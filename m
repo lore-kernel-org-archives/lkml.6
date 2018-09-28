@@ -2,228 +2,91 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AEEC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B52C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FE2420676
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:22:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="wADK4z76"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FE2420676
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
+	by mail.kernel.org (Postfix) with ESMTP id 2579F20676
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:23:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2579F20676
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729497AbeI1Xrc (ORCPT
+        id S1729499AbeI1Xs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 19:47:32 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36023 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbeI1Xrb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 19:47:31 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f18-v6so1429348pgv.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:22:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jixE4dktc9tg/BVvAzQI2i/55DQM6A5/+8EwamwF8ok=;
-        b=wADK4z76JHbyl2EsFn19f7bkHwUTye3F0w/zZ3Y6TtLO2md6329WXHKTJhoxWRA2EI
-         8tPglGYAYcOP/pFpJ1ZzbO5vsKU+CnxI12Vl/owUhIFlUPXi8NQeBm1h7vLDCndPZezu
-         jK0I5khr+Qdvb78Ba/XZINiba92i1er44kr9qCa4N/qVXUZVr12LqF82z+YXPej148p1
-         jjO0CEU1713sG1pYV+0ag/cWPwN8q19+oRjQxi6uNUAJbVOvXva0bfVuAa2AUBcLSReX
-         TZ2O2n0gYp1s6SSzodhgsELwix9PWFBz2aPX92ulRzSpbrVNLd8xH5DEPbR5HIOPkgqv
-         UHGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jixE4dktc9tg/BVvAzQI2i/55DQM6A5/+8EwamwF8ok=;
-        b=Fa9CMzlcIDA68fYLwkmk6noZ/uOFRQlMhZYBoPxzWGGClYM1m5UllbPZiWlX91NUAH
-         dng2Zpjb0QJEjt42d9aXeKsfBSQnQypddwgXzUWtbSbhEif8viztjbo/EDaebVOIWJOU
-         /cxiBIiNlhm1+bo9BRyz3YmIHOUHAQDM3RDxmQBIgtEEX4/3/tF2Y0XvdTgjjJ1A6i83
-         sk+XmhPQrbMsbKR2ljjM2NWwmJLq4lJc4o5sxYyV5ZaOIoUCx7RUuNQZyAgfDczXtP0v
-         YGVRj1yKW4ojAB4Jsy6h3qZtMHMMqVUmb3UIAl8bL8zujspEnx4TxvrVUaSgCmd7McIT
-         5hLw==
-X-Gm-Message-State: ABuFfohCA8ehOtZmR/PVwOjW1YI3dewwZQVzkC3QekKfpJSw6RLc5THE
-        5mq9ronICpGRfB7s4K4iHeOS3/gl0hg=
-X-Google-Smtp-Source: ACcGV63Mm9pEZNJylVSF9kohqZCwEFVCwEWRNunSKJUdj3q01FqWgPZQED8izxHU8t2R6swVakFnvQ==
-X-Received: by 2002:aa7:86cb:: with SMTP id h11-v6mr17723929pfo.58.1538155365467;
-        Fri, 28 Sep 2018 10:22:45 -0700 (PDT)
-Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
-        by smtp.gmail.com with ESMTPSA id i2-v6sm8584369pgq.35.2018.09.28.10.22.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 10:22:44 -0700 (PDT)
-From:   Mark Salyzyn <salyzyn@android.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mark Salyzyn <salyzyn@android.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>, stable@vger.kernel.org,
-        linux-unionfs@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: ovl: hash non-dir by lower inode for fsnotify
-Date:   Fri, 28 Sep 2018 10:22:12 -0700
-Message-Id: <20180928172223.38233-1-salyzyn@android.com>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        Fri, 28 Sep 2018 19:48:26 -0400
+Received: from mga05.intel.com ([192.55.52.43]:19238 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726738AbeI1Xs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 19:48:26 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 10:23:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,315,1534834800"; 
+   d="scan'208";a="77203532"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga008.jf.intel.com with ESMTP; 28 Sep 2018 10:23:40 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 9A539300B51; Fri, 28 Sep 2018 10:23:40 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 10:23:40 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        tvrtko.ursulin@linux.intel.com,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
+Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
+Message-ID: <20180928172340.GA32651@tassilo.jf.intel.com>
+References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
+ <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
+ <20180928164111.i6nba2j6mnegwslw@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928164111.i6nba2j6mnegwslw@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(cherry pick from commit 764baba80168ad3adafb521d2ab483ccbc49e344)
+> There's also been prior discussion on these feature in other contexts
+> (e.g. android expoits resulting from out-of-tree drivers). It would be
+> nice to see those considered.
+> 
+> IIRC The conclusion from prior discussions (e.g. [1]) was that we wanted
+> finer granularity of control such that we could limit PMU access to
+> specific users -- e.g. disallow arbitrary android apps from poking *any*
+> PMU, while allowing some more trusted apps/users to uses *some* specific
+> PMUs.
+> 
+> e.g. we could add /sys/bus/event_source/devices/${PMU}/device, protect
+> this via the usual fs ACLs, and pass the fd to perf_event_open()
+> somehow. A valid fd would act as a capability, taking precedence over
+> perf_event_paranoid.
 
-Commit 31747eda41ef ("ovl: hash directory inodes for fsnotify")
-fixed an issue of inotify watch on directory that stops getting
-events after dropping dentry caches.
+That sounds like an orthogonal feature. I don't think the original
+patchkit would need to be hold up for this. It would be something
+in addition.
 
-A similar issue exists for non-dir non-upper files, for example:
+BTW can't you already do that with the syscall filter? I assume
+the Android sandboxes already use that. Just forbid perf_event_open
+for the apps.
 
-$ mkdir -p lower upper work merged
-$ touch lower/foo
-$ mount -t overlay -o
-lowerdir=lower,workdir=work,upperdir=upper none merged
-$ inotifywait merged/foo &
-$ echo 2 > /proc/sys/vm/drop_caches
-$ cat merged/foo
-
-inotifywait doesn't get the OPEN event, because ovl_lookup() called
-from 'cat' allocates a new overlay inode and does not reuse the
-watched inode.
-
-Fix this by hashing non-dir overlay inodes by lower real inode in
-the following cases that were not hashed before this change:
- - A non-upper overlay mount
- - A lower non-hardlink when index=off
-
-A helper ovl_hash_bylower() was added to put all the logic and
-documentation about which real inode an overlay inode is hashed by
-into one place.
-
-The issue dates back to initial version of overlayfs, but this
-patch depends on ovl_inode code that was introduced in kernel v4.13.
-
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Cc: <stable@vger.kernel.org> #v4.13
-Signed-off-by: Mark Salyzyn <salyzyn@android.com> #4.14
-Cc: <linux-unionfs@vger.kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>
----
- fs/overlayfs/inode.c | 62 +++++++++++++++++++++++++++++++-------------
- 1 file changed, 44 insertions(+), 18 deletions(-)
-
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index d60900b615f9..efed50304b49 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -14,6 +14,7 @@
- #include <linux/posix_acl.h>
- #include <linux/ratelimit.h>
- #include "overlayfs.h"
-+#include "ovl_entry.h"
- 
- int ovl_setattr(struct dentry *dentry, struct iattr *attr)
- {
-@@ -608,39 +609,63 @@ static bool ovl_verify_inode(struct inode *inode, struct dentry *lowerdentry,
- 	return true;
- }
- 
-+/*
-+ * Does overlay inode need to be hashed by lower inode?
-+ */
-+static bool ovl_hash_bylower(struct super_block *sb, struct dentry *upper,
-+			     struct dentry *lower, struct dentry *index)
-+{
-+	struct ovl_fs *ofs = sb->s_fs_info;
-+
-+	/* No, if pure upper */
-+	if (!lower)
-+		return false;
-+
-+	/* Yes, if already indexed */
-+	if (index)
-+		return true;
-+
-+	/* Yes, if won't be copied up */
-+	if (!ofs->upper_mnt)
-+		return true;
-+
-+	/* No, if lower hardlink is or will be broken on copy up */
-+	if ((upper || !ovl_indexdir(sb)) &&
-+	    !d_is_dir(lower) && d_inode(lower)->i_nlink > 1)
-+		return false;
-+
-+	/* No, if non-indexed upper with NFS export */
-+	if (sb->s_export_op && upper)
-+		return false;
-+
-+	/* Otherwise, hash by lower inode for fsnotify */
-+	return true;
-+}
-+
- struct inode *ovl_get_inode(struct dentry *dentry, struct dentry *upperdentry,
- 			    struct dentry *index)
- {
-+	struct super_block *sb = dentry->d_sb;
- 	struct dentry *lowerdentry = ovl_dentry_lower(dentry);
- 	struct inode *realinode = upperdentry ? d_inode(upperdentry) : NULL;
- 	struct inode *inode;
--	/* Already indexed or could be indexed on copy up? */
--	bool indexed = (index || (ovl_indexdir(dentry->d_sb) && !upperdentry));
--	struct dentry *origin = indexed ? lowerdentry : NULL;
-+	bool bylower = ovl_hash_bylower(sb, upperdentry, lowerdentry, index);
- 	bool is_dir;
- 
--	if (WARN_ON(upperdentry && indexed && !lowerdentry))
--		return ERR_PTR(-EIO);
--
- 	if (!realinode)
- 		realinode = d_inode(lowerdentry);
- 
- 	/*
--	 * Copy up origin (lower) may exist for non-indexed non-dir upper, but
--	 * we must not use lower as hash key in that case.
--	 * Hash non-dir that is or could be indexed by origin inode.
--	 * Hash dir that is or could be merged by origin inode.
--	 * Hash pure upper and non-indexed non-dir by upper inode.
-+	 * Copy up origin (lower) may exist for non-indexed upper, but we must
-+	 * not use lower as hash key if this is a broken hardlink.
- 	 */
- 	is_dir = S_ISDIR(realinode->i_mode);
--	if (is_dir)
--		origin = lowerdentry;
--
--	if (upperdentry || origin) {
--		struct inode *key = d_inode(origin ?: upperdentry);
-+	if (upperdentry || bylower) {
-+		struct inode *key = d_inode(bylower ? lowerdentry :
-+						      upperdentry);
- 		unsigned int nlink = is_dir ? 1 : realinode->i_nlink;
- 
--		inode = iget5_locked(dentry->d_sb, (unsigned long) key,
-+		inode = iget5_locked(sb, (unsigned long) key,
- 				     ovl_inode_test, ovl_inode_set, key);
- 		if (!inode)
- 			goto out_nomem;
-@@ -664,7 +689,8 @@ struct inode *ovl_get_inode(struct dentry *dentry, struct dentry *upperdentry,
- 			nlink = ovl_get_nlink(lowerdentry, upperdentry, nlink);
- 		set_nlink(inode, nlink);
- 	} else {
--		inode = new_inode(dentry->d_sb);
-+		/* Lower hardlink that will be broken on copy up */
-+		inode = new_inode(sb);
- 		if (!inode)
- 			goto out_nomem;
- 	}
--- 
-2.19.0.605.g01d371f741-goog
+-Andi
 
