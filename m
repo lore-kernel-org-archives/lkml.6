@@ -2,125 +2,154 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8A9C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B934C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5A0D21708
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:49:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="H3Hl7Y6l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A0D21708
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 5659A20779
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:52:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5659A20779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728582AbeI1KLM (ORCPT
+        id S1728621AbeI1KOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 06:11:12 -0400
-Received: from ozlabs.org ([203.11.71.1]:58243 "EHLO ozlabs.org"
+        Fri, 28 Sep 2018 06:14:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35402 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726068AbeI1KLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 06:11:11 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726106AbeI1KOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 06:14:21 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42LyNV6LfSz9s3Z;
-        Fri, 28 Sep 2018 13:49:30 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538106571;
-        bh=dqq6wco2e//1pFJK4QuRzdB5buuWUhCmiqUjAjGkweE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=H3Hl7Y6lZQM4RRIgi6guAJhV0PAUjKw9r8zq+ogwcIWDdi13XJsMhQ9LT1UbHvc38
-         Yjdl7Ha5h9rfOWMujxNNCrMcmjTwSfcipHQs1wmCE7Ozj6b4AFOQgobc9Q4ZxHMEyy
-         bo2Kq0NhCCABRRirTEP+9pExxX/laMHbBdL6l1hUIhKU2KdL0aaj5pPPLDzxijrZGs
-         kvZ6v9tot4qO66T36/93sEt6A1UVdcH9d7RoXsnhZr/oQa7S29aDOO1LwyZdXYlbdF
-         +d4x4NBUlGmt3mQIs0IgBv4reZugrhHHqhwTUBv1RigB79ARlSH51KvMKrDTYNaOXq
-         PlEqkfG49TMUw==
-Date:   Fri, 28 Sep 2018 13:49:29 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the userns tree with the arm64 tree
-Message-ID: <20180928134929.73598ec6@canb.auug.org.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id A62F33001BD3;
+        Fri, 28 Sep 2018 03:52:41 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-53.pek2.redhat.com [10.72.12.53])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2FC345D73F;
+        Fri, 28 Sep 2018 03:52:26 +0000 (UTC)
+Subject: Re: [PATCH v7 RESEND 2/4] kexec: allocate unencrypted control pages
+ for kdump in case SME is enabled
+To:     Borislav Petkov <bp@suse.de>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, thomas.lendacky@amd.com,
+        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
+        brijesh.singh@amd.com, dyoung@redhat.com, bhe@redhat.com,
+        jroedel@suse.de
+References: <20180927071954.29615-1-lijiang@redhat.com>
+ <20180927071954.29615-3-lijiang@redhat.com> <20180927165323.GC19779@zn.tnic>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <ef91c6cd-03dd-1a72-eea8-97d05d0ad370@redhat.com>
+Date:   Fri, 28 Sep 2018 11:52:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/AbN9IIKd.4DXS_x49UCAG6i"; protocol="application/pgp-signature"
+In-Reply-To: <20180927165323.GC19779@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 28 Sep 2018 03:52:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/AbN9IIKd.4DXS_x49UCAG6i
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+在 2018年09月28日 00:53, Borislav Petkov 写道:
+> On Thu, Sep 27, 2018 at 03:19:52PM +0800, Lianbo Jiang wrote:
+>> When SME is enabled in the first kernel, we will allocate unencrypted pages
+>> for kdump in order to be able to boot the kdump kernel like kexec.
+> 
+> This is not what the commit does - it marks the control pages as
+> decrypted when SME. Why doesn't the commit message state that and why is
+> this being done?
+> 
+Ok, i will improve this patch log.
 
-Hi Eric,
+If SME is active, we need to mark the control pages as decrypted, because
+when we boot to the kdump kernel, these pages won't be accessed encrypted
+at the initial stage, in order to boot the kdump kernel in the same manner
+as originally booted.
 
-Today's linux-next merge of the userns tree got a conflict in:
+>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+>> ---
+>>  kernel/kexec_core.c | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+>> index 23a83a4da38a..e7efcd1a977b 100644
+>> --- a/kernel/kexec_core.c
+>> +++ b/kernel/kexec_core.c
+>> @@ -471,6 +471,16 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
+>>  		}
+>>  	}
+>>  
+>> +	if (pages) {
+>> +		/*
+>> +		 * For kdump, we need to ensure that these pages are
+>> +		 * unencrypted pages if SME is enabled.
+> 
+> Remember to always call unencrypted pages "decrypted" - this is the
+> convention we agreed upon and it should keep the confusion level at
+> minimum to others staring at this code.
+> 
+Ok, i will improve this comment.
 
-  arch/arm64/kernel/traps.c
+>> +		 * By the way, it is unnecessary to call the arch_
+>> +		 * kexec_pre_free_pages(), which will make the code
+>> +		 * become more simple.
+>> +		 */
+> 
+> This second sentence I don't understand...
+> 
 
-between commit:
+There are two functions that are usually called in pairs, they are:
+arch_kexec_post_alloc_pages() and arch_kexec_pre_free_pages().
 
-  8a60419d3676 ("arm64: force_signal_inject: WARN if called from kernel con=
-text")
+One marks the pages as decrypted, another one marks the pages as encrypted.
 
-from the arm64 tree and commit:
+But for the crash control pages, no need to call arch_kexec_pre_free_pages(),
+there are three reasons:
+1. Crash pages are reserved in memblock, these pages are only used by kdump,
+   no other people uses these pages;
 
-  6fa998e83ef9 ("signal/arm64: Push siginfo generation into arm64_notify_di=
-e")
+2. Whenever crash pages are allocated, these pages are always marked as
+   decrypted(when SME is active);
 
-from the userns tree.
+3. If we plan to call the arch_kexe_pre_free_pages(), we have to store these
+pages to somewhere, which will have more code changes.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+So, here it is redundant to call the arch_kexe_pre_free_pages().
 
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/kernel/traps.c
-index 21689c6a985f,856b32aa03d8..000000000000
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@@ -353,12 -366,6 +368,9 @@@ void force_signal_inject(int signal, in
-  	const char *desc;
-  	struct pt_regs *regs =3D current_pt_regs();
- =20
- +	if (WARN_ON(!user_mode(regs)))
- +		return;
- +
-- 	clear_siginfo(&info);
--=20
-  	switch (signal) {
-  	case SIGILL:
-  		desc =3D "undefined instruction";
-
---Sig_/AbN9IIKd.4DXS_x49UCAG6i
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlutpMkACgkQAVBC80lX
-0GwSLAf/UNR1AOtAmLKtxFCoadq57qvQjMMqsNVV1yNb23v+f7mJejm+u34AMoHE
-scjKQqm8ndKVs7dgqNoqDCnNahTEEGnRmqzr/d0ONqzhLdm+Chbn7DAuv8cNNgpZ
-MMozwZYaKt/KEBCjMsdUV4zq1XIkCYk6LxfqQIi4hkPwQExOoJf4Ppi/XmN3bkRD
-TfxTTudkwQdc/CD/GOYWpxW1MXIKevVpkmLpINFek+cXRWEdY+O2imy9QptyxI2p
-mOs9jaMevYsOZKXh6wr7qPL6Z+cyZWIwTje5G3FYi73EdeVXmTP1gyf1NcPaZfve
-i8xRLMHpa7x0NKtgQTaukn7TFnXwsg==
-=tN97
------END PGP SIGNATURE-----
-
---Sig_/AbN9IIKd.4DXS_x49UCAG6i--
+Thanks.
+Lianbo
+>> +		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
+>> +	}
+>>  	return pages;
+>>  }
+>>  
+>> @@ -867,6 +877,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>>  			result  = -ENOMEM;
+>>  			goto out;
+>>  		}
+>> +		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+>>  		ptr = kmap(page);
+>>  		ptr += maddr & ~PAGE_MASK;
+>>  		mchunk = min_t(size_t, mbytes,
+>> @@ -884,6 +895,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>>  			result = copy_from_user(ptr, buf, uchunk);
+>>  		kexec_flush_icache_page(page);
+>>  		kunmap(page);
+>> +		arch_kexec_pre_free_pages(page_address(page), 1);
+>>  		if (result) {
+>>  			result = -EFAULT;
+>>  			goto out;
+>> -- 
+>> 2.17.1
+>>
+> 
