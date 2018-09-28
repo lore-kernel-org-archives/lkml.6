@@ -2,152 +2,228 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABE4C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AEEC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 815B620676
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:21:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815B620676
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 6FE2420676
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:22:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="wADK4z76"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FE2420676
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbeI1Xqe (ORCPT
+        id S1729497AbeI1Xrc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 19:46:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40544 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726121AbeI1Xqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 19:46:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E0F8AAECE;
-        Fri, 28 Sep 2018 17:21:46 +0000 (UTC)
-Subject: Re: [PATCH v3 6/9] kbuild: consolidate Devicetree dtb build rules
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Michal Simek <monstr@monstr.eu>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        H8/300 ARCHITECTURE <uclinux-h8-devel@lists.sourceforge.jp>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        nios2-dev@lists.rocketboards.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-xtensa@linux-xtensa.org, Will Deacon <will.deacon@arm.com>,
-        Paul Burton <paul.burton@mips.com>, ley.foon.tan@intel.com
-References: <20180910150403.19476-1-robh@kernel.org>
- <20180910150403.19476-7-robh@kernel.org>
- <CAL_Jsq+=VbdcVLiwXbOA5d+R2YY6=2Pw2bQpci-jj-JvereD1A@mail.gmail.com>
- <CAK7LNAQFqhWw+LwDoypGG=OP6tH4qf2tT=LvtchK2GoiNyzDXg@mail.gmail.com>
- <CAMuHMdWEnoh97_jiDWMq=ke4PrhSFbToYnx91CPLBuq3mOGzoQ@mail.gmail.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <75740733-d0d4-4c0c-838c-f01a5e7291d3@suse.de>
-Date:   Fri, 28 Sep 2018 19:21:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 28 Sep 2018 19:47:32 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36023 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbeI1Xrb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 19:47:31 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f18-v6so1429348pgv.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:22:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jixE4dktc9tg/BVvAzQI2i/55DQM6A5/+8EwamwF8ok=;
+        b=wADK4z76JHbyl2EsFn19f7bkHwUTye3F0w/zZ3Y6TtLO2md6329WXHKTJhoxWRA2EI
+         8tPglGYAYcOP/pFpJ1ZzbO5vsKU+CnxI12Vl/owUhIFlUPXi8NQeBm1h7vLDCndPZezu
+         jK0I5khr+Qdvb78Ba/XZINiba92i1er44kr9qCa4N/qVXUZVr12LqF82z+YXPej148p1
+         jjO0CEU1713sG1pYV+0ag/cWPwN8q19+oRjQxi6uNUAJbVOvXva0bfVuAa2AUBcLSReX
+         TZ2O2n0gYp1s6SSzodhgsELwix9PWFBz2aPX92ulRzSpbrVNLd8xH5DEPbR5HIOPkgqv
+         UHGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jixE4dktc9tg/BVvAzQI2i/55DQM6A5/+8EwamwF8ok=;
+        b=Fa9CMzlcIDA68fYLwkmk6noZ/uOFRQlMhZYBoPxzWGGClYM1m5UllbPZiWlX91NUAH
+         dng2Zpjb0QJEjt42d9aXeKsfBSQnQypddwgXzUWtbSbhEif8viztjbo/EDaebVOIWJOU
+         /cxiBIiNlhm1+bo9BRyz3YmIHOUHAQDM3RDxmQBIgtEEX4/3/tF2Y0XvdTgjjJ1A6i83
+         sk+XmhPQrbMsbKR2ljjM2NWwmJLq4lJc4o5sxYyV5ZaOIoUCx7RUuNQZyAgfDczXtP0v
+         YGVRj1yKW4ojAB4Jsy6h3qZtMHMMqVUmb3UIAl8bL8zujspEnx4TxvrVUaSgCmd7McIT
+         5hLw==
+X-Gm-Message-State: ABuFfohCA8ehOtZmR/PVwOjW1YI3dewwZQVzkC3QekKfpJSw6RLc5THE
+        5mq9ronICpGRfB7s4K4iHeOS3/gl0hg=
+X-Google-Smtp-Source: ACcGV63Mm9pEZNJylVSF9kohqZCwEFVCwEWRNunSKJUdj3q01FqWgPZQED8izxHU8t2R6swVakFnvQ==
+X-Received: by 2002:aa7:86cb:: with SMTP id h11-v6mr17723929pfo.58.1538155365467;
+        Fri, 28 Sep 2018 10:22:45 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
+        by smtp.gmail.com with ESMTPSA id i2-v6sm8584369pgq.35.2018.09.28.10.22.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 10:22:44 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mark Salyzyn <salyzyn@android.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>, stable@vger.kernel.org,
+        linux-unionfs@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: ovl: hash non-dir by lower inode for fsnotify
+Date:   Fri, 28 Sep 2018 10:22:12 -0700
+Message-Id: <20180928172223.38233-1-salyzyn@android.com>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWEnoh97_jiDWMq=ke4PrhSFbToYnx91CPLBuq3mOGzoQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+(cherry pick from commit 764baba80168ad3adafb521d2ab483ccbc49e344)
 
-Am 13.09.18 um 17:51 schrieb Geert Uytterhoeven:
-> On Wed, Sep 12, 2018 at 3:02 AM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> Even x86 can enable OF and OF_UNITTEST.
->>
->> Another solution might be,
->> guard it by 'depends on ARCH_SUPPORTS_OF'.
->>
->> This is actually what ACPI does.
->>
->> menuconfig ACPI
->>         bool "ACPI (Advanced Configuration and Power Interface) Support"
->>         depends on ARCH_SUPPORTS_ACPI
->>          ...
-> 
-> ACPI is a real platform feature, as it depends on firmware.
-> 
-> CONFIG_OF can be enabled, and DT overlays can be loaded, on any platform,
-> even if it has ACPI ;-)
+Commit 31747eda41ef ("ovl: hash directory inodes for fsnotify")
+fixed an issue of inotify watch on directory that stops getting
+events after dropping dentry caches.
 
-How would loading a DT overlay work on an ACPI platform? I.e., what
-would it overlay against and how to practically load such a file?
+A similar issue exists for non-dir non-upper files, for example:
 
-I wonder whether that could be helpful for USB devices and serdev...
+$ mkdir -p lower upper work merged
+$ touch lower/foo
+$ mount -t overlay -o
+lowerdir=lower,workdir=work,upperdir=upper none merged
+$ inotifywait merged/foo &
+$ echo 2 > /proc/sys/vm/drop_caches
+$ cat merged/foo
 
-Cheers,
-Andreas
+inotifywait doesn't get the OPEN event, because ovl_lookup() called
+from 'cat' allocates a new overlay inode and does not reuse the
+watched inode.
 
+Fix this by hashing non-dir overlay inodes by lower real inode in
+the following cases that were not hashed before this change:
+ - A non-upper overlay mount
+ - A lower non-hardlink when index=off
+
+A helper ovl_hash_bylower() was added to put all the logic and
+documentation about which real inode an overlay inode is hashed by
+into one place.
+
+The issue dates back to initial version of overlayfs, but this
+patch depends on ovl_inode code that was introduced in kernel v4.13.
+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Cc: <stable@vger.kernel.org> #v4.13
+Signed-off-by: Mark Salyzyn <salyzyn@android.com> #4.14
+Cc: <linux-unionfs@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+---
+ fs/overlayfs/inode.c | 62 +++++++++++++++++++++++++++++++-------------
+ 1 file changed, 44 insertions(+), 18 deletions(-)
+
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index d60900b615f9..efed50304b49 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -14,6 +14,7 @@
+ #include <linux/posix_acl.h>
+ #include <linux/ratelimit.h>
+ #include "overlayfs.h"
++#include "ovl_entry.h"
+ 
+ int ovl_setattr(struct dentry *dentry, struct iattr *attr)
+ {
+@@ -608,39 +609,63 @@ static bool ovl_verify_inode(struct inode *inode, struct dentry *lowerdentry,
+ 	return true;
+ }
+ 
++/*
++ * Does overlay inode need to be hashed by lower inode?
++ */
++static bool ovl_hash_bylower(struct super_block *sb, struct dentry *upper,
++			     struct dentry *lower, struct dentry *index)
++{
++	struct ovl_fs *ofs = sb->s_fs_info;
++
++	/* No, if pure upper */
++	if (!lower)
++		return false;
++
++	/* Yes, if already indexed */
++	if (index)
++		return true;
++
++	/* Yes, if won't be copied up */
++	if (!ofs->upper_mnt)
++		return true;
++
++	/* No, if lower hardlink is or will be broken on copy up */
++	if ((upper || !ovl_indexdir(sb)) &&
++	    !d_is_dir(lower) && d_inode(lower)->i_nlink > 1)
++		return false;
++
++	/* No, if non-indexed upper with NFS export */
++	if (sb->s_export_op && upper)
++		return false;
++
++	/* Otherwise, hash by lower inode for fsnotify */
++	return true;
++}
++
+ struct inode *ovl_get_inode(struct dentry *dentry, struct dentry *upperdentry,
+ 			    struct dentry *index)
+ {
++	struct super_block *sb = dentry->d_sb;
+ 	struct dentry *lowerdentry = ovl_dentry_lower(dentry);
+ 	struct inode *realinode = upperdentry ? d_inode(upperdentry) : NULL;
+ 	struct inode *inode;
+-	/* Already indexed or could be indexed on copy up? */
+-	bool indexed = (index || (ovl_indexdir(dentry->d_sb) && !upperdentry));
+-	struct dentry *origin = indexed ? lowerdentry : NULL;
++	bool bylower = ovl_hash_bylower(sb, upperdentry, lowerdentry, index);
+ 	bool is_dir;
+ 
+-	if (WARN_ON(upperdentry && indexed && !lowerdentry))
+-		return ERR_PTR(-EIO);
+-
+ 	if (!realinode)
+ 		realinode = d_inode(lowerdentry);
+ 
+ 	/*
+-	 * Copy up origin (lower) may exist for non-indexed non-dir upper, but
+-	 * we must not use lower as hash key in that case.
+-	 * Hash non-dir that is or could be indexed by origin inode.
+-	 * Hash dir that is or could be merged by origin inode.
+-	 * Hash pure upper and non-indexed non-dir by upper inode.
++	 * Copy up origin (lower) may exist for non-indexed upper, but we must
++	 * not use lower as hash key if this is a broken hardlink.
+ 	 */
+ 	is_dir = S_ISDIR(realinode->i_mode);
+-	if (is_dir)
+-		origin = lowerdentry;
+-
+-	if (upperdentry || origin) {
+-		struct inode *key = d_inode(origin ?: upperdentry);
++	if (upperdentry || bylower) {
++		struct inode *key = d_inode(bylower ? lowerdentry :
++						      upperdentry);
+ 		unsigned int nlink = is_dir ? 1 : realinode->i_nlink;
+ 
+-		inode = iget5_locked(dentry->d_sb, (unsigned long) key,
++		inode = iget5_locked(sb, (unsigned long) key,
+ 				     ovl_inode_test, ovl_inode_set, key);
+ 		if (!inode)
+ 			goto out_nomem;
+@@ -664,7 +689,8 @@ struct inode *ovl_get_inode(struct dentry *dentry, struct dentry *upperdentry,
+ 			nlink = ovl_get_nlink(lowerdentry, upperdentry, nlink);
+ 		set_nlink(inode, nlink);
+ 	} else {
+-		inode = new_inode(dentry->d_sb);
++		/* Lower hardlink that will be broken on copy up */
++		inode = new_inode(sb);
+ 		if (!inode)
+ 			goto out_nomem;
+ 	}
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+2.19.0.605.g01d371f741-goog
+
