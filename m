@@ -2,177 +2,291 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE17CC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 04:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A00C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 04:55:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19603216FA
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 04:54:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 354F0216FA
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 04:55:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="ZASrJFl7";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="LC1ZaxZ8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19603216FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhVqYJYY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 354F0216FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbeI1LQb (ORCPT
+        id S1728820AbeI1LRj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 07:16:31 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:36872 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727588AbeI1LQb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 07:16:31 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8S4rFLb013708;
-        Thu, 27 Sep 2018 21:53:58 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=RnPwaRWNfIcarW9j5Fh8wBeCoHhCQz+gXuu8oYLi8Vw=;
- b=ZASrJFl7s/RRLMoExCobzvOESh7QuJv6u5Ba45QllI6CNwOkQ0zOLScGTdPVrLj8zvoe
- GD2ZlXdsR87YuVa7fNK5jOUkJX4QIHOy2/OQmuJ01zyfd/a9mz6zI194XcE2grksW+xT
- x2RPvym98Xsj3niPFwZ0vlgu9CeRe/WErEM= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2msdmfg06c-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 27 Sep 2018 21:53:58 -0700
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.27) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Fri, 28 Sep 2018 00:53:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RnPwaRWNfIcarW9j5Fh8wBeCoHhCQz+gXuu8oYLi8Vw=;
- b=LC1ZaxZ8wKiLOb8y9pjJePLpXu7NLHkniMvhzZmtI/5/QRtd8U1Rb9Iyf7i6d8TDNV4Itxuy78WRGMlL+iw6q2aSvQQvuLBryLxguSScFZOi296wgIFa+VZDiyanzo/xjXtu6qqcPwDD4OFnu/kKMhYu0zt2EGzv/XS7LvbpbdU=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
- MWHPR15MB1376.namprd15.prod.outlook.com (10.173.234.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.25; Fri, 28 Sep 2018 04:53:52 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::9082:c167:38a9:9705]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::9082:c167:38a9:9705%7]) with mapi id 15.20.1143.022; Fri, 28 Sep 2018
- 04:53:52 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-CC:     lkml <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>, Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Subject: Re: [PATCH v3 1/1] perf: Sharing PMU counters across compatible
- events
-Thread-Topic: [PATCH v3 1/1] perf: Sharing PMU counters across compatible
- events
-Thread-Index: AQHUVFWHLkWT+gOEaE6ulIM978nb5KUFIEEAgAAFk4A=
-Date:   Fri, 28 Sep 2018 04:53:52 +0000
-Message-ID: <CBE3EBD5-EAC6-41B6-88C1-B15958591172@fb.com>
-References: <20180924222517.197296-1-songliubraving@fb.com>
- <20180924222517.197296-2-songliubraving@fb.com>
- <0b57307e-b75c-5df8-1ea7-27d527577489@linux.ibm.com>
-In-Reply-To: <0b57307e-b75c-5df8-1ea7-27d527577489@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.9.1)
-x-originating-ip: [2620:10d:c090:180::1:be70]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1376;20:ivHnsM6qGNDd/cBVNsHxHDW0haIoe1/hkYDngYoc7BsF1m3fYDt18T1BeD+PjpL2Iw17Qhv1R6/EDWH2MhWRz7E1qcc2oLE5cDFXoFCgFqeMF5Y4HX3I/p1v5KYtJX5liAB4BI6Yb7vItwVvOjaAxpypo4MEzdxYKJAqRt7W4aU=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 45716172-9ab0-470f-ee51-08d624fe6336
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1376;
-x-ms-traffictypediagnostic: MWHPR15MB1376:
-x-microsoft-antispam-prvs: <MWHPR15MB137613D04E24A8CBB7A7D416B3EC0@MWHPR15MB1376.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(104084551191319);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(3002001)(93006095)(93001095)(3231355)(11241501184)(944501410)(52105095)(10201501046)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051);SRVR:MWHPR15MB1376;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1376;
-x-forefront-prvs: 0809C12563
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(366004)(396003)(136003)(199004)(189003)(446003)(5024004)(36756003)(102836004)(11346002)(83716004)(34290500001)(256004)(6246003)(2906002)(68736007)(50226002)(2900100001)(2616005)(5250100002)(6916009)(4326008)(97736004)(57306001)(53546011)(71190400001)(186003)(71200400001)(46003)(86362001)(6506007)(14454004)(966005)(478600001)(53936002)(6306002)(99286004)(33656002)(476003)(6512007)(6116002)(305945005)(7736002)(5660300001)(229853002)(486006)(316002)(76176011)(25786009)(81166006)(8936002)(8676002)(82746002)(105586002)(6486002)(54906003)(106356001)(81156014)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1376;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: qYSO0BxJUD9wxqz5D28s94s3MG9ZkBF7208/bKAYuwOgH80u14G9Gn6Z8wKXqwSz+q9UY7v5pkRoQVBQExxvIcJeEf0fwMe+IcCEDj5ffSpLjMbu1PNl6IJO0TiVndgdgUimfNAF/ioRPsoD7gxQzutd4e3hln17ZFbAOETX/xUFIcqp8vYjkFR+3KfxwO86fIhPF5Npjz0JqnmjT1nUgva8USM+BMcqzKCdT3hUuuxtn9JEd4jp5KKLI6itABYdyGIa1olQfOhaEwlHpVvBeVBQe7elOPAuwiYMcBrWB4JLqCvYbvhWQX1f7GklsveGXkTUdqfePFQmRSkKk6u2l6UdOqeAD8SDhAlcpsB6nOE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <30F74CF89714784EAB94EA8976ADCDE9@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 28 Sep 2018 07:17:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59844 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728375AbeI1LRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 07:17:38 -0400
+Received: from zzz.localdomain (unknown [96.76.194.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4710216FA;
+        Fri, 28 Sep 2018 04:55:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538110546;
+        bh=YK4JOWGPSjqUs2zagCInlQ+kDIBFcqB3hIvK9B7DPQ8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PhVqYJYYWMiX3Cx3+91OX8uzAoG/oIezXiZo5zFWUotbzTE1a+kKwSdfg+3Z2JcpU
+         QR22Y/FzDedz2oPOD2MyPRrU+TnpeZcKttV+4Caz+QLbp1B+dP4LydV0b7AOLVz0It
+         6Gn1mYbrP54YovNAbNFqG/+C3PcUO/QLBEjfjfNE=
+Date:   Thu, 27 Sep 2018 21:55:44 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-crypto@vger.kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org
+Subject: Re: [PATCH net-next v6 00/23] WireGuard: Secure Network Tunnel
+Message-ID: <20180928045542.GA545@zzz.localdomain>
+References: <20180925145622.29959-1-Jason@zx2c4.com>
+ <20180927182944.GA22921@gmail.com>
+ <20180927213537.GA27576@zx2c4.com>
+ <20180928011726.GA98113@gmail.com>
+ <20180928023546.GA20765@zx2c4.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45716172-9ab0-470f-ee51-08d624fe6336
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Sep 2018 04:53:52.3170
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1376
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_01:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928023546.GA20765@zx2c4.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ravi,
+Hi Jason,
 
-> On Sep 27, 2018, at 9:33 PM, Ravi Bangoria <ravi.bangoria@linux.ibm.com> =
-wrote:
->=20
-> Hi Song,
->=20
-> On 09/25/2018 03:55 AM, Song Liu wrote:
->> This patch tries to enable PMU sharing. To make perf event scheduling
->> fast, we use special data structures.
->>=20
->> An array of "struct perf_event_dup" is added to the perf_event_context,
->> to remember all the duplicated events under this ctx. All the events
->> under this ctx has a "dup_id" pointing to its perf_event_dup. Compatible
->> events under the same ctx share the same perf_event_dup. The following
->> figure shows a simplified version of the data structure.
->>=20
->>      ctx ->  perf_event_dup -> master
->>                     ^
->>                     |
->>         perf_event /|
->>                     |
->>         perf_event /
->>=20
->=20
-> I've not gone through the patch in detail, but I was specifically
-> interested in scenarios where one perf instance is counting event
-> systemwide and thus other perf instance fails to count the same
-> event for a specific workload because that event can be counted
-> in one hw counter only.
->=20
-> Ex: https://lkml.org/lkml/2018/3/12/1011
->=20
-> Seems this patch does not solve this issue. Please let me know if
-> I'm missing anything.
->=20
+On Fri, Sep 28, 2018 at 04:35:48AM +0200, Jason A. Donenfeld wrote:
+> Hi Eric,
+> 
+> On Thu, Sep 27, 2018 at 06:17:27PM -0700, Eric Biggers wrote:
+> > So, Zinc will simultaneously replace the current crypto implementations, *and*
+> > be "orthogonal" and "separate" from all the crypto code currently maintained by
+> > Herbert?  You can't have your cake and eat it too...
+> 
+> The plan is for it to replace many uses of the crypto API where it makes
+> sense, but not replace uses where it doesn't make sense. Perhaps in the
+> long run, over time, its usage will grow to cover those cases too, or,
+> perhaps instead, Zinc will form a simple basis of software crypto
+> algorithms in whatever future API designs crop up. In other words, like
+> most changes in kernel development, things happen gradually, starting
+> with a few good cases, and gradually growing as the need and design
+> arise.
 
-In this case, unfortunately, these two events cannot share the same
-counter, because one of them is in cpu ctx; while the other belongs=20
-to the task ctx. They have to go through the rotation, that each=20
-event counts 50% of the time. However, if you have 2 events in cpu=20
-ctx and 2 events in task ctx on the same counter, this patch will=20
-help each event to count 50% of time, instead of 25%.=20
+Please re-read what I wrote.  Here I'm talking about the crypto code itself, not
+its users.
 
-Another potential solution is to create a cgroup for the workload,=20
-and attach perf event to the cgroup. Since cgroup events are added
-to the cpu ctx, they can share counters with the system wide events.=20
+And you still haven't answered my question about adding a new algorithm that is
+useful to have in both APIs.  You're proposing that in most cases the crypto API
+part will need to go through Herbert while the implementation will need to go
+through you/Greg, right?  Or will you/Greg be taking both?  Or will Herbert take
+both?
 
-I made this trade-off for O(1) time context switch. If we share=20
-hw counter between cpu ctx and task ctx, we have to do linear time=20
-comparison to identify events that can share the counter. =20
+> 
+> > I'm still concerned you're splitting the community in two.  It will be unclear
+> > where new algorithms and implementations should go.  Some people will choose
+> > Herbert and the current crypto API and conventions, and some people will choose
+> > you and Zinc...  I still don't see clear guidelines for what will go where.
+> 
+> I can try to work out some explicit guidelines and write these up for
+> Documentation/, if that'd make a difference for you. I don't think this
+> is a matter of "community splitting". On the contrary, I think Zinc will
+> bring communities together, inviting the larger cryptography community
+> to take an interest in improving the state of crypto in Linux. Either
+> way, the litmus test for where code should go remains pretty similar to
+> how it's been working so far. Are you tempted to stick it in lib/
+> because that fits your programming paradigm and because you think it's
+> generally useful? If so, submit it to lib/zinc/. Conversely, is it only
+> something used in the large array of options provided by dmcrypt, ipsec,
+> afalg, etc? Submit it to the crypto API.
+> 
+> If you think this criteria is lacking, I'm amenable to adjusting that
+> and changing it, especially as situations and designs change and morph
+> over time. But that seems like a fairly decent starting point.
 
-Thanks,
-Song
+A documentation file for Zinc is a good idea.  Some of the information in your
+commit messages should be moved there too.
 
+> 
+> > Please reach out to Herbert to find a sane solution
+> > crypto development without choosing "sides".
+> 
+> Please, don't politicize this. This has nothing to do with "sides". This
+> has to do with which paradigm makes sense for implementing a particular
+> algorithm. 
 
+I'm not trying to "politicize" this, but rather determine your criteria for
+including algorithms in Zinc, which you haven't made clear.  Since for the
+second time you've avoided answering my question about whether you'd allow the
+SM4 cipher in Zinc, and you designed WireGuard to be "cryptographically
+opinionated", and you were one of the loudest voices calling for the Speck
+cipher to be removed, and your justification for Zinc complains about cipher
+modes from "90s cryptographers", I think it's reasonable for people to wonder
+whether as the Zinc (i.e. Linux crypto library) maintainer you will restrict the
+inclusion of crypto algorithms to the ones you prefer, rather than the ones that
+users need.  Note that the kernel is used by people all over the world and needs
+to support various standards, protocols, and APIs that use different crypto
+algorithms, not always the ones we'd like; and different users have different
+preferences.  People need to know whether the Linux kernel's crypto library will
+meet (or be allowed to meet) their crypto needs.
 
+> And everything that goes in Zinc gets to be used seamlessly
+> by the crypto API anyway, through use of the trivial stub glue code,
+> like what I've shown in the two commits in this series. Again, if it's
+> something that will work well as a direct function call, then it seems
+> like Zinc makes sense as a home for it.
+> 
+> With that said, I've reached out to Herbert, and we'll of course discuss
+> and reach a good conclusion together.
+> 
+> > Note that usage can change over time; a user that requires a
+> > single cipher could later need multiple, and vice versa.
+> 
+> I think this depends on the design of the driver and the style it's
+> implemented in. For example, I could imagine something like this:
+> 
+>    encrypt_stuff_with_morus(obj, key);
+> 
+> evolving over time to:
+> 
+>   if (obj->type == MORUS_TYPE)
+>     encrypt_stuff_with_morus(obj, key);
+>   else if (obj->type == AEGIS_TYPE)
+>     encrypt_stuff_with_aegis(obj, key);
+> 
+> On the other hand, if the developer has good reason to use the crypto
+> API's dynamic dispatch and async API and so forth, then perhaps it just
+> changes from:
+> 
+>   static const char *cipher_name = "morus";
+> 
+> to
+> 
+>   static const char *cipher_name_type_1 = "morus";
+>   static const char *cipher_name_type_2 = "aegis";
+> 
+> I can imagine both programming styles and evolutions being desirable for
+> different reasons.
+> 
+> > >   - It matches exactly what Andy Polyakov's code is doing for the exact
+> > >     same reason, so this isn't something that's actually "new". (There
+> > >     are paths inside his implementation that branch from the vector code
+> > >     to the scalar code.)
+> > 
+> > Matches Andy's code, where?  The reason you had to add the radix conversion is
+> > because his code does *not* handle it...
+> 
+> For example, check out the avx blocks function. The radix conversion
+> happens in a few different places throughout. The reason we need it
+> separately here is because, unlike userspace, it's possible the kernel
+> code will transition from 2^26 back to 2^64 as a result of the FPU
+> context changing.
+
+IOW, you had to rewrite the x86 assembly algorithm in C and make it use a
+different Poly1305 context format.  That's a major change, where bugs can be
+introduced -- and at least one was introduced, in fact.  I'd appreciate it if
+you were more accurate in describing your modifications and the potential risks
+involved.
+
+And yes I know why converting radixes is needed, as I had pointed it out...
+
+> 
+> As well, AndyP seems to like the idea of including this logic in the
+> assembly instead of in C, if I understood our discussions correctly, so
+> there's a decent chance this will migrate out of the glue code and into
+> the assembly properly, which is probably a better place for it.
+> 
+> > >   - It has been discussed at length with Andy, including what kinds of
+> > >     proofs we'll need if we want to chop it down further (to remove that
+> > >     final reduction), and why we both don't want to do that yet, and so
+> > >     we go with the full carrying for the avoidance of risk.
+> > 
+> > Sorry, other people don't know about your private discussions.  For the rest of
+> > us, why not add a comment to the code explaining what's going on?
+> 
+> That's a good idea. I can include some discussion about this as well in
+> the commit message that introduces the glue code, too, I guess? I've
+> been hesitant to fill these commit messages up even more, given there
+> are already so many walls of text and whatnot, but if you think that'd
+> be useful, I'll do that for v7, and also add comments.
+
+Please prefer to put information in the code or documentation rather than in
+commit messages, when appropriate.
+
+> 
+> > >   - We've proved its correctness with Z3, actually using an even looser
+> > >     constraint on digit size than what Andy mentioned to us, thus resulting
+> > >     in a stronger proof result. So we're certain this isn't rubbish.
+> > AFAICS actually it *is* rubbish, because your C code stores the accumulator as
+> > 64-bit integers whereas the asm code (at least, the 32-bit version) reads it as
+> > 32-bit integers.  That won't work correctly on big endian ARM.
+> > > There's no doubt about it, we've done our due-diligence here. 
+> > Apparently not, given that it's broken on big endian ARM.
+> > Of course, having bugs in code which you insist was proven correct
+> > + fuzzed doesn't exactly inspire trust.
+> 
+> What's with the snark? It's not rubbish. I'm not sure if you noticed it in
+> the development trees (both the WireGuard module tree and my kernel.org
+> integration tree for this patch), but the big endian ARM support was fixed
+> pretty shortly after I jumped the gun posting v6. Like, super soon after.
+> That, and other big endian fixes (on aarch64 as well) are already queued up
+> for v7. And now build.wireguard.com has more big endian running in CI.
+> 
+> > The details of the correctness proofs and fuzzing you claim to have done aren't
+> > explained, even in the cover letter; so for now we just have to trust you on
+> > that point.
+> 
+> "Claim to have done", "trust you on that point" -- I think there's no
+> reason to doubt the integrity of my "claims", and I don't appreciate the
+> phrasing that appears to call that into question.
+> 
+> Regardless, sure, we can expand the "wall-of-text" commit messages even
+> further, if you want, and include the verbatim Z3 scripts for reproduction.
+> 
+> > I understand that your standards are still as high or even higher than
+> > Herbert's, which is good; crypto code should be held to high standards!  But
+> > based on the evidence, I do worry there's a double standard going on where you
+> > get away with things yourself which you won't allow from others in Zinc.  It's
+> > just not honest, and it will make people not want to contribute to Zinc.
+> > Maintainers are supposed to be unbiased and hold all contributions to the same
+> > standard.
+> 
+> This is complete and utter garbage, and I find its insinuations insulting
+> and ridiculous. There is absolutely no lack of honesty and no double
+> standard being applied whatsoever. Your attempt to cast doubt about the
+> quality of standards applied and the integrity of the process is wholly
+> inappropriate. When I tell you that high standards were applied and that
+> due-diligence was done in developing a particular patch, I mean what I
+> say.
+
+No, I was not aware of the fixed version.  I found the bug myself reading the
+latest patchset you've mailed out, v6.  It's great that you found and fixed this
+bug on your own, and of course that raises my level of confidence in your work.
+Still, the v6 patchset still includes your claim that "All implementations have
+been extensively tested and fuzzed"; so that claim was objectively wrong.  So I
+disagree that my concerns are "complete and utter garbage".  And I think that
+the fact that you prefer to respond by attacking me, rather than committing to
+be more accurate in your claims and to treat all contributions fairly, is
+problematic.
+
+Also, if you have extra tests that you're running, it would be great if you
+could include them as part of the submission so that others can run them too.
+
+> 
+> > We need "Zinc" to be Linux's crypto library, not "Jason's crypto library".
+> 
+> This very much is a project directed toward the benefit of the kernel in
+> a general sense. It's been this way from the start, and there's nothing
+> in its goals or plans to the contrary of that. Please leave this vague
+> and unproductive rhetoric aside.
+> 
+
+Well, it doesn't help that you yourself claim that Zinc stands for
+"Zx2c4's INsane Cryptolib"...
+
+- Eric
