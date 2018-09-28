@@ -2,141 +2,128 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FACC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 09:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3C1C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:02:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51F4D206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 09:53:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F/qFR4vT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51F4D206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A3AC821527
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:02:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3AC821527
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729176AbeI1QQL (ORCPT
+        id S1729195AbeI1QZi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 12:16:11 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36204 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728936AbeI1QQL (ORCPT
+        Fri, 28 Sep 2018 12:25:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34230 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729008AbeI1QZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:16:11 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b7-v6so3981649pfo.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 02:53:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oYJhqrqnOxYBongsXjKG5tsCf6jK5aypglb+nXFuqkw=;
-        b=F/qFR4vTTlgHtZOF3TVQkAhiezTePrj1f1bvb7XUG6I4xEji2TReQuRt6HI8vQT2sh
-         0AcvkO4Jz8fGXKziqildLhVttQpIX3rKxUfg4odZOpsntjp7NMVEJwkqxsd4cyQaMrDK
-         lWRn83hsBZL23BJBWHRCHG0wPLPj1b00JPcb//0MCzzJ/+SbeZBtZrJxnbNYXd+IS7i5
-         s1WXwR68sdHSizkpBy1IY19wTW8RlanJ4+v9reMXiKG6SNk297h7S5YMn+rIkUbXqNUw
-         mT5KQ0FTFE6giov/E0tZ+qpETnLX6qT/8Nsx/weFZqsnPZv0mPBH2dGweEizsOqnjUld
-         WQUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oYJhqrqnOxYBongsXjKG5tsCf6jK5aypglb+nXFuqkw=;
-        b=W5mzrD+ZVLfJii5Ou0ckmLX4NENlR4noGht7uNteBtLe+ScqJLQUXDzV30SKHOTn4y
-         thbJzJR7/mLDFWG5pt+HT498upKd33vqSs2Rx7yMoonzg3Vhb/szXvbaorHJaz4QOKD4
-         9I0lweUlvdcjht7EpVlimqof+B3V6SydTw9TWUJgBWwRXnxFdODz6PBernEXbTXS7Sio
-         cNWbvyBWRa5RZKSCC7/cng13IxLf7GdyDZ8i2gC1iEkTJg7Hrlfszt3UbURSMXGIuYZF
-         ZcRfAeeTcSHPKUaCzko1g8c5ndgxqMuUio/f0YUcvHqhUk2Mr3IJLVulOf9n9hjt8Qdk
-         /bMA==
-X-Gm-Message-State: ABuFfojpZ/rmz+X8VMYiE0QadUpPGOWl13ss3XDKbtQeqxQlG9HbWeq7
-        NA2bbUxySmhjNYm1DDVPaEU=
-X-Google-Smtp-Source: ACcGV61YGXqbXHJC/BJFRFVsSh0JNnN0mT4A422x9ItHwRk2FOPHNVZYXCZIJt2cKPiGe1KCiJcIVA==
-X-Received: by 2002:a63:4b44:: with SMTP id k4-v6mr14258053pgl.51.1538128393616;
-        Fri, 28 Sep 2018 02:53:13 -0700 (PDT)
-Received: from localhost.localdomain ([110.70.14.151])
-        by smtp.gmail.com with ESMTPSA id p64-v6sm8043121pfa.47.2018.09.28.02.53.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 02:53:11 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCHv2] printk: CON_PRINTBUFFER console registration is a bit racy
-Date:   Fri, 28 Sep 2018 18:53:04 +0900
-Message-Id: <20180928095304.9972-1-sergey.senozhatsky@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Fri, 28 Sep 2018 12:25:38 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8S9x5Ko017327
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 06:02:38 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2msj4pr8au-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 06:02:38 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Fri, 28 Sep 2018 11:02:34 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 28 Sep 2018 11:02:31 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8SA2UF164290846
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 28 Sep 2018 10:02:30 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6DDC111C064;
+        Fri, 28 Sep 2018 13:02:10 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 07F6911C052;
+        Fri, 28 Sep 2018 13:02:10 +0100 (BST)
+Received: from oc3784624756.ibm.com (unknown [9.152.212.24])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 28 Sep 2018 13:02:09 +0100 (BST)
+Subject: Re: [PATCH v2] perf test: S390 does not support watchpoints in test
+ 22
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org, brueckner@linux.vnet.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+References: <20180928074317.42893-1-tmricht@linux.ibm.com>
+ <b743ec89-9e54-e54d-86cc-f3312e06e23c@linux.ibm.com>
+From:   Thomas-Mich Richter <tmricht@linux.ibm.com>
+Organization: IBM
+Date:   Fri, 28 Sep 2018 12:02:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <b743ec89-9e54-e54d-86cc-f3312e06e23c@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18092810-0016-0000-0000-0000020BBDE5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092810-0017-0000-0000-00003262E8D6
+Message-Id: <491ce3c5-f1ce-1513-3a9f-b86795e0332a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809280102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CON_PRINTBUFFER console registration requires us to do several
-preparation steps:
-- Rollback console_seq to replay logbuf messages which were already
-  seen on other consoles;
-- Set exclusive_console flag so console_unlock() will ->write() logbuf
-  messages only to the exclusive_console driver.
+On 09/28/2018 10:37 AM, Ravi Bangoria wrote:
+> Hi Thomas,
+> 
+> On 09/28/2018 01:13 PM, Thomas Richter wrote:
+>> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+>> index 54ca7d87236f..e83c15a95c43 100644
+>> --- a/tools/perf/tests/builtin-test.c
+>> +++ b/tools/perf/tests/builtin-test.c
+>> @@ -124,7 +124,7 @@ static struct test generic_tests[] = {
+>>  		.desc = "Watchpoint",
+>>  		.func = test__wp,
+>>  		.subtest = {
+>> -			.skip_if_fail	= false,
+>> +			.skip_if_fail	= true,
+> 
+> Can you instead use ".is_supported"?
+> 
+> Thanks,
+> Ravi
+> 
 
-The way we do it, however, is a bit racy
+Hi Ravi,
 
-	logbuf_lock_irqsave(flags);
-	console_seq = syslog_seq;
-	console_idx = syslog_idx;
-	logbuf_unlock_irqrestore(flags);
-						<< preemption enabled
-						<< irqs enabled
-	exclusive_console = newcon;
-	console_unlock();
+I can rework the patch to use the is_supported() member function. The
+down side is that the test does not show up in the list of executed tests anymore,
+unless some debug output is enabled:
 
-We rollback console_seq under logbuf_lock with IRQs disabled, but
-we set exclusive_console with local IRQs enabled and logbuf unlocked.
-If the system oops-es or panic-s before we set exclusive_console - and
-given that we have IRQs and preemption enabled there is such a
-possibility - we will re-play all logbuf messages to every registered
-console, which may be a bit annoying and time consuming.
+[root@s8360046 perf]# ./perf test -F 22
+[root@s8360046 perf]# ./perf test -Fv 22
+22: Watchpoint                                            : Disabled
+[root@s8360046 perf]#
 
-Move exclusive_console assignment to the same IRQs-disabled and
-logbuf_lock-protected section where we rollback console_seq.
+I leave it to Arnaldo to decide...
 
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
----
-
-v2: added comment (Petr)
-
- kernel/printk/printk.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 308497194bd4..24a81ba9ec77 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2742,14 +2742,18 @@ void register_console(struct console *newcon)
- 		logbuf_lock_irqsave(flags);
- 		console_seq = syslog_seq;
- 		console_idx = syslog_idx;
--		logbuf_unlock_irqrestore(flags);
- 		/*
- 		 * We're about to replay the log buffer.  Only do this to the
- 		 * just-registered console to avoid excessive message spam to
- 		 * the already-registered consoles.
-+		 *
-+		 * Set exclusive_console with disabled interrupts to reduce
-+		 * race window with eventual console_flush_on_panic() that
-+		 * ignores console_lock.
- 		 */
- 		exclusive_console = newcon;
- 		exclusive_console_stop_seq = console_seq;
-+		logbuf_unlock_irqrestore(flags);
- 	}
- 	console_unlock();
- 	console_sysfs_notify();
 -- 
-2.19.0
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+Vorsitzende des Aufsichtsrats: Martina Koederitz 
+Geschäftsführung: Dirk Wittkopp
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
