@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BD3C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73741C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 180BB2073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:55:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 180BB2073F
+	by mail.kernel.org (Postfix) with ESMTP id 3B4FB206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:56:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B4FB206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbeI2EVj (ORCPT
+        id S1726896AbeI2EWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:21:39 -0400
-Received: from smtprelay0057.hostedemail.com ([216.40.44.57]:54375 "EHLO
+        Sat, 29 Sep 2018 00:22:18 -0400
+Received: from smtprelay0131.hostedemail.com ([216.40.44.131]:54419 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726244AbeI2EVj (ORCPT
+        by vger.kernel.org with ESMTP id S1726244AbeI2EWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:21:39 -0400
+        Sat, 29 Sep 2018 00:22:18 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 04A95181D3417;
-        Fri, 28 Sep 2018 21:55:56 +0000 (UTC)
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id B5CB8181D3419;
+        Fri, 28 Sep 2018 21:56:34 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: jeans02_6de677c0dcd14
-X-Filterd-Recvd-Size: 2885
+X-HE-Tag: watch49_7389f4a283802
+X-Filterd-Recvd-Size: 2881
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 21:55:55 +0000 (UTC)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 21:56:33 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Boris Pismenny <borisp@mellanox.com>, netdev@vger.kernel.org
 Subject: Bad MAINTAINERS pattern in section 'MELLANOX ETHERNET INNOVA IPSEC DRIVER'
-Date:   Fri, 28 Sep 2018 14:55:53 -0700
-Message-Id: <20180928215553.30079-1-joe@perches.com>
+Date:   Fri, 28 Sep 2018 14:56:32 -0700
+Message-Id: <20180928215632.30162-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -55,8 +55,8 @@ linux-next MAINTAINERS section:
 	9328	S:	Supported
 	9329	W:	http://www.mellanox.com
 	9330	Q:	http://patchwork.ozlabs.org/project/netdev/list/
--->	9331	F:	drivers/net/ethernet/mellanox/mlx5/core/en_ipsec/*
-	9332	F:	drivers/net/ethernet/mellanox/mlx5/core/ipsec*
+	9331	F:	drivers/net/ethernet/mellanox/mlx5/core/en_ipsec/*
+-->	9332	F:	drivers/net/ethernet/mellanox/mlx5/core/ipsec*
 
 Commit that introduced this:
 
@@ -97,5 +97,5 @@ commit 547eede070eb981f1442e494f08f4567dcf1d1c7
   include/linux/mlx5/qp.h                            |  14 +-
   9 files changed, 552 insertions(+), 4 deletions(-)
 
-No commit with drivers/net/ethernet/mellanox/mlx5/core/en_ipsec/* found
+No commit with drivers/net/ethernet/mellanox/mlx5/core/ipsec* found
 
