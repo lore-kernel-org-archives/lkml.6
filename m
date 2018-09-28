@@ -2,238 +2,193 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD57C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B408AC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F78D215F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:11:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F78D215F0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 75BE521754
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:11:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75BE521754
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729371AbeI1Re3 (ORCPT
+        id S1729404AbeI1Re7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 13:34:29 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35649 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729089AbeI1Re3 (ORCPT
+        Fri, 28 Sep 2018 13:34:59 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43532 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729089AbeI1Re6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 13:34:29 -0400
-Received: by mail-ed1-f66.google.com with SMTP id y21-v6so7838364edr.2;
-        Fri, 28 Sep 2018 04:11:11 -0700 (PDT)
+        Fri, 28 Sep 2018 13:34:58 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z14-v6so5924231wrs.10
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 04:11:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lNLw2EDB/0ZGOEwR/b6SNIhp1EW1z+JSRiWPuEI8Vwg=;
-        b=YXu/LhfIbLAnTPuFl8rOaPg1RsPXKSKbabT4/xNanxEsB2aS2WkToXkBx7LCPYbXFc
-         4ZHjgV+YDB2LgqIWtIfzfu4xjl6fFF7JjHXqNxmf19DWoVBPXqa+NVI/XimYbwFHjn2a
-         L352RIXGfB3I7BTYXzLaSrrgwNiRDPovysl4+RQ4F4K6mJPr12W1M7Fyo+4mbkZAjN3+
-         qM7Da+N6Dr4NUGkkuKMfExi+E4F7kk6wz1eyD0tjzdGNKch3yOxBCQLLMEYoZpne+Ai1
-         QLCs0ofmaZvF+DoEmS4+DUX6XgGbb67RaU+PDohiSFvWdcQ7a05dAtTHaY9v2CaPVmg/
-         ELUg==
-X-Gm-Message-State: ABuFfohozVjW8tRU8v7jXZK9QmZIuee7AVx/HJD0nBPHcsN7pT28TALJ
-        020owzD4iUIV8SjYIdyd5Z+pUMCosYM=
-X-Google-Smtp-Source: ACcGV630H5jGkquqlkpY9sptCR/fFHxi9tFYHwwHhghFcMdzMHZjniRidfSFVOU/TURTu60r5En5+w==
-X-Received: by 2002:a50:9306:: with SMTP id m6-v6mr2251643eda.206.1538133070905;
-        Fri, 28 Sep 2018 04:11:10 -0700 (PDT)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
-        by smtp.gmail.com with ESMTPSA id 30-v6sm2101158edt.24.2018.09.28.04.11.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 04:11:10 -0700 (PDT)
-Received: by mail-wm1-f42.google.com with SMTP id 189-v6so1492251wmw.2;
-        Fri, 28 Sep 2018 04:11:10 -0700 (PDT)
-X-Received: by 2002:a1c:1d6:: with SMTP id 205-v6mr1393154wmb.151.1538133069789;
- Fri, 28 Sep 2018 04:11:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <1537951204-24672-1-git-send-email-yong.deng@magewell.com>
- <20180928093833.gwmskm2jvby6x4s6@paasikivi.fi.intel.com> <14114604.4rraf0qJLU@avalon>
- <20180928102345.r2g342tg5mgcwfw6@paasikivi.fi.intel.com>
-In-Reply-To: <20180928102345.r2g342tg5mgcwfw6@paasikivi.fi.intel.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Fri, 28 Sep 2018 19:10:58 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65YpPRHb5YiGJhC8NX5F5i3+1rW5y6Dq5L+pNN3U_uLdQ@mail.gmail.com>
-Message-ID: <CAGb2v65YpPRHb5YiGJhC8NX5F5i3+1rW5y6Dq5L+pNN3U_uLdQ@mail.gmail.com>
-Subject: Re: [PATCH v11 1/2] dt-bindings: media: Add Allwinner V3s Camera
- Sensor Interface (CSI)
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DdMrOd1vGJXpR1H0Nxrj5UIVTrQm0seXiPTs+tYZ0+4=;
+        b=aOljlyFSb+1i/R3OxCkSB6W5IXVabQt/wAxW9VHXKN3GRB/UKRcTTvkuejGB6u9eSu
+         N0nm+pcjs4a0p/4whswCsLlJ14pQkVd3ii4lFIACRsgSe01P2lGevvu41oIDdNmS1BNo
+         3jZMSdwXrq7JHYONUOZipF1JaUv4LwHHGO4n0VNhjc6mzcKinRCRLY8Ev3Xmn3Xs//jY
+         W4pAvi7qXgkKfk4d9iGjIdBEHVOmt8SZMnBpGU9WUH8iuvWf5bSJpAoeFk+54LvWoEFO
+         3FhWtmnQ7xaGkXxESh2W0vUrvVqDc7Q0bMPGdRethPLSl70IfJW13VsHrGZOz6WBr+Nq
+         ZuNQ==
+X-Gm-Message-State: ABuFfohlzg2+nADxymunMEtTW4ziy97u2EXv0KzBqZymUE+eVUzl/zYh
+        CqgS604A43h4z1aJK6KVPnia
+X-Google-Smtp-Source: ACcGV62KGLScxRNlK/MigV8hYuMKL0E90A3soBuFbXrsOXMCzWcJ/eUPmMe+KproZlOm4ziPVSEqOg==
+X-Received: by 2002:adf:e882:: with SMTP id d2-v6mr11549768wrm.43.1538133101468;
+        Fri, 28 Sep 2018 04:11:41 -0700 (PDT)
+Received: from localhost (cpc111743-lutn13-2-0-cust844.9-3.cable.virginm.net. [82.17.115.77])
+        by smtp.gmail.com with ESMTPSA id u185-v6sm1667615wmf.9.2018.09.28.04.11.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Sep 2018 04:11:40 -0700 (PDT)
+From:   Aaron Tomlin <atomlin@redhat.com>
+To:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
+        iamjoonsoo.kim@lge.com, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        atomlin@redhat.com, malchev@google.com
+Subject: [PATCH v3] slub: extend slub debug to handle multiple slabs
+Date:   Fri, 28 Sep 2018 12:11:39 +0100
+Message-Id: <20180928111139.27962-1-atomlin@redhat.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 6:23 PM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Laurent,
->
-> On Fri, Sep 28, 2018 at 12:45:12PM +0300, Laurent Pinchart wrote:
-> > Hi Sakari,
-> >
-> > On Friday, 28 September 2018 12:38:33 EEST Sakari Ailus wrote:
-> > > On Wed, Sep 26, 2018 at 04:40:04PM +0800, Yong Deng wrote:
-> > > > Add binding documentation for Allwinner V3s CSI.
-> > > >
-> > > > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > >
-> > > I know... but I have a few more comments.
-> > >
-> > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > Signed-off-by: Yong Deng <yong.deng@magewell.com>
-> > > > ---
-> > > >
-> > > >  .../devicetree/bindings/media/sun6i-csi.txt        | 59 +++++++++++++++++
-> > > >  1 file changed, 59 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
-> > > > 100644
-> > > > index 000000000000..2ff47a9507a6
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > @@ -0,0 +1,59 @@
-> > > > +Allwinner V3s Camera Sensor Interface
-> > > > +-------------------------------------
-> > > > +
-> > > > +Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-> > > > +interface and CSI1 is used for parallel interface.
-> > > > +
-> > > > +Required properties:
-> > > > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
-> > > > +  - reg: base address and size of the memory-mapped region.
-> > > > +  - interrupts: interrupt associated to this IP
-> > > > +  - clocks: phandles to the clocks feeding the CSI
-> > > > +    * bus: the CSI interface clock
-> > > > +    * mod: the CSI module clock
-> > > > +    * ram: the CSI DRAM clock
-> > > > +  - clock-names: the clock names mentioned above
-> > > > +  - resets: phandles to the reset line driving the CSI
-> > > > +
-> > > > +Each CSI node should contain one 'port' child node with one child
-> > > > 'endpoint' +node, according to the bindings defined in
-> > > > +Documentation/devicetree/bindings/media/video-interfaces.txt. As
-> > > > mentioned
-> > > > +above, the endpoint's bus type should be MIPI CSI-2 for CSI0 and parallel
-> > > > or +Bt656 for CSI1.
-> > >
-> > > Which port represents CSI0 and which one is CSI1? That needs to be
-> > > documented.
-> >
-> > There are two CSI devices, named CSI0 and CSI1, with one port each. The CSI0
-> > device supports CSI-2 only, and the CSI1 device parallel (BT.601 or BT.656)
-> > only.
-> >
-> > > > +
-> > > > +Endpoint node properties for CSI1
-> > >
-> > > How about CSI0? I'd expect at least data-lanes, and clock-lanes as well if
-> > > the hardware supports lane mapping.
-> >
-> > I enquired about that too. As far as I understand, CSI0 isn't supported yet in
-> > the driver due to lack of documentation and lack of open-source vendor-
-> > provided source code. While DT bindings are not tied to driver
-> > implementations, it's not the best idea to design DT bindings without at least
-> > one working implementation to test them. I thus proposed just listing CSI0 as
-> > being unsupported for now.
->
-> Ack.
->
-> We should still define which receiver corresponds to a given port. Probably
-> 1 for CSI1 would make sense, in order to avoid changing the order the
-> hardware already uses. 0 doesn't need to be documented no IMO.
->
-> What do you think?
+Extend the slub_debug syntax to "slub_debug=<flags>[,<slub>]*", where <slub>
+may contain an asterisk at the end.  For example, the following would poison
+all kmalloc slabs:
 
-AFAICT it would be a completely seperate node, since they have different address
-spaces, clocks and reset controls. So there's no possibility of confusion.
+	slub_debug=P,kmalloc*
 
-According to Yong, CSI0 is tied internally to some unknown MIPI CSI2-receiver,
-which is the undocumented part. CSI1 has its parallel data pins exposed to the
-outside.
+and the following would apply the default flags to all kmalloc and all block IO
+slabs:
 
-ChenYu
+	slub_debug=,bio*,kmalloc*
 
-> >
-> > > > +---------------------------------
-> > > > +
-> > > > +- remote-endpoint        : (required) a phandle to the bus receiver's endpoint
-> > > > +                    node
-> > > > +- bus-width:             : (required) must be 8, 10, 12 or 16
-> > > > +- pclk-sample            : (optional) (default: sample on falling edge)
-> > >
-> > > Could you add that video-interfaces.txt contains documentation of these
-> > > properties as well? There's a reference above but only discusses port and
-> > > endpoint nodes.
-> > >
-> > > > +- hsync-active           : (only required for parallel)
-> > > > +- vsync-active           : (only required for parallel)
-> > >
-> > > As you support both Bt656 and parallel (with sync signals), you can detect
-> > > the interface type from the presence of these properties. I think you
-> > > should also say that these properties are not allowed on Bt656. So I'd
-> > > change this to e.g.
-> > >
-> > >     (required; parallel-only)
-> > >
-> > > > +
-> > > > +Example:
-> > > > +
-> > > > +csi1: csi@1cb4000 {
-> > > > + compatible = "allwinner,sun8i-v3s-csi";
-> > > > + reg = <0x01cb4000 0x1000>;
-> > > > + interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> > > > + clocks = <&ccu CLK_BUS_CSI>,
-> > > > +          <&ccu CLK_CSI1_SCLK>,
-> > > > +          <&ccu CLK_DRAM_CSI>;
-> > > > + clock-names = "bus", "mod", "ram";
-> > > > + resets = <&ccu RST_BUS_CSI>;
-> > > > +
-> > > > + port {
-> > > > +         /* Parallel bus endpoint */
-> > > > +         csi1_ep: endpoint {
-> > > > +                 remote-endpoint = <&adv7611_ep>;
-> > > > +                 bus-width = <16>;
-> > > > +
-> > > > +                 /* If hsync-active/vsync-active are missing,
-> > > > +                    embedded BT.656 sync is used */
-> > > > +                 hsync-active = <0>; /* Active low */
-> > > > +                 vsync-active = <0>; /* Active low */
-> > > > +                 pclk-sample = <1>;  /* Rising */
-> > > > +         };
-> > > > + };
-> > > > +};
->
-> --
-> Terveisin,
->
-> Sakari Ailus
-> sakari.ailus@linux.intel.com
+Please note that a similar patch was posted by Iliyan Malchev some time ago but
+was never merged:
+
+	https://marc.info/?l=linux-mm&m=131283905330474&w=2
+
+Signed-off-by: Aaron Tomlin <atomlin@redhat.com>
+---
+Changes from v2 [2]:
+
+ - Add a function and kernel-doc comment
+ - Refactor code
+ - Use the appropriate helper function max_t()
+
+Changes from v1 [1]:
+
+ - Add appropriate cast to address compiler warning
+
+[1]: https://marc.info/?l=linux-kernel&m=153657804506284&w=2
+[2]: https://marc.info/?l=linux-kernel&m=153747362316965&w=2
+---
+ Documentation/vm/slub.rst | 12 +++++++++---
+ mm/slub.c                 | 50 +++++++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 53 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/vm/slub.rst b/Documentation/vm/slub.rst
+index 3a775fd64e2d..195928808bac 100644
+--- a/Documentation/vm/slub.rst
++++ b/Documentation/vm/slub.rst
+@@ -36,9 +36,10 @@ debugging is enabled. Format:
+ 
+ slub_debug=<Debug-Options>
+ 	Enable options for all slabs
+-slub_debug=<Debug-Options>,<slab name>
+-	Enable options only for select slabs
+ 
++slub_debug=<Debug-Options>,<slab name1>,<slab name2>,...
++	Enable options only for select slabs (no spaces
++	after a comma)
+ 
+ Possible debug options are::
+ 
+@@ -62,7 +63,12 @@ Trying to find an issue in the dentry cache? Try::
+ 
+ 	slub_debug=,dentry
+ 
+-to only enable debugging on the dentry cache.
++to only enable debugging on the dentry cache.  You may use an asterisk at the
++end of the slab name, in order to cover all slabs with the same prefix.  For
++example, here's how you can poison the dentry cache as well as all kmalloc
++slabs:
++
++	slub_debug=P,kmalloc-*,dentry
+ 
+ Red zoning and tracking may realign the slab.  We can just apply sanity checks
+ to the dentry cache with::
+diff --git a/mm/slub.c b/mm/slub.c
+index 8da34a8af53d..7927f971df0d 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1276,16 +1276,54 @@ static int __init setup_slub_debug(char *str)
+ 
+ __setup("slub_debug", setup_slub_debug);
+ 
++/*
++ * kmem_cache_flags - apply debugging options to the cache
++ * @object_size:	the size of an object without meta data
++ * @flags:		flags to set
++ * @name:		name of the cache
++ * @ctor:		constructor function
++ *
++ * Debug option(s) are applied to @flags. In addition to the debug
++ * option(s), if a slab name (or multiple) is specified i.e.
++ * slub_debug=<Debug-Options>,<slab name1>,<slab name2> ...
++ * then only the select slabs will receive the debug option(s).
++ */
+ slab_flags_t kmem_cache_flags(unsigned int object_size,
+ 	slab_flags_t flags, const char *name,
+ 	void (*ctor)(void *))
+ {
+-	/*
+-	 * Enable debugging if selected on the kernel commandline.
+-	 */
+-	if (slub_debug && (!slub_debug_slabs || (name &&
+-		!strncmp(slub_debug_slabs, name, strlen(slub_debug_slabs)))))
+-		flags |= slub_debug;
++	char *iter;
++	size_t len;
++
++	/* If slub_debug = 0, it folds into the if conditional. */
++	if (!slub_debug_slabs)
++		return flags | slub_debug;
++
++	len = strlen(name);
++	iter = slub_debug_slabs;
++	while (*iter) {
++		char *end, *glob;
++		size_t cmplen;
++
++		end = strchr(iter, ',');
++		if (!end)
++			end = iter + strlen(iter);
++
++		glob = strnchr(iter, end - iter, '*');
++		if (glob)
++			cmplen = glob - iter;
++		else
++			cmplen = max_t(size_t, len, (end - iter));
++
++		if (!strncmp(name, iter, cmplen)) {
++			flags |= slub_debug;
++			break;
++		}
++
++		if (!*end)
++			break;
++		iter = end + 1;
++	}
+ 
+ 	return flags;
+ }
+-- 
+2.14.4
+
