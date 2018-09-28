@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8CC2C004D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E0BC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 984772086E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:19:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEDDF2073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:19:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiyMGjAC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 984772086E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pcnr75rb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEDDF2073F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbeI2Fpa (ORCPT
+        id S1727649AbeI2Fpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 01:45:30 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54211 "EHLO
+        Sat, 29 Sep 2018 01:45:34 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51693 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbeI2Fp3 (ORCPT
+        with ESMTP id S1726492AbeI2Fpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:45:29 -0400
-Received: by mail-wm1-f67.google.com with SMTP id b19-v6so3666517wme.3;
-        Fri, 28 Sep 2018 16:19:27 -0700 (PDT)
+        Sat, 29 Sep 2018 01:45:34 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y25-v6so3656059wmi.1;
+        Fri, 28 Sep 2018 16:19:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TKgRBdcbaLjCLYFNNphXO7D7Dwz80ZmX3ouxX2MzgvY=;
-        b=fiyMGjACH7SDcTB1+tZSz1L/V932cPSByVOm0f2zm8CTItuiNIkj4wf9QHAysl9AMi
-         BRUwV0+aeBbx1IxlNpScSyvD7hhOvQgbl5X5cYTGRZ/QZsB1pZbIOVC8lMeJA1L0/YDT
-         /6K8geMWbG6PHy+zdqyUwZ9oQOdyY2t06QMYYC31/utc7HNov3HwsPZeiEyjTx2AHPNz
-         4a7do1UivlHnUstIO7wXhvdhxo6KmkWgMu4dTEQalAsEonjRYVtMb39y7+3R1PatJT+J
-         CIl1g/K3Md7J/kIRxikemAhx9HX0Z8vIlRohaNIAOzaHhGXk8V/WEsRw79FSy193hByL
-         pvIA==
+        bh=Piwc98Rhl39Hpiu2GJne8FYMrIF9jD8b1cwLP656bic=;
+        b=Pcnr75rbfu9HIrsQjIdfBEU0vz34OCgUeX23DJPcTiLGUSiRJVoZc9lz9qGkjIiOcC
+         wUYjRi69QbfRWo/LL1L96+WJ4BikKAqz3TTVF19v6OIzEsKwA3gsuv2waroe90NEOxk1
+         p+pmy0cWVilRS29EChc2DzNASvA6zWRxD3oCkja5yMCZzDSdhfM2IlQJ7oL7G32jnH2c
+         BWyWWzjmt0R1xWtNYLcMHZOhzICEEc3qSdXBXQ0ssVQtTrGrt16IQJhSzR/LoyoXT656
+         CPUnsCjv4pgJxrnrf6TvGBLQrKHrIMqEDIFmjhwBVfrDPUIF2xoR2R8gOLgcEiLR3fQX
+         PjBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=TKgRBdcbaLjCLYFNNphXO7D7Dwz80ZmX3ouxX2MzgvY=;
-        b=CbWV7jAVHQ4W1nmVSyrn6KPj6G8vjbRxqKDX4gR8M7qzr2U8ODT8SRIhHHzt9jzoEz
-         F0VHwrPfD/qij/4EKtVFT7HDcUtyhKqAu5oo++AwE8XgXQzYk3wXJNFlIU+7ftjlLWWe
-         i/5QeRmNEjHSyLeBLZKjiOXIRVBXtEw7gLtiW+8SY5esWLm6wNHWEX+B5z7VQaHLY32I
-         tBzZKYZPWeE/Y2hOKbsOOpZnM93WCvFC8KZyB2ymmxou8LxqohQJl2ayVMVlDdZUXzeQ
-         ldKOLmh/xumcISqYBatMGvAOIio6XpZyKc5EnBSPRm4aagmEtZt8a99T4tCJHPyuZgSN
-         j0Tg==
-X-Gm-Message-State: ABuFfojO2HJH9YYZz8pZOJVYzor8V4IB9tAx+gtYAOnhAuLwmgDd7O3Q
-        yziwKJnW5NQE7HUVQCaG7LH1SW0Y
-X-Google-Smtp-Source: ACcGV61v4IEyTEZbBPwvjqt2GWiqrJr+dpLxY2/ZGphzfLHgKdZNncn7I5aKOhL1HllqGjzpNA0R8g==
-X-Received: by 2002:a1c:d785:: with SMTP id o127-v6mr3036028wmg.67.1538176766877;
-        Fri, 28 Sep 2018 16:19:26 -0700 (PDT)
+        bh=Piwc98Rhl39Hpiu2GJne8FYMrIF9jD8b1cwLP656bic=;
+        b=OPglw/my4fPZEFQJi3Kao8l5uBjWJS1o50c6XTXKENw97PeRWGLTC2839ftEy2sh7q
+         EbcMLqRHWH+PCXKd0xGGe7rzkLvibSD1ao79V8SiH0gMS/XkhncdsV9BrK0ERzJmA4k4
+         8DNRD3GpIdhc2lEgaHMOm+bXAb/9p7qXjlLfm+YKcRekGlwt80unNK8V3bayOl9z/B/W
+         uZv9hTYz+RyUhaxcJhUSnZDjw1+hjwV0vdggSSC7tWhWzp1qclKNT5ZQLuhOTUJ3ddVn
+         hbjEdbcIItMTrzlYVUPIzjhjbsa9+z943ssNVplQG/U2/kQfjSDJiHnuWLPZFaiWf9JZ
+         PGoA==
+X-Gm-Message-State: ABuFfohqHaxc6dgz1N5Zvr7TN50tvY8PG+nma/l9NxP+Dk8nr1RFyht+
+        8YxV/LosAPp5ml+o8e0Wep5icgNm
+X-Google-Smtp-Source: ACcGV626wKqCBnh03Bs22JMEHG+vOVREBV/JLZnFnvKyUfAbCiUERuUFsaSAuGsdXen2JbOulXbDPw==
+X-Received: by 2002:a1c:d712:: with SMTP id o18-v6mr3307394wmg.54.1538176771071;
+        Fri, 28 Sep 2018 16:19:31 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id 11-v6sm8590730wrb.95.2018.09.28.16.19.22
+        by smtp.gmail.com with ESMTPSA id 11-v6sm8590730wrb.95.2018.09.28.16.19.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 16:19:25 -0700 (PDT)
+        Fri, 28 Sep 2018 16:19:30 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -76,9 +76,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         Eric Dumazet <edumazet@google.com>,
         linux-usb@vger.kernel.org (open list:USB NETWORKING DRIVERS),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net v2 4/7] sr9800: Check for supported Wake-on-LAN modes
-Date:   Fri, 28 Sep 2018 16:18:53 -0700
-Message-Id: <20180928231856.3587-5-f.fainelli@gmail.com>
+Subject: [PATCH net v2 5/7] r8152: Check for supported Wake-on-LAN Modes
+Date:   Fri, 28 Sep 2018 16:18:54 -0700
+Message-Id: <20180928231856.3587-6-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180928231856.3587-1-f.fainelli@gmail.com>
 References: <20180928231856.3587-1-f.fainelli@gmail.com>
@@ -87,30 +87,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver currently silently accepts unsupported Wake-on-LAN modes
-(other than WAKE_PHY or WAKE_MAGIC) without reporting that to the user,
-which is confusing.
+The driver does not check for Wake-on-LAN modes specified by an user,
+but will conditionally set the device as wake-up enabled or not based on
+that, which could be a very confusing user experience.
 
-Fixes: 19a38d8e0aa3 ("USB2NET : SR9800 : One chip USB2.0 USB2NET SR9800 Device Driver Support")
+Fixes: 21ff2e8976b1 ("r8152: support WOL")
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/net/usb/sr9800.c | 3 +++
+ drivers/net/usb/r8152.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/usb/sr9800.c b/drivers/net/usb/sr9800.c
-index 9277a0f228df..35f39f23d881 100644
---- a/drivers/net/usb/sr9800.c
-+++ b/drivers/net/usb/sr9800.c
-@@ -421,6 +421,9 @@ sr_set_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
- 	struct usbnet *dev = netdev_priv(net);
- 	u8 opt = 0;
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index 2cd71bdb6484..f1b5201cc320 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -4506,6 +4506,9 @@ static int rtl8152_set_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
+ 	if (!rtl_can_wakeup(tp))
+ 		return -EOPNOTSUPP;
  
-+	if (wolinfo->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
++	if (wol->wolopts & ~WAKE_ANY)
 +		return -EINVAL;
 +
- 	if (wolinfo->wolopts & WAKE_PHY)
- 		opt |= SR_MONITOR_LINK;
- 	if (wolinfo->wolopts & WAKE_MAGIC)
+ 	ret = usb_autopm_get_interface(tp->intf);
+ 	if (ret < 0)
+ 		goto out_set_wol;
 -- 
 2.17.1
 
