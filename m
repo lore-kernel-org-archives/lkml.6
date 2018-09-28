@@ -2,104 +2,141 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6829CC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3004C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D2A92173D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:25:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D2A92173D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 747372173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:27:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b1Ng8vkr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nrU1JdPz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 747372173D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728845AbeI1Mrr (ORCPT
+        id S1728850AbeI1Mtf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 08:47:47 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:56599 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbeI1Mrq (ORCPT
+        Fri, 28 Sep 2018 08:49:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43844 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbeI1Mtf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 08:47:46 -0400
-Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.51 with ESMTP; 28 Sep 2018 15:25:35 +0900
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: namhyung@kernel.org
-Received: from unknown (HELO sejong) (10.177.227.17)
-        by 156.147.1.125 with ESMTP; 28 Sep 2018 15:25:35 +0900
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date:   Fri, 28 Sep 2018 15:25:35 +0900
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        kernel-team@lge.com
-Subject: Re: [PATCH 47/48] perf record: Spread maps for --threads option
-Message-ID: <20180928062535.GA25037@sejong>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <20180913125450.21342-48-jolsa@kernel.org>
- <20180917114048.GF18395@sejong>
- <20180923194432.GH30923@krava>
- <20180924142254.GB4640@kernel.org>
- <20180926062317.GA8610@krava>
- <20180927160158.GE6916@krava>
+        Fri, 28 Sep 2018 08:49:35 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 68782609A8; Fri, 28 Sep 2018 06:27:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538116045;
+        bh=aG3MCBTwK0CKjeDhgOLoOv8qrB02DeqzWQQtovW7xNE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=b1Ng8vkrWMAdV1Zghyov3Rq3A66Tka+zsccivovpe+jIKc4KFuqC27MA5UFvbk7rm
+         y/XV1R6/QPfqd8E9Z+BHbjXUfArGw9wMSA8detHR6hrJ6GtFp4Z7mSDhWkYUmvgmmR
+         I/lJ0OL3YQVerTayLLYLxTCWQ0KfidrW7EOv5qW4=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id A4408607F4;
+        Fri, 28 Sep 2018 06:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538116044;
+        bh=aG3MCBTwK0CKjeDhgOLoOv8qrB02DeqzWQQtovW7xNE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nrU1JdPzINxAhJxoPJ2IF+ORTxOA0U/jJmGMAkBPyNRDR/iEuTe+M/vVDfxe9nCh0
+         5hRQ8bqtsOPMgvpURw0kId1w4SNWsYkBF7p4lK6mHNlCKc8AuPpid3MT1ufBtSyxQ3
+         vFzYvAMWOnwam8N2gt7+29po/xk6r04LmHzfPDU8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180927160158.GE6916@krava>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 28 Sep 2018 11:57:24 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH v2] remoteproc: qcom: pas: Add QCS404 remoteprocs
+In-Reply-To: <20180927190346.2984-1-bjorn.andersson@linaro.org>
+References: <20180927190346.2984-1-bjorn.andersson@linaro.org>
+Message-ID: <580f4c902aa18e86e5a2e78521d998ee@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo and Jiri,
-
-On Thu, Sep 27, 2018 at 06:01:58PM +0200, Jiri Olsa wrote:
-> On Wed, Sep 26, 2018 at 08:23:17AM +0200, Jiri Olsa wrote:
+On 2018-09-28 00:33, Bjorn Andersson wrote:
+> Add compatibles for the three PAS based remote processors found in
+> QCS404.
 > 
-> SNIP
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 > 
-> > > I agree with Namhyung, with a slight difference: perhaps we should set
-> > > perf_event_attr.mmap on one of the events of the per-cpu mmap, that way
-> > > we don't need that dummy event, right?
-> > 
-> > currently it's all based on having tracking data separated
-> > in single file which is read/processed first, so when we
-> > read the sample data files, we can read them separately,
-> > because we have the tracking data ready
-> > 
-> > >  
-> > > > with the *_time API, we should be able to properly read the
-> > > > tracking data separately for each cpu
-> > > 
-> > > That may end up making the *_time API not needed (assuming the kernel
-> > > keeps the per-cpu mmap events in order, barring that, using the
-> > > ordered_events in batches, prior to consuming the events) and would help
-> > > with things like 'perf top' and 'perf trace', that want to consume
-> > > events right away.
-> > 
-> > if we dont want to use *_by_time API, we need to find a way
-> > to sort evevrything out before we start processing.. and that
-> > seems too costly to me
+
+Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+
+> Changes since v1:
+> - Fixed incorrect sysmon_name, as pointed out by Sibi.
 > 
-> actualy we might try to read all the streams at simultaneously
-> and sort the samples on the fly with some reasonable sorting
-> window time frame.. this way we could have just single file
-> for thread and would skip the *by_time api, hopefuly :-\
+>  .../devicetree/bindings/remoteproc/qcom,adsp.txt     |  3 +++
+>  drivers/remoteproc/qcom_adsp_pil.c                   | 12 ++++++++++++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> index b7d058228185..9c0cff3a5ed8 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> @@ -10,6 +10,9 @@ on the Qualcomm ADSP Hexagon core.
+>  		    "qcom,msm8974-adsp-pil"
+>  		    "qcom,msm8996-adsp-pil"
+>  		    "qcom,msm8996-slpi-pil"
+> +		    "qcom,qcs404-adsp-pas"
+> +		    "qcom,qcs404-cdsp-pas"
+> +		    "qcom,qcs404-wcss-pas"
+>  		    "qcom,sdm845-adsp-pas"
+>  		    "qcom,sdm845-cdsp-pas"
+> 
+> diff --git a/drivers/remoteproc/qcom_adsp_pil.c
+> b/drivers/remoteproc/qcom_adsp_pil.c
+> index da2254ea1135..d5e58235e83a 100644
+> --- a/drivers/remoteproc/qcom_adsp_pil.c
+> +++ b/drivers/remoteproc/qcom_adsp_pil.c
+> @@ -362,10 +362,22 @@ static const struct adsp_data slpi_resource_init 
+> = {
+>  		.ssctl_id = 0x16,
+>  };
+> 
+> +static const struct adsp_data wcss_resource_init = {
+> +	.crash_reason_smem = 421,
+> +	.firmware_name = "wcnss.mdt",
+> +	.pas_id = 6,
+> +	.ssr_name = "mpss",
+> +	.sysmon_name = "wcnss",
+> +	.ssctl_id = 0x12,
+> +};
+> +
+>  static const struct of_device_id adsp_of_match[] = {
+>  	{ .compatible = "qcom,msm8974-adsp-pil", .data = 
+> &adsp_resource_init},
+>  	{ .compatible = "qcom,msm8996-adsp-pil", .data = 
+> &adsp_resource_init},
+>  	{ .compatible = "qcom,msm8996-slpi-pil", .data = 
+> &slpi_resource_init},
+> +	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init 
+> },
+> +	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init 
+> },
+> +	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init 
+> },
+>  	{ .compatible = "qcom,sdm845-adsp-pas", .data = &adsp_resource_init},
+>  	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &cdsp_resource_init},
+>  	{ },
 
-Note that without the *by_time API, it only can see the last state.
-For example if a task calls exec() in the middle of the window, all
-the samples will be processed to the new one.  It might or might not
-matter depending on the length of the window.
-
-Thanks,
-Namhyung
+-- 
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
