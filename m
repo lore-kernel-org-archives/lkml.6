@@ -2,181 +2,104 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790E6C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED285C04E87
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23A0B2168B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:56:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23A0B2168B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BAD3C2168B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:56:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAD3C2168B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728869AbeI1TTr (ORCPT
+        id S1728921AbeI1TTs convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 15:19:47 -0400
-Received: from mga05.intel.com ([192.55.52.43]:45865 "EHLO mga05.intel.com"
+        Fri, 28 Sep 2018 15:19:48 -0400
+Received: from ozlabs.org ([203.11.71.1]:58005 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbeI1TTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726867AbeI1TTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 28 Sep 2018 15:19:47 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 05:56:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,315,1534834800"; 
-   d="scan'208";a="266755153"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga005.fm.intel.com with ESMTP; 28 Sep 2018 05:56:02 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 76446209CB; Fri, 28 Sep 2018 15:56:01 +0300 (EEST)
-Date:   Fri, 28 Sep 2018 15:56:01 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v11 1/2] dt-bindings: media: Add Allwinner V3s Camera
- Sensor Interface (CSI)
-Message-ID: <20180928125601.6ye5tvrmh57amvh5@paasikivi.fi.intel.com>
-References: <1537951204-24672-1-git-send-email-yong.deng@magewell.com>
- <20180928093833.gwmskm2jvby6x4s6@paasikivi.fi.intel.com>
- <14114604.4rraf0qJLU@avalon>
- <20180928102345.r2g342tg5mgcwfw6@paasikivi.fi.intel.com>
- <CAGb2v65YpPRHb5YiGJhC8NX5F5i3+1rW5y6Dq5L+pNN3U_uLdQ@mail.gmail.com>
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42MBWC4FJHz9s4Z;
+        Fri, 28 Sep 2018 22:56:07 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] powerpc/32: add stack protector support
+In-Reply-To: <28451b6a-e302-691e-ee28-16521997fb07@c-s.fr>
+References: <d6c43ab708bf9ae1266c745fece457ed2da43d7c.1537961921.git.christophe.leroy@c-s.fr> <20180926191615.GO23155@gate.crashing.org> <220fbef8-429c-9485-d10e-c1eaa989918d@c-s.fr> <20180927074525.GQ23155@gate.crashing.org> <28451b6a-e302-691e-ee28-16521997fb07@c-s.fr>
+Date:   Fri, 28 Sep 2018 22:56:07 +1000
+Message-ID: <8736ttu6fs.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGb2v65YpPRHb5YiGJhC8NX5F5i3+1rW5y6Dq5L+pNN3U_uLdQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chen-Yu,
+Christophe LEROY <christophe.leroy@c-s.fr> writes:
+> Le 27/09/2018 à 09:45, Segher Boessenkool a écrit :
+>> On Thu, Sep 27, 2018 at 08:20:00AM +0200, Christophe LEROY wrote:
+...
+>> 
+>>> However this is the canary for initial startup only. Only idle() still
+>>> uses this canary once the system is running. A new canary is set for any
+>>> new forked task.
+>> 
+>> Ah, that makes things a lot better!  Do those new tasks get a canary
+>> from something with sufficient entropy though?
+>
+> For the kernel threads that are started early, probably not. For the 
+> ones started a bit later, and for user processes, I believe they have 
+> better entropy. Anyway, all this is handled by the kernel core and is 
+> out of control of individual arches, as its done in kernel/fork.c in 
+> function dup_task_struct(). However this function is declared as
+> static __latent_entropy struct task_struct *copy_process(). This 
+> __latent_entropy attibute must help in a way.
+>
+>> 
+>>> Maybe should the idle canary be updated later once there is more entropy
+>> 
+>> That is tricky to do, but sure, if you can, that should help.
+>> 
+>>> ? Today there is a new call to boot_init_stack_canary() in
+>>> cpu_startup_entry(), but it is enclosed inside #ifdef CONFIG_X86.
+>> 
+>> It needs to know the details of how ssp works on each platform.
+>
+> Well, that could be for another patch in the future. That's probably 
+> feasible on x86 and PPC because they both use TLS guard, but not for 
+> other arches where the guard is global at the moment. So we'll have to 
+> do it carefully.
+>
+> I agree with you that we may not for the time being get all the expected 
+> security against hackers out of it due to that little entropy, but my 
+> main concern at the time being is to deter developper's bugs clobbering 
+> the stack, and for that any non trivial canary should make it, shouldn't 
+> it ?
 
-On Fri, Sep 28, 2018 at 07:10:58PM +0800, Chen-Yu Tsai wrote:
-> On Fri, Sep 28, 2018 at 6:23 PM Sakari Ailus
-> <sakari.ailus@linux.intel.com> wrote:
-> >
-> > Hi Laurent,
-> >
-> > On Fri, Sep 28, 2018 at 12:45:12PM +0300, Laurent Pinchart wrote:
-> > > Hi Sakari,
-> > >
-> > > On Friday, 28 September 2018 12:38:33 EEST Sakari Ailus wrote:
-> > > > On Wed, Sep 26, 2018 at 04:40:04PM +0800, Yong Deng wrote:
-> > > > > Add binding documentation for Allwinner V3s CSI.
-> > > > >
-> > > > > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > >
-> > > > I know... but I have a few more comments.
-> > > >
-> > > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > > Signed-off-by: Yong Deng <yong.deng@magewell.com>
-> > > > > ---
-> > > > >
-> > > > >  .../devicetree/bindings/media/sun6i-csi.txt        | 59 +++++++++++++++++
-> > > > >  1 file changed, 59 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
-> > > > > 100644
-> > > > > index 000000000000..2ff47a9507a6
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > > @@ -0,0 +1,59 @@
-> > > > > +Allwinner V3s Camera Sensor Interface
-> > > > > +-------------------------------------
-> > > > > +
-> > > > > +Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-> > > > > +interface and CSI1 is used for parallel interface.
-> > > > > +
-> > > > > +Required properties:
-> > > > > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
-> > > > > +  - reg: base address and size of the memory-mapped region.
-> > > > > +  - interrupts: interrupt associated to this IP
-> > > > > +  - clocks: phandles to the clocks feeding the CSI
-> > > > > +    * bus: the CSI interface clock
-> > > > > +    * mod: the CSI module clock
-> > > > > +    * ram: the CSI DRAM clock
-> > > > > +  - clock-names: the clock names mentioned above
-> > > > > +  - resets: phandles to the reset line driving the CSI
-> > > > > +
-> > > > > +Each CSI node should contain one 'port' child node with one child
-> > > > > 'endpoint' +node, according to the bindings defined in
-> > > > > +Documentation/devicetree/bindings/media/video-interfaces.txt. As
-> > > > > mentioned
-> > > > > +above, the endpoint's bus type should be MIPI CSI-2 for CSI0 and parallel
-> > > > > or +Bt656 for CSI1.
-> > > >
-> > > > Which port represents CSI0 and which one is CSI1? That needs to be
-> > > > documented.
-> > >
-> > > There are two CSI devices, named CSI0 and CSI1, with one port each. The CSI0
-> > > device supports CSI-2 only, and the CSI1 device parallel (BT.601 or BT.656)
-> > > only.
-> > >
-> > > > > +
-> > > > > +Endpoint node properties for CSI1
-> > > >
-> > > > How about CSI0? I'd expect at least data-lanes, and clock-lanes as well if
-> > > > the hardware supports lane mapping.
-> > >
-> > > I enquired about that too. As far as I understand, CSI0 isn't supported yet in
-> > > the driver due to lack of documentation and lack of open-source vendor-
-> > > provided source code. While DT bindings are not tied to driver
-> > > implementations, it's not the best idea to design DT bindings without at least
-> > > one working implementation to test them. I thus proposed just listing CSI0 as
-> > > being unsupported for now.
-> >
-> > Ack.
-> >
-> > We should still define which receiver corresponds to a given port. Probably
-> > 1 for CSI1 would make sense, in order to avoid changing the order the
-> > hardware already uses. 0 doesn't need to be documented no IMO.
-> >
-> > What do you think?
-> 
-> AFAICT it would be a completely seperate node, since they have different address
-> spaces, clocks and reset controls. So there's no possibility of confusion.
-> 
-> According to Yong, CSI0 is tied internally to some unknown MIPI CSI2-receiver,
-> which is the undocumented part. CSI1 has its parallel data pins exposed to the
-> outside.
+Yes.
 
-Thanks for clearing up the confusion. If these are truly different kinds of
-devices, then don't they also deserve different compatible strings? And
-possibly also different DT binding documentation in a separate file.
+The problem of low entropy at boot on systems without a good hardware
+source is sort of unsolvable.
 
--- 
-Regards,
+As you say it's up to the core kernel/random code, we shouldn't be
+trying to do anything tricky in the arch code.
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+You don't want your system to take 3 hours to boot because it's waiting
+for entropy for the stack canary.
+
+If we can update the canary later once the entropy pool is setup that
+would be ideal.
+
+cheers
