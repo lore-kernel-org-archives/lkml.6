@@ -2,87 +2,82 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8320C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D87EC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A2B2170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:42:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A2B2170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 3AADB2173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:43:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AADB2173D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbeI1PFX (ORCPT
+        id S1729233AbeI1PGS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 11:05:23 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:53963 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728868AbeI1PFX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 11:05:23 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g5oM9-0003gY-5v; Fri, 28 Sep 2018 10:42:37 +0200
-Date:   Fri, 28 Sep 2018 10:42:36 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
-cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Finn Thain <fthain@telegraphics.com.au>
-Subject: Re: [PATCH] futex: Set USER_DS for the futex_detect_cmpxchg() test
-In-Reply-To: <20180928103726.07761672@mschwideX1>
-Message-ID: <alpine.DEB.2.21.1809281041420.2004@nanos.tec.linutronix.de>
-References: <74fb6ce22f62e0fb48b91ca9918b74cedbcecaf1.1538096323.git.luto@kernel.org> <alpine.DEB.2.21.1809280819040.8118@nanos.tec.linutronix.de> <CAMuHMdWWxgvo0a+8UvesiVikWS_45yOXRhM39F31Vn17kN+Ptg@mail.gmail.com> <20180928103726.07761672@mschwideX1>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 28 Sep 2018 11:06:18 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:50580 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727389AbeI1PGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 11:06:18 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3A18A200032;
+        Fri, 28 Sep 2018 10:43:36 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2E48620000A;
+        Fri, 28 Sep 2018 10:43:36 +0200 (CEST)
+Received: from fsr-fed2164-101.ea.freescale.net (fsr-fed2164-101.ea.freescale.net [10.171.82.91])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B2DF120621;
+        Fri, 28 Sep 2018 10:43:35 +0200 (CEST)
+From:   Madalin Bucur <madalin.bucur@nxp.com>
+To:     leoyang.li@nxp.com
+Cc:     roy.pledge@nxp.com, claudiu.manoil@nxp.com,
+        catalin.marinas@arm.com, oss@buserror.net,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Madalin Bucur <madalin.bucur@nxp.com>
+Subject: [PATCH v2 0/5] soc/fsl/qbman: DPAA QBMan fixes and additions 
+Date:   Fri, 28 Sep 2018 11:43:19 +0300
+Message-Id: <1538124204-31406-1-git-send-email-madalin.bucur@nxp.com>
+X-Mailer: git-send-email 2.1.0
+Reply-to: madalin.bucur@nxp.com
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Sep 2018, Martin Schwidefsky wrote:
-> On Fri, 28 Sep 2018 09:12:10 +0200
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > I don't know if that has happened, and whether it would work on s390 now.
-> 
-> commit 03b8c7b623c80af264c4c8d6111e5c6289933666
-> Author: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Date:   Sun Mar 2 13:09:47 2014 +0100
-> 
->     futex: Allow architectures to skip futex_atomic_cmpxchg_inatomic() test
->     
->     If an architecture has futex_atomic_cmpxchg_inatomic() implemented and there
->     is no runtime check necessary, allow to skip the test within futex_init().
->     
->     This allows to get rid of some code which would always give the same result,
->     and also allows the compiler to optimize a couple of if statements away.
->     
->     Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
->     Cc: Finn Thain <fthain@telegraphics.com.au>
->     Cc: Geert Uytterhoeven <geert@linux-m68k.org>
->     Link: http://lkml.kernel.org/r/20140302120947.GA3641@osiris
->     Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> 
-> 
-> Heiko created the CONFIG_HAVE_FUTEX_CMPXCHG to get around this issue.
-> We just skip the runtime check as well as arc, m68k and sh. Not sure
-> about xtensa, the set it config option only for !MMU.
+This patch set brings a number of fixes and the option to control
+the QMan portal interrupt coalescing.
 
-Duh. grep would have told me. -ENOTENOUGHCOFFEE
+Changes from v1:
+ - change CPU 0 with any online CPU to allow CPU 0 to be taken offline
+ - move common code in a function
+ - address all places in the code where the portal interrupt was affined
+   to CPU 0
+ - remove unrelated change from patch adding 64 bit DMA addressing
+   requirement
 
-Thanks,
+Madalin Bucur (2):
+  soc/fsl/qbman: replace CPU 0 with any online CPU in hotplug handlers
+  soc/fsl_qbman: export coalesce change API
 
-	tglx
+Roy Pledge (3):
+  soc/fsl/qbman: Check if CPU is offline when initializing portals
+  soc/fsl/qbman: Add 64 bit DMA addressing requirement to QBMan
+  soc/fsl/qbman: Use last response to determine valid bit
+
+ drivers/soc/fsl/qbman/Kconfig       |  2 +-
+ drivers/soc/fsl/qbman/bman.c        |  6 ++---
+ drivers/soc/fsl/qbman/bman_portal.c |  4 ++-
+ drivers/soc/fsl/qbman/dpaa_sys.h    | 20 ++++++++++++++
+ drivers/soc/fsl/qbman/qman.c        | 53 ++++++++++++++++++++++++++++++++-----
+ drivers/soc/fsl/qbman/qman_portal.c |  6 +++--
+ include/soc/fsl/qman.h              | 27 +++++++++++++++++++
+ 7 files changed, 104 insertions(+), 14 deletions(-)
+
+-- 
+2.1.0
+
