@@ -2,240 +2,114 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE234C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD4E9C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B972172C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:40:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B972172C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 810052172C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:43:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="103k2DNM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 810052172C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728867AbeI1NCM (ORCPT
+        id S1728832AbeI1NFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 09:02:12 -0400
-Received: from mga02.intel.com ([134.134.136.20]:40240 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726060AbeI1NCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 09:02:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 23:39:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,313,1534834800"; 
-   d="scan'208";a="74562483"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Sep 2018 23:39:26 -0700
-Received: from [10.125.252.13] (abudanko-mobl.ccr.corp.intel.com [10.125.252.13])
-        by linux.intel.com (Postfix) with ESMTP id 6BC70580144;
-        Thu, 27 Sep 2018 23:39:24 -0700 (PDT)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Subject: [PATCH v2] perf record: encode -k clockid frequency into Perf trace
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <16a10c62-e929-fc1b-de09-1d36b8d7396e@linux.intel.com>
-Date:   Fri, 28 Sep 2018 09:39:23 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 28 Sep 2018 09:05:36 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33917 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbeI1NFg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 09:05:36 -0400
+Received: by mail-pf1-f194.google.com with SMTP id k19-v6so3635540pfi.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 23:43:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KN03EsNqwzZLnlgcrhu3QfV9omxhJTIAtxUA5lMJDbA=;
+        b=103k2DNMlpo8p8eyDow1vMKfQzJaReUU0tUHrKkGyoVVjweKab0ynzWjyjWdT+qh5c
+         RT/6E76QwCE2WOVorDZUnGUo6gouljGMlHqICrIEJJdFKH4Z0us+vUkEYjmBd8r6cb8U
+         8dHuAr5UXHt6w8R0cp5gored7DFey7Jp9BGj3efftpopw6Vqfe9smpCm8B/ZQW0zXGQS
+         tPC1QXZr1G72v01ZHhT0rjQgRv8CuItSKlPOcPOOr19TBVqgAO4KLzKm1lRfWoIGWk7U
+         LhsFpIECTeznF7v2t6ZXHJG9MnIUsi8pjUaBaBAJDdGVPdpnKISFc57cKLoh69my6FMO
+         Yagg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KN03EsNqwzZLnlgcrhu3QfV9omxhJTIAtxUA5lMJDbA=;
+        b=r58Am/uQNpV0e1JrmsE7DCYbhMYv6rfYcyZkf+2eYBZir0OYgwxGxi4slm1VKhmfoU
+         cIr/+9sjo+4rallAcxds19ylnJhNchYWg74nqhQJKnFXcLw0kF7c/074B15oFuWfCRiu
+         /dofO4Tj8Aql7m7YO8uXy21tY0vZFh+XXM2W+QVRvKIqhIjA+j4Bb6QA2YLBjf46MXXH
+         xOQraHuy99w9P++VFcpfQ/eqTQIZh9z3vR1bq9WKYR5hfWgz8VHzrLGoY2R06myOQXYq
+         EVMg3wur8DGaXcR5pPLoGfJ7EQGm57u8R44lXNgkXFH/XDbC68gNE+rN01vgeLjepMgM
+         DKug==
+X-Gm-Message-State: ABuFfogtZMyUujZFTTF+YxyHhEEltfsD27VaQNk9YQpGelRj2pS407/0
+        +2vLJxN8/ywlgVFEoWpIUBOs6A==
+X-Google-Smtp-Source: ACcGV626wHsqvG+MYyBe5tI3I85tq57WokGU7dXTqBiwZbUXTi4Gwf7pNzEF6Jd9rt5DBkTvyxX2OA==
+X-Received: by 2002:a63:e255:: with SMTP id y21-v6mr13584289pgj.160.1538117001931;
+        Thu, 27 Sep 2018 23:43:21 -0700 (PDT)
+Received: from vader ([2601:602:8800:a9a9:e6a7:a0ff:fe0b:c9a8])
+        by smtp.gmail.com with ESMTPSA id k26-v6sm9248576pfb.167.2018.09.27.23.43.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 23:43:21 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 23:43:19 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Omar Sandoval <osandov@fb.com>
+Subject: Re: linux-next: build warning after merge of the block tree
+Message-ID: <20180928064319.GD29754@vader>
+References: <20180928111124.745bf2ef@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928111124.745bf2ef@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Sep 28, 2018 at 11:11:24AM +1000, Stephen Rothwell wrote:
+> Hi Jens,
+> 
+> After merging the block tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+> 
+> block/kyber-iosched.c:84:22: warning: integer overflow in expression of type 'long int' results in '705032704' [-Woverflow]
+>   [KYBER_DISCARD] = 5 * NSEC_PER_SEC,
+>                       ^
+> 
+> Introduced by commit
+> 
+>   6e25cb01ea20 ("kyber: implement improved heuristics")
 
-Store -k clockid frequency into Perf trace to enable timestamps 
-derived metrics conversion into wall clock time on reporting stage.
+Ugh, thanks for the report. This should fix it:
 
-Below is the example of perf report output:
-
-tools/perf/perf record -k raw -- ../../matrix/linux/matrix.gcc
-...
-[ perf record: Captured and wrote 31.222 MB perf.data (818054 samples) ]
-
-tools/perf/perf report --header
-# ========
-...
-# event : name = cycles:ppp, , size = 112, { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|PERIOD, disabled = 1, inherit = 1, mmap = 1, comm = 1, freq = 1, enable_on_exec = 1, task = 1, precise_ip = 3, sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1, use_clockid = 1, clockid = 4
-...
-# clockid frequency: 1000 MHz
-...
-# ========
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v2:
- - renamed clockid_freq to clockid_res_ns and get_clockid_freq() to get_clockid_res()
- - avoided redundant define of NSEC_IN_SEC, reused linux/time64.h:NSEC_PER_SEC
- - moved MHz conversion into print_clockid() and shortened write_clockid()
----
- tools/perf/builtin-record.c | 21 +++++++++++++++++++--
- tools/perf/perf.h           |  1 +
- tools/perf/util/env.h       |  1 +
- tools/perf/util/header.c    | 27 +++++++++++++++++++++++++++
- tools/perf/util/header.h    |  1 +
- 5 files changed, 49 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 0980dfe3396b..127dc7432394 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -592,6 +592,11 @@ static void record__init_features(struct record *rec)
- 	if (!rec->opts.full_auxtrace)
- 		perf_header__clear_feat(&session->header, HEADER_AUXTRACE);
- 
-+	if (rec->opts.use_clockid && rec->opts.clockid_res_ns)
-+		session->header.env.clockid_res_ns = rec->opts.clockid_res_ns;
-+	else
-+		perf_header__clear_feat(&session->header, HEADER_CLOCKID);
-+
- 	perf_header__clear_feat(&session->header, HEADER_STAT);
- }
- 
-@@ -1337,6 +1342,17 @@ static const struct clockid_map clockids[] = {
- 	CLOCKID_END,
+diff --git a/block/kyber-iosched.c b/block/kyber-iosched.c
+index 2b62e362fb36..eccac01a10b6 100644
+--- a/block/kyber-iosched.c
++++ b/block/kyber-iosched.c
+@@ -79,9 +79,9 @@ static const unsigned int kyber_depth[] = {
+  * Default latency targets for each scheduling domain.
+  */
+ static const u64 kyber_latency_targets[] = {
+-	[KYBER_READ] = 2 * NSEC_PER_MSEC,
+-	[KYBER_WRITE] = 10 * NSEC_PER_MSEC,
+-	[KYBER_DISCARD] = 5 * NSEC_PER_SEC,
++	[KYBER_READ] = 2ULL * NSEC_PER_MSEC,
++	[KYBER_WRITE] = 10ULL * NSEC_PER_MSEC,
++	[KYBER_DISCARD] = 5ULL * NSEC_PER_SEC,
  };
  
-+static int get_clockid_res(clockid_t clk_id, size_t *res_ns)
-+{
-+	struct timespec res;
-+
-+	*res_ns = 0;
-+	if (!clock_getres(clk_id, &res))
-+		*res_ns = res.tv_nsec + res.tv_sec * NSEC_PER_SEC;
-+
-+	return 0;
-+}
-+
- static int parse_clockid(const struct option *opt, const char *str, int unset)
- {
- 	struct record_opts *opts = (struct record_opts *)opt->value;
-@@ -1360,7 +1376,7 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
- 
- 	/* if its a number, we're done */
- 	if (sscanf(str, "%d", &opts->clockid) == 1)
--		return 0;
-+		return get_clockid_res(opts->clockid, &opts->clockid_res_ns);
- 
- 	/* allow a "CLOCK_" prefix to the name */
- 	if (!strncasecmp(str, "CLOCK_", 6))
-@@ -1369,7 +1385,8 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
- 	for (cm = clockids; cm->name; cm++) {
- 		if (!strcasecmp(str, cm->name)) {
- 			opts->clockid = cm->clockid;
--			return 0;
-+			return get_clockid_res(opts->clockid,
-+					       &opts->clockid_res_ns);
- 		}
- 	}
- 
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 21bf7f5a3cf5..981db3c2ed60 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -81,6 +81,7 @@ struct record_opts {
- 	unsigned     initial_delay;
- 	bool         use_clockid;
- 	clockid_t    clockid;
-+	size_t       clockid_res_ns;
- 	unsigned int proc_map_timeout;
- };
- 
-diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-index 1f3ccc368530..b167a54d635f 100644
---- a/tools/perf/util/env.h
-+++ b/tools/perf/util/env.h
-@@ -63,6 +63,7 @@ struct perf_env {
- 	struct numa_node	*numa_nodes;
- 	struct memory_node	*memory_nodes;
- 	unsigned long long	 memory_bsize;
-+	size_t                   clockid_res_ns;
- };
- 
- extern struct perf_env perf_env;
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 1ec1d9bc2d63..4ce5339158f7 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1034,6 +1034,13 @@ static int write_auxtrace(struct feat_fd *ff,
- 	return err;
- }
- 
-+static int write_clockid(struct feat_fd *ff,
-+			 struct perf_evlist *evlist __maybe_unused)
-+{
-+	return do_write(ff, &ff->ph->env.clockid_res_ns,
-+			sizeof(ff->ph->env.clockid_res_ns));
-+}
-+
- static int cpu_cache_level__sort(const void *a, const void *b)
- {
- 	struct cpu_cache_level *cache_a = (struct cpu_cache_level *)a;
-@@ -1508,6 +1515,12 @@ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
- 		fprintf(fp, "# Core ID and Socket ID information is not available\n");
- }
- 
-+static void print_clockid(struct feat_fd *ff, FILE *fp)
-+{
-+	fprintf(fp, "# clockid frequency: %ld MHz\n",
-+		ff->ph->env.clockid_res_ns * 1000);
-+}
-+
- static void free_event_desc(struct perf_evsel *events)
- {
- 	struct perf_evsel *evsel;
-@@ -2531,6 +2544,19 @@ static int process_mem_topology(struct feat_fd *ff,
- 	return ret;
- }
- 
-+static int process_clockid(struct feat_fd *ff,
-+			   void *data __maybe_unused)
-+{
-+	size_t clockid_res_ns;
-+
-+	if (do_read_u64(ff, &clockid_res_ns))
-+		return -1;
-+
-+	ff->ph->env.clockid_res_ns = clockid_res_ns;
-+
-+	return 0;
-+}
-+
- struct feature_ops {
- 	int (*write)(struct feat_fd *ff, struct perf_evlist *evlist);
- 	void (*print)(struct feat_fd *ff, FILE *fp);
-@@ -2590,6 +2616,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
- 	FEAT_OPN(CACHE,		cache,		true),
- 	FEAT_OPR(SAMPLE_TIME,	sample_time,	false),
- 	FEAT_OPR(MEM_TOPOLOGY,	mem_topology,	true),
-+	FEAT_OPR(CLOCKID,       clockid,        false)
- };
- 
- struct header_print_data {
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index e17903caa71d..0d553ddca0a3 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -38,6 +38,7 @@ enum {
- 	HEADER_CACHE,
- 	HEADER_SAMPLE_TIME,
- 	HEADER_MEM_TOPOLOGY,
-+	HEADER_CLOCKID,
- 	HEADER_LAST_FEATURE,
- 	HEADER_FEAT_BITS	= 256,
- };
+ /*
+
+Jens, do you mind folding that in, or should I send it separately?
