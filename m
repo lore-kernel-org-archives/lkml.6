@@ -2,101 +2,87 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB889C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8320C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E9412170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:42:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="far/vZ5U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E9412170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A0A2B2170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:42:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A2B2170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbeI1PFB (ORCPT
+        id S1729286AbeI1PFX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 11:05:01 -0400
-Received: from mail-qt1-f177.google.com ([209.85.160.177]:35697 "EHLO
-        mail-qt1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728868AbeI1PFA (ORCPT
+        Fri, 28 Sep 2018 11:05:23 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53963 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728868AbeI1PFX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 11:05:00 -0400
-Received: by mail-qt1-f177.google.com with SMTP id z14-v6so5809594qtn.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 01:42:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XtpzZ9z9D5DPJAZAqg9zIW+VJnsjD+flloKCaGnEFSo=;
-        b=far/vZ5U+EUZsrEefK/T6T6s074MPQzv1qIxiT1KiNggOEJ2OSuct24EcF2UfCK0RG
-         QfWzvpZIKFY7QBT2JKyJiyoPTj5B+5G4KcugtNcBS33SPzG3nb7S8rCM+O7LlBsS0O3s
-         Gm6iVqNnep6ovhD33aL+b8vLgXEoZnyReonBE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XtpzZ9z9D5DPJAZAqg9zIW+VJnsjD+flloKCaGnEFSo=;
-        b=aBHqi9ol05f0WL8qY8MMb5w9OtUTGvO2wsiN+KGM0/XFjTug7UgkwWQrXPF0devm1G
-         7qwts5gr2MafC5wEHfhe4No/BY82sDEJnLhKgREz2Qf1lDCQdk8JkOEmv6i1fOJYY3/h
-         8o9nQdaYiMP2b04rPWEj5uekP10iArzauJU5SaJ0N1Is5L6jnNuB4wAfvLiRYiO+mmD5
-         9UtI6/OxGnSWQiD+H/cocHQZuuGdHL2RzjhlSLFMpDgsqylI1J4/8dDHfA13d9WjAf3U
-         G6LIwr0kOas60hT81ciVJu/WDAVq/VGHHRUl+1a7hCAxdQ4/V0X78wLj9uj89msb6Ys3
-         PXuw==
-X-Gm-Message-State: ABuFfog6PX+icm3QFxrSSNCMDFLg6QpLjhOj7hSRBDKevl5BcdVbZKFS
-        dkFf1W2dcm8NVW8jGROLSrLqHnC4Xrv8WFSh9YeaaA==
-X-Google-Smtp-Source: ACcGV60k3bI6IPzNuR/tnyomlJr2HywMGJnNQq9dNBbTWEXZVW4Eqz7XXHFYUeg6KT0IGIbQH0sMXwP9r2E9pJQzjio=
-X-Received: by 2002:aed:3a68:: with SMTP id n95-v6mr11784964qte.283.1538124139546;
- Fri, 28 Sep 2018 01:42:19 -0700 (PDT)
+        Fri, 28 Sep 2018 11:05:23 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g5oM9-0003gY-5v; Fri, 28 Sep 2018 10:42:37 +0200
+Date:   Fri, 28 Sep 2018 10:42:36 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Finn Thain <fthain@telegraphics.com.au>
+Subject: Re: [PATCH] futex: Set USER_DS for the futex_detect_cmpxchg() test
+In-Reply-To: <20180928103726.07761672@mschwideX1>
+Message-ID: <alpine.DEB.2.21.1809281041420.2004@nanos.tec.linutronix.de>
+References: <74fb6ce22f62e0fb48b91ca9918b74cedbcecaf1.1538096323.git.luto@kernel.org> <alpine.DEB.2.21.1809280819040.8118@nanos.tec.linutronix.de> <CAMuHMdWWxgvo0a+8UvesiVikWS_45yOXRhM39F31Vn17kN+Ptg@mail.gmail.com> <20180928103726.07761672@mschwideX1>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <CACK8Z6Ebo0giDifRHBg13pe_mO18vb1n0+LGMoMjkLai6X9MNg@mail.gmail.com>
- <20180926074756.GD2664@lahna.fi.intel.com> <CAHp75Vdf7NxFtgZx+hqsA1YZY4szD5Ba9jbyo4CeeDHeaU3YAQ@mail.gmail.com>
- <CACK8Z6F1jkSN3KXiv+0X2uh61pBkpSMpHrdMHwLarbSAFoHMUA@mail.gmail.com>
- <CAHp75VcQ0SviZ6vsn_5inn5oZxxj-5ZQq5bC+bXPxuF8KOa_Rg@mail.gmail.com> <CACK8Z6HjFy_5sv_ZRRyfRgCYMYPpuoFqmKekyi7fSLk14YpN6w@mail.gmail.com>
-In-Reply-To: <CACK8Z6HjFy_5sv_ZRRyfRgCYMYPpuoFqmKekyi7fSLk14YpN6w@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 28 Sep 2018 10:42:07 +0200
-Message-ID: <CACRpkdZZW_HK8uFA=iQQ88DnoR7KX2mYTbO3HMtNBLd-3GpiWQ@mail.gmail.com>
-Subject: Re: sdhci driver card-detect is broken because gpiolib can't fallback
- to _CRS?
-To:     Rajat Jain <rajatja@google.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>, rajatxjain@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 7:57 PM Rajat Jain <rajatja@google.com> wrote:
+On Fri, 28 Sep 2018, Martin Schwidefsky wrote:
+> On Fri, 28 Sep 2018 09:12:10 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > I don't know if that has happened, and whether it would work on s390 now.
+> 
+> commit 03b8c7b623c80af264c4c8d6111e5c6289933666
+> Author: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Date:   Sun Mar 2 13:09:47 2014 +0100
+> 
+>     futex: Allow architectures to skip futex_atomic_cmpxchg_inatomic() test
+>     
+>     If an architecture has futex_atomic_cmpxchg_inatomic() implemented and there
+>     is no runtime check necessary, allow to skip the test within futex_init().
+>     
+>     This allows to get rid of some code which would always give the same result,
+>     and also allows the compiler to optimize a couple of if statements away.
+>     
+>     Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+>     Cc: Finn Thain <fthain@telegraphics.com.au>
+>     Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+>     Link: http://lkml.kernel.org/r/20140302120947.GA3641@osiris
+>     Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> 
+> 
+> Heiko created the CONFIG_HAVE_FUTEX_CMPXCHG to get around this issue.
+> We just skip the runtime check as well as arc, m68k and sh. Not sure
+> about xtensa, the set it config option only for !MMU.
 
-> > Patches are welcome, I think.
-> >
-> > Btw, is there any existing hardware on the market with such BIOS?
->
-> Yes, all the chrome books available in the market (at least the ones
-> released in last 3 years) have same ACPI layout (provide _DSD for
-> card-detect). They are all working fine today because they use an
-> older kernel, but if we update them to the latest kernel, this part
-> will be broken.
+Duh. grep would have told me. -ENOTENOUGHCOFFEE
 
-This is not looking good at all.
+Thanks,
 
-Andy should we revert the patch or do you have some other
-quick fix in mind we could do? It seems reverting the patch
-could be bad for the mctrl patches IIUC, but this regression
-seems even more serious.
-
-Yours,
-Linus Walleij
+	tglx
