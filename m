@@ -2,84 +2,228 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C2FC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B452FC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB0112170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:33:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0112170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 471972170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:34:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 471972170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728626AbeI1IyX (ORCPT
+        id S1728548AbeI1I4G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 04:54:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36570 "EHLO mx1.suse.de"
+        Fri, 28 Sep 2018 04:56:06 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13138 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726271AbeI1IyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 04:54:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7A131AE12;
-        Fri, 28 Sep 2018 02:32:57 +0000 (UTC)
-Subject: Re: [PATCH] bcache: add separate workqueue for journal_write to avoid
- deadlock
-To:     Eddie Chapman <eddie@ehuk.net>
-Cc:     guoju <fangguoju@gmail.com>, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1538055919-5757-1-git-send-email-fangguoju@gmail.com>
- <bda92f58-d321-d4db-c73f-0ceecbfd9c38@suse.de>
- <9b1abe65-c6f5-77b4-290e-e6af21723cfc@ehuk.net>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <ef36fbef-9f2e-0208-aa00-bd9ba656de31@suse.de>
-Date:   Fri, 28 Sep 2018 10:32:53 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1726060AbeI1I4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 04:56:05 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 741BBA22C7BDA;
+        Fri, 28 Sep 2018 10:34:37 +0800 (CST)
+Received: from HULK-Android.huawei.com (10.113.189.218) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 28 Sep 2018 10:34:32 +0800
+From:   Sheng Yong <shengyong1@huawei.com>
+To:     <jaegeuk@kernel.org>, <yuchao0@huawei.com>,
+        <linux-kernel@vger.kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [PATCH] f2fs: cleanup dirty pages if recover failed
+Date:   Fri, 28 Sep 2018 10:34:24 +0800
+Message-ID: <20180928023424.28186-1-shengyong1@huawei.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <9b1abe65-c6f5-77b4-290e-e6af21723cfc@ehuk.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.113.189.218]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+During recover, we will try to create new dentries for inodes with
+dentry_mark. But if the parent is missing (e.g. killed by fsck),
+recover will break. But those recovered dirty pages are not cleanup.
+This will hit f2fs_bug_on:
 
-On 9/27/18 11:53 PM, Eddie Chapman wrote:
-> On 27/09/18 16:23, Coly Li wrote:
->>
->> On 9/27/18 9:45 PM, guoju wrote:
->>> After write SSD completed, bcache schedule journal_write work to
->>> system_wq, that is a public workqueue in system, without WQ_MEM_RECLAIM
->>> flag. system_wq is also a bound wq, and there may be no idle kworker on
->>> current processor. Creating a new kworker may unfortunately need to
->>> reclaim memory first, by shrinking cache and slab used by vfs, which
->>> depends on bcache device. That's a deadlock.
->>>
->>> This patch create a new workqueue for journal_write with WQ_MEM_RECLAIM
->>> flag. It's rescuer thread will work to avoid the deadlock.
->>>
->>> Signed-off-by: guoju <fangguoju@gmail.com>
->>
->> Nice catch, this fix is quite important. I will try to submit to Jens 
->> ASAP.
->>
->> Thanks.
->>
->> Coly Li
->
-> Once this goes into 4.19, would this be a candidate for backporting to 
-> any stable kernels, or does it only fix something introduced in this 
-> cycle?
->
-This bug exists in upstream for quite long time, it should be applied to 
-all stable kernels which it can be applied. And it is Cced to 
-stable@vger.kernel.org already.
+[   53.519566] F2FS-fs (loop0): Found nat_bits in checkpoint
+[   53.539354] F2FS-fs (loop0): recover_inode: ino = 5, name = file, inline = 3
+[   53.539402] F2FS-fs (loop0): recover_dentry: ino = 5, name = file, dir = 0, err = -2
+[   53.545760] F2FS-fs (loop0): Cannot recover all fsync data errno=-2
+[   53.546105] F2FS-fs (loop0): access invalid blkaddr:4294967295
+[   53.546171] WARNING: CPU: 1 PID: 1798 at fs/f2fs/checkpoint.c:163 f2fs_is_valid_blkaddr+0x26c/0x320
+[   53.546174] Modules linked in:
+[   53.546183] CPU: 1 PID: 1798 Comm: mount Not tainted 4.19.0-rc2+ #1
+[   53.546186] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[   53.546191] RIP: 0010:f2fs_is_valid_blkaddr+0x26c/0x320
+[   53.546195] Code: 85 bb 00 00 00 48 89 df 88 44 24 07 e8 ad a8 db ff 48 8b 3b 44 89 e1 48 c7 c2 40 03 72 a9 48 c7 c6 e0 01 72 a9 e8 84 3c ff ff <0f> 0b 0f b6 44 24 07 e9 8a 00 00 00 48 8d bf 38 01 00 00 e8 7c a8
+[   53.546201] RSP: 0018:ffff88006c067768 EFLAGS: 00010282
+[   53.546208] RAX: 0000000000000000 RBX: ffff880068844200 RCX: ffffffffa83e1a33
+[   53.546211] RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88006d51e590
+[   53.546215] RBP: 0000000000000005 R08: ffffed000daa3cb3 R09: ffffed000daa3cb3
+[   53.546218] R10: 0000000000000001 R11: ffffed000daa3cb2 R12: 00000000ffffffff
+[   53.546221] R13: ffff88006a1f8000 R14: 0000000000000200 R15: 0000000000000009
+[   53.546226] FS:  00007fb2f3646840(0000) GS:ffff88006d500000(0000) knlGS:0000000000000000
+[   53.546229] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   53.546234] CR2: 00007f0fd77f0008 CR3: 00000000687e6002 CR4: 00000000000206e0
+[   53.546237] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   53.546240] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   53.546242] Call Trace:
+[   53.546248]  f2fs_submit_page_bio+0x95/0x740
+[   53.546253]  read_node_page+0x161/0x1e0
+[   53.546271]  ? truncate_node+0x650/0x650
+[   53.546283]  ? add_to_page_cache_lru+0x12c/0x170
+[   53.546288]  ? pagecache_get_page+0x262/0x2d0
+[   53.546292]  __get_node_page+0x200/0x660
+[   53.546302]  f2fs_update_inode_page+0x4a/0x160
+[   53.546306]  f2fs_write_inode+0x86/0xb0
+[   53.546317]  __writeback_single_inode+0x49c/0x620
+[   53.546322]  writeback_single_inode+0xe4/0x1e0
+[   53.546326]  sync_inode_metadata+0x93/0xd0
+[   53.546330]  ? sync_inode+0x10/0x10
+[   53.546342]  ? do_raw_spin_unlock+0xed/0x100
+[   53.546347]  f2fs_sync_inode_meta+0xe0/0x130
+[   53.546351]  f2fs_fill_super+0x287d/0x2d10
+[   53.546367]  ? vsnprintf+0x742/0x7a0
+[   53.546372]  ? f2fs_commit_super+0x180/0x180
+[   53.546379]  ? up_write+0x20/0x40
+[   53.546385]  ? set_blocksize+0x5f/0x140
+[   53.546391]  ? f2fs_commit_super+0x180/0x180
+[   53.546402]  mount_bdev+0x181/0x200
+[   53.546406]  mount_fs+0x94/0x180
+[   53.546411]  vfs_kern_mount+0x6c/0x1e0
+[   53.546415]  do_mount+0xe5e/0x1510
+[   53.546420]  ? fs_reclaim_release+0x9/0x30
+[   53.546424]  ? copy_mount_string+0x20/0x20
+[   53.546428]  ? fs_reclaim_acquire+0xd/0x30
+[   53.546435]  ? __might_sleep+0x2c/0xc0
+[   53.546440]  ? ___might_sleep+0x53/0x170
+[   53.546453]  ? __might_fault+0x4c/0x60
+[   53.546468]  ? _copy_from_user+0x95/0xa0
+[   53.546474]  ? memdup_user+0x39/0x60
+[   53.546478]  ksys_mount+0x88/0xb0
+[   53.546482]  __x64_sys_mount+0x5d/0x70
+[   53.546495]  do_syscall_64+0x65/0x130
+[   53.546503]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   53.547639] ---[ end trace b804d1ea2fec893e ]---
 
-Coly Li
+So if recover fails, we need to drop all recovered data.
+
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+---
+ fs/f2fs/recovery.c | 19 ++++++++++++-------
+ fs/f2fs/super.c    | 15 ++++++++++++++-
+ 2 files changed, 26 insertions(+), 8 deletions(-)
+
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index fb24a6d734e9..064b91544a84 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -96,8 +96,12 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+ 	return ERR_PTR(err);
+ }
+ 
+-static void del_fsync_inode(struct fsync_inode_entry *entry)
++static void del_fsync_inode(struct fsync_inode_entry *entry, int drop)
+ {
++	if (drop) {
++		make_bad_inode(entry->inode);
++		f2fs_inode_synced(entry->inode);
++	}
+ 	iput(entry->inode);
+ 	list_del(&entry->list);
+ 	kmem_cache_free(fsync_entry_slab, entry);
+@@ -337,12 +341,12 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 	return err;
+ }
+ 
+-static void destroy_fsync_dnodes(struct list_head *head)
++static void destroy_fsync_dnodes(struct list_head *head, int drop)
+ {
+ 	struct fsync_inode_entry *entry, *tmp;
+ 
+ 	list_for_each_entry_safe(entry, tmp, head, list)
+-		del_fsync_inode(entry);
++		del_fsync_inode(entry, drop);
+ }
+ 
+ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+@@ -631,7 +635,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+ 		}
+ 
+ 		if (entry->blkaddr == blkaddr)
+-			del_fsync_inode(entry);
++			del_fsync_inode(entry, 0);
+ next:
+ 		/* check next segment */
+ 		blkaddr = next_blkaddr_of_node(page);
+@@ -697,7 +701,7 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	if (!err)
+ 		f2fs_bug_on(sbi, !list_empty(&inode_list));
+ skip:
+-	destroy_fsync_dnodes(&inode_list);
++	destroy_fsync_dnodes(&inode_list, err);
+ 
+ 	/* truncate meta pages to be used by the recovery */
+ 	truncate_inode_pages_range(META_MAPPING(sbi),
+@@ -706,13 +710,14 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	if (err) {
+ 		truncate_inode_pages_final(NODE_MAPPING(sbi));
+ 		truncate_inode_pages_final(META_MAPPING(sbi));
++	} else {
++		clear_sbi_flag(sbi, SBI_POR_DOING);
+ 	}
+ 
+-	clear_sbi_flag(sbi, SBI_POR_DOING);
+ 	mutex_unlock(&sbi->cp_mutex);
+ 
+ 	/* let's drop all the directory inodes for clean checkpoint */
+-	destroy_fsync_dnodes(&dir_list);
++	destroy_fsync_dnodes(&dir_list, err);
+ 
+ 	if (need_writecp) {
+ 		set_sbi_flag(sbi, SBI_IS_RECOVERED);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c47b1ef2685a..9cc3c43a0b35 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1883,6 +1883,19 @@ void f2fs_quota_off_umount(struct super_block *sb)
+ 	}
+ }
+ 
++static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
++{
++	struct quota_info *dqopt = sb_dqopt(sb);
++	int type;
++
++	for (type = 0; type < MAXQUOTAS; type++) {
++		if (!dqopt->files[type])
++			continue;
++		f2fs_inode_synced(dqopt->files[type]);
++		truncate_inode_pages_final(dqopt->files[type]->i_mapping);
++	}
++}
++
+ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ {
+ 	*projid = F2FS_I(inode)->i_projid;
+@@ -3135,10 +3148,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ free_meta:
+ #ifdef CONFIG_QUOTA
++	f2fs_truncate_quota_inode_pages(sb);
+ 	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb))
+ 		f2fs_quota_off_umount(sbi->sb);
+ #endif
+-	f2fs_sync_inode_meta(sbi);
+ 	/*
+ 	 * Some dirty meta pages can be produced by f2fs_recover_orphan_inodes()
+ 	 * failed by EIO. Then, iput(node_inode) can trigger balance_fs_bg()
+-- 
+2.17.1
 
