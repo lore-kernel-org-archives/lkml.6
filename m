@@ -2,92 +2,84 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFD4C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7F1C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 675D3206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:48:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 675D3206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 0D5F9206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:50:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cs.utexas.edu header.i=@cs.utexas.edu header.b="cBUyBU8G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D5F9206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cs.utexas.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbeI2COK (ORCPT
+        id S1727260AbeI2CPT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 22:14:10 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55105 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbeI2COJ (ORCPT
+        Fri, 28 Sep 2018 22:15:19 -0400
+Received: from newman.cs.utexas.edu ([128.83.139.110]:49463 "EHLO
+        newman.cs.utexas.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeI2CPT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 22:14:09 -0400
-Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g5yki-0004iW-TG; Fri, 28 Sep 2018 21:48:41 +0200
-Date:   Fri, 28 Sep 2018 21:48:40 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jeff loughlin <loughlinjd@gmail.com>
-cc:     mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        pombredanne@nexb.com, brijesh.singh@amd.com,
-        thomas.lendacky@amd.com, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86: init: Remove raw kernel pointer from printk
-In-Reply-To: <1538163460-17173-1-git-send-email-loughlinjd@gmail.com>
-Message-ID: <alpine.DEB.2.21.1809282141410.1432@nanos.tec.linutronix.de>
-References: <1538163460-17173-1-git-send-email-loughlinjd@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 28 Sep 2018 22:15:19 -0400
+Received: from vyasa.cs.utexas.edu (vyasa.cs.utexas.edu [128.83.130.99])
+        by newman.cs.utexas.edu (8.14.4/8.14.4/Debian-4.1ubuntu1) with ESMTP id w8SJnuOM013529
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 28 Sep 2018 14:49:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.utexas.edu;
+        s=default; t=1538164197;
+        bh=4HSo9XEidbY+TNBViYKSixTVMw1Va9JYeI++uw7QaQ0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cBUyBU8Gj5d+IoT/QKQuVQKsPRkvDeMJ5ohXlL39oBZHZ8OJSeK31i60Mhym8CWeB
+         j6Y7exDISMsk5bofpe3Twv1FWjvUVCH0d49nBVGhJO3R+z66rlRtOr/zA6vz7AS/zU
+         pbPEtOPGPLgkW5rc914n2fUAfAmjx2Nsy5wlNXsA=
+Received: (from mihir@localhost)
+        by vyasa.cs.utexas.edu (8.15.2/8.15.2/Submit) id w8SJnuaF024002;
+        Fri, 28 Sep 2018 14:49:56 -0500
+From:   Mihir Mehta <mihir@cs.utexas.edu>
+To:     hirofumi@mail.parknet.co.jp
+Cc:     linux-kernel@vger.kernel.org, Mihir Mehta <mihir@cs.utexas.edu>
+Subject: [PATCH] fat: Expand a slightly out-of-date comment
+Date:   Fri, 28 Sep 2018 14:49:47 -0500
+Message-Id: <20180928194947.23932-1-mihir@cs.utexas.edu>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <87sh1tewtw.fsf@mail.parknet.co.jp>
+References: <87sh1tewtw.fsf@mail.parknet.co.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.3.9 (newman.cs.utexas.edu [128.83.139.110]); Fri, 28 Sep 2018 14:49:57 -0500 (CDT)
+X-Virus-Scanned: clamav-milter 0.98.7 at newman
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jeff, 
+The file namei.c seems to have been renamed to namei_msdos.c, so I
+decided to update the comment with the correct name, and expand it a bit
+to tell the reader what to look for.
+---
+ fs/fat/dir.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On Fri, 28 Sep 2018, Jeff loughlin wrote:
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index 7f5f369..f4db13f 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -369,7 +369,9 @@ static int fat_parse_short(struct super_block *sb,
+ 	}
+ 
+ 	memcpy(work, de->name, sizeof(work));
+-	/* see namei.c, msdos_format_name */
++	/* For an explanation of the special treatment of 0x05 in
++	 * filenames, see msdos_format_name in namei_msdos.c 
++	 */
+ 	if (work[0] == 0x05)
+ 		work[0] = 0xE5;
+ 
+-- 
+2.7.4
 
-> From: Jeff Loughlin <loughlinjd@gmail.com>
-> 
->     printk message in set_real_mode_mem() contains a raw kernel pointer, which printk rightly changes to (ptrval).
-
-Please format your changelog properly next time. Left aligned and line
-breaks around 78 characters.
-
->     This is useless in the dmesg log and should be removed.
-
-Agreed, (ptrval) is pretty useless, but this is a debug printk and the real
-address is not useless for debugging, so just removing it is not
-necessarily the best solution.
-
->     Signed-off-by: Jeff Loughlin <loughlinjd@gmail.com>
-> ---
->  arch/x86/realmode/init.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/realmode/init.c b/arch/x86/realmode/init.c
-> index d101058..d76a138 100644
-> --- a/arch/x86/realmode/init.c
-> +++ b/arch/x86/realmode/init.c
-> @@ -20,8 +20,8 @@ void __init set_real_mode_mem(phys_addr_t mem, size_t size)
->  	void *base = __va(mem);
->  
->  	real_mode_header = (struct real_mode_header *) base;
-> -	printk(KERN_DEBUG "Base memory trampoline at [%p] %llx size %zu\n",
-> -	       base, (unsigned long long)mem, size);
-> +	printk(KERN_DEBUG "Base memory trampoline at %llx size %zu\n",
-> +	       (unsigned long long)mem, size);
-
-Please check your patches with scripts/checkpatch.pl next time. It would
-have told you to change that printk(KERN_DEBUG) to pr_debug()
-
-Thanks,
-
-	tglx
