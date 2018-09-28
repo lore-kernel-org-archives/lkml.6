@@ -2,317 +2,789 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FF7C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D643C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786122173D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:27:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 786122173D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F35D2172C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:28:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I2fsqLfb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F35D2172C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729000AbeI1OuI (ORCPT
+        id S1729147AbeI1Ouy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 10:50:08 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36076 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbeI1OuH (ORCPT
+        Fri, 28 Sep 2018 10:50:54 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50569 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729047AbeI1Oux (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 10:50:07 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 39EA8263AAC
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
-        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@google.com>
-Subject: [PATCH v2] drm/rockchip: update cursors asynchronously through atomic.
-Date:   Fri, 28 Sep 2018 10:27:22 +0200
-Message-Id: <20180928082722.26951-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.19.0
+        Fri, 28 Sep 2018 10:50:53 -0400
+Received: by mail-it1-f194.google.com with SMTP id j81-v6so1661655ite.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 01:28:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=E0fRPFEmXv8HzsDIRcEgzdzY4iyR4Xa37IUOb0mDwyg=;
+        b=I2fsqLfblql79CTu8s0CiDG5PNcS+JrpBV5No+SV+51itUIU27GOa58FqXcc5MuDqV
+         3lwwyyE0pmYjDuUxB/arjxegTlneAirf1dkxaV1/G5xTX/AQUAIfY4vawF9mcUg53V3T
+         eroMlriXvrIQxULEiLLnAomudCBqiE9+Q7pR8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=E0fRPFEmXv8HzsDIRcEgzdzY4iyR4Xa37IUOb0mDwyg=;
+        b=pLDvcVtKKC9xOfiktTaH8CVapM5y6LqyAVXqa6K8baPS25Oh7lhK89DjftDRN9z7t3
+         pZznBwqEaZKNoSzNnaHg9vDig/kFBZFkCR7Ekq/YV9zgc3B7ekNSdfOLzVJAV42xj2p4
+         Pp59kB+unAssvwxrdSeh3N5ZGB5i3iOspCUybxjQwGJlKyLhYG50kSdn+qHoedp/+i/3
+         sdfeK78Lowyk6RjBRX0DS2HMzwRRFuVQW3uIXcJKSyX4DvMH9pNOYe93IZmtjQ44/8BU
+         J0B8MjcQaL8t3iQMjT5uclg0htLs5bbgsJpAsm1MNtrX8bS/A7lIXDmm8NZK3Nqs7lfz
+         Hd0Q==
+X-Gm-Message-State: ABuFfojJ5CxlolhI6W83V4E5WdIU+YrcALKoARSXoIHAzPFjqqesuUUk
+        lYQIBpmTQGZhkdr6zaddb2IzwgbsvxbvyGySBkrUwA==
+X-Google-Smtp-Source: ACcGV62h2CJbyZbxe/5x7YcCciSM87VIsUZtn2bWffUMkBiTHWSuDCjRKa320a958Y47+/laIEzZ7AR/Ix0TKkQM7ss=
+X-Received: by 2002:a02:9b97:: with SMTP id p23-v6mr13137072jak.5.1538123295461;
+ Fri, 28 Sep 2018 01:28:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 01:28:14
+ -0700 (PDT)
+In-Reply-To: <20180925145622.29959-2-Jason@zx2c4.com>
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-2-Jason@zx2c4.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 28 Sep 2018 10:28:14 +0200
+Message-ID: <CAKv+Gu9e35+AyktmSq9qeNE0LR83_yrEEB3DiQv0bmyArivqRQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 01/23] asm: simd context helper API
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to async updates of cursors by using the new atomic
-interface for that.
+On 25 September 2018 at 16:56, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> Sometimes it's useful to amortize calls to XSAVE/XRSTOR and the related
+> FPU/SIMD functions over a number of calls, because FPU restoration is
+> quite expensive. This adds a simple header for carrying out this pattern:
+>
+>     simd_context_t simd_context;
+>
+>     simd_get(&simd_context);
+>     while ((item = get_item_from_queue()) != NULL) {
+>         encrypt_item(item, simd_context);
+>         simd_relax(&simd_context);
+>     }
+>     simd_put(&simd_context);
+>
+> The relaxation step ensures that we don't trample over preemption, and
+> the get/put API should be a familiar paradigm in the kernel.
+>
+> On the other end, code that actually wants to use SIMD instructions can
+> accept this as a parameter and check it via:
+>
+>    void encrypt_item(struct item *item, simd_context_t *simd_context)
+>    {
+>        if (item->len > LARGE_FOR_SIMD && simd_use(simd_context))
+>            wild_simd_code(item);
+>        else
+>            boring_scalar_code(item);
+>    }
+>
+> The actual XSAVE happens during simd_use (and only on the first time),
+> so that if the context is never actually used, no performance penalty is
+> hit.
+>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> Cc: Samuel Neves <sneves@dei.uc.pt>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Greg KH <gregkh@linuxfoundation.org>
+> Cc: linux-arch@vger.kernel.org
+> ---
+>  arch/alpha/include/asm/Kbuild      |  5 ++-
+>  arch/arc/include/asm/Kbuild        |  1 +
+>  arch/arm/include/asm/simd.h        | 63 ++++++++++++++++++++++++++++++
+>  arch/arm64/include/asm/simd.h      | 51 +++++++++++++++++++++---
+>  arch/c6x/include/asm/Kbuild        |  3 +-
+>  arch/h8300/include/asm/Kbuild      |  3 +-
+>  arch/hexagon/include/asm/Kbuild    |  1 +
+>  arch/ia64/include/asm/Kbuild       |  1 +
+>  arch/m68k/include/asm/Kbuild       |  1 +
+>  arch/microblaze/include/asm/Kbuild |  1 +
+>  arch/mips/include/asm/Kbuild       |  1 +
+>  arch/nds32/include/asm/Kbuild      |  7 ++--
+>  arch/nios2/include/asm/Kbuild      |  1 +
+>  arch/openrisc/include/asm/Kbuild   |  7 ++--
+>  arch/parisc/include/asm/Kbuild     |  1 +
+>  arch/powerpc/include/asm/Kbuild    |  3 +-
+>  arch/riscv/include/asm/Kbuild      |  3 +-
+>  arch/s390/include/asm/Kbuild       |  3 +-
+>  arch/sh/include/asm/Kbuild         |  1 +
+>  arch/sparc/include/asm/Kbuild      |  1 +
+>  arch/um/include/asm/Kbuild         |  3 +-
+>  arch/unicore32/include/asm/Kbuild  |  1 +
+>  arch/x86/include/asm/simd.h        | 44 ++++++++++++++++++++-
+>  arch/xtensa/include/asm/Kbuild     |  1 +
+>  include/asm-generic/simd.h         | 20 ++++++++++
+>  include/linux/simd.h               | 28 +++++++++++++
+>  26 files changed, 234 insertions(+), 21 deletions(-)
+>  create mode 100644 arch/arm/include/asm/simd.h
+>  create mode 100644 include/linux/simd.h
+>
+> diff --git a/arch/alpha/include/asm/Kbuild b/arch/alpha/include/asm/Kbuild
+> index 0580cb8c84b2..07b2c1025d34 100644
+> --- a/arch/alpha/include/asm/Kbuild
+> +++ b/arch/alpha/include/asm/Kbuild
+> @@ -2,14 +2,15 @@
+>
+>
+>  generic-y += compat.h
+> +generic-y += current.h
+>  generic-y += exec.h
+>  generic-y += export.h
+>  generic-y += fb.h
+>  generic-y += irq_work.h
+> +generic-y += kprobes.h
+>  generic-y += mcs_spinlock.h
+>  generic-y += mm-arch-hooks.h
+>  generic-y += preempt.h
+>  generic-y += sections.h
+> +generic-y += simd.h
+>  generic-y += trace_clock.h
+> -generic-y += current.h
+> -generic-y += kprobes.h
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-Hi,
+Given that this patch applies to all architectures at once, it is
+probably better to drop the unrelated reordering hunks to avoid
+conflicts.
 
-This is a second version of the patch to add async-plane update support
-to the Rockchip driver.
+> diff --git a/arch/arc/include/asm/Kbuild b/arch/arc/include/asm/Kbuild
+> index feed50ce89fa..a7f4255f1649 100644
+> --- a/arch/arc/include/asm/Kbuild
+> +++ b/arch/arc/include/asm/Kbuild
+> @@ -22,6 +22,7 @@ generic-y += parport.h
+>  generic-y += pci.h
+>  generic-y += percpu.h
+>  generic-y += preempt.h
+> +generic-y += simd.h
+>  generic-y += topology.h
+>  generic-y += trace_clock.h
+>  generic-y += user.h
+> diff --git a/arch/arm/include/asm/simd.h b/arch/arm/include/asm/simd.h
+> new file mode 100644
+> index 000000000000..263950dd69cb
+> --- /dev/null
+> +++ b/arch/arm/include/asm/simd.h
+> @@ -0,0 +1,63 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + *
+> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+> + */
+> +
+> +#include <linux/simd.h>
+> +#ifndef _ASM_SIMD_H
+> +#define _ASM_SIMD_H
+> +
+> +#ifdef CONFIG_KERNEL_MODE_NEON
+> +#include <asm/neon.h>
+> +
+> +static __must_check inline bool may_use_simd(void)
+> +{
+> +       return !in_interrupt();
+> +}
+> +
 
-The patch was tested on a Samsung Chromebook Plus in two ways.
+Remember this guy?
 
- 1. Running all igt kms_cursor_legacy and kms_atomic tests and see that
-there is no regression after the patch.
-    Note that before the patch, the following igt tests failed:
-    - basic-flip-before-cursor-legacy
-    - basic-flip-before-cursor-atomic
-    - cursor-vs-flip-legacy
-    - cursor-vs-flip-toggle
-    - flip-vs-cursor-atomic
-    - flip-vs-cursor-crc-atomic
-    - flip-vs-cursor-crc-legacy
-    - flip-vs-cursor-legacy
-    - flip-vs-cursor-crc-atomic
-    - flip-vs-cursor-crc-legacy
+https://marc.info/?l=linux-arch&m=149631094625176&w=2
 
-    With the patch applied only two tests don't fail (these two are
-expexted to not pass right now):
-    - flip-vs-cursor-crc-atomic
-    - flip-vs-cursor-crc-legac
+That was never merged, so let's get it right this time.
 
-    You can check full IGT test report here:
-    - Before the patch:
-        https://people.collabora.com/~eballetbo/tests/igt/samsung-chromebook-plus/igt-1.23/4.19-rc5/index.html
-    - With the patch applied:
-        https://people.collabora.com/~eballetbo/tests/igt/samsung-chromebook-plus/igt-1.23/4.19-rc5-async-update/index.html
+> +static inline void simd_get(simd_context_t *ctx)
+> +{
+> +       *ctx = may_use_simd() ? HAVE_FULL_SIMD : HAVE_NO_SIMD;
+> +}
+> +
+> +static inline void simd_put(simd_context_t *ctx)
+> +{
+> +       if (*ctx & HAVE_SIMD_IN_USE)
+> +               kernel_neon_end();
+> +       *ctx = HAVE_NO_SIMD;
+> +}
+> +
+> +static __must_check inline bool simd_use(simd_context_t *ctx)
+> +{
+> +       if (!(*ctx & HAVE_FULL_SIMD))
+> +               return false;
+> +       if (*ctx & HAVE_SIMD_IN_USE)
+> +               return true;
+> +       kernel_neon_begin();
+> +       *ctx |= HAVE_SIMD_IN_USE;
+> +       return true;
+> +}
+> +
+> +#else
+> +
+> +static __must_check inline bool may_use_simd(void)
+> +{
+> +       return false;
+> +}
+> +
+> +static inline void simd_get(simd_context_t *ctx)
+> +{
+> +       *ctx = HAVE_NO_SIMD;
+> +}
+> +
+> +static inline void simd_put(simd_context_t *ctx)
+> +{
+> +}
+> +
+> +static __must_check inline bool simd_use(simd_context_t *ctx)
+> +{
+> +       return false;
+> +}
+> +#endif
+> +
+> +#endif /* _ASM_SIMD_H */
+> diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
+> index 6495cc51246f..a45ff1600040 100644
+> --- a/arch/arm64/include/asm/simd.h
+> +++ b/arch/arm64/include/asm/simd.h
+> @@ -1,11 +1,10 @@
+> -/*
+> - * Copyright (C) 2017 Linaro Ltd. <ard.biesheuvel@linaro.org>
+> +/* SPDX-License-Identifier: GPL-2.0
+>   *
+> - * This program is free software; you can redistribute it and/or modify it
+> - * under the terms of the GNU General Public License version 2 as published
+> - * by the Free Software Foundation.
+> + * Copyright (C) 2017 Linaro Ltd. <ard.biesheuvel@linaro.org>
+> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+>   */
+>
+> +#include <linux/simd.h>
+>  #ifndef __ASM_SIMD_H
+>  #define __ASM_SIMD_H
+>
+> @@ -16,6 +15,8 @@
+>  #include <linux/types.h>
+>
+>  #ifdef CONFIG_KERNEL_MODE_NEON
+> +#include <asm/neon.h>
+> +#include <asm/simd.h>
+>
+>  DECLARE_PER_CPU(bool, kernel_neon_busy);
+>
+> @@ -40,9 +41,47 @@ static __must_check inline bool may_use_simd(void)
+>                 !this_cpu_read(kernel_neon_busy);
+>  }
+>
+> +static inline void simd_get(simd_context_t *ctx)
+> +{
+> +       *ctx = may_use_simd() ? HAVE_FULL_SIMD : HAVE_NO_SIMD;
+> +}
+> +
+> +static inline void simd_put(simd_context_t *ctx)
+> +{
+> +       if (*ctx & HAVE_SIMD_IN_USE)
+> +               kernel_neon_end();
+> +       *ctx = HAVE_NO_SIMD;
+> +}
+> +
+> +static __must_check inline bool simd_use(simd_context_t *ctx)
+> +{
+> +       if (!(*ctx & HAVE_FULL_SIMD))
+> +               return false;
+> +       if (*ctx & HAVE_SIMD_IN_USE)
+> +               return true;
+> +       kernel_neon_begin();
+> +       *ctx |= HAVE_SIMD_IN_USE;
+> +       return true;
+> +}
+> +
+>  #else /* ! CONFIG_KERNEL_MODE_NEON */
+>
+> -static __must_check inline bool may_use_simd(void) {
+> +static __must_check inline bool may_use_simd(void)
+> +{
+> +       return false;
+> +}
+> +
+> +static inline void simd_get(simd_context_t *ctx)
+> +{
+> +       *ctx = HAVE_NO_SIMD;
+> +}
+> +
+> +static inline void simd_put(simd_context_t *ctx)
+> +{
+> +}
+> +
+> +static __must_check inline bool simd_use(simd_context_t *ctx)
+> +{
+>         return false;
+>  }
+>
+> diff --git a/arch/c6x/include/asm/Kbuild b/arch/c6x/include/asm/Kbuild
+> index 33a2c94fed0d..22f3d8333c74 100644
+> --- a/arch/c6x/include/asm/Kbuild
+> +++ b/arch/c6x/include/asm/Kbuild
+> @@ -5,8 +5,8 @@ generic-y += compat.h
+>  generic-y += current.h
+>  generic-y += device.h
+>  generic-y += div64.h
+> -generic-y += dma.h
+>  generic-y += dma-mapping.h
+> +generic-y += dma.h
+>  generic-y += emergency-restart.h
+>  generic-y += exec.h
+>  generic-y += extable.h
+> @@ -30,6 +30,7 @@ generic-y += pgalloc.h
+>  generic-y += preempt.h
+>  generic-y += segment.h
+>  generic-y += serial.h
+> +generic-y += simd.h
+>  generic-y += tlbflush.h
+>  generic-y += topology.h
+>  generic-y += trace_clock.h
+> diff --git a/arch/h8300/include/asm/Kbuild b/arch/h8300/include/asm/Kbuild
+> index a5d0b2991f47..f5c2f12d593e 100644
+> --- a/arch/h8300/include/asm/Kbuild
+> +++ b/arch/h8300/include/asm/Kbuild
+> @@ -8,8 +8,8 @@ generic-y += current.h
+>  generic-y += delay.h
+>  generic-y += device.h
+>  generic-y += div64.h
+> -generic-y += dma.h
+>  generic-y += dma-mapping.h
+> +generic-y += dma.h
+>  generic-y += emergency-restart.h
+>  generic-y += exec.h
+>  generic-y += extable.h
+> @@ -39,6 +39,7 @@ generic-y += preempt.h
+>  generic-y += scatterlist.h
+>  generic-y += sections.h
+>  generic-y += serial.h
+> +generic-y += simd.h
+>  generic-y += sizes.h
+>  generic-y += spinlock.h
+>  generic-y += timex.h
+> diff --git a/arch/hexagon/include/asm/Kbuild b/arch/hexagon/include/asm/Kbuild
+> index dd2fd9c0d292..217d4695fd8a 100644
+> --- a/arch/hexagon/include/asm/Kbuild
+> +++ b/arch/hexagon/include/asm/Kbuild
+> @@ -29,6 +29,7 @@ generic-y += rwsem.h
+>  generic-y += sections.h
+>  generic-y += segment.h
+>  generic-y += serial.h
+> +generic-y += simd.h
+>  generic-y += sizes.h
+>  generic-y += topology.h
+>  generic-y += trace_clock.h
+> diff --git a/arch/ia64/include/asm/Kbuild b/arch/ia64/include/asm/Kbuild
+> index 557bbc8ba9f5..41c5ebdf79e5 100644
+> --- a/arch/ia64/include/asm/Kbuild
+> +++ b/arch/ia64/include/asm/Kbuild
+> @@ -4,6 +4,7 @@ generic-y += irq_work.h
+>  generic-y += mcs_spinlock.h
+>  generic-y += mm-arch-hooks.h
+>  generic-y += preempt.h
+> +generic-y += simd.h
+>  generic-y += trace_clock.h
+>  generic-y += vtime.h
+>  generic-y += word-at-a-time.h
+> diff --git a/arch/m68k/include/asm/Kbuild b/arch/m68k/include/asm/Kbuild
+> index a4b8d3331a9e..73898dd1a4d0 100644
+> --- a/arch/m68k/include/asm/Kbuild
+> +++ b/arch/m68k/include/asm/Kbuild
+> @@ -19,6 +19,7 @@ generic-y += mm-arch-hooks.h
+>  generic-y += percpu.h
+>  generic-y += preempt.h
+>  generic-y += sections.h
+> +generic-y += simd.h
+>  generic-y += spinlock.h
+>  generic-y += topology.h
+>  generic-y += trace_clock.h
+> diff --git a/arch/microblaze/include/asm/Kbuild b/arch/microblaze/include/asm/Kbuild
+> index 569ba9e670c1..7a877eea99d3 100644
+> --- a/arch/microblaze/include/asm/Kbuild
+> +++ b/arch/microblaze/include/asm/Kbuild
+> @@ -25,6 +25,7 @@ generic-y += parport.h
+>  generic-y += percpu.h
+>  generic-y += preempt.h
+>  generic-y += serial.h
+> +generic-y += simd.h
+>  generic-y += syscalls.h
+>  generic-y += topology.h
+>  generic-y += trace_clock.h
+> diff --git a/arch/mips/include/asm/Kbuild b/arch/mips/include/asm/Kbuild
+> index 58351e48421e..e8868e0fb2c3 100644
+> --- a/arch/mips/include/asm/Kbuild
+> +++ b/arch/mips/include/asm/Kbuild
+> @@ -16,6 +16,7 @@ generic-y += qrwlock.h
+>  generic-y += qspinlock.h
+>  generic-y += sections.h
+>  generic-y += segment.h
+> +generic-y += simd.h
+>  generic-y += trace_clock.h
+>  generic-y += unaligned.h
+>  generic-y += user.h
+> diff --git a/arch/nds32/include/asm/Kbuild b/arch/nds32/include/asm/Kbuild
+> index dbc4e5422550..603c1d020620 100644
+> --- a/arch/nds32/include/asm/Kbuild
+> +++ b/arch/nds32/include/asm/Kbuild
+> @@ -7,14 +7,14 @@ generic-y += bug.h
+>  generic-y += bugs.h
+>  generic-y += checksum.h
+>  generic-y += clkdev.h
+> -generic-y += cmpxchg.h
+>  generic-y += cmpxchg-local.h
+> +generic-y += cmpxchg.h
+>  generic-y += compat.h
+>  generic-y += cputime.h
+>  generic-y += device.h
+>  generic-y += div64.h
+> -generic-y += dma.h
+>  generic-y += dma-mapping.h
+> +generic-y += dma.h
+>  generic-y += emergency-restart.h
+>  generic-y += errno.h
+>  generic-y += exec.h
+> @@ -46,14 +46,15 @@ generic-y += sections.h
+>  generic-y += segment.h
+>  generic-y += serial.h
+>  generic-y += shmbuf.h
+> +generic-y += simd.h
+>  generic-y += sizes.h
+>  generic-y += stat.h
+>  generic-y += switch_to.h
+>  generic-y += timex.h
+>  generic-y += topology.h
+>  generic-y += trace_clock.h
+> -generic-y += xor.h
+>  generic-y += unaligned.h
+>  generic-y += user.h
+>  generic-y += vga.h
+>  generic-y += word-at-a-time.h
+> +generic-y += xor.h
+> diff --git a/arch/nios2/include/asm/Kbuild b/arch/nios2/include/asm/Kbuild
+> index 8fde4fa2c34f..571a9d9ad107 100644
+> --- a/arch/nios2/include/asm/Kbuild
+> +++ b/arch/nios2/include/asm/Kbuild
+> @@ -33,6 +33,7 @@ generic-y += preempt.h
+>  generic-y += sections.h
+>  generic-y += segment.h
+>  generic-y += serial.h
+> +generic-y += simd.h
+>  generic-y += spinlock.h
+>  generic-y += topology.h
+>  generic-y += trace_clock.h
+> diff --git a/arch/openrisc/include/asm/Kbuild b/arch/openrisc/include/asm/Kbuild
+> index eb87cd8327c8..5e9f2f4c4d39 100644
+> --- a/arch/openrisc/include/asm/Kbuild
+> +++ b/arch/openrisc/include/asm/Kbuild
+> @@ -28,12 +28,13 @@ generic-y += module.h
+>  generic-y += pci.h
+>  generic-y += percpu.h
+>  generic-y += preempt.h
+> -generic-y += qspinlock_types.h
+> -generic-y += qspinlock.h
+> -generic-y += qrwlock_types.h
+>  generic-y += qrwlock.h
+> +generic-y += qrwlock_types.h
+> +generic-y += qspinlock.h
+> +generic-y += qspinlock_types.h
+>  generic-y += sections.h
+>  generic-y += segment.h
+> +generic-y += simd.h
+>  generic-y += string.h
+>  generic-y += switch_to.h
+>  generic-y += topology.h
+> diff --git a/arch/parisc/include/asm/Kbuild b/arch/parisc/include/asm/Kbuild
+> index 2013d639e735..97970b4d05ab 100644
+> --- a/arch/parisc/include/asm/Kbuild
+> +++ b/arch/parisc/include/asm/Kbuild
+> @@ -17,6 +17,7 @@ generic-y += percpu.h
+>  generic-y += preempt.h
+>  generic-y += seccomp.h
+>  generic-y += segment.h
+> +generic-y += simd.h
+>  generic-y += topology.h
+>  generic-y += trace_clock.h
+>  generic-y += user.h
+> diff --git a/arch/powerpc/include/asm/Kbuild b/arch/powerpc/include/asm/Kbuild
+> index 3196d227e351..64290f48e733 100644
+> --- a/arch/powerpc/include/asm/Kbuild
+> +++ b/arch/powerpc/include/asm/Kbuild
+> @@ -4,7 +4,8 @@ generic-y += irq_regs.h
+>  generic-y += irq_work.h
+>  generic-y += local64.h
+>  generic-y += mcs_spinlock.h
+> +generic-y += msi.h
+>  generic-y += preempt.h
+>  generic-y += rwsem.h
+> +generic-y += simd.h
+>  generic-y += vtime.h
+> -generic-y += msi.h
+> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
+> index efdbe311e936..6669b7374c0a 100644
+> --- a/arch/riscv/include/asm/Kbuild
+> +++ b/arch/riscv/include/asm/Kbuild
+> @@ -5,9 +5,9 @@ generic-y += compat.h
+>  generic-y += cputime.h
+>  generic-y += device.h
+>  generic-y += div64.h
+> -generic-y += dma.h
+>  generic-y += dma-contiguous.h
+>  generic-y += dma-mapping.h
+> +generic-y += dma.h
+>  generic-y += emergency-restart.h
+>  generic-y += errno.h
+>  generic-y += exec.h
+> @@ -46,6 +46,7 @@ generic-y += setup.h
+>  generic-y += shmbuf.h
+>  generic-y += shmparam.h
+>  generic-y += signal.h
+> +generic-y += simd.h
+>  generic-y += socket.h
+>  generic-y += sockios.h
+>  generic-y += stat.h
+> diff --git a/arch/s390/include/asm/Kbuild b/arch/s390/include/asm/Kbuild
+> index e3239772887a..7a26dc6ce815 100644
+> --- a/arch/s390/include/asm/Kbuild
+> +++ b/arch/s390/include/asm/Kbuild
+> @@ -7,9 +7,9 @@ generated-y += unistd_nr.h
+>  generic-y += asm-offsets.h
+>  generic-y += cacheflush.h
+>  generic-y += device.h
+> +generic-y += div64.h
+>  generic-y += dma-contiguous.h
+>  generic-y += dma-mapping.h
+> -generic-y += div64.h
+>  generic-y += emergency-restart.h
+>  generic-y += export.h
+>  generic-y += fb.h
+> @@ -22,6 +22,7 @@ generic-y += mcs_spinlock.h
+>  generic-y += mm-arch-hooks.h
+>  generic-y += preempt.h
+>  generic-y += rwsem.h
+> +generic-y += simd.h
+>  generic-y += trace_clock.h
+>  generic-y += unaligned.h
+>  generic-y += word-at-a-time.h
+> diff --git a/arch/sh/include/asm/Kbuild b/arch/sh/include/asm/Kbuild
+> index 6a5609a55965..8e64ff35a933 100644
+> --- a/arch/sh/include/asm/Kbuild
+> +++ b/arch/sh/include/asm/Kbuild
+> @@ -16,6 +16,7 @@ generic-y += percpu.h
+>  generic-y += preempt.h
+>  generic-y += rwsem.h
+>  generic-y += serial.h
+> +generic-y += simd.h
+>  generic-y += sizes.h
+>  generic-y += trace_clock.h
+>  generic-y += xor.h
+> diff --git a/arch/sparc/include/asm/Kbuild b/arch/sparc/include/asm/Kbuild
+> index 410b263ef5c8..72b9e08fb350 100644
+> --- a/arch/sparc/include/asm/Kbuild
+> +++ b/arch/sparc/include/asm/Kbuild
+> @@ -17,5 +17,6 @@ generic-y += msi.h
+>  generic-y += preempt.h
+>  generic-y += rwsem.h
+>  generic-y += serial.h
+> +generic-y += simd.h
+>  generic-y += trace_clock.h
+>  generic-y += word-at-a-time.h
+> diff --git a/arch/um/include/asm/Kbuild b/arch/um/include/asm/Kbuild
+> index b10dde6cb793..d37288b08dd2 100644
+> --- a/arch/um/include/asm/Kbuild
+> +++ b/arch/um/include/asm/Kbuild
+> @@ -16,15 +16,16 @@ generic-y += io.h
+>  generic-y += irq_regs.h
+>  generic-y += irq_work.h
+>  generic-y += kdebug.h
+> +generic-y += kprobes.h
+>  generic-y += mcs_spinlock.h
+>  generic-y += mm-arch-hooks.h
+>  generic-y += param.h
+>  generic-y += pci.h
+>  generic-y += percpu.h
+>  generic-y += preempt.h
+> +generic-y += simd.h
+>  generic-y += switch_to.h
+>  generic-y += topology.h
+>  generic-y += trace_clock.h
+>  generic-y += word-at-a-time.h
+>  generic-y += xor.h
+> -generic-y += kprobes.h
+> diff --git a/arch/unicore32/include/asm/Kbuild b/arch/unicore32/include/asm/Kbuild
+> index bfc7abe77905..98a908720bbd 100644
+> --- a/arch/unicore32/include/asm/Kbuild
+> +++ b/arch/unicore32/include/asm/Kbuild
+> @@ -27,6 +27,7 @@ generic-y += preempt.h
+>  generic-y += sections.h
+>  generic-y += segment.h
+>  generic-y += serial.h
+> +generic-y += simd.h
+>  generic-y += sizes.h
+>  generic-y += syscalls.h
+>  generic-y += topology.h
+> diff --git a/arch/x86/include/asm/simd.h b/arch/x86/include/asm/simd.h
+> index a341c878e977..4aad7f158dcb 100644
+> --- a/arch/x86/include/asm/simd.h
+> +++ b/arch/x86/include/asm/simd.h
+> @@ -1,4 +1,11 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0
+> + *
+> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+> + */
+> +
+> +#include <linux/simd.h>
+> +#ifndef _ASM_SIMD_H
+> +#define _ASM_SIMD_H
+>
+>  #include <asm/fpu/api.h>
+>
+> @@ -10,3 +17,38 @@ static __must_check inline bool may_use_simd(void)
+>  {
+>         return irq_fpu_usable();
+>  }
+> +
+> +static inline void simd_get(simd_context_t *ctx)
+> +{
+> +#if !defined(CONFIG_UML)
+> +       *ctx = may_use_simd() ? HAVE_FULL_SIMD : HAVE_NO_SIMD;
+> +#else
+> +       *ctx = HAVE_NO_SIMD;
+> +#endif
+> +}
+> +
+> +static inline void simd_put(simd_context_t *ctx)
+> +{
+> +#if !defined(CONFIG_UML)
+> +       if (*ctx & HAVE_SIMD_IN_USE)
+> +               kernel_fpu_end();
+> +#endif
+> +       *ctx = HAVE_NO_SIMD;
+> +}
+> +
+> +static __must_check inline bool simd_use(simd_context_t *ctx)
+> +{
+> +#if !defined(CONFIG_UML)
+> +       if (!(*ctx & HAVE_FULL_SIMD))
+> +               return false;
+> +       if (*ctx & HAVE_SIMD_IN_USE)
+> +               return true;
+> +       kernel_fpu_begin();
+> +       *ctx |= HAVE_SIMD_IN_USE;
+> +       return true;
+> +#else
+> +       return false;
+> +#endif
+> +}
+> +
+> +#endif /* _ASM_SIMD_H */
+> diff --git a/arch/xtensa/include/asm/Kbuild b/arch/xtensa/include/asm/Kbuild
+> index 82c756431b49..7950f359649d 100644
+> --- a/arch/xtensa/include/asm/Kbuild
+> +++ b/arch/xtensa/include/asm/Kbuild
+> @@ -24,6 +24,7 @@ generic-y += percpu.h
+>  generic-y += preempt.h
+>  generic-y += rwsem.h
+>  generic-y += sections.h
+> +generic-y += simd.h
+>  generic-y += topology.h
+>  generic-y += trace_clock.h
+>  generic-y += word-at-a-time.h
+> diff --git a/include/asm-generic/simd.h b/include/asm-generic/simd.h
+> index d0343d58a74a..b3dd61ac010e 100644
+> --- a/include/asm-generic/simd.h
+> +++ b/include/asm-generic/simd.h
+> @@ -1,5 +1,9 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>
+> +#include <linux/simd.h>
+> +#ifndef _ASM_SIMD_H
+> +#define _ASM_SIMD_H
+> +
+>  #include <linux/hardirq.h>
+>
+>  /*
+> @@ -13,3 +17,19 @@ static __must_check inline bool may_use_simd(void)
+>  {
+>         return !in_interrupt();
+>  }
+> +
+> +static inline void simd_get(simd_context_t *ctx)
+> +{
+> +       *ctx = HAVE_NO_SIMD;
+> +}
+> +
+> +static inline void simd_put(simd_context_t *ctx)
+> +{
+> +}
+> +
+> +static __must_check inline bool simd_use(simd_context_t *ctx)
+> +{
+> +       return false;
+> +}
+> +
+> +#endif /* _ASM_SIMD_H */
+> diff --git a/include/linux/simd.h b/include/linux/simd.h
+> new file mode 100644
+> index 000000000000..33bba21012ff
+> --- /dev/null
+> +++ b/include/linux/simd.h
+> @@ -0,0 +1,28 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + *
+> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+> + */
+> +
+> +#ifndef _SIMD_H
+> +#define _SIMD_H
+> +
+> +typedef enum {
+> +       HAVE_NO_SIMD = 1 << 0,
+> +       HAVE_FULL_SIMD = 1 << 1,
+> +       HAVE_SIMD_IN_USE = 1 << 31
+> +} simd_context_t;
+> +
+> +#include <linux/sched.h>
+> +#include <asm/simd.h>
+> +
+> +static inline void simd_relax(simd_context_t *ctx)
+> +{
+> +#ifdef CONFIG_PREEMPT
+> +       if ((*ctx & HAVE_SIMD_IN_USE) && need_resched()) {
+> +               simd_put(ctx);
+> +               simd_get(ctx);
+> +       }
+> +#endif
 
- 2. Running weston using the atomic API.
+Could we return a bool here indicating whether we rescheduled or not?
+In some cases, we could pass that into the asm code as a 'reload'
+param, allowing repeated loads of key schedules, round constant tables
+or S-boxes to be elided.
 
-Best regards,
-  Enric
-
-Changes in v2:
-- Change the framebuffer as well to cover jumpy cursor when hovering
-  text boxes or hyperlink. (Tomasz)
-- Use the PSR inhibit mechanism when accessing VOP hardware instead of
-  PSR flushing (Tomasz)
-
-Changes in v1:
-- Rebased on top of drm-misc
-- In async_check call drm_atomic_helper_check_plane_state to check that
-  the desired plane is valid and update various bits of derived state
-  (clipped coordinates etc.)
-- In async_check allow to configure new scaling in the fast path.
-- In async_update force to flush all registered PSR encoders.
-- In async_update call atomic_update directly.
-- In async_update call vop_cfg_done needed to set the vop registers and take effect.
-
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c  | 36 ------------
- drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 37 ++++++++++++
- drivers/gpu/drm/rockchip/rockchip_drm_psr.h |  3 +
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 62 +++++++++++++++++++++
- 4 files changed, 102 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-index 7b6f7227d476..aec9a997de13 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-@@ -128,24 +128,6 @@ rockchip_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 	return ERR_PTR(ret);
- }
- 
--static void
--rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state)
--{
--	struct drm_crtc *crtc;
--	struct drm_crtc_state *crtc_state;
--	struct drm_encoder *encoder;
--	u32 encoder_mask = 0;
--	int i;
--
--	for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
--		encoder_mask |= crtc_state->encoder_mask;
--		encoder_mask |= crtc->state->encoder_mask;
--	}
--
--	drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
--		rockchip_drm_psr_inhibit_get(encoder);
--}
--
- uint32_t rockchip_drm_get_vblank_ns(struct drm_display_mode *mode)
- {
- 	uint64_t vblank_time = mode->vtotal - mode->vdisplay;
-@@ -156,24 +138,6 @@ uint32_t rockchip_drm_get_vblank_ns(struct drm_display_mode *mode)
- 	return vblank_time;
- }
- 
--static void
--rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state)
--{
--	struct drm_crtc *crtc;
--	struct drm_crtc_state *crtc_state;
--	struct drm_encoder *encoder;
--	u32 encoder_mask = 0;
--	int i;
--
--	for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
--		encoder_mask |= crtc_state->encoder_mask;
--		encoder_mask |= crtc->state->encoder_mask;
--	}
--
--	drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
--		rockchip_drm_psr_inhibit_put(encoder);
--}
--
- static void
- rockchip_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
- {
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-index 79d00d861a31..1635485955d3 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-@@ -13,6 +13,7 @@
-  */
- 
- #include <drm/drmP.h>
-+#include <drm/drm_atomic.h>
- #include <drm/drm_crtc_helper.h>
- 
- #include "rockchip_drm_drv.h"
-@@ -109,6 +110,42 @@ int rockchip_drm_psr_inhibit_put(struct drm_encoder *encoder)
- }
- EXPORT_SYMBOL(rockchip_drm_psr_inhibit_put);
- 
-+void rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state)
-+{
-+	struct drm_crtc *crtc;
-+	struct drm_crtc_state *crtc_state;
-+	struct drm_encoder *encoder;
-+	u32 encoder_mask = 0;
-+	int i;
-+
-+	for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
-+		encoder_mask |= crtc_state->encoder_mask;
-+		encoder_mask |= crtc->state->encoder_mask;
-+	}
-+
-+	drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
-+		rockchip_drm_psr_inhibit_get(encoder);
-+}
-+EXPORT_SYMBOL(rockchip_drm_psr_inhibit_get_state);
-+
-+void rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state)
-+{
-+	struct drm_crtc *crtc;
-+	struct drm_crtc_state *crtc_state;
-+	struct drm_encoder *encoder;
-+	u32 encoder_mask = 0;
-+	int i;
-+
-+	for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
-+		encoder_mask |= crtc_state->encoder_mask;
-+		encoder_mask |= crtc->state->encoder_mask;
-+	}
-+
-+	drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
-+		rockchip_drm_psr_inhibit_put(encoder);
-+}
-+EXPORT_SYMBOL(rockchip_drm_psr_inhibit_put_state);
-+
- /**
-  * rockchip_drm_psr_inhibit_get - acquire PSR inhibit on given encoder
-  * @encoder: encoder to obtain the PSR encoder
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-index 860c62494496..25350ba3237b 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-@@ -20,6 +20,9 @@ void rockchip_drm_psr_flush_all(struct drm_device *dev);
- int rockchip_drm_psr_inhibit_put(struct drm_encoder *encoder);
- int rockchip_drm_psr_inhibit_get(struct drm_encoder *encoder);
- 
-+void rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state);
-+void rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state);
-+
- int rockchip_drm_psr_register(struct drm_encoder *encoder,
- 			int (*psr_set)(struct drm_encoder *, bool enable));
- void rockchip_drm_psr_unregister(struct drm_encoder *encoder);
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 6642c2b9bb3c..682ce40166f7 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -819,10 +819,72 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 	spin_unlock(&vop->reg_lock);
- }
- 
-+static int vop_plane_atomic_async_check(struct drm_plane *plane,
-+					struct drm_plane_state *state)
-+{
-+	struct vop_win *vop_win = to_vop_win(plane);
-+	const struct vop_win_data *win = vop_win->data;
-+	int min_scale = win->phy->scl ? FRAC_16_16(1, 8) :
-+					DRM_PLANE_HELPER_NO_SCALING;
-+	int max_scale = win->phy->scl ? FRAC_16_16(8, 1) :
-+					DRM_PLANE_HELPER_NO_SCALING;
-+	struct drm_crtc_state *crtc_state;
-+	int ret;
-+
-+	if (plane != state->crtc->cursor)
-+		return -EINVAL;
-+
-+	if (!plane->state)
-+		return -EINVAL;
-+
-+	if (!plane->state->fb)
-+		return -EINVAL;
-+
-+	if (state->state)
-+		crtc_state = drm_atomic_get_existing_crtc_state(state->state,
-+								state->crtc);
-+	else /* Special case for asynchronous cursor updates. */
-+		crtc_state = plane->crtc->state;
-+
-+	ret = drm_atomic_helper_check_plane_state(plane->state,
-+						  crtc_state,
-+						  min_scale, max_scale,
-+						  true, true);
-+	return ret;
-+}
-+
-+static void vop_plane_atomic_async_update(struct drm_plane *plane,
-+					  struct drm_plane_state *new_state)
-+{
-+	struct vop *vop = to_vop(plane->state->crtc);
-+
-+	plane->state->crtc_x = new_state->crtc_x;
-+	plane->state->crtc_y = new_state->crtc_y;
-+	plane->state->crtc_h = new_state->crtc_h;
-+	plane->state->crtc_w = new_state->crtc_w;
-+	plane->state->src_x = new_state->src_x;
-+	plane->state->src_y = new_state->src_y;
-+	plane->state->src_h = new_state->src_h;
-+	plane->state->src_w = new_state->src_w;
-+
-+	drm_atomic_set_fb_for_plane(plane->state, new_state->fb);
-+
-+	if (vop->is_enabled) {
-+		rockchip_drm_psr_inhibit_get_state(new_state->state);
-+		vop_plane_atomic_update(plane, plane->state);
-+		spin_lock(&vop->reg_lock);
-+		vop_cfg_done(vop);
-+		spin_unlock(&vop->reg_lock);
-+		rockchip_drm_psr_inhibit_put_state(new_state->state);
-+	}
-+}
-+
- static const struct drm_plane_helper_funcs plane_helper_funcs = {
- 	.atomic_check = vop_plane_atomic_check,
- 	.atomic_update = vop_plane_atomic_update,
- 	.atomic_disable = vop_plane_atomic_disable,
-+	.atomic_async_check = vop_plane_atomic_async_check,
-+	.atomic_async_update = vop_plane_atomic_async_update,
- };
- 
- static const struct drm_plane_funcs vop_plane_funcs = {
--- 
-2.19.0
-
+> +}
+> +
+> +#endif /* _SIMD_H */
+> --
+> 2.19.0
+>
