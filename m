@@ -2,143 +2,120 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F322C004D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C45DC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6A61206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:52:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACDFE20657
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:57:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgdN6oFp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6A61206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZL6cV10"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACDFE20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbeI2GSe (ORCPT
+        id S1727248AbeI2GYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 02:18:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726804AbeI2GSe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 02:18:34 -0400
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1817206B6;
-        Fri, 28 Sep 2018 23:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538178746;
-        bh=NNcSMbNweO7EpssOcZLVZT/m+fF9WWksGyYkkEvn98A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=BgdN6oFpW3xvIgeraIGo13ygm3KLOkF1Ue6E/r75Aqubn0C9Fwutar+cMXtS/LepM
-         p0U9Y6fQ7HZ9q/UG2AfX7We0d1npAWT3MDJ/IugLjd8EcknUOFZi9vD3Z8pmB6yR/w
-         Pj4+uS0xe/OfJsar2ZmwTeyhcPsDCuSRybuAmM/w=
-Received: by mail-qt1-f179.google.com with SMTP id z13-v6so8538014qts.5;
-        Fri, 28 Sep 2018 16:52:25 -0700 (PDT)
-X-Gm-Message-State: ABuFfoiVKYNdif5A7QIOOaz2LjfC+oVxMu5jok8ixes51zLYE2T2F+R1
-        mL5FQtgooxCLJR3gbc9aactdmOFI71zvCYvAag==
-X-Google-Smtp-Source: ACcGV6345Uffgku8+ez+1yCefTbOEYHtwnrI/ojhFSN26ST+JNlFEHjnGP/lDWshZKM+ImJSjYHTdNKv/zKYPyYtx1I=
-X-Received: by 2002:ac8:190e:: with SMTP id t14-v6mr702816qtj.327.1538178745050;
- Fri, 28 Sep 2018 16:52:25 -0700 (PDT)
+        Sat, 29 Sep 2018 02:24:03 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40685 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726804AbeI2GYD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 02:24:03 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n31-v6so5504619pgm.7;
+        Fri, 28 Sep 2018 16:57:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=merjcaXvPn8QqP1t7YSsSDLOqBWwKRj7EU/0b0XzcAU=;
+        b=GZL6cV10MNt6qI8uP/LxseIZoZc8pBRlLuKUVz5IXm0AZA2atQHy2c8JT/wc6EpZqY
+         yDPpWRVP+hBCAWLBtbvFeJKA7+zAfy8M3U6vbYcAnHELOJ6I+v1/5zScBRIWfISPyc1x
+         Kx57dh04+GiN84JPTlxztFfpAY7+5dkN65xO1AK0SgZH4k3n7kmkqxU4EFWH4OtFAM8U
+         Y99YwFxfaJrfGTZl05Vm9d7casq+AUAnUpb8f0U7StrurvcJbx9zQrLhPteVoqf2XlJ9
+         osPzWR7pnC255VScEHcENjqdu+EH97Zh8F5c2WRL/K635XH9CwWbqxcuwirNpC55iJwS
+         Pu6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=merjcaXvPn8QqP1t7YSsSDLOqBWwKRj7EU/0b0XzcAU=;
+        b=B3/LaFkEuY6hP0OtU+WJKfB/Fh8KIu7aaggQvBTeLwkYGxUYKbKfcg6Yg95FStgisc
+         Xh7bOaUr7vcvV1VzmuFAr68ymvR0OzQmLNQZs/rVEeqLQY+qpWrGGgaIJYzQ4iWlyRkU
+         aeZVhQAz/W/BEq/QsVcg3+J947/DFdw8iqiKAZKRiIwDoG7n6eVkygWhlyL0tod1ynNe
+         Gmk+FXueM+pC71lPFG/7aGj4F86pi98y7uhDDEut8M41OsiDIdbUggTeeSyI56P1ZUXY
+         B7HpkoOAstyaP7LNzx5EqW4Yjz6RiGenkZp6BFT6UzmFi2j8JkJiMY4rWuVtj1w45FK1
+         cutw==
+X-Gm-Message-State: ABuFfohiCqQ5V12yCNovo2XCscRsIZUlKeMYzQedMnNS7trZxYAIEtPs
+        A1Jyb+tHLSc4Q8WVn2EGk04=
+X-Google-Smtp-Source: ACcGV60drRwU0TJIKawZXPgSsB0dA8o37iwD9AFKBbIa4Vc3ooVN5Amjx1BUNdSbh5oXQ3tWz2zbnw==
+X-Received: by 2002:a65:6249:: with SMTP id q9-v6mr792656pgv.392.1538179074034;
+        Fri, 28 Sep 2018 16:57:54 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id n80-v6sm14941664pfb.95.2018.09.28.16.57.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Sep 2018 16:57:53 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 16:57:51 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [git pull] Input updates for v4.19-rc5
+Message-ID: <20180928235751.GA182564@dtor-ws>
 MIME-Version: 1.0
-References: <20180918082422.13050-1-songqiang1304521@gmail.com>
- <20180918082422.13050-2-songqiang1304521@gmail.com> <20180922160523.16b399fc@archlinux>
- <20180926224618.GA32126@bogus> <20180928093618.GA24536@Eros>
-In-Reply-To: <20180928093618.GA24536@Eros>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 28 Sep 2018 18:52:13 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLpNiGdK9hWTGWZwgbgRr8DNF=XvKGUx=oS2jTJ61yhFg@mail.gmail.com>
-Message-ID: <CAL_JsqLpNiGdK9hWTGWZwgbgRr8DNF=XvKGUx=oS2jTJ61yhFg@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] iio: proximity: vl53l0x: add interrupt support
-To:     Song Qiang <songqiang1304521@gmail.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Matt Ranostay <matt.ranostay@konsulko.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andreas Klinger <ak@it-klinger.de>, linux-iio@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 4:36 AM Song Qiang <songqiang1304521@gmail.com> wrote:
->
-> On Wed, Sep 26, 2018 at 05:46:18PM -0500, Rob Herring wrote:
-> > On Sat, Sep 22, 2018 at 04:05:23PM +0100, Jonathan Cameron wrote:
-> > > On Tue, 18 Sep 2018 16:24:22 +0800
-> > > Song Qiang <songqiang1304521@gmail.com> wrote:
-> > >
-> > > > The first version of this driver issues a measuring request and polling
-> > > > for a status register in the device for measuring completes.
-> > > > vl53l0x support configuring GPIO1 on it to generate interrupt to
-> > > > indicate that new measurement is ready. This patch adds support for
-> > > > using this mechanisim to reduce cpu cost.
-> > > >
-> > > > Signed-off-by: Song Qiang <songqiang1304521@gmail.com>
-> > > Hi Song.
-> > >
-> > > Looks correct in principal but a few things to tidy up before
-> > > this is ready to apply.
-> > >
-> > > Also we have an unrelated change in here to check the devices ID.
-> > > That should be in it's own patch.
-> > >
-> > > Thanks,
-> > >
-> > > Jonathan
-> > > > ---
-> > > >  .../bindings/iio/proximity/vl53l0x.txt        |  14 +-
-> >
-> > This should have been split with the complete binding in one patch
-> > rather than piecemeal driver feature by feature.
-> >
->
-> Hi Rob,
->
-> A few days ago when I was submitting this driver, I didn't do it very
-> well, the function of this driver is limited. I added interrupt support
-> the next day after you acked my first patch. I thought it's not polite
-> to add something after someone acked that patch, so I send the interrupt
-> support as a second patch. The first patch is merged to togreg now, but
-> this doesn't. I don't know when can I add new functions to the code that
-> just merged to togreg branch, could you offer some suggestions?
+Hi Greg,
 
-You just needed to state why you didn't add a ack. But really, just
-don't send things except as RFC until they are "done".
+Please pull from:
 
-What to do next depends on Jonathan and whether he wants a follow-up
-patch or he will drop the first one.
+	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
 
-> > > >  drivers/iio/proximity/vl53l0x-i2c.c           | 135 +++++++++++++++---
-> > > >  2 files changed, 129 insertions(+), 20 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt b/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
-> > > > index ab9a9539fec4..40290f8dd70f 100644
-> > > > --- a/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
-> > > > +++ b/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
-> > > > @@ -4,9 +4,21 @@ Required properties:
-> > > >   - compatible: must be "st,vl53l0x-i2c"
-> >
-> > Is there more than one interface on this device, such as SPI? If not,
-> > then '-i2c' should be dropped.
-> >
->
-> Yes, there is a CCI(Camera Control Interface) for communication.
+to receive updates for the input subsystem. Just a few driver fixes.
 
-Isn't CCI just a subset of I2C? I should clarify my question is
-whether there's more than 1 mutually exclusive control interface (as
-many devices have control and data interfaces) where you could have 2
-different drivers. A common example are devices with I2C and SPI
-interfaces.
+Changelog:
+---------
 
-Rob
+Aaron Ma (1):
+      Input: elantech - enable middle button of touchpad on ThinkPad P72
+
+Andreas Schwab (1):
+      Input: atakbd - fix Atari keymap
+
+Anson Huang (1):
+      Input: egalax_ts - add system wakeup support
+
+Michael Schmitz (1):
+      Input: atakbd - fix Atari CapsLock behaviour
+
+Peter Hutterer (1):
+      Input: uinput - allow for max == min during input_absinfo validation
+
+Song Qiang (1):
+      Input: gpio-keys - fix a documentation index issue
+
+Diffstat:
+--------
+
+ .../devicetree/bindings/input/gpio-keys.txt        |  2 +-
+ drivers/input/keyboard/atakbd.c                    | 74 ++++++++--------------
+ drivers/input/misc/uinput.c                        |  2 +-
+ drivers/input/mouse/elantech.c                     |  2 +
+ drivers/input/touchscreen/egalax_ts.c              |  6 ++
+ 5 files changed, 38 insertions(+), 48 deletions(-)
+
+Thanks.
+
+
+-- 
+Dmitry
