@@ -6,82 +6,92 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C886CC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC3AC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92C7E2172C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:33:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C7E2172C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+	by mail.kernel.org (Postfix) with ESMTP id 6548220684
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:35:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6548220684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729205AbeI1Ozp (ORCPT
+        id S1729044AbeI1O5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 10:55:45 -0400
-Received: from mail.us.es ([193.147.175.20]:35168 "EHLO mail.us.es"
+        Fri, 28 Sep 2018 10:57:50 -0400
+Received: from foss.arm.com ([217.140.101.70]:44742 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726440AbeI1Ozo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 10:55:44 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id 58D726231E
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:33:03 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 465A2DA8F6
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:33:03 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id 363C3DA87E; Fri, 28 Sep 2018 10:33:03 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 5E95ADA73F;
-        Fri, 28 Sep 2018 10:33:01 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Fri, 28 Sep 2018 10:33:01 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (sys.soleta.eu [212.170.55.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 23B984265A5D;
-        Fri, 28 Sep 2018 10:33:01 +0200 (CEST)
-Date:   Fri, 28 Sep 2018 10:33:00 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Flavio Leitner <fbl@redhat.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfilter: check if the socket netns is correct.
-Message-ID: <20180928083300.q6xz2vbibm7jipws@salvia>
-References: <20180927204629.GA4680@roeck-us.net>
- <20180927225824.GT2702@plex.lan>
+        id S1726586AbeI1O5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 10:57:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B752C7A9;
+        Fri, 28 Sep 2018 01:35:11 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 753B03F5D3;
+        Fri, 28 Sep 2018 01:35:07 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 09:35:05 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Subject: Re: [PATCH v7 02/14] sched/cpufreq: Prepare schedutil for Energy
+ Aware Scheduling
+Message-ID: <20180928083503.h4jbdgk3dqpaufzb@queper01-lin>
+References: <20180912091309.7551-1-quentin.perret@arm.com>
+ <CAJZ5v0gL+NurA8UcN5oweqwxfgS10HgO1Zjh_cod4_Sr5nWQHQ@mail.gmail.com>
+ <20180927121749.urdqtayq6ll4k7qn@queper01-lin>
+ <2417577.QmA9JEQx1z@aspire.rjw.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180927225824.GT2702@plex.lan>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <2417577.QmA9JEQx1z@aspire.rjw.lan>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 07:58:24PM -0300, Flavio Leitner wrote:
+Hi Rafael,
+
+On Friday 28 Sep 2018 at 10:23:42 (+0200), Rafael J. Wysocki wrote:
 [...]
-> From a5f927e7f1368d753f87cb978d630d786d5adb62 Mon Sep 17 00:00:00 2001
-> From: Flavio Leitner <fbl@redhat.com>
-> Date: Thu, 27 Sep 2018 19:36:28 -0300
-> Subject: [PATCH] xt_socket: check sk before checking for netns.
-> 
-> Only check for the network namespace if the socket is available.
+> OK, so please document the enum type.
 
-Applied.
+Will do.
 
-Please, Cc netfilter-devel@vger.kernel.org next time for your
-netfilter patches.
+[...]
+> Documenting things properly is absolutely required.
 
-Thanks.
+Understood.
+
+> The other changes suggested by me are rather straightforward, so why would it
+> be a problem to make them right away if you agree to make them?
+
+Right, if I need to spin a v8 for doc purpose anyway, I guess I can do
+the other small fixes at the same time.
+
+I'll wait a bit before sending the update to see if others have some
+feedback. It's probably a bit late for 4.20 anyway ... Or is it not ?
+
+Thanks,
+Quentin
