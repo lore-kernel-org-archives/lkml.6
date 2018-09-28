@@ -6,106 +6,132 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEC9ECE561
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 303DBC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 524E4206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:53:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524E4206B8
+	by mail.kernel.org (Postfix) with ESMTP id 02E46206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02E46206B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeI2ASg (ORCPT
+        id S1727359AbeI2ASi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 20:18:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45568 "EHLO mx1.redhat.com"
+        Fri, 28 Sep 2018 20:18:38 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51758 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbeI2ASe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 20:18:34 -0400
+        id S1726657AbeI2ASh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 20:18:37 -0400
 Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0D0B180F95;
-        Fri, 28 Sep 2018 17:53:41 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9C23530820C7;
+        Fri, 28 Sep 2018 17:53:44 +0000 (UTC)
 Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 64C042010D95;
-        Fri, 28 Sep 2018 17:53:40 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E95CF2010DAA;
+        Fri, 28 Sep 2018 17:53:41 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         Will Deacon <will.deacon@arm.com>
 Cc:     linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: [PATCH 2/5] locking/lockdep: Eliminate redundant irqs check in __lock_acquire()
-Date:   Fri, 28 Sep 2018 13:53:18 -0400
-Message-Id: <1538157201-29173-3-git-send-email-longman@redhat.com>
+Subject: [PATCH 4/5] locking/lockdep: Make class->ops a percpu counter
+Date:   Fri, 28 Sep 2018 13:53:20 -0400
+Message-Id: <1538157201-29173-5-git-send-email-longman@redhat.com>
 In-Reply-To: <1538157201-29173-1-git-send-email-longman@redhat.com>
 References: <1538157201-29173-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 28 Sep 2018 17:53:41 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 28 Sep 2018 17:53:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The static __lock_acquire() function has only two callers:
+A sizable portion of the CPU cycles spent on the __lock_acquire() is used
+up by the atomic increment of class->ops stat counter. By changing it
+to a per-cpu counter, we can reduce the amount of cacheline contention
+on the class structure when multiple CPUs are trying to acquire locks
+of the same class simultaneously.
 
- 1) lock_acquire()
- 2) reacquire_held_locks()
-
-In lock_acquire(), raw_local_irq_save() is called before hand. So
-irqs must have been disabled. So the check
-
-	DEBUG_LOCKS_WARN_ON(!irqs_disabled())
-
-is kind of redundant in thise case. So move the above check
-to reacquire_held_locks() to eliminate redundant code in the
-lock_acquire path.
+This patch also fixes a bug in the increment code as the counter is of
+the unsigned long type, but atomic_inc() was used to increment it.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- kernel/locking/lockdep.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ include/linux/lockdep.h  |  2 +-
+ kernel/locking/lockdep.c | 18 ++++++++++++++----
+ 2 files changed, 15 insertions(+), 5 deletions(-)
 
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index b0d0b51..f8bf705 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -102,7 +102,7 @@ struct lock_class {
+ 	/*
+ 	 * Statistics counter:
+ 	 */
+-	unsigned long			ops;
++	unsigned long __percpu		*pops;
+ 
+ 	const char			*name;
+ 	int				name_version;
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 8f9de7c..add0468 100644
+index ca002c0..7a0ed1d 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -3192,6 +3192,10 @@ void lockdep_init_map(struct lockdep_map *lock, const char *name,
- /*
-  * This gets called for every mutex_lock*()/spin_lock*() operation.
-  * We maintain the dependency maps and validate the locking attempt:
-+ *
-+ * The callers must make sure that IRQs are disabled before calling it.
-+ * otherwise we could get an interrupt which would want to take locks,
-+ * which would end up in lockdep again.
+@@ -139,6 +139,7 @@ static inline int debug_locks_off_graph_unlock(void)
   */
- static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 			  int trylock, int read, int check, int hardirqs_off,
-@@ -3209,14 +3213,6 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 	if (unlikely(!debug_locks))
- 		return 0;
+ unsigned long nr_lock_classes;
+ static struct lock_class lock_classes[MAX_LOCKDEP_KEYS];
++static DEFINE_PER_CPU(unsigned long [MAX_LOCKDEP_KEYS], lock_class_ops);
  
--	/*
--	 * Lockdep should run with IRQs disabled, otherwise we could
--	 * get an interrupt which would want to take locks, which would
--	 * end up in lockdep and have you got a head-ache already?
--	 */
--	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
--		return 0;
--
- 	if (!prove_locking || lock->key == &__lockdep_no_validate__)
- 		check = 0;
- 
-@@ -3473,6 +3469,9 @@ static int reacquire_held_locks(struct task_struct *curr, unsigned int depth,
+ static inline struct lock_class *hlock_class(struct held_lock *hlock)
  {
- 	struct held_lock *hlock;
- 
-+	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
-+		return 0;
+@@ -784,11 +785,14 @@ static bool assign_lock_key(struct lockdep_map *lock)
+ 		dump_stack();
+ 		return NULL;
+ 	}
+-	class = lock_classes + nr_lock_classes++;
++	class = lock_classes + nr_lock_classes;
+ 	debug_atomic_inc(nr_unused_locks);
+ 	class->key = key;
+ 	class->name = lock->name;
+ 	class->subclass = subclass;
++	class->pops = &lock_class_ops[nr_lock_classes];
++	nr_lock_classes++;
 +
- 	for (hlock = curr->held_locks + idx; idx < depth; idx++, hlock++) {
- 		if (!__lock_acquire(hlock->instance,
- 				    hlock_class(hlock)->subclass,
+ 	INIT_LIST_HEAD(&class->lock_entry);
+ 	INIT_LIST_HEAD(&class->locks_before);
+ 	INIT_LIST_HEAD(&class->locks_after);
+@@ -1387,11 +1391,15 @@ static inline int usage_match(struct lock_list *entry, void *bit)
+ 
+ static void print_lock_class_header(struct lock_class *class, int depth)
+ {
+-	int bit;
++	int bit, cpu;
++	unsigned long ops = 0UL;
++
++	for_each_possible_cpu(cpu)
++		ops += *per_cpu(class->pops, cpu);
+ 
+ 	printk("%*s->", depth, "");
+ 	print_lock_name(class);
+-	printk(KERN_CONT " ops: %lu", class->ops);
++	printk(KERN_CONT " ops: %lu", ops);
+ 	printk(KERN_CONT " {\n");
+ 
+ 	for (bit = 0; bit < LOCK_USAGE_STATES; bit++) {
+@@ -3226,7 +3234,9 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 		if (!class)
+ 			return 0;
+ 	}
+-	atomic_inc((atomic_t *)&class->ops);
++
++	__this_cpu_inc(*class->pops);
++
+ 	if (very_verbose(class)) {
+ 		printk("\nacquire class [%px] %s", class->key, class->name);
+ 		if (class->name_version > 1)
 -- 
 1.8.3.1
 
