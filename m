@@ -2,84 +2,118 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 646FCC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B467C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26F4C20685
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:33:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26F4C20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E276920685
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:35:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bnStTyta"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E276920685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbeI2A6o convert rfc822-to-8bit (ORCPT
+        id S1726703AbeI2BAC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 20:58:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36204 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726145AbeI2A6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 20:58:44 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E3977C0578FA;
-        Fri, 28 Sep 2018 18:33:41 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A41584DA8E;
-        Fri, 28 Sep 2018 18:33:40 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] debugobjects: Disable lockdep tracking of
- debugobjects internal locks
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Arnd Bergmann <arnd@arndb.de>, chuhu@redhat.com
-References: <1537886469-18227-1-git-send-email-longman@redhat.com>
- <1537886469-18227-3-git-send-email-longman@redhat.com>
- <20180925153241.GD29985@hirez.programming.kicks-ass.net>
- <e3275861-6fbe-70c6-c005-2bfe80cbba0b@redhat.com>
- <20180925163150.GE29985@hirez.programming.kicks-ass.net>
- <e6dc78dc-fdd5-81b7-9a6a-c3e0f02286cc@redhat.com>
-Organization: Red Hat
-Message-ID: <52e6048f-c361-e6bc-7840-a55bbd30416f@redhat.com>
-Date:   Fri, 28 Sep 2018 14:33:40 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Fri, 28 Sep 2018 21:00:02 -0400
+Received: from mail-lj1-f181.google.com ([209.85.208.181]:41254 "EHLO
+        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbeI2BAB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 21:00:01 -0400
+Received: by mail-lj1-f181.google.com with SMTP id y17-v6so6741732ljy.8
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 11:34:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=HAD3WdQFUOdp9MFdr8NXoZ6oAgspMLPbOgqExa7wGgQ=;
+        b=bnStTytaZYTADujWGvCtxJUiW8+b8AQ/79cr+RRf4FRd5yM0fr4l5CFD97iwwyfvMy
+         KFPVO6UuS+jZDjAzcMf3lQIaf/SSKmOB7tOyt2Gy6by18Nkb+f9uLw0hAL44uHVQy2zo
+         XX8oHcoMR4jNHzwhHlqAiXUQTg8ckYuI5GpWBrBbGtSO+BtLNgdmBXW2p4LAKPVLS5yz
+         l6eKdyXKzelU48qGnNtak1Y3I/wJ0qewATrg08RU1bsE7Qp7Qk5FpsDRHMa9UTnOdSYq
+         BIelcvc1FXZ27LjTa3dG4+I/G1gXta+vSpsah4HwZztWcO9LhTPY3fqn2s5v2u89X3a6
+         Oydg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=HAD3WdQFUOdp9MFdr8NXoZ6oAgspMLPbOgqExa7wGgQ=;
+        b=Y7G3hBceS7VWnWok0iawrywlOinFRRviy9HYr+P6UqRFqeXKD1dNSDZ8ESjsaXBH0Q
+         F8ci6sj6GHCGQH/lWgTDJ1dk5RHB3FYPfnWmWhpdKaEr6yEHLsATEf20ctjBKMZnzO76
+         sIRqnjUUH1/1SCP2d62zwfwPr3x/gCo/TX1FJfH3hznwIee4ASS/5LBmkj32XbPKEZI4
+         YHDC0oXfDFiWxKq7ZohPZBh8F50AierzvHBxhMvDR8ImrdGGcZPyE2i4DFklLovhyW5o
+         wlO0QIG2Jf9x3X0thE1hX+bjBLRpQi9ficRWXNg37zzTKbXg2r8q40V9AFqTyC1PkPfI
+         inIw==
+X-Gm-Message-State: ABuFfojdkFgMg1KdgC1X2qCzgHdNAASP7Na1CJ9mEAty4fOw+zLmgEfY
+        zB6hHEfUW0ZHVrxCpHNo67dY707HC9rU1w6RYcoy+g==
+X-Google-Smtp-Source: ACcGV61xEepsqUhx3fphZNHESpKX8/39/zKFGi8+8NcJda0DDex57ukiNEGsQjASbFn0e0JBrYy7tSusOrIUdMECemc=
+X-Received: by 2002:a2e:9883:: with SMTP id b3-v6mr4104319ljj.171.1538159696820;
+ Fri, 28 Sep 2018 11:34:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <e6dc78dc-fdd5-81b7-9a6a-c3e0f02286cc@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 28 Sep 2018 18:33:42 +0000 (UTC)
+Received: by 2002:a19:278e:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 11:34:55
+ -0700 (PDT)
+In-Reply-To: <20180926203355.rfmezs3lbmlcvv3x@gmail.com>
+References: <87zhwbj8xe.fsf@redhat.com> <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
+ <20180921231545.GC2966@thunk.org> <CAKON4Oy3=7H+9WxzK-xK=T7t7rN7L3_PsJ+cdUWTjiKN=BGSRg@mail.gmail.com>
+ <d364f33b-fbb4-57e0-78f5-302cd5c9050f@petrovitsch.priv.at>
+ <CAMjeLr-a4cCrs0cF0aBRoeeXXLwiM835BXqhP9ZoeLB8=w=YKw@mail.gmail.com>
+ <8c18dcc5-9028-672f-1449-359ac3d73592@petrovitsch.priv.at>
+ <CAMjeLr-j1XhZJgcvsP5z6SHCDmbUA=rMyfvQpX40qKBK+2ojbw@mail.gmail.com>
+ <9be16b08-7aa9-d42e-24c0-f054af39b78a@petrovitsch.priv.at>
+ <CAMjeLr_cx5+96NGedcYB-MjugA53_j+tksP0Na8W9GY-PAhoZA@mail.gmail.com> <20180926203355.rfmezs3lbmlcvv3x@gmail.com>
+From:   "\\0xDynamite" <dreamingforward@gmail.com>
+Date:   Fri, 28 Sep 2018 13:34:55 -0500
+Message-ID: <CAMjeLr8fQbD1akKBYLO3Me7BkF_10+XHYPT9hQG5Nekqvt_GNw@mail.gmail.com>
+Subject: Re: Code of Conduct: Let's revamp it.
+To:     Joey Pabalinas <joeypabalinas@gmail.com>,
+        "\\0xDynamite" <dreamingforward@gmail.com>,
+        Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
+        "jonsmirl@gmail.com" <jonsmirl@gmail.com>,
+        Theodore Tso <tytso@mit.edu>, fche@redhat.com,
+        riel@surriel.com, ec429@cantab.net,
+        Olof Johansson <olof@lixom.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/25/2018 12:36 PM, Waiman Long wrote:
-> On 09/25/2018 12:31 PM, Peter Zijlstra wrote:
->> Also, where is the performance benefit here. The normal lock_acquire
->> path doesn't change gobal state (it will not see new lock ordering in
->> 99%+ of the cases).
+>> You did it again.  You changed words.  I said intended for the public,
+>> and you ended your sentence with "intended to be published".
 >>
->> Typically we only push the lock on the task local lock stack, compute
->> the new hash, and do the hash lookup, find it already exists and return.
+>> Like it or not, both the law and English grammar have ambiguities.
+>> People put up with them because they share a common intuition (in a
+>> lot of cases) of what each other means.
 >>
->> So what is the expensive part, and can we do something about that?
-> I will need to do some experimentation to find out. Will update this
-> thread with my finding.
+>> If you share a birthday card with your personal love note inscribed
+>> and the birthday girl sends it around to everyone at the party, have
+>> you been violated?  She might argue:  how did you expect it to remain
+>> private if you knew there were several people invited to the birthday
+>> party?
 >
+> English does have oddities, agreed.  However, open source code is
+> definitely intended for the public as well.
 
-I have sent out a patchset on improving lockdep performance that
-hopefully will help to alleviate the problems that I saw. I still have
-other ideas about further changes I want to investigate, but that will
-wait until I am done with the current lockdep patchset.
+I think your wording is a bit sloppy.  As an engineer, I might publish
+my designs, but do I intend them for the general public?  Only if I'm
+in some kind of teacher-mode where I hope the public can learn from my
+designs.  However, RMS started GNU with the idea of a COMMUNITY -- a
+particular community:  one of fellow coders.
 
--Longman
+If others learn from the code by its nature as open source, that
+doesn't mean the license implies that it is INTENDED for the public,
+just that it was OPEN to it.  It is the same difference between
+*marketing* your business and just "setting up shop" with an open
+door.  Once you've marketed the business, you've created an implied
+contract of "intent to deliver".
 
+Subtle, but significant, difference.
+
+Mark
