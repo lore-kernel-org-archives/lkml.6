@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EDEC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 361BEC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:48:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA06321746
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0CE121746
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:48:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NOu5gWVY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA06321746
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IkRQaACF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0CE121746
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbeI1NKT (ORCPT
+        id S1729015AbeI1NKZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 09:10:19 -0400
-Received: from mail-pg1-f173.google.com ([209.85.215.173]:42593 "EHLO
-        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbeI1NKT (ORCPT
+        Fri, 28 Sep 2018 09:10:25 -0400
+Received: from mail-pg1-f181.google.com ([209.85.215.181]:36552 "EHLO
+        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbeI1NKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 09:10:19 -0400
-Received: by mail-pg1-f173.google.com with SMTP id i4-v6so3116249pgq.9
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 23:48:05 -0700 (PDT)
+        Fri, 28 Sep 2018 09:10:24 -0400
+Received: by mail-pg1-f181.google.com with SMTP id f18-v6so222557pgv.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 23:48:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SFnjB8OZwPCkN/cF+2XtrYPYnwjUqNvYjNJ7CAWxc5o=;
-        b=NOu5gWVY0xlMpxIclXnxjYR6bEPT29dU0ZklbtpXSY5Ypq8qCjjvQMi2SgJVNEJjEP
-         YjEWlJKbjI/9XcoxOVGYN5Q1V5+A2MHBdjMa4vVEreAt9quWR2PwMrjes2N0vi6SeW66
-         3wKxN/9fSi1KQdhlDw7G7H7TV99dhfTxGOYoQ=
+        bh=GkP10Cl5MP4nxVesufI8pOCjA8cWm/ywpOEKb9ueudc=;
+        b=IkRQaACFLS0lvXgRp3LiGqnUuHtzQt5Y9M7/3TW1yIkM8S+qtrisT+jwz/Z+t5Mtt6
+         EwAYVYbezOlY0HkVAPEh813zdFagQ85MAMNEph2blAqjyEocIINOAM1T8nVMc2kK+wSs
+         lYdOPoCwYjU5W4wPToawZjAor310uRDhp2A/c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SFnjB8OZwPCkN/cF+2XtrYPYnwjUqNvYjNJ7CAWxc5o=;
-        b=CTL/ijlo/RkZY0JqLWhgAAbLSK+IwWNCcES6+edTCpjS6eaVEyEWlLZBW/VHfN/z2o
-         Kw0+H/O+w+R+8u3aS3g7MDvwdJ5t2KYtgtnSjUeulML4zX6ga8DtRf/zNk+DQ4XwuFKr
-         8jhkrEEr8QiXJooLgSCVYBKOIBvL305uP812maGviDPfc7lZI9HJ+xg9xFcgwxwDMq24
-         NcEi+txtJddS4UA0OjJ7SAlaUTqdSv28Cqr8LMsRl0oUjpdsLTL5d7M1mP3TwxjbZbP3
-         NH7dcwzSLRtJOWW7AEQo4uUzVMW2pCk/PgeUhlZWTn5lXeThNQu7PhtZwdcK2vfaoHWH
-         BwmQ==
-X-Gm-Message-State: ABuFfojfu0Q4c+g7yFToYnsWBKoBrIUvtF1B208nKLvrSmPiQqaQT8IC
-        NtcWHinmCLQ2QpMUSMDgK4Ngkw==
-X-Google-Smtp-Source: ACcGV62wHSCQDbe2gCAXySgK0gjx4k7VnV1SvMRCcldq9IaLlCj1mgGONJsIMITlezJ/ohUP9yWyoA==
-X-Received: by 2002:aa7:8895:: with SMTP id l21-v6mr2833137pfo.74.1538117284863;
-        Thu, 27 Sep 2018 23:48:04 -0700 (PDT)
+        bh=GkP10Cl5MP4nxVesufI8pOCjA8cWm/ywpOEKb9ueudc=;
+        b=SfHHPyIT7EeRSfai41KXKyA6T5G0vf1sryjV+LLrVA/ENy8slDAv6dNgiwXkIU8PkW
+         1O8oTNf6KcN3ek8esbc0Sud/p4ApcAZTNv8WbvLHszaoM/nY2L3n3LYXcOL4KVDtQUV+
+         lffCbqadcNXAfO1hvycIW5mvEvdu8PqbVp9zQSjblSjiUY3Dy8b1fZNbjhV+CQLahaeI
+         ATmFMfGQxN2ZnGICAdUIny55Ea0QxyOalD+EnaUa8QP4Bu49z+aqURTm6N/D2BO38gwm
+         UO+2spYme+unNfbAQyA/nVQAWG0NzLnFAGrXWsBnhpxwPht6I438BiFfh1qaXQoifB/L
+         p25Q==
+X-Gm-Message-State: ABuFfogXfFEIwSc8uvhN90rDDDz/j/48a5+eEdd8mTeGZMG6qJL7p76z
+        04tkrVBlfHfRwnsgAmDatcY5nw==
+X-Google-Smtp-Source: ACcGV63YSylKyCjjqizFkyw8WfxTANncmJVizh2MBUkwGi/GB112j0mSsGtUxJMIwL8i7lNilwkwQA==
+X-Received: by 2002:a17:902:543:: with SMTP id 61-v6mr14871971plf.126.1538117289637;
+        Thu, 27 Sep 2018 23:48:09 -0700 (PDT)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id a1-v6sm9770651pfc.28.2018.09.27.23.48.03
+        by smtp.googlemail.com with ESMTPSA id e68-v6sm7165147pfg.93.2018.09.27.23.48.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 23:48:03 -0700 (PDT)
+        Thu, 27 Sep 2018 23:48:08 -0700 (PDT)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
         vgoyal@redhat.com, herbert@gondor.apana.org.au,
@@ -66,9 +66,9 @@ Cc:     prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
         kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
         AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v15 02/16] kexec_file: make kexec_image_post_load_cleanup_default() global
-Date:   Fri, 28 Sep 2018 15:48:27 +0900
-Message-Id: <20180928064841.14117-3-takahiro.akashi@linaro.org>
+Subject: [PATCH v15 03/16] s390, kexec_file: drop arch_kexec_mem_walk()
+Date:   Fri, 28 Sep 2018 15:48:28 +0900
+Message-Id: <20180928064841.14117-4-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180928064841.14117-1-takahiro.akashi@linaro.org>
 References: <20180928064841.14117-1-takahiro.akashi@linaro.org>
@@ -79,44 +79,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change this function from static to global so that arm64 can implement
-its own arch_kimage_file_post_load_cleanup() later using
-kexec_image_post_load_cleanup_default().
+Since s390 already knows where to locate buffers, calling
+arch_kexec_mem_walk() has no sense. So we can just drop it as kbuf->mem
+indicates this while all other architectures sets it to 0 initially.
+
+This change is a preparatory work for the next patch, where all the
+variant memory walks, either on system resource or memblock, will be
+put in one common place so that it will satisfy all the architectures'
+need.
 
 Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Acked-by: Dave Young <dyoung@redhat.com>
+Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Dave Young <dyoung@redhat.com>
 Cc: Vivek Goyal <vgoyal@redhat.com>
 Cc: Baoquan He <bhe@redhat.com>
 ---
- include/linux/kexec.h | 1 +
- kernel/kexec_file.c   | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ arch/s390/kernel/machine_kexec_file.c | 10 ----------
+ include/linux/kexec.h                 |  8 ++++++++
+ kernel/kexec_file.c                   |  4 ++++
+ 3 files changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-index 9e4e638fb505..49ab758f4d91 100644
---- a/include/linux/kexec.h
-+++ b/include/linux/kexec.h
-@@ -143,6 +143,7 @@ extern const struct kexec_file_ops * const kexec_file_loaders[];
- 
- int kexec_image_probe_default(struct kimage *image, void *buf,
- 			      unsigned long buf_len);
-+int kexec_image_post_load_cleanup_default(struct kimage *image);
- 
- /**
-  * struct kexec_buf - parameters for finding a place for a buffer in memory
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index c6a3b6851372..63c7ce1c0c3e 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -78,7 +78,7 @@ void * __weak arch_kexec_kernel_image_load(struct kimage *image)
- 	return kexec_image_load_default(image);
+diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
+index f413f57f8d20..32023b4f9dc0 100644
+--- a/arch/s390/kernel/machine_kexec_file.c
++++ b/arch/s390/kernel/machine_kexec_file.c
+@@ -134,16 +134,6 @@ int kexec_file_add_initrd(struct kimage *image, struct s390_load_data *data,
+ 	return ret;
  }
  
--static int kexec_image_post_load_cleanup_default(struct kimage *image)
-+int kexec_image_post_load_cleanup_default(struct kimage *image)
+-/*
+- * The kernel is loaded to a fixed location. Turn off kexec_locate_mem_hole
+- * and provide kbuf->mem by hand.
+- */
+-int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+-			int (*func)(struct resource *, void *))
+-{
+-	return 1;
+-}
+-
+ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+ 				     Elf_Shdr *section,
+ 				     const Elf_Shdr *relsec,
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 49ab758f4d91..f378cb786f1b 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -145,6 +145,14 @@ int kexec_image_probe_default(struct kimage *image, void *buf,
+ 			      unsigned long buf_len);
+ int kexec_image_post_load_cleanup_default(struct kimage *image);
+ 
++/*
++ * If kexec_buf.mem is set to this value, kexec_locate_mem_hole()
++ * will try to allocate free memory. Arch may overwrite it.
++ */
++#ifndef KEXEC_BUF_MEM_UNKNOWN
++#define KEXEC_BUF_MEM_UNKNOWN 0
++#endif
++
+ /**
+  * struct kexec_buf - parameters for finding a place for a buffer in memory
+  * @image:	kexec image in which memory to search.
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 63c7ce1c0c3e..0fcaa86219d1 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -534,6 +534,10 @@ int kexec_locate_mem_hole(struct kexec_buf *kbuf)
  {
- 	if (!image->fops || !image->fops->cleanup)
- 		return 0;
+ 	int ret;
+ 
++	/* Arch knows where to place */
++	if (kbuf->mem != KEXEC_BUF_MEM_UNKNOWN)
++		return 0;
++
+ 	ret = arch_kexec_walk_mem(kbuf, locate_mem_hole_callback);
+ 
+ 	return ret == 1 ? 0 : -EADDRNOTAVAIL;
 -- 
 2.19.0
 
