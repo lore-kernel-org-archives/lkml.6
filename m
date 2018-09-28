@@ -2,110 +2,74 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 451D3C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AE4C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC04021733
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:07:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC04021733
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id AEDA721754
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:10:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ur3eurF0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEDA721754
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbeI1H2m (ORCPT
+        id S1728377AbeI1HbR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 03:28:42 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:56355 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726060AbeI1H2l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 03:28:41 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1181642|-1;CH=blue;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03294;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.CwkpIo._1538096843;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CwkpIo._1538096843)
-          by smtp.aliyun-inc.com(10.147.41.178);
-          Fri, 28 Sep 2018 09:07:24 +0800
-Date:   Fri, 28 Sep 2018 09:07:23 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     akpm@linux-foundation.org, arnd@arndb.de,
-        daniel.lezcano@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, jason@lakedaemon.net,
-        marc.zyngier@arm.com, mark.rutland@arm.com,
-        mchehab+samsung@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
-        green.hu@gmail.com, palmer@sifive.com
-Subject: Re: [PATCH V5 23/30] dt-bindings: interrupt-controller: C-SKY SMP
- intc
-Message-ID: <20180928010721.GB4179@guoren-Inspiron-7460>
-References: <cover.1537789736.git.ren_guo@c-sky.com>
- <57888913907d6c22b23425ed9d4e5a79be5b2eff.1537789737.git.ren_guo@c-sky.com>
- <20180927165044.GA30320@bogus>
+        Fri, 28 Sep 2018 03:31:17 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:44157 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725972AbeI1HbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 03:31:17 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 7494aa7b;
+        Fri, 28 Sep 2018 00:51:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=eBmhDTw0W8Hg/+vYb4BCXZpKn0g=; b=ur3eur
+        F0DDP8esJVJSw0ODEyzryULYAww8hyz4jEPWDZJ5kU8QImElauI9lEKK/nnzZgc6
+        Lk8qnglOXLceKA1wHZU8YulPa/c1uck7SdJNGjF9tSdOPcDzMoIpvdZAXPW9MOPW
+        tg3uV/nFsB7cSHKGxNWWzfMVZrGX+n7xxXiBz8UWE09vmPfOV0wDEFui2EKtaKJt
+        IxqlWAHdsUp0/4zpoel7VFggcNBVs6xYtXh4Klmu7DsLyLd+4QscACq2HvtEoT55
+        HCoPWyjUr/UWvkB6osYykbSiFGs3IqE9xUk8vNX9OsgEtjFzoLO2bUSF//XSx8bM
+        wLwcNZXr0TqqKGjA==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c5e124a8 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Fri, 28 Sep 2018 00:51:24 +0000 (UTC)
+Received: by mail-oi1-f178.google.com with SMTP id a203-v6so3938723oib.0;
+        Thu, 27 Sep 2018 18:10:08 -0700 (PDT)
+X-Gm-Message-State: ABuFfoi0Yn3w/JZ0IsalU/pAy6WN+RUiSvhuRj8AfKsHNi39hXjj6e7V
+        U0Nnd5bFN1AOwcdmdNXtVHgsFBj7iqE2IggXu1Y=
+X-Google-Smtp-Source: ACcGV63Jl6oViHNv++naxecBlSdUtbCH6K9NBaUcYZh3sOp9IEoueCRKHqeXPysh6hbvn38L7hwdLaZpoK3goKympaU=
+X-Received: by 2002:aca:d4cd:: with SMTP id l196-v6mr4262718oig.15.1538097007668;
+ Thu, 27 Sep 2018 18:10:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180927165044.GA30320@bogus>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-24-Jason@zx2c4.com>
+ <20180927011526.GB1193@lunn.ch> <CAHmME9q7WRGF3TTRhhy0i_EB4ad2DaSD=tnHM92zfV4Cckyw=A@mail.gmail.com>
+In-Reply-To: <CAHmME9q7WRGF3TTRhhy0i_EB4ad2DaSD=tnHM92zfV4Cckyw=A@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Fri, 28 Sep 2018 03:09:56 +0200
+X-Gmail-Original-Message-ID: <CAHmME9q72YbkM5FsZMf-KR32pOXa6n=pHVYGnRmkxYk19tZ4CQ@mail.gmail.com>
+Message-ID: <CAHmME9q72YbkM5FsZMf-KR32pOXa6n=pHVYGnRmkxYk19tZ4CQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 23/23] net: WireGuard secure network tunnel
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 11:50:44AM -0500, Rob Herring wrote:
-> On Tue, Sep 25, 2018 at 07:39:26AM +0800, Guo Ren wrote:
-> >  - Dt-bindings doc about C-SKY Multi-processors interrupt controller.
-> > 
-> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> > ---
-> >  .../bindings/interrupt-controller/csky,mpintc.txt  | 40 ++++++++++++++++++++++
-> >  1 file changed, 40 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
-> > new file mode 100644
-> > index 0000000..9cdad74
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
-> > @@ -0,0 +1,40 @@
-> > +===========================================
-> > +C-SKY Multi-processors Interrupt Controller
-> > +===========================================
-> > +
-> > +C-SKY Multi-processors Interrupt Controller is designed for ck807/ck810/ck860
-> > +SMP soc, and it also could be used in non-SMP system.
-> > +
-> > +Interrupt number definition:
-> > +
-> > +  0-15  : software irq, and we use 15 as our IPI_IRQ.
-> > + 16-31  : private  irq, and we use 16 as the co-processor timer.
-> > + 31-1024: common irq for soc ip.
-> > +
-> > +=============================
-> > +intc node bindings definition
-> > +=============================
-> > +
-> > +	Description: Describes SMP interrupt controller
-> > +
-> > +	PROPERTIES
-> > +
-> > +	- compatible
-> > +		Usage: required
-> > +		Value type: <string>
-> > +		Definition: must be "csky,mpintc"
-> 
-> Only 1 version?
-Currently, one version. Only one csky,mpintc.
+On Fri, Sep 28, 2018 at 12:37 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> Will do. v7 will include the wg_ prefix.
 
-> 
-> This is fine for a fallback, but you should have an SoC specific 
-> compatible too in case there are any SoC specific errata/quirks.
-No SoC specific in fact currently. If necessary we could add it in future.
+$ nm *.o | while read a b c; do [[ $b == T ]] && echo $c; done | grep -v ^wg_
+cleanup_module
+init_module
 
-> 
-> > +	- interrupt-cells
-> 
-> Should be: #interrupt-cells
-Yes, I'll fix it.
+Success.
