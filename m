@@ -2,120 +2,182 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E56C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A64D0C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22BD2204FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:32:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63DEC20645
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:32:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="WvvO/4Mr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22BD2204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="W/deg7ad"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63DEC20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbeI1U4J (ORCPT
+        id S1729412AbeI1U4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:56:09 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:41116 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbeI1U4J (ORCPT
+        Fri, 28 Sep 2018 16:56:25 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42193 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728889AbeI1U4Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:56:09 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 96ACC10C0F6E;
-        Fri, 28 Sep 2018 07:32:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1538145125; bh=q1h9ENHygeE89lD6FfafBAdW7I3ApbO1f4FnbqGLh/Q=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=WvvO/4Mrh/MJFxE09QEOn1rdgG9XOhhaeADpN+Ne+81yi3h8nOGUWxQ5cliNjhMWC
-         BD6np+h6xycBypbI92w4w07oj8Q9/Hd5Vu0wNorTdCHb9nFbYLWdMHSJwG2mcZpIw1
-         6xAZXo8UxfzPMsocDUBTXZAxfnVHh3XftRda7azAdavwentXjeR4XGGnoZA2Qi0NbB
-         NwxXa4BxqHauQAfTA2HcaOZX8860nxTbimxM8mC9oDhLDnHY9gHAKShN0maE4rOZpC
-         2Oy3nTJArD7uGV9VMc2zUfu1wDuruNjbJri8K9Eug24d4OHKplYWK+tS2hs9G5pc5L
-         ItL4DcR3Y1XWQ==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 51FBF3F4E;
-        Fri, 28 Sep 2018 07:32:05 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Fri, 28 Sep 2018 07:32:04 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Fri,
- 28 Sep 2018 16:32:02 +0200
-From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-To:     "ville.syrjala@linux.intel.com" <ville.syrjala@linux.intel.com>,
-        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>
-CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexey.brodkin@synopsys.com" <alexey.brodkin@synopsys.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH] DRM: VBLANK: provide valid timestamp for EVENT_FLIP
-Thread-Topic: [PATCH] DRM: VBLANK: provide valid timestamp for EVENT_FLIP
-Thread-Index: AQHUVaTd72K6txZPUEmQwUCRbzZgK6UCoZWAgAMBogA=
-Date:   Fri, 28 Sep 2018 14:32:01 +0000
-Message-ID: <1538145120.5186.6.camel@synopsys.com>
-References: <20180926142535.17997-1-Eugeniy.Paltsev@synopsys.com>
-         <20180926163723.GW9144@intel.com>
-In-Reply-To: <20180926163723.GW9144@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.3.38]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <43575F86C0A4944BAA17EC090EFB7CF6@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Fri, 28 Sep 2018 16:56:25 -0400
+Received: by mail-wr1-f67.google.com with SMTP id b11-v6so6610756wru.9
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 07:32:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4tDKLPmuxUhe6l7qNGxjdkZP+rVlFN1lBKcvyX+xKF4=;
+        b=W/deg7adVipgFSEx2/Ez+cQMfUcY1EviszjIjTx+3/fVS+OB1jBJAWLFsbWE/aTbIG
+         SCE7an9tYnOQojlTHtfmF0mz2ijgb1JbGpbY+zFOMwlRH9gOYLdhA4TFAH5oAm5anTtB
+         FbJJRF+DSECKgKRXn08iUAYKgksOhbFBs1diUz/AOfsp1fiSHECTy23Lfur6rzZIadH9
+         iUyGF6Mvyg69jRt0WutmIOvcRebrNIE1X+mJzIqKXOFCS8u3GXQwpOYodzWfYv4xW2bJ
+         wMXr8Wd7iBkRzdiq0AIbJgMS3BNsMe+chZc+wREhm6qpT07xcvdhqxbphabf83YtPDeF
+         +nyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4tDKLPmuxUhe6l7qNGxjdkZP+rVlFN1lBKcvyX+xKF4=;
+        b=k2JHaR5Qm8OFlVyX35D2ahEoHmy78tIe1Q6aRSWFN/VvqedW9D2q+Ehk3H+meXtxd0
+         P4DhlBpF7z7UDy+aYf5BKYs9/zVwU2XCcz6V7y1LS/QNpau/0h7U/6PxVpDNdNnHn9bK
+         brmpYMkcLEZKL9Dfz0g3ZOGTxZzTTlGgYlhxGT5cHgiHgEoyNudNFi6PChsOZDPCxJPS
+         D8pyR1hU9xzzfhXvjwwGziY0vqTHHVt1ovMMGMv8+DSO17dQFpp9GOxChzNLzFelqm4I
+         1NvBEeZ27F+FUfe4lIrd0wR3qw4T+5kPVDopIZ3IGOnPYCRwWKDe2WpPxibteM+Jz5mP
+         waDw==
+X-Gm-Message-State: ABuFfoiVUb9kbRbV6gyrk88JovNO2Am0VDq4gjoull3Re6ZFFLmTYqAu
+        BcZJSp1clQSLCTyJL5PjNBy8htKjCgZxXz5eMo6Jmg==
+X-Google-Smtp-Source: ACcGV63tNspinjLKzmEMi8bz8871peTqTQRl0Gn78FoL6/K52z8k0XPw9c4SDDRPpHNh2Ukf/s8TACERWFUuhX/Trzk=
+X-Received: by 2002:adf:fdca:: with SMTP id i10-v6mr13384176wrs.276.1538145140437;
+ Fri, 28 Sep 2018 07:32:20 -0700 (PDT)
 MIME-Version: 1.0
+References: <20180928142816.4311-1-mjourdan@baylibre.com> <20180928142816.4311-2-mjourdan@baylibre.com>
+In-Reply-To: <20180928142816.4311-2-mjourdan@baylibre.com>
+From:   Maxime Jourdan <mjourdan@baylibre.com>
+Date:   Fri, 28 Sep 2018 16:32:09 +0200
+Message-ID: <CAMO6naws6gRXogL8MyGdz8rBivg7ZxLG1ZoPy0zff=rnHfKPQQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: media: add Amlogic Video Decoder Bindings
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTA5LTI2IGF0IDE5OjM3ICswMzAwLCBWaWxsZSBTeXJqw6Rsw6Qgd3JvdGU6
-DQo+IE9uIFdlZCwgU2VwIDI2LCAyMDE4IGF0IDA1OjI1OjM1UE0gKzAzMDAsIEV1Z2VuaXkgUGFs
-dHNldiB3cm90ZToNCj4gPiBJZiBkcml2ZXIvSFcgZG9lc24ndCBzdXBwb3J0IHZibGFuayBmdW5j
-dGlvbmFsaXR5IChmb3IgZXhhbXBsZQ0KPiA+IFVETCBkcml2ZXIsIEFSQ1BHVSBkcml2ZXIsIC4u
-Likgd2UgYWx3YXlzIGhhdmUgdmJsYW5rLT50aW1lID09IDAuDQo+ID4gSW4gcmVzdWx0IHdlIGFs
-d2F5cyBwcm92aWRlIHplcm8gdGltZXN0YW1wIGZvcg0KPiA+IERSTV9FVkVOVF9GTElQX0NPTVBM
-RVRFLiBUaGlzIGJyZWFrcyB1c2Vyc3BhY2UgYXBwcyAoZm9yIGV4YW1wbGUNCj4gPiB3ZXN0b24p
-IHdoaWNoIHJlbGllcyBvbiB0aW1lc3RhbXAgdmFsdWUuDQo+ID4gDQo+ID4gU2V0dXAgdGltZSB0
-byBwcm92aWRlIHZhbGlkIHRpbWVzdGFtcCBmb3IgRFJNX0VWRU5UX0ZMSVBfQ09NUExFVEUNCj4g
-PiBldmVudC4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBFdWdlbml5IFBhbHRzZXYgPEV1Z2Vu
-aXkuUGFsdHNldkBzeW5vcHN5cy5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9k
-cm1fdmJsYW5rLmMgfCA5ICsrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRp
-b25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fdmJsYW5r
-LmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX3ZibGFuay5jDQo+ID4gaW5kZXggMjhjZGNmNzZiNmY5
-Li4wZDE5YWNhNDg3ODIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV92Ymxh
-bmsuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fdmJsYW5rLmMNCj4gPiBAQCAtOTEx
-LDYgKzkxMSwxNSBAQCB2b2lkIGRybV9jcnRjX3NlbmRfdmJsYW5rX2V2ZW50KHN0cnVjdCBkcm1f
-Y3J0YyAqY3J0YywNCj4gPiAgDQo+ID4gIAlpZiAoZGV2LT5udW1fY3J0Y3MgPiAwKSB7DQo+IA0K
-PiBJZiB0aG9zZSBkcml2ZXJzIGRvbid0IHN1cHBvcnQgdmJsYW5rIHN0dWZmIHdoeSBhcmUgdGhl
-eSBjYWxsaW5nDQo+IGJsZHJtX3ZhbmtfaW5pdCgpIHcvIG51bV9jcnRjcyA+IDA/IElmIHRoZXkg
-ZGlkbid0IHRoZXknZCB0YWtlIHRoZQ0KPiBlbHNlIGJyYW5jaCB3aGljaCBhbHJlYWR5IGRvZXMg
-d2hhdCB5b3Ugd2FudC4NCg0KSG1tLi4uDQpBcyBJIGNhbiBzZWUgVURMIGNhbGwgZHJtX3ZibGFu
-a19pbml0KCkgd2l0aCBudW1fY3J0Y3MgPSAxIGJ1dCBVREwgSFcNCmRvZXNuJ3Qgc3VwcG9ydCB2
-YmxhbmsgYXQgYWxsLg0KSSBndWVzcyBJIG5lZWQgdG8gZml4IGl0Lg0KDQo+ID4gIAkJc2VxID0g
-ZHJtX3ZibGFua19jb3VudF9hbmRfdGltZShkZXYsIHBpcGUsICZub3cpOw0KPiA+ICsNCj4gPiAr
-CQkvKg0KPiA+ICsJCSAqIElmIGRyaXZlci9IVyBkb2Vzbid0IHN1cHBvcnQgdmJsYW5rIGZ1bmN0
-aW9uYWxpdHkgd2UNCj4gPiArCQkgKiBhbHdheXMgaGF2ZSB2YmxhbmstPnRpbWUgPT0gMC4gU2V0
-dXAgdGltZSB0byBwcm92aWRlIHZhbGlkDQo+ID4gKwkJICogdGltZXN0YW1wIGZvciBEUk1fRVZF
-TlRfRkxJUF9DT01QTEVURSBldmVudC4NCj4gPiArCQkgKi8NCj4gPiArCQlpZiAoIW5vdyAmJiBl
-LT5ldmVudC5iYXNlLnR5cGUgPT0gRFJNX0VWRU5UX0ZMSVBfQ09NUExFVEUpDQo+ID4gKwkJCW5v
-dyA9IGt0aW1lX2dldCgpOw0KPiA+ICsNCj4gPiAgCX0gZWxzZSB7DQo+ID4gIAkJc2VxID0gMDsN
-Cj4gPiAgDQo+ID4gLS0gDQo+ID4gMi4xNC40DQo+ID4gDQo+ID4gX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4gPiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-DQo+ID4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZw0KPiA+IGh0dHBzOi8vdXJsZGVm
-ZW5zZS5wcm9vZnBvaW50LmNvbS92Mi91cmw/dT1odHRwcy0zQV9fbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnX21haWxtYW5fbGlzdGluZm9fZHJpLTJEZGV2ZWwmZD1Ed0lEQXcmYz1EUEw2X1hfNkprWEZ4
-N0FYV3FCMHRnJnI9WmxKTjFNDQo+ID4gcmlQVVRrQktDclBTeDY3R21hcGxFVUdjQUVrOXlQdENM
-ZFVYSSZtPTViYmI5U2VWWFRNUERhMWJYUXhxbEJJT25TZEthS1k1VzBCa01DZ3dpakUmcz01MEVo
-QXBDWkFlTU1EVUVkNkZWcFhmNW93ZDFCaTN2bjVHYUJ0MEtFMkN3JmU9DQo+IA0KPiANCi0tIA0K
-IEV1Z2VuaXkgUGFsdHNldg==
+Errata: I forgot the following tag:
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+(The patch is unchanged from v2)
+Le ven. 28 sept. 2018 =C3=A0 16:29, Maxime Jourdan <mjourdan@baylibre.com> =
+a =C3=A9crit :
+>
+> Add documentation for the meson vdec dts node.
+>
+> Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+> ---
+>  .../bindings/media/amlogic,vdec.txt           | 71 +++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/amlogic,vdec.=
+txt
+>
+> diff --git a/Documentation/devicetree/bindings/media/amlogic,vdec.txt b/D=
+ocumentation/devicetree/bindings/media/amlogic,vdec.txt
+> new file mode 100644
+> index 000000000000..aabdd01bcf32
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/amlogic,vdec.txt
+> @@ -0,0 +1,71 @@
+> +Amlogic Video Decoder
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +The video decoding IP lies within the DOS memory region,
+> +except for the hardware bitstream parser that makes use of an undocument=
+ed
+> +region.
+> +
+> +It makes use of the following blocks:
+> +
+> +- ESPARSER is a bitstream parser that outputs to a VIFIFO. Further VDEC =
+blocks
+> +then feed from this VIFIFO.
+> +- VDEC_1 can decode MPEG-1, MPEG-2, MPEG-4 part 2, MJPEG, H.263, H.264, =
+VC-1.
+> +- VDEC_HEVC can decode HEVC and VP9.
+> +
+> +Both VDEC_1 and VDEC_HEVC share the "vdec" IRQ and as such cannot run
+> +concurrently.
+> +
+> +Device Tree Bindings:
+> +---------------------
+> +
+> +VDEC: Video Decoder
+> +--------------------------
+> +
+> +Required properties:
+> +- compatible: value should be different for each SoC family as :
+> +       - GXBB (S905) : "amlogic,gxbb-vdec"
+> +       - GXL (S905X, S905D) : "amlogic,gxl-vdec"
+> +       - GXM (S912) : "amlogic,gxm-vdec"
+> +- reg: base address and size of he following memory-mapped regions :
+> +       - dos
+> +       - esparser
+> +- reg-names: should contain the names of the previous memory regions
+> +- interrupts: should contain the following IRQs:
+> +       - vdec
+> +       - esparser
+> +- interrupt-names: should contain the names of the previous interrupts
+> +- amlogic,ao-sysctrl: should point to the AOBUS sysctrl node
+> +- amlogic,canvas: should point to a canvas provider node
+> +- clocks: should contain the following clocks :
+> +       - dos_parser
+> +       - dos
+> +       - vdec_1
+> +       - vdec_hevc
+> +- clock-names: should contain the names of the previous clocks
+> +- resets: should contain the parser reset
+> +- reset-names: should be "esparser"
+> +
+> +Example:
+> +
+> +vdec: video-decoder@c8820000 {
+> +       compatible =3D "amlogic,gxbb-vdec";
+> +       reg =3D <0x0 0xc8820000 0x0 0x10000>,
+> +             <0x0 0xc110a580 0x0 0xe4>;
+> +       reg-names =3D "dos", "esparser";
+> +
+> +       interrupts =3D <GIC_SPI 44 IRQ_TYPE_EDGE_RISING>,
+> +                    <GIC_SPI 32 IRQ_TYPE_EDGE_RISING>;
+> +       interrupt-names =3D "vdec", "esparser";
+> +
+> +       amlogic,ao-sysctrl =3D <&sysctrl_AO>;
+> +       amlogic,canvas =3D <&canvas>;
+> +
+> +       clocks =3D <&clkc CLKID_DOS_PARSER>,
+> +                <&clkc CLKID_DOS>,
+> +                <&clkc CLKID_VDEC_1>,
+> +                <&clkc CLKID_VDEC_HEVC>;
+> +       clock-names =3D "dos_parser", "dos", "vdec_1", "vdec_hevc";
+> +
+> +       resets =3D <&reset RESET_PARSER>;
+> +       reset-names =3D "esparser";
+> +};
+> --
+> 2.19.0
+>
