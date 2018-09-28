@@ -6,42 +6,41 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 684C0C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AF3C004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38843206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:04:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38843206B6
+	by mail.kernel.org (Postfix) with ESMTP id D5BEF2073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:04:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5BEF2073F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbeI2EaM (ORCPT
+        id S1727552AbeI2EaU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:30:12 -0400
-Received: from smtprelay0202.hostedemail.com ([216.40.44.202]:35250 "EHLO
+        Sat, 29 Sep 2018 00:30:20 -0400
+Received: from smtprelay0098.hostedemail.com ([216.40.44.98]:36435 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726325AbeI2EaL (ORCPT
+        by vger.kernel.org with ESMTP id S1726569AbeI2EaT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:30:11 -0400
+        Sat, 29 Sep 2018 00:30:19 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 321B5180A813C;
-        Fri, 28 Sep 2018 22:04:26 +0000 (UTC)
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id B4AE621950;
+        Fri, 28 Sep 2018 22:04:33 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: front81_269029482992b
-X-Filterd-Recvd-Size: 3606
+X-HE-Tag: wing47_27b6805978533
+X-Filterd-Recvd-Size: 3027
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 22:04:24 +0000 (UTC)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 22:04:32 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Marek Belisko <marek.belisko@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Bad MAINTAINERS pattern in section 'STAGING - FLARION FT1000 DRIVERS'
-Date:   Fri, 28 Sep 2018 15:04:23 -0700
-Message-Id: <20180928220423.31573-1-joe@perches.com>
+Cc:     Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: Bad MAINTAINERS pattern in section 'STI CEC DRIVER'
+Date:   Fri, 28 Sep 2018 15:04:30 -0700
+Message-Id: <20180928220431.31656-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,66 +51,57 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	13899	STAGING - FLARION FT1000 DRIVERS
-	13900	M:	Marek Belisko <marek.belisko@gmail.com>
-	13901	S:	Odd Fixes
--->	13902	F:	drivers/staging/ft1000/
+	13992	STI CEC DRIVER
+	13993	M:	Benjamin Gaignard <benjamin.gaignard@linaro.org>
+	13994	S:	Maintained
+-->	13995	F:	drivers/staging/media/st-cec/
+	13996	F:	Documentation/devicetree/bindings/media/stih-cec.txt
 
 Commit that introduced this:
 
-commit a0138163cfbfdfbdc20e4477c77bd7046bd66bb4
- Author: Joe Perches <joe@perches.com>
- Date:   Tue Jul 5 15:21:34 2011 -0700
+commit 82abbea734d659b4218ad06734b4927b43261985
+ Author: Randy Dunlap <rdunlap@infradead.org>
+ Date:   Fri Jul 21 13:32:27 2017 -0700
  
-     MAINTAINERS: Add remaining staging entries
+     MAINTAINERS: fix alphabetical ordering
      
-     Add the staging entries from various TODO files
-     to MAINTAINERS.  Add a few web links as well.
+     Fix major alphabetic errors.  No attempt to fix items that all begin
+     with the same word (like ARM, BROADCOM, DRM, EDAC, FREESCALE, INTEL,
+     OMAP, PCI, SAMSUNG, TI, USB, etc.).
      
-     Miscellaneous staging typo section header fix.
+     (diffstat +/- is different by one line because TI KEYSTONE MULTICORE
+     had 2 blank lines after it.)
      
-     Signed-off-by: Joe Perches <joe@perches.com>
-     Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+     Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+     Acked-by: Andrew Morton <akpm@linux-foundation.org>
+     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
  
-  MAINTAINERS | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
-  1 file changed, 68 insertions(+), 1 deletion(-)
+  MAINTAINERS | 1683 +++++++++++++++++++++++++++++------------------------------
+  1 file changed, 841 insertions(+), 842 deletions(-)
 
-Last commit with drivers/staging/ft1000/
+Last commit with drivers/staging/media/st-cec/
 
-commit 6512edec48b2ccfe9bb969ce26ebbbcd49de6c4b
-Author: Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Wed Oct 21 18:42:37 2015 -0700
+commit fc4e009c6c986a8cc717dc070d65ccb60d7de91a
+Author: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date:   Tue Jan 3 12:54:56 2017 -0200
 
-    staging: ft1000: remove obsolete driver
+    [media] stih-cec: add CEC notifier support
     
-    Remove support for Qleadtek Flash-OFDM modems. Telecom carrier is
-    discontinuing service for the radio technology.
-    See http://www.gtigroup.org/news/ind/2015-08-18/6996.html.
+    By using the CEC notifier framework there is no longer any reason
+    to manually set the physical address. This was the one blocking
+    issue that prevented this driver from going out of staging, so do
+    this move as well.
     
-    Suggested-by: Arnd Bergmann <arnd@arndb.de>
-    Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-    Acked-by: Arnd Bergmann <arnd@arndb.de>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+    Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+    Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
- drivers/staging/Kconfig                            |    2 -
- drivers/staging/Makefile                           |    1 -
- drivers/staging/ft1000/Kconfig                     |   22 -
- drivers/staging/ft1000/Makefile                    |    3 -
- drivers/staging/ft1000/TODO                        |    9 -
- drivers/staging/ft1000/ft1000-pcmcia/Makefile      |    2 -
- drivers/staging/ft1000/ft1000-pcmcia/boot.h        |  158 --
- drivers/staging/ft1000/ft1000-pcmcia/ft1000.h      |   70 -
- drivers/staging/ft1000/ft1000-pcmcia/ft1000.img    |  Bin 305770 -> 0 bytes
- drivers/staging/ft1000/ft1000-pcmcia/ft1000_cs.c   |  158 --
- drivers/staging/ft1000/ft1000-pcmcia/ft1000_dnld.c |  762 --------
- drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.c   | 2068 --------------------
- drivers/staging/ft1000/ft1000-usb/Makefile         |    3 -
- drivers/staging/ft1000/ft1000-usb/ft1000_debug.c   |  789 --------
- .../staging/ft1000/ft1000-usb/ft1000_download.c    | 1058 ----------
- drivers/staging/ft1000/ft1000-usb/ft1000_hw.c      | 1586 ---------------
- drivers/staging/ft1000/ft1000-usb/ft1000_ioctl.h   |  123 --
- drivers/staging/ft1000/ft1000-usb/ft1000_usb.c     |  248 ---
- drivers/staging/ft1000/ft1000-usb/ft1000_usb.h     |  150 --
- drivers/staging/ft1000/ft1000-usb/ft3000.img       |  Bin 280414 -> 0 bytes
- drivers/staging/ft1000/ft1000.h                    |  366 ----
- 21 files changed, 7578 deletions(-)
+ drivers/media/platform/Kconfig                     | 18 +++++++++++++
+ drivers/media/platform/Makefile                    |  1 +
+ .../st-cec => media/platform/sti/cec}/Makefile     |  0
+ .../st-cec => media/platform/sti/cec}/stih-cec.c   | 31 +++++++++++++++++++---
+ drivers/staging/media/Kconfig                      |  2 --
+ drivers/staging/media/Makefile                     |  1 -
+ drivers/staging/media/st-cec/Kconfig               |  8 ------
+ drivers/staging/media/st-cec/TODO                  |  7 -----
+ 8 files changed, 47 insertions(+), 21 deletions(-)
