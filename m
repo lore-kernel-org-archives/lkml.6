@@ -2,142 +2,101 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D656CC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA76C004D1
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 976C821746
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:14:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="WcoMX+C9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 976C821746
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 968382174E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:14:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 968382174E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbeI1Ngs (ORCPT
+        id S1729111AbeI1NhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 09:36:48 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45845 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728850AbeI1Ngq (ORCPT
+        Fri, 28 Sep 2018 09:37:03 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36690 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728921AbeI1NhD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 09:36:46 -0400
-Received: by mail-wr1-f65.google.com with SMTP id m16so5137389wrx.12
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 00:14:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=aahfn6W3XqbfPKSIMQjYMgIUnQeoDBftDVQeJAnnkHA=;
-        b=WcoMX+C9r7Nhm6nWDcA0cWik7JPGoLzUMGxGlEyBvVT0v4JaG3FAcbtCBsSffzoNQQ
-         9NE2wgmzuC0gupcc0ODXgTmXUWWdbbwNEsZ/MDeL2P80n8bV3vzDufGm5Wul5F5nb2bz
-         ZwGsS63plVXwHDRByuDDyspsS2y1TS/GCjsGmBm+To/eQJ7XDPLsGY7vjXkgQ6nXsvmh
-         bLQhsAaDqw3/HxFpqClJ+S2JYXjXhlJveYBeiBlUC1BqCKyR+iy+j5wdKfnfLXDOSLSv
-         7IJAYRQsmMl6nmDKbYosByBPUdq5xi4XhAjLYKwPd+lJGlhffdA1JSQGb5InfFt65+z3
-         S30w==
+        Fri, 28 Sep 2018 09:37:03 -0400
+Received: by mail-lj1-f193.google.com with SMTP id p89-v6so4844294ljb.3;
+        Fri, 28 Sep 2018 00:14:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=aahfn6W3XqbfPKSIMQjYMgIUnQeoDBftDVQeJAnnkHA=;
-        b=VCpYllLjAvuuhJ5ljZb4yQDxpubPKb1KQPaUeAUIayY1VYCt0+V0zkeDajhDxL23aN
-         uMN7dtM4uWckFFAMzUxUZLtaZ4QTp//sLwhpye6GuyLsWL7rtQaaMwIdep+362dcUjTw
-         jaYLgynp8wbbnfryoHuKRh20fiB3jhfFy6rtk9WsG/NawvWvKYl38f2Hgek/VHulYPvv
-         Uz+C2VyujHaxOT4KXW2AZcSmfSV/07fy4YtgRTEO7ecjDFph2bS9JkqTUA8HRV+CujuT
-         utyOkD8+IAbLFMDunnSYaEYbTZAu09Rv8b/M6RECp7y23q3JsGLLMR1kjtY7/ehaFrS9
-         3GpA==
-X-Gm-Message-State: ABuFfogFwdd+7ptE4YpMqQ5VwuVTDb/6UFpMK0zf4E9o19zX5iZd0vjl
-        ER2p49/skTxOt8unZV8Ff0MUZpM6Asg=
-X-Google-Smtp-Source: ACcGV63dAIzBiNxrypnzZ7c/q17bjSFrJU94ofSqZ0yNmyySuop9DsNdLC9R2TnGlRQDb6WSwx9PxQ==
-X-Received: by 2002:a5d:4143:: with SMTP id c3-v6mr11258748wrq.61.1538118865099;
-        Fri, 28 Sep 2018 00:14:25 -0700 (PDT)
-Received: from brgl-bgdev.sitez.s.ibrowse.com (93-158-26-51.subs.ibrowse.com. [93.158.26.51])
-        by smtp.gmail.com with ESMTPSA id w3-v6sm2699580wru.93.2018.09.28.00.14.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 00:14:24 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v5 2/4] mm: move is_kernel_rodata() to asm-generic/sections.h
-Date:   Fri, 28 Sep 2018 09:14:12 +0200
-Message-Id: <20180928071414.30703-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180928071414.30703-1-brgl@bgdev.pl>
-References: <20180928071414.30703-1-brgl@bgdev.pl>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cW2dZM23GkKjeo+Poi01rT+5Ggz6QDfM613pJNXu5nc=;
+        b=EArAti6F51BWtgbbue1on0Ntsmh9WXkv0chzvnx5xnxuRkrg5WB/pKmliAiyVd8wfS
+         5uszJX7acKLTwMYmM55YiIPuNmC3Ap+UYgw60aVqgDMfY44rOytHg/h+94zQY6AXrK2/
+         TmnLMcCS3ZYdIHaaQLDiG1Dq80m5dM5wmocOm7uAuhLTLUDITK51cJiYNud54pl30yd5
+         TpZn+0jLNa/jS+nms5WWQB4BLPOjVfX1qt8Va2ALnAO/ZPHlxcMk9gPiEd+LFxUQ6SCx
+         IQk7IXcXVsyNfzsMCYH9SGBszBPOqmAdRgUF3wf9rnJd03Or92RIwql57Ke8mTbfjCc0
+         KY+w==
+X-Gm-Message-State: ABuFfoiV0RydWkWu+V1yrKv6FtH6+1PG5SmNM+zH2gm5WK6FmStoTl8J
+        zXccjEcaYyw3uNiPcHvU31M=
+X-Google-Smtp-Source: ACcGV631eTOV0/ajCK+yloyMQCjRwVuZ05nopXSYEKMyLIBVAPmoLSf/aFP03llMsdoXozTsEyjEFQ==
+X-Received: by 2002:a2e:3e0d:: with SMTP id l13-v6mr9874559lja.151.1538118880578;
+        Fri, 28 Sep 2018 00:14:40 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id x78-v6sm875476lfa.33.2018.09.28.00.14.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Sep 2018 00:14:39 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 10:14:37 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, sboyd@kernel.org,
+        mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] regulator/mfd: Support ROHM BD71847 power
+ management IC
+Message-ID: <20180928071437.GB9389@localhost.localdomain>
+References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+ <3996792a07fea45d94d4d712ed05527199cc4ac0.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180921172959.GG20825@sirena.org.uk>
+ <20180921180241.GA4358@dell>
+ <20180921181217.GI20825@sirena.org.uk>
+ <20180921185258.GC4358@dell>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180921185258.GC4358@dell>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Export this routine so that we can use it later in devm_kstrdup_const()
-and devm_kfree_const().
+On Fri, Sep 21, 2018 at 11:52:58AM -0700, Lee Jones wrote:
+> On Fri, 21 Sep 2018, Mark Brown wrote:
+> 
+> > On Fri, Sep 21, 2018 at 11:02:41AM -0700, Lee Jones wrote:
+> > > On Fri, 21 Sep 2018, Mark Brown wrote:
+> > 
+> > > > This looks OK to me - Lee, the patch is almost entirely a regulator one,
+> > > > are you OK with me applying it?
+> > 
+> > > The diff in rohm-bd718x7.h does not look significant.
+> > 
+> > > You can apply it so long as you provide me with a PR in order to avoid
+> > > any potential merge conflicts.  Especially as Linus is out for this
+> > > release.
+> > 
+> > Great, thanks.  There's also the MFD DT bindings and another patch later
+> > on with Acked-for-MFD tags on them, should I convert the tags to acks,
+> > apply those as well and include them in the pull request?
+> 
+> Please.
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
- include/asm-generic/sections.h | 14 ++++++++++++++
- mm/util.c                      |  7 -------
- 2 files changed, 14 insertions(+), 7 deletions(-)
+I was just wondering if I could do something to help get this patch
+series applied? Mark, have you had the time to take a look on pickable
+ranges addition yet? Should I do some rebasing/resending? Are you giving
+me a nudge if I can do something?
 
-diff --git a/include/asm-generic/sections.h b/include/asm-generic/sections.h
-index 849cd8eb5ca0..d79abca81a52 100644
---- a/include/asm-generic/sections.h
-+++ b/include/asm-generic/sections.h
-@@ -141,4 +141,18 @@ static inline bool init_section_intersects(void *virt, size_t size)
- 	return memory_intersects(__init_begin, __init_end, virt, size);
- }
- 
-+/**
-+ * is_kernel_rodata - checks if the pointer address is located in the
-+ *                    .rodata section
-+ *
-+ * @addr: address to check
-+ *
-+ * Returns: true if the address is located in .rodata, false otherwise.
-+ */
-+static inline bool is_kernel_rodata(unsigned long addr)
-+{
-+	return addr >= (unsigned long)__start_rodata &&
-+	       addr < (unsigned long)__end_rodata;
-+}
-+
- #endif /* _ASM_GENERIC_SECTIONS_H_ */
-diff --git a/mm/util.c b/mm/util.c
-index 9e3ebd2ef65f..470f5cd80b64 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -15,17 +15,10 @@
- #include <linux/vmalloc.h>
- #include <linux/userfaultfd_k.h>
- 
--#include <asm/sections.h>
- #include <linux/uaccess.h>
- 
- #include "internal.h"
- 
--static inline int is_kernel_rodata(unsigned long addr)
--{
--	return addr >= (unsigned long)__start_rodata &&
--		addr < (unsigned long)__end_rodata;
--}
--
- /**
-  * kfree_const - conditionally free memory
-  * @x: pointer to the memory
--- 
-2.18.0
-
+Br,
+	Matti Vaittinen
