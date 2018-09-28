@@ -3,95 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC3AC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6007C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6548220684
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:35:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6548220684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B40920684
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:37:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B40920684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbeI1O5u (ORCPT
+        id S1729137AbeI1O7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 10:57:50 -0400
-Received: from foss.arm.com ([217.140.101.70]:44742 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726586AbeI1O5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 10:57:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B752C7A9;
-        Fri, 28 Sep 2018 01:35:11 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 753B03F5D3;
-        Fri, 28 Sep 2018 01:35:07 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 09:35:05 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Subject: Re: [PATCH v7 02/14] sched/cpufreq: Prepare schedutil for Energy
- Aware Scheduling
-Message-ID: <20180928083503.h4jbdgk3dqpaufzb@queper01-lin>
-References: <20180912091309.7551-1-quentin.perret@arm.com>
- <CAJZ5v0gL+NurA8UcN5oweqwxfgS10HgO1Zjh_cod4_Sr5nWQHQ@mail.gmail.com>
- <20180927121749.urdqtayq6ll4k7qn@queper01-lin>
- <2417577.QmA9JEQx1z@aspire.rjw.lan>
+        Fri, 28 Sep 2018 10:59:48 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:29686 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728275AbeI1O7s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 10:59:48 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8S8YLHW031526;
+        Fri, 28 Sep 2018 10:36:42 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2mrj4mhvx4-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 28 Sep 2018 10:36:42 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DF54831;
+        Fri, 28 Sep 2018 08:36:41 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A6DEB262C;
+        Fri, 28 Sep 2018 08:36:41 +0000 (GMT)
+Received: from localhost (10.75.127.46) by SFHDAG5NODE2.st.com (10.75.127.14)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 28 Sep 2018 10:36:41
+ +0200
+From:   Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        <devicetree@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [PATCH v2 0/7] Add-DMA-MDMA-chaining-support
+Date:   Fri, 28 Sep 2018 10:36:27 +0200
+Message-ID: <1538123794-17085-1-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2417577.QmA9JEQx1z@aspire.rjw.lan>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+This serie adds support for M2M transfer triggered by STM32 DMA in order to
+transfer data from/to SRAM to/from DDR.
 
-On Friday 28 Sep 2018 at 10:23:42 (+0200), Rafael J. Wysocki wrote:
-[...]
-> OK, so please document the enum type.
+Normally, this mode should not be needed as transferring data from/to DDR
+is supported by the STM32 DMA.
+However, the STM32 DMA don't have the ability to generate burst transfer
+on the DDR as it only embeds only a 4-word FIFO although the minimal burst
+length on the DDR is 8 words.
+Due to this constraint, the STM32 DMA transfers data from/to DDR in a
+single way and could lead to pollute the DDR.
+To avoid this, we have to use SRAM for all transfers where STM32 DMA is
+involved.
 
-Will do.
+An Hw design has been specially put in place to allow this chaining where DMA
+interrupt is connected on GIC and MDMA request line as well. This grants the
+possibility to trigger an MDMA transfer from the completion of DMA.
+At the same time MDMA has the ability to acknowlege DMA. The aim is to have an
+self refreching mechanism to transfer from/to device to/from DDR with minimal
+sw support.
+For instance the DMA is set in cyclic double buffering to feed SRAM and MDMA
+transfer to DDR thanks to LLI.
 
-[...]
-> Documenting things properly is absolutely required.
+M'boumba Cedric Madianga (7):
+  dt-bindings: stm32-dma: Add DMA/MDMA chaining support bindings
+  dt-bindings: stm32-dmamux: Add one cell to support DMA/MDMA chain
+  dt-bindings: stm32-mdma: Add DMA/MDMA chaining support bindings
+  dmaengine: stm32-dma: Add DMA/MDMA chaining support
+  dmaengine: stm32-mdma: Add DMA/MDMA chaining support
+  dmaengine: stm32-dma: enable descriptor_reuse
+  dmaengine: stm32-mdma: enable descriptor_reuse
 
-Understood.
+ .../devicetree/bindings/dma/stm32-dma.txt          |  27 +-
+ .../devicetree/bindings/dma/stm32-dmamux.txt       |   6 +-
+ .../devicetree/bindings/dma/stm32-mdma.txt         |  12 +-
+ drivers/dma/stm32-dma.c                            | 903 ++++++++++++++++++---
+ drivers/dma/stm32-mdma.c                           | 133 ++-
+ 5 files changed, 949 insertions(+), 132 deletions(-)
 
-> The other changes suggested by me are rather straightforward, so why would it
-> be a problem to make them right away if you agree to make them?
+-- 
+2.7.4
 
-Right, if I need to spin a v8 for doc purpose anyway, I guess I can do
-the other small fixes at the same time.
-
-I'll wait a bit before sending the update to see if others have some
-feedback. It's probably a bit late for 4.20 anyway ... Or is it not ?
-
-Thanks,
-Quentin
