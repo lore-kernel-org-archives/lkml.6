@@ -2,120 +2,203 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0BBC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E761C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F4A421571
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:43:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F4A421571
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E22EA21571
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:44:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+j801IG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E22EA21571
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbeI1UHK (ORCPT
+        id S1729119AbeI1UIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:07:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44294 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728748AbeI1UHK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:07:10 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8SDd1NS088705
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 09:43:19 -0400
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mskv9cuuk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 09:43:18 -0400
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Fri, 28 Sep 2018 07:43:18 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 28 Sep 2018 07:43:14 -0600
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8SDhBaU27001024
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 Sep 2018 06:43:11 -0700
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 80BC36A051;
-        Fri, 28 Sep 2018 07:43:11 -0600 (MDT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9D1096A04D;
-        Fri, 28 Sep 2018 07:43:09 -0600 (MDT)
-Received: from oc8043147753.ibm.com.endicott.ibm.com (unknown [9.60.75.213])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Fri, 28 Sep 2018 07:43:09 -0600 (MDT)
-From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, fiuczy@linux.vnet.ibm.com,
-        buendgen@de.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [FIXUP v9] fixup! fixup! s390: doc: detailed specifications for AP virtualization
-Date:   Fri, 28 Sep 2018 09:43:06 -0400
-X-Mailer: git-send-email 2.19.0.221.g150f307
-In-Reply-To: <20180926164222.74731b74@t450s.home>
-References: <20180926164222.74731b74@t450s.home>
+        Fri, 28 Sep 2018 16:08:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49284 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726349AbeI1UIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 16:08:47 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CA892173D;
+        Fri, 28 Sep 2018 13:44:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538142294;
+        bh=CWT1mp+mjvQ6NF6YuqWl2Os52EhMv6oS1W1vZfCyGdU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=K+j801IGLUkqp+Q2hiy+X7PTCNlrkdfj2ClIXGaR1SoDVtcHs3KG12gnbYnaLjFcL
+         PCZE46xA5iMB2awF5zskCwNkGU6l+2klFaOvfzwetRIdNGzGBoRqx9YiYjz2tPoh21
+         te5jPIOnjEt97rHNFDeYUdgoKMqA8naGQloxor4A=
+Received: by mail-qk1-f174.google.com with SMTP id 80-v6so3891115qkj.1;
+        Fri, 28 Sep 2018 06:44:54 -0700 (PDT)
+X-Gm-Message-State: ABuFfohrvea5cc9NRzfv22+FANkK79trP7yZhhAE1/zo4oWfi1RWwwJ5
+        OrZuOzPnvb/YMVSAYQZC40bZX2i+CHiovYgngw==
+X-Google-Smtp-Source: ACcGV62+l5WjT0op2MNnjjR03dgU08rTqkGnrbVR3GpLQ+HIxhGNoi30SSrShJ6wvcrD8vkH5Znewe/xPNGzwMUDFb8=
+X-Received: by 2002:a37:12d1:: with SMTP id 78-v6mr11925244qks.147.1538142293648;
+ Fri, 28 Sep 2018 06:44:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092813-0020-0000-0000-00000E6E8A50
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009786; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01094891; UDB=6.00566015; IPR=6.00874926;
- MB=3.00023544; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-28 13:43:17
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092813-0021-0000-0000-0000632FF993
-Message-Id: <20180928134306.1395-1-akrowiak@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=781 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809280138
+References: <20180928064841.14117-1-takahiro.akashi@linaro.org> <20180928064841.14117-7-takahiro.akashi@linaro.org>
+In-Reply-To: <20180928064841.14117-7-takahiro.akashi@linaro.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 28 Sep 2018 08:44:42 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKwmcdQ+2eK3LGHhcQ2Wb+Yz1-Atz0-3K6WKNZQt_woVw@mail.gmail.com>
+Message-ID: <CAL_JsqKwmcdQ+2eK3LGHhcQ2Wb+Yz1-Atz0-3K6WKNZQt_woVw@mail.gmail.com>
+Subject: Re: [PATCH v15 06/16] of/fdt: add helper functions for handling properties
+To:     "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        David Gibson <david@gibson.dropbear.id.au>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>, dyoung@redhat.com,
+        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        prudo@linux.ibm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>, bhsharma@redhat.com,
+        kexec@lists.infradead.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Krowiak <akrowiak@linux.ibm.com>
++David Gibson
 
-Removes extraneous text from third line below:
+On Fri, Sep 28, 2018 at 1:48 AM AKASHI Takahiro
+<takahiro.akashi@linaro.org> wrote:
+>
+> These functions will be used later to handle kexec-specific properties
+> in arm64's kexec_file implementation.
+>
+> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Cc: devicetree@vger.kernel.org
+> ---
+>  drivers/of/fdt.c       | 56 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/of_fdt.h |  4 +++
+>  2 files changed, 60 insertions(+)
+>
+> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+> index 800ad252cf9c..c65c31562ccb 100644
+> --- a/drivers/of/fdt.c
+> +++ b/drivers/of/fdt.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/debugfs.h>
+>  #include <linux/serial_core.h>
+>  #include <linux/sysfs.h>
+> +#include <linux/types.h>
+>
+>  #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
+>  #include <asm/page.h>
+> @@ -1323,3 +1324,58 @@ late_initcall(of_fdt_raw_init);
+>  #endif
+>
+>  #endif /* CONFIG_OF_EARLY_FLATTREE */
+> +
+> +#define FDT_ALIGN(x, a)        (((x) + (a) - 1) & ~((a) - 1))
+> +#define FDT_TAGALIGN(x)        (FDT_ALIGN((x), FDT_TAGSIZE))
+> +
+> +int fdt_prop_len(const char *prop_name, int len)
+> +{
+> +       return (strlen(prop_name) + 1) +
+> +               sizeof(struct fdt_property) +
+> +               FDT_TAGALIGN(len);
 
-+05          CEX5A Accelerator
-+05.0047     CEX5A Accelerator
-+05.00ff     CEX5A Accelerator (5,4), (5,171), (6,4), (6,171),
-                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
----
- Documentation/s390/vfio-ap.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks like you are using this to calculate how much space you need to
+allocate in addition to the current DTB for a couple of new or
+replaced properties. I'm not sure that this calculation is completely
+accurate. And it is strange there doesn't seem to be any libfdt
+function for this already. It would be simpler to just add some fixed
+additional amount.
 
-diff --git a/Documentation/s390/vfio-ap.txt b/Documentation/s390/vfio-ap.txt
-index 599eb0f75c07..6a880a27cfb6 100644
---- a/Documentation/s390/vfio-ap.txt
-+++ b/Documentation/s390/vfio-ap.txt
-@@ -459,7 +459,7 @@ CARD.DOMAIN TYPE  MODE
- ------------------------------
- 05          CEX5A Accelerator
- 05.0047     CEX5A Accelerator
--05.00ff     CEX5A Accelerator (5,4), (5,171), (6,4), (6,171),
-+05.00ff     CEX5A Accelerator
- 
- Guest2
- ------
--- 
-2.19.0.221.g150f307
+Maybe David G has comments on this?
 
+> +}
+> +
+
+The rest of this should go in drivers/of/fdt_address.c. Ultimately, it
+should go into libfdt, but I'm fine with having it in the kernel for
+now.
+
+> +static void fill_property(void *buf, u64 val64, int cells)
+> +{
+> +       __be32 val32;
+> +
+> +       while (cells) {
+> +               val32 = cpu_to_fdt32((val64 >> (32 * (--cells))) & U32_MAX);
+> +               memcpy(buf, &val32, sizeof(val32));
+> +               buf += sizeof(val32);
+
+This is kind of hard to read. I would copy u-boot's fdt_pack_reg function.
+
+BTW, for purposes of moving to libfdt, we'll need the authors'
+(Masahiro Yamada and Hans de Goede) permission to dual license.
+
+> +       }
+> +}
+> +
+> +int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
+> +                                               u64 addr, u64 size)
+> +{
+> +       int addr_cells, size_cells;
+> +       char buf[sizeof(__be32) * 2 * 2];
+> +               /* assume dt_root_[addr|size]_cells <= 2 */
+> +       void *prop;
+> +       size_t buf_size;
+> +
+> +       addr_cells = fdt_address_cells(fdt, 0);
+> +       if (addr_cells < 0)
+> +               return addr_cells;
+> +       size_cells = fdt_size_cells(fdt, 0);
+> +       if (size_cells < 0)
+> +               return size_cells;
+> +
+> +       /* if *_cells >= 2, cells can hold 64-bit values anyway */
+> +       if ((addr_cells == 1) && (addr > U32_MAX))
+> +               return -FDT_ERR_BADVALUE;
+> +
+> +       if ((size_cells == 1) && (size > U32_MAX))
+> +               return -FDT_ERR_BADVALUE;
+> +
+> +       buf_size = (addr_cells + size_cells) * sizeof(u32);
+> +       prop = buf;
+> +
+> +       fill_property(prop, addr, addr_cells);
+> +       prop += addr_cells * sizeof(u32);
+> +
+> +       fill_property(prop, size, size_cells);
+> +
+> +       return fdt_setprop(fdt, nodeoffset, name, buf, buf_size);
+> +}
+> diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
+> index b9cd9ebdf9b9..842af6ea92ea 100644
+> --- a/include/linux/of_fdt.h
+> +++ b/include/linux/of_fdt.h
+> @@ -108,5 +108,9 @@ static inline void unflatten_device_tree(void) {}
+>  static inline void unflatten_and_copy_device_tree(void) {}
+>  #endif /* CONFIG_OF_EARLY_FLATTREE */
+>
+> +int fdt_prop_len(const char *prop_name, int len);
+> +int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
+> +                                               u64 addr, u64 size);
+> +
+>  #endif /* __ASSEMBLY__ */
+>  #endif /* _LINUX_OF_FDT_H */
+> --
+> 2.19.0
+>
