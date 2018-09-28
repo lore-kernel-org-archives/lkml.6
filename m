@@ -6,42 +6,43 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7A1C004D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57286C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D2D206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D2D206B6
+	by mail.kernel.org (Postfix) with ESMTP id 1D135206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D135206B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbeI2E1L (ORCPT
+        id S1727431AbeI2E1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:27:11 -0400
-Received: from smtprelay0126.hostedemail.com ([216.40.44.126]:56528 "EHLO
+        Sat, 29 Sep 2018 00:27:18 -0400
+Received: from smtprelay0149.hostedemail.com ([216.40.44.149]:35026 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726423AbeI2E1L (ORCPT
+        by vger.kernel.org with ESMTP id S1726393AbeI2E1S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:27:11 -0400
+        Sat, 29 Sep 2018 00:27:18 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 8955118004A73;
-        Fri, 28 Sep 2018 22:01:26 +0000 (UTC)
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id C8F02180A814D;
+        Fri, 28 Sep 2018 22:01:33 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: kite97_c6242f8cb220
-X-Filterd-Recvd-Size: 3279
+X-HE-Tag: fog07_d7b890405e5c
+X-Filterd-Recvd-Size: 2948
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 22:01:24 +0000 (UTC)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 22:01:32 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Florian Westphal <fw@strlen.de>
-Subject: Bad MAINTAINERS pattern in section 'NETWORKING [IPSEC]'
-Date:   Fri, 28 Sep 2018 15:01:23 -0700
-Message-Id: <20180928220123.30999-1-joe@perches.com>
+Cc:     Willy Tarreau <willy@haproxy.com>,
+        Ksenija Stanojevic <ksenija.stanojevic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Bad MAINTAINERS pattern in section 'PARALLEL LCD/KEYPAD PANEL DRIVER'
+Date:   Fri, 28 Sep 2018 15:01:31 -0700
+Message-Id: <20180928220131.31075-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,76 +53,56 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	10233	NETWORKING [IPSEC]
-	10234	M:	Steffen Klassert <steffen.klassert@secunet.com>
-	10235	M:	Herbert Xu <herbert@gondor.apana.org.au>
-	10236	M:	"David S. Miller" <davem@davemloft.net>
-	10237	L:	netdev@vger.kernel.org
-	10238	T:	git git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec.git
-	10239	T:	git git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec-next.git
-	10240	S:	Maintained
--->	10241	F:	net/core/flow.c
-	10242	F:	net/xfrm/
-	10243	F:	net/key/
-	10244	F:	net/ipv4/xfrm*
-	10245	F:	net/ipv4/esp4*
-	10246	F:	net/ipv4/ah4.c
-	10247	F:	net/ipv4/ipcomp.c
-	10248	F:	net/ipv4/ip_vti.c
-	10249	F:	net/ipv6/xfrm*
-	10250	F:	net/ipv6/esp6*
-	10251	F:	net/ipv6/ah6.c
-	10252	F:	net/ipv6/ipcomp6.c
-	10253	F:	net/ipv6/ip6_vti.c
-	10254	F:	include/uapi/linux/xfrm.h
-	10255	F:	include/net/xfrm.h
+	11056	PARALLEL LCD/KEYPAD PANEL DRIVER
+	11057	M:	Willy Tarreau <willy@haproxy.com>
+	11058	M:	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
+	11059	S:	Odd Fixes
+	11060	F:	Documentation/auxdisplay/lcd-panel-cgram.txt
+-->	11061	F:	drivers/misc/panel.c
 
 Commit that introduced this:
 
-commit 5826bdd1816fa2baa122b62e14905c0ad8e7b96a
- Author: Fan Du <fan.du@windriver.com>
- Date:   Sat Jan 18 09:55:28 2014 +0800
+commit 7683e9e529258d01ce99216ad3be21f59eff83ec
+ Author: Linus Torvalds <torvalds@linux-foundation.org>
+ Date:   Sun Jul 23 16:06:21 2017 -0700
  
-     flowcache: Bring net/core/flow.c under IPsec maintain scope
+     Properly alphabetize MAINTAINERS file
      
-     As flow cache is mainly manipulated from IPsec.
+     This adds a perl script to actually parse the MAINTAINERS file, clean up
+     some whitespace in it, warn about errors in it, and then properly sort
+     the end result.
      
-     Signed-off-by: Fan Du <fan.du@windriver.com>
-     Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+     My perl-fu is atrocious, so the script has basically been created by
+     randomly putting various characters in a pile, mixing them around, and
+     then looking it the end result does anything interesting when used as a
+     perl script.
+     
+     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
  
-  MAINTAINERS | 1 +
-  1 file changed, 1 insertion(+)
+  MAINTAINERS                  | 3585 +++++++++++++++++++++---------------------
+  scripts/parse-maintainers.pl |   77 +
+  2 files changed, 1868 insertions(+), 1794 deletions(-)
 
-Last commit with net/core/flow.c
+Last commit with drivers/misc/panel.c
 
-commit 09c7570480f7544ffbf8e6db365208b0b0c154c6
-Author: Florian Westphal <fw@strlen.de>
-Date:   Mon Jul 17 13:57:26 2017 +0200
+commit 51c1e9b554c996284d5d3bd44da829f41a49a21b
+Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date:   Tue Apr 4 20:25:21 2017 +0300
 
-    xfrm: remove flow cache
+    auxdisplay: Move panel.c to drivers/auxdisplay folder
     
-    After rcu conversions performance degradation in forward tests isn't that
-    noticeable anymore.
+    It looks like panel.c belongs to auxdisplay subsystem.
     
-    See next patch for some numbers.
+    Move it to drivers/auxdisplay folder.
+    No functional changes intended.
     
-    A followup patcg could then also remove genid from the policies
-    as we do not cache bundles anymore.
-    
-    Signed-off-by: Florian Westphal <fw@strlen.de>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
+    Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+    Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
- include/net/flow.h              |  34 ---
- include/net/flowcache.h         |  25 --
- include/net/netns/xfrm.h        |  11 -
- include/net/xfrm.h              |   8 -
- net/core/Makefile               |   1 -
- net/core/flow.c                 | 516 ----------------------------------------
- net/ipv4/xfrm4_policy.c         |   9 -
- net/ipv6/xfrm6_policy.c         |   9 -
- net/key/af_key.c                |   6 -
- net/xfrm/xfrm_device.c          |   2 -
- net/xfrm/xfrm_policy.c          | 108 +--------
- net/xfrm/xfrm_user.c            |   3 -
- security/selinux/include/xfrm.h |   4 +-
- 13 files changed, 2 insertions(+), 734 deletions(-)
+ drivers/auxdisplay/Kconfig           | 280 +++++++++++++++++++++++++++++++++++
+ drivers/auxdisplay/Makefile          |   1 +
+ drivers/{misc => auxdisplay}/panel.c |   0
+ drivers/misc/Kconfig                 | 280 -----------------------------------
+ drivers/misc/Makefile                |   1 -
+ 5 files changed, 281 insertions(+), 281 deletions(-)
