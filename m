@@ -2,134 +2,118 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33923C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F849C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDC1120645
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:30:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="VjquitXH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC1120645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 61770204FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:31:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61770204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729387AbeI1Uyr (ORCPT
+        id S1729282AbeI1Uz3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:54:47 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41430 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726971AbeI1Uyr (ORCPT
+        Fri, 28 Sep 2018 16:55:29 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:10446 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726867AbeI1Uz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:54:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2UWy1P674fdC2Qlkkie+NNLdQvgKPWXFWXsHbfa2eb4=; b=VjquitXHo0TMFc9J4VSjafzTc
-        fEWxlr1GZvidL0WP1IlPCWIyIop8WGgbuqkc76tLTtX2vjSWV1pGLpjnIKxpOBwTxz8H+l+vzDZUW
-        LE9hDyUJ4hOQUTjsMUNGbwMskgzXyOAkm3aDzolHway587tkWbKPln2mwC+g+5Pq4fda0=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g5tn0-00007Q-Hb; Fri, 28 Sep 2018 14:30:42 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 04096440078; Fri, 28 Sep 2018 15:30:41 +0100 (BST)
-Date:   Fri, 28 Sep 2018 15:30:41 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [GIT PULL] spi fixes for v4.19
-Message-ID: <20180928143041.GQ20825@sirena.org.uk>
+        Fri, 28 Sep 2018 16:55:29 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8SET7bB025957;
+        Fri, 28 Sep 2018 16:30:58 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2mnb6y2dc3-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 28 Sep 2018 16:30:58 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AD42C38;
+        Fri, 28 Sep 2018 14:30:57 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5059250E0;
+        Fri, 28 Sep 2018 14:30:57 +0000 (GMT)
+Received: from [10.129.6.39] (10.75.127.46) by SFHDAG5NODE2.st.com
+ (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 28 Sep
+ 2018 16:30:55 +0200
+Subject: Re: [PATCH v2 0/7] Add-DMA-MDMA-chaining-support
+To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        <devicetree@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1538123794-17085-1-git-send-email-pierre-yves.mordret@st.com>
+From:   Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+Message-ID: <6bc2e022-1a36-f36c-b23b-e2ba7b16f2fc@st.com>
+Date:   Fri, 28 Sep 2018 16:30:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xYEXny2b0/vlBQCR"
-Content-Disposition: inline
-X-Cookie: Disc space -- the final frontier!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1538123794-17085-1-git-send-email-pierre-yves.mordret@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello all,
 
---xYEXny2b0/vlBQCR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I've submitted a V3 following a KBuild warning.
+You can thus drop this V2.
 
-The following changes since commit 5223c9c1cbfc0cd4d0a1b50758e0949af3290fa1:
+Thanks and sorry for the spamming.
 
-  spi: spi-fsl-dspi: fix broken DSPI_EOQ_MODE (2018-08-28 20:55:23 +0100)
+Have a nice weekend.
+Regards
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v4.19-rc5
-
-for you to fetch changes up to c949a8e8b43f2c75567269bcc9a50d704ae3c420:
-
-  spi: spi-mem: Move the DMA-able constraint doc to the kerneldoc header (2018-09-20 12:23:31 -0700)
-
-----------------------------------------------------------------
-spi: Fixes for v4.19
-
-Quite a few fixes for the Renesas drivers in here, plus a fix for the
-Tegra driver and some documentation fixes for the recently added spi-mem
-code.  The Tegra fix is relatively large but fairly straightforward and
-mechanical, it runs on probe so it's been reasonably well covered in
--next testing.
-
-----------------------------------------------------------------
-
-There's also a small fix for error checking in the bitbanging GPIO
-driver I forgot to mention above.
-
-Boris Brezillon (2):
-      spi: spi-mem: Add missing description for data.nbytes field
-      spi: spi-mem: Move the DMA-able constraint doc to the kerneldoc header
-
-Gaku Inami (1):
-      spi: sh-msiof: Fix invalid SPI use during system suspend
-
-Geert Uytterhoeven (2):
-      spi: rspi: Fix invalid SPI use during system suspend
-      spi: rspi: Fix interrupted DMA transfers
-
-Hiromitsu Yamasaki (1):
-      spi: sh-msiof: Fix handling of write value for SISTR register
-
-Linus Walleij (1):
-      spi: gpio: Fix copy-and-paste error
-
-Marcel Ziswiler (1):
-      spi: tegra20-slink: explicitly enable/disable clock
-
- drivers/spi/spi-gpio.c          |  4 ++--
- drivers/spi/spi-rspi.c          | 34 ++++++++++++++++++++++++++++++----
- drivers/spi/spi-sh-msiof.c      | 28 +++++++++++++++++++++++++++-
- drivers/spi/spi-tegra20-slink.c | 31 +++++++++++++++++++++++--------
- include/linux/spi/spi-mem.h     |  7 ++++---
- 5 files changed, 86 insertions(+), 18 deletions(-)
-
---xYEXny2b0/vlBQCR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluuOxEACgkQJNaLcl1U
-h9B7aggAgQW3GoHvmPvS9TM5XOANT/6KBbq5XAadZdUQMry0SNJx4FKtzsLFTf7G
-xeMXPAC5RgYwoNrVtLkJatWATXzt5Gc7tshwlZDiARIEWFHtsL99C3PyyRhlxw5m
-jVHJkyXxPXZbHRc5Ou2E0PouSB7W/ej5/53XWo92HsdaW1ld/Ll/ZYXaf9W8oT6M
-Zby2XpQRFsUrlF2l4aGw2zT576rpKlueSCN17aQfzt0+mJleroP7qWy0TxIaj6/j
-lCIxFxrBJcCxkJsVSD61wvFThQoOnfegXd5haeYxhb4WnTips+WMZQ3ewUCVGMbF
-wGX50uh7eWi++f57H3/VprB1RrY/7Q==
-=aExT
------END PGP SIGNATURE-----
-
---xYEXny2b0/vlBQCR--
+On 09/28/2018 10:36 AM, Pierre-Yves MORDRET wrote:
+> This serie adds support for M2M transfer triggered by STM32 DMA in order to
+> transfer data from/to SRAM to/from DDR.
+> 
+> Normally, this mode should not be needed as transferring data from/to DDR
+> is supported by the STM32 DMA.
+> However, the STM32 DMA don't have the ability to generate burst transfer
+> on the DDR as it only embeds only a 4-word FIFO although the minimal burst
+> length on the DDR is 8 words.
+> Due to this constraint, the STM32 DMA transfers data from/to DDR in a
+> single way and could lead to pollute the DDR.
+> To avoid this, we have to use SRAM for all transfers where STM32 DMA is
+> involved.
+> 
+> An Hw design has been specially put in place to allow this chaining where DMA
+> interrupt is connected on GIC and MDMA request line as well. This grants the
+> possibility to trigger an MDMA transfer from the completion of DMA.
+> At the same time MDMA has the ability to acknowlege DMA. The aim is to have an
+> self refreching mechanism to transfer from/to device to/from DDR with minimal
+> sw support.
+> For instance the DMA is set in cyclic double buffering to feed SRAM and MDMA
+> transfer to DDR thanks to LLI.
+> 
+> M'boumba Cedric Madianga (7):
+>   dt-bindings: stm32-dma: Add DMA/MDMA chaining support bindings
+>   dt-bindings: stm32-dmamux: Add one cell to support DMA/MDMA chain
+>   dt-bindings: stm32-mdma: Add DMA/MDMA chaining support bindings
+>   dmaengine: stm32-dma: Add DMA/MDMA chaining support
+>   dmaengine: stm32-mdma: Add DMA/MDMA chaining support
+>   dmaengine: stm32-dma: enable descriptor_reuse
+>   dmaengine: stm32-mdma: enable descriptor_reuse
+> 
+>  .../devicetree/bindings/dma/stm32-dma.txt          |  27 +-
+>  .../devicetree/bindings/dma/stm32-dmamux.txt       |   6 +-
+>  .../devicetree/bindings/dma/stm32-mdma.txt         |  12 +-
+>  drivers/dma/stm32-dma.c                            | 903 ++++++++++++++++++---
+>  drivers/dma/stm32-mdma.c                           | 133 ++-
+>  5 files changed, 949 insertions(+), 132 deletions(-)
+> 
