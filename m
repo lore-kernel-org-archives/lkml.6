@@ -4,36 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B99C04E87
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 798D1C004D1
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 584EA2173D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:04:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 584EA2173D
+	by mail.kernel.org (Postfix) with ESMTP id 30FD821527
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:05:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30FD821527
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbeI1Q1x (ORCPT
+        id S1729394AbeI1Q15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 12:27:53 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:1045 "EHLO
+        Fri, 28 Sep 2018 12:27:57 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:62385 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729286AbeI1Q1x (ORCPT
+        with ESMTP id S1729333AbeI1Q1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:27:53 -0400
-X-UUID: 70bc8abef791401cb320befe34534a28-20180928
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        Fri, 28 Sep 2018 12:27:55 -0400
+X-UUID: 40f70a36181d4a17a67098141df29031-20180928
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
         (envelope-from <honghui.zhang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 117818808; Fri, 28 Sep 2018 18:04:46 +0800
+        with ESMTP id 1744052678; Fri, 28 Sep 2018 18:04:50 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 28 Sep 2018 18:04:45 +0800
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 28 Sep 2018 18:04:48 +0800
 Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 28 Sep 2018 18:04:44 +0800
+ Transport; Fri, 28 Sep 2018 18:04:47 +0800
 From:   <honghui.zhang@mediatek.com>
 To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
         <linux-arm-kernel@lists.infradead.org>,
@@ -44,15 +45,15 @@ CC:     <ulf.hansson@linaro.org>, <marc.zyngier@arm.com>,
         <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
         <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>,
         <yt.shen@mediatek.com>, <sean.wang@mediatek.com>
-Subject: [PATCH v5 3/9] PCI: mediatek: Remove the redundant dev->pm_domain check
-Date:   Fri, 28 Sep 2018 18:04:34 +0800
-Message-ID: <1538129080-8206-4-git-send-email-honghui.zhang@mediatek.com>
+Subject: [PATCH v5 6/9] PCI: mediatek: Enable msi after clock enabled
+Date:   Fri, 28 Sep 2018 18:04:37 +0800
+Message-ID: <1538129080-8206-7-git-send-email-honghui.zhang@mediatek.com>
 X-Mailer: git-send-email 2.6.4
 In-Reply-To: <1538129080-8206-1-git-send-email-honghui.zhang@mediatek.com>
 References: <1538129080-8206-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 1C03DAE02A2BC320B4A04AF13BDB27E79C59D76E793E44A0AF2AEAD3C2C340CB2000:8
+X-TM-SNTS-SMTP: D8223F1D09969A57176FA1E72EF699335B46AA4019E13A4D49B56E091B1765BB2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,57 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-It's no needed to check whether device have pm_domain attached before
-calling the pm_runtime_XXX interface, remove it.
+The clocks was not enabled when enable MSI. This patch fix this
+issue by calling mtk_pcie_enable_msi in mtk_pcie_startup_port_v2
+since the clock was all enabled at that time.
 
 Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
 ---
- drivers/pci/controller/pcie-mediatek.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ drivers/pci/controller/pcie-mediatek.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 3ab80d6..e2c4127 100644
+index d150be1..be38b38 100644
 --- a/drivers/pci/controller/pcie-mediatek.c
 +++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -225,10 +225,8 @@ static void mtk_pcie_subsys_powerdown(struct mtk_pcie *pcie)
- 
- 	clk_disable_unprepare(pcie->free_ck);
- 
--	if (dev->pm_domain) {
--		pm_runtime_put_sync(dev);
--		pm_runtime_disable(dev);
--	}
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
- }
- 
- static void mtk_pcie_port_free(struct mtk_pcie_port *port)
-@@ -1002,10 +1000,8 @@ static int mtk_pcie_subsys_powerup(struct mtk_pcie *pcie)
- 		pcie->free_ck = NULL;
+@@ -572,8 +572,6 @@ static int mtk_pcie_init_irq_domain(struct mtk_pcie_port *port,
+ 		ret = mtk_pcie_allocate_msi_domains(port);
+ 		if (ret)
+ 			return ret;
+-
+-		mtk_pcie_enable_msi(port);
  	}
  
--	if (dev->pm_domain) {
--		pm_runtime_enable(dev);
--		pm_runtime_get_sync(dev);
--	}
-+	pm_runtime_enable(dev);
-+	pm_runtime_get_sync(dev);
- 
- 	/* enable top level clock */
- 	err = clk_prepare_enable(pcie->free_ck);
-@@ -1017,10 +1013,8 @@ static int mtk_pcie_subsys_powerup(struct mtk_pcie *pcie)
  	return 0;
+@@ -694,6 +692,9 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+ 	val &= ~INTX_MASK;
+ 	writel(val, port->base + PCIE_INT_MASK);
  
- err_free_ck:
--	if (dev->pm_domain) {
--		pm_runtime_put_sync(dev);
--		pm_runtime_disable(dev);
--	}
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
- 
- 	return err;
- }
++	if (IS_ENABLED(CONFIG_PCI_MSI))
++		mtk_pcie_enable_msi(port);
++
+ 	/* Set AHB to PCIe translation windows */
+ 	size = mem->end - mem->start;
+ 	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
 -- 
 2.6.4
 
