@@ -2,134 +2,158 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64408C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8810CC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C45206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3317A206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="udrTHRWl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C45206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vu+jwOMb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3317A206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbeI2E2c (ORCPT
+        id S1727001AbeI2E2q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:28:32 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46228 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbeI2E2b (ORCPT
+        Sat, 29 Sep 2018 00:28:46 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44059 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbeI2E2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:28:31 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d8-v6so5149695pfo.13
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 15:02:46 -0700 (PDT)
+        Sat, 29 Sep 2018 00:28:46 -0400
+Received: by mail-oi1-f196.google.com with SMTP id u74-v6so6675563oia.11
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 15:03:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DEpx5TG66rcd4Z2ytd18XX/tOyyZDkshRv3fyOh2Nhk=;
-        b=udrTHRWlBJGnPnqJKHivAZau1tHBKUyNW3vlgWma06MjqtPssVF3PjDI8EpIkPPCCc
-         mPrVh8U4O7P10OpXRI3KrkZmFER8/SxeSTCm0CmC6Mc80IimlBEqvHVd5Eqr2pnxUg2k
-         +UTDhquYQ3M1HEzz/DRcIjbXrXVA2vZFE7FJy6wEE6hziSCxMmabyoVnCKbNYx/rWL7c
-         hzJqUf03Ct92zmiTgoLM3DUR0ffU3ZgI4Uv/oG3gjkw+B3Fi2FMyQSVTdsbE2CAB7G8f
-         1ehnxYFoCIHwJfflknGvSa1oQMUM8s+U893o7ziDK1HrMENC9A2NqVZuTszueyImi+3D
-         EwqQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hlQhvcOu+7OVuUVkgP+0YkFabn5JNPb5a7R7knpXp3A=;
+        b=Vu+jwOMbVJjBQS04HMvX/Hj7ryO3t759iYpIs7dkdnYfR3cRxZRw7QFTnKtdYzlkOZ
+         QIOp5B6eKoB/38cWKGZnsbshtEnSP47rskw99sSnC+peEIs2DDsMKQ/PBot+twizo0Jb
+         MmNnU32aojRRVzsB6AqEZcZf+ERExegFWPh07cPLygZl9sUVBYtjkJB4IM5ZxCVLbjZ4
+         WfQP5aYl5tORrsMq1PIjiefAPmsia+nwbCyVmj3L9VjCQRmDgGbeUsU4Cyums2C+Bszg
+         Tom1LFIYvW2HM92It+Zze11981oiHULDqm9AnmXpXsedWyfskg6+06086FMFCNLJ/kpp
+         kxzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DEpx5TG66rcd4Z2ytd18XX/tOyyZDkshRv3fyOh2Nhk=;
-        b=OxqGJlblfhhHOC6iZJJteZ9fpOrTLt5ETRaoJTo+JiHgPAadrOghmnyQTTKbkJQsBT
-         vOJqeegzKINxbAXRbhObxG94aLT7YIaUFFZyQPQE2IiJkZONSJKFyJ2D05C7BaIfMq2Y
-         T3Bbnv4VaCAtl/ThFYqx2bN2MAS1lw+JJIcDl0lUn7cZT1yBx5YozZ+OXXPZDmVKMQTI
-         l7CZG1kFSdO2Ezt8W1RFs+sZurwB7dmWDoO+qXgNUAXrOzFaEmKz9iSZubbAuLx4rDey
-         oz2lLb2Kmjb0Cu9Ed+Y3DsXrEi58wk4N+XWkr1lEdhLDorHm93qH3uYyikzMYoGglLtD
-         L7PQ==
-X-Gm-Message-State: ABuFfogYnh/IzW/L5DAUuyqaiRM59NQ2S246ZkuZsiwFdLrogyQCeC11
-        gmZXV5Ri4qnqUcjo7RFKxLftug==
-X-Google-Smtp-Source: ACcGV60/lAkWQr0S1MYTyOT96uQhEFw3up52kLQjJKK6u9Qrsk+hWOupWS4oxONJ3Jb4fP0dYykFFw==
-X-Received: by 2002:a62:52cc:: with SMTP id g195-v6mr488883pfb.241.1538172166265;
-        Fri, 28 Sep 2018 15:02:46 -0700 (PDT)
-Received: from cisco.lan ([128.107.241.171])
-        by smtp.gmail.com with ESMTPSA id k3-v6sm15483040pfk.60.2018.09.28.15.02.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Sep 2018 15:02:45 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 16:02:43 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Jann Horn <jannh@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH 3/3] seccomp: introduce read protection for struct seccomp
-Message-ID: <20180928220243.GE18045@cisco.lan>
-References: <20180928154648.6320-1-tycho@tycho.ws>
- <20180928154648.6320-3-tycho@tycho.ws>
- <CAG48ez2h51s1VG8hf1ASHHq88r5b+6rS4nSkgvre77jgsJLbhg@mail.gmail.com>
- <20180928205652.GC18045@cisco.lan>
- <CAG48ez1CpPmk6BFOztA-=w1U-pvaNBXou6JpcfMKx_ELGSwDVA@mail.gmail.com>
- <20180928213557.GD18045@cisco.lan>
- <CAG48ez18dg1dZ-jDQjDQ6zmo7R54SHJYYAZpunFLojOChwZ=9g@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hlQhvcOu+7OVuUVkgP+0YkFabn5JNPb5a7R7knpXp3A=;
+        b=kGiEArd0+n0ZGVqEmPwess9vnlxn8U+eycAg4HvMxhAB1PQhgPhKHbvgrG4bB1ucFN
+         qJyGiHbh2PyB5Ikd5aJsKr4rGQsrTTUhWScNYE1uqWpv7I8njqbXfKKuWUOkVEVuYpxz
+         51lM5H/O09cZ2zN8E3at6qaNEMkh6alISM8WUQk1BQFqR+Qz0km4tB7g7XjiSdzFNM/4
+         feQPsC3CRIVcy/qkoT0vteYNi+sV48A7BMzVrVinrkiRpS/e9e04q6j8e9NzDVaOex6b
+         4Id3RLMsjROwq1cV3tL050Yfgar4nGRO202a4WJ+70KmpRBmzc+lgWYluCrNiVvgpk+C
+         SOew==
+X-Gm-Message-State: ABuFfojDEPjcD8EXE7u6xPgaFCaSPiICV4q5eIh2f2qBsUe3jK6YS9lp
+        NYqzLnsHMyNsTL7EKGG7e7XcxxhEIiEqj71GmmwggA==
+X-Google-Smtp-Source: ACcGV62WlGarIEdlZmvR5F5z5WMYfJ5xDw9lPBFVCYDz2jVi1Z5MceS6VQu2sNaaLbHEi5vp96XrACuBHz7ZogW8L0c=
+X-Received: by 2002:aca:3b45:: with SMTP id i66-v6mr310583oia.312.1538172180668;
+ Fri, 28 Sep 2018 15:03:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez18dg1dZ-jDQjDQ6zmo7R54SHJYYAZpunFLojOChwZ=9g@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
+ <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
+ <e89ec139-1a97-803e-343c-76eedf244d65@linux.intel.com> <CAG48ez17MOP4hLavskqJDj8KwF=otrNiwV6+cizFPwM_L0k6gA@mail.gmail.com>
+In-Reply-To: <CAG48ez17MOP4hLavskqJDj8KwF=otrNiwV6+cizFPwM_L0k6gA@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Sat, 29 Sep 2018 00:02:34 +0200
+Message-ID: <CAG48ez0Ux6p-Bcu9ymNm_eMpydLm0-DSBYKp4XJRv27XO_QqeA@mail.gmail.com>
+Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
+To:     tvrtko.ursulin@linux.intel.com
+Cc:     Thomas Gleixner <tglx@linutronix.de>, tursulin@ursulin.net,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, maddy@linux.vnet.ibm.com,
+        Andi Kleen <ak@linux.intel.com>,
+        alexey.budankov@linux.intel.com, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 11:54:22PM +0200, Jann Horn wrote:
-> On Fri, Sep 28, 2018 at 11:36 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > On Fri, Sep 28, 2018 at 11:10:48PM +0200, Jann Horn wrote:
-> > > On Fri, Sep 28, 2018 at 10:56 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > >
-> > > > On Fri, Sep 28, 2018 at 10:33:34PM +0200, Jann Horn wrote:
-> > > > > On Fri, Sep 28, 2018 at 5:47 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > > > > As Jann pointed out, there is a race between SECCOMP_FILTER_FLAG_TSYNC and
-> > > > > > the ptrace code that can inspect a filter of another process. Let's
-> > > > > > introduce read locking into the two ptrace accesses so that we don't race.
-> > > > >
-> > > > > Hmm. Is that true? The ptrace code uses get_nth_filter(), which holds
-> > > > > the siglock while grabbing the seccomp filter and bumping its
-> > > > > refcount. And TSYNC happens from seccomp_set_mode_filter(), which
-> > > > > takes the siglock. So this looks okay to me?
-> > > >
-> > > > Oh, yes, you're right. So I guess we should just change the comment to
-> > > > say we're using siglock to represent the read lock.
+On Fri, Sep 28, 2018 at 5:12 PM Jann Horn <jannh@google.com> wrote:
+>
+> On Fri, Sep 28, 2018 at 3:22 PM Tvrtko Ursulin
+> <tvrtko.ursulin@linux.intel.com> wrote:
+> > On 28/09/2018 11:26, Thomas Gleixner wrote:
+> > > On Wed, 19 Sep 2018, Tvrtko Ursulin wrote:
+> > >> For situations where sysadmins might want to allow different level of
+> > >> access control for different PMUs, we start creating per-PMU
+> > >> perf_event_paranoid controls in sysfs.
+> > >>
+> > >> These work in equivalent fashion as the existing perf_event_paranoid
+> > >> sysctl, which now becomes the parent control for each PMU.
+> > >>
+> > >> On PMU registration the global/parent value will be inherited by each PMU,
+> > >> as it will be propagated to all registered PMUs when the sysctl is
+> > >> updated.
+> > >>
+> > >> At any later point individual PMU access controls, located in
+> > >> <sysfs>/device/<pmu-name>/perf_event_paranoid, can be adjusted to achieve
+> > >> fine grained access control.
+> > >>
+> > >> Discussion from previous posting:
+> > >> https://lkml.org/lkml/2018/5/21/156
 > > >
-> > > Hmm... actually, looking at this closer, I think you only need the
-> > > siglock for writing. As far as I can tell, any read (no matter if
-> > > current or non-current) can just use READ_ONCE(), because once a
-> > > seccomp filter is in a task's seccomp filter chain, it can't be freed
-> > > until the task reaches free_task() and calls put_seccomp_filter() from
-> > > there. And if the task whose seccomp filter you're trying to read can
-> > > reach free_task(), you have bigger problems.
+> > > This is really not helpful. The cover letter and the change logs should
+> > > contain a summary of that discussion and a proper justification of the
+> > > proposed change. Just saying 'sysadmins might want to allow' is not useful
+> > > at all, it's yet another 'I want a pony' thing.
 > >
-> > Ok; looks like get_nth_filter() took the siglock anyway. Since we get
-> > the filters in these two functions in get_nth_filter(), I think it's
-> > enough just to just,
+> > Okay, for the next round I will expand the cover letter with at least
+> > one concrete example on how it is usable and summarize the discussion a bit.
 > >
-> > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> > index f65d47650ac1..79d833ed4c34 100644
-> > --- a/kernel/seccomp.c
-> > +++ b/kernel/seccomp.c
-> > @@ -1001,7 +1001,7 @@ static struct seccomp_filter *get_nth_filter(struct task_struct *task,
-> >                 return ERR_PTR(-EINVAL);
-> >         }
+> > > I read through the previous thread and there was a clear request to involve
+> > > security people into this. Especially those who are deeply involved with
+> > > hardware side channels. I don't see anyone Cc'ed on the whole series.
 > >
-> > -       orig = task->seccomp.filter;
-> > +       orig = READ_ONCE(task->seccomp.filter);
-> >         __get_seccomp_filter(orig);
-> >         spin_unlock_irq(&task->sighand->siglock);
-> 
-> Huh? Now you're holding the siglock *and* you're using READ_ONCE()?
-> I'm not sure what you're trying to accomplish here.
+> > Who would you recommend I add? Because I really don't know..
+> >
+> > > For the record, I'm not buying the handwavy 'more noise' argument at
+> > > all. It wants a proper analysis and we need to come up with criteria which
+> > > PMUs can be exposed at all.
+> > >
+> > > All of this want's a proper documentation clearly explaining the risks and
+> > > scope of these knobs per PMU. Just throwing magic knobs at sysadmins and
+> > > then saying 'its their problem to figure it out' is not acceptable.
+> >
+> > Presumably you see adding fine grained control as diminishing the
+> > overall security rather than raising it? Could you explain why? Because
+> > incompetent sysadmin will turn it off for some PMU, while without having
+> > the fine-grained control they wouldn't turn it off globally?
+> >
+> > This feature was requested by the exact opposite concern, that in order
+> > to access the i915 PMU, one has to compromise the security of the entire
+> > system by allowing access to *all* PMU's.
+> >
+> > Making this ability fine-grained sounds like a logical solution for
+> > solving this weakening of security controls.
+> >
+> > Concrete example was that on video transcoding farms users want to
+> > monitor the utilization of GPU engines (like CPU cores) and they can do
+> > that via the i915 PMU. But for that to work today they have to dial down
+> > the global perf_event_paranoid setting. Obvious improvement was to allow
+> > them to only dial down the i915.perf_event_paranoid setting. As such,
+> > for this specific use case at least, the security is increased.
+>
+> Which paranoia level would be used for the i915.perf_event_paranoid
+> setting in such a case?
 
-Yes, let's just drop this patch all together.
+Ah, I guess the answer is "0", since you want to see data about what
+other users are doing.
 
-Tycho
+Does the i915 PMU expose sampling events, counting events, or both?
+The thing about sampling events is that they AFAIK always let the user
+pick arbitrary data to collect - like register contents, or userspace
+stack memory -, and independent of the performance counter being
+monitored, this kind of access should not be permitted to other
+contexts. (But it might be that I misunderstand how perf works - I'm
+not super familiar with its API.)
