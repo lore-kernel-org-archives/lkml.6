@@ -2,87 +2,98 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 793F4C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2819BC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 439E62170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:32:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439E62170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id C96792170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:34:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h8NuHtWg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C96792170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729541AbeI1R4Q (ORCPT
+        id S1729452AbeI1R5n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 13:56:16 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:35468 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeI1R4Q (ORCPT
+        Fri, 28 Sep 2018 13:57:43 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36571 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729232AbeI1R5n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 13:56:16 -0400
-Received: from ramsan.of.borg ([84.194.111.163])
-        by laurent.telenet-ops.be with bizsmtp
-        id gzYt1y00T3XaVaC01zYtES; Fri, 28 Sep 2018 13:32:54 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1g5r0v-00031I-KP; Fri, 28 Sep 2018 13:32:53 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1g5r0v-0004UT-IV; Fri, 28 Sep 2018 13:32:53 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: irqchip: renesas-irqc: Document R-Car E3 support
-Date:   Fri, 28 Sep 2018 13:32:38 +0200
-Message-Id: <20180928113238.17192-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Fri, 28 Sep 2018 13:57:43 -0400
+Received: by mail-lf1-f65.google.com with SMTP id v17-v6so4741828lfe.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 04:34:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NtlxJJLat4KPRoSgywPh8BSygJ1ZYtWu3TCCHHkYSGU=;
+        b=h8NuHtWghjsnmxCFUY6HAaJVXDJNyLM8s8+DC1jCGSqpto34vZnXROcC5zWmqInapn
+         7O9yJIf80gRkrf0eNv4ru6QKod5rXC9YyQcmb3DyqR4qS4X9bp9a8ies48zztIsArj1U
+         btyw57I49Rh5Ob1djpgUf19thNjEG4vdtRQeMkX5GCAfyC7Svdxq7fp0YwKUInKfq0Yz
+         QWZonzBCnQBifkarwGrI+InO+9nwVZ/vRgBZ7SZGBNxRi68EAsnB+VU6zOunfFHf2GG3
+         8HNow5VMq++qG/7mImPT6merug/hdYJ7OdRbd3hvHwCWzcmt/DOHGjk3SBg+71d6Vv7N
+         Z9AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NtlxJJLat4KPRoSgywPh8BSygJ1ZYtWu3TCCHHkYSGU=;
+        b=dLLPIdPp/aDjtwYUetn0xg6I2n2V4gUdw4fYO9kwlgBSWGhaegWS+/2eiivd9XWJpq
+         YGvGSujKry4UQA4ogxkG/E76hyJEKzqlspdMRazDFLhtZhznN7Zl+NxZLgiNpw3lJ71t
+         tAAAKc2/g0gHJRuTgUmby45fz573PImP5W8VwPvh5MUH/hkd9FuX1L5jUEdEzxI3w7Hn
+         5WZzqjPG4SBfeETG0CXtsnx07ADJ6LVQY+ktTmFxiyqiddIc1mc4iS/ByhAU4ib+ThYX
+         /nKj890sr8Osb+V2XVCVPM+Uuta+wzZUUU+NxQZlXth/+gJO57BEjv4W4HWs2zcTeB4o
+         EfiA==
+X-Gm-Message-State: ABuFfohgrcKUJF4IYQ0KFnZdIb/y/2TJJkZFYJqN/zYCTlQmeLC4NeLh
+        xAe4JWtDSRKBvmmaObee+Ts=
+X-Google-Smtp-Source: ACcGV616cI2ks/zqqTSMXMLHjpUEl2cPnHlHKRhEID5eY6pkE+LVAmpLUktRjEM6W0m6nBHv2cdmkQ==
+X-Received: by 2002:a19:7411:: with SMTP id v17-v6mr10494766lfe.49.1538134460657;
+        Fri, 28 Sep 2018 04:34:20 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.102.224])
+        by smtp.gmail.com with ESMTPSA id 197-v6sm396151ljj.17.2018.09.28.04.34.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Sep 2018 04:34:19 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 8CC9346065D; Fri, 28 Sep 2018 14:34:18 +0300 (MSK)
+Date:   Fri, 28 Sep 2018 14:34:18 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com,
+        aryabinin@virtuozzo.com, hannes@cmpxchg.org,
+        penguin-kernel@i-love.sakura.ne.jp, shakeelb@google.com,
+        jbacik@fb.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: Fix int overflow in callers of do_shrink_slab()
+Message-ID: <20180928113418.GR15710@uranus>
+References: <153813407177.17544.14888305435570723973.stgit@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153813407177.17544.14888305435570723973.stgit@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document support for the Interrupt Controller for External Devices
-(INTC-EX) in the Renesas E3 (r8a77990) SoC.
+On Fri, Sep 28, 2018 at 02:28:32PM +0300, Kirill Tkhai wrote:
+> do_shrink_slab() returns unsigned long value, and
+> the placing into int variable cuts high bytes off.
+> Then we compare ret and 0xfffffffe (since SHRINK_EMPTY
+> is converted to ret type).
+> 
+> Thus, big number of objects returned by do_shrink_slab()
+> may be interpreted as SHRINK_EMPTY, if low bytes of
+> their value are equal to 0xfffffffe. Fix that
+> by declaration ret as unsigned long in these functions.
+> 
+> Reported-by: Cyrill Gorcunov <gorcunov@openvz.org>
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Acked-by: Cyrill Gorcunov <gorcunov@openvz.org>
 
-No driver update is needed.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../devicetree/bindings/interrupt-controller/renesas,irqc.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-index a046ed374d808d66..b8a86e30e8e67068 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-@@ -2,7 +2,8 @@ DT bindings for the R-Mobile/R-Car/RZ/G interrupt controller
- 
- Required properties:
- 
--- compatible: has to be "renesas,irqc-<soctype>", "renesas,irqc" as fallback.
-+- compatible: must be "renesas,irqc-<soctype>" or "renesas,intc-ex-<soctype>",
-+	      and "renesas,irqc" as fallback.
-   Examples with soctypes are:
-     - "renesas,irqc-r8a73a4" (R-Mobile APE6)
-     - "renesas,irqc-r8a7743" (RZ/G1M)
-@@ -19,6 +20,7 @@ Required properties:
-     - "renesas,intc-ex-r8a77965" (R-Car M3-N)
-     - "renesas,intc-ex-r8a77970" (R-Car V3M)
-     - "renesas,intc-ex-r8a77980" (R-Car V3H)
-+    - "renesas,intc-ex-r8a77990" (R-Car E3)
-     - "renesas,intc-ex-r8a77995" (R-Car D3)
- - #interrupt-cells: has to be <2>: an interrupt index and flags, as defined in
-   interrupts.txt in this directory
--- 
-2.17.1
-
+Thank you!
