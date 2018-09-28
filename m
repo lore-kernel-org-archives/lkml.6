@@ -2,108 +2,137 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CE8C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E25C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 320C121528
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:01:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="aX2x/F//"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 320C121528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id EECD721528
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:02:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EECD721528
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbeI1UZs (ORCPT
+        id S1729359AbeI1U0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:25:48 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:36815 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726971AbeI1UZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:25:47 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 2e726d46;
-        Fri, 28 Sep 2018 13:43:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=xri/HvHpWJvl4xOiPMBgOOsqXhU=; b=aX2x/F
-        //1ijGD9OAo5VSQ/oTskgbxR1+pbLNx/4AY9E+R5/p7oGUUEpz91dCdnFFLARC1f
-        Ml2KG2CkpYSY+0NGpjekWvDufRvE2UGbJq9AqToO+6JXEefAsDbjU9JpWBCayAXJ
-        AGs0GhNjlJTkmEnKxLMN4975TIMCFOnJ2Pvry0azpzbdV05+/2Cvn5LbNz+mvPli
-        Lkq+VdSkJDxE79q9cpFC736/iOzY2tkWQtxrjypXZiqrLMtMXR62cSu/2nc/XiW6
-        I0UWhDRdypTtx+RbRrVV6ZcLs8EH2sImneFEqh4uwwU86ol0+U4gvRcD2JA6EUVB
-        5cok2P6adL7bRL8w==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 28596e47 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Fri, 28 Sep 2018 13:43:02 +0000 (UTC)
-Received: by mail-ot1-f50.google.com with SMTP id o13-v6so6126790otl.4;
-        Fri, 28 Sep 2018 07:01:49 -0700 (PDT)
-X-Gm-Message-State: ABuFfoitDwnnngaqeUrMchEvaKJafw9FdxcMEA37/tV7ihHaRY7CZBPD
-        UvDDQaK4u4Whyja61CLoI/Hirg/pHUqWnmjxnXU=
-X-Google-Smtp-Source: ACcGV60k//u4Rr4Z2qxDLnfeFAcQMBQ9F4eLpg42ZXFd3QzecOsTivVApo2vSw3Dv2SFDPQWEWFFimCdAWiwdHWy2Qs=
-X-Received: by 2002:a9d:1719:: with SMTP id i25-v6mr9566734ota.223.1538143309237;
- Fri, 28 Sep 2018 07:01:49 -0700 (PDT)
+        Fri, 28 Sep 2018 16:26:11 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:54511 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726971AbeI1U0L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 16:26:11 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g5tLM-0008Jd-N9; Fri, 28 Sep 2018 16:02:08 +0200
+Date:   Fri, 28 Sep 2018 16:02:08 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+cc:     Tvrtko Ursulin <tursulin@ursulin.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
+Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
+In-Reply-To: <e89ec139-1a97-803e-343c-76eedf244d65@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1809281542180.2004@nanos.tec.linutronix.de>
+References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com> <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de> <e89ec139-1a97-803e-343c-76eedf244d65@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-2-Jason@zx2c4.com>
- <CAKv+Gu9e35+AyktmSq9qeNE0LR83_yrEEB3DiQv0bmyArivqRQ@mail.gmail.com>
- <CAKv+Gu9kbLPZH4W0zKAfuv-b11mcDaZ05HUauvh9gMZVGVR0AQ@mail.gmail.com>
- <CAHmME9pfs0_MsD9QAGfSm31_w-=6BCF_gZO04XkfhD=mEoZmtQ@mail.gmail.com>
- <CAKv+Gu__7mZFFq6qC=8yh0OuaV+TCCLFt6nm8yJfaANHUPrJ=A@mail.gmail.com>
- <CAHmME9owF+3aQaZUkK4KkfnJna+DK=GoWV8yf-Wb+gH4w3y9eg@mail.gmail.com> <CAKv+Gu9FAVVOiYyGovYZ19-107_6sK9Ya6LnK=AQkTgctMmu5A@mail.gmail.com>
-In-Reply-To: <CAKv+Gu9FAVVOiYyGovYZ19-107_6sK9Ya6LnK=AQkTgctMmu5A@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Fri, 28 Sep 2018 16:01:37 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rqsOid6UOx+VTsFzJLEiaXpTP_z_wvHC6MbeAQUeEtHg@mail.gmail.com>
-Message-ID: <CAHmME9rqsOid6UOx+VTsFzJLEiaXpTP_z_wvHC6MbeAQUeEtHg@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 01/23] asm: simd context helper API
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 4:00 PM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
->
-> On 28 September 2018 at 15:59, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > On Fri, Sep 28, 2018 at 3:58 PM Ard Biesheuvel
-> > <ard.biesheuvel@linaro.org> wrote:
-> >>
-> >> On 28 September 2018 at 15:47, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> >> > On Fri, Sep 28, 2018 at 10:49 AM Ard Biesheuvel
-> >> > <ard.biesheuvel@linaro.org> wrote:
-> >> >> >> +typedef enum {
-> >> >> >> +       HAVE_NO_SIMD = 1 << 0,
-> >> >> >> +       HAVE_FULL_SIMD = 1 << 1,
-> >> >> >> +       HAVE_SIMD_IN_USE = 1 << 31
-> >> >> >> +} simd_context_t;
-> >> >> >> +
-> >> >>
-> >> >> Oh, and another thing (and I'm surprised checkpatch.pl didn't complain
-> >> >> about it): the use of typedef in new code is strongly discouraged.
-> >> >> This policy predates my involvement, so perhaps Joe can elaborate on
-> >> >> the rationale?
-> >> >
-> >> > In case it matters, the motivation for making this a typedef is I
-> >> > could imagine this at some point turning into a more complicated
-> >> > struct on certain platforms and that would make refactoring easier. I
-> >> > could just make it `struct simd_context` now with 1 member though...
-> >>
-> >> Yes that makes sense
-> >
-> > The rationale for it being a typedef or moving to a struct now?
->
-> Yes just switch to a struct.
+Tvrtko,
 
-Okay. No problem with that, but will wait to hear from Joe first.
+On Fri, 28 Sep 2018, Tvrtko Ursulin wrote:
+> On 28/09/2018 11:26, Thomas Gleixner wrote:
+> > On Wed, 19 Sep 2018, Tvrtko Ursulin wrote:
+> > 
+> > It would be very helpful if you cc all involved people on the cover letter
+> > instead of just cc'ing your own pile of email addresses. CC'ed now.
+> 
+> I accept it was by bad to miss adding Cc's on the cover letter, but my own
+> email addresses hopefully should not bother you. It is simply a question of
+> what I have in .gitconfig vs what I forgot to do manually.
+
+The keyword in the above sentence is 'just'. You can add as many of yours
+as you want as long as everybody else is cc'ed.
+
+> > I read through the previous thread and there was a clear request to involve
+> > security people into this. Especially those who are deeply involved with
+> > hardware side channels. I don't see anyone Cc'ed on the whole series.
+> 
+> Who would you recommend I add? Because I really don't know..
+
+Sure, and because you don't know you didn't bother to ask around and
+ignored the review request.
+
+I already added Kees and Jann. Please look for the SECCOMP folks in
+MAINTAINERS.
+
+> > For the record, I'm not buying the handwavy 'more noise' argument at
+> > all. It wants a proper analysis and we need to come up with criteria which
+> > PMUs can be exposed at all.
+> > 
+> > All of this want's a proper documentation clearly explaining the risks and
+> > scope of these knobs per PMU. Just throwing magic knobs at sysadmins and
+> > then saying 'its their problem to figure it out' is not acceptable.
+> 
+> Presumably you see adding fine grained control as diminishing the overall
+> security rather than raising it? Could you explain why? Because incompetent
+> sysadmin will turn it off for some PMU, while without having the fine-grained
+> control they wouldn't turn it off globally?
+
+I did not say at all that this might be diminishing security. And the
+argumentation with 'incompetent sysadmins' is just the wrong attitude.
+
+What I was asking for is proper documentation and this proper documentation
+is meant for _competent_ sysadmins.
+
+That documentation has to clearly describe what kind of information is
+accessible and what potential side effects security wise this might
+have. You cannot expect that even competent sysadmins know offhand what
+which PMU might expose. And telling them 'Use Google' is just not the right
+thing to do.
+
+If you can't explain and document it, then providing the knob is just
+fulfilling somebodys 'I want a pony' request.
+
+> This feature was requested by the exact opposite concern, that in order to
+> access the i915 PMU, one has to compromise the security of the entire system
+> by allowing access to *all* PMU's.
+> 
+> Making this ability fine-grained sounds like a logical solution for solving
+> this weakening of security controls.
+
+Sure, and this wants to be documented in the cover letter and the
+changelogs.
+
+But this does also require a proper analysis and documentation why it is
+not a security risk to expose the i915 PMU or what potential security
+issues this can create, so that the competent sysadmin can make a
+judgement.
+
+And the same is required for all other PMUs which can be enabled in the
+same way for unprivileged access. And we might as well come to the
+conclusion via analysis that for some PMUs unpriviledged access is just not
+a good idea and exclude them. I surely know a few which qualify for
+exclusion, so the right approach is to provide this knob only when the risk
+is analyzed and documented and the PMU has been flagged as candidate for
+unpriviledged exposure. I.e. opt in and not opt out.
+
+Thanks,
+
+	tglx
