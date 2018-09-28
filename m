@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F82AC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C354C004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC3DB2073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC3DB2073F
+	by mail.kernel.org (Postfix) with ESMTP id E5A52206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A52206B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbeI2E0m (ORCPT
+        id S1727201AbeI2E0r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:26:42 -0400
-Received: from smtprelay0057.hostedemail.com ([216.40.44.57]:45614 "EHLO
+        Sat, 29 Sep 2018 00:26:47 -0400
+Received: from smtprelay0243.hostedemail.com ([216.40.44.243]:36151 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725985AbeI2E0m (ORCPT
+        by vger.kernel.org with ESMTP id S1725985AbeI2E0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:26:42 -0400
+        Sat, 29 Sep 2018 00:26:46 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id B6EFF1802642F;
-        Fri, 28 Sep 2018 22:00:57 +0000 (UTC)
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id F0C1A2195C;
+        Fri, 28 Sep 2018 22:01:01 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: crow47_850b9933e708
-X-Filterd-Recvd-Size: 2026
+X-HE-Tag: angle64_8e964c9dad15
+X-Filterd-Recvd-Size: 4586
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 22:00:57 +0000 (UTC)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 22:01:01 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Peter Rosin <peda@axentia.se>
-Subject: Bad MAINTAINERS pattern in section 'MULTIPLEXER SUBSYSTEM'
-Date:   Fri, 28 Sep 2018 15:00:55 -0700
-Message-Id: <20180928220055.30772-1-joe@perches.com>
+Cc:     Petr Vandrovec <petr@vandrovec.name>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Bad MAINTAINERS pattern in section 'NCP FILESYSTEM'
+Date:   Fri, 28 Sep 2018 15:00:59 -0700
+Message-Id: <20180928220059.30847-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,40 +50,88 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	9976	MULTIPLEXER SUBSYSTEM
-	9977	M:	Peter Rosin <peda@axentia.se>
-	9978	S:	Maintained
-	9979	F:	Documentation/ABI/testing/sysfs-class-mux*
-	9980	F:	Documentation/devicetree/bindings/mux/
--->	9981	F:	include/linux/dt-bindings/mux/
-	9982	F:	include/linux/mux/
-	9983	F:	drivers/mux/
+	10052	NCP FILESYSTEM
+	10053	M:	Petr Vandrovec <petr@vandrovec.name>
+	10054	S:	Obsolete
+-->	10055	F:	drivers/staging/ncpfs/
 
 Commit that introduced this:
 
-commit 256ac0375098e50d59c415fcbb561f2927fa8780
- Author: Peter Rosin <peda@axentia.se>
- Date:   Sun May 14 21:51:05 2017 +0200
+commit 1bb8155080c652c4853e6228f8f0d262b3049699
+ Author: Stephen Hemminger <stephen@networkplumber.org>
+ Date:   Tue Nov 14 08:37:15 2017 -0800
  
-     dt-bindings: document devicetree bindings for mux-controllers and gpio-mux
+     ncpfs: move net/ncpfs to drivers/staging/ncpfs
      
-     Allow specifying that a single multiplexer controller can be used to
-     control several parallel multiplexers, thus enabling sharing of the
-     multiplexer controller by different consumers.
+     The Netware Core Protocol is a file system that talks to
+     Netware clients over IPX. Since IPX has been dead for many years
+     move the file system into staging for eventual interment.
      
-     Add a binding for a first mux controller in the form of a GPIO based mux
-     controller.
-     
-     Acked-by: Jonathan Cameron <jic23@kernel.org>
-     Acked-by: Rob Herring <robh@kernel.org>
-     Signed-off-by: Peter Rosin <peda@axentia.se>
+     Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+     Acked-by: David S. Miller <davem@davemloft.net>
      Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
-  Documentation/devicetree/bindings/mux/gpio-mux.txt |  69 +++++++++
-  .../devicetree/bindings/mux/mux-controller.txt     | 157 +++++++++++++++++++++
-  MAINTAINERS                                        |   6 +
-  include/dt-bindings/mux/mux.h                      |  16 +++
-  4 files changed, 248 insertions(+)
+  MAINTAINERS                                    | 2 +-
+  drivers/staging/Kconfig                        | 2 ++
+  drivers/staging/Makefile                       | 1 +
+  {fs => drivers/staging}/ncpfs/Kconfig          | 0
+  {fs => drivers/staging}/ncpfs/Makefile         | 0
+  drivers/staging/ncpfs/TODO                     | 4 ++++
+  {fs => drivers/staging}/ncpfs/dir.c            | 0
+  {fs => drivers/staging}/ncpfs/file.c           | 0
+  {fs => drivers/staging}/ncpfs/getopt.c         | 0
+  {fs => drivers/staging}/ncpfs/getopt.h         | 0
+  {fs => drivers/staging}/ncpfs/inode.c          | 0
+  {fs => drivers/staging}/ncpfs/ioctl.c          | 0
+  {fs => drivers/staging}/ncpfs/mmap.c           | 0
+  {fs => drivers/staging}/ncpfs/ncp_fs.h         | 0
+  {fs => drivers/staging}/ncpfs/ncp_fs_i.h       | 0
+  {fs => drivers/staging}/ncpfs/ncp_fs_sb.h      | 0
+  {fs => drivers/staging}/ncpfs/ncplib_kernel.c  | 0
+  {fs => drivers/staging}/ncpfs/ncplib_kernel.h  | 0
+  {fs => drivers/staging}/ncpfs/ncpsign_kernel.c | 0
+  {fs => drivers/staging}/ncpfs/ncpsign_kernel.h | 0
+  {fs => drivers/staging}/ncpfs/sock.c           | 0
+  {fs => drivers/staging}/ncpfs/symlink.c        | 0
+  fs/Kconfig                                     | 1 -
+  fs/Makefile                                    | 1 -
+  24 files changed, 8 insertions(+), 3 deletions(-)
 
-No commit with include/linux/dt-bindings/mux/ found
+Last commit with drivers/staging/ncpfs/
 
+commit bd32895c750bcd2b511bf93917bf7ae723e3d0b6
+Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Fri Jun 1 20:23:10 2018 +0200
+
+    staging: ncpfs: delete it
+    
+    The ncpfs code moved into the staging tree back in November 2017 and no
+    one has complained or even noticed it was gone.  Because of that, let's
+    just delete it.
+    
+    Cc: Stephen Hemminger <stephen@networkplumber.org>
+    Cc: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+ drivers/staging/Kconfig                |    2 -
+ drivers/staging/Makefile               |    1 -
+ drivers/staging/ncpfs/Kconfig          |  108 ---
+ drivers/staging/ncpfs/Makefile         |   17 -
+ drivers/staging/ncpfs/TODO             |    4 -
+ drivers/staging/ncpfs/dir.c            | 1232 -----------------------------
+ drivers/staging/ncpfs/file.c           |  263 -------
+ drivers/staging/ncpfs/getopt.c         |   76 --
+ drivers/staging/ncpfs/getopt.h         |   17 -
+ drivers/staging/ncpfs/inode.c          | 1067 -------------------------
+ drivers/staging/ncpfs/ioctl.c          |  923 ----------------------
+ drivers/staging/ncpfs/mmap.c           |  125 ---
+ drivers/staging/ncpfs/ncp_fs.h         |  101 ---
+ drivers/staging/ncpfs/ncp_fs_i.h       |   31 -
+ drivers/staging/ncpfs/ncp_fs_sb.h      |  174 -----
+ drivers/staging/ncpfs/ncplib_kernel.c  | 1326 --------------------------------
+ drivers/staging/ncpfs/ncplib_kernel.h  |  215 ------
+ drivers/staging/ncpfs/ncpsign_kernel.c |  128 ---
+ drivers/staging/ncpfs/ncpsign_kernel.h |   27 -
+ drivers/staging/ncpfs/sock.c           |  855 --------------------
+ drivers/staging/ncpfs/symlink.c        |  182 -----
+ 21 files changed, 6874 deletions(-)
