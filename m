@@ -2,133 +2,94 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEAEC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD943C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B32F20779
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:41:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B32F20779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 3914120779
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:41:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3914120779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729509AbeI1WFo (ORCPT
+        id S1729527AbeI1WGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 18:05:44 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:24019 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729138AbeI1WFo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 18:05:44 -0400
-X-UUID: 10fadca6f10a48a89a9288a065550b77-20180928
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1071842508; Fri, 28 Sep 2018 23:41:19 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 28 Sep 2018 23:41:17 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 28 Sep 2018 23:41:17 +0800
-Message-ID: <1538149277.23182.7.camel@mtkswgap22>
-Subject: Re: [PATCH v5 4/9] PCI: mediatek: Convert to use pci_host_probe()
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     <honghui.zhang@mediatek.com>
-CC:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        <marc.zyngier@arm.com>, <matthias.bgg@gmail.com>,
-        <devicetree@vger.kernel.org>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <youlin.pei@mediatek.com>,
-        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>
-Date:   Fri, 28 Sep 2018 23:41:17 +0800
-In-Reply-To: <1538129080-8206-5-git-send-email-honghui.zhang@mediatek.com>
-References: <1538129080-8206-1-git-send-email-honghui.zhang@mediatek.com>
-         <1538129080-8206-5-git-send-email-honghui.zhang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Fri, 28 Sep 2018 18:06:04 -0400
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:34322 "EHLO fuzix.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728953AbeI1WGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 18:06:03 -0400
+Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
+        by fuzix.org (8.15.2/8.15.2) with ESMTP id w8SFfgXA016685;
+        Fri, 28 Sep 2018 16:41:43 +0100
+Date:   Fri, 28 Sep 2018 16:41:42 +0100
+From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To:     Marcus Linsner <constantoverride@gmail.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: Howto prevent kernel from evicting code pages ever? (to avoid
+ disk thrashing when about to run out of RAM)
+Message-ID: <20180928164142.715ea2a1@alans-desktop>
+In-Reply-To: <CAKYFi-4a=H+vT+vo5s6mpKXAv+0W0pyTj1WtEr6xfjoFVFmtJQ@mail.gmail.com>
+References: <CAKYFi-4a=H+vT+vo5s6mpKXAv+0W0pyTj1WtEr6xfjoFVFmtJQ@mail.gmail.com>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-09-28 at 18:04 +0800, honghui.zhang@mediatek.com wrote:
-> From: Honghui Zhang <honghui.zhang@mediatek.com>
+On Wed, 22 Aug 2018 11:25:35 +0200
+Marcus Linsner <constantoverride@gmail.com> wrote:
+
+> Hi. How to make the kernel keep(lock?) all code pages in RAM so that
+> kswapd0 won't evict them when the system is under low memory
+> conditions ?
 > 
-> Part of mtk_pcie_register_host is an open-coded version of
-> pci_host_probe(). So instead of duplicating this code, use
-> pci_host_probe() directly and remove mtk_pcie_register_host.
-> 
-> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> ---
->  drivers/pci/controller/pcie-mediatek.c | 37 ++++++++--------------------------
->  1 file changed, 8 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> index e2c4127..cbf4543 100644
-> --- a/drivers/pci/controller/pcie-mediatek.c
-> +++ b/drivers/pci/controller/pcie-mediatek.c
-> @@ -1125,34 +1125,6 @@ static int mtk_pcie_request_resources(struct mtk_pcie *pcie)
->  	return 0;
->  }
->  
-> -static int mtk_pcie_register_host(struct pci_host_bridge *host)
-> -{
-> -	struct mtk_pcie *pcie = pci_host_bridge_priv(host);
-> -	struct pci_bus *child;
-> -	int err;
+> The purpose of this is to prevent the kernel from causing lots of disk
+> reads(effectively freezing the whole system) when about to run out of
+> RAM, even when there is no swap enabled, but well before(in real time
+> minutes) OOM-killer triggers to kill the offending process (eg. ld)!
 
-To make the patch simple, could we keep these host->*. and return
-pci_host_probe() directly?
+Having no swap is not helping you at all.
 
-> -	host->busnr = pcie->busn.start;
-> -	host->dev.parent = pcie->dev;
-> -	host->ops = pcie->soc->ops;
-> -	host->map_irq = of_irq_parse_and_map_pci;
-> -	host->swizzle_irq = pci_common_swizzle;
-> -	host->sysdata = pcie;
-> -
-> -	err = pci_scan_root_bus_bridge(host);
-> -	if (err < 0)
-> -		return err;
-> -
-> -	pci_bus_size_bridges(host->bus);
-> -	pci_bus_assign_resources(host->bus);
-> -
-> -	list_for_each_entry(child, &host->bus->children, node)
-> -		pcie_bus_configure_settings(child);
-> -
-> -	pci_bus_add_devices(host->bus);
-> -
-> -	return 0;
-> -}
-> -
->  static int mtk_pcie_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -1179,7 +1151,14 @@ static int mtk_pcie_probe(struct platform_device *pdev)
->  	if (err)
->  		goto put_resources;
->  
-> -	err = mtk_pcie_register_host(host);
-> +	host->busnr = pcie->busn.start;
-> +	host->dev.parent = pcie->dev;
-> +	host->ops = pcie->soc->ops;
-> +	host->map_irq = of_irq_parse_and_map_pci;
-> +	host->swizzle_irq = pci_common_swizzle;
-> +	host->sysdata = pcie;
-> +
-> +	err = pci_host_probe(host);
->  	if (err)
->  		goto put_resources;
->  
+In Linux you can do several things. Firstly add some swap - even a
+swap file because if you have no swap you fill up memory with pages that
+are not backed by disk and the kernel has to pick less and less optimal
+things to swap out so begins to thrash. Even slowish swap is better than
+no swap as it can dump out little used data pages.
 
+You can tune the OOM killer to taste and you can even guide it on what to
+shoot first.
 
+You can use cgroups to constrain the resources some group of things are
+allowed to use.
+
+You can play with no overcommit mode, although that is much more about
+'cannot fail' embedded applications usually. In that mode the kernel
+tightly constrains the resource overcommit permissible. It's very
+conservative and you end up needing a lot of 'just in case' wasted
+resource, although you can tune the amount you leverage the real
+resources.
+
+To be fair Linux *is* really bad at handling this case. What other systems
+did (being older and from the days where RAM wasn't reasonably assumed
+infinite) was two fold.  The first was under high swap load to switch to
+swapping out entire processes, which with all the shared resources and
+fast I/O today isn't quite so relevant. The second was that it would
+ensure a process got a certain amount of real CPU time before it's pages
+could be booted out again (and would then boot out lots of them). That
+turns the thrashing into forward progress but still feels unpleasant.
+However you still need swap or you don't have anywhere to boot out all
+the dirty non code pages in order to manage progress.
+
+There is a reason swap exists. If you don't have enough RAM to run
+smoothly without swap, add swap (or RAM). Even then some things usually
+need swap - I've got things that make the compiler consume over 16GB
+building one file. With swap it's fine even on a 4GB machine.
+
+Alan
