@@ -2,105 +2,95 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1078EC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D618C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:04:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3F082073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:04:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F082073F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id D12A6206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:04:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D12A6206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbeI2E3u (ORCPT
+        id S1727496AbeI2E37 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:29:50 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45797 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727352AbeI2E3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:29:49 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 005CF20737; Sat, 29 Sep 2018 00:04:01 +0200 (CEST)
-Received: from bbrezillon (unknown [109.190.253.16])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 991DC206A7;
-        Sat, 29 Sep 2018 00:04:00 +0200 (CEST)
-Date:   Sat, 29 Sep 2018 00:03:59 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     Frieder Schrempf <frieder.schrempf@exceet.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yogeshnarayan.gaur@nxp.com,
-        richard@nod.at, Stefan Agner <stefan@agner.ch>,
-        Fabio Estevam <festevam@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        prabhakar.kushwaha@nxp.com, han.xu@nxp.com, broonie@kernel.org,
-        david.wolfe@nxp.com, computersforpeace@gmail.com,
-        dwmw2@infradead.org, albert.aribaud@3adev.fr
-Subject: Re: [RFC/RFT PATCH v1 0/9] mtd: fsl: quadspi: Fixes for
- fsl-quadspi.c driver (vybrid HW)
-Message-ID: <20180929000359.34fe18ae@bbrezillon>
-In-Reply-To: <20180926220739.620-1-lukma@denx.de>
-References: <20180926220739.620-1-lukma@denx.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sat, 29 Sep 2018 00:29:59 -0400
+Received: from smtprelay0073.hostedemail.com ([216.40.44.73]:56729 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726451AbeI2E37 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 00:29:59 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 686BA18028980;
+        Fri, 28 Sep 2018 22:04:13 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: team23_24c38eebfac5f
+X-Filterd-Recvd-Size: 2495
+Received: from joe-laptop.perches.com (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 22:04:12 +0000 (UTC)
+From:   Joe Perches <joe@perches.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     James Morse <james.morse@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Bad MAINTAINERS pattern in section 'SOFTWARE DELEGATED EXCEPTION INTERFACE (SDEI)'
+Date:   Fri, 28 Sep 2018 15:04:11 -0700
+Message-Id: <20180928220411.31488-1-joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukasz,
+Please fix this defect appropriately.
 
-On Thu, 27 Sep 2018 00:07:30 +0200
-Lukasz Majewski <lukma@denx.de> wrote:
+linux-next MAINTAINERS section:
 
-> Please find following set of patches, which provide improved behaviour
-> of the fsl-quadspi.c driver on Vybrid vf610 HW.
-> 
-> Below code is based on previous work done by Albert ARIBAUD:
-> https://patchwork.ozlabs.org/patch/675401/
-> 
-> I've cleaned up the code a bit, make separate patches, exclude not
-> needed parts and port it to v4.19-rc3.
-> 
-> After applying those patches, the quadspi controller on vf610 works
-> with UBI/UBIFS.
-> The problem is with some corner case writes to raw MTD device
-> (like writing 1023B with single byte writes). Those fail sometimes.
-> 
-> Regression tests can be found in the following repository:
-> https://github.com/lmajewski/tests-spi/tree/master/tests
-> 
-> (Please read README.txt).
-> 
-> The NXP's community thread regarding HW issues in this block on
-> the vf610:
-> https://community.nxp.com/thread/485139
-> 
-> Maybe those patches will be helpful with the new, work in progress
-> driver for spi-fsl-qspi.c
+	13609	SOFTWARE DELEGATED EXCEPTION INTERFACE (SDEI)
+	13610	M:	James Morse <james.morse@arm.com>
+	13611	L:	linux-arm-kernel@lists.infradead.org
+	13612	S:	Maintained
+	13613	F:	Documentation/devicetree/bindings/arm/firmware/sdei.txt
+	13614	F:	drivers/firmware/arm_sdei.c
+	13615	F:	include/linux/sdei.h
+-->	13616	F:	include/uapi/linux/sdei.h
 
-Talking about that, can you try to port your fixes on top of Frieder's
-patchset? I'm pretty sure some bug fixes are irrelevant after the
-migration to spi-mem (patch 1, 3, 4, 5, 6, 7 and 9 should be dropped I
-think).
+Commit that introduced this:
 
-> 
-> Lukasz Majewski (9):
->   Revert "mtd: fsl-quadspi: Rename SEQID_QUAD_READ to SEQID_READ"
->   mtd: qspi: Provide quirk to read only half of RX buffer (NXP's vybrid)
->   mtd: spi: Do not setup the default seqid as we got it set for DUAL and
->     QUAD
->   mtd: spi: Modify the HW capability mask according to supported RX
->     lanes
->   mtd: spi: Provide LUT entry to perform DUAL read
->   mtd: spi: Enhance the fsl_qspi_read() method to support DUAL and QUAD
->   mtd: spi: Add SPI_NOR_DUAL_READ property for the 'n25q128a13' Micron
->     memory
->   mtd: spi: Allocate memory corresponding to maximal fsl-quadspi.c
->     controller area
->   mtd: spi: Skip reading the Serial Flash Discoverable Parameters
+commit ad6eb31ef90355993eb55ff77e0e855ae7d91e4c
+ Author: James Morse <james.morse@arm.com>
+ Date:   Mon Jan 8 15:38:09 2018 +0000
+ 
+     firmware: arm_sdei: Add driver for Software Delegated Exceptions
+     
+     The Software Delegated Exception Interface (SDEI) is an ARM standard
+     for registering callbacks from the platform firmware into the OS.
+     This is typically used to implement firmware notifications (such as
+     firmware-first RAS) or promote an IRQ that has been promoted to a
+     firmware-assisted NMI.
+     
+     Add the code for detecting the SDEI version and the framework for
+     registering and unregistering events. Subsequent patches will add the
+     arch-specific backend code and the necessary power management hooks.
+     
+     Only shared events are supported, power management, private events and
+     discovery for ACPI systems will be added by later patches.
+     
+     Signed-off-by: James Morse <james.morse@arm.com>
+     Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+ 
+  MAINTAINERS                   |   9 +
+  arch/arm64/include/asm/sdei.h |   8 +
+  drivers/firmware/Kconfig      |   8 +
+  drivers/firmware/Makefile     |   1 +
+  drivers/firmware/arm_sdei.c   | 619 ++++++++++++++++++++++++++++++++++++++++++
+  include/linux/arm_sdei.h      |  79 ++++++
+  include/uapi/linux/arm_sdei.h |  73 +++++
+  7 files changed, 797 insertions(+)
+
+No commit with include/uapi/linux/sdei.h found
+
