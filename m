@@ -2,220 +2,108 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5106C04E87
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4C4C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7211B21755
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D16092173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:26:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="B3oqWtqF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7211B21755
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lH1E2/oG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16092173D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728694AbeI1Lps (ORCPT
+        id S1728806AbeI1LsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 07:45:48 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:55155 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727421AbeI1Lps (ORCPT
+        Fri, 28 Sep 2018 07:48:07 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:38634 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbeI1LsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 07:45:48 -0400
-Received: by mail-it1-f193.google.com with SMTP id f14-v6so1232574ita.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 22:23:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=C8l/NdNU70ldu1eZDyHhwFKeWFHIqn4FyYC2IvbfJGE=;
-        b=B3oqWtqFzxKAJ55AGGxrWWaCtmb+Hp7wsVRkv6gPLdk288kdevERoBicsxfQwg7mE/
-         lKr/9/1AvdDyeN37dbbYlTh1oqyQHEl6docE5zhWLu3+e6mqEEYYboF+KZkHTLkq5p7n
-         andwMRyp4ZApMPXxatI9BYzYlMZfIEsPUwYdHpsLxrj3z5SS88uwOu8vpOIHmzZNq6sG
-         dO5PU3FJrEAi4QF2MpvBFaKtAZKclNu76YfwrwScajsQe2jMbQ0eZT927L3mYb4o3xbs
-         EFpw9q32I/zFUR6lFMQE+f/dY/rpKYBnOsF+qgxqSn5oiEFkq3xdQDm9OKl+JaOJH7ph
-         HITg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C8l/NdNU70ldu1eZDyHhwFKeWFHIqn4FyYC2IvbfJGE=;
-        b=ldirP2TX9s0H2rbWvrVwn7U3P4ffjlvXcN0PoEmZrBBYFHJ+Xxn9iweIK1SCCNf2en
-         db+S2z9QVzYlCcGzTgwdHt461DT5eerlo4yTr4/ywZNmeIc414To+89JcT160konie3B
-         oGf9eOATHXlzSQUzPGB9Kac9p38/6kOhp9k2j60iFo7qGSABqZKQW71Xytp2BrucN4Ty
-         DOk1j2iCqYy6Fh5p8fO6n/i8sKVEaVbBhVSYgy5WhFDlESFOc+cQ1pUJQDH0iNG76iGJ
-         P2zYsP25CwMqxIwd60nKbRXwFNzxHP7lW4zyPBN333qUXOVQYzID5oyWJx5wtcYo2aA8
-         +aEA==
-X-Gm-Message-State: ABuFfojLRHpYV/C09A6+0kihfaydUw+imuedOJt3oWVPKFULWuvTG/qN
-        +tAWSFA7IuDjL8m2NerUqYPwtg==
-X-Google-Smtp-Source: ACcGV62vvKUBfGjMMpnBgLpks6lV4vf1JhiCKV3XOMuVbXHUQJqTu5uURfhvQ3aLDavOTvtJT9K7FA==
-X-Received: by 2002:a24:6fc6:: with SMTP id x189-v6mr500528itb.149.1538112230552;
-        Thu, 27 Sep 2018 22:23:50 -0700 (PDT)
-Received: from cisco.lan (71-218-141-49.hlrn.qwest.net. [71.218.141.49])
-        by smtp.gmail.com with ESMTPSA id k9-v6sm1326914iop.1.2018.09.27.22.23.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 22:23:49 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 23:23:46 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Jann Horn <jannh@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v7 4/6] files: add a replace_fd_files() function
-Message-ID: <20180928052346.GA18045@cisco.lan>
-References: <20180927151119.9989-1-tycho@tycho.ws>
- <20180927151119.9989-5-tycho@tycho.ws>
- <CAGXu5jLOe0izpGoB8c-hAeH2SzA51dF1BuMcXbk-d=QwqfjxxQ@mail.gmail.com>
- <CAGXu5jJvkkNNsGj=MK+=Dg0=nauANRkp=b1MrvOOzxkpb+DVkg@mail.gmail.com>
+        Fri, 28 Sep 2018 07:48:07 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8S5PTsg054842;
+        Fri, 28 Sep 2018 00:25:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1538112329;
+        bh=AEfsXMvy3cqdwmEUPDDQcp7lcq78C3iQ3zg71bqyr+U=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=lH1E2/oGmafLCXhTPj6/mo8jnx1xAmiGsP7EEkbjlF/7oBRR5yaU7eRwfTp4aCDKp
+         O2tJhQCcurbGzNj+nyxij9Mcabb1+CJ3dMTYhQeS9G4RL6lYQuMlJbYBHu37VTSVEW
+         TC+VVP4USCz4VkdGv/6H7tuI5+l5fQvyvvmHRgh4=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S5PTxv013579;
+        Fri, 28 Sep 2018 00:25:29 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 28
+ Sep 2018 00:25:28 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 28 Sep 2018 00:25:28 -0500
+Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S5PMGp012173;
+        Fri, 28 Sep 2018 00:25:26 -0500
+From:   Vignesh R <vigneshr@ti.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC:     Vignesh R <vigneshr@ti.com>, Sekhar Nori <nsekhar@ti.com>,
+        Nishanth Menon <nm@ti.com>, Peter Rosin <peda@axentia.se>,
+        <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2 1/2] dt-bindings: i2c-omap: Add new compatible for AM654 SoCs
+Date:   Fri, 28 Sep 2018 10:55:56 +0530
+Message-ID: <20180928052557.21663-2-vigneshr@ti.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180928052557.21663-1-vigneshr@ti.com>
+References: <20180928052557.21663-1-vigneshr@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jJvkkNNsGj=MK+=Dg0=nauANRkp=b1MrvOOzxkpb+DVkg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 07:20:50PM -0700, Kees Cook wrote:
-> On Thu, Sep 27, 2018 at 2:59 PM, Kees Cook <keescook@chromium.org> wrote:
-> > On Thu, Sep 27, 2018 at 8:11 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> >> Similar to fd_install/__fd_install, we want to be able to replace an fd of
-> >> an arbitrary struct files_struct, not just current's. We'll use this in the
-> >> next patch to implement the seccomp ioctl that allows inserting fds into a
-> >> stopped process' context.
-> >>
-> >> v7: new in v7
-> >>
-> >> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> >> CC: Alexander Viro <viro@zeniv.linux.org.uk>
-> >> CC: Kees Cook <keescook@chromium.org>
-> >> CC: Andy Lutomirski <luto@amacapital.net>
-> >> CC: Oleg Nesterov <oleg@redhat.com>
-> >> CC: Eric W. Biederman <ebiederm@xmission.com>
-> >> CC: "Serge E. Hallyn" <serge@hallyn.com>
-> >> CC: Christian Brauner <christian.brauner@ubuntu.com>
-> >> CC: Tyler Hicks <tyhicks@canonical.com>
-> >> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
-> >> ---
-> >>  fs/file.c            | 22 +++++++++++++++-------
-> >>  include/linux/file.h |  8 ++++++++
-> >>  2 files changed, 23 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/fs/file.c b/fs/file.c
-> >> index 7ffd6e9d103d..3b3c5aadaadb 100644
-> >> --- a/fs/file.c
-> >> +++ b/fs/file.c
-> >> @@ -850,24 +850,32 @@ __releases(&files->file_lock)
-> >>  }
-> >>
-> >>  int replace_fd(unsigned fd, struct file *file, unsigned flags)
-> >> +{
-> >> +       return replace_fd_task(current, fd, file, flags);
-> >> +}
-> >> +
-> >> +/*
-> >> + * Same warning as __alloc_fd()/__fd_install() here.
-> >> + */
-> >> +int replace_fd_task(struct task_struct *task, unsigned fd,
-> >> +                   struct file *file, unsigned flags)
-> >>  {
-> >>         int err;
-> >> -       struct files_struct *files = current->files;
-> >
-> > Same feedback as Jann: on a purely "smaller diff" note, this could
-> > just be s/current/task/ here and all the other s/files/task->files/
-> > would go away...
-> >
-> >>
-> >>         if (!file)
-> >> -               return __close_fd(files, fd);
-> >> +               return __close_fd(task->files, fd);
-> >>
-> >> -       if (fd >= rlimit(RLIMIT_NOFILE))
-> >> +       if (fd >= task_rlimit(task, RLIMIT_NOFILE))
-> >>                 return -EBADF;
-> >>
-> >> -       spin_lock(&files->file_lock);
-> >> -       err = expand_files(files, fd);
-> >> +       spin_lock(&task->files->file_lock);
-> >> +       err = expand_files(task->files, fd);
-> >>         if (unlikely(err < 0))
-> >>                 goto out_unlock;
-> >> -       return do_dup2(files, file, fd, flags);
-> >> +       return do_dup2(task->files, file, fd, flags);
-> >>
-> >>  out_unlock:
-> >> -       spin_unlock(&files->file_lock);
-> >> +       spin_unlock(&task->files->file_lock);
-> >>         return err;
-> >>  }
-> >>
-> >> diff --git a/include/linux/file.h b/include/linux/file.h
-> >> index 6b2fb032416c..f94277fee038 100644
-> >> --- a/include/linux/file.h
-> >> +++ b/include/linux/file.h
-> >> @@ -11,6 +11,7 @@
-> >>  #include <linux/posix_types.h>
-> >>
-> >>  struct file;
-> >> +struct task_struct;
-> >>
-> >>  extern void fput(struct file *);
-> >>
-> >> @@ -79,6 +80,13 @@ static inline void fdput_pos(struct fd f)
-> >>
-> >>  extern int f_dupfd(unsigned int from, struct file *file, unsigned flags);
-> >>  extern int replace_fd(unsigned fd, struct file *file, unsigned flags);
-> >> +/*
-> >> + * Warning! This is only safe if you know the owner of the files_struct is
-> >> + * stopped outside syscall context. It's a very bad idea to use this unless you
-> >> + * have similar guarantees in your code.
-> >> + */
-> >> +extern int replace_fd_task(struct task_struct *task, unsigned fd,
-> >> +                          struct file *file, unsigned flags);
-> >
-> > Perhaps call this __replace_fd() to indicate the "please don't use
-> > this unless you're very sure"ness of it?
-> >
-> >>  extern void set_close_on_exec(unsigned int fd, int flag);
-> >>  extern bool get_close_on_exec(unsigned int fd);
-> >>  extern int get_unused_fd_flags(unsigned flags);
-> >> --
-> >> 2.17.1
-> >>
-> >
-> > If I can get an Ack from Al, that would be very nice. :)
-> 
-> In out-of-band feedback from Al, he's pointed out a much cleaner
-> approach: do the work on the "current" side. i.e. current is stopped
-> in __seccomp_filter in the case SECCOMP_RET_USER_NOTIFY. Instead of
-> having the ioctl-handing process doing the work, have it done on the
-> other side. This may cause some additional complexity on the ioctl
-> return path, but it solves both this problem and the "ptrace attach"
-> issue: have the work delayed until "current" gets caught by seccomp.
+AM654 SoCs have same I2C IP as OMAP SoCs. Add new compatible to
+handle AM654 SoCs. While at that reformat the existing compatible list
+for older SoCs to list one valid compatible per line.
 
-So this is pretty much what we had in v6 (a one fd version, but the
-idea is the same). The biggest issue is that in the case of e.g.
-socketpair(), the fd values need to be written somewhere in the task's
-memory, which means they need to be known before the response is sent.
-If we have to wait until we're back in the task's context to install
-them, we can't know the fd values.
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+---
 
-V6 implementation: https://lkml.org/lkml/2018/9/6/773
+v2: Reformat compatible existing compatible list.
 
-Tycho
+ Documentation/devicetree/bindings/i2c/i2c-omap.txt | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-omap.txt b/Documentation/devicetree/bindings/i2c/i2c-omap.txt
+index 7e49839d4124..4b90ba9f31b7 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-omap.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-omap.txt
+@@ -1,8 +1,12 @@
+ I2C for OMAP platforms
+ 
+ Required properties :
+-- compatible : Must be "ti,omap2420-i2c", "ti,omap2430-i2c", "ti,omap3-i2c"
+-  or "ti,omap4-i2c"
++- compatible : Must be
++	"ti,omap2420-i2c" for OMAP2420 SoCs
++	"ti,omap2430-i2c" for OMAP2430 SoCs
++	"ti,omap3-i2c" for OMAP3 SoCs
++	"ti,omap4-i2c" for OMAP4+ SoCs
++	"ti,am654-i2c", "ti,omap4-i2c" for AM654 SoCs
+ - ti,hwmods : Must be "i2c<n>", n being the instance number (1-based)
+ - #address-cells = <1>;
+ - #size-cells = <0>;
+-- 
+2.19.0
+
