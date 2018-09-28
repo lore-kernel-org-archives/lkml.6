@@ -2,143 +2,95 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A402C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED0EC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6EDC206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0EA9206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:56:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KYA1GWYh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6EDC206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="GkoXDwZr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0EA9206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbeI2DUI (ORCPT
+        id S1727235AbeI2DWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 23:20:08 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:46597 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727244AbeI2DUH (ORCPT
+        Fri, 28 Sep 2018 23:22:25 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37936 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbeI2DWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 23:20:07 -0400
-Received: by mail-yb1-f196.google.com with SMTP id o8-v6so3211177ybk.13
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 13:54:38 -0700 (PDT)
+        Fri, 28 Sep 2018 23:22:25 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r77-v6so5288046pgr.5
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 13:56:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=eo/Y9cUiTa2FJkL9XobLvlA6LGBEt5Rqn8JaEc6iKEA=;
-        b=KYA1GWYhgim1f3rgeiEzJeYK5w0RKRABJKgJw/mdcckCmjBKBWlUUf1wI6wwy6iBoR
-         huHD9F3KL9DOvLGb6Tfn98L8B1ReFdxqUwNKbkJTv8wZA+0aXOY3uhP48jJD/wBMpNCA
-         8XRevKKdGAEElqKAfmwnjKOMyv/urFmzixK5w=
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ObDouDItvDbBB1kaU/M5VglmBpR6LkHJ8vh0jm5niVw=;
+        b=GkoXDwZrQfA61EtwbX8WPYgkeY3T4JQ9XZgCTMktGJNMAuehDR4caExDJxGereATDV
+         65QyXYBAMng3Tbihk+tiaKEFwWa4hYTT3wQAlC5hTb2gfOLt1WPtIsQpv7xDutZ3lwzD
+         nmn5HD45Mzhsf4emyUbkTjKhF88RQh2FTQ4BE4UtnrRQI01GYY2pzDTFNvi80eapEO5N
+         b75M3jo14QpezolBNWPDarqIvkxgchbQWampuoUNOrlxFUcREP4AnphEW6105eE+LDpN
+         ZEkuf384fcd9XDtCcEtsT49zjz0zRq/2/35qqVinUdXvCai9XbeMDdt4hzuuT6uWg7pL
+         EkCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=eo/Y9cUiTa2FJkL9XobLvlA6LGBEt5Rqn8JaEc6iKEA=;
-        b=Pj7BwgomXxQ3Ed5rQAa/HrgbWU8HKTSfqQOv+BCq2VTVRdQIb3ffftD9xq5HCgoK9K
-         EWBzY8XSXPjc4VfsEqgjFsQ9KPlE7F3U+TkVZl0r65fgdGpQ6wOl/tTlzK6ahVmJ7cnJ
-         LSJDmCxtp/l0QhkkWYzFB34F8CA7Sh6HUkuOXa2b4YeOse/mMMdcUqe+oH6T9L3L9c90
-         TQWGfIyt0MKcDn7LRpiERANzTn+NdaFrvRdfYCgwSbwSPsBUEDjY5E0YqtWGjc/zK/CY
-         032J76a2pwMmbZloPcf8zdShGUdNjR+6BaSgpfkZ63GO23Qwlbqx9s53PZnRHe0+EXES
-         rCRA==
-X-Gm-Message-State: ABuFfoiu9uRkJlx+fMgFFNFaEkVAKathCPMac+7gbHnsRu20ZpeHrfGt
-        eNoVAjhEveBe/rNu32JlMezPrVgvIWc=
-X-Google-Smtp-Source: ACcGV6190zDINXbatmuxt/OYv1nOBsjRYrTNVZbCo3MAh0u9ovKDfF4ruDVHWo81x46/nFiFvRbyjA==
-X-Received: by 2002:a25:f605:: with SMTP id t5-v6mr214597ybd.83.1538168077249;
-        Fri, 28 Sep 2018 13:54:37 -0700 (PDT)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id r12-v6sm2301042ywg.67.2018.09.28.13.54.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 13:54:34 -0700 (PDT)
-Received: by mail-yw1-f48.google.com with SMTP id k66-v6so3191331ywa.10
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 13:54:34 -0700 (PDT)
-X-Received: by 2002:a81:2288:: with SMTP id i130-v6mr224963ywi.288.1538168074051;
- Fri, 28 Sep 2018 13:54:34 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ObDouDItvDbBB1kaU/M5VglmBpR6LkHJ8vh0jm5niVw=;
+        b=QPWHSlMiGiMZ/qNG+siYV0Ulygxlz11Dj3z+WRwoop1G98tUPvjgzkSwY+xFBdLjki
+         CYXSu54mZs1Yiho/iigHUQzwyEE8TEF25gW3oEtHs34qdxvba0o7pDCKy92uPAsMuysX
+         XYtvpNwsqzEQJAml2EkcJOIDZGzuIeAvGB5DEF8zg0iT7+0zT24sBTsQSXrbF7roAv+H
+         hew22+PWSLntIF7Lb0u413MoEOLGCrwlV7Suq9JH+XnSAmFZZwp1xp2pn991FmGv9bqP
+         0wH3kgOqwX0r6eI6ACDTpNckruB8s+Rn+9XWZ30t88UiREi9YtoXtcv2GdZfhn34t24W
+         GVFQ==
+X-Gm-Message-State: ABuFfoigejTEca09PEozzgj/qU7gPMao7f+it5ZSmUDxXCkkL1z0RBqT
+        xBmP7K6I4RAedjPdxpFTlsH7uiE2toc=
+X-Google-Smtp-Source: ACcGV60zkqSWpji7ZhvvernjsUxON+xGzQPonpcrpOgllrAUUrR+1Flt2cbUtU6c6QVrtQ3QAssGxQ==
+X-Received: by 2002:a62:7788:: with SMTP id s130-v6mr285005pfc.189.1538168215002;
+        Fri, 28 Sep 2018 13:56:55 -0700 (PDT)
+Received: from cisco.lan ([128.107.241.171])
+        by smtp.gmail.com with ESMTPSA id t63-v6sm9769451pfa.158.2018.09.28.13.56.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Sep 2018 13:56:54 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 14:56:52 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH 3/3] seccomp: introduce read protection for struct seccomp
+Message-ID: <20180928205652.GC18045@cisco.lan>
+References: <20180928154648.6320-1-tycho@tycho.ws>
+ <20180928154648.6320-3-tycho@tycho.ws>
+ <CAG48ez2h51s1VG8hf1ASHHq88r5b+6rS4nSkgvre77jgsJLbhg@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 13:54:33
- -0700 (PDT)
-In-Reply-To: <145fab48-969f-0aed-74e8-ac0a5bb1c79b@tycho.nsa.gov>
-References: <20180925001832.18322-1-keescook@chromium.org> <e6122c7d-bd29-d081-3c1e-96b7c369d4fe@schaufler-ca.com>
- <CAGXu5jKQVDW8Wp0ESv2raa0xJnHCCMNqFCzZ5jSVXQ=Dp7FF8A@mail.gmail.com>
- <cb49b4c4-a379-7a8e-41a6-6e6a4afb6fe5@tycho.nsa.gov> <145fab48-969f-0aed-74e8-ac0a5bb1c79b@tycho.nsa.gov>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 28 Sep 2018 13:54:33 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKX9VCFqRrchr55_977kOA=1WzdB+YcEZq0y5CPcsp7Zw@mail.gmail.com>
-Message-ID: <CAGXu5jKX9VCFqRrchr55_977kOA=1WzdB+YcEZq0y5CPcsp7Zw@mail.gmail.com>
-Subject: Re: [PATCH security-next v3 00/29] LSM: Explict LSM ordering
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez2h51s1VG8hf1ASHHq88r5b+6rS4nSkgvre77jgsJLbhg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 1:33 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 09/28/2018 04:25 PM, Stephen Smalley wrote:
->>
->> On 09/28/2018 04:01 PM, Kees Cook wrote:
->>>
->>> On Fri, Sep 28, 2018 at 8:55 AM, Casey Schaufler <casey@schaufler-ca.com>
->>> wrote:
->>>>
->>>> On 9/24/2018 5:18 PM, Kees Cook wrote:
->>>>>
->>>>> v3:
->>>>> - add CONFIG_LSM_ENABLE and refactor resulting logic
->>>>
->>>>
->>>> Kees, you can add my
->>>>
->>>>          Reviewed-by:Casey Schaufler <casey@schaufler-ca.com>
->>>>
->>>> for this entire patch set. Thank you for taking this on, it's
->>>> a significant and important chunk of the LSM infrastructure
->>>> update.
->>>
->>>
->>> Thanks!
->>>
->>> John, you'd looked at this a bit too -- do the results line up with
->>> your expectations?
->>>
->>> Any thoughts from SELinux, TOMOYO, or IMA folks?
->>
->>
->> What's it relative to?  First patch fails for me on current security/next.
->
-> Never mind - user error ;)
+On Fri, Sep 28, 2018 at 10:33:34PM +0200, Jann Horn wrote:
+> On Fri, Sep 28, 2018 at 5:47 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > As Jann pointed out, there is a race between SECCOMP_FILTER_FLAG_TSYNC and
+> > the ptrace code that can inspect a filter of another process. Let's
+> > introduce read locking into the two ptrace accesses so that we don't race.
+> 
+> Hmm. Is that true? The ptrace code uses get_nth_filter(), which holds
+> the siglock while grabbing the seccomp filter and bumping its
+> refcount. And TSYNC happens from seccomp_set_mode_filter(), which
+> takes the siglock. So this looks okay to me?
 
-FWIW, it's against v4.19-rc2.
+Oh, yes, you're right. So I guess we should just change the comment to
+say we're using siglock to represent the read lock.
 
->> Is there a branch in your repo that has the v3 patches?
->
-> But still wondered about this one.
-
-Oops! Sorry, I didn't push to kernel.org. Now pushed!
-
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=lsm/ordering-v3
-
-(and "preview" v4 also with Reviewed-bys added and a cosmetic fix.)
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Tycho
