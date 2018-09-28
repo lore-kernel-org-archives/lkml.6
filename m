@@ -2,99 +2,218 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C83EC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CE1C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 545722073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:36:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 545722073F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id E8BF12073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:37:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8BF12073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbeI2CBq (ORCPT
+        id S1727096AbeI2CCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 22:01:46 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42394 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726337AbeI2CBq (ORCPT
+        Fri, 28 Sep 2018 22:02:44 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39883 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbeI2CCn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 22:01:46 -0400
-Received: by mail-qt1-f193.google.com with SMTP id z8-v6so7884777qto.9;
-        Fri, 28 Sep 2018 12:36:31 -0700 (PDT)
+        Fri, 28 Sep 2018 22:02:43 -0400
+Received: by mail-ot1-f66.google.com with SMTP id c20-v6so562508otl.6;
+        Fri, 28 Sep 2018 12:37:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zuipmkcWw7YmnYotTmKn82b9WhCKH+SyD3YXfchbLl0=;
-        b=GWgOXfiLQgew/L3UtiHMJyAayNe0a0DxqW/Lnck26AVg4vK7YzEYlLCXII1Yttr9pE
-         RuRJFxgQ45XEq1c2Hus+UVRmFwL5/pitFsMEJufxdz17oe368ihTdcRDKxreOPneMN0m
-         DjI3/ct44EiHMvzSGxOzp9BPfstivRAC1iqhLrGvlIVk1FK56aHskY777PDEakQY4sTS
-         +fnEeR5Gzq3yQJe6UDtqrAQwYgqPDgzjndcbQYadXYKon2t7hmJDOmbPriBIGo8za3o+
-         l4y6cVqgMqNbmpI+MMDEJ+vuGUqZjkqQAXUdUwRF3GoDy+JSXaRwKriz76p8aG6ysuyl
-         tqQQ==
-X-Gm-Message-State: ABuFfoiMtXjr7YbuIWKq485nHocfvLeGqYt3u2rK2LVK0Vi1jGXohai5
-        Fy4i/avwKmxR7hwvq6uRH/Cxw1EZ6xZxbplPgtM=
-X-Google-Smtp-Source: ACcGV61zbmw03+G5aUTkBUJtC5JmcGSjBRO8b7t8higVrA/ba990BJuyKgMZlwHxMAOadMMN720EWw1bP38vYW/UT0Q=
-X-Received: by 2002:aed:3f08:: with SMTP id p8-v6mr54588qtf.185.1538163390547;
- Fri, 28 Sep 2018 12:36:30 -0700 (PDT)
+        bh=K+qCV9SaBAMefNu93MVLFeCsJFl0wtxQ1dZwtJUyGPk=;
+        b=gPm4C3tgzGcbELAf7Er03OaV/gfxANt5UwF9Erqk3gzkqohMyRoxiTu42StBL7oTc9
+         trOcL3xz5I5IxNtPB1JTgaDLjIaqK53/UgUwJAgB5sEwC5LOR/LYvW0EQvzndSxpSAI6
+         Vuxg7nhPGmRNLJMTdutz4O2GyNgF0VPkuj/Cyq/dn2LxH7Z2zvKQxM2cuGV6SEhnWhak
+         2lGMmcR04kiZh8/NpiAJMonYRVRu68zarfFWuDT5vw/OSC61TJN5I0BcMIukvUU4Ul8F
+         0vYgsS0iKoJv+RWZkVqOaPL0UHWn3ycEhkFgyeH8Q+uJFI0Dmo0/URScmtPmvNwIjaT7
+         lBww==
+X-Gm-Message-State: ABuFfohf1pCxiR61Vp5rCHnZWlSgWpD3SKFs4spIlu6mO9goXrG+Pj1+
+        Qf6t9SIfwC/b26zCvZDt2mZ9epk1lAw=
+X-Google-Smtp-Source: ACcGV62F3qKOOOa8mVBjdVGnJkWm9pC8chv1eQECf5iQjKGQg+Syogqg+z/vLE6ku3hJ44+l9XA/eg==
+X-Received: by 2002:a9d:4e94:: with SMTP id v20-v6mr47514otk.255.1538163447770;
+        Fri, 28 Sep 2018 12:37:27 -0700 (PDT)
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com. [209.85.210.54])
+        by smtp.gmail.com with ESMTPSA id j80-v6sm2161122oib.33.2018.09.28.12.37.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 12:37:27 -0700 (PDT)
+Received: by mail-ot1-f54.google.com with SMTP id m23-v6so7159016otf.0;
+        Fri, 28 Sep 2018 12:37:26 -0700 (PDT)
+X-Received: by 2002:a9d:1b50:: with SMTP id l74-v6mr81460otl.112.1538163446517;
+ Fri, 28 Sep 2018 12:37:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <1538117388-11945-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1538117388-11945-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 28 Sep 2018 21:36:14 +0200
-Message-ID: <CAK8P3a16pR5e1js7JiGreqHqxv5RNJZZY=JLFwLRE8i3nbg5hQ@mail.gmail.com>
-Subject: Re: [PATCH] samples: run headers_install for host arch instead of
- target arch
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Jeff Dike <jdike@addtoit.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andy Gross <andy.gross@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>
+References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com> <1537747741-6245-7-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <1537747741-6245-7-git-send-email-vabhav.sharma@nxp.com>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Fri, 28 Sep 2018 14:37:15 -0500
+X-Gmail-Original-Message-ID: <CADRPPNS1Zj=47M-yOBAJ=X=sjjxmh0k7tNcj1A8uY=cPM398tQ@mail.gmail.com>
+Message-ID: <CADRPPNS1Zj=47M-yOBAJ=X=sjjxmh0k7tNcj1A8uY=cPM398tQ@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] arm64: dts: add LX2160ARDB board support
+To:     vabhav.sharma@nxp.com
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, Scott Wood <oss@buserror.net>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel-owner@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        yamada.masahiro@socionext.com, udit.kumar@nxp.com,
+        Priyanka Jain <priyanka.jain@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, V.Sethi@nxp.com,
+        Sriram Dash <sriram.dash@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 8:51 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Mon, Sep 24, 2018 at 7:51 AM Vabhav Sharma <vabhav.sharma@nxp.com> wrote:
 >
-> Some samples search headers in $(objtree)/usr/include, which is made
-> available by "make headers_install".  It is not kernel-space code but
-> host programs that need this header search path.
->
-> Commit 3fca1700c4c3 ("kbuild: make samples really depend on
-> headers_install") is wrong because it installs headers of the target
-> architecture.  Besides, UML fails to build with CONFIG_SAMPLES=y
-> because UML does not support headers_install.
->
-> Invoke "make headers_install" for the _host_ architecture in the
-> prepare stage.  Introduce CONFIG_HOST_HEADERS_INSTALL so that this
-> happens only for samples that need it.
->
-> I also removed 'Documentation/: headers_install', which I guess is
-> stale code.
->
-> Fixes: 3fca1700c4c3 ("kbuild: make samples really depend on headers_install")
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: David Howells <dhowells@redhat.com>
+> LX2160A reference design board (RDB) is a high-performance
+> computing, evaluation, and development platform with LX2160A
+> SoC.
 
-I don't understand this one. Why would we want to build the samples for
-the host architecture rather than the target architecture?
+Please send next version with Shawn Guo and me in the "to" recipient
+so that its less likely we will miss it.
 
-I would think that the bug is that we try to build them using
-HOSTCC, and they end up being unusable on the target as
-a consequence.
+>
+> Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
+> Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
+> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/Makefile            |  1 +
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 88 +++++++++++++++++++++++
+>  2 files changed, 89 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+>
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> index 86e18ad..445b72b 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-rdb.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-qds.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-rdb.dtb
+> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> new file mode 100644
+> index 0000000..1bbe663
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> @@ -0,0 +1,88 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +//
+> +// Device Tree file for LX2160ARDB
+> +//
+> +// Copyright 2018 NXP
+> +
+> +/dts-v1/;
+> +
+> +#include "fsl-lx2160a.dtsi"
+> +
+> +/ {
+> +       model = "NXP Layerscape LX2160ARDB";
+> +       compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
+> +
+> +       chosen {
+> +               stdout-path = "serial0:115200n8";
+> +       };
+> +};
+> +
+> +&uart0 {
+> +       status = "okay";
+> +};
+> +
+> +&uart1 {
+> +       status = "okay";
+> +};
+> +
+> +&i2c0 {
+> +       status = "okay";
+> +       i2c-mux@77 {
+> +               compatible = "nxp,pca9547";
+> +               reg = <0x77>;
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               i2c@2 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       reg = <0x2>;
+> +
+> +                       power-monitor@40 {
+> +                               compatible = "ti,ina220";
+> +                               reg = <0x40>;
+> +                               shunt-resistor = <1000>;
+> +                       };
+> +               };
+> +
+> +               i2c@3 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       reg = <0x3>;
+> +
+> +                       temperature-sensor@4c {
+> +                               compatible = "nxp,sa56004";
+> +                               reg = <0x4c>;
 
-        Arnd
+Need a vcc-supply property according to the binding.
+
+> +                       };
+> +
+> +                       temperature-sensor@4d {
+> +                               compatible = "nxp,sa56004";
+> +                               reg = <0x4d>;
+
+Ditto.
+
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+> +&i2c4 {
+> +       status = "okay";
+> +
+> +       rtc@51 {
+> +               compatible = "nxp,pcf2129";
+> +               reg = <0x51>;
+> +               // IRQ10_B
+> +               interrupts = <0 150 0x4>;
+> +               };
+> +
+> +};
+> +
+> +&usb0 {
+> +       status = "okay";
+> +};
+> +
+> +&usb1 {
+> +       status = "okay";
+> +};
+> +
+> +&crypto {
+> +       status = "okay";
+> +};
+> --
+> 2.7.4
+>
