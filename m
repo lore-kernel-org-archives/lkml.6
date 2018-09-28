@@ -2,109 +2,109 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64239C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12058C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16CBC2082C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB7552064E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:51:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="UjPfCt97"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16CBC2082C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fGDxoumR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB7552064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbeI1WPU (ORCPT
+        id S1729676AbeI1WP2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 18:15:20 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42342 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728765AbeI1WPU (ORCPT
+        Fri, 28 Sep 2018 18:15:28 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41168 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729572AbeI1WP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 18:15:20 -0400
-Received: by mail-ot1-f66.google.com with SMTP id h26-v6so6455667otl.9
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 08:50:58 -0700 (PDT)
+        Fri, 28 Sep 2018 18:15:28 -0400
+Received: by mail-io1-f66.google.com with SMTP id q4-v6so4506058iob.8
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 08:51:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=xjBb3SQH/hsxIPobB+9r5d85WlcL1nVs52vIZOMa+bE=;
-        b=UjPfCt971qK4Ooiyf51ime1IugxUXn+QnJaQZGysf9PqdWuh0xaFLa2oTkns5rTB8p
-         Sb1K9Fy9Kx9af92II7788S5e6mKXjKxfuFlLIaATzhfR/mwadEj29KUgCfw9edRVBcjK
-         VySmGzIsFKdxX+RmakF0O02sa5fXdb+TT0gHPLZDKpfQgB6DqnjJ3V/GI41F08VMTGLz
-         g3mYFpjR09j2ObH4/EZyOH5nXEf+POEFjmQIChHAebsHTWulWio4WP3MfRxsIrBXmi0N
-         dgrlCrOnKUWr9AE8yjTY7YKh0Os4ao3pYAy5+E1VmLhp5CfwGj90hTKEkYZzzg0qFZPA
-         tJUg==
+        bh=vzDt74SW5SLJ2Hrz9xihYP6PDW3zkRrLZERI7r7ojYk=;
+        b=fGDxoumR0N/ltlf32da+rBZSM4+4nFXJGJErexdp4YiV8vIiHwwzsLhm1IhtjsGj/I
+         HMCnOPTRe+Mbv85b8rgVRU3oLMC7YWGDtLIGTr2YA7fthQafEDrQGj94DGtwJwbhXYHU
+         IQ0KlS/u0OIR0X/4qfq4W+qroeonnK8UpR2ec=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=xjBb3SQH/hsxIPobB+9r5d85WlcL1nVs52vIZOMa+bE=;
-        b=fQ4EOFr8BspgogBFicKHKP58lJ/pyUHWcU9RjV14JSvfUtUFKVDtrI1qQiM3bhyXOL
-         DnXTZcfSZ3WNfW4Ek9HPtZTkdj0kVlApHYDGYHtxNoiNUMP+mVGYJHoAjWB0XB8umr2B
-         CX/fsMvWkSME5oiZMozR6tb50QlaUNPi+oeQaJw51kvmIjbTcrJd6NLwsatRhTyscy7Q
-         o/xSBFbUpoSXMZjcRjgSzgpXH+c9I4bczweeN1iIWMmCUv9FEl8YgGZZXImbOXp8WiN9
-         2p4A0ahnAQwAphe4G4pOde1qR6piAiyi6jL7ayvbOOZDYbMxMI7EFRsyWyqgCM/JVBAf
-         rP6Q==
-X-Gm-Message-State: ABuFfogGt6MLwaTkh6tLBMIDvagUVX8jkUgcRFm78NQAzC7hZm85KJLr
-        S75nODVokbAU8V4bDWrtkobksFa73XQP+SRBADbnwA==
-X-Google-Smtp-Source: ACcGV61vOSraV3gCINzsgOdHSnTk0O2/dbNo3SMu961v45fNjqsOuGgShhXyQABt5Cz/0GTr0P1rDHrFPhbgFhUQDUU=
-X-Received: by 2002:a9d:530c:: with SMTP id g12-v6mr10202171oth.353.1538149858104;
- Fri, 28 Sep 2018 08:50:58 -0700 (PDT)
+        bh=vzDt74SW5SLJ2Hrz9xihYP6PDW3zkRrLZERI7r7ojYk=;
+        b=jeJcccDbWRyTdCDeFNCeoTnZwMyFvo1x3W0h5WDJ9VZ8a/Mg3m3ZkMOkqGCzRNXdxE
+         B2nyt01SS/Nai+jsHzvMyoIRu9JPYyJQo1Ggoqb14T4W7XouvAf3ElwYgbLCFkp39S90
+         EpT5BbQpRSffRDvArU52LsNcjR4m4vtrUl3e7+VhH49sIAy4i3wraZY2gjZs8sHJFh4y
+         8AOWJh+2lkRT/F3b7MyjZUjPqu2fr1uUF2vFXnNI9igEVucrUCUm3mjIPl/9vB1TAxj0
+         afD4+aIO7Ks15GrnZaE8lqWgv7wl70ztVeQjzFa23z1s+8XXCDT1IZU6+rWxQAymgIsK
+         VZBQ==
+X-Gm-Message-State: ABuFfohtHNvh6kp1luqY7a2gosmtecktmfeLnQGmvwgLhzI0z24jRPwN
+        eSasFZcNBGJMjZrgC5p/5Y3PYiLHpRsEHOBclf4JnA==
+X-Google-Smtp-Source: ACcGV61Q5+ISEtGHPgoBeuEuvulSAmuY52hW9kYISohvcR2NjfxYF9geBTsXT5XjMt6/M+EomBPvNxTN61BbageTd1M=
+X-Received: by 2002:a6b:3787:: with SMTP id e129-v6mr12946858ioa.60.1538149865991;
+ Fri, 28 Sep 2018 08:51:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180925200551.3576.18755.stgit@localhost.localdomain>
- <20180925202053.3576.66039.stgit@localhost.localdomain> <20180926075540.GD6278@dhcp22.suse.cz>
- <6f87a5d7-05e2-00f4-8568-bb3521869cea@linux.intel.com> <20180927110926.GE6278@dhcp22.suse.cz>
- <20180927122537.GA20378@techadventures.net> <20180927131329.GI6278@dhcp22.suse.cz>
- <20180928081224.GA25561@techadventures.net> <20180928084433.GB25561@techadventures.net>
-In-Reply-To: <20180928084433.GB25561@techadventures.net>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 28 Sep 2018 08:50:46 -0700
-Message-ID: <CAPcyv4hY97wL53Pa8oaq4UK6OS4R48_35nJhbY4SYmoMSctQHA@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-To:     osalvador@techadventures.net
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        alexander.h.duyck@linux.intel.com, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Logan Gunthorpe <logang@deltatee.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 08:51:05
+ -0700 (PDT)
+In-Reply-To: <CAKv+Gu8-EwxFhQSUPxjEvTA5ZPz34RieMokM6CUqwURDr74jtg@mail.gmail.com>
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-6-Jason@zx2c4.com>
+ <CAKv+Gu8-EwxFhQSUPxjEvTA5ZPz34RieMokM6CUqwURDr74jtg@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 28 Sep 2018 17:51:05 +0200
+Message-ID: <CAKv+Gu8Pej+hKV7=RbwUkE4PtXjqHewRMfE7mYJLu+xnS+HFQw@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 05/23] zinc: import Andy Polyakov's ChaCha20
+ ARM and ARM64 implementations
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Andy Polyakov <appro@openssl.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 1:45 AM Oscar Salvador
-<osalvador@techadventures.net> wrote:
+On 28 September 2018 at 17:49, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 25 September 2018 at 16:56, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>> These NEON and non-NEON implementations come from Andy Polyakov's
+>> implementation, and are included here in raw form without modification,
+>> so that subsequent commits that fix these up for the kernel can see how
+>> it has changed. This awkward commit splitting has been requested for the
+>> ARM[64] implementations in particular.
+>>
+>> While this is CRYPTOGAMS code, the originating code for this happens to
+>> be the same as OpenSSL's commit 87cc649f30aaf69b351701875b9dac07c29ce8a2
+>>
+>> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+>> Based-on-code-from: Andy Polyakov <appro@openssl.org>
+>> Cc: Samuel Neves <sneves@dei.uc.pt>
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Cc: Greg KH <gregkh@linuxfoundation.org>
+>> Cc: Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
+>> Cc: Andy Polyakov <appro@openssl.org>
+>> Cc: Russell King <linux@armlinux.org.uk>
+>> Cc: linux-arm-kernel@lists.infradead.org
 >
-> On Fri, Sep 28, 2018 at 10:12:24AM +0200, Oscar Salvador wrote:
-> > Although I am not sure about leaving memmap_init_zone unprotected.
-> > For the normal memory, that is not a problem since the memblock's lock
-> > protects us from touching the same pages at the same time in online/offline_pages,
-> > but for HMM/devm the story is different.
-> >
-> > I am totally unaware of HMM/devm, so I am not sure if its protected somehow.
-> > e.g: what happens if devm_memremap_pages and devm_memremap_pages_release are running
-> > at the same time for the same memory-range (with the assumption that the hotplug-lock
-> > does not protect move_pfn_range_to_zone anymore).
+> As I mentioned before, I'd prefer this to be based on the original .pl
+> but if I am the only one objecting to this, I guess I can live with
+> it.
 >
-> I guess that this could not happen since the device is not linked to devm_memremap_pages_release
-> until the end with:
->
-> devm_add_action(dev, devm_memremap_pages_release, pgmap)
 
-It's a bug if devm_memremap_pages and devm_memremap_pages_release are
-running simultaneously for the same range. This is enforced by the
-requirement that the caller has done a successful request_region() on
-the range before the call to map pages.
+Note that I am getting bounces from LAKML because the patch is too big.
