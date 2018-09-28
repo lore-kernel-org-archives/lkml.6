@@ -2,74 +2,99 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD508C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C83EC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:36:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69D892073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:34:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69D892073F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 545722073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:36:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 545722073F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbeI2B71 (ORCPT
+        id S1726971AbeI2CBq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 21:59:27 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55059 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeI2B71 (ORCPT
+        Fri, 28 Sep 2018 22:01:46 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42394 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726337AbeI2CBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 21:59:27 -0400
-Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g5yWg-0004a4-DX; Fri, 28 Sep 2018 21:34:10 +0200
-Date:   Fri, 28 Sep 2018 21:34:09 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-cc:     Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [Problem] Cache line starvation
-In-Reply-To: <20180928192630.nvwlwlgswde2fpbq@linutronix.de>
-Message-ID: <alpine.DEB.2.21.1809282132530.1432@nanos.tec.linutronix.de>
-References: <20180921120226.6xjgr4oiho22ex75@linutronix.de> <20180926125301.GE2979@brain-police> <20180927142547.ucgh5elb7pxs46dq@linutronix.de> <20180927144127.qdkem4juhztxdkdb@linutronix.de> <alpine.DEB.2.21.1809271644120.8118@nanos.tec.linutronix.de>
- <20180928192630.nvwlwlgswde2fpbq@linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 28 Sep 2018 22:01:46 -0400
+Received: by mail-qt1-f193.google.com with SMTP id z8-v6so7884777qto.9;
+        Fri, 28 Sep 2018 12:36:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zuipmkcWw7YmnYotTmKn82b9WhCKH+SyD3YXfchbLl0=;
+        b=GWgOXfiLQgew/L3UtiHMJyAayNe0a0DxqW/Lnck26AVg4vK7YzEYlLCXII1Yttr9pE
+         RuRJFxgQ45XEq1c2Hus+UVRmFwL5/pitFsMEJufxdz17oe368ihTdcRDKxreOPneMN0m
+         DjI3/ct44EiHMvzSGxOzp9BPfstivRAC1iqhLrGvlIVk1FK56aHskY777PDEakQY4sTS
+         +fnEeR5Gzq3yQJe6UDtqrAQwYgqPDgzjndcbQYadXYKon2t7hmJDOmbPriBIGo8za3o+
+         l4y6cVqgMqNbmpI+MMDEJ+vuGUqZjkqQAXUdUwRF3GoDy+JSXaRwKriz76p8aG6ysuyl
+         tqQQ==
+X-Gm-Message-State: ABuFfoiMtXjr7YbuIWKq485nHocfvLeGqYt3u2rK2LVK0Vi1jGXohai5
+        Fy4i/avwKmxR7hwvq6uRH/Cxw1EZ6xZxbplPgtM=
+X-Google-Smtp-Source: ACcGV61zbmw03+G5aUTkBUJtC5JmcGSjBRO8b7t8higVrA/ba990BJuyKgMZlwHxMAOadMMN720EWw1bP38vYW/UT0Q=
+X-Received: by 2002:aed:3f08:: with SMTP id p8-v6mr54588qtf.185.1538163390547;
+ Fri, 28 Sep 2018 12:36:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <1538117388-11945-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1538117388-11945-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 28 Sep 2018 21:36:14 +0200
+Message-ID: <CAK8P3a16pR5e1js7JiGreqHqxv5RNJZZY=JLFwLRE8i3nbg5hQ@mail.gmail.com>
+Subject: Re: [PATCH] samples: run headers_install for host arch instead of
+ target arch
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Jeff Dike <jdike@addtoit.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Andy Gross <andy.gross@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Sep 2018, Sebastian Andrzej Siewior wrote:
+On Fri, Sep 28, 2018 at 8:51 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Some samples search headers in $(objtree)/usr/include, which is made
+> available by "make headers_install".  It is not kernel-space code but
+> host programs that need this header search path.
+>
+> Commit 3fca1700c4c3 ("kbuild: make samples really depend on
+> headers_install") is wrong because it installs headers of the target
+> architecture.  Besides, UML fails to build with CONFIG_SAMPLES=y
+> because UML does not support headers_install.
+>
+> Invoke "make headers_install" for the _host_ architecture in the
+> prepare stage.  Introduce CONFIG_HOST_HEADERS_INSTALL so that this
+> happens only for samples that need it.
+>
+> I also removed 'Documentation/: headers_install', which I guess is
+> stale code.
+>
+> Fixes: 3fca1700c4c3 ("kbuild: make samples really depend on headers_install")
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: David Howells <dhowells@redhat.com>
 
-> On 2018-09-27 16:47:47 [+0200], Thomas Gleixner wrote:
-> > I wonder if it's just the store on the stack which makes it work. I've seen
-> > that when instrumenting x86. When the careful instrumentation just stayed
-> > in registers it failed. Once it was too much and stack got involved it
-> > vanished away.
-> 
-> Added two load/stores into wait_task_inactive() and it still triggers
-> (on the core2duo).
+I don't understand this one. Why would we want to build the samples for
+the host architecture rather than the target architecture?
 
-So it was some interaction with rdtsc() which got stored on
-stack. Heisenbugs are lovely.
+I would think that the bug is that we try to build them using
+HOSTCC, and they end up being unusable on the target as
+a consequence.
 
-Thanks,
-
-	tglx
+        Arnd
