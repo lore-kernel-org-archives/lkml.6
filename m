@@ -2,138 +2,109 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E17F5C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC83C004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A23092073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:34:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mZojv/KE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A23092073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 99DFF206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:34:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99DFF206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeI2FA0 (ORCPT
+        id S1727319AbeI2FAc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 01:00:26 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:41339 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbeI2FA0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:00:26 -0400
-Received: by mail-yb1-f195.google.com with SMTP id d14-v6so3331847ybs.8
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 15:34:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Kc+xotBuieQLVo8qummA7HdgBUNE8UPl/HeS/sepKgw=;
-        b=mZojv/KEZw6rscD0hNmSSUW3hAbAj4sPS6jGhaWRrPozf1phGUthK35UH17m/jvd6x
-         UYFh4IaNVj4nCXQpiO7QVe039ih24wvbmwvfNKk8F4X5vD06lrDnOM4sNd5W8qKdaROT
-         90G1N+tPDeOlbHTpLQR1zqpOd9fK/SF9Bsz88=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Kc+xotBuieQLVo8qummA7HdgBUNE8UPl/HeS/sepKgw=;
-        b=TWEFelRdN22cQ++zYoJ+psrUhPaBU5IljLQrgJm+qT8DfneaWbNRSTa22OGUu9s71y
-         0Y9tIwNrRec/TBYBT2nm6MzJb/z6aISqdE2i6aBcHK7tLCGHrFHX9jUKOqKuRg2OopIx
-         kh1xM8wawCjDBMszV9vJJTnh0f2Yb1S1OiEctvKZLpsgGpm4C5evL6Ro/RuKxGm1vu+f
-         Sr3747H2ylZEJIh8agC5jgZXGmBh7NobqOXtrd7tlseQR1zAVUh0xyhIdsYbiuUrJmO7
-         rx+7gzoQoyrN9k6jLSsHeCg46JrCQps0Rgtqn79C9LaT2sZkuMW6+o1gWm68MZFFD6jO
-         dCyQ==
-X-Gm-Message-State: ABuFfohELDKIN4+Fbha+SHMicMlGcVTbolXRfCWjlFEfr0DkadXqs4uc
-        noJlw8KT61U8fycAPZ7AdkIQDDPkHEs=
-X-Google-Smtp-Source: ACcGV61rbvELCeH06S6k3aJ7Wu1b1msx2NMFcZwGapD49YAGgSvmghUYO8VEyAuEOKpLS1xZoJDxwA==
-X-Received: by 2002:a25:5406:: with SMTP id i6-v6mr408036ybb.71.1538174073604;
-        Fri, 28 Sep 2018 15:34:33 -0700 (PDT)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id 140-v6sm2450869ywt.71.2018.09.28.15.34.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 15:34:32 -0700 (PDT)
-Received: by mail-yb1-f178.google.com with SMTP id o63-v6so3347964yba.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 15:34:32 -0700 (PDT)
-X-Received: by 2002:a25:dd82:: with SMTP id u124-v6mr394175ybg.171.1538174071972;
- Fri, 28 Sep 2018 15:34:31 -0700 (PDT)
+        Sat, 29 Sep 2018 01:00:32 -0400
+Received: from mga09.intel.com ([134.134.136.24]:17973 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725938AbeI2FAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 01:00:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 15:34:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,316,1534834800"; 
+   d="scan'208";a="267880087"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by fmsmga006.fm.intel.com with ESMTP; 28 Sep 2018 15:34:37 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH v5 00/21] tpm: separate tpm 1.x and tpm 2.x commands
+Date:   Sat, 29 Sep 2018 01:30:14 +0300
+Message-Id: <20180928223035.14471-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.4
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 15:34:31
- -0700 (PDT)
-In-Reply-To: <CAKgNAkgcHENKrT=n4_YbmxJCOaY2Z+SXJcfuw9j7uOJwgym3Dg@mail.gmail.com>
-References: <20180927151119.9989-1-tycho@tycho.ws> <686fe047-16e6-3dfc-6284-ed574d97ad2f@gmail.com>
- <20180928220359.GF18045@cisco.lan> <CAKgNAkgcHENKrT=n4_YbmxJCOaY2Z+SXJcfuw9j7uOJwgym3Dg@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 28 Sep 2018 15:34:31 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+GTwOZnNscfMmArxxJgNvPETgBns1Y6u11tapkoOwn+w@mail.gmail.com>
-Message-ID: <CAGXu5j+GTwOZnNscfMmArxxJgNvPETgBns1Y6u11tapkoOwn+w@mail.gmail.com>
-Subject: Re: [PATCH v7 0/6] seccomp trap to userspace
-To:     Michael Kerrisk <mtk.manpages@gmail.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Jann Horn <jannh@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 3:16 PM, Michael Kerrisk (man-pages)
-<mtk.manpages@gmail.com> wrote:
-> Hi Tycho,
->
-> On Sat, 29 Sep 2018 at 00:04, Tycho Andersen <tycho@tycho.ws> wrote:
->>
->> On Fri, Sep 28, 2018 at 11:57:40PM +0200, Michael Kerrisk (man-opages) wrote:
->> > Hi Tycho,
->> >
->> > On 09/27/2018 05:11 PM, Tycho Andersen wrote:
->> > > Hi all,
->> > >
->> > > Here's v7 of the seccomp trap to userspace set. There are various minor
->> > > changes and bug fixes, but two major changes:
->> > >
->> > > * We now pass fds to the tracee via an ioctl, and do it immediately when
->> > >    the ioctl is called. For this we needed some help from the vfs, so
->> > >    I've put the one patch in this series and cc'd fsdevel. This does have
->> > >    the advantage that the feature is now totally decoupled from the rest
->> > >    of the set, which is itself useful (thanks Andy!)
->> > >
->> > > * Instead of putting all of the notification related stuff into the
->> > >    struct seccomp_filter, it now lives in its own struct notification,
->> > >    which is pointed to by struct seccomp_filter. This will save a lot of
->> > >    memory (thanks Tyler!)
->> >
->> > Is there a documentation (man page) patch for this API change?
->>
->> Not yet, but once we decide on a final API I'll prepare one.
->
-> Honestly, the production of such documentation should be part of the
-> evolution towards the final API...
->
-> Documentation is not an afterthought. It's a tool for pushing you, the
-> developer (and others, your reviewers) to more deeply consider your
-> design.
+This patch series provides initial separation of tpm 1.x and tpm 2.x
+commands, in foresight that the tpm 1.x chips will eventually phase out
+and can be compiled out for modern systems.
+ A new file is added tpm1-cmd.c that contains tpm 1.x specific commands.
+In addition, tpm 1.x commands are now implemented using tpm_buf
+structure and instead of tpm_cmd_t construct. The latter is now removed.
 
-In Tycho's defense, he did write up documentation in Documentation/
-for the feature, so it won't be an afterthought. :) But yes, there's
-no manpage delta yet.
+Note: my tpm 1.x HW availability is limited hence some more testing is needed.
 
--Kees
+This series also contains two trivial cleanups and addition of new
+commands by TCG spec 1.36, now supported on new Intet's platforms.
+
+
+Tomas Winkler (21):
+  tpm2: add new tpm2 commands according to TCG 1.36
+  tpm: sort objects in the Makefile
+  tpm: factor out tpm 1.x duration calculation to tpm1-cmd.c
+  tpm: add tpm_calc_ordinal_duration() wrapper
+  tpm: factor out tpm_get_timeouts()
+  tpm: move tpm1_pcr_extend to tpm1-cmd.c
+  tpm: move tpm_getcap to tpm1-cmd.c
+  tpm: factor out tpm1_get_random into tpm1-cmd.c
+  tpm: move tpm 1.x selftest code from tpm-interface.c tpm1-cmd.c
+  tpm: factor out tpm 1.x pm suspend flow into tpm1-cmd.c
+  tpm: factor out tpm_startup function
+  tpm: move pcr extend code to tpm2-cmd.c
+  tpm: add tpm_auto_startup() into tpm-interface.c
+  tpm: tpm-interface.c drop unused macros
+  tpm: tpm-space.c remove unneeded semicolon
+  tpm: tpm1: rewrite tpm1_get_random() using tpm_buf structure
+  tpm1: implement tpm1_pcr_read_dev() using tpm_buf structure
+  tmp1: rename tpm1_pcr_read_dev to tpm1_pcr_read().
+  tpm1: reimplement SAVESTATE using tpm_buf
+  tpm1: reimplement tpm1_continue_selftest() using tpm_buf
+  tpm: use u32 instead of int for PCR index
+
+ drivers/char/tpm/Makefile            |  16 +-
+ drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
+ drivers/char/tpm/tpm-chip.c          |  11 +-
+ drivers/char/tpm/tpm-interface.c     | 841 +++--------------------------------
+ drivers/char/tpm/tpm-sysfs.c         |  52 +--
+ drivers/char/tpm/tpm.h               |  98 ++--
+ drivers/char/tpm/tpm1-cmd.c          | 781 ++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm2-cmd.c          | 344 +++++++-------
+ drivers/char/tpm/tpm2-space.c        |   2 +-
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  10 +-
+ drivers/char/tpm/tpm_tis_core.c      |  10 +-
+ include/linux/tpm.h                  |  11 +-
+ security/integrity/ima/ima_crypto.c  |   5 +-
+ 13 files changed, 1121 insertions(+), 1062 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm1-cmd.c
 
 -- 
-Kees Cook
-Pixel Security
+2.14.4
+
