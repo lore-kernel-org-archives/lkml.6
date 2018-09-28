@@ -2,102 +2,95 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA05C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1F8C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 259E5206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:52:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 259E5206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id BD083206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:54:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="p1BYL9tp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD083206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729511AbeI1WQp (ORCPT
+        id S1728873AbeI1WSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 18:16:45 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:38606 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728920AbeI1WQp (ORCPT
+        Fri, 28 Sep 2018 18:18:42 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:32247 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726288AbeI1WSm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 18:16:45 -0400
-Received: by mail-qk1-f194.google.com with SMTP id 204-v6so3474325qkd.5
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 08:52:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f5yB+YUP4b8jH1Ml0hq1zz6gNrHnS4SyRFbgMxbJbxU=;
-        b=Uyunkla/pu7xb45NL/Grhc/2r4mr5C/fQi8Mps4nu1LO5nXoO7SXI+x9OxoBPLXDOw
-         4yoAuYRa+y1imbWW3phwU145NXHrBNxRRj14bJcuu20km4o0luEKOk44NcFjDgBYJaBP
-         FD/jOPkxKG8+nS538eYNRmCZJebgVFKTM8wz/4YwaTr66lMDa1FwTE8q5uz3u56gILU5
-         wi/ewCbsmGojbXaBj2hohguB2aTJtvTQ9mwYTlm7flBMCY7njLPDrK4Xm7ukGC3JjQoi
-         86Izk3lVDGG0ZJ/obWKWZZtM9OfycdIrQkhhGf/mLLK9/XG0GTxbHlQtdE8tjLGabaIK
-         nvNA==
-X-Gm-Message-State: ABuFfojK7QfDZg/x4OyOhpPl6otIiO4BG18gY5rTFw+EkCBKn1lN6P73
-        Vyl1SOkGiJL6uCEwT7yEPtchTEFyaHEZ51cDalyQl/hb
-X-Google-Smtp-Source: ACcGV61IqbAUE07P1UTy96HQH4ZkUy2XF9eh89py6+y72NJnayyQ9SGBT47E57P4GyXESF9YogObihXKDS2fJrvoqU0=
-X-Received: by 2002:a37:c542:: with SMTP id p63-v6mr12097227qki.330.1538149942917;
- Fri, 28 Sep 2018 08:52:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180926135110.13061-1-Jason@zx2c4.com>
-In-Reply-To: <20180926135110.13061-1-Jason@zx2c4.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 28 Sep 2018 17:52:06 +0200
-Message-ID: <CAK8P3a0+s6DM=QUqS_KrNp+95aDj2QTsWb+w73piwLsQFvq+pg@mail.gmail.com>
-Subject: Re: [PATCH] arm: support big-endian for the virt architecture
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 28 Sep 2018 18:18:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1538150055;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=Ig+N/AFXJJvd/hv9LJIYRhtQw8wbxvY27l5+lkAd1ws=;
+        b=p1BYL9tpOoTq+43dnoRjzVRgxvz7dON1fOlRV5FgdG7KW8N9k50IflcgHshb5SRlXx
+        Nf2KSjeF5QkeJSu+vmykOqp7Kexp5bfYrl9edYyCL6ikX1vSXw0/m0vZ4OMkPpTWywep
+        tRl4XgX3RB9boSY/ehcn0S0k9myvI97C3JvaNkI3ywZPB/JXrQDJzCi/JKKrvIvoZrBk
+        3c8CXuucsf2xhn4uRNXEB3pJHpLAcr4c1+hNKbZJvayQ8/f+A/TnVj7ITH5XMa09J/Pu
+        vZstYvxzAKUJefamGWmT6e0jN8IkVuH4B8rEe5N4qcrAJuVE5Q9k1+Qzy1uKIf8B0xNy
+        74rQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1pxICp41QvXLY9sHKU="
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 44.2 DYNA|AUTH)
+        with ESMTPSA id N05e1au8SFs06c1
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 28 Sep 2018 17:54:00 +0200 (CEST)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@pyra-handheld.com,
+        letux-kernel@openphoenux.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH] ARM: DTS: OMAP5: enable OTG role for DWC3 controller
+Date:   Fri, 28 Sep 2018 17:54:00 +0200
+Message-Id: <0c739437f2331913e6593d651fd782fde3181e0a.1538150039.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.12.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 3:52 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->
-> This architecture, used for running in QEMU, runs just fine when
-> compiled in big-endian mode. So enable it. This is enabled in exactly
-> the same way that it is for other platforms (such as vexpress) that also
-> support big-endian mode in QEMU successfully.
->
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> ---
-> Personally, I'm using this as part of WireGuard's CI, and patching
-> kernels to include this is a bit annoying. Any chance this can get into
-> 4.19?
->
->  arch/arm/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index e8cd55a5b04c..b8c6062ca0c1 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -701,6 +701,7 @@ config ARCH_VIRT
->         select ARM_GIC_V3_ITS if PCI
->         select ARM_PSCI
->         select HAVE_ARM_ARCH_TIMER
-> +       select ARCH_SUPPORTS_BIG_ENDIAN
+Since SMPS10 and OTG cable detection extcon are described here, and
+work to enable OTG power when an OTG cable is plugged in, we can
+define OTG mode in the controller (which is disabled by default in
+omap5.dtsi).
 
-Applied for 4.20 with subject line changed s/arm/ARM/, thanks!
+Tested on OMAP5EVM and Pyra.
 
-We don't really handle this well in general, by allowing a big-endian
-build if any of the enabled platforms select ARCH_SUPPORTS_BIG_ENDIAN,
-rather than making sure that /all/ of them do.
+Suggested-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ arch/arm/boot/dts/omap5-board-common.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I think most people just build a 'defconfig' kernel, which includes
-multiple platforms that use ARCH_SUPPORTS_BIG_ENDIAN.
+diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi b/arch/arm/boot/dts/omap5-board-common.dtsi
+index da5d9a86a1f1..ce524f239e84 100644
+--- a/arch/arm/boot/dts/omap5-board-common.dtsi
++++ b/arch/arm/boot/dts/omap5-board-common.dtsi
+@@ -708,6 +708,10 @@
+ 	vbus-supply = <&smps10_out1_reg>;
+ };
+ 
++&dwc3 {
++	dr_mode = "otg";
++};
++
+ &mcspi1 {
+ 
+ };
+-- 
+2.12.2
 
-A better way to do this might be to assume ARCH_SUPPORTS_BIG_ENDIAN
-for ARCH_MULTIPLATFORM, and then mark all platforms that are
-known to be broken as 'depends on !CPU_BIG_ENDIAN'.
-
-Your patch is certainly fine for 4.20, but since we haven't decided
-what the proper fix should be, I didn't want to push this for 4.19.
-
-        Arnd
