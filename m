@@ -2,172 +2,124 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3044C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1959C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7172B206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:09:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6255B206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:10:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="THovtu/5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7172B206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="IVlOwlTT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6255B206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbeI2EfD (ORCPT
+        id S1726870AbeI2Efp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:35:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58348 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbeI2EfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:35:02 -0400
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 448F72082C;
-        Fri, 28 Sep 2018 22:09:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538172555;
-        bh=HNJsIfW4Zwj9YHU/6iKGze1QgCcDLZL+IOQ3QzMwOLQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=THovtu/58atNNVIcXJRAN9GK6wh1VPUg45sW17WGqSOrErP2mRLAXPp/Let9RXE+F
-         eItgr/qz0YzZQQQHNjoxghIWo1qgcd2lA8TUh+2Xd43IUmA98GzeM+8u8fQzIAaJS6
-         oyXEUfJG5BnnvCk04JUaGizZSXvjAYhzKskAISZ8=
-Received: by mail-qt1-f170.google.com with SMTP id q41-v6so3536735qtq.10;
-        Fri, 28 Sep 2018 15:09:15 -0700 (PDT)
-X-Gm-Message-State: ABuFfogvlK+/Zrd7at+nN77bglEs6KV56Kfqi6sYK5sa3pWArM25wJsO
-        LJhlQZNkn3/iezXZcr3V8pJtApVxf27fAA9PwA==
-X-Google-Smtp-Source: ACcGV60hFKFRnTk0/nbtL5dmVTvlvFzfy8F65G/nPcUDndGSKj4026QkIjOyeyW12d+iuZRWpicx04xBNw5l+IrJXX0=
-X-Received: by 2002:aed:3983:: with SMTP id m3-v6mr484695qte.164.1538172554449;
- Fri, 28 Sep 2018 15:09:14 -0700 (PDT)
+        Sat, 29 Sep 2018 00:35:45 -0400
+Received: from mail-eopbgr720107.outbound.protection.outlook.com ([40.107.72.107]:38684
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726287AbeI2Efp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 00:35:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6yguIl9URadi869ejO4X3fptzrT1E7YWrznkh0jtBRU=;
+ b=IVlOwlTT6U8C2S1ivGTvAU+jh6b/9ytVPC8RsJT44NHGSN4wFbWChCsltYwNXiZhdnc5Tmmp/PQy4ea2lSwLCyEe8pRS1isut6CI6KAk1CmkbT5DvXIE9b+eibUzX2Ihm2yZ3WwawP7c69BYzR72n6Z93QZZlboFp36uY5gdwGw=
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) by
+ CY4PR21MB0696.namprd21.prod.outlook.com (10.175.121.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.7; Fri, 28 Sep 2018 22:09:56 +0000
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::d1f6:46cd:d8b4:880c]) by CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::d1f6:46cd:d8b4:880c%5]) with mapi id 15.20.1207.011; Fri, 28 Sep 2018
+ 22:09:56 +0000
+From:   "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+To:     Yi Sun <yi.y.sun@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "x86@kernel.org" <x86@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "chao.p.peng@intel.com" <chao.p.peng@intel.com>,
+        "chao.gao@intel.com" <chao.gao@intel.com>,
+        "isaku.yamahata@intel.com" <isaku.yamahata@intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+Subject: RE: [PATCH v3 2/2] locking/pvqspinlock, hv: Enable PV qspinlock for
+ Hyper-V
+Thread-Topic: [PATCH v3 2/2] locking/pvqspinlock, hv: Enable PV qspinlock for
+ Hyper-V
+Thread-Index: AQHUVisPgLpvw7VxSEeLDWmxbZPH/qUGQyyg
+Date:   Fri, 28 Sep 2018 22:09:56 +0000
+Message-ID: <CY4PR21MB0773E72641E19C0FFBE9CD41DCEC0@CY4PR21MB0773.namprd21.prod.outlook.com>
+References: <1538028104-114050-1-git-send-email-yi.y.sun@linux.intel.com>
+ <1538028104-114050-3-git-send-email-yi.y.sun@linux.intel.com>
+In-Reply-To: <1538028104-114050-3-git-send-email-yi.y.sun@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-09-28T22:09:55.0790542Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0696;6:j9RVp/VvdqGJDWiX78bq0JFhDG00ifwfPizYoFKUYWz9V7k37FDm1vhrxcrYGWsdJhCT5bZVovKiLn/6TNr1a4Z0eJBq8K7Zi/bFSUUfunYRU2aZvnf8Ees1jQxFsXCDX3NJ7DMajcBNU8uVov5Drrzknbkxs1NTSNp7Lxb7aYXx9bpJocHnxg7JLezx/+FJONrfCRubnbzcY+UQuw8IL527rVLKpPdMyoakOqRtd1r4niN+i6+QIoYBAbRdtp29RKKDnKq8C6M1yJfzwTSoRjVhqV5V2ywDegFIsLSlKIsBhhfD0OWxc3KdJE9Ll0R5bJVwPIi+H11IivlC8ZikdESpFR2KYRqP+D1Dosu3OWcoeJedxhbdVvj/MsiFKkeIhyzkHIGIULnaPRWDtM69kuaq6QWmK9Zc6BxK1TGSbC0nofcmDktadlVVocaHR3yXqkCviEumq0HUk+tZEDYgPw==;5:dfDZsVa9stqCaRjfMDxccd04w91FJwuXEFGXS+QIFMsvfSNykKsqKipdzpFtV/n6jTwV1SCmC/txbdSw9MwU/OAs8jJ4VukAIgaFDTUkSVXwWjafwNr2dfrDNRdpKjloBTt420B2JUFwX+sWWHAIsxUKwggZtdMt9rADKs+lEgY=;7:kzOdgwwCIcwIec0EcdFBxJpbU/eqCjs8SbbNvyQ5TeRtvCZkb7hHsPcCe9qlj3FB28iGZ8F/tNGb32q+CiDhM9zGopdR5h9pH1Zlzez8OVjZYA+ARliVXHJ5keTYj4ODFKcxq+WwuhonsPjjvdIUYPXGjxDJEdhn8GIWvB8CiEH40+4GTv3FahhevsbUqTzTcC5loD3dNIj1yLwVhVH6KNi+Ohw4ZpEfYS/uySrF6Al5bnqrmxe+pGiwE4hbwEqx
+x-ms-office365-filtering-correlation-id: d9807821-9667-4a8f-7a2d-08d6258f201e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0696;
+x-ms-traffictypediagnostic: CY4PR21MB0696:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Michael.H.Kelley@microsoft.com; 
+x-microsoft-antispam-prvs: <CY4PR21MB06966008092095B0C99B7A8DDCEC0@CY4PR21MB0696.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0696;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0696;
+x-forefront-prvs: 0809C12563
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(39860400002)(396003)(366004)(199004)(189003)(256004)(72206003)(25786009)(186003)(8990500004)(53936002)(26005)(66066001)(11346002)(110136005)(54906003)(476003)(478600001)(446003)(6436002)(34290500001)(71200400001)(71190400001)(486006)(2501003)(10290500003)(6116002)(99286004)(316002)(22452003)(3846002)(68736007)(10090500001)(86612001)(305945005)(6506007)(2906002)(55016002)(74316002)(14454004)(86362001)(7736002)(5660300001)(2900100001)(97736004)(5250100002)(106356001)(76176011)(107886003)(9686003)(81156014)(81166006)(4326008)(102836004)(6246003)(33656002)(7696005)(105586002)(229853002)(8676002)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0696;H:CY4PR21MB0773.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: wpbFLQ16eESv48x7PCmlRNw8z4T13aLMs4N5JdocVakEcAtB9s2W9vxFBpcH/n9TuOMZH/NSRqUtBfJmENBFGwocUNON5r0MmqX2H7Bvldm9x2rLzySnsHzcQvkRiUQEvhQnEbTd7AqQb7gsDqtdm0udWAK9SZL9L+VJIuYxd1lWuNAmv1jMbAFedUXdQro/g4ZPh1g0kQtMiXlWGk/rKQU+egq1DlEqPXhe6C/Wx473TIG2XG3CFZtFdBYPTpD0XBsBUAxxVCtKQDJzvuRVStGq8fGQfXfiV13XlsI7r6nE1wPTOuk+l/GlrMTmX1oyB8yRx49XrQGRAtvNDFyDKNjpEoeTgqU36wS0S3woXkE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-46-robh@kernel.org>
-In-Reply-To: <20180828015252.28511-46-robh@kernel.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 28 Sep 2018 17:09:03 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJfAsv-MOgk2Ycs2VBj2vK0m29B_3FxwJV5xUjnMbH4sg@mail.gmail.com>
-Message-ID: <CAL_JsqJfAsv-MOgk2Ycs2VBj2vK0m29B_3FxwJV5xUjnMbH4sg@mail.gmail.com>
-Subject: Re: [PATCH] tty: Convert to using %pOFn instead of device_node.name
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jslaby@suse.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9807821-9667-4a8f-7a2d-08d6258f201e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Sep 2018 22:09:56.7321
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0696
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 8:55 PM Rob Herring <robh@kernel.org> wrote:
->
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
->
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: linux-serial@vger.kernel.org
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+From: Yi Sun <yi.y.sun@linux.intel.com> Sent: Wednesday, September 26, 2018=
+ 11:02 PM
+
+> Follow PV spinlock mechanism to implement the callback functions
+> to allow the CPU idling and kicking operations on Hyper-V.
+>=20
+> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+> Cc: Haiyang Zhang <haiyangz@microsoft.com>
+> Cc: Stephen Hemminger <sthemmin@microsoft.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Michael Kelley (EOSG) <Michael.H.Kelley@microsoft.com>
+> Signed-off-by: Yi Sun <yi.y.sun@linux.intel.com>
 > ---
->  drivers/tty/ehv_bytechan.c                  | 12 ++++++------
->  drivers/tty/serial/cpm_uart/cpm_uart_core.c |  8 ++++----
->  drivers/tty/serial/pmac_zilog.c             |  4 ++--
->  3 files changed, 12 insertions(+), 12 deletions(-)
 
-Hey Greg, Is this still in your queue? Maybe you've just been extra
-busy lately. ;)
-
-Rob
->
-> diff --git a/drivers/tty/ehv_bytechan.c b/drivers/tty/ehv_bytechan.c
-> index eea4049b5dcc..769e0a5d1dfc 100644
-> --- a/drivers/tty/ehv_bytechan.c
-> +++ b/drivers/tty/ehv_bytechan.c
-> @@ -128,8 +128,8 @@ static int find_console_handle(void)
->          */
->         iprop = of_get_property(np, "hv-handle", NULL);
->         if (!iprop) {
-> -               pr_err("ehv-bc: no 'hv-handle' property in %s node\n",
-> -                      np->name);
-> +               pr_err("ehv-bc: no 'hv-handle' property in %pOFn node\n",
-> +                      np);
->                 return 0;
->         }
->         stdout_bc = be32_to_cpu(*iprop);
-> @@ -661,8 +661,8 @@ static int ehv_bc_tty_probe(struct platform_device *pdev)
->
->         iprop = of_get_property(np, "hv-handle", NULL);
->         if (!iprop) {
-> -               dev_err(&pdev->dev, "no 'hv-handle' property in %s node\n",
-> -                       np->name);
-> +               dev_err(&pdev->dev, "no 'hv-handle' property in %pOFn node\n",
-> +                       np);
->                 return -ENODEV;
->         }
->
-> @@ -682,8 +682,8 @@ static int ehv_bc_tty_probe(struct platform_device *pdev)
->         bc->rx_irq = irq_of_parse_and_map(np, 0);
->         bc->tx_irq = irq_of_parse_and_map(np, 1);
->         if ((bc->rx_irq == NO_IRQ) || (bc->tx_irq == NO_IRQ)) {
-> -               dev_err(&pdev->dev, "no 'interrupts' property in %s node\n",
-> -                       np->name);
-> +               dev_err(&pdev->dev, "no 'interrupts' property in %pOFn node\n",
-> +                       np);
->                 ret = -ENODEV;
->                 goto error;
->         }
-> diff --git a/drivers/tty/serial/cpm_uart/cpm_uart_core.c b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-> index 24a5f05e769b..ea7204d75022 100644
-> --- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-> +++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-> @@ -1151,8 +1151,8 @@ static int cpm_uart_init_port(struct device_node *np,
->         if (!pinfo->clk) {
->                 data = of_get_property(np, "fsl,cpm-brg", &len);
->                 if (!data || len != 4) {
-> -                       printk(KERN_ERR "CPM UART %s has no/invalid "
-> -                                       "fsl,cpm-brg property.\n", np->name);
-> +                       printk(KERN_ERR "CPM UART %pOFn has no/invalid "
-> +                                       "fsl,cpm-brg property.\n", np);
->                         return -EINVAL;
->                 }
->                 pinfo->brg = *data;
-> @@ -1160,8 +1160,8 @@ static int cpm_uart_init_port(struct device_node *np,
->
->         data = of_get_property(np, "fsl,cpm-command", &len);
->         if (!data || len != 4) {
-> -               printk(KERN_ERR "CPM UART %s has no/invalid "
-> -                               "fsl,cpm-command property.\n", np->name);
-> +               printk(KERN_ERR "CPM UART %pOFn has no/invalid "
-> +                               "fsl,cpm-command property.\n", np);
->                 return -EINVAL;
->         }
->         pinfo->command = *data;
-> diff --git a/drivers/tty/serial/pmac_zilog.c b/drivers/tty/serial/pmac_zilog.c
-> index 3d21790d961e..a4ec22d1f214 100644
-> --- a/drivers/tty/serial/pmac_zilog.c
-> +++ b/drivers/tty/serial/pmac_zilog.c
-> @@ -1566,9 +1566,9 @@ static int pmz_attach(struct macio_dev *mdev, const struct of_device_id *match)
->          * to work around bugs in ancient Apple device-trees
->          */
->         if (macio_request_resources(uap->dev, "pmac_zilog"))
-> -               printk(KERN_WARNING "%s: Failed to request resource"
-> +               printk(KERN_WARNING "%pOFn: Failed to request resource"
->                        ", port still active\n",
-> -                      uap->node->name);
-> +                      uap->node);
->         else
->                 uap->flags |= PMACZILOG_FLAG_RSRC_REQUESTED;
->
-> --
-> 2.17.1
->
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
