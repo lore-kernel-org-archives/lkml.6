@@ -2,145 +2,96 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D02C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E30C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA08C2173D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:12:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA08C2173D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id BD69E215EB
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:13:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jXYQuFRc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD69E215EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbeI1OfA (ORCPT
+        id S1728990AbeI1OgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 10:35:00 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36016 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbeI1OfA (ORCPT
+        Fri, 28 Sep 2018 10:36:15 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:54778 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbeI1OgP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 10:35:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id l10-v6so5359418wrp.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 01:12:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e6G1NBSTkJ/bhGl8Fn+Smcp7GAw+5rucnfxNIeZbOzo=;
-        b=S3CAsZfXlsBOq8TQoLW58hgTjLvILPpzf9fvkxcYfYNBjbyjsebGUx1EQx2KpfApF0
-         9I6UNgToYs37w6hp/0RZKFn8JsU5mF07OgnmEu3GMCU6BSnnJRzxe9wfTTtpvITYyPBP
-         Ny7Idkrh6qu1/uEftvfDPr5CZ/tioBs8VPARKJNuVzz92VtaoekOiPNgGVcqozy8QOgY
-         S2/g7cfzRI59N4xKdZRUrhdw83ukQKgexS/xRGAcw6MqqHEqcQUREsKvbqa+tVyhOi2V
-         8V/ArRGcGH6HlVezE5tXIzTt6q8+UBotUBRGR9XMRF8YLtnxKt1Zjfb7K+Sbt1un1upe
-         4zeQ==
-X-Gm-Message-State: ABuFfohUsDTm+qVREYc0hTtAeH4b5IJyuMQ1WqY5h0QW0i3H67rOfezr
-        Lgz0mO5vPYrzH1KBQFAjdM0=
-X-Google-Smtp-Source: ACcGV60s4Hcx4Z1suQRy8NNzLjwDF2+XOGXk2KDNV6GGFUnZ4tUlIpFt1RNyaGj1ni9K4GfzcTewMQ==
-X-Received: by 2002:adf:8024:: with SMTP id 33-v6mr11575338wrk.16.1538122345973;
-        Fri, 28 Sep 2018 01:12:25 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id x204-v6sm1141493wmg.27.2018.09.28.01.12.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 01:12:25 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id A486A125651; Fri, 28 Sep 2018 10:12:24 +0200 (CEST)
-Date:   Fri, 28 Sep 2018 10:12:24 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
-        dave.hansen@intel.com, jglisse@redhat.com, rppt@linux.vnet.ibm.com,
-        dan.j.williams@intel.com, logang@deltatee.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-Message-ID: <20180928081224.GA25561@techadventures.net>
-References: <20180925200551.3576.18755.stgit@localhost.localdomain>
- <20180925202053.3576.66039.stgit@localhost.localdomain>
- <20180926075540.GD6278@dhcp22.suse.cz>
- <6f87a5d7-05e2-00f4-8568-bb3521869cea@linux.intel.com>
- <20180927110926.GE6278@dhcp22.suse.cz>
- <20180927122537.GA20378@techadventures.net>
- <20180927131329.GI6278@dhcp22.suse.cz>
+        Fri, 28 Sep 2018 10:36:15 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8S8DPlm023979;
+        Fri, 28 Sep 2018 08:13:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=MiDYgWceKmaxYr5lv2EbMuq6e2rIf9fNA839ZV8hvtY=;
+ b=jXYQuFRcvyOqbpVpyqTWjgh4P72wfN6LlXH6QqEuXv/Bsh9ORL3c25o3P/N6lvH3Vkyb
+ tZSgvC/2XRl43H53AC/XIgXF0F7ZWieTz/yV+Yalyzs0VpG3WZFOwFWuGBFG1ZtlJ3sQ
+ Baoc1K+B+d/pdt4HBOr0bcGpfzl7WjJeOGkeU+eObVX3a125LyBIzh/vylmqY+wFJ/77
+ mtUd42OqKCOetGHTypL39A9UlFa962IbITaNQN8OMlnU7JBQvm/pf8dMJlAiorAtxOQg
+ Uf2sufzSREytDAoffs3ATm+cS463seMup66Gnqeejz/XORAIux2PER3eegeWl5r03Qdd EQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2mnd5txhb6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Sep 2018 08:13:33 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8S8DXmb009874
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Sep 2018 08:13:33 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8S8DWaq002522;
+        Fri, 28 Sep 2018 08:13:32 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 28 Sep 2018 01:13:32 -0700
+Date:   Fri, 28 Sep 2018 11:13:25 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Aymen Qader <qader.aymen@gmail.com>
+Cc:     devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v3] staging: ks7010: Add null pointer check for skb
+Message-ID: <20180928081325.krgawue3cs6mavw2@mwanda>
+References: <20180927151614.25470-1-qader.aymen@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180927131329.GI6278@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180927151614.25470-1-qader.aymen@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9029 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=495
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809280087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 03:13:29PM +0200, Michal Hocko wrote:
-> I would have to double check but is the hotplug lock really serializing
-> access to the state initialized by init_currently_empty_zone? E.g.
-> zone_start_pfn is a nice example of a state that is used outside of the
-> lock. zone's free lists are similar. So do we really need the hoptlug
-> lock? And more broadly, what does the hotplug lock is supposed to
-> serialize in general. A proper documentation would surely help to answer
-> these questions. There is way too much of "do not touch this code and
-> just make my particular hack" mindset which made the whole memory
-> hotplug a giant pile of mess. We really should start with some proper
-> engineering here finally.
+You might want to try running Smatch on your patches.  This is the
+second one where maybe the results would have been interesting.
 
-* Locking rules:
-*
-* zone_start_pfn and spanned_pages are protected by span_seqlock.
-* It is a seqlock because it has to be read outside of zone->lock,
-* and it is done in the main allocator path.  But, it is written
-* quite infrequently.
-*
-* Write access to present_pages at runtime should be protected by
-* mem_hotplug_begin/end(). Any reader who can't tolerant drift of
-* present_pages should get_online_mems() to get a stable value.
+git clone http://repo.or.cz/w/smatch.git
+cd smatch
+make
+cd ~/kernel/src/
+~/smatch/smatch_scripts/kchecker drivers/staging/ks7010/ks_hostif.c
 
-IIUC, looks like zone_start_pfn should be envolved with
-zone_span_writelock/zone_span_writeunlock, and since zone_start_pfn is changed
-in init_currently_empty_zone, I guess that the whole function should be within
-that lock.
+This patch introduced a problem, but the earlier one fixed a potential
+problem in rtl8723bs:
 
-So, a blind shot, but could we do something like the following?
+drivers/staging/rtl8723bs/core/rtw_mlme_ext.c:1274 OnAssocReq() error: uninitialized symbol 'ie_len'.
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 898e1f816821..49f87252f1b1 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -764,14 +764,13 @@ void __ref move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
-        int nid = pgdat->node_id;
-        unsigned long flags;
- 
--       if (zone_is_empty(zone))
--               init_currently_empty_zone(zone, start_pfn, nr_pages);
--
-        clear_zone_contiguous(zone);
- 
-        /* TODO Huh pgdat is irqsave while zone is not. It used to be like that before */
-        pgdat_resize_lock(pgdat, &flags);
-        zone_span_writelock(zone);
-+       if (zone_is_empty(zone))
-+               init_currently_empty_zone(zone, start_pfn, nr_pages);
-        resize_zone_range(zone, start_pfn, nr_pages);
-        zone_span_writeunlock(zone);
-        resize_pgdat_range(pgdat, start_pfn, nr_pages);
+Unfortunately, Smatch missed the potential NULL dereference in
+OnAssocReq()...  It wouldn't be that hard to fix...
 
-Then, we could take move_pfn_range_to_zone out of the hotplug lock.
-
-Although I am not sure about leaving memmap_init_zone unprotected.
-For the normal memory, that is not a problem since the memblock's lock
-protects us from touching the same pages at the same time in online/offline_pages,
-but for HMM/devm the story is different.
-
-I am totally unaware of HMM/devm, so I am not sure if its protected somehow.
-e.g: what happens if devm_memremap_pages and devm_memremap_pages_release are running
-at the same time for the same memory-range (with the assumption that the hotplug-lock
-does not protect move_pfn_range_to_zone anymore).
-
--- 
-Oscar Salvador
-SUSE L3
+regards,
+dan carpenter
