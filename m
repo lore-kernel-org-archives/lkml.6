@@ -2,89 +2,193 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 950FCC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6D0C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B1A020652
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:42:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1A020652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D2C020652
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:45:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D2C020652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729261AbeI1VGo (ORCPT
+        id S1728873AbeI1VJL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 17:06:44 -0400
-Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:37394
-        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726473AbeI1VGo (ORCPT
+        Fri, 28 Sep 2018 17:09:11 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:38554 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726867AbeI1VJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 17:06:44 -0400
-Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
-        by : HOSTING RELAY : with ESMTP
-        id 5txZgoMGOM0DP5txZgX4G6; Fri, 28 Sep 2018 07:41:37 -0700
-x-originating-ip: 107.180.71.197
-Received: from haiyangz by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
-        (envelope-from <haiyangz@linuxonhyperv2.linuxonhyperv.com>)
-        id 1g5txZ-000375-7o; Fri, 28 Sep 2018 07:41:37 -0700
-From:   Haiyang Zhang <haiyangz@linuxonhyperv.com>
-To:     davem@davemloft.net, netdev@vger.kernel.org
-Cc:     haiyangz@microsoft.com, kys@microsoft.com, sthemmin@microsoft.com,
-        olaf@aepfle.de, vkuznets@redhat.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] hv_netvsc: Fix rndis_per_packet_info internal field initialization
-Date:   Fri, 28 Sep 2018 14:41:23 +0000
-Message-Id: <20180928144123.11926-1-haiyangz@linuxonhyperv.com>
-X-Mailer: git-send-email 2.18.0
-Reply-To: haiyangz@microsoft.com
-X-CMAE-Envelope: MS4wfI3mVWiHsa0E6pA/GDlXFR653jfUxSVxblp2rP6BNPbNkOsIDEY9XP/M2/Z5sI9i5xaB7wP7Q92OfzvyXwv04+gUz3i8q99m2f/I+zn5ZO9VN9j1U5rx
- WFO1dVHDhguiT6PVMit+/t4pvsL1ug0QTcw0uwX8RDnDw55JauFUZUHxbCyfGqPxuV5TdGgKd/83qJqHN7Dwvs6pS/vPN6/SPCi9PvkgElAlQZ+fYl3ycgz7
- j3M2Yjlp71roucIk+C0gbu8TiTgZTR9RbppyXI0yfEgl0DlAX7HIWheJQC3RLcGRh7s7cB9oeJMvFAhIWuB8m/DcY8AWpEUV6RCsrbRGAro7FDzxnyNdlKtX
- CTF8Da2fnvS/7GpkFWw/zQFIWZ+d+tM7RwrHhBNp3WrGCr9a2HOD3ktb2sVlNFirEyk4f6j/DQO37Zh1Cvm1Z42PEvbQ3LldCEZHN+BcfUI8P9sfjhQeqgow
- f1f52dOWxkbYZ5WM0GyR72Yr6s5PqcxioLNhmA==
+        Fri, 28 Sep 2018 17:09:11 -0400
+Received: by mail-io1-f69.google.com with SMTP id n17-v6so6332406ioa.5
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 07:45:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=XzYva1YRWHbAy7ylNgi8uwSu1j8QEcuwkMcsohAye94=;
+        b=CrlWIuTlgjRf1KZJXmuP59pFg93tO89iTleO5WS158XSlsUcQj5XrfAjb3taRsZNCP
+         SaxKuCuQ+R7YpfIa6gyuEi+mCltuG4+gKG9HeKp2Uauxktv+PlTK+WlDh0lt8atC1rs+
+         qP0IDhApbzQ1Ku9be9JfeTv61JshA0bV0jNd08ImCufEC1dcXHT/6I2LPeZEDI43LaXu
+         6jBMLEYwAR9KCClznjtDxqGjTc2KMs5qE+TIX0RzhBo/e5jWkHAWY/nhUeHSPlGopggZ
+         7WIpj5Y98mgcXog1Fs2KdDzlsSj3kNVXVlyjhOxQPl3Q54wYKxKwc2UXNP3QKBhhxC/K
+         NGZA==
+X-Gm-Message-State: ABuFfog9GAz2NqP3h1NzVS6I2jNOV2XMW6rHbB9ivgCL/f6XqWXy4I2P
+        OdRKAgiKFKiMOYqdSvoug2JpZuTepShvFP9T9P/dRkurnsIs
+X-Google-Smtp-Source: ACcGV62a759w5C739yE6lbp/v8Ovx0+iQFcgBvvt70eqmgsIYh3W+in9VY79ONED/4gNzo3kNE1fqJwscQQnESrXPQvyDtvGfg6F
+MIME-Version: 1.0
+X-Received: by 2002:a24:a0cb:: with SMTP id o194-v6mr1950832ite.36.1538145903986;
+ Fri, 28 Sep 2018 07:45:03 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 07:45:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003852440576ef80b2@google.com>
+Subject: KASAN: slab-out-of-bounds Read in string (2)
+From:   syzbot <syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, pmladek@suse.com,
+        rostedt@goodmis.org, sergey.senozhatsky@gmail.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+Hello,
 
-The RSC feature -- a bit field "internal" was added here with total
-size unchanged:
-struct rndis_per_packet_info {
-	u32 size;
-	u32 type:31;
-	u32 internal:1;
-	u32 ppi_offset;
-};
+syzbot found the following crash on:
 
-On TX path, we put rndis msg into skb head room, which is not zeroed
-before passing to us. We do not use the "internal" field in TX path,
-but it may impact older hosts which use the entire 32 bits as "type".
+HEAD commit:    c127e59bee3e Merge tag 'for_v4.19-rc6' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b2f32a400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dfb440e26f0a6f6f
+dashboard link: https://syzkaller.appspot.com/bug?extid=376cea2b0ef340db3dd4
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-To fix the bug, this patch sets the field "internal" to zero.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Fixes: c8e4eff4675f ("hv_netvsc: Add support for LRO/RSC in the vSwitch")
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com
+
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000140
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0e714a76d4
+R13: 00000000004c32cb R14: 00000000004d4ef0 R15: 0000000000000004
+==================================================================
+BUG: KASAN: slab-out-of-bounds in string+0x298/0x2d0 lib/vsprintf.c:604
+Read of size 1 at addr ffff8801c36c66ba by task syz-executor2/27811
+
+CPU: 0 PID: 27811 Comm: syz-executor2 Not tainted 4.19.0-rc5+ #36
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+  string+0x298/0x2d0 lib/vsprintf.c:604
+  vsnprintf+0x48e/0x1b60 lib/vsprintf.c:2293
+  vscnprintf+0x2d/0x80 lib/vsprintf.c:2396
+  vprintk_store+0x43/0x510 kernel/printk/printk.c:1847
+  vprintk_emit+0x1c1/0x930 kernel/printk/printk.c:1905
+  vprintk_default+0x28/0x30 kernel/printk/printk.c:1963
+  vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
+  printk+0xa7/0xcf kernel/printk/printk.c:1996
+  ovl_lookup_index.cold.15+0xe8/0x1f8 fs/overlayfs/namei.c:689
+  ovl_lookup+0x9f2/0x29c0 fs/overlayfs/namei.c:1022
+  __lookup_hash+0x12e/0x190 fs/namei.c:1546
+  do_rmdir+0x3b3/0x630 fs/namei.c:3930
+  __do_sys_rmdir fs/namei.c:3959 [inline]
+  __se_sys_rmdir fs/namei.c:3957 [inline]
+  __x64_sys_rmdir+0x36/0x40 fs/namei.c:3957
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f0e714a6c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000054
+RAX: ffffffffffffffda RBX: 00007f0e714a6c90 RCX: 0000000000457579
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000140
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0e714a76d4
+R13: 00000000004c32cb R14: 00000000004d4ef0 R15: 0000000000000004
+
+Allocated by task 27811:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc mm/slab.c:3718 [inline]
+  __kmalloc+0x14e/0x760 mm/slab.c:3727
+  kmalloc_array include/linux/slab.h:635 [inline]
+  kcalloc include/linux/slab.h:646 [inline]
+  ovl_get_index_name_fh+0x57/0x180 fs/overlayfs/namei.c:596
+  ovl_get_index_name+0x5c/0x80 fs/overlayfs/namei.c:631
+  ovl_lookup_index+0xe4/0x700 fs/overlayfs/namei.c:678
+  ovl_lookup+0x9f2/0x29c0 fs/overlayfs/namei.c:1022
+  __lookup_hash+0x12e/0x190 fs/namei.c:1546
+  do_rmdir+0x3b3/0x630 fs/namei.c:3930
+  __do_sys_rmdir fs/namei.c:3959 [inline]
+  __se_sys_rmdir fs/namei.c:3957 [inline]
+  __x64_sys_rmdir+0x36/0x40 fs/namei.c:3957
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 5441:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3813
+  __vunmap+0x335/0x460 mm/vmalloc.c:1532
+  vfree+0x68/0x100 mm/vmalloc.c:1593
+  copy_entries_to_user net/ipv4/netfilter/ip_tables.c:870 [inline]
+  get_entries net/ipv4/netfilter/ip_tables.c:1027 [inline]
+  do_ipt_get_ctl+0x9eb/0xbc0 net/ipv4/netfilter/ip_tables.c:1703
+  nf_sockopt net/netfilter/nf_sockopt.c:104 [inline]
+  nf_getsockopt+0x80/0xe0 net/netfilter/nf_sockopt.c:122
+  ip_getsockopt+0x1af/0x240 net/ipv4/ip_sockglue.c:1577
+  tcp_getsockopt+0x93/0xe0 net/ipv4/tcp.c:3583
+  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:2997
+  __sys_getsockopt+0x1ad/0x390 net/socket.c:1939
+  __do_sys_getsockopt net/socket.c:1950 [inline]
+  __se_sys_getsockopt net/socket.c:1947 [inline]
+  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1947
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801c36c6680
+  which belongs to the cache kmalloc-64 of size 64
+The buggy address is located 58 bytes inside of
+  64-byte region [ffff8801c36c6680, ffff8801c36c66c0)
+The buggy address belongs to the page:
+page:ffffea00070db180 count:1 mapcount:0 mapping:ffff8801da800340  
+index:0xffff8801c36c6380
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea0006d16508 ffffea000638a588 ffff8801da800340
+raw: ffff8801c36c6380 ffff8801c36c6000 000000010000001b 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801c36c6580: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff8801c36c6600: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+> ffff8801c36c6680: 00 00 00 00 00 00 00 02 fc fc fc fc fc fc fc fc
+                                         ^
+  ffff8801c36c6700: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff8801c36c6780: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+==================================================================
+
+
 ---
- drivers/net/hyperv/netvsc_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index ec699741170b..005cbaa2fa3b 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -226,6 +226,7 @@ static inline void *init_ppi_data(struct rndis_message *msg,
- 
- 	ppi->size = ppi_size;
- 	ppi->type = pkt_type;
-+	ppi->internal = 0;
- 	ppi->ppi_offset = sizeof(struct rndis_per_packet_info);
- 
- 	rndis_pkt->per_pkt_info_len += ppi_size;
--- 
-2.18.0
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
