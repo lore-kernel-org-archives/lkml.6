@@ -3,205 +3,420 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A405C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C9BC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F17682173D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:45:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA2B2173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:45:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GE0iNqgu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F17682173D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p2bIGemU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AA2B2173D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbeI1PH7 (ORCPT
+        id S1729342AbeI1PIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 11:07:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728672AbeI1PH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 11:07:59 -0400
-Received: from dragon (unknown [45.56.155.164])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05E6D2170E;
-        Fri, 28 Sep 2018 08:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538124316;
-        bh=AzUHFJy5soOos4ZJhUsrc5gOnhFrrrBnnD18iXiFV+U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GE0iNqgud/DsJuytswh8M1AjP9i9nZS83nmY4TVPuC3Jq7Ry0UiKI8nhd3VkQbhwe
-         Vp7BH6KMsPCqDJiTpXPK5B4Wyv63vecKxImYANpnTHW0zPoG33SUxt0mm96QaURRYO
-         8MAgGaJVynCs69DsEApObNpvm/FHozM0NutpJo9U=
-Date:   Fri, 28 Sep 2018 16:44:54 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, fabio.estevam@nxp.com,
-        linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org,
-        ping.bai@nxp.com, Aisheng.dong@nxp.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH V2 1/4] ARM: imx: add i.mx6ulz msl support
-Message-ID: <20180928084452.GH26692@dragon>
-References: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
- <1537337088-28819-2-git-send-email-Anson.Huang@nxp.com>
+        Fri, 28 Sep 2018 11:08:23 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43648 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728672AbeI1PIX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 11:08:23 -0400
+Received: by mail-pf1-f193.google.com with SMTP id j26-v6so3832869pfi.10;
+        Fri, 28 Sep 2018 01:45:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xwNgUaYy+QCCgXTgkFjXs0nDNjiCXfkgBMbj7Mi4zHw=;
+        b=p2bIGemUi431bAM/itA01zZc9CMmZXJreo19hoVxNCalb8Pszp0TwVejWJrbYZ2ezN
+         BLvRvUeIru7iah8mui1wMQoK4gwCCP2/JyRAODmbEif4SBeJS5EsARsrSX/acqsyz1mK
+         FO6OQm6LFiG1zurqRtmCv/kTd3w0Wv/5Mj4aKQFxQj+w27aTYTn1cwsZjbqT1gtMAK9R
+         n9C0dt60E7zGRQzbqfqfM7tqzs4NDuWI2q5s9Id/g3+2/8YS7MwynQiR79it2IopfHfN
+         5tkPYOp5nC56hvh7fF7GY83KGlThxH9K2/oCOPODrLWxAIGZGP89j7k3RREqgOfzh4as
+         7vWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xwNgUaYy+QCCgXTgkFjXs0nDNjiCXfkgBMbj7Mi4zHw=;
+        b=XCRuMlPZ7XttR10eqEZ6mlpRvObququklJJABsZK3DeaxB8bcWApw5AUG0IW8C73lE
+         NFepySiF0xugmKVm+RFS5TxJayL13sLr6Kw9bsrMc4OuIyLJI8VBhVPfMPEkbFwZHLB/
+         8bswJlYKSTqXItnOv7g4vv83FRZamdx+fWF7/xo582Y7lLvNFRCR26/Roj3LcTKOWsTF
+         xhJUdWtkblgpWjkxXQkGjoYD9cEVXVUtbbgvGDUuCVA6mUz47My+tbfTqCKFoH3PeUyQ
+         xEPvj/IUahSyOj7aBCsssmdMEKCpRNs3esYh7wAjy4BIWDtUaN9rG8kEs97bceEZiDIu
+         sKNA==
+X-Gm-Message-State: ABuFfogB5NVnfG7NZsUOyjdU8HuQlo0Vv8bZjBYl4BejqYHmM3Ve3pEy
+        4eIN2WFf0BhltF/XWSNvvl4=
+X-Google-Smtp-Source: ACcGV615mvVRy+cn3v0w+b8u1gVlQA3YIHgwhgxs2GQB6JLwCuAEo+OLSNsfJgoTTTyVxPPBGAPKpA==
+X-Received: by 2002:a62:6d02:: with SMTP id i2-v6mr15916833pfc.218.1538124340231;
+        Fri, 28 Sep 2018 01:45:40 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:5ff1])
+        by smtp.gmail.com with ESMTPSA id k77-v6sm7291537pfg.1.2018.09.28.01.45.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 01:45:39 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 10:45:31 +0200
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     netdev@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH v3 bpf-next 03/10] bpf: introduce per-cpu cgroup local
+ storage
+Message-ID: <20180928084528.i5txkac34pmqvs3p@ast-mbp.dhcp.thefacebook.com>
+References: <20180926113326.29069-1-guro@fb.com>
+ <20180926113326.29069-4-guro@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1537337088-28819-2-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180926113326.29069-4-guro@fb.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 02:04:45PM +0800, Anson Huang wrote:
-> The i.MX 6ULZ processor is a high-performance, ultra
-> cost-efficient consumer Linux processor featuring an
-> advanced implementation of a single Arm® Cortex®-A7 core,
-> which operates at speeds up to 900 MHz.
+On Wed, Sep 26, 2018 at 12:33:19PM +0100, Roman Gushchin wrote:
+> This commit introduced per-cpu cgroup local storage.
 > 
-> This patch adds basic MSL support for i.MX6ULZ, the
-> i.MX6ULZ has same soc_id as i.MX6ULL, and SRC_SBMR2 bit[6]
-> is to differentiate i.MX6ULZ from i.MX6ULL, 1'b1 means
-> i.MX6ULZ and 1'b0 means i.MX6ULL.
+> Per-cpu cgroup local storage is very similar to simple cgroup storage
+> (let's call it shared), except all the data is per-cpu.
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> The main goal of per-cpu variant is to implement super fast
+> counters (e.g. packet counters), which don't require neither
+> lookups, neither atomic operations.
+> 
+> From userspace's point of view, accessing a per-cpu cgroup storage
+> is similar to other per-cpu map types (e.g. per-cpu hashmaps and
+> arrays).
+> 
+> Writing to a per-cpu cgroup storage is not atomic, but is performed
+> by copying longs, so some minimal atomicity is here, exactly
+> as with other per-cpu maps.
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Alexei Starovoitov <ast@kernel.org>
 > ---
->  arch/arm/mach-imx/anatop.c      | 20 ++++++++++++++++++++
->  arch/arm/mach-imx/cpu.c         |  3 +++
->  arch/arm/mach-imx/mach-imx6ul.c |  1 +
->  arch/arm/mach-imx/mxc.h         |  7 +++++++
->  arch/arm/mach-imx/pm-imx6.c     |  4 ++--
->  5 files changed, 33 insertions(+), 2 deletions(-)
+>  include/linux/bpf-cgroup.h |  20 ++++-
+>  include/linux/bpf.h        |   1 +
+>  include/linux/bpf_types.h  |   1 +
+>  include/uapi/linux/bpf.h   |   1 +
+>  kernel/bpf/helpers.c       |   8 +-
+>  kernel/bpf/local_storage.c | 148 ++++++++++++++++++++++++++++++++-----
+>  kernel/bpf/syscall.c       |  11 ++-
+>  kernel/bpf/verifier.c      |  15 +++-
+>  8 files changed, 177 insertions(+), 28 deletions(-)
 > 
-> diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
-> index 61f3d94..45d618a 100644
-> --- a/arch/arm/mach-imx/anatop.c
-> +++ b/arch/arm/mach-imx/anatop.c
-> @@ -31,6 +31,8 @@
->  #define ANADIG_DIGPROG_IMX6SL	0x280
->  #define ANADIG_DIGPROG_IMX7D	0x800
->  
-> +#define SRC_SBMR2		0x1c
-> +
->  #define BM_ANADIG_REG_2P5_ENABLE_WEAK_LINREG	0x40000
->  #define BM_ANADIG_REG_2P5_ENABLE_PULLDOWN	0x8
->  #define BM_ANADIG_REG_CORE_FET_ODRIVE		0x20000000
-> @@ -148,6 +150,24 @@ void __init imx_init_revision_from_anatop(void)
->  		major_part = (digprog >> 8) & 0xf;
->  		minor_part = digprog & 0xf;
->  		revision = ((major_part + 1) << 4) | minor_part;
-> +
-> +		if ((digprog >> 16) == MXC_CPU_IMX6ULL) {
-> +			void __iomem *src_base;
-> +			u32 sbmr2;
-> +
-> +			np = of_find_compatible_node(NULL, NULL,
-> +						     "fsl,imx6ul-src");
-> +			src_base = of_iomap(np, 0);
-> +			WARN_ON(!src_base);
-> +			sbmr2 = readl_relaxed(src_base + SRC_SBMR2);
-> +			iounmap(src_base);
-> +
-> +			/* src_sbmr2 bit 6 is to identify if it is i.MX6ULZ */
-> +			if (sbmr2 & (1 << 6)) {
-> +				digprog &= ~(0xff << 16);
-> +				digprog |= (MXC_CPU_IMX6ULZ << 16);
-> +			}
-> +		}
->  	}
->  
->  	mxc_set_cpu_type(digprog >> 16 & 0xff);
-> diff --git a/arch/arm/mach-imx/cpu.c b/arch/arm/mach-imx/cpu.c
-> index c6b1bf9..c73593e 100644
-> --- a/arch/arm/mach-imx/cpu.c
-> +++ b/arch/arm/mach-imx/cpu.c
-> @@ -136,6 +136,9 @@ struct device * __init imx_soc_device_init(void)
->  	case MXC_CPU_IMX6ULL:
->  		soc_id = "i.MX6ULL";
->  		break;
-> +	case MXC_CPU_IMX6ULZ:
-> +		soc_id = "i.MX6ULZ";
-> +		break;
->  	case MXC_CPU_IMX6SLL:
->  		soc_id = "i.MX6SLL";
->  		break;
-> diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
-> index 6cb8a22..4ffe3c8 100644
-> --- a/arch/arm/mach-imx/mach-imx6ul.c
-> +++ b/arch/arm/mach-imx/mach-imx6ul.c
-> @@ -90,6 +90,7 @@ static void __init imx6ul_init_late(void)
->  static const char * const imx6ul_dt_compat[] __initconst = {
->  	"fsl,imx6ul",
->  	"fsl,imx6ull",
-> +	"fsl,imx6ulz",
-
-Can we have "fsl,imx6ull" on the DT compatible, so that we can save the
-changes on kernel side, like this and the clock driver update (patch #2)?
-
-  compatible = "fsl,imx6ull", "fsl,imx6ulz";
-
-I'm not sure if there is any problem with this approach.  But you can
-think about it.
-
-Shawn
-
->  	NULL,
+> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+> index 7e0c9a1d48b7..588dd5f0bd85 100644
+> --- a/include/linux/bpf-cgroup.h
+> +++ b/include/linux/bpf-cgroup.h
+> @@ -37,7 +37,10 @@ struct bpf_storage_buffer {
 >  };
 >  
-> diff --git a/arch/arm/mach-imx/mxc.h b/arch/arm/mach-imx/mxc.h
-> index 026e2ca..b130a53 100644
-> --- a/arch/arm/mach-imx/mxc.h
-> +++ b/arch/arm/mach-imx/mxc.h
-> @@ -40,6 +40,8 @@
->  #define MXC_CPU_IMX6Q		0x63
->  #define MXC_CPU_IMX6UL		0x64
->  #define MXC_CPU_IMX6ULL		0x65
-> +/* virtual cpu id for i.mx6ulz */
-> +#define MXC_CPU_IMX6ULZ		0x6b
->  #define MXC_CPU_IMX6SLL		0x67
->  #define MXC_CPU_IMX7D		0x72
->  
-> @@ -80,6 +82,11 @@ static inline bool cpu_is_imx6ull(void)
->  	return __mxc_cpu_type == MXC_CPU_IMX6ULL;
+>  struct bpf_cgroup_storage {
+> -	struct bpf_storage_buffer *buf;
+> +	union {
+> +		struct bpf_storage_buffer *buf;
+> +		void __percpu *percpu_buf;
+> +	};
+>  	struct bpf_cgroup_storage_map *map;
+>  	struct bpf_cgroup_storage_key key;
+>  	struct list_head list;
+> @@ -109,6 +112,9 @@ int __cgroup_bpf_check_dev_permission(short dev_type, u32 major, u32 minor,
+>  static inline enum bpf_cgroup_storage_type cgroup_storage_type(
+>  	struct bpf_map *map)
+>  {
+> +	if (map->map_type == BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE)
+> +		return BPF_CGROUP_STORAGE_PERCPU;
+> +
+>  	return BPF_CGROUP_STORAGE_SHARED;
 >  }
 >  
-> +static inline bool cpu_is_imx6ulz(void)
+> @@ -131,6 +137,10 @@ void bpf_cgroup_storage_unlink(struct bpf_cgroup_storage *storage);
+>  int bpf_cgroup_storage_assign(struct bpf_prog *prog, struct bpf_map *map);
+>  void bpf_cgroup_storage_release(struct bpf_prog *prog, struct bpf_map *map);
+>  
+> +int bpf_percpu_cgroup_storage_copy(struct bpf_map *map, void *key, void *value);
+> +int bpf_percpu_cgroup_storage_update(struct bpf_map *map, void *key,
+> +				     void *value, u64 flags);
+> +
+>  /* Wrappers for __cgroup_bpf_run_filter_skb() guarded by cgroup_bpf_enabled. */
+>  #define BPF_CGROUP_RUN_PROG_INET_INGRESS(sk, skb)			      \
+>  ({									      \
+> @@ -285,6 +295,14 @@ static inline struct bpf_cgroup_storage *bpf_cgroup_storage_alloc(
+>  	struct bpf_prog *prog, enum bpf_cgroup_storage_type stype) { return 0; }
+>  static inline void bpf_cgroup_storage_free(
+>  	struct bpf_cgroup_storage *storage) {}
+> +static inline int bpf_percpu_cgroup_storage_copy(struct bpf_map *map, void *key,
+> +						 void *value) {
+> +	return 0;
+> +}
+> +static inline int bpf_percpu_cgroup_storage_update(struct bpf_map *map,
+> +					void *key, void *value, u64 flags) {
+> +	return 0;
+> +}
+>  
+>  #define cgroup_bpf_enabled (0)
+>  #define BPF_CGROUP_PRE_CONNECT_ENABLED(sk) (0)
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index b457fbe7b70b..018299a595c8 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -274,6 +274,7 @@ struct bpf_prog_offload {
+>  
+>  enum bpf_cgroup_storage_type {
+>  	BPF_CGROUP_STORAGE_SHARED,
+> +	BPF_CGROUP_STORAGE_PERCPU,
+>  	__BPF_CGROUP_STORAGE_MAX
+>  };
+>  
+> diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
+> index c9bd6fb765b0..5432f4c9f50e 100644
+> --- a/include/linux/bpf_types.h
+> +++ b/include/linux/bpf_types.h
+> @@ -43,6 +43,7 @@ BPF_MAP_TYPE(BPF_MAP_TYPE_CGROUP_ARRAY, cgroup_array_map_ops)
+>  #endif
+>  #ifdef CONFIG_CGROUP_BPF
+>  BPF_MAP_TYPE(BPF_MAP_TYPE_CGROUP_STORAGE, cgroup_storage_map_ops)
+> +BPF_MAP_TYPE(BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE, cgroup_storage_map_ops)
+>  #endif
+>  BPF_MAP_TYPE(BPF_MAP_TYPE_HASH, htab_map_ops)
+>  BPF_MAP_TYPE(BPF_MAP_TYPE_PERCPU_HASH, htab_percpu_map_ops)
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index aa5ccd2385ed..e2070d819e04 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -127,6 +127,7 @@ enum bpf_map_type {
+>  	BPF_MAP_TYPE_SOCKHASH,
+>  	BPF_MAP_TYPE_CGROUP_STORAGE,
+>  	BPF_MAP_TYPE_REUSEPORT_SOCKARRAY,
+> +	BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE,
+>  };
+>  
+>  enum bpf_prog_type {
+> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> index e42f8789b7ea..6502115e8f55 100644
+> --- a/kernel/bpf/helpers.c
+> +++ b/kernel/bpf/helpers.c
+> @@ -206,10 +206,16 @@ BPF_CALL_2(bpf_get_local_storage, struct bpf_map *, map, u64, flags)
+>  	 */
+>  	enum bpf_cgroup_storage_type stype = cgroup_storage_type(map);
+>  	struct bpf_cgroup_storage *storage;
+> +	void *ptr;
+>  
+>  	storage = this_cpu_read(bpf_cgroup_storage[stype]);
+>  
+> -	return (unsigned long)&READ_ONCE(storage->buf)->data[0];
+> +	if (stype == BPF_CGROUP_STORAGE_SHARED)
+> +		ptr = &READ_ONCE(storage->buf)->data[0];
+> +	else
+> +		ptr = this_cpu_ptr(storage->percpu_buf);
+> +
+> +	return (unsigned long)ptr;
+>  }
+>  
+>  const struct bpf_func_proto bpf_get_local_storage_proto = {
+> diff --git a/kernel/bpf/local_storage.c b/kernel/bpf/local_storage.c
+> index 6742292fb39e..c739f6dcc3c2 100644
+> --- a/kernel/bpf/local_storage.c
+> +++ b/kernel/bpf/local_storage.c
+> @@ -152,6 +152,71 @@ static int cgroup_storage_update_elem(struct bpf_map *map, void *_key,
+>  	return 0;
+>  }
+>  
+> +int bpf_percpu_cgroup_storage_copy(struct bpf_map *_map, void *_key,
+> +				   void *value)
 > +{
-> +	return __mxc_cpu_type == MXC_CPU_IMX6ULZ;
+> +	struct bpf_cgroup_storage_map *map = map_to_storage(_map);
+> +	struct bpf_cgroup_storage_key *key = _key;
+> +	struct bpf_cgroup_storage *storage;
+> +	int cpu, off = 0;
+> +	u32 size;
+> +
+> +	rcu_read_lock();
+> +	storage = cgroup_storage_lookup(map, key, false);
+> +	if (!storage) {
+> +		rcu_read_unlock();
+> +		return -ENOENT;
+> +	}
+> +
+> +	/* per_cpu areas are zero-filled and bpf programs can only
+> +	 * access 'value_size' of them, so copying rounded areas
+> +	 * will not leak any kernel data
+> +	 */
+> +	size = round_up(_map->value_size, 8);
+> +	for_each_possible_cpu(cpu) {
+> +		bpf_long_memcpy(value + off,
+> +				per_cpu_ptr(storage->percpu_buf, cpu), size);
+> +		off += size;
+> +	}
+> +	rcu_read_unlock();
+> +	return 0;
 > +}
 > +
->  static inline bool cpu_is_imx6sll(void)
+> +int bpf_percpu_cgroup_storage_update(struct bpf_map *_map, void *_key,
+> +				     void *value, u64 map_flags)
+> +{
+> +	struct bpf_cgroup_storage_map *map = map_to_storage(_map);
+> +	struct bpf_cgroup_storage_key *key = _key;
+> +	struct bpf_cgroup_storage *storage;
+> +	int cpu, off = 0;
+> +	u32 size;
+> +
+> +	if (unlikely(map_flags & BPF_EXIST))
+> +		return -EINVAL;
+
+that should have been BPF_NOEXIST ?
+
+> +
+> +	rcu_read_lock();
+> +	storage = cgroup_storage_lookup(map, key, false);
+> +	if (!storage) {
+> +		rcu_read_unlock();
+> +		return -ENOENT;
+> +	}
+> +
+> +	/* the user space will provide round_up(value_size, 8) bytes that
+> +	 * will be copied into per-cpu area. bpf programs can only access
+> +	 * value_size of it. During lookup the same extra bytes will be
+> +	 * returned or zeros which were zero-filled by percpu_alloc,
+> +	 * so no kernel data leaks possible
+> +	 */
+> +	size = round_up(_map->value_size, 8);
+> +	for_each_possible_cpu(cpu) {
+> +		bpf_long_memcpy(per_cpu_ptr(storage->percpu_buf, cpu),
+> +				value + off, size);
+> +		off += size;
+> +	}
+> +	rcu_read_unlock();
+
+storage_update and storage_copy look essentially the same
+with the only difference that src/dst swap.
+Would it be possible to combine them ?
+Not sure whether #define template would look better.
+
+> +	return 0;
+> +}
+> +
+>  static int cgroup_storage_get_next_key(struct bpf_map *_map, void *_key,
+>  				       void *_next_key)
 >  {
->  	return __mxc_cpu_type == MXC_CPU_IMX6SLL;
-> diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-> index 529f4b5..87f45b9 100644
-> --- a/arch/arm/mach-imx/pm-imx6.c
-> +++ b/arch/arm/mach-imx/pm-imx6.c
-> @@ -313,7 +313,7 @@ int imx6_set_lpm(enum mxc_cpu_pwr_mode mode)
->  		if (cpu_is_imx6sl())
->  			val |= BM_CLPCR_BYPASS_PMIC_READY;
->  		if (cpu_is_imx6sl() || cpu_is_imx6sx() || cpu_is_imx6ul() ||
-> -		    cpu_is_imx6ull() || cpu_is_imx6sll())
-> +		    cpu_is_imx6ull() || cpu_is_imx6sll() || cpu_is_imx6ulz())
->  			val |= BM_CLPCR_BYP_MMDC_CH0_LPM_HS;
->  		else
->  			val |= BM_CLPCR_BYP_MMDC_CH1_LPM_HS;
-> @@ -331,7 +331,7 @@ int imx6_set_lpm(enum mxc_cpu_pwr_mode mode)
->  		if (cpu_is_imx6sl() || cpu_is_imx6sx())
->  			val |= BM_CLPCR_BYPASS_PMIC_READY;
->  		if (cpu_is_imx6sl() || cpu_is_imx6sx() || cpu_is_imx6ul() ||
-> -		    cpu_is_imx6ull() || cpu_is_imx6sll())
-> +		    cpu_is_imx6ull() || cpu_is_imx6sll() || cpu_is_imx6ulz())
->  			val |= BM_CLPCR_BYP_MMDC_CH0_LPM_HS;
->  		else
->  			val |= BM_CLPCR_BYP_MMDC_CH1_LPM_HS;
-> -- 
-> 2.7.4
-> 
+> @@ -292,55 +357,98 @@ struct bpf_cgroup_storage *bpf_cgroup_storage_alloc(struct bpf_prog *prog,
+>  {
+>  	struct bpf_cgroup_storage *storage;
+>  	struct bpf_map *map;
+> +	gfp_t flags;
+> +	size_t size;
+>  	u32 pages;
+>  
+>  	map = prog->aux->cgroup_storage[stype];
+>  	if (!map)
+>  		return NULL;
+>  
+> -	pages = round_up(sizeof(struct bpf_cgroup_storage) +
+> -			 sizeof(struct bpf_storage_buffer) +
+> -			 map->value_size, PAGE_SIZE) >> PAGE_SHIFT;
+> +	if (stype == BPF_CGROUP_STORAGE_SHARED) {
+> +		size = sizeof(struct bpf_storage_buffer) + map->value_size;
+> +		pages = round_up(sizeof(struct bpf_cgroup_storage) + size,
+> +				 PAGE_SIZE) >> PAGE_SHIFT;
+> +	} else {
+> +		size = map->value_size;
+> +		pages = round_up(round_up(size, 8) * num_possible_cpus(),
+> +				 PAGE_SIZE) >> PAGE_SHIFT;
+> +	}
+> +
+>  	if (bpf_map_charge_memlock(map, pages))
+>  		return ERR_PTR(-EPERM);
+>  
+>  	storage = kmalloc_node(sizeof(struct bpf_cgroup_storage),
+>  			       __GFP_ZERO | GFP_USER, map->numa_node);
+> -	if (!storage) {
+> -		bpf_map_uncharge_memlock(map, pages);
+> -		return ERR_PTR(-ENOMEM);
+> -	}
+> +	if (!storage)
+> +		goto enomem;
+>  
+> -	storage->buf = kmalloc_node(sizeof(struct bpf_storage_buffer) +
+> -				    map->value_size, __GFP_ZERO | GFP_USER,
+> -				    map->numa_node);
+> -	if (!storage->buf) {
+> -		bpf_map_uncharge_memlock(map, pages);
+> -		kfree(storage);
+> -		return ERR_PTR(-ENOMEM);
+> +	flags = __GFP_ZERO | GFP_USER;
+> +
+> +	if (stype == BPF_CGROUP_STORAGE_SHARED) {
+> +		storage->buf = kmalloc_node(size, flags, map->numa_node);
+> +		if (!storage->buf)
+> +			goto enomem;
+> +	} else {
+> +		storage->percpu_buf = __alloc_percpu_gfp(size, 8, flags);
+> +		if (!storage->percpu_buf)
+> +			goto enomem;
+>  	}
+>  
+>  	storage->map = (struct bpf_cgroup_storage_map *)map;
+>  
+>  	return storage;
+> +
+> +enomem:
+> +	bpf_map_uncharge_memlock(map, pages);
+> +	kfree(storage);
+> +	return ERR_PTR(-ENOMEM);
+> +}
+> +
+> +static void free_shared_cgroup_storage_rcu(struct rcu_head *rcu)
+> +{
+> +	struct bpf_cgroup_storage *storage =
+> +		container_of(rcu, struct bpf_cgroup_storage, rcu);
+> +
+> +	kfree(storage->buf);
+> +	kfree(storage);
+> +}
+> +
+> +static void free_percpu_cgroup_storage_rcu(struct rcu_head *rcu)
+> +{
+> +	struct bpf_cgroup_storage *storage =
+> +		container_of(rcu, struct bpf_cgroup_storage, rcu);
+> +
+> +	free_percpu(storage->percpu_buf);
+> +	kfree(storage);
+>  }
+>  
+>  void bpf_cgroup_storage_free(struct bpf_cgroup_storage *storage)
+>  {
+> -	u32 pages;
+> +	enum bpf_cgroup_storage_type stype;
+>  	struct bpf_map *map;
+> +	u32 pages;
+>  
+>  	if (!storage)
+>  		return;
+>  
+>  	map = &storage->map->map;
+> -	pages = round_up(sizeof(struct bpf_cgroup_storage) +
+> -			 sizeof(struct bpf_storage_buffer) +
+> -			 map->value_size, PAGE_SIZE) >> PAGE_SHIFT;
+> +	stype = cgroup_storage_type(map);
+> +	if (stype == BPF_CGROUP_STORAGE_SHARED)
+> +		pages = round_up(sizeof(struct bpf_cgroup_storage) +
+> +				 sizeof(struct bpf_storage_buffer) +
+> +				 map->value_size, PAGE_SIZE) >> PAGE_SHIFT;
+> +	else
+> +		pages = round_up(round_up(map->value_size, 8) *
+> +				 num_possible_cpus(),
+> +				 PAGE_SIZE) >> PAGE_SHIFT;
+
+storage_alloc and storage_free have subttly different math here.
+Please combine them into single helper that computes the number of pages.
+In the current form it's hard to tell that the math is actually the same.
+
