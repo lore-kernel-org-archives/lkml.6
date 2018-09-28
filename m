@@ -2,147 +2,226 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BCEC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A96BAC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AA6120676
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:04:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=8chan.co header.i=@8chan.co header.b="sWgHPbVm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AA6120676
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=8chan.co
+	by mail.kernel.org (Postfix) with ESMTP id 6497E20676
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:04:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6497E20676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729468AbeI1X2q (ORCPT
+        id S1729515AbeI1X2t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 19:28:46 -0400
-Received: from cock.li ([185.100.85.212]:60406 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbeI1X2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 19:28:45 -0400
+        Fri, 28 Sep 2018 19:28:49 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:33295 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726971AbeI1X2r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 19:28:47 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g5wBO-0001x0-OM; Fri, 28 Sep 2018 11:04:02 -0600
+Received: from [105.184.227.67] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g5wB8-0004cu-QC; Fri, 28 Sep 2018 11:04:02 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andrey Vagin <avagin@virtuozzo.com>,
+        Dmitry Safonov <dima@arista.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelianov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        "containers\@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "criu\@openvz.org" <criu@openvz.org>,
+        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "linux-kselftest\@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+References: <20180919205037.9574-1-dima@arista.com>
+        <874lej6nny.fsf@xmission.com>
+        <20180924205119.GA14833@outlook.office365.com>
+        <874leezh8n.fsf@xmission.com>
+        <20180925014150.GA6302@outlook.office365.com>
+        <87zhw4rwiq.fsf@xmission.com>
+        <alpine.DEB.2.21.1809272247270.8118@nanos.tec.linutronix.de>
+Date:   Fri, 28 Sep 2018 19:03:22 +0200
+In-Reply-To: <alpine.DEB.2.21.1809272247270.8118@nanos.tec.linutronix.de>
+        (Thomas Gleixner's message of "Thu, 27 Sep 2018 23:30:09 +0200
+        (CEST)")
+Message-ID: <87mus1ftb9.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8chan.co; s=mail;
-        t=1538154242; bh=1pm4y+bwewZkwnTMD11H/MPXWMI+t7VoASrMbW2MTLA=;
-        h=Date:From:To:Subject:From;
-        b=sWgHPbVmM5+diSMd8qFOYt8ryDQkmCwf32MZkAxbhzA1+JWaNk7AoIzs7JPasjZMZ
-         iclDCYAb2syBVB2n+pAmCWGi5BnR4OO/jrlxthFToNebiqBHedgwTvAwhGaKTVcGkn
-         mYpNKuriZWCtXKzik7TIxVLKFUaSSGPuZjRfjGYQaYO3mx/bbYwZ/m4knOqVHv9UhD
-         GRN85nHGeDrNmEYbVC5mH03kMw1xmf++0ElNg/y+S0HZdSHxxrQrwJAgrHbEP7IyTB
-         zpeLMfXqBE73fJML1BR503cyzdDn0oO5q6hgP+FkkJpwpcRYHqsMDxYT9ZJozN8yYM
-         8xbXkUFQtaC7w==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Fri, 28 Sep 2018 17:04:01 +0000
-From:   vwdfrwd@8chan.co
-To:     linux-kernel@vger.kernel.org
-Subject: Response to SFConservancy: Under US copyright, permission regarding a
- GPL version 2 licensed work is revocable by the grantor.
-Message-ID: <278ff9f3bac71bd7f64d4fd4e088a93f@8chan.co>
-X-Sender: vwdfrwd@8chan.co
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain
+X-XM-SPF: eid=1g5wB8-0004cu-QC;;;mid=<87mus1ftb9.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18XrQlhkDJRFtZr1+olyhrEsUocvzS50D8=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [RFC 00/20] ns: Introduce Time Namespace
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The software freedom conservancy has tendered its response:
-http://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
-http://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
+Thomas Gleixner <tglx@linutronix.de> writes:
+
+> On Wed, 26 Sep 2018, Eric W. Biederman wrote:
+>> Reading the code the calling sequence there is:
+>> tick_sched_do_timer
+>>    tick_do_update_jiffies64
+>>       update_wall_time
+>>           timekeeping_advance
+>>              timekeepging_update
+>> 
+>> If I read that properly under the right nohz circumstances that update
+>> can be delayed indefinitely.
+>> 
+>> So I think we could prototype a time namespace that was per
+>> timekeeping_update and just had update_wall_time iterate through
+>> all of the time namespaces.
+>
+> Please don't go there. timekeeping_update() is already heavy and walking
+> through a gazillion of namespaces will just make it horrible,
+>
+>> I don't think the naive version would scale to very many time
+>> namespaces.
+>
+> :)
+>
+>> At the same time using the techniques from the nohz work and a little
+>> smarts I expect we could get the code to scale.
+>
+> You'd need to invoke the update when the namespace is switched in and
+> hasn't been updated since the last tick happened. That might be doable, but
+> you also need to take the wraparound constraints of the underlying
+> clocksources into account, which again can cause walking all name spaces
+> when they are all idle long enough.
+
+The wrap around constraints being how long before the time sources wrap
+around so you have to read them once per wrap around?  I have not dug
+deeply enough into the code to see that yet.
+
+> From there it becomes hairy, because it's not only timekeeping,
+> i.e. reading time, this is also affecting all timers which are armed from a
+> namespace.
+>
+> That gets really ugly because when you do settimeofday() or adjtimex() for
+> a particular namespace, then you have to search for all armed timers of
+> that namespace and adjust them.
+>
+> The original posix timer code had the same issue because it mapped the
+> clock realtime timers to the timer wheel so any setting of the clock caused
+> a full walk of all armed timers, disarming, adjusting and requeing
+> them. That's horrible not only performance wise, it's also a locking
+> nightmare of all sorts.
+>
+> Add time skew via NTP/PTP into the picture and you might have to adjust
+> timers as well, because you need to guarantee that they are not expiring
+> early.
+>
+> I haven't looked through Dimitry's patches yet, but I don't see how this
+> can work at all without introducing subtle issues all over the place.
+
+Then it sounds like this will take some more digging.
+
+Please pardon me for thinking out load.
+
+There are one or more time sources that we use to compute the time
+and for each time source we have a conversion from ticks of the
+time source to nanoseconds.
+
+Each time source needs to be sampled at least once per wrap-around
+and something incremented so that we don't loose time when looking
+at that time source.
+
+There are several clocks presented to userspace and they all share the
+same length of second and are all fundamentally offsets from
+CLOCK_MONOTONIC.
+
+I see two fundamental driving cases for a time namespace.
+1) Migration from one node to another node in a cluster in almost
+   real time.
+
+   The problem is that CLOCK_MONOTONIC between nodes in the cluster
+   has not relation ship to each other (except a synchronized length of
+   the second).  So applications that migrate can see CLOCK_MONOTONIC
+   and CLOCK_BOOTTIME go backwards.
+
+   This is the truly pressing problem and adding some kind of offset
+   sounds like it would be the solution.  Possibly by allowing a boot
+   time synchronization of CLOCK_BOOTTIME and CLOCK_MONOTONIC.
+
+2) Dealing with two separate time management domains.  Say a machine
+   that needes to deal with both something inside of google where they
+   slew time to avoid leap time seconds and something in the outside
+   world proper UTC time is kept as an offset from TAI with the
+   occasional leap seconds.
+
+   In the later case it would fundamentally require having seconds of
+   different length.
 
 
-""
-"The GPLv2 have several provisions that, when taken together, can be 
-construed as an irrevocable license from each contributor. "
-""
+A pure 64bit nanoseond counter is good for 500 years.  So 64bit
+variables can be used to hold time, and everything can be converted from
+there.
 
-It cites:
+This suggests we can for ticks have two values.
+- The number of ticks from the time source.
+- The number of times the ticks would have rolled over.
 
+That sounds like it may be a little simplistic as it would require being
+very diligent about firing a timer exactly at rollover and not losing
+that, but for a handwaving argument is probably enough to generate
+a 64bit tick counter.
 
-           " That license granted to downstream is irrevocable, again 
-provided that the downstream user complies with the license terms: 
-"[P]arties who have received copies, or rights, from you under this 
-License will not have their licenses terminated so long as such parties 
-remain in full compliance" (GPLv2§4). "
+If the focus is on a 64bit tick counter then what update_wall_time
+has to do is very limited.  Just deal the accounting needed to cope with
+tick rollover.
 
-However this is disingenuous
+Getting the actual time looks like it would be as simple as now, with
+perhaps an extra addition to account for the number of times the tick
+counter has rolled over.  With limited precision arithmetic and various
+optimizations I don't think it is that simple to implement but it feels
+like it should be very little extra work.
 
-The full text of section 4 is as follows:
+For timers my inclination would be to assume no adjustments to the
+current time parameters and set the timer to go off then.   If the time
+on the appropriate clock has been changed since the timer was set and
+the timer is going off early reschedule so the timer fires at the
+appropriate time.
 
-""
-   4. You may not copy, modify, sublicense, or distribute the Program
-except as expressly provided under this License.  Any attempt
-otherwise to copy, modify, sublicense or distribute the Program is
-void, and will automatically terminate your rights under this License.
-However, parties who have received copies, or rights, from you under
-this License will not have their licenses terminated so long as such
-parties remain in full compliance.
-""
+With the above I think it is theoretically possible to build a time
+namespace that supports multiple lengths of second, and does not have
+much overhead.
 
+Not that I think a final implementation would necessary look like what I
+have described. I just think it is possible with extreme care to evolve
+the current code base into something that can efficiently handle
+multiple time domains with slightly different lenghts of second.
 
+Thomas does it sound like I am completely out of touch with reality?
 
-The "You" in section 4 is speaking of the licensee regarding 
-sub-licensees, it is not speaking to the licensor/copyright-holder.
+It does though sound like it is going to take some serious digging
+through the code to understand how what everything does and how and why
+everthing works the way it does.  Not something grafted on top with just
+a cursory understanding of how the code works.
 
-IE: if the licensee loses his license, through operation of the 
-automatic-revocation provisions, the sub-licensees do not also lose 
-their licenses.
-
-IE: The language is disclaiming a chain topography for license 
-distribution, and instead substituting a hub-and-spoke topography (all 
-licenses originating from the copyright holder, not the 
-previous-in-line)
-
-GPLv3 added a no-rescission clause for a reason: the reason being to 
-attempt to create an estoppel defense for the licensees against the 
-licensor. You will notice that Eben Moglen never speaks on these issues. 
-(He preumably is aware of the weaknesses vis a vis the US copyright 
-regime.)
-
-Section 6 further clarifies the hub-and-spoke model:
-""
-    6. Each time you redistribute the Program (or any work based on the
-Program), the recipient automatically receives a license from the
-original licensor to copy, distribute or modify the Program subject to
-these terms and conditions.  You may not impose any further
-restrictions on the recipients' exercise of the rights granted herein.
-You are not responsible for enforcing compliance by third parties to
-this License.
-""
-
-The memorandum posted then goes on to a discussion of estoppel, 
-detrimental reliance, etc; noting that users may have relied on the 
-software and their licenses may be estopped from being revoked from said 
-users since doing so might cause them unanticipated loss. This is 
-speaking of already published, existent, versions of the program used by 
-end users.
-
-The memorandum seems to ignore what happens to "upstream" once said 
-project  receives a revocation notice. Thought it may be possible that 
-users of a published piece of software may have defenses to license 
-revocation, the same is not true regarding the rescinded property 
-vis-a-vis future prospective versions of the software nor of future 
-prospective licensees of said software.
-
-That is: once the grant to use the code in question is rescinded, future 
-versions of the software may not use that code. Current users of the 
-software may be-able to raise an estoppel / detrimental reliance defense 
-regarding the current published software, however the programmers 
-working on the next version of said software cannot continue to use the 
-property in future versions of the software (such would be a copyright 
-violation once the gratuitous license is rescinded by the grantor).
-
-Additionally, prospective-licensees, once the grant was rescinded and 
-such was published, would have no same-such estoppel defense (not being 
-user-licensees at the time of revocation).
-
-(Ignoring this eventuality in the published memorandum, is, of-course, 
-by design.)
-(Now, to note: the free-software movement is focused on the freedom of 
-the user, not the progenitors of the software, so one could certainly 
-say that ignoring some developer-focused analysis is consistent with 
-their prerogative...)
+Eric
