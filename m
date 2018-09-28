@@ -6,225 +6,205 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06244C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26083C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:10:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B43FE2173D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:10:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43FE2173D
+	by mail.kernel.org (Postfix) with ESMTP id D5EA02172C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:10:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5EA02172C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbeI1QdT (ORCPT
+        id S1729457AbeI1QdZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 12:33:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52212 "EHLO mx1.redhat.com"
+        Fri, 28 Sep 2018 12:33:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37734 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729093AbeI1QdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:33:18 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        id S1729093AbeI1QdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 12:33:25 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7F913723D9;
-        Fri, 28 Sep 2018 10:10:16 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9AB20300286E;
+        Fri, 28 Sep 2018 10:10:23 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 698BA3091882;
-        Fri, 28 Sep 2018 10:10:15 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 88B775D777;
+        Fri, 28 Sep 2018 10:10:22 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net 3/8] rxrpc: Fix RTT gathering
+Subject: [PATCH net 4/8] rxrpc: Emit BUSY packets when supposed to rather
+ than ABORTs
 From:   David Howells <dhowells@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date:   Fri, 28 Sep 2018 11:10:14 +0100
-Message-ID: <153812941462.10469.480051247101168310.stgit@warthog.procyon.org.uk>
+Date:   Fri, 28 Sep 2018 11:10:21 +0100
+Message-ID: <153812942175.10469.7486837009948924652.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153812939111.10469.179989653628053410.stgit@warthog.procyon.org.uk>
 References: <153812939111.10469.179989653628053410.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 28 Sep 2018 10:10:16 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 28 Sep 2018 10:10:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix RTT information gathering in AF_RXRPC by the following means:
+In the input path, a received sk_buff can be marked for rejection by
+setting RXRPC_SKB_MARK_* in skb->mark and, if needed, some auxiliary data
+(such as an abort code) in skb->priority.  The rejection is handled by
+queueing the sk_buff up for dealing with in process context.  The output
+code reads the mark and priority and, theoretically, generates an
+appropriate response packet.
 
- (1) Enable Rx timestamping on the transport socket with SO_TIMESTAMPNS.
+However, if RXRPC_SKB_MARK_BUSY is set, this isn't noticed and an ABORT
+message with a random abort code is generated (since skb->priority wasn't
+set to anything).
 
- (2) If the sk_buff doesn't have a timestamp set when rxrpc_data_ready()
-     collects it, set it at that point.
+Fix this by outputting the appropriate sort of packet.
 
- (3) Allow ACKs to be requested on the last packet of a client call, but
-     not a service call.  We need to be careful lest we undo:
+Also, whilst we're at it, most of the marks are no longer used, so remove
+them and rename the remaining two to something more obvious.
 
-	bf7d620abf22c321208a4da4f435e7af52551a21
-	Author: David Howells <dhowells@redhat.com>
-	Date:   Thu Oct 6 08:11:51 2016 +0100
-	rxrpc: Don't request an ACK on the last DATA packet of a call's Tx phase
-
-     but that only really applies to service calls that we're handling,
-     since the client side gets to send the final ACK (or not).
-
- (4) When about to transmit an ACK or DATA packet, record the Tx timestamp
-     before only; don't update the timestamp afterwards.
-
- (5) Switch the ordering between recording the serial and recording the
-     timestamp to always set the serial number first.  The serial number
-     shouldn't be seen referenced by an ACK packet until we've transmitted
-     the packet bearing it - so in the Rx path, we don't need the timestamp
-     until we've checked the serial number.
-
-Fixes: cf1a6474f807 ("rxrpc: Add per-peer RTT tracker")
+Fixes: 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- net/rxrpc/input.c        |    8 ++++++--
- net/rxrpc/local_object.c |    9 +++++++++
- net/rxrpc/output.c       |   31 ++++++++++++++++++-------------
- 3 files changed, 33 insertions(+), 15 deletions(-)
+ net/rxrpc/ar-internal.h |   13 ++++---------
+ net/rxrpc/call_accept.c |    6 +++---
+ net/rxrpc/input.c       |    2 +-
+ net/rxrpc/output.c      |   23 ++++++++++++++++++-----
+ 4 files changed, 26 insertions(+), 18 deletions(-)
 
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index 9fcb3e197b14..e8861cb78070 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -40,17 +40,12 @@ struct rxrpc_crypt {
+ struct rxrpc_connection;
+ 
+ /*
+- * Mark applied to socket buffers.
++ * Mark applied to socket buffers in skb->mark.  skb->priority is used
++ * to pass supplementary information.
+  */
+ enum rxrpc_skb_mark {
+-	RXRPC_SKB_MARK_DATA,		/* data message */
+-	RXRPC_SKB_MARK_FINAL_ACK,	/* final ACK received message */
+-	RXRPC_SKB_MARK_BUSY,		/* server busy message */
+-	RXRPC_SKB_MARK_REMOTE_ABORT,	/* remote abort message */
+-	RXRPC_SKB_MARK_LOCAL_ABORT,	/* local abort message */
+-	RXRPC_SKB_MARK_NET_ERROR,	/* network error message */
+-	RXRPC_SKB_MARK_LOCAL_ERROR,	/* local error message */
+-	RXRPC_SKB_MARK_NEW_CALL,	/* local error message */
++	RXRPC_SKB_MARK_REJECT_BUSY,	/* Reject with BUSY */
++	RXRPC_SKB_MARK_REJECT_ABORT,	/* Reject with ABORT (code in skb->priority) */
+ };
+ 
+ /*
+diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
+index 9d1e298b784c..e88f131c1d7f 100644
+--- a/net/rxrpc/call_accept.c
++++ b/net/rxrpc/call_accept.c
+@@ -353,7 +353,7 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
+ 
+ 	trace_rxrpc_abort(0, "INV", sp->hdr.cid, sp->hdr.callNumber, sp->hdr.seq,
+ 			  RX_INVALID_OPERATION, EOPNOTSUPP);
+-	skb->mark = RXRPC_SKB_MARK_LOCAL_ABORT;
++	skb->mark = RXRPC_SKB_MARK_REJECT_ABORT;
+ 	skb->priority = RX_INVALID_OPERATION;
+ 	_leave(" = NULL [service]");
+ 	return NULL;
+@@ -364,7 +364,7 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
+ 	    rx->sk.sk_state == RXRPC_CLOSE) {
+ 		trace_rxrpc_abort(0, "CLS", sp->hdr.cid, sp->hdr.callNumber,
+ 				  sp->hdr.seq, RX_INVALID_OPERATION, ESHUTDOWN);
+-		skb->mark = RXRPC_SKB_MARK_LOCAL_ABORT;
++		skb->mark = RXRPC_SKB_MARK_REJECT_ABORT;
+ 		skb->priority = RX_INVALID_OPERATION;
+ 		_leave(" = NULL [close]");
+ 		call = NULL;
+@@ -373,7 +373,7 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
+ 
+ 	call = rxrpc_alloc_incoming_call(rx, local, conn, skb);
+ 	if (!call) {
+-		skb->mark = RXRPC_SKB_MARK_BUSY;
++		skb->mark = RXRPC_SKB_MARK_REJECT_BUSY;
+ 		_leave(" = NULL [busy]");
+ 		call = NULL;
+ 		goto out;
 diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index ec299c627f77..7f9ed3a60b9a 100644
+index 7f9ed3a60b9a..b0f12471f5e7 100644
 --- a/net/rxrpc/input.c
 +++ b/net/rxrpc/input.c
-@@ -622,13 +622,14 @@ static void rxrpc_input_requested_ack(struct rxrpc_call *call,
- 		if (!skb)
- 			continue;
- 
-+		sent_at = skb->tstamp;
-+		smp_rmb(); /* Read timestamp before serial. */
- 		sp = rxrpc_skb(skb);
- 		if (sp->hdr.serial != orig_serial)
- 			continue;
--		smp_rmb();
--		sent_at = skb->tstamp;
- 		goto found;
- 	}
-+
- 	return;
- 
- found:
-@@ -1143,6 +1144,9 @@ void rxrpc_data_ready(struct sock *udp_sk)
- 		return;
- 	}
- 
-+	if (skb->tstamp == 0)
-+		skb->tstamp = ktime_get_real();
-+
- 	rxrpc_new_skb(skb, rxrpc_skb_rx_received);
- 
- 	_net("recv skb %p", skb);
-diff --git a/net/rxrpc/local_object.c b/net/rxrpc/local_object.c
-index 777c3ed4cfc0..81de7d889ffa 100644
---- a/net/rxrpc/local_object.c
-+++ b/net/rxrpc/local_object.c
-@@ -173,6 +173,15 @@ static int rxrpc_open_socket(struct rxrpc_local *local, struct net *net)
- 			_debug("setsockopt failed");
- 			goto error;
- 		}
-+
-+		/* We want receive timestamps. */
-+		opt = 1;
-+		ret = kernel_setsockopt(local->socket, SOL_SOCKET, SO_TIMESTAMPNS,
-+					(char *)&opt, sizeof(opt));
-+		if (ret < 0) {
-+			_debug("setsockopt failed");
-+			goto error;
-+		}
- 		break;
- 
- 	default:
+@@ -1354,7 +1354,7 @@ void rxrpc_data_ready(struct sock *udp_sk)
+ protocol_error:
+ 	skb->priority = RX_PROTOCOL_ERROR;
+ post_abort:
+-	skb->mark = RXRPC_SKB_MARK_LOCAL_ABORT;
++	skb->mark = RXRPC_SKB_MARK_REJECT_ABORT;
+ reject_packet:
+ 	trace_rxrpc_rx_done(skb->mark, skb->priority);
+ 	rxrpc_reject_packet(local, skb);
 diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index ccf5de160444..8a4da3fe96df 100644
+index 8a4da3fe96df..e8fb8922bca8 100644
 --- a/net/rxrpc/output.c
 +++ b/net/rxrpc/output.c
-@@ -124,7 +124,6 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
+@@ -524,7 +524,7 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
  	struct kvec iov[2];
- 	rxrpc_serial_t serial;
- 	rxrpc_seq_t hard_ack, top;
--	ktime_t now;
- 	size_t len, n;
- 	int ret;
- 	u8 reason;
-@@ -196,9 +195,7 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
- 		/* We need to stick a time in before we send the packet in case
- 		 * the reply gets back before kernel_sendmsg() completes - but
- 		 * asking UDP to send the packet can take a relatively long
--		 * time, so we update the time after, on the assumption that
--		 * the packet transmission is more likely to happen towards the
--		 * end of the kernel_sendmsg() call.
-+		 * time.
- 		 */
- 		call->ping_time = ktime_get_real();
- 		set_bit(RXRPC_CALL_PINGING, &call->flags);
-@@ -206,9 +203,6 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
- 	}
+ 	size_t size;
+ 	__be32 code;
+-	int ret;
++	int ret, ioc;
  
- 	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, 2, len);
--	now = ktime_get_real();
--	if (ping)
--		call->ping_time = now;
- 	conn->params.peer->last_tx_at = ktime_get_seconds();
- 	if (ret < 0)
- 		trace_rxrpc_tx_fail(call->debug_id, serial, ret,
-@@ -363,8 +357,14 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
+ 	_enter("%d", local->debug_id);
  
- 	/* If our RTT cache needs working on, request an ACK.  Also request
- 	 * ACKs if a DATA packet appears to have been lost.
-+	 *
-+	 * However, we mustn't request an ACK on the last reply packet of a
-+	 * service call, lest OpenAFS incorrectly send us an ACK with some
-+	 * soft-ACKs in it and then never follow up with a proper hard ACK.
- 	 */
--	if (!(sp->hdr.flags & RXRPC_LAST_PACKET) &&
-+	if ((!(sp->hdr.flags & RXRPC_LAST_PACKET) ||
-+	     rxrpc_to_server(sp)
-+	     ) &&
- 	    (test_and_clear_bit(RXRPC_CALL_EV_ACK_LOST, &call->events) ||
- 	     retrans ||
- 	     call->cong_mode == RXRPC_CALL_SLOW_START ||
-@@ -390,6 +390,11 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
- 		goto send_fragmentable;
+@@ -532,7 +532,6 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
+ 	iov[0].iov_len = sizeof(whdr);
+ 	iov[1].iov_base = &code;
+ 	iov[1].iov_len = sizeof(code);
+-	size = sizeof(whdr) + sizeof(code);
  
- 	down_read(&conn->params.local->defrag_sem);
+ 	msg.msg_name = &srx.transport;
+ 	msg.msg_control = NULL;
+@@ -540,17 +539,31 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
+ 	msg.msg_flags = 0;
+ 
+ 	memset(&whdr, 0, sizeof(whdr));
+-	whdr.type = RXRPC_PACKET_TYPE_ABORT;
+ 
+ 	while ((skb = skb_dequeue(&local->reject_queue))) {
+ 		rxrpc_see_skb(skb, rxrpc_skb_rx_seen);
+ 		sp = rxrpc_skb(skb);
+ 
++		switch (skb->mark) {
++		case RXRPC_SKB_MARK_REJECT_BUSY:
++			whdr.type = RXRPC_PACKET_TYPE_BUSY;
++			size = sizeof(whdr);
++			ioc = 1;
++			break;
++		case RXRPC_SKB_MARK_REJECT_ABORT:
++			whdr.type = RXRPC_PACKET_TYPE_ABORT;
++			code = htonl(skb->priority);
++			size = sizeof(whdr) + sizeof(code);
++			ioc = 2;
++			break;
++		default:
++			rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
++			continue;
++		}
 +
-+	sp->hdr.serial = serial;
-+	smp_wmb(); /* Set serial before timestamp */
-+	skb->tstamp = ktime_get_real();
-+
- 	/* send the packet by UDP
- 	 * - returns -EMSGSIZE if UDP would have to fragment the packet
- 	 *   to go out of the interface
-@@ -413,12 +418,8 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
- 	trace_rxrpc_tx_data(call, sp->hdr.seq, serial, whdr.flags,
- 			    retrans, lost);
- 	if (ret >= 0) {
--		ktime_t now = ktime_get_real();
--		skb->tstamp = now;
--		smp_wmb();
--		sp->hdr.serial = serial;
- 		if (whdr.flags & RXRPC_REQUEST_ACK) {
--			call->peer->rtt_last_req = now;
-+			call->peer->rtt_last_req = skb->tstamp;
- 			trace_rxrpc_rtt_tx(call, rxrpc_rtt_tx_data, serial);
- 			if (call->peer->rtt_usage > 1) {
- 				unsigned long nowj = jiffies, ack_lost_at;
-@@ -457,6 +458,10 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
+ 		if (rxrpc_extract_addr_from_skb(local, &srx, skb) == 0) {
+ 			msg.msg_namelen = srx.transport_len;
  
- 	down_write(&conn->params.local->defrag_sem);
- 
-+	sp->hdr.serial = serial;
-+	smp_wmb(); /* Set serial before timestamp */
-+	skb->tstamp = ktime_get_real();
-+
- 	switch (conn->params.local->srx.transport.family) {
- 	case AF_INET:
- 		opt = IP_PMTUDISC_DONT;
+-			code = htonl(skb->priority);
+-
+ 			whdr.epoch	= htonl(sp->hdr.epoch);
+ 			whdr.cid	= htonl(sp->hdr.cid);
+ 			whdr.callNumber	= htonl(sp->hdr.callNumber);
 
