@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBADC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BD4C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97CA12172C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 995612172C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:48:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kk2MuAr2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97CA12172C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a1qa43cU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 995612172C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729062AbeI1NKd (ORCPT
+        id S1729081AbeI1NKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 09:10:33 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40587 "EHLO
+        Fri, 28 Sep 2018 09:10:38 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32942 "EHLO
         mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbeI1NKd (ORCPT
+        with ESMTP id S1726473AbeI1NKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 09:10:33 -0400
-Received: by mail-pf1-f193.google.com with SMTP id s5-v6so3624633pfj.7
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 23:48:18 -0700 (PDT)
+        Fri, 28 Sep 2018 09:10:37 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d4-v6so3653985pfn.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 23:48:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7lEK32bpyfZBbvzr+AgaMH3E2lcp0Tdtbfmv5MlM7pE=;
-        b=Kk2MuAr2ZxQGAFTckoI4a3OJjqCm/d1ykOA9ozVI2d5mQlhjrcGdC9cRGkw13D3b5+
-         luxQvhuNtGsEi3sx4uVzGEz+tkO982AHPYPk2EFmfsZAQmC6Xwqt/4DxGwu7a7IsX9bz
-         fTR41f4878GBeepJZeruzkxW8PtyUjdFaHlW8=
+        bh=Pt0GdTUj/ouoBc0plwl0qxBtF8IeFfWdoXUu09cJo+Q=;
+        b=a1qa43cUD3aEMCBBW+bPEPzCN0FPKwq7mNCLZT1Q8/I1oH07mIv3ms6vWZ0nRdjueB
+         RWCSvRKjgb6jdgEZYiv0PSwrzd6TycaifX8EGVal+obfRXgDcaEMCtDQq3NzhlXgp3jV
+         +q/uY98I7cnuQEWg2SjjZxoM4ZG3JndQxgZNo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7lEK32bpyfZBbvzr+AgaMH3E2lcp0Tdtbfmv5MlM7pE=;
-        b=NXNRtCdhb01Qoq3ARJ+SdiLA82plJNefxGSqM/OaMronory5oteHmG0NDhd7h8CMbV
-         gMhd67vg0UcpdrlkSbU7R1pMTj66E1f2HyZsU2RyR9er3FQHo1pwAjIjPZ1Yx6P0WbJo
-         pL+sflvCx+62Z39CjKggfYfostFmFyEmJbzLrODiCRfsgamJSPsDJe6yHgrQL8THrIdR
-         22AZGgNrIrH0TbYdplKMWVAotR5QN2BE11okO0RmX3EL84XyU8EvKh4zsI9Lpkxtmq07
-         dy8N3SbQ9b2v9XLtSJa4YR9uzHuylfyDi/8rydND57XCKgMmpV8DjgjKbEWJTanv9ouf
-         eirQ==
-X-Gm-Message-State: ABuFfogL7iQ5O35FADO77IvdsF+w0qcuQoOK4mKTbNSDMtzfSoFg1efn
-        KmvRWU9SR/pzsVgGnXjJSuUhng==
-X-Google-Smtp-Source: ACcGV60sTkh7k8gMS6cAMiFFQ89lfpIQtHaRo1p9d7THHcKbHldE5LM41g64aklBZ3NQ4VGGQtkkpQ==
-X-Received: by 2002:a17:902:9045:: with SMTP id w5-v6mr14943273plz.10.1538117298309;
-        Thu, 27 Sep 2018 23:48:18 -0700 (PDT)
+        bh=Pt0GdTUj/ouoBc0plwl0qxBtF8IeFfWdoXUu09cJo+Q=;
+        b=F/OH//pi3QxH+KHVC0oSDJmaVFD0taRXMe1FXCOGWG4A+qJ3AEDyTFRiMPuoJzVztw
+         c5cCeRtxIpGphnRr4pTUDsFua1ifYXpx0b+7E8pg//QelcIHgwB3leY4MSZUAHhdBUVN
+         oBic5RKcjqd2y/5ZJeQkpfr16BUJQEST3VHw3wZF7CASh5PH9eg2ptIUn8+dWrCDQDNR
+         1g2mohk/9UGEVzP2knySl+2JZ0TXqJRth6LftCFKTTuwITIF48gWnmZBvjVcmhkAZdBZ
+         ngM7qqY83lnqvNyIIhNaHg+OWSeMVUPAoaY0wbWdmtfWo2wyzLCH/BdsCMv8l3V8hcaW
+         17ng==
+X-Gm-Message-State: ABuFfoiByeRP0j80wVN5nY6lrSAL4Jj7MEc5hflrgsyXcsaSYZV2xCpq
+        vT2Ra/s3XrdUdPfmGwbfF+/8tw==
+X-Google-Smtp-Source: ACcGV6132QMgaHUkEnzpOJ34vEDqPCuVCNDWxwxsgSM4vQASkor4Pf8KuOATk2NREZeo2zXkL7a4ZA==
+X-Received: by 2002:a17:902:a40e:: with SMTP id p14-v6mr1085759plq.338.1538117302650;
+        Thu, 27 Sep 2018 23:48:22 -0700 (PDT)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id h12-v6sm5847448pfo.135.2018.09.27.23.48.16
+        by smtp.googlemail.com with ESMTPSA id 89-v6sm9522313pfk.134.2018.09.27.23.48.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 23:48:17 -0700 (PDT)
+        Thu, 27 Sep 2018 23:48:21 -0700 (PDT)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
         vgoyal@redhat.com, herbert@gondor.apana.org.au,
@@ -65,10 +65,13 @@ Cc:     prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
         james.morse@arm.com, bhsharma@redhat.com,
         kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v15 05/16] kexec_file: kexec_walk_memblock() only walks a dedicated region at kdump
-Date:   Fri, 28 Sep 2018 15:48:30 +0900
-Message-Id: <20180928064841.14117-6-takahiro.akashi@linaro.org>
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v15 06/16] of/fdt: add helper functions for handling properties
+Date:   Fri, 28 Sep 2018 15:48:31 +0900
+Message-Id: <20180928064841.14117-7-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180928064841.14117-1-takahiro.akashi@linaro.org>
 References: <20180928064841.14117-1-takahiro.akashi@linaro.org>
@@ -79,48 +82,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In kdump case, there exists only one dedicated memblock region as usable
-memory (crashk_res). With this patch, kexec_walk_memblock() runs a given
-callback function on this region.
-
-Cosmetic change: 0 to MEMBLOCK_NONE at for_each_free_mem_range*()
+These functions will be used later to handle kexec-specific properties
+in arm64's kexec_file implementation.
 
 Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Baoquan He <bhe@redhat.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: devicetree@vger.kernel.org
 ---
- kernel/kexec_file.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/of/fdt.c       | 56 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/of_fdt.h |  4 +++
+ 2 files changed, 60 insertions(+)
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 370d7eab49fe..2f615a7968dd 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -511,8 +511,11 @@ static int kexec_walk_memblock(struct kexec_buf *kbuf,
- 	phys_addr_t mstart, mend;
- 	struct resource res = { };
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index 800ad252cf9c..c65c31562ccb 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -25,6 +25,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/serial_core.h>
+ #include <linux/sysfs.h>
++#include <linux/types.h>
  
-+	if (kbuf->image->type == KEXEC_TYPE_CRASH)
-+		return func(&crashk_res, kbuf);
+ #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
+ #include <asm/page.h>
+@@ -1323,3 +1324,58 @@ late_initcall(of_fdt_raw_init);
+ #endif
+ 
+ #endif /* CONFIG_OF_EARLY_FLATTREE */
 +
- 	if (kbuf->top_down) {
--		for_each_free_mem_range_reverse(i, NUMA_NO_NODE, 0,
-+		for_each_free_mem_range_reverse(i, NUMA_NO_NODE, MEMBLOCK_NONE,
- 						&mstart, &mend, NULL) {
- 			/*
- 			 * In memblock, end points to the first byte after the
-@@ -526,8 +529,8 @@ static int kexec_walk_memblock(struct kexec_buf *kbuf,
- 				break;
- 		}
- 	} else {
--		for_each_free_mem_range(i, NUMA_NO_NODE, 0, &mstart, &mend,
--					NULL) {
-+		for_each_free_mem_range(i, NUMA_NO_NODE, MEMBLOCK_NONE,
-+					&mstart, &mend, NULL) {
- 			/*
- 			 * In memblock, end points to the first byte after the
- 			 * range while in kexec, end points to the last byte
++#define FDT_ALIGN(x, a)	(((x) + (a) - 1) & ~((a) - 1))
++#define FDT_TAGALIGN(x)	(FDT_ALIGN((x), FDT_TAGSIZE))
++
++int fdt_prop_len(const char *prop_name, int len)
++{
++	return (strlen(prop_name) + 1) +
++		sizeof(struct fdt_property) +
++		FDT_TAGALIGN(len);
++}
++
++static void fill_property(void *buf, u64 val64, int cells)
++{
++	__be32 val32;
++
++	while (cells) {
++		val32 = cpu_to_fdt32((val64 >> (32 * (--cells))) & U32_MAX);
++		memcpy(buf, &val32, sizeof(val32));
++		buf += sizeof(val32);
++	}
++}
++
++int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
++						u64 addr, u64 size)
++{
++	int addr_cells, size_cells;
++	char buf[sizeof(__be32) * 2 * 2];
++		/* assume dt_root_[addr|size]_cells <= 2 */
++	void *prop;
++	size_t buf_size;
++
++	addr_cells = fdt_address_cells(fdt, 0);
++	if (addr_cells < 0)
++		return addr_cells;
++	size_cells = fdt_size_cells(fdt, 0);
++	if (size_cells < 0)
++		return size_cells;
++
++	/* if *_cells >= 2, cells can hold 64-bit values anyway */
++	if ((addr_cells == 1) && (addr > U32_MAX))
++		return -FDT_ERR_BADVALUE;
++
++	if ((size_cells == 1) && (size > U32_MAX))
++		return -FDT_ERR_BADVALUE;
++
++	buf_size = (addr_cells + size_cells) * sizeof(u32);
++	prop = buf;
++
++	fill_property(prop, addr, addr_cells);
++	prop += addr_cells * sizeof(u32);
++
++	fill_property(prop, size, size_cells);
++
++	return fdt_setprop(fdt, nodeoffset, name, buf, buf_size);
++}
+diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
+index b9cd9ebdf9b9..842af6ea92ea 100644
+--- a/include/linux/of_fdt.h
++++ b/include/linux/of_fdt.h
+@@ -108,5 +108,9 @@ static inline void unflatten_device_tree(void) {}
+ static inline void unflatten_and_copy_device_tree(void) {}
+ #endif /* CONFIG_OF_EARLY_FLATTREE */
+ 
++int fdt_prop_len(const char *prop_name, int len);
++int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
++						u64 addr, u64 size);
++
+ #endif /* __ASSEMBLY__ */
+ #endif /* _LINUX_OF_FDT_H */
 -- 
 2.19.0
 
