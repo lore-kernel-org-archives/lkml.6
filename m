@@ -2,789 +2,141 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D643C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A910C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F35D2172C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:28:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I2fsqLfb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F35D2172C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 541D02172C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:28:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 541D02172C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbeI1Ouy (ORCPT
+        id S1729186AbeI1Ovd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 10:50:54 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50569 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729047AbeI1Oux (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 10:50:53 -0400
-Received: by mail-it1-f194.google.com with SMTP id j81-v6so1661655ite.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 01:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=E0fRPFEmXv8HzsDIRcEgzdzY4iyR4Xa37IUOb0mDwyg=;
-        b=I2fsqLfblql79CTu8s0CiDG5PNcS+JrpBV5No+SV+51itUIU27GOa58FqXcc5MuDqV
-         3lwwyyE0pmYjDuUxB/arjxegTlneAirf1dkxaV1/G5xTX/AQUAIfY4vawF9mcUg53V3T
-         eroMlriXvrIQxULEiLLnAomudCBqiE9+Q7pR8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=E0fRPFEmXv8HzsDIRcEgzdzY4iyR4Xa37IUOb0mDwyg=;
-        b=pLDvcVtKKC9xOfiktTaH8CVapM5y6LqyAVXqa6K8baPS25Oh7lhK89DjftDRN9z7t3
-         pZznBwqEaZKNoSzNnaHg9vDig/kFBZFkCR7Ekq/YV9zgc3B7ekNSdfOLzVJAV42xj2p4
-         Pp59kB+unAssvwxrdSeh3N5ZGB5i3iOspCUybxjQwGJlKyLhYG50kSdn+qHoedp/+i/3
-         sdfeK78Lowyk6RjBRX0DS2HMzwRRFuVQW3uIXcJKSyX4DvMH9pNOYe93IZmtjQ44/8BU
-         J0B8MjcQaL8t3iQMjT5uclg0htLs5bbgsJpAsm1MNtrX8bS/A7lIXDmm8NZK3Nqs7lfz
-         Hd0Q==
-X-Gm-Message-State: ABuFfojJ5CxlolhI6W83V4E5WdIU+YrcALKoARSXoIHAzPFjqqesuUUk
-        lYQIBpmTQGZhkdr6zaddb2IzwgbsvxbvyGySBkrUwA==
-X-Google-Smtp-Source: ACcGV62h2CJbyZbxe/5x7YcCciSM87VIsUZtn2bWffUMkBiTHWSuDCjRKa320a958Y47+/laIEzZ7AR/Ix0TKkQM7ss=
-X-Received: by 2002:a02:9b97:: with SMTP id p23-v6mr13137072jak.5.1538123295461;
- Fri, 28 Sep 2018 01:28:15 -0700 (PDT)
+        Fri, 28 Sep 2018 10:51:33 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:62712 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728815AbeI1Ovc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 10:51:32 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42M4Zr5NBWz9ttRf;
+        Fri, 28 Sep 2018 10:28:52 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id ZlYInmZgdXCi; Fri, 28 Sep 2018 10:28:52 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42M4Zr4n2Xz9ttBd;
+        Fri, 28 Sep 2018 10:28:52 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7B0678B8CB;
+        Fri, 28 Sep 2018 10:28:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id V8ubInMGcyzY; Fri, 28 Sep 2018 10:28:54 +0200 (CEST)
+Received: from PO15451 (unknown [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 46C8A8B8C2;
+        Fri, 28 Sep 2018 10:28:54 +0200 (CEST)
+Subject: Re: [PATCH] powerpc: wire up memtest
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <b3f2074b89ef0e3352fb11b69be30caeaa823fa0.1535360497.git.christophe.leroy@c-s.fr>
+ <871s9euw4m.fsf@concordia.ellerman.id.au>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <9f0055e2-ebd1-649b-272e-cb9b58bd4e15@c-s.fr>
+Date:   Fri, 28 Sep 2018 10:28:53 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 01:28:14
- -0700 (PDT)
-In-Reply-To: <20180925145622.29959-2-Jason@zx2c4.com>
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-2-Jason@zx2c4.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 28 Sep 2018 10:28:14 +0200
-Message-ID: <CAKv+Gu9e35+AyktmSq9qeNE0LR83_yrEEB3DiQv0bmyArivqRQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 01/23] asm: simd context helper API
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <871s9euw4m.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25 September 2018 at 16:56, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> Sometimes it's useful to amortize calls to XSAVE/XRSTOR and the related
-> FPU/SIMD functions over a number of calls, because FPU restoration is
-> quite expensive. This adds a simple header for carrying out this pattern:
->
->     simd_context_t simd_context;
->
->     simd_get(&simd_context);
->     while ((item = get_item_from_queue()) != NULL) {
->         encrypt_item(item, simd_context);
->         simd_relax(&simd_context);
->     }
->     simd_put(&simd_context);
->
-> The relaxation step ensures that we don't trample over preemption, and
-> the get/put API should be a familiar paradigm in the kernel.
->
-> On the other end, code that actually wants to use SIMD instructions can
-> accept this as a parameter and check it via:
->
->    void encrypt_item(struct item *item, simd_context_t *simd_context)
->    {
->        if (item->len > LARGE_FOR_SIMD && simd_use(simd_context))
->            wild_simd_code(item);
->        else
->            boring_scalar_code(item);
->    }
->
-> The actual XSAVE happens during simd_use (and only on the first time),
-> so that if the context is never actually used, no performance penalty is
-> hit.
->
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> Cc: Samuel Neves <sneves@dei.uc.pt>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Greg KH <gregkh@linuxfoundation.org>
-> Cc: linux-arch@vger.kernel.org
-> ---
->  arch/alpha/include/asm/Kbuild      |  5 ++-
->  arch/arc/include/asm/Kbuild        |  1 +
->  arch/arm/include/asm/simd.h        | 63 ++++++++++++++++++++++++++++++
->  arch/arm64/include/asm/simd.h      | 51 +++++++++++++++++++++---
->  arch/c6x/include/asm/Kbuild        |  3 +-
->  arch/h8300/include/asm/Kbuild      |  3 +-
->  arch/hexagon/include/asm/Kbuild    |  1 +
->  arch/ia64/include/asm/Kbuild       |  1 +
->  arch/m68k/include/asm/Kbuild       |  1 +
->  arch/microblaze/include/asm/Kbuild |  1 +
->  arch/mips/include/asm/Kbuild       |  1 +
->  arch/nds32/include/asm/Kbuild      |  7 ++--
->  arch/nios2/include/asm/Kbuild      |  1 +
->  arch/openrisc/include/asm/Kbuild   |  7 ++--
->  arch/parisc/include/asm/Kbuild     |  1 +
->  arch/powerpc/include/asm/Kbuild    |  3 +-
->  arch/riscv/include/asm/Kbuild      |  3 +-
->  arch/s390/include/asm/Kbuild       |  3 +-
->  arch/sh/include/asm/Kbuild         |  1 +
->  arch/sparc/include/asm/Kbuild      |  1 +
->  arch/um/include/asm/Kbuild         |  3 +-
->  arch/unicore32/include/asm/Kbuild  |  1 +
->  arch/x86/include/asm/simd.h        | 44 ++++++++++++++++++++-
->  arch/xtensa/include/asm/Kbuild     |  1 +
->  include/asm-generic/simd.h         | 20 ++++++++++
->  include/linux/simd.h               | 28 +++++++++++++
->  26 files changed, 234 insertions(+), 21 deletions(-)
->  create mode 100644 arch/arm/include/asm/simd.h
->  create mode 100644 include/linux/simd.h
->
-> diff --git a/arch/alpha/include/asm/Kbuild b/arch/alpha/include/asm/Kbuild
-> index 0580cb8c84b2..07b2c1025d34 100644
-> --- a/arch/alpha/include/asm/Kbuild
-> +++ b/arch/alpha/include/asm/Kbuild
-> @@ -2,14 +2,15 @@
->
->
->  generic-y += compat.h
-> +generic-y += current.h
->  generic-y += exec.h
->  generic-y += export.h
->  generic-y += fb.h
->  generic-y += irq_work.h
-> +generic-y += kprobes.h
->  generic-y += mcs_spinlock.h
->  generic-y += mm-arch-hooks.h
->  generic-y += preempt.h
->  generic-y += sections.h
-> +generic-y += simd.h
->  generic-y += trace_clock.h
-> -generic-y += current.h
-> -generic-y += kprobes.h
 
-Given that this patch applies to all architectures at once, it is
-probably better to drop the unrelated reordering hunks to avoid
-conflicts.
 
-> diff --git a/arch/arc/include/asm/Kbuild b/arch/arc/include/asm/Kbuild
-> index feed50ce89fa..a7f4255f1649 100644
-> --- a/arch/arc/include/asm/Kbuild
-> +++ b/arch/arc/include/asm/Kbuild
-> @@ -22,6 +22,7 @@ generic-y += parport.h
->  generic-y += pci.h
->  generic-y += percpu.h
->  generic-y += preempt.h
-> +generic-y += simd.h
->  generic-y += topology.h
->  generic-y += trace_clock.h
->  generic-y += user.h
-> diff --git a/arch/arm/include/asm/simd.h b/arch/arm/include/asm/simd.h
-> new file mode 100644
-> index 000000000000..263950dd69cb
-> --- /dev/null
-> +++ b/arch/arm/include/asm/simd.h
-> @@ -0,0 +1,63 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + *
-> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-> + */
-> +
-> +#include <linux/simd.h>
-> +#ifndef _ASM_SIMD_H
-> +#define _ASM_SIMD_H
-> +
-> +#ifdef CONFIG_KERNEL_MODE_NEON
-> +#include <asm/neon.h>
-> +
-> +static __must_check inline bool may_use_simd(void)
-> +{
-> +       return !in_interrupt();
-> +}
-> +
+Le 28/09/2018 à 05:41, Michael Ellerman a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>> Add call to early_memtest() so that kernel compiled with
+>> CONFIG_MEMTEST really perform memtest at startup when requested
+>> via 'memtest' boot parameter.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   arch/powerpc/kernel/setup-common.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
+>> index 93fa0c99681e..904b728eb20d 100644
+>> --- a/arch/powerpc/kernel/setup-common.c
+>> +++ b/arch/powerpc/kernel/setup-common.c
+>> @@ -33,6 +33,7 @@
+>>   #include <linux/serial_8250.h>
+>>   #include <linux/percpu.h>
+>>   #include <linux/memblock.h>
+>> +#include <linux/bootmem.h>
+>>   #include <linux/of_platform.h>
+>>   #include <linux/hugetlb.h>
+>>   #include <asm/debugfs.h>
+>> @@ -917,6 +918,8 @@ void __init setup_arch(char **cmdline_p)
+>>   	/* Parse memory topology */
+>>   	mem_topology_setup();
+>>   
+>> +	early_memtest(min_low_pfn << PAGE_SHIFT, max_low_pfn << PAGE_SHIFT);
+> 
+> On a ppc64le VM this boils down to early_memtest(0, 0) for me.
+> 
+> I think it's too early, we don't set up max_low_pfn until
+> initmem_init().
+> 
+> If I move it after initmem_init() then it does something more useful:
 
-Remember this guy?
+Ok. On my 8xx max_low_pfn is set in mem_topology_setup().
 
-https://marc.info/?l=linux-arch&m=149631094625176&w=2
+Moving the test afte initmem_init() still works on the 8xx so I'll do that.
 
-That was never merged, so let's get it right this time.
+Thanks for testing.
 
-> +static inline void simd_get(simd_context_t *ctx)
-> +{
-> +       *ctx = may_use_simd() ? HAVE_FULL_SIMD : HAVE_NO_SIMD;
-> +}
-> +
-> +static inline void simd_put(simd_context_t *ctx)
-> +{
-> +       if (*ctx & HAVE_SIMD_IN_USE)
-> +               kernel_neon_end();
-> +       *ctx = HAVE_NO_SIMD;
-> +}
-> +
-> +static __must_check inline bool simd_use(simd_context_t *ctx)
-> +{
-> +       if (!(*ctx & HAVE_FULL_SIMD))
-> +               return false;
-> +       if (*ctx & HAVE_SIMD_IN_USE)
-> +               return true;
-> +       kernel_neon_begin();
-> +       *ctx |= HAVE_SIMD_IN_USE;
-> +       return true;
-> +}
-> +
-> +#else
-> +
-> +static __must_check inline bool may_use_simd(void)
-> +{
-> +       return false;
-> +}
-> +
-> +static inline void simd_get(simd_context_t *ctx)
-> +{
-> +       *ctx = HAVE_NO_SIMD;
-> +}
-> +
-> +static inline void simd_put(simd_context_t *ctx)
-> +{
-> +}
-> +
-> +static __must_check inline bool simd_use(simd_context_t *ctx)
-> +{
-> +       return false;
-> +}
-> +#endif
-> +
-> +#endif /* _ASM_SIMD_H */
-> diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
-> index 6495cc51246f..a45ff1600040 100644
-> --- a/arch/arm64/include/asm/simd.h
-> +++ b/arch/arm64/include/asm/simd.h
-> @@ -1,11 +1,10 @@
-> -/*
-> - * Copyright (C) 2017 Linaro Ltd. <ard.biesheuvel@linaro.org>
-> +/* SPDX-License-Identifier: GPL-2.0
->   *
-> - * This program is free software; you can redistribute it and/or modify it
-> - * under the terms of the GNU General Public License version 2 as published
-> - * by the Free Software Foundation.
-> + * Copyright (C) 2017 Linaro Ltd. <ard.biesheuvel@linaro.org>
-> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
->   */
->
-> +#include <linux/simd.h>
->  #ifndef __ASM_SIMD_H
->  #define __ASM_SIMD_H
->
-> @@ -16,6 +15,8 @@
->  #include <linux/types.h>
->
->  #ifdef CONFIG_KERNEL_MODE_NEON
-> +#include <asm/neon.h>
-> +#include <asm/simd.h>
->
->  DECLARE_PER_CPU(bool, kernel_neon_busy);
->
-> @@ -40,9 +41,47 @@ static __must_check inline bool may_use_simd(void)
->                 !this_cpu_read(kernel_neon_busy);
->  }
->
-> +static inline void simd_get(simd_context_t *ctx)
-> +{
-> +       *ctx = may_use_simd() ? HAVE_FULL_SIMD : HAVE_NO_SIMD;
-> +}
-> +
-> +static inline void simd_put(simd_context_t *ctx)
-> +{
-> +       if (*ctx & HAVE_SIMD_IN_USE)
-> +               kernel_neon_end();
-> +       *ctx = HAVE_NO_SIMD;
-> +}
-> +
-> +static __must_check inline bool simd_use(simd_context_t *ctx)
-> +{
-> +       if (!(*ctx & HAVE_FULL_SIMD))
-> +               return false;
-> +       if (*ctx & HAVE_SIMD_IN_USE)
-> +               return true;
-> +       kernel_neon_begin();
-> +       *ctx |= HAVE_SIMD_IN_USE;
-> +       return true;
-> +}
-> +
->  #else /* ! CONFIG_KERNEL_MODE_NEON */
->
-> -static __must_check inline bool may_use_simd(void) {
-> +static __must_check inline bool may_use_simd(void)
-> +{
-> +       return false;
-> +}
-> +
-> +static inline void simd_get(simd_context_t *ctx)
-> +{
-> +       *ctx = HAVE_NO_SIMD;
-> +}
-> +
-> +static inline void simd_put(simd_context_t *ctx)
-> +{
-> +}
-> +
-> +static __must_check inline bool simd_use(simd_context_t *ctx)
-> +{
->         return false;
->  }
->
-> diff --git a/arch/c6x/include/asm/Kbuild b/arch/c6x/include/asm/Kbuild
-> index 33a2c94fed0d..22f3d8333c74 100644
-> --- a/arch/c6x/include/asm/Kbuild
-> +++ b/arch/c6x/include/asm/Kbuild
-> @@ -5,8 +5,8 @@ generic-y += compat.h
->  generic-y += current.h
->  generic-y += device.h
->  generic-y += div64.h
-> -generic-y += dma.h
->  generic-y += dma-mapping.h
-> +generic-y += dma.h
->  generic-y += emergency-restart.h
->  generic-y += exec.h
->  generic-y += extable.h
-> @@ -30,6 +30,7 @@ generic-y += pgalloc.h
->  generic-y += preempt.h
->  generic-y += segment.h
->  generic-y += serial.h
-> +generic-y += simd.h
->  generic-y += tlbflush.h
->  generic-y += topology.h
->  generic-y += trace_clock.h
-> diff --git a/arch/h8300/include/asm/Kbuild b/arch/h8300/include/asm/Kbuild
-> index a5d0b2991f47..f5c2f12d593e 100644
-> --- a/arch/h8300/include/asm/Kbuild
-> +++ b/arch/h8300/include/asm/Kbuild
-> @@ -8,8 +8,8 @@ generic-y += current.h
->  generic-y += delay.h
->  generic-y += device.h
->  generic-y += div64.h
-> -generic-y += dma.h
->  generic-y += dma-mapping.h
-> +generic-y += dma.h
->  generic-y += emergency-restart.h
->  generic-y += exec.h
->  generic-y += extable.h
-> @@ -39,6 +39,7 @@ generic-y += preempt.h
->  generic-y += scatterlist.h
->  generic-y += sections.h
->  generic-y += serial.h
-> +generic-y += simd.h
->  generic-y += sizes.h
->  generic-y += spinlock.h
->  generic-y += timex.h
-> diff --git a/arch/hexagon/include/asm/Kbuild b/arch/hexagon/include/asm/Kbuild
-> index dd2fd9c0d292..217d4695fd8a 100644
-> --- a/arch/hexagon/include/asm/Kbuild
-> +++ b/arch/hexagon/include/asm/Kbuild
-> @@ -29,6 +29,7 @@ generic-y += rwsem.h
->  generic-y += sections.h
->  generic-y += segment.h
->  generic-y += serial.h
-> +generic-y += simd.h
->  generic-y += sizes.h
->  generic-y += topology.h
->  generic-y += trace_clock.h
-> diff --git a/arch/ia64/include/asm/Kbuild b/arch/ia64/include/asm/Kbuild
-> index 557bbc8ba9f5..41c5ebdf79e5 100644
-> --- a/arch/ia64/include/asm/Kbuild
-> +++ b/arch/ia64/include/asm/Kbuild
-> @@ -4,6 +4,7 @@ generic-y += irq_work.h
->  generic-y += mcs_spinlock.h
->  generic-y += mm-arch-hooks.h
->  generic-y += preempt.h
-> +generic-y += simd.h
->  generic-y += trace_clock.h
->  generic-y += vtime.h
->  generic-y += word-at-a-time.h
-> diff --git a/arch/m68k/include/asm/Kbuild b/arch/m68k/include/asm/Kbuild
-> index a4b8d3331a9e..73898dd1a4d0 100644
-> --- a/arch/m68k/include/asm/Kbuild
-> +++ b/arch/m68k/include/asm/Kbuild
-> @@ -19,6 +19,7 @@ generic-y += mm-arch-hooks.h
->  generic-y += percpu.h
->  generic-y += preempt.h
->  generic-y += sections.h
-> +generic-y += simd.h
->  generic-y += spinlock.h
->  generic-y += topology.h
->  generic-y += trace_clock.h
-> diff --git a/arch/microblaze/include/asm/Kbuild b/arch/microblaze/include/asm/Kbuild
-> index 569ba9e670c1..7a877eea99d3 100644
-> --- a/arch/microblaze/include/asm/Kbuild
-> +++ b/arch/microblaze/include/asm/Kbuild
-> @@ -25,6 +25,7 @@ generic-y += parport.h
->  generic-y += percpu.h
->  generic-y += preempt.h
->  generic-y += serial.h
-> +generic-y += simd.h
->  generic-y += syscalls.h
->  generic-y += topology.h
->  generic-y += trace_clock.h
-> diff --git a/arch/mips/include/asm/Kbuild b/arch/mips/include/asm/Kbuild
-> index 58351e48421e..e8868e0fb2c3 100644
-> --- a/arch/mips/include/asm/Kbuild
-> +++ b/arch/mips/include/asm/Kbuild
-> @@ -16,6 +16,7 @@ generic-y += qrwlock.h
->  generic-y += qspinlock.h
->  generic-y += sections.h
->  generic-y += segment.h
-> +generic-y += simd.h
->  generic-y += trace_clock.h
->  generic-y += unaligned.h
->  generic-y += user.h
-> diff --git a/arch/nds32/include/asm/Kbuild b/arch/nds32/include/asm/Kbuild
-> index dbc4e5422550..603c1d020620 100644
-> --- a/arch/nds32/include/asm/Kbuild
-> +++ b/arch/nds32/include/asm/Kbuild
-> @@ -7,14 +7,14 @@ generic-y += bug.h
->  generic-y += bugs.h
->  generic-y += checksum.h
->  generic-y += clkdev.h
-> -generic-y += cmpxchg.h
->  generic-y += cmpxchg-local.h
-> +generic-y += cmpxchg.h
->  generic-y += compat.h
->  generic-y += cputime.h
->  generic-y += device.h
->  generic-y += div64.h
-> -generic-y += dma.h
->  generic-y += dma-mapping.h
-> +generic-y += dma.h
->  generic-y += emergency-restart.h
->  generic-y += errno.h
->  generic-y += exec.h
-> @@ -46,14 +46,15 @@ generic-y += sections.h
->  generic-y += segment.h
->  generic-y += serial.h
->  generic-y += shmbuf.h
-> +generic-y += simd.h
->  generic-y += sizes.h
->  generic-y += stat.h
->  generic-y += switch_to.h
->  generic-y += timex.h
->  generic-y += topology.h
->  generic-y += trace_clock.h
-> -generic-y += xor.h
->  generic-y += unaligned.h
->  generic-y += user.h
->  generic-y += vga.h
->  generic-y += word-at-a-time.h
-> +generic-y += xor.h
-> diff --git a/arch/nios2/include/asm/Kbuild b/arch/nios2/include/asm/Kbuild
-> index 8fde4fa2c34f..571a9d9ad107 100644
-> --- a/arch/nios2/include/asm/Kbuild
-> +++ b/arch/nios2/include/asm/Kbuild
-> @@ -33,6 +33,7 @@ generic-y += preempt.h
->  generic-y += sections.h
->  generic-y += segment.h
->  generic-y += serial.h
-> +generic-y += simd.h
->  generic-y += spinlock.h
->  generic-y += topology.h
->  generic-y += trace_clock.h
-> diff --git a/arch/openrisc/include/asm/Kbuild b/arch/openrisc/include/asm/Kbuild
-> index eb87cd8327c8..5e9f2f4c4d39 100644
-> --- a/arch/openrisc/include/asm/Kbuild
-> +++ b/arch/openrisc/include/asm/Kbuild
-> @@ -28,12 +28,13 @@ generic-y += module.h
->  generic-y += pci.h
->  generic-y += percpu.h
->  generic-y += preempt.h
-> -generic-y += qspinlock_types.h
-> -generic-y += qspinlock.h
-> -generic-y += qrwlock_types.h
->  generic-y += qrwlock.h
-> +generic-y += qrwlock_types.h
-> +generic-y += qspinlock.h
-> +generic-y += qspinlock_types.h
->  generic-y += sections.h
->  generic-y += segment.h
-> +generic-y += simd.h
->  generic-y += string.h
->  generic-y += switch_to.h
->  generic-y += topology.h
-> diff --git a/arch/parisc/include/asm/Kbuild b/arch/parisc/include/asm/Kbuild
-> index 2013d639e735..97970b4d05ab 100644
-> --- a/arch/parisc/include/asm/Kbuild
-> +++ b/arch/parisc/include/asm/Kbuild
-> @@ -17,6 +17,7 @@ generic-y += percpu.h
->  generic-y += preempt.h
->  generic-y += seccomp.h
->  generic-y += segment.h
-> +generic-y += simd.h
->  generic-y += topology.h
->  generic-y += trace_clock.h
->  generic-y += user.h
-> diff --git a/arch/powerpc/include/asm/Kbuild b/arch/powerpc/include/asm/Kbuild
-> index 3196d227e351..64290f48e733 100644
-> --- a/arch/powerpc/include/asm/Kbuild
-> +++ b/arch/powerpc/include/asm/Kbuild
-> @@ -4,7 +4,8 @@ generic-y += irq_regs.h
->  generic-y += irq_work.h
->  generic-y += local64.h
->  generic-y += mcs_spinlock.h
-> +generic-y += msi.h
->  generic-y += preempt.h
->  generic-y += rwsem.h
-> +generic-y += simd.h
->  generic-y += vtime.h
-> -generic-y += msi.h
-> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
-> index efdbe311e936..6669b7374c0a 100644
-> --- a/arch/riscv/include/asm/Kbuild
-> +++ b/arch/riscv/include/asm/Kbuild
-> @@ -5,9 +5,9 @@ generic-y += compat.h
->  generic-y += cputime.h
->  generic-y += device.h
->  generic-y += div64.h
-> -generic-y += dma.h
->  generic-y += dma-contiguous.h
->  generic-y += dma-mapping.h
-> +generic-y += dma.h
->  generic-y += emergency-restart.h
->  generic-y += errno.h
->  generic-y += exec.h
-> @@ -46,6 +46,7 @@ generic-y += setup.h
->  generic-y += shmbuf.h
->  generic-y += shmparam.h
->  generic-y += signal.h
-> +generic-y += simd.h
->  generic-y += socket.h
->  generic-y += sockios.h
->  generic-y += stat.h
-> diff --git a/arch/s390/include/asm/Kbuild b/arch/s390/include/asm/Kbuild
-> index e3239772887a..7a26dc6ce815 100644
-> --- a/arch/s390/include/asm/Kbuild
-> +++ b/arch/s390/include/asm/Kbuild
-> @@ -7,9 +7,9 @@ generated-y += unistd_nr.h
->  generic-y += asm-offsets.h
->  generic-y += cacheflush.h
->  generic-y += device.h
-> +generic-y += div64.h
->  generic-y += dma-contiguous.h
->  generic-y += dma-mapping.h
-> -generic-y += div64.h
->  generic-y += emergency-restart.h
->  generic-y += export.h
->  generic-y += fb.h
-> @@ -22,6 +22,7 @@ generic-y += mcs_spinlock.h
->  generic-y += mm-arch-hooks.h
->  generic-y += preempt.h
->  generic-y += rwsem.h
-> +generic-y += simd.h
->  generic-y += trace_clock.h
->  generic-y += unaligned.h
->  generic-y += word-at-a-time.h
-> diff --git a/arch/sh/include/asm/Kbuild b/arch/sh/include/asm/Kbuild
-> index 6a5609a55965..8e64ff35a933 100644
-> --- a/arch/sh/include/asm/Kbuild
-> +++ b/arch/sh/include/asm/Kbuild
-> @@ -16,6 +16,7 @@ generic-y += percpu.h
->  generic-y += preempt.h
->  generic-y += rwsem.h
->  generic-y += serial.h
-> +generic-y += simd.h
->  generic-y += sizes.h
->  generic-y += trace_clock.h
->  generic-y += xor.h
-> diff --git a/arch/sparc/include/asm/Kbuild b/arch/sparc/include/asm/Kbuild
-> index 410b263ef5c8..72b9e08fb350 100644
-> --- a/arch/sparc/include/asm/Kbuild
-> +++ b/arch/sparc/include/asm/Kbuild
-> @@ -17,5 +17,6 @@ generic-y += msi.h
->  generic-y += preempt.h
->  generic-y += rwsem.h
->  generic-y += serial.h
-> +generic-y += simd.h
->  generic-y += trace_clock.h
->  generic-y += word-at-a-time.h
-> diff --git a/arch/um/include/asm/Kbuild b/arch/um/include/asm/Kbuild
-> index b10dde6cb793..d37288b08dd2 100644
-> --- a/arch/um/include/asm/Kbuild
-> +++ b/arch/um/include/asm/Kbuild
-> @@ -16,15 +16,16 @@ generic-y += io.h
->  generic-y += irq_regs.h
->  generic-y += irq_work.h
->  generic-y += kdebug.h
-> +generic-y += kprobes.h
->  generic-y += mcs_spinlock.h
->  generic-y += mm-arch-hooks.h
->  generic-y += param.h
->  generic-y += pci.h
->  generic-y += percpu.h
->  generic-y += preempt.h
-> +generic-y += simd.h
->  generic-y += switch_to.h
->  generic-y += topology.h
->  generic-y += trace_clock.h
->  generic-y += word-at-a-time.h
->  generic-y += xor.h
-> -generic-y += kprobes.h
-> diff --git a/arch/unicore32/include/asm/Kbuild b/arch/unicore32/include/asm/Kbuild
-> index bfc7abe77905..98a908720bbd 100644
-> --- a/arch/unicore32/include/asm/Kbuild
-> +++ b/arch/unicore32/include/asm/Kbuild
-> @@ -27,6 +27,7 @@ generic-y += preempt.h
->  generic-y += sections.h
->  generic-y += segment.h
->  generic-y += serial.h
-> +generic-y += simd.h
->  generic-y += sizes.h
->  generic-y += syscalls.h
->  generic-y += topology.h
-> diff --git a/arch/x86/include/asm/simd.h b/arch/x86/include/asm/simd.h
-> index a341c878e977..4aad7f158dcb 100644
-> --- a/arch/x86/include/asm/simd.h
-> +++ b/arch/x86/include/asm/simd.h
-> @@ -1,4 +1,11 @@
-> -/* SPDX-License-Identifier: GPL-2.0 */
-> +/* SPDX-License-Identifier: GPL-2.0
-> + *
-> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-> + */
-> +
-> +#include <linux/simd.h>
-> +#ifndef _ASM_SIMD_H
-> +#define _ASM_SIMD_H
->
->  #include <asm/fpu/api.h>
->
-> @@ -10,3 +17,38 @@ static __must_check inline bool may_use_simd(void)
->  {
->         return irq_fpu_usable();
->  }
-> +
-> +static inline void simd_get(simd_context_t *ctx)
-> +{
-> +#if !defined(CONFIG_UML)
-> +       *ctx = may_use_simd() ? HAVE_FULL_SIMD : HAVE_NO_SIMD;
-> +#else
-> +       *ctx = HAVE_NO_SIMD;
-> +#endif
-> +}
-> +
-> +static inline void simd_put(simd_context_t *ctx)
-> +{
-> +#if !defined(CONFIG_UML)
-> +       if (*ctx & HAVE_SIMD_IN_USE)
-> +               kernel_fpu_end();
-> +#endif
-> +       *ctx = HAVE_NO_SIMD;
-> +}
-> +
-> +static __must_check inline bool simd_use(simd_context_t *ctx)
-> +{
-> +#if !defined(CONFIG_UML)
-> +       if (!(*ctx & HAVE_FULL_SIMD))
-> +               return false;
-> +       if (*ctx & HAVE_SIMD_IN_USE)
-> +               return true;
-> +       kernel_fpu_begin();
-> +       *ctx |= HAVE_SIMD_IN_USE;
-> +       return true;
-> +#else
-> +       return false;
-> +#endif
-> +}
-> +
-> +#endif /* _ASM_SIMD_H */
-> diff --git a/arch/xtensa/include/asm/Kbuild b/arch/xtensa/include/asm/Kbuild
-> index 82c756431b49..7950f359649d 100644
-> --- a/arch/xtensa/include/asm/Kbuild
-> +++ b/arch/xtensa/include/asm/Kbuild
-> @@ -24,6 +24,7 @@ generic-y += percpu.h
->  generic-y += preempt.h
->  generic-y += rwsem.h
->  generic-y += sections.h
-> +generic-y += simd.h
->  generic-y += topology.h
->  generic-y += trace_clock.h
->  generic-y += word-at-a-time.h
-> diff --git a/include/asm-generic/simd.h b/include/asm-generic/simd.h
-> index d0343d58a74a..b3dd61ac010e 100644
-> --- a/include/asm-generic/simd.h
-> +++ b/include/asm-generic/simd.h
-> @@ -1,5 +1,9 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
->
-> +#include <linux/simd.h>
-> +#ifndef _ASM_SIMD_H
-> +#define _ASM_SIMD_H
-> +
->  #include <linux/hardirq.h>
->
->  /*
-> @@ -13,3 +17,19 @@ static __must_check inline bool may_use_simd(void)
->  {
->         return !in_interrupt();
->  }
-> +
-> +static inline void simd_get(simd_context_t *ctx)
-> +{
-> +       *ctx = HAVE_NO_SIMD;
-> +}
-> +
-> +static inline void simd_put(simd_context_t *ctx)
-> +{
-> +}
-> +
-> +static __must_check inline bool simd_use(simd_context_t *ctx)
-> +{
-> +       return false;
-> +}
-> +
-> +#endif /* _ASM_SIMD_H */
-> diff --git a/include/linux/simd.h b/include/linux/simd.h
-> new file mode 100644
-> index 000000000000..33bba21012ff
-> --- /dev/null
-> +++ b/include/linux/simd.h
-> @@ -0,0 +1,28 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + *
-> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-> + */
-> +
-> +#ifndef _SIMD_H
-> +#define _SIMD_H
-> +
-> +typedef enum {
-> +       HAVE_NO_SIMD = 1 << 0,
-> +       HAVE_FULL_SIMD = 1 << 1,
-> +       HAVE_SIMD_IN_USE = 1 << 31
-> +} simd_context_t;
-> +
-> +#include <linux/sched.h>
-> +#include <asm/simd.h>
-> +
-> +static inline void simd_relax(simd_context_t *ctx)
-> +{
-> +#ifdef CONFIG_PREEMPT
-> +       if ((*ctx & HAVE_SIMD_IN_USE) && need_resched()) {
-> +               simd_put(ctx);
-> +               simd_get(ctx);
-> +       }
-> +#endif
+Christophe
 
-Could we return a bool here indicating whether we rescheduled or not?
-In some cases, we could pass that into the asm code as a 'reload'
-param, allowing repeated loads of key schedules, round constant tables
-or S-boxes to be elided.
-
-> +}
-> +
-> +#endif /* _SIMD_H */
-> --
-> 2.19.0
->
+> 
+> early_memtest: # of tests: 17
+>    0x0000000001450580 - 0x0000000001450800 pattern 4c494e5558726c7a
+>    0x0000000001450c00 - 0x0000000003600000 pattern 4c494e5558726c7a
+>    0x00000000047c0000 - 0x000000002fff0000 pattern 4c494e5558726c7a
+>    0x0000000030000000 - 0x000000003ff24000 pattern 4c494e5558726c7a
+>    0x000000003fff4000 - 0x000000003fff4c00 pattern 4c494e5558726c7a
+>    0x000000003fff5000 - 0x000000003fff5300 pattern 4c494e5558726c7a
+>    0x000000003fff5c00 - 0x000000003fff5f00 pattern 4c494e5558726c7a
+>    0x000000003fff6800 - 0x000000003fff6b00 pattern 4c494e5558726c7a
+>    0x000000003fff7400 - 0x000000003fff7700 pattern 4c494e5558726c7a
+>    0x000000003fff8000 - 0x000000003fff8300 pattern 4c494e5558726c7a
+>    0x000000003fff8c00 - 0x000000003fff8f00 pattern 4c494e5558726c7a
+>    0x000000003fff9800 - 0x000000003fff9b00 pattern 4c494e5558726c7a
+>    0x000000003fffa400 - 0x000000003fffa700 pattern 4c494e5558726c7a
+>    0x000000003fffb000 - 0x000000003fffb300 pattern 4c494e5558726c7a
+>    0x000000003fffbc00 - 0x000000003fffbf00 pattern 4c494e5558726c7a
+>    0x000000003fffc800 - 0x000000003fffcb00 pattern 4c494e5558726c7a
+>    0x000000003fffd400 - 0x000000003fffd700 pattern 4c494e5558726c7a
+>    0x000000003fffe000 - 0x000000003fffe100 pattern 4c494e5558726c7a
+>    0x0000000040000000 - 0x00000000ffc10000 pattern 4c494e5558726c7a
+>    0x00000000fffa0000 - 0x00000000fffa5b00 pattern 4c494e5558726c7a
+>    0x0000000100000000 - 0x00000001ffbe0000 pattern 4c494e5558726c7a
+>    0x00000001fff60000 - 0x00000001fff61b00 pattern 4c494e5558726c7a
+>    0x00000001fffec000 - 0x00000001fffec4b8 pattern 4c494e5558726c7a
+>    0x00000001fffec524 - 0x00000001fffec528 pattern 4c494e5558726c7a
+> 
+> 
+> cheers
+> 
