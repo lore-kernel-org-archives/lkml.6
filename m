@@ -2,152 +2,218 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAEBFC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE0EC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65A7B2173D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:01:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65A7B2173D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ts.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id EB5B22174E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:04:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eXRj82pD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5B22174E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbeI1OX6 (ORCPT
+        id S1729087AbeI1O0i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 10:23:58 -0400
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.4]:59366 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726106AbeI1OX6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 10:23:58 -0400
-Received: from [85.158.142.101] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-4.bemta.az-a.eu-central-1.aws.symcld.net id 6C/89-28090-4DFDDAB5; Fri, 28 Sep 2018 08:01:24 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjleJIrShJLcpLzFFi42Kxs+GYonv5/tp
-  ogxe7pS323tK2uLxrDpsDk8fnTXIBjFGsmXlJ+RUJrBkfn7SwFKxSqFi9UKSBcad8FyMXh5DA
-  EkaJ/S/vM3cxcgI5ZRK/9m5gg7GXbZzODmKzCKhKNDb9BYuLCChLfGztZQdpZhbYzCwxY+4yF
-  pCEsECIxK75L1hBbF4BI4nW/cdZIAapSSzcvYAVwjaR6OrrZ4SoEZQ4OfMJWA0z0LIr03YADe
-  UAsqUllv/jAAlzCphKnD12Guw2CQEZid8rv4PdIAp0w7rFJ8HGsAGtWvrnJ/sERsFZSKbOQjJ
-  1FsJUiLCWxI1/L5kwhLUlvj16zAZhm0q8PvqREcJWlJjS/ZB9ASPHKkaLpKLM9IyS3MTMHF1D
-  AwNdQ0NjXSNdExO9xCrdRL3UUt3k1LySokSgpF5iebFecWVuck6KXl5qySZGYDylFDLp7GD8t
-  DD9EKMkB5OSKO/DtrXRQnxJ+SmVGYnFGfFFpTmpxYcYZTg4lCR4RYHxKSRYlJqeWpGWmQOMbJ
-  i0BAePkgivGEiat7ggMbc4Mx0idYpRUUqcVxYkIQCSyCjNg2uDJZNLjLJSwryMDAwMQjwFqUW
-  5mSWo8q8YxTkYlYR519wDmsKTmVcCN/0V0GImoMUiB9aALC5JREhJNTDyrpp3+a+LWfwkrlNJ
-  OdwxLtPVDrc6hyY/Wru0mscrVWt93+Y12bMP/tB1TjXLvtnEup5d/L/z7aQD286Jnshxfpa8c
-  bmn+6G60DmfmHjnnhbot6w7Ze7B95/hT/T3eQeSVRdH3xNY/yNVsXbSSnuhSkZfe88Pprs/Ou
-  qsf3D8UlSFJrfFslYlluKMREMt5qLiRAD8Tn2NIQMAAA==
-X-Env-Sender: Alan.Robinson@ts.fujitsu.com
-X-Msg-Ref: server-2.tower-226.messagelabs.com!1538121683!576439!1
-X-Originating-IP: [62.60.8.148]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.14.24; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 15872 invoked from network); 28 Sep 2018 08:01:23 -0000
-Received: from unknown (HELO mailhost1.uk.fujitsu.com) (62.60.8.148)
-  by server-2.tower-226.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 28 Sep 2018 08:01:23 -0000
-Received: from abgdgate50u.abg.fsc.net ([172.25.138.66])
-        by mailhost1.uk.fujitsu.com (8.14.5/8.14.5) with ESMTP id w8S81Dsc025628;
-        Fri, 28 Sep 2018 09:01:22 +0100
-Received: from sanpedro.mch.fsc.net ([172.17.20.6])
-  by abgdgate50u.abg.fsc.net with SMTP; 28 Sep 2018 10:01:13 +0200
-Received: by sanpedro.mch.fsc.net (Postfix, from userid 5004)
-        id 7A2349D00DA9; Fri, 28 Sep 2018 09:58:52 +0200 (CEST)
-Date:   Fri, 28 Sep 2018 09:58:52 +0200
-To:     Juergen Gross <jgross@suse.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "roger.pau@citrix.com" <roger.pau@citrix.com>
-Subject: Re: [Xen-devel] [PATCH] xen/blkfront: correct purging of persistent
- grants
-Message-ID: <20180928075852.GC6271@ts.fujitsu.com>
-Reply-To: Alan.Robinson@ts.fujitsu.com
-References: <20180928072827.14229-1-jgross@suse.com>
+        Fri, 28 Sep 2018 10:26:38 -0400
+Received: from mail-eopbgr70054.outbound.protection.outlook.com ([40.107.7.54]:11402
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727389AbeI1O0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 10:26:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LqMxHqXZKNlvrTKGx4ZXqC8aBh3wJqsofmdT3wLTcbQ=;
+ b=eXRj82pDDchw4RDQzHJlUwlfadWgEd7DgrH4onCdf/A6s57u3fiLKUdXE4UGNRWahar/+/86jdEZO8//Gx1kBiMsAoqlHLuDiasH/6vw19/9eFPAC2yvASVeCNrQyfV5I1jK0Y4fbMFbgqxAqUpnvFCkcNuPx9Htwqa58ilMngw=
+Received: from VI1PR0401MB2237.eurprd04.prod.outlook.com (10.169.133.18) by
+ VI1PR0401MB2557.eurprd04.prod.outlook.com (10.168.65.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.22; Fri, 28 Sep 2018 08:04:00 +0000
+Received: from VI1PR0401MB2237.eurprd04.prod.outlook.com
+ ([fe80::984e:2d7e:1a9c:c1b9]) by VI1PR0401MB2237.eurprd04.prod.outlook.com
+ ([fe80::984e:2d7e:1a9c:c1b9%7]) with mapi id 15.20.1185.022; Fri, 28 Sep 2018
+ 08:04:00 +0000
+From:   "Y.b. Lu" <yangbo.lu@nxp.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: RE: [PATCH 1/2] net: dpaa2: move DPAA2 PTP driver out of staging/
+Thread-Topic: [PATCH 1/2] net: dpaa2: move DPAA2 PTP driver out of staging/
+Thread-Index: AQHUVlODYLzUr6TXRkCk3Aso2dGK1KUEHlyAgAEqd6A=
+Date:   Fri, 28 Sep 2018 08:04:00 +0000
+Message-ID: <VI1PR0401MB223737CACE4E4064AE8325A4F8EC0@VI1PR0401MB2237.eurprd04.prod.outlook.com>
+References: <20180927111228.46118-1-yangbo.lu@nxp.com>
+ <20180927132507.GB23375@lunn.ch>
+In-Reply-To: <20180927132507.GB23375@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yangbo.lu@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0401MB2557;6:RAvfMt6mTS1Bh9qZIJPZxN72dujkiVIl+vF7vSZqj4zRyL8Cx1TY5v1VaXL/eugG9IDGHd9Tgxy/czzNtUVMrWaYks/FPeoSvyLNUb/BG+wt6AeWbjUGw71xH8rKOFg3HbRlbDReuRJoPLPahbpvjxZJ/5eaqV07rtYNUJn0nLfpYgpqagLywSqy1N6xuJKH0Bfz5pjlwCub+MkZsc8hIIS93NqXVX0HWZ2JUcd++pom2W2wX/lPazEOxMnDy1d47M9cznIprF5VKq9dyXSLkq3Ui6kTi7rUXbU2ifz58tAGbm0PskK7wP4dsIVkHtG+bgUXDmPAiJvhyJH6WLMHfbZ9PldGq6MCDmELnsHJy/FHF7/x5rl6hYGzf0mBtXPfinsWAg3/R6MJV9ZVcyC8UeQCeLcKxhf0xQ5sOz+CacRGr9TMhTZ+PMJBPoR0R/zt6Stp7EpcPrSoHy8huvTjEw==;5:JQEI4IlHPHGSMowWmAAYwjl87PkL7RPbfd1bEAwhyhTAOKS1c2qJ4rrTTRek4SFbqdhnMHl7f/hCswOPH0z7o/R91Wgmlrz7rlEwOXNPp2HwUV938y9ZP+65A03n0PRA39HXN41VvW9PFKtP/XC7NTZnPGvYBBGRT3QYnSXtS38=;7:eiueYJ4BCjfdoz+Hq7sRDXl7nNLwk6EUD3HPwS5pA5Cgd68+K5NyJ2h1XZ/4ok5RbG+TdNohmYCtFxfg34H1ynrKqAqsj3zGJjNBY7MHZE8ijTIpx4fVao6/gGDO5sGfahoYHg4tQ5dxQe7YIWNWub4sN2IHSxY/Bk5ggQ7SUiEKD1kWR+MU1GQEmDikc763GPmtmTuJ8FRv/q+W8QS11dTee3GAUL06ho5RsWP7XNHvDEvk9dXwA96rTfvLTohy
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e44f3c18-8910-4e2f-4bcc-08d62518f302
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0401MB2557;
+x-ms-traffictypediagnostic: VI1PR0401MB2557:
+x-microsoft-antispam-prvs: <VI1PR0401MB255746D35BE6FB755E4F2B6BF8EC0@VI1PR0401MB2557.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051);SRVR:VI1PR0401MB2557;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0401MB2557;
+x-forefront-prvs: 0809C12563
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(39860400002)(366004)(136003)(13464003)(189003)(199004)(256004)(39060400002)(186003)(6916009)(97736004)(4326008)(14454004)(305945005)(316002)(34290500001)(74316002)(66066001)(71190400001)(26005)(71200400001)(68736007)(25786009)(2900100001)(7736002)(102836004)(33656002)(6116002)(3846002)(6506007)(8936002)(53546011)(476003)(486006)(6246003)(5660300001)(81156014)(76176011)(7696005)(81166006)(99286004)(8676002)(5250100002)(106356001)(54906003)(55016002)(9686003)(446003)(6436002)(86362001)(229853002)(2906002)(53936002)(11346002)(105586002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0401MB2557;H:VI1PR0401MB2237.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: rIIqHNpAuxCPrQgsoQ8rrYD5IhJFdNt1zOKnEzX3MazwonhTv1mU9DAMh22i57Zx8CL5RQ7DN79DCDGX0y22bSnvyCVr/VHBpEARw2pLl8HJv8g3GWRd/vYjH6bNDrZU4ftHOxKqW1xethx93cJi5KcFpH+c+OFjSbNQBQGy9D8RetYLjHrX397JM67y7dqcu8EQQsR6oL/jPTbCwkSs0yaXYmJtpSHSB3x8L25LF375KVvyPadBsO1JS+06IlaemHrik7nyIsyRUeF0eLGtopcD+NT4mrH2fC3ehtpcLQn9EYqdPFUNAgVXri0pkBXTect+chu1L+H/kFiEfeltu6YsEGWX69bbQYfOcjED7rk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
-        micalg=sha-256; boundary="Y5rl02BVI9TCfPar"
-Content-Disposition: inline
-In-Reply-To: <20180928072827.14229-1-jgross@suse.com>
-X-sent-by-me: robin@sanpedro
-User-Agent: Mutt/1.9.3 (2018-01-21)
-From:   Alan.Robinson@ts.fujitsu.com (Alan Robinson)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e44f3c18-8910-4e2f-4bcc-08d62518f302
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Sep 2018 08:04:00.4866
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB2557
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andrew,
 
---Y5rl02BVI9TCfPar
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks a lot for your comments.
+Please see my comments inline.
 
-On Fri, Sep 28, 2018 at 09:28:27AM +0200, Juergen Gross wrote:
-> Commit a46b53672b2c2e3770b38a4abf90d16364d2584b ("xen/blkfront: cleanup
-> stale persistent grants") introduced a regression as purged persistent
-> grants were not pu into the list of free grants again. Correct that.
-s/pu /put /
+Best regards,
+Yangbo Lu
 
-Alan
+> -----Original Message-----
+> From: Andrew Lunn <andrew@lunn.ch>
+> Sent: Thursday, September 27, 2018 9:25 PM
+> To: Y.b. Lu <yangbo.lu@nxp.com>
+> Cc: linux-kernel@vger.kernel.org; devel@driverdev.osuosl.org;
+> netdev@vger.kernel.org; Richard Cochran <richardcochran@gmail.com>;
+> David S . Miller <davem@davemloft.net>; Ioana Ciocoi Radulescu
+> <ruxandra.radulescu@nxp.com>; Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org>
+> Subject: Re: [PATCH 1/2] net: dpaa2: move DPAA2 PTP driver out of staging=
+/
+>=20
+> On Thu, Sep 27, 2018 at 07:12:27PM +0800, Yangbo Lu wrote:
+> > This patch is to move DPAA2 PTP driver out of staging/ since the
+> > dpaa2-eth had been moved out.
+> >
+> > Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+> > ---
+> >  drivers/net/ethernet/freescale/Kconfig             |    9 +--------
+> >  drivers/net/ethernet/freescale/dpaa2/Kconfig       |   15
+> +++++++++++++++
+> >  drivers/net/ethernet/freescale/dpaa2/Makefile      |    6 ++++--
+> >  .../ethernet/freescale/dpaa2}/dprtc-cmd.h          |    0
+> >  .../rtc =3D> net/ethernet/freescale/dpaa2}/dprtc.c   |    0
+> >  .../rtc =3D> net/ethernet/freescale/dpaa2}/dprtc.h   |    0
+> >  .../rtc =3D> net/ethernet/freescale/dpaa2}/rtc.c     |    0
+> >  .../rtc =3D> net/ethernet/freescale/dpaa2}/rtc.h     |    0
+> >  drivers/staging/fsl-dpaa2/Kconfig                  |    8 --------
+> >  drivers/staging/fsl-dpaa2/Makefile                 |    1 -
+> >  drivers/staging/fsl-dpaa2/rtc/Makefile             |    7 -------
+> >  11 files changed, 20 insertions(+), 26 deletions(-)  create mode
+> > 100644 drivers/net/ethernet/freescale/dpaa2/Kconfig
+> >  rename drivers/{staging/fsl-dpaa2/rtc =3D>
+> > net/ethernet/freescale/dpaa2}/dprtc-cmd.h (100%)  rename
+> > drivers/{staging/fsl-dpaa2/rtc =3D>
+> > net/ethernet/freescale/dpaa2}/dprtc.c (100%)  rename
+> > drivers/{staging/fsl-dpaa2/rtc =3D>
+> > net/ethernet/freescale/dpaa2}/dprtc.h (100%)  rename
+> > drivers/{staging/fsl-dpaa2/rtc =3D> net/ethernet/freescale/dpaa2}/rtc.c
+> > (100%)  rename drivers/{staging/fsl-dpaa2/rtc =3D>
+> > net/ethernet/freescale/dpaa2}/rtc.h (100%)
+>=20
+> Hi Yangbo
+>=20
+> Calling a ptp driver rtc.[ch] seems rather odd. Could you fixup the name,
+> change it to ptp.[ch]. Also, some of the function names, and structures,
+> rtc_probe->ptp_probe, rtc_remove->ptp_remove, rtc_match_id_table->
+> ptp_match_id_table, etc.
 
---Y5rl02BVI9TCfPar
-Content-Type: application/x-pkcs7-signature
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+[Y.b. Lu] Indeed, it's odd and confusing...
+For dpaa2, all hardware resources are allocated and configured through the =
+Management Complex (MC) portals.
+MC abstracts most of these resources as DPAA2 objects and exposes ABIs thro=
+ugh which they can be configured and controlled.
+This ptp timer was named as rtc in MC firmware and APIs as you saw in dprtc=
+.*.
+So initially I wrote this driver using rtc as name.
 
-MIIKTgYJKoZIhvcNAQcCoIIKPzCCCjsCAQExCzAJBgUrDgMCGgUAMAsGCSqGSIb3DQEHAaCC
-CH8wggSjMIIDi6ADAgECAgo2C52zAAAAAlTDMA0GCSqGSIb3DQEBBQUAMC8xLTArBgNVBAMT
-JEZ1aml0c3UgVGVjaG5vbG9neSBTb2x1dGlvbnMgVXNlciBDQTAeFw0xNzA1MTIxNTM0Mjda
-Fw0xOTAzMTExMjI0NTlaMEAxFzAVBgNVBAMMDlJvYmluc29uLCBBbGFuMSUwIwYDVQQKDBxG
-dWppdHN1IFRlY2hub2xvZ3kgU29sdXRpb25zMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKB
-gQClZEMpN68qHzred2QKqifLuUSlYnt/kB4V9Kjy8U7cQK/pN+ytbEBFXsllMyP2CjgGNYFu
-oqeztgkla2vBrjV9ilrJe3s+RJqkXgioKG1RSuiDW0sBFvI90dS4mHCH7cOTPPFHO5QHuCBU
-bClqAN0HlKweu/rIbqg0/g9j+SMb8QIDAQABo4ICMjCCAi4wCwYDVR0PBAQDAgWgMIGSBgNV
-HREEgYowgYeBHGFsYW4ucm9iaW5zb25AdHMuZnVqaXRzdS5jb22BJmFsYW4ucm9iaW5zb25A
-ZW1laWFjZW1lYS5mdWppdHN1LmxvY2FsgRxhbGFuLnJvYmluc29uQGNlbWFpbC5mc2MubmV0
-gSFBbGFuLlJvYmluc29uQGZ1aml0c3Utc2llbWVucy5jb20wHQYDVR0OBBYEFIlosAD8kas+
-gZn51OiifJoSRQTUMB8GA1UdIwQYMBaAFAj1yGq/gON7UMQ59AeYRuhtfpeoMDwGA1UdHwQ1
-MDMwMaAvoC2GK2h0dHA6Ly9jZHAudHMuZnVqaXRzdS5jb20vY2RwL2Z0czAxdXNlci5jcmww
-RwYIKwYBBQUHAQEEOzA5MDcGCCsGAQUFBzAChitodHRwOi8vYWlhLnRzLmZ1aml0c3UuY29t
-L2FpYS9mdHMwMXVzZXIuY2VyMAwGA1UdEwEB/wQCMAAwPQYJKwYBBAGCNxUHBDAwLgYmKwYB
-BAGCNxUIhYXEMoGH/2GBhYEEhuyCIIHHgRp5g4igcYfS8S8CAWQCAQgwEwYDVR0lBAwwCgYI
-KwYBBQUHAwQwGwYJKwYBBAGCNxUKBA4wDDAKBggrBgEFBQcDBDBEBgkqhkiG9w0BCQ8ENzA1
-MA4GCCqGSIb3DQMCAgIAgDAOBggqhkiG9w0DBAICAIAwBwYFKw4DAgcwCgYIKoZIhvcNAwcw
-DQYJKoZIhvcNAQEFBQADggEBADwUZHvoZuxiGLFQCoURq/FgeKSyxKrjuoutb8Bs3blR2QDA
-D3NWp0W+T4Js9fDcIb3Rq3uvFx0T/EcUiz1fFeQyN4B2xT8ofAnZeWuxWxWLUqS/K73fRIUC
-m7DUNj8lgRGsnSnAIl6ZKHDrdvwnxrF7qFPRVz77B4k3BK5mkMxxNVtKjbCoPj8fnh17Vnob
-Wnb0yztrPYeOHi2CqIey5qPjVMSTxKJYOejwjvE78SBMKKQS7cHBg+iOnYK90S0m+LK2/Yz5
-vgJtjGJL+68d5i0O/rmzgefOEeuMtD0IOI9lFXoUS16hbxj8gMy0dXKxfPhoYWB7bqIlY4Ri
-mpguPFwwggPUMIICvKADAgECAhA0zRJXyDaDRuC/9z0wA24FMA0GCSqGSIb3DQEBBQUAMC8x
-LTArBgNVBAMTJEZ1aml0c3UgVGVjaG5vbG9neSBTb2x1dGlvbnMgUm9vdCBDQTAeFw0wOTAz
-MTIxMjI0NTlaFw0xOTAzMTExMjI0NTlaMC8xLTArBgNVBAMTJEZ1aml0c3UgVGVjaG5vbG9n
-eSBTb2x1dGlvbnMgVXNlciBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALAb
-TX9HzfBJFvcukKqEBkui1MHs3p1dgZw8zkXRmp7pEbaRs2DAD3cosLZadP8zjWvowiRs5F+I
-mAo07Iib8dNUj0TWduHx2hRl6SQV+ffaumRdIrLvodWiGrNbX8ggWpQGyii7zYCLkI514XX3
-1ZOL0rgcrTtzhnFC7SdvpWFUhL8cxrfYk0sE+UZxLyqUdIjgvvf1DVTojyvVws+bu24N4noT
-+YA/r+brt2CEcFf+YMnewGT3HJE32D/xmXMm3AF3xJeZ2/22Ykix3mRI8TDDPGGahSoR/ccp
-iHY5HESuzSdo/Dg+9PEBb+G+G5ntZhxn040m8W9ZzqFE7DbbIWcCAwEAAaOB6zCB6DAdBgNV
-HQ4EFgQUCPXIar+A43tQxDn0B5hG6G1+l6gwCwYDVR0PBAQDAgGGMB8GA1UdIwQYMBaAFBR1
-4le2FTcVgCqX5VFIZazPhpDLMBIGA1UdEwEB/wQIMAYBAf8CAQAwRwYIKwYBBQUHAQEEOzA5
-MDcGCCsGAQUFBzAChitodHRwOi8vYWlhLnRzLmZ1aml0c3UuY29tL2FpYS9mdHMwMXJvb3Qu
-Y2VyMDwGA1UdHwQ1MDMwMaAvoC2GK2h0dHA6Ly9jZHAudHMuZnVqaXRzdS5jb20vY2RwL2Z0
-czAxcm9vdC5jcmwwDQYJKoZIhvcNAQEFBQADggEBAEO6UD/S8PW3J7dQ4b1eVFm9c5pwAkqO
-p+sfm7qXJEM5a392iex0GYoGbmgmpPnXsS9fCPOojQwziQQbK89A3A+Fz7M3C01Hs6qhpQMi
-G74gauZsAxwFgQPRddRkcei3axzCjXRz8AFsgt6+qr+BjugPs9eilGRUj+JL7mjeWByOPNU+
-xRcRJp7ZMpaYZ3V/upkNTQAQKTDIV9GjeXVYTwDAD/JxDSdYRpPNSBvIM5KBwz0qCwrX3wJz
-YWAKob6wztsm12//cfkn9w0LswYN4aQdciTNyvH6EGkt7k6RSE33TKa3EMqyHZeCcNurP+r6
-SLNLIi1U6d8gMIDWqkEoMUkxggGXMIIBkwIBATA9MC8xLTArBgNVBAMTJEZ1aml0c3UgVGVj
-aG5vbG9neSBTb2x1dGlvbnMgVXNlciBDQQIKNgudswAAAAJUwzAJBgUrDgMCGgUAoIGxMBgG
-CSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE4MDkyODA3NTg1Mlow
-IwYJKoZIhvcNAQkEMRYEFGaKtAFzZu9vnVRDeB9gNBRUgmHnMFIGCSqGSIb3DQEJDzFFMEMw
-CgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcGBSsOAwIHMA0G
-CCqGSIb3DQMCAgEoMA0GCSqGSIb3DQEBAQUABIGAGIF5Z7uJhBa1KzaIw4hNUuzQpHTdy2pe
-Ahk/mJsX4mPGi/CDu3gHQRElCRQ8X7jD2GkiHphP/km8Wojk85pZ0Opfr1ldVl46jrYkbYIb
-CMC/AgOwTHeV3sT6o4IqabVvqqK0nPVIZRZ/GdEOnGp/kTAwg/bEdvYe9gzz1UzGlEU=
+No worries, let me change it in next version.
 
---Y5rl02BVI9TCfPar--
+>=20
+> ptp_dpaa2_adjfreq() probably should return err, not 0.
+> ptp_dpaa2_gettime() again does not return the error.
+> If fact, it seems like all the main functions ignore errors.
+
+[Y.b. Lu] Will fix the returns in next version.
+
+>=20
+> kzalloc() could be changed to devm_kzalloc() to simplify the cleanup
+
+[Y.b. Lu] Will use devm_kzalloc() in next version.
+
+ Can
+> ptp_dpaa2_caps be made const?
+
+[Y.b. Lu] Yes. Will change it in next version.
+
+> dpaa2_phc_index does not appear to be used.
+
+[Y.b. Lu] It's used in dpaa2-ethtool.c for .get_ts_info interface of ethtoo=
+l_ops.
+
+> dev_set_drvdata(dev, NULL); is not needed.
+
+[Y.b. Lu] Will remove it in next version.
+
+> Can rtc_drv be made const?
+
+[Y.b. Lu] Will use const in next version.
+
+> Is rtc.h used by anything other than rtc.c? It seems like it can be remov=
+ed.
+
+[Y.b. Lu] Let me remove it in next version.
+
+>=20
+> It seems like there is a lot of code in dprtc.c which is unused. rtc.c do=
+es nothing
+> with interrupts for example. Do you plan to make use of this extra code? =
+Or
+> can it be removed leaving just what is needed?
+
+[Y.b. Lu] Currently the ptp/rtc driver is not full-featured. The extra code=
+ is being planed to be used.
+
+>=20
+> struct dprtc_cmd_get_irq - Putting pad at the beginning of a struct seems=
+ very
+> odd. And it is not the only example.
+
+[Y.b. Lu] This should depended on MC firmware and APIs I think. Once the MC=
+ improves this, the APIs could be updated to fix this.
+
+>=20
+>       Andrew
