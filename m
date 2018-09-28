@@ -2,114 +2,151 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A42D7C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB21C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFF9921708
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:46:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE8B021708
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:48:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIlYUnCN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF9921708
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="o8IOBBCs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE8B021708
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728626AbeI1IHx (ORCPT
+        id S1728075AbeI1IJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 04:07:53 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37616 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeI1IHw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 04:07:52 -0400
-Received: by mail-qt1-f193.google.com with SMTP id n6-v6so5024367qtl.4;
-        Thu, 27 Sep 2018 18:46:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=X4z7jPf+dvuu42+tYZqKX430fxhW5Xfzad8xEo8VLqg=;
-        b=TIlYUnCNWpQijbfpEwuhe5dycr9EThxJFylubBOpgYIZ7lcXjakkDG5ZsH38m4ual8
-         IoREXTJtYOpX7ZjioyUMOoQRwfSHC5B838qJ4KigSeAMfnqbt1KMWTkKN3bfQ47kNrYS
-         DEOsmuXXVteRjhSqETJVZceoJt42ipuHYirFnVbacv59xPCYxTZe8NXrZlKAT4c+GBxz
-         tz1q+EkUcsw68q+xNW0u0Vm83sqNXJp1PKYkR9x/ujRhauLYItsFViPOOXJJ9MHCQe8O
-         Q/6Y6FZ7flYmhHJJAiza39a0gYeqbKAoLhPjeJrUbDEzXIsXLzUwwe37todopHB116jy
-         XxQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=X4z7jPf+dvuu42+tYZqKX430fxhW5Xfzad8xEo8VLqg=;
-        b=Q+GciXnQU0mbvvvo+EB2zEiNgwmgGLh1DpHyxoJSUR0MeJ66Qo5GRDtpcTvIKxBvH7
-         c9qL4BYyLxIqSXhUzdO1ojEkSvgDmYglgFG04vkGKB8Mdq4IYi97uzThEJQ5CfnhCBRz
-         FdZZv92mjujpkRE24gxhRvOxOXBNlVq3Uuk1t23kzEk+pBaU8cNTprKfPv3gOyYc/D5H
-         /q9Z6su0yIxKkaQpqnS2OTaHiGzfcnCQS1F7Fvwom+10D9oh9rwW6QFqR4UDskAfFsIi
-         lz0UysuzEO0f2twQX1RN4LzkoxvDR2yk8t6nCIQ/pzyNa7hT1ArViw2LF2D6SOYbeNVm
-         T4CQ==
-X-Gm-Message-State: ABuFfoh8lJQJeum0SLupKdNGYidwloHPAWhnwSx1b0w/t8OMsqTNRxUE
-        yw6AozVLhgomUjJlnyvM/6Q=
-X-Google-Smtp-Source: ACcGV62xfoYJb6xff8wzdqw0f0gjy5qLeUwqKQYNIjIdi7GkRm3W8oYwVxaXrDdkbFg2u75a1EFq5g==
-X-Received: by 2002:ac8:2d69:: with SMTP id o38-v6mr10364997qta.21.1538099198983;
-        Thu, 27 Sep 2018 18:46:38 -0700 (PDT)
-Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id m190-v6sm2050250qkd.48.2018.09.27.18.46.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 18:46:38 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 22:46:28 -0300
-From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
-To:     lkcamp@lists.libreplanetbr.org,
-        /tmp/v3-0002-drivers-nubus-Avoids-building-driver-if-CONFIG_NU.patch@windflash,
-        /tmp/v3-0003-drivers-parisc-Avoids-building-driver-if-CONFIG_P.patch@windflash,
-        /tmp/v3-0004-drivers-zorro-Avoids-building-proc.o-if-CONFIG_ZO.patch@windflash,
-        /tmp/v3-0005-drivers-s390-Avoids-building-drivers-if-ARCH-is-n.patch@windflash,
-        /tmp/v3-0006-drivers-oprofile-Avoids-building-driver-from-dire.patch@windflash,
-        /tmp/v3-0007-drivers-hwtracing-Adds-Makefile-to-enable-buildin.patch@windflash
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Robert Richter <rric@kernel.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: [PATCH v3 1/7] drivers: dio: Avoids building driver if CONFIG_DIO is
- disabled
-Message-ID: <20180928014628.GA10427@WindFlash>
+        Fri, 28 Sep 2018 04:09:32 -0400
+Received: from cock.li ([185.100.85.212]:60042 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726083AbeI1IJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 04:09:32 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1538099294; bh=9aXct+ALQBUmBiwRrUvcNJTC2TfIdB2yPivql9ltWSs=;
+        h=Date:From:To:Subject:From;
+        b=o8IOBBCsHJ30IbW1F4/oDHACkIhDNcEsbhKsuN3KnysYkIQAO8C8Hu2qWbsgpmWl1
+         3oHimw9UUjliV2iO+faU71OSdSZZtvaKw7F1Amf3+sIhmWpVucDwrMUsNpSmTuouU8
+         vlrCx2IAtMmi1kg8XxGWJ8zkU2UadTw2ogNCnM63pOxqf8Fp0VpvACNu1Xv9+3b/r5
+         R0WkfWHWeA6SuMDlEKnbMW88UoUIK/FVHXzlNqYEv/pBWUngzmcK958do9maMKfviT
+         V/A0Y8Tzi2KhUf7rYsKdEvE+YOOkYIhHY5XToXgt4jQjLI73EGu21MCWLsCEHuCz19
+         8qeOLxcc7Opzg==
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Date:   Fri, 28 Sep 2018 01:48:13 +0000
+From:   vweforwd@redchan.it
+To:     linux-kernel@vger.kernel.org
+Subject: (Response to SFConservancy) Under US copyright, permission regarding
+ a GPL version 2 licensed work is revocable by the grantor.
+Message-ID: <4c1939793441dd244379db27c25a94dc@redchan.it>
+X-Sender: vweforwd@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoids building driver if 'make drivers/dio/' is called and
-CONFIG_DIO is disabled.
+The software freedom conservancy has tendered its response:
+http://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
+http://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
 
-Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
----
- drivers/dio/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dio/Makefile b/drivers/dio/Makefile
-index ae92d17083f2..8fc80e805b90 100644
---- a/drivers/dio/Makefile
-+++ b/drivers/dio/Makefile
-@@ -2,4 +2,4 @@
- # Makefile for the linux kernel.
- #
- 
--obj-y := dio.o dio-driver.o dio-sysfs.o
-+obj-$(CONFIG_DIO) := dio.o dio-driver.o dio-sysfs.o
--- 
-2.19.0
+""
+"The GPLv2 have several provisions that, when taken together, can be 
+construed as an irrevocable license from each contributor. "
+""
 
+It cites:
+
+
+           " That license granted to downstream is irrevocable, again 
+provided that the downstream user complies with the license terms: 
+"[P]arties who have received copies, or rights, from you under this 
+License will not have their licenses terminated so long as such parties 
+remain in full compliance" (GPLv2§4). "
+
+However this is disingenuous
+
+The full text of section 4 is as follows:
+
+""
+   4. You may not copy, modify, sublicense, or distribute the Program
+except as expressly provided under this License.  Any attempt
+otherwise to copy, modify, sublicense or distribute the Program is
+void, and will automatically terminate your rights under this License.
+However, parties who have received copies, or rights, from you under
+this License will not have their licenses terminated so long as such
+parties remain in full compliance.
+""
+
+
+
+The "You" in section 4 is speaking of the licensee regarding 
+sub-licensees, it is not speaking to the licensor/copyright-holder.
+
+IE: if the licensee loses his license, through operation of the 
+automatic-revocation provisions, the sub-licensees do not also lose 
+their licenses.
+
+IE: The language is disclaiming a chain topography for license 
+distribution, and instead substituting a hub-and-spoke topography (all 
+licenses originating from the copyright holder, not the 
+previous-in-line)
+
+GPLv3 added a no-rescission clause for a reason: the reason being to 
+attempt to create an estoppel defense for the licensees against the 
+licensor. You will notice that Eben Moglen never speaks on these issues. 
+(He preumably is aware of the weaknesses vis a vis the US copyright 
+regime.)
+
+Section 6 further clarifies the hub-and-spoke model:
+""
+    6. Each time you redistribute the Program (or any work based on the
+Program), the recipient automatically receives a license from the
+original licensor to copy, distribute or modify the Program subject to
+these terms and conditions.  You may not impose any further
+restrictions on the recipients' exercise of the rights granted herein.
+You are not responsible for enforcing compliance by third parties to
+this License.
+""
+
+The memorandum posted then goes on to a discussion of estoppel, 
+detrimental reliance, etc; noting that users may have relied on the 
+software and their licenses may be estopped from being revoked from said 
+users since doing so might cause them unanticipated loss. This is 
+speaking of already published, existent, versions of the program used by 
+end users.
+
+The memorandum seems to ignore what happens to "upstream" once said 
+project  receives a revocation notice. Thought it may be possible that 
+users of a published piece of software may have defenses to license 
+revocation, the same is not true regarding the rescinded property 
+vis-a-vis future prospective versions of the software nor of future 
+prospective licensees of said software.
+
+That is: once the grant to use the code in question is rescinded, future 
+versions of the software may not use that code. Current users of the 
+software may be-able to raise an estoppel / detrimental reliance defense 
+regarding the current published software, however the programmers 
+working on the next version of said software cannot continue to use the 
+property in future versions of the software (such would be a copyright 
+violation once the gratuitous license is rescinded by the grantor).
+
+Additionally, prospective-licensees, once the grant was rescinded and 
+such was published, would have no same-such estoppel defense (not being 
+user-licensees at the time of revocation).
+
+(Ignoring this eventuality in the published memorandum, is, of-course, 
+by design.)
+(Now, to note: the free-software movement is focused on the freedom of 
+the user, not the progenitors of the software, so one could certainly 
+say that ignoring some developer-focused analysis is consistent with 
+their prerogative...)
+
+
+
+_
