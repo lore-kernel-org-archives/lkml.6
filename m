@@ -2,100 +2,129 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1B4C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDC0C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0533216E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:52:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RNMNFA+g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0533216E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C828214C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:53:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C828214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729010AbeI1UQC (ORCPT
+        id S1729176AbeI1UQv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:16:02 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:55737 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727676AbeI1UQC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:16:02 -0400
-Received: by mail-it1-f193.google.com with SMTP id c23-v6so2528509itd.5
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 06:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=I8vXbrqB5BF4OtvkNXYZLxzdp/koegsaDLHAuHoixQk=;
-        b=RNMNFA+gK3oYxwcvXZ1rNhZZNTyT2usHOaui/A4uzkNinQl9SvuMe57Ia5EkWLkKV+
-         3HKVLv883xMf3I6Kmh6TDnewNusqAle9sa4EWYgLo51cNMJ4KQd6oMu6fzzNX4Omn/km
-         07RF4VhXYKZc3oQb84JenLw2XpzIUMIBOt30g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=I8vXbrqB5BF4OtvkNXYZLxzdp/koegsaDLHAuHoixQk=;
-        b=QmTrudbKBqtZOPdb+vddPMUtGRmj/fA9DKepHJqP1qbZP/WZ8in/3bxrx+5j7M9l0k
-         37xhMqnWiEdkuEIPm2FAjbFcPdaHOdguiFjsCwVlQ3rP7pjqVcW+p3UbPjnu/yPwsS7M
-         a7pwDfxMSpKUHWbj8eQbWEcTvgcdFBYgqNf8pxLgCiZqYesonb2Uvyrp8uMazfATNLSb
-         JKfBVBn9YTsrgHLK1t78R9hsJvZXsAmIVxhhPJ3lbOtA7Q7gliBxXBV/t27YJ8b4WTzl
-         sVN/M9wD7n6DnInhDTzKNOfektf7CvD8F8uecBPyDOynJYTD5ijdzfyoURAy6RuDoehV
-         wzMg==
-X-Gm-Message-State: ABuFfoi6LO+vS+Tt6pfzXLrsj07qQRF+Y6bxrsqlXeoX3kQypN1JN0sz
-        RQHbMk+1jVurxGnU+C0YxfSv6QVxWV6GTi5YPXJL6w==
-X-Google-Smtp-Source: ACcGV60BKnfCTY9ye8djKdljaSHfRgelzXD0dj7nBQIrB4d1+xpgd9pHDhS68+et2nB24AWYQUygE6sCSgku6NOT2pc=
-X-Received: by 2002:a24:57cb:: with SMTP id u194-v6mr1605523ita.148.1538142728281;
- Fri, 28 Sep 2018 06:52:08 -0700 (PDT)
+        Fri, 28 Sep 2018 16:16:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37382 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726473AbeI1UQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 16:16:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A3777B0C4;
+        Fri, 28 Sep 2018 13:52:56 +0000 (UTC)
+Subject: Re: [PATCH] xen/blkfront: correct purging of persistent grants
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-block@vger.kernel.org
+Cc:     roger.pau@citrix.com, konrad.wilk@oracle.com, axboe@kernel.dk
+References: <20180928072827.14229-1-jgross@suse.com>
+ <95e32835-426f-36c9-a86a-09563f090f22@oracle.com>
+ <772c3886-d4fe-b912-b125-a648b31a3074@suse.com>
+ <b454645f-de15-2912-864e-18f00736013d@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <cfebb100-952b-4b86-9b27-222dd89031dd@suse.com>
+Date:   Fri, 28 Sep 2018 15:52:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 06:52:07
- -0700 (PDT)
-In-Reply-To: <CAHmME9pfs0_MsD9QAGfSm31_w-=6BCF_gZO04XkfhD=mEoZmtQ@mail.gmail.com>
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-2-Jason@zx2c4.com>
- <CAKv+Gu9e35+AyktmSq9qeNE0LR83_yrEEB3DiQv0bmyArivqRQ@mail.gmail.com>
- <CAKv+Gu9kbLPZH4W0zKAfuv-b11mcDaZ05HUauvh9gMZVGVR0AQ@mail.gmail.com> <CAHmME9pfs0_MsD9QAGfSm31_w-=6BCF_gZO04XkfhD=mEoZmtQ@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 28 Sep 2018 15:52:07 +0200
-Message-ID: <CAKv+Gu__7mZFFq6qC=8yh0OuaV+TCCLFt6nm8yJfaANHUPrJ=A@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 01/23] asm: simd context helper API
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b454645f-de15-2912-864e-18f00736013d@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28 September 2018 at 15:47, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> On Fri, Sep 28, 2018 at 10:49 AM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> >> +typedef enum {
->> >> +       HAVE_NO_SIMD = 1 << 0,
->> >> +       HAVE_FULL_SIMD = 1 << 1,
->> >> +       HAVE_SIMD_IN_USE = 1 << 31
->> >> +} simd_context_t;
->> >> +
->>
->> Oh, and another thing (and I'm surprised checkpatch.pl didn't complain
->> about it): the use of typedef in new code is strongly discouraged.
->> This policy predates my involvement, so perhaps Joe can elaborate on
->> the rationale?
->
-> In case it matters, the motivation for making this a typedef is I
-> could imagine this at some point turning into a more complicated
-> struct on certain platforms and that would make refactoring easier. I
-> could just make it `struct simd_context` now with 1 member though...
+On 28/09/2018 15:33, Boris Ostrovsky wrote:
+> On 9/28/18 9:13 AM, Juergen Gross wrote:
+>> On 28/09/2018 14:45, Boris Ostrovsky wrote:
+>>> On 9/28/18 3:28 AM, Juergen Gross wrote:
+>>>> Commit a46b53672b2c2e3770b38a4abf90d16364d2584b ("xen/blkfront: cleanup
+>>>> stale persistent grants") introduced a regression as purged persistent
+>>>> grants were not pu into the list of free grants again. Correct that.
+>>>>
+>>>> Signed-off-by: Juergen Gross <jgross@suse.com>
+>>>> ---
+>>>>  drivers/block/xen-blkfront.c | 4 ++--
+>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+>>>> index a71d817e900d..429d20131c7e 100644
+>>>> --- a/drivers/block/xen-blkfront.c
+>>>> +++ b/drivers/block/xen-blkfront.c
+>>>> @@ -2670,8 +2670,8 @@ static void purge_persistent_grants(struct blkfront_info *info)
+>>>>  			list_del(&gnt_list_entry->node);
+>>>>  			gnttab_end_foreign_access(gnt_list_entry->gref, 0, 0UL);
+>>>>  			rinfo->persistent_gnts_c--;
+>>>> -			__free_page(gnt_list_entry->page);
+>>>> -			kfree(gnt_list_entry);
+>>>> +			gnt_list_entry->gref = GRANT_INVALID_REF;
+>>>> +			list_add_tail(&gnt_list_entry->node, &rinfo->grants);
+>>> Sorry, I don't follow this. What is the purpose of removing the grant
+>>> from rinfo->grants list with list_del() and then adding it back with
+>>> list_add_tail()?
+>> The persistent grants are at the list head and the non-persistent ones
+>> at the tail.
+> 
+> Oh, I didn't realize that. But isn't that an optimization (and so not
+> following this rule should not cause errors)?
 
-Yes that makes sense
+In theory: yes.
+
+The persistent grant handling is rather complicated so I'd like to make
+sure not to deviate from the common standards.
+
+When I find some time I want to modify the persistent grant handling to
+be more explicit and controlled completely by the frontend (within the
+backend defined limits, of course). Until then we should try to modify
+persistent grants not too much IMO.
+
+
+Juergen
