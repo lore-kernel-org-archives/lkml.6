@@ -6,42 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 013CDC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC77C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2FC5206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:52:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2FC5206B8
+	by mail.kernel.org (Postfix) with ESMTP id 1645E20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:52:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1645E20868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727375AbeI2ESP (ORCPT
+        id S1727380AbeI2ESg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:18:15 -0400
-Received: from smtprelay0212.hostedemail.com ([216.40.44.212]:54128 "EHLO
+        Sat, 29 Sep 2018 00:18:36 -0400
+Received: from smtprelay0120.hostedemail.com ([216.40.44.120]:59534 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726085AbeI2ESO (ORCPT
+        by vger.kernel.org with ESMTP id S1726330AbeI2ESf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:18:14 -0400
+        Sat, 29 Sep 2018 00:18:35 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id D0196181D340F;
-        Fri, 28 Sep 2018 21:52:32 +0000 (UTC)
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id A95A2100E86C4;
+        Fri, 28 Sep 2018 21:52:53 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: frogs99_504ef09951230
-X-Filterd-Recvd-Size: 1919
+X-HE-Tag: milk59_53615848c7a08
+X-Filterd-Recvd-Size: 1891
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 21:52:31 +0000 (UTC)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 21:52:52 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     "Manoj N . Kumar" <manoj@linux.vnet.ibm.com>,
-        "Matthew R . Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org
-Subject: Bad MAINTAINERS pattern in section 'CXLFLASH (IBM Coherent Accelerator Processor Interface CAPI Flash) SCSI DRIVER'
-Date:   Fri, 28 Sep 2018 14:52:30 -0700
-Message-Id: <20180928215230.29127-1-joe@perches.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-input@vger.kernel.org
+Subject: Bad MAINTAINERS pattern in section 'D-LINK DIR-685 TOUCHKEYS DRIVER'
+Date:   Fri, 28 Sep 2018 14:52:51 -0700
+Message-Id: <20180928215251.29213-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,34 +50,36 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	3964	CXLFLASH (IBM Coherent Accelerator Processor Interface CAPI Flash) SCSI DRIVER
-	3965	M:	Manoj N. Kumar <manoj@linux.vnet.ibm.com>
-	3966	M:	Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
-	3967	M:	Uma Krishnan <ukrishn@linux.vnet.ibm.com>
-	3968	L:	linux-scsi@vger.kernel.org
-	3969	S:	Supported
-	3970	F:	drivers/scsi/cxlflash/
--->	3971	F:	include/uapi/scsi/cxlflash_ioctls.h
-	3972	F:	Documentation/powerpc/cxlflash.txt
+	4010	D-LINK DIR-685 TOUCHKEYS DRIVER
+	4011	M:	Linus Walleij <linus.walleij@linaro.org>
+	4012	L:	linux-input@vger.kernel.org
+	4013	S:	Supported
+-->	4014	F:	drivers/input/dlink-dir685-touchkeys.c
 
 Commit that introduced this:
 
-commit 11f43ae7735a04994ef3c33295d386ef4e5529b7
- Author: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
- Date:   Wed Oct 21 15:15:22 2015 -0500
+commit 131b3de7016b73fca1aba8ffb528217ac95b2505
+ Author: Linus Walleij <linus.walleij@linaro.org>
+ Date:   Mon Jun 5 14:48:44 2017 -0700
  
-     MAINTAINERS: Add cxlflash driver
+     Input: add D-Link DIR-685 touchkeys driver
      
-     Add stanza for cxlflash SCSI driver.
+     This adds support for the D-Link DIR-685 touchkeys found in the
+     router with this name.
      
-     Signed-off-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
-     Signed-off-by: Manoj N. Kumar <manoj@linux.vnet.ibm.com>
-     Reviewed-by: Brian King <brking@linux.vnet.ibm.com>
-     Reviewed-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-     Signed-off-by: James Bottomley <JBottomley@Odin.com>
+     The vendor code calles this a "touchpad" but we are registering
+     it here under its real name.
+     
+     Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+     Acked-by: Rob Herring <robh@kernel.org>
+     Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
  
-  MAINTAINERS | 9 +++++++++
-  1 file changed, 9 insertions(+)
+  .../bindings/input/dlink,dir685-touchkeys.txt      |  21 +++
+  MAINTAINERS                                        |   6 +
+  drivers/input/keyboard/Kconfig                     |  11 ++
+  drivers/input/keyboard/Makefile                    |   1 +
+  drivers/input/keyboard/dlink-dir685-touchkeys.c    | 155 +++++++++++++++++++++
+  5 files changed, 194 insertions(+)
 
-No commit with include/uapi/scsi/cxlflash_ioctls.h found
+No commit with drivers/input/dlink-dir685-touchkeys.c found
 
