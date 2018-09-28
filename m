@@ -7,119 +7,122 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 137BEC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B15E9C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:16:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0C1920671
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:13:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E6E020671
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:16:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g3yetvsX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0C1920671
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hb/c17tn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6E020671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbeI2EjQ (ORCPT
+        id S1726645AbeI2Emp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:39:16 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36109 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbeI2EjP (ORCPT
+        Sat, 29 Sep 2018 00:42:45 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39956 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbeI2Emp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:39:15 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l10-v6so7857325wrp.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 15:13:27 -0700 (PDT)
+        Sat, 29 Sep 2018 00:42:45 -0400
+Received: by mail-ed1-f66.google.com with SMTP id j62-v6so9406337edd.7;
+        Fri, 28 Sep 2018 15:16:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Sg516m4dbymHNg8RVNuut2Y+rwmFzvZI6nvToz1ph10=;
-        b=g3yetvsXaQj/lhU6Iz82dpnyP6zQJEg2QkbN3oWiu0QC1xOW5fRFmUYEl4dkJ1xQqB
-         7RkCqmiAdsQMXfeVvZf7HT7iJKEEd37H1wqZMemBClOEX+9l8B+DrN7XS1a9kbMqdJ8n
-         dDwvRJo4E7iBkRn5tMoO8m2uPzrissTMUu8WPPrb1llmUiyr6Ec1SLcXMWUCv00uZiC7
-         pTKPn9cHipbfsRvk4rz84QLwl2DddK8woNl/doqPiwqNuBfsdjjMGTEHAvl5SbV398BO
-         +jK78QRehN0WuRSpwWTTaqXZkWBAb9pdfsSDHvWtj/+8T0fcseO950bQD/yytXxxh5zB
-         HlTA==
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=XDMXHnRodwWSz9TFAJayP3GrPM6xRs5hUT2n1VgH2Jk=;
+        b=hb/c17tn5VUADWZZ+V8jz7XpQ8b+zvbGTq1BKDqXN4OXneWYHTjQkbd28JaMs6AALi
+         aFC2aMrXtswvNFq61fAlL7prkgnm6CDNHw26E6FGwZl8oRZ7s9WBvxr9cz6hteX23S+z
+         lAk9ErtLjogIadl55ZUAKvkUkk8E/Cf7LwGJ8vp2QpWM7tFmLUno9C/9KE1gXedSAdqC
+         Ck4kEtpqA31J/lWF/pRHR8q98CjZaoEwEWYhORPiNh/c/vOyxdneeb2/F0cob9IJCU3p
+         c9f+v0PC8pRQaCmZOTWO3KQKha+Ej1OMQAn6NuMYPSmFiG7I9Ddto6EflHoYrQTi+TPt
+         vn3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Sg516m4dbymHNg8RVNuut2Y+rwmFzvZI6nvToz1ph10=;
-        b=FtP3whVCcPB2/H/x1C2MPPIGEKZf3KORNHGrHZFsqKSLftFPbPfJEkFSqxan4Fw3XR
-         irWsI13n6DpYwduP+h26Xok1ceAjpGchb6Je3YL4hPNai10lt53USYgrlvijMPMhE/tx
-         ypbDNtgRuotmiGbwWOmuABpHX1JBQMk3nc2ZXMGCke2gYt46UG4nqIQSsy2Q9pDL8YmW
-         /qKdzqobktJQPidLQ/lh7VwC0UpJhiWOWD2abFAri/N4uCsFCk68ukGOVadLe16wQpjq
-         pf1YETrBNFIPYC70xkg8ShUrfbn862kY4fqUwonT6e+qi5u4xdC3ZteK9s38LGLMyDQh
-         yvew==
-X-Gm-Message-State: ABuFfoih2tMogThpR2tSmiup7cZnzGCBiY5fsPVDPmFB6gBLpvLKYCcw
-        Due0BXzwCMNfvW23VbInHBk67zEYiOI=
-X-Google-Smtp-Source: ACcGV61yVZ8yyau0lRcnR9slheUlnPyf869grRtlBeb+lFkctgjXenQxYUhh2j1v0rgMrQK/SO1STg==
-X-Received: by 2002:adf:e752:: with SMTP id c18-v6mr372378wrn.143.1538172806068;
-        Fri, 28 Sep 2018 15:13:26 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8bc0:ba00:74d6:1665:45bd:df46? (p200300EA8BC0BA0074D6166545BDDF46.dip0.t-ipconnect.de. [2003:ea:8bc0:ba00:74d6:1665:45bd:df46])
-        by smtp.googlemail.com with ESMTPSA id l8-v6sm6900760wrs.63.2018.09.28.15.13.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 15:13:25 -0700 (PDT)
-Subject: Re: R8169: Network lockups in 4.18.{8,9,10} (and 4.19 dev)
-To:     Chris Clayton <chris2553@googlemail.com>,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Azat Khuzhin <a3at.mail@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <54d8d7e9-a80d-dc2b-5628-22f9dc14e2ee@maciej.szmigiero.name>
- <535f42c7-6c3b-8e5a-49de-5dc975879b21@googlemail.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <98680351-5123-761f-982a-726098da9716@gmail.com>
-Date:   Sat, 29 Sep 2018 00:13:19 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=XDMXHnRodwWSz9TFAJayP3GrPM6xRs5hUT2n1VgH2Jk=;
+        b=aYfM+Vr+ClF4zjrEyrVyCBihDqM07gl05qEdMxyGSqJGGzoMg0oUGWOD+4+41cfwZx
+         AP2vrlgn1NipQkaBju1M6OKd1QgWlA/02Hm8k8P7mkwCLupw4r9CJurjWkK4e76SAuXu
+         PFTZsd5sxHx8IwY+dgzOTdFJJGSzh7OAvWu2UzTmLRJCl8a+js2ZzNXoga+uFwlsPu0z
+         brsVzMBfprF1vNVGvZ6zwBqEafpjZEwkigZYgtrc7kvVZ6Q+w2CzwVpd2Y00gft1N408
+         839TeoP8ugGjF/kDLaBAIFBtYqDXGj65PcUAhFG1bdgn18DZ+pCduT+Y/puIoL97uNON
+         DGgA==
+X-Gm-Message-State: ABuFfojIj9LYH/nHlR7AczVkjbFthiggcnMjlvhJhfxxbiGyKhGmN1lS
+        Ly2b9CILRRTf02znYBc410h9ZwOo74HTh7E2GBs=
+X-Google-Smtp-Source: ACcGV613yUwTziprZBF45orKDdH3dTp8exyTjfzjuBep+QMour9CQy0kZGjN0JqmEW8gwapMCPPGm3DaLo1jp9yZvl0=
+X-Received: by 2002:a50:baae:: with SMTP id x43-v6mr5429482ede.65.1538173015135;
+ Fri, 28 Sep 2018 15:16:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <535f42c7-6c3b-8e5a-49de-5dc975879b21@googlemail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180927151119.9989-1-tycho@tycho.ws> <686fe047-16e6-3dfc-6284-ed574d97ad2f@gmail.com>
+ <20180928220359.GF18045@cisco.lan>
+In-Reply-To: <20180928220359.GF18045@cisco.lan>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Sat, 29 Sep 2018 00:16:43 +0200
+Message-ID: <CAKgNAkgcHENKrT=n4_YbmxJCOaY2Z+SXJcfuw9j7uOJwgym3Dg@mail.gmail.com>
+Subject: Re: [PATCH v7 0/6] seccomp trap to userspace
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Jann Horn <jannh@google.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.09.2018 00:00, Chris Clayton wrote:
-> Thanks Maciej.
-> 
-> On 28/09/2018 16:54, Maciej S. Szmigiero wrote:
->> Hi,
->>
->>> Hi,
->>>
->>> I upgraded my kernel to 4.18.10 recently and have since been experiencing network problems after resuming from a
->>> suspend to RAM or disk. I previously had 4.18.6 and that was OK.
->>>
->>> The pattern of the problem is that when I first boot, the network is fine. But, after resume from suspend I find that
->>> the time taken for a ping of one of my ISP's nameservers increases from 14-15ms to more than 1000ms. Moreover, when I
->>> open a browser (chromium or firefox), it fails to retrieve my home page (https://www.google.co.uk) and pings of the
->>> nameserver fail with the message "Destination Host Unreachable". Often, I can revive the network by stopping it with
->>> /sbin/if(down,up} but sometimes it is necessary to also remove the r8169 module and load it again.
->>
->> Please have a look at the following thread:
->> https://lkml.org/lkml/2018/9/25/1118
->>
-> 
-> I applied your patch for the 4.18 stable kernels to 4.18.10, but the problem is not solved by it. Similarly, I applied
-> Heiner's patch to the 4.19, but again the problem is not solved.
-> 
-I think we talk about two different issues here. The one the fix is for has no link to suspend/resume.
+Hi Tycho,
 
-Chris, the lspci output doesn't provide enough detail to determine the exact chip version.
-Can you provide the dmesg part with the XID?
-According to your lspci output neither MSI nor MSI-X is active.
-Do you have to use nomsi for whatever reason?
+On Sat, 29 Sep 2018 at 00:04, Tycho Andersen <tycho@tycho.ws> wrote:
+>
+> On Fri, Sep 28, 2018 at 11:57:40PM +0200, Michael Kerrisk (man-opages) wrote:
+> > Hi Tycho,
+> >
+> > On 09/27/2018 05:11 PM, Tycho Andersen wrote:
+> > > Hi all,
+> > >
+> > > Here's v7 of the seccomp trap to userspace set. There are various minor
+> > > changes and bug fixes, but two major changes:
+> > >
+> > > * We now pass fds to the tracee via an ioctl, and do it immediately when
+> > >    the ioctl is called. For this we needed some help from the vfs, so
+> > >    I've put the one patch in this series and cc'd fsdevel. This does have
+> > >    the advantage that the feature is now totally decoupled from the rest
+> > >    of the set, which is itself useful (thanks Andy!)
+> > >
+> > > * Instead of putting all of the notification related stuff into the
+> > >    struct seccomp_filter, it now lives in its own struct notification,
+> > >    which is pointed to by struct seccomp_filter. This will save a lot of
+> > >    memory (thanks Tyler!)
+> >
+> > Is there a documentation (man page) patch for this API change?
+>
+> Not yet, but once we decide on a final API I'll prepare one.
 
-Heiner
+Honestly, the production of such documentation should be part of the
+evolution towards the final API...
 
->> Maciej
->>
-> Chris
-> 
+Documentation is not an afterthought. It's a tool for pushing you, the
+developer (and others, your reviewers) to more deeply consider your
+design.
 
+Thanks,
+
+Michael
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
