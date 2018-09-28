@@ -2,64 +2,151 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3481C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D0DC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65DCE2073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:25:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65DCE2073F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
+	by mail.kernel.org (Postfix) with ESMTP id 06AC820671
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:26:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06AC820671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbeI2DvV (ORCPT
+        id S1727361AbeI2DwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 23:51:21 -0400
-Received: from mail.ispras.ru ([83.149.199.45]:40028 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726451AbeI2DvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 23:51:21 -0400
-Received: from localhost.localdomain (unknown [85.140.181.162])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 2C6A554006A;
-        Sat, 29 Sep 2018 00:25:43 +0300 (MSK)
-From:   Alexey Khoroshilov <khoroshilov@ispras.ru>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jacob Feder <jacobsfeder@gmail.com>
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: [PATCH] staging: axis-fifo: add error handling of class_create()
-Date:   Sat, 29 Sep 2018 00:25:27 +0300
-Message-Id: <1538169927-26267-1-git-send-email-khoroshilov@ispras.ru>
-X-Mailer: git-send-email 2.7.4
+        Fri, 28 Sep 2018 23:52:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35346 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbeI2DwK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 23:52:10 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D4D44CAB;
+        Fri, 28 Sep 2018 21:26:31 +0000 (UTC)
+Date:   Fri, 28 Sep 2018 14:26:30 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     nixiaoming <nixiaoming@huawei.com>
+Cc:     <jack@suse.cz>, <amir73il@gmail.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Geliang Tang <geliangtang@gmail.com>
+Subject: Re: [PATCH] fix memory leak in ramoops_init
+Message-Id: <20180928142630.f4501105f413f2b5b4772a8b@linux-foundation.org>
+In-Reply-To: <20180917091531.21356-1-nixiaoming@huawei.com>
+References: <20180917091531.21356-1-nixiaoming@huawei.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Found by Linux Driver Verification project (linuxtesting.org).
+On Mon, 17 Sep 2018 17:15:31 +0800 nixiaoming <nixiaoming@huawei.com> wrote:
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> 1, memory leak in ramoops_register_dummy.
+>    dummy_data = kzalloc(sizeof(*dummy_data), GFP_KERNEL);
+>    but no free when platform_device_register_data return fail
+> 
+> 2, if kzalloc(sizeof(*dummy_data), GFP_KERNEL) return NULL,
+>     but platform_driver_register(&ramoops_driver) return 0
+>    kfree(NULL) in ramoops_exit
+> so, add return val for ramoops_register_dummy, and check it in ramoops_init
+> 
+> 3, memory leak in ramoops_init.
+>    miss platform_device_unregister(dummy) and kfree(dummy_data)
+>    when platform_driver_register(&ramoops_driver) return fail
+
+Looks right.
+
+It's unclear (to me) who maintains fs/pstore/ram.c.  Let's add some
+Cc's and see if we can catch a reviewed-by.
+
+
+From: nixiaoming <nixiaoming@huawei.com>
+Subject: fs/pstore/ram.c: fix memory leak in ramoops_init()
+
+1, memory leak in ramoops_register_dummy.
+   dummy_data = kzalloc(sizeof(*dummy_data), GFP_KERNEL);
+   but no free when platform_device_register_data return fail
+
+2, if kzalloc(sizeof(*dummy_data), GFP_KERNEL) return NULL,
+    but platform_driver_register(&ramoops_driver) return 0
+   kfree(NULL) in ramoops_exit
+so, add return val for ramoops_register_dummy, and check it in ramoops_init
+
+3, memory leak in ramoops_init.
+   miss platform_device_unregister(dummy) and kfree(dummy_data)
+   when platform_driver_register(&ramoops_driver) return fail
+
+Link: http://lkml.kernel.org/r/20180917091531.21356-1-nixiaoming@huawei.com
+Signed-off-by: nixiaoming <nixiaoming@huawei.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Geliang Tang <geliangtang@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- drivers/staging/axis-fifo/axis-fifo.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
-index abeee0ecc122..63c8efd1b8db 100644
---- a/drivers/staging/axis-fifo/axis-fifo.c
-+++ b/drivers/staging/axis-fifo/axis-fifo.c
-@@ -1089,6 +1089,8 @@ static int __init axis_fifo_init(void)
- 	pr_info("axis-fifo driver loaded with parameters read_timeout = %i, write_timeout = %i\n",
- 		read_timeout, write_timeout);
- 	axis_fifo_driver_class = class_create(THIS_MODULE, DRIVER_NAME);
-+	if (IS_ERR(axis_fifo_driver_class))
-+		return PTR_ERR(axis_fifo_driver_class);
- 	return platform_driver_register(&axis_fifo_driver);
+ fs/pstore/ram.c |   22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+--- a/fs/pstore/ram.c~fix-memory-leak-in-ramoops_init
++++ a/fs/pstore/ram.c
+@@ -898,17 +898,17 @@ static struct platform_driver ramoops_dr
+ 	},
+ };
+ 
+-static void ramoops_register_dummy(void)
++static int ramoops_register_dummy(void)
+ {
+ 	if (!mem_size)
+-		return;
++		return -EINVAL;
+ 
+ 	pr_info("using module parameters\n");
+ 
+ 	dummy_data = kzalloc(sizeof(*dummy_data), GFP_KERNEL);
+ 	if (!dummy_data) {
+ 		pr_info("could not allocate pdata\n");
+-		return;
++		return -ENOMEM;
+ 	}
+ 
+ 	dummy_data->mem_size = mem_size;
+@@ -932,13 +932,25 @@ static void ramoops_register_dummy(void)
+ 	if (IS_ERR(dummy)) {
+ 		pr_info("could not create platform device: %ld\n",
+ 			PTR_ERR(dummy));
++		kfree(dummy_data);
++		return PTR_ERR(dummy);
+ 	}
++	return 0;
  }
  
--- 
-2.7.4
+ static int __init ramoops_init(void)
+ {
+-	ramoops_register_dummy();
+-	return platform_driver_register(&ramoops_driver);
++	int ret = ramoops_register_dummy();
++
++	if (ret != 0)
++		return ret;
++
++	ret = platform_driver_register(&ramoops_driver);
++	if (ret != 0) {
++		platform_device_unregister(dummy);
++		kfree(dummy_data);
++	}
++	return ret;
+ }
+ late_initcall(ramoops_init);
+ 
+_
 
