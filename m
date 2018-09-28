@@ -2,77 +2,116 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A27CC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB186C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CF6D206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:04:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EA5F206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:04:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n9jZaIOu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CF6D206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VzWhVyXB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA5F206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbeI2FaV (ORCPT
+        id S1727500AbeI2Fae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 01:30:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42458 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbeI2FaU (ORCPT
+        Sat, 29 Sep 2018 01:30:34 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:33049 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbeI2Fae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:30:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WsTzXtg5q47SXmHc///IwX9bC/jq6sNprPFeTCQQOI4=; b=n9jZaIOuKt0ASk67lpscIhHLN
-        48hqbSL5+tulZooRD87x0GYp1sa0EDXYNsU/o7sT642WBDScO41PgnfwIBsWw/oIztHLmNB+mZGGa
-        9b9yBvgt23vMPOhigVurZ3d80m4p2fYIchnX+s0bEbxyAnsURKrmbuxJIEo3XX3GoeIphrv5JimW7
-        LgIK54jINFyBdU3+/HEmPjIAg9OfvOpINLyORpTh2ZJ5ave6jx0b7tZl7Tjbla8wQ3SvaB+B5E3Fx
-        3cyxiRcpPGMD5lA/ZB4mCL8tZU+bstWx5U5JwO35U3KtyxnRjy9dbwwC06oMigz4DAKqttS7PA8tB
-        ESZ0+k+7Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g61o0-00083U-NV; Fri, 28 Sep 2018 23:04:16 +0000
-Date:   Fri, 28 Sep 2018 16:04:16 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>
-Subject: Re: [PATCH v2 2/2] scsi: ufs: Execute START_STOP_UNIT during init
-Message-ID: <20180928230416.GA30772@infradead.org>
-References: <20180928230203.905-1-evgreen@chromium.org>
- <20180928230203.905-3-evgreen@chromium.org>
+        Sat, 29 Sep 2018 01:30:34 -0400
+Received: by mail-it1-f196.google.com with SMTP id h6-v6so1309386ith.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 16:04:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GWbnhXNs5XF/W3I2IPiSaq6qUYesoeDpj10rrKjDVak=;
+        b=VzWhVyXB/+gk5lL/rxDJVHpfmFsyTR+PvbW6pFh+6xji9CeY2xp8Dp7GP+cyFOfApF
+         5aCOYX2ohrKP8g+lyHtxXjimZrRNo8a759/HA1Rx+vOpVzh3ZPW1zPHkW9dpvmcFJHjK
+         wL/w9Wi/t7F8Q7gXqmOqZg7nMK7UdBfEUajrSQRgNbOg0Rk97fFAvTjRo5yQthrWMrhZ
+         xosWo5U+ua5abGucrTjUgCC+8gfAmUjrRGSpoEON5tcfC1ltcj4N/Yryz6iziwDaZzUU
+         G+ygVv66HI5b6iRfJSYBy70mC0Qfffp0GEBOAvmwJSP2gycbxAEDbv/3SDZmY+XDHPu5
+         EADA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GWbnhXNs5XF/W3I2IPiSaq6qUYesoeDpj10rrKjDVak=;
+        b=dg6+KeM8j6I4CGjA9SITKlcIRY1ZAmTBWentlxzIQCQhmOujjGBLQ+FuS9Aehb+RY8
+         PRjRLvEzcO7i/r5lNMkhh9c+glWHnszznRxQS/HTfHNPOk5QjQ22IWWlOzuo0rdAYjv/
+         QzQnlrjjhdU/ByQLEniChVqzUQSQPbTPTZLwqCFsxNhBeEVYggkTRFw/yy6IvTwXrr0b
+         Rs/SOXhTBAccnTWJUUlSiWCjzibK8rj8zb+NBqCziodpskg/OAo9fC9bS6iJkINwT8hg
+         /5+zGbKzikRI0RtXRXOOgUJIXp9BWNwuyY7W1393aIknA2T+wH6O5MGn2oka3YVs/OtZ
+         AqwA==
+X-Gm-Message-State: ABuFfohy4ei4EEQB1XqZW5Tz5byjS6XtXsiAHHx27z00WHBWo7dmXDew
+        uDdK7csPGnV4jEXbGc6fwFKLiQ==
+X-Google-Smtp-Source: ACcGV63PRpRcC0yAoTCJu6eSxsoo3xN/CgYTs5qKUsxqi71qogGKC/NgcS8yyVW1KDKliDvR9mNG8A==
+X-Received: by 2002:a24:3095:: with SMTP id q143-v6mr3278033itq.73.1538175875203;
+        Fri, 28 Sep 2018 16:04:35 -0700 (PDT)
+Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id m186-v6sm1468973itg.29.2018.09.28.16.04.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 16:04:33 -0700 (PDT)
+From:   Yu Zhao <yuzhao@google.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Steve Glendinning <steve.glendinning@shawell.net>
+Cc:     netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
+Subject: [PATCH] net/usb: cancel pending work when unbinding smsc75xx
+Date:   Fri, 28 Sep 2018 17:04:30 -0600
+Message-Id: <20180928230430.125003-1-yuzhao@google.com>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928230203.905-3-evgreen@chromium.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 04:02:03PM -0700, Evan Green wrote:
-> For UFS devices that are provisioned to have an initial power mode
-> (bInitPowerMode) of "sleep", Linux will currently fail to enumerate
-> the device. This is because the UFS specification says that the
-> device must get a START_STOP_UNIT SCSI command to wake the unit
-> up before other common initialization features like the device
-> descriptor will be available to be read.
+Cancel pending work before freeing smsc75xx private data structure
+during binding. This fixes the following crash in the driver:
 
-Yikes, this is just completely broken in terms of scsi compliance.
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000050
+IP: mutex_lock+0x2b/0x3f
+<snipped>
+Workqueue: events smsc75xx_deferred_multicast_write [smsc75xx]
+task: ffff8caa83e85700 task.stack: ffff948b80518000
+RIP: 0010:mutex_lock+0x2b/0x3f
+<snipped>
+Call Trace:
+ smsc75xx_deferred_multicast_write+0x40/0x1af [smsc75xx]
+ process_one_work+0x18d/0x2fc
+ worker_thread+0x1a2/0x269
+ ? pr_cont_work+0x58/0x58
+ kthread+0xfa/0x10a
+ ? pr_cont_work+0x58/0x58
+ ? rcu_read_unlock_sched_notrace+0x48/0x48
+ ret_from_fork+0x22/0x40
 
-I think we should simply not support such devices.
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+---
+ drivers/net/usb/smsc75xx.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/usb/smsc75xx.c b/drivers/net/usb/smsc75xx.c
+index 05553d252446..b64b1ee56d2d 100644
+--- a/drivers/net/usb/smsc75xx.c
++++ b/drivers/net/usb/smsc75xx.c
+@@ -1517,6 +1517,7 @@ static void smsc75xx_unbind(struct usbnet *dev, struct usb_interface *intf)
+ {
+ 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
+ 	if (pdata) {
++		cancel_work_sync(&pdata->set_multicast);
+ 		netif_dbg(dev, ifdown, dev->net, "free pdata\n");
+ 		kfree(pdata);
+ 		pdata = NULL;
+-- 
+2.19.0.605.g01d371f741-goog
+
