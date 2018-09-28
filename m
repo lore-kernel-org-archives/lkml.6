@@ -2,102 +2,86 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BDBC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C886CC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46AF62172C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:33:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hm9uRb81"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46AF62172C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 92C7E2172C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:33:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C7E2172C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729177AbeI1Ozo (ORCPT
+        id S1729205AbeI1Ozp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 28 Sep 2018 10:55:45 -0400
+Received: from mail.us.es ([193.147.175.20]:35168 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726440AbeI1Ozo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 28 Sep 2018 10:55:44 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37012 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728972AbeI1Ozo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 10:55:44 -0400
-Received: by mail-it1-f195.google.com with SMTP id m9-v6so1690580ita.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 01:33:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=F12Ux4nSgmprBmPIu8auOTbDDa3Ai8e/lVLdV13qhXM=;
-        b=hm9uRb81HgnrMbMkjiZfNwqfwQiURguPC0oeEOpncLNk39/J6haYPCerxqMmXVDv+i
-         pSr3B3B6zwXpCWnh6RnCk4KzOxlqRWJiA8+xL+nAKqZ29Q6z14DddhKKBw5Yz/6HHsUf
-         dVaA89C7BHQKnnVYeUhx3ha8koZyyZTBh33ldDDGyCPvhuAzvl1hAekAvh6dIwSXmphQ
-         KEJy1wCVqJ0KnYfv/q0VLBWQurpIkBFTITpvmFD6LcECGSQzx00SPczS/+pX6KqXsTNZ
-         uTz7s/NhNh96SCuuNAwSEmOvvE6FgP/tAvH2KLw9DX/c7oHLdh1oSMXQhSCbDLz1V5ck
-         hYAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=F12Ux4nSgmprBmPIu8auOTbDDa3Ai8e/lVLdV13qhXM=;
-        b=IGB5geKjnQgXQ10ridmqWmmJYLM+xExFAPonR1thWb7YPcrg7hN8OSQdA5wCAzKq0T
-         qTPA3HFAc1NrL9pmcc+3CoeN5NyjNK7Ow3YVTGW86PuKd1X3q0ymNiauWUQ9W9YwkJlA
-         jwsu2fQ6kD1eKGcCEhauWR7ehIxauyG3gKOZl9VSrEO3o/mWL8ZtbzJMT3/9a30ZVvMG
-         Ilqt48imE7P6545+INnWhPm50Wfuh3zPTNyN5dAhhnnbXmyWsUKfjRCbT76Yp4uNu+WM
-         FFfX5DIcIGr46otGPdKFeyCt7g2ZaijedzJPXtcG1a+SfZ/UWYX3ILfl6Zm05xURYbUy
-         /hUA==
-X-Gm-Message-State: ABuFfogpu1+Lgw/rKM8Jfo/RIfLE7buXsx/9oAXUMPmF4+7X9hgHE7KI
-        Vc+vlf2+fzGhp1D/VItDzqNgwK5/0/uizX1bF0knBhHw
-X-Google-Smtp-Source: ACcGV63imqvnqeEMqDmC2XfVZXwPV7cqY0TjiP5n1CMGe5Se96olWXaTr51OeN92K8cUit+KPn00xZgNjZyRznk7SYU=
-X-Received: by 2002:a24:9343:: with SMTP id y64-v6mr852537itd.33.1538123585897;
- Fri, 28 Sep 2018 01:33:05 -0700 (PDT)
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id 58D726231E
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:33:03 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 465A2DA8F6
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:33:03 +0200 (CEST)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 363C3DA87E; Fri, 28 Sep 2018 10:33:03 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 5E95ADA73F;
+        Fri, 28 Sep 2018 10:33:01 +0200 (CEST)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Fri, 28 Sep 2018 10:33:01 +0200 (CEST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (sys.soleta.eu [212.170.55.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id 23B984265A5D;
+        Fri, 28 Sep 2018 10:33:01 +0200 (CEST)
+Date:   Fri, 28 Sep 2018 10:33:00 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Flavio Leitner <fbl@redhat.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: check if the socket netns is correct.
+Message-ID: <20180928083300.q6xz2vbibm7jipws@salvia>
+References: <20180927204629.GA4680@roeck-us.net>
+ <20180927225824.GT2702@plex.lan>
 MIME-Version: 1.0
-Received: by 2002:a02:978e:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 01:33:05
- -0700 (PDT)
-From:   Uros Bizjak <ubizjak@gmail.com>
-Date:   Fri, 28 Sep 2018 10:33:05 +0200
-Message-ID: <CAFULd4YdvwwhXWHqqPsGk5+TLG71ozgSscTZNsqmrm+Jzg941w@mail.gmail.com>
-Subject: [PATCH resend] x86, asm: Use CC_SET()/CC_OUT() for __cmpxchg_double
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927225824.GT2702@plex.lan>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove open-coded uses of set instructions to use CC_SET()/CC_OUT()
-for __cmpxchg_double.
+On Thu, Sep 27, 2018 at 07:58:24PM -0300, Flavio Leitner wrote:
+[...]
+> From a5f927e7f1368d753f87cb978d630d786d5adb62 Mon Sep 17 00:00:00 2001
+> From: Flavio Leitner <fbl@redhat.com>
+> Date: Thu, 27 Sep 2018 19:36:28 -0300
+> Subject: [PATCH] xt_socket: check sk before checking for netns.
+> 
+> Only check for the network namespace if the socket is available.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
----
- arch/x86/include/asm/cmpxchg.h | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Applied.
 
-diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
-index a55d79b233d3..bfb85e5844ab 100644
---- a/arch/x86/include/asm/cmpxchg.h
-+++ b/arch/x86/include/asm/cmpxchg.h
-@@ -242,10 +242,12 @@ extern void __add_wrong_size(void)
-        BUILD_BUG_ON(sizeof(*(p2)) != sizeof(long));                    \
-        VM_BUG_ON((unsigned long)(p1) % (2 * sizeof(long)));            \
-        VM_BUG_ON((unsigned long)((p1) + 1) != (unsigned long)(p2));    \
--       asm volatile(pfx "cmpxchg%c4b %2; sete %0"                      \
--                    : "=a" (__ret), "+d" (__old2),                     \
--                      "+m" (*(p1)), "+m" (*(p2))                       \
--                    : "i" (2 * sizeof(long)), "a" (__old1),            \
-+       asm volatile(pfx "cmpxchg%c5b %1"                               \
-+                    CC_SET(e)                                          \
-+                    : CC_OUT(e) (__ret),                               \
-+                      "+m" (*(p1)), "+m" (*(p2)),                      \
-+                      "+a" (__old1), "+d" (__old2)                     \
-+                    : "i" (2 * sizeof(long)),                          \
-                       "b" (__new1), "c" (__new2));                     \
-        __ret;                                                          \
- })
---
-2.17.1
+Please, Cc netfilter-devel@vger.kernel.org next time for your
+netfilter patches.
+
+Thanks.
