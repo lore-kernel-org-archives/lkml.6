@@ -2,122 +2,101 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE7CC64E93
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F8BC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B29A22073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:06:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42F21206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:10:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TH7Iq+uO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B29A22073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bL5Wx30M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42F21206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbeI2FcS (ORCPT
+        id S1727319AbeI2FgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 01:32:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726804AbeI2FcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:32:18 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0C17206B2;
-        Fri, 28 Sep 2018 23:06:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538175978;
-        bh=CyRSco7B+Z2g5xRJzIoEoSRiG6gj0ciuXLVIiseL/a4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TH7Iq+uOFEUAJPzOnXYq0uMWX73uHSP5B7ni1tEtobk0bQObPmG0TI++WDOLWnwnz
-         vJDByg5v/dG/MTbivs96xy4hPrjjI/Hp9qQXBF/gtHnmlVMdqGRQfeHRjXPBsXqc8l
-         GfIWi9BqcFLfVK/NYtHHdomHtj+xSI6q/RJzPxJ8=
-Date:   Fri, 28 Sep 2018 18:06:17 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>, linux-pci@vger.kernel.org
-Subject: Re: Bad MAINTAINERS pattern in section 'ACPI'
-Message-ID: <20180928230616.GA150287@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180928215054.28561-1-joe@perches.com>
+        Sat, 29 Sep 2018 01:36:08 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36984 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726517AbeI2FgI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 01:36:08 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v9-v6so7311264ljk.4
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 16:10:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4U7qXeMnCTJ8U6WDyWaq2/3eUrFOrRe91R90RiauHuw=;
+        b=bL5Wx30MErTLw+ELnhmXqlVsuC8XkjqI/FqWOYo89jvoz1kD9xRqesvDxG8t5gXITP
+         zhVJjUtOMRHHrXoj7lN8UvhiZOwgNUV6fQdQh815e9N73KIZ1UoTDEsN+Mte94zNsCkZ
+         EegwIv9om72cOx4k9dmBdIFvjO3kFFwwUjZ4Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4U7qXeMnCTJ8U6WDyWaq2/3eUrFOrRe91R90RiauHuw=;
+        b=qpLMPJ7qSYv7yLt23Vj0nFamRQ89TBXFO1U2YC5XF+fclUYu6RC0KIuBCHlTX8W4zK
+         lxzZpUs5rQZI9iiuZRqkKpk/UjmHA8bJpiCxBfq7cr7hQWJ2HZAMqXRdWdQD+BSVRGN7
+         q+lQYoIglJyjK1SrSuq0Pb5V+c5M46cyS0S84aFDHPwq5yQDxFlOlDZM33xIWMtuktSX
+         s1yXu2TqgPghNmpcUMPQyeMR1Yw4iYRBDAC/aFVyvCbrVcOcNpUmhqKeg+efud+o791l
+         jdgnzC1vNbWKmY9+GgG5LVqCEQZ+1ncEJ2iaz2OnseCnu/zNRUdDC5r7530QYfUIGjCX
+         8Jww==
+X-Gm-Message-State: ABuFfoiaT+WFz2dhwOOX/J48PMno2Rawgx35n1S7g8cW+I2nYd/s6NFY
+        XVUMvwagWY018t5LjO+DZYOndbFiwyY=
+X-Google-Smtp-Source: ACcGV62lmV6e7IsWViaTYCuPfTkSV3EweZC2SC6/UmXvgez0oURwwuwrrdPjRQ+nIsSxohcaKuGa6g==
+X-Received: by 2002:a2e:7017:: with SMTP id l23-v6mr384198ljc.160.1538176207362;
+        Fri, 28 Sep 2018 16:10:07 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id b62-v6sm1251837ljf.7.2018.09.28.16.10.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 16:10:06 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id u21-v6so245893lja.8
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 16:10:05 -0700 (PDT)
+X-Received: by 2002:a2e:7c18:: with SMTP id x24-v6mr418811ljc.174.1538176204601;
+ Fri, 28 Sep 2018 16:10:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928215054.28561-1-joe@perches.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180928230203.905-1-evgreen@chromium.org> <20180928230203.905-3-evgreen@chromium.org>
+ <20180928230416.GA30772@infradead.org>
+In-Reply-To: <20180928230416.GA30772@infradead.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Fri, 28 Sep 2018 16:09:28 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4iB_iHfZ10vtty1aC6BAevT_zGLd0Yh3P8=Cpg4pymew@mail.gmail.com>
+Message-ID: <CAE=gft4iB_iHfZ10vtty1aC6BAevT_zGLd0Yh3P8=Cpg4pymew@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] scsi: ufs: Execute START_STOP_UNIT during init
+To:     hch@infradead.org
+Cc:     Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        adrian.hunter@intel.com, stanislav.nijnikov@wdc.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Tony, Borislav (ACPI APEI reviewers), linux-pci]
+On Fri, Sep 28, 2018 at 4:04 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Fri, Sep 28, 2018 at 04:02:03PM -0700, Evan Green wrote:
+> > For UFS devices that are provisioned to have an initial power mode
+> > (bInitPowerMode) of "sleep", Linux will currently fail to enumerate
+> > the device. This is because the UFS specification says that the
+> > device must get a START_STOP_UNIT SCSI command to wake the unit
+> > up before other common initialization features like the device
+> > descriptor will be available to be read.
+>
+> Yikes, this is just completely broken in terms of scsi compliance.
+>
+> I think we should simply not support such devices.
 
-On Fri, Sep 28, 2018 at 02:50:53PM -0700, Joe Perches wrote:
-> Please fix this defect appropriately.
-> 
-> linux-next MAINTAINERS section:
-> 
-> 	308	ACPI
-> 	309	M:	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-> 	310	M:	Len Brown <lenb@kernel.org>
-> 	311	L:	linux-acpi@vger.kernel.org
-> 	312	W:	https://01.org/linux-acpi
-> 	313	Q:	https://patchwork.kernel.org/project/linux-acpi/list/
-> 	314	T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-> 	315	B:	https://bugzilla.kernel.org
-> 	316	S:	Supported
-> 	317	F:	drivers/acpi/
-> 	318	F:	drivers/pnp/pnpacpi/
-> 	319	F:	include/linux/acpi.h
-> 	320	F:	include/linux/fwnode.h
-> 	321	F:	include/acpi/
-> 	322	F:	Documentation/acpi/
-> 	323	F:	Documentation/ABI/testing/sysfs-bus-acpi
-> 	324	F:	Documentation/ABI/testing/configfs-acpi
-> 	325	F:	drivers/pci/*acpi*
-> 	326	F:	drivers/pci/*/*acpi*
-> -->	327	F:	drivers/pci/*/*/*acpi*
-> 	328	F:	tools/power/acpi/
-
-My proposal to fix this:
-
-commit a99051c0d3c59fd259fd76a8bbd9837b76b509d9
-Author: Bjorn Helgaas <bhelgaas@google.com>
-Date:   Fri Sep 28 17:34:21 2018 -0500
-
-    MAINTAINERS: Remove obsolete drivers/pci pattern from ACPI section
-    
-    Prior to 256a45937093 ("PCI/AER: Squash aerdrv_acpi.c into aerdrv.c"),
-    drivers/pci/pcie/aer/aerdrv_acpi.c contained code to parse the ACPI HEST
-    table.  That code now lives in drivers/pci/pcie/aer.c.
-    
-    Remove the "F: drivers/pci/*/*/*acpi*" pattern because it matches nothing.
-    
-    We could add a "F: drivers/pci/pcie/aer.c" pattern to the ACPI APEI
-    section, but that file sees a lot of changes, almost none of which are of
-    interest to the ACPI folks.
-    
-    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 700408b7bc53..9babd8a0406b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -324,7 +324,6 @@ F:	Documentation/ABI/testing/sysfs-bus-acpi
- F:	Documentation/ABI/testing/configfs-acpi
- F:	drivers/pci/*acpi*
- F:	drivers/pci/*/*acpi*
--F:	drivers/pci/*/*/*acpi*
- F:	tools/power/acpi/
- 
- ACPI APEI
+Really? It's part of the UFS spec. The document I have specifies that
+I shouldn't reproduce without permission, but it's in JESD220A section
+7.2.4 UFS-Sleep Power Mode.
+-Evan
