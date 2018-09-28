@@ -2,119 +2,158 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E1AC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA01C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09142206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:01:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09142206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 8280F20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:04:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nio365.onmicrosoft.com header.i=@nio365.onmicrosoft.com header.b="kg/8vknE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8280F20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ni.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeI2D0h (ORCPT
+        id S1727244AbeI2D34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 23:26:37 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41800 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbeI2D0h (ORCPT
+        Fri, 28 Sep 2018 23:29:56 -0400
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:53696 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726496AbeI2D34 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 23:26:37 -0400
-Received: by mail-oi1-f193.google.com with SMTP id l197-v6so6576872oib.8;
-        Fri, 28 Sep 2018 14:01:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lRsq3w2R+gURnajoQ19rTCU7wGm92qa64p4LIPgdLd8=;
-        b=HNpejmcpC9waWFo/++s4uA5Yy4jJkj+xUSVF8vh8IQg+KStHV4SGE1A0GGwAL6B4JZ
-         nD9fao+XW4eKeYaAO2rd84RmonMHNXIjQU8IDbYEDQsaNcva2pX246IXCLJBhuPeNYpj
-         C4IpRNbBuiDYF0Klxpg5ZkbU0QQKuoblZaqpn1OD38dHZDHgrmxgn7zuO6zSs35t3DUS
-         S2357jGqkSMplGeu9VwsEdwMhwJkC9dPVM3hDgZ7NKDtCJj1JYH5Q+jGTqmLSbzweqxd
-         NM0XgFNGgqygj3Ov/1ulYuKKG/coGC4+7A/clhl6pPQkHJUxQy/dpoA7NaTeLlEzSlM0
-         TKng==
-X-Gm-Message-State: ABuFfojliNvwgTY0yIy5g+/HRh7a0HjPVinNl5KqOponAKNLBbzv75Nj
-        y8nf7c3NOa1Of1F9nDRzprVNBl4He6s=
-X-Google-Smtp-Source: ACcGV63A+dU0U6/Z0BJjTcsEX4ZbIRdiSsUBhJCcojZM9rMaUN+cv4kHkqa8xjo9AlrMuxycQW89IA==
-X-Received: by 2002:aca:3006:: with SMTP id w6-v6mr208450oiw.342.1538168465098;
-        Fri, 28 Sep 2018 14:01:05 -0700 (PDT)
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com. [209.85.210.41])
-        by smtp.gmail.com with ESMTPSA id n1-v6sm2290118ote.37.2018.09.28.14.01.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 14:01:04 -0700 (PDT)
-Received: by mail-ot1-f41.google.com with SMTP id e18-v6so7326335oti.8;
-        Fri, 28 Sep 2018 14:01:04 -0700 (PDT)
-X-Received: by 2002:a9d:1d2a:: with SMTP id m39-v6mr267327otm.168.1538168464035;
- Fri, 28 Sep 2018 14:01:04 -0700 (PDT)
+        Fri, 28 Sep 2018 23:29:56 -0400
+Received: from pps.filterd (m0098781.ppops.net [127.0.0.1])
+        by mx0a-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8SKuAAM031249;
+        Fri, 28 Sep 2018 16:03:53 -0500
+Authentication-Results: ppops.net;
+        dkim=pass header.d=nio365.onmicrosoft.com header.s=selector1-ni-com
+Received: from nam01-sn1-obe.outbound.protection.outlook.com (mail-sn1nam01lp0119.outbound.protection.outlook.com [207.46.163.119])
+        by mx0a-00010702.pphosted.com with ESMTP id 2mqyx8bbvy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 28 Sep 2018 16:03:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=nio365.onmicrosoft.com; s=selector1-ni-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AQszOQENfFXMW4S7wYKbwWeNi6onKWiNOGTF7AHnkzg=;
+ b=kg/8vknEt1X8NISPgcaVJn64i0BctOqmyvb/F9Pp+8htMnIIDsjynrrt//Bdu2ovZjul19Fx9eBYZY0yXbdj/HCma1t9mdMXQDsTFz0Eacle5LDgbiiPWyd1sEZ1ESWgjiEBbKDmsfgbpjcETnZEW/IQO76tAPUGpvgMvx7lwaI=
+Received: from BN6PR04MB0963.namprd04.prod.outlook.com (10.174.233.163) by
+ BN6PR04MB1237.namprd04.prod.outlook.com (10.174.94.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.25; Fri, 28 Sep 2018 21:03:52 +0000
+Received: from BN6PR04MB0963.namprd04.prod.outlook.com
+ ([fe80::351f:554:dbf4:f988]) by BN6PR04MB0963.namprd04.prod.outlook.com
+ ([fe80::351f:554:dbf4:f988%2]) with mapi id 15.20.1185.022; Fri, 28 Sep 2018
+ 21:03:52 +0000
+From:   Julia Cartwright <julia@ni.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Tim Sander <tim@krieglstein.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH RT 2/2] watchdog, rt: prevent deferral of watchdogd wakeup
+Thread-Topic: [PATCH RT 2/2] watchdog, rt: prevent deferral of watchdogd
+ wakeup
+Thread-Index: AQHUV27Clo0p39J5tkqdZEnvx9ujKA==
+Date:   Fri, 28 Sep 2018 21:03:51 +0000
+Message-ID: <0e02d8327aeca344096c246713033887bc490dd7.1538089180.git.julia@ni.com>
+References: <cover.1538089179.git.julia@ni.com>
+In-Reply-To: <cover.1538089179.git.julia@ni.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CY4PR04CA0080.namprd04.prod.outlook.com
+ (2603:10b6:910:4f::45) To BN6PR04MB0963.namprd04.prod.outlook.com
+ (2603:10b6:405:43::35)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [130.164.62.116]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR04MB1237;6:zhCDEfO0r3MH1ChFx+D2VoUhhy7+4nWh4CQ+N8frcZi69Q8YKB2vxrV+9l264S7Szfc8xs2+x0xpjfGToPoh7O5ZHXjhEtzAyAo3QWD/4E4PI3jPkc63El++aYHZugp0nN7L9TB/Ye8Dp6/kdk8DkehzyLmJqWd00kf3mBLuXlUy1vIOiorcBU7eltXERze5viaYxUaMbWr7j+WahDmVd6WR5LUfhIeghoTT5qybs5CTSfngzbyNR42iVDTLqQYUOsJm9A7i9d0BGdUKx9w+fVNo6dDOqzeTnAYHPXhzFYeiIicFlLWFeJUSTQuPzKtIxbbH50fOBxRbh+VuQPCJ7WROkVm5Z1zpfxSwUt3XnRc0ml0wwpb6L4mx8HSO9GsCULt7cIB0ZJVMdE93gKFB+Z4Verg3o9K21pW8GL7+6yhRmrwMilqEjhCzrb1vMbvS5jEZmY4M0TFKVZpqwziJug==;5:dyLlKXImpcp3XEBR2skJFVBvDPmv+ya8nxN0tS8hJz1Mf82sDNYJXM+gNx62pSMwfxnnZ5COkGgwfNIhLhGFsAAa3fY38zX3u5Ux1bV1LWA++1Jr2pBugJklR+/2SbKvZJNjSFYccW97eB2ws+2Ne22IKhvrh4zu9RtWkls28k8=;7:6mnkEHegMl2A/cNxEiIbOoOWIU6GPR2EJ4AaM5SetqCLEeTAcn0YHjmm1DDhYrHs7z9U4qxNW7ozTk1lfIm5o5Ox6tF+ZDgC35EDFpGHvDOr18XHPq2oe5dalLkb+5h4b7V90pegkJCE24fizjNt7ZK/oDYpXsp/4YBZD4qCFzSsKGu4A8h8FmvD6qroo+gAGsmsZ1ZBgK+O8RTXcKIPOXWJP5GzKKR27C5Qt7QOoflBu/iTdQNEIeqLwd2ihGXB
+x-ms-office365-filtering-correlation-id: 8c053b31-b1b8-4780-d914-08d62585e497
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR04MB1237;
+x-ms-traffictypediagnostic: BN6PR04MB1237:
+x-microsoft-antispam-prvs: <BN6PR04MB12379AFC760BEF4FAA8D38A3F4EC0@BN6PR04MB1237.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(145744241990776);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(944501410)(52105095)(93006095)(93001095)(149066)(150057)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051);SRVR:BN6PR04MB1237;BCL:0;PCL:0;RULEID:;SRVR:BN6PR04MB1237;
+x-forefront-prvs: 0809C12563
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(366004)(396003)(376002)(346002)(189003)(199004)(186003)(102836004)(26005)(486006)(66066001)(476003)(11346002)(2616005)(105586002)(118296001)(256004)(14444005)(106356001)(81166006)(71190400001)(71200400001)(446003)(76176011)(5660300001)(99286004)(68736007)(6486002)(8936002)(81156014)(8676002)(6436002)(316002)(52116002)(305945005)(7736002)(54906003)(25786009)(110136005)(4326008)(5250100002)(97736004)(2900100001)(14454004)(6116002)(386003)(2906002)(3846002)(53936002)(6506007)(478600001)(6512007)(36756003)(34290500001);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR04MB1237;H:BN6PR04MB0963.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: ni.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 32BjF4EOBjb+NyYNlfkVOfplvCU64gcpxzENkkINIfr+dWH89WVXykEYqYC0hK56xHDaB/C8WD9WAhJhrODRMmqT+KR7DAqzrA3Jys0C/MyFtlXI9eK3ZJyjzh7auhH7HUD78PKd23T5mA42FOuLekhE/888h0ZGQdgmiL/qk8bPDg+G6PwV2oC6IPztfFq3TKDcLrvqc8m+pM5FwWcphBZyyAK2qntdv/AcYI9RpvLH71JMZCjSmE2BIbkHYa1MVVuD8+WwPchMY0jB76FWwgn2j+A6flSrvMwwtf+0wECMUL2pi5223wmK3DxE6c/UC6u0eVwwBqOuiNy1uEw1ujP4kx0TA+KLEFhRE1ohEPI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <CADRPPNT0QiBkJtJnxjW95Yf-mirL5OzRrvqj8rC-O8fiz17VnA@mail.gmail.com>
- <CAL_JsqKRH8uEzSx6H6ZSRJF9Ecp4am1cNsxgQqf2OO5_aGR1zw@mail.gmail.com>
-In-Reply-To: <CAL_JsqKRH8uEzSx6H6ZSRJF9Ecp4am1cNsxgQqf2OO5_aGR1zw@mail.gmail.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Fri, 28 Sep 2018 16:00:52 -0500
-X-Gmail-Original-Message-ID: <CADRPPNQam-QUfqDMvu42KS+50VaHfGPhCZj-1jRHQ-Od0fbxuQ@mail.gmail.com>
-Message-ID: <CADRPPNQam-QUfqDMvu42KS+50VaHfGPhCZj-1jRHQ-Od0fbxuQ@mail.gmail.com>
-Subject: Re: drivers binding to device node with multiple compatible strings
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Grant Likely <grant.likely@secretlab.ca>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        frowand.list@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: ni.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c053b31-b1b8-4780-d914-08d62585e497
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Sep 2018 21:03:51.9701
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR04MB1237
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=30 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809280206
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 3:07 PM Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Thu, Sep 27, 2018 at 5:25 PM Li Yang <leoyang.li@nxp.com> wrote:
-> >
-> > Hi Rob and Grant,
-> >
-> > Various device tree specs are recommending to include all the
-> > potential compatible strings in the device node, with the order from
-> > most specific to most general.  But it looks like Linux kernel doesn't
-> > provide a way to bind the device to the most specific driver, however,
-> > the first registered compatible driver will be bound.
-> >
-> > As more and more generic drivers are added to the Linux kernel, they
-> > are competing with the more specific vendor drivers and causes problem
-> > when both are built into the kernel.  I'm wondering if there is a
-> > generic solution (or in plan) to make the most specific driver bound
-> > to the device.   Or we have to disable the more general driver or
-> > remove the more general compatible string from the device tree?
->
-> It's been a known limitation for a long time. However, in practice it
-> doesn't seem to be a common problem. Perhaps folks just remove the
-> less specific compatible from their DT (though that's not ideal). For
-> most modern bindings, there's so many other resources beyond
-> compatible (clocks, resets, pinctrl, etc.) that there are few generic
-> drivers that can work.
->
-> I guess if we want to fix this, we'd need to have weighted matching in
-> the driver core and unbind drivers when we get a better match. Though
-> it could get messy if the better driver probe fails. Then we've got to
-> rebind to the original driver.
+When PREEMPT_RT_FULL is enabled, all hrtimer expiry functions are
+deferred for execution into the context of ktimersoftd unless otherwise
+annotated.
 
-Probably we can populate the platform devices from device tree after
-the device_init phase?  So that all built-in drivers are already
-registered when the devices are created and we can try find the best
-match in one go?  For more specific loadable modules we probably need
-to unbind from the old driver and bind to the new one.  But I agree
-with you that it could be messy.
+Deferring the expiry of the hrtimer used by the watchdog core, however,
+is a waste, as the callback does nothing but queue a kthread work item
+and wakeup watchdogd.
 
->
-> Do you have a specific case where you hit this?
+It's worst then that, too: the deferral through ktimersoftd also means
+that for correct behavior a user must adjust the scheduling parameters
+of both watchdogd _and_ ktimersoftd, which is unnecessary and has other
+side effects (like causing unrelated expiry functions to execute at
+potentially elevated priority).
 
-Maybe not a new issue but "snps,dw-pcie" is competing with various
-"fsl,<chip>-pcie" compatibles.  Also a specific PHY
-"ethernet-phy-idAAAA.BBBB" with generic "ethernet-phy-ieee802.3-c45".
+Instead, mark the hrtimer used by the watchdog core as being _HARD to
+allow it's execution directly from hardirq context.  The work done in
+this expiry function is well-bounded and minimal.
 
-Regards,
-Leo
+A user still must adjust the scheduling parameters of the watchdogd
+to be correct w.r.t. their application needs.
+
+Cc: Guenter Roeck <linux@roeck-us.net>
+Reported-and-tested-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Reported-by: Tim Sander <tim@krieglstein.org>
+Signed-off-by: Julia Cartwright <julia@ni.com>
+---
+ drivers/watchdog/watchdog_dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_de=
+v.c
+index ffbdc4642ea5..9c2b3e5cebdc 100644
+--- a/drivers/watchdog/watchdog_dev.c
++++ b/drivers/watchdog/watchdog_dev.c
+@@ -945,7 +945,7 @@ static int watchdog_cdev_register(struct watchdog_devic=
+e *wdd, dev_t devno)
+ 		return -ENODEV;
+=20
+ 	kthread_init_work(&wd_data->work, watchdog_ping_work);
+-	hrtimer_init(&wd_data->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	hrtimer_init(&wd_data->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+ 	wd_data->timer.function =3D watchdog_timer_expired;
+=20
+ 	if (wdd->id =3D=3D 0) {
+--=20
+2.18.0
+
