@@ -6,43 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57286C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E10C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D135206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D135206B6
+	by mail.kernel.org (Postfix) with ESMTP id 82D012073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D012073F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbeI2E1S (ORCPT
+        id S1727454AbeI2E1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:27:18 -0400
-Received: from smtprelay0149.hostedemail.com ([216.40.44.149]:35026 "EHLO
+        Sat, 29 Sep 2018 00:27:39 -0400
+Received: from smtprelay0237.hostedemail.com ([216.40.44.237]:54590 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726393AbeI2E1S (ORCPT
+        by vger.kernel.org with ESMTP id S1726393AbeI2E1j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:27:18 -0400
+        Sat, 29 Sep 2018 00:27:39 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id C8F02180A814D;
-        Fri, 28 Sep 2018 22:01:33 +0000 (UTC)
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 75EC0837F243;
+        Fri, 28 Sep 2018 22:01:54 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: fog07_d7b890405e5c
-X-Filterd-Recvd-Size: 2948
+X-HE-Tag: birds42_108e3d31b503d
+X-Filterd-Recvd-Size: 1888
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 22:01:32 +0000 (UTC)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 22:01:53 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Willy Tarreau <willy@haproxy.com>,
-        Ksenija Stanojevic <ksenija.stanojevic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Bad MAINTAINERS pattern in section 'PARALLEL LCD/KEYPAD PANEL DRIVER'
-Date:   Fri, 28 Sep 2018 15:01:31 -0700
-Message-Id: <20180928220131.31075-1-joe@perches.com>
+Cc:     Marek Vasut <marek.vasut@gmail.com>, linux-iio@vger.kernel.org
+Subject: Bad MAINTAINERS pattern in section 'RENESAS R-CAR GYROADC DRIVER'
+Date:   Fri, 28 Sep 2018 15:01:52 -0700
+Message-Id: <20180928220152.31151-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -53,56 +49,37 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	11056	PARALLEL LCD/KEYPAD PANEL DRIVER
-	11057	M:	Willy Tarreau <willy@haproxy.com>
-	11058	M:	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
-	11059	S:	Odd Fixes
-	11060	F:	Documentation/auxdisplay/lcd-panel-cgram.txt
--->	11061	F:	drivers/misc/panel.c
+	12496	RENESAS R-CAR GYROADC DRIVER
+	12497	M:	Marek Vasut <marek.vasut@gmail.com>
+	12498	L:	linux-iio@vger.kernel.org
+	12499	S:	Supported
+-->	12500	F:	drivers/iio/adc/rcar_gyro_adc.c
 
 Commit that introduced this:
 
-commit 7683e9e529258d01ce99216ad3be21f59eff83ec
- Author: Linus Torvalds <torvalds@linux-foundation.org>
- Date:   Sun Jul 23 16:06:21 2017 -0700
+commit 059c53b3232960cfd38cc46de0a7bedd642021f5
+ Author: Marek Vasut <marek.vasut+renesas@gmail.com>
+ Date:   Sat Jan 28 00:08:37 2017 +0100
  
-     Properly alphabetize MAINTAINERS file
+     iio: adc: Add Renesas GyroADC driver
      
-     This adds a perl script to actually parse the MAINTAINERS file, clean up
-     some whitespace in it, warn about errors in it, and then properly sort
-     the end result.
+     Add IIO driver for the Renesas RCar GyroADC block. This block is a
+     simple 4/8-channel ADC which samples 12/15/24 bits of data every
+     cycle from all channels.
      
-     My perl-fu is atrocious, so the script has basically been created by
-     randomly putting various characters in a pile, mixing them around, and
-     then looking it the end result does anything interesting when used as a
-     perl script.
-     
-     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+     Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+     Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+     Cc: Simon Horman <horms+renesas@verge.net.au>
+     Cc: Jonathan Cameron <jic23@kernel.org>
+     Cc: linux-renesas-soc@vger.kernel.org
+     Cc: Wolfram Sang <wsa@the-dreams.de>
+     Signed-off-by: Jonathan Cameron <jic23@kernel.org>
  
-  MAINTAINERS                  | 3585 +++++++++++++++++++++---------------------
-  scripts/parse-maintainers.pl |   77 +
-  2 files changed, 1868 insertions(+), 1794 deletions(-)
+  MAINTAINERS                    |   6 +
+  drivers/iio/adc/Kconfig        |  13 +
+  drivers/iio/adc/Makefile       |   1 +
+  drivers/iio/adc/rcar-gyroadc.c | 631 +++++++++++++++++++++++++++++++++++++++++
+  4 files changed, 651 insertions(+)
 
-Last commit with drivers/misc/panel.c
+No commit with drivers/iio/adc/rcar_gyro_adc.c found
 
-commit 51c1e9b554c996284d5d3bd44da829f41a49a21b
-Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date:   Tue Apr 4 20:25:21 2017 +0300
-
-    auxdisplay: Move panel.c to drivers/auxdisplay folder
-    
-    It looks like panel.c belongs to auxdisplay subsystem.
-    
-    Move it to drivers/auxdisplay folder.
-    No functional changes intended.
-    
-    Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-    Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
- drivers/auxdisplay/Kconfig           | 280 +++++++++++++++++++++++++++++++++++
- drivers/auxdisplay/Makefile          |   1 +
- drivers/{misc => auxdisplay}/panel.c |   0
- drivers/misc/Kconfig                 | 280 -----------------------------------
- drivers/misc/Makefile                |   1 -
- 5 files changed, 281 insertions(+), 281 deletions(-)
