@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A8DC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BD3C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63C28206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:55:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C28206B8
+	by mail.kernel.org (Postfix) with ESMTP id 180BB2073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:55:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 180BB2073F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbeI2EVB (ORCPT
+        id S1726829AbeI2EVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:21:01 -0400
-Received: from smtprelay0235.hostedemail.com ([216.40.44.235]:34556 "EHLO
+        Sat, 29 Sep 2018 00:21:39 -0400
+Received: from smtprelay0057.hostedemail.com ([216.40.44.57]:54375 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726287AbeI2EVA (ORCPT
+        by vger.kernel.org with ESMTP id S1726244AbeI2EVj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:21:00 -0400
+        Sat, 29 Sep 2018 00:21:39 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 26339180A812F;
-        Fri, 28 Sep 2018 21:55:18 +0000 (UTC)
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 04A95181D3417;
+        Fri, 28 Sep 2018 21:55:56 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: toys03_686375b16ac0b
-X-Filterd-Recvd-Size: 1871
+X-HE-Tag: jeans02_6de677c0dcd14
+X-Filterd-Recvd-Size: 2885
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 21:55:17 +0000 (UTC)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 21:55:55 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Subject: Bad MAINTAINERS pattern in section 'MAX20751 HARDWARE MONITOR DRIVER'
-Date:   Fri, 28 Sep 2018 14:55:15 -0700
-Message-Id: <20180928215516.30001-1-joe@perches.com>
+Cc:     Boris Pismenny <borisp@mellanox.com>, netdev@vger.kernel.org
+Subject: Bad MAINTAINERS pattern in section 'MELLANOX ETHERNET INNOVA IPSEC DRIVER'
+Date:   Fri, 28 Sep 2018 14:55:53 -0700
+Message-Id: <20180928215553.30079-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,36 +49,53 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	8835	MAX20751 HARDWARE MONITOR DRIVER
-	8836	M:	Guenter Roeck <linux@roeck-us.net>
-	8837	L:	linux-hwmon@vger.kernel.org
-	8838	S:	Maintained
-	8839	F:	Documentation/hwmon/max20751
--->	8840	F:	drivers/hwmon/max20751.c
+	9325	MELLANOX ETHERNET INNOVA IPSEC DRIVER
+	9326	R:	Boris Pismenny <borisp@mellanox.com>
+	9327	L:	netdev@vger.kernel.org
+	9328	S:	Supported
+	9329	W:	http://www.mellanox.com
+	9330	Q:	http://patchwork.ozlabs.org/project/netdev/list/
+-->	9331	F:	drivers/net/ethernet/mellanox/mlx5/core/en_ipsec/*
+	9332	F:	drivers/net/ethernet/mellanox/mlx5/core/ipsec*
 
 Commit that introduced this:
 
-commit 1f61cab8a729e00af77b51b44c3a8dc8ef3b3eb9
- Author: Guenter Roeck <linux@roeck-us.net>
- Date:   Mon Jun 8 11:15:23 2015 -0700
+commit 547eede070eb981f1442e494f08f4567dcf1d1c7
+ Author: Ilan Tayari <ilant@mellanox.com>
+ Date:   Tue Apr 18 16:04:28 2017 +0300
  
-     hwmon: (pmbus) Add support for MAX20751
+     net/mlx5e: IPSec, Innova IPSec offload infrastructure
      
-     MAX20751 is a multiphase power controller with internal buck converter.
-     It uses VR12.0 to report the output voltage. This requires an explicit
-     driver, since the VR version can not be auto-detected.
+     Add Innova IPSec ESP crypto offload configuration paths.
+     Detect Innova IPSec device and set the NETIF_F_HW_ESP flag.
+     Configure Security Associations using the API introduced in a previous
+     patch.
      
-     The chip supports a manufacturer specific command to fine-tune the output
-     voltage.  This command is not currently supported.
+     Add Software-parser hardware descriptor layout
+     Software-Parser (swp) is a hardware feature in ConnectX which allows the
+     host software to specify protocol header offsets in the TX path, thus
+     overriding the hardware parser.
+     This is useful for protocols that the ASIC may not be able to parse on
+     its own.
      
-     Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+     Note that due to inline metadata, XDP is not supported in Innova IPSec.
+     
+     Signed-off-by: Ilan Tayari <ilant@mellanox.com>
+     Signed-off-by: Yossi Kuperman <yossiku@mellanox.com>
+     Signed-off-by: Yevgeny Kliteynik <kliteyn@mellanox.com>
+     Signed-off-by: Boris Pismenny <borisp@mellanox.com>
+     Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
  
-  Documentation/hwmon/max20751   | 77 ++++++++++++++++++++++++++++++++++++++++++
-  MAINTAINERS                    |  7 ++++
-  drivers/hwmon/pmbus/Kconfig    | 10 ++++++
-  drivers/hwmon/pmbus/Makefile   |  1 +
-  drivers/hwmon/pmbus/max20751.c | 64 +++++++++++++++++++++++++++++++++++
-  5 files changed, 159 insertions(+)
+  MAINTAINERS                                        |  10 +
+  drivers/net/ethernet/mellanox/mlx5/core/Kconfig    |  12 +
+  drivers/net/ethernet/mellanox/mlx5/core/Makefile   |   2 +
+  drivers/net/ethernet/mellanox/mlx5/core/en.h       |   3 +
+  .../ethernet/mellanox/mlx5/core/en_accel/ipsec.c   | 415 +++++++++++++++++++++
+  .../ethernet/mellanox/mlx5/core/en_accel/ipsec.h   |  78 ++++
+  drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |  14 +
+  include/linux/mlx5/mlx5_ifc.h                      |   8 +-
+  include/linux/mlx5/qp.h                            |  14 +-
+  9 files changed, 552 insertions(+), 4 deletions(-)
 
-No commit with drivers/hwmon/max20751.c found
+No commit with drivers/net/ethernet/mellanox/mlx5/core/en_ipsec/* found
 
