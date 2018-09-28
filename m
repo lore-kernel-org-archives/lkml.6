@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFCAC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 606BBC004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A69552073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:51:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A69552073F
+	by mail.kernel.org (Postfix) with ESMTP id 2E464206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:51:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E464206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbeI2ERC (ORCPT
+        id S1726814AbeI2ERL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:17:02 -0400
-Received: from smtprelay0210.hostedemail.com ([216.40.44.210]:40487 "EHLO
+        Sat, 29 Sep 2018 00:17:11 -0400
+Received: from smtprelay0021.hostedemail.com ([216.40.44.21]:59422 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726303AbeI2ERC (ORCPT
+        by vger.kernel.org with ESMTP id S1725938AbeI2ERL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:17:02 -0400
+        Sat, 29 Sep 2018 00:17:11 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 68199182CED2A;
-        Fri, 28 Sep 2018 21:51:20 +0000 (UTC)
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id E0140100E86C4;
+        Fri, 28 Sep 2018 21:51:29 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: hill40_45bb6e2f05b3a
-X-Filterd-Recvd-Size: 2107
+X-HE-Tag: smell83_4715ffb24f109
+X-Filterd-Recvd-Size: 3069
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 21:51:19 +0000 (UTC)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 21:51:28 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        openbmc@lists.ozlabs.org
-Subject: Bad MAINTAINERS pattern in section 'ARM/NUVOTON NPCM ARCHITECTURE'
-Date:   Fri, 28 Sep 2018 14:51:17 -0700
-Message-Id: <20180928215117.28711-1-joe@perches.com>
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Kamil Debski <kamil@wypas.org>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        Kukjin Kim <kgene@kernel.org>
+Subject: Bad MAINTAINERS pattern in section 'ARM/SAMSUNG S5P SERIES Multi Format Codec (MFC) SUPPORT'
+Date:   Fri, 28 Sep 2018 14:51:26 -0700
+Message-Id: <20180928215127.28790-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -54,38 +54,57 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	1781	ARM/NUVOTON NPCM ARCHITECTURE
-	1782	M:	Avi Fishman <avifishman70@gmail.com>
-	1783	M:	Tomer Maimon <tmaimon77@gmail.com>
-	1784	R:	Patrick Venture <venture@google.com>
-	1785	R:	Nancy Yuen <yuenn@google.com>
-	1786	R:	Brendan Higgins <brendanhiggins@google.com>
-	1787	L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
-	1788	S:	Supported
-	1789	F:	arch/arm/mach-npcm/
-	1790	F:	arch/arm/boot/dts/nuvoton-npcm*
--->	1791	F:	include/dt-bindings/clock/nuvoton,npcm7xx-clks.h
-	1792	F:	drivers/*/*npcm*
-	1793	F:	Documentation/devicetree/bindings/*/*npcm*
-	1794	F:	Documentation/devicetree/bindings/*/*/*npcm*
+	2009	ARM/SAMSUNG S5P SERIES Multi Format Codec (MFC) SUPPORT
+	2010	M:	Kyungmin Park <kyungmin.park@samsung.com>
+	2011	M:	Kamil Debski <kamil@wypas.org>
+	2012	M:	Jeongtae Park <jtp.park@samsung.com>
+	2013	M:	Andrzej Hajda <a.hajda@samsung.com>
+	2014	L:	linux-arm-kernel@lists.infradead.org
+	2015	L:	linux-media@vger.kernel.org
+	2016	S:	Maintained
+-->	2017	F:	arch/arm/plat-samsung/s5p-dev-mfc.c
+	2018	F:	drivers/media/platform/s5p-mfc/
 
 Commit that introduced this:
 
-commit 6a498e06ba22872d3a27cc0dae77b9314b1de48b
- Author: Brendan Higgins <brendanhiggins@google.com>
- Date:   Thu Aug 17 09:44:32 2017 -0700
+commit 7683e9e529258d01ce99216ad3be21f59eff83ec
+ Author: Linus Torvalds <torvalds@linux-foundation.org>
+ Date:   Sun Jul 23 16:06:21 2017 -0700
  
-     MAINTAINERS: Add entry for the Nuvoton NPCM architecture
+     Properly alphabetize MAINTAINERS file
      
-     Add maintainers and reviewers for the Nuvoton NPCM architecture.
+     This adds a perl script to actually parse the MAINTAINERS file, clean up
+     some whitespace in it, warn about errors in it, and then properly sort
+     the end result.
      
-     Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-     Reviewed-by: Tomer Maimon <tmaimon77@gmail.com>
-     Reviewed-by: Avi Fishman <avifishman70@gmail.com>
-     Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+     My perl-fu is atrocious, so the script has basically been created by
+     randomly putting various characters in a pile, mixing them around, and
+     then looking it the end result does anything interesting when used as a
+     perl script.
+     
+     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
  
-  MAINTAINERS | 14 ++++++++++++++
-  1 file changed, 14 insertions(+)
+  MAINTAINERS                  | 3585 +++++++++++++++++++++---------------------
+  scripts/parse-maintainers.pl |   77 +
+  2 files changed, 1868 insertions(+), 1794 deletions(-)
 
-No commit with include/dt-bindings/clock/nuvoton,npcm7xx-clks.h found
+Last commit with arch/arm/plat-samsung/s5p-dev-mfc.c
 
+commit b93b315d444faa1505b6a5e001c30f3024849e46
+Author: Kukjin Kim <kgene@kernel.org>
+Date:   Thu Jul 30 01:48:17 2015 +0900
+
+    ARM: SAMSUNG: make local s5p-dev-mfc in mach-exynos
+    
+    This patch moves s5p-dev-mfc from plat-samsung into mach-exynos
+    because it is used for only exynos no other platforms.
+    
+    Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+    Signed-off-by: Kukjin Kim <kgene@kernel.org>
+
+ arch/arm/mach-exynos/Kconfig                         | 5 +++++
+ arch/arm/mach-exynos/Makefile                        | 2 ++
+ arch/arm/{plat-samsung => mach-exynos}/s5p-dev-mfc.c | 0
+ arch/arm/plat-samsung/Kconfig                        | 5 -----
+ arch/arm/plat-samsung/Makefile                       | 1 -
+ 5 files changed, 7 insertions(+), 6 deletions(-)
