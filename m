@@ -2,177 +2,135 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11713C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42555C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A92EE2170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:48:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="Hm0bigXg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92EE2170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E3022170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:49:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3022170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbeI1JKV (ORCPT
+        id S1728711AbeI1JK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 05:10:21 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34888 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbeI1JKV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 05:10:21 -0400
-Received: by mail-oi1-f193.google.com with SMTP id m11-v6so4074031oic.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 19:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7zVxyYD2BJDPT96bhHR+Phf4ssRThIcfmrvwv59HVuA=;
-        b=Hm0bigXgFLC7zMH4akhhFXeLRVHXZoKBD4wB8rVcQIxZhlHum2iwiM3Sv4wrnTs50M
-         fMcZevZTNECaOgDA2iJj4w6/Y38th8fay/amSRYXa/9rrod1iWr3Pe+STfl+agJpYv1M
-         wtqC54SIltnRwuCo6BDGIQrU2ApuOjysyzIM5AraTQO6W62JvZ99m8bPV5NUqxeQ35dA
-         wbnwssIVvqu3FGoU+mJuh6ic3gXIwluTwJVNeLNr1JNDmLNB+juJaVydOhZkqArowhGc
-         LM9rbZBnx5J6ukhDRvymSB0UPK4qyCJL6XN46tRd2KAEGcus783cNlWUNOdhr6oa5ewB
-         FKtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7zVxyYD2BJDPT96bhHR+Phf4ssRThIcfmrvwv59HVuA=;
-        b=ZHs2oR1MqLeTibgLJY32ddZZMPQxbRbM+i9NDH8DRYqWncJUD7eFc6GG1cbsc0XHDe
-         PZFSWTax2atVQDUL3A6Frzkq0F9zMZ89Xn7DQCOq5Lm0gqRX+CJFgyfBbMtb45QIL+O6
-         mshEJ1KuHpQ30fcOs2QO/jigLGLDCQnPC8v0p5ARwM9O4botn+q9fvHd4goMgLZWqFfk
-         +5wGqFGqEpR7Xh3ethkX29oboQEkcXMEtokVaYaOprWTHQJ6R/l2N63z7XXaG7t+UHU9
-         Hbg3XHJbT3FQKy4fC0hyZJ4geI5bCa+tNgrQNTUw5N3exTMapQ13dElRQGg9sH/7JXxd
-         PV/A==
-X-Gm-Message-State: ABuFfogSXPE0RdIhIYsaUweH+V1ZFo7i72DbNvUpMJuR5n15fHAPdSBE
-        /EJJW2yW9nelANsLab57eg/GslLHCt68wEn3V0gvoQ==
-X-Google-Smtp-Source: ACcGV638/l55rqN4GqnAESazVLvULRwD5HUHEGBR7oPcb3pbVdY5D3ohVMDpEYfoIM6B61LKuYElD4EYveHsBwmnzq4=
-X-Received: by 2002:aca:e504:: with SMTP id c4-v6mr4244533oih.246.1538102932990;
- Thu, 27 Sep 2018 19:48:52 -0700 (PDT)
+        Fri, 28 Sep 2018 05:10:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52902 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726060AbeI1JK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 05:10:28 -0400
+Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BADD986641;
+        Fri, 28 Sep 2018 02:49:00 +0000 (UTC)
+Received: from localhost (ovpn-8-26.pek2.redhat.com [10.72.8.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0175F3091382;
+        Fri, 28 Sep 2018 02:48:59 +0000 (UTC)
+Date:   Fri, 28 Sep 2018 10:48:57 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] ACPI / NUMA: Add warning message if the padding
+ size for KASLR is not enough
+Message-ID: <20180928024857.GA14470@MiWiFi-R3L-srv>
+References: <20180927203146.12201-1-msys.mizuma@gmail.com>
+ <20180927203146.12201-3-msys.mizuma@gmail.com>
 MIME-Version: 1.0
-References: <20180926214433.13512.30289.stgit@localhost.localdomain>
- <20180926215149.13512.51991.stgit@localhost.localdomain> <CAPcyv4h5U4Fph52H80QodBRXK+PjS6Zw_6qK2+DXtr=qZT7Gzw@mail.gmail.com>
- <021d55fb-9f6a-0b52-3513-e9c5493bd7d7@linux.intel.com>
-In-Reply-To: <021d55fb-9f6a-0b52-3513-e9c5493bd7d7@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 27 Sep 2018 19:48:42 -0700
-Message-ID: <CAPcyv4hQJo9HvCw70p+Qnpcg40x=mOsnLvsd1asGc0GD8EP6Sg@mail.gmail.com>
-Subject: Re: [RFC workqueue/driver-core PATCH 3/5] driver core: Probe devices
- asynchronously instead of the driver
-To:     alexander.h.duyck@linux.intel.com
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Brown, Len" <len.brown@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        jiangshanlai@gmail.com, Pavel Machek <pavel@ucw.cz>,
-        zwisler@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927203146.12201-3-msys.mizuma@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 28 Sep 2018 02:49:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 8:31 AM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
->
->
->
-> On 9/26/2018 5:48 PM, Dan Williams wrote:
-> > On Wed, Sep 26, 2018 at 2:51 PM Alexander Duyck
-> > <alexander.h.duyck@linux.intel.com> wrote:
-> >>
-> >> This change makes it so that we probe devices asynchronously instead of the
-> >> driver. This results in us seeing the same behavior if the device is
-> >> registered before the driver or after. This way we can avoid serializing
-> >> the initialization should the driver not be loaded until after the devices
-> >> have already been added.
-> >>
-> >> The motivation behind this is that if we have a set of devices that
-> >> take a significant amount of time to load we can greatly reduce the time to
-> >> load by processing them in parallel instead of one at a time. In addition,
-> >> each device can exist on a different node so placing a single thread on one
-> >> CPU to initialize all of the devices for a given driver can result in poor
-> >> performance on a system with multiple nodes.
-> >>
-> >> One issue I can see with this patch is that I am using the
-> >> dev_set/get_drvdata functions to store the driver in the device while I am
-> >> waiting on the asynchronous init to complete. For now I am protecting it by
-> >> using the lack of a dev->driver and the device lock.
-> >>
-> >> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > [..]
-> >> @@ -891,6 +914,25 @@ static int __driver_attach(struct device *dev, void *data)
-> >>                  return ret;
-> >>          } /* ret > 0 means positive match */
-> >>
-> >> +       if (driver_allows_async_probing(drv)) {
-> >> +               /*
-> >> +                * Instead of probing the device synchronously we will
-> >> +                * probe it asynchronously to allow for more parallelism.
-> >> +                *
-> >> +                * We only take the device lock here in order to guarantee
-> >> +                * that the dev->driver and driver_data fields are protected
-> >> +                */
-> >> +               dev_dbg(dev, "scheduling asynchronous probe\n");
-> >> +               device_lock(dev);
-> >> +               if (!dev->driver) {
-> >> +                       get_device(dev);
-> >> +                       dev_set_drvdata(dev, drv);
-> >> +                       async_schedule(__driver_attach_async_helper, dev);
-> >
-> > I'm not sure async drivers / sub-systems are ready for their devices
-> > to show up in parallel. While userspace should not be relying on
-> > kernel device names, people get upset when devices change kernel names
-> > from one boot to the next, and I can see this change leading to that
-> > scenario.
->
-> The thing is the current async behavior already does this if the driver
-> is loaded before the device is added. All I am doing is making the
-> behavior with the driver loaded first the standard instead of letting it
-> work the other way around. This way we get consistent behavior.
+On 09/27/18 at 04:31pm, Masayoshi Mizuma wrote:
+> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> 
+> Add warning message if the padding size for KASLR,
+> rand_mem_physical_padding, is not enough. The message also
+> says the suitable padding size.
+> 
+> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> ---
+>  arch/x86/include/asm/setup.h |  2 ++
+>  drivers/acpi/numa.c          | 14 ++++++++++++++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+> index ae13bc9..65a5bf8 100644
+> --- a/arch/x86/include/asm/setup.h
+> +++ b/arch/x86/include/asm/setup.h
+> @@ -80,6 +80,8 @@ static inline unsigned long kaslr_offset(void)
+>  	return (unsigned long)&_text - __START_KERNEL;
+>  }
+>  
+> +extern int rand_mem_physical_padding;
+> +
+>  /*
+>   * Do NOT EVER look at the BIOS memory size location.
+>   * It does not work on many machines.
+> diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> index 8516760..9c3cc3c 100644
+> --- a/drivers/acpi/numa.c
+> +++ b/drivers/acpi/numa.c
+> @@ -32,6 +32,7 @@
+>  #include <linux/numa.h>
+>  #include <linux/nodemask.h>
+>  #include <linux/topology.h>
+> +#include <asm/setup.h>
+>  
+>  static nodemask_t nodes_found_map = NODE_MASK_NONE;
+>  
+> @@ -435,6 +436,8 @@ acpi_table_parse_srat(enum acpi_srat_type id,
+>  int __init acpi_numa_init(void)
+>  {
+>  	int cnt = 0;
+> +	u32 max_phys_addr_tb;
+> +	u64 max_phys_addr;
+>  
+>  	if (acpi_disabled)
+>  		return -EINVAL;
+> @@ -463,6 +466,17 @@ int __init acpi_numa_init(void)
+>  
+>  		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+>  					    acpi_parse_memory_affinity, 0);
+> +
+> +		if (parsed_numa_memblks && kaslr_enabled()) {
+> +			max_phys_addr = PFN_PHYS(max_possible_pfn);
+> +			max_phys_addr_tb = (roundup(max_phys_addr, 1ULL << 40)) >> 40;
+> +
+> +			if (max_phys_addr_tb > rand_mem_physical_padding)
 
-Ok, I can see the consistency argument. It's still a behavior change
-that needs testing. Configurations that have been living with the
-default of synchronous probing of the devices on the bus for a later
-arriving driver might be surprised.
+Here I assume max_phys_addr_tb is the end of the possible RAM in system.
+rand_mem_physical_padding is the preserved space for later memory
+extending. Don't we add the actual RAM size to the
+rand_mem_physical_padding, then compare with max_phys_addr_tb?
 
-That said, I was confusing async probing with device registration in
-my thinking, so some of the discovery order / naming concerns may not
-be as bad as I was imagining. Sub-systems that would be broken by this
-behavior change would already be broken if a driver is built-in vs
-module.
+Please correct me if I am wrong.
 
-So, consider this, an Acked-by.
+Thanks
+Baoquan
 
-> > If a driver / sub-system wants more parallelism than what
-> > driver_allows_async_probing() provides it should do it locally, for
-> > example, like libata does.
->
-> So where I actually saw this was with the pmem legacy setup I had. After
-> doing all the work to parallelize things in the driver it had no effect.
-> That was because the nd_pmem driver wasn't loaded yet so all the
-> device_add calls did is add the device but didn't attach the nd_pmem
-> driver. Then when the driver loaded it serialized the probe calls
-> resulting in it taking twice as long as it needed to in order to
-> initialize the memory.
->
-> This seems to affect standard persistent memory as well. The only
-> difference is that instead of probing the device on the first pass we
-> kick it back and reprobe it in nd_pmem_probe/nd_pfn_probe in order to
-> set the correct personality and that in turn allows us to asynchronously
-> reschedule the work on the correct CPU and deserialize it.
-
-I don't see any problems with this series with the nvdimm unit tests,
-but note those tests do not check for discovery order / naming
-discrepancies.
+> +				pr_warn("Set 'rand_mem_physical_padding=%d' "
+> +					"as the kernel parameter. "
+> +					"Otherwise, memory hotadd may be failed.\n",
+> +					max_phys_addr_tb);
+> +		}
+>  	}
+>  
+>  	/* SLIT: System Locality Information Table */
+> -- 
+> 2.18.0
+> 
