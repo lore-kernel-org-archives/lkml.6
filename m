@@ -2,161 +2,158 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D93C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 464A8C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E5732172C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:51:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF3A82173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:53:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="GCvLOxuh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E5732172C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tTrfGVQZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF3A82173D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbeI1NN3 (ORCPT
+        id S1729000AbeI1NPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 09:13:29 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:55053 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728765AbeI1NN3 (ORCPT
+        Fri, 28 Sep 2018 09:15:42 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38397 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728813AbeI1NPl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 09:13:29 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id w8S6oBTF027595;
-        Fri, 28 Sep 2018 15:50:11 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w8S6oBTF027595
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538117412;
-        bh=+jgLJg3F8cUQ4dmT7mf0GMqljUEbkw8vKA4jmhEStJI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=GCvLOxuhpaTfpMm0kaXLvCOP7aOBsbLnqy6/63r2j8wJ70i6/0Sb9QXwLxBWIOn2P
-         1AWLNUpzX8L0mOAJjhP0xvBouRk0+k4HFFPFFbRcbBw8F6SrZeprSi/ryTsgeXVMqe
-         FegAv4iPjPOOUSsJj+kiQq+96+xT9hKVRPZMyKiEn2iJWWiLL2DTnxNgB1csCEceMI
-         Vdzyb9fNwyznynN57Q6HPdR160V61jeb/jmTQvFr0t1SL2SA7+6z3dnPekBg5tzOuF
-         R+w338tFD1wQXqutInZBfHZ6Hal0FLgYoq6PAEFqn7Z/7xTPcNhQ35VN3JW13E3+Uv
-         k/uDDVpyX1GTg==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Jeff Dike <jdike@addtoit.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andy Gross <andy.gross@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>
-Subject: [PATCH] samples: run headers_install for host arch instead of target arch
-Date:   Fri, 28 Sep 2018 15:49:48 +0900
-Message-Id: <1538117388-11945-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 28 Sep 2018 09:15:41 -0400
+Received: by mail-wm1-f68.google.com with SMTP id z16-v6so1030175wmi.3;
+        Thu, 27 Sep 2018 23:53:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=G24O8/iVoiurdwsx3tCMQSoGwc+c9qa/sgdkgEZrNVU=;
+        b=tTrfGVQZFd64wwG7/qRE8kqB/m44KpP8641p43EXmqx0N3egn3B0LiEuAgM2Ss4V83
+         A8NLm8Q2goHJc9w9e6nvcuI5cWnHzn/0YdIPme5HAjbyqdbZzH6nkxIQJBeJUhu67oPq
+         wLF/stX5XTR8KKFoKvjZ+1vPdJ7gV1AHFsurQGwP7pOJHbCLxyUWxd9ICcrB+IFw8hBR
+         i+6zuzq8b1YH886/hHqWilSpKCwikU4XJeOoBclRUu6RWGPMmGPRPwpbXy2Yc8LmqilD
+         13VhKdgv4TG3540h3qsnY2rJS5MyX3V9Pw6zEBxRdcKQ8YlhxmGw4A+0FDxoEk4IjRCi
+         6wTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=G24O8/iVoiurdwsx3tCMQSoGwc+c9qa/sgdkgEZrNVU=;
+        b=FCfn8weBmJVpssOvOH0AK04Fj046kXiUFD3i6fuz2ttWlqtsjQIZAn1+C9t6sjH9cz
+         tHceZLJwMwFixv21Nza/HrETJKe2T4flJjiwVNvrg7h9mO29G1Qx0h55BqLWlxTsjTLq
+         AsJw0uVAYcTGvhpw/0o6NpRDl+5Olxs4kCL5cBkrmAOrHoNcT8bvfwBHNECJmURJ6rfO
+         FQvwFDxsX7twRw2Y37L2e3NDClDMgAKwMkCAoz9ibQNSukeFrvC8lHRpZiMSbk+fzl53
+         736C3Ce2fd5DdB/b1byKuHOErm/R+09DkZG3rD7FEqYbWoyG2YU2f3UrAFawCRQ2GeuF
+         wsCA==
+X-Gm-Message-State: ABuFfohR73IjxXkloJShQ3TpZFQeJsZYdkpklghiGKDWSIHGJ9UeSXHM
+        Nq2W8EhMOC0JPRyDCz1JMlyz8Rs6NWm3n759d6s=
+X-Google-Smtp-Source: ACcGV63/r5iflykzOTIJ0ORQBw4djzVGVpTp6kzCm5rtxEvmLnheDO3C1eB94qmk0lecJitYkX4vJtEo0RhDsR115wA=
+X-Received: by 2002:a1c:a90:: with SMTP id 138-v6mr683576wmk.49.1538117603884;
+ Thu, 27 Sep 2018 23:53:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180907062502.8241-1-andrea.merello@gmail.com>
+ <20180907062502.8241-4-andrea.merello@gmail.com> <20180918162508.GD2613@vkoul-mobl>
+In-Reply-To: <20180918162508.GD2613@vkoul-mobl>
+Reply-To: andrea.merello@gmail.com
+From:   Andrea Merello <andrea.merello@gmail.com>
+Date:   Fri, 28 Sep 2018 08:53:11 +0200
+Message-ID: <CAN8YU5OySuzAyQ=Buad=Jidhes28koV52Gi-QJ-qOiG5TFBO=Q@mail.gmail.com>
+Subject: Re: [PATCH v5 4/7] dmaengine: xilinx_dma: program hardware supported
+ buffer length
+To:     Vinod <vkoul@kernel.org>
+Cc:     dan.j.williams@intel.com, michal.simek@xilinx.com,
+        appana.durga.rao@xilinx.com, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some samples search headers in $(objtree)/usr/include, which is made
-available by "make headers_install".  It is not kernel-space code but
-host programs that need this header search path.
+On Tue, Sep 18, 2018 at 6:25 PM Vinod <vkoul@kernel.org> wrote:
+>
+> On 07-09-18, 08:24, Andrea Merello wrote:
+> > From: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> >
+> > AXI-DMA IP supports configurable (c_sg_length_width) buffer length
+> > register width, hence read buffer length (xlnx,sg-length-width) DT
+> > property and ensure that driver doesn't program buffer length
+> > exceeding the supported limit. For VDMA and CDMA there is no change.
+> >
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> > Signed-off-by: Andrea Merello <andrea.merello@gmail.com> [rebase, reword]
+> > ---
+> > Changes in v2:
+> >         - drop original patch and replace with the one in Xilinx tree
+> > Changes in v3:
+> >       - cc DT maintainers/ML
+> > Changes in v4:
+> >       - upper bound for the property should be 26, not 23
+> >       - add warn for width > 23 as per xilinx original patch
+> >       - rework due to changes introduced in 1/6
+> > Changes in v5:
+> >       None
+> > ---
+> >  drivers/dma/xilinx/xilinx_dma.c | 36 +++++++++++++++++++++++++--------
+> >  1 file changed, 28 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+> > index aaa6de8a70e4..b17f24e4ec35 100644
+> > --- a/drivers/dma/xilinx/xilinx_dma.c
+> > +++ b/drivers/dma/xilinx/xilinx_dma.c
+> > @@ -158,7 +158,9 @@
+> >  #define XILINX_DMA_REG_BTT           0x28
+> >
+> >  /* AXI DMA Specific Masks/Bit fields */
+> > -#define XILINX_DMA_MAX_TRANS_LEN     GENMASK(22, 0)
+> > +#define XILINX_DMA_MAX_TRANS_LEN_MIN 8
+> > +#define XILINX_DMA_MAX_TRANS_LEN_MAX 23
+> > +#define XILINX_DMA_V2_MAX_TRANS_LEN_MAX      26
+> >  #define XILINX_DMA_CR_COALESCE_MAX   GENMASK(23, 16)
+> >  #define XILINX_DMA_CR_CYCLIC_BD_EN_MASK      BIT(4)
+> >  #define XILINX_DMA_CR_COALESCE_SHIFT 16
+> > @@ -418,6 +420,7 @@ struct xilinx_dma_config {
+> >   * @rxs_clk: DMA s2mm stream clock
+> >   * @nr_channels: Number of channels DMA device supports
+> >   * @chan_id: DMA channel identifier
+> > + * @max_buffer_len: Max buffer length
+> >   */
+> >  struct xilinx_dma_device {
+> >       void __iomem *regs;
+> > @@ -437,6 +440,7 @@ struct xilinx_dma_device {
+> >       struct clk *rxs_clk;
+> >       u32 nr_channels;
+> >       u32 chan_id;
+> > +     u32 max_buffer_len;
+> >  };
+> >
+> >  /* Macros */
+> > @@ -964,7 +968,7 @@ static int xilinx_dma_calc_copysize(struct xilinx_dma_chan *chan,
+> >                                   int size, int done)
+> >  {
+> >       size_t copy = min_t(size_t, size - done,
+> > -                  XILINX_DMA_MAX_TRANS_LEN);
+> > +                         chan->xdev->max_buffer_len);
+>
+> hmm why not add max_buffer_len in patch 1 again, and then use default
+> len as XILINX_DMA_MAX_TRANS_LEN and add multiple lengths here :)
 
-Commit 3fca1700c4c3 ("kbuild: make samples really depend on
-headers_install") is wrong because it installs headers of the target
-architecture.  Besides, UML fails to build with CONFIG_SAMPLES=y
-because UML does not support headers_install.
+Sorry, I'm not getting your point. Could you please elaborate the "add
+multiple lengths here" thing ?
 
-Invoke "make headers_install" for the _host_ architecture in the
-prepare stage.  Introduce CONFIG_HOST_HEADERS_INSTALL so that this
-happens only for samples that need it.
-
-I also removed 'Documentation/: headers_install', which I guess is
-stale code.
-
-Fixes: 3fca1700c4c3 ("kbuild: make samples really depend on headers_install")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: David Howells <dhowells@redhat.com>
----
-
- Makefile        | 8 ++++----
- samples/Kconfig | 6 ++++++
- 2 files changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index 0c90c43..f04564c 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1029,10 +1029,9 @@ ifdef CONFIG_GDB_SCRIPTS
- endif
- 	+$(call if_changed,link-vmlinux)
- 
--# Build samples along the rest of the kernel. This needs headers_install.
-+# Build samples along the rest of the kernel.
- ifdef CONFIG_SAMPLES
- vmlinux-dirs += samples
--samples: headers_install
- endif
- 
- # The actual objects are generated when descending,
-@@ -1098,6 +1097,9 @@ archprepare: archheaders archscripts prepare1 scripts_basic
- 
- prepare0: archprepare gcc-plugins
- 	$(Q)$(MAKE) $(build)=.
-+ifdef CONFIG_HOST_HEADERS_INSTALL
-+	$(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(SUBARCH) headers_install
-+endif
- 
- # All the preparing..
- prepare: prepare0 prepare-objtool
-@@ -1682,8 +1684,6 @@ endif
- 	$(cmd_crmodverdir)
- 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
- 	$(build)=$(build-dir)
--# Make sure the latest headers are built for Documentation
--Documentation/ samples/: headers_install
- %/: prepare scripts FORCE
- 	$(cmd_crmodverdir)
- 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
-diff --git a/samples/Kconfig b/samples/Kconfig
-index bd133ef..fcd6b7c 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -1,3 +1,6 @@
-+config HOST_HEADERS_INSTALL
-+	bool
-+
- menuconfig SAMPLES
- 	bool "Sample kernel code"
- 	help
-@@ -95,6 +98,7 @@ config SAMPLE_CONFIGFS
- config SAMPLE_CONNECTOR
- 	tristate "Build connector sample -- loadable modules only"
- 	depends on CONNECTOR && m
-+	select HOST_HEADERS_INSTALL
- 	help
- 	  When enabled, this builds both a sample kernel module for
- 	  the connector interface and a user space tool to communicate
-@@ -104,6 +108,7 @@ config SAMPLE_CONNECTOR
- config SAMPLE_SECCOMP
- 	tristate "Build seccomp sample code -- loadable modules only"
- 	depends on SECCOMP_FILTER && m
-+	select HOST_HEADERS_INSTALL
- 	help
- 	  Build samples of seccomp filters using various methods of
- 	  BPF filter construction.
-@@ -149,6 +154,7 @@ config SAMPLE_VFIO_MDEV_MBOCHS
- config SAMPLE_STATX
- 	bool "Build example extended-stat using code"
- 	depends on BROKEN
-+	select HOST_HEADERS_INSTALL
- 	help
- 	  Build example userspace program to use the new extended-stat syscall.
- 
--- 
-2.7.4
-
+> -
+> ~Vinod
