@@ -2,158 +2,201 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5D1C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C3B5C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AF312168B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:32:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F14821580
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:32:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="W73+Vl3q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AF312168B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U31ev38l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F14821580
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729122AbeI1Tzs (ORCPT
+        id S1729075AbeI1T4l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 15:55:48 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:51408 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbeI1Tzs (ORCPT
+        Fri, 28 Sep 2018 15:56:41 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:59540 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbeI1T4k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 15:55:48 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8SDNeRC110827;
-        Fri, 28 Sep 2018 13:31:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=19rWMn+OcCijELCFnV/Kd1D7QHkXITp7pfNfWpn4ECI=;
- b=W73+Vl3qVMWCbFJM9W5vhvL3Fh7oy3bI/NaqitxqF2hw2XkmYYRuKxi2Pq++HmT3yDxl
- 5xY7MhqTPnWBRRJclcjPPXls/VFgA9dA/Ofsplvjv0zs/VgNJExV25sfjXZVadjWxp8Y
- FCoDuqXkASqON183RmAvDKEoHfCTBK9dzPMBBBDrJpfzXLbg6MCyAugUS6XeK9mvcaIY
- zsS0sRRxpE6x4U0LIYzJ+FsBCIVCTR01E8xvy17WWL6PHaFH9yLi76D/Ha4SZ5+2oc5T
- 0WTCkbLeorxtl4vsrUiTT6WkNvSJMMH2GV+q9ADXrdPPjNpWXSeYwGWpx/rNlz1LHqiQ Hw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2mnd5u0970-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Sep 2018 13:31:52 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8SDVkH9002359
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Sep 2018 13:31:46 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8SDVkAc019754;
-        Fri, 28 Sep 2018 13:31:46 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 28 Sep 2018 06:31:45 -0700
-Subject: Re: [PATCH] xen/blkfront: correct purging of persistent grants
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org
-Cc:     roger.pau@citrix.com, konrad.wilk@oracle.com, axboe@kernel.dk
-References: <20180928072827.14229-1-jgross@suse.com>
- <95e32835-426f-36c9-a86a-09563f090f22@oracle.com>
- <772c3886-d4fe-b912-b125-a648b31a3074@suse.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <b454645f-de15-2912-864e-18f00736013d@oracle.com>
-Date:   Fri, 28 Sep 2018 09:33:13 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 28 Sep 2018 15:56:40 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180928133250euoutp0150cbad3638250b35c2be84e400bb2178~Yk5vXMH023137731377euoutp01Q
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 13:32:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180928133250euoutp0150cbad3638250b35c2be84e400bb2178~Yk5vXMH023137731377euoutp01Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1538141570;
+        bh=Ud0PsHYwfx0uLAHZaGRuIFh+ijbvUK4h30W0BCZFq5c=;
+        h=To:Cc:From:Subject:Date:References:From;
+        b=U31ev38lx/j7YdjgJZ0j+T9KqVTykO9OTjpUogyjhaFTgAlo64Ew6hv10qvFEXYQU
+         auv9rY6fwNBwA94r7fRbeop7J1ZvU1H+UH/a/v88rhKR3j1Lyj/iCHigbftxDRmh9k
+         9/H/b/fy+qfIxjyM6KHUJSOlXmLsTVUr2KqEjISA=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180928133249eucas1p10324dc2d0b7baf5af15c929a1d5477a8~Yk5u3VQCb1586615866eucas1p1T;
+        Fri, 28 Sep 2018 13:32:49 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 51.18.04441.18D2EAB5; Fri, 28
+        Sep 2018 14:32:49 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20180928133248eucas1p27feaea76c3193825e319943c60491962~Yk5t7fL-z0673006730eucas1p2K;
+        Fri, 28 Sep 2018 13:32:48 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20180928133248eusmtrp21357b23f09fd4f6bb9f937076183b7a1~Yk5tqquxg3269732697eusmtrp2I;
+        Fri, 28 Sep 2018 13:32:48 +0000 (GMT)
+X-AuditID: cbfec7f2-a1ae89c000001159-f3-5bae2d81e321
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4E.A9.04284.08D2EAB5; Fri, 28
+        Sep 2018 14:32:48 +0100 (BST)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20180928133248eusmtip14e4b86238d64290ffcabc1054a1a9a22~Yk5tVBnNO2505225052eusmtip1i;
+        Fri, 28 Sep 2018 13:32:48 +0000 (GMT)
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: limit SAMSUNG_PM_CHECK config option to
+ non-Exynos platforms
+Date:   Fri, 28 Sep 2018 15:32:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <772c3886-d4fe-b912-b125-a648b31a3074@suse.com>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9029 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809280136
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7djPc7qNuuuiDTb2CFhsnLGe1aL/8Wtm
+        i/PnN7BbbHp8jdXi8q45bBYzzu9jsjg0dS+jA7vH5WsXmT02repk89i8pN6jb8sqRo/Pm+QC
+        WKO4bFJSczLLUov07RK4Mr4se8haMEO3Yua3TYwNjA9Vuxg5OSQETCS+N51i62Lk4hASWMEo
+        8WzPZnYI5wujxMoZLVCZz4wS+559ZYdpWbG2hRUisZxR4n/fMyYI5z2jxOnvt5lBqkQENCWu
+        //0OVsUs8IpRomH2XiaQBJuAlcTE9lWMXYwcHMICsRJN02RAwiwCqhJL525iBwmLCkRI9J9R
+        BwnzCghKnJz5hAXEZhaQl9j+dg4zyEgJgW52iSu9l9khisok7r16AXWdi8SE57/YIGxhiVfH
+        t0DFZST+75zPBNE8nVHiza+lLBDOekaJNWeOMUFUWUscPn6RFeQKZqAP1u/Shwg7ShzedAos
+        LCHAJ3HjrSDEQXwSk7ZNZ4YI80p0tAlBVKtJbFi2gQ1mbdfOlVAlHhLXv5mChIWAHn924RHz
+        BEaFWUi+nIXky1kIJyxgZF7FKJ5aWpybnlpsmJdarlecmFtcmpeul5yfu4kRmGhO/zv+aQfj
+        10tJhxgFOBiVeHgTHq2JFmJNLCuuzD3EKMHBrCTCu696bbQQb0piZVVqUX58UWlOavEhRmkO
+        FiVxXj6ttGghgfTEktTs1NSC1CKYLBMHp1QDY9hPy5anb4rffts6dcH75v6vRd/NDVRVn4ew
+        rfxWw7CWN9p5/1Qhgy7JxGmBT0NX+kXb7tF0iJrfoMDhej/9qm+7hk7dhvTWLScWcR++/zym
+        Odv7q8D8Mv7JRyoKVrOJza5pKVihPP2x7nJbcQthaYNXq6WZHbXqT36t/FjzdN2aHsPI/uZ7
+        SizFGYmGWsxFxYkArQcOazADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmkeLIzCtJLcpLzFFi42I5/e/4Xd0G3XXRBjv6JC02zljPatH/+DWz
+        xfnzG9gtNj2+xmpxedccNosZ5/cxWRyaupfRgd3j8rWLzB6bVnWyeWxeUu/Rt2UVo8fnTXIB
+        rFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GV+W
+        PWQtmKFbMfPbJsYGxoeqXYycHBICJhIr1rawdjFycQgJLGWUmDLvB2MXIwdQQkbi+PoyiBph
+        iT/Xutggat4ySszobWQFSYgIaEpc//sdrJlZ4BWjxJ6J5xlBEmwCVhIT21eBDRIWiJVomiYD
+        EuYVsJOY0zQRrJdFQFVi6dxN7CC2qECExK2HHSwQNYISJ2c+AbOZBdQl/sy7xAxhy0tsfzuH
+        eQIj/ywkZbOQlM1CUraAkXkVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYERsO/Zz8w7GSxuD
+        DzEKcDAq8fAmPFoTLcSaWFZcmXuIUYKDWUmEd1/12mgh3pTEyqrUovz4otKc1OJDjKZAh09k
+        lhJNzgdGa15JvKGpobmFpaG5sbmxmYWSOO95g8ooIYH0xJLU7NTUgtQimD4mDk6pBsb+/aav
+        MqYfNtCaw6sl7q1RbJX1pbPuhMiMNYtcvjBOFZ02Vzfz1BbD3KQsZgN2jaVW3u/DEvdWnuj5
+        V6b9dKvVzgpdyZX3/z6bmztxeenXlzGp1iUmbB8X3RGJzGc/orGYPeapz23raecfRqz+f/H5
+        mkvlH99sv6Uy2c7v+LsFS/lcji3beuOvEktxRqKhFnNRcSIAlvqtCZ4CAAA=
+Message-Id: <20180928133248eucas1p27feaea76c3193825e319943c60491962~Yk5t7fL-z0673006730eucas1p2K@eucas1p2.samsung.com>
+X-CMS-MailID: 20180928133248eucas1p27feaea76c3193825e319943c60491962
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180928133248eucas1p27feaea76c3193825e319943c60491962
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180928133248eucas1p27feaea76c3193825e319943c60491962
+References: <CGME20180928133248eucas1p27feaea76c3193825e319943c60491962@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/28/18 9:13 AM, Juergen Gross wrote:
-> On 28/09/2018 14:45, Boris Ostrovsky wrote:
->> On 9/28/18 3:28 AM, Juergen Gross wrote:
->>> Commit a46b53672b2c2e3770b38a4abf90d16364d2584b ("xen/blkfront: cleanup
->>> stale persistent grants") introduced a regression as purged persistent
->>> grants were not pu into the list of free grants again. Correct that.
->>>
->>> Signed-off-by: Juergen Gross <jgross@suse.com>
->>> ---
->>>  drivers/block/xen-blkfront.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
->>> index a71d817e900d..429d20131c7e 100644
->>> --- a/drivers/block/xen-blkfront.c
->>> +++ b/drivers/block/xen-blkfront.c
->>> @@ -2670,8 +2670,8 @@ static void purge_persistent_grants(struct blkfront_info *info)
->>>  			list_del(&gnt_list_entry->node);
->>>  			gnttab_end_foreign_access(gnt_list_entry->gref, 0, 0UL);
->>>  			rinfo->persistent_gnts_c--;
->>> -			__free_page(gnt_list_entry->page);
->>> -			kfree(gnt_list_entry);
->>> +			gnt_list_entry->gref = GRANT_INVALID_REF;
->>> +			list_add_tail(&gnt_list_entry->node, &rinfo->grants);
->> Sorry, I don't follow this. What is the purpose of removing the grant
->> from rinfo->grants list with list_del() and then adding it back with
->> list_add_tail()?
-> The persistent grants are at the list head and the non-persistent ones
-> at the tail.
+"S3C2410 PM Suspend Memory CRC" feature (controlled by
+SAMSUNG_PM_CHECK config option) is incompatible with highmem
+(uses phys_to_virt() instead of proper mapping) which is used by
+the majority of Exynos boards. The issue manifests itself in OOPS
+on affected boards, i.e. on Odroid-U3 I got the following one:
 
-Oh, I didn't realize that. But isn't that an optimization (and so not
-following this rule should not cause errors)?
+[   18.757127] Unable to handle kernel paging request at virtual address f0000000
+[   18.757127] pgd = 1c0f9bb4
+[   18.757127] [f0000000] *pgd=00000000
+[   18.757127] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+[   18.757127] Modules linked in:
+[   18.757127] CPU: 0 PID: 1357 Comm: rtcwake Not tainted 4.19.0-rc1-next-20180830 #35
+[   18.757127] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   18.757127] PC is at crc32_le+0x30/0x150
+[   18.757127] LR is at s3c_pm_makecheck+0x34/0x54
+[   18.757127] pc : [<c0458034>]    lr : [<c0121f8c>]    psr: 000000d3
+[   18.757127] sp : ed2e3db0  ip : 00002000  fp : 00002000
+[   18.757127] r10: 00000000  r9 : c0c2f6e8  r8 : c0fc0734
+[   18.757127] r7 : 01000200  r6 : efffce40  r5 : ec68c000  r4 : effffffc
+[   18.757127] r3 : c0a25dc0  r2 : 00000000  r1 : effffffc  r0 : ffffffff
+[   18.757127] Flags: nzcv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment none
+[   18.757127] Control: 10c5387d  Table: 6d24c04a  DAC: 00000051
+[   18.757127] Process rtcwake (pid: 1357, stack limit = 0x104b670f)
+[   18.757127] Stack: (0xed2e3db0 to 0xed2e4000)
+[   18.757127] 3da0:                                     c0fc0734 00000000 70000000 ec68c000
+[   18.757127] 3dc0: efffce40 01000200 c0fc0734 c0c2f6e8 00000000 c0fac13c efffce40 ec680000
+[   18.757127] 3de0: c0121f58 c0121efc c0fc773c c0f0f3cc ec680000 c0121f58 01000200 c0121ecc
+[   18.757127] 3e00: c0fc773c c0f0d9e0 c0ce4d00 00000000 c0fac13c c01210b8 c0121054 c16d17ec
+[   18.757127] 3e20: 00000003 c018893c c0f07470 ec60b300 ec60b880 c017cc5c 00000000 60000053
+[   18.757127] 3e40: c0f07470 c0faa913 00000003 c0f07470 c0fac13c c0c2f6f8 c0faa913 c0a035c4
+[   18.757127] 3e60: c0c2f71c c0189534 00000001 00000006 00000000 00000003 c0c286c8 c16d180c
+[   18.757127] 3e80: 00000003 ec41c940 00000000 00000004 00000000 c0186ce8 00000004 ec4210c0
+[   18.757127] 3ea0: 00000004 ec41c940 00000004 00000000 ec4210d0 c09db434 00000004 c02fa63c
+[   18.757127] 3ec0: ec4210c0 ec41c940 ed2e3f80 c02f97a4 00000000 00000000 c0a0dec4 b6f1a000
+[   18.757127] 3ee0: ed1f8f00 ed2e3f80 00000004 ed2e2000 b6f1a000 c027b198 00000001 c017ccd4
+[   18.757127] 3f00: 00000001 c0f53b64 ed1301f4 c0198fa4 c0faa925 c01992d8 d166c958 00000000
+[   18.757127] 3f20: 00000000 c027cad0 00000001 00000000 c027b4b8 00000000 ed118554 ed1f8f00
+[   18.757127] 3f40: ed1f8f00 00000004 b6f1a000 00000000 ed2e3f80 c027b418 b6f1a000 c023e65c
+[   18.757127] 3f60: 00000022 00000000 00000000 ed1f8f00 ed1f8f00 00000004 b6f1a000 c027b5d8
+[   18.757127] 3f80: 00000000 00000000 00000000 00000004 b6f1a000 000160e0 00000004 c01011c4
+[   18.757127] 3fa0: 00000004 c0101000 00000004 b6f1a000 00000004 b6f1a000 00000004 00000000
+[   18.757127] 3fc0: 00000004 b6f1a000 000160e0 00000004 00000004 b6f1a000 00000004 00000000
+[   18.757127] 3fe0: 00000000 be880b2c b6e21a6c b6e77a0c 60000050 00000004 00000000 00000000
+[   18.757127] [<c0458034>] (crc32_le) from [<c0121f8c>] (s3c_pm_makecheck+0x34/0x54)
+[   18.757127] [<c0121f8c>] (s3c_pm_makecheck) from [<c0121efc>] (s3c_pm_run_res+0x74/0x8c)
+[   18.757127] [<c0121efc>] (s3c_pm_run_res) from [<c0121ecc>] (s3c_pm_run_res+0x44/0x8c)
+[   18.757127] [<c0121ecc>] (s3c_pm_run_res) from [<c01210b8>] (exynos_suspend_enter+0x64/0x148)
+[   18.757127] [<c01210b8>] (exynos_suspend_enter) from [<c018893c>] (suspend_devices_and_enter+0x9ec/0xe74)
+[   18.757127] [<c018893c>] (suspend_devices_and_enter) from [<c0189534>] (pm_suspend+0x770/0xc04)
+[   18.757127] [<c0189534>] (pm_suspend) from [<c0186ce8>] (state_store+0x6c/0xcc)
+[   18.757127] [<c0186ce8>] (state_store) from [<c09db434>] (kobj_attr_store+0x14/0x20)
+[   18.757127] [<c09db434>] (kobj_attr_store) from [<c02fa63c>] (sysfs_kf_write+0x4c/0x50)
+[   18.757127] [<c02fa63c>] (sysfs_kf_write) from [<c02f97a4>] (kernfs_fop_write+0xfc/0x1e4)
+[   18.757127] [<c02f97a4>] (kernfs_fop_write) from [<c027b198>] (__vfs_write+0x2c/0x140)
+[   18.757127] [<c027b198>] (__vfs_write) from [<c027b418>] (vfs_write+0xa4/0x160)
+[   18.757127] [<c027b418>] (vfs_write) from [<c027b5d8>] (ksys_write+0x40/0x8c)
+[   18.757127] [<c027b5d8>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+[   18.757127] Exception stack(0xed2e3fa8 to 0xed2e3ff0)
+[   18.757127] 3fa0:                   00000004 b6f1a000 00000004 b6f1a000 00000004 00000000
+[   18.757127] 3fc0: 00000004 b6f1a000 000160e0 00000004 00000004 b6f1a000 00000004 00000000
+[   18.757127] 3fe0: 00000000 be880b2c b6e21a6c b6e77a0c
+[   18.757127] Code: 0a00002a e59f3120 e1a04001 e1a0c00b (e5945004)
+[   18.757127] ---[ end trace 213166221066122e ]---
 
--boris
+Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
+SAMSUNG_PM_CHECK config option to hide it on Exynos platforms.
+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/plat-samsung/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: b/arch/arm/plat-samsung/Kconfig
+===================================================================
+--- a/arch/arm/plat-samsung/Kconfig	2018-09-28 15:20:00.057911275 +0200
++++ b/arch/arm/plat-samsung/Kconfig	2018-09-28 15:20:00.053911275 +0200
+@@ -256,7 +256,7 @@ config S3C_PM_DEBUG_LED_SMDK
+ 
+ config SAMSUNG_PM_CHECK
+ 	bool "S3C2410 PM Suspend Memory CRC"
+-	depends on PM
++	depends on PM && (PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210)
+ 	select CRC32
+ 	help
+ 	  Enable the PM code's memory area checksum over sleep. This option
+
