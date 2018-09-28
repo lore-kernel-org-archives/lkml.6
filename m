@@ -2,116 +2,128 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9252CC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8E8C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 455E4215F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:13:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 455E4215F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 459772173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:22:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 459772173D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbeI1Rgb (ORCPT
+        id S1729565AbeI1RpT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 13:36:31 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51640 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729232AbeI1Rgb (ORCPT
+        Fri, 28 Sep 2018 13:45:19 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:45635 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729089AbeI1RpS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 13:36:31 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8SBASul136251
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 07:13:14 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mshk84sg1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 07:13:14 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Fri, 28 Sep 2018 12:13:12 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 28 Sep 2018 12:13:09 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8SBD8F560686408
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 Sep 2018 11:13:08 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 63BE44C04A;
-        Fri, 28 Sep 2018 14:12:51 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 162994C044;
-        Fri, 28 Sep 2018 14:12:50 +0100 (BST)
-Received: from [9.124.35.65] (unknown [9.124.35.65])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Sep 2018 14:12:49 +0100 (BST)
-Subject: Re: [PATCH v3] perf test: S390 does not support watchpoints in test
- 22
-To:     Thomas Richter <tmricht@linux.ibm.com>, acme@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180928105335.67179-1-tmricht@linux.ibm.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Fri, 28 Sep 2018 16:43:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Fri, 28 Sep 2018 13:45:18 -0400
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8SBLwTC097191;
+        Fri, 28 Sep 2018 20:21:59 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
+ Fri, 28 Sep 2018 20:21:58 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8SBLwKO097186
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 28 Sep 2018 20:21:58 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20180912120548.4280f04a@vmware.local.home>
+ <20180913071204.GA604@jagdpanzerIV>
+ <20180913122625.6ieyexpcmlc5z2it@pathway.suse.cz>
+ <20180913142802.GB517@tigerII.localdomain>
+ <20180914065728.GA515@jagdpanzerIV>
+ <49d22738-17ad-410a-be0a-d27d76ba9f37@i-love.sakura.ne.jp>
+ <20180914115028.GB20572@tigerII.localdomain>
+ <e855cbef-03ff-b4ac-3e06-d2f2f48cfb1f@i-love.sakura.ne.jp>
+ <20180914122217.GA518@tigerII.localdomain>
+ <a661ed7f-889a-1811-0ada-111cc5185d05@i-love.sakura.ne.jp>
+ <20180928085648.GC1160@jagdpanzerIV>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <802130a3-b8c1-3973-933b-d6dc5ff2930d@i-love.sakura.ne.jp>
+Date:   Fri, 28 Sep 2018 20:21:58 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180928105335.67179-1-tmricht@linux.ibm.com>
+In-Reply-To: <20180928085648.GC1160@jagdpanzerIV>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092811-0020-0000-0000-000002CCC7E9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092811-0021-0000-0000-0000211AF773
-Message-Id: <f1ee3dc0-6b96-c7e5-f449-caabd3bf7f8a@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809280114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018/09/28 17:56, Sergey Senozhatsky wrote:
+> The good thing about cont buffer is that we flush it on panic. E.g.
+> core/arch early boot stage can do:
+> 
+> 	pr_cont("going to call early_init_foo()...");
+> 	early_init_foo();
+> 	pr_cont("OK\n");
+> 
+
+Is printing
+
+  going to call early_init_foo()...OK
+
+in one line so critically important? If caller information is prefixed,
+we would no longer need to support KERN_CONT. That is, we could do
+
+  printk("going to call early_init_foo()...\n");
+  early_init_foo();
+  printk("OK\n");
+
+and get output like below.
+
+  T0: going to call early_init_foo()...
+  T0: OK
+
+Even if "going to call early_init_foo()..." part became too long,
+
+  T0: going to call
+  T0: early_init_foo()...
+  T0: OK
+
+will not be so bad.
+
+> should early_init_foo() panic the system we will have
+> "going to call early_init_foo()" on the serial console. This can
+> be addressed if you'd iterate printk_buffers[] in flush_on_panic().
+
+Yes, flush on panic() would also be possible.
 
 
-On 09/28/2018 04:23 PM, Thomas Richter wrote:
-> S390 does not support the perf_event_open system call for
-> attribute type PERF_TYPE_BREAKPOINT. This results in test
-> failure for test 22:
-> 
-> [root@s8360046 perf]# ./perf test 22
-> 22: Watchpoint                                :
-> 22.1: Read Only Watchpoint                    : FAILED!
-> 22.2: Write Only Watchpoint                   : FAILED!
-> 22.3: Read / Write Watchpoint                 : FAILED!
-> 22.4: Modify Watchpoint                       : FAILED!
-> [root@s8360046 perf]#
-> 
-> Add s390 support to avoid these tests being executed on
-> s390 platform:
-> 
-> [root@s8360046 perf]# ./perf test 22
-> [root@s8360046 perf]# ./perf test -v 22
-> 22: Watchpoint                                : Disabled
-> [root@s8360046 perf]#
-> 
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
 
-Acked-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Tetsuo, do you still want to have a fixed size array of printk buffers?
 
-Thanks,
-Ravi
+For my intended users where printk() is used for reporting errors (e.g.
+stack backtrace, GFP_ATOMIC memory allocation failure, lockdep splat),
+being prepared for already tight stack is preferable.
+
+> 
+> What do others think?
+
+Yes, I want to hear from others.
 
