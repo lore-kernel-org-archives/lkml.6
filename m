@@ -2,140 +2,129 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C27AC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5611C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0C220671
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:33:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35EBF20671
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:36:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="D+2CcLbW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D0C220671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="xLa+anWE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35EBF20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbeI2D7W (ORCPT
+        id S1726194AbeI2EBj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 23:59:22 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:51922 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbeI2D7W (ORCPT
+        Sat, 29 Sep 2018 00:01:39 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40576 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725266AbeI2EBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 23:59:22 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8SLRCFj145406;
-        Fri, 28 Sep 2018 21:32:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=vupmQYaYr9qOT16FHm1qaVkPMFM9P1Or9YaS/RAohfI=;
- b=D+2CcLbWIi5ag3qiwZOQNmLlGI6nPVJfdR0itxVPly0t/X0nsXiiRCEdRQqu8PTP0iKs
- xMAVyolrjgc0Wr+slCTQXYnX3c0BDj0K/17PbTWTz0vOjCSeu39Xu9U7FNgVCpABTdoQ
- EuVXip6a9i7fG0rBsWlMDt91JyzivGIP0B7dViaWiYAiC3JIVpSVxpEfnI7mcWXuueN5
- pyYSecFydHF1QWHNLhhd4D0Wrb52IBgKDV8RxSmdK2HyrNm8dCfL7UXavVKaF50lrClr
- 7XvAOos3u0lPlIk+LzzAswLeAuxX6kWrL0Gx28r703jtFtoEHTmF/DJp1TFYwwS4BQeC 9g== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2mnd5u2rgm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Sep 2018 21:32:28 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8SLWQc4024296
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Sep 2018 21:32:27 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8SLWMnc017474;
-        Fri, 28 Sep 2018 21:32:22 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 28 Sep 2018 14:32:22 -0700
-Date:   Fri, 28 Sep 2018 14:32:24 -0700
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: Re: [PATCH -V5 RESEND 03/21] swap: Support PMD swap mapping in
- swap_duplicate()
-Message-ID: <20180928213224.tjff2rtfmxmnz5nq@ca-dmjordan1.us.oracle.com>
-References: <20180925071348.31458-1-ying.huang@intel.com>
- <20180925071348.31458-4-ying.huang@intel.com>
- <20180925191953.4ped5ki7u3ymafmd@ca-dmjordan1.us.oracle.com>
- <874lecifj4.fsf@yhuang-dev.intel.com>
- <20180926145145.6xp2kxpngyd54f6i@ca-dmjordan1.us.oracle.com>
- <87r2hfhger.fsf@yhuang-dev.intel.com>
- <20180927211238.ly3e7cyvfu3rswcv@ca-dmjordan1.us.oracle.com>
- <87lg7mf30o.fsf@yhuang-dev.intel.com>
+        Sat, 29 Sep 2018 00:01:38 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n31-v6so5328500pgm.7
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 14:36:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p0Rn2oFe/6hznO3NPjkrSRQTmzEzp1V3hJsY2r8gT30=;
+        b=xLa+anWEY5+H6jIchBEs6Z4+iLIsRAs/sVTxYqXsfCFmUqXqcRquXfrk5To0HW4btV
+         3xIVcALC00nitap/OP2mPwgHElJU8niYEkci7b+29UziSQf8SA2yupT8XOI/4TF8esAb
+         9p2mxbpm63Tncd9Qe2C23JZTZzuBi/kf5tfoCeaY1Yy+9cmoqT8JS06XDpaA8xwFt9Gv
+         J/fHKU8OtWTFrDHZ/gQmHNEs/0nObmLyMQFT6GNUv3cHbFku9qudvZDohW34r08plwEk
+         He5dqg1W4G2BOicfl3daAgQEzkUCBvmqknRp8eooblVo0GSaVWEi1hXqhlsE7gMLJGJF
+         dUgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p0Rn2oFe/6hznO3NPjkrSRQTmzEzp1V3hJsY2r8gT30=;
+        b=JlrYGtBGL3OrvP9qw89+00kMn+Hy9N4zY6XmhzYubiUdEHLTUaxMeFAlhE4HcGHzwo
+         PJYpHonAbadn1oj+gyXSUg+L9C2MdhMLbapfgAvM5dAZXUon+qijF3mKw6HzCSzWCD18
+         lqSvqf3qimIiTIJ9C1i5lIIRqA1jmNZy1sw4+p6DchKE2J8ZGJuIfnpQyOKgkelObP8w
+         NsD2k9jzplv6QsaowRWBlwE930q9RqG195WSNECnAx0K26P7X0BmxOW9Bhx2YHLWqhks
+         WThdDCjSmTn0FHneJBVRyfENJ16Gh4SA5laK++HdPso1WZCq8jK7fIPm86luxuXr5p7S
+         8E2A==
+X-Gm-Message-State: ABuFfogVfLusTYYYIecXp41xll908Prr1dxCPjo1JrLuSwlsRBRcBoVO
+        OHuapHkAPa0d0RpjamQvT2fJ6w==
+X-Google-Smtp-Source: ACcGV62Q/98Gk+3+sbbMn3Lcs/IamJ2YyZW1oQ0oOHOlWCpMGdksdx3u8pTaLccGpbGwcpkI9xbwwg==
+X-Received: by 2002:a17:902:1744:: with SMTP id i62-v6mr400856pli.315.1538170560082;
+        Fri, 28 Sep 2018 14:36:00 -0700 (PDT)
+Received: from cisco.lan ([128.107.241.171])
+        by smtp.gmail.com with ESMTPSA id g3-v6sm6992930pgn.37.2018.09.28.14.35.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Sep 2018 14:35:58 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 15:35:57 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH 3/3] seccomp: introduce read protection for struct seccomp
+Message-ID: <20180928213557.GD18045@cisco.lan>
+References: <20180928154648.6320-1-tycho@tycho.ws>
+ <20180928154648.6320-3-tycho@tycho.ws>
+ <CAG48ez2h51s1VG8hf1ASHHq88r5b+6rS4nSkgvre77jgsJLbhg@mail.gmail.com>
+ <20180928205652.GC18045@cisco.lan>
+ <CAG48ez1CpPmk6BFOztA-=w1U-pvaNBXou6JpcfMKx_ELGSwDVA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87lg7mf30o.fsf@yhuang-dev.intel.com>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9030 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809280210
+In-Reply-To: <CAG48ez1CpPmk6BFOztA-=w1U-pvaNBXou6JpcfMKx_ELGSwDVA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 04:19:03PM +0800, Huang, Ying wrote:
-> Daniel Jordan <daniel.m.jordan@oracle.com> writes:
-> > One way is to change
-> > copy_one_pte's return to int so we can just pass the error code back to
-> > copy_pte_range so it knows whether to try adding the continuation.
+On Fri, Sep 28, 2018 at 11:10:48PM +0200, Jann Horn wrote:
+> On Fri, Sep 28, 2018 at 10:56 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> >
+> > On Fri, Sep 28, 2018 at 10:33:34PM +0200, Jann Horn wrote:
+> > > On Fri, Sep 28, 2018 at 5:47 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > > > As Jann pointed out, there is a race between SECCOMP_FILTER_FLAG_TSYNC and
+> > > > the ptrace code that can inspect a filter of another process. Let's
+> > > > introduce read locking into the two ptrace accesses so that we don't race.
+> > >
+> > > Hmm. Is that true? The ptrace code uses get_nth_filter(), which holds
+> > > the siglock while grabbing the seccomp filter and bumping its
+> > > refcount. And TSYNC happens from seccomp_set_mode_filter(), which
+> > > takes the siglock. So this looks okay to me?
+> >
+> > Oh, yes, you're right. So I guess we should just change the comment to
+> > say we're using siglock to represent the read lock.
 > 
-> There may be even more problems.  After add_swap_count_continuation(),
-> copy_one_pte() will be retried, and the CPU may hang with dead loop.
+> Hmm... actually, looking at this closer, I think you only need the
+> siglock for writing. As far as I can tell, any read (no matter if
+> current or non-current) can just use READ_ONCE(), because once a
+> seccomp filter is in a task's seccomp filter chain, it can't be freed
+> until the task reaches free_task() and calls put_seccomp_filter() from
+> there. And if the task whose seccomp filter you're trying to read can
+> reach free_task(), you have bigger problems.
 
-That's true, it would do that.
+Ok; looks like get_nth_filter() took the siglock anyway. Since we get
+the filters in these two functions in get_nth_filter(), I think it's
+enough just to just,
 
-> But before the changes in this patchset, the behavior is,
-> __swap_duplicate() return an error that isn't -ENOMEM, such as -EEXIST.
-> Then copy_one_pte() would thought the operation has been done
-> successfully, and go to call set_pte_at().  This will cause the system
-> state become inconsistent, and the system may panic or hang somewhere
-> later.
-> 
-> So per my understanding, if we thought page table corruption isn't a
-> real problem (that is, __swap_duplicate() will never return e.g. -EEXIST
-> if copied by copy_one_pte() indirectly), both the original and the new
-> code should be OK.
-> 
-> If we thought it is a real problem, we need to fix the original code and
-> keep it fixed in the new code.  Do you agree?
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index f65d47650ac1..79d833ed4c34 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -1001,7 +1001,7 @@ static struct seccomp_filter *get_nth_filter(struct task_struct *task,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	orig = task->seccomp.filter;
++	orig = READ_ONCE(task->seccomp.filter);
+ 	__get_seccomp_filter(orig);
+ 	spin_unlock_irq(&task->sighand->siglock);
+ 
 
-Yes, if it was a real problem, which seems less and less the case the more I
-stare at this.
+since once it's returned from get_nth_filter() we don't need to worry
+about multiple accesses?
 
-> There's several ways to fix the problem.  But the page table shouldn't
-> be corrupted in practice, unless there's some programming error.  So I
-> suggest to make it as simple as possible via adding,
-> 
-> VM_BUG_ON(error != -ENOMEM);
-> 
-> in swap_duplicate().
-> 
-> Do you agree?
-
-Yes, I'm ok with that, adding in -ENOTDIR along with it.
-
-The error handling in __swap_duplicate (before this series) still leaves
-something to be desired IMHO.  Why all the different returns when callers
-ignore them or only specifically check for -ENOMEM or -EEXIST?  Could maybe
-stand a cleanup, but outside this series.
+Tycho
