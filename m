@@ -2,113 +2,96 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E648C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3384AC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0D96206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:08:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C212F2073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:11:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="glvSTSWz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D96206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cWKIghWw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C212F2073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbeI2Ddr (ORCPT
+        id S1727281AbeI2Dgt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 23:33:47 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39383 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbeI2Ddq (ORCPT
+        Fri, 28 Sep 2018 23:36:49 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42838 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbeI2Dgt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 23:33:46 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r9-v6so1435658pgv.6
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 14:08:13 -0700 (PDT)
+        Fri, 28 Sep 2018 23:36:49 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w81-v6so4909486oiw.9
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 14:11:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=cy6m3+19iPAV89xjvtxNobg8u1DCt9a+TuM7sS4wT1A=;
-        b=glvSTSWz1mTQRpN3OnMRcBbkTby8lT1VO2XSDGaNwmEoRg+hhByPPKa7UfTzK19+dj
-         qeOKEJUgUg0JBi4Ev0aZlYSNsvsEhIDteHoOprLRE8dB2ZL1ZC2i/kChwtg96GodeEAJ
-         b3j/q22QOVx5UJgtOyEWav2yqf1VfncL7ebaIRdbMwZDCPTWDlof9FmJvMrlB1d3isAC
-         qPbBPfUuHSHiisvUo4gBSPyHtA8qorb8il6iKRtd88oEixgoN4FA20rjgVleMjYv3Ebq
-         hTtdsr7tk6LU1tu8xPa+vXPwrKfRsx2R1uHrnTkbosbHGxCfCyvlp0qFIlGFf77hkizg
-         ccSA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YVQOrYQQFizQjvXpBS1py/Hn3EBucELMQiGGQ8ijEnQ=;
+        b=cWKIghWwJENAA/BZy0XxzBh9Ev1ibl4ChghcZJVosPIsdU8nzwaVbHdDOjLps+a0Eu
+         T3kN2Xxp6Z+ui6aOpbe9kB47ZTVWdmbIuUHYlN26aLwEH4zt7cal4vTu8r8fNKgVH+YH
+         n3tFn64yARyRVb+s74mdlK4BPIZfe5VKw0D0E7CUsS7tVxtQRJYQx9SIvnON4YyA5ls2
+         ZQn45XG7kLDOrPRvmvPNj24wpOiqiBDGXa46O3h+AbBTaNPr7vPlWdRC4G4Lsa5j4heC
+         0ysCPDqaim5yOrIgBASN47ac1DUNCAD+e9wVhdXYvRlb6aT387eD0tWSa0BJsY5YDy8u
+         2i+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=cy6m3+19iPAV89xjvtxNobg8u1DCt9a+TuM7sS4wT1A=;
-        b=XFHCo/EdSgS4YwGgY9jwKk3PvtY8zq2vYYz2NT2Wpgsh9narIGOMRS1BE+a5xtxVh8
-         H9fkH5o/Tj+08Nn3SRJ9tybUVoNFHB/LggvAKJVHD4Ial8Oq/Gw7QCIU7sK2IHLLoUH8
-         OIIpBn66On5kVR3SykGSlbkUR655uxTLTomOS028XSUZZpg1LpfH90/ruyDX8HNLEtnP
-         2orGayayOXGN6iCRruVINlCWoX/9l9HvA7cCoF2kmTu+f8eG534vOn7OKJW8aoGzH5fc
-         8u56Pm3Mg+5oXH55PBjOi4uHcx9Cvm4ctqAByzvZcN7NkS4hbT6C0edHpfDWFU70FwpE
-         r0Pw==
-X-Gm-Message-State: ABuFfoh6vFpT117V9/NdLMSMEETdMiw5CT7Ee8dEoRjD4I+MOn68M34L
-        W1vDzu8mOB9RifPEzC6VQp6XDg==
-X-Google-Smtp-Source: ACcGV63Hiu9J+Lb3eR8smblrmXtvbAi9PMBhjWtzzOhP+wNHIM3Bl9PgM/Bt3vr9555LCZkDlcvlog==
-X-Received: by 2002:a62:c60e:: with SMTP id m14-v6mr374666pfg.40.1538168893063;
-        Fri, 28 Sep 2018 14:08:13 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b029:4fc8:d7f:8889:342e:40b? ([2600:1010:b029:4fc8:d7f:8889:342e:40b])
-        by smtp.gmail.com with ESMTPSA id y19-v6sm13303840pff.14.2018.09.28.14.08.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 14:08:11 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] futex: Set USER_DS for the futex_detect_cmpxchg() test
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A366)
-In-Reply-To: <alpine.DEB.2.21.1809282224090.1432@nanos.tec.linutronix.de>
-Date:   Fri, 28 Sep 2018 14:08:10 -0700
-Cc:     Max Filippov <jcmvbkbc@gmail.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        fthain@telegraphics.com.au
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A3EEA386-DC02-432B-8B53-F1ECD035F431@amacapital.net>
-References: <74fb6ce22f62e0fb48b91ca9918b74cedbcecaf1.1538096323.git.luto@kernel.org> <alpine.DEB.2.21.1809280819040.8118@nanos.tec.linutronix.de> <CAMuHMdWWxgvo0a+8UvesiVikWS_45yOXRhM39F31Vn17kN+Ptg@mail.gmail.com> <20180928103726.07761672@mschwideX1> <alpine.DEB.2.21.1809281041420.2004@nanos.tec.linutronix.de> <0B38810F-3E22-45A8-9D5D-EDEABD214148@amacapital.net> <20180928165321.0ddaf948@mschwideX1> <CALCETrXm_-YVVw4YQVn8E+hHGAQ6tv+ie8Sfq=h72R5U8=hf-g@mail.gmail.com> <CAMo8BfJ7t-qPWzGPb6JzqEhPm9JBzvAX0a2paBXeQt-RCeHe_w@mail.gmail.com> <alpine.DEB.2.21.1809282224090.1432@nanos.tec.linutronix.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YVQOrYQQFizQjvXpBS1py/Hn3EBucELMQiGGQ8ijEnQ=;
+        b=VXAnf27l96okcvsCv4KrEgW6BeH0klViO0vn8KsECxSlgcg3eyRJ1cKeJkbZtADy59
+         TpemgGPPGPhikXmm3GrxaJB6y+W+BDoGNvyW73Slg60mjM/8wwZVA5vXZiHVyRKjUl3P
+         T09+fvSyhsy1bUqIpkLBGvcl5ld+N+z+gbndbb+fme+5o5Id2ARjw8BL7Puoo/vlUKNB
+         MwCZQwKYKNXtYJjX6wHWWOn9B1Cg25sp4hjX9fguMioYY/gbmERHhkH3IgxwMaQ8Yf3B
+         fFSeqHH7KATtsfP3sj4tgf4re5Eo9ONWFMNSvZ/95eUD4QAHttPlfc/ZhfbrcHim435R
+         6LFw==
+X-Gm-Message-State: ABuFfogHtWsNFMmnbj+ZS/YtZRI7H/AsnNf4NkrlW9d1pzzOly8wHoiE
+        WggabIWgHG15Cf2XBNPTiNkw9PYwPvmpNgBRjTXYb9WsG2pMQlwH
+X-Google-Smtp-Source: ACcGV61X44fWJTU97aP+6AzLvpqvc3zAsmsC5J3VW/CFmOheFMo8iMwD1vEQhsCDUKHUh5JmZz+RdtLbY5Jc/2ekiVk=
+X-Received: by 2002:aca:3b45:: with SMTP id i66-v6mr225544oia.312.1538169074897;
+ Fri, 28 Sep 2018 14:11:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180928154648.6320-1-tycho@tycho.ws> <20180928154648.6320-3-tycho@tycho.ws>
+ <CAG48ez2h51s1VG8hf1ASHHq88r5b+6rS4nSkgvre77jgsJLbhg@mail.gmail.com> <20180928205652.GC18045@cisco.lan>
+In-Reply-To: <20180928205652.GC18045@cisco.lan>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 28 Sep 2018 23:10:48 +0200
+Message-ID: <CAG48ez1CpPmk6BFOztA-=w1U-pvaNBXou6JpcfMKx_ELGSwDVA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] seccomp: introduce read protection for struct seccomp
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Sep 28, 2018 at 10:56 PM Tycho Andersen <tycho@tycho.ws> wrote:
+>
+> On Fri, Sep 28, 2018 at 10:33:34PM +0200, Jann Horn wrote:
+> > On Fri, Sep 28, 2018 at 5:47 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > > As Jann pointed out, there is a race between SECCOMP_FILTER_FLAG_TSYNC and
+> > > the ptrace code that can inspect a filter of another process. Let's
+> > > introduce read locking into the two ptrace accesses so that we don't race.
+> >
+> > Hmm. Is that true? The ptrace code uses get_nth_filter(), which holds
+> > the siglock while grabbing the seccomp filter and bumping its
+> > refcount. And TSYNC happens from seccomp_set_mode_filter(), which
+> > takes the siglock. So this looks okay to me?
+>
+> Oh, yes, you're right. So I guess we should just change the comment to
+> say we're using siglock to represent the read lock.
 
-
-> On Sep 28, 2018, at 1:26 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
->=20
->> On Fri, 28 Sep 2018, Max Filippov wrote:
->>=20
->>> On Fri, Sep 28, 2018 at 11:02 AM, Andy Lutomirski <luto@amacapital.net> w=
-rote:
->>> There may be a much nicer solution.  Unless I missed something, only
->>> mips and xtensa even have the possibility of cmpxchg being missing.
->>> We could just make those arches supply a futex-detecting helper.
->>=20
->> In case of xtensa availability of cmpxchg is known at build time.
->=20
-> That makes it even simpler. Could you provide a patch which selects
-> CONFIG_HAVE_FUTEX_CMPXCHG for the right set of CPUs please?
->=20
->=20
-
-I think that=E2=80=99s the wrong approach, since it won=E2=80=99t cover mips=
-. How about adding this to mips and xtensa only:
-
-static inline void arch_have_futex_cmpxchg(void) {...};
-#define arch_have_futex_cmpxchg arch_have_futex_cmpxchg
-
-And getting rid of the config option.=
+Hmm... actually, looking at this closer, I think you only need the
+siglock for writing. As far as I can tell, any read (no matter if
+current or non-current) can just use READ_ONCE(), because once a
+seccomp filter is in a task's seccomp filter chain, it can't be freed
+until the task reaches free_task() and calls put_seccomp_filter() from
+there. And if the task whose seccomp filter you're trying to read can
+reach free_task(), you have bigger problems.
