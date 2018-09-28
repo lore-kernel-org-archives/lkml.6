@@ -2,120 +2,106 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2F9C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 315EBC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA56521546
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:45:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="luJfNfnb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA56521546
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id E84C7216FE
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:47:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E84C7216FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbeI1TI6 (ORCPT
+        id S1729091AbeI1TKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 15:08:58 -0400
-Received: from mail-sg2apc01on0111.outbound.protection.outlook.com ([104.47.125.111]:28864
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726068AbeI1TI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 15:08:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5YqA7+Drrzp54XA8zJ9l8CgS1JW5oN8XeVuWtv/kxY0=;
- b=luJfNfnbP8iZpe+emKI9q3k6CzEfBIF5DcNJyHlSvcBeGdNQ/+C1Vi4+RXhcK67h4gTk0MXn19mE/7fpjOg0r3ChpUBjEZu3y2DHJP0nPEltuxVs3FM9epRdYMVMZtxO3fqfDjQD9NQ/eirwDBxdK2MgAJRslZs2gODYwDZLLkA=
-Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM (52.133.156.18) by
- HK0P153MB0179.APCP153.PROD.OUTLOOK.COM (52.133.212.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.3; Fri, 28 Sep 2018 12:45:17 +0000
-Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
- ([fe80::8584:ad93:130a:6267]) by HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
- ([fe80::8584:ad93:130a:6267%3]) with mapi id 15.20.1207.011; Fri, 28 Sep 2018
- 12:45:17 +0000
-From:   Tianyu Lan <Tianyu.Lan@microsoft.com>
-CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] KVM/VMX: Remve unused function is_external_interrupt().
-Thread-Topic: [PATCH] KVM/VMX: Remve unused function is_external_interrupt().
-Thread-Index: AQHUVykbq0ivsPwgo06IrxynQUenpQ==
-Date:   Fri, 28 Sep 2018 12:45:16 +0000
-Message-ID: <20180928124449.11493-1-Tianyu.Lan@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tianyu.Lan@microsoft.com; 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK0P153MB0179;6:rcJQXU25nRXKB9+YD+p377NbJrlN2mcR6c8aC4CN0Qo/EfyIx1mBVjy9XOxqhNTc0Hp+wm7cBO11TesDzUucwNu3K695KqY2lM9nQlEo720rHVjK69AEElns9TORDUeuCPaOypF+bnkuoKRnU68YeDSm25AeJWiUhyyIp9jfnrIM7mHRovW2z1sJlzneKO7WW1ShZpFD9gkvHOTdkJEVRPQykFsqLv+QEcp0bTIMSo4qXuSqVqr0B6v/4kOYa984LqONB5HDoioAeyceWOAt7h4GBuopRDc4bmsTcET/ADxREq01gyI7Vv2+IziacqsY4+Tu05TpRx7/39CUeHj2jSRBeWMnQfvMl096JWcfK09vhAQ9nkzQXosdHg2M2EmphDqCWOFO3qCdX1xZD4eX7cR/QfoQZ5e7Cx61vTbFeHSQGkbnPCef4qYmmWjkj8cgAZrVe9VqU5j7XLhA6dK+iw==;5:SoqOIuFJzmTRv86OF37yzadK/KMvH1wq9ybJhe0rP15cgh2TBFuHMDr/yddtJDgJJG7VDFAyUd283+Lvsn0tSAnSfszXfYNlsuIeM43QnvVd1nJsUBYD7BUxND+QqRHXajGM8+iuEzGG2ZFOXTPKQl3EpvPyetqxnZ+578YwJFg=;7:qfAOOHbEb5wFl3fp0XuAuJVG0Uz8aoly0BVGARV/VBXZAlY8obCAtXpcXGDu7FOsG9EG33lTdJm4/K3aeRIdsbJDx9weegZE5oJ/6bapN7etMOD2WqrjEtjrD5/gWKW75J2kZdOyF1SaDXExTH8E9vHmEUzXnRzkY1cWcOHtTQmiU9bJv2UyCTTOb3NFA+ntxiKXp186xEYuEuRivbzsBPOf6Wkk3VX6YfjCH5gfsJ4m8SmGhYf1kCBQ7hxtsFjg
-x-ms-office365-filtering-correlation-id: 6e4ca83c-c6ea-416c-1ced-08d625403e41
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:HK0P153MB0179;
-x-ms-traffictypediagnostic: HK0P153MB0179:
-x-microsoft-antispam-prvs: <HK0P153MB01798DABF4C40C661E88EA3792EC0@HK0P153MB0179.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051);SRVR:HK0P153MB0179;BCL:0;PCL:0;RULEID:;SRVR:HK0P153MB0179;
-x-forefront-prvs: 0809C12563
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(396003)(376002)(366004)(346002)(199004)(189003)(1671002)(256004)(105586002)(106356001)(2900100001)(5660300001)(14454004)(86612001)(86362001)(2906002)(10090500001)(10290500003)(478600001)(72206003)(59246006)(7736002)(305945005)(3846002)(6116002)(1076002)(68736007)(102836004)(6512007)(71200400001)(26005)(1857600001)(71190400001)(476003)(2616005)(486006)(109986005)(4326008)(6486002)(8676002)(25786009)(22452003)(6506007)(81166006)(6436002)(54906003)(99286004)(97736004)(81156014)(5250100002)(34290500001)(8936002)(36756003)(316002)(66066001)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:HK0P153MB0179;H:HK0P153MB0129.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Ikr/6nrbsIAP1LlV9oTwoenG33fmA3gIcn94sSi7iKj2d1qfmdbOk8wXPLXWh1j0llTmyD+fR0wjwBtKqifwCPIG0WMWMJaiKDBEjECT4eklLp9rjHITV23e0ex7nRUMYqpdVE605pOkAmiArG/b6+PzpCot0I9H05Ik/6g4Xfs5KsGjaGOgRekVtkDCeIsEHGP955vzDbjGvIrXOoiWmyLo2QrmT2bUMZsRmTpT2x0EciwkKSEPq2lxrtN28RJKpNefY6pVv/XDdsTk6JeRW4Hh4GB11QkKa6gSdZIgpWvz1JwPmuMedtfYI+jmDb3HCu9Nr9AjDJdTtAr7Ga7DAEzMLvlmzoH8bIuRWSojfSY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 28 Sep 2018 15:10:48 -0400
+Received: from foss.arm.com ([217.140.101.70]:49036 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728200AbeI1TKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 15:10:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E59BFED1;
+        Fri, 28 Sep 2018 05:47:10 -0700 (PDT)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 862313F5D3;
+        Fri, 28 Sep 2018 05:47:08 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 13:47:05 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     joro@8bytes.org, thunder.leizhen@huawei.com,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
+        john.garry@huawei.com
+Subject: Re: [PATCH v8 5/7] iommu/arm-smmu-v3: Add support for non-strict mode
+Message-ID: <20180928124704.GC1577@brain-police>
+References: <cover.1537458163.git.robin.murphy@arm.com>
+ <b98f8f695178c9c9ac6e081680090d5ac97e8d7c.1537458163.git.robin.murphy@arm.com>
+ <20180928121900.GB1577@brain-police>
+ <1d2b57f7-be4e-39c5-4981-7f8e2f601b6a@arm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e4ca83c-c6ea-416c-1ced-08d625403e41
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Sep 2018 12:45:16.7619
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0P153MB0179
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d2b57f7-be4e-39c5-4981-7f8e2f601b6a@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-is_external_interrupt() is not used now and so remove it.
+On Fri, Sep 28, 2018 at 01:26:00PM +0100, Robin Murphy wrote:
+> On 28/09/18 13:19, Will Deacon wrote:
+> > On Thu, Sep 20, 2018 at 05:10:25PM +0100, Robin Murphy wrote:
+> > > From: Zhen Lei <thunder.leizhen@huawei.com>
+> > > 
+> > > Now that io-pgtable knows how to dodge strict TLB maintenance, all
+> > > that's left to do is bridge the gap between the IOMMU core requesting
+> > > DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE for default domains, and showing the
+> > > appropriate IO_PGTABLE_QUIRK_NON_STRICT flag to alloc_io_pgtable_ops().
+> > > 
+> > > Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> > > [rm: convert to domain attribute, tweak commit message]
+> > > Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> > > ---
+> > > 
+> > > v8:
+> > >   - Use nested switches for attrs
+> > >   - Document barrier semantics
+> > > 
+> > >   drivers/iommu/arm-smmu-v3.c | 79 ++++++++++++++++++++++++++-----------
+> > >   1 file changed, 56 insertions(+), 23 deletions(-)
+> > > 
+> > > diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> > > index f10c852479fc..db402e8b068b 100644
+> > > --- a/drivers/iommu/arm-smmu-v3.c
+> > > +++ b/drivers/iommu/arm-smmu-v3.c
+> > > @@ -612,6 +612,7 @@ struct arm_smmu_domain {
+> > >   	struct mutex			init_mutex; /* Protects smmu pointer */
+> > >   	struct io_pgtable_ops		*pgtbl_ops;
+> > > +	bool				non_strict;
+> > >   	enum arm_smmu_domain_stage	stage;
+> > >   	union {
+> > > @@ -1407,6 +1408,12 @@ static void arm_smmu_tlb_inv_context(void *cookie)
+> > >   		cmd.tlbi.vmid	= smmu_domain->s2_cfg.vmid;
+> > >   	}
+> > > +	/*
+> > > +	 * NOTE: when io-pgtable is in non-strict mode, we may get here with
+> > > +	 * PTEs previously cleared by unmaps on the current CPU not yet visible
+> > > +	 * to the SMMU. We are relying on the DSB implicit in queue_inc_prod()
+> > > +	 * to guarantee those are observed before the TLBI. Do be careful, 007.
+> > > +	 */
+> > 
+> > Good, so you can ignore my comment on the previous patch :)
+> 
+> Well, I suppose that comment in io-pgtable *could* have explicitly noted
+> that same-CPU order is dealt with elsewhere - feel free to fix it up if you
+> think it would be a helpful reminder for the future.
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
- arch/x86/kvm/vmx.c | 6 ------
- 1 file changed, 6 deletions(-)
+I think I'll move it into the documentation for the new attribute, so that
+any driver authors wanting to enable lazy invalidation know that they need
+to provide this guarantee in their full TLB invalidation callback.
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 70e1f916bfc9..619307b3e6bb 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -1667,12 +1667,6 @@ static inline bool is_gp_fault(u32 intr_info)
- 	return is_exception_n(intr_info, GP_VECTOR);
- }
-=20
--static inline bool is_external_interrupt(u32 intr_info)
--{
--	return (intr_info & (INTR_INFO_INTR_TYPE_MASK | INTR_INFO_VALID_MASK))
--		=3D=3D (INTR_TYPE_EXT_INTR | INTR_INFO_VALID_MASK);
--}
--
- static inline bool is_machine_check(u32 intr_info)
- {
- 	return (intr_info & (INTR_INFO_INTR_TYPE_MASK | INTR_INFO_VECTOR_MASK |
---=20
-2.14.4
+Will
