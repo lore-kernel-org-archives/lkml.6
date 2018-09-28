@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4655EC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFE8C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1427021547
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:02:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1427021547
+	by mail.kernel.org (Postfix) with ESMTP id 98B77215EB
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:02:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98B77215EB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729054AbeI1T0S (ORCPT
+        id S1728804AbeI1T0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 15:26:18 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:24807 "EHLO
+        Fri, 28 Sep 2018 15:26:06 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:5635 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726440AbeI1T0K (ORCPT
+        by vger.kernel.org with ESMTP id S1726345AbeI1T0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 15:26:10 -0400
+        Fri, 28 Sep 2018 15:26:06 -0400
 Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8SCxE55031447;
-        Fri, 28 Sep 2018 15:02:07 +0200
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8SCxDEe031434;
+        Fri, 28 Sep 2018 15:02:11 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mnb6y1wyu-1
+        by mx07-00178001.pphosted.com with ESMTP id 2mnb6y1x06-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 28 Sep 2018 15:02:07 +0200
+        Fri, 28 Sep 2018 15:02:11 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 577403D;
-        Fri, 28 Sep 2018 13:02:06 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BDAEA34;
+        Fri, 28 Sep 2018 13:02:10 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2A5C64E74;
-        Fri, 28 Sep 2018 13:02:06 +0000 (GMT)
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A0CF14E74;
+        Fri, 28 Sep 2018 13:02:10 +0000 (GMT)
 Received: from localhost (10.75.127.50) by SFHDAG5NODE2.st.com (10.75.127.14)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 28 Sep 2018 15:02:05
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 28 Sep 2018 15:02:09
  +0200
 From:   Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
@@ -49,16 +49,16 @@ To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 CC:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH v3 1/7] dt-bindings: stm32-dma: Add DMA/MDMA chaining support bindings
-Date:   Fri, 28 Sep 2018 15:01:49 +0200
-Message-ID: <1538139715-24406-2-git-send-email-pierre-yves.mordret@st.com>
+Subject: [PATCH v3 2/7] dt-bindings: stm32-dmamux: Add one cell to support DMA/MDMA chain
+Date:   Fri, 28 Sep 2018 15:01:50 +0200
+Message-ID: <1538139715-24406-3-git-send-email-pierre-yves.mordret@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538139715-24406-1-git-send-email-pierre-yves.mordret@st.com>
 References: <1538139715-24406-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG5NODE2.st.com
+X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG5NODE2.st.com
  (10.75.127.14)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_06:,,
  signatures=0
@@ -69,15 +69,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
 
-This patch adds dma bindings to support DMA/MDMA chaining transfer.
-1 bit is to manage both DMA FIFO Threshold
-1 bit is to manage DMA/MDMA Chaining features.
-2 bits are used to specify SDRAM size to use for DMA/MDMA chaining.
-The size in bytes of a certain order is given by the formula:
-    (2 ^ order) * PAGE_SIZE.
-The order is given by those 2 bits.
-For cyclic, whether chaining is chosen, any value above 1 can be set :
-SRAM buffer size will rely on period size and not on this DT value.
+Add one cell to support DMA/MDMA chaining.
 
 Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 ---
@@ -89,61 +81,26 @@ Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
        * Initial
 ---
 ---
- .../devicetree/bindings/dma/stm32-dma.txt          | 27 +++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/dma/stm32-dmamux.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/dma/stm32-dma.txt b/Documentation/devicetree/bindings/dma/stm32-dma.txt
-index c5f5190..2bac8c7 100644
---- a/Documentation/devicetree/bindings/dma/stm32-dma.txt
-+++ b/Documentation/devicetree/bindings/dma/stm32-dma.txt
-@@ -17,6 +17,12 @@ Optional properties:
- - resets: Reference to a reset controller asserting the DMA controller
- - st,mem2mem: boolean; if defined, it indicates that the controller supports
-   memory-to-memory transfer
-+- dmas: A list of eight dma specifiers, one for each entry in dma-names.
-+  Refer to stm32-mdma.txt for more details.
-+- dma-names: should contain "ch0", "ch1", "ch2", "ch3", "ch4", "ch5", "ch6" and
-+  "ch7" and represents each STM32 DMA channel connected to a STM32 MDMA one.
-+- memory-region : phandle to a node describing memory to be used for
-+  M2M intermediate transfer between DMA and MDMA.
- 
- Example:
- 
-@@ -36,6 +42,16 @@ Example:
- 		st,mem2mem;
- 		resets = <&rcc 150>;
- 		dma-requests = <8>;
-+		dmas = <&mdma1 8 0x10 0x1200000a 0x40026408 0x00000020 1>,
-+		       <&mdma1 9 0x10 0x1200000a 0x40026408 0x00000800 1>,
-+		       <&mdma1 10 0x10 0x1200000a 0x40026408 0x00200000 1>,
-+		       <&mdma1 11 0x10 0x1200000a 0x40026408 0x08000000 1>,
-+		       <&mdma1 12 0x10 0x1200000a 0x4002640C 0x00000020 1>,
-+		       <&mdma1 13 0x10 0x1200000a 0x4002640C 0x00000800 1>,
-+		       <&mdma1 14 0x10 0x1200000a 0x4002640C 0x00200000 1>,
-+		       <&mdma1 15 0x10 0x1200000a 0x4002640C 0x08000000 1>;
-+		dma-names = "ch0", "ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7";
-+		memory-region = <&sram_dmapool>;
- 	};
- 
- * DMA client
-@@ -68,7 +84,16 @@ channel: a phandle to the DMA controller plus the following four integer cells:
- 	0x1: 1/2 full FIFO
- 	0x2: 3/4 full FIFO
- 	0x3: full FIFO
--
-+ -bit 2: Intermediate M2M transfer from/to DDR to/from SRAM throughout MDMA
-+	0: MDMA not used to generate an intermediate M2M transfer
-+	1: MDMA used to generate an intermediate M2M transfer.
-+ -bit 3-4: indicated SRAM Buffer size in (2^order)*PAGE_SIZE.
-+	PAGE_SIZE is given by Linux at 4KiB: include/asm-generic/page.h.
-+	Order is given by those 2 bits starting at 0.
-+	Valid only whether Intermediate M2M transfer is set.
-+	For cyclic, whether Intermediate M2M transfer is chosen, any value can
-+	be set: SRAM buffer size will rely on period size and not on this DT
-+	value.
- 
- Example:
- 
+diff --git a/Documentation/devicetree/bindings/dma/stm32-dmamux.txt b/Documentation/devicetree/bindings/dma/stm32-dmamux.txt
+index 1b893b2..5e92b59 100644
+--- a/Documentation/devicetree/bindings/dma/stm32-dmamux.txt
++++ b/Documentation/devicetree/bindings/dma/stm32-dmamux.txt
+@@ -4,9 +4,9 @@ Required properties:
+ - compatible:	"st,stm32h7-dmamux"
+ - reg:		Memory map for accessing module
+ - #dma-cells:	Should be set to <3>.
+-		First parameter is request line number.
+-		Second is DMA channel configuration
+-		Third is Fifo threshold
++-		First parameter is request line number.
++-		Second is DMA channel configuration
++-		Third is a 32bit bitfield
+ 		For more details about the three cells, please see
+ 		stm32-dma.txt documentation binding file
+ - dma-masters:	Phandle pointing to the DMA controllers.
 -- 
 2.7.4
 
