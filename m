@@ -2,153 +2,184 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36334C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F84C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E13DA20779
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:25:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E13DA20779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C38020779
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:26:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RoPTdDOV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C38020779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbeI1Utl (ORCPT
+        id S1729054AbeI1Uun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:49:41 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51388 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbeI1Utl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:49:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9724DED1;
-        Fri, 28 Sep 2018 07:25:39 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5A3A3F5B3;
-        Fri, 28 Sep 2018 07:25:37 -0700 (PDT)
-Subject: Re: [PATCH v8 3/7] iommu: Add "iommu.strict" command line option
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     joro@8bytes.org, thunder.leizhen@huawei.com,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
-        john.garry@huawei.com
-References: <cover.1537458163.git.robin.murphy@arm.com>
- <799fad801970298385af3abc8ca82620ad62c000.1537458163.git.robin.murphy@arm.com>
- <20180928125130.GD1577@brain-police>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <a3839ea8-ef67-300a-49aa-19b8932b042b@arm.com>
-Date:   Fri, 28 Sep 2018 15:25:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 28 Sep 2018 16:50:43 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35827 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbeI1Uun (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 16:50:43 -0400
+Received: by mail-qt1-f195.google.com with SMTP id z14-v6so6850566qtn.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 07:26:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lQnVi8wUAiqnxlTl73Slq2pOQzl1K90IPxbHwQeFnis=;
+        b=RoPTdDOV3k4zRiMehbUo1Sv/ssEXTlul1jQ2+K409/s+8lF5oBVKYiQE19Ag09o6/z
+         7cu5FrnQebsSd/BlYHHltl7e8L/kePUep2DxkmL03/qmaSCOXtStYE0CfC73ndnUIsPc
+         rNe9bHT24jdLN7wHYKlnkvIcCSGZlKXd2WFcCiaTE3mPN8oLhkWA2cexIK55YTCoq+6Y
+         //y3c0xkwy7PGSDY32lpAL2a09Xx1BrZp3atIFtg9AP4+aJMBcymFeJ3hT4ZjXEFol3y
+         KZtqo5SP32dHL/vcZR1uWV33qkkSriYtg+V37SIXi5cIN6gQSd7/OdlewVbDmJKfd1es
+         Ic1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lQnVi8wUAiqnxlTl73Slq2pOQzl1K90IPxbHwQeFnis=;
+        b=NMP4zU7Qh7HnvaKjz63YxnAOGK7Bz+s2ssuxp82TSAP8Vjm8jWJ6CwxTb3e0pvkXdG
+         J3cSyke0xP82THLq/3G6ihsMOtcXk2k2LZKPJGPSnscX/OIJjjPCx1WDWMjYTGc4fCJG
+         ges8QRWRx5s1vp1ruenXQhp0bC9GqQgONPBb2fZ4n28vQfksmWrkzHkYQQ5k/7zW6+8N
+         Xmi9VT3vKsmCtyoGWimrqsUgWUyzX9ue6Dm8tyYhS6FSA/dDqXQex1kr/Jg7G6ykBJhb
+         c3SVarE8/Pjoawwq3EGV3SI6pciRg96vzFx0zXi4Eb083sn75xzqVTtOKFpvtV2X93U3
+         wNyQ==
+X-Gm-Message-State: ABuFfog/h6nuoKMxRUay3bfsD6Rcw+4TJuCisxT0kF0T188IdzAMpTWi
+        MFLFJkEvoFGrkCnpww6GGYwxC7o=
+X-Google-Smtp-Source: ACcGV62uw4ni2dUirqaZx9ce87zKeopFJ1F6GSvRPeEfW8VDSPsDopV5sYVsJIVj4NnJrkMXNOISiw==
+X-Received: by 2002:a0c:c3c6:: with SMTP id p6-v6mr11974037qvi.146.1538144800378;
+        Fri, 28 Sep 2018 07:26:40 -0700 (PDT)
+Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id v10-v6sm3519784qkv.90.2018.09.28.07.26.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Sep 2018 07:26:40 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 10:26:34 -0400
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] ACPI / NUMA: Add warning message if the padding
+ size for KASLR is not enough
+Message-ID: <20180928142633.u5me4uhq7lkiblh5@gabell>
+References: <20180927203146.12201-1-msys.mizuma@gmail.com>
+ <20180927203146.12201-3-msys.mizuma@gmail.com>
+ <20180928024857.GA14470@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-In-Reply-To: <20180928125130.GD1577@brain-police>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928024857.GA14470@MiWiFi-R3L-srv>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/09/18 13:51, Will Deacon wrote:
-> On Thu, Sep 20, 2018 at 05:10:23PM +0100, Robin Murphy wrote:
->> From: Zhen Lei <thunder.leizhen@huawei.com>
->>
->> Add a generic command line option to enable lazy unmapping via IOVA
->> flush queues, which will initally be suuported by iommu-dma. This echoes
->> the semantics of "intel_iommu=strict" (albeit with the opposite default
->> value), but in the driver-agnostic fashion of "iommu.passthrough".
->>
->> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
->> [rm: move handling out of SMMUv3 driver, clean up documentation]
->> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->> ---
->>
->> v8:
->>   - Rename "non-strict" to "strict" to better match existing options
->>   - Rewrite doc text/commit message
->>   - Downgrade boot-time message from warn/taint to info
->>
->>   .../admin-guide/kernel-parameters.txt         | 12 ++++++++++
->>   drivers/iommu/iommu.c                         | 23 +++++++++++++++++++
->>   2 files changed, 35 insertions(+)
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index 9871e649ffef..92ae12aeabf4 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -1749,6 +1749,18 @@
->>   		nobypass	[PPC/POWERNV]
->>   			Disable IOMMU bypass, using IOMMU for PCI devices.
->>   
->> +	iommu.strict=	[ARM64] Configure TLB invalidation behaviour
->> +			Format: { "0" | "1" }
->> +			0 - Lazy mode.
->> +			  Request that DMA unmap operations use deferred
->> +			  invalidation of hardware TLBs, for increased
->> +			  throughput at the cost of reduced device isolation.
->> +			  Will fall back to strict mode if not supported by
->> +			  the relevant IOMMU driver.
->> +			1 - Strict mode (default).
->> +			  DMA unmap operations invalidate IOMMU hardware TLBs
->> +			  synchronously.
->> +
->>   	iommu.passthrough=
->>   			[ARM64] Configure DMA to bypass the IOMMU by default.
->>   			Format: { "0" | "1" }
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->> index 8c15c5980299..02b6603f0616 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -41,6 +41,7 @@ static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_IDENTITY;
->>   #else
->>   static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_DMA;
->>   #endif
->> +static bool iommu_dma_strict __read_mostly = true;
->>   
->>   struct iommu_callback_data {
->>   	const struct iommu_ops *ops;
->> @@ -131,6 +132,21 @@ static int __init iommu_set_def_domain_type(char *str)
->>   }
->>   early_param("iommu.passthrough", iommu_set_def_domain_type);
->>   
->> +static int __init iommu_dma_setup(char *str)
->> +{
->> +	int ret;
->> +
->> +	ret = kstrtobool(str, &iommu_dma_strict);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (!iommu_dma_strict)
->> +		pr_info("Enabling deferred TLB invalidation for DMA; protection against malicious/malfunctioning devices may be reduced.\n");
+On Fri, Sep 28, 2018 at 10:48:57AM +0800, Baoquan He wrote:
+> On 09/27/18 at 04:31pm, Masayoshi Mizuma wrote:
+> > From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > 
+> > Add warning message if the padding size for KASLR,
+> > rand_mem_physical_padding, is not enough. The message also
+> > says the suitable padding size.
+> > 
+> > Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > ---
+> >  arch/x86/include/asm/setup.h |  2 ++
+> >  drivers/acpi/numa.c          | 14 ++++++++++++++
+> >  2 files changed, 16 insertions(+)
+> > 
+> > diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+> > index ae13bc9..65a5bf8 100644
+> > --- a/arch/x86/include/asm/setup.h
+> > +++ b/arch/x86/include/asm/setup.h
+> > @@ -80,6 +80,8 @@ static inline unsigned long kaslr_offset(void)
+> >  	return (unsigned long)&_text - __START_KERNEL;
+> >  }
+> >  
+> > +extern int rand_mem_physical_padding;
+> > +
+> >  /*
+> >   * Do NOT EVER look at the BIOS memory size location.
+> >   * It does not work on many machines.
+> > diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> > index 8516760..9c3cc3c 100644
+> > --- a/drivers/acpi/numa.c
+> > +++ b/drivers/acpi/numa.c
+> > @@ -32,6 +32,7 @@
+> >  #include <linux/numa.h>
+> >  #include <linux/nodemask.h>
+> >  #include <linux/topology.h>
+> > +#include <asm/setup.h>
+> >  
+> >  static nodemask_t nodes_found_map = NODE_MASK_NONE;
+> >  
+> > @@ -435,6 +436,8 @@ acpi_table_parse_srat(enum acpi_srat_type id,
+> >  int __init acpi_numa_init(void)
+> >  {
+> >  	int cnt = 0;
+> > +	u32 max_phys_addr_tb;
+> > +	u64 max_phys_addr;
+> >  
+> >  	if (acpi_disabled)
+> >  		return -EINVAL;
+> > @@ -463,6 +466,17 @@ int __init acpi_numa_init(void)
+> >  
+> >  		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+> >  					    acpi_parse_memory_affinity, 0);
+> > +
+> > +		if (parsed_numa_memblks && kaslr_enabled()) {
+> > +			max_phys_addr = PFN_PHYS(max_possible_pfn);
+> > +			max_phys_addr_tb = (roundup(max_phys_addr, 1ULL << 40)) >> 40;
+> > +
+> > +			if (max_phys_addr_tb > rand_mem_physical_padding)
 > 
-> Printing here isn't quite right, because if somebody boots with something
-> like:
+> Here I assume max_phys_addr_tb is the end of the possible RAM in system.
+
+Yes, correct.
+
+> rand_mem_physical_padding is the preserved space for later memory
+> extending. Don't we add the actual RAM size to the
+> rand_mem_physical_padding, then compare with max_phys_addr_tb?
+
+This is very good point! You are right, the padding should be
+adjusted to exceed the possible RAM size, like as follows.
+
+   ADDRESS
+     0
+     :
+    1TB           <= actual RAM size
+     :
+    2TB           <= possible RAM size
+    2TB and more  <= actual + padding size (kaslr_regions[0].size_tb)
+
+I'll fix it, thanks!
+
+- Masa
+
 > 
-> 	"iommu.strict=1 iommu.strict=0 iommu.strict=0 iommu.strict=1"
+> Please correct me if I am wrong.
 > 
-> then we'll print the wrong thing twice :)
-
-But it's not wrong! For those two brief moments it *is* enabled :P
-
-For reasons of conciseness, the subtlety that "enabled" doesn't 
-necessarily imply "in use" is only conveyed by the "may".
-
-> I think we either need to drop the print, or move it to a the DMA domain
-> initialisation.
-
-TBH I did toy with moving it around, but in the end it seemed neatest to 
-have it right there next to the parameter handling, with the added 
-advantage that it appears early in the log where system-wide things 
-might be expected to appear, rather than mixed in with all the driver 
-noise later.
-
-AFAICS it's no worse than various other parameters - try booting with, 
-say, "mem=640k mem=1G mem=cheese" and one finds that memory is in fact 
-not limited (nor indeed cheese) regardless of what the log might say.
-
-Robin.
+> Thanks
+> Baoquan
+> 
+> > +				pr_warn("Set 'rand_mem_physical_padding=%d' "
+> > +					"as the kernel parameter. "
+> > +					"Otherwise, memory hotadd may be failed.\n",
+> > +					max_phys_addr_tb);
+> > +		}
+> >  	}
+> >  
+> >  	/* SLIT: System Locality Information Table */
+> > -- 
+> > 2.18.0
+> > 
