@@ -2,80 +2,85 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 478D3C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FE4C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05F58204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:06:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05F58204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=diehl.com
+	by mail.kernel.org (Postfix) with ESMTP id 72E2E204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:09:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E2E204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbeI1S36 (ORCPT
+        id S1727870AbeI1SdQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 14:29:58 -0400
-Received: from enterprise01.smtp.diehl.com ([193.201.238.219]:53543 "EHLO
-        enterprise01.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726024AbeI1S36 (ORCPT
+        Fri, 28 Sep 2018 14:33:16 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34752 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbeI1SdQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 14:29:58 -0400
-X-$ESA-Groupmapping: true
-X-IronPort-AV: E=Sophos;i="5.54,314,1534802400"; 
-   d="scan'208";a="57476047"
-From:   Denis OSTERLAND <denis.osterland@diehl.com>
-To:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
-CC:     "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rtc: isl1208: access i2c client via rtc parent
-Thread-Topic: [PATCH] rtc: isl1208: access i2c client via rtc parent
-Thread-Index: AQHUVyGQKP+USsTTMEa4uID7TSMNXaUFdyGAgAAAcoA=
-Date:   Fri, 28 Sep 2018 12:06:27 +0000
-Message-ID: <1538136387.6162.10.camel@diehl.com>
-References: <20180928114832.27383-1-Denis.Osterland@diehl.com>
-         <20180928120451.GR16644@piout.net>
-In-Reply-To: <20180928120451.GR16644@piout.net>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8BE0801DBD03B2459E4F52DF3220D37F@diehl.internal>
-Content-Transfer-Encoding: base64
+        Fri, 28 Sep 2018 14:33:16 -0400
+Received: by mail-qt1-f196.google.com with SMTP id x23-v6so6331998qtr.1;
+        Fri, 28 Sep 2018 05:09:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s+bx1FzWZAJStTfViWY9Qus05GxGMuHIRFsQvJa/OZE=;
+        b=UYNwGyt9aubU+PjuSTiAnS5RYBEyE9y4sjCwBN4f6CVm0gW2X0AHknGwItMzU7D5MP
+         dzXBwYP/w2XXyWIChBByunqUwxGUOgOZascRnyhUO+aD9FDVMTIeXP76hpExZ71zwc/V
+         6gsgkh9v9EN+amICQeaAgXkN1bLjRZBAZ0syYWdzAuUKoqSeI+emIwi2MplAL3Lkp5Fu
+         I0zbv8FAIclL0y2uYlScANBW5zoifA6E7XY4T3rNR8A0qsJrU7iGghc/+17O+k75MiJT
+         mKAXdgj5tY+po/78xoq9I3iQlAFKzH8VIqhEKYlzPh+KW4TCTAKLM+mapK/jPrOGoD+Q
+         hy/Q==
+X-Gm-Message-State: ABuFfogW7WXf4i9QgQAWuAHje/sSdD9UjOjToyXBK14qPYvpgMMA3e8m
+        zPWd/DtCT3BsD7AtdqTLAMQdXMO+auft9iyY89c=
+X-Google-Smtp-Source: ACcGV625VmSj8m/blZSc64uzBAfpIfIxM+5+1beUlGK4i+9tpxQ/EHHmEE/hK7HxoS2jaObk4UB5GoVUAWA+7XQTNiY=
+X-Received: by 2002:aed:366a:: with SMTP id e97-v6mr301280qtb.75.1538136587047;
+ Fri, 28 Sep 2018 05:09:47 -0700 (PDT)
 MIME-Version: 1.0
-X-TrailerSkip: 1
-X-GBS-PROC: 415AWy8o668fDtCxszluzzNQMPGhQkQzcd6oqm98zpHhwNYwnmNi6YoGhlOC0Boq
+References: <1538057720-3392-1-git-send-email-firoz.khan@linaro.org> <1538057720-3392-8-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1538057720-3392-8-git-send-email-firoz.khan@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 28 Sep 2018 14:09:30 +0200
+Message-ID: <CAK8P3a2E2KJApEcwpJgqs9KHuyr-mzE8Y6F+D1E0akpXt8VK_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] ia64: add __IGNORE* entries in asm/unistd.h
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     linux-ia64@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QW0gRnJlaXRhZywgZGVuIDI4LjA5LjIwMTgsIDE0OjA0ICswMjAwIHNjaHJpZWIgQWxleGFu
-ZHJlIEJlbGxvbmk6DQo+IEhlbGxvLA0KPsKgDQo+IE9oIHJpZ2h0LCBJIGFjdHVhbGx5IGhh
-ZCB0aGF0IGJ1dCBzb21laG93LCBJIHN0YXNoZWQgdGhlIHBhdGNoIGluc3RlYWQNCj4gb2Yg
-c3F1YXNoaW5nIGl0Lg0KPiANCj4gSWYgdGhhdCBpcyBmaW5lIGZvciB5b3UsIEknbGwgZm9s
-ZCB0aGF0IGluIHRoZSBvcmlnaW5hbCBwYXRjaCAoSSdsbCBhZA0KPiB5b3VyIFNvQikuDQo+
-IA0KPiANClNvdW5kcyBnb29kLg0KDQpSZWdhcmRzIERlbmlzDQoNCkRpZWhsIENvbm5lY3Rp
-dml0eSBTb2x1dGlvbnMgR21iSA0KR2VzY2jDpGZ0c2bDvGhydW5nOiBIb3JzdCBMZW9uYmVy
-Z2VyDQpTaXR6IGRlciBHZXNlbGxzY2hhZnQ6IE7DvHJuYmVyZyAtIFJlZ2lzdGVyZ2VyaWNo
-dDogQW10c2dlcmljaHQNCk7DvHJuYmVyZzogSFJCIDMyMzE1DQpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCg0KRGVyIEluaGFsdCBkZXIgdm9yc3Rl
-aGVuZGVuIEUtTWFpbCBpc3QgbmljaHQgcmVjaHRsaWNoIGJpbmRlbmQuIERpZXNlIEUtTWFp
-bCBlbnRoYWVsdCB2ZXJ0cmF1bGljaGUgdW5kL29kZXIgcmVjaHRsaWNoIGdlc2NodWV0enRl
-IEluZm9ybWF0aW9uZW4uDQpJbmZvcm1pZXJlbiBTaWUgdW5zIGJpdHRlLCB3ZW5uIFNpZSBk
-aWVzZSBFLU1haWwgZmFlbHNjaGxpY2hlcndlaXNlIGVyaGFsdGVuIGhhYmVuLiBCaXR0ZSBs
-b2VzY2hlbiBTaWUgaW4gZGllc2VtIEZhbGwgZGllIE5hY2hyaWNodC4NCkplZGUgdW5lcmxh
-dWJ0ZSBGb3JtIGRlciBSZXByb2R1a3Rpb24sIEJla2FubnRnYWJlLCBBZW5kZXJ1bmcsIFZl
-cnRlaWx1bmcgdW5kL29kZXIgUHVibGlrYXRpb24gZGllc2VyIEUtTWFpbCBpc3Qgc3RyZW5n
-c3RlbnMgdW50ZXJzYWd0Lg0KVGhlIGNvbnRlbnRzIG9mIHRoZSBhYm92ZSBtZW50aW9uZWQg
-ZS1tYWlsIGlzIG5vdCBsZWdhbGx5IGJpbmRpbmcuIFRoaXMgZS1tYWlsIGNvbnRhaW5zIGNv
-bmZpZGVudGlhbCBhbmQvb3IgbGVnYWxseSBwcm90ZWN0ZWQgaW5mb3JtYXRpb24uIFBsZWFz
-ZSBpbmZvcm0gdXMgaWYgeW91IGhhdmUgcmVjZWl2ZWQgdGhpcyBlLW1haWwgYnkNCm1pc3Rh
-a2UgYW5kIGRlbGV0ZSBpdCBpbiBzdWNoIGEgY2FzZS4gRWFjaCB1bmF1dGhvcml6ZWQgcmVw
-cm9kdWN0aW9uLCBkaXNjbG9zdXJlLCBhbHRlcmF0aW9uLCBkaXN0cmlidXRpb24gYW5kL29y
-IHB1YmxpY2F0aW9uIG9mIHRoaXMgZS1tYWlsIGlzIHN0cmljdGx5IHByb2hpYml0ZWQuIA0K
+On Thu, Sep 27, 2018 at 4:16 PM Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+> Add __IGNORE* entries for perf_event_open, seccomp, pkey_
+> mprotect, pkey_alloc, pkey_free, statx, io_pgetevents and
+> rseq in the file asm/unistd.h as it is correct to keep
+> __IGNORE* entry in non uapi header asm/unistd.h while uapi/
+> asm/unistd.h must hold information only useful for user
+> space applications.
+>
+> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+> ---
+
+This patch looks wrong: We don't want to ignore the fact that the
+syscalls are missing here, we should add them instead. I'd leave
+that for a follow-up though, we may want to add further ones that
+are currently marked as __IGNORE.
+
+      Arnd
