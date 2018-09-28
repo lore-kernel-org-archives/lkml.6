@@ -7,75 +7,74 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF36FC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4C5C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC01320685
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:50:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D4EC20685
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:51:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GCF2eheh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC01320685
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OEl5BOVL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D4EC20685
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeI2APh (ORCPT
+        id S1727284AbeI2AQQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 20:15:37 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39252 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbeI2APg (ORCPT
+        Fri, 28 Sep 2018 20:16:16 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51600 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbeI2AQP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 20:15:36 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s14-v6so7273912wrw.6
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:50:42 -0700 (PDT)
+        Fri, 28 Sep 2018 20:16:15 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y25-v6so3048127wmi.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:51:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=1LS8AAoIw9CgoI0j5IPI8Zm8pUCqPzs5Y0JKM+noeoI=;
-        b=GCF2ehehfhdfxqJUNUFSf2PsRVKDsmlkr7JWNG1rcMY+w7EhQ//PgGsYppzP4kyp0/
-         7auCAhlmf1bPyX1Bv6xeOZMRO2evI6/H+elWyV6CcsUnzYvNQo9L2XccA29mM8UZSQ87
-         30GyvrtaxkiwAeP3KIJFPgmNBn6Io9MD035GhwVKa6LdwXf7xbzkQioxd90iH1YiZKoM
-         xEU1T867kdV/6TpphnYEaNplPJL+ADF5kJTOz7Uj8iaSmM7QxA8cqAP+QAHu2UNjB1hE
-         3iHFXKCDJHoiWXdvLBhOYTK6BfL4Sg0t51MnAP48xNEdqxMPccsuQ4BVruq4PWtzJnfZ
-         lmNQ==
+        bh=42KdwwpMqYNTGm9woRS/rwgRdRRM69f8qZaQDJg0IhU=;
+        b=OEl5BOVLqftw7k0Vz2OR9jFMCPKeatcmvhnXNuUdoKnYs8EwZ5aOaxx83R7l8Qk6hM
+         SY3HvUf5BqjEMrs4pDkeW5ZdL0lEBou37NSLWIG7wOT1kloclyWtUojw9rO806UEMIsT
+         U+8M+2fManJMyclKT+HMWPaxKytkcUNqEb4xqsNasaHBLBvtcqqLzY+BA5IuzkTS21jF
+         yMTTBnFP7y91SxB64p3ME5uhdx0nZ00ijNdAIq2wo1Hh0i9NUt6FG6EwnDdGyWmsiAtX
+         x4YvqnRNk5a5IQwaDAAsCsKMEO4Lu4arSFPCDEvl8e7n2Q43cIg4cWyM/JI+PJoweXn5
+         giqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=1LS8AAoIw9CgoI0j5IPI8Zm8pUCqPzs5Y0JKM+noeoI=;
-        b=fRpGYv4iVZSAumyIJjWgGvwhvpPPOlp8EcCt3I4RKiE4OLleLqnWMpuFsY86wT9Q8M
-         e9asslo2MuPXTZU8g4RFrdCV+vbRRyXVSt6gGiGd/EXdh0IA7nKUGJ62lPZlNkbm9rd9
-         GL1KSPQybzcQZZ3w07bZkaOvjiYRIR8h6FBM/Tz9gjAU+3kKTcoMhFTBvlCc2O2BxIbi
-         rYxZkBFg+PUf+NiW+jMTbHhCuyR/Kxa5H/MkAlv9Ej8myBx7ATVgBUCFeK21yt7JXBMx
-         jMORxltU00BnUJFsfMgcqCz203b1VoXQCy1HsICt4z1pAZJk6L022lkN6aNw/enbHlJt
-         CAiA==
-X-Gm-Message-State: ABuFfojAC/6sBrpnlPZJvMuTFF9XzpoRY2MZasxAp/u0atHISnU0+j0Q
-        Qt1aAy7Bltjm4chHnyFj/vaHHTy0
-X-Google-Smtp-Source: ACcGV627OndyJ4snR0mRHUWV7ltjo4MoBT6C19IhO35phFr/pZtDJA8I3OowpfJa9D9CgP7IRdth+g==
-X-Received: by 2002:adf:ade3:: with SMTP id w90-v6mr13596394wrc.73.1538157041836;
-        Fri, 28 Sep 2018 10:50:41 -0700 (PDT)
+        bh=42KdwwpMqYNTGm9woRS/rwgRdRRM69f8qZaQDJg0IhU=;
+        b=N/P7nHJAN+0sWsAS/nisfRdFKK0h85tyW2bzw8NXsKuq46Az/Zf40oo0jM6sZ0cyL5
+         RLTpZ3PYZrFE3uxXXgjvS5uSIpMYhwClcFgYmneaDP/685+ImGZUhXtpAFcSssvyWvjO
+         m7zuksLaMtvf1s9WmJljbxXGrOaYFwbpGHVNZPzr1LPyid1aOu6RLhLOWVCfxUQ7dL/8
+         h5iJXilHR63aNN6zeOsL6fVKSYQ6M1SVwbH672rlY4Hze1TJNCNBUit97GHzUOYz/G+h
+         VC5yGS7DAj8M0v9DZKU4Ix2o9fks0SLNkb3FA7ctbB4OC4JynSQ+Pq0bTN0S+7dYgMMF
+         C0uA==
+X-Gm-Message-State: ABuFfogxOvod6eBCZ79LYfHrWKmjbSENUIqfoM/6jNfMAC0R+fJsCVk7
+        vKmiReblu192Qz2V3nMTlO72mMbd
+X-Google-Smtp-Source: ACcGV63mvz4eO8WJB5hXHj0DsqpBhqyBGLTZf82nrmZwid+7LZtneQPNoHJN2awgSUw02ebRRijg0A==
+X-Received: by 2002:a1c:cc0e:: with SMTP id h14-v6mr2318170wmb.2.1538157081462;
+        Fri, 28 Sep 2018 10:51:21 -0700 (PDT)
 Received: from [10.67.50.87] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id t25-v6sm1975597wmh.15.2018.09.28.10.50.38
+        by smtp.googlemail.com with ESMTPSA id c8sm3611777wrx.92.2018.09.28.10.51.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 10:50:40 -0700 (PDT)
-Subject: Re: [PATCH 1/3] firmware/psci: Fix cpu_resume entry points with
- THUMB2_KERNEL
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>,
+        Fri, 28 Sep 2018 10:51:20 -0700 (PDT)
+Subject: Re: [PATCH 0/3] ARM/PSCI: Fix THUMB2_KERNEL entry points
+To:     Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        open list <linux-kernel@vger.kernel.org>,
         "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
         <bcm-kernel-feedback-list@broadcom.com>,
-        Rob Herring <robh@kernel.org>, Doug Berger <opendmb@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Doug Berger <opendmb@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>
 References: <20180927192711.26455-1-f.fainelli@gmail.com>
- <20180927192711.26455-2-f.fainelli@gmail.com>
- <20180928134704.deonmn5hozam74tz@lakrids.cambridge.arm.com>
+ <c68b01ab-9077-73cc-8356-25a4e3a909f0@arm.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -111,12 +110,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <b21ea7e5-9ca7-f76e-1bbf-9d29374553f8@gmail.com>
-Date:   Fri, 28 Sep 2018 10:50:31 -0700
+Message-ID: <26239d41-0d58-43fd-89e9-1576c84f89f2@gmail.com>
+Date:   Fri, 28 Sep 2018 10:51:16 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180928134704.deonmn5hozam74tz@lakrids.cambridge.arm.com>
+In-Reply-To: <c68b01ab-9077-73cc-8356-25a4e3a909f0@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -125,24 +124,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/28/2018 06:47 AM, Mark Rutland wrote:
-> On Thu, Sep 27, 2018 at 12:27:09PM -0700, Florian Fainelli wrote:
->> When THUMB2_KERNEL is enabled, we would be failing to resume from an
->> idle or system suspend call where the reentry point is set to
->> cpu_resume() because that function is in Thumb2. Utilize
->> cpu_resume_arm() for ARM 32-bit kernels which takes care of the mode
->> switching for us.
+On 09/28/2018 01:08 AM, Robin Murphy wrote:
+> On 2018-09-27 8:27 PM, Florian Fainelli wrote:
+>> Hi all,
+>>
+>> While playing with THUMB2_KERNEL on ARCH_BRCMSTB, several issues came up
+>> which are addressed by these 3 patches.
 > 
-> Looking at the PSCI spec, if bit[0] of the entry point address is set,
-> the CPU should be placed into thumb state.
-> 
-> So either there's a FW bug here, or perhaps we're stripping bit[0] when
-> we do the __pa_symbol() dance.
-> 
-> Which firmware have you seen this with?
+> Hmmm, PSCI looks to explicitly support Thumb entrypoints ("T32 support"
+> in section 6.4.3 of DEN0022D), so these changes smell a little of
+> papering over a more fundamental problem, which is presumably either
+> that Thumb symbols are not being resolved correctly, or that the
+> firmware you're using has a bug.
 
-This is a custom implementation use with ARCH_BRCMSTB, the same way I
-managed to miss it during code review, I missed it again here, sorry
-about that and thanks for pointing me in the right direction.
+Yes, I clearly missed that during the internal review of our
+implementation and missed it again prior to submitting those patches,
+shame on me.
+
+The last patch is valid because it addresses a problem on 32-bit only
+platforms which do not have a PSCI firmware at that point.
+
+Thanks!
 -- 
 Florian
