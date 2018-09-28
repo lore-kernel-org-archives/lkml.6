@@ -2,103 +2,280 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEAFC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C002CC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84BEC206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:32:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D3AA2073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:40:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R2PRwxs0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84BEC206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5QcoWAM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D3AA2073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbeI2F6v (ORCPT
+        id S1727465AbeI2GGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 01:58:51 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45888 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbeI2F6u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:58:50 -0400
-Received: by mail-wr1-f65.google.com with SMTP id q5-v6so1487964wrw.12
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 16:32:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TG59PWsjc1/L1DPpI8msTki+CENLSaFu5iNEATjte3A=;
-        b=R2PRwxs0uYO+FqVTzO2VujduMC0iSD2ol+9f3i/FBC1rULSC69KI60rzhCMkOXBszt
-         uYN/zY0C1jZMPnhvQBvMaJR4+ZSxXaRXbFiW9OepGKsBYbSesf8D8zfBd8B+n7wPk9QB
-         sTcGf7iwljimnHybCKsj4PWaoCYYgXSuisSjs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TG59PWsjc1/L1DPpI8msTki+CENLSaFu5iNEATjte3A=;
-        b=Ih512KjhYk9IDlF+W4HtlUh0dGWxpz63Q1o11LwFf1RlOW6QrK5//dqom7Chgqn3gz
-         laOaVBn5jLYkkuhqO/k2iok0Er+XVBqe693bXShcBt3osAMS8vc3sTS1TrfBKn/PYTOM
-         4daE27aIeuSgFUwQdfAaqc8J85eo5foJAIiBxgXHwFvpBq6kdRPpyVomK9B5W7JE38q1
-         ITuF1KnvHndUmXn6caiABmAfJUbh8dycGpdG25LOsFWIrQ4gsuSuepq+6A6UxS5Cg+ND
-         oh4NKH7G1PHS2SRYcpJbd7Hk4LTUQ0gaDgwvAx0pcZlj1TopZNmkERPddp5EClxu/wk/
-         h+nA==
-X-Gm-Message-State: ABuFfohLcOs8mu1UBbYJpsZu/DBtn8UBQznZVer5zqwAlXTy7DIC3HLV
-        TPv5QTYNNAutMJidvOGqfPxp/lcefF1sTHtLHoQ=
-X-Google-Smtp-Source: ACcGV60L3U1FFzHpJ/of5U6aNBVLRCSmj1aNR3agFwAebH8gVHuWZumyWwLwbDMIkRnuyN8epoyGe0oXHsqK60LAw/w=
-X-Received: by 2002:adf:f88d:: with SMTP id u13-v6mr439031wrp.311.1538177565883;
- Fri, 28 Sep 2018 16:32:45 -0700 (PDT)
+        Sat, 29 Sep 2018 02:06:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52426 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727230AbeI2GGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 02:06:32 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33533206B8;
+        Fri, 28 Sep 2018 23:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538178026;
+        bh=JzOIfbR1jgr9snNS5L+zmGsgZir1AG+OuQuD0Np67kw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S5QcoWAM3zLi5NoIQ/VIVG5Bn9eASHU3BC245HxGOxxg/tO+ic7NcAGyT9k6PhYD+
+         BHVBcGxzJBBAWP3dv+AGCJI3xBnf5H4a+HGFUZgzPV855p1CBJKSMu9wLYWkGiehNM
+         vGRTgo4eJUdjSPekynf/uB1JnUBwxXEKfC1WtiOo=
+Date:   Fri, 28 Sep 2018 16:40:25 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Message-ID: <20180928234025.GA94043@jaegeuk-macbookpro.roam.corp.google.com>
+References: <157abebb-80e7-d32d-3102-69ddfc5892f2@huawei.com>
+ <20180920214213.GD35918@jaegeuk-macbookpro.roam.corp.google.com>
+ <0c98ab72-9bc4-093d-707f-9c59a38fc7c7@huawei.com>
+ <20180926002909.GC3829@jaegeuk-macbookpro.roam.corp.google.com>
+ <b45beb50-c814-5fb4-63da-060871e33553@huawei.com>
+ <20180926014418.GE3829@jaegeuk-macbookpro.roam.corp.google.com>
+ <e1e855e5-2aaf-6560-d69d-2b7b0f60404e@huawei.com>
+ <20180926020921.GG3829@jaegeuk-macbookpro.roam.corp.google.com>
+ <d4279226-ca5c-8905-f6e9-c660c3aad6a0@huawei.com>
+ <20180928173721.GB64391@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
-References: <20180906122436.25610-1-linus.walleij@linaro.org>
-In-Reply-To: <20180906122436.25610-1-linus.walleij@linaro.org>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Fri, 28 Sep 2018 16:32:33 -0700
-Message-ID: <CANcMJZBAerypZGFV+Bc_+J34+8zt7t6+6vnJof7x7PC9bFGq8w@mail.gmail.com>
-Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
-To:     linus.walleij@linaro.org, Anders Roxell <anders.roxell@linaro.org>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jmkrzyszt@gmail.com, shc_work@mail.ru, haojian.zhuang@gmail.com,
-        aaro.koskinen@iki.fi, rppt@linux.vnet.ibm.com,
-        robert.jarzmik@free.fr, philipp.zabel@gmail.com, zonque@gmail.com,
-        marc.zyngier@arm.com, jacopo@jmondi.org, geert+renesas@glider.be,
-        rmk+kernel@armlinux.org.uk, Tom Gall <tom.gall@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928173721.GB64391@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 6:01 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> As we augmented the regulator core to accept a GPIO descriptor instead
-> of a GPIO number, we can augment the fixed GPIO regulator to look up
-> and pass that descriptor directly from device tree or board GPIO
-> descriptor look up tables.
->
-> Some boards just auto-enumerate their fixed regulator platform devices
-> and I have assumed they get names like "fixed-regulator.0" but it's
-> pretty hard to guess this. I need some testing from board maintainers to
-> be sure. Other boards are straight forward, using just plain
-> "fixed-regulator" (ID -1) or "fixed-regulator.1" hammering down the
-> device ID.
+Testing other fix.
 
-Hey Linus,
-  Anders recently noted a regression in -next when running HiKey,
-where USB fails to function.  I took a look and could reproduce this
-as well, and after some unsuccessful muddling about in the usb
-changes, I bisected it down to your commit here (specifically
-efdfeb079cc3 in -next).
+---
+ fs/f2fs/checkpoint.c |  7 +++++++
+ fs/f2fs/f2fs.h       |  1 +
+ fs/f2fs/gc.c         | 10 +++++++++-
+ fs/f2fs/super.c      | 22 +++++++++++++++++++++-
+ 4 files changed, 38 insertions(+), 2 deletions(-)
 
-I'm not sure exactly why this would cause trouble, but I suspect it
-has something to do w/ the cable-detect OTG to host-hub switch on the
-HiKey.
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 524b87667cf4..3fde91f41a91 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1494,6 +1494,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ {
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+ 	unsigned long long ckpt_ver;
++	bool need_up = false;
+ 	int err = 0;
+ 
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+@@ -1506,6 +1507,10 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+ 				"Start checkpoint disabled!");
+ 	}
++	if (!is_sbi_flag_set(sbi, SBI_QUOTA_INIT)) {
++		need_up = true;
++		down_read(&sbi->sb->s_umount);
++	}
+ 	mutex_lock(&sbi->cp_mutex);
+ 
+ 	if (!is_sbi_flag_set(sbi, SBI_IS_DIRTY) &&
+@@ -1582,6 +1587,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish checkpoint");
+ out:
+ 	mutex_unlock(&sbi->cp_mutex);
++	if (need_up)
++		up_read(&sbi->sb->s_umount);
+ 	return err;
+ }
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 57c829dd107e..30194f2f108e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1096,6 +1096,7 @@ enum {
+ 	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
+ 	SBI_IS_RECOVERED,			/* recovered orphan/data */
+ 	SBI_CP_DISABLED,			/* CP was disabled last mount */
++	SBI_QUOTA_INIT,				/* avoid sb->s_umount lock */
+ 	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
+ 	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
+ 	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index adaf5a695b12..deece448cb3b 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -55,9 +55,14 @@ static int gc_thread_func(void *data)
+ 			f2fs_stop_checkpoint(sbi, false);
+ 		}
+ 
+-		if (!sb_start_write_trylock(sbi->sb))
++		if (!down_read_trylock(&sbi->sb->s_umount))
+ 			continue;
+ 
++		set_sbi_flag(sbi, SBI_QUOTA_INIT);
++
++		if (!sb_start_write_trylock(sbi->sb))
++			goto next_umount;
++
+ 		/*
+ 		 * [GC triggering condition]
+ 		 * 0. GC is not conducted currently.
+@@ -104,6 +109,9 @@ static int gc_thread_func(void *data)
+ 		f2fs_balance_fs_bg(sbi);
+ next:
+ 		sb_end_write(sbi->sb);
++next_umount:
++		clear_sbi_flag(sbi, SBI_QUOTA_INIT);
++		up_read(&sbi->sb->s_umount);
+ 
+ 	} while (!kthread_should_stop());
+ 	return 0;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index a28c245b1288..40a77a4eb465 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1029,6 +1029,8 @@ static void f2fs_put_super(struct super_block *sb)
+ 	int i;
+ 	bool dropped;
+ 
++	set_sbi_flag(sbi, SBI_QUOTA_INIT);
++
+ 	f2fs_quota_off_umount(sb);
+ 
+ 	/* prevent remaining shrinker jobs */
+@@ -1122,11 +1124,17 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
+ 
+ 	if (sync) {
+ 		struct cp_control cpc;
++		bool keep = is_sbi_flag_set(sbi, SBI_QUOTA_INIT);
+ 
+ 		cpc.reason = __get_cp_reason(sbi);
+ 
+ 		mutex_lock(&sbi->gc_mutex);
++		if (sbi->sb->s_writers.frozen >= SB_FREEZE_WRITE)
++			set_sbi_flag(sbi, SBI_QUOTA_INIT);
++
+ 		err = f2fs_write_checkpoint(sbi, &cpc);
++		if (!keep)
++			clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+ 		mutex_unlock(&sbi->gc_mutex);
+ 	}
+ 	f2fs_trace_ios(NULL, 1);
+@@ -1534,6 +1542,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 		}
+ 	}
+ #endif
++	set_sbi_flag(sbi, SBI_QUOTA_INIT);
+ 
+ 	/* recover superblocks we couldn't write due to previous RO mount */
+ 	if (!(*flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
+@@ -1653,6 +1662,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+ 
+ 	limit_reserve_root(sbi);
++	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+ 	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+ 	return 0;
+ restore_gc:
+@@ -1673,6 +1683,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ #endif
+ 	sbi->mount_opt = org_mount_opt;
+ 	sb->s_flags = old_sb_flags;
++	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+ 	return err;
+ }
+ 
+@@ -1706,6 +1717,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+ 				congestion_wait(BLK_RW_ASYNC, HZ/50);
+ 				goto repeat;
+ 			}
++			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+ 			return PTR_ERR(page);
+ 		}
+ 
+@@ -1717,6 +1729,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+ 		}
+ 		if (unlikely(!PageUptodate(page))) {
+ 			f2fs_put_page(page, 1);
++			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+ 			return -EIO;
+ 		}
+ 
+@@ -1758,6 +1771,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+ 				congestion_wait(BLK_RW_ASYNC, HZ/50);
+ 				goto retry;
+ 			}
++			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+ 			break;
+ 		}
+ 
+@@ -1794,7 +1808,6 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
+ 
+ static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
+ {
+-
+ 	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
+ 		f2fs_msg(sbi->sb, KERN_ERR,
+ 			"quota sysfile may be corrupted, skip loading it");
+@@ -1958,7 +1971,9 @@ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
+ 	if (err)
+ 		return err;
+ 
++	set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_INIT);
+ 	err = dquot_quota_on(sb, type, format_id, path);
++	clear_sbi_flag(F2FS_SB(sb), SBI_QUOTA_INIT);
+ 	if (err)
+ 		return err;
+ 
+@@ -3179,6 +3194,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto free_meta_inode;
+ 	}
+ 
++	set_sbi_flag(sbi, SBI_QUOTA_INIT);
+ 	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_QUOTA_NEED_FSCK_FLAG))
+ 		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+ 
+@@ -3370,6 +3386,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 				cur_cp_version(F2FS_CKPT(sbi)));
+ 	f2fs_update_time(sbi, CP_TIME);
+ 	f2fs_update_time(sbi, REQ_TIME);
++
++	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+ 	return 0;
+ 
+ free_meta:
+@@ -3434,6 +3452,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		shrink_dcache_sb(sb);
+ 		goto try_onemore;
+ 	}
++	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+ 	return err;
+ }
+ 
+@@ -3449,6 +3468,7 @@ static void kill_f2fs_super(struct super_block *sb)
+ 		struct f2fs_sb_info *sbi = F2FS_SB(sb);
+ 
+ 		set_sbi_flag(sbi, SBI_IS_CLOSE);
++		set_sbi_flag(sbi, SBI_QUOTA_INIT);
+ 		f2fs_stop_gc_thread(sbi);
+ 		f2fs_stop_discard_thread(sbi);
+ 
+-- 
+2.19.0.605.g01d371f741-goog
 
-Anyway, I just wanted to raise this with you so it can get sorted out
-before that patch hits mainline.
-
-thanks
--john
