@@ -2,86 +2,119 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D86C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E1AC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D694F206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:59:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D694F206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 09142206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:01:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09142206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeI2DZH (ORCPT
+        id S1727265AbeI2D0h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 23:25:07 -0400
-Received: from mga14.intel.com ([192.55.52.115]:39204 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727069AbeI2DZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 23:25:07 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 13:59:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,316,1534834800"; 
-   d="scan'208";a="95884402"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga002.jf.intel.com with ESMTP; 28 Sep 2018 13:59:07 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 33B69300B51; Fri, 28 Sep 2018 13:59:07 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 13:59:07 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tursulin@ursulin.net,
-        kernel list <linux-kernel@vger.kernel.org>,
-        tvrtko.ursulin@linux.intel.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, maddy@linux.vnet.ibm.com,
-        alexey.budankov@linux.intel.com, Kees Cook <keescook@chromium.org>
-Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
-Message-ID: <20180928205907.GD32651@tassilo.jf.intel.com>
-References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
- <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
- <20180928164111.i6nba2j6mnegwslw@lakrids.cambridge.arm.com>
- <20180928172340.GA32651@tassilo.jf.intel.com>
- <20180928174016.i7d24puv7y3jwzf6@lakrids.cambridge.arm.com>
- <20180928204930.GC32651@tassilo.jf.intel.com>
- <CAG48ez16ECnLMNggTZQQJOuPK5ZJ8dLSkGDzvxwK1zVh1BFExw@mail.gmail.com>
+        Fri, 28 Sep 2018 23:26:37 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41800 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727096AbeI2D0h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 23:26:37 -0400
+Received: by mail-oi1-f193.google.com with SMTP id l197-v6so6576872oib.8;
+        Fri, 28 Sep 2018 14:01:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lRsq3w2R+gURnajoQ19rTCU7wGm92qa64p4LIPgdLd8=;
+        b=HNpejmcpC9waWFo/++s4uA5Yy4jJkj+xUSVF8vh8IQg+KStHV4SGE1A0GGwAL6B4JZ
+         nD9fao+XW4eKeYaAO2rd84RmonMHNXIjQU8IDbYEDQsaNcva2pX246IXCLJBhuPeNYpj
+         C4IpRNbBuiDYF0Klxpg5ZkbU0QQKuoblZaqpn1OD38dHZDHgrmxgn7zuO6zSs35t3DUS
+         S2357jGqkSMplGeu9VwsEdwMhwJkC9dPVM3hDgZ7NKDtCJj1JYH5Q+jGTqmLSbzweqxd
+         NM0XgFNGgqygj3Ov/1ulYuKKG/coGC4+7A/clhl6pPQkHJUxQy/dpoA7NaTeLlEzSlM0
+         TKng==
+X-Gm-Message-State: ABuFfojliNvwgTY0yIy5g+/HRh7a0HjPVinNl5KqOponAKNLBbzv75Nj
+        y8nf7c3NOa1Of1F9nDRzprVNBl4He6s=
+X-Google-Smtp-Source: ACcGV63A+dU0U6/Z0BJjTcsEX4ZbIRdiSsUBhJCcojZM9rMaUN+cv4kHkqa8xjo9AlrMuxycQW89IA==
+X-Received: by 2002:aca:3006:: with SMTP id w6-v6mr208450oiw.342.1538168465098;
+        Fri, 28 Sep 2018 14:01:05 -0700 (PDT)
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com. [209.85.210.41])
+        by smtp.gmail.com with ESMTPSA id n1-v6sm2290118ote.37.2018.09.28.14.01.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 14:01:04 -0700 (PDT)
+Received: by mail-ot1-f41.google.com with SMTP id e18-v6so7326335oti.8;
+        Fri, 28 Sep 2018 14:01:04 -0700 (PDT)
+X-Received: by 2002:a9d:1d2a:: with SMTP id m39-v6mr267327otm.168.1538168464035;
+ Fri, 28 Sep 2018 14:01:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez16ECnLMNggTZQQJOuPK5ZJ8dLSkGDzvxwK1zVh1BFExw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CADRPPNT0QiBkJtJnxjW95Yf-mirL5OzRrvqj8rC-O8fiz17VnA@mail.gmail.com>
+ <CAL_JsqKRH8uEzSx6H6ZSRJF9Ecp4am1cNsxgQqf2OO5_aGR1zw@mail.gmail.com>
+In-Reply-To: <CAL_JsqKRH8uEzSx6H6ZSRJF9Ecp4am1cNsxgQqf2OO5_aGR1zw@mail.gmail.com>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Fri, 28 Sep 2018 16:00:52 -0500
+X-Gmail-Original-Message-ID: <CADRPPNQam-QUfqDMvu42KS+50VaHfGPhCZj-1jRHQ-Od0fbxuQ@mail.gmail.com>
+Message-ID: <CADRPPNQam-QUfqDMvu42KS+50VaHfGPhCZj-1jRHQ-Od0fbxuQ@mail.gmail.com>
+Subject: Re: drivers binding to device node with multiple compatible strings
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Grant Likely <grant.likely@secretlab.ca>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        frowand.list@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > This new file descriptor argument doesn't exist today so it would
-> > need to create a new system call with more arguments
-> 
-> Is that true? The first argument is a pointer to a struct that
-> contains its own size, so it can be expanded without an ABI break. I
-> don't see any reason why you couldn't cram more stuff in there.
-
-You're right we could put the fd into the perf_event, but the following is
-still true:
-
-> > Obviously we would need to keep the old system call around
-> > for compability, so you would need to worry about this
-> > interaction in any case!
+On Fri, Sep 28, 2018 at 3:07 PM Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Thu, Sep 27, 2018 at 5:25 PM Li Yang <leoyang.li@nxp.com> wrote:
 > >
-> > So tying it together doesn't make any sense, because
-> > the problem has to be solved separately anyways.
+> > Hi Rob and Grant,
+> >
+> > Various device tree specs are recommending to include all the
+> > potential compatible strings in the device node, with the order from
+> > most specific to most general.  But it looks like Linux kernel doesn't
+> > provide a way to bind the device to the most specific driver, however,
+> > the first registered compatible driver will be bound.
+> >
+> > As more and more generic drivers are added to the Linux kernel, they
+> > are competing with the more specific vendor drivers and causes problem
+> > when both are built into the kernel.  I'm wondering if there is a
+> > generic solution (or in plan) to make the most specific driver bound
+> > to the device.   Or we have to disable the more general driver or
+> > remove the more general compatible string from the device tree?
+>
+> It's been a known limitation for a long time. However, in practice it
+> doesn't seem to be a common problem. Perhaps folks just remove the
+> less specific compatible from their DT (though that's not ideal). For
+> most modern bindings, there's so many other resources beyond
+> compatible (clocks, resets, pinctrl, etc.) that there are few generic
+> drivers that can work.
+>
+> I guess if we want to fix this, we'd need to have weighted matching in
+> the driver core and unbind drivers when we get a better match. Though
+> it could get messy if the better driver probe fails. Then we've got to
+> rebind to the original driver.
 
+Probably we can populate the platform devices from device tree after
+the device_init phase?  So that all built-in drivers are already
+registered when the devices are created and we can try find the best
+match in one go?  For more specific loadable modules we probably need
+to unbind from the old driver and bind to the new one.  But I agree
+with you that it could be messy.
 
--Andi
+>
+> Do you have a specific case where you hit this?
+
+Maybe not a new issue but "snps,dw-pcie" is competing with various
+"fsl,<chip>-pcie" compatibles.  Also a specific PHY
+"ethernet-phy-idAAAA.BBBB" with generic "ethernet-phy-ieee802.3-c45".
+
+Regards,
+Leo
