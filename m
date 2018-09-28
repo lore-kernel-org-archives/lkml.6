@@ -2,114 +2,123 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E61B1C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D10BDC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6136214C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:54:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6136214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id A0DCC2087D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:55:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0DCC2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729137AbeI1USi (ORCPT
+        id S1729177AbeI1UTN convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:18:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38082 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727361AbeI1USi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:18:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A85B2ACEB;
-        Fri, 28 Sep 2018 13:54:42 +0000 (UTC)
-Date:   Fri, 28 Sep 2018 15:54:39 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Lianbo Jiang <lijiang@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>, kexec@lists.infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, thomas.lendacky@amd.com,
-        baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
-        brijesh.singh@amd.com, dyoung@redhat.com, bhe@redhat.com
-Subject: Re: [PATCH 2/3] resource: Include resource end in walk_*() interfaces
-Message-ID: <20180928135439.GD21895@zn.tnic>
-References: <153805773703.1157.14773321497580233478.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <153805812254.1157.16736368485811773752.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        Fri, 28 Sep 2018 16:19:13 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34091 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726934AbeI1UTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 16:19:13 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4FE51208B7; Fri, 28 Sep 2018 15:55:17 +0200 (CEST)
+Received: from localhost (nat-240.udc.es [193.144.61.240])
+        by mail.bootlin.com (Postfix) with ESMTPSA id EB5DD206DE;
+        Fri, 28 Sep 2018 15:55:16 +0200 (CEST)
+Date:   Fri, 28 Sep 2018 15:55:16 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     jorik@kippendief.biz
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] dts: sun8i-h3: add sy8106a to orange pi plus
+Message-ID: <20180928135516.jxhnsgaa3s2nagv7@flea>
+References: <20180927083636.5415-1-jorik@kippendief.biz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <153805812254.1157.16736368485811773752.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180927083636.5415-1-jorik@kippendief.biz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 09:22:02AM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> find_next_iomem_res() finds an iomem resource that covers part of a range
-> described by "start, end".  All callers expect that range to be inclusive,
-> i.e., both start and end are included, but find_next_iomem_res() doesn't
-> handle the end address correctly.
-> 
-> If it finds an iomem resource that contains exactly the end address, it
-> skips it, e.g., if "start, end" is [0x0-0x10000] and there happens to be an
-> iomem resource [mem 0x10000-0x10000] (the single byte at 0x10000), we skip
-> it:
-> 
->   find_next_iomem_res(...)
->   {
->     start = 0x0;
->     end = 0x10000;
->     for (p = next_resource(...)) {
->       # p->start = 0x10000;
->       # p->end = 0x10000;
->       # we *should* return this resource, but this condition is false:
->       if ((p->end >= start) && (p->start < end))
->         break;
-> 
-> Adjust find_next_iomem_res() so it allows a resource that includes the
-> single byte at the end of the range.  This is a corner case that we
-> probably don't see in practice.
+Hi!
 
-This is how one should write commit messages! Thanks for that - it was a
-joy - for a change - to read it :-)
+On Thu, Sep 27, 2018 at 10:36:36AM +0200, jorik@kippendief.biz wrote:
+> From: Jorik Jonker <jorik@kippendief.biz>
 
+The prefix of your commit title should be "ARM: dts: ..."
+
+> The Orange Pi Plus board lacks voltage scaling capabilities in its
+> current form. This results in random freezes during boot when cpufreq is
+> enabled, probably due to wrong voltages.
 > 
-> Fixes: 58c1b5b07907 ("[PATCH] memory hotadd fixes: find_next_system_ram catch range fix")
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> This patch (a copy/paste of 06139c) does the following things on this
+> board:
+> - enable r_i2c
+> - add sy8106a to the r_i2c bus
+> - have the sy8106a regulate VDD of cpu
+> 
+> I have tested this on two Orange Pi Plus boards, and they run stable
+> across a range of voltages (and frequencies).
+
+How was this tested?
+
+> Signed-off-by: Jorik Jonker <jorik@kippendief.biz>
 > ---
->  kernel/resource.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Reviewed-by: Borislav Petkov <bp@suse.de>
-
-> diff --git a/kernel/resource.c b/kernel/resource.c
-> index 30e1bc68503b..155ec873ea4d 100644
-> --- a/kernel/resource.c
-> +++ b/kernel/resource.c
-> @@ -319,7 +319,7 @@ int release_resource(struct resource *old)
->  EXPORT_SYMBOL(release_resource);
+>  arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts | 29 ++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
+> index b403e5d78..fd64b5c94 100644
+> --- a/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
+> +++ b/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
+> @@ -74,6 +74,10 @@
+>  	};
+>  };
 >  
->  /*
-> - * Finds the lowest iomem resource existing within [res->start.res->end).
+> +&cpu0 {
+> +	cpu-supply = <&reg_vdd_cpux>;
+> +};
+> +
+>  &ehci3 {
+>  	status = "okay";
+>  };
+> @@ -119,6 +123,31 @@
+>  	};
+>  };
+>  
+> +&r_i2c {
+> +	status = "okay";
+> +
+> +	reg_vdd_cpux: regulator@65 {
+> +		compatible = "silergy,sy8106a";
+> +		reg = <0x65>;
+> +		regulator-name = "vdd-cpux";
+> +		silergy,fixed-microvolt = <1200000>;
+> +		/*
+> +		 * The datasheet uses 1.1V as the minimum value of VDD-CPUX,
+> +		 * however both the Armbian DVFS table and the official one
+> +		 * have operating points with voltage under 1.1V, and both
+> +		 * DVFS table are known to work properly at the lowest
+> +		 * operating point.
+> +		 *
+> +		 * Use 1.0V as the minimum voltage instead.
+> +		 */
 
-What I'm still wondering about is, why was it ever even considered to
-have a non-inclusive range. Looking at the git history, especially
-58c1b5b07907 and 2842f11419704 - it looks like it was an omission and
-then users started using it with inclusive ranges.
+There's not much point to that comment, since it's been that way for
+all the other SoCs from Allwinner. However, that would be great to
+have it in the commit log.
 
-Thx.
+Thanks!
+Maxime
 
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
