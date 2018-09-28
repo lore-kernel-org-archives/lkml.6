@@ -2,119 +2,75 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 196C5C04E87
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 674E9C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC39E206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:41:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC39E206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E429204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:42:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TK7Sp2ZQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E429204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729196AbeI1XFx (ORCPT
+        id S1729451AbeI1XGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 19:05:53 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53428 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728451AbeI1XFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 19:05:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EFFF7A9;
-        Fri, 28 Sep 2018 09:41:17 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 480BA3F5BD;
-        Fri, 28 Sep 2018 09:41:14 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 17:41:11 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Tvrtko Ursulin <tursulin@ursulin.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        tvrtko.ursulin@linux.intel.com,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
-Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
-Message-ID: <20180928164111.i6nba2j6mnegwslw@lakrids.cambridge.arm.com>
-References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
- <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
+        Fri, 28 Sep 2018 19:06:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42354 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbeI1XGk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 19:06:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xgwjnTvayf+L6F/C4e9YJ+e1F+TcO0YCZ5iolqEmcAA=; b=TK7Sp2ZQlHi9fhOjS5ytrFUBw
+        KNuFNwWIF+pRl06KeBoPEZhtqCEMEKH3G3rZ9Ej1pLQpIUwT068tGOrzqfwtYqL7yF+qOuqGIheMU
+        Ry8iYjmpysneJP9e9Q9JuC8ee5sae5uIJwrI0NBsO94uziD0KfijQMzQb0QUo509CaIMgtb36l9Nb
+        mOxvTQmH1XLgogVmeOhZoIkXX0As5pu5zK9WWPiQxUd2LJM5EnTTHjyzYNh7nStQeR3n2nVgY9WcC
+        +nvYVAYm6ocEc+bKPlMtwtK+3f9aw6gl+g+k5iKOUWBJc96JAnCfplm2Nv9PFVXjxJXckqCl5mrwy
+        6PCSTeSSQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5vq9-0002UY-20; Fri, 28 Sep 2018 16:42:05 +0000
+Date:   Fri, 28 Sep 2018 09:42:04 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/9] fuse: allow caching readdir
+Message-ID: <20180928164204.GA20414@bombadil.infradead.org>
+References: <20180928154234.19270-1-mszeredi@redhat.com>
+ <20180928154234.19270-5-mszeredi@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180928154234.19270-5-mszeredi@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 12:26:52PM +0200, Thomas Gleixner wrote:
-> On Wed, 19 Sep 2018, Tvrtko Ursulin wrote:
-> 
-> It would be very helpful if you cc all involved people on the cover letter
-> instead of just cc'ing your own pile of email addresses. CC'ed now.
-> 
-> > For situations where sysadmins might want to allow different level of
-> > access control for different PMUs, we start creating per-PMU
-> > perf_event_paranoid controls in sysfs.
-> > 
-> > These work in equivalent fashion as the existing perf_event_paranoid
-> > sysctl, which now becomes the parent control for each PMU.
-> > 
-> > On PMU registration the global/parent value will be inherited by each PMU,
-> > as it will be propagated to all registered PMUs when the sysctl is
-> > updated.
-> > 
-> > At any later point individual PMU access controls, located in
-> > <sysfs>/device/<pmu-name>/perf_event_paranoid, can be adjusted to achieve
-> > fine grained access control.
-> > 
-> > Discussion from previous posting:
-> > https://lkml.org/lkml/2018/5/21/156
-> 
-> This is really not helpful. The cover letter and the change logs should
-> contain a summary of that discussion and a proper justification of the
-> proposed change. Just saying 'sysadmins might want to allow' is not useful
-> at all, it's yet another 'I want a pony' thing.
-> 
-> I read through the previous thread and there was a clear request to involve
-> security people into this. Especially those who are deeply involved with
-> hardware side channels. I don't see anyone Cc'ed on the whole series.
-> 
-> For the record, I'm not buying the handwavy 'more noise' argument at
-> all. It wants a proper analysis and we need to come up with criteria which
-> PMUs can be exposed at all.
-> 
-> All of this want's a proper documentation clearly explaining the risks and
-> scope of these knobs per PMU. Just throwing magic knobs at sysadmins and
-> then saying 'its their problem to figure it out' is not acceptable.
+On Fri, Sep 28, 2018 at 05:42:29PM +0200, Miklos Szeredi wrote:
+> @@ -103,6 +103,21 @@ struct fuse_inode {
+>  	/** List of writepage requestst (pending or sent) */
+>  	struct list_head writepages;
+>  
+> +	/** readdir cache */
+> +	struct {
+> +		/** true if fully cached */
+> +		bool cached;
 
-There's also been prior discussion on these feature in other contexts
-(e.g. android expoits resulting from out-of-tree drivers). It would be
-nice to see those considered.
+umm, you're using kernel-doc markers without formatting this comment as
+kernel-doc.  See Documentation/doc-guide/kernel-doc.rst but I believe
+you should be writing this as:
 
-IIRC The conclusion from prior discussions (e.g. [1]) was that we wanted
-finer granularity of control such that we could limit PMU access to
-specific users -- e.g. disallow arbitrary android apps from poking *any*
-PMU, while allowing some more trusted apps/users to uses *some* specific
-PMUs.
+		/** @rdc.cached: true if fully cached */
 
-e.g. we could add /sys/bus/event_source/devices/${PMU}/device, protect
-this via the usual fs ACLs, and pass the fd to perf_event_open()
-somehow. A valid fd would act as a capability, taking precedence over
-perf_event_paranoid.
-
-Thanks,
-Mark.
-
-[1] https://patchwork.kernel.org/patch/9249919/
+or just use /* */ if you don't want kernel-doc.
