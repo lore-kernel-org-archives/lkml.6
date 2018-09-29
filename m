@@ -2,166 +2,111 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A69FEC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 09:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80934C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 09:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61DA92064D
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 09:22:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8gEAH6W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61DA92064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 51E912084D
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 09:22:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51E912084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbeI2PuL (ORCPT
+        id S1727973AbeI2Pu2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 11:50:11 -0400
-Received: from mail-it1-f173.google.com ([209.85.166.173]:39465 "EHLO
-        mail-it1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeI2PuK (ORCPT
+        Sat, 29 Sep 2018 11:50:28 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:28944 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727518AbeI2Pu2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 11:50:10 -0400
-Received: by mail-it1-f173.google.com with SMTP id w200-v6so5668735itc.4
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 02:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=sMMY51Y2m7dsoanpeBS006EbMnUuND6Wlh5Y67N33Sc=;
-        b=f8gEAH6WIIXjOu8B0iMEhYEEyZ7Ay9jK6h1wGK+tzf6KcP4SQLMzTIVh2HSDvq4yks
-         3WPHGHYz3xcYziMMN7Rfhfeo6ObwnLpevcUvh0MbZZzMJyeZTe1uQQRpIyzipcFsZqt7
-         2h3duCPNPxBPLvBXRxK9VymgCU+MQxO4yJGx1wsIUAc+lOPAj2fVmprziE7ifWBcL55U
-         dRRCDMLKO+wudGXeTwj2mel7KNId1k/FW+tlIkUrT2H79oKTRL1RyqX0Ab3QJIqWEO/y
-         bFB5/2fJSpjKh/GHDI9gxnrC/grR6poGI83hhMuoK/7wOES541hBIJjZ2/3qsdnfTaGT
-         wE/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=sMMY51Y2m7dsoanpeBS006EbMnUuND6Wlh5Y67N33Sc=;
-        b=o7nA+PxTokZ31HdtvOrF/8RPKmDAaMkUUGtf2MLHe9V09lVFk874+jtSNDg7i9Vkoc
-         zmb4jECsFNgFDsdTs1Ov9zvRydXAgHgY+vHKgXHhIQb2fuDxQ1CrfuiJVjz+K6SRVy/V
-         GzXyPb4sX5Vyzxc4s9s5zaIhaKoNZxWzSx3tW1byUKeYGTpSwtCPF0AVxa9dOcsee+uB
-         N47Kqa6KqpNtvPhqlVjNOgMfHzUw31HWTJLKBUaUi0//9TtWKsAdViaaOTp8sQk+c6Av
-         C+uY7aQzznSkqjLLX+MLETut9q10IzZHxxBJjwQ19LhUSKY6tHqbxq3yW7fPkIMmtFQJ
-         8zjg==
-X-Gm-Message-State: ABuFfogVTFx0TnVFBs8pLExqYvake/TG2t3Q355HtWDgCwvzek/cs+RC
-        r3zCNuTsVSIW+/eNRbu177fbPy+aZCjQUhnM+VLpljcanlc=
-X-Google-Smtp-Source: ACcGV63pqor+QkPSZ1H4g4NiEjgjAxN6KE8gUll7bnMiYulkskNVt6TKJa4V1/xomXgNtesRA0o25iTCPXFwiRjbh30=
-X-Received: by 2002:a02:9894:: with SMTP id q20-v6mr1786697jaj.90.1538212947341;
- Sat, 29 Sep 2018 02:22:27 -0700 (PDT)
+        Sat, 29 Sep 2018 11:50:28 -0400
+X-UUID: a1521a2c6ca841e6931f87efe309c81f-20180929
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <houlong.wei@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 587612068; Sat, 29 Sep 2018 17:22:39 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 29 Sep 2018 17:22:31 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sat, 29 Sep 2018 17:22:29 +0800
+From:   Houlong Wei <houlong.wei@mediatek.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        CK HU <ck.hu@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Monica Wang <monica.wang@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        HS Liao <hs.liao@mediatek.com>, <ginny.chen@mediatek.com>,
+        <enzhu.wang@mediatek.com>
+Subject: [PATCH v25 1/2] arm64: dts: mt8173: Add GCE node
+Date:   Sat, 29 Sep 2018 17:21:42 +0800
+Message-ID: <1538212903-14331-2-git-send-email-houlong.wei@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1538212903-14331-1-git-send-email-houlong.wei@mediatek.com>
+References: <1538212903-14331-1-git-send-email-houlong.wei@mediatek.com>
 MIME-Version: 1.0
-From:   =?UTF-8?B?546L5pmT5Lic?= <wisedd@gmail.com>
-Date:   Sat, 29 Sep 2018 17:22:13 +0800
-Message-ID: <CAHyWSemw6LYChaEZinFTFvA=kfJKqvWMfadVq5a=+j9TcCrewg@mail.gmail.com>
-Subject: rcu: Kernel stack is corrupted in: perf_trace_rcu_dyntick
-To:     rostedt@goodmis.org, mingo@redhat.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi there,
+This patch adds the device node of the GCE hardware for CMDQ module.
 
-We would like to report a kernel stack corrupted problem we identified
-in the perf_trace_rcu_dyntick function of tracing events subsystem.
-And the problem was founded by syzkaller.  We has tested the PoC on
-the lasted master branch of kernel(4.19.0-rc5+).
+Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
+Signed-off-by: HS Liao <hs.liao@mediatek.com>
+---
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-The crash log generated with KASAN enabled:
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+index abd2f15..412ffd4 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@ -18,6 +18,7 @@
+ #include <dt-bindings/phy/phy.h>
+ #include <dt-bindings/power/mt8173-power.h>
+ #include <dt-bindings/reset/mt8173-resets.h>
++#include <dt-bindings/gce/mt8173-gce.h>
+ #include "mt8173-pinfunc.h"
+ 
+ / {
+@@ -521,6 +522,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		gce: mailbox@10212000 {
++			compatible = "mediatek,mt8173-gce";
++			reg = <0 0x10212000 0 0x1000>;
++			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_GCE>;
++			clock-names = "gce";
++			#mbox-cells = <3>;
++		};
++
+ 		mipi_tx0: mipi-dphy@10215000 {
+ 			compatible = "mediatek,mt8173-mipi-tx";
+ 			reg = <0 0x10215000 0 0x1000>;
+-- 
+1.7.9.5
 
-root@pc:~# ./perf_trace_rcu_dyntick
-[  582.069938] Kernel panic - not syncing: stack-protector: Kernel
-stack is corrupted in: perf_trace_rcu_dyntick+0x355/0x4f0
-[  582.069938]
-[  582.071341] CPU: 6 PID: 3417 Comm: perf_trace_rcu_ Not tainted 4.19.0-rc5+ #1
-[  582.072134] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  582.073103] Call Trace:
-[  582.073364]  <IRQ>
-[  582.073614]  dump_stack+0x8c/0xce
-[  582.074039]  panic+0x1cb/0x3aa
-[  582.074427]  ? refcount_error_report+0x296/0x296
-[  582.075003]  ? timerqueue_del+0x71/0x130
-[  582.075553]  ? perf_trace_rcu_dyntick+0x355/0x4f0
-[  582.076063]  ? __stack_chk_fail+0x6/0x20
-[  582.076763]  ? perf_trace_rcu_dyntick+0x355/0x4f0
-[  582.077369]  __stack_chk_fail+0x1f/0x20
-[  582.077877]  perf_trace_rcu_dyntick+0x355/0x4f0
-[  582.078442]  ? rcu_gp_is_expedited+0xa0/0xa0
-[  582.078993]  ? rcu_gp_is_expedited+0xa0/0xa0
-[  582.079525]  ? check_preempt_curr+0x1c2/0x2a0
-[  582.080059]  ? sched_clock_cpu+0x18/0x160
-[  582.080551]  rcu_nmi_enter+0x1f0/0x2f0
-[  582.081036]  ? rcu_gp_is_expedited+0xa0/0xa0
-[  582.081507]  irq_enter+0xf/0x80
-[  582.081914]  smp_apic_timer_interrupt+0x1b/0x2d0
-[  582.082480]  apic_timer_interrupt+0xf/0x20
-[  582.082984]  </IRQ>
-[  582.083219] RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x50
-[  582.087816] Code: e8 35 0b 20 00 48 8b 14 24 e9 fe fe ff ff 48 89
-df e8 24 0b 20 00 e9 d9 fe ff ff 4c 89 e7 e8 17 0b 20 00 e9 ab fe ff
-ff 90 90 <65> 48 8b 04 25 40 dd 01 00 65 8b 15 70 03 8f 63 81 e2 00 01
-1f 00
-[  582.090289] RSP: 0018:ffff8800651bf9e0 EFLAGS: 00000206 ORIG_RAX:
-ffffffffffffff13
-[  582.091238] RAX: 0000000000000000 RBX: ffffffff9eed12a5 RCX: ffffffff9c6ca1b6
-[  582.092873] RDX: 0000000000000005 RSI: ffffffff9ee31d71 RDI: ffffffff9eed12a4
-[  582.093934] RBP: 0000000000000078 R08: ffffed000d38dfb2 R09: ffffed000d38dfb1
-[  582.095102] R10: 000000007350a3ba R11: ffff880069c6fd8f R12: ffff8800651bfa6e
-[  582.096444] R13: 0000000000000001 R14: dffffc0000000000 R15: 000000000000006a
-[  582.097414]  ? kallsyms_expand_symbol.constprop.11+0x176/0x250
-[  582.098518]  kallsyms_expand_symbol.constprop.11+0x12e/0x250
-[  582.099707]  kallsyms_lookup_name+0xbe/0x1d0
-[  582.100369]  ? kallsyms_on_each_symbol+0x210/0x210
-[  582.101436]  ? snprintf+0xbd/0xf0
-[  582.102029]  ? vsprintf+0x30/0x30
-[  582.102805]  ? kasan_kmalloc+0xa9/0xd0
-[  582.103489]  ? alloc_trace_kprobe+0x6c0/0x930
-[  582.104073]  kprobe_on_func_entry+0x57/0xb0
-[  582.105421]  register_kretprobe+0x89/0xc10
-[  582.105930]  ? set_print_fmt+0x32/0xa0
-[  582.106376]  __register_trace_kprobe.part.10+0x14e/0x2e0
-[  582.106980]  create_local_trace_kprobe+0x29c/0x3f0
-[  582.107487]  perf_kprobe_init+0x15f/0x210
-[  582.107912]  perf_kprobe_event_init+0xc4/0x140
-[  582.108377]  perf_try_init_event+0xcb/0x290
-[  582.108817]  perf_event_alloc+0x1476/0x2020
-[  582.109264]  ? find_get_context.isra.106+0x690/0x690
-[  582.109922]  ? __alloc_fd+0x1a3/0x4e0
-[  582.120002]  __do_sys_perf_event_open+0x222/0x1f40
-[  582.123049]  ? avc_has_perm_noaudit+0x340/0x340
-[  582.131226]  ? perf_event_set_output+0x5f0/0x5f0
-[  582.134395]  ? handle_mm_fault+0x103/0x350
-[  582.138102]  ? ksys_ioctl+0x61/0x90
-[  582.140234]  do_syscall_64+0x9a/0x2c0
-[  582.142674]  ? prepare_exit_to_usermode+0xbc/0x150
-[  582.146856]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  582.151127] RIP: 0033:0x446159
-[  582.152816] Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00
-00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
-08 0f 05 <48> 3d 01 f0 ff ff 0f 83 5b 08 fc ff c3 66 2e 0f 1f 84 00 00
-00 00
-[  582.167257] RSP: 002b:00007fffc2b023d8 EFLAGS: 00000246 ORIG_RAX:
-000000000000012a
-[  582.171375] RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000446159
-[  582.175760] RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000000020000180
-[  582.176487] RBP: 00007fffc2b025b0 R08: 0000000000000000 R09: 0000000000000000
-[  582.177189] R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000000406e40
-[  582.177898] R13: 0000000000406ed0 R14: 0000000000000000 R15: 0000000000000000
-[  583.353322] Shutting down cpus with NMI
-[  583.354285] Kernel Offset: 0x1b400000 from 0xffffffff81000000
-(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-[  583.356743] Rebooting in 86400 seconds..
-
-
-This bug could be easily reproduced by running the PoC(generated by
-syzkaller, and transformed to C Source code).
-
-For any further information, please feel free to contact us at
-wisedd@gmail.com. We would be more than happy to provide other
-information of this problem.
