@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 813EEC64EAD
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C15C64EAD
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43B8720880
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:02:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43B8720880
+	by mail.kernel.org (Postfix) with ESMTP id 93FE6206B8
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:02:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FE6206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728580AbeI3EcK (ORCPT
+        id S1728669AbeI3EcR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:32:10 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51538 "EHLO
+        Sun, 30 Sep 2018 00:32:17 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51534 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726502AbeI3ESU (ORCPT
+        by vger.kernel.org with ESMTP id S1726491AbeI3ESU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Sep 2018 00:18:20 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N60-0000HA-Qf; Sat, 29 Sep 2018 22:48:16 +0100
+        id 1g6N60-0000HB-SJ; Sat, 29 Sep 2018 22:48:16 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5v-0006qI-LG; Sat, 29 Sep 2018 22:48:11 +0100
+        id 1g6N5v-0006qN-MO; Sat, 29 Sep 2018 22:48:11 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
-        "Kees Cook" <keescook@chromium.org>
+CC:     akpm@linux-foundation.org, "Kees Cook" <keescook@chromium.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.451981028@decadent.org.uk>
+Message-ID: <lsq.1538257387.607011550@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 018/131] proc: Provide details on speculation flaw
- mitigations
+Subject: [PATCH 3.16 019/131] seccomp: Enable speculation flaw mitigations
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,55 +58,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kees Cook <keescook@chromium.org>
 
-commit fae1fa0fc6cca8beee3ab8ed71d54f9a78fa3f64 upstream.
+commit 5c3070890d06ff82eecb808d02d2ca39169533ef upstream.
 
-As done with seccomp and no_new_privs, also show speculation flaw
-mitigation state in /proc/$pid/status.
+When speculation flaw mitigations are opt-in (via prctl), using seccomp
+will automatically opt-in to these protections, since using seccomp
+indicates at least some level of sandboxing is desired.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[bwh: Backported to 3.16:
+ - Apply to current task
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/proc/array.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ kernel/seccomp.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -79,6 +79,7 @@
- #include <linux/delayacct.h>
- #include <linux/seq_file.h>
- #include <linux/pid_namespace.h>
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -16,6 +16,8 @@
+ #include <linux/atomic.h>
+ #include <linux/audit.h>
+ #include <linux/compat.h>
++#include <linux/nospec.h>
 +#include <linux/prctl.h>
- #include <linux/ptrace.h>
- #include <linux/tracehook.h>
- #include <linux/user_namespace.h>
-@@ -326,6 +327,28 @@ static inline void task_seccomp(struct s
- #ifdef CONFIG_SECCOMP
- 	seq_printf(m, "Seccomp:\t%d\n", p->seccomp.mode);
- #endif
-+	seq_printf(m, "Speculation Store Bypass:\t");
-+	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
-+	case -EINVAL:
-+		seq_printf(m, "unknown");
-+		break;
-+	case PR_SPEC_NOT_AFFECTED:
-+		seq_printf(m, "not vulnerable");
-+		break;
-+	case PR_SPEC_PRCTL | PR_SPEC_DISABLE:
-+		seq_printf(m, "thread mitigated");
-+		break;
-+	case PR_SPEC_PRCTL | PR_SPEC_ENABLE:
-+		seq_printf(m, "thread vulnerable");
-+		break;
-+	case PR_SPEC_DISABLE:
-+		seq_printf(m, "globally mitigated");
-+		break;
-+	default:
-+		seq_printf(m, "vulnerable");
-+		break;
-+	}
-+	seq_putc(m, '\n');
+ #include <linux/sched.h>
+ #include <linux/seccomp.h>
+ #include <linux/syscalls.h>
+@@ -205,9 +207,24 @@ static inline bool seccomp_may_assign_mo
+ 	return true;
  }
  
- static inline void task_context_switch_counts(struct seq_file *m,
++/*
++ * If a given speculation mitigation is opt-in (prctl()-controlled),
++ * select it, by disabling speculation (enabling mitigation).
++ */
++static inline void spec_mitigate(struct task_struct *task,
++				 unsigned long which)
++{
++	int state = arch_prctl_spec_ctrl_get(task, which);
++
++	if (state > 0 && (state & PR_SPEC_PRCTL))
++		arch_prctl_spec_ctrl_set(task, which, PR_SPEC_DISABLE);
++}
++
+ static inline void seccomp_assign_mode(unsigned long seccomp_mode)
+ {
+ 	current->seccomp.mode = seccomp_mode;
++	/* Assume seccomp processes want speculation flaw mitigation. */
++	spec_mitigate(current, PR_SPEC_STORE_BYPASS);
+ 	set_tsk_thread_flag(current, TIF_SECCOMP);
+ }
+ 
 
