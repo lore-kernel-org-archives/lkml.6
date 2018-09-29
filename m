@@ -2,77 +2,104 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0AC7C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B72C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E44320879
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:40:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E44320879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 172B320882
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:41:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 172B320882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbeI3BKE (ORCPT
+        id S1727992AbeI3BKo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 21:10:04 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:56996 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727405AbeI3BKD (ORCPT
+        Sat, 29 Sep 2018 21:10:44 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:40864 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727431AbeI3BKo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 21:10:03 -0400
-Received: from localhost (96-89-128-221-static.hfc.comcastbusiness.net [96.89.128.221])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D8EE41476CF80;
-        Sat, 29 Sep 2018 11:40:33 -0700 (PDT)
-Date:   Sat, 29 Sep 2018 11:40:23 -0700 (PDT)
-Message-Id: <20180929.114023.1370133506922372520.davem@davemloft.net>
-To:     vdronov@redhat.com
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, syzkaller@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: arp, ipv6: handle special case of tap device
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180926093018.6646-1-vdronov@redhat.com>
-References: <20180926093018.6646-1-vdronov@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 29 Sep 2018 11:40:34 -0700 (PDT)
+        Sat, 29 Sep 2018 21:10:44 -0400
+Received: from svr-orw-mbx-02.mgc.mentorg.com ([147.34.90.202])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g6KAx-0000Ow-VY from Steve_Longerbeam@mentor.com ; Sat, 29 Sep 2018 11:41:12 -0700
+Received: from mappy.world.mentorg.com (147.34.91.1) by
+ svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Sat, 29 Sep 2018 11:41:09 -0700
+From:   Steve Longerbeam <steve_longerbeam@mentor.com>
+To:     <linux-media@vger.kernel.org>
+CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Sebastian Reichel <sre@kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH v7 01/17] media: v4l2-fwnode: ignore endpoints that have no remote port parent
+Date:   Sat, 29 Sep 2018 11:40:36 -0700
+Message-ID: <20180929184052.19479-2-steve_longerbeam@mentor.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180929184052.19479-1-steve_longerbeam@mentor.com>
+References: <20180929184052.19479-1-steve_longerbeam@mentor.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
+ svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladis Dronov <vdronov@redhat.com>
-Date: Wed, 26 Sep 2018 11:30:18 +0200
+Documentation/devicetree/bindings/media/video-interfaces.txt states that
+the 'remote-endpoint' property is optional.
 
-> @@ -187,7 +187,14 @@ EXPORT_SYMBOL(arp_tbl);
->  
->  int arp_mc_map(__be32 addr, u8 *haddr, struct net_device *dev, int dir)
->  {
-> -	switch (dev->type) {
-> +	unsigned short type = dev->type;
-> +
-> +#if IS_ENABLED(CONFIG_TAP)
-> +	if (dev->rtnl_link_ops && !strcmp(dev->rtnl_link_ops->kind, "tun"))
-> +		type = ARPHRD_ETHER;
-> +#endif /* CONFIG_TAP */
+So v4l2_async_notifier_fwnode_parse_endpoint() should not return error
+if the endpoint has no remote port parent. Just ignore the endpoint,
+skip adding an asd to the notifier and return 0.
+__v4l2_async_notifier_parse_fwnode_endpoints() will then continue
+parsing the remaining port endpoints of the device.
 
-This is insanely ugly.
+Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+Changes since v6:
+- none
+Changes since v5:
+- none
+Changes since v4:
+- none
+Changes since v3:
+- none
+Changes since v2:
+- none
+Changes since v1:
+- don't pass an empty endpoint to the parse_endpoint callback,
+  v4l2_async_notifier_fwnode_parse_endpoint() now just ignores them
+  and returns success. The current users of
+  v4l2_async_notifier_parse_fwnode_endpoints() (omap3isp, rcar-vin,
+  intel-ipu3) no longer need modification.
+---
+ drivers/media/v4l2-core/v4l2-fwnode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-dev->type determines the link layer header layout and size.
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 169bdbb1f61a..0b8c736b1606 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -367,7 +367,7 @@ static int v4l2_async_notifier_fwnode_parse_endpoint(
+ 		fwnode_graph_get_remote_port_parent(endpoint);
+ 	if (!asd->match.fwnode) {
+ 		dev_warn(dev, "bad remote port parent\n");
+-		ret = -EINVAL;
++		ret = -ENOTCONN;
+ 		goto out_err;
+ 	}
+ 
+-- 
+2.17.1
 
-You can fix the kernel, but userspace AF_PACKET applications are still
-going to be broken by this behavior.  And that is just the tip of the
-iceberg.
-
-I'm not applying this, sorry.  I think tun/tap should be prevented from
-allowing the dev->type to be changed, unless it will make those changes
-adjust the link layer headers properly as well.
-
-Sorry.
