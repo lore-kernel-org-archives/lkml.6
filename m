@@ -2,125 +2,98 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71946C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 16:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CC6C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 17:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9A1120685
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 16:53:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="UHWNoUAk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9A1120685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D9312073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 17:00:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D9312073F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbeI2XWI (ORCPT
+        id S1728498AbeI2X3f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 19:22:08 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:43238 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728431AbeI2XWH (ORCPT
+        Sat, 29 Sep 2018 19:29:35 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:38903 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728394AbeI2X3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 19:22:07 -0400
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w8TGqgPt021326;
-        Sun, 30 Sep 2018 01:52:42 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w8TGqgPt021326
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538239962;
-        bh=AAzDwdb6k8OEMf4qZz6SnjocYzfRWZqB26d4z5uy7f4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UHWNoUAk+Wyb9jDuuEohObetTkV3Sd+F73nHhweyy7SKLpNUyy1z/faAhdb23UVrC
-         Uoq519azAEviISuQHdLAUebBeWK1/4n79x3YbArqPdNfza8rvx/tehHiONNlZAaD7B
-         mQlstJqiK6EFzEyGX8Oi5ZmcZsLeUE3F6J9lt27ZaP/Fb5wdROWA155mcxyV2cUoll
-         csw18CqUIigEjgWlPdMG9iVWHiHpaknkvr6XYA2oEu90mV4HGppHxLrus/9HYWrutc
-         LrN/0bPPiXLr4nR5ZXOAHWFu+mjRgPHYSzQrRMcNrGLS1jYiqpssK6gPWnvvo1w6Tv
-         J0DharI5Hp/LQ==
-X-Nifty-SrcIP: [209.85.221.170]
-Received: by mail-vk1-f170.google.com with SMTP id h200-v6so2105221vke.5;
-        Sat, 29 Sep 2018 09:52:42 -0700 (PDT)
-X-Gm-Message-State: ABuFfoidsmwL0Z4be2elAAdqNtMk5UMl4ottI384rywgiSSW4f5E3JCM
-        bFS6rpvgzmJ9CWQQvWd8NR/oIitTy8ZwvURriB0=
-X-Google-Smtp-Source: ACcGV61Ct7Zq3jsuDbP8dUwzZrerOkMHBK9cS0GXvBecibfDkHWhw8lgDMSvvOyxu+s9aiUdmXmltAJHju6WgtppzQM=
-X-Received: by 2002:a1f:3c01:: with SMTP id j1-v6mr1348011vka.84.1538239961376;
- Sat, 29 Sep 2018 09:52:41 -0700 (PDT)
+        Sat, 29 Sep 2018 19:29:35 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08073233|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07408;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=20;RT=20;SR=0;TI=SMTPD_---.CxVflgQ_1538240412;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CxVflgQ_1538240412)
+          by smtp.aliyun-inc.com(10.147.40.7);
+          Sun, 30 Sep 2018 01:00:12 +0800
+Date:   Sun, 30 Sep 2018 01:00:11 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
+        robh+dt@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org, green.hu@gmail.com,
+        Chen Linfei <linfei_chen@c-sky.com>,
+        Mao Han <han_mao@c-sky.com>
+Subject: Re: [PATCH V6 13/33] csky: Library functions
+Message-ID: <20180929170011.GA27796@guoren-Inspiron-7460>
+References: <cover.1538058840.git.ren_guo@c-sky.com>
+ <2418a9d77fb92ff7606c08e209d8994e4f21e7ff.1538058840.git.ren_guo@c-sky.com>
+ <20180928162030.GE19827@infradead.org>
 MIME-Version: 1.0
-References: <1538117388-11945-1-git-send-email-yamada.masahiro@socionext.com> <CAK8P3a16pR5e1js7JiGreqHqxv5RNJZZY=JLFwLRE8i3nbg5hQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a16pR5e1js7JiGreqHqxv5RNJZZY=JLFwLRE8i3nbg5hQ@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 30 Sep 2018 01:52:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT+mYBfjtO+MrRhedLCqwPnTLrK6nKSpFd=TVrMnQxx9Q@mail.gmail.com>
-Message-ID: <CAK7LNAT+mYBfjtO+MrRhedLCqwPnTLrK6nKSpFd=TVrMnQxx9Q@mail.gmail.com>
-Subject: Re: [PATCH] samples: run headers_install for host arch instead of
- target arch
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Jeff Dike <jdike@addtoit.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andy Gross <andy.gross@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928162030.GE19827@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018=E5=B9=B49=E6=9C=8829=E6=97=A5(=E5=9C=9F) 4:38 Arnd Bergmann <arnd@arnd=
-b.de>:
->
-> On Fri, Sep 28, 2018 at 8:51 AM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> >
-> > Some samples search headers in $(objtree)/usr/include, which is made
-> > available by "make headers_install".  It is not kernel-space code but
-> > host programs that need this header search path.
-> >
-> > Commit 3fca1700c4c3 ("kbuild: make samples really depend on
-> > headers_install") is wrong because it installs headers of the target
-> > architecture.  Besides, UML fails to build with CONFIG_SAMPLES=3Dy
-> > because UML does not support headers_install.
-> >
-> > Invoke "make headers_install" for the _host_ architecture in the
-> > prepare stage.  Introduce CONFIG_HOST_HEADERS_INSTALL so that this
-> > happens only for samples that need it.
-> >
-> > I also removed 'Documentation/: headers_install', which I guess is
-> > stale code.
-> >
-> > Fixes: 3fca1700c4c3 ("kbuild: make samples really depend on headers_ins=
-tall")
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Cc: David Howells <dhowells@redhat.com>
->
-> I don't understand this one. Why would we want to build the samples for
-> the host architecture rather than the target architecture?
->
-> I would think that the bug is that we try to build them using
-> HOSTCC, and they end up being unusable on the target as
-> a consequence.
+On Fri, Sep 28, 2018 at 09:20:30AM -0700, Christoph Hellwig wrote:
+> > +unsigned long long notrace __bswapdi2(unsigned long long u)
+> > +{
+> > +	return (((u) & 0xff00000000000000ull) >> 56) |
+> > +	       (((u) & 0x00ff000000000000ull) >> 40) |
+> > +	       (((u) & 0x0000ff0000000000ull) >> 24) |
+> > +	       (((u) & 0x000000ff00000000ull) >>  8) |
+> > +	       (((u) & 0x00000000ff000000ull) <<  8) |
+> > +	       (((u) & 0x0000000000ff0000ull) << 24) |
+> > +	       (((u) & 0x000000000000ff00ull) << 40) |
+> > +	       (((u) & 0x00000000000000ffull) << 56);
+> > +}
+> 
+> How is this any better than using the generic byteswap helpers?
+OK.
+#include <uapi/linux/swab.h>
+
+unsigned long long notrace __bswapdi2(unsigned long long u)
+{
+	return ___constant_swab64(u);
 
 
-I just read Makefiles under samples/, and
-all that require -I$(objtree)/usr/include
-are listed in hostprogs-y,
-so they are built for host architectures.
+> 
+> > +unsigned int notrace __bswapsi2(unsigned int u)
+> > +{
+> > +	return (((u) & 0xff000000) >> 24) |
+> > +	       (((u) & 0x00ff0000) >>  8) |
+> > +	       (((u) & 0x0000ff00) <<  8) |
+> > +	       (((u) & 0x000000ff) << 24);
+> > +}
+> 
+> Same here.
+OK.
+#include <uapi/linux/swab.h>
 
-If this is different from our intent,
-we need to fix this first.
+unsigned int notrace __bswapsi2(unsigned int u)
+{
+	return ___constant_swab32(u);
+}
 
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Thx
+ Guo Ren
