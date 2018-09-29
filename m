@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCD2C004D5
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C517C004D5
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 252132084D
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:47:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 381E22084D
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:47:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QtyXJRWs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 252132084D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I2x3UrUa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381E22084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbeI2OOb (ORCPT
+        id S1727759AbeI2OOm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 10:14:31 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40926 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727528AbeI2OOb (ORCPT
+        Sat, 29 Sep 2018 10:14:42 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44998 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727528AbeI2OOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 10:14:31 -0400
-Received: by mail-pf1-f193.google.com with SMTP id s5-v6so5794765pfj.7
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 00:47:06 -0700 (PDT)
+        Sat, 29 Sep 2018 10:14:41 -0400
+Received: by mail-pf1-f196.google.com with SMTP id k21-v6so5779516pff.11
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 00:47:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uVMEsprQm9gudmgxiK82x9lkc/giPgwELqLOkGrioH0=;
-        b=QtyXJRWs7uIbraMJGQFWjTOq0ThdPmG7FaAZVP4W80xr2iiohY9GdxboO5o6AydQAj
-         L9VssystDcpRn0Bg3N4FUXfipMUFewlZKrS8dYo9lqcUfQH1p59zvZFGPYmQB5szEuBH
-         BQpDIQqhEZPDafOWCBuXssAJ8xfiehh/J5wrQ=
+        bh=NhxWnMICtyLVgQ8tgcBJblIpV968gEL3tsJPDbXWuxg=;
+        b=I2x3UrUaTEDmeyvCzKL4ilIZ6tPRPjtwiEmbQtb0z6HrgkuRMSU7VinD5fdoLpGjPA
+         5A1ypXABka1u/07T+/FjB09gb8mrNbyW+2fiLvmcudlAto6ZfE9nGq0VeLQHgAzqXE+R
+         zdr8e6hXHiwVopnJifOfi62265zGwbsJfOoAE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=uVMEsprQm9gudmgxiK82x9lkc/giPgwELqLOkGrioH0=;
-        b=Jj/xGoMuoM0qaGfnsH/+jT9WUXLwoJIUwQTMXVVtd3HKQTLf7/oKfKCyImc0gQmmf4
-         LjhOhzO6UsdAIAYq2NKPg5xhfnUMBYj6Htlp8hG/7SvK9DCZzZAEmpfrjDra+QYHdP2i
-         aFa8/YhLY0JlJRROSRmqiAiEFcedM0nPhadTLY8opeq05RkSlIsUN88XuvglCyYW9HFm
-         Xtate+UziZKqohHva8yv4ZGml4PnVc/UP6PD23BPzqeYAKQLgiCnzhzRs4nQdIKxuha5
-         2gl+7DcnUXhsXdQmYbK/JfVD/AijHyQBAG/m394nmExp8+YxRAOHvKIBpu75jvNteQ2d
-         Te3A==
-X-Gm-Message-State: ABuFfoi+198z+cMeUWwys3mpAZ05zHpF1EshSlOAgAEQe4r6Rw6B5KBI
-        2V9s4EZCVPqUgI40Idc9H+wT
-X-Google-Smtp-Source: ACcGV60SMyaA3GJZNMwRYEWcWYgMOgNcXN1rCg6dOywa0iGhSTUK6gx14Om2uLC4r85WISQccMGatg==
-X-Received: by 2002:a63:9e0a:: with SMTP id s10-v6mr1928388pgd.326.1538207225764;
-        Sat, 29 Sep 2018 00:47:05 -0700 (PDT)
+        bh=NhxWnMICtyLVgQ8tgcBJblIpV968gEL3tsJPDbXWuxg=;
+        b=jf0mHtf7GQmFFHv0V0NsKo9+WvKZizH6lz1aAHt7wqBHiUmW4DAEKHAecNC6eQ65Ix
+         COgpgJuVwVN7+2xy16WVdHs948mmzrob4aYG97I60c9MJtVdi03o/JkwCDalZRVYXykq
+         ivynqbPEZHThtEveCjgwyjEUvAEMW8Nj80MlfnFLegpxTjpVnekO8hgcdEJqnp5Lx9DI
+         /lgvusnUyBzuQObdj65RhYeqIk4PYsRki8kNiFxLIrBiejNHfkzxX3GUc5MpTa0pmHj1
+         MZ3g/UsrrGZcJYyzkEJvQIXw2F/AIW+ZV9WjfTVR6272k5f0Bz7almsT1K7upWlulRJW
+         doTg==
+X-Gm-Message-State: ABuFfojLuISbcldw+0hO0Dqy2H0AFJe2xzkkTpA9u/bwcvcwj+iadQtm
+        eKQNAXrYGQgUV8NEjPkDlZH/
+X-Google-Smtp-Source: ACcGV6054eOMVK9z2kMldflbJ/olCOMQGXVanXPVOkot1tpS1SKjRAhEaMqtwIuUnqqivvipWfhcSg==
+X-Received: by 2002:a17:902:32c3:: with SMTP id z61-v6mr2070504plb.324.1538207235623;
+        Sat, 29 Sep 2018 00:47:15 -0700 (PDT)
 Received: from localhost.localdomain ([2409:4072:717:b0f2:f0af:8cc:da39:e2c3])
-        by smtp.gmail.com with ESMTPSA id m21-v6sm9926570pgd.6.2018.09.29.00.46.56
+        by smtp.gmail.com with ESMTPSA id m21-v6sm9926570pgd.6.2018.09.29.00.47.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Sep 2018 00:47:05 -0700 (PDT)
+        Sat, 29 Sep 2018 00:47:15 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     vkoul@kernel.org, dan.j.williams@intel.com, afaerber@suse.de,
         robh+dt@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com
@@ -67,9 +67,9 @@ Cc:     linux-serial@vger.kernel.org, dmaengine@vger.kernel.org,
         thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
         pn@denx.de, edgar.righi@lsitec.org.br,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 1/3] arm64: dts: actions: s900: Enable Tx DMA for UART5
-Date:   Sat, 29 Sep 2018 13:16:35 +0530
-Message-Id: <20180929074637.9766-2-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 2/3] dmaengine: Add Slave and Cyclic mode support for Actions Semi Owl S900 SoC
+Date:   Sat, 29 Sep 2018 13:16:36 +0530
+Message-Id: <20180929074637.9766-3-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180929074637.9766-1-manivannan.sadhasivam@linaro.org>
 References: <20180929074637.9766-1-manivannan.sadhasivam@linaro.org>
@@ -78,26 +78,426 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable Tx DMA for UART5 in Actions Semi S900 SoC.
+Add Slave and Cyclic mode support for Actions Semi Owl S900 SoC. The slave
+mode supports bus width of 4 bytes common for all peripherals and 1 byte
+specific for UART.
+
+The cyclic mode supports only block mode transfer.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm64/boot/dts/actions/s900.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/dma/owl-dma.c | 279 ++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 272 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-index eceba914762c..39af1236f611 100644
---- a/arch/arm64/boot/dts/actions/s900.dtsi
-+++ b/arch/arm64/boot/dts/actions/s900.dtsi
-@@ -156,6 +156,8 @@
- 			compatible = "actions,s900-uart", "actions,owl-uart";
- 			reg = <0x0 0xe012a000 0x0 0x2000>;
- 			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+			dma-names = "tx";
-+			dmas = <&dma 26>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/dma/owl-dma.c b/drivers/dma/owl-dma.c
+index 7812a6338acd..1d26db4c9229 100644
+--- a/drivers/dma/owl-dma.c
++++ b/drivers/dma/owl-dma.c
+@@ -21,6 +21,7 @@
+ #include <linux/mm.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/of_dma.h>
+ #include <linux/slab.h>
+ #include "virt-dma.h"
  
+@@ -165,6 +166,7 @@ struct owl_dma_lli {
+ struct owl_dma_txd {
+ 	struct virt_dma_desc	vd;
+ 	struct list_head	lli_list;
++	bool			cyclic;
+ };
+ 
+ /**
+@@ -191,6 +193,8 @@ struct owl_dma_vchan {
+ 	struct virt_dma_chan	vc;
+ 	struct owl_dma_pchan	*pchan;
+ 	struct owl_dma_txd	*txd;
++	struct dma_slave_config cfg;
++	u8			drq;
+ };
+ 
+ /**
+@@ -336,9 +340,11 @@ static struct owl_dma_lli *owl_dma_alloc_lli(struct owl_dma *od)
+ 
+ static struct owl_dma_lli *owl_dma_add_lli(struct owl_dma_txd *txd,
+ 					   struct owl_dma_lli *prev,
+-					   struct owl_dma_lli *next)
++					   struct owl_dma_lli *next,
++					   bool is_cyclic)
+ {
+-	list_add_tail(&next->node, &txd->lli_list);
++	if (!is_cyclic)
++		list_add_tail(&next->node, &txd->lli_list);
+ 
+ 	if (prev) {
+ 		prev->hw.next_lli = next->phys;
+@@ -351,7 +357,9 @@ static struct owl_dma_lli *owl_dma_add_lli(struct owl_dma_txd *txd,
+ static inline int owl_dma_cfg_lli(struct owl_dma_vchan *vchan,
+ 				  struct owl_dma_lli *lli,
+ 				  dma_addr_t src, dma_addr_t dst,
+-				  u32 len, enum dma_transfer_direction dir)
++				  u32 len, enum dma_transfer_direction dir,
++				  struct dma_slave_config *sconfig,
++				  bool is_cyclic)
+ {
+ 	struct owl_dma_lli_hw *hw = &lli->hw;
+ 	u32 mode;
+@@ -364,6 +372,32 @@ static inline int owl_dma_cfg_lli(struct owl_dma_vchan *vchan,
+ 			OWL_DMA_MODE_DT_DCU | OWL_DMA_MODE_SAM_INC |
+ 			OWL_DMA_MODE_DAM_INC;
+ 
++		break;
++	case DMA_MEM_TO_DEV:
++		mode |= OWL_DMA_MODE_TS(vchan->drq)
++			| OWL_DMA_MODE_ST_DCU | OWL_DMA_MODE_DT_DEV
++			| OWL_DMA_MODE_SAM_INC | OWL_DMA_MODE_DAM_CONST;
++
++		/*
++		 * Hardware only supports 32bit and 8bit buswidth. Since the
++		 * default is 32bit, select 8bit only when requested.
++		 */
++		if (sconfig->dst_addr_width == DMA_SLAVE_BUSWIDTH_1_BYTE)
++			mode |= OWL_DMA_MODE_NDDBW_8BIT;
++
++		break;
++	case DMA_DEV_TO_MEM:
++		 mode |= OWL_DMA_MODE_TS(vchan->drq)
++			| OWL_DMA_MODE_ST_DEV | OWL_DMA_MODE_DT_DCU
++			| OWL_DMA_MODE_SAM_CONST | OWL_DMA_MODE_DAM_INC;
++
++		/*
++		 * Hardware only supports 32bit and 8bit buswidth. Since the
++		 * default is 32bit, select 8bit only when requested.
++		 */
++		if (sconfig->src_addr_width == DMA_SLAVE_BUSWIDTH_1_BYTE)
++			mode |= OWL_DMA_MODE_NDDBW_8BIT;
++
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -381,7 +415,10 @@ static inline int owl_dma_cfg_lli(struct owl_dma_vchan *vchan,
+ 				 OWL_DMA_LLC_SAV_LOAD_NEXT |
+ 				 OWL_DMA_LLC_DAV_LOAD_NEXT);
+ 
+-	hw->ctrlb = llc_hw_ctrlb(OWL_DMA_INTCTL_SUPER_BLOCK);
++	if (is_cyclic)
++		hw->ctrlb = llc_hw_ctrlb(OWL_DMA_INTCTL_BLOCK);
++	else
++		hw->ctrlb = llc_hw_ctrlb(OWL_DMA_INTCTL_SUPER_BLOCK);
+ 
+ 	return 0;
+ }
+@@ -443,6 +480,16 @@ static void owl_dma_terminate_pchan(struct owl_dma *od,
+ 	spin_unlock_irqrestore(&od->lock, flags);
+ }
+ 
++static void owl_dma_pause_pchan(struct owl_dma_pchan *pchan)
++{
++	pchan_writel(pchan, 1, OWL_DMAX_PAUSE);
++}
++
++static void owl_dma_resume_pchan(struct owl_dma_pchan *pchan)
++{
++	pchan_writel(pchan, 0, OWL_DMAX_PAUSE);
++}
++
+ static int owl_dma_start_next_txd(struct owl_dma_vchan *vchan)
+ {
+ 	struct owl_dma *od = to_owl_dma(vchan->vc.chan.device);
+@@ -464,7 +511,10 @@ static int owl_dma_start_next_txd(struct owl_dma_vchan *vchan)
+ 	lli = list_first_entry(&txd->lli_list,
+ 			       struct owl_dma_lli, node);
+ 
+-	int_ctl = OWL_DMA_INTCTL_SUPER_BLOCK;
++	if (txd->cyclic)
++		int_ctl = OWL_DMA_INTCTL_BLOCK;
++	else
++		int_ctl = OWL_DMA_INTCTL_SUPER_BLOCK;
+ 
+ 	pchan_writel(pchan, OWL_DMAX_MODE, OWL_DMA_MODE_LME);
+ 	pchan_writel(pchan, OWL_DMAX_LINKLIST_CTL,
+@@ -627,6 +677,54 @@ static int owl_dma_terminate_all(struct dma_chan *chan)
+ 	return 0;
+ }
+ 
++static int owl_dma_config(struct dma_chan *chan,
++			  struct dma_slave_config *config)
++{
++	struct owl_dma_vchan *vchan = to_owl_vchan(chan);
++
++	/* Reject definitely invalid configurations */
++	if (config->src_addr_width == DMA_SLAVE_BUSWIDTH_8_BYTES ||
++	    config->dst_addr_width == DMA_SLAVE_BUSWIDTH_8_BYTES)
++		return -EINVAL;
++
++	memcpy(&vchan->cfg, config, sizeof(struct dma_slave_config));
++
++	return 0;
++}
++
++static int owl_dma_pause(struct dma_chan *chan)
++{
++	struct owl_dma_vchan *vchan = to_owl_vchan(chan);
++	unsigned long flags;
++
++	spin_lock_irqsave(&vchan->vc.lock, flags);
++
++	owl_dma_pause_pchan(vchan->pchan);
++
++	spin_unlock_irqrestore(&vchan->vc.lock, flags);
++
++	return 0;
++}
++
++static int owl_dma_resume(struct dma_chan *chan)
++{
++	struct owl_dma_vchan *vchan = to_owl_vchan(chan);
++	unsigned long flags;
++
++	if (!vchan->pchan && !vchan->txd)
++		return 0;
++
++	dev_dbg(chan2dev(chan), "vchan %p: resume\n", &vchan->vc);
++
++	spin_lock_irqsave(&vchan->vc.lock, flags);
++
++	owl_dma_resume_pchan(vchan->pchan);
++
++	spin_unlock_irqrestore(&vchan->vc.lock, flags);
++
++	return 0;
++}
++
+ static u32 owl_dma_getbytes_chan(struct owl_dma_vchan *vchan)
+ {
+ 	struct owl_dma_pchan *pchan;
+@@ -754,13 +852,14 @@ static struct dma_async_tx_descriptor
+ 		bytes = min_t(size_t, (len - offset), OWL_DMA_FRAME_MAX_LENGTH);
+ 
+ 		ret = owl_dma_cfg_lli(vchan, lli, src + offset, dst + offset,
+-				      bytes, DMA_MEM_TO_MEM);
++				      bytes, DMA_MEM_TO_MEM,
++				      &vchan->cfg, txd->cyclic);
+ 		if (ret) {
+ 			dev_warn(chan2dev(chan), "failed to config lli\n");
+ 			goto err_txd_free;
+ 		}
+ 
+-		prev = owl_dma_add_lli(txd, prev, lli);
++		prev = owl_dma_add_lli(txd, prev, lli, false);
+ 	}
+ 
+ 	return vchan_tx_prep(&vchan->vc, &txd->vd, flags);
+@@ -770,6 +869,133 @@ static struct dma_async_tx_descriptor
+ 	return NULL;
+ }
+ 
++static struct dma_async_tx_descriptor
++		*owl_dma_prep_slave_sg(struct dma_chan *chan,
++				       struct scatterlist *sgl,
++				       unsigned int sg_len,
++				       enum dma_transfer_direction dir,
++				       unsigned long flags, void *context)
++{
++	struct owl_dma *od = to_owl_dma(chan->device);
++	struct owl_dma_vchan *vchan = to_owl_vchan(chan);
++	struct dma_slave_config *sconfig = &vchan->cfg;
++	struct owl_dma_txd *txd;
++	struct owl_dma_lli *lli, *prev = NULL;
++	struct scatterlist *sg;
++	dma_addr_t addr, src = 0, dst = 0;
++	size_t len;
++	int ret, i;
++
++	txd = kzalloc(sizeof(*txd), GFP_NOWAIT);
++	if (!txd)
++		return NULL;
++
++	INIT_LIST_HEAD(&txd->lli_list);
++
++	for_each_sg(sgl, sg, sg_len, i) {
++		addr = sg_dma_address(sg);
++		len = sg_dma_len(sg);
++
++		if (len > OWL_DMA_FRAME_MAX_LENGTH) {
++			dev_err(od->dma.dev,
++				"frame length exceeds max supported length");
++			goto err_txd_free;
++		}
++
++		lli = owl_dma_alloc_lli(od);
++		if (!lli) {
++			dev_err(chan2dev(chan), "failed to allocate lli");
++			goto err_txd_free;
++		}
++
++		if (dir == DMA_MEM_TO_DEV) {
++			src = addr;
++			dst = sconfig->dst_addr;
++		} else {
++			src = sconfig->src_addr;
++			dst = addr;
++		}
++
++		ret = owl_dma_cfg_lli(vchan, lli, src, dst, len, dir, sconfig,
++				      txd->cyclic);
++		if (ret) {
++			dev_warn(chan2dev(chan), "failed to config lli");
++			goto err_txd_free;
++		}
++
++		prev = owl_dma_add_lli(txd, prev, lli, false);
++	}
++
++	return vchan_tx_prep(&vchan->vc, &txd->vd, flags);
++
++err_txd_free:
++	owl_dma_free_txd(od, txd);
++
++	return NULL;
++}
++
++static struct dma_async_tx_descriptor
++		*owl_prep_dma_cyclic(struct dma_chan *chan,
++				     dma_addr_t buf_addr, size_t buf_len,
++				     size_t period_len,
++				     enum dma_transfer_direction dir,
++				     unsigned long flags)
++{
++	struct owl_dma *od = to_owl_dma(chan->device);
++	struct owl_dma_vchan *vchan = to_owl_vchan(chan);
++	struct dma_slave_config *sconfig = &vchan->cfg;
++	struct owl_dma_txd *txd;
++	struct owl_dma_lli *lli, *prev = NULL, *first = NULL;
++	dma_addr_t src = 0, dst = 0;
++	unsigned int periods = buf_len / period_len;
++	int ret, i;
++
++	txd = kzalloc(sizeof(*txd), GFP_NOWAIT);
++	if (!txd)
++		return NULL;
++
++	INIT_LIST_HEAD(&txd->lli_list);
++	txd->cyclic = true;
++
++	for (i = 0; i < periods; i++) {
++		lli = owl_dma_alloc_lli(od);
++		if (!lli) {
++			dev_warn(chan2dev(chan), "failed to allocate lli");
++			goto err_txd_free;
++		}
++
++		if (dir == DMA_MEM_TO_DEV) {
++			src = buf_addr + (period_len * i);
++			dst = sconfig->dst_addr;
++		} else if (dir == DMA_DEV_TO_MEM) {
++			src = sconfig->src_addr;
++			dst = buf_addr + (period_len * i);
++		}
++
++		ret = owl_dma_cfg_lli(vchan, lli, src, dst, period_len,
++				      dir, sconfig, txd->cyclic);
++		if (ret) {
++			dev_warn(chan2dev(chan), "failed to config lli");
++			goto err_txd_free;
++		}
++
++		if (!first)
++			first = lli;
++
++		prev = owl_dma_add_lli(txd, prev, lli, false);
++	}
++
++	/* close the cyclic list */
++	owl_dma_add_lli(txd, prev, first, true);
++
++	return vchan_tx_prep(&vchan->vc, &txd->vd, flags);
++
++err_txd_free:
++	owl_dma_free_txd(od, txd);
++
++	return NULL;
++}
++
+ static void owl_dma_free_chan_resources(struct dma_chan *chan)
+ {
+ 	struct owl_dma_vchan *vchan = to_owl_vchan(chan);
+@@ -790,6 +1016,27 @@ static inline void owl_dma_free(struct owl_dma *od)
+ 	}
+ }
+ 
++static struct dma_chan *owl_dma_of_xlate(struct of_phandle_args *dma_spec,
++					 struct of_dma *ofdma)
++{
++	struct owl_dma *od = ofdma->of_dma_data;
++	struct owl_dma_vchan *vchan;
++	struct dma_chan *chan;
++	u8 drq = dma_spec->args[0];
++
++	if (drq > od->nr_vchans)
++		return NULL;
++
++	chan = dma_get_any_slave_channel(&od->dma);
++	if (!chan)
++		return NULL;
++
++	vchan = to_owl_vchan(chan);
++	vchan->drq = drq;
++
++	return chan;
++}
++
+ static int owl_dma_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -833,12 +1080,19 @@ static int owl_dma_probe(struct platform_device *pdev)
+ 	spin_lock_init(&od->lock);
+ 
+ 	dma_cap_set(DMA_MEMCPY, od->dma.cap_mask);
++	dma_cap_set(DMA_SLAVE, od->dma.cap_mask);
++	dma_cap_set(DMA_CYCLIC, od->dma.cap_mask);
+ 
+ 	od->dma.dev = &pdev->dev;
+ 	od->dma.device_free_chan_resources = owl_dma_free_chan_resources;
+ 	od->dma.device_tx_status = owl_dma_tx_status;
+ 	od->dma.device_issue_pending = owl_dma_issue_pending;
+ 	od->dma.device_prep_dma_memcpy = owl_dma_prep_memcpy;
++	od->dma.device_prep_slave_sg = owl_dma_prep_slave_sg;
++	od->dma.device_prep_dma_cyclic = owl_prep_dma_cyclic;
++	od->dma.device_config = owl_dma_config;
++	od->dma.device_pause = owl_dma_pause;
++	od->dma.device_resume = owl_dma_resume;
+ 	od->dma.device_terminate_all = owl_dma_terminate_all;
+ 	od->dma.src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
+ 	od->dma.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
+@@ -910,8 +1164,18 @@ static int owl_dma_probe(struct platform_device *pdev)
+ 		goto err_pool_free;
+ 	}
+ 
++	/* Device-tree DMA controller registration */
++	ret = of_dma_controller_register(pdev->dev.of_node,
++					 owl_dma_of_xlate, od);
++	if (ret) {
++		dev_err(&pdev->dev, "of_dma_controller_register failed\n");
++		goto err_dma_unregister;
++	}
++
+ 	return 0;
+ 
++err_dma_unregister:
++	dma_async_device_unregister(&od->dma);
+ err_pool_free:
+ 	clk_disable_unprepare(od->clk);
+ 	dma_pool_destroy(od->lli_pool);
+@@ -923,6 +1187,7 @@ static int owl_dma_remove(struct platform_device *pdev)
+ {
+ 	struct owl_dma *od = platform_get_drvdata(pdev);
+ 
++	of_dma_controller_free(pdev->dev.of_node);
+ 	dma_async_device_unregister(&od->dma);
+ 
+ 	/* Mask all interrupts for this execution environment */
 -- 
 2.17.1
 
