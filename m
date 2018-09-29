@@ -2,117 +2,96 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69404C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 17:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4833EC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 17:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C7092073F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 17:03:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2b323YE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C7092073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 171D92073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 17:04:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 171D92073F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728559AbeI2Xck (ORCPT
+        id S1728565AbeI2Xdk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 19:32:40 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37134 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728419AbeI2Xck (ORCPT
+        Sat, 29 Sep 2018 19:33:40 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:33400 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728377AbeI2Xdj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 19:32:40 -0400
-Received: by mail-pg1-f196.google.com with SMTP id c10-v6so6620892pgq.4
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 10:03:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:date:from:to:cc:subject:reply-to:mime-version
-         :content-disposition:user-agent;
-        bh=xOYsHzIVIqXkd+oxHdpbJWMi2vKrLBi/u8T0C8kHHiE=;
-        b=P2b323YEhcuOn1t38oYomaAmhJFmxuUQHiV7Vzx0eVth4NGiHhKOIa9BupGuq+jB1z
-         SNybbslBspwC4OXV8MYKrKoHYYtjDg/VVnFUygta119XJEmjsY+g5RzMJHTP9TMVQVnd
-         jP4oPg9elIT/u1SxxX7m9s0EffxEvCu3XUhowUmq9QIueavO9W2mrsJeqSmnlyTy2Bhc
-         Skh8qb2HO4XCJp9BgcDc8qP4z7fr/VMsr/oWQdZjI4j3OulnjVT8xR7SVYYKj7IG5Flf
-         6BKY6VqDZc6j/KrwaK6yuSW+PmU9TEenzgEkOfjCLSdjxVW7vshMz5y99cj9xwq/En8j
-         Ol0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:reply-to
-         :mime-version:content-disposition:user-agent;
-        bh=xOYsHzIVIqXkd+oxHdpbJWMi2vKrLBi/u8T0C8kHHiE=;
-        b=OPYvoX8t0L3LvKw7H/kNJuHduH/xij+J7fKJAlygrEG/ZO/xAsahdrhiRyEx1LcubD
-         MFnGMEc3UtSjd6IKK4+fqjZeTI4znz1KDxM3rsxzM3A/V4JXo30rZiLIbAtakIgH2XaD
-         c85o+AJLv8GlZ/W+v11A8eFeV7hYMNdiosuYI3v3ebVXH6gYoNKz7kb8Dupv0nfK0g+B
-         DM8HDJ8IPUXD8Mbu7KvU6mjlKikflKuZVKL1/BCPewkdHCxP4L5tDUpC/nSc6fe27WOQ
-         TC94IAUgKwTVNwUPvuWnvYnoI7aLQgy+B6xPLAYcZf2zh60dqN3mYwVLMq/fdBC/lZkj
-         Hviw==
-X-Gm-Message-State: ABuFfojM/cedDVzC/tiAq8Id+JE/rIqYQ0/Au53hfTLU3XZTVt39Tpj1
-        kwKB0MkFm2etaEqyAPSOh69xXwM=
-X-Google-Smtp-Source: ACcGV62NZUJhnaSiN1v+6BriXYEU55C8DsfH3yXUThl1aDT9/1/DhxY7iPqkmQoTZaKXQ1ESqGP1Cw==
-X-Received: by 2002:a17:902:b08e:: with SMTP id p14-v6mr3983878plr.241.1538240610412;
-        Sat, 29 Sep 2018 10:03:30 -0700 (PDT)
-Received: from localhost ([182.69.157.96])
-        by smtp.gmail.com with ESMTPSA id q85-v6sm12050531pfa.151.2018.09.29.10.03.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Sep 2018 10:03:28 -0700 (PDT)
-Message-ID: <5bafb060.1c69fb81.ebebd.f24c@mx.google.com>
-X-Google-Original-Message-ID: <20180929170325.GA8525@tapaswenipathak@gmail.com>
-Date:   Sat, 29 Sep 2018 22:33:25 +0530
-From:   Tapasweni Pathak <tapaswenipathak@gmail.com>
-To:     gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
-        pombredanne@nexb.com, tglx@linutronix.de,
-        tapaswenipathak@gmail.com, linux-kernel@vger.kernel.org
-Cc:     tapaswenipathak@gmail.com
-Subject: [PATCH] tools: lib: subcmd: Fix null pointer dereference
-Reply-To: tapaswenipathak@gmail.com
+        Sat, 29 Sep 2018 19:33:39 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07670777|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07423;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=18;RT=18;SR=0;TI=SMTPD_---.CxVngT6_1538240657;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CxVngT6_1538240657)
+          by smtp.aliyun-inc.com(10.147.40.233);
+          Sun, 30 Sep 2018 01:04:17 +0800
+Date:   Sun, 30 Sep 2018 01:04:16 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
+        robh+dt@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org, green.hu@gmail.com
+Subject: Re: [PATCH V6 07/33] csky: MMU and page table management
+Message-ID: <20180929170415.GD27796@guoren-Inspiron-7460>
+References: <cover.1538058840.git.ren_guo@c-sky.com>
+ <ed7dcac1e0f3a858fa75735fa881818bc4ab1468.1538058840.git.ren_guo@c-sky.com>
+ <20180927154733.GA15985@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180927154733.GA15985@infradead.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add null check before dereferencing ent. ent is pointer to memory
-allocated using malloc and is dereferenced immediately without
-null check.
+On Thu, Sep 27, 2018 at 08:47:33AM -0700, Christoph Hellwig wrote:
+> > +static void *csky_dma_alloc_atomic(
+> > +	struct device *dev,
+> > +	size_t size,
+> > +	dma_addr_t *dma_handle
+> > +	)
+> 
+> Can you please use normal kernel coding style?  Closing brace on the
+> same line, either two tab indents for the arguments or align them to the
+> first argument:
+> 
+> static void *csky_dma_alloc_atomic(struct device *dev, size_t size,
+> 		dma_addr_t *dma_handle)
+> 
+> or:
+> 
+> static void *csky_dma_alloc_atomic(struct device *dev, size_t size,
+> 				   dma_addr_t *dma_handle)
+OK, I like 2th.
 
-Found using Facebook's Infer. Build tested it.
+> > +	if (DMA_ATTR_NON_CONSISTENT & attrs)
+> > +		BUG();
+> 
+> Please don't bug on unknown attributs, they can be safely ignored.
+No BUG(), return NULL.
 
-Signed-off-by: Tapasweni Pathak <tapaswenipathak@gmail.com>
----
-Another option is to dereference only inside if (ent).
- tools/lib/subcmd/help.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> > +void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
+> > +			      size_t size, enum dma_data_direction dir)
+> > +{
+> > +	struct page *page = pfn_to_page(paddr >> PAGE_SHIFT);
+> > +	unsigned long offset = paddr & ~PAGE_MASK;
+> > +	unsigned long vaddr;
+> > +
+> > +	if (PageHighMem(page))
+> > +		vaddr = (unsigned long) kmap_atomic(page);
+> 
+> This isn't going to work as the size might be larger than PAGE_SIZE.
+Ops ... BIG BUG, must be fixed immediately, thank you.
 
-diff --git a/tools/lib/subcmd/help.c b/tools/lib/subcmd/help.c
-index 2859f10..b805d1d 100644
---- a/tools/lib/subcmd/help.c
-+++ b/tools/lib/subcmd/help.c
-@@ -16,13 +16,18 @@
- void add_cmdname(struct cmdnames *cmds, const char *name, size_t len)
- {
- 	struct cmdname *ent = malloc(sizeof(*ent) + len + 1);
--
-+        if (!ent) {
-+                printf("mem alloc failed\n");
-+                goto error;
-+        }
- 	ent->len = len;
- 	memcpy(ent->name, name, len);
- 	ent->name[len] = 0;
-
- 	ALLOC_GROW(cmds->names, cmds->cnt + 1, cmds->alloc);
- 	cmds->names[cmds->cnt++] = ent;
-+        error:
-+                if (ent) free(ent);
- }
-
- void clean_cmdnames(struct cmdnames *cmds)
---
-2.7.4
+Best Regards
+ Guo Ren
