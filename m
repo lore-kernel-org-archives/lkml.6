@@ -2,194 +2,228 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CBCC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BADC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A042087A
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:44:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gqw5sTDD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A042087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D72C2087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D72C2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbeI3EOU (ORCPT
+        id S1727969AbeI3ESW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:14:20 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42775 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726543AbeI3EOT (ORCPT
+        Sun, 30 Sep 2018 00:18:22 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51546 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726670AbeI3ESV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 00:14:19 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i4-v6so6239604pgq.9;
-        Sat, 29 Sep 2018 14:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jIcczCRJA7bP+5h9Te1N43SjRq2VNPPLL50OG3IxI4c=;
-        b=Gqw5sTDDrdpJkHshjfWTkFb7NL4mC7M1jMFEMpfQjjj0bdbPLQWd5P+NEQi5vI/xy7
-         mhhHMQcd3sD3PaaEp93WlSGU4Ibr8RILc2lrswI9BJJ/8lpAMzkhlKNZuYO7cenlKoyF
-         oUNcD6T1b1mSQvxJgzvZo29Z9nhDYJ8m8To1oKcEu9oOQoDSvQeibcxB3jFmxiZqhHux
-         N7N/Io1A9crQWb81LarhHB2aMHOLm1C0QkCQfZq4a2vQAsxdYQ+Oz3V++oNqACW6Onof
-         zm69Px1TdgR3PbMog7ogxI4m2393bTrLEHqNMLDtTijNBi8GLMZCs9MP5U/sRUZ4N0Qm
-         3IxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=jIcczCRJA7bP+5h9Te1N43SjRq2VNPPLL50OG3IxI4c=;
-        b=daHEfHbPpMAMz2v5UORZR6hni7jw/65xwrlF4ygqMvLOJftWu2sJf1Ck4MfkXx4DTY
-         oKPEt+kqgcDLsi7B8B3qFhpWTKbBxGwIGiZJxP8LiSD93csu8FWcH88DhVJvoaOLG2Xq
-         XFmtt+fmT0p7QrBmM3/knpLgSt8YbuQsu56wmi5D95Wp/cjpuL/NuqhzxzpOJYjeJdFZ
-         N+/qxDPLR7Z/ZUNRy6wBydFih5uXN/ac+OYafd+5MgAdc0ngmZUF5qVa8nf8FxeTXhA1
-         Yuq/LdnFdach40bGNIdaUY8+Ct3rqfynlrmEIr5BoWj7eVxSbn2Iz/M2Xqd/FyQ+U9NR
-         PkaQ==
-X-Gm-Message-State: ABuFfogLQ2SFJTJ1ivvMKZeSvOZrYIENaPV+n+h6qP5LL4NFIk4M0E3y
-        YtD3Ondh4PG85b3rnbaQNik=
-X-Google-Smtp-Source: ACcGV62z028jGyXJObtfc0st/T3SjcoKZ0Fd8ZuZcQ6eWyfyfkeqwtyS+f702kjx4kDSjUEHCj4NhQ==
-X-Received: by 2002:a17:902:103:: with SMTP id 3-v6mr2918531plb.58.1538257457170;
-        Sat, 29 Sep 2018 14:44:17 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id o20-v6sm17780313pfj.35.2018.09.29.14.44.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Sep 2018 14:44:16 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     jdelvare@suse.com, linux@roeck-us.net
-Cc:     afd@ti.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] hwmon: ina3221: Add suspend and resume functions
-Date:   Sat, 29 Sep 2018 14:44:07 -0700
-Message-Id: <20180929214407.27208-4-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180929214407.27208-1-nicoleotsuka@gmail.com>
-References: <20180929214407.27208-1-nicoleotsuka@gmail.com>
+        Sun, 30 Sep 2018 00:18:21 -0400
+Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g6N60-0000H1-Hj; Sat, 29 Sep 2018 22:48:16 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g6N5v-0006pY-C7; Sat, 29 Sep 2018 22:48:11 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org, "Ingo Molnar" <mingo@kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        "Borislav Petkov" <bp@suse.de>
+Date:   Sat, 29 Sep 2018 22:43:07 +0100
+Message-ID: <lsq.1538257387.331723245@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 009/131] x86/bugs/intel: Set proper CPU features and
+ setup RDS
+In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Depending on the hardware design, an INA3221 chip might lose
-its power during system suspend/resume. So this patch adds
-a set of suspend and resume functions to cache the register
-values including config register value and limit settings.
+3.16.59-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+------------------
+
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+
+commit 772439717dbf703b39990be58d8d4e3e4ad0598a upstream.
+
+Intel CPUs expose methods to:
+
+ - Detect whether RDS capability is available via CPUID.7.0.EDX[31],
+
+ - The SPEC_CTRL MSR(0x48), bit 2 set to enable RDS.
+
+ - MSR_IA32_ARCH_CAPABILITIES, Bit(4) no need to enable RRS.
+
+With that in mind if spec_store_bypass_disable=[auto,on] is selected set at
+boot-time the SPEC_CTRL MSR to enable RDS if the platform requires it.
+
+Note that this does not fix the KVM case where the SPEC_CTRL is exposed to
+guests which can muck with it, see patch titled :
+ KVM/SVM/VMX/x86/spectre_v2: Support the combination of guest and host IBRS.
+
+And for the firmware (IBRS to be set), see patch titled:
+ x86/spectre_v2: Read SPEC_CTRL MSR during boot and re-use reserved bits
+
+[ tglx: Distangled it from the intel implementation and kept the call order ]
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: adjust filename, context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
-Changelog
-v1->v2:
- * Added power-down setting during suspend for power saving
+ arch/x86/include/uapi/asm/msr-index.h |  6 ++++++
+ arch/x86/kernel/cpu/bugs.c            | 30 +++++++++++++++++++++++++--
+ arch/x86/kernel/cpu/common.c          | 10 +++++----
+ arch/x86/kernel/cpu/cpu.h             |  3 +++
+ arch/x86/kernel/cpu/intel.c           |  1 +
+ 5 files changed, 44 insertions(+), 6 deletions(-)
 
- drivers/hwmon/ina3221.c | 63 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
-
-diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-index e0c4f4d83f4e..877952efaa88 100644
---- a/drivers/hwmon/ina3221.c
-+++ b/drivers/hwmon/ina3221.c
-@@ -38,6 +38,8 @@
- #define INA3221_WARN3			0x0c
- #define INA3221_MASK_ENABLE		0x0f
+--- a/arch/x86/include/uapi/asm/msr-index.h
++++ b/arch/x86/include/uapi/asm/msr-index.h
+@@ -35,6 +35,7 @@
+ #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
+ #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
+ #define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
++#define SPEC_CTRL_RDS			(1 << 2)   /* Reduced Data Speculation */
  
-+#define INA3221_CONFIG_MODE_MASK	GENMASK(2, 0)
-+#define INA3221_CONFIG_MODE_POWERDOWN	0
- #define INA3221_CONFIG_MODE_SHUNT	BIT(0)
- #define INA3221_CONFIG_MODE_BUS		BIT(1)
- #define INA3221_CONFIG_MODE_CONTINUOUS	BIT(2)
-@@ -91,11 +93,13 @@ static const unsigned int register_channel[] = {
-  * @regmap: Register map of the device
-  * @fields: Register fields of the device
-  * @shunt_resistors: Array of resistor values per channel
-+ * @reg_config: Register value of INA3221_CONFIG
-  */
- struct ina3221_data {
- 	struct regmap *regmap;
- 	struct regmap_field *fields[F_MAX_FIELDS];
- 	int shunt_resistors[INA3221_NUM_CHANNELS];
-+	u32 reg_config;
- };
+ #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
+ #define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
+@@ -57,6 +58,11 @@
+ #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
+ #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
+ #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
++#define ARCH_CAP_RDS_NO			(1 << 4)   /*
++						    * Not susceptible to Speculative Store Bypass
++						    * attack, so no Reduced Data Speculation control
++						    * required.
++						    */
  
- static int ina3221_read_value(struct ina3221_data *ina, unsigned int reg,
-@@ -415,9 +419,67 @@ static int ina3221_probe(struct i2c_client *client,
- 		return PTR_ERR(hwmon_dev);
+ #define MSR_IA32_BBL_CR_CTL		0x00000119
+ #define MSR_IA32_BBL_CR_CTL3		0x0000011e
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -179,7 +179,7 @@ static enum spectre_v2_mitigation spectr
+ 
+ void x86_spec_ctrl_set(u64 val)
+ {
+-	if (val & ~SPEC_CTRL_IBRS)
++	if (val & ~(SPEC_CTRL_IBRS | SPEC_CTRL_RDS))
+ 		WARN_ONCE(1, "SPEC_CTRL MSR value 0x%16llx is unknown.\n", val);
+ 	else
+ 		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base | val);
+@@ -482,8 +482,28 @@ static enum ssb_mitigation_cmd __init __
+ 		break;
  	}
  
-+	dev_set_drvdata(dev, ina);
-+
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM
-+static int ina3221_suspend(struct device *dev)
-+{
-+	struct ina3221_data *ina = dev_get_drvdata(dev);
-+	int ret;
-+
-+	/* Save config register value and enable cache-only */
-+	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
-+	if (ret)
-+		return ret;
-+
-+	/* Set to power-down mode for power saving */
-+	ret = regmap_update_bits(ina->regmap, INA3221_CONFIG,
-+				 INA3221_CONFIG_MODE_MASK,
-+				 INA3221_CONFIG_MODE_POWERDOWN);
-+	if (ret)
-+		return ret;
-+
-+	regcache_cache_only(ina->regmap, true);
-+	regcache_mark_dirty(ina->regmap);
-+
-+	return 0;
-+}
-+
-+static int ina3221_resume(struct device *dev)
-+{
-+	struct ina3221_data *ina = dev_get_drvdata(dev);
-+	int ret;
-+
-+	regcache_cache_only(ina->regmap, false);
-+
-+	/* Software reset the chip */
-+	ret = regmap_field_write(ina->fields[F_RST], true);
-+	if (ret) {
-+		dev_err(dev, "Unable to reset device\n");
-+		return ret;
+-	if (mode != SPEC_STORE_BYPASS_NONE)
++	/*
++	 * We have three CPU feature flags that are in play here:
++	 *  - X86_BUG_SPEC_STORE_BYPASS - CPU is susceptible.
++	 *  - X86_FEATURE_RDS - CPU is able to turn off speculative store bypass
++	 *  - X86_FEATURE_SPEC_STORE_BYPASS_DISABLE - engage the mitigation
++	 */
++	if (mode != SPEC_STORE_BYPASS_NONE) {
+ 		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
++		/*
++		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD uses
++		 * a completely different MSR and bit dependent on family.
++		 */
++		switch (boot_cpu_data.x86_vendor) {
++		case X86_VENDOR_INTEL:
++			x86_spec_ctrl_base |= SPEC_CTRL_RDS;
++			x86_spec_ctrl_set(SPEC_CTRL_RDS);
++			break;
++		case X86_VENDOR_AMD:
++			break;
++		}
 +	}
 +
-+	/* Restore cached register values to hardware */
-+	ret = regcache_sync(ina->regmap);
-+	if (ret)
-+		return ret;
-+
-+	/* Restore config register value to hardware */
-+	ret = regmap_write(ina->regmap, INA3221_CONFIG, ina->reg_config);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
+ 	return mode;
+ }
+ 
+@@ -497,6 +517,12 @@ static void ssb_select_mitigation()
+ 
+ #undef pr_fmt
+ 
++void x86_spec_ctrl_setup_ap(void)
++{
++	if (boot_cpu_has(X86_FEATURE_IBRS))
++		x86_spec_ctrl_set(x86_spec_ctrl_base & (SPEC_CTRL_IBRS | SPEC_CTRL_RDS));
 +}
-+#endif
 +
-+static const struct dev_pm_ops ina3221_pm = {
-+	SET_SYSTEM_SLEEP_PM_OPS(ina3221_suspend, ina3221_resume)
-+};
+ #ifdef CONFIG_SYSFS
+ 
+ ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -827,7 +827,11 @@ static void __init cpu_set_bug_bits(stru
+ {
+ 	u64 ia32_cap = 0;
+ 
+-	if (!x86_match_cpu(cpu_no_spec_store_bypass))
++	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
++		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
 +
- static const struct of_device_id ina3221_of_match_table[] = {
- 	{ .compatible = "ti,ina3221", },
- 	{ /* sentinel */ }
-@@ -435,6 +497,7 @@ static struct i2c_driver ina3221_i2c_driver = {
- 	.driver = {
- 		.name = INA3221_DRIVER_NAME,
- 		.of_match_table = ina3221_of_match_table,
-+		.pm = &ina3221_pm,
- 	},
- 	.id_table = ina3221_ids,
- };
--- 
-2.17.1
++	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
++	   !(ia32_cap & ARCH_CAP_RDS_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+ 
+ 	if (x86_match_cpu(cpu_no_speculation))
+@@ -839,9 +843,6 @@ static void __init cpu_set_bug_bits(stru
+ 	if (x86_match_cpu(cpu_no_meltdown))
+ 		return;
+ 
+-	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
+-		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+-
+ 	/* Rogue Data Cache Load? No! */
+ 	if (ia32_cap & ARCH_CAP_RDCL_NO)
+ 		return;
+@@ -1175,6 +1176,7 @@ void identify_secondary_cpu(struct cpuin
+ 	enable_sep_cpu();
+ #endif
+ 	mtrr_ap_init();
++	x86_spec_ctrl_setup_ap();
+ }
+ 
+ struct msr_range {
+--- a/arch/x86/kernel/cpu/cpu.h
++++ b/arch/x86/kernel/cpu/cpu.h
+@@ -45,4 +45,7 @@ extern const struct cpu_dev *const __x86
+ 
+ extern void get_cpu_cap(struct cpuinfo_x86 *c);
+ extern void cpu_detect_cache_sizes(struct cpuinfo_x86 *c);
++ 
++extern void x86_spec_ctrl_setup_ap(void);
++
+ #endif /* ARCH_X86_CPU_H */
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -120,6 +120,7 @@ static void early_init_intel(struct cpui
+ 		setup_clear_cpu_cap(X86_FEATURE_STIBP);
+ 		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
+ 		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
++		setup_clear_cpu_cap(X86_FEATURE_RDS);
+ 	}
+ 
+ 	/*
 
