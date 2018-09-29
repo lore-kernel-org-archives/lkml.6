@@ -2,341 +2,105 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22636C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9226AC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7F0E2084D
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:47:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cbg7VWaK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F0E2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D0102088F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:55:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D0102088F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbeI2OOv (ORCPT
+        id S1727637AbeI2OWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 10:14:51 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43445 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727769AbeI2OOv (ORCPT
+        Sat, 29 Sep 2018 10:22:48 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41817 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727508AbeI2OWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 10:14:51 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j26-v6so5780735pfi.10
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 00:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=u9S+IwXTtUPV4JAD8SAdBcU3BcDCxDZSRNqvDApyuVs=;
-        b=Cbg7VWaK2PbpKVWS6gaftRor9vDejpWReaYbI7Ss+IbjjZofw2Fh1MLzbHWWR2Y/CF
-         M0dhncv9IKGeUzc21QKjZKi1dG7SD6Fijh8yJhwVGYmrBufcOy8m/vh08+B7fm5gblcO
-         mpwHuZ8T1hOMZP+gvCI+wkq2JFsF35FdxS6Ys=
+        Sat, 29 Sep 2018 10:22:48 -0400
+Received: by mail-vs1-f66.google.com with SMTP id e128-v6so4883025vsc.8;
+        Sat, 29 Sep 2018 00:55:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=u9S+IwXTtUPV4JAD8SAdBcU3BcDCxDZSRNqvDApyuVs=;
-        b=k7+A3ponwuA68/H3PkNYwBhsDl3rmvKS7YnQ3fwHbxdsflnPe+q4T6k3sBWXFzfNMQ
-         X3OsrX4Gs9GBx2TAAGK/R3iRN5HQdycavuv3Vk3bFBtNOGeGlyu+qioweQmtR/MMELZj
-         8B86smFYLzuz3GQaEzFOko+dtAcp875WjSM/Sai6RnPNMWzDjGFfd3+x4FCyKsf7NDK3
-         K+4sGkyM7jNV1onUPQNfQMCpuvKkwYIUMCmNX+5zksY3BaE+J941+VIhYUe/BmTNfY8P
-         fYLYjT6yQKOtjmQRkKzxjbHFDj/tWY/0GosuNvWXP5IJIcDysSkpmTmuHcnAvDO1uLZZ
-         QGeg==
-X-Gm-Message-State: ABuFfoiM1Sh7/J+Cv+TGwTh4UnJaIc9JdqKSScRqaHxGyGo/4Hh9qYZy
-        tJBplj1NwQgY1MGDdtSWPzr6
-X-Google-Smtp-Source: ACcGV62acRlNuLxdkDahBi16CKxWzRA8HpW8mXDnbyNdyiPkoJQ8L89v0NIwsoaqgl+vihNJYZvJ0g==
-X-Received: by 2002:a17:902:ac8e:: with SMTP id h14-v6mr2028806plr.300.1538207245150;
-        Sat, 29 Sep 2018 00:47:25 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:717:b0f2:f0af:8cc:da39:e2c3])
-        by smtp.gmail.com with ESMTPSA id m21-v6sm9926570pgd.6.2018.09.29.00.47.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Sep 2018 00:47:24 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     vkoul@kernel.org, dan.j.williams@intel.com, afaerber@suse.de,
-        robh+dt@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com
-Cc:     linux-serial@vger.kernel.org, dmaengine@vger.kernel.org,
-        liuwei@actions-semi.com, 96boards@ucrobotics.com,
-        devicetree@vger.kernel.org, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
-        bdong@ucrobotics.com, manivannanece23@gmail.com,
-        thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
-        pn@denx.de, edgar.righi@lsitec.org.br,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 3/3] tty: serial: Add Tx DMA support for UART in Actions Semi Owl SoCs
-Date:   Sat, 29 Sep 2018 13:16:37 +0530
-Message-Id: <20180929074637.9766-4-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180929074637.9766-1-manivannan.sadhasivam@linaro.org>
-References: <20180929074637.9766-1-manivannan.sadhasivam@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h3ESr2xI28NP1aemcmYN65QISZL1RvT0IOKEwjQoj2Q=;
+        b=bRuAbUCdi3vwij8u09Xr7AiLPGE2+0PDpgDfqK3EAvqS1zXyLko2+jUJy4kHjHx/FA
+         0Jk58ZzZkvAgIfY9ieCrP5a06Wx8rUNZTLBu/SqMDMSwdIsKV8cuHz6q9GW6dUHo8r/+
+         kgdENs7owt5sHGoS5dkAK7pYP3Feqj4mjPc+7x/zHdR8yg3LvEOHH8GAMDqHQ9w9nOCA
+         RNNxFVx11tLM+6JFp5J5PUAJ6FLEih+PC5AnsyS0l2+hr1gmxwW2NfK5pREjAt2ncpaS
+         WhdjuglH+JKTTPZL5kdu2fBfVsl6oPp2axcxkysn+vNCqdlHs22CTbGNlaagrfVTp9mV
+         w/ZQ==
+X-Gm-Message-State: ABuFfoht93ICPsl50V4Xz7okcaXB49L+xDnlJU1AICKjGgVE6nHciFUT
+        tTvTvBsW47XqUOudZ8Ldo9HuHB9bS4ViusVCa9w=
+X-Google-Smtp-Source: ACcGV62uUsMFWfuXzgg1xCyQ4d1hZ1EWb6uiPKJF0b0jHNvyNVvq4Ijybx7ejx0qwqJuJiHOzMIXLW9x/yE/wFcXiMo=
+X-Received: by 2002:a67:6582:: with SMTP id z124-v6mr734814vsb.11.1538207720462;
+ Sat, 29 Sep 2018 00:55:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180928223947.20751-1-f.fainelli@gmail.com>
+In-Reply-To: <20180928223947.20751-1-f.fainelli@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sat, 29 Sep 2018 09:55:08 +0200
+Message-ID: <CAMuHMdVgpf2b8gOeygij7MGjTwxgBv8-Y0M5ggBBhNE0pS07pA@mail.gmail.com>
+Subject: Re: [PATCH] i2c: brcmstb: Allow enabling the driver on DSL SoCs
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
+        kramasub@codeaurora.org,
+        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        eajames@linux.vnet.ibm.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        manivannan.sadhasivam@linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Tx DMA support for Actions Semi Owl SoCs. If there is no DMA
-property specified in DT, it will fallback to default interrupt mode.
+Hi Florian,
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/tty/serial/owl-uart.c | 172 +++++++++++++++++++++++++++++++++-
- 1 file changed, 171 insertions(+), 1 deletion(-)
+On Sat, Sep 29, 2018 at 12:40 AM Florian Fainelli <f.fainelli@gmail.com> wrote:
+> ARCH_BCM_63XX which is used by ARM-based DSL SoCs from Broadcom uses the
+> same controller, make it possible to select the STB driver and update
+> the Kconfig and help text a bit.
+>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-diff --git a/drivers/tty/serial/owl-uart.c b/drivers/tty/serial/owl-uart.c
-index 29a6dc6a8d23..1b3016db7ae2 100644
---- a/drivers/tty/serial/owl-uart.c
-+++ b/drivers/tty/serial/owl-uart.c
-@@ -11,6 +11,8 @@
- #include <linux/clk.h>
- #include <linux/console.h>
- #include <linux/delay.h>
-+#include <linux/dmaengine.h>
-+#include <linux/dma-mapping.h>
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -48,6 +50,8 @@
- #define OWL_UART_CTL_RXIE		BIT(18)
- #define OWL_UART_CTL_TXIE		BIT(19)
- #define OWL_UART_CTL_LBEN		BIT(20)
-+#define OWL_UART_CTL_DRCR		BIT(21)
-+#define OWL_UART_CTL_DTCR		BIT(22)
- 
- #define OWL_UART_STAT_RIP		BIT(0)
- #define OWL_UART_STAT_TIP		BIT(1)
-@@ -71,12 +75,21 @@ struct owl_uart_info {
- struct owl_uart_port {
- 	struct uart_port port;
- 	struct clk *clk;
-+
-+	struct dma_chan *tx_ch;
-+	dma_addr_t tx_dma_buf;
-+	dma_cookie_t dma_tx_cookie;
-+	u32 tx_size;
-+	bool tx_dma;
-+	bool dma_tx_running;
- };
- 
- #define to_owl_uart_port(prt) container_of(prt, struct owl_uart_port, prt)
- 
- static struct owl_uart_port *owl_uart_ports[OWL_UART_PORT_NUM];
- 
-+static void owl_uart_dma_start_tx(struct owl_uart_port *owl_port);
-+
- static inline void owl_uart_write(struct uart_port *port, u32 val, unsigned int off)
- {
- 	writel(val, port->membase + off);
-@@ -115,6 +128,83 @@ static unsigned int owl_uart_get_mctrl(struct uart_port *port)
- 	return mctrl;
- }
- 
-+static void owl_uart_dma_tx_callback(void *data)
-+{
-+	struct owl_uart_port *owl_port = data;
-+	struct uart_port *port = &owl_port->port;
-+	struct circ_buf	*xmit = &port->state->xmit;
-+	unsigned long flags;
-+	u32 val;
-+
-+	dma_sync_single_for_cpu(port->dev, owl_port->tx_dma_buf,
-+				UART_XMIT_SIZE, DMA_TO_DEVICE);
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+
-+	owl_port->dma_tx_running = 0;
-+
-+	xmit->tail += owl_port->tx_size;
-+	xmit->tail &= UART_XMIT_SIZE - 1;
-+	port->icount.tx += owl_port->tx_size;
-+
-+	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
-+		uart_write_wakeup(port);
-+
-+	/* Disable Tx DRQ */
-+	val = owl_uart_read(port, OWL_UART_CTL);
-+	val &= ~OWL_UART_CTL_TXDE;
-+	owl_uart_write(port, val, OWL_UART_CTL);
-+
-+	/* Clear pending Tx IRQ */
-+	val = owl_uart_read(port, OWL_UART_STAT);
-+	val |= OWL_UART_STAT_TIP;
-+	owl_uart_write(port, val, OWL_UART_STAT);
-+
-+	if (!uart_circ_empty(xmit) && !uart_tx_stopped(port))
-+		owl_uart_dma_start_tx(owl_port);
-+
-+	spin_unlock_irqrestore(&port->lock, flags);
-+}
-+
-+static void owl_uart_dma_start_tx(struct owl_uart_port *owl_port)
-+{
-+	struct uart_port *port = &owl_port->port;
-+	struct circ_buf *xmit = &port->state->xmit;
-+	struct dma_async_tx_descriptor *desc;
-+	u32 val;
-+
-+	if (uart_tx_stopped(port) || uart_circ_empty(xmit) ||
-+	    owl_port->dma_tx_running)
-+		return;
-+
-+	dma_sync_single_for_device(port->dev, owl_port->tx_dma_buf,
-+				   UART_XMIT_SIZE, DMA_TO_DEVICE);
-+
-+	owl_port->tx_size = CIRC_CNT_TO_END(xmit->head, xmit->tail,
-+					    UART_XMIT_SIZE);
-+
-+	desc = dmaengine_prep_slave_single(owl_port->tx_ch,
-+					   owl_port->tx_dma_buf + xmit->tail,
-+					   owl_port->tx_size, DMA_MEM_TO_DEV,
-+					   DMA_PREP_INTERRUPT);
-+	if (!desc)
-+		return;
-+
-+	desc->callback = owl_uart_dma_tx_callback;
-+	desc->callback_param = owl_port;
-+
-+	/* Enable Tx DRQ */
-+	val = owl_uart_read(port, OWL_UART_CTL);
-+	val &= ~OWL_UART_CTL_TXIE;
-+	val |= OWL_UART_CTL_TXDE | OWL_UART_CTL_DTCR;
-+	owl_uart_write(port, val, OWL_UART_CTL);
-+
-+	/* Start Tx DMA transfer */
-+	owl_port->dma_tx_running = true;
-+	owl_port->dma_tx_cookie = dmaengine_submit(desc);
-+	dma_async_issue_pending(owl_port->tx_ch);
-+}
-+
- static unsigned int owl_uart_tx_empty(struct uart_port *port)
- {
- 	unsigned long flags;
-@@ -159,6 +249,7 @@ static void owl_uart_stop_tx(struct uart_port *port)
- 
- static void owl_uart_start_tx(struct uart_port *port)
- {
-+	struct owl_uart_port *owl_port = to_owl_uart_port(port);
- 	u32 val;
- 
- 	if (uart_tx_stopped(port)) {
-@@ -166,6 +257,11 @@ static void owl_uart_start_tx(struct uart_port *port)
- 		return;
- 	}
- 
-+	if (owl_port->tx_dma) {
-+		owl_uart_dma_start_tx(owl_port);
-+		return;
-+	}
-+
- 	val = owl_uart_read(port, OWL_UART_STAT);
- 	val |= OWL_UART_STAT_TIP;
- 	owl_uart_write(port, val, OWL_UART_STAT);
-@@ -273,13 +369,27 @@ static irqreturn_t owl_uart_irq(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static void owl_dma_channel_free(struct owl_uart_port *owl_port)
-+{
-+	dmaengine_terminate_all(owl_port->tx_ch);
-+	dma_release_channel(owl_port->tx_ch);
-+	dma_unmap_single(owl_port->port.dev, owl_port->tx_dma_buf,
-+			 UART_XMIT_SIZE, DMA_TO_DEVICE);
-+	owl_port->dma_tx_running = false;
-+	owl_port->tx_ch = NULL;
-+}
-+
- static void owl_uart_shutdown(struct uart_port *port)
- {
--	u32 val;
-+	struct owl_uart_port *owl_port = to_owl_uart_port(port);
- 	unsigned long flags;
-+	u32 val;
- 
- 	spin_lock_irqsave(&port->lock, flags);
- 
-+	if (owl_port->tx_dma)
-+		owl_dma_channel_free(owl_port);
-+
- 	val = owl_uart_read(port, OWL_UART_CTL);
- 	val &= ~(OWL_UART_CTL_TXIE | OWL_UART_CTL_RXIE
- 		| OWL_UART_CTL_TXDE | OWL_UART_CTL_RXDE | OWL_UART_CTL_EN);
-@@ -290,6 +400,62 @@ static void owl_uart_shutdown(struct uart_port *port)
- 	free_irq(port->irq, port);
- }
- 
-+static int owl_uart_dma_tx_init(struct uart_port *port)
-+{
-+	struct owl_uart_port *owl_port = to_owl_uart_port(port);
-+	struct device *dev = port->dev;
-+	struct dma_slave_config slave_config;
-+	int ret;
-+
-+	owl_port->tx_dma = false;
-+
-+	/* Request DMA TX channel */
-+	owl_port->tx_ch = dma_request_slave_channel(dev, "tx");
-+	if (!owl_port->tx_ch) {
-+		dev_info(dev, "tx dma alloc failed\n");
-+		return -ENODEV;
-+	}
-+
-+	owl_port->tx_dma_buf = dma_map_single(dev,
-+					      owl_port->port.state->xmit.buf,
-+					      UART_XMIT_SIZE, DMA_TO_DEVICE);
-+	if (dma_mapping_error(dev, owl_port->tx_dma_buf)) {
-+		ret = -ENOMEM;
-+		goto alloc_err;
-+	}
-+
-+	/* Configure DMA channel */
-+	memset(&slave_config, 0, sizeof(slave_config));
-+	slave_config.direction = DMA_MEM_TO_DEV;
-+	slave_config.dst_addr = port->mapbase + OWL_UART_TXDAT;
-+	slave_config.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-+
-+	ret = dmaengine_slave_config(owl_port->tx_ch, &slave_config);
-+	if (ret < 0) {
-+		dev_err(dev, "tx dma channel config failed\n");
-+		ret = -ENODEV;
-+		goto map_err;
-+	}
-+
-+	/* Use DMA buffer size as the FIFO size */
-+	port->fifosize = UART_XMIT_SIZE;
-+
-+	/* Set DMA flag */
-+	owl_port->tx_dma = true;
-+	owl_port->dma_tx_running = false;
-+
-+	return 0;
-+
-+map_err:
-+	dma_unmap_single(dev, owl_port->tx_dma_buf, UART_XMIT_SIZE,
-+			 DMA_TO_DEVICE);
-+alloc_err:
-+	dma_release_channel(owl_port->tx_ch);
-+	owl_port->tx_ch = NULL;
-+
-+	return ret;
-+}
-+
- static int owl_uart_startup(struct uart_port *port)
- {
- 	u32 val;
-@@ -301,6 +467,10 @@ static int owl_uart_startup(struct uart_port *port)
- 	if (ret)
- 		return ret;
- 
-+	ret = owl_uart_dma_tx_init(port);
-+	if (!ret)
-+		dev_info(port->dev, "using DMA for tx\n");
-+
- 	spin_lock_irqsave(&port->lock, flags);
- 
- 	val = owl_uart_read(port, OWL_UART_STAT);
+Thanks for your patch!
+
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -432,12 +432,13 @@ config I2C_BCM_KONA
+>           If you do not need KONA I2C interface, say N.
+>
+>  config I2C_BRCMSTB
+> -       tristate "BRCM Settop I2C controller"
+> -       depends on ARCH_BRCMSTB || BMIPS_GENERIC || COMPILE_TEST
+> +       tristate "BRCM Settop/DSL I2C controller"
+> +       depends on ARCH_BRCMSTB || BMIPS_GENERIC || COMPILE_TEST || \
+> +                  ARCH_BCM_63XX
+
+I think it would be good to keep the "|| COMPILE_TEST" as the last dependency.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
