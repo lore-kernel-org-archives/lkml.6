@@ -2,82 +2,130 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E24C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 19:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D52E5C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 19:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAD77206B2
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 19:46:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90B612073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 19:54:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PPu01VWs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAD77206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mO3FyjyY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90B612073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbeI3CQc (ORCPT
+        id S1727861AbeI3CYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 22:16:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38078 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727405AbeI3CQc (ORCPT
+        Sat, 29 Sep 2018 22:24:17 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38051 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726999AbeI3CYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 22:16:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=d+Pi6r1Xb+XbBfameMEsWsdZZO+w1ilk/ee61pLllTo=; b=PPu01VWsmZCdrM/rcgdEM3Cdu
-        iu2NiBA4bqfMDkHUgm5EGmXYNQeUm0xsCUQRfYd4w4mPY8KaeoCQ/u7EV/uFwZI0u18DtwG/ju4Vm
-        odl35rs99dqF8g4wt+q+gibdq9Aog+KUaKOxQxAb1B/narPjSYJ4tvUGKHjcCJ4zEGoQjGw6B+Dnc
-        uh4t8IZR7xc00AMqpiGCrbt+kVyxG3+xJdMR+7yX/WQKKg0MlKo1ZdwCYXeXyCs6AQtku43D3Lcuj
-        qPV94fCwoiE8tS0A5pJrFatZBWgRnkSvMQz+aEt2hslIV5mxBc8AuvNvWnvnTQKMt1Gk+D5lIPOe6
-        y8OXUKafQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g6LAD-0002dY-Ip; Sat, 29 Sep 2018 19:44:29 +0000
-Date:   Sat, 29 Sep 2018 12:44:29 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>, Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Tycho Andersen <tycho@tycho.ws>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
-        containers@lists.linux-foundation.org
-Subject: Re: [PATCH 0/3] namei: implement various scoping AT_* flags
-Message-ID: <20180929194429.GA1702@bombadil.infradead.org>
-References: <20180929103453.12025-1-cyphar@cyphar.com>
- <1EE20CA2-4C8B-4A80-B613-0277D92B376D@amacapital.net>
- <20180929154551.jsi6dt3xjxdxoqeh@ryuk>
- <9D01A225-05BE-4B4A-873A-94168D17F687@amacapital.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9D01A225-05BE-4B4A-873A-94168D17F687@amacapital.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Sat, 29 Sep 2018 22:24:16 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r77-v6so6772377pgr.5;
+        Sat, 29 Sep 2018 12:54:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=vhmN50C9sktsUnQ0DqCK715HpG76rwFyWm3Q6vCbPtY=;
+        b=mO3FyjyYptjEAJ++6jXEHZN5VdartMJnHMu3KHKwOYVc4SBx4ELpPDcLOxgVowrXvE
+         mowgSPf/sMuaEiXe2VBBSjETuEwvCf3r4aWcQiwpv976z1mVckU6DREGYTx+7dMJYmTI
+         ePKdUT0KxC0G+gI8hAQVsGfrnGrjQhh5D7YvNhA80TSLOoO+kj3qg8dOFQtQ2R8D8v7p
+         CzdFe9FS/cccpX8Ij/0zxkhBolUoCyb3vyLbU8X4Gw2YPOIGwtllOfK+8DO5+jB20AkK
+         kc/vPirqe9gmkrFOZLXaUkFo9nOj5RhJSTI0T6Vi1kSsPrVvAwwZxibh8sauqZwaaVRD
+         IsaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=vhmN50C9sktsUnQ0DqCK715HpG76rwFyWm3Q6vCbPtY=;
+        b=L02x+fZpWd+SAF0aQkifYJDsYKSiX+z2s0Pe+V+c8C/SuarKeiN6K9LNvKFOqT3NBM
+         gI/DTnZ9Dg1ZKE6n5quVJc3ILy7HX2W6jbOESCaHZsrOsKgfi+iM55Sk6ICZ2eUVVjsI
+         gCRMnXafj7ovKgQV5eRvtJA4UJ7UnM1ICTZ7xXTCMkocf39Kf9bdirk7Q7Ip/a9Gt0iS
+         Gl7HujfCrbZHWL4g3W9jM4RTUOmse1ls6wI+wh0chhP2gzYCE+3ZEWd+J7kxC2pc3mR4
+         09loCjU/l5xJVR//G5CrtxFk99o4Yn8oXtAewnwq32aXQ93ZtkKgIdYHoibZ5NArTjxM
+         3SQw==
+X-Gm-Message-State: ABuFfogt2+I7S0zYo8GqeoGkbXeLp7pfEUqXAnEHzP59WHscfzCzsW5/
+        H8SPekLvCNKg7s3wOeph2mU22lFV
+X-Google-Smtp-Source: ACcGV60zRyZPccSUNHc1UCET1WgAxAMrI78O/PKIzcqJQmspSyx4lGHKfceliUBtCzF/vHbRJkDluA==
+X-Received: by 2002:a63:1c1b:: with SMTP id c27-v6mr3906619pgc.351.1538250873709;
+        Sat, 29 Sep 2018 12:54:33 -0700 (PDT)
+Received: from mappy.world.mentorg.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
+        by smtp.gmail.com with ESMTPSA id b126-v6sm18371946pga.49.2018.09.29.12.54.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 29 Sep 2018 12:54:32 -0700 (PDT)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+To:     linux-media@vger.kernel.org
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Sebastian Reichel <sre@kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [RESEND PATCH v7 01/17] media: v4l2-fwnode: ignore endpoints that have no remote port parent
+Date:   Sat, 29 Sep 2018 12:54:04 -0700
+Message-Id: <20180929195420.28579-2-slongerbeam@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180929195420.28579-1-slongerbeam@gmail.com>
+References: <20180929195420.28579-1-slongerbeam@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 09:34:24AM -0700, Andy Lutomirski wrote:
-> Also, as a perhaps-silly suggestion: if you end up adding a new
-> syscall, I can see a use for a mode that does the path walk but, rather
-> than failing on a disallowed link, stops early and indicates where it
-> stopped. Then web servers, samba, etc can more efficiently implement
-> custom behavior when links are encountered.  And it may also be useful
-> to have a variant of AT_THIS_ROOT where trying to escape is an error
-> instead of having it just get stuck at the root.
+Documentation/devicetree/bindings/media/video-interfaces.txt states that
+the 'remote-endpoint' property is optional.
 
-AT_USER_LINKS indicating that userspace wants to resolve symlinks
-themselves?
+So v4l2_async_notifier_fwnode_parse_endpoint() should not return error
+if the endpoint has no remote port parent. Just ignore the endpoint,
+skip adding an asd to the notifier and return 0.
+__v4l2_async_notifier_parse_fwnode_endpoints() will then continue
+parsing the remaining port endpoints of the device.
+
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+Changes since v6:
+- none
+Changes since v5:
+- none
+Changes since v4:
+- none
+Changes since v3:
+- none
+Changes since v2:
+- none
+Changes since v1:
+- don't pass an empty endpoint to the parse_endpoint callback,
+  v4l2_async_notifier_fwnode_parse_endpoint() now just ignores them
+  and returns success. The current users of
+  v4l2_async_notifier_parse_fwnode_endpoints() (omap3isp, rcar-vin,
+  intel-ipu3) no longer need modification.
+---
+ drivers/media/v4l2-core/v4l2-fwnode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 169bdbb1f61a..0b8c736b1606 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -367,7 +367,7 @@ static int v4l2_async_notifier_fwnode_parse_endpoint(
+ 		fwnode_graph_get_remote_port_parent(endpoint);
+ 	if (!asd->match.fwnode) {
+ 		dev_warn(dev, "bad remote port parent\n");
+-		ret = -EINVAL;
++		ret = -ENOTCONN;
+ 		goto out_err;
+ 	}
+ 
+-- 
+2.17.1
+
