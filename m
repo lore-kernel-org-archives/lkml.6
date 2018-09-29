@@ -2,115 +2,131 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBA6C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D11CC004D5
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6A282087A
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:16:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kippendief-biz.20150623.gappssmtp.com header.i=@kippendief-biz.20150623.gappssmtp.com header.b="iUVoJ3RT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6A282087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kippendief.biz
+	by mail.kernel.org (Postfix) with ESMTP id 288892087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:19:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288892087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeI2Tor (ORCPT
+        id S1728290AbeI2TrY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 15:44:47 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44443 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728077AbeI2Tor (ORCPT
+        Sat, 29 Sep 2018 15:47:24 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42063 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728029AbeI2TrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 15:44:47 -0400
-Received: by mail-ed1-f67.google.com with SMTP id t11-v6so10414478edq.11
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 06:16:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kippendief-biz.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9MccTDyreqT0In6a6lHkaX5W8SUzGwcrIU8DDyd2e4M=;
-        b=iUVoJ3RT5V3R9yU7reSluCVuN4LnWsQrlW/XMDSRKA7d34gwEsB1ZZBmbSCb5wdoDl
-         TdwcQ2rgyqUO/Y/3AvqGq3JAIi1GLTDdlRRMp+hP6o3J5M0XHaUMHHH2AG+B4o5cI75N
-         P3/0o+FlMvtTvN3QwunlsdHzPDH7x6yQ0ahLXqyUNzItXG4J0/3qLUT/so9N4ZqjLINx
-         DnVH6jZ4J3+ZA4c73stp9r2+cg6JAqzFDq+Ol3V1JHJc9P2/RKHRwI5aBrAvu0hBjyST
-         WBqzQwp0gBKg/cXg3hZo7Qbu8AueMUQfSE1xlkxjoNdFB4EJ1qdNqkB7MyEXMNFX3QrX
-         gsVA==
+        Sat, 29 Sep 2018 15:47:23 -0400
+Received: by mail-ot1-f67.google.com with SMTP id h26-v6so8697115otl.9;
+        Sat, 29 Sep 2018 06:18:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9MccTDyreqT0In6a6lHkaX5W8SUzGwcrIU8DDyd2e4M=;
-        b=T1j7lxk93oMwJX5GOFUFi2MJ0ZDY+/BfMD3ZpmQKz6kylmC9U9WuZpusTYdwEmp7W3
-         7pPjh1lqKEaMIZig+9t1oZVQmb6i02xkrWqLEhRJtcmp3CT7B6Db1QJreVU+BRWEZSUP
-         xTn2wdoNfjXpd0uUe48fmiFyc3F4TWdhPgtaGY7/8xT8Vg5YMCUdnQUIpPAHIDb2Cc3Z
-         BbMnKHh39D23yt/ZGuvXy/ed+Ub36B4Jz4xoEA/wOhS4QuckwLed76nKJzONkVJMSuFM
-         9dWHEoq2pkVQ1jxJYcslWBhvxXw0wNs8b4LwpbeyqT9FPK4gxGZt51SmBp123lfJw9xI
-         Wm8Q==
-X-Gm-Message-State: ABuFfohvYvZbccKu924MDSIqa0PuKLIOvTwiFjyqGvRgGBcvpXF896RG
-        QnkqZ5CJXTfIHG6ndxFxl1JTbA==
-X-Google-Smtp-Source: ACcGV63PpZ+w5YDAWn87q2CLRNeGCYOY06WvYuMm4UNBsJJCKO/Ee2tCV1RNoWVET3sgFa1Klkyotw==
-X-Received: by 2002:a05:6402:547:: with SMTP id i7mr8593881edx.22.1538226980165;
-        Sat, 29 Sep 2018 06:16:20 -0700 (PDT)
-Received: from carbon.kippendief.biz (e0.carbon.efgh.nl. [2001:1540:801:2::2])
-        by smtp.gmail.com with ESMTPSA id v49-v6sm1171787edm.6.2018.09.29.06.16.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 29 Sep 2018 06:16:18 -0700 (PDT)
-Date:   Sat, 29 Sep 2018 15:16:17 +0200
-From:   Jorik Jonker <jorik@kippendief.biz>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] dts: sun8i-h3: add sy8106a to orange pi plus
-Message-ID: <20180929131617.GA7940@carbon.kippendief.biz>
-References: <20180927083636.5415-1-jorik@kippendief.biz>
- <20180928135516.jxhnsgaa3s2nagv7@flea>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e2ZdzCMuwxxmZmPfkJD5u2P9Apa5Mq6LiwzMxfl7dc8=;
+        b=IWVBILx1Yl0J9tlt7/keRQDxSH37Ba3XaCP0zrR6U8YgJKwMaQr7pdWep8FF4R6ulx
+         98LPAU83+4ZG3Emvl6Jj47v60asEwRp8q8L9i5Bbs3r5uDdKcDE2qMyv+QkVqzWywEgs
+         WTnCdfIu2FR6Uq7m6Nz58Agj8GurqjzD8yVbyrF81GyV8+FTqXQHVr7K74+ssCbLg5O6
+         iF3fh5s6kgWH0tzWZLX8CUB7u/e/ssTJrYfkbM3htEDhYtLOGCvc38TYWDI1Kq4qUqB4
+         Y1XdOIzYO7eefY62GHm7a1chZBJiJT/AH40c5i9YMOqjXy8xNVSP/QHWrXZC+ljdtY91
+         3nKg==
+X-Gm-Message-State: ABuFfoimg85DEI4CVk8PPdDGd6GMyTwaENXWsF+r8JrdOfvVcYFIWws/
+        b20u3FEF9FZS7RqpLRiBWOLkBiKySj9kkIT8ric=
+X-Google-Smtp-Source: ACcGV63Z00kmUxofNmnxr+FnW1CWrz3N5cyNCA1wvbqPsLNeV2rJJcMfky7xnuUk/AfPRjrkMojmqMD9tbJn6SpkWIU=
+X-Received: by 2002:a9d:48f9:: with SMTP id a54-v6mr1875665otj.343.1538227136722;
+ Sat, 29 Sep 2018 06:18:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180928135516.jxhnsgaa3s2nagv7@flea>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180928215054.28561-1-joe@perches.com> <20180928230616.GA150287@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20180928230616.GA150287@bhelgaas-glaptop.roam.corp.google.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Sat, 29 Sep 2018 15:18:38 +0200
+Message-ID: <CAJZ5v0hh899QjTTbzRK7oWqSH6GccV_H0weUUYJdVw8sQgyONQ@mail.gmail.com>
+Subject: Re: Bad MAINTAINERS pattern in section 'ACPI'
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Linux PCI <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, Sep 28, 2018 at 03:55:16PM +0200, Maxime Ripard wrote:
->The prefix of your commit title should be "ARM: dts: ..."
-
-Sure, will fix it in v2.
-
->> I have tested this on two Orange Pi Plus boards, and they run stable
->> across a range of voltages (and frequencies).
+On Sat, Sep 29, 2018 at 1:06 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
 >
->How was this tested?
-
-Basically using intermittent cpuburn runs and monitor freq/voltage/temp.  
-I've included a description of my test in the v2 commit log.
-
->> +		/*
->> +		 * The datasheet uses 1.1V as the minimum value of VDD-CPUX,
->> +		 * however both the Armbian DVFS table and the official one
->> +		 * have operating points with voltage under 1.1V, and both
->> +		 * DVFS table are known to work properly at the lowest
->> +		 * operating point.
->> +		 *
->> +		 * Use 1.0V as the minimum voltage instead.
->> +		 */
+> [+cc Tony, Borislav (ACPI APEI reviewers), linux-pci]
 >
->There's not much point to that comment, since it's been that way for
->all the other SoCs from Allwinner. However, that would be great to
->have it in the commit log.
+> On Fri, Sep 28, 2018 at 02:50:53PM -0700, Joe Perches wrote:
+> > Please fix this defect appropriately.
+> >
+> > linux-next MAINTAINERS section:
+> >
+> >       308     ACPI
+> >       309     M:      "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> >       310     M:      Len Brown <lenb@kernel.org>
+> >       311     L:      linux-acpi@vger.kernel.org
+> >       312     W:      https://01.org/linux-acpi
+> >       313     Q:      https://patchwork.kernel.org/project/linux-acpi/list/
+> >       314     T:      git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+> >       315     B:      https://bugzilla.kernel.org
+> >       316     S:      Supported
+> >       317     F:      drivers/acpi/
+> >       318     F:      drivers/pnp/pnpacpi/
+> >       319     F:      include/linux/acpi.h
+> >       320     F:      include/linux/fwnode.h
+> >       321     F:      include/acpi/
+> >       322     F:      Documentation/acpi/
+> >       323     F:      Documentation/ABI/testing/sysfs-bus-acpi
+> >       324     F:      Documentation/ABI/testing/configfs-acpi
+> >       325     F:      drivers/pci/*acpi*
+> >       326     F:      drivers/pci/*/*acpi*
+> > -->   327     F:      drivers/pci/*/*/*acpi*
+> >       328     F:      tools/power/acpi/
+>
+> My proposal to fix this:
+>
+> commit a99051c0d3c59fd259fd76a8bbd9837b76b509d9
+> Author: Bjorn Helgaas <bhelgaas@google.com>
+> Date:   Fri Sep 28 17:34:21 2018 -0500
+>
+>     MAINTAINERS: Remove obsolete drivers/pci pattern from ACPI section
+>
+>     Prior to 256a45937093 ("PCI/AER: Squash aerdrv_acpi.c into aerdrv.c"),
+>     drivers/pci/pcie/aer/aerdrv_acpi.c contained code to parse the ACPI HEST
+>     table.  That code now lives in drivers/pci/pcie/aer.c.
+>
+>     Remove the "F: drivers/pci/*/*/*acpi*" pattern because it matches nothing.
+>
+>     We could add a "F: drivers/pci/pcie/aer.c" pattern to the ACPI APEI
+>     section, but that file sees a lot of changes, almost none of which are of
+>     interest to the ACPI folks.
+>
+>     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 700408b7bc53..9babd8a0406b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -324,7 +324,6 @@ F:  Documentation/ABI/testing/sysfs-bus-acpi
+>  F:     Documentation/ABI/testing/configfs-acpi
+>  F:     drivers/pci/*acpi*
+>  F:     drivers/pci/*/*acpi*
+> -F:     drivers/pci/*/*/*acpi*
+>  F:     tools/power/acpi/
 
-Totally agree, but I thought: there must be a good reason this text is 
-in the PC dts, so let's put it in the Plus dts as well. I've moved it 
-from the patch to the log in the v2 patch, which I will send right away.
+Looks good to me.
 
-Thanks for reviewing!
-
-Jorik
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
