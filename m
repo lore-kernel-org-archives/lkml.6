@@ -2,295 +2,176 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D038C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 15:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C8DC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 15:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E502720880
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 15:44:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E502720880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DFD6920879
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 15:46:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cyphar-com.20150623.gappssmtp.com header.i=@cyphar-com.20150623.gappssmtp.com header.b="s1bH6hkC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFD6920879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbeI2WNq (ORCPT
+        id S1728417AbeI2WO5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 18:13:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44228 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728246AbeI2WNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 18:13:46 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 59C4030820EE;
-        Sat, 29 Sep 2018 15:44:53 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-53.pek2.redhat.com [10.72.12.53])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 05A6D2010DA8;
-        Sat, 29 Sep 2018 15:44:38 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, thomas.lendacky@amd.com,
-        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
-        bp@suse.de, brijesh.singh@amd.com, dyoung@redhat.com,
-        bhe@redhat.com, jroedel@suse.de
-Subject: [PATCH 4/4 v8] kdump/vmcore: support encrypted old memory with SME enabled
-Date:   Sat, 29 Sep 2018 23:43:33 +0800
-Message-Id: <20180929154333.3116-5-lijiang@redhat.com>
-In-Reply-To: <20180929154333.3116-1-lijiang@redhat.com>
-References: <20180929154333.3116-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Sat, 29 Sep 2018 15:44:53 +0000 (UTC)
+        Sat, 29 Sep 2018 18:14:57 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39550 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728317AbeI2WO4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 18:14:56 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j8-v6so6290899pff.6
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 08:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cyphar-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Z15+FW4F9UKJIHjZBstqTm7xfEGYHoJPwVvvHCy4b5c=;
+        b=s1bH6hkC0C1gD6giwClpueR2auQgZW5j4wzaBG0v5hz5esl0wyvaAp6o5dXeqs/JnL
+         WAUei+Unb1eB4p5YrmS1+u9LBanstLMuUz31Iq117ZgsUqjr8DJO+uPl/X7LLvkEdDvB
+         P0VSbGWlzn2D3NAcsKdaMrtJGQKdeL64JOnGmTNrbWIE0uSumdcOMqzrmFAn3ejY7Zlw
+         GFN0SbUi+x3LJRPnSl5FMotRs04YZB3hQaenVuMGxXPA23INU3ocR4/NEgZbJ7jy9ZXh
+         yHP+EreFCjIjyfeEhOt3JxYOs1ebzg6QXAw++49pwgIoDmrKiipVGLpBC4t8b20USanb
+         /ZOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z15+FW4F9UKJIHjZBstqTm7xfEGYHoJPwVvvHCy4b5c=;
+        b=WCe2cHTv3+zDKRBIbO3klqtkjYJqWmXjTZgo9OcBx5cLxSnZw/Qq0krkl8mZleJwI7
+         PCqDqEdTcxkmNtjNBkHyYUgOs+UD+tWBFFlDHGyS/6RuGDgbxxUo5FNQMDjfWH7fy00Q
+         3tJh1vVsXuwh+ISPnRaUDvo0yl0K26wP6zJgVJsAkYuIeszeN5GGnQTuY8x4FSMS7BNw
+         YLEBwSln+HLE/SgA/JYeUB6ivTCDJi+SLrXrRNA9Qwm2JyRcYs73iUJERUC4MJ/REFdj
+         etK3wzu76pMfa1iV2mZWhSCmh32KFWJLumdVwqDYE37BPKo3WxhrBnHNnzCubapfCen4
+         5J/g==
+X-Gm-Message-State: ABuFfojj7BRjttgATbhkD4DxxCKwLQXJUfdm/U3k+O00ua3Djr81k6cq
+        Tgzlc+LMfiQgPrrILYvpmE6DsQ==
+X-Google-Smtp-Source: ACcGV61m+JCHgdmtiHTNkbVgAZbwyCUqgtdtTAL4t2Irz4gzOsGFW1Me66G8osP0AND8aWfKPFNFLg==
+X-Received: by 2002:a63:5ec5:: with SMTP id s188-v6mr3346868pgb.126.1538235962829;
+        Sat, 29 Sep 2018 08:46:02 -0700 (PDT)
+Received: from ryuk (pa49-199-213-175.pa.vic.optusnet.com.au. [49.199.213.175])
+        by smtp.gmail.com with ESMTPSA id y1-v6sm12723328pfy.89.2018.09.29.08.45.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 29 Sep 2018 08:46:02 -0700 (PDT)
+Date:   Sun, 30 Sep 2018 01:45:51 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Tycho Andersen <tycho@tycho.ws>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
+        containers@lists.linux-foundation.org
+Subject: Re: [PATCH 0/3] namei: implement various scoping AT_* flags
+Message-ID: <20180929154551.jsi6dt3xjxdxoqeh@ryuk>
+References: <20180929103453.12025-1-cyphar@cyphar.com>
+ <1EE20CA2-4C8B-4A80-B613-0277D92B376D@amacapital.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qwzrg5udmfedjzky"
+Content-Disposition: inline
+In-Reply-To: <1EE20CA2-4C8B-4A80-B613-0277D92B376D@amacapital.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In kdump kernel, the old memory needs to be dumped into vmcore file.
-If SME is enabled in the first kernel, the old memory has to be
-remapped with the memory encryption mask, which will be automatically
-decrypted when read from DRAM.
 
-For SME kdump, there are two cases that doesn't support:
+--qwzrg5udmfedjzky
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- ----------------------------------------------
-| first-kernel | second-kernel | kdump support |
-|      (mem_encrypt=on|off)    |   (yes|no)    |
-|--------------+---------------+---------------|
-|     on       |     on        |     yes       |
-|     off      |     off       |     yes       |
-|     on       |     off       |     no        |
-|     off      |     on        |     no        |
-|______________|_______________|_______________|
+On 2018-09-29, Andy Lutomirski <luto@amacapital.net> wrote:
+> > The most obvious change is that AT_NO_JUMPS has been split as dicussed
+> > in the original thread, along with a further split of AT_NO_PROCLINKS
+> > which means that each individual property of AT_NO_JUMPS is now a
+> > separate flag:
+> >=20
+> >  * Path-based escapes from the starting-point using "/" or ".." are
+> >    blocked by AT_BENEATH.
+>=20
+> Seems useful.
+>=20
+> >  * Mountpoint crossings are blocked by AT_XDEV.
+>=20
+> Seems useful.
+>=20
+> >  * /proc/$pid/fd/$fd resolution is blocked by AT_NO_PROCLINKS (more
+> >    correctly it actually blocks any user of nd_jump_link() because it
+> >    allows out-of-VFS path resolution manipulation).
+> >=20
+>=20
+> So how do I disable following symlinks? ISTM the most natural way
+> would be to have AT_NO_SYMLINKS, and to have that flag disable proc
+> links.
 
-1. SME is enabled in the first kernel, but SME is disabled in kdump kernel
-In this case, because the old memory is encrypted, it can't be decrypted.
-The root cause is that the encryption key is not visible to any software
-runnint on the CPU cores(AMD cpu with SME), and is randomly generated on
-eache system reset. That is to say, kdump kernel won't have a chance to
-get the encryption key. So the encrypted memory can not be decrypted
-unless SME is active.
+So, this patchset has both AT_NO_SYMLINKS and AT_NO_PROCLINKS.
 
-2. SME is disabled in the first kernel, but SME is enabled in kdump kernel
-On the one hand, the old memory is decrypted, the old memory can be dumped
-as usual, so SME doesn't need to be enabled in kdump kernel; On the other
-hand, it will increase the complexity of the code, because that will have
-to consider how to pass the SME flag from the first kernel to the kdump
-kernel, it is really too expensive to do this.
+* AT_NO_SYMLINKS blocks *all* symlinks (which is something Linus requested
+  in the original thread[2] -- apparently this is something that would
+  be useful to git even if wouldn't violate AT_BENEATH). This implies
+  AT_NO_PROCLINKS.
 
-This patches are only for SME kdump, the patches don't support SEV kdump.
+* AT_NO_PROCLINKS only blocks procfs-style "symlinks" (filesystem
+  "symlinks" that call nd_jump_link() themselves -- currently only
+  procfs and nsfs).
 
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
----
-Changes since v7:
-1. Delete a file arch/x86/kernel/crash_dump_encrypt.c, and move the
-copy_oldmem_page_encrypted() to arch/x86/kernel/crash_dump_64.c, also
-rewrite some functions.(Suggested by Borislav)
-2. Modify all code style issue.(Suggested by Borislav)
-3. Remove a reduntant header file.(Suggested by Borislav)
-4. Improve patch log.(Suggested by Borislav)
+The reason why we need AT_NO_PROCLINKS is that "proclinks"[*] allow for
+breaking-out of nd->root without a trivial way of detecting it (since
+the filesystem can manipulate nd->path almost arbitrarily outside of the
+control of VFS). Al Viro's original patchset[1] also blocked these but
+it was all included within AT_NO_JUMPS.
 
- arch/x86/kernel/crash_dump_64.c | 65 ++++++++++++++++++++++++++++-----
- fs/proc/vmcore.c                | 24 +++++++++---
- include/linux/crash_dump.h      |  3 ++
- 3 files changed, 77 insertions(+), 15 deletions(-)
+Requiring you to block *all* symlinks in order to block "proclinks"
+seems to be a bit overkill to me (especially if consider that
+AT_THIS_ROOT|AT_NO_PROCLINKS is definitely a usecase most container
+runtimes would be _very_ interested in -- while AT_NO_SYMLINKS will
+cause issues with most distribution images).
 
-diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
-index 4f2e0778feac..6adbde592c44 100644
---- a/arch/x86/kernel/crash_dump_64.c
-+++ b/arch/x86/kernel/crash_dump_64.c
-@@ -12,7 +12,7 @@
- #include <linux/io.h>
- 
- /**
-- * copy_oldmem_page - copy one page from "oldmem"
-+ * __copy_oldmem_page - copy one page from "old memory encrypted or decrypted"
-  * @pfn: page frame number to be copied
-  * @buf: target memory address for the copy; this can be in kernel address
-  *	space or user address space (see @userbuf)
-@@ -20,31 +20,78 @@
-  * @offset: offset in bytes into the page (based on pfn) to begin the copy
-  * @userbuf: if set, @buf is in user address space, use copy_to_user(),
-  *	otherwise @buf is in kernel address space, use memcpy().
-+ * @encrypted: if true, the old memory is encrypted.
-+ *             if false, the old memory is decrypted.
-  *
-- * Copy a page from "oldmem". For this page, there is no pte mapped
-- * in the current kernel. We stitch up a pte, similar to kmap_atomic.
-+ * Copy a page from "old memory encrypted or decrypted". For this page, there
-+ * is no pte mapped in the current kernel. We stitch up a pte, similar to
-+ * kmap_atomic.
-  */
--ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
--		size_t csize, unsigned long offset, int userbuf)
-+static ssize_t __copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
-+				  unsigned long offset, int userbuf,
-+				  bool encrypted)
- {
- 	void  *vaddr;
- 
- 	if (!csize)
- 		return 0;
- 
--	vaddr = ioremap_cache(pfn << PAGE_SHIFT, PAGE_SIZE);
-+	if (encrypted)
-+		vaddr = (__force void *)ioremap_encrypted(pfn << PAGE_SHIFT, PAGE_SIZE);
-+	else
-+		vaddr = (__force void *)ioremap_cache(pfn << PAGE_SHIFT, PAGE_SIZE);
-+
- 	if (!vaddr)
- 		return -ENOMEM;
- 
- 	if (userbuf) {
--		if (copy_to_user(buf, vaddr + offset, csize)) {
--			iounmap(vaddr);
-+		if (copy_to_user((void __user *)buf, vaddr + offset, csize)) {
-+			iounmap((void __iomem *)vaddr);
- 			return -EFAULT;
- 		}
- 	} else
- 		memcpy(buf, vaddr + offset, csize);
- 
- 	set_iounmap_nonlazy();
--	iounmap(vaddr);
-+	iounmap((void __iomem *)vaddr);
- 	return csize;
- }
-+
-+/**
-+ * copy_oldmem_page - copy one page from "old memory decrypted"
-+ * @pfn: page frame number to be copied
-+ * @buf: target memory address for the copy; this can be in kernel address
-+ *	space or user address space (see @userbuf)
-+ * @csize: number of bytes to copy
-+ * @offset: offset in bytes into the page (based on pfn) to begin the copy
-+ * @userbuf: if set, @buf is in user address space, use copy_to_user(),
-+ *	otherwise @buf is in kernel address space, use memcpy().
-+ *
-+ * Copy a page from "old memory decrypted". For this page, there is no pte
-+ * mapped in the current kernel. We stitch up a pte, similar to kmap_atomic.
-+ */
-+ssize_t copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
-+			 unsigned long offset, int userbuf)
-+{
-+	return __copy_oldmem_page(pfn, buf, csize, offset, userbuf, false);
-+}
-+
-+/**
-+ * copy_oldmem_page_encrypted - copy one page from "old memory encrypted"
-+ * @pfn: page frame number to be copied
-+ * @buf: target memory address for the copy; this can be in kernel address
-+ *	space or user address space (see @userbuf)
-+ * @csize: number of bytes to copy
-+ * @offset: offset in bytes into the page (based on pfn) to begin the copy
-+ * @userbuf: if set, @buf is in user address space, use copy_to_user(),
-+ *	otherwise @buf is in kernel address space, use memcpy().
-+ *
-+ * Copy a page from "old memory encrypted". For this page, there is no pte
-+ * mapped in the current kernel. We stitch up a pte, similar to
-+ * kmap_atomic.
-+ */
-+ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
-+				   unsigned long offset, int userbuf)
-+{
-+	return __copy_oldmem_page(pfn, buf, csize, offset, userbuf, true);
-+}
-diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index cbde728f8ac6..42c32d06f7da 100644
---- a/fs/proc/vmcore.c
-+++ b/fs/proc/vmcore.c
-@@ -24,6 +24,8 @@
- #include <linux/vmalloc.h>
- #include <linux/pagemap.h>
- #include <linux/uaccess.h>
-+#include <linux/mem_encrypt.h>
-+#include <asm/pgtable.h>
- #include <asm/io.h>
- #include "internal.h"
- 
-@@ -98,7 +100,8 @@ static int pfn_is_ram(unsigned long pfn)
- 
- /* Reads a page from the oldmem device from given offset. */
- static ssize_t read_from_oldmem(char *buf, size_t count,
--				u64 *ppos, int userbuf)
-+				u64 *ppos, int userbuf,
-+				bool encrypted)
- {
- 	unsigned long pfn, offset;
- 	size_t nr_bytes;
-@@ -120,8 +123,15 @@ static ssize_t read_from_oldmem(char *buf, size_t count,
- 		if (pfn_is_ram(pfn) == 0)
- 			memset(buf, 0, nr_bytes);
- 		else {
--			tmp = copy_oldmem_page(pfn, buf, nr_bytes,
--						offset, userbuf);
-+			if (encrypted)
-+				tmp = copy_oldmem_page_encrypted(pfn, buf,
-+								 nr_bytes,
-+								 offset,
-+								 userbuf);
-+			else
-+				tmp = copy_oldmem_page(pfn, buf, nr_bytes,
-+						       offset, userbuf);
-+
- 			if (tmp < 0)
- 				return tmp;
- 		}
-@@ -155,7 +165,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
-  */
- ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
- {
--	return read_from_oldmem(buf, count, ppos, 0);
-+	return read_from_oldmem(buf, count, ppos, 0, false);
- }
- 
- /*
-@@ -163,7 +173,7 @@ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
-  */
- ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
- {
--	return read_from_oldmem(buf, count, ppos, 0);
-+	return read_from_oldmem(buf, count, ppos, 0, sme_active());
- }
- 
- /*
-@@ -173,6 +183,7 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
- 				  unsigned long from, unsigned long pfn,
- 				  unsigned long size, pgprot_t prot)
- {
-+	prot = pgprot_encrypted(prot);
- 	return remap_pfn_range(vma, from, pfn, size, prot);
- }
- 
-@@ -351,7 +362,8 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
- 					    m->offset + m->size - *fpos,
- 					    buflen);
- 			start = m->paddr + *fpos - m->offset;
--			tmp = read_from_oldmem(buffer, tsz, &start, userbuf);
-+			tmp = read_from_oldmem(buffer, tsz, &start,
-+					       userbuf, sme_active());
- 			if (tmp < 0)
- 				return tmp;
- 			buflen -= tsz;
-diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-index 3e4ba9d753c8..cf382594568f 100644
---- a/include/linux/crash_dump.h
-+++ b/include/linux/crash_dump.h
-@@ -26,6 +26,9 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
- 
- extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
- 						unsigned long, int);
-+extern ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-+					  size_t csize, unsigned long offset,
-+					  int userbuf);
- void vmcore_cleanup(void);
- 
- /* Architecture code defines this if there are other possible ELF
--- 
-2.17.1
+[*]: Sorry for the awful naming, I'm not sure what the correct name is
+	 (I've called them "super symlinks" in the past) -- if you have a
+	 better name please let me know!
 
+[1]: https://lwn.net/Articles/721443/
+[2]: https://marc.info/?l=3Dlinux-kernel&m=3D149394765324531&w=3D2
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--qwzrg5udmfedjzky
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAluvnisACgkQnhiqJn3b
+jbRV4Q//Yv0XqDT57HQ7f6MoWyB/2CXJ7ato/sBw45GjHWhxXQeE+7YX1j3Dos0b
+YCGutLWMFaLFV4lezrHWqKMwEn1ZvntEdaqufQyTIr8i/2sCdRXQbQvX3t1Rb48e
+6FPyzXMzPJNxq7MOo6ELsuhJbX3u2S46gCkBsDRpkSqxoGsd8M7pY4+zmtVmtBoH
+kvHFHsyiHbOlRaDUhwx4KPEmYM14bUWgTYSa4jH+yQrI6gLGbuGMlcWd5izj2gUh
+L0OFFnUSXh5wPa1XBbyuMseutfA9vLUSf7ixeEcaA91v4kRj2s2eLonwFDyy85PB
++MlxYbWGmpNH2dICexMklhgjnHXEqWfFZzWQIPFoeaDi1o9JS+14wvL5oEUaHt2S
+dGtAjASgwo/T6lwuvkZcvIm52JGNT7br37tHuxqZsIUa5jTk3QqKK3FjNKneOVvA
+qKpq7baRP+83b7szJI8P5giKqZd6dCJl3VT7vr5dIu2J3icAVP6t+rOZXvFazlT9
+9osRnYfb1h36OgpJt0kbiPIDHKeyYTbDJHklVE039KNhBvk4tMD/vsTi/h+Daey1
+tCsvRAd7OiphkO/agltEcQh6LG/0mGAL0Ded2jh4halv1frFXmBdp/jcezbPGEMz
+/rb8svqBRkp+xbfqLvpbNOLYS+j4plv3SAvsSnNOcckWfnbxAnM=
+=MTjA
+-----END PGP SIGNATURE-----
+
+--qwzrg5udmfedjzky--
