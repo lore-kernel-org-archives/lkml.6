@@ -2,759 +2,162 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D7AC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 856A2C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A53ED208E4
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:00:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2632A2073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:18:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAR5MRND"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A53ED208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Aw7LOBlm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2632A2073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728649AbeI3AaA (ORCPT
+        id S1728567AbeI3AsJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 20:30:00 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41398 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728475AbeI3A37 (ORCPT
+        Sat, 29 Sep 2018 20:48:09 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:42999 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728197AbeI3AsI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 20:29:59 -0400
-Received: by mail-qt1-f195.google.com with SMTP id m15-v6so10020432qtp.8
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 11:00:38 -0700 (PDT)
+        Sat, 29 Sep 2018 20:48:08 -0400
+Received: by mail-yb1-f194.google.com with SMTP id p74-v6so4019843ybc.9
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 11:18:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Mybv1bPm12Lf5Uice4/lCZ5nQ6JOL9bYQDTePFpNcdI=;
-        b=HAR5MRNDdJ287KtBUvFLsPX8Ldvu+WClSc72q4lt0DrDNscV8JcSrLNDWK6htoPMXO
-         VG3be2nWMs3Dze8IbnmC0931AHOPPYqiJT3KpmDgnNYY0rqbAsCBtXFA0r0TInlYlLne
-         qDfb+r+/ro1gwiv2mPsUsJe09kWPaFuE3KUfi2l+XZHHMCKM/0Pzmh5eCvIu/b/qmpIu
-         CPY3F5W4pYIq2XpuKCyUAFPMLDYL7SZQlG3a0O+neFr0S0SP15rtCzVy4AM1R7p+h0xN
-         qJhE7w9pw0CDzKc8v50u9kk3vS0eaFGuQyj9UXJHc8oeCfKrl5yF9tMg0d6zqFEW0o76
-         RI4w==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=was+uRWAqpm9gQzap61cLsWwW3x6Tph2Eq+orYTfcUw=;
+        b=Aw7LOBlmhS51Eg+gIwJC41hvWLpbtD58tOk/ZyW8YE89sNay89KHgK6EHODChdBIR0
+         wrSE/rFpM7/BkIvvAxNU764fFC95h3dBzhvfhYUMGm4razQbHQ6AfGuqku59psbEpF+F
+         BuzUmsJneBrK3aVUH4DOfoAeL2gar3TENzDXc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Mybv1bPm12Lf5Uice4/lCZ5nQ6JOL9bYQDTePFpNcdI=;
-        b=F1KA5UxB/k4Q0ARVne27CqWp9Diz44G/jkrcZDlPaGCVmLoIZIpxLobdxpX02arIDm
-         4oiwjLbVATuMLq1ruBEv2ThwAeadz7ARdh/NOaus5rJQqLN/5OzECAI74OhIH8PS1RI2
-         5YDP/NQdjcfXizNzkzoG5dy4CJLZFgbsfut7yA/Z7pojp9jQM7AJTMOBSazxn4oYjkKw
-         4X7i+msOIOAIA47jyhJ/PYf1bCwLjIp1WM4o8lFI7Yipkfy8oWzUsYWpFTsBCpTf3Z0L
-         luniRSaUWPi1zaURrBTckz6rT6FgwXqvQMoeeSunWluxFLIn84oOyVbNuymbVwMgn+85
-         u7iw==
-X-Gm-Message-State: ABuFfoi8xkVPiJAq8PEDFnEz03GJZg0919SVbN12J6gpF7Jh8seDiYnc
-        lfJnVs/+Q/ux18KLYSWLxKo=
-X-Google-Smtp-Source: ACcGV603eMKsTUI5aqTdrflhw29g7fnCPYvHXrbDoOqOEwJxpSzrKj4N/YvLaJbq6q6HuteFscb0Hg==
-X-Received: by 2002:a0c:98cf:: with SMTP id g15-v6mr3039412qvd.178.1538244037690;
-        Sat, 29 Sep 2018 11:00:37 -0700 (PDT)
-Received: from localhost.localdomain (modemcable211.182-179-173.mc.videotron.ca. [173.179.182.211])
-        by smtp.gmail.com with ESMTPSA id a50-v6sm5227360qtc.93.2018.09.29.11.00.36
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=was+uRWAqpm9gQzap61cLsWwW3x6Tph2Eq+orYTfcUw=;
+        b=ra8Txerorvdar9w/jj8FJaVffbhH0ZIfIFyBx5QjUHCP7LpzPHgiiiMijbKz+tcaQo
+         dZPZXifQqpMI3BdnZSRU3QjWeBDoeG0O2FJ1yZiYXmUdiVVEe9o1MDS6LCoeFB6BZnly
+         5LLrOFaiuPKVGwyp7otNL0HVAL6MvAMAQUwtm3G8oRFHZakndyPvjDESqwHziMyIdQCY
+         NyXQ8qUpgbD+lYQlpJUI4urvt1FOy/vemTQLJnaXnH/1kmj2REwJdQfgK2sM5ZCc9o94
+         N7H70AqYaDgan4DS9a67IPctHb+IDCjgrhTRZtevmbdNLxdLL67zV1DINOUeBGPbFoek
+         wQfA==
+X-Gm-Message-State: ABuFfogkgXHBR3DnJKXlAxUzSONTboiwcLp8u7nx+sVWGL6Oz/yJ5v3g
+        lI9SUI73XsaCbMU4CJPCCCIS/k5n4I0=
+X-Google-Smtp-Source: ACcGV62zWyWjjFw4a8pQXzl4iOlcu+hLOq4d68AIlrCU7CBGRKYxu6dqnWUCV5bkXWFIuF6VXF2YOA==
+X-Received: by 2002:a25:dccf:: with SMTP id y198-v6mr2141020ybe.389.1538245123533;
+        Sat, 29 Sep 2018 11:18:43 -0700 (PDT)
+Received: from mail-yw1-f49.google.com (mail-yw1-f49.google.com. [209.85.161.49])
+        by smtp.gmail.com with ESMTPSA id 137-v6sm4614821ywo.54.2018.09.29.11.18.41
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Sep 2018 11:00:37 -0700 (PDT)
-From:   Maxime Desroches <desroches.maxime@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Maxime Desroches <desroches.maxime@gmail.com>
-Subject: [PATCH 6/6] Staging: rts5208: xd.c: Fixed all braces issues of the file
-Date:   Sat, 29 Sep 2018 14:00:27 -0400
-Message-Id: <20180929180027.19815-1-desroches.maxime@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 29 Sep 2018 11:18:41 -0700 (PDT)
+Received: by mail-yw1-f49.google.com with SMTP id s73-v6so3954113ywg.11
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 11:18:41 -0700 (PDT)
+X-Received: by 2002:a81:1194:: with SMTP id 142-v6mr2258624ywr.168.1538245120949;
+ Sat, 29 Sep 2018 11:18:40 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Sat, 29 Sep 2018 11:18:40
+ -0700 (PDT)
+In-Reply-To: <eda428eb-f6e1-f048-a394-251953c388b6@i-love.sakura.ne.jp>
+References: <20180925001832.18322-1-keescook@chromium.org> <e6122c7d-bd29-d081-3c1e-96b7c369d4fe@schaufler-ca.com>
+ <CAGXu5jKQVDW8Wp0ESv2raa0xJnHCCMNqFCzZ5jSVXQ=Dp7FF8A@mail.gmail.com> <eda428eb-f6e1-f048-a394-251953c388b6@i-love.sakura.ne.jp>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sat, 29 Sep 2018 11:18:40 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLUaFX_jPHoOq1abEAjJdLo29Hr2q=sk07yj4KytW6psQ@mail.gmail.com>
+Message-ID: <CAGXu5jLUaFX_jPHoOq1abEAjJdLo29Hr2q=sk07yj4KytW6psQ@mail.gmail.com>
+Subject: Re: [PATCH security-next v3 00/29] LSM: Explict LSM ordering
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed all the braces issues of the xd.c file
+On Sat, Sep 29, 2018 at 3:48 AM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2018/09/29 5:01, Kees Cook wrote:
+>> On Fri, Sep 28, 2018 at 8:55 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>> On 9/24/2018 5:18 PM, Kees Cook wrote:
+>>>> v3:
+>>>> - add CONFIG_LSM_ENABLE and refactor resulting logic
+>>>
+>>> Kees, you can add my
+>>>
+>>>         Reviewed-by:Casey Schaufler <casey@schaufler-ca.com>
+>>>
+>>> for this entire patch set. Thank you for taking this on, it's
+>>> a significant and important chunk of the LSM infrastructure
+>>> update.
+>>
+>> Thanks!
+>>
+>> John, you'd looked at this a bit too -- do the results line up with
+>> your expectations?
+>>
+>> Any thoughts from SELinux, TOMOYO, or IMA folks?
+>
+> I'm OK with this approach. Thank you.
 
-Signed-off-by: Maxime Desroches <desroches.maxime@gmail.com>
----
- drivers/staging/rts5208/xd.c | 232 ++++++++++++++---------------------
- 1 file changed, 92 insertions(+), 140 deletions(-)
+Thanks for looking it over!
 
-diff --git a/drivers/staging/rts5208/xd.c b/drivers/staging/rts5208/xd.c
-index 261d868a3072..415fea2f9ff1 100644
---- a/drivers/staging/rts5208/xd.c
-+++ b/drivers/staging/rts5208/xd.c
-@@ -60,9 +60,8 @@ static int xd_set_init_para(struct rtsx_chip *chip)
- 		xd_card->xd_clock = CLK_50;
- 
- 	retval = switch_clock(chip, xd_card->xd_clock);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
- 
- 	return STATUS_SUCCESS;
- }
-@@ -73,14 +72,12 @@ static int xd_switch_clock(struct rtsx_chip *chip)
- 	int retval;
- 
- 	retval = select_card(chip, XD_CARD);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
- 
- 	retval = switch_clock(chip, xd_card->xd_clock);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
- 
- 	return STATUS_SUCCESS;
- }
-@@ -102,9 +99,8 @@ static int xd_read_id(struct rtsx_chip *chip, u8 id_cmd, u8 *id_buf, u8 buf_len)
- 		rtsx_add_cmd(chip, READ_REG_CMD, (u16)(XD_ADDRESS1 + i), 0, 0);
- 
- 	retval = rtsx_send_cmd(chip, XD_CARD, 20);
--	if (retval < 0) {
-+	if (retval < 0)
- 		return STATUS_FAIL;
--	}
- 
- 	ptr = rtsx_get_cmd_data(chip) + 1;
- 	if (id_buf && buf_len) {
-@@ -173,9 +169,8 @@ static int xd_read_redundant(struct rtsx_chip *chip, u32 page_addr,
- 	rtsx_add_cmd(chip, READ_REG_CMD, XD_PARITY, 0, 0);
- 
- 	retval = rtsx_send_cmd(chip, XD_CARD, 500);
--	if (retval < 0) {
-+	if (retval < 0)
- 		return STATUS_FAIL;
--	}
- 
- 	if (buf && buf_len) {
- 		u8 *ptr = rtsx_get_cmd_data(chip) + 1;
-@@ -193,9 +188,8 @@ static int xd_read_data_from_ppb(struct rtsx_chip *chip, int offset,
- {
- 	int retval, i;
- 
--	if (!buf || (buf_len < 0)) {
-+	if (!buf || (buf_len < 0))
- 		return STATUS_FAIL;
--	}
- 
- 	rtsx_init_cmd(chip);
- 
-@@ -220,9 +214,8 @@ static int xd_read_cis(struct rtsx_chip *chip, u32 page_addr, u8 *buf,
- 	int retval;
- 	u8 reg;
- 
--	if (!buf || (buf_len < 10)) {
-+	if (!buf || (buf_len < 10))
- 		return STATUS_FAIL;
--	}
- 
- 	rtsx_init_cmd(chip);
- 
-@@ -246,36 +239,35 @@ static int xd_read_cis(struct rtsx_chip *chip, u32 page_addr, u8 *buf,
- 	}
- 
- 	retval = rtsx_read_register(chip, XD_PAGE_STATUS, &reg);
--	if (retval) {
-+	if (retval)
- 		return retval;
--	}
-+
- 	if (reg != XD_GPG) {
- 		rtsx_clear_xd_error(chip);
- 		return STATUS_FAIL;
- 	}
- 
- 	retval = rtsx_read_register(chip, XD_CTL, &reg);
--	if (retval) {
-+	if (retval)
- 		return retval;
--	}
-+
- 	if (!(reg & XD_ECC1_ERROR) || !(reg & XD_ECC1_UNCORRECTABLE)) {
- 		retval = xd_read_data_from_ppb(chip, 0, buf, buf_len);
--		if (retval != STATUS_SUCCESS) {
-+		if (retval != STATUS_SUCCESS)
- 			return STATUS_FAIL;
--		}
-+
- 		if (reg & XD_ECC1_ERROR) {
- 			u8 ecc_bit, ecc_byte;
- 
- 			retval = rtsx_read_register(chip, XD_ECC_BIT1,
- 						    &ecc_bit);
--			if (retval) {
-+			if (retval)
- 				return retval;
--			}
-+
- 			retval = rtsx_read_register(chip, XD_ECC_BYTE1,
- 						    &ecc_byte);
--			if (retval) {
-+			if (retval)
- 				return retval;
--			}
- 
- 			dev_dbg(rtsx_dev(chip), "ECC_BIT1 = 0x%x, ECC_BYTE1 = 0x%x\n",
- 				ecc_bit, ecc_byte);
-@@ -291,22 +283,21 @@ static int xd_read_cis(struct rtsx_chip *chip, u32 page_addr, u8 *buf,
- 		rtsx_clear_xd_error(chip);
- 
- 		retval = xd_read_data_from_ppb(chip, 256, buf, buf_len);
--		if (retval != STATUS_SUCCESS) {
-+		if (retval != STATUS_SUCCESS)
- 			return STATUS_FAIL;
--		}
-+
- 		if (reg & XD_ECC2_ERROR) {
- 			u8 ecc_bit, ecc_byte;
- 
- 			retval = rtsx_read_register(chip, XD_ECC_BIT2,
- 						    &ecc_bit);
--			if (retval) {
-+			if (retval)
- 				return retval;
--			}
-+
- 			retval = rtsx_read_register(chip, XD_ECC_BYTE2,
- 						    &ecc_byte);
--			if (retval) {
-+			if (retval)
- 				return retval;
--			}
- 
- 			dev_dbg(rtsx_dev(chip), "ECC_BIT2 = 0x%x, ECC_BYTE2 = 0x%x\n",
- 				ecc_bit, ecc_byte);
-@@ -404,68 +395,67 @@ static int xd_pull_ctl_disable(struct rtsx_chip *chip)
- 					     XD_D2_PD |
- 					     XD_D1_PD |
- 					     XD_D0_PD);
--		if (retval) {
-+		if (retval)
- 			return retval;
--		}
-+
- 		retval = rtsx_write_register(chip, CARD_PULL_CTL2, 0xFF,
- 					     XD_D7_PD |
- 					     XD_D6_PD |
- 					     XD_D5_PD |
- 					     XD_D4_PD);
--		if (retval) {
-+		if (retval)
- 			return retval;
--		}
-+
- 		retval = rtsx_write_register(chip, CARD_PULL_CTL3, 0xFF,
- 					     XD_WP_PD |
- 					     XD_CE_PD |
- 					     XD_CLE_PD |
- 					     XD_CD_PU);
--		if (retval) {
-+		if (retval)
- 			return retval;
--		}
-+
- 		retval = rtsx_write_register(chip, CARD_PULL_CTL4, 0xFF,
- 					     XD_RDY_PD |
- 					     XD_WE_PD |
- 					     XD_RE_PD |
- 					     XD_ALE_PD);
--		if (retval) {
-+		if (retval)
- 			return retval;
--		}
-+
- 		retval = rtsx_write_register(chip, CARD_PULL_CTL5, 0xFF,
- 					     MS_INS_PU |
- 					     SD_WP_PD |
- 					     SD_CD_PU |
- 					     SD_CMD_PD);
--		if (retval) {
-+		if (retval)
- 			return retval;
--		}
-+
- 		retval = rtsx_write_register(chip, CARD_PULL_CTL6, 0xFF,
- 					     MS_D5_PD | MS_D4_PD);
--		if (retval) {
-+		if (retval)
- 			return retval;
--		}
-+
- 	} else if (CHECK_PID(chip, 0x5288)) {
- 		if (CHECK_BARO_PKG(chip, QFN)) {
- 			retval = rtsx_write_register(chip, CARD_PULL_CTL1,
- 						     0xFF, 0x55);
--			if (retval) {
-+			if (retval)
- 				return retval;
--			}
-+
- 			retval = rtsx_write_register(chip, CARD_PULL_CTL2,
- 						     0xFF, 0x55);
--			if (retval) {
-+			if (retval)
- 				return retval;
--			}
-+
- 			retval = rtsx_write_register(chip, CARD_PULL_CTL3,
- 						     0xFF, 0x4B);
--			if (retval) {
-+			if (retval)
- 				return retval;
--			}
-+
- 			retval = rtsx_write_register(chip, CARD_PULL_CTL4,
- 						     0xFF, 0x69);
--			if (retval) {
-+			if (retval)
- 				return retval;
--			}
- 		}
- 	}
- 
-@@ -479,9 +469,8 @@ static int reset_xd(struct rtsx_chip *chip)
- 	u8 *ptr, id_buf[4], redunt[11];
- 
- 	retval = select_card(chip, XD_CARD);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
- 
- 	rtsx_init_cmd(chip);
- 
-@@ -505,15 +494,13 @@ static int reset_xd(struct rtsx_chip *chip)
- 	rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_OE, XD_OUTPUT_EN, 0);
- 
- 	retval = rtsx_send_cmd(chip, XD_CARD, 100);
--	if (retval < 0) {
-+	if (retval < 0)
- 		return STATUS_FAIL;
--	}
- 
- 	if (!chip->ft2_fast_mode) {
- 		retval = card_power_off(chip, XD_CARD);
--		if (retval != STATUS_SUCCESS) {
-+		if (retval != STATUS_SUCCESS)
- 			return STATUS_FAIL;
--		}
- 
- 		wait_timeout(250);
- 
-@@ -529,14 +516,12 @@ static int reset_xd(struct rtsx_chip *chip)
- 		}
- 
- 		retval = rtsx_send_cmd(chip, XD_CARD, 100);
--		if (retval < 0) {
-+		if (retval < 0)
- 			return STATUS_FAIL;
--		}
- 
- 		retval = card_power_on(chip, XD_CARD);
--		if (retval != STATUS_SUCCESS) {
-+		if (retval != STATUS_SUCCESS)
- 			return STATUS_FAIL;
--		}
- 
- #ifdef SUPPORT_OCP
- 		wait_timeout(50);
-@@ -565,17 +550,15 @@ static int reset_xd(struct rtsx_chip *chip)
- 	rtsx_add_cmd(chip, WRITE_REG_CMD, XD_CTL, XD_CE_DISEN, XD_CE_DISEN);
- 
- 	retval = rtsx_send_cmd(chip, XD_CARD, 100);
--	if (retval < 0) {
-+	if (retval < 0)
- 		return STATUS_FAIL;
--	}
- 
- 	if (!chip->ft2_fast_mode)
- 		wait_timeout(200);
- 
- 	retval = xd_set_init_para(chip);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
- 
- 	/* Read ID to check if the timing setting is right */
- 	for (i = 0; i < 4; i++) {
-@@ -598,9 +581,8 @@ static int reset_xd(struct rtsx_chip *chip)
- 		rtsx_add_cmd(chip, READ_REG_CMD, XD_CTL, 0, 0);
- 
- 		retval = rtsx_send_cmd(chip, XD_CARD, 100);
--		if (retval < 0) {
-+		if (retval < 0)
- 			return STATUS_FAIL;
--		}
- 
- 		ptr = rtsx_get_cmd_data(chip) + 1;
- 
-@@ -612,9 +594,8 @@ static int reset_xd(struct rtsx_chip *chip)
- 			continue;
- 
- 		retval = xd_read_id(chip, READ_ID, id_buf, 4);
--		if (retval != STATUS_SUCCESS) {
-+		if (retval != STATUS_SUCCESS)
- 			return STATUS_FAIL;
--		}
- 
- 		dev_dbg(rtsx_dev(chip), "READ_ID: 0x%x 0x%x 0x%x 0x%x\n",
- 			id_buf[0], id_buf[1], id_buf[2], id_buf[3]);
-@@ -694,9 +675,8 @@ static int reset_xd(struct rtsx_chip *chip)
- 		/* Confirm timing setting */
- 		for (j = 0; j < 10; j++) {
- 			retval = xd_read_id(chip, READ_ID, id_buf, 4);
--			if (retval != STATUS_SUCCESS) {
-+			if (retval != STATUS_SUCCESS)
- 				return STATUS_FAIL;
--			}
- 
- 			if (id_buf[1] != xd_card->device_code)
- 				break;
-@@ -716,22 +696,20 @@ static int reset_xd(struct rtsx_chip *chip)
- 	}
- 
- 	retval = xd_read_id(chip, READ_xD_ID, id_buf, 4);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
-+
- 	dev_dbg(rtsx_dev(chip), "READ_xD_ID: 0x%x 0x%x 0x%x 0x%x\n",
- 		id_buf[0], id_buf[1], id_buf[2], id_buf[3]);
--	if (id_buf[2] != XD_ID_CODE) {
-+	if (id_buf[2] != XD_ID_CODE)
- 		return STATUS_FAIL;
--	}
- 
- 	/* Search CIS block */
- 	for (i = 0; i < 24; i++) {
- 		u32 page_addr;
- 
--		if (detect_card_cd(chip, XD_CARD) != STATUS_SUCCESS) {
-+		if (detect_card_cd(chip, XD_CARD) != STATUS_SUCCESS)
- 			return STATUS_FAIL;
--		}
- 
- 		page_addr = (u32)i << xd_card->block_shift;
- 
-@@ -769,9 +747,8 @@ static int reset_xd(struct rtsx_chip *chip)
- 			page_addr += j;
- 
- 			retval = xd_read_cis(chip, page_addr, buf, 10);
--			if (retval != STATUS_SUCCESS) {
-+			if (retval != STATUS_SUCCESS)
- 				return STATUS_FAIL;
--			}
- 
- 			if ((buf[0] == 0x01) && (buf[1] == 0x03) &&
- 			    (buf[2] == 0xD9) &&
-@@ -841,17 +818,15 @@ static int xd_init_l2p_tbl(struct rtsx_chip *chip)
- 	dev_dbg(rtsx_dev(chip), "%s: zone_cnt = %d\n", __func__,
- 		xd_card->zone_cnt);
- 
--	if (xd_card->zone_cnt < 1) {
-+	if (xd_card->zone_cnt < 1)
- 		return STATUS_FAIL;
--	}
- 
- 	size = xd_card->zone_cnt * sizeof(struct zone_entry);
- 	dev_dbg(rtsx_dev(chip), "Buffer size for l2p table is %d\n", size);
- 
- 	xd_card->zone = vmalloc(size);
--	if (!xd_card->zone) {
-+	if (!xd_card->zone)
- 		return STATUS_ERROR;
--	}
- 
- 	for (i = 0; i < xd_card->zone_cnt; i++) {
- 		xd_card->zone[i].build_flag = 0;
-@@ -1028,19 +1003,16 @@ int reset_xd_card(struct rtsx_chip *chip)
- 	xd_card->delay_write.delay_write_flag = 0;
- 
- 	retval = enable_card_clock(chip, XD_CARD);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
- 
- 	retval = reset_xd(chip);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
- 
- 	retval = xd_init_l2p_tbl(chip);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
- 
- 	return STATUS_SUCCESS;
- }
-@@ -1054,9 +1026,8 @@ static int xd_mark_bad_block(struct rtsx_chip *chip, u32 phy_blk)
- 
- 	dev_dbg(rtsx_dev(chip), "mark block 0x%x as bad block\n", phy_blk);
- 
--	if (phy_blk == BLK_NOT_FOUND) {
-+	if (phy_blk == BLK_NOT_FOUND)
- 		return STATUS_FAIL;
--	}
- 
- 	rtsx_init_cmd(chip);
- 
-@@ -1107,12 +1078,11 @@ static int xd_init_page(struct rtsx_chip *chip, u32 phy_blk,
- 
- 	dev_dbg(rtsx_dev(chip), "Init block 0x%x\n", phy_blk);
- 
--	if (start_page > end_page) {
-+	if (start_page > end_page)
- 		return STATUS_FAIL;
--	}
--	if (phy_blk == BLK_NOT_FOUND) {
-+
-+	if (phy_blk == BLK_NOT_FOUND)
- 		return STATUS_FAIL;
--	}
- 
- 	rtsx_init_cmd(chip);
- 
-@@ -1164,13 +1134,11 @@ static int xd_copy_page(struct rtsx_chip *chip, u32 old_blk, u32 new_blk,
- 	dev_dbg(rtsx_dev(chip), "Copy page from block 0x%x to block 0x%x\n",
- 		old_blk, new_blk);
- 
--	if (start_page > end_page) {
-+	if (start_page > end_page)
- 		return STATUS_FAIL;
--	}
- 
--	if ((old_blk == BLK_NOT_FOUND) || (new_blk == BLK_NOT_FOUND)) {
-+	if ((old_blk == BLK_NOT_FOUND) || (new_blk == BLK_NOT_FOUND))
- 		return STATUS_FAIL;
--	}
- 
- 	old_page = (old_blk << xd_card->block_shift) + start_page;
- 	new_page = (new_blk << xd_card->block_shift) + start_page;
-@@ -1179,9 +1147,9 @@ static int xd_copy_page(struct rtsx_chip *chip, u32 old_blk, u32 new_blk,
- 
- 	retval = rtsx_write_register(chip, CARD_DATA_SOURCE, 0x01,
- 				     PINGPONG_BUFFER);
--	if (retval) {
-+	if (retval)
- 		return retval;
--	}
-+
- 
- 	for (i = start_page; i < end_page; i++) {
- 		if (detect_card_cd(chip, XD_CARD) != STATUS_SUCCESS) {
-@@ -1287,9 +1255,8 @@ static int xd_reset_cmd(struct rtsx_chip *chip)
- 	rtsx_add_cmd(chip, READ_REG_CMD, XD_CTL, 0, 0);
- 
- 	retval = rtsx_send_cmd(chip, XD_CARD, 100);
--	if (retval < 0) {
-+	if (retval < 0)
- 		return STATUS_FAIL;
--	}
- 
- 	ptr = rtsx_get_cmd_data(chip) + 1;
- 	if (((ptr[0] & READY_FLAG) == READY_STATE) && (ptr[1] & XD_RDY))
-@@ -1305,9 +1272,8 @@ static int xd_erase_block(struct rtsx_chip *chip, u32 phy_blk)
- 	u8 reg = 0, *ptr;
- 	int i, retval;
- 
--	if (phy_blk == BLK_NOT_FOUND) {
-+	if (phy_blk == BLK_NOT_FOUND)
- 		return STATUS_FAIL;
--	}
- 
- 	page_addr = phy_blk << xd_card->block_shift;
- 
-@@ -1333,9 +1299,9 @@ static int xd_erase_block(struct rtsx_chip *chip, u32 phy_blk)
- 			}
- 			xd_set_err_code(chip, XD_ERASE_FAIL);
- 			retval = xd_reset_cmd(chip);
--			if (retval != STATUS_SUCCESS) {
-+			if (retval != STATUS_SUCCESS)
- 				return STATUS_FAIL;
--			}
-+
- 			continue;
- 		}
- 
-@@ -1382,17 +1348,16 @@ static int xd_build_l2p_tbl(struct rtsx_chip *chip, int zone_no)
- 
- 	if (!zone->l2p_table) {
- 		zone->l2p_table = vmalloc(2000);
--		if (!zone->l2p_table) {
-+		if (!zone->l2p_table)
- 			goto build_fail;
--		}
-+
- 	}
- 	memset((u8 *)(zone->l2p_table), 0xff, 2000);
- 
- 	if (!zone->free_table) {
- 		zone->free_table = vmalloc(XD_FREE_TABLE_CNT * 2);
--		if (!zone->free_table) {
-+		if (!zone->free_table)
- 			goto build_fail;
--		}
- 	}
- 	memset((u8 *)(zone->free_table), 0xff, XD_FREE_TABLE_CNT * 2);
- 
-@@ -1555,9 +1520,8 @@ static int xd_send_cmd(struct rtsx_chip *chip, u8 cmd)
- 		     XD_TRANSFER_END, XD_TRANSFER_END);
- 
- 	retval = rtsx_send_cmd(chip, XD_CARD, 200);
--	if (retval < 0) {
-+	if (retval < 0)
- 		return STATUS_FAIL;
--	}
- 
- 	return STATUS_SUCCESS;
- }
-@@ -1636,17 +1600,15 @@ static int xd_read_multiple_pages(struct rtsx_chip *chip, u32 phy_blk,
- 
- fail:
- 	retval = rtsx_read_register(chip, XD_PAGE_STATUS, &reg_val);
--	if (retval) {
-+	if (retval)
- 		return retval;
--	}
- 
- 	if (reg_val !=  XD_GPG)
- 		xd_set_err_code(chip, XD_PRG_ERROR);
- 
- 	retval = rtsx_read_register(chip, XD_CTL, &reg_val);
--	if (retval) {
-+	if (retval)
- 		return retval;
--	}
- 
- 	if (((reg_val & (XD_ECC1_ERROR | XD_ECC1_UNCORRECTABLE)) ==
- 				(XD_ECC1_ERROR | XD_ECC1_UNCORRECTABLE)) ||
-@@ -1702,9 +1664,8 @@ static int xd_finish_write(struct rtsx_chip *chip,
- 	dev_dbg(rtsx_dev(chip),	"new_blk = 0x%x, ", new_blk);
- 	dev_dbg(rtsx_dev(chip), "log_blk = 0x%x\n", log_blk);
- 
--	if (page_off > xd_card->page_off) {
-+	if (page_off > xd_card->page_off)
- 		return STATUS_FAIL;
--	}
- 
- 	zone_no = (int)(log_blk / 1000);
- 	log_off = (u16)(log_blk % 1000);
-@@ -1760,9 +1721,8 @@ static int xd_prepare_write(struct rtsx_chip *chip,
- 
- 	if (page_off) {
- 		retval = xd_copy_page(chip, old_blk, new_blk, 0, page_off);
--		if (retval != STATUS_SUCCESS) {
-+		if (retval != STATUS_SUCCESS)
- 			return STATUS_FAIL;
--		}
- 	}
- 
- 	return STATUS_SUCCESS;
-@@ -1858,9 +1818,9 @@ static int xd_write_multiple_pages(struct rtsx_chip *chip, u32 old_blk,
- 
- fail:
- 	retval = rtsx_read_register(chip, XD_DAT, &reg_val);
--	if (retval) {
-+	if (retval)
- 		return retval;
--	}
-+
- 	if (reg_val & PROGRAM_ERROR) {
- 		xd_set_err_code(chip, XD_PRG_ERROR);
- 		xd_mark_bad_block(chip, new_blk);
-@@ -1880,9 +1840,8 @@ int xd_delay_write(struct rtsx_chip *chip)
- 	if (delay_write->delay_write_flag) {
- 		dev_dbg(rtsx_dev(chip), "%s\n", __func__);
- 		retval = xd_switch_clock(chip);
--		if (retval != STATUS_SUCCESS) {
-+		if (retval != STATUS_SUCCESS)
- 			return STATUS_FAIL;
--		}
- 
- 		delay_write->delay_write_flag = 0;
- 		retval = xd_finish_write(chip,
-@@ -1890,9 +1849,8 @@ int xd_delay_write(struct rtsx_chip *chip)
- 					 delay_write->new_phyblock,
- 					 delay_write->logblock,
- 					 delay_write->pageoff);
--		if (retval != STATUS_SUCCESS) {
-+		if (retval != STATUS_SUCCESS)
- 			return STATUS_FAIL;
--		}
- 	}
- 
- 	return STATUS_SUCCESS;
-@@ -1924,9 +1882,8 @@ int xd_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip,
- 	ptr = (u8 *)scsi_sglist(srb);
- 
- 	retval = xd_switch_clock(chip);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
- 
- 	if (detect_card_cd(chip, XD_CARD) != STATUS_SUCCESS) {
- 		chip->card_fail |= XD_CARD;
-@@ -2180,34 +2137,30 @@ int xd_power_off_card3v3(struct rtsx_chip *chip)
- 	int retval;
- 
- 	retval = disable_card_clock(chip, XD_CARD);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
- 
- 	retval = rtsx_write_register(chip, CARD_OE, XD_OUTPUT_EN, 0);
--	if (retval) {
-+	if (retval)
- 		return retval;
--	}
- 
- 	if (!chip->ft2_fast_mode) {
- 		retval = card_power_off(chip, XD_CARD);
--		if (retval != STATUS_SUCCESS) {
-+		if (retval != STATUS_SUCCESS)
- 			return STATUS_FAIL;
--		}
- 
- 		wait_timeout(50);
- 	}
- 
- 	if (chip->asic_code) {
- 		retval = xd_pull_ctl_disable(chip);
--		if (retval != STATUS_SUCCESS) {
-+		if (retval != STATUS_SUCCESS)
- 			return STATUS_FAIL;
--		}
-+
- 	} else {
- 		retval = rtsx_write_register(chip, FPGA_PULL_CTL, 0xFF, 0xDF);
--		if (retval) {
-+		if (retval)
- 			return retval;
--		}
- 	}
- 
- 	return STATUS_SUCCESS;
-@@ -2227,9 +2180,8 @@ int release_xd_card(struct rtsx_chip *chip)
- 	xd_free_l2p_tbl(chip);
- 
- 	retval = xd_power_off_card3v3(chip);
--	if (retval != STATUS_SUCCESS) {
-+	if (retval != STATUS_SUCCESS)
- 		return STATUS_FAIL;
--	}
- 
- 	return STATUS_SUCCESS;
- }
+> Just wondering what is "__lsm_name_##lsm" for...
+>
+> +#define DEFINE_LSM(lsm)                                                        \
+> +       static const char __lsm_name_##lsm[] __initconst                \
+> +               __aligned(1) = #lsm;                                    \
+> +       static struct lsm_info __lsm_##lsm                              \
+> +               __used __section(.lsm_info.init)                        \
+> +               __aligned(sizeof(unsigned long))                        \
+> +               = {                                                     \
+> +                       .name = __lsm_name_##lsm,                       \
+> +
+> +#define END_LSM          }
+
+I wasn't super happy with the END_LSM thing, but I wanted to be able
+to declare the name as __initconst, otherwise it needlessly stays in
+memory after init. That said, it's not a huge deal, and maybe
+readability trumps a tiny meory savings?
+
+> We could do something like below so that funny END_LSM is not required?
+> I felt } like a typo error at the first glance. What we need is to
+> gather into one section with appropriate alignment, isn't it?
+>
+> #define LSM_INFO                                                        \
+>         static struct lsm_info __lsm_                                   \
+>                 __used __section(.lsm_info.init)                        \
+>                 __aligned(sizeof(unsigned long))                        \
+>
+> LSM_INFO = {
+>         .name = "tomoyo",
+>         .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+>         .init = tomoyo_init,
+> };
+
+I thought the structure instances would need a unique name, but it
+seems the section naming removes that requirement. This seems only to
+be needed if we had multiple LSMs defined in the same source file.
+Though I wonder if this would be a problem for LTO in the future?
+
+I'm happy to do whatever.
+
+-Kees
+
 -- 
-2.17.1
-
+Kees Cook
+Pixel Security
