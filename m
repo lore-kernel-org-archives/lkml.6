@@ -2,131 +2,80 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D11CC004D5
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44736C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 288892087A
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:19:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288892087A
+	by mail.kernel.org (Postfix) with ESMTP id E3BD220880
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:21:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayeq0b+T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3BD220880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbeI2TrY (ORCPT
+        id S1728263AbeI2TuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 15:47:24 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42063 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728029AbeI2TrX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 15:47:23 -0400
-Received: by mail-ot1-f67.google.com with SMTP id h26-v6so8697115otl.9;
-        Sat, 29 Sep 2018 06:18:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e2ZdzCMuwxxmZmPfkJD5u2P9Apa5Mq6LiwzMxfl7dc8=;
-        b=IWVBILx1Yl0J9tlt7/keRQDxSH37Ba3XaCP0zrR6U8YgJKwMaQr7pdWep8FF4R6ulx
-         98LPAU83+4ZG3Emvl6Jj47v60asEwRp8q8L9i5Bbs3r5uDdKcDE2qMyv+QkVqzWywEgs
-         WTnCdfIu2FR6Uq7m6Nz58Agj8GurqjzD8yVbyrF81GyV8+FTqXQHVr7K74+ssCbLg5O6
-         iF3fh5s6kgWH0tzWZLX8CUB7u/e/ssTJrYfkbM3htEDhYtLOGCvc38TYWDI1Kq4qUqB4
-         Y1XdOIzYO7eefY62GHm7a1chZBJiJT/AH40c5i9YMOqjXy8xNVSP/QHWrXZC+ljdtY91
-         3nKg==
-X-Gm-Message-State: ABuFfoimg85DEI4CVk8PPdDGd6GMyTwaENXWsF+r8JrdOfvVcYFIWws/
-        b20u3FEF9FZS7RqpLRiBWOLkBiKySj9kkIT8ric=
-X-Google-Smtp-Source: ACcGV63Z00kmUxofNmnxr+FnW1CWrz3N5cyNCA1wvbqPsLNeV2rJJcMfky7xnuUk/AfPRjrkMojmqMD9tbJn6SpkWIU=
-X-Received: by 2002:a9d:48f9:: with SMTP id a54-v6mr1875665otj.343.1538227136722;
- Sat, 29 Sep 2018 06:18:56 -0700 (PDT)
+        Sat, 29 Sep 2018 15:50:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727876AbeI2TuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 15:50:22 -0400
+Received: from [192.168.1.75] (cpe-24-28-70-126.austin.res.rr.com [24.28.70.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC90C206B2;
+        Sat, 29 Sep 2018 13:21:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538227315;
+        bh=tv+n1u2sa4yJQvanWPNPraodOjf0ubQ52vfH0h72ofs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ayeq0b+TQm4kngOpdMUBlEKMco0VChUxSiOlUXxsbdEK9uoPNDUTsDUb/QJPTbGoD
+         WGBZXPLY/4xPOC02fWpQPugSv0Io5CLCqoyn9ixfR0yZw5HrztN3GltmOW3jWrDecT
+         y7G8z0mPd3P5Ir9V6BgEn8FILW/HqUWCswJ+vkQ4=
+Subject: Re: [PATCH v2] gpiolib: Show correct direction from the beginning
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     jhugo@codeaurora.org, swboyd@chromium.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+ <20180921103604.13361-2-ricardo.ribalda@gmail.com>
+ <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
+ <ffe11a8c-368b-8c74-54a7-a088c3997032@kernel.org>
+ <3e07cab8-0f3e-7474-8f6d-e6bb16e8f998@codeaurora.org>
+ <5aea282d-6fc9-cd70-cec4-10f28aa819b9@codeaurora.org>
+ <CAOZdJXUUWUWHzus+3sbEXbW_q92e+SSzTQJCqCyQp6Y6_HOo3g@mail.gmail.com>
+ <CAPybu_3v6Y1Bs1+WQKFfdNmAFdBN6VJTDiCG1ApNVM2AWt4vjA@mail.gmail.com>
+From:   Timur Tabi <timur@kernel.org>
+Message-ID: <9df3f61f-ac54-f5b1-6b86-db539e07c5bd@kernel.org>
+Date:   Sat, 29 Sep 2018 08:21:54 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180928215054.28561-1-joe@perches.com> <20180928230616.GA150287@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180928230616.GA150287@bhelgaas-glaptop.roam.corp.google.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sat, 29 Sep 2018 15:18:38 +0200
-Message-ID: <CAJZ5v0hh899QjTTbzRK7oWqSH6GccV_H0weUUYJdVw8sQgyONQ@mail.gmail.com>
-Subject: Re: Bad MAINTAINERS pattern in section 'ACPI'
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Linux PCI <linux-pci@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAPybu_3v6Y1Bs1+WQKFfdNmAFdBN6VJTDiCG1ApNVM2AWt4vjA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 1:06 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> [+cc Tony, Borislav (ACPI APEI reviewers), linux-pci]
->
-> On Fri, Sep 28, 2018 at 02:50:53PM -0700, Joe Perches wrote:
-> > Please fix this defect appropriately.
-> >
-> > linux-next MAINTAINERS section:
-> >
-> >       308     ACPI
-> >       309     M:      "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> >       310     M:      Len Brown <lenb@kernel.org>
-> >       311     L:      linux-acpi@vger.kernel.org
-> >       312     W:      https://01.org/linux-acpi
-> >       313     Q:      https://patchwork.kernel.org/project/linux-acpi/list/
-> >       314     T:      git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-> >       315     B:      https://bugzilla.kernel.org
-> >       316     S:      Supported
-> >       317     F:      drivers/acpi/
-> >       318     F:      drivers/pnp/pnpacpi/
-> >       319     F:      include/linux/acpi.h
-> >       320     F:      include/linux/fwnode.h
-> >       321     F:      include/acpi/
-> >       322     F:      Documentation/acpi/
-> >       323     F:      Documentation/ABI/testing/sysfs-bus-acpi
-> >       324     F:      Documentation/ABI/testing/configfs-acpi
-> >       325     F:      drivers/pci/*acpi*
-> >       326     F:      drivers/pci/*/*acpi*
-> > -->   327     F:      drivers/pci/*/*/*acpi*
-> >       328     F:      tools/power/acpi/
->
-> My proposal to fix this:
->
-> commit a99051c0d3c59fd259fd76a8bbd9837b76b509d9
-> Author: Bjorn Helgaas <bhelgaas@google.com>
-> Date:   Fri Sep 28 17:34:21 2018 -0500
->
->     MAINTAINERS: Remove obsolete drivers/pci pattern from ACPI section
->
->     Prior to 256a45937093 ("PCI/AER: Squash aerdrv_acpi.c into aerdrv.c"),
->     drivers/pci/pcie/aer/aerdrv_acpi.c contained code to parse the ACPI HEST
->     table.  That code now lives in drivers/pci/pcie/aer.c.
->
->     Remove the "F: drivers/pci/*/*/*acpi*" pattern because it matches nothing.
->
->     We could add a "F: drivers/pci/pcie/aer.c" pattern to the ACPI APEI
->     section, but that file sees a lot of changes, almost none of which are of
->     interest to the ACPI folks.
->
->     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 700408b7bc53..9babd8a0406b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -324,7 +324,6 @@ F:  Documentation/ABI/testing/sysfs-bus-acpi
->  F:     Documentation/ABI/testing/configfs-acpi
->  F:     drivers/pci/*acpi*
->  F:     drivers/pci/*/*acpi*
-> -F:     drivers/pci/*/*/*acpi*
->  F:     tools/power/acpi/
+On 9/29/18 1:23 AM, Ricardo Ribalda Delgado wrote:
+> In fact  gpiochip_init_valid_mask is called some lines after in the
+> same function. We could reorder the function. Would that work for you?
 
-Looks good to me.
+It might.  It might break something else, though.
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> The driver breaking is upstream?
+
+Yes.
+
+> Is it possible to access the hardware?
+
+Linaro and some Linux OSVs should still have systems, but I usually just 
+ask Jeff to test code for me.
