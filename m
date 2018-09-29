@@ -2,162 +2,172 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 118D2C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0738C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A45C92087A
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:31:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="jF24iOXn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A45C92087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id BCA0320879
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:31:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA0320879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbeI2Q7A (ORCPT
+        id S1728042AbeI2Q7h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 12:59:00 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:39988 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727540AbeI2Q7A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 12:59:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BcGJSVe35QGbB7GkZ5cWUwnvCicTDtbg3QLQES+7XGQ=; b=jF24iOXnGXxqLcYr3IQzGnH55
-        lDM5rmO1ci3ASyV3t30Qmkpisavliau2xqRtuXjUg2TL0b3z6KiFZdehiPCEh1Hv5i07/xF+iRXuJ
-        Rnn6SewRSguuONXk6Qm2H+ESlntkBCaEhHfGd2g7VcMGL5ttp8GScWj5i36fjGq1Aq+ok=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:47876)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1g6CWP-0002Sz-Pd; Sat, 29 Sep 2018 11:30:52 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1g6CWM-0000WR-Ps; Sat, 29 Sep 2018 11:30:46 +0100
-Date:   Sat, 29 Sep 2018 11:30:45 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Tony Lindgren <tony@atomide.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: Re: [BUG] sleep in atomic in 8250 runtime PM code path
-Message-ID: <20180929103045.GQ30658@n2100.armlinux.org.uk>
-References: <20180929132036.0323e24b@xhacker.debian>
+        Sat, 29 Sep 2018 12:59:37 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13580 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727756AbeI2Q7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 12:59:37 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id EAEB0E9D0F999;
+        Sat, 29 Sep 2018 18:31:38 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.399.0; Sat, 29 Sep 2018 18:31:33 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: add to account meta IO
+Date:   Sat, 29 Sep 2018 18:31:27 +0800
+Message-ID: <20180929103128.31307-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180929132036.0323e24b@xhacker.debian>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 01:20:36PM +0800, Jisheng Zhang wrote:
-> Hi,
-> 
-> Recently I found I could trigger sleep in atomic bug on berlin after commit
-> d76c74387e1c ("serial: 8250_dw: Fix runtime PM handling"). The path looks like:
-> 
-> dw8250_probe => serial850_register_8250_port => uart_add_one_port=>
-> register_console => console_unlock => univ8250_console_write =>
-> serial8250_console_write => serial8250_rpm_get => pm_runtime_get_sync
-> 
-> The irq is disabled by printk_safe_enter_irqsave() in console_unlock, but
-> pm_runtime_get_sync can't be called in atomic context...
-> 
-> I guess the reason why we didn't notice it is due to the fact that
-> only OMAP and DW sets UART_CAP_RPM currently, and DW set the flag in
-> May 2018.
-> 
-> Per my understanding, the bug sits in the 8250 core driver rather than
-> 8250_dw.c.
+This patch supports to account meta IO, it enables to show write IO
+from f2fs more comprehensively via 'status' debugfs entry.
 
-(Adding Tony and Sebastian, presumably CAP_RPM comes from OMAP since
-that is the only other user, and this same bug is present there too.)
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/debug.c   | 13 +++++++++++++
+ fs/f2fs/f2fs.h    | 15 +++++++++++++++
+ fs/f2fs/segment.c |  1 +
+ 3 files changed, 29 insertions(+)
 
-Correct.  printk() can be called from atomic contexts (consider what
-happens when an oops or similar occurs - we can be in any context,
-holding any locks etc.)  Plain printk() can also be used from within
-spinlocked irqs-off regions.
-
-This means the console's write function may be called in these contexts.
-Since pm_runtime_get_sync() is may sleep, it means that its use in the
-console path is _fundamentally_ wrong, and will lead to exactly this
-problem.
-
-I don't see a way around that other than to avoid RPM on consoles.
-(which makes the presence of the RPM code in serial8250_console_write()
-completely unnecessary.)
-
-When I rewrote the serial drivers and created serial_core & 8250, this
-is something that I realised, and I arranged the PM support at the time
-to always maintain the console in active state (this is prior to RPM).
-
-While I'm looking at commit d74d5d1b7288 ("tty: serial: 8250_core: add
-run time pm"):
-
-+static void serial8250_rpm_get_tx(struct uart_8250_port *p)
-+{
-+       unsigned char rpm_active;
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index d3c402183e3c..da1cabbc4973 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -118,6 +118,9 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 		si->curzone[i] = GET_ZONE_FROM_SEC(sbi, si->cursec[i]);
+ 	}
+ 
++	for (i = META_CP; i < META_MAX; i++)
++		si->meta_count[i] = atomic_read(&sbi->meta_count[i]);
 +
-+       if (!(p->capabilities & UART_CAP_RPM))
-+               return;
-+
-+       rpm_active = xchg(&p->rpm_tx_active, 1);
-+       if (rpm_active)
-+               return;
-+       pm_runtime_get_sync(p->port.dev);
-+}
-
-is particularly "interesting" - if this is called from sections of
-code that allow it to be called concurrently from different contexts,
-then we could have:
-
-rpm_tx_active	thread 0			thread 1
-0
-		xchg(, 1)
-1
-						xchg(, 1)
-						... goes on to use port ...
-		pm_runtime_get_sync()
-
-In other words, the port can be used _before_ pm_runtime_get_sync() is
-called.
-
-If, on the other hand, this can't race, then considering the
-serial8250_rpm_put_tx() path as well, what stops this race from
-happening:
-
-rpm_tx_active	thread 0			thread 1
-1
-		serial8250_rpm_get_tx()
-						serial8250_rpm_put_tx()
-		xchg(, 1)
-1
-						xchg(, 0)
-0
-						pm_runtime_put_autosuspend()
-
-Now to the real point about the above - if _neither_ race is possible,
-then what is the point of the more expensive xchg() here rather than
-simple test-and-assignment of rpm_tx_active?  Either these paths can't
-race with each other and xchg() is unnecessary, or they can and they
-_could_ fail as shown above.  My suspicion is that xchg() is an attempt
-to reduce the likelyhood of one of these races being hit.
-
+ 	for (i = 0; i < 2; i++) {
+ 		si->segment_count[i] = sbi->segment_count[i];
+ 		si->block_count[i] = sbi->block_count[i];
+@@ -329,6 +332,13 @@ static int stat_show(struct seq_file *s, void *v)
+ 			   si->prefree_count, si->free_segs, si->free_secs);
+ 		seq_printf(s, "CP calls: %d (BG: %d)\n",
+ 				si->cp_count, si->bg_cp_count);
++		seq_printf(s, "  - cp blocks : %u\n", si->meta_count[META_CP]);
++		seq_printf(s, "  - sit blocks : %u\n",
++				si->meta_count[META_SIT]);
++		seq_printf(s, "  - nat blocks : %u\n",
++				si->meta_count[META_NAT]);
++		seq_printf(s, "  - ssa blocks : %u\n",
++				si->meta_count[META_SSA]);
+ 		seq_printf(s, "GC calls: %d (BG: %d)\n",
+ 			   si->call_count, si->bg_gc);
+ 		seq_printf(s, "  - data segments : %d (%d)\n",
+@@ -441,6 +451,7 @@ int f2fs_build_stats(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
+ 	struct f2fs_stat_info *si;
++	int i;
+ 
+ 	si = f2fs_kzalloc(sbi, sizeof(struct f2fs_stat_info), GFP_KERNEL);
+ 	if (!si)
+@@ -466,6 +477,8 @@ int f2fs_build_stats(struct f2fs_sb_info *sbi)
+ 	atomic_set(&sbi->inline_inode, 0);
+ 	atomic_set(&sbi->inline_dir, 0);
+ 	atomic_set(&sbi->inplace_count, 0);
++	for (i = META_CP; i < META_MAX; i++)
++		atomic_set(&sbi->meta_count[i], 0);
+ 
+ 	atomic_set(&sbi->aw_cnt, 0);
+ 	atomic_set(&sbi->vw_cnt, 0);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index b1738113e821..0f82f342e514 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -202,6 +202,7 @@ enum {
+ 	META_NAT,
+ 	META_SIT,
+ 	META_SSA,
++	META_MAX,
+ 	META_POR,
+ 	DATA_GENERIC,
+ 	META_GENERIC,
+@@ -1267,6 +1268,7 @@ struct f2fs_sb_info {
+ 	 */
+ #ifdef CONFIG_F2FS_STAT_FS
+ 	struct f2fs_stat_info *stat_info;	/* FS status information */
++	atomic_t meta_count[META_MAX];		/* # of meta blocks */
+ 	unsigned int segment_count[2];		/* # of allocated segments */
+ 	unsigned int block_count[2];		/* # of allocated blocks */
+ 	atomic_t inplace_count;		/* # of inplace update */
+@@ -3146,6 +3148,7 @@ struct f2fs_stat_info {
+ 	int cursec[NR_CURSEG_TYPE];
+ 	int curzone[NR_CURSEG_TYPE];
+ 
++	unsigned int meta_count[META_MAX];
+ 	unsigned int segment_count[2];
+ 	unsigned int block_count[2];
+ 	unsigned int inplace_count;
+@@ -3197,6 +3200,17 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
+ 		if (f2fs_has_inline_dentry(inode))			\
+ 			(atomic_dec(&F2FS_I_SB(inode)->inline_dir));	\
+ 	} while (0)
++#define stat_inc_meta_count(sbi, blkaddr)				\
++	do {								\
++		if (blkaddr < SIT_I(sbi)->sit_base_addr)		\
++			atomic_inc(&(sbi)->meta_count[META_CP]);	\
++		else if (blkaddr < NM_I(sbi)->nat_blkaddr)		\
++			atomic_inc(&(sbi)->meta_count[META_SIT]);	\
++		else if (blkaddr < SM_I(sbi)->ssa_blkaddr)		\
++			atomic_inc(&(sbi)->meta_count[META_NAT]);	\
++		else if (blkaddr < SM_I(sbi)->main_blkaddr)		\
++			atomic_inc(&(sbi)->meta_count[META_SSA]);	\
++	} while (0)
+ #define stat_inc_seg_type(sbi, curseg)					\
+ 		((sbi)->segment_count[(curseg)->alloc_type]++)
+ #define stat_inc_block_count(sbi, curseg)				\
+@@ -3284,6 +3298,7 @@ void f2fs_destroy_root_stats(void);
+ #define stat_inc_volatile_write(inode)			do { } while (0)
+ #define stat_dec_volatile_write(inode)			do { } while (0)
+ #define stat_update_max_volatile_write(inode)		do { } while (0)
++#define stat_inc_meta_count(sbi, blkaddr)		do { } while (0)
+ #define stat_inc_seg_type(sbi, curseg)			do { } while (0)
+ #define stat_inc_block_count(sbi, curseg)		do { } while (0)
+ #define stat_inc_inplace_blocks(sbi)			do { } while (0)
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 230da5ee02e0..e16dae0f0a5b 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3018,6 +3018,7 @@ void f2fs_do_write_meta_page(struct f2fs_sb_info *sbi, struct page *page,
+ 	ClearPageError(page);
+ 	f2fs_submit_page_write(&fio);
+ 
++	stat_inc_meta_count(sbi, page->index);
+ 	f2fs_update_iostat(sbi, io_type, F2FS_BLKSIZE);
+ }
+ 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 14.8Mbps down 650kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+2.18.0.rc1
+
