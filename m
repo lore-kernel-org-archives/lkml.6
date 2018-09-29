@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C603BC64EAE
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB25C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B72B206B8
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:01:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B72B206B8
+	by mail.kernel.org (Postfix) with ESMTP id AB5AE206B8
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:01:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB5AE206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbeI3Ebx (ORCPT
+        id S1728655AbeI3EcA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:31:53 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51531 "EHLO
+        Sun, 30 Sep 2018 00:32:00 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51524 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726286AbeI3ESU (ORCPT
+        by vger.kernel.org with ESMTP id S1726176AbeI3ESU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Sep 2018 00:18:20 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N60-0000H7-NV; Sat, 29 Sep 2018 22:48:16 +0100
+        id 1g6N60-0000H6-MQ; Sat, 29 Sep 2018 22:48:16 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5v-0006q2-Hi; Sat, 29 Sep 2018 22:48:11 +0100
+        id 1g6N5v-0006px-Gj; Sat, 29 Sep 2018 22:48:11 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Ingo Molnar" <mingo@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
+CC:     akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@kernel.org>,
         "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.37732532@decadent.org.uk>
+Message-ID: <lsq.1538257387.879374454@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 015/131] x86/process: Allow runtime control of
- Speculative Store Bypass
+Subject: [PATCH 3.16 014/131] prctl: Add speculation control prctls
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,222 +59,229 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 885f82bfbc6fefb6664ea27965c3ab9ac4194b8c upstream.
+commit b617cfc858161140d69cc0b5cc211996b557a1c7 upstream.
 
-The Speculative Store Bypass vulnerability can be mitigated with the
-Reduced Data Speculation (RDS) feature. To allow finer grained control of
-this eventually expensive mitigation a per task mitigation control is
-required.
+Add two new prctls to control aspects of speculation related vulnerabilites
+and their mitigations to provide finer grained control over performance
+impacting mitigations.
 
-Add a new TIF_RDS flag and put it into the group of TIF flags which are
-evaluated for mismatch in switch_to(). If these bits differ in the previous
-and the next task, then the slow path function __switch_to_xtra() is
-invoked. Implement the TIF_RDS dependent mitigation control in the slow
-path.
+PR_GET_SPECULATION_CTRL returns the state of the speculation misfeature
+which is selected with arg2 of prctl(2). The return value uses bit 0-2 with
+the following meaning:
 
-If the prctl for controlling Speculative Store Bypass is disabled or no
-task uses the prctl then there is no overhead in the switch_to() fast
-path.
+Bit  Define           Description
+0    PR_SPEC_PRCTL    Mitigation can be controlled per task by
+                      PR_SET_SPECULATION_CTRL
+1    PR_SPEC_ENABLE   The speculation feature is enabled, mitigation is
+                      disabled
+2    PR_SPEC_DISABLE  The speculation feature is disabled, mitigation is
+                      enabled
 
-Update the KVM related speculation control functions to take TID_RDS into
-account as well.
+If all bits are 0 the CPU is not affected by the speculation misfeature.
 
-Based on a patch from Tim Chen. Completely rewritten.
+If PR_SPEC_PRCTL is set, then the per task control of the mitigation is
+available. If not set, prctl(PR_SET_SPECULATION_CTRL) for the speculation
+misfeature will fail.
+
+PR_SET_SPECULATION_CTRL allows to control the speculation misfeature, which
+is selected by arg2 of prctl(2) per task. arg3 is used to hand in the
+control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE.
+
+The common return values are:
+
+EINVAL  prctl is not implemented by the architecture or the unused prctl()
+        arguments are not 0
+ENODEV  arg2 is selecting a not supported speculation misfeature
+
+PR_SET_SPECULATION_CTRL has these additional return values:
+
+ERANGE  arg3 is incorrect, i.e. it's not either PR_SPEC_ENABLE or PR_SPEC_DISABLE
+ENXIO   prctl control of the selected speculation misfeature is disabled
+
+The first supported controlable speculation misfeature is
+PR_SPEC_STORE_BYPASS. Add the define so this can be shared between
+architectures.
+
+Based on an initial patch from Tim Chen and mostly rewritten.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 [bwh: Backported to 3.16:
- - Exclude _TIF_RDS from _TIF_WORK_MASK and _TIF_ALLWORK_MASK
- - Adjust filename, context]
+ - Add the documentation directly under Documentation/ since there is
+   no userspace-api subdirectory or reST index
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -2,6 +2,7 @@
- #ifndef _ASM_X86_SPECCTRL_H_
- #define _ASM_X86_SPECCTRL_H_
+ Documentation/spec_ctrl.rst | 86 +++++++++++++++++++++++++++++++++++++
+ include/linux/nospec.h      |  5 +++
+ include/uapi/linux/prctl.h  | 11 +++++
+ kernel/sys.c                | 22 ++++++++++
+ 4 files changed, 124 insertions(+)
+ create mode 100644 Documentation/spec_ctrl.rst
+
+--- /dev/null
++++ b/Documentation/spec_ctrl.rst
+@@ -0,0 +1,86 @@
++===================
++Speculation Control
++===================
++
++Quite some CPUs have speculation related misfeatures which are in fact
++vulnerabilites causing data leaks in various forms even accross privilege
++domains.
++
++The kernel provides mitigation for such vulnerabilities in various
++forms. Some of these mitigations are compile time configurable and some on
++the kernel command line.
++
++There is also a class of mitigations which are very expensive, but they can
++be restricted to a certain set of processes or tasks in controlled
++environments. The mechanism to control these mitigations is via
++:manpage:`prctl(2)`.
++
++There are two prctl options which are related to this:
++
++ * PR_GET_SPECULATION_CTRL
++
++ * PR_SET_SPECULATION_CTRL
++
++PR_GET_SPECULATION_CTRL
++-----------------------
++
++PR_GET_SPECULATION_CTRL returns the state of the speculation misfeature
++which is selected with arg2 of prctl(2). The return value uses bits 0-2 with
++the following meaning:
++
++==== ================ ===================================================
++Bit  Define           Description
++==== ================ ===================================================
++0    PR_SPEC_PRCTL    Mitigation can be controlled per task by
++                      PR_SET_SPECULATION_CTRL
++1    PR_SPEC_ENABLE   The speculation feature is enabled, mitigation is
++                      disabled
++2    PR_SPEC_DISABLE  The speculation feature is disabled, mitigation is
++                      enabled
++==== ================ ===================================================
++
++If all bits are 0 the CPU is not affected by the speculation misfeature.
++
++If PR_SPEC_PRCTL is set, then the per task control of the mitigation is
++available. If not set, prctl(PR_SET_SPECULATION_CTRL) for the speculation
++misfeature will fail.
++
++PR_SET_SPECULATION_CTRL
++-----------------------
++PR_SET_SPECULATION_CTRL allows to control the speculation misfeature, which
++is selected by arg2 of :manpage:`prctl(2)` per task. arg3 is used to hand
++in the control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE.
++
++Common error codes
++------------------
++======= =================================================================
++Value   Meaning
++======= =================================================================
++EINVAL  The prctl is not implemented by the architecture or unused
++        prctl(2) arguments are not 0
++
++ENODEV  arg2 is selecting a not supported speculation misfeature
++======= =================================================================
++
++PR_SET_SPECULATION_CTRL error codes
++-----------------------------------
++======= =================================================================
++Value   Meaning
++======= =================================================================
++0       Success
++
++ERANGE  arg3 is incorrect, i.e. it's neither PR_SPEC_ENABLE nor
++        PR_SPEC_DISABLE
++
++ENXIO   Control of the selected speculation misfeature is not possible.
++        See PR_GET_SPECULATION_CTRL.
++======= =================================================================
++
++Speculation misfeature controls
++-------------------------------
++- PR_SPEC_STORE_BYPASS: Speculative Store Bypass
++
++  Invocations:
++   * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, 0, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -55,4 +55,9 @@ static inline unsigned long array_index_
+ 									\
+ 	(typeof(_i)) (_i & _mask);					\
+ })
++
++/* Speculation control prctl */
++int arch_prctl_spec_ctrl_get(unsigned long which);
++int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl);
++
+ #endif /* _LINUX_NOSPEC_H */
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -152,4 +152,15 @@
+ #define PR_SET_THP_DISABLE	41
+ #define PR_GET_THP_DISABLE	42
  
-+#include <linux/thread_info.h>
- #include <asm/nospec-branch.h>
++/* Per task speculation control */
++#define PR_GET_SPECULATION_CTRL		52
++#define PR_SET_SPECULATION_CTRL		53
++/* Speculation control variants */
++# define PR_SPEC_STORE_BYPASS		0
++/* Return and control values for PR_SET/GET_SPECULATION_CTRL */
++# define PR_SPEC_NOT_AFFECTED		0
++# define PR_SPEC_PRCTL			(1UL << 0)
++# define PR_SPEC_ENABLE			(1UL << 1)
++# define PR_SPEC_DISABLE		(1UL << 2)
++
+ #endif /* _LINUX_PRCTL_H */
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -53,6 +53,8 @@
+ #include <linux/uidgid.h>
+ #include <linux/cred.h>
  
- /*
-@@ -18,4 +19,20 @@ extern void x86_spec_ctrl_restore_host(u
- extern u64 x86_amd_ls_cfg_base;
- extern u64 x86_amd_ls_cfg_rds_mask;
- 
-+/* The Intel SPEC CTRL MSR base value cache */
-+extern u64 x86_spec_ctrl_base;
++#include <linux/nospec.h>
 +
-+static inline u64 rds_tif_to_spec_ctrl(u64 tifn)
-+{
-+	BUILD_BUG_ON(TIF_RDS < SPEC_CTRL_RDS_SHIFT);
-+	return (tifn & _TIF_RDS) >> (TIF_RDS - SPEC_CTRL_RDS_SHIFT);
-+}
-+
-+static inline u64 rds_tif_to_amd_ls_cfg(u64 tifn)
-+{
-+	return (tifn & _TIF_RDS) ? x86_amd_ls_cfg_rds_mask : 0ULL;
-+}
-+
-+extern void speculative_store_bypass_update(void);
-+
+ #include <linux/kmsg_dump.h>
+ /* Move somewhere else to avoid recompiling? */
+ #include <generated/utsrelease.h>
+@@ -1832,6 +1834,16 @@ static int prctl_get_tid_address(struct
+ }
  #endif
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -72,6 +72,7 @@ struct thread_info {
- #define TIF_SIGPENDING		2	/* signal pending */
- #define TIF_NEED_RESCHED	3	/* rescheduling necessary */
- #define TIF_SINGLESTEP		4	/* reenable singlestep on user return*/
-+#define TIF_RDS			5	/* Reduced data speculation */
- #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
- #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
- #define TIF_SECCOMP		8	/* secure computing */
-@@ -97,6 +98,7 @@ struct thread_info {
- #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
- #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
- #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
-+#define _TIF_RDS		(1 << TIF_RDS)
- #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
- #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
- #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
-@@ -131,12 +133,12 @@ struct thread_info {
- #define _TIF_WORK_MASK							\
- 	(0x0000FFFF &							\
- 	 ~(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|			\
--	   _TIF_SINGLESTEP|_TIF_SECCOMP|_TIF_SYSCALL_EMU))
-+	   _TIF_SINGLESTEP|_TIF_RDS|_TIF_SECCOMP|_TIF_SYSCALL_EMU))
  
- /* work to do on any return to user space */
- #define _TIF_ALLWORK_MASK						\
--	((0x0000FFFF & ~_TIF_SECCOMP) | _TIF_SYSCALL_TRACEPOINT |	\
--	_TIF_NOHZ)
-+	((0x0000FFFF & ~(_TIF_RDS | _TIF_SECCOMP)) |			\
-+	 _TIF_SYSCALL_TRACEPOINT | _TIF_NOHZ)
- 
- /* Only used for 64 bit */
- #define _TIF_DO_NOTIFY_MASK						\
-@@ -145,7 +147,7 @@ struct thread_info {
- 
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW							\
--	(_TIF_IO_BITMAP|_TIF_NOTSC|_TIF_BLOCKSTEP)
-+	(_TIF_IO_BITMAP|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_RDS)
- 
- #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
- #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
---- a/arch/x86/include/uapi/asm/msr-index.h
-+++ b/arch/x86/include/uapi/asm/msr-index.h
-@@ -35,7 +35,8 @@
- #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
- #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
- #define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
--#define SPEC_CTRL_RDS			(1 << 2)   /* Reduced Data Speculation */
-+#define SPEC_CTRL_RDS_SHIFT		2	   /* Reduced Data Speculation bit */
-+#define SPEC_CTRL_RDS			(1 << SPEC_CTRL_RDS_SHIFT)   /* Reduced Data Speculation */
- 
- #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
- #define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -32,7 +32,7 @@ static void __init ssb_select_mitigation
-  * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
-  * writes to SPEC_CTRL contain whatever reserved bits have been set.
-  */
--static u64 x86_spec_ctrl_base;
-+u64 x86_spec_ctrl_base;
- 
- /*
-  * The vendor and possibly platform specific bits which can be modified in
-@@ -202,25 +202,41 @@ EXPORT_SYMBOL_GPL(x86_spec_ctrl_set);
- 
- u64 x86_spec_ctrl_get_default(void)
- {
--	return x86_spec_ctrl_base;
-+	u64 msrval = x86_spec_ctrl_base;
-+
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+		msrval |= rds_tif_to_spec_ctrl(current_thread_info()->flags);
-+	return msrval;
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
- 
- void x86_spec_ctrl_set_guest(u64 guest_spec_ctrl)
- {
-+	u64 host = x86_spec_ctrl_base;
-+
- 	if (!boot_cpu_has(X86_FEATURE_IBRS))
- 		return;
--	if (x86_spec_ctrl_base != guest_spec_ctrl)
-+
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+		host |= rds_tif_to_spec_ctrl(current_thread_info()->flags);
-+
-+	if (host != guest_spec_ctrl)
- 		wrmsrl(MSR_IA32_SPEC_CTRL, guest_spec_ctrl);
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_set_guest);
- 
- void x86_spec_ctrl_restore_host(u64 guest_spec_ctrl)
- {
-+	u64 host = x86_spec_ctrl_base;
-+
- 	if (!boot_cpu_has(X86_FEATURE_IBRS))
- 		return;
--	if (x86_spec_ctrl_base != guest_spec_ctrl)
--		wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+		host |= rds_tif_to_spec_ctrl(current_thread_info()->flags);
-+
-+	if (host != guest_spec_ctrl)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, host);
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_restore_host);
- 
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -30,6 +30,7 @@
- #include <asm/debugreg.h>
- #include <asm/nmi.h>
- #include <asm/tlbflush.h>
-+#include <asm/spec-ctrl.h>
- 
- /*
-  * per-CPU TSS segments. Threads are completely 'soft' on Linux,
-@@ -216,6 +217,24 @@ static inline void switch_to_bitmap(stru
- 	}
- }
- 
-+static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
++int __weak arch_prctl_spec_ctrl_get(unsigned long which)
 +{
-+	u64 msr;
-+
-+	if (static_cpu_has(X86_FEATURE_AMD_RDS)) {
-+		msr = x86_amd_ls_cfg_base | rds_tif_to_amd_ls_cfg(tifn);
-+		wrmsrl(MSR_AMD64_LS_CFG, msr);
-+	} else {
-+		msr = x86_spec_ctrl_base | rds_tif_to_spec_ctrl(tifn);
-+		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
-+	}
++	return -EINVAL;
 +}
 +
-+void speculative_store_bypass_update(void)
++int __weak arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
 +{
-+	__speculative_store_bypass_update(current_thread_info()->flags);
++	return -EINVAL;
 +}
 +
- void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
- 		      struct tss_struct *tss)
+ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 		unsigned long, arg4, unsigned long, arg5)
  {
-@@ -248,6 +267,9 @@ void __switch_to_xtra(struct task_struct
- 		else
- 			hard_enable_TSC();
- 	}
-+
-+	if ((tifp ^ tifn) & _TIF_RDS)
-+		__speculative_store_bypass_update(tifn);
- }
- 
- /*
+@@ -2010,6 +2022,16 @@ SYSCALL_DEFINE5(prctl, int, option, unsi
+ 			me->mm->def_flags &= ~VM_NOHUGEPAGE;
+ 		up_write(&me->mm->mmap_sem);
+ 		break;
++	case PR_GET_SPECULATION_CTRL:
++		if (arg3 || arg4 || arg5)
++			return -EINVAL;
++		error = arch_prctl_spec_ctrl_get(arg2);
++		break;
++	case PR_SET_SPECULATION_CTRL:
++		if (arg4 || arg5)
++			return -EINVAL;
++		error = arch_prctl_spec_ctrl_set(arg2, arg3);
++		break;
+ 	default:
+ 		error = -EINVAL;
+ 		break;
 
