@@ -2,256 +2,125 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 070E4C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 03:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AAFC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 03:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B36F2073F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 03:12:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D429E2073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 03:19:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bnPMaoQS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B36F2073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="iRD5Rq1y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D429E2073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbeI2JjT (ORCPT
+        id S1727426AbeI2Jqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 05:39:19 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:1696 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbeI2JjT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 05:39:19 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5baeeda10000>; Fri, 28 Sep 2018 20:12:33 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 28 Sep 2018 20:12:34 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 28 Sep 2018 20:12:34 -0700
-Received: from [10.110.48.28] (10.110.48.28) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 29 Sep
- 2018 03:12:33 +0000
-Subject: Re: [PATCH 3/4] infiniband/mm: convert to the new put_user_page()
- call
-To:     Jason Gunthorpe <jgg@ziepe.ca>, <john.hubbard@gmail.com>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Christian Benvenuti <benve@cisco.com>
-References: <20180928053949.5381-1-jhubbard@nvidia.com>
- <20180928053949.5381-3-jhubbard@nvidia.com> <20180928153922.GA17076@ziepe.ca>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <36bc65a3-8c2a-87df-44fc-89a1891b86db@nvidia.com>
-Date:   Fri, 28 Sep 2018 20:12:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180928153922.GA17076@ziepe.ca>
-X-Originating-IP: [10.110.48.28]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
+        Sat, 29 Sep 2018 05:46:32 -0400
+Received: from mail-eopbgr10081.outbound.protection.outlook.com ([40.107.1.81]:38887
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727295AbeI2Jqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 05:46:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ay/iSuast34LT7wuJHIjBz49gqIEHBwHTYrPSOxvJis=;
+ b=iRD5Rq1yaqY/YQq2HpraznIxz7dAWjIsCUvARE+pNEa5J159W68+Gfp/pDDCPXZTwnL0OqJUoFxu8K9tLzF2hxN2JbxA8gO3ngPQpGXJx7cRD2Wn/NAzrElHix05y7TZlvD6by/FKLGW0KdNJ9KWk7C0bee5/bopzldZywWDmeg=
+Received: from VI1PR0401MB2237.eurprd04.prod.outlook.com (10.169.133.18) by
+ VI1PR0401MB2672.eurprd04.prod.outlook.com (10.168.66.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.23; Sat, 29 Sep 2018 03:19:43 +0000
+Received: from VI1PR0401MB2237.eurprd04.prod.outlook.com
+ ([fe80::984e:2d7e:1a9c:c1b9]) by VI1PR0401MB2237.eurprd04.prod.outlook.com
+ ([fe80::984e:2d7e:1a9c:c1b9%7]) with mapi id 15.20.1185.022; Sat, 29 Sep 2018
+ 03:19:43 +0000
+From:   "Y.b. Lu" <yangbo.lu@nxp.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: RE: [PATCH 1/2] net: dpaa2: move DPAA2 PTP driver out of staging/
+Thread-Topic: [PATCH 1/2] net: dpaa2: move DPAA2 PTP driver out of staging/
+Thread-Index: AQHUVlODYLzUr6TXRkCk3Aso2dGK1KUEHlyAgAEqd6CAAIdcAIAAxprw
+Date:   Sat, 29 Sep 2018 03:19:42 +0000
+Message-ID: <VI1PR0401MB2237AB083B3A6A9E084E4349F8ED0@VI1PR0401MB2237.eurprd04.prod.outlook.com>
+References: <20180927111228.46118-1-yangbo.lu@nxp.com>
+ <20180927132507.GB23375@lunn.ch>
+ <VI1PR0401MB223737CACE4E4064AE8325A4F8EC0@VI1PR0401MB2237.eurprd04.prod.outlook.com>
+ <20180928151750.GD19396@lunn.ch>
+In-Reply-To: <20180928151750.GD19396@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yangbo.lu@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0401MB2672;6:m6LKqawtE/l298S+Z+ScjCaw3f0/nAifC7FeMsWMG0/cmjhqXMyzKcAAnA46QnKbR2d8gGU2K39xzmm1corPAVTp3CRmvW6ftPf5ii3KZ+iX09QJwxXQzuJQyS+uhMlbDl9W/SwE5b+81JlA69QFa1NthkIwvaw6MrY8yzsdzMv0fX6HT8woXJIGMsqUvNepJCKYpiK7SlLb8qvS+Axa1yNne/5ZMaon/yG4bxD41Fj0GSFabSDQUTIRrWJdeZ+hmtB1HvvQVElwaLdtZk3oAyBNXThAXkzSAoUHY1mPPUGhqJX+a9uKg4cAlTKI88IRu5khbOET5uTcgojjXpzj7Hj3lHszMyamT1d16CZhL8O/QyeC3H6RuO+UR98dQ9o4XSzAzrYG64KiP670DvgJvNVd27ZIy88SO6RfwNtAQbvkfqSGz/I/XADSyUiW1K9uloRb1doDNeBWSysDnr2/oA==;5:JhLb9yIkjtRphKg2ELd0n0/4ILGez4d8DSok3Qa37ieosOygD4IpLVSKX1FsNbGzZeK8BLbtHMavpqSKE/NNYrpagwoxuns5NLFBYLiSsThf2CKFOqel4YAQ805P2K3nQ+4t4DymaUktGRgp9rc73oqzdn/BMA2topbE7CRLWhM=;7:vFvLDA5XVsk7shhO6uFvsb3b5+A8OBv0Wtj704ur0iRwwjHpQFi5oNb43lmF+Pr0XwLVCUcskzvnGFXmW0FPCUgSpzGTL7gYtf+w5vjJTbiknPYWzavDo3VwWjYUZ3M0Ke4I1gWL2YubYTzR4flQilBnb69q/aILMm9BELjOW24lL7lDHzfJ44rg10bS3m2Jtb1YboXiqXL42NMxIklM1/HyzNMfHuvK792YheEVaKbTsYTBFB7Tt3h625tR3tmz
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e61b29e0-2320-4bd2-20d6-08d625ba6659
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0401MB2672;
+x-ms-traffictypediagnostic: VI1PR0401MB2672:
+x-microsoft-antispam-prvs: <VI1PR0401MB26723D2BC1B003C5038A6F3EF8ED0@VI1PR0401MB2672.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:VI1PR0401MB2672;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0401MB2672;
+x-forefront-prvs: 0810818DA0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(136003)(396003)(39860400002)(13464003)(189003)(199004)(68736007)(33656002)(93886005)(8936002)(53546011)(2906002)(81156014)(6506007)(81166006)(34290500001)(7736002)(102836004)(229853002)(25786009)(8676002)(106356001)(256004)(14444005)(2900100001)(105586002)(316002)(66066001)(71200400001)(71190400001)(54906003)(86362001)(5250100002)(305945005)(11346002)(6436002)(486006)(26005)(74316002)(476003)(6246003)(6916009)(39060400002)(9686003)(55016002)(99286004)(6116002)(4326008)(3846002)(53936002)(7696005)(5660300001)(478600001)(14454004)(97736004)(76176011)(186003)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0401MB2672;H:VI1PR0401MB2237.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: /LnZIvARXSB+pNrO91jAhhnpepnviUc7+w2vglENItmaulUWIhYx28eJFSm7LR8fe4upC53VsOWqlyRS+wSDMHYt9x7vU/7mMfuxx+OfFTSZQnSO00lFoDAlFcbm+PBGEFASJHPEMW7SvjtAUNj1CsJ9YBnjh8Uok2yTRxSY9DWvgwt5U21jQwZyfvh0C1eHqowmY9/X55KH64/AxWorlpVzzzF3KTtzd4UfmE0JqisfDyDG473wmidn6Xv/j88vSF7SoGJRXQYAwU7OWmQKLvw851ufOaBEA0AqDYH057urGHBII/Cr8uptsrwl8POD8tghOHeIYZvo5owG9fF99RyU+9d+q07VnbZheo/R67Q=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1538190753; bh=5cPDwkzBjUYG/dvcvYDKLruiu5HQvH4QX5CYkyDaQ5g=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=bnPMaoQS4BupKtwTJqAF4spoVzf3QVgub3CJbTGAzjxskP18n/cqFF0V7yYK8OCqg
-         a5ZpGsmGQ961vkdAWx0/Q9CucLnUOZJOXyQdJSFs92fUj/3FEOKmH83sFeFWXSb/tP
-         6n6TVbkUVqn6nHnK0R4ibJfj8UU+rz/Nv28NIQe7hzELRUqriqF0Yy5RBfrGG03cQo
-         8AZyaxDMISkeBSYtswDKEfzPdHFewWbOB6x2z84UyLs045UQHJi2HBoj2Lh5Bx1a3b
-         I7seRCYzLfCMXzeFo269StuVHjPSRLJOD118Xz6ccj1sGGJkT7tBLSka5XhSRvHriu
-         /szGWDcR3vlPw==
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e61b29e0-2320-4bd2-20d6-08d625ba6659
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2018 03:19:42.9984
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB2672
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/28/18 8:39 AM, Jason Gunthorpe wrote:
-> On Thu, Sep 27, 2018 at 10:39:47PM -0700, john.hubbard@gmail.com wrote:
->> From: John Hubbard <jhubbard@nvidia.com>
-[...]
->>
->> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
->> index a41792dbae1f..9430d697cb9f 100644
->> +++ b/drivers/infiniband/core/umem.c
->> @@ -60,7 +60,7 @@ static void __ib_umem_release(struct ib_device *dev, struct ib_umem *umem, int d
->>  		page = sg_page(sg);
->>  		if (!PageDirty(page) && umem->writable && dirty)
->>  			set_page_dirty_lock(page);
->> -		put_page(page);
->> +		put_user_page(page);
-> 
-> Would it make sense to have a release/put_user_pages_dirtied to absorb
-> the set_page_dity pattern too? I notice in this patch there is some
-> variety here, I wonder what is the right way?
-> 
-> Also, I'm told this code here is a big performance bottleneck when the
-> number of pages becomes very long (think >> GB of memory), so having a
-> future path to use some kind of batching/threading sound great.
-> 
-
-Yes. And you asked for this the first time, too. Consistent! :) Sorry for
-being slow to pick it up. It looks like there are several patterns, and
-we have to support both set_page_dirty() and set_page_dirty_lock(). So
-the best combination looks to be adding a few variations of
-release_user_pages*(), but leaving put_user_page() alone, because it's
-the "do it yourself" basic one. Scatter-gather will be stuck with that.
-
-Here's a differential patch with that, that shows a nice little cleanup in 
-a couple of IB places, and as you point out, it also provides the hooks for 
-performance upgrades (via batching) in the future.
-
-Does this API look about right?
-
-diff --git a/drivers/infiniband/hw/hfi1/user_pages.c b/drivers/infiniband/hw/hfi1/user_pages.c
-index c7516029af33..48afec362c31 100644
---- a/drivers/infiniband/hw/hfi1/user_pages.c
-+++ b/drivers/infiniband/hw/hfi1/user_pages.c
-@@ -123,11 +123,7 @@ void hfi1_release_user_pages(struct mm_struct *mm, struct page **p,
- {
-        size_t i;
- 
--       for (i = 0; i < npages; i++) {
--               if (dirty)
--                       set_page_dirty_lock(p[i]);
--               put_user_page(p[i]);
--       }
-+       release_user_pages_lock(p, npages, dirty);
- 
-        if (mm) { /* during close after signal, mm can be NULL */
-                down_write(&mm->mmap_sem);
-diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
-index 3f8fd42dd7fc..c57a3a6730b6 100644
---- a/drivers/infiniband/hw/qib/qib_user_pages.c
-+++ b/drivers/infiniband/hw/qib/qib_user_pages.c
-@@ -40,13 +40,7 @@
- static void __qib_release_user_pages(struct page **p, size_t num_pages,
-                                     int dirty)
- {
--       size_t i;
--
--       for (i = 0; i < num_pages; i++) {
--               if (dirty)
--                       set_page_dirty_lock(p[i]);
--               put_user_page(p[i]);
--       }
-+       release_user_pages_lock(p, num_pages, dirty);
- }
- 
- /*
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 72caf803115f..b280d0181e06 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -138,6 +138,9 @@ extern int overcommit_ratio_handler(struct ctl_table *, int, void __user *,
- extern int overcommit_kbytes_handler(struct ctl_table *, int, void __user *,
-                                    size_t *, loff_t *);
- 
-+int set_page_dirty(struct page *page);
-+int set_page_dirty_lock(struct page *page);
-+
- #define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
- 
- /* to align the pointer to the (next) page boundary */
-@@ -949,12 +952,56 @@ static inline void put_user_page(struct page *page)
-        put_page(page);
- }
- 
--/* A drop-in replacement for release_pages(): */
-+/* For get_user_pages*()-pinned pages, use these variants instead of
-+ * release_pages():
-+ */
-+static inline void release_user_pages_dirty(struct page **pages,
-+                                           unsigned long npages)
-+{
-+       while (npages) {
-+               set_page_dirty(pages[npages]);
-+               put_user_page(pages[npages]);
-+               --npages;
-+       }
-+}
-+
-+static inline void release_user_pages_dirty_lock(struct page **pages,
-+                                                unsigned long npages)
-+{
-+       while (npages) {
-+               set_page_dirty_lock(pages[npages]);
-+               put_user_page(pages[npages]);
-+               --npages;
-+       }
-+}
-+
-+static inline void release_user_pages_basic(struct page **pages,
-+                                           unsigned long npages)
-+{
-+       while (npages) {
-+               put_user_page(pages[npages]);
-+               --npages;
-+       }
-+}
-+
- static inline void release_user_pages(struct page **pages,
--                                     unsigned long npages)
-+                                     unsigned long npages,
-+                                     bool set_dirty)
- {
--       while (npages)
--               put_user_page(pages[--npages]);
-+       if (set_dirty)
-+               release_user_pages_dirty(pages, npages);
-+       else
-+               release_user_pages_basic(pages, npages);
-+}
-+
-+static inline void release_user_pages_lock(struct page **pages,
-+                                          unsigned long npages,
-+                                          bool set_dirty)
-+{
-+       if (set_dirty)
-+               release_user_pages_dirty_lock(pages, npages);
-+       else
-+               release_user_pages_basic(pages, npages);
- }
- 
- #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
-@@ -1548,8 +1595,6 @@ int redirty_page_for_writepage(struct writeback_control *wbc,
- void account_page_dirtied(struct page *page, struct address_space *mapping);
- void account_page_cleaned(struct page *page, struct address_space *mapping,
-                          struct bdi_writeback *wb);
--int set_page_dirty(struct page *page);
--int set_page_dirty_lock(struct page *page);
- void __cancel_dirty_page(struct page *page);
- static inline void cancel_dirty_page(struct page *page)
- {
-
-
-> Otherwise this RDMA part seems fine to me, there might be some minor
-> conflicts however. I assume you want to run this through the -mm tree?
-> 
-> Acked-by: Jason Gunthorpe <jgg@mellanox.com>
-> 
-
-Great, thanks for the ACK.
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+SGkgQW5kcmV3LA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEFuZHJl
+dyBMdW5uIDxhbmRyZXdAbHVubi5jaD4NCj4gU2VudDogRnJpZGF5LCBTZXB0ZW1iZXIgMjgsIDIw
+MTggMTE6MTggUE0NCj4gVG86IFkuYi4gTHUgPHlhbmdiby5sdUBueHAuY29tPg0KPiBDYzogbGlu
+dXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgZGV2ZWxAZHJpdmVyZGV2Lm9zdW9zbC5vcmc7DQo+
+IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IFJpY2hhcmQgQ29jaHJhbiA8cmljaGFyZGNvY2hyYW5A
+Z21haWwuY29tPjsNCj4gRGF2aWQgUyAuIE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD47IElv
+YW5hIENpb2NvaSBSYWR1bGVzY3UNCj4gPHJ1eGFuZHJhLnJhZHVsZXNjdUBueHAuY29tPjsgR3Jl
+ZyBLcm9haC1IYXJ0bWFuDQo+IDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4NCj4gU3ViamVj
+dDogUmU6IFtQQVRDSCAxLzJdIG5ldDogZHBhYTI6IG1vdmUgRFBBQTIgUFRQIGRyaXZlciBvdXQg
+b2Ygc3RhZ2luZy8NCj4gDQo+ID4gPiBzdHJ1Y3QgZHBydGNfY21kX2dldF9pcnEgLSBQdXR0aW5n
+IHBhZCBhdCB0aGUgYmVnaW5uaW5nIG9mIGEgc3RydWN0DQo+ID4gPiBzZWVtcyB2ZXJ5IG9kZC4g
+QW5kIGl0IGlzIG5vdCB0aGUgb25seSBleGFtcGxlLg0KPiA+DQo+ID4gW1kuYi4gTHVdIFRoaXMg
+c2hvdWxkIGRlcGVuZGVkIG9uIE1DIGZpcm13YXJlIGFuZCBBUElzIEkgdGhpbmsuIE9uY2UgdGhl
+DQo+IE1DIGltcHJvdmVzIHRoaXMsIHRoZSBBUElzIGNvdWxkIGJlIHVwZGF0ZWQgdG8gZml4IHRo
+aXMuDQo+IA0KPiBUaGF0IGlzIGdvaW5nIHRvIGJlIGhhcmQgdG8gZG8uIElkZWFsbHkgdGhlIGRy
+aXZlciBzaG91bGQgd29yayB3aXRoIGFueQ0KPiBmaXJtd2FyZSB2ZXJzaW9uLiBZb3UgZG9uJ3Qg
+cmVhbGx5IHdhbnQgdG8gZm9yY2UgdGhlIHVzZXIgdG8gdXBncmFkZSB0aGUNCj4gZHJpdmVyL2tl
+cm5lbCBhbmQgdGhlIGZpcm13YXJlIGF0IHRoZSBzYW1lIHRpbWUuIFNvIHlvdSBjYW5ub3QgZm9y
+IGV4YW1wbGUNCj4gcmVtb3ZlIHRoaXMgcGFkLiBXaGF0IHlvdSBtaWdodCBiZSBhYmxlIHRvIGRv
+IGluIG5ld2VyIHZlcnNpb25zIGlzIGFjdHVhbGx5DQo+IHVzZSB0aGUgc3BhY2UuIEJ1dCB5b3Ug
+aGF2ZSB0byBiZSBzdXJlIHRoZSBjdXJyZW50IGNvZGUgaXMgY29ycmVjdGx5IGlnbm9yaW5nIGl0
+DQo+IGFuZCBzZXR0aW5nIGl0IHRvIHplcm8uDQoNCltZLmIuIEx1XSBUaGFua3MgYSBsb3QsIEkg
+dGhpbmsgSSB1bmRlcnN0YW5kIG5vd/CfmIoNClRoZSBmaWxlcyBkcHJ0YyogZGVmaW5pbmcgdGhl
+IEFQSXMgd2VyZSBwcm92aWRlZCB0b2dldGhlciB3aXRoIE1DIGZpcm13YXJlLiBUaGV5IHdlcmUg
+dGVzdGVkIHdvcmtpbmcgZmluZS4NCk1DIGZpcm13YXJlIHdvdWxkIGFsc28gY29uc2lkZXIgdGhl
+IGJhY2t3YXJkIGNvbXBhdGliaWxpdHkgSSB0aGluay4NClJlZ2FyZGluZyB0byB0aGUgQVBJIGZp
+bGVzLCBsZXQgbWUgcmVtb3ZlIHVudXNlZCBjb2RlIGJlZm9yZSB1c2luZyB0aGVtLCBhbmQga2Vl
+cCB0aGUgcmVzdC4NCg0KPiANCj4gCUFuZHJldw0K
