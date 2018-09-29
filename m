@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D5AC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 02:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7549AC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 02:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E4F82073F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 02:30:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E4F82073F
+	by mail.kernel.org (Postfix) with ESMTP id 406902073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 02:30:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406902073F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbeI2I4r (ORCPT
+        id S1727468AbeI2I4v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 04:56:47 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:28405 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726325AbeI2I4r (ORCPT
+        Sat, 29 Sep 2018 04:56:51 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:59682 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727355AbeI2I4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 04:56:47 -0400
-X-UUID: 7a10b456fc984ea8800bababfa563445-20180929
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        Sat, 29 Sep 2018 04:56:50 -0400
+X-UUID: 0677bb2924024f129c3e3487994d181e-20180929
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
         (envelope-from <chaotian.jing@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1904570835; Sat, 29 Sep 2018 10:30:01 +0800
+        with ESMTP id 455522438; Sat, 29 Sep 2018 10:30:04 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sat, 29 Sep 2018 10:30:00 +0800
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 29 Sep 2018 10:30:02 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sat, 29 Sep 2018 10:29:59 +0800
+ Transport; Sat, 29 Sep 2018 10:30:01 +0800
 From:   Chaotian Jing <chaotian.jing@mediatek.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>
 CC:     Rob Herring <robh+dt@kernel.org>,
@@ -47,38 +47,67 @@ CC:     Rob Herring <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Subject: [PATCH v1 1/2] mmc: dt-bindings: add "bus-clk" for MT2712
-Date:   Sat, 29 Sep 2018 10:29:54 +0800
-Message-ID: <1538188195-3608-1-git-send-email-chaotian.jing@mediatek.com>
+Subject: [PATCH v1 2/2] mmc: mediatek: add bus_clk control
+Date:   Sat, 29 Sep 2018 10:29:55 +0800
+Message-ID: <1538188195-3608-2-git-send-email-chaotian.jing@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1538188195-3608-1-git-send-email-chaotian.jing@mediatek.com>
+References: <1538188195-3608-1-git-send-email-chaotian.jing@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: CDF554A6A90584992D63062400167C931FBC488D909A985C62635BD44C11D7622000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On MT2712 MSDC0/3, HCLK/bus-clk need gate/ungate together,
-or will hang when access MSDC register.
+when gate MSDC0_HCLK, access register will hang, even the MSDC driver
+will never accessing register after HCLK was gated, but for safety, need
+gate the bus_clk(which used to access register) too.
 
 Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
 ---
- Documentation/devicetree/bindings/mmc/mtk-sd.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mmc/host/mtk-sd.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.txt b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-index f33467a..f2208f4 100644
---- a/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-+++ b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-@@ -22,6 +22,7 @@ Required properties:
- 	"source" - source clock (required)
- 	"hclk" - HCLK which used for host (required)
- 	"source_cg" - independent source clock gate (required for MT2712)
-+	"bus_clk" - bus clock used for internal register access (required for MT2712 MSDC0/3)
- - pinctrl-names: should be "default", "state_uhs"
- - pinctrl-0: should contain default/high speed pin ctrl
- - pinctrl-1: should contain uhs mode pin ctrl
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 0484138..1c1c967 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -387,6 +387,7 @@ struct msdc_host {
+ 
+ 	struct clk *src_clk;	/* msdc source clock */
+ 	struct clk *h_clk;      /* msdc h_clk */
++	struct clk *bus_clk;	/* bus clock which used to access register */
+ 	struct clk *src_clk_cg; /* msdc source clock control gate */
+ 	u32 mclk;		/* mmc subsystem clock frequency */
+ 	u32 src_clk_freq;	/* source clock frequency */
+@@ -660,12 +661,14 @@ static void msdc_gate_clock(struct msdc_host *host)
+ {
+ 	clk_disable_unprepare(host->src_clk_cg);
+ 	clk_disable_unprepare(host->src_clk);
++	clk_disable_unprepare(host->bus_clk);
+ 	clk_disable_unprepare(host->h_clk);
+ }
+ 
+ static void msdc_ungate_clock(struct msdc_host *host)
+ {
+ 	clk_prepare_enable(host->h_clk);
++	clk_prepare_enable(host->bus_clk);
+ 	clk_prepare_enable(host->src_clk);
+ 	clk_prepare_enable(host->src_clk_cg);
+ 	while (!(readl(host->base + MSDC_CFG) & MSDC_CFG_CKSTB))
+@@ -1900,6 +1903,9 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 		goto host_free;
+ 	}
+ 
++	host->bus_clk = devm_clk_get(&pdev->dev, "bus_clk");
++	if (IS_ERR(host->bus_clk))
++		host->bus_clk = NULL;
+ 	/*source clock control gate is optional clock*/
+ 	host->src_clk_cg = devm_clk_get(&pdev->dev, "source_cg");
+ 	if (IS_ERR(host->src_clk_cg))
 -- 
 1.8.1.1.dirty
 
