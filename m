@@ -6,47 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B64C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E950C004D5
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 901DD2087A
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:49:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 901DD2087A
+	by mail.kernel.org (Postfix) with ESMTP id 040572087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:49:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 040572087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728950AbeI3ESi (ORCPT
+        id S1729051AbeI3ETO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:18:38 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52053 "EHLO
+        Sun, 30 Sep 2018 00:19:14 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52135 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728778AbeI3ESf (ORCPT
+        by vger.kernel.org with ESMTP id S1728698AbeI3ESi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 00:18:35 -0400
+        Sun, 30 Sep 2018 00:18:38 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N6E-0000H0-Pv; Sat, 29 Sep 2018 22:48:31 +0100
+        id 1g6N6H-0000H4-JB; Sat, 29 Sep 2018 22:48:33 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5w-0006sE-Hg; Sat, 29 Sep 2018 22:48:12 +0100
+        id 1g6N5v-0006qr-TV; Sat, 29 Sep 2018 22:48:11 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
-        "Borislav Petkov" <bp@suse.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "David Woodhouse" <dwmw@amazon.co.uk>
+CC:     akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.910470277@decadent.org.uk>
+Message-ID: <lsq.1538257387.989833049@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 042/131] x86/bugs: Expose x86_spec_ctrl_base directly
+Subject: [PATCH 3.16 025/131] x86/bugs: Rename _RDS to _SSBD
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,114 +56,395 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit fa8ac4988249c38476f6ad678a4848a736373403 upstream.
+commit 9f65fb29374ee37856dbad847b4e121aab72b510 upstream.
 
-x86_spec_ctrl_base is the system wide default value for the SPEC_CTRL MSR.
-x86_spec_ctrl_get_default() returns x86_spec_ctrl_base and was intended to
-prevent modification to that variable. Though the variable is read only
-after init and globaly visible already.
+Intel collateral will reference the SSB mitigation bit in IA32_SPEC_CTL[2]
+as SSBD (Speculative Store Bypass Disable).
 
-Remove the function and export the variable instead.
+Hence changing it.
 
+It is unclear yet what the MSR_IA32_ARCH_CAPABILITIES (0x10a) Bit(4) name
+is going to be. Following the rename it would be SSBD_NO but that rolls out
+to Speculative Store Bypass Disable No.
+
+Also fixed the missing space in X86_FEATURE_AMD_SSBD.
+
+[ tglx: Fixup x86_amd_rds_enable() and rds_tif_to_amd_ls_cfg() as well ]
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust context]
+[bwh: Backported to 3.16:
+ - Update guest_cpuid_has_spec_ctrl() rather than vmx_{get,set}_msr()
+ - Update _TIF_WORK_MASK and _TIF_ALLWORK_MASK
+ - Adjust filenames, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/nospec-branch.h | 16 +++++-----------
- arch/x86/include/asm/spec-ctrl.h     |  3 ---
- arch/x86/kernel/cpu/bugs.c           | 11 +----------
- 3 files changed, 6 insertions(+), 24 deletions(-)
+ arch/x86/include/asm/cpufeature.h     |  4 +--
+ arch/x86/include/asm/spec-ctrl.h      | 12 ++++-----
+ arch/x86/include/asm/thread_info.h    |  6 ++---
+ arch/x86/include/uapi/asm/msr-index.h | 10 ++++----
+ arch/x86/kernel/cpu/amd.c             | 14 +++++------
+ arch/x86/kernel/cpu/bugs.c            | 36 +++++++++++++--------------
+ arch/x86/kernel/cpu/common.c          |  2 +-
+ arch/x86/kernel/cpu/intel.c           |  2 +-
+ arch/x86/kernel/process.c             |  8 +++---
+ arch/x86/kvm/cpuid.c                  |  2 +-
+ arch/x86/kvm/cpuid.h                  |  2 +-
+ arch/x86/kvm/vmx.c                    |  2 +-
+ 12 files changed, 50 insertions(+), 50 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -172,16 +172,7 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_IBRS,
- };
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -192,7 +192,7 @@
+ #define X86_FEATURE_USE_IBPB	(7*32+12) /* "" Indirect Branch Prediction Barrier enabled */
+ #define X86_FEATURE_USE_IBRS_FW (7*32+13) /* "" Use IBRS during runtime firmware calls */
+ #define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE (7*32+14) /* "" Disable Speculative Store Bypass. */
+-#define X86_FEATURE_AMD_RDS	(7*32+15)  /* "" AMD RDS implementation */
++#define X86_FEATURE_AMD_SSBD	(7*32+15)  /* "" AMD SSBD implementation */
  
--/*
-- * The Intel specification for the SPEC_CTRL MSR requires that we
-- * preserve any already set reserved bits at boot time (e.g. for
-- * future additions that this kernel is not currently aware of).
-- * We then set any additional mitigation bits that we want
-- * ourselves and always use this as the base for SPEC_CTRL.
-- * We also use this when handling guest entry/exit as below.
-- */
- extern void x86_spec_ctrl_set(u64);
--extern u64 x86_spec_ctrl_get_default(void);
+ #define X86_FEATURE_RETPOLINE	(7*32+29) /* "" Generic Retpoline mitigation for Spectre variant 2 */
+ #define X86_FEATURE_RETPOLINE_AMD (7*32+30) /* "" AMD Retpoline mitigation for Spectre variant 2 */
+@@ -243,7 +243,7 @@
+ #define X86_FEATURE_SPEC_CTRL		(10*32+26) /* "" Speculation Control (IBRS + IBPB) */
+ #define X86_FEATURE_INTEL_STIBP		(10*32+27) /* "" Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_ARCH_CAPABILITIES	(10*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
+-#define X86_FEATURE_RDS			(10*32+31) /* Reduced Data Speculation */
++#define X86_FEATURE_SSBD		(10*32+31) /* Speculative Store Bypass Disable */
  
- /* The Speculative Store Bypass disable variants */
- enum ssb_mitigation {
-@@ -232,6 +223,9 @@ static inline void indirect_branch_predi
- 	alternative_msr_write(MSR_IA32_PRED_CMD, val, X86_FEATURE_USE_IBPB);
- }
- 
-+/* The Intel SPEC CTRL MSR base value cache */
-+extern u64 x86_spec_ctrl_base;
-+
- /*
-  * With retpoline, we must use IBRS to restrict branch prediction
-  * before calling into firmware.
-@@ -240,7 +234,7 @@ static inline void indirect_branch_predi
-  */
- #define firmware_restrict_branch_speculation_start()			\
- do {									\
--	u64 val = x86_spec_ctrl_get_default() | SPEC_CTRL_IBRS;		\
-+	u64 val = x86_spec_ctrl_base | SPEC_CTRL_IBRS;			\
- 									\
- 	preempt_disable();						\
- 	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
-@@ -249,7 +243,7 @@ do {									\
- 
- #define firmware_restrict_branch_speculation_end()			\
- do {									\
--	u64 val = x86_spec_ctrl_get_default();				\
-+	u64 val = x86_spec_ctrl_base;					\
- 									\
- 	alternative_msr_write(MSR_IA32_SPEC_CTRL, val,			\
- 			      X86_FEATURE_USE_IBRS_FW);			\
+ /* AMD-defined CPU features, CPUID level 0x80000008 (EBX), word 11 */
+ #define X86_FEATURE_IBPB		(11*32+12) /* Indirect Branch Prediction Barrier */
 --- a/arch/x86/include/asm/spec-ctrl.h
 +++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -47,9 +47,6 @@ void x86_spec_ctrl_restore_host(u64 gues
- extern u64 x86_amd_ls_cfg_base;
- extern u64 x86_amd_ls_cfg_ssbd_mask;
+@@ -17,20 +17,20 @@ extern void x86_spec_ctrl_restore_host(u
  
--/* The Intel SPEC CTRL MSR base value cache */
--extern u64 x86_spec_ctrl_base;
--
- static inline u64 ssbd_tif_to_spec_ctrl(u64 tifn)
+ /* AMD specific Speculative Store Bypass MSR data */
+ extern u64 x86_amd_ls_cfg_base;
+-extern u64 x86_amd_ls_cfg_rds_mask;
++extern u64 x86_amd_ls_cfg_ssbd_mask;
+ 
+ /* The Intel SPEC CTRL MSR base value cache */
+ extern u64 x86_spec_ctrl_base;
+ 
+-static inline u64 rds_tif_to_spec_ctrl(u64 tifn)
++static inline u64 ssbd_tif_to_spec_ctrl(u64 tifn)
  {
- 	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
+-	BUILD_BUG_ON(TIF_RDS < SPEC_CTRL_RDS_SHIFT);
+-	return (tifn & _TIF_RDS) >> (TIF_RDS - SPEC_CTRL_RDS_SHIFT);
++	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
++	return (tifn & _TIF_SSBD) >> (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
+ }
+ 
+-static inline u64 rds_tif_to_amd_ls_cfg(u64 tifn)
++static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
+ {
+-	return (tifn & _TIF_RDS) ? x86_amd_ls_cfg_rds_mask : 0ULL;
++	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
+ }
+ 
+ extern void speculative_store_bypass_update(void);
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -72,7 +72,7 @@ struct thread_info {
+ #define TIF_SIGPENDING		2	/* signal pending */
+ #define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+ #define TIF_SINGLESTEP		4	/* reenable singlestep on user return*/
+-#define TIF_RDS			5	/* Reduced data speculation */
++#define TIF_SSBD			5	/* Reduced data speculation */
+ #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
+ #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+ #define TIF_SECCOMP		8	/* secure computing */
+@@ -98,7 +98,7 @@ struct thread_info {
+ #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+ #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+ #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_RDS		(1 << TIF_RDS)
++#define _TIF_SSBD		(1 << TIF_SSBD)
+ #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+@@ -133,11 +133,11 @@ struct thread_info {
+ #define _TIF_WORK_MASK							\
+ 	(0x0000FFFF &							\
+ 	 ~(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|			\
+-	   _TIF_SINGLESTEP|_TIF_RDS|_TIF_SECCOMP|_TIF_SYSCALL_EMU))
++	   _TIF_SINGLESTEP|_TIF_SSBD|_TIF_SECCOMP|_TIF_SYSCALL_EMU))
+ 
+ /* work to do on any return to user space */
+ #define _TIF_ALLWORK_MASK						\
+-	((0x0000FFFF & ~(_TIF_RDS | _TIF_SECCOMP)) |			\
++	((0x0000FFFF & ~(_TIF_SSBD | _TIF_SECCOMP)) |			\
+ 	 _TIF_SYSCALL_TRACEPOINT | _TIF_NOHZ)
+ 
+ /* Only used for 64 bit */
+@@ -147,7 +147,7 @@ struct thread_info {
+ 
+ /* flags to check in __switch_to() */
+ #define _TIF_WORK_CTXSW							\
+-	(_TIF_IO_BITMAP|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_RDS)
++	(_TIF_IO_BITMAP|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
+ 
+ #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
+ #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
+--- a/arch/x86/include/uapi/asm/msr-index.h
++++ b/arch/x86/include/uapi/asm/msr-index.h
+@@ -35,8 +35,8 @@
+ #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
+ #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
+ #define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
+-#define SPEC_CTRL_RDS_SHIFT		2	   /* Reduced Data Speculation bit */
+-#define SPEC_CTRL_RDS			(1 << SPEC_CTRL_RDS_SHIFT)   /* Reduced Data Speculation */
++#define SPEC_CTRL_SSBD_SHIFT		2	   /* Speculative Store Bypass Disable bit */
++#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)   /* Speculative Store Bypass Disable */
+ 
+ #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
+ #define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
+@@ -59,10 +59,10 @@
+ #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
+ #define ARCH_CAP_RDCL_NO		(1 << 0)   /* Not susceptible to Meltdown */
+ #define ARCH_CAP_IBRS_ALL		(1 << 1)   /* Enhanced IBRS support */
+-#define ARCH_CAP_RDS_NO			(1 << 4)   /*
++#define ARCH_CAP_SSBD_NO		(1 << 4)   /*
+ 						    * Not susceptible to Speculative Store Bypass
+-						    * attack, so no Reduced Data Speculation control
+-						    * required.
++						    * attack, so no Speculative Store Bypass
++						    * control required.
+ 						    */
+ 
+ #define MSR_IA32_BBL_CR_CTL		0x00000119
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -483,12 +483,12 @@ static void bsp_init_amd(struct cpuinfo_
+ 		}
+ 		/*
+ 		 * Try to cache the base value so further operations can
+-		 * avoid RMW. If that faults, do not enable RDS.
++		 * avoid RMW. If that faults, do not enable SSBD.
+ 		 */
+ 		if (!rdmsrl_safe(MSR_AMD64_LS_CFG, &x86_amd_ls_cfg_base)) {
+-			setup_force_cpu_cap(X86_FEATURE_RDS);
+-			setup_force_cpu_cap(X86_FEATURE_AMD_RDS);
+-			x86_amd_ls_cfg_rds_mask = 1ULL << bit;
++			setup_force_cpu_cap(X86_FEATURE_SSBD);
++			setup_force_cpu_cap(X86_FEATURE_AMD_SSBD);
++			x86_amd_ls_cfg_ssbd_mask = 1ULL << bit;
+ 		}
+ 	}
+ }
+@@ -802,9 +802,9 @@ static void init_amd(struct cpuinfo_x86
+ 
+ 	rdmsr_safe(MSR_AMD64_PATCH_LEVEL, &c->microcode, &dummy);
+ 
+-	if (boot_cpu_has(X86_FEATURE_AMD_RDS)) {
+-		set_cpu_cap(c, X86_FEATURE_RDS);
+-		set_cpu_cap(c, X86_FEATURE_AMD_RDS);
++	if (boot_cpu_has(X86_FEATURE_AMD_SSBD)) {
++		set_cpu_cap(c, X86_FEATURE_SSBD);
++		set_cpu_cap(c, X86_FEATURE_AMD_SSBD);
+ 	}
+ }
+ 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -35,6 +35,7 @@ static void __init ssb_select_mitigation
-  * writes to SPEC_CTRL contain whatever reserved bits have been set.
-  */
- u64 x86_spec_ctrl_base;
-+EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
+@@ -44,10 +44,10 @@ static u64 x86_spec_ctrl_mask = ~SPEC_CT
  
  /*
-  * The vendor and possibly platform specific bits which can be modified in
-@@ -202,16 +203,6 @@ void x86_spec_ctrl_set(u64 val)
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_set);
+  * AMD specific MSR info for Speculative Store Bypass control.
+- * x86_amd_ls_cfg_rds_mask is initialized in identify_boot_cpu().
++ * x86_amd_ls_cfg_ssbd_mask is initialized in identify_boot_cpu().
+  */
+ u64 x86_amd_ls_cfg_base;
+-u64 x86_amd_ls_cfg_rds_mask;
++u64 x86_amd_ls_cfg_ssbd_mask;
  
--u64 x86_spec_ctrl_get_default(void)
--{
--	u64 msrval = x86_spec_ctrl_base;
--
--	if (static_cpu_has(X86_FEATURE_SPEC_CTRL))
--		msrval |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
--	return msrval;
--}
--EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
--
- void
- x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
+ #ifdef CONFIG_X86_32
+ 
+@@ -207,7 +207,7 @@ u64 x86_spec_ctrl_get_default(void)
+ 	u64 msrval = x86_spec_ctrl_base;
+ 
+ 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
+-		msrval |= rds_tif_to_spec_ctrl(current_thread_info()->flags);
++		msrval |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
+ 	return msrval;
+ }
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_get_default);
+@@ -220,7 +220,7 @@ void x86_spec_ctrl_set_guest(u64 guest_s
+ 		return;
+ 
+ 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
+-		host |= rds_tif_to_spec_ctrl(current_thread_info()->flags);
++		host |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
+ 
+ 	if (host != guest_spec_ctrl)
+ 		wrmsrl(MSR_IA32_SPEC_CTRL, guest_spec_ctrl);
+@@ -235,18 +235,18 @@ void x86_spec_ctrl_restore_host(u64 gues
+ 		return;
+ 
+ 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
+-		host |= rds_tif_to_spec_ctrl(current_thread_info()->flags);
++		host |= ssbd_tif_to_spec_ctrl(current_thread_info()->flags);
+ 
+ 	if (host != guest_spec_ctrl)
+ 		wrmsrl(MSR_IA32_SPEC_CTRL, host);
+ }
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_restore_host);
+ 
+-static void x86_amd_rds_enable(void)
++static void x86_amd_ssb_disable(void)
  {
+-	u64 msrval = x86_amd_ls_cfg_base | x86_amd_ls_cfg_rds_mask;
++	u64 msrval = x86_amd_ls_cfg_base | x86_amd_ls_cfg_ssbd_mask;
+ 
+-	if (boot_cpu_has(X86_FEATURE_AMD_RDS))
++	if (boot_cpu_has(X86_FEATURE_AMD_SSBD))
+ 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
+ }
+ 
+@@ -510,7 +510,7 @@ static enum ssb_mitigation_cmd __init __
+ 	enum ssb_mitigation mode = SPEC_STORE_BYPASS_NONE;
+ 	enum ssb_mitigation_cmd cmd;
+ 
+-	if (!boot_cpu_has(X86_FEATURE_RDS))
++	if (!boot_cpu_has(X86_FEATURE_SSBD))
+ 		return mode;
+ 
+ 	cmd = ssb_parse_cmdline();
+@@ -544,7 +544,7 @@ static enum ssb_mitigation_cmd __init __
+ 	/*
+ 	 * We have three CPU feature flags that are in play here:
+ 	 *  - X86_BUG_SPEC_STORE_BYPASS - CPU is susceptible.
+-	 *  - X86_FEATURE_RDS - CPU is able to turn off speculative store bypass
++	 *  - X86_FEATURE_SSBD - CPU is able to turn off speculative store bypass
+ 	 *  - X86_FEATURE_SPEC_STORE_BYPASS_DISABLE - engage the mitigation
+ 	 */
+ 	if (mode == SPEC_STORE_BYPASS_DISABLE) {
+@@ -555,12 +555,12 @@ static enum ssb_mitigation_cmd __init __
+ 		 */
+ 		switch (boot_cpu_data.x86_vendor) {
+ 		case X86_VENDOR_INTEL:
+-			x86_spec_ctrl_base |= SPEC_CTRL_RDS;
+-			x86_spec_ctrl_mask &= ~SPEC_CTRL_RDS;
+-			x86_spec_ctrl_set(SPEC_CTRL_RDS);
++			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
++			x86_spec_ctrl_mask &= ~SPEC_CTRL_SSBD;
++			x86_spec_ctrl_set(SPEC_CTRL_SSBD);
+ 			break;
+ 		case X86_VENDOR_AMD:
+-			x86_amd_rds_enable();
++			x86_amd_ssb_disable();
+ 			break;
+ 		}
+ 	}
+@@ -593,16 +593,16 @@ static int ssb_prctl_set(struct task_str
+ 		if (task_spec_ssb_force_disable(task))
+ 			return -EPERM;
+ 		task_clear_spec_ssb_disable(task);
+-		update = test_and_clear_tsk_thread_flag(task, TIF_RDS);
++		update = test_and_clear_tsk_thread_flag(task, TIF_SSBD);
+ 		break;
+ 	case PR_SPEC_DISABLE:
+ 		task_set_spec_ssb_disable(task);
+-		update = !test_and_set_tsk_thread_flag(task, TIF_RDS);
++		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
+ 		break;
+ 	case PR_SPEC_FORCE_DISABLE:
+ 		task_set_spec_ssb_disable(task);
+ 		task_set_spec_ssb_force_disable(task);
+-		update = !test_and_set_tsk_thread_flag(task, TIF_RDS);
++		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
+ 		break;
+ 	default:
+ 		return -ERANGE;
+@@ -672,7 +672,7 @@ void x86_spec_ctrl_setup_ap(void)
+ 		x86_spec_ctrl_set(x86_spec_ctrl_base & ~x86_spec_ctrl_mask);
+ 
+ 	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
+-		x86_amd_rds_enable();
++		x86_amd_ssb_disable();
+ }
+ 
+ #ifdef CONFIG_SYSFS
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -835,7 +835,7 @@ static void __init cpu_set_bug_bits(stru
+ 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+ 
+ 	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
+-	   !(ia32_cap & ARCH_CAP_RDS_NO))
++	   !(ia32_cap & ARCH_CAP_SSBD_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+ 
+ 	if (x86_match_cpu(cpu_no_speculation))
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -120,7 +120,7 @@ static void early_init_intel(struct cpui
+ 		setup_clear_cpu_cap(X86_FEATURE_STIBP);
+ 		setup_clear_cpu_cap(X86_FEATURE_SPEC_CTRL);
+ 		setup_clear_cpu_cap(X86_FEATURE_INTEL_STIBP);
+-		setup_clear_cpu_cap(X86_FEATURE_RDS);
++		setup_clear_cpu_cap(X86_FEATURE_SSBD);
+ 	}
+ 
+ 	/*
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -221,11 +221,11 @@ static __always_inline void __speculativ
+ {
+ 	u64 msr;
+ 
+-	if (static_cpu_has(X86_FEATURE_AMD_RDS)) {
+-		msr = x86_amd_ls_cfg_base | rds_tif_to_amd_ls_cfg(tifn);
++	if (static_cpu_has(X86_FEATURE_AMD_SSBD)) {
++		msr = x86_amd_ls_cfg_base | ssbd_tif_to_amd_ls_cfg(tifn);
+ 		wrmsrl(MSR_AMD64_LS_CFG, msr);
+ 	} else {
+-		msr = x86_spec_ctrl_base | rds_tif_to_spec_ctrl(tifn);
++		msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
+ 		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+ 	}
+ }
+@@ -268,7 +268,7 @@ void __switch_to_xtra(struct task_struct
+ 			hard_enable_TSC();
+ 	}
+ 
+-	if ((tifp ^ tifn) & _TIF_RDS)
++	if ((tifp ^ tifn) & _TIF_SSBD)
+ 		__speculative_store_bypass_update(tifn);
+ }
+ 
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -318,7 +318,7 @@ static inline int __do_cpuid_ent(struct
+ 
+ 	/* cpuid 7.0.edx*/
+ 	const u32 kvm_cpuid_7_0_edx_x86_features =
+-		F(SPEC_CTRL) | F(RDS) | F(ARCH_CAPABILITIES);
++		F(SPEC_CTRL) | F(SSBD) | F(ARCH_CAPABILITIES);
+ 
+ 	/* all calls to cpuid_count() should be made on the same cpu */
+ 	get_cpu();
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -123,7 +123,7 @@ static inline bool guest_cpuid_has_spec_
+ 	if (best && (best->ebx & bit(X86_FEATURE_IBRS)))
+ 		return true;
+ 	best = kvm_find_cpuid_entry(vcpu, 7, 0);
+-	return best && (best->edx & (bit(X86_FEATURE_SPEC_CTRL) | bit(X86_FEATURE_RDS)));
++	return best && (best->edx & (bit(X86_FEATURE_SPEC_CTRL) | bit(X86_FEATURE_SSBD)));
+ }
+ 
+ static inline bool guest_cpuid_has_arch_capabilities(struct kvm_vcpu *vcpu)
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -2637,7 +2637,7 @@ static int vmx_set_msr(struct kvm_vcpu *
+ 			return 1;
+ 
+ 		/* The STIBP bit doesn't fault even if it's not advertised */
+-		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP | SPEC_CTRL_RDS))
++		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP | SPEC_CTRL_SSBD))
+ 			return 1;
+ 
+ 		vmx->spec_ctrl = data;
 
