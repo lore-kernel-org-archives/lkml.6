@@ -6,50 +6,46 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94913C64EAD
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E19BDC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4042C2087A
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:53:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4042C2087A
+	by mail.kernel.org (Postfix) with ESMTP id A2D5E2087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:53:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D5E2087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729051AbeI3EXU (ORCPT
+        id S1729275AbeI3EXa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:23:20 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51956 "EHLO
+        Sun, 30 Sep 2018 00:23:30 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51946 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728720AbeI3ESd (ORCPT
+        by vger.kernel.org with ESMTP id S1728716AbeI3ESd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Sep 2018 00:18:33 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N6B-0000H9-QN; Sat, 29 Sep 2018 22:48:28 +0100
+        id 1g6N6B-0000H3-Pk; Sat, 29 Sep 2018 22:48:28 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5w-0006t1-Ud; Sat, 29 Sep 2018 22:48:12 +0100
+        id 1g6N5x-0006tC-0y; Sat, 29 Sep 2018 22:48:13 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Dave Jones" <davej@redhat.com>,
-        "Hugh Dickins" <hughd@google.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        "Sasha Levin" <sasha.levin@oracle.com>,
-        "Ingo Molnar" <mingo@kernel.org>, "Armin Rigo" <arigo@tunes.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+CC:     akpm@linux-foundation.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Felipe Balbi" <balbi@ti.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.335260145@decadent.org.uk>
+Message-ID: <lsq.1538257387.689508170@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 052/131] mm: replace remap_file_pages() syscall with
- emulation
+Subject: [PATCH 3.16 054/131] mm: drop support of non-linear mapping from
+ unmap/zap codepath
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -65,537 +61,232 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-commit c8d78c1823f46519473949d33f0d1d33fe21ea16 upstream.
+commit 8a5f14a23177061ec11daeaa3d09d0765d785c47 upstream.
 
-remap_file_pages(2) was invented to be able efficiently map parts of
-huge file into limited 32-bit virtual address space such as in database
-workloads.
+We have remap_file_pages(2) emulation in -mm tree for few release cycles
+and we plan to have it mainline in v3.20. This patchset removes rest of
+VM_NONLINEAR infrastructure.
 
-Nonlinear mappings are pain to support and it seems there's no
-legitimate use-cases nowadays since 64-bit systems are widely available.
+Patches 1-8 take care about generic code. They are pretty
+straight-forward and can be applied without other of patches.
 
-Let's drop it and get rid of all these special-cased code.
+Rest patches removes pte_file()-related stuff from architecture-specific
+code. It usually frees up one bit in non-present pte. I've tried to reuse
+that bit for swap offset, where I was able to figure out how to do that.
 
-The patch replaces the syscall with emulation which creates new VMA on
-each remap_file_pages(), unless they it can be merged with an adjacent
-one.
+For obvious reason I cannot test all that arch-specific code and would
+like to see acks from maintainers.
 
-I didn't find *any* real code that uses remap_file_pages(2) to test
-emulation impact on.  I've checked Debian code search and source of all
-packages in ALT Linux.  No real users: libc wrappers, mentions in
-strace, gdb, valgrind and this kind of stuff.
+In total, remap_file_pages(2) required about 1.4K lines of not-so-trivial
+kernel code. That's too much for functionality nobody uses.
 
-There are few basic tests in LTP for the syscall.  They work just fine
-with emulation.
+Tested-by: Felipe Balbi <balbi@ti.com>
 
-To test performance impact, I've written small test case which
-demonstrate pretty much worst case scenario: map 4G shmfs file, write to
-begin of every page pgoff of the page, remap pages in reverse order,
-read every page.
+This patch (of 38):
 
-The test creates 1 million of VMAs if emulation is in use, so I had to
-set vm.max_map_count to 1100000 to avoid -ENOMEM.
+We don't create non-linear mappings anymore. Let's drop code which
+handles them on unmap/zap.
 
-Before:		23.3 ( +-  4.31% ) seconds
-After:		43.9 ( +-  0.85% ) seconds
-Slowdown:	1.88x
-
-I believe we can live with that.
-
-Test case:
-
-        #define _GNU_SOURCE
-        #include <assert.h>
-        #include <stdlib.h>
-        #include <stdio.h>
-        #include <sys/mman.h>
-
-        #define MB	(1024UL * 1024)
-        #define SIZE	(4096 * MB)
-
-        int main(int argc, char **argv)
-        {
-                unsigned long *p;
-                long i, pass;
-
-                for (pass = 0; pass < 10; pass++) {
-                        p = mmap(NULL, SIZE, PROT_READ|PROT_WRITE,
-                                        MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-                        if (p == MAP_FAILED) {
-                                perror("mmap");
-                                return -1;
-                        }
-
-                        for (i = 0; i < SIZE / 4096; i++)
-                                p[i * 4096 / sizeof(*p)] = i;
-
-                        for (i = 0; i < SIZE / 4096; i++) {
-                                if (remap_file_pages(p + i * 4096 / sizeof(*p), 4096,
-                                                0, (SIZE - 4096 * (i + 1)) >> 12, 0)) {
-                                        perror("remap_file_pages");
-                                        return -1;
-                                }
-                        }
-
-                        for (i = SIZE / 4096 - 1; i >= 0; i--)
-                                assert(p[i * 4096 / sizeof(*p)] == SIZE / 4096 - i - 1);
-
-                        munmap(p, SIZE);
-                }
-
-                return 0;
-        }
-
-[akpm@linux-foundation.org: fix spello]
-[sasha.levin@oracle.com: initialize populate before usage]
-[sasha.levin@oracle.com: grab file ref to prevent race while mmaping]
-Signed-off-by: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Jones <davej@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Armin Rigo <arigo@tunes.org>
-Signed-off-by: Sasha Levin <sasha.levin@oracle.com>
-Cc: Hugh Dickins <hughd@google.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16:
- - Deleted code is slightly different
- - Adjust context]
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- Documentation/vm/remap_file_pages.txt |   7 +-
- include/linux/fs.h                    |   8 +-
- mm/Makefile                           |   2 +-
- mm/fremap.c                           | 283 --------------------------
- mm/mmap.c                             |  69 +++++++
- mm/nommu.c                            |   8 -
- 6 files changed, 79 insertions(+), 298 deletions(-)
- delete mode 100644 mm/fremap.c
+ include/linux/mm.h |  1 -
+ mm/madvise.c       |  9 +----
+ mm/memory.c        | 82 ++++++++++++----------------------------------
+ 3 files changed, 22 insertions(+), 70 deletions(-)
 
---- a/Documentation/vm/remap_file_pages.txt
-+++ b/Documentation/vm/remap_file_pages.txt
-@@ -18,10 +18,9 @@ on 32-bit systems to map files bigger th
- virtual address space. This use-case is not critical anymore since 64-bit
- systems are widely available.
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1103,7 +1103,6 @@ extern void user_shm_unlock(size_t, stru
+  * Parameter block passed down to zap_pte_range in exceptional cases.
+  */
+ struct zap_details {
+-	struct vm_area_struct *nonlinear_vma;	/* Check page->index if set */
+ 	struct address_space *check_mapping;	/* Check page->mapping if set */
+ 	pgoff_t	first_index;			/* Lowest page->index to unmap */
+ 	pgoff_t last_index;			/* Highest page->index to unmap */
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -277,14 +277,7 @@ static long madvise_dontneed(struct vm_a
+ 	if (vma->vm_flags & (VM_LOCKED|VM_HUGETLB|VM_PFNMAP))
+ 		return -EINVAL;
  
--The plan is to deprecate the syscall and replace it with an emulation.
--The emulation will create new VMAs instead of nonlinear mappings. It's
--going to work slower for rare users of remap_file_pages() but ABI is
--preserved.
-+The syscall is deprecated and replaced it with an emulation now. The
-+emulation creates new VMAs instead of nonlinear mappings. It's going to
-+work slower for rare users of remap_file_pages() but ABI is preserved.
+-	if (unlikely(vma->vm_flags & VM_NONLINEAR)) {
+-		struct zap_details details = {
+-			.nonlinear_vma = vma,
+-			.last_index = ULONG_MAX,
+-		};
+-		zap_page_range(vma, start, end - start, &details);
+-	} else
+-		zap_page_range(vma, start, end - start, NULL);
++	zap_page_range(vma, start, end - start, NULL);
+ 	return 0;
+ }
  
- One side effect of emulation (apart from performance) is that user can hit
- vm.max_map_count limit more easily due to additional VMAs. See comment for
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2430,8 +2430,12 @@ extern int sb_min_blocksize(struct super
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1081,6 +1081,7 @@ static unsigned long zap_pte_range(struc
+ 	spinlock_t *ptl;
+ 	pte_t *start_pte;
+ 	pte_t *pte;
++	swp_entry_t entry;
  
- extern int generic_file_mmap(struct file *, struct vm_area_struct *);
- extern int generic_file_readonly_mmap(struct file *, struct vm_area_struct *);
--extern int generic_file_remap_pages(struct vm_area_struct *, unsigned long addr,
--		unsigned long size, pgoff_t pgoff);
-+static inline int generic_file_remap_pages(struct vm_area_struct *vma,
-+		unsigned long addr, unsigned long size, pgoff_t pgoff)
-+{
-+	BUG();
-+	return 0;
-+}
- int generic_write_checks(struct file *file, loff_t *pos, size_t *count, int isblk);
- extern ssize_t generic_file_read_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -3,7 +3,7 @@
- #
- 
- mmu-y			:= nommu.o
--mmu-$(CONFIG_MMU)	:= fremap.o gup.o highmem.o madvise.o memory.o mincore.o \
-+mmu-$(CONFIG_MMU)	:= gup.o highmem.o madvise.o memory.o mincore.o \
- 			   mlock.o mmap.o mprotect.o mremap.o msync.o rmap.o \
- 			   vmalloc.o pagewalk.o pgtable-generic.o
- 
---- a/mm/fremap.c
-+++ /dev/null
-@@ -1,283 +0,0 @@
--/*
-- *   linux/mm/fremap.c
-- * 
-- * Explicit pagetable population and nonlinear (random) mappings support.
-- *
-- * started by Ingo Molnar, Copyright (C) 2002, 2003
-- */
--#include <linux/export.h>
--#include <linux/backing-dev.h>
--#include <linux/mm.h>
--#include <linux/swap.h>
--#include <linux/file.h>
--#include <linux/mman.h>
--#include <linux/pagemap.h>
--#include <linux/swapops.h>
--#include <linux/rmap.h>
--#include <linux/syscalls.h>
--#include <linux/mmu_notifier.h>
--
--#include <asm/mmu_context.h>
--#include <asm/cacheflush.h>
--#include <asm/tlbflush.h>
--
--#include "internal.h"
--
--static int mm_counter(struct page *page)
--{
--	return PageAnon(page) ? MM_ANONPAGES : MM_FILEPAGES;
--}
--
--static void zap_pte(struct mm_struct *mm, struct vm_area_struct *vma,
--			unsigned long addr, pte_t *ptep)
--{
--	pte_t pte = *ptep;
--	struct page *page;
--	swp_entry_t entry;
--
--	if (pte_present(pte)) {
--		flush_cache_page(vma, addr, pte_pfn(pte));
--		pte = ptep_clear_flush(vma, addr, ptep);
--		page = vm_normal_page(vma, addr, pte);
--		if (page) {
--			if (pte_dirty(pte))
--				set_page_dirty(page);
--			update_hiwater_rss(mm);
--			dec_mm_counter(mm, mm_counter(page));
--			page_remove_rmap(page);
--			page_cache_release(page);
--		}
--	} else {	/* zap_pte() is not called when pte_none() */
--		if (!pte_file(pte)) {
--			update_hiwater_rss(mm);
--			entry = pte_to_swp_entry(pte);
--			if (non_swap_entry(entry)) {
--				if (is_migration_entry(entry)) {
--					page = migration_entry_to_page(entry);
--					dec_mm_counter(mm, mm_counter(page));
--				}
--			} else {
--				free_swap_and_cache(entry);
--				dec_mm_counter(mm, MM_SWAPENTS);
+ again:
+ 	init_rss_vec(rss);
+@@ -1106,28 +1107,12 @@ again:
+ 				if (details->check_mapping &&
+ 				    details->check_mapping != page->mapping)
+ 					continue;
+-				/*
+-				 * Each page->index must be checked when
+-				 * invalidating or truncating nonlinear.
+-				 */
+-				if (details->nonlinear_vma &&
+-				    (page->index < details->first_index ||
+-				     page->index > details->last_index))
+-					continue;
+ 			}
+ 			ptent = ptep_get_and_clear_full(mm, addr, pte,
+ 							tlb->fullmm);
+ 			tlb_remove_tlb_entry(tlb, pte, addr);
+ 			if (unlikely(!page))
+ 				continue;
+-			if (unlikely(details) && details->nonlinear_vma
+-			    && linear_page_index(details->nonlinear_vma,
+-						addr) != page->index) {
+-				pte_t ptfile = pgoff_to_pte(page->index);
+-				if (pte_soft_dirty(ptent))
+-					ptfile = pte_file_mksoft_dirty(ptfile);
+-				set_pte_at(mm, addr, pte, ptfile);
 -			}
--		}
--		pte_clear_not_present_full(mm, addr, ptep, 0);
--	}
--}
+ 			if (PageAnon(page))
+ 				rss[MM_ANONPAGES]--;
+ 			else {
+@@ -1150,33 +1135,25 @@ again:
+ 			}
+ 			continue;
+ 		}
+-		/*
+-		 * If details->check_mapping, we leave swap entries;
+-		 * if details->nonlinear_vma, we leave file entries.
+-		 */
++		/* If details->check_mapping, we leave swap entries. */
+ 		if (unlikely(details))
+ 			continue;
+-		if (pte_file(ptent)) {
+-			if (unlikely(!(vma->vm_flags & VM_NONLINEAR)))
+-				print_bad_pte(vma, addr, ptent, NULL);
+-		} else {
+-			swp_entry_t entry = pte_to_swp_entry(ptent);
 -
--/*
-- * Install a file pte to a given virtual memory address, release any
-- * previously existing mapping.
-- */
--static int install_file_pte(struct mm_struct *mm, struct vm_area_struct *vma,
--		unsigned long addr, unsigned long pgoff, pgprot_t prot)
+-			if (!non_swap_entry(entry))
+-				rss[MM_SWAPENTS]--;
+-			else if (is_migration_entry(entry)) {
+-				struct page *page;
+-
+-				page = migration_entry_to_page(entry);
+-
+-				if (PageAnon(page))
+-					rss[MM_ANONPAGES]--;
+-				else
+-					rss[MM_FILEPAGES]--;
+-			}
+-			if (unlikely(!free_swap_and_cache(entry)))
+-				print_bad_pte(vma, addr, ptent, NULL);
++
++		entry = pte_to_swp_entry(ptent);
++		if (!non_swap_entry(entry))
++			rss[MM_SWAPENTS]--;
++		else if (is_migration_entry(entry)) {
++			struct page *page;
++
++			page = migration_entry_to_page(entry);
++
++			if (PageAnon(page))
++				rss[MM_ANONPAGES]--;
++			else
++				rss[MM_FILEPAGES]--;
+ 		}
++		if (unlikely(!free_swap_and_cache(entry)))
++			print_bad_pte(vma, addr, ptent, NULL);
+ 		pte_clear_not_present_full(mm, addr, pte, tlb->fullmm);
+ 	} while (pte++, addr += PAGE_SIZE, addr != end);
+ 
+@@ -1288,7 +1265,7 @@ static void unmap_page_range(struct mmu_
+ 	pgd_t *pgd;
+ 	unsigned long next;
+ 
+-	if (details && !details->check_mapping && !details->nonlinear_vma)
++	if (details && !details->check_mapping)
+ 		details = NULL;
+ 
+ 	BUG_ON(addr >= end);
+@@ -1384,7 +1361,7 @@ void unmap_vmas(struct mmu_gather *tlb,
+  * @vma: vm_area_struct holding the applicable pages
+  * @start: starting address of pages to zap
+  * @size: number of bytes to zap
+- * @details: details of nonlinear truncation or shared cache invalidation
++ * @details: details of shared cache invalidation
+  *
+  * Caller must protect the VMA list
+  */
+@@ -1410,7 +1387,7 @@ void zap_page_range(struct vm_area_struc
+  * @vma: vm_area_struct holding the applicable pages
+  * @address: starting address of pages to zap
+  * @size: number of bytes to zap
+- * @details: details of nonlinear truncation or shared cache invalidation
++ * @details: details of shared cache invalidation
+  *
+  * The range must fit into one VMA.
+  */
+@@ -2340,25 +2317,11 @@ static inline void unmap_mapping_range_t
+ 	}
+ }
+ 
+-static inline void unmap_mapping_range_list(struct list_head *head,
+-					    struct zap_details *details)
 -{
--	int err = -ENOMEM;
--	pte_t *pte, ptfile;
--	spinlock_t *ptl;
--
--	pte = get_locked_pte(mm, addr, &ptl);
--	if (!pte)
--		goto out;
--
--	ptfile = pgoff_to_pte(pgoff);
--
--	if (!pte_none(*pte))
--		zap_pte(mm, vma, addr, pte);
--
--	set_pte_at(mm, addr, pte, pte_file_mksoft_dirty(ptfile));
--	/*
--	 * We don't need to run update_mmu_cache() here because the "file pte"
--	 * being installed by install_file_pte() is not a real pte - it's a
--	 * non-present entry (like a swap entry), noting what file offset should
--	 * be mapped there when there's a fault (in a non-linear vma where
--	 * that's not obvious).
--	 */
--	pte_unmap_unlock(pte, ptl);
--	err = 0;
--out:
--	return err;
--}
--
--int generic_file_remap_pages(struct vm_area_struct *vma, unsigned long addr,
--			     unsigned long size, pgoff_t pgoff)
--{
--	struct mm_struct *mm = vma->vm_mm;
--	int err;
--
--	do {
--		err = install_file_pte(mm, vma, addr, pgoff, vma->vm_page_prot);
--		if (err)
--			return err;
--
--		size -= PAGE_SIZE;
--		addr += PAGE_SIZE;
--		pgoff++;
--	} while (size);
--
--	return 0;
--}
--EXPORT_SYMBOL(generic_file_remap_pages);
--
--/**
-- * sys_remap_file_pages - remap arbitrary pages of an existing VM_SHARED vma
-- * @start: start of the remapped virtual memory range
-- * @size: size of the remapped virtual memory range
-- * @prot: new protection bits of the range (see NOTE)
-- * @pgoff: to-be-mapped page of the backing store file
-- * @flags: 0 or MAP_NONBLOCKED - the later will cause no IO.
-- *
-- * sys_remap_file_pages remaps arbitrary pages of an existing VM_SHARED vma
-- * (shared backing store file).
-- *
-- * This syscall works purely via pagetables, so it's the most efficient
-- * way to map the same (large) file into a given virtual window. Unlike
-- * mmap()/mremap() it does not create any new vmas. The new mappings are
-- * also safe across swapout.
-- *
-- * NOTE: the @prot parameter right now is ignored (but must be zero),
-- * and the vma's default protection is used. Arbitrary protections
-- * might be implemented in the future.
-- */
--SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
--		unsigned long, prot, unsigned long, pgoff, unsigned long, flags)
--{
--	struct mm_struct *mm = current->mm;
--	struct address_space *mapping;
 -	struct vm_area_struct *vma;
--	int err = -EINVAL;
--	int has_write_lock = 0;
--	vm_flags_t vm_flags = 0;
--
--	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. "
--			"See Documentation/vm/remap_file_pages.txt.\n",
--			current->comm, current->pid);
--
--	if (prot)
--		return err;
--	/*
--	 * Sanitize the syscall parameters:
--	 */
--	start = start & PAGE_MASK;
--	size = size & PAGE_MASK;
--
--	/* Does the address range wrap, or is the span zero-sized? */
--	if (start + size <= start)
--		return err;
--
--	/* Does pgoff wrap? */
--	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
--		return err;
--
--	/* Can we represent this offset inside this architecture's pte's? */
--#if PTE_FILE_MAX_BITS < BITS_PER_LONG
--	if (pgoff + (size >> PAGE_SHIFT) >= (1UL << PTE_FILE_MAX_BITS))
--		return err;
--#endif
--
--	/* We need down_write() to change vma->vm_flags. */
--	down_read(&mm->mmap_sem);
-- retry:
--	vma = find_vma(mm, start);
 -
 -	/*
--	 * Make sure the vma is shared, that it supports prefaulting,
--	 * and that the remapped range is valid and fully within
--	 * the single existing vma.
+-	 * In nonlinear VMAs there is no correspondence between virtual address
+-	 * offset and file offset.  So we must perform an exhaustive search
+-	 * across *all* the pages in each nonlinear VMA, not just the pages
+-	 * whose virtual address lies outside the file truncation point.
 -	 */
--	if (!vma || !(vma->vm_flags & VM_SHARED))
--		goto out;
--
--	if (!vma->vm_ops || !vma->vm_ops->remap_pages)
--		goto out;
--
--	if (start < vma->vm_start || start + size > vma->vm_end)
--		goto out;
--
--	/* Must set VM_NONLINEAR before any pages are populated. */
--	if (!(vma->vm_flags & VM_NONLINEAR)) {
--		/*
--		 * vm_private_data is used as a swapout cursor
--		 * in a VM_NONLINEAR vma.
--		 */
--		if (vma->vm_private_data)
--			goto out;
--
--		/* Don't need a nonlinear mapping, exit success */
--		if (pgoff == linear_page_index(vma, start)) {
--			err = 0;
--			goto out;
--		}
--
--		if (!has_write_lock) {
--get_write_lock:
--			up_read(&mm->mmap_sem);
--			down_write(&mm->mmap_sem);
--			has_write_lock = 1;
--			goto retry;
--		}
--		mapping = vma->vm_file->f_mapping;
--		/*
--		 * page_mkclean doesn't work on nonlinear vmas, so if
--		 * dirty pages need to be accounted, emulate with linear
--		 * vmas.
--		 */
--		if (mapping_cap_account_dirty(mapping)) {
--			unsigned long addr;
--			struct file *file = get_file(vma->vm_file);
--			/* mmap_region may free vma; grab the info now */
--			vm_flags = vma->vm_flags;
--
--			addr = mmap_region(file, start, size, vm_flags, pgoff);
--			fput(file);
--			if (IS_ERR_VALUE(addr)) {
--				err = addr;
--			} else {
--				BUG_ON(addr != start);
--				err = 0;
--			}
--			goto out_freed;
--		}
--		mutex_lock(&mapping->i_mmap_mutex);
--		flush_dcache_mmap_lock(mapping);
--		vma->vm_flags |= VM_NONLINEAR;
--		vma_interval_tree_remove(vma, &mapping->i_mmap);
--		vma_nonlinear_insert(vma, &mapping->i_mmap_nonlinear);
--		flush_dcache_mmap_unlock(mapping);
--		mutex_unlock(&mapping->i_mmap_mutex);
+-	list_for_each_entry(vma, head, shared.nonlinear) {
+-		details->nonlinear_vma = vma;
+-		unmap_mapping_range_vma(vma, vma->vm_start, vma->vm_end, details);
 -	}
--
--	if (vma->vm_flags & VM_LOCKED) {
--		/*
--		 * drop PG_Mlocked flag for over-mapped range
--		 */
--		if (!has_write_lock)
--			goto get_write_lock;
--		vm_flags = vma->vm_flags;
--		munlock_vma_pages_range(vma, start, start + size);
--		vma->vm_flags = vm_flags;
--	}
--
--	mmu_notifier_invalidate_range_start(mm, start, start + size);
--	err = vma->vm_ops->remap_pages(vma, start, size, pgoff);
--	mmu_notifier_invalidate_range_end(mm, start, start + size);
--
--	/*
--	 * We can't clear VM_NONLINEAR because we'd have to do
--	 * it after ->populate completes, and that would prevent
--	 * downgrading the lock.  (Locks can't be upgraded).
--	 */
--
--out:
--	if (vma)
--		vm_flags = vma->vm_flags;
--out_freed:
--	if (likely(!has_write_lock))
--		up_read(&mm->mmap_sem);
--	else
--		up_write(&mm->mmap_sem);
--	if (!err && ((vm_flags & VM_LOCKED) || !(flags & MAP_NONBLOCK)))
--		mm_populate(start, size);
--
--	return err;
 -}
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2620,6 +2620,75 @@ SYSCALL_DEFINE2(munmap, unsigned long, a
- 	return vm_munmap(addr, len);
- }
- 
-+
-+/*
-+ * Emulation of deprecated remap_file_pages() syscall.
-+ */
-+SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
-+		unsigned long, prot, unsigned long, pgoff, unsigned long, flags)
-+{
-+
-+	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma;
-+	unsigned long populate = 0;
-+	unsigned long ret = -EINVAL;
-+	struct file *file;
-+
-+	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. "
-+			"See Documentation/vm/remap_file_pages.txt.\n",
-+			current->comm, current->pid);
-+
-+	if (prot)
-+		return ret;
-+	start = start & PAGE_MASK;
-+	size = size & PAGE_MASK;
-+
-+	if (start + size <= start)
-+		return ret;
-+
-+	/* Does pgoff wrap? */
-+	if (pgoff + (size >> PAGE_SHIFT) < pgoff)
-+		return ret;
-+
-+	down_write(&mm->mmap_sem);
-+	vma = find_vma(mm, start);
-+
-+	if (!vma || !(vma->vm_flags & VM_SHARED))
-+		goto out;
-+
-+	if (start < vma->vm_start || start + size > vma->vm_end)
-+		goto out;
-+
-+	if (pgoff == linear_page_index(vma, start)) {
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	prot |= vma->vm_flags & VM_READ ? PROT_READ : 0;
-+	prot |= vma->vm_flags & VM_WRITE ? PROT_WRITE : 0;
-+	prot |= vma->vm_flags & VM_EXEC ? PROT_EXEC : 0;
-+
-+	flags &= MAP_NONBLOCK;
-+	flags |= MAP_SHARED | MAP_FIXED | MAP_POPULATE;
-+	if (vma->vm_flags & VM_LOCKED) {
-+		flags |= MAP_LOCKED;
-+		/* drop PG_Mlocked flag for over-mapped range */
-+		munlock_vma_pages_range(vma, start, start + size);
-+	}
-+
-+	file = get_file(vma->vm_file);
-+	ret = do_mmap_pgoff(vma->vm_file, start, size,
-+			prot, flags, pgoff, &populate);
-+	fput(file);
-+out:
-+	up_write(&mm->mmap_sem);
-+	if (populate)
-+		mm_populate(ret, populate);
-+	if (!IS_ERR_VALUE(ret))
-+		ret = 0;
-+	return ret;
-+}
-+
- static inline void verify_mm_writelocked(struct mm_struct *mm)
- {
- #ifdef CONFIG_DEBUG_VM
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -1999,14 +1999,6 @@ void filemap_map_pages(struct vm_area_st
- }
- EXPORT_SYMBOL(filemap_map_pages);
- 
--int generic_file_remap_pages(struct vm_area_struct *vma, unsigned long addr,
--			     unsigned long size, pgoff_t pgoff)
--{
--	BUG();
--	return 0;
--}
--EXPORT_SYMBOL(generic_file_remap_pages);
 -
- int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
- 		unsigned long addr, void *buf, int len, int write)
- {
+ /**
+- * unmap_mapping_range - unmap the portion of all mmaps in the specified address_space corresponding to the specified page range in the underlying file.
++ * unmap_mapping_range - unmap the portion of all mmaps in the specified
++ * address_space corresponding to the specified page range in the underlying
++ * file.
++ *
+  * @mapping: the address space containing mmaps to be unmapped.
+  * @holebegin: byte in first page to unmap, relative to the start of
+  * the underlying file.  This will be rounded down to a PAGE_SIZE
+@@ -2387,7 +2350,6 @@ void unmap_mapping_range(struct address_
+ 	}
+ 
+ 	details.check_mapping = even_cows? NULL: mapping;
+-	details.nonlinear_vma = NULL;
+ 	details.first_index = hba;
+ 	details.last_index = hba + hlen - 1;
+ 	if (details.last_index < details.first_index)
+@@ -2397,8 +2359,6 @@ void unmap_mapping_range(struct address_
+ 	mutex_lock(&mapping->i_mmap_mutex);
+ 	if (unlikely(!RB_EMPTY_ROOT(&mapping->i_mmap)))
+ 		unmap_mapping_range_tree(&mapping->i_mmap, &details);
+-	if (unlikely(!list_empty(&mapping->i_mmap_nonlinear)))
+-		unmap_mapping_range_list(&mapping->i_mmap_nonlinear, &details);
+ 	mutex_unlock(&mapping->i_mmap_mutex);
+ }
+ EXPORT_SYMBOL(unmap_mapping_range);
 
