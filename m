@@ -2,105 +2,80 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9226AC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE4CC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D0102088F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:55:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D0102088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id DDFA0204FD
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:56:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDFA0204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbeI2OWs (ORCPT
+        id S1727741AbeI2OX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 10:22:48 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41817 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbeI2OWs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 10:22:48 -0400
-Received: by mail-vs1-f66.google.com with SMTP id e128-v6so4883025vsc.8;
-        Sat, 29 Sep 2018 00:55:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h3ESr2xI28NP1aemcmYN65QISZL1RvT0IOKEwjQoj2Q=;
-        b=bRuAbUCdi3vwij8u09Xr7AiLPGE2+0PDpgDfqK3EAvqS1zXyLko2+jUJy4kHjHx/FA
-         0Jk58ZzZkvAgIfY9ieCrP5a06Wx8rUNZTLBu/SqMDMSwdIsKV8cuHz6q9GW6dUHo8r/+
-         kgdENs7owt5sHGoS5dkAK7pYP3Feqj4mjPc+7x/zHdR8yg3LvEOHH8GAMDqHQ9w9nOCA
-         RNNxFVx11tLM+6JFp5J5PUAJ6FLEih+PC5AnsyS0l2+hr1gmxwW2NfK5pREjAt2ncpaS
-         WhdjuglH+JKTTPZL5kdu2fBfVsl6oPp2axcxkysn+vNCqdlHs22CTbGNlaagrfVTp9mV
-         w/ZQ==
-X-Gm-Message-State: ABuFfoht93ICPsl50V4Xz7okcaXB49L+xDnlJU1AICKjGgVE6nHciFUT
-        tTvTvBsW47XqUOudZ8Ldo9HuHB9bS4ViusVCa9w=
-X-Google-Smtp-Source: ACcGV62uUsMFWfuXzgg1xCyQ4d1hZ1EWb6uiPKJF0b0jHNvyNVvq4Ijybx7ejx0qwqJuJiHOzMIXLW9x/yE/wFcXiMo=
-X-Received: by 2002:a67:6582:: with SMTP id z124-v6mr734814vsb.11.1538207720462;
- Sat, 29 Sep 2018 00:55:20 -0700 (PDT)
+        Sat, 29 Sep 2018 10:23:28 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:50204 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727508AbeI2OX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 10:23:28 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ODLdnqEmWjkP; Sat, 29 Sep 2018 09:56:00 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BD81000329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd8:1000:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 19C541EC04DF;
+        Sat, 29 Sep 2018 09:56:00 +0200 (CEST)
+Date:   Sat, 29 Sep 2018 09:56:01 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Andy Polyakov <appro@openssl.org>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        X86 ML <x86@kernel.org>
+Subject: Re: [PATCH net-next v6 04/23] zinc: ChaCha20 x86_64 implementation
+Message-ID: <20180929075601.GA11115@zn.tnic>
+References: <20180925145622.29959-1-Jason@zx2c4.com>
+ <20180925145622.29959-5-Jason@zx2c4.com>
+ <CAKv+Gu9aOiYdEzHHrHFHUFK=hNfeS=zEsvMe9OWD8hEdAYkffg@mail.gmail.com>
+ <CAHmME9rc5zgN4HhBy0_oq+EbEXdS8nePzA7qW39nocx_y4ay1Q@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180928223947.20751-1-f.fainelli@gmail.com>
-In-Reply-To: <20180928223947.20751-1-f.fainelli@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sat, 29 Sep 2018 09:55:08 +0200
-Message-ID: <CAMuHMdVgpf2b8gOeygij7MGjTwxgBv8-Y0M5ggBBhNE0pS07pA@mail.gmail.com>
-Subject: Re: [PATCH] i2c: brcmstb: Allow enabling the driver on DSL SoCs
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
-        kramasub@codeaurora.org,
-        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        eajames@linux.vnet.ibm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        manivannan.sadhasivam@linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHmME9rc5zgN4HhBy0_oq+EbEXdS8nePzA7qW39nocx_y4ay1Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On Sat, Sep 29, 2018 at 04:01:53AM +0200, Jason A. Donenfeld wrote:
+> I was wondering about the ordering of these, actually. I've seen s-o-b
+> on top and s-o-b on bottom of the cc list in lots of commits and
+> haven't yet divined the One True Position.
 
-On Sat, Sep 29, 2018 at 12:40 AM Florian Fainelli <f.fainelli@gmail.com> wrote:
-> ARCH_BCM_63XX which is used by ARM-based DSL SoCs from Broadcom uses the
-> same controller, make it possible to select the STB driver and update
-> the Kconfig and help text a bit.
->
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Documentation/process/submitting-patches.rst
 
-Thanks for your patch!
+section 12, first sentence.
 
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -432,12 +432,13 @@ config I2C_BCM_KONA
->           If you do not need KONA I2C interface, say N.
->
->  config I2C_BRCMSTB
-> -       tristate "BRCM Settop I2C controller"
-> -       depends on ARCH_BRCMSTB || BMIPS_GENERIC || COMPILE_TEST
-> +       tristate "BRCM Settop/DSL I2C controller"
-> +       depends on ARCH_BRCMSTB || BMIPS_GENERIC || COMPILE_TEST || \
-> +                  ARCH_BCM_63XX
-
-I think it would be good to keep the "|| COMPILE_TEST" as the last dependency.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+The SOB chain needs to clearly express the path of the patch from
+author(s) to the upstream kernel.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards/Gruss,
+    Boris.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Good mailing practices for 400: avoid top-posting and trim the reply.
