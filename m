@@ -3,48 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C53C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905B7C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B2C12073F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:01:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B2C12073F
+	by mail.kernel.org (Postfix) with ESMTP id 6012B2073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:02:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6012B2073F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbeI2N3B (ORCPT
+        id S1727672AbeI2N3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 09:29:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49567 "EHLO
+        Sat, 29 Sep 2018 09:29:31 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54259 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727393AbeI2N3B (ORCPT
+        with ESMTP id S1727393AbeI2N3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 09:29:01 -0400
+        Sat, 29 Sep 2018 09:29:31 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8T71Osr726338
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8T71uX5726385
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 29 Sep 2018 00:01:24 -0700
+        Sat, 29 Sep 2018 00:01:56 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8T71OtM726335;
-        Sat, 29 Sep 2018 00:01:24 -0700
-Date:   Sat, 29 Sep 2018 00:01:24 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8T71uwR726382;
+        Sat, 29 Sep 2018 00:01:56 -0700
+Date:   Sat, 29 Sep 2018 00:01:56 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-b5e4274ef7f00a03ce8d728701409a6e2c99146b@git.kernel.org>
-Cc:     mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, reinette.chatre@intel.com,
-        peterz@infradead.org
-Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
-          reinette.chatre@intel.com, hpa@zytor.com, mingo@kernel.org,
-          tglx@linutronix.de
-In-Reply-To: <f430f57347414e0691765d92b144758ab93d8407.1537377064.git.reinette.chatre@intel.com>
-References: <f430f57347414e0691765d92b144758ab93d8407.1537377064.git.reinette.chatre@intel.com>
+Message-ID: <tip-0a701c9dd5351cbaef1677a0c8d37950e158cd55@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        reinette.chatre@intel.com, peterz@infradead.org, hpa@zytor.com,
+        mingo@kernel.org
+Reply-To: peterz@infradead.org, reinette.chatre@intel.com,
+          tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <1822f6164e221a497648d108913d056ab675d5d0.1537377064.git.reinette.chatre@intel.com>
+References: <1822f6164e221a497648d108913d056ab675d5d0.1537377064.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Remove local register variables
-Git-Commit-ID: b5e4274ef7f00a03ce8d728701409a6e2c99146b
+Subject: [tip:x86/cache] x86/intel_rdt: Create required perf event
+ attributes
+Git-Commit-ID: 0a701c9dd5351cbaef1677a0c8d37950e158cd55
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,40 +59,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b5e4274ef7f00a03ce8d728701409a6e2c99146b
-Gitweb:     https://git.kernel.org/tip/b5e4274ef7f00a03ce8d728701409a6e2c99146b
+Commit-ID:  0a701c9dd5351cbaef1677a0c8d37950e158cd55
+Gitweb:     https://git.kernel.org/tip/0a701c9dd5351cbaef1677a0c8d37950e158cd55
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Wed, 19 Sep 2018 10:29:08 -0700
+AuthorDate: Wed, 19 Sep 2018 10:29:09 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 28 Sep 2018 22:48:26 +0200
+CommitDate: Fri, 28 Sep 2018 22:48:27 +0200
 
-x86/intel_rdt: Remove local register variables
+x86/intel_rdt: Create required perf event attributes
 
-Local register variables were used in an effort to improve the
-accuracy of the measurement of cache residency of a pseudo-locked
-region. This was done to ensure that only the cache residency of
-the memory is measured and not the cache residency of the variables
-used to perform the measurement.
+A perf event has many attributes that are maintained in a separate
+structure that should be provided when a new perf_event is created.
 
-While local register variables do accomplish the goal they do require
-significant care since different architectures have different registers
-available. Local register variables also cannot be used with valuable
-developer tools like KASAN.
+In preparation for the transition to perf_events the required attribute
+structures are created for all the events that may be used in the
+measurements. Most attributes for all the events are identical. The
+actual configuration, what specifies what needs to be measured, is what
+will be different between the events used. This configuration needs to
+be done with X86_CONFIG that cannot be used as part of the designated
+initializers used here, this will be introduced later.
 
-Significant testing has shown that similar accuracy in measurement
-results can be obtained by replacing local register variables with
-regular local variables.
+Although they do look identical at this time the attribute structures
+needs to be maintained separately since a perf_event will maintain a
+pointer to its unique attributes.
 
-Make use of local variables in the critical code but do so with
-READ_ONCE() to prevent the compiler from merging or refetching reads.
-Ensure these variables are initialized before the measurement starts,
-and ensure it is only the local variables that are accessed during
-the measurement.
-
-With the removal of the local register variables and using READ_ONCE()
-there is no longer a motivation for using a direct wrmsr call (that
-avoids the additional tracing code that may clobber the local register
-variables).
+In support of patch testing the new structs are given the unused attribute
+until their use in later patches.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -103,110 +96,53 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/f430f57347414e0691765d92b144758ab93d8407.1537377064.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/1822f6164e221a497648d108913d056ab675d5d0.1537377064.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 53 +++++------------------------
- 1 file changed, 9 insertions(+), 44 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index 40f3903ae5d9..8ad83eb3fc89 100644
+index 8ad83eb3fc89..33d7968f152a 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -886,31 +886,14 @@ static int measure_cycles_lat_fn(void *_plr)
- 	struct pseudo_lock_region *plr = _plr;
- 	unsigned long i;
- 	u64 start, end;
--#ifdef CONFIG_KASAN
--	/*
--	 * The registers used for local register variables are also used
--	 * when KASAN is active. When KASAN is active we use a regular
--	 * variable to ensure we always use a valid pointer to access memory.
--	 * The cost is that accessing this pointer, which could be in
--	 * cache, will be included in the measurement of memory read latency.
--	 */
- 	void *mem_r;
--#else
--#ifdef CONFIG_X86_64
--	register void *mem_r asm("rbx");
--#else
--	register void *mem_r asm("ebx");
--#endif /* CONFIG_X86_64 */
--#endif /* CONFIG_KASAN */
+@@ -17,6 +17,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/kthread.h>
+ #include <linux/mman.h>
++#include <linux/perf_event.h>
+ #include <linux/pm_qos.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+@@ -915,6 +916,31 @@ static int measure_cycles_lat_fn(void *_plr)
+ 	return 0;
+ }
  
- 	local_irq_disable();
- 	/*
--	 * The wrmsr call may be reordered with the assignment below it.
--	 * Call wrmsr as directly as possible to avoid tracing clobbering
--	 * local register variable used for memory pointer.
-+	 * Disable hardware prefetchers.
- 	 */
--	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
--	mem_r = plr->kmem;
-+	wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
-+	mem_r = READ_ONCE(plr->kmem);
- 	/*
- 	 * Dummy execute of the time measurement to load the needed
- 	 * instructions into the L1 instruction cache.
-@@ -939,26 +922,10 @@ static int measure_cycles_perf_fn(void *_plr)
- 	struct pseudo_lock_region *plr = _plr;
- 	unsigned long long l2_hits, l2_miss;
- 	u64 l2_hit_bits, l2_miss_bits;
--	unsigned long i;
--#ifdef CONFIG_KASAN
--	/*
--	 * The registers used for local register variables are also used
--	 * when KASAN is active. When KASAN is active we use regular variables
--	 * at the cost of including cache access latency to these variables
--	 * in the measurements.
--	 */
- 	unsigned int line_size;
- 	unsigned int size;
-+	unsigned long i;
- 	void *mem_r;
--#else
--	register unsigned int line_size asm("esi");
--	register unsigned int size asm("edi");
--#ifdef CONFIG_X86_64
--	register void *mem_r asm("rbx");
--#else
--	register void *mem_r asm("ebx");
--#endif /* CONFIG_X86_64 */
--#endif /* CONFIG_KASAN */
- 
- 	/*
- 	 * Non-architectural event for the Goldmont Microarchitecture
-@@ -1011,11 +978,9 @@ static int measure_cycles_perf_fn(void *_plr)
- 
- 	local_irq_disable();
- 	/*
--	 * Call wrmsr direcly to avoid the local register variables from
--	 * being overwritten due to reordering of their assignment with
--	 * the wrmsr calls.
-+	 * Disable hardware prefetchers.
- 	 */
--	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
-+	wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
- 	/* Disable events and reset counters */
- 	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0, 0x0);
- 	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1, 0x0);
-@@ -1028,6 +993,9 @@ static int measure_cycles_perf_fn(void *_plr)
- 		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0 + 3, 0x0);
- 	}
- 	/* Set and enable the L2 counters */
-+	mem_r = READ_ONCE(plr->kmem);
-+	size = READ_ONCE(plr->size);
-+	line_size = READ_ONCE(plr->line_size);
- 	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0, l2_hit_bits);
- 	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1, l2_miss_bits);
- 	if (l3_hit_bits > 0) {
-@@ -1036,9 +1004,6 @@ static int measure_cycles_perf_fn(void *_plr)
- 		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 3,
- 				      l3_miss_bits);
- 	}
--	mem_r = plr->kmem;
--	size = plr->size;
--	line_size = plr->line_size;
- 	for (i = 0; i < size; i += line_size) {
- 		asm volatile("mov (%0,%1,1), %%eax\n\t"
- 			     :
++/*
++ * Create a perf_event_attr for the hit and miss perf events that will
++ * be used during the performance measurement. A perf_event maintains
++ * a pointer to its perf_event_attr so a unique attribute structure is
++ * created for each perf_event.
++ *
++ * The actual configuration of the event is set right before use in order
++ * to use the X86_CONFIG macro.
++ */
++static struct perf_event_attr __attribute__((unused)) perf_miss_attr = {
++	.type		= PERF_TYPE_RAW,
++	.size		= sizeof(struct perf_event_attr),
++	.pinned		= 1,
++	.disabled	= 0,
++	.exclude_user	= 1,
++};
++
++static struct perf_event_attr __attribute__((unused)) perf_hit_attr = {
++	.type		= PERF_TYPE_RAW,
++	.size		= sizeof(struct perf_event_attr),
++	.pinned		= 1,
++	.disabled	= 0,
++	.exclude_user	= 1,
++};
++
+ static int measure_cycles_perf_fn(void *_plr)
+ {
+ 	unsigned long long l3_hits = 0, l3_miss = 0;
