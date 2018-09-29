@@ -2,132 +2,173 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60012C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 06:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EB2C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 06:16:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E69EF206B8
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 06:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80C112073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 06:16:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="X+HY5Ft5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E69EF206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XBvNhcr2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C112073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbeI2MkI (ORCPT
+        id S1727520AbeI2Mng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 08:40:08 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39720 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727248AbeI2MkI (ORCPT
+        Sat, 29 Sep 2018 08:43:36 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54201 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727393AbeI2Mng (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 08:40:08 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q8-v6so4034496wmq.4
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 23:12:58 -0700 (PDT)
+        Sat, 29 Sep 2018 08:43:36 -0400
+Received: by mail-it1-f195.google.com with SMTP id q70-v6so5233895itb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 23:16:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=29jDzSXlXoffgt2mMIY4dV6BM8lRkIziSF82pMVMEUI=;
-        b=X+HY5Ft5iJaK0ZTUxP+aceQUKNO/Y1AdprsmKMDrmGYY3DmZ6BIKQn7tZN93/7piOC
-         YNkh9/XQjZHBUBS98iXRFnblDKAnUQOeced4giytTsSjIu51dG7MaDSz82UoAn8XC5Tm
-         yeAYv3NeZ7REQwEM4jHvSLnRZ/RzWvXwvCETCXvgSxjqa9kQ9Kqt1ctx3cORjw7Cwba5
-         Wl07ONSXkhVEJEe5o1NZnhdWXqdSoUzM0gwDGlpo+6tfWN7TfIT4mqhdsb7kz8UKyJwp
-         RUZe4uxJHcRpUBQ+k8z8T2elU0K2MbuvfwJAt06y23KBwPsE096PtWMmRCVQV1K1OAED
-         5dLw==
+        bh=XeZyq/qEj2ItjcgGNAv5a4ph8pT+nz7xNN0hcMcL6bI=;
+        b=XBvNhcr202lnJQ2QxFQz0c/oxOqTt1u566xfCi5djYRwqGhNfjtOPlhLg3FQ8U4wUD
+         ZUTdeCydA2kZ9a+5UxE6kPThnEfwuo3Ho9/QGu/wTdvAh3WLRr8JmmycLPMqDC5KFUXC
+         PSpXBAacntM4WE3tszcFUpqMIgFrYSj3aibQ4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=29jDzSXlXoffgt2mMIY4dV6BM8lRkIziSF82pMVMEUI=;
-        b=EM/lU0WHRRBZk4I1VyezGoh9hagcJbhgMS7/ze89QPwjGzIh4o2S8nhffXnEjMbVmC
-         pMCChyNHFxqZRbIlV/SDsG5Gw5fMvxaoaUTbRpfs4S6XJfH9M/UgUubVTfOFfNyNTNb3
-         pkZH12o7z7/W+NvtATURrGyO4OewWufcgbJdUVOUZ+lWLcuDTPYn2eWnOa4KL1IpVN6K
-         57d7rknx48VRitGn56vggHZITzohtq5Hzsl2i77WvKC+m/9Omj1SD0Wm+j+vE3p6oxJy
-         zOMekHXlSnnaAT4KdSd/I4w7ML2A7eoRQxBWd/uqED4Fur80XfdbD10+SLlR1KdO8QMc
-         +uAQ==
-X-Gm-Message-State: ABuFfogAYgSzQ//d0z+eO8dYj4lGm/EThnxUJNWwBC8MVGM99Q8CMExm
-        OK9j9nxTki8uwrMRIM1Cp/5e84oY8ux6fLHzv8+cqg==
-X-Google-Smtp-Source: ACcGV63seKW84U6HmityIPpYOaCw3LFOUKpPjVpDhbo8qpRwSHMESAdEb+Nc7CMM3mi/N2b3lmBlAQvlDvmhVdwgNFA=
-X-Received: by 2002:a1c:3383:: with SMTP id z125-v6mr3183079wmz.56.1538201577553;
- Fri, 28 Sep 2018 23:12:57 -0700 (PDT)
+        bh=XeZyq/qEj2ItjcgGNAv5a4ph8pT+nz7xNN0hcMcL6bI=;
+        b=AGzskDNAxOtb9yWYCuxC4CijkknbBKG0rhSm8wL41kwxLF2QADwWa0ntPhJvcseAaA
+         UWrIEiV52TUYiQ04BJn3rjDm14y7AOcGrmILnulsb9t58/ta0UCKRmQS4X5RW5EGimF1
+         P8Z/vhMNyIGwl/c9ZSqD1Ba+EuYQU6790PpMzR7tiJWB3R/Hy+uoutOhVL91bJmnPt+W
+         pKECEzofELKx6udfXygTC2AUJxtbhdeYgDEa+VjdJQ7AttH1LQuXDqsetZp41rbyN8L5
+         JYlsze7XDyEp2aLrb7XeC2kjlrapmzUI7RfxeW3RtK78q8DE6KVKpzjLDeCYwySl/9KV
+         a3BQ==
+X-Gm-Message-State: ABuFfohEpFAK2TOD9g2Y9YmkGvgA+jngWZ5ntOGEpE7WF9844vu6C/95
+        8koUh9c2xUbjxpKMiL1J6njHUNbwJZxuCKg5n2FxIA==
+X-Google-Smtp-Source: ACcGV63TM/Ae+4lxzR70epyXb8a5sosf0IbMGg23Z2ZVr7uZrTLlQVIVntlNrazOsBI0OpfqT9kVLkEvabN183/YClE=
+X-Received: by 2002:a24:57cb:: with SMTP id u194-v6mr3947691ita.148.1538201786140;
+ Fri, 28 Sep 2018 23:16:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180912143822.21948-1-anup@brainfault.org> <mhng-f8bcf381-8d26-4082-876a-781fe87ee721@palmer-si-x1c4>
-In-Reply-To: <mhng-f8bcf381-8d26-4082-876a-781fe87ee721@palmer-si-x1c4>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Sat, 29 Sep 2018 11:42:47 +0530
-Message-ID: <CAAhSdy2gC15j9zW+_rjBQzofGyhBjcNVWSYCbBtrAmQtDogBqA@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: Show CPU ID and Hart ID separately in /proc/cpuinfo
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>,
-        Atish Patra <atish.patra@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 23:16:25
+ -0700 (PDT)
+In-Reply-To: <CAHmME9qtN8kiKnMHTa76r9a_5Ou_s3WhAMT_HnH7-1FeoHUOZg@mail.gmail.com>
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
+ <CAKv+Gu8knzzmK4_KouFQWKzMdHFgEsk-CtBrcuAvk0bYkDFO=w@mail.gmail.com> <CAHmME9qtN8kiKnMHTa76r9a_5Ou_s3WhAMT_HnH7-1FeoHUOZg@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 29 Sep 2018 08:16:25 +0200
+Message-ID: <CAKv+Gu9FoFQymp2-=rUeh14CkUKON389OCE7stYCOFwKZpaCrg@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 7:16 AM Palmer Dabbelt <palmer@sifive.com> wrote:
+On 29 September 2018 at 04:20, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> Hi Ard,
 >
-> On Wed, 12 Sep 2018 07:38:22 PDT (-0700), anup@brainfault.org wrote:
-> > Currently, /proc/cpuinfo show logical CPU ID as Hart ID which
-> > is in-correct. This patch shows CPU ID and Hart ID separately
-> > in /proc/cpuinfo using cpuid_to_hardid_map().
-> >
-> > With this patch, contents of /proc/cpuinfo looks as follows:
-> > cpu   : 0
-> > hart  : 1
-> > isa   : rv64imafdcsu
-> > mmu   : sv48
-> >
-> > cpu   : 1
-> > hart  : 0
-> > isa   : rv64imafdcsu
-> > mmu   : sv48
-> >
-> > cpu   : 2
-> > hart  : 3
-> > isa   : rv64imafdcsu
-> > mmu   : sv48
-> >
-> > cpu   : 3
-> > hart  : 2
-> > isa   : rv64imafdcsu
-> > mmu   : sv48
-> >
-> > Signed-off-by: Anup Patel <anup@brainfault.org>
-> > ---
-> >  arch/riscv/kernel/cpu.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-> > index f0f0ec2737b7..7c1342e242e6 100644
-> > --- a/arch/riscv/kernel/cpu.c
-> > +++ b/arch/riscv/kernel/cpu.c
-> > @@ -87,7 +87,8 @@ static int c_show(struct seq_file *m, void *v)
-> >                                                  NULL);
-> >       const char *compat, *isa, *mmu;
-> >
-> > -     seq_printf(m, "hart\t: %lu\n", cpu_id);
-> > +     seq_printf(m, "cpu\t: %lu\n", cpu_id);
-> > +     seq_printf(m, "hart\t: %lu\n", cpuid_to_hardid_map(cpu_id));
-> >       if (!of_property_read_string(node, "riscv,isa", &isa)
-> >           && isa[0] == 'r'
-> >           && isa[1] == 'v')
+> On Fri, Sep 28, 2018 at 6:02 PM Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+>> Please put comments like this below the ---
 >
-> I like this, but it doesn't appear to apply.  Do you mind sending something
-> against Linus' master?  Then I should be able to sort it out.
+> git-notes is nice for this indeed.
+>
+>> Are these CONFIG_ symbols defined anywhere at this point?
+>
+> Yes, they're introduced in the first zinc commit. There's no git-blame
+> on git.kernel.org, presumably because it's expensive to compute, but
+> there is on my personal instance, so this might help:
+> https://git.zx2c4.com/linux-dev/blame/lib/zinc/Kconfig?h=jd/wireguard
+>
+>> In any case, I don't think these is a reason for these, at least not
+>> on ARM/arm64. The 64-bitness is implied in both cases
+>
+> You mean to say that since these nobs are def_bool y and are
+> essentially "depends on ARM", then I should just straight up use
+> CONFIG_ARM? I had thought about this, but figured this would make it
+> easier to later make these optional or have other options block them
+> need be, or even if the dependencies and requirements for having them
+> changes (for example, with UML on x86). I think doing it this way
+> gives us some flexibility later on. So if that's a compelling enough
+> reason, I'd like to keep those.
 >
 
-This patch is requires cpuid_to_hardid_map() added by Atish's
-patchset so I have requested Atish to make this patch part of
-his v6 patchset.
+Sure. But probably better to be consistent then, and stop using
+CONFIG_ARM directly in your code.
 
-Thanks,
-Anup
+>> and the
+>> dependency on !CPU_32v3 you introduce (looking at the version of
+>> Kconfig at the end of the series) seems spurious to me. Was that added
+>> because of some kbuild robot report? (we don't support ARMv3 in the
+>> kernel but ARCH_RPC is built in v3 mode because of historical reasons
+>> while the actual core is a v4)
+>
+> I added the !CPU_32v3 in my development tree after posting v6, so good
+> to hear you're just looking straight at the updated tree. If you see
+> things jump out in there prior to me posting v7, don't hesitate to let
+> me know.
+>
+> The reason it was added was indeed because of:
+> https://lists.01.org/pipermail/kbuild-all/2018-September/053114.html
+> -- exactly what you suspected, ARCH_RPC. Have a better suggestion than
+> !CPU_32v3?
+
+Yes, you could just add
+
+asflags-$(CONFIG_CPU_32v3) += -march=armv4
+
+with a comment stating that we don't actually support ARMv3 but only
+use it as a code generation target for reasons unrelated to the ISA
+
+> It seems to me like so long as the kernel has CPU_32v3 as a
+> thing in any form, I should mark Zinc as not supporting it, since
+> we'll certainly be at least v4 and up. (Do you guys have any old Acorn
+> ARM610 boxes sitting around for old time's sake at LinaroHQ? ;-)
+>
+
+AFAIK we only support the StrongARM flavor of RiscPC which is ARMv4.
+But yes, some people do care deeply about these antiquated platforms,
+including Russell, and there is no particular to leave this one
+behind.
+
+>> > +#endif
+>> > +
+>>
+>> No need to make asmlinkage declarations conditional
+>
+> Yep, addressed in the IS_ENABLED cleanup.
+>
+>>
+>> if (IS_ENABLED())
+>
+> Sorted.
+>
+>>
+>> """
+>> if (!IS_ENABLED(CONFIG_ARM))
+>>    return false;
+>>
+>> hchacha20_arm(x, derived_key);
+>> return true;
+>> """
+>>
+>> and drop the #ifdefs
+>
+> Also sorted.
+>
+> Regards,
+> Jason
