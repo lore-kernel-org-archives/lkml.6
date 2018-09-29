@@ -2,88 +2,78 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5ACC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 12:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5E1C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 12:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2A43206B2
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 12:50:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9D3420879
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 12:56:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rg8sWKTJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2A43206B2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lTFzjX4n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9D3420879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbeI2TTD (ORCPT
+        id S1728245AbeI2TYl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 15:19:03 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33948 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727235AbeI2TTC (ORCPT
+        Sat, 29 Sep 2018 15:24:41 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34444 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727979AbeI2TYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 15:19:02 -0400
-Received: by mail-ed1-f67.google.com with SMTP id q19-v6so10410549edr.1;
-        Sat, 29 Sep 2018 05:50:39 -0700 (PDT)
+        Sat, 29 Sep 2018 15:24:40 -0400
+Received: by mail-ed1-f68.google.com with SMTP id q19-v6so10417404edr.1;
+        Sat, 29 Sep 2018 05:56:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=3woudOcFYmw5jShswvg+Lfj7ZEcXm1ndkqlGWot4BRI=;
-        b=rg8sWKTJEf1x4w11FiJrfAiUg/mF8iXSPIzv22ZRKxZJxCiz3w+klTDzmKxYb+jno9
-         rlwkb9HiDk0nya3SrbaVZJ63FOIJcDQB18KUpaxa9R/ZaWxs+ZD+C3CbZW55VMuirGht
-         fe6mpal5wusfFg5xjbpzb4ZwU9/Vqu7XLCKKS1ZGZjfZm8r3S9hL4fMBbouqiA2hC9OL
-         nCjbDsNYsXHrHFutxElKqK5mCsi15j9z72Z1+kd42KBeFAgKg97SxVlE3tJQ9167HFPT
-         RiOBq9gQfcwerliPgeV+uLtDhKPIw18qfjmbUg6YuyzNJ3l/GO+wEbNnrnRnn2zbaY7b
-         gw7Q==
+        bh=0Vet9+d8MECqz4x7wr86ALZx7dPHCbSRgY+YnYT74J4=;
+        b=lTFzjX4nu8qowc6x6wKHPzSYAuaWXTbPuRJl8nf5A3I6DqDM1dcoiVp4ifIWKfkwQs
+         mhf4sOwyZlXejNmS0wJ4VcfEFrJbRofhuE8vw7gheJE3/5ikCGVqfztDgLls9x/TKiaU
+         BKL4WGZkPHmJU/Y6DSFnKInmRMhQeisHUlAfl6gLshKXYjtF9QiUl5kGDXScIIrbzQK/
+         +DLDey7+akWzwSYd0OSSedjAOdLTV+r9nH6Ue/HSb4KJQmq/H4CHyaXP2lRbel5kpoYe
+         WgSE+aOMwS4Sv3mPMg4rOzZZxyPX0SI9+8Ye4xGrkww+Klubq8cGDZzvIdxaNa7F1PU2
+         5z9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=3woudOcFYmw5jShswvg+Lfj7ZEcXm1ndkqlGWot4BRI=;
-        b=MrjPfnbDe6DFjO20xvliMFoErgvhPg6ek+E0PZMoP4GirNjpp8OCS2RQ0k8695tvGJ
-         TOC988/KPxfnHLJrkmn3BG2z/4g4IKHnqnm7Jjf+6vLVpyg+ScUAC6QYLATbSrT2BMSR
-         Ke1eEIpiidt8Gqps0+vAOeee80GmEXGGh9KVWf2kWgR5BrYQ9Vhh6idAQ7r2n/Vm5KgE
-         lyRd4hSdAnZ7uG1Yh3Q4T1je1y84/M8IJnCECEWSpPepNlLDL2WvoENtlbtLRWk4heA6
-         Tthd2Oz6R03apA2RNhPI1RI7HSDRNWZF5UpMjpCznxr7u3qhlDTbFKVay+88xCsL8G5U
-         HXlQ==
-X-Gm-Message-State: ABuFfogcb1wH2YE5eeYjC+X2necbhxZ271xxsLcX7cRxS+tU5B21b32a
-        PEoKOEBDFmvh2Vb24OTj1YM=
-X-Google-Smtp-Source: ACcGV60utoCGzW7vY+PLIZNuwcvUnnYzFb/omYrtW2C30BPGt9Y788qxnYPBNlGhOjzY/6RB4LNbiA==
-X-Received: by 2002:a50:b7b7:: with SMTP id h52-v6mr8307392ede.17.1538225439029;
-        Sat, 29 Sep 2018 05:50:39 -0700 (PDT)
+        bh=0Vet9+d8MECqz4x7wr86ALZx7dPHCbSRgY+YnYT74J4=;
+        b=dszfXgbRuL76polIlRAZmtFnWuzNbqCFZMqBQ5u/Yfd97zRPQwIE2Q/+i++zmj2t9e
+         QpnUHkbKjrAA9MuFUcgR0mqKJzM3vqIqop1blXo6uaz+SofbNHf6uAWNt9H2SmUM3pqK
+         E4bvX5y/wVxMt6Gq2ItBRwWX18NUqTZYsRDj3H2sAtLLsJm+hoNGoxFT9gSh4dii8zXn
+         +iiiNse0Uyn9/Ctg5asl+M9MrfM0Zq4uK6cWJDJTQb3pk62YrxDqdojFI641yXh1adpJ
+         Nnc+J5dlko0Eu1jJ2N6ghL11X1zpxZTv5ZxzarJtgbJhTny9xlVWS5n7UNAe84lP8w31
+         D1DQ==
+X-Gm-Message-State: ABuFfoi/kTSOs77n+5SDlLGzhzaA1zTevObI6iQ3Ks3SB/NoLXyKKjxy
+        OuYCRIJ+Qztc/LrB0VYqg3k=
+X-Google-Smtp-Source: ACcGV628047HAuDboDTN1gJaW0Vcs+pxNCW/n7XqS6qvPEhknBhm+ne0unqYPHHjZcqt2lwj35BJ2A==
+X-Received: by 2002:a17:906:1f87:: with SMTP id t7-v6mr1043044ejr.153.1538225776136;
+        Sat, 29 Sep 2018 05:56:16 -0700 (PDT)
 Received: from ziggy.stardust (p54A4E637.dip0.t-ipconnect.de. [84.164.230.55])
-        by smtp.gmail.com with ESMTPSA id s22-v6sm1173078eja.30.2018.09.29.05.50.36
+        by smtp.gmail.com with ESMTPSA id n25-v6sm2649074edq.27.2018.09.29.05.56.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Sep 2018 05:50:38 -0700 (PDT)
-Subject: Re: [PATCH v25 2/2] soc: mediatek: Add Mediatek CMDQ helper
-To:     Houlong Wei <houlong.wei@mediatek.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        CK HU <ck.hu@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        YT Shen <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
-        Monica Wang <monica.wang@mediatek.com>,
-        HS Liao <hs.liao@mediatek.com>, ginny.chen@mediatek.com,
-        enzhu.wang@mediatek.com
-References: <1538212903-14331-1-git-send-email-houlong.wei@mediatek.com>
- <1538212903-14331-3-git-send-email-houlong.wei@mediatek.com>
+        Sat, 29 Sep 2018 05:56:15 -0700 (PDT)
+Subject: Re: [PATCH v1 2/2] mmc: mediatek: add bus_clk control
+To:     Chaotian Jing <chaotian.jing@mediatek.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sean Wang <sean.wang@mediatek.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        srv_heupstream@mediatek.com
+References: <1538188195-3608-1-git-send-email-chaotian.jing@mediatek.com>
+ <1538188195-3608-2-git-send-email-chaotian.jing@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -129,15 +119,15 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <7040427b-f580-ec33-8afa-35dcf5735abb@gmail.com>
-Date:   Sat, 29 Sep 2018 14:50:35 +0200
+Message-ID: <b9a6e56c-0762-e8d7-08df-7633a8e28ec0@gmail.com>
+Date:   Sat, 29 Sep 2018 14:56:13 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <1538212903-14331-3-git-send-email-houlong.wei@mediatek.com>
+In-Reply-To: <1538188195-3608-2-git-send-email-chaotian.jing@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -145,35 +135,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 29/09/2018 11:21, Houlong Wei wrote:
-[...]
+On 29/09/2018 04:29, Chaotian Jing wrote:
+> when gate MSDC0_HCLK, access register will hang, even the MSDC driver
+> will never accessing register after HCLK was gated, but for safety, need
+> gate the bus_clk(which used to access register) too.
+> 
+> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+> ---
+>  drivers/mmc/host/mtk-sd.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index 0484138..1c1c967 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -387,6 +387,7 @@ struct msdc_host {
+>  
+>  	struct clk *src_clk;	/* msdc source clock */
+>  	struct clk *h_clk;      /* msdc h_clk */
+> +	struct clk *bus_clk;	/* bus clock which used to access register */
+>  	struct clk *src_clk_cg; /* msdc source clock control gate */
+>  	u32 mclk;		/* mmc subsystem clock frequency */
+>  	u32 src_clk_freq;	/* source clock frequency */
+> @@ -660,12 +661,14 @@ static void msdc_gate_clock(struct msdc_host *host)
+>  {
+>  	clk_disable_unprepare(host->src_clk_cg);
+>  	clk_disable_unprepare(host->src_clk);
+> +	clk_disable_unprepare(host->bus_clk);
+>  	clk_disable_unprepare(host->h_clk);
+>  }
+>  
+>  static void msdc_ungate_clock(struct msdc_host *host)
+>  {
+>  	clk_prepare_enable(host->h_clk);
+> +	clk_prepare_enable(host->bus_clk);
+>  	clk_prepare_enable(host->src_clk);
+>  	clk_prepare_enable(host->src_clk_cg);
+>  	while (!(readl(host->base + MSDC_CFG) & MSDC_CFG_CKSTB))
+> @@ -1900,6 +1903,9 @@ static int msdc_drv_probe(struct platform_device *pdev)
+>  		goto host_free;
+>  	}
+>  
+> +	host->bus_clk = devm_clk_get(&pdev->dev, "bus_clk");
+> +	if (IS_ERR(host->bus_clk))
+> +		host->bus_clk = NULL;
 
-> +static int cmdq_pkt_append_command(struct cmdq_pkt *pkt, enum cmdq_code code,
-> +				   u32 arg_a, u32 arg_b)
-> +{
-> +	u64 *cmd_ptr;
-> +
-> +	if (unlikely(pkt->cmd_buf_size + CMDQ_INST_SIZE > pkt->buf_size)) {
-> +		pkt->cmd_buf_size += CMDQ_INST_SIZE;
+That means the bus_clk is not requiered, even for mt2712, although the binding
+says so. Not sure if this is good enough or if we want to enforce the driver to
+actually error out, when the clock is not present in a mt2712 DTS.
 
-Can you plesae provide some example code of a driver that will use this API, I
-still don't understand why you need to update the cmd_buf_size here.
+I suppose that's up to the maintainer :)
 
-> +		WARN_ON(1);
-
-can we add some debug information:
-WARN_ON(1, "%s: buffer size too small for the amount of commands", __func__);
-
-Would it make sense to use WARN_ONCE()?
-
-> +		return -ENOMEM;
-> +	}
-> +	cmd_ptr = pkt->va_base + pkt->cmd_buf_size;
-> +	(*cmd_ptr) = (u64)((code << CMDQ_OP_CODE_SHIFT) | arg_a) << 32 | arg_b;
-> +	pkt->cmd_buf_size += CMDQ_INST_SIZE;
-> +
-> +	return 0;
-> +}
-
-Thanks,
+Regards,
 Matthias
