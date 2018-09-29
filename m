@@ -2,124 +2,78 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C619EC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 00:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 013FAC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 00:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B7F520779
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 00:27:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B7F520779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id C3D12206B8
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 00:27:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3D12206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeI2Gxn (ORCPT
+        id S1727421AbeI2GyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 02:53:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56488 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726287AbeI2Gxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 02:53:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2B05CAE14;
-        Sat, 29 Sep 2018 00:27:27 +0000 (UTC)
-Date:   Sat, 29 Sep 2018 10:28:55 +1000
-From:   Aleksa Sarai <asarai@suse.de>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
-        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH v7 1/6] seccomp: add a return code to trap to userspace
-Message-ID: <20180929002855.bcx5u2kabtqjtcnt@mikami>
-References: <20180927151119.9989-1-tycho@tycho.ws>
- <20180927151119.9989-2-tycho@tycho.ws>
+        Sat, 29 Sep 2018 02:54:10 -0400
+Received: from muru.com ([72.249.23.125]:57826 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726287AbeI2GyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 02:54:10 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 8C0D880C0;
+        Sat, 29 Sep 2018 00:32:19 +0000 (UTC)
+Date:   Fri, 28 Sep 2018 17:27:53 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Maciej Purski <m.purski@samsung.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        Carlos Hernandez <ceh@ti.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] regulator: core: Pass max_uV value to
+ regulator_set_voltage_rdev
+Message-ID: <20180929002753.GT5662@atomide.com>
+References: <20180615112916.GK112168@atomide.com>
+ <CGME20180618140856eucas1p281619f9bf003655a3c2eac356216ab25@eucas1p2.samsung.com>
+ <1529330913-11152-1-git-send-email-m.purski@samsung.com>
+ <20180702080505.GN112168@atomide.com>
+ <95655644-ef41-f5bd-7e8e-a257d48cd020@gmail.com>
+ <20180928202251.GM5662@atomide.com>
+ <2c0132ff-ea0f-f19e-ebfb-a0d077565d2c@gmail.com>
+ <20180928224109.GS5662@atomide.com>
+ <ea0a59ef-e201-986a-9499-a0638359b1b9@gmail.com>
+ <d14cc796-8644-41a3-5135-299bd8820204@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q7cghsiykh2acose"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180927151119.9989-2-tycho@tycho.ws>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <d14cc796-8644-41a3-5135-299bd8820204@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+* Dmitry Osipenko <digetx@gmail.com> [180928 23:55]:
+> On 9/29/18 2:17 AM, Dmitry Osipenko wrote:
+> > On 9/29/18 1:41 AM, Tony Lindgren wrote:
+> >> I'm still getting these errors after init:
+> > 
+> > Thank you very much again, seems I got what's wrong with your case. The ti-abb-regulator driver sets the "abb->current_info_idx = -EINVAL" on probe and that value is getting updated only after the first voltage change, hence _regulator_get_voltage() returns -22.
 
---q7cghsiykh2acose
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK that's starting to make some sense now thanks.
 
-On 2018-09-27, Tycho Andersen <tycho@tycho.ws> wrote:
-> This patch introduces a means for syscalls matched in seccomp to notify
-> some other task that a particular filter has been triggered.
->=20
-> The motivation for this is primarily for use with containers. For example,
-> if a container does an init_module(), we obviously don't want to load this
-> untrusted code, which may be compiled for the wrong version of the kernel
-> anyway. Instead, we could parse the module image, figure out which module
-> the container is trying to load and load it on the host.
->=20
-> As another example, containers cannot mknod(), since this checks
-> capable(CAP_SYS_ADMIN). However, harmless devices like /dev/null or
-> /dev/zero should be ok for containers to mknod, but we'd like to avoid ha=
-rd
-> coding some whitelist in the kernel. Another example is mount(), which has
-> many security restrictions for good reason, but configuration or runtime
-> knowledge could potentially be used to relax these restrictions.
+> > Please try this patch:
+> 
+> I've revised the patch and here is the current final version.
 
-Minor thing, but this is no longer _entirely_ true (now it checks
-ns_capable(sb->s_user_ns)). I think the kernel module auto-loading is a
-much more interesting example, but since this is just a commit message
-feel free to ignore my pedantry. :P
+Hey cool this one works now :) I suggest you rework the whole series
+with these fixes. I recall the series had a problem with git bisect
+too between the patches. It will make life easier for other people
+who may need to git bisect these patches.
 
-> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> CC: Kees Cook <keescook@chromium.org>
-> CC: Andy Lutomirski <luto@amacapital.net>
-> CC: Oleg Nesterov <oleg@redhat.com>
-> CC: Eric W. Biederman <ebiederm@xmission.com>
-> CC: "Serge E. Hallyn" <serge@hallyn.com>
-> CC: Christian Brauner <christian.brauner@ubuntu.com>
-> CC: Tyler Hicks <tyhicks@canonical.com>
-> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+Thanks,
 
-Would you mind adding me to the Cc: list for the next round of patches?
-It's looking pretty neat!
-
-Thanks!
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---q7cghsiykh2acose
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAluux0MACgkQnhiqJn3b
-jbShfg//elDogyxGNl2K0aVd1a01yiY3io1AMaYdFo3t1iFXaQ+chVYkP8KnhC1F
-Ce3a0GnCn1x7y8yCWipt+QcaI5vuby8x4xVMJbvQCO2kYp89LAgjE6se2ZlXph2C
-HW2UuXLgntTJJpphn3pOhzOQe8wP87JGLLYEIZ0AlvHxycWlIT9fk4YWT7LDT+ke
-egGT8dMRyIWgu3mjOBqAhmi38tjjaleyT4t0BqUZU5TopNBpkciedyyQsfrKqHeS
-T0mP11fnKDqu2ikwHvz93JgDXDbwneooRkHEyHu4+lXK1XQoZhYpDhN5w4+DUsnB
-SrUg5+JEoz0jUJ5TgGko7Y6J8wHru2j7Vr4hZyMhxgsCqceBgdykXq0ZjMXwo2oM
-vCbzyJz3VY0SDTY49c5iNFCqrJ9FKA17GqTZ2mVAtVCGqKoluw1UAmuzR8EYW4Mj
-H9tsxCepS+FKVlhTzCoGhuPUSBBgrY6u30vMuirR4A1Eo3M8/RvXjWERK0r7n2vl
-v5pvOP0WoxAQvgQ256xzduuqERU+CgX2rLcEgLRsCSltCJlGdkLlwQWz0iKEaX9i
-Iqb+RUkM/qJLenIR28bpF1haDwnfZ2JEouRFD4I8VRy81fKLASpK8YfE6aEaLHfM
-VSDPxoHYzQeN7u7WZX5WBPIkFUvoBhI2k2dxHLeQ+TQQbgFdgEk=
-=GIx7
------END PGP SIGNATURE-----
-
---q7cghsiykh2acose--
+Tony
