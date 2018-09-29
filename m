@@ -3,69 +3,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0730C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 11:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F45BC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 11:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B2B1206B8
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 11:03:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B2B1206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 14E742064D
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 11:07:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14E742064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbeI2Rbd (ORCPT
+        id S1728089AbeI2RfN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 13:31:33 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37881 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbeI2Rbd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 13:31:33 -0400
-Received: from cpc129250-craw9-2-0-cust139.know.cable.virginm.net ([82.43.126.140] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1g6D22-0005P2-KS; Sat, 29 Sep 2018 11:03:30 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Samuel Ortiz <sameo@linux.intel.com>,
-        Daniel Mack <daniel@zonque.org>, linux-wireless@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] NFC: st95hf: fix spelling mistake "receieve" -> "receive"
-Date:   Sat, 29 Sep 2018 12:03:30 +0100
-Message-Id: <20180929110330.8996-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 29 Sep 2018 13:35:13 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:51889 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727775AbeI2RfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 13:35:13 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 81A02E7728E54;
+        Sat, 29 Sep 2018 19:07:09 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.399.0; Sat, 29 Sep 2018 19:07:04 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <airlied@linux.ie>, <Shaoyun.Liu@amd.com>,
+        <Ken.Wang@amd.com>, <Feifei.Xu@amd.com>, <ray.huang@amd.com>,
+        <evan.quan@amd.com>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring' in psp_v3_1_ring_stop
+Date:   Sat, 29 Sep 2018 11:16:09 +0000
+Message-ID: <1538219769-37710-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Trivial fix to spelling mistake in dev_err message
+drivers/gpu/drm/amd/amdgpu/psp_v3_1.c: In function 'psp_v3_1_ring_stop':
+drivers/gpu/drm/amd/amdgpu/psp_v3_1.c:359:19: warning:
+ variable 'ring' set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/nfc/st95hf/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/psp_v3_1.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/nfc/st95hf/core.c b/drivers/nfc/st95hf/core.c
-index a50a95cfcfd8..d72d48243141 100644
---- a/drivers/nfc/st95hf/core.c
-+++ b/drivers/nfc/st95hf/core.c
-@@ -327,7 +327,7 @@ static int st95hf_echo_command(struct st95hf_context *st95context)
- 					  &echo_response);
- 	if (result) {
- 		dev_err(&st95context->spicontext.spidev->dev,
--			"err: echo response receieve error = 0x%x\n", result);
-+			"err: echo response receive error = 0x%x\n", result);
- 		return result;
- 	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
+index e1ebf77..cc5e3ac 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
+@@ -356,12 +356,9 @@ static int psp_v3_1_ring_stop(struct psp_context *psp,
+ 			      enum psp_ring_type ring_type)
+ {
+ 	int ret = 0;
+-	struct psp_ring *ring;
+ 	unsigned int psp_ring_reg = 0;
+ 	struct amdgpu_device *adev = psp->adev;
  
--- 
-2.17.1
+-	ring = &psp->km_ring;
+-
+ 	/* Write the ring destroy command to C2PMSG_64 */
+ 	psp_ring_reg = 3 << 16;
+ 	WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64, psp_ring_reg);
 
