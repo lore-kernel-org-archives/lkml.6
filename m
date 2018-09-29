@@ -2,149 +2,93 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE20C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 05:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2852AC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 05:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F75B206B8
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 05:36:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F75B206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+	by mail.kernel.org (Postfix) with ESMTP id CF7CE206B2
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 05:50:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9IMtv7h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF7CE206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbeI2MDE (ORCPT
+        id S1727469AbeI2MRD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 08:03:04 -0400
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:34637 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727248AbeI2MDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 08:03:04 -0400
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id w8T5ZpeL013927;
-        Sat, 29 Sep 2018 07:35:51 +0200
-Date:   Sat, 29 Sep 2018 07:35:51 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH net-next v6 00/23] WireGuard: Secure Network Tunnel
-Message-ID: <20180929053551.GA13905@1wt.eu>
-References: <20180925145622.29959-1-Jason@zx2c4.com>
- <20180927182944.GA22921@gmail.com>
- <20180927213537.GA27576@zx2c4.com>
- <20180928011726.GA98113@gmail.com>
- <20180928023546.GA20765@zx2c4.com>
- <20180928045542.GA545@zzz.localdomain>
- <CAHmME9rJ4CewfDEqWh00ZowjWg9TaYpksVSzKSSxoKya-M8_LA@mail.gmail.com>
- <CAKv+Gu-8eiMkrJtpnMKzT=m9zGvY5qHVAmLM_rFA3gxk2gV-zw@mail.gmail.com>
- <CAHmME9pPTxx5JP+8WQ0jLVBXxJmRKy2=z5YOSx_ar7JZqBQ1CA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHmME9pPTxx5JP+8WQ0jLVBXxJmRKy2=z5YOSx_ar7JZqBQ1CA@mail.gmail.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+        Sat, 29 Sep 2018 08:17:03 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34681 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727407AbeI2MRC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 08:17:02 -0400
+Received: by mail-pg1-f196.google.com with SMTP id g12-v6so214930pgs.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 22:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=xaTIHnBx9nGQAitv4LjbDYDAae72H66pyrlVCxGapGA=;
+        b=S9IMtv7hnjaeY8h//I9X4VSLRH8y6+x4asMn1p7S52NEy8CvhPp1lH1+PsCi8N8y/j
+         wj8eV93GA4KXjogrwMq+ajoGLi6utuVahRsoNsrgyJP1ip2W3KBrWhDTuXB0FXhkRGBt
+         IlbgDUZBD3G4jlgt34GAs+NsQp9RDuyHY8Ewk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xaTIHnBx9nGQAitv4LjbDYDAae72H66pyrlVCxGapGA=;
+        b=SKODnGtyzWf7UoYh7KJk0flO9JPIonRlEDBEhVYcU5fwXMs0joeHdXKa0jeW6Ez7wA
+         J+1gq6pVnZT0+gpOSKL40eD6zcfK/HvuIiNr+Pzqb5ZC7mOJjhX8VqVYCHsmUBbYbmLh
+         r+tO3T8KUkwwhsTp4uuU6NjC3O64E8ct+EB3L39q70I83R80NeMAhxRTjfhMs2EIB6WA
+         BSTiR5Jm/ydCbUY7rXF4pDod8trFT+/yekLuX4i7K0EtrZpeaYVg9N2ChGO3yMHAUVIn
+         bG4Bs1lLIB7ApPYNeF9TGmqo+SkMHy9LdEwHJkC+24A1fk/r4MGPE8aP7bfNg6dRnXiq
+         371g==
+X-Gm-Message-State: ABuFfojRZBmaOvuzBjQvVSgICGETiYvR7Sb9Ej4guQdeWnrfC45K1pjf
+        6zGcYhLFKv0uQsQVgePDNtn0Sg==
+X-Google-Smtp-Source: ACcGV60Xh+6b3YeOTLISPP+rJvGbFpF3BveZmc9vlGPQQJ7QNKYvCb+sMW9l3B7LPOU777wfnY3MPQ==
+X-Received: by 2002:a62:b87:: with SMTP id 7-v6mr1733705pfl.67.1538200198553;
+        Fri, 28 Sep 2018 22:49:58 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id i80-v6sm11118049pfi.87.2018.09.28.22.49.54
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 28 Sep 2018 22:49:57 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     dan.j.williams@intel.com, vkoul@kernel.org,
+        eric.long@spreadtrum.com
+Cc:     broonie@kernel.org, baolin.wang@linaro.org,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] Add some fixes and new feature for SPRD DMA 
+Date:   Sat, 29 Sep 2018 13:48:58 +0800
+Message-Id: <cover.1538199697.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 04:40:03AM +0200, Jason A. Donenfeld wrote:
-> > CRC32 is another case study that I would like to bring up:
-> > - the current status is a bit of a mess, where we treat crc32() and
-> > crc32c() differently - the latter is exposed by libcrc32.ko as a
-> > wrapper around the crypto API, and there is some networking code (SCTP
-> > iirc) that puts another kludge on top of that to ensure that the code
-> > is not used before the module is loaded
-> > - we have C versions, scalar hw instruction based versions and
-> > carryless multiplication based versions for various architectures
-> > - on ST platforms, we have a synchronous hw accelerator that is 10x
-> > faster than C code on the same platform.
-> >
-> > AFAICT none of its current users rely on the async interface or
-> > runtime dispatch of the 'hash'.
-> 
-> I've added Willy to the CC, as we were actually discussing the crc32
-> case together two days ago. If my understanding was correct, he seemed
-> to think it'd be pretty useful too.
+This patchset removes the direction usage from struct dma_slave_config,
+and add one new field to save the direction. It also fixes some issues
+for link-list transfer. Moreover this patchset adds new 2-stage transfer
+support for our DMA.
 
-Yep, I've had a hard time finding a suitable implementation when I wrote
-libslz (deflate+gzip compression). Some were totally inefficient in C,
-spending their time negating the value twice for each byte because they
-were using the pre-computed tables found in literature, some were using
-optimized SIMD and I didn't understand them at all. Finally I spent some
-time studying the principle and implemented mine. Later I discovered
-that ARMv8 chips have a crc32 instruction for this which is very fast.
-I tried it and it works much faster than my C implementation. For me
-it's a perfect example of something that could go into a lib like zinc.
+Baolin Wang (1):
+  dmaengine: sprd: Remove direction usage from struct dma_slave_config
 
-> It seems like unifying the crc32 implementations at some point would
-> make sense, and since there's no usage of these as part of the crypto
-> api, providing crc32 via a vanilla function call seems reasonable.
-> It's not clear that on some strict formal level, crc32 belongs
-> anywhere near Zinc, since it's not _exactly_ in the same category...
+Eric Long (6):
+  dmaengine: sprd: Get transfer residue depending on the transfer
+    direction
+  dmaengine: sprd: Fix the last link-list configuration
+  dmaengine: sprd: Set cur_desc as NULL when free or terminate one dma
+    channel
+  dmaengine: sprd: Support DMA link-list cyclic callback
+  dmaengine: sprd: Support DMA 2-stage transfer mode
+  dmaengine: sprd: Add me as one of the module authors
 
-Well, it's a hash. Not a cryptographically secure one (32 bits only)
-but definitely a hash usable (and used) for many cases. Those who need
-a hash could start with SHA2 and figure that they don't need something
-that secure since they only use 32 output bits and be fine with CRC32
-instead. So that would make sense.
+ drivers/dma/sprd-dma.c       |  152 +++++++++++++++++++++++++++++++++++++-----
+ include/linux/dma/sprd-dma.h |   62 ++++++++++++++++-
+ 2 files changed, 194 insertions(+), 20 deletions(-)
 
-> But one could broaden the scope a bit and make the argument that this
-> general idea of accepting some bytes, doing some "pure" arithmetic
-> operations from a particular discipline on them in slightly different
-> ways depending on the architecture, and then returning some other
-> bytes, is what in essence is happening with these all of these
-> function calls, no matter their security or intended use; so if crc32
-> would benefit from being implemented using the exact same design
-> patterns, then it might as well be grouped in with the rest of Zinc.
+-- 
+1.7.9.5
 
-You should avoid suggesting it like this because you may end up
-implementing addition :-) You should stick to the initial intent which
-is to implement painful and boring stuff like crypto. But when you
-see how to implement CRC32, you'll see that it's as painful to
-implement as a crypto function. You start with a reference, you're
-not satisfied and start to optimize various parts of it until you
-break it for some inputs without noticing. I'm pretty sure that it
-reminds you your own experience with some crypto functions because
-I think we've all been in that situation in this domain.
-
-> On the other hand, this might be a bit of a slippery slope ("are
-> compression functions next?"),
-
-I was thinking about it as well. There's a relation between crypto
-and compression, all transform intelligible information into hidden
-one in a reversable way, so the API is quite similar. One could argue
-that compression usually requires memory allocation and huge states,
-so that's probably not for the same use cases if the functions have
-to deal with memory allocations.
-
-In my opinion currently we have :
-  - asymmetric crypto whose goal is to reversably encrypt/decrypt
-    in order to protect confidentiality on small data like keys,
-    or to sign in order to authenticate small data like hashes
-
-  - symmetric crypto whose goal is to protect confidentiality on
-    data blocks.
-
-  - hashes whose goal is to provide integrity of data blocks (crc32
-    fall into this category by the way)
-
-It's visible that despite using similar APIs, compression doesn't
-fit into any of these categories.
-
-> and a libcrc32.ko could just as well
-> exist as a standalone thing.
-
-Having it included could simplify exposing it as a static inline
-function when it's a single native instruction on the CPU.
-
-Just my two cents,
-Willy
