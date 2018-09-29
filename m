@@ -1,130 +1,111 @@
-Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70882C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8F5C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 00:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 334BC20657
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:59:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 195372073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 00:08:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKz+mHLi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 334BC20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KunjB0VQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 195372073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbeI2G0G (ORCPT
+        id S1727265AbeI2GeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 02:26:06 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39986 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbeI2G0F (ORCPT
+        Sat, 29 Sep 2018 02:34:14 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:54418 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeI2GeN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 02:26:05 -0400
-Received: by mail-pf1-f196.google.com with SMTP id s5-v6so5308284pfj.7;
-        Fri, 28 Sep 2018 16:59:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=D5eHZerBRfqeQ3F8rVTt+HYC42dMiPZYu042oCMxCok=;
-        b=TKz+mHLiv44jhswgBHs4bUkQpqJK8VQOe98F+iBjE58qIxiSiwsNCGzyz1oQFLPG1l
-         GHetkfE4cLx8YDWHrziFI2Ur2fdqnAlioumfod9PNCkszapQLXNODlY1Ey3qR7UnCd2g
-         3PxA0NO2HY5cA5IDbFIYyPOIrDVp1EbLB5M+5KL6sn04qTovLSNazbtAG31wfI7iJ1l9
-         uLcErbwegOFu5oih7dM/oMFjH/Zho4M6M9uRub9fLgoSfFT1fNXNy4hk2ta9bbJgpN+4
-         mxgIoLP9UVLgwUnTCojBcSVFmxEbsPZPBiZL9FFzgshgLycsC8NwcQpOKVGGntQ4ITXp
-         tiAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=D5eHZerBRfqeQ3F8rVTt+HYC42dMiPZYu042oCMxCok=;
-        b=PsvxN2FsYKTuurukh3RQAGJ8gv4zUlXn8pHncSDEmLuGCWjZ7vImbOyKZNmhBxnoCA
-         YEDI5yJ0ItLWLU0SnGW/Q90bhu0Me5jzAYrbngewDXDpu+PKvRpgqHCR6AWkW4SPpEyG
-         VwWW0ykW3IMzJc7zsqyw/3Ta1yUiYKMs4ZqSOG19RdbodX0sCbJcy4nWhXjrQ26dVbZx
-         4fF8XtlI/rH1KWnNbCs1Uj4UjgXLlG06JftqJVOz0NywBwyg0UpewlS+bmg+M+7P4saD
-         Golo0Qoqs4zHg+8GRTMxC5ciooxj4QiErdLIPIiaqBdNEtz4iuBdu5JTGHho3cx/ikAQ
-         OQqw==
-X-Gm-Message-State: ABuFfohwG69PN6XiP0MIozLhNNcHRoF7fyy7uVbhTk6KylpnHtj5/9jT
-        bqvYEAITmmB2ssKLTHJlhL8=
-X-Google-Smtp-Source: ACcGV623x1hwBhuMb3bXwb3vEB7b3BSgquGjJ9nYNZpVL8TI8/8lni3uUxLhn/D8JyWV9+fx7EdusA==
-X-Received: by 2002:a63:6bc2:: with SMTP id g185-v6mr806580pgc.25.1538179196419;
-        Fri, 28 Sep 2018 16:59:56 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id a1-v6sm14500994pfc.28.2018.09.28.16.59.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Sep 2018 16:59:55 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 16:59:53 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Ramses =?iso-8859-1?Q?Ram=EDrez?= <ramzeto@gmail.com>
-Cc:     Cameron Gutman <aicommander@gmail.com>,
-        Mark Furneaux <mark@furneaux.ca>,
-        Leo Sperling <leosperling97@gmail.com>,
-        Enno Boland <gottox@voidlinux.eu>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Francis Therien <frtherien@gmail.com>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: Support for Xbox1 PDP Camo series gamepad
-Message-ID: <20180928235953.GB182370@dtor-ws>
-References: <20180828054812.14428-1-ramzeto@gmail.com>
+        Sat, 29 Sep 2018 02:34:13 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8T05tpY061547;
+        Sat, 29 Sep 2018 00:07:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=A/OfJA6AvtML2NZ+y5hTa3EkkBJMjW3nDyvrcggykIo=;
+ b=KunjB0VQ75xOJGtwwHtlcI9RZKKbszSDWy7YYheEVDWJomDnN6bmOeWsWpjh978BKKgX
+ 87K98z997uGJro/fdrPLwG3Gp0ksNMAqpM8T4Eg5/69qBT/Jn49ypIyvqcbjAaS6oYFb
+ jqqVfu6BMbbBx9NBa2oPxj3jVJBaNuGc0d8vDsSX1xdZSxTr+OT3SLJ6QtgeJViYtZW0
+ 27Pw8Magt8yMPlr3QxvDPU57oERqzNXzfkq9juFamY/S2fZeSgYnbhxnqI96KClyzQap
+ tCbO8nGQf4jby4LrYymCjqkXag5ve2aQwUPMP1dNVN3mtm0J1t2ut1N8tG7xAjSeGVVd ng== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2mnd5u3531-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 29 Sep 2018 00:07:42 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8T07faS016483
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 29 Sep 2018 00:07:41 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8T07e3K009758;
+        Sat, 29 Sep 2018 00:07:41 GMT
+Received: from [10.209.243.127] (/10.209.243.127)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 28 Sep 2018 17:07:40 -0700
+Subject: Re: [PATCH] MAINTAINERS: Drop dt-bindings/genpd/k2g.h
+To:     "arm@kernel.org" <arm@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh@kernel.org>, Dave Gerlach <d-gerlach@ti.com>,
+        Tero Kristo <t-kristo@ti.com>
+References: <20180928224615.19862-1-nm@ti.com>
+From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <19176740-b38f-8ae9-a9a2-85d6f7a9c590@oracle.com>
+Date:   Fri, 28 Sep 2018 17:07:39 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180828054812.14428-1-ramzeto@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180928224615.19862-1-nm@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9030 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=910
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809280236
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 12:48:11AM -0500, Ramses Ramírez wrote:
-> The "Xbox One PDP Wired Controller - Camo series" has a different
-> product-id than the regular PDP controller and the PDP stealth series,
-> but it uses the same initialization sequence. This patch adds the
-> product-id of the camo series to the structures that handle the other
-> PDP Xbox One controllers.
+Hi Anrd, Olof,
+
+On 9/28/2018 3:46 PM, Nishanth Menon wrote:
+> Drop include/dt-bindings/genpd/k2g.h which disappeared from kernel tree
+> some time back, however MAINTAINERS file was missed to be updated.
 > 
-> Signed-off-by: Ramses Ramírez <ramzeto@gmail.com>
-
-Applied, thank you.
-
+> Fixes: d16645054d2f ("dt-bindings: Drop k2g genpd device ID macros")
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Dave Gerlach <d-gerlach@ti.com>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Reported-by: Joe Perches <joe@perches.com>
+> Signed-off-by: Nishanth Menon <nm@ti.com>
 > ---
->  drivers/input/joystick/xpad.c | 3 +++
->  1 file changed, 3 insertions(+)
 > 
-> diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-> index cd620e009bad..d4b9db487b16 100644
-> --- a/drivers/input/joystick/xpad.c
-> +++ b/drivers/input/joystick/xpad.c
-> @@ -231,6 +231,7 @@ static const struct xpad_device {
->  	{ 0x0e6f, 0x0246, "Rock Candy Gamepad for Xbox One 2015", 0, XTYPE_XBOXONE },
->  	{ 0x0e6f, 0x02ab, "PDP Controller for Xbox One", 0, XTYPE_XBOXONE },
->  	{ 0x0e6f, 0x02a4, "PDP Wired Controller for Xbox One - Stealth Series", 0, XTYPE_XBOXONE },
-> +	{ 0x0e6f, 0x02a6, "PDP Wired Controller for Xbox One - Camo Series", 0, XTYPE_XBOXONE },
->  	{ 0x0e6f, 0x0301, "Logic3 Controller", 0, XTYPE_XBOX360 },
->  	{ 0x0e6f, 0x0346, "Rock Candy Gamepad for Xbox One 2016", 0, XTYPE_XBOXONE },
->  	{ 0x0e6f, 0x0401, "Logic3 Controller", 0, XTYPE_XBOX360 },
-> @@ -530,6 +531,8 @@ static const struct xboxone_init_packet xboxone_init_packets[] = {
->  	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
->  	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init1),
->  	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init2),
-> +	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init1),
-> +	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init2),
->  	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
->  	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
->  	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
-> -- 
-> 2.17.1
+> A big oops.. Sorry about that. will do better next time. I tried to relook and
+> I think we have'nt missed any other files.
 > 
+> Based off next-20180928 tag.
+> 
+> Santosh, any chance you could pick this up -> Thread:
+> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1776470.html
+> 
+Could you please apply this to arm-soc tree if its not too
+late ?
 
--- 
-Dmitry
+
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
