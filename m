@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7833C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C02BEC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95DD92084D
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:30:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95DD92084D
+	by mail.kernel.org (Postfix) with ESMTP id 705182084D
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 07:30:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 705182084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbeI2N5t (ORCPT
+        id S1727667AbeI2N5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 09:57:49 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:59264 "EHLO inva021.nxp.com"
+        Sat, 29 Sep 2018 09:57:50 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:59304 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727485AbeI2N5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 09:57:48 -0400
+        id S1727483AbeI2N5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 09:57:50 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A7C0320007E;
-        Sat, 29 Sep 2018 09:30:24 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E6658200044;
+        Sat, 29 Sep 2018 09:30:25 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 949AF200145;
-        Sat, 29 Sep 2018 09:30:19 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A1EB0200079;
+        Sat, 29 Sep 2018 09:30:20 +0200 (CEST)
 Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DEEBC4031D;
-        Sat, 29 Sep 2018 15:30:13 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D85814031E;
+        Sat, 29 Sep 2018 15:30:14 +0800 (SGT)
 From:   Yangbo Lu <yangbo.lu@nxp.com>
 To:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
         netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
@@ -39,9 +39,9 @@ To:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Lunn <andrew@lunn.ch>
 Cc:     Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v2, 3/5] net: dpaa2: rename rtc as ptp in dpaa2-ptp driver
-Date:   Sat, 29 Sep 2018 15:26:43 +0800
-Message-Id: <20180929072645.20027-3-yangbo.lu@nxp.com>
+Subject: [v2, 4/5] net: dpaa2: remove unused code for dprtc
+Date:   Sat, 29 Sep 2018 15:26:44 +0800
+Message-Id: <20180929072645.20027-4-yangbo.lu@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180929072645.20027-1-yangbo.lu@nxp.com>
 References: <20180929072645.20027-1-yangbo.lu@nxp.com>
@@ -51,128 +51,817 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In dpaa2-ptp driver, it's odd to use rtc in names of
-some functions and structures except for these dprtc
-APIs. This patch is to use ptp instead of rtc in names.
+This patch is to removed unused code for dprtc.
+This code will be re-added along with more features
+of dpaa2-ptp added.
 
 Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 ---
 Changes for v2:
 	- Added this patch.
 ---
- drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c |   30 +++++++++++-----------
- 1 files changed, 15 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h |   97 ----
+ drivers/net/ethernet/freescale/dpaa2/dprtc.c     |  507 ----------------------
+ drivers/net/ethernet/freescale/dpaa2/dprtc.h     |  119 -----
+ 3 files changed, 0 insertions(+), 723 deletions(-)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
-index 2e90d5a..c73eef2 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
-@@ -12,7 +12,7 @@
- #include "dpaa2-ptp.h"
+diff --git a/drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h b/drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h
+index db6a473..9af4ac7 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h
++++ b/drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h
+@@ -7,10 +7,6 @@
+ #ifndef _FSL_DPRTC_CMD_H
+ #define _FSL_DPRTC_CMD_H
  
- struct ptp_dpaa2_priv {
--	struct fsl_mc_device *rtc_mc_dev;
-+	struct fsl_mc_device *ptp_mc_dev;
- 	struct ptp_clock *clock;
- 	struct ptp_clock_info caps;
- 	u32 freq_comp;
-@@ -23,7 +23,7 @@ static int ptp_dpaa2_adjfreq(struct ptp_clock_info *ptp, s32 ppb)
- {
- 	struct ptp_dpaa2_priv *ptp_dpaa2 =
- 		container_of(ptp, struct ptp_dpaa2_priv, caps);
--	struct fsl_mc_device *mc_dev = ptp_dpaa2->rtc_mc_dev;
-+	struct fsl_mc_device *mc_dev = ptp_dpaa2->ptp_mc_dev;
- 	struct device *dev = &mc_dev->dev;
- 	u64 adj;
- 	u32 diff, tmr_add;
-@@ -53,7 +53,7 @@ static int ptp_dpaa2_adjtime(struct ptp_clock_info *ptp, s64 delta)
- {
- 	struct ptp_dpaa2_priv *ptp_dpaa2 =
- 		container_of(ptp, struct ptp_dpaa2_priv, caps);
--	struct fsl_mc_device *mc_dev = ptp_dpaa2->rtc_mc_dev;
-+	struct fsl_mc_device *mc_dev = ptp_dpaa2->ptp_mc_dev;
- 	struct device *dev = &mc_dev->dev;
- 	s64 now;
- 	int err = 0;
-@@ -78,7 +78,7 @@ static int ptp_dpaa2_gettime(struct ptp_clock_info *ptp, struct timespec64 *ts)
- {
- 	struct ptp_dpaa2_priv *ptp_dpaa2 =
- 		container_of(ptp, struct ptp_dpaa2_priv, caps);
--	struct fsl_mc_device *mc_dev = ptp_dpaa2->rtc_mc_dev;
-+	struct fsl_mc_device *mc_dev = ptp_dpaa2->ptp_mc_dev;
- 	struct device *dev = &mc_dev->dev;
- 	u64 ns;
- 	u32 remainder;
-@@ -100,7 +100,7 @@ static int ptp_dpaa2_settime(struct ptp_clock_info *ptp,
- {
- 	struct ptp_dpaa2_priv *ptp_dpaa2 =
- 		container_of(ptp, struct ptp_dpaa2_priv, caps);
--	struct fsl_mc_device *mc_dev = ptp_dpaa2->rtc_mc_dev;
-+	struct fsl_mc_device *mc_dev = ptp_dpaa2->ptp_mc_dev;
- 	struct device *dev = &mc_dev->dev;
- 	u64 ns;
- 	int err = 0;
-@@ -129,7 +129,7 @@ static int ptp_dpaa2_settime(struct ptp_clock_info *ptp,
- 	.settime64	= ptp_dpaa2_settime,
+-/* DPRTC Version */
+-#define DPRTC_VER_MAJOR			2
+-#define DPRTC_VER_MINOR			0
+-
+ /* Command versioning */
+ #define DPRTC_CMD_BASE_VERSION		1
+ #define DPRTC_CMD_ID_OFFSET		4
+@@ -20,105 +16,17 @@
+ /* Command IDs */
+ #define DPRTC_CMDID_CLOSE			DPRTC_CMD(0x800)
+ #define DPRTC_CMDID_OPEN			DPRTC_CMD(0x810)
+-#define DPRTC_CMDID_CREATE			DPRTC_CMD(0x910)
+-#define DPRTC_CMDID_DESTROY			DPRTC_CMD(0x990)
+-#define DPRTC_CMDID_GET_API_VERSION		DPRTC_CMD(0xa10)
+-
+-#define DPRTC_CMDID_ENABLE			DPRTC_CMD(0x002)
+-#define DPRTC_CMDID_DISABLE			DPRTC_CMD(0x003)
+-#define DPRTC_CMDID_GET_ATTR			DPRTC_CMD(0x004)
+-#define DPRTC_CMDID_RESET			DPRTC_CMD(0x005)
+-#define DPRTC_CMDID_IS_ENABLED			DPRTC_CMD(0x006)
+ 
+-#define DPRTC_CMDID_SET_IRQ_ENABLE		DPRTC_CMD(0x012)
+-#define DPRTC_CMDID_GET_IRQ_ENABLE		DPRTC_CMD(0x013)
+-#define DPRTC_CMDID_SET_IRQ_MASK		DPRTC_CMD(0x014)
+-#define DPRTC_CMDID_GET_IRQ_MASK		DPRTC_CMD(0x015)
+-#define DPRTC_CMDID_GET_IRQ_STATUS		DPRTC_CMD(0x016)
+-#define DPRTC_CMDID_CLEAR_IRQ_STATUS		DPRTC_CMD(0x017)
+-
+-#define DPRTC_CMDID_SET_CLOCK_OFFSET		DPRTC_CMD(0x1d0)
+ #define DPRTC_CMDID_SET_FREQ_COMPENSATION	DPRTC_CMD(0x1d1)
+ #define DPRTC_CMDID_GET_FREQ_COMPENSATION	DPRTC_CMD(0x1d2)
+ #define DPRTC_CMDID_GET_TIME			DPRTC_CMD(0x1d3)
+ #define DPRTC_CMDID_SET_TIME			DPRTC_CMD(0x1d4)
+-#define DPRTC_CMDID_SET_ALARM			DPRTC_CMD(0x1d5)
+-#define DPRTC_CMDID_SET_PERIODIC_PULSE		DPRTC_CMD(0x1d6)
+-#define DPRTC_CMDID_CLEAR_PERIODIC_PULSE	DPRTC_CMD(0x1d7)
+-#define DPRTC_CMDID_SET_EXT_TRIGGER		DPRTC_CMD(0x1d8)
+-#define DPRTC_CMDID_CLEAR_EXT_TRIGGER		DPRTC_CMD(0x1d9)
+-#define DPRTC_CMDID_GET_EXT_TRIGGER_TIMESTAMP	DPRTC_CMD(0x1dA)
+-
+-/* Macros for accessing command fields smaller than 1byte */
+-#define DPRTC_MASK(field)        \
+-	GENMASK(DPRTC_##field##_SHIFT + DPRTC_##field##_SIZE - 1, \
+-		DPRTC_##field##_SHIFT)
+-#define dprtc_get_field(var, field)      \
+-	(((var) & DPRTC_MASK(field)) >> DPRTC_##field##_SHIFT)
+ 
+ #pragma pack(push, 1)
+ struct dprtc_cmd_open {
+ 	__le32 dprtc_id;
  };
  
--static int rtc_probe(struct fsl_mc_device *mc_dev)
-+static int dpaa2_ptp_probe(struct fsl_mc_device *mc_dev)
- {
- 	struct device *dev = &mc_dev->dev;
- 	struct ptp_dpaa2_priv *ptp_dpaa2;
-@@ -153,7 +153,7 @@ static int rtc_probe(struct fsl_mc_device *mc_dev)
- 		goto err_free_mcp;
- 	}
+-struct dprtc_cmd_destroy {
+-	__le32 object_id;
+-};
+-
+-#define DPRTC_ENABLE_SHIFT	0
+-#define DPRTC_ENABLE_SIZE	1
+-
+-struct dprtc_rsp_is_enabled {
+-	u8 en;
+-};
+-
+-struct dprtc_cmd_get_irq {
+-	__le32 pad;
+-	u8 irq_index;
+-};
+-
+-struct dprtc_cmd_set_irq_enable {
+-	u8 en;
+-	u8 pad[3];
+-	u8 irq_index;
+-};
+-
+-struct dprtc_rsp_get_irq_enable {
+-	u8 en;
+-};
+-
+-struct dprtc_cmd_set_irq_mask {
+-	__le32 mask;
+-	u8 irq_index;
+-};
+-
+-struct dprtc_rsp_get_irq_mask {
+-	__le32 mask;
+-};
+-
+-struct dprtc_cmd_get_irq_status {
+-	__le32 status;
+-	u8 irq_index;
+-};
+-
+-struct dprtc_rsp_get_irq_status {
+-	__le32 status;
+-};
+-
+-struct dprtc_cmd_clear_irq_status {
+-	__le32 status;
+-	u8 irq_index;
+-};
+-
+-struct dprtc_rsp_get_attributes {
+-	__le32 pad;
+-	__le32 id;
+-};
+-
+-struct dprtc_cmd_set_clock_offset {
+-	__le64 offset;
+-};
+-
+ struct dprtc_get_freq_compensation {
+ 	__le32 freq_compensation;
+ };
+@@ -127,11 +35,6 @@ struct dprtc_time {
+ 	__le64 time;
+ };
  
--	ptp_dpaa2->rtc_mc_dev = mc_dev;
-+	ptp_dpaa2->ptp_mc_dev = mc_dev;
+-struct dprtc_rsp_get_api_version {
+-	__le16 major;
+-	__le16 minor;
+-};
+-
+ #pragma pack(pop)
  
- 	err = dprtc_get_freq_compensation(mc_dev->mc_io, 0,
- 					  mc_dev->mc_handle, &tmr_add);
-@@ -187,7 +187,7 @@ static int rtc_probe(struct fsl_mc_device *mc_dev)
- 	return err;
+ #endif /* _FSL_DPRTC_CMD_H */
+diff --git a/drivers/net/ethernet/freescale/dpaa2/dprtc.c b/drivers/net/ethernet/freescale/dpaa2/dprtc.c
+index 68ae6ff..c13e09b 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/dprtc.c
++++ b/drivers/net/ethernet/freescale/dpaa2/dprtc.c
+@@ -74,452 +74,6 @@ int dprtc_close(struct fsl_mc_io *mc_io,
  }
  
--static int rtc_remove(struct fsl_mc_device *mc_dev)
-+static int dpaa2_ptp_remove(struct fsl_mc_device *mc_dev)
- {
- 	struct ptp_dpaa2_priv *ptp_dpaa2;
- 	struct device *dev = &mc_dev->dev;
-@@ -204,26 +204,26 @@ static int rtc_remove(struct fsl_mc_device *mc_dev)
- 	return 0;
+ /**
+- * dprtc_create() - Create the DPRTC object.
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @dprc_token:	Parent container token; '0' for default container
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @cfg:	Configuration structure
+- * @obj_id:	Returned object id
+- *
+- * Create the DPRTC object, allocate required resources and
+- * perform required initialization.
+- *
+- * The function accepts an authentication token of a parent
+- * container that this object should be assigned to. The token
+- * can be '0' so the object will be assigned to the default container.
+- * The newly created object can be opened with the returned
+- * object id and using the container's associated tokens and MC portals.
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_create(struct fsl_mc_io *mc_io,
+-		 u16 dprc_token,
+-		 u32 cmd_flags,
+-		 const struct dprtc_cfg *cfg,
+-		 u32 *obj_id)
+-{
+-	struct fsl_mc_command cmd = { 0 };
+-	int err;
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_CREATE,
+-					  cmd_flags,
+-					  dprc_token);
+-
+-	err = mc_send_command(mc_io, &cmd);
+-	if (err)
+-		return err;
+-
+-	*obj_id = mc_cmd_read_object_id(&cmd);
+-
+-	return 0;
+-}
+-
+-/**
+- * dprtc_destroy() - Destroy the DPRTC object and release all its resources.
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @dprc_token: Parent container token; '0' for default container
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @object_id:	The object id; it must be a valid id within the container that
+- * created this object;
+- *
+- * The function accepts the authentication token of the parent container that
+- * created the object (not the one that currently owns the object). The object
+- * is searched within parent using the provided 'object_id'.
+- * All tokens to the object must be closed before calling destroy.
+- *
+- * Return:	'0' on Success; error code otherwise.
+- */
+-int dprtc_destroy(struct fsl_mc_io *mc_io,
+-		  u16 dprc_token,
+-		  u32 cmd_flags,
+-		  u32 object_id)
+-{
+-	struct dprtc_cmd_destroy *cmd_params;
+-	struct fsl_mc_command cmd = { 0 };
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_DESTROY,
+-					  cmd_flags,
+-					  dprc_token);
+-	cmd_params = (struct dprtc_cmd_destroy *)cmd.params;
+-	cmd_params->object_id = cpu_to_le32(object_id);
+-
+-	return mc_send_command(mc_io, &cmd);
+-}
+-
+-/**
+- * dprtc_enable() - Enable the DPRTC.
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_enable(struct fsl_mc_io *mc_io,
+-		 u32 cmd_flags,
+-		 u16 token)
+-{
+-	struct fsl_mc_command cmd = { 0 };
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_ENABLE, cmd_flags,
+-					  token);
+-
+-	return mc_send_command(mc_io, &cmd);
+-}
+-
+-/**
+- * dprtc_disable() - Disable the DPRTC.
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_disable(struct fsl_mc_io *mc_io,
+-		  u32 cmd_flags,
+-		  u16 token)
+-{
+-	struct fsl_mc_command cmd = { 0 };
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_DISABLE,
+-					  cmd_flags,
+-					  token);
+-
+-	return mc_send_command(mc_io, &cmd);
+-}
+-
+-/**
+- * dprtc_is_enabled() - Check if the DPRTC is enabled.
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- * @en:		Returns '1' if object is enabled; '0' otherwise
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_is_enabled(struct fsl_mc_io *mc_io,
+-		     u32 cmd_flags,
+-		     u16 token,
+-		     int *en)
+-{
+-	struct dprtc_rsp_is_enabled *rsp_params;
+-	struct fsl_mc_command cmd = { 0 };
+-	int err;
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_IS_ENABLED, cmd_flags,
+-					  token);
+-
+-	err = mc_send_command(mc_io, &cmd);
+-	if (err)
+-		return err;
+-
+-	rsp_params = (struct dprtc_rsp_is_enabled *)cmd.params;
+-	*en = dprtc_get_field(rsp_params->en, ENABLE);
+-
+-	return 0;
+-}
+-
+-/**
+- * dprtc_reset() - Reset the DPRTC, returns the object to initial state.
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_reset(struct fsl_mc_io *mc_io,
+-		u32 cmd_flags,
+-		u16 token)
+-{
+-	struct fsl_mc_command cmd = { 0 };
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_RESET,
+-					  cmd_flags,
+-					  token);
+-
+-	return mc_send_command(mc_io, &cmd);
+-}
+-
+-/**
+- * dprtc_set_irq_enable() - Set overall interrupt state.
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- * @irq_index:	The interrupt index to configure
+- * @en:		Interrupt state - enable = 1, disable = 0
+- *
+- * Allows GPP software to control when interrupts are generated.
+- * Each interrupt can have up to 32 causes.  The enable/disable control's the
+- * overall interrupt state. if the interrupt is disabled no causes will cause
+- * an interrupt.
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_set_irq_enable(struct fsl_mc_io *mc_io,
+-			 u32 cmd_flags,
+-			 u16 token,
+-			 u8 irq_index,
+-			 u8 en)
+-{
+-	struct dprtc_cmd_set_irq_enable *cmd_params;
+-	struct fsl_mc_command cmd = { 0 };
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_SET_IRQ_ENABLE,
+-					  cmd_flags,
+-					  token);
+-	cmd_params = (struct dprtc_cmd_set_irq_enable *)cmd.params;
+-	cmd_params->irq_index = irq_index;
+-	cmd_params->en = en;
+-
+-	return mc_send_command(mc_io, &cmd);
+-}
+-
+-/**
+- * dprtc_get_irq_enable() - Get overall interrupt state
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- * @irq_index:	The interrupt index to configure
+- * @en:		Returned interrupt state - enable = 1, disable = 0
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_get_irq_enable(struct fsl_mc_io *mc_io,
+-			 u32 cmd_flags,
+-			 u16 token,
+-			 u8 irq_index,
+-			 u8 *en)
+-{
+-	struct dprtc_rsp_get_irq_enable *rsp_params;
+-	struct dprtc_cmd_get_irq *cmd_params;
+-	struct fsl_mc_command cmd = { 0 };
+-	int err;
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_GET_IRQ_ENABLE,
+-					  cmd_flags,
+-					  token);
+-	cmd_params = (struct dprtc_cmd_get_irq *)cmd.params;
+-	cmd_params->irq_index = irq_index;
+-
+-	err = mc_send_command(mc_io, &cmd);
+-	if (err)
+-		return err;
+-
+-	rsp_params = (struct dprtc_rsp_get_irq_enable *)cmd.params;
+-	*en = rsp_params->en;
+-
+-	return 0;
+-}
+-
+-/**
+- * dprtc_set_irq_mask() - Set interrupt mask.
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- * @irq_index:	The interrupt index to configure
+- * @mask:	Event mask to trigger interrupt;
+- *		each bit:
+- *			0 = ignore event
+- *			1 = consider event for asserting IRQ
+- *
+- * Every interrupt can have up to 32 causes and the interrupt model supports
+- * masking/unmasking each cause independently
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_set_irq_mask(struct fsl_mc_io *mc_io,
+-		       u32 cmd_flags,
+-		       u16 token,
+-		       u8 irq_index,
+-		       u32 mask)
+-{
+-	struct dprtc_cmd_set_irq_mask *cmd_params;
+-	struct fsl_mc_command cmd = { 0 };
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_SET_IRQ_MASK,
+-					  cmd_flags,
+-					  token);
+-	cmd_params = (struct dprtc_cmd_set_irq_mask *)cmd.params;
+-	cmd_params->mask = cpu_to_le32(mask);
+-	cmd_params->irq_index = irq_index;
+-
+-	return mc_send_command(mc_io, &cmd);
+-}
+-
+-/**
+- * dprtc_get_irq_mask() - Get interrupt mask.
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- * @irq_index:	The interrupt index to configure
+- * @mask:	Returned event mask to trigger interrupt
+- *
+- * Every interrupt can have up to 32 causes and the interrupt model supports
+- * masking/unmasking each cause independently
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_get_irq_mask(struct fsl_mc_io *mc_io,
+-		       u32 cmd_flags,
+-		       u16 token,
+-		       u8 irq_index,
+-		       u32 *mask)
+-{
+-	struct dprtc_rsp_get_irq_mask *rsp_params;
+-	struct dprtc_cmd_get_irq *cmd_params;
+-	struct fsl_mc_command cmd = { 0 };
+-	int err;
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_GET_IRQ_MASK,
+-					  cmd_flags,
+-					  token);
+-	cmd_params = (struct dprtc_cmd_get_irq *)cmd.params;
+-	cmd_params->irq_index = irq_index;
+-
+-	err = mc_send_command(mc_io, &cmd);
+-	if (err)
+-		return err;
+-
+-	rsp_params = (struct dprtc_rsp_get_irq_mask *)cmd.params;
+-	*mask = le32_to_cpu(rsp_params->mask);
+-
+-	return 0;
+-}
+-
+-/**
+- * dprtc_get_irq_status() - Get the current status of any pending interrupts.
+- *
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- * @irq_index:	The interrupt index to configure
+- * @status:	Returned interrupts status - one bit per cause:
+- *			0 = no interrupt pending
+- *			1 = interrupt pending
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_get_irq_status(struct fsl_mc_io *mc_io,
+-			 u32 cmd_flags,
+-			 u16 token,
+-			 u8 irq_index,
+-			 u32 *status)
+-{
+-	struct dprtc_cmd_get_irq_status *cmd_params;
+-	struct dprtc_rsp_get_irq_status *rsp_params;
+-	struct fsl_mc_command cmd = { 0 };
+-	int err;
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_GET_IRQ_STATUS,
+-					  cmd_flags,
+-					  token);
+-	cmd_params = (struct dprtc_cmd_get_irq_status *)cmd.params;
+-	cmd_params->status = cpu_to_le32(*status);
+-	cmd_params->irq_index = irq_index;
+-
+-	err = mc_send_command(mc_io, &cmd);
+-	if (err)
+-		return err;
+-
+-	rsp_params = (struct dprtc_rsp_get_irq_status *)cmd.params;
+-	*status = le32_to_cpu(rsp_params->status);
+-
+-	return 0;
+-}
+-
+-/**
+- * dprtc_clear_irq_status() - Clear a pending interrupt's status
+- *
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- * @irq_index:	The interrupt index to configure
+- * @status:	Bits to clear (W1C) - one bit per cause:
+- *			0 = don't change
+- *			1 = clear status bit
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_clear_irq_status(struct fsl_mc_io *mc_io,
+-			   u32 cmd_flags,
+-			   u16 token,
+-			   u8 irq_index,
+-			   u32 status)
+-{
+-	struct dprtc_cmd_clear_irq_status *cmd_params;
+-	struct fsl_mc_command cmd = { 0 };
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_CLEAR_IRQ_STATUS,
+-					  cmd_flags,
+-					  token);
+-	cmd_params = (struct dprtc_cmd_clear_irq_status *)cmd.params;
+-	cmd_params->irq_index = irq_index;
+-	cmd_params->status = cpu_to_le32(status);
+-
+-	return mc_send_command(mc_io, &cmd);
+-}
+-
+-/**
+- * dprtc_get_attributes - Retrieve DPRTC attributes.
+- *
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- * @attr:	Returned object's attributes
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_get_attributes(struct fsl_mc_io *mc_io,
+-			 u32 cmd_flags,
+-			 u16 token,
+-			 struct dprtc_attr *attr)
+-{
+-	struct dprtc_rsp_get_attributes *rsp_params;
+-	struct fsl_mc_command cmd = { 0 };
+-	int err;
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_GET_ATTR,
+-					  cmd_flags,
+-					  token);
+-
+-	err = mc_send_command(mc_io, &cmd);
+-	if (err)
+-		return err;
+-
+-	rsp_params = (struct dprtc_rsp_get_attributes *)cmd.params;
+-	attr->id = le32_to_cpu(rsp_params->id);
+-
+-	return 0;
+-}
+-
+-/**
+- * dprtc_set_clock_offset() - Sets the clock's offset
+- * (usually relative to another clock).
+- *
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- * @offset:	New clock offset (in nanoseconds).
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_set_clock_offset(struct fsl_mc_io *mc_io,
+-			   u32 cmd_flags,
+-			   u16 token,
+-			   int64_t offset)
+-{
+-	struct dprtc_cmd_set_clock_offset *cmd_params;
+-	struct fsl_mc_command cmd = { 0 };
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_SET_CLOCK_OFFSET,
+-					  cmd_flags,
+-					  token);
+-	cmd_params = (struct dprtc_cmd_set_clock_offset *)cmd.params;
+-	cmd_params->offset = cpu_to_le64(offset);
+-
+-	return mc_send_command(mc_io, &cmd);
+-}
+-
+-/**
+  * dprtc_set_freq_compensation() - Sets a new frequency compensation value.
+  *
+  * @mc_io:		Pointer to MC portal's I/O object
+@@ -638,64 +192,3 @@ int dprtc_set_time(struct fsl_mc_io *mc_io,
+ 
+ 	return mc_send_command(mc_io, &cmd);
  }
+-
+-/**
+- * dprtc_set_alarm() - Defines and sets alarm.
+- *
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @token:	Token of DPRTC object
+- * @time:	In nanoseconds, the time when the alarm
+- *			should go off - must be a multiple of
+- *			1 microsecond
+- *
+- * Return:	'0' on Success; Error code otherwise.
+- */
+-int dprtc_set_alarm(struct fsl_mc_io *mc_io,
+-		    u32 cmd_flags,
+-		    u16 token, uint64_t time)
+-{
+-	struct dprtc_time *cmd_params;
+-	struct fsl_mc_command cmd = { 0 };
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_SET_ALARM,
+-					  cmd_flags,
+-					  token);
+-	cmd_params = (struct dprtc_time *)cmd.params;
+-	cmd_params->time = cpu_to_le64(time);
+-
+-	return mc_send_command(mc_io, &cmd);
+-}
+-
+-/**
+- * dprtc_get_api_version() - Get Data Path Real Time Counter API version
+- * @mc_io:	Pointer to MC portal's I/O object
+- * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+- * @major_ver:	Major version of data path real time counter API
+- * @minor_ver:	Minor version of data path real time counter API
+- *
+- * Return:  '0' on Success; Error code otherwise.
+- */
+-int dprtc_get_api_version(struct fsl_mc_io *mc_io,
+-			  u32 cmd_flags,
+-			  u16 *major_ver,
+-			  u16 *minor_ver)
+-{
+-	struct dprtc_rsp_get_api_version *rsp_params;
+-	struct fsl_mc_command cmd = { 0 };
+-	int err;
+-
+-	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_GET_API_VERSION,
+-					  cmd_flags,
+-					  0);
+-
+-	err = mc_send_command(mc_io, &cmd);
+-	if (err)
+-		return err;
+-
+-	rsp_params = (struct dprtc_rsp_get_api_version *)cmd.params;
+-	*major_ver = le16_to_cpu(rsp_params->major);
+-	*minor_ver = le16_to_cpu(rsp_params->minor);
+-
+-	return 0;
+-}
+diff --git a/drivers/net/ethernet/freescale/dpaa2/dprtc.h b/drivers/net/ethernet/freescale/dpaa2/dprtc.h
+index 08f7c7b..fe19618 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/dprtc.h
++++ b/drivers/net/ethernet/freescale/dpaa2/dprtc.h
+@@ -13,25 +13,6 @@
  
--static const struct fsl_mc_device_id rtc_match_id_table[] = {
-+static const struct fsl_mc_device_id dpaa2_ptp_match_id_table[] = {
- 	{
- 		.vendor = FSL_MC_VENDOR_FREESCALE,
- 		.obj_type = "dprtc",
- 	},
- 	{}
- };
--MODULE_DEVICE_TABLE(fslmc, rtc_match_id_table);
-+MODULE_DEVICE_TABLE(fslmc, dpaa2_ptp_match_id_table);
+ struct fsl_mc_io;
  
--static struct fsl_mc_driver rtc_drv = {
-+static struct fsl_mc_driver dpaa2_ptp_drv = {
- 	.driver = {
- 		.name = KBUILD_MODNAME,
- 		.owner = THIS_MODULE,
- 	},
--	.probe = rtc_probe,
--	.remove = rtc_remove,
--	.match_id_table = rtc_match_id_table,
-+	.probe = dpaa2_ptp_probe,
-+	.remove = dpaa2_ptp_remove,
-+	.match_id_table = dpaa2_ptp_match_id_table,
- };
+-/**
+- * Number of irq's
+- */
+-#define DPRTC_MAX_IRQ_NUM			1
+-#define DPRTC_IRQ_INDEX				0
+-
+-/**
+- * Interrupt event masks:
+- */
+-
+-/**
+- * Interrupt event mask indicating alarm event had occurred
+- */
+-#define DPRTC_EVENT_ALARM			0x40000000
+-/**
+- * Interrupt event mask indicating periodic pulse event had occurred
+- */
+-#define DPRTC_EVENT_PPS				0x08000000
+-
+ int dprtc_open(struct fsl_mc_io *mc_io,
+ 	       u32 cmd_flags,
+ 	       int dprtc_id,
+@@ -41,47 +22,6 @@ int dprtc_close(struct fsl_mc_io *mc_io,
+ 		u32 cmd_flags,
+ 		u16 token);
  
--module_fsl_mc_driver(rtc_drv);
-+module_fsl_mc_driver(dpaa2_ptp_drv);
+-/**
+- * struct dprtc_cfg - Structure representing DPRTC configuration
+- * @options:	place holder
+- */
+-struct dprtc_cfg {
+-	u32 options;
+-};
+-
+-int dprtc_create(struct fsl_mc_io *mc_io,
+-		 u16 dprc_token,
+-		 u32 cmd_flags,
+-		 const struct dprtc_cfg *cfg,
+-		 u32 *obj_id);
+-
+-int dprtc_destroy(struct fsl_mc_io *mc_io,
+-		  u16 dprc_token,
+-		  u32 cmd_flags,
+-		  u32 object_id);
+-
+-int dprtc_enable(struct fsl_mc_io *mc_io,
+-		 u32 cmd_flags,
+-		 u16 token);
+-
+-int dprtc_disable(struct fsl_mc_io *mc_io,
+-		  u32 cmd_flags,
+-		  u16 token);
+-
+-int dprtc_is_enabled(struct fsl_mc_io *mc_io,
+-		     u32 cmd_flags,
+-		     u16 token,
+-		     int *en);
+-
+-int dprtc_reset(struct fsl_mc_io *mc_io,
+-		u32 cmd_flags,
+-		u16 token);
+-
+-int dprtc_set_clock_offset(struct fsl_mc_io *mc_io,
+-			   u32 cmd_flags,
+-			   u16 token,
+-			   int64_t offset);
+-
+ int dprtc_set_freq_compensation(struct fsl_mc_io *mc_io,
+ 				u32 cmd_flags,
+ 				u16 token,
+@@ -102,63 +42,4 @@ int dprtc_set_time(struct fsl_mc_io *mc_io,
+ 		   u16 token,
+ 		   uint64_t time);
  
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("DPAA2 PTP Clock Driver");
+-int dprtc_set_alarm(struct fsl_mc_io *mc_io,
+-		    u32 cmd_flags,
+-		    u16 token,
+-		    uint64_t time);
+-
+-int dprtc_set_irq_enable(struct fsl_mc_io *mc_io,
+-			 u32 cmd_flags,
+-			 u16 token,
+-			 u8 irq_index,
+-			 u8 en);
+-
+-int dprtc_get_irq_enable(struct fsl_mc_io *mc_io,
+-			 u32 cmd_flags,
+-			 u16 token,
+-			 u8 irq_index,
+-			 u8 *en);
+-
+-int dprtc_set_irq_mask(struct fsl_mc_io *mc_io,
+-		       u32 cmd_flags,
+-		       u16 token,
+-		       u8 irq_index,
+-		       u32 mask);
+-
+-int dprtc_get_irq_mask(struct fsl_mc_io *mc_io,
+-		       u32 cmd_flags,
+-		       u16 token,
+-		       u8 irq_index,
+-		       u32 *mask);
+-
+-int dprtc_get_irq_status(struct fsl_mc_io *mc_io,
+-			 u32 cmd_flags,
+-			 u16 token,
+-			 u8 irq_index,
+-			 u32 *status);
+-
+-int dprtc_clear_irq_status(struct fsl_mc_io *mc_io,
+-			   u32 cmd_flags,
+-			   u16 token,
+-			   u8 irq_index,
+-			   u32 status);
+-
+-/**
+- * struct dprtc_attr - Structure representing DPRTC attributes
+- * @id:		DPRTC object ID
+- */
+-struct dprtc_attr {
+-	int id;
+-};
+-
+-int dprtc_get_attributes(struct fsl_mc_io *mc_io,
+-			 u32 cmd_flags,
+-			 u16 token,
+-			 struct dprtc_attr *attr);
+-
+-int dprtc_get_api_version(struct fsl_mc_io *mc_io,
+-			  u32 cmd_flags,
+-			  u16 *major_ver,
+-			  u16 *minor_ver);
+-
+ #endif /* __FSL_DPRTC_H */
 -- 
 1.7.1
 
