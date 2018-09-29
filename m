@@ -2,162 +2,181 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 856A2C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E99C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2632A2073F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D149C2073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:19:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Aw7LOBlm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2632A2073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SaAMkvpp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D149C2073F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbeI3AsJ (ORCPT
+        id S1728602AbeI3AsZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 20:48:09 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:42999 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728197AbeI3AsI (ORCPT
+        Sat, 29 Sep 2018 20:48:25 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41285 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728197AbeI3AsZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 20:48:08 -0400
-Received: by mail-yb1-f194.google.com with SMTP id p74-v6so4019843ybc.9
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 11:18:44 -0700 (PDT)
+        Sat, 29 Sep 2018 20:48:25 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z3-v6so6672940pgv.8;
+        Sat, 29 Sep 2018 11:19:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=was+uRWAqpm9gQzap61cLsWwW3x6Tph2Eq+orYTfcUw=;
-        b=Aw7LOBlmhS51Eg+gIwJC41hvWLpbtD58tOk/ZyW8YE89sNay89KHgK6EHODChdBIR0
-         wrSE/rFpM7/BkIvvAxNU764fFC95h3dBzhvfhYUMGm4razQbHQ6AfGuqku59psbEpF+F
-         BuzUmsJneBrK3aVUH4DOfoAeL2gar3TENzDXc=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tDXzf/udT2sLICh0F22dZmfyKcOE6GKdhC9TxcJib8o=;
+        b=SaAMkvppvQTYGQVtNj3RcYow2tvFEWnQXsWIP7k1NdH5nlSz5e6+28aZq+J+Pcv/iB
+         B5rHD6HcnlrnmBteGs4zByny8fsuelYReWqzCL4gF04tUbxjVDSd7Mv/4557Z0uNtpMy
+         wY50UqQN3m0iBtq3DVB3Jfz4G21X17PxNhM91r08KpfXAE5GSagVtUNHEaeQP/IUcp6t
+         pOyCCeQJOaO6n8NypCeiKaekdxXsSe3ZbfWSREMACao+dg47lkczR9RHLzgYil3N85R8
+         0qsHRsyh8QphOh/dkCgT2KgOT5KJsIwZiPT/KfWQc4YTxM9KscW3Jz65SLpcivYK+EF4
+         mzIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=was+uRWAqpm9gQzap61cLsWwW3x6Tph2Eq+orYTfcUw=;
-        b=ra8Txerorvdar9w/jj8FJaVffbhH0ZIfIFyBx5QjUHCP7LpzPHgiiiMijbKz+tcaQo
-         dZPZXifQqpMI3BdnZSRU3QjWeBDoeG0O2FJ1yZiYXmUdiVVEe9o1MDS6LCoeFB6BZnly
-         5LLrOFaiuPKVGwyp7otNL0HVAL6MvAMAQUwtm3G8oRFHZakndyPvjDESqwHziMyIdQCY
-         NyXQ8qUpgbD+lYQlpJUI4urvt1FOy/vemTQLJnaXnH/1kmj2REwJdQfgK2sM5ZCc9o94
-         N7H70AqYaDgan4DS9a67IPctHb+IDCjgrhTRZtevmbdNLxdLL67zV1DINOUeBGPbFoek
-         wQfA==
-X-Gm-Message-State: ABuFfogkgXHBR3DnJKXlAxUzSONTboiwcLp8u7nx+sVWGL6Oz/yJ5v3g
-        lI9SUI73XsaCbMU4CJPCCCIS/k5n4I0=
-X-Google-Smtp-Source: ACcGV62zWyWjjFw4a8pQXzl4iOlcu+hLOq4d68AIlrCU7CBGRKYxu6dqnWUCV5bkXWFIuF6VXF2YOA==
-X-Received: by 2002:a25:dccf:: with SMTP id y198-v6mr2141020ybe.389.1538245123533;
-        Sat, 29 Sep 2018 11:18:43 -0700 (PDT)
-Received: from mail-yw1-f49.google.com (mail-yw1-f49.google.com. [209.85.161.49])
-        by smtp.gmail.com with ESMTPSA id 137-v6sm4614821ywo.54.2018.09.29.11.18.41
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tDXzf/udT2sLICh0F22dZmfyKcOE6GKdhC9TxcJib8o=;
+        b=nUo/9x58F7MGlxN+E3FqItnEkoVXc8WwnwnIOZLrSJmWsNGtlwmoGeFAcZP6xDU5aZ
+         DydSDfBSXYUjiJZSM1r5uyAN5/AYbTpy27D4NkONzSrx9xwwTT59FCt8H1b0FirBb0xZ
+         s1MDgATDDZzAx4KCSRZlszzzbE8Av+dq5sYb5WeT0LmD0/CHl47gdIueT6mVAywxbTmO
+         MPmz01alZuRbNHXmZZ1NGqg8McVBVH+Tnr7gSauAiAmdygdrFPVNP8QvF5LVk6fC1swW
+         rA4/mko15p+Rxp24cUqsaT7fHeIxBOkzvBpzKOo23uVrxk885Um+3vZoE02JFCcRJJ23
+         XC+A==
+X-Gm-Message-State: ABuFfohId/fNdqmh5z/GG29LYJCDuD/NijfjdDjbvpW3dKSxd6L9tVJ1
+        S/RREpKLbG7sTlbUZNuziVM=
+X-Google-Smtp-Source: ACcGV63yscddTUXp+MU7pwVbHt+9bogVEYBKbUkq+SKLnTPEUkf/Tgd4Px4eTAUToGrGbYiuDHgscA==
+X-Received: by 2002:a62:1a16:: with SMTP id a22-v6mr4025109pfa.237.1538245140891;
+        Sat, 29 Sep 2018 11:19:00 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id u62-v6sm13227276pfu.69.2018.09.29.11.18.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Sep 2018 11:18:41 -0700 (PDT)
-Received: by mail-yw1-f49.google.com with SMTP id s73-v6so3954113ywg.11
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 11:18:41 -0700 (PDT)
-X-Received: by 2002:a81:1194:: with SMTP id 142-v6mr2258624ywr.168.1538245120949;
- Sat, 29 Sep 2018 11:18:40 -0700 (PDT)
+        Sat, 29 Sep 2018 11:18:59 -0700 (PDT)
+Date:   Sat, 29 Sep 2018 11:18:58 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Radu Rendec <radu.rendec@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [v3,2/3] watchdog: mpc8xxx: provide boot status
+Message-ID: <20180929181858.GA5758@roeck-us.net>
+References: <207741bf9c994a869f574a93d4fb4152d4e169c9.1537163779.git.christophe.leroy@c-s.fr>
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Sat, 29 Sep 2018 11:18:40
- -0700 (PDT)
-In-Reply-To: <eda428eb-f6e1-f048-a394-251953c388b6@i-love.sakura.ne.jp>
-References: <20180925001832.18322-1-keescook@chromium.org> <e6122c7d-bd29-d081-3c1e-96b7c369d4fe@schaufler-ca.com>
- <CAGXu5jKQVDW8Wp0ESv2raa0xJnHCCMNqFCzZ5jSVXQ=Dp7FF8A@mail.gmail.com> <eda428eb-f6e1-f048-a394-251953c388b6@i-love.sakura.ne.jp>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sat, 29 Sep 2018 11:18:40 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLUaFX_jPHoOq1abEAjJdLo29Hr2q=sk07yj4KytW6psQ@mail.gmail.com>
-Message-ID: <CAGXu5jLUaFX_jPHoOq1abEAjJdLo29Hr2q=sk07yj4KytW6psQ@mail.gmail.com>
-Subject: Re: [PATCH security-next v3 00/29] LSM: Explict LSM ordering
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <207741bf9c994a869f574a93d4fb4152d4e169c9.1537163779.git.christophe.leroy@c-s.fr>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 3:48 AM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2018/09/29 5:01, Kees Cook wrote:
->> On Fri, Sep 28, 2018 at 8:55 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> On 9/24/2018 5:18 PM, Kees Cook wrote:
->>>> v3:
->>>> - add CONFIG_LSM_ENABLE and refactor resulting logic
->>>
->>> Kees, you can add my
->>>
->>>         Reviewed-by:Casey Schaufler <casey@schaufler-ca.com>
->>>
->>> for this entire patch set. Thank you for taking this on, it's
->>> a significant and important chunk of the LSM infrastructure
->>> update.
->>
->> Thanks!
->>
->> John, you'd looked at this a bit too -- do the results line up with
->> your expectations?
->>
->> Any thoughts from SELinux, TOMOYO, or IMA folks?
->
-> I'm OK with this approach. Thank you.
+On Mon, Sep 17, 2018 at 06:22:50AM +0000, Christophe Leroy wrote:
+> mpc8xxx watchdog driver supports the following platforms:
+> - mpc8xx
+> - mpc83xx
+> - mpc86xx
+> 
+> Those three platforms have a 32 bits register which provides the
+> reason of the last boot, including whether it was caused by the
+> watchdog.
+> 
+> mpc8xx: Register RSR, bit SWRS (bit 3)
+> mpc83xx: Register RSR, bit SWRS (bit 28)
+> mpc86xx: Register RSTRSCR, bit WDT_RR (bit 11)
+> 
+> This patch maps the register as defined in the device tree and updates
+> wdt.bootstatus based on the value of the watchdog related bit. Then
+> the information can be retrieved via the WDIOC_GETBOOTSTATUS ioctl.
+> 
+> Hereunder is an example of devicetree for mpc8xx,
+> the Reset Status Register being at offset 0x288:
+> 
+> 		WDT: watchdog@0 {
+> 			compatible = "fsl,mpc823-wdt";
+> 			reg = <0x0 0x10 0x288 0x4>;
+> 		};
+> 
+> On the mpc83xx, RSR is at offset 0x910
+> On the mpc86xx, RSTRSCR is at offset 0xe0094
+> 
+> Suggested-by: Radu Rendec <radu.rendec@gmail.com>
+> Tested-by: Christophe Leroy <christophe.leroy@c-s.fr> # On mpc885
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Thanks for looking it over!
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-> Just wondering what is "__lsm_name_##lsm" for...
->
-> +#define DEFINE_LSM(lsm)                                                        \
-> +       static const char __lsm_name_##lsm[] __initconst                \
-> +               __aligned(1) = #lsm;                                    \
-> +       static struct lsm_info __lsm_##lsm                              \
-> +               __used __section(.lsm_info.init)                        \
-> +               __aligned(sizeof(unsigned long))                        \
-> +               = {                                                     \
-> +                       .name = __lsm_name_##lsm,                       \
+> ---
+>  drivers/watchdog/mpc8xxx_wdt.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/drivers/watchdog/mpc8xxx_wdt.c b/drivers/watchdog/mpc8xxx_wdt.c
+> index 1dcf5f10cdd9..069072e6747d 100644
+> --- a/drivers/watchdog/mpc8xxx_wdt.c
+> +++ b/drivers/watchdog/mpc8xxx_wdt.c
+> @@ -47,6 +47,7 @@ struct mpc8xxx_wdt {
+>  struct mpc8xxx_wdt_type {
+>  	int prescaler;
+>  	bool hw_enabled;
+> +	u32 rsr_mask;
+>  };
+>  
+>  struct mpc8xxx_wdt_ddata {
+> @@ -159,6 +160,24 @@ static int mpc8xxx_wdt_probe(struct platform_device *ofdev)
+>  		return -ENODEV;
+>  	}
+>  
+> +	res = platform_get_resource(ofdev, IORESOURCE_MEM, 1);
+> +	if (res) {
+> +		bool status;
+> +		u32 __iomem *rsr = ioremap(res->start, resource_size(res));
 > +
-> +#define END_LSM          }
-
-I wasn't super happy with the END_LSM thing, but I wanted to be able
-to declare the name as __initconst, otherwise it needlessly stays in
-memory after init. That said, it's not a huge deal, and maybe
-readability trumps a tiny meory savings?
-
-> We could do something like below so that funny END_LSM is not required?
-> I felt } like a typo error at the first glance. What we need is to
-> gather into one section with appropriate alignment, isn't it?
->
-> #define LSM_INFO                                                        \
->         static struct lsm_info __lsm_                                   \
->                 __used __section(.lsm_info.init)                        \
->                 __aligned(sizeof(unsigned long))                        \
->
-> LSM_INFO = {
->         .name = "tomoyo",
->         .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
->         .init = tomoyo_init,
-> };
-
-I thought the structure instances would need a unique name, but it
-seems the section naming removes that requirement. This seems only to
-be needed if we had multiple LSMs defined in the same source file.
-Though I wonder if this would be a problem for LTO in the future?
-
-I'm happy to do whatever.
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+> +		if (!rsr)
+> +			return -ENOMEM;
+> +
+> +		status = in_be32(rsr) & wdt_type->rsr_mask;
+> +		ddata->wdd.bootstatus = status ? WDIOF_CARDRESET : 0;
+> +		 /* clear reset status bits related to watchdog timer */
+> +		out_be32(rsr, wdt_type->rsr_mask);
+> +		iounmap(rsr);
+> +
+> +		dev_info(dev, "Last boot was %scaused by watchdog\n",
+> +			 status ? "" : "not ");
+> +	}
+> +
+>  	spin_lock_init(&ddata->lock);
+>  
+>  	ddata->wdd.info = &mpc8xxx_wdt_info,
+> @@ -216,6 +235,7 @@ static const struct of_device_id mpc8xxx_wdt_match[] = {
+>  		.compatible = "mpc83xx_wdt",
+>  		.data = &(struct mpc8xxx_wdt_type) {
+>  			.prescaler = 0x10000,
+> +			.rsr_mask = BIT(3), /* RSR Bit SWRS */
+>  		},
+>  	},
+>  	{
+> @@ -223,6 +243,7 @@ static const struct of_device_id mpc8xxx_wdt_match[] = {
+>  		.data = &(struct mpc8xxx_wdt_type) {
+>  			.prescaler = 0x10000,
+>  			.hw_enabled = true,
+> +			.rsr_mask = BIT(20), /* RSTRSCR Bit WDT_RR */
+>  		},
+>  	},
+>  	{
+> @@ -230,6 +251,7 @@ static const struct of_device_id mpc8xxx_wdt_match[] = {
+>  		.data = &(struct mpc8xxx_wdt_type) {
+>  			.prescaler = 0x800,
+>  			.hw_enabled = true,
+> +			.rsr_mask = BIT(28), /* RSR Bit SWRS */
+>  		},
+>  	},
+>  	{},
