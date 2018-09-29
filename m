@@ -6,43 +6,42 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20572C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A02CC004D5
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEBA920880
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:49:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEBA920880
+	by mail.kernel.org (Postfix) with ESMTP id 39F282087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:49:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39F282087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbeI3ETa (ORCPT
+        id S1729096AbeI3ETh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:19:30 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52146 "EHLO
+        Sun, 30 Sep 2018 00:19:37 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52131 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728897AbeI3ESi (ORCPT
+        by vger.kernel.org with ESMTP id S1728896AbeI3ESi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Sep 2018 00:18:38 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N6H-0000HB-H3; Sat, 29 Sep 2018 22:48:33 +0100
+        id 1g6N6H-0000H9-JB; Sat, 29 Sep 2018 22:48:33 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5v-0006qw-Uf; Sat, 29 Sep 2018 22:48:11 +0100
+        id 1g6N5v-0006qX-On; Sat, 29 Sep 2018 22:48:11 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
-        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>
+CC:     akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.99542996@decadent.org.uk>
+Message-ID: <lsq.1538257387.972713658@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 026/131] proc: Use underscores for SSBD in 'status'
+Subject: [PATCH 3.16 021/131] seccomp: Use PR_SPEC_FORCE_DISABLE
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,30 +55,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit e96f46ee8587607a828f783daa6eb5b44d25004d upstream.
+commit b849a812f7eb92e96d1c8239b06581b2cfd8b275 upstream.
 
-The style for the 'status' file is CamelCase or this. _.
+Use PR_SPEC_FORCE_DISABLE in seccomp() because seccomp does not allow to
+widen restrictions.
 
-Fixes: fae1fa0fc ("proc: Provide details on speculation flaw mitigations")
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/proc/array.c | 2 +-
+ kernel/seccomp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -327,7 +327,7 @@ static inline void task_seccomp(struct s
- #ifdef CONFIG_SECCOMP
- 	seq_printf(m, "Seccomp:\t%d\n", p->seccomp.mode);
- #endif
--	seq_printf(m, "Speculation Store Bypass:\t");
-+	seq_printf(m, "Speculation_Store_Bypass:\t");
- 	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
- 	case -EINVAL:
- 		seq_printf(m, "unknown");
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -217,7 +217,7 @@ static inline void spec_mitigate(struct
+ 	int state = arch_prctl_spec_ctrl_get(task, which);
+ 
+ 	if (state > 0 && (state & PR_SPEC_PRCTL))
+-		arch_prctl_spec_ctrl_set(task, which, PR_SPEC_DISABLE);
++		arch_prctl_spec_ctrl_set(task, which, PR_SPEC_FORCE_DISABLE);
+ }
+ 
+ static inline void seccomp_assign_mode(unsigned long seccomp_mode)
 
