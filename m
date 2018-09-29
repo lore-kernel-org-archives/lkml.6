@@ -2,98 +2,153 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EACC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 05:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FED1C64E93
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 05:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C19A2087D
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 05:50:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hpBvakUN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C19A2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0EAE020882
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 05:56:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EAE020882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbeI2MR2 (ORCPT
+        id S1727471AbeI2MXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 08:17:28 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37019 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727420AbeI2MR1 (ORCPT
+        Sat, 29 Sep 2018 08:23:17 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:54234 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727393AbeI2MXR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 08:17:27 -0400
-Received: by mail-pf1-f195.google.com with SMTP id x26-v6so5674947pfn.4
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 22:50:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=5xZvV9ure0B+Th/au/ie3rB7XqPr/svxvChRm0xoFwg=;
-        b=hpBvakUNb4T8ainOmd6UaRX9Am+kZP71yKwiZMqtFvyofcJRewL5Tq/DS46xAwOkqE
-         KIVb1IDSSZS7F/6yiOc+8UD/ML/nTLTal5LYqk+oKHEe5rz2+2tdXsTBcFoo5d06CpRs
-         6N8OgTQGHPvv4qS8tIraFX/k4k+/kVHKs1Dp4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=5xZvV9ure0B+Th/au/ie3rB7XqPr/svxvChRm0xoFwg=;
-        b=HiSeWYa9aK3Qj4kcRIZuk0MMRfRPICjT3Ley1rUXWEJWJrU1TYHVArJ2FxQIBx0HGC
-         Q/mSdsopq5ZtYDT4DL+KdVEY3oK0I8LwJGLCtpitKxmdCVfyqdUof3fCFCKmpFLMx/6F
-         sHnaGkoKzUK5A96Qv/HUDugMvPyRVxoDQ3Yk6Urvjyno9BiqeoFrwPhHagc1zRDPsCO7
-         +/u8jUEnO5i79b2zjgUPIrTPoaBOJrQDqHjCXjwATFDw0cSxUnXERISUzsdkMeFNzO1w
-         JtqOpx47t2zb3jWQtU991xh/nc1RgUsj2Aqn8qp0gpOuyPNEVTeA5Se1DgrWMcjpcypb
-         p9+w==
-X-Gm-Message-State: ABuFfohH0GvECtItrYeesCyav1aRLOYhlMJZgCJskHWcBWtmNZpBsU5O
-        n1bqolY26w2HayNJggV69+o1fdIZZqI/Iw==
-X-Google-Smtp-Source: ACcGV6102u+MUI5IZUapI4Hd253UUKINrrKH7Ruy795W3nNou7IRSd+vkhFVmcT29bH8uiUzlflU2w==
-X-Received: by 2002:a17:902:8b8c:: with SMTP id ay12-v6mr1701882plb.163.1538200222836;
-        Fri, 28 Sep 2018 22:50:22 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id i80-v6sm11118049pfi.87.2018.09.28.22.50.19
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 28 Sep 2018 22:50:21 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     dan.j.williams@intel.com, vkoul@kernel.org,
-        eric.long@spreadtrum.com
-Cc:     broonie@kernel.org, baolin.wang@linaro.org,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] dmaengine: sprd: Add me as one of the module authors
-Date:   Sat, 29 Sep 2018 13:49:05 +0800
-Message-Id: <c6a70c1245092d1c2c2c195f82423798457fb3c6.1538199697.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1538199697.git.baolin.wang@linaro.org>
-References: <cover.1538199697.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1538199697.git.baolin.wang@linaro.org>
-References: <cover.1538199697.git.baolin.wang@linaro.org>
+        Sat, 29 Sep 2018 08:23:17 -0400
+X-UUID: 93ae8b3afb4f44e68c62794d269862fd-20180929
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <ryder.lee@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 621870044; Sat, 29 Sep 2018 13:56:01 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 29 Sep 2018 13:55:59 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sat, 29 Sep 2018 13:55:55 +0800
+Message-ID: <1538200554.25778.4.camel@mtkswgap22>
+Subject: Re: [PATCH v5 4/9] PCI: mediatek: Convert to use pci_host_probe()
+From:   Ryder Lee <ryder.lee@mediatek.com>
+To:     Honghui Zhang <honghui.zhang@mediatek.com>
+CC:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ulf.hansson@linaro.org>,
+        <marc.zyngier@arm.com>, <matthias.bgg@gmail.com>,
+        <devicetree@vger.kernel.org>, <yingjoe.chen@mediatek.com>,
+        <eddie.huang@mediatek.com>, <youlin.pei@mediatek.com>,
+        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>
+Date:   Sat, 29 Sep 2018 13:55:54 +0800
+In-Reply-To: <1538180205.14753.20.camel@mhfsdcap03>
+References: <1538129080-8206-1-git-send-email-honghui.zhang@mediatek.com>
+         <1538129080-8206-5-git-send-email-honghui.zhang@mediatek.com>
+         <1538149277.23182.7.camel@mtkswgap22>
+         <1538180205.14753.20.camel@mhfsdcap03>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: 67E7F166831E3AA6CEB68F652C190C1D86E1435962AB698DF12921B8FE64E6982000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Long <eric.long@spreadtrum.com>
+On Sat, 2018-09-29 at 08:16 +0800, Honghui Zhang wrote:
+> On Fri, 2018-09-28 at 23:41 +0800, Ryder Lee wrote:
+> > On Fri, 2018-09-28 at 18:04 +0800, honghui.zhang@mediatek.com wrote:
+> > > From: Honghui Zhang <honghui.zhang@mediatek.com>
+> > > 
+> > > Part of mtk_pcie_register_host is an open-coded version of
+> > > pci_host_probe(). So instead of duplicating this code, use
+> > > pci_host_probe() directly and remove mtk_pcie_register_host.
+> > > 
+> > > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> > > ---
+> > >  drivers/pci/controller/pcie-mediatek.c | 37 ++++++++--------------------------
+> > >  1 file changed, 8 insertions(+), 29 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> > > index e2c4127..cbf4543 100644
+> > > --- a/drivers/pci/controller/pcie-mediatek.c
+> > > +++ b/drivers/pci/controller/pcie-mediatek.c
+> > > @@ -1125,34 +1125,6 @@ static int mtk_pcie_request_resources(struct mtk_pcie *pcie)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > -static int mtk_pcie_register_host(struct pci_host_bridge *host)
+> > > -{
+> > > -	struct mtk_pcie *pcie = pci_host_bridge_priv(host);
+> > > -	struct pci_bus *child;
+> > > -	int err;
+> > 
+> > To make the patch simple, could we keep these host->*. and return
+> > pci_host_probe() directly?
+> 
+> Well, I guess it's not necessary to keep the mtk_pcie_register_host just
+> wrap pci_host_probe(). Put those host->* directly in probe function is
+> no harm, it will reduce one function call and related parameter passing.
+> 
+> I may update this patch to keep the mtk_pcie_register_host if you insist
+> though I prefer the current way.
+> 
+> Thanks.
 
-Add me as one of the module authors.
+Okay. I'm fine with this.
 
-Signed-off-by: Eric Long <eric.long@spreadtrum.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/dma/sprd-dma.c |    1 +
- 1 file changed, 1 insertion(+)
+> > > -	host->busnr = pcie->busn.start;
+> > > -	host->dev.parent = pcie->dev;
+> > > -	host->ops = pcie->soc->ops;
+> > > -	host->map_irq = of_irq_parse_and_map_pci;
+> > > -	host->swizzle_irq = pci_common_swizzle;
+> > > -	host->sysdata = pcie;
+> > > -
+> > > -	err = pci_scan_root_bus_bridge(host);
+> > > -	if (err < 0)
+> > > -		return err;
+> > > -
+> > > -	pci_bus_size_bridges(host->bus);
+> > > -	pci_bus_assign_resources(host->bus);
+> > > -
+> > > -	list_for_each_entry(child, &host->bus->children, node)
+> > > -		pcie_bus_configure_settings(child);
+> > > -
+> > > -	pci_bus_add_devices(host->bus);
+> > > -
+> > > -	return 0;
+> > > -}
+> > > -
+> > >  static int mtk_pcie_probe(struct platform_device *pdev)
+> > >  {
+> > >  	struct device *dev = &pdev->dev;
+> > > @@ -1179,7 +1151,14 @@ static int mtk_pcie_probe(struct platform_device *pdev)
+> > >  	if (err)
+> > >  		goto put_resources;
+> > >  
+> > > -	err = mtk_pcie_register_host(host);
+> > > +	host->busnr = pcie->busn.start;
+> > > +	host->dev.parent = pcie->dev;
+> > > +	host->ops = pcie->soc->ops;
+> > > +	host->map_irq = of_irq_parse_and_map_pci;
+> > > +	host->swizzle_irq = pci_common_swizzle;
+> > > +	host->sysdata = pcie;
+> > > +
+> > > +	err = pci_host_probe(host);
+> > >  	if (err)
+> > >  		goto put_resources;
+> > >  
+> > 
+> > 
+> 
+> 
 
-diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index 50d6569..e2f0167 100644
---- a/drivers/dma/sprd-dma.c
-+++ b/drivers/dma/sprd-dma.c
-@@ -1226,4 +1226,5 @@ static int __maybe_unused sprd_dma_runtime_resume(struct device *dev)
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("DMA driver for Spreadtrum");
- MODULE_AUTHOR("Baolin Wang <baolin.wang@spreadtrum.com>");
-+MODULE_AUTHOR("Eric Long <eric.long@spreadtrum.com>");
- MODULE_ALIAS("platform:sprd-dma");
--- 
-1.7.9.5
 
