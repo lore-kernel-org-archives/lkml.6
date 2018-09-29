@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCACC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 01:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B035C004D2
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 01:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B0EF20652
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 01:21:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B0EF20652
+	by mail.kernel.org (Postfix) with ESMTP id 29BF8206B8
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 01:21:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29BF8206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbeI2HrV (ORCPT
+        id S1727461AbeI2Hra (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 03:47:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51768 "EHLO
+        Sat, 29 Sep 2018 03:47:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51772 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbeI2HrV (ORCPT
+        with ESMTP id S1727359AbeI2Hra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 03:47:21 -0400
+        Sat, 29 Sep 2018 03:47:30 -0400
 Received: from localhost (c-73-221-170-44.hsd1.wa.comcast.net [73.221.170.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07FF2C97;
-        Sat, 29 Sep 2018 01:20:57 +0000 (UTC)
-Date:   Fri, 28 Sep 2018 18:20:56 -0700
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E0D2EC97;
+        Sat, 29 Sep 2018 01:21:06 +0000 (UTC)
+Date:   Fri, 28 Sep 2018 18:21:05 -0700
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [GIT PULL] spi fixes for v4.19
-Message-ID: <20180929012056.GB28824@kroah.com>
-References: <20180928143041.GQ20825@sirena.org.uk>
+Subject: Re: [git pull] Input updates for v4.19-rc5
+Message-ID: <20180929012105.GC28824@kroah.com>
+References: <20180928235751.GA182564@dtor-ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180928143041.GQ20825@sirena.org.uk>
+In-Reply-To: <20180928235751.GA182564@dtor-ws>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 03:30:41PM +0100, Mark Brown wrote:
-> The following changes since commit 5223c9c1cbfc0cd4d0a1b50758e0949af3290fa1:
+On Fri, Sep 28, 2018 at 04:57:51PM -0700, Dmitry Torokhov wrote:
+> Hi Greg,
 > 
->   spi: spi-fsl-dspi: fix broken DSPI_EOQ_MODE (2018-08-28 20:55:23 +0100)
+> Please pull from:
 > 
-> are available in the Git repository at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
 > 
->   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v4.19-rc5
+> to receive updates for the input subsystem. Just a few driver fixes.
 
 Now pulled, thanks.
 
