@@ -2,227 +2,100 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F6DC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A287BC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8004208E4
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:42:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8004208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4908021502
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 18:52:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="sEdc+qK/";
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="aXYk92La"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4908021502
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728223AbeI3BLk (ORCPT
+        id S1728211AbeI3BWB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 21:11:40 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:40890 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727431AbeI3BLj (ORCPT
+        Sat, 29 Sep 2018 21:22:01 -0400
+Received: from forward100j.mail.yandex.net ([5.45.198.240]:55762 "EHLO
+        forward100j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728148AbeI3BWB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 21:11:39 -0400
-Received: from svr-orw-mbx-02.mgc.mentorg.com ([147.34.90.202])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1g6KBA-0000QT-Gt from Steve_Longerbeam@mentor.com ; Sat, 29 Sep 2018 11:41:24 -0700
-Received: from mappy.world.mentorg.com (147.34.91.1) by
- svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Sat, 29 Sep 2018 11:41:21 -0700
-From:   Steve Longerbeam <steve_longerbeam@mentor.com>
-To:     <linux-media@vger.kernel.org>
-CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 04/17] media: v4l2: async: Add convenience functions to allocate and add asd's
-Date:   Sat, 29 Sep 2018 11:40:39 -0700
-Message-ID: <20180929184052.19479-5-steve_longerbeam@mentor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180929184052.19479-1-steve_longerbeam@mentor.com>
-References: <20180929184052.19479-1-steve_longerbeam@mentor.com>
+        Sat, 29 Sep 2018 21:22:01 -0400
+Received: from mxback6j.mail.yandex.net (mxback6j.mail.yandex.net [IPv6:2a02:6b8:0:1619::10f])
+        by forward100j.mail.yandex.net (Yandex) with ESMTP id B799F5D85CF5;
+        Sat, 29 Sep 2018 21:52:26 +0300 (MSK)
+Received: from smtp1j.mail.yandex.net (smtp1j.mail.yandex.net [2a02:6b8:0:801::ab])
+        by mxback6j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id kPwK8j4bPW-qQZKlKk4;
+        Sat, 29 Sep 2018 21:52:26 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1538247146;
+        bh=WUi1ueU8hOsgoaKf8dMcW0fLcw94VO/x3lPCnDetNms=;
+        h=From:To:Cc:Subject:Date:Message-Id;
+        b=sEdc+qK/sZrCCK6OtmH3QCFMzzA4ElKJwCzUlkCVml2YgUgwwk7DZ0+lJM9Q12Yfa
+         4VSKVgZ2TmKpZcI8UqS8FVGpWNLtLqX2bVbIakZ3LiHuyE/G2GWOeMzqXd0BisiRvA
+         2XTTAnnddxSQYOdOerDsYV9Z9BKGlSKVBFFO0wYM=
+Received: by smtp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 6U6u8UHQAn-qPXWVCqZ;
+        Sat, 29 Sep 2018 21:52:25 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1538247145;
+        bh=WUi1ueU8hOsgoaKf8dMcW0fLcw94VO/x3lPCnDetNms=;
+        h=From:To:Cc:Subject:Date:Message-Id;
+        b=aXYk92LapfQNMxf0cOK0AhodM5N3QeG/R2qB3vRPFbwo/+ML3+S97RGom13mdi70I
+         0mknu99oXhXyhQCe12/z8n9KPsvoAXbVuMuMipvvDPhsRFdizQyRccQUwUpAA3xbuq
+         WBrgiDKlEoc4ySL1JEiKmgHmTHcFhvaD2diCiNeI=
+Authentication-Results: smtp1j.mail.yandex.net; dkim=pass header.i=@yandex.ru
+From:   Andrey Abramov <st5pub@yandex.ru>
+To:     mchehab@kernel.org
+Cc:     gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Andrey Abramov <st5pub@yandex.ru>
+Subject: [PATCH] Staging: media: replaced deprecated probe method
+Date:   Sat, 29 Sep 2018 21:51:50 +0300
+Message-Id: <20180929185150.16657-1-st5pub@yandex.ru>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
- svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add these convenience functions, which allocate an asd of match type
-fwnode, i2c, or device-name, of size asd_struct_size, and then adds
-them to the notifier asd_list.
+drivers/staging/media/bcm2048/radio-bcm2048.c replaced i2c_driver::probe with i2c_driver::probe_new, because documentation says that i2c_driver::probe "soon to be deprecated"
 
-Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+Signed-off-by: Andrey Abramov <st5pub@yandex.ru>
 ---
- drivers/media/v4l2-core/v4l2-async.c | 76 ++++++++++++++++++++++++++++
- include/media/v4l2-async.h           | 62 +++++++++++++++++++++++
- 2 files changed, 138 insertions(+)
+ drivers/staging/media/bcm2048/radio-bcm2048.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index 7925875d09b7..196573f4ec48 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -650,6 +650,82 @@ int v4l2_async_notifier_add_subdev(struct v4l2_async_notifier *notifier,
- }
- EXPORT_SYMBOL_GPL(v4l2_async_notifier_add_subdev);
- 
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_fwnode_subdev(struct v4l2_async_notifier *notifier,
-+				      struct fwnode_handle *fwnode,
-+				      unsigned int asd_struct_size)
-+{
-+	struct v4l2_async_subdev *asd;
-+	int ret;
-+
-+	asd = kzalloc(asd_struct_size, GFP_KERNEL);
-+	if (!asd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
-+	asd->match.fwnode = fwnode;
-+
-+	ret = v4l2_async_notifier_add_subdev(notifier, asd);
-+	if (ret) {
-+		kfree(asd);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return asd;
-+}
-+EXPORT_SYMBOL_GPL(v4l2_async_notifier_add_fwnode_subdev);
-+
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_i2c_subdev(struct v4l2_async_notifier *notifier,
-+				   int adapter_id, unsigned short address,
-+				   unsigned int asd_struct_size)
-+{
-+	struct v4l2_async_subdev *asd;
-+	int ret;
-+
-+	asd = kzalloc(asd_struct_size, GFP_KERNEL);
-+	if (!asd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	asd->match_type = V4L2_ASYNC_MATCH_I2C;
-+	asd->match.i2c.adapter_id = adapter_id;
-+	asd->match.i2c.address = address;
-+
-+	ret = v4l2_async_notifier_add_subdev(notifier, asd);
-+	if (ret) {
-+		kfree(asd);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return asd;
-+}
-+EXPORT_SYMBOL_GPL(v4l2_async_notifier_add_i2c_subdev);
-+
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_devname_subdev(struct v4l2_async_notifier *notifier,
-+				       const char *device_name,
-+				       unsigned int asd_struct_size)
-+{
-+	struct v4l2_async_subdev *asd;
-+	int ret;
-+
-+	asd = kzalloc(asd_struct_size, GFP_KERNEL);
-+	if (!asd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
-+	asd->match.device_name = device_name;
-+
-+	ret = v4l2_async_notifier_add_subdev(notifier, asd);
-+	if (ret) {
-+		kfree(asd);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return asd;
-+}
-+EXPORT_SYMBOL_GPL(v4l2_async_notifier_add_devname_subdev);
-+
- int v4l2_async_register_subdev(struct v4l2_subdev *sd)
+diff --git a/drivers/staging/media/bcm2048/radio-bcm2048.c b/drivers/staging/media/bcm2048/radio-bcm2048.c
+index a90b2eb112f9..756f7f08c713 100644
+--- a/drivers/staging/media/bcm2048/radio-bcm2048.c
++++ b/drivers/staging/media/bcm2048/radio-bcm2048.c
+@@ -2574,8 +2574,7 @@ static const struct video_device bcm2048_viddev_template = {
+ /*
+  *	I2C driver interface
+  */
+-static int bcm2048_i2c_driver_probe(struct i2c_client *client,
+-				    const struct i2c_device_id *id)
++static int bcm2048_i2c_driver_probe_new(struct i2c_client *client)
  {
- 	struct v4l2_async_notifier *subdev_notifier;
-diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
-index ab4d7acb7960..3489e4ccb29b 100644
---- a/include/media/v4l2-async.h
-+++ b/include/media/v4l2-async.h
-@@ -174,6 +174,68 @@ void v4l2_async_notifier_init(struct v4l2_async_notifier *notifier);
- int v4l2_async_notifier_add_subdev(struct v4l2_async_notifier *notifier,
- 				   struct v4l2_async_subdev *asd);
- 
-+/**
-+ * v4l2_async_notifier_add_fwnode_subdev - Allocate and add a fwnode async
-+ *				subdev to the notifier's master asd_list.
-+ *
-+ * @notifier: pointer to &struct v4l2_async_notifier
-+ * @fwnode: fwnode handle of the sub-device to be matched
-+ * @asd_struct_size: size of the driver's async sub-device struct, including
-+ *		     sizeof(struct v4l2_async_subdev). The &struct
-+ *		     v4l2_async_subdev shall be the first member of
-+ *		     the driver's async sub-device struct, i.e. both
-+ *		     begin at the same memory address.
-+ *
-+ * This can be used before registering a notifier to add a
-+ * fwnode-matched asd to the notifiers master asd_list. If the caller
-+ * uses this method to compose an asd list, it must never allocate
-+ * or place asd's in the @subdevs array.
-+ */
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_fwnode_subdev(struct v4l2_async_notifier *notifier,
-+				      struct fwnode_handle *fwnode,
-+				      unsigned int asd_struct_size);
-+
-+/**
-+ * v4l2_async_notifier_add_i2c_subdev - Allocate and add an i2c async
-+ *				subdev to the notifier's master asd_list.
-+ *
-+ * @notifier: pointer to &struct v4l2_async_notifier
-+ * @adapter_id: I2C adapter ID to be matched
-+ * @address: I2C address of sub-device to be matched
-+ * @asd_struct_size: size of the driver's async sub-device struct, including
-+ *		     sizeof(struct v4l2_async_subdev). The &struct
-+ *		     v4l2_async_subdev shall be the first member of
-+ *		     the driver's async sub-device struct, i.e. both
-+ *		     begin at the same memory address.
-+ *
-+ * Same as above but for I2C matched sub-devices.
-+ */
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_i2c_subdev(struct v4l2_async_notifier *notifier,
-+				   int adapter_id, unsigned short address,
-+				   unsigned int asd_struct_size);
-+
-+/**
-+ * v4l2_async_notifier_add_devname_subdev - Allocate and add a device-name
-+ *				async subdev to the notifier's master asd_list.
-+ *
-+ * @notifier: pointer to &struct v4l2_async_notifier
-+ * @device_name: device name string to be matched
-+ * @asd_struct_size: size of the driver's async sub-device struct, including
-+ *		     sizeof(struct v4l2_async_subdev). The &struct
-+ *		     v4l2_async_subdev shall be the first member of
-+ *		     the driver's async sub-device struct, i.e. both
-+ *		     begin at the same memory address.
-+ *
-+ * Same as above but for device-name matched sub-devices.
-+ */
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_devname_subdev(struct v4l2_async_notifier *notifier,
-+				       const char *device_name,
-+				       unsigned int asd_struct_size);
-+
-+
- /**
-  * v4l2_async_notifier_register - registers a subdevice asynchronous notifier
-  *
+ 	struct bcm2048_device *bdev;
+ 	int err;
+@@ -2679,7 +2678,7 @@ static struct i2c_driver bcm2048_i2c_driver = {
+ 	.driver		= {
+ 		.name	= BCM2048_DRIVER_NAME,
+ 	},
+-	.probe		= bcm2048_i2c_driver_probe,
++	.probe_new	= bcm2048_i2c_driver_probe_new,
+ 	.remove		= bcm2048_i2c_driver_remove,
+ 	.id_table	= bcm2048_id,
+ };
 -- 
-2.17.1
+2.19.0
 
