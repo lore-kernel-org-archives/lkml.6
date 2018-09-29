@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54ACFC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 17:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 097ECC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 17:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 247942073F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 17:01:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 247942073F
+	by mail.kernel.org (Postfix) with ESMTP id C21A12073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 17:02:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C21A12073F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728534AbeI2XaO (ORCPT
+        id S1728557AbeI2XbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 19:30:14 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:34030 "EHLO
+        Sat, 29 Sep 2018 19:31:11 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:44178 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728501AbeI2XaO (ORCPT
+        by vger.kernel.org with ESMTP id S1728419AbeI2XbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 19:30:14 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1176559|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03294;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=18;RT=18;SR=0;TI=SMTPD_---.CxVf12z_1538240432;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CxVf12z_1538240432)
-          by smtp.aliyun-inc.com(10.147.41.143);
-          Sun, 30 Sep 2018 01:00:32 +0800
-Date:   Sun, 30 Sep 2018 01:00:31 +0800
+        Sat, 29 Sep 2018 19:31:11 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2412168|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03278;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=18;RT=18;SR=0;TI=SMTPD_---.CxVVe8F_1538240509;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CxVVe8F_1538240509)
+          by smtp.aliyun-inc.com(10.147.44.145);
+          Sun, 30 Sep 2018 01:01:49 +0800
+Date:   Sun, 30 Sep 2018 01:01:48 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
-To:     Christoph Hellwig <hch@infradead.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     akpm@linux-foundation.org, arnd@arndb.de,
         daniel.lezcano@linaro.org, davem@davemloft.net,
         gregkh@linuxfoundation.org, jason@lakedaemon.net,
@@ -38,36 +38,84 @@ Cc:     akpm@linux-foundation.org, arnd@arndb.de,
         robh+dt@kernel.org, tglx@linutronix.de,
         linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         devicetree@vger.kernel.org, green.hu@gmail.com
-Subject: Re: [PATCH V6 10/33] csky: IRQ handling
-Message-ID: <20180929170031.GB27796@guoren-Inspiron-7460>
+Subject: Re: [PATCH V6 08/33] csky: Process management and Signal
+Message-ID: <20180929170148.GC27796@guoren-Inspiron-7460>
 References: <cover.1538058840.git.ren_guo@c-sky.com>
- <fbb4e798d1588e9df2da16818932747430068baf.1538058840.git.ren_guo@c-sky.com>
- <20180927154918.GB15985@infradead.org>
+ <cover.1538058840.git.ren_guo@c-sky.com>
+ <a51eb26bd9442a3e4d09e9785ae5ccaf2555a534.1538058840.git.ren_guo@c-sky.com>
+ <87h8iaoh2k.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180927154918.GB15985@infradead.org>
+In-Reply-To: <87h8iaoh2k.fsf@xmission.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 08:49:18AM -0700, Christoph Hellwig wrote:
-> > --- /dev/null
-> > +++ b/arch/csky/include/asm/irq.h
-> > @@ -0,0 +1,9 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-> > +
-> > +#ifndef __ASM_CSKY_IRQ_H
-> > +#define __ASM_CSKY_IRQ_H
-> > +
-> > +#include <asm-generic/irq.h>
-> > +
-> > +#endif /* __ASM_CSKY_IRQ_H */
+On Thu, Sep 27, 2018 at 09:50:43PM +0200, Eric W. Biederman wrote:
+> Guo Ren <ren_guo@c-sky.com> writes:
 > 
-> Just wire this up using generic-y in the Kbuild file instead of
-> creating a wrapper.  (Same for any other header which is a trivial
-> asm-generic wrapper).
-Ok.
+> > --- /dev/null
+> > +++ b/arch/csky/abiv2/fpu.c
+> > +void fpu_fpe(struct pt_regs * regs)
+> > +{
+> > +	int sig;
+> > +	unsigned int fesr;
+> > +	siginfo_t info;
+> > +
+> > +	fesr = mfcr("cr<2, 2>");
+> > +
+> > +	if(fesr & FPE_ILLE){
+> > +		info.si_code = ILL_ILLOPC;
+> > +		sig = SIGILL;
+> > +	}
+> > +	else if(fesr & FPE_IDC){
+> > +		info.si_code = ILL_ILLOPN;
+> > +		sig = SIGILL;
+> > +	}
+> > +	else if(fesr & FPE_FEC){
+> > +		sig = SIGFPE;
+> > +		if(fesr & FPE_IOC){
+> > +			info.si_code = FPE_FLTINV;
+> > +		}
+> > +		else if(fesr & FPE_DZC){
+> > +			info.si_code = FPE_FLTDIV;
+> > +		}
+> > +		else if(fesr & FPE_UFC){
+> > +			info.si_code = FPE_FLTUND;
+> > +		}
+> > +		else if(fesr & FPE_OFC){
+> > +			info.si_code = FPE_FLTOVF;
+> > +		}
+> > +		else if(fesr & FPE_IXC){
+> > +			info.si_code = FPE_FLTRES;
+> > +		}
+> > +		else {
+> > +			info.si_code = NSIGFPE;
+> > +		}
+> > +	}
+> > +	else {
+> > +		info.si_code = NSIGFPE;
+> > +		sig = SIGFPE;
+> > +	}
+> > +	info.si_signo = SIGFPE;
+> > +	info.si_errno = 0;
+> > +	info.si_addr = (void *)regs->pc;
+> > +	force_sig_info(sig, &info, current);
+> > +}
+> 
+> 
+> This use of sending a signal is buggy.  It results in undefined values
+> being copied to userspace.
+> 
+> Userspace should never be sent NSIGXXX as a si_code.  You can use
+> FPE_FLTUNK for this default case.
+> 
+> In new code please use force_sig_fault instead of force_sig_info in new
+> code.  That saves you the trouble of messing with struct siginfo.
+Ok, I'll check and USE FPE_FLTUNK and force_sig_fault instead.
+
+Best Regards
+ Guo Ren
