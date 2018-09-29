@@ -2,42 +2,43 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0738C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D27C004D5
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCA0320879
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:31:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA0320879
+	by mail.kernel.org (Postfix) with ESMTP id A7C1E20879
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:31:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C1E20879
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeI2Q7h (ORCPT
+        id S1727993AbeI2Q7h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 29 Sep 2018 12:59:37 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13580 "EHLO huawei.com"
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13581 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727756AbeI2Q7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727540AbeI2Q7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 29 Sep 2018 12:59:37 -0400
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id EAEB0E9D0F999;
+        by Forcepoint Email with ESMTP id E57F45CAE572;
         Sat, 29 Sep 2018 18:31:38 +0800 (CST)
 Received: from szvp000201624.huawei.com (10.120.216.130) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.399.0; Sat, 29 Sep 2018 18:31:33 +0800
+ 14.3.399.0; Sat, 29 Sep 2018 18:31:34 +0800
 From:   Chao Yu <yuchao0@huawei.com>
 To:     <jaegeuk@kernel.org>
 CC:     <linux-f2fs-devel@lists.sourceforge.net>,
         <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
         Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: add to account meta IO
-Date:   Sat, 29 Sep 2018 18:31:27 +0800
-Message-ID: <20180929103128.31307-1-yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: add to account skip count of background GC
+Date:   Sat, 29 Sep 2018 18:31:28 +0800
+Message-ID: <20180929103128.31307-2-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20180929103128.31307-1-yuchao0@huawei.com>
+References: <20180929103128.31307-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.120.216.130]
@@ -47,126 +48,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch supports to account meta IO, it enables to show write IO
-from f2fs more comprehensively via 'status' debugfs entry.
+This patch adds to account skip count of background GC, and show stat
+info via 'status' debugfs entry.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/debug.c   | 13 +++++++++++++
- fs/f2fs/f2fs.h    | 15 +++++++++++++++
- fs/f2fs/segment.c |  1 +
- 3 files changed, 29 insertions(+)
+ fs/f2fs/debug.c |  4 ++++
+ fs/f2fs/f2fs.h  |  7 +++++++
+ fs/f2fs/gc.c    | 14 +++++++++++---
+ 3 files changed, 22 insertions(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index d3c402183e3c..da1cabbc4973 100644
+index da1cabbc4973..75bc62edc4c1 100644
 --- a/fs/f2fs/debug.c
 +++ b/fs/f2fs/debug.c
-@@ -118,6 +118,9 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- 		si->curzone[i] = GET_ZONE_FROM_SEC(sbi, si->cursec[i]);
- 	}
- 
-+	for (i = META_CP; i < META_MAX; i++)
-+		si->meta_count[i] = atomic_read(&sbi->meta_count[i]);
-+
- 	for (i = 0; i < 2; i++) {
- 		si->segment_count[i] = sbi->segment_count[i];
- 		si->block_count[i] = sbi->block_count[i];
-@@ -329,6 +332,13 @@ static int stat_show(struct seq_file *s, void *v)
- 			   si->prefree_count, si->free_segs, si->free_secs);
- 		seq_printf(s, "CP calls: %d (BG: %d)\n",
- 				si->cp_count, si->bg_cp_count);
-+		seq_printf(s, "  - cp blocks : %u\n", si->meta_count[META_CP]);
-+		seq_printf(s, "  - sit blocks : %u\n",
-+				si->meta_count[META_SIT]);
-+		seq_printf(s, "  - nat blocks : %u\n",
-+				si->meta_count[META_NAT]);
-+		seq_printf(s, "  - ssa blocks : %u\n",
-+				si->meta_count[META_SSA]);
- 		seq_printf(s, "GC calls: %d (BG: %d)\n",
- 			   si->call_count, si->bg_gc);
- 		seq_printf(s, "  - data segments : %d (%d)\n",
-@@ -441,6 +451,7 @@ int f2fs_build_stats(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
- 	struct f2fs_stat_info *si;
-+	int i;
- 
- 	si = f2fs_kzalloc(sbi, sizeof(struct f2fs_stat_info), GFP_KERNEL);
- 	if (!si)
-@@ -466,6 +477,8 @@ int f2fs_build_stats(struct f2fs_sb_info *sbi)
- 	atomic_set(&sbi->inline_inode, 0);
- 	atomic_set(&sbi->inline_dir, 0);
- 	atomic_set(&sbi->inplace_count, 0);
-+	for (i = META_CP; i < META_MAX; i++)
-+		atomic_set(&sbi->meta_count[i], 0);
- 
- 	atomic_set(&sbi->aw_cnt, 0);
- 	atomic_set(&sbi->vw_cnt, 0);
+@@ -101,6 +101,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 	si->avail_nids = NM_I(sbi)->available_nids;
+ 	si->alloc_nids = NM_I(sbi)->nid_cnt[PREALLOC_NID];
+ 	si->bg_gc = sbi->bg_gc;
++	si->io_skip_bggc = sbi->io_skip_bggc;
++	si->other_skip_bggc = sbi->other_skip_bggc;
+ 	si->skipped_atomic_files[BG_GC] = sbi->skipped_atomic_files[BG_GC];
+ 	si->skipped_atomic_files[FG_GC] = sbi->skipped_atomic_files[FG_GC];
+ 	si->util_free = (int)(free_user_blocks(sbi) >> sbi->log_blocks_per_seg)
+@@ -355,6 +357,8 @@ static int stat_show(struct seq_file *s, void *v)
+ 				si->skipped_atomic_files[BG_GC] +
+ 				si->skipped_atomic_files[FG_GC],
+ 				si->skipped_atomic_files[BG_GC]);
++		seq_printf(s, "BG skip : IO: %u, Other: %u\n",
++				si->io_skip_bggc, si->other_skip_bggc);
+ 		seq_puts(s, "\nExtent Cache:\n");
+ 		seq_printf(s, "  - Hit Count: L1-1:%llu L1-2:%llu L2:%llu\n",
+ 				si->hit_largest, si->hit_cached,
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b1738113e821..0f82f342e514 100644
+index 0f82f342e514..807a2e34543c 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -202,6 +202,7 @@ enum {
- 	META_NAT,
- 	META_SIT,
- 	META_SSA,
-+	META_MAX,
- 	META_POR,
- 	DATA_GENERIC,
- 	META_GENERIC,
-@@ -1267,6 +1268,7 @@ struct f2fs_sb_info {
- 	 */
- #ifdef CONFIG_F2FS_STAT_FS
- 	struct f2fs_stat_info *stat_info;	/* FS status information */
-+	atomic_t meta_count[META_MAX];		/* # of meta blocks */
- 	unsigned int segment_count[2];		/* # of allocated segments */
- 	unsigned int block_count[2];		/* # of allocated blocks */
- 	atomic_t inplace_count;		/* # of inplace update */
-@@ -3146,6 +3148,7 @@ struct f2fs_stat_info {
- 	int cursec[NR_CURSEG_TYPE];
- 	int curzone[NR_CURSEG_TYPE];
+@@ -1284,6 +1284,8 @@ struct f2fs_sb_info {
+ 	atomic_t max_aw_cnt;			/* max # of atomic writes */
+ 	atomic_t max_vw_cnt;			/* max # of volatile writes */
+ 	int bg_gc;				/* background gc calls */
++	unsigned int io_skip_bggc;		/* skip background gc for in-flight IO */
++	unsigned int other_skip_bggc;		/* skip background gc for other reasons */
+ 	unsigned int ndirty_inode[NR_INODE_TYPE];	/* # of dirty inodes */
+ #endif
+ 	spinlock_t stat_lock;			/* lock for stat operations */
+@@ -3127,6 +3129,7 @@ struct f2fs_stat_info {
+ 	int free_nids, avail_nids, alloc_nids;
+ 	int total_count, utilization;
+ 	int bg_gc, nr_wb_cp_data, nr_wb_data;
++	unsigned int io_skip_bggc, other_skip_bggc;
+ 	int nr_flushing, nr_flushed, flush_list_empty;
+ 	int nr_discarding, nr_discarded;
+ 	int nr_discard_cmd;
+@@ -3164,6 +3167,8 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
+ #define stat_inc_bg_cp_count(si)	((si)->bg_cp_count++)
+ #define stat_inc_call_count(si)		((si)->call_count++)
+ #define stat_inc_bggc_count(sbi)	((sbi)->bg_gc++)
++#define stat_io_skip_bggc_count(sbi)	((sbi)->io_skip_bggc++)
++#define stat_other_skip_bggc_count(sbi)	((sbi)->other_skip_bggc++)
+ #define stat_inc_dirty_inode(sbi, type)	((sbi)->ndirty_inode[type]++)
+ #define stat_dec_dirty_inode(sbi, type)	((sbi)->ndirty_inode[type]--)
+ #define stat_inc_total_hit(sbi)		(atomic64_inc(&(sbi)->total_hit_ext))
+@@ -3280,6 +3285,8 @@ void f2fs_destroy_root_stats(void);
+ #define stat_inc_bg_cp_count(si)			do { } while (0)
+ #define stat_inc_call_count(si)				do { } while (0)
+ #define stat_inc_bggc_count(si)				do { } while (0)
++#define stat_io_skip_bggc_count(sbi)			do { } while (0)
++#define stat_other_skip_bggc_count(sbi)			do { } while (0)
+ #define stat_inc_dirty_inode(sbi, type)			do { } while (0)
+ #define stat_dec_dirty_inode(sbi, type)			do { } while (0)
+ #define stat_inc_total_hit(sb)				do { } while (0)
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 91896d979972..21e42554bdb8 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -40,13 +40,16 @@ static int gc_thread_func(void *data)
+ 		if (gc_th->gc_wake)
+ 			gc_th->gc_wake = 0;
  
-+	unsigned int meta_count[META_MAX];
- 	unsigned int segment_count[2];
- 	unsigned int block_count[2];
- 	unsigned int inplace_count;
-@@ -3197,6 +3200,17 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
- 		if (f2fs_has_inline_dentry(inode))			\
- 			(atomic_dec(&F2FS_I_SB(inode)->inline_dir));	\
- 	} while (0)
-+#define stat_inc_meta_count(sbi, blkaddr)				\
-+	do {								\
-+		if (blkaddr < SIT_I(sbi)->sit_base_addr)		\
-+			atomic_inc(&(sbi)->meta_count[META_CP]);	\
-+		else if (blkaddr < NM_I(sbi)->nat_blkaddr)		\
-+			atomic_inc(&(sbi)->meta_count[META_SIT]);	\
-+		else if (blkaddr < SM_I(sbi)->ssa_blkaddr)		\
-+			atomic_inc(&(sbi)->meta_count[META_NAT]);	\
-+		else if (blkaddr < SM_I(sbi)->main_blkaddr)		\
-+			atomic_inc(&(sbi)->meta_count[META_SSA]);	\
-+	} while (0)
- #define stat_inc_seg_type(sbi, curseg)					\
- 		((sbi)->segment_count[(curseg)->alloc_type]++)
- #define stat_inc_block_count(sbi, curseg)				\
-@@ -3284,6 +3298,7 @@ void f2fs_destroy_root_stats(void);
- #define stat_inc_volatile_write(inode)			do { } while (0)
- #define stat_dec_volatile_write(inode)			do { } while (0)
- #define stat_update_max_volatile_write(inode)		do { } while (0)
-+#define stat_inc_meta_count(sbi, blkaddr)		do { } while (0)
- #define stat_inc_seg_type(sbi, curseg)			do { } while (0)
- #define stat_inc_block_count(sbi, curseg)		do { } while (0)
- #define stat_inc_inplace_blocks(sbi)			do { } while (0)
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 230da5ee02e0..e16dae0f0a5b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3018,6 +3018,7 @@ void f2fs_do_write_meta_page(struct f2fs_sb_info *sbi, struct page *page,
- 	ClearPageError(page);
- 	f2fs_submit_page_write(&fio);
+-		if (try_to_freeze())
++		if (try_to_freeze()) {
++			stat_other_skip_bggc_count(sbi);
+ 			continue;
++		}
+ 		if (kthread_should_stop())
+ 			break;
  
-+	stat_inc_meta_count(sbi, page->index);
- 	f2fs_update_iostat(sbi, io_type, F2FS_BLKSIZE);
- }
+ 		if (sbi->sb->s_writers.frozen >= SB_FREEZE_WRITE) {
+ 			increase_sleep_time(gc_th, &wait_ms);
++			stat_other_skip_bggc_count(sbi);
+ 			continue;
+ 		}
+ 
+@@ -55,8 +58,10 @@ static int gc_thread_func(void *data)
+ 			f2fs_stop_checkpoint(sbi, false);
+ 		}
+ 
+-		if (!sb_start_write_trylock(sbi->sb))
++		if (!sb_start_write_trylock(sbi->sb)) {
++			stat_other_skip_bggc_count(sbi);
+ 			continue;
++		}
+ 
+ 		/*
+ 		 * [GC triggering condition]
+@@ -77,12 +82,15 @@ static int gc_thread_func(void *data)
+ 			goto do_gc;
+ 		}
+ 
+-		if (!mutex_trylock(&sbi->gc_mutex))
++		if (!mutex_trylock(&sbi->gc_mutex)) {
++			stat_other_skip_bggc_count(sbi);
+ 			goto next;
++		}
+ 
+ 		if (!is_idle(sbi, GC_TIME)) {
+ 			increase_sleep_time(gc_th, &wait_ms);
+ 			mutex_unlock(&sbi->gc_mutex);
++			stat_io_skip_bggc_count(sbi);
+ 			goto next;
+ 		}
  
 -- 
 2.18.0.rc1
