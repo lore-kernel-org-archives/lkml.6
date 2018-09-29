@@ -2,139 +2,109 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 062BAC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39391C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A153B20879
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:26:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJqdQdjM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A153B20879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EC59220879
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:27:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC59220879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbeI2Ox6 (ORCPT
+        id S1727775AbeI2OzN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 10:53:58 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33096 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727540AbeI2Ox6 (ORCPT
+        Sat, 29 Sep 2018 10:55:13 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36470 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbeI2OzN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 10:53:58 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d4-v6so5866903pfn.0
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 01:26:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sWSx5Pg2KyRtXyD75XvycxaZYeX+wUxjGd4FM4Wjx2Y=;
-        b=DJqdQdjMLSza45WxNRJtgRZWnv4kK253eZ4icBM9zD7ALVrM4mde+2xQBYuARvMNJT
-         40adgXn27Vj0zwHIkNQx3n/6RNysfNwvduSjkg07tiar9FDzDMP+BTThmp8Wkd6V73hB
-         6ivNqyWkKZTAd9xHKGG65+x7td6zNnb5PdIpej/jypDFUfGgyTNHsTp0/9ztwkpMBBKC
-         1HS4XZ0gvo7wqz8dLPcBIUWN78G/Tw/uWqEhbRjFqQ9+8idg0e2wBDR/mqd04eLgZODT
-         TpNGVIZUTB+FZEy0bvqQXHSSu5CEOSXt3FdbJIdlQ083UG/0czz5OLO9Qe5N+Lg3Nods
-         5J4A==
+        Sat, 29 Sep 2018 10:55:13 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y16so386281wrw.3;
+        Sat, 29 Sep 2018 01:27:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sWSx5Pg2KyRtXyD75XvycxaZYeX+wUxjGd4FM4Wjx2Y=;
-        b=BGdwsAVgGfdbeT0rbXeS0XRuG5WTH4OR6gssTFO0ApbN4sSdVKVYK6y06PYd3p754t
-         7/MUDyW4nR8lORvhIQCUb/YhwFdfQBi9VxpQgJQEtzzPb9IXJvBnBidvkMZKYwvew3N0
-         9V0uBGywouhS6wEGu+nqqhVciE+hGZtQAVWf+QOIHORBY83W2WVsESK5CrcNyDzRjT2h
-         4iEI71A3DeLgFVKz8oVB+2fldmyiYc4xEVPPyX+9J+yD5gh8JBJhOwkARsiQ6YGmhGAL
-         owhZP68hbTeRWfy20ZqtfFOMoR0kRBOAjJiY9Wqslb4ZbVTARwlxZtcyPslz/0DnbvIm
-         MHZw==
-X-Gm-Message-State: ABuFfojI8Nhh3jl1EFggtWsEqucD+vdh4CaM5wOvgjHUFIlYR/ZfaGik
-        ThhuiEtL7HCYzg5f9SlFPTcdri00xyo=
-X-Google-Smtp-Source: ACcGV619ZISRu1T/ytLu3dGoV+LD9JQMMGM0nxRWHkRWCU5EG7M6Zy6uK9dXvh5uO59cZtkQDPCBAA==
-X-Received: by 2002:a63:a42:: with SMTP id z2-v6mr1947861pgk.209.1538209585545;
-        Sat, 29 Sep 2018 01:26:25 -0700 (PDT)
-Received: from localhost ([110.70.26.9])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm4543268pff.30.2018.09.29.01.26.23
+        bh=0zRNAhGfRB/2xQjeoBHl7S4YByoOC1qQzhykWEfmOfI=;
+        b=QDKWCH18TuBGiowJcBAukegYVaOtpqXSOWIOXN3gEGmec8aWzOhh0eEgsyLT57pxra
+         JuC+J7AxHXw9c/OjvZwwVAQGQbQM2AVgwoO2xio2XXpTlppFYblj6AOLplvQ62zbjmZi
+         CkbWCUMcM+dNneoL6hhjPkwsAgjhKl2qRc/oMtGUufryeI5XuTpKr3c/HiX4akkzTqnM
+         qNru11PjWUsPhotRD5IJMkjCHp0srkJn899qpKe/PZMNuycNdwj/Ci6MhsWNOvkzTLfO
+         jwlHB7lfV3b5IFmFOAEuhDin2Y2KCjv78MwcOAlU3uJK0AfAp77jsxkuJt4QCVoGkJc8
+         GKiw==
+X-Gm-Message-State: ABuFfojYoO6hLEsprOpyad4mOKduXD4LVLb6B6NXoJv66TPKF6f5E3RW
+        lODl2jP/E+7ZsuqAwA3Wc0I=
+X-Google-Smtp-Source: ACcGV62qglRRpqNCfZZJ/vgd6OaGATEcP5BexhzHyEtc+X+5ouzYgyLe3XXh3B2O0I5O+jO36NgTTg==
+X-Received: by 2002:adf:b643:: with SMTP id i3-v6mr1454867wre.14.1538209658454;
+        Sat, 29 Sep 2018 01:27:38 -0700 (PDT)
+Received: from ryzen ([2a02:2f01:530d:1e00:fdec:1efd:a09c:509a])
+        by smtp.gmail.com with ESMTPSA id v106-v6sm11309671wrc.85.2018.09.29.01.27.36
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 29 Sep 2018 01:26:24 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Sat, 29 Sep 2018 17:26:19 +0900
-To:     zhe.he@windriver.com
-Cc:     pmladek@suse.com, sergey.senozhatsky@gmail.com,
-        rostedt@goodmis.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] printk: Fix panic caused by passing log_buf_len
- to command line
-Message-ID: <20180929082619.GA582@tigerII.localdomain>
-References: <1538145961-52724-1-git-send-email-zhe.he@windriver.com>
+        Sat, 29 Sep 2018 01:27:37 -0700 (PDT)
+Date:   Sat, 29 Sep 2018 11:27:29 +0300
+From:   Abel Vesa <abelvesa@linux.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Andy Polyakov <appro@openssl.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>
+Subject: Re: [PATCH net-next v6 04/23] zinc: ChaCha20 x86_64 implementation
+Message-ID: <20180929082729.GA22116@ryzen>
+References: <20180925145622.29959-1-Jason@zx2c4.com>
+ <20180925145622.29959-5-Jason@zx2c4.com>
+ <CAKv+Gu9aOiYdEzHHrHFHUFK=hNfeS=zEsvMe9OWD8hEdAYkffg@mail.gmail.com>
+ <CAHmME9rc5zgN4HhBy0_oq+EbEXdS8nePzA7qW39nocx_y4ay1Q@mail.gmail.com>
+ <20180929075601.GA11115@zn.tnic>
+ <CAKv+Gu_jawg7R1n0qz75=H16J+WNx4aRhEsAt2WMNUkPAhD2og@mail.gmail.com>
+ <20180929081118.GB11115@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1538145961-52724-1-git-send-email-zhe.he@windriver.com>
+In-Reply-To: <20180929081118.GB11115@zn.tnic>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/28/18 22:46), zhe.he@windriver.com wrote:
-> This patch adds a check to prevent the panic and a check to report if someone is
-> setting it over 4G.
+On 18-09-29 10:11:18, Borislav Petkov wrote:
+> On Sat, Sep 29, 2018 at 10:00:29AM +0200, Ard Biesheuvel wrote:
+> > Note that this is the author of the *patch* not necessarily the author
+> > of the code.
+> > 
+> > Anyone is free to submit patches adding code authored by others as
+> > long as the author has made it available under a suitable license, and
+> > this is actually the whole point of the S-o-B: you are stating to the
+> > next guy that the code included in your patch was made available to
+> > you under a compatible license.
+> 
+> ... and the actual author could be named with Originally-by or
+> Co-Developed-by:, and even in free text in the commit message.
 
-OK, He Zhe, you are almost there.
-Let's do the series the following way:
+Or you could just put the original author as the first S-o-b and then
+another (second) S-o-b line where you put yourself as a submitter.
 
-- four patches
-- each change goes into a separate patch
-- the first two patches Cc stable
+AFAIK, that's how people usually do it.
 
-
-patch #0   Cc stable
-
----
-	unsigned int size;
-
-	if (!str)
-		return -EINVAL;
-	size = memparse(str, &str);
-
----
-
-
-patch #1   Cc stable
-
----
-
-        len = sprintf(text,
-                      "** %llu printk messages dropped **\n",
-                      log_first_seq - console_seq);
-
----
-
-
-=====================================================================
-
-patch #2
-
----
-
-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-
----
-
-
-patch #3
-
----
-
-      if (size > UINT_MAX) {
-              size = UINT_MAX;
-              pr_err("log_buf over 4G is not supported.\n");
-      }
-
-      ...
----
-
-	-ss
+> 
+> But the correct SOB chain denoting who handled the patch on its way up,
+> is important.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> Good mailing practices for 400: avoid top-posting and trim the reply.
