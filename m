@@ -2,85 +2,215 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B2CC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C76C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0ABC20666
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:04:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0ABC20666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+	by mail.kernel.org (Postfix) with ESMTP id B9DD62064D
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:19:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9DD62064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=magewell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbeI2Qce (ORCPT
+        id S1727879AbeI2Qrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 12:32:34 -0400
-Received: from mail.parknet.co.jp ([210.171.160.6]:40466 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbeI2Qce (ORCPT
+        Sat, 29 Sep 2018 12:47:31 -0400
+Received: from out20-2.mail.aliyun.com ([115.124.20.2]:39831 "EHLO
+        out20-2.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbeI2Qra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 12:32:34 -0400
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 26FAB15AF4A;
-        Sat, 29 Sep 2018 19:04:44 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id w8TA4gYb019929
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 29 Sep 2018 19:04:43 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id w8TA4gLg030094
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 29 Sep 2018 19:04:42 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id w8TA4fAM030093;
-        Sat, 29 Sep 2018 19:04:41 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Mihir Mehta <mihir@cs.utexas.edu>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fat: Expand a slightly out-of-date comment
-References: <87sh1tewtw.fsf@mail.parknet.co.jp>
-        <20180928194947.23932-1-mihir@cs.utexas.edu>
-Date:   Sat, 29 Sep 2018 19:04:41 +0900
-In-Reply-To: <20180928194947.23932-1-mihir@cs.utexas.edu> (Mihir Mehta's
-        message of "Fri, 28 Sep 2018 14:49:47 -0500")
-Message-ID: <87h8i8ei12.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Sat, 29 Sep 2018 12:47:30 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07441301|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03289;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=23;RT=23;SR=0;TI=SMTPD_---.CxOk15N_1538216326;
+Received: from John(mailfrom:yong.deng@magewell.com fp:SMTPD_---.CxOk15N_1538216326)
+          by smtp.aliyun-inc.com(10.147.42.22);
+          Sat, 29 Sep 2018 18:18:47 +0800
+Date:   Sat, 29 Sep 2018 18:18:44 +0800
+From:   Yong <yong.deng@magewell.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v11 2/2] media: V3s: Add support for Allwinner CSI.
+Message-Id: <20180929181844.87fd7560cc560f268df3c7b4@magewell.com>
+In-Reply-To: <20180928101937.wdlrgezxoqzua5ke@paasikivi.fi.intel.com>
+References: <1537951420-24752-1-git-send-email-yong.deng@magewell.com>
+        <20180928101937.wdlrgezxoqzua5ke@paasikivi.fi.intel.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.30; i686-pc-mingw32)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mihir Mehta <mihir@cs.utexas.edu> writes:
+Hi Sakari,
 
-> The file namei.c seems to have been renamed to namei_msdos.c, so I
-> decided to update the comment with the correct name, and expand it a bit
-> to tell the reader what to look for.
-> ---
->  fs/fat/dir.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-> index 7f5f369..f4db13f 100644
-> --- a/fs/fat/dir.c
-> +++ b/fs/fat/dir.c
-> @@ -369,7 +369,9 @@ static int fat_parse_short(struct super_block *sb,
->  	}
->  
->  	memcpy(work, de->name, sizeof(work));
-> -	/* see namei.c, msdos_format_name */
-> +	/* For an explanation of the special treatment of 0x05 in
-> +	 * filenames, see msdos_format_name in namei_msdos.c 
-> +	 */
->  	if (work[0] == 0x05)
->  		work[0] = 0xE5;
+On Fri, 28 Sep 2018 13:19:37 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+> Hi Yong,
+> 
+> Thanks for the update! This looks pretty good; some small bits to fix
+> still, please see my comments below.
+> 
+> On Wed, Sep 26, 2018 at 04:43:40PM +0800, Yong Deng wrote:
+> > Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
+> > interface and CSI1 is used for parallel interface. This is not
+> > documented in datasheet but by test and guess.
+> > 
+> > This patch implement a v4l2 framework driver for it.
+> > 
+> > Currently, the driver only support the parallel interface. MIPI-CSI2,
+> > ISP's support are not included in this patch.
+> > 
 
-Thanks.
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+...
+
+> > +
+> > +static void sun6i_csi_v4l2_cleanup(struct sun6i_csi *csi)
+> > +{
+> > +	v4l2_async_notifier_unregister(&csi->notifier);
+> > +	v4l2_async_notifier_cleanup(&csi->notifier);
+> > +	sun6i_video_cleanup(&csi->video);
+> > +	v4l2_device_unregister(&csi->v4l2_dev);
+> > +	media_device_unregister(&csi->media_dev);
+> 
+> Please unregister the media device as first.
+
+I notice that the release order of intel ipu3 is:
+    cio2_notifier_exit(cio2);
+    cio2_fbpt_exit_dummy(cio2);
+    for (i = 0; i < CIO2_QUEUES; i++) 
+        cio2_queue_exit(cio2, &cio2->queue[i]);
+    v4l2_device_unregister(&cio2->v4l2_dev);
+    media_device_unregister(&cio2->media_dev);
+    media_device_cleanup(&cio2->media_dev);
+    mutex_destroy(&cio2->lock);
+
+> 
+> You're missing freeing the control handler.
+> 
+> > +	media_device_cleanup(&csi->media_dev);
+> > +}
+> > +
+> > +static int sun6i_csi_v4l2_init(struct sun6i_csi *csi)
+> > +{
+> > +	int ret;
+> > +
+> > +	csi->media_dev.dev = csi->dev;
+> > +	strlcpy(csi->media_dev.model, "Allwinner Video Capture Device",
+> > +		sizeof(csi->media_dev.model));
+> 
+> strscpy, please.
+> 
+> > +	csi->media_dev.hw_revision = 0;
+> > +
+> > +	media_device_init(&csi->media_dev);
+> > +
+> > +	ret = v4l2_ctrl_handler_init(&csi->ctrl_handler, 0);
+> 
+> Do you need controls? The driver doesn't appear to register any.
+
+Some one suggest this. They want the drver can pass control queries to 
+the subdev.
+
+> 
+> > +	if (ret) {
+> > +		dev_err(csi->dev, "V4L2 controls handler init failed (%d)\n",
+> > +			ret);
+> > +		goto clean_media;
+> > +	}
+> > +
+> > +	csi->v4l2_dev.mdev = &csi->media_dev;
+> > +	csi->v4l2_dev.ctrl_handler = &csi->ctrl_handler;
+> > +	ret = v4l2_device_register(csi->dev, &csi->v4l2_dev);
+> > +	if (ret) {
+> > +		dev_err(csi->dev, "V4L2 device registration failed (%d)\n",
+
+...
+
+> > +
+> > +/*
+> > + * PHYS_OFFSET isn't available on all architectures. In order to
+> > + * accomodate for COMPILE_TEST, let's define it to something dumb.
+> > + */
+> > +#ifndef PHYS_OFFSET
+> 
+> How about:
+> 
+> #if !defined(CONFIG_COMPILE_TEST) && !defined(PHYS_OFFSET)
+
+Do you mean:
+#if defined(CONFIG_COMPILE_TEST) && !defined(PHYS_OFFSET)
+
+> 
+> Or something alike. That avoids things going horribly wrong if PHYS_OFFSET
+> is undefined for a different reason.
+> 
+> > +#define PHYS_OFFSET 0
+> > +#endif
+> > +
+> > +static int sun6i_csi_probe(struct platform_device *pdev)
+> > +{
+> > +	struct sun6i_csi_dev *sdev;
+> > +	int ret;
+> > +
+
+...
+
+> > +
+> > +static const struct v4l2_ioctl_ops sun6i_video_ioctl_ops = {
+> > +	.vidioc_querycap		= vidioc_querycap,
+> > +	.vidioc_enum_fmt_vid_cap	= vidioc_enum_fmt_vid_cap,
+> > +	.vidioc_g_fmt_vid_cap		= vidioc_g_fmt_vid_cap,
+> > +	.vidioc_s_fmt_vid_cap		= vidioc_s_fmt_vid_cap,
+> > +	.vidioc_try_fmt_vid_cap		= vidioc_try_fmt_vid_cap,
+> > +
+> > +	.vidioc_enum_input		= vidioc_enum_input,
+> > +	.vidioc_s_input			= vidioc_s_input,
+> > +	.vidioc_g_input			= vidioc_g_input,
+> > +
+> > +	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
+> > +	.vidioc_querybuf		= vb2_ioctl_querybuf,
+> > +	.vidioc_qbuf			= vb2_ioctl_qbuf,
+> > +	.vidioc_expbuf			= vb2_ioctl_expbuf,
+> > +	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
+> > +	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
+> > +	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
+> > +	.vidioc_streamon		= vb2_ioctl_streamon,
+> > +	.vidioc_streamoff		= vb2_ioctl_streamoff,
+> > +
+> > +	.vidioc_log_status		= v4l2_ctrl_log_status,
+> > +	.vidioc_subscribe_event		= v4l2_ctrl_subscribe_event,
+> > +	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
+> 
+> Do you need events? The driver doesn't seem to be using controls for
+> anything and I see no trace of events otherwise either.
+> 
+
+I am not sure. The reason is same as ctrl handler.
+
+
+Thanks,
+Yong
