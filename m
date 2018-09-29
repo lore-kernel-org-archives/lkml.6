@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023FCC004D5
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8798FC004D5
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB54520880
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB54520880
+	by mail.kernel.org (Postfix) with ESMTP id 54B4C2087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54B4C2087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbeI3ESX (ORCPT
+        id S1728679AbeI3ESa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:18:23 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51553 "EHLO
+        Sun, 30 Sep 2018 00:18:30 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51759 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726630AbeI3ESV (ORCPT
+        by vger.kernel.org with ESMTP id S1727989AbeI3ES2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 00:18:21 -0400
+        Sun, 30 Sep 2018 00:18:28 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N60-0000H3-KT; Sat, 29 Sep 2018 22:48:16 +0100
+        id 1g6N68-0000Gv-Dh; Sat, 29 Sep 2018 22:48:24 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5v-0006pi-EE; Sat, 29 Sep 2018 22:48:11 +0100
+        id 1g6N5y-0006wB-Ev; Sat, 29 Sep 2018 22:48:14 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Ingo Molnar" <mingo@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
-        "Borislav Petkov" <bp@suse.de>
+CC:     akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Andi Kleen" <ak@linux.intel.com>,
+        "Michal Hocko" <mhocko@suse.com>,
+        "Dave Hansen" <dave.hansen@intel.com>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.503384937@decadent.org.uk>
+Message-ID: <lsq.1538257387.629173816@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 011/131] x86/bugs/AMD: Add support to disable RDS on
- Fam[15,16,17]h if requested
+Subject: [PATCH 3.16 091/131] x86/speculation/l1tf: Increase 32bit PAE
+ __PHYSICAL_PAGE_SHIFT
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,190 +60,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit 764f3c21588a059cd783c6ba0734d4db2d72822d upstream.
+commit 50896e180c6aa3a9c61a26ced99e15d602666a4c upstream.
 
-AMD does not need the Speculative Store Bypass mitigation to be enabled.
+L1 Terminal Fault (L1TF) is a speculation related vulnerability. The CPU
+speculates on PTE entries which do not have the PRESENT bit set, if the
+content of the resulting physical address is available in the L1D cache.
 
-The parameters for this are already available and can be done via MSR
-C001_1020. Each family uses a different bit in that MSR for this.
+The OS side mitigation makes sure that a !PRESENT PTE entry points to a
+physical address outside the actually existing and cachable memory
+space. This is achieved by inverting the upper bits of the PTE. Due to the
+address space limitations this only works for 64bit and 32bit PAE kernels,
+but not for 32bit non PAE.
 
-[ tglx: Expose the bit mask via a variable and move the actual MSR fiddling
-  	into the bugs code as that's the right thing to do and also required
-	to prepare for dynamic enable/disable ]
+This mitigation applies to both host and guest kernels, but in case of a
+64bit host (hypervisor) and a 32bit PAE guest, inverting the upper bits of
+the PAE address space (44bit) is not enough if the host has more than 43
+bits of populated memory address space, because the speculation treats the
+PTE content as a physical host address bypassing EPT.
 
-Suggested-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+The host (hypervisor) protects itself against the guest by flushing L1D as
+needed, but pages inside the guest are not protected against attacks from
+other processes inside the same guest.
+
+For the guest the inverted PTE mask has to match the host to provide the
+full protection for all pages the host could possibly map into the
+guest. The hosts populated address space is not known to the guest, so the
+mask must cover the possible maximal host address space, i.e. 52 bit.
+
+On 32bit PAE the maximum PTE mask is currently set to 44 bit because that
+is the limit imposed by 32bit unsigned long PFNs in the VMs. This limits
+the mask to be below what the host could possible use for physical pages.
+
+The L1TF PROT_NONE protection code uses the PTE masks to determine which
+bits to invert to make sure the higher bits are set for unmapped entries to
+prevent L1TF speculation attacks against EPT inside guests.
+
+In order to invert all bits that could be used by the host, increase
+__PHYSICAL_PAGE_SHIFT to 52 to match 64bit.
+
+The real limit for a 32bit PAE kernel is still 44 bits because all Linux
+PTEs are created from unsigned long PFNs, so they cannot be higher than 44
+bits on a 32bit kernel. So these extra PFN bits should be never set. The
+only users of this macro are using it to look at PTEs, so it's safe.
+
+[ tglx: Massaged changelog ]
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16:
- - Renumber the feature bit
- - We don't have __ro_after_init
- - Adjust filename, context]
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/cpufeature.h    |  1 +
- arch/x86/include/asm/nospec-branch.h |  4 ++++
- arch/x86/kernel/cpu/amd.c            | 26 ++++++++++++++++++++++++++
- arch/x86/kernel/cpu/bugs.c           | 27 ++++++++++++++++++++++++++-
- arch/x86/kernel/cpu/common.c         |  4 ++++
- 5 files changed, 61 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/page_32_types.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -192,6 +192,7 @@
- #define X86_FEATURE_USE_IBPB	(7*32+12) /* "" Indirect Branch Prediction Barrier enabled */
- #define X86_FEATURE_USE_IBRS_FW (7*32+13) /* "" Use IBRS during runtime firmware calls */
- #define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE (7*32+14) /* "" Disable Speculative Store Bypass. */
-+#define X86_FEATURE_AMD_RDS	(7*32+15)  /* "" AMD RDS implementation */
+--- a/arch/x86/include/asm/page_32_types.h
++++ b/arch/x86/include/asm/page_32_types.h
+@@ -27,8 +27,13 @@
+ #define N_EXCEPTION_STACKS 1
  
- #define X86_FEATURE_RETPOLINE	(7*32+29) /* "" Generic Retpoline mitigation for Spectre variant 2 */
- #define X86_FEATURE_RETPOLINE_AMD (7*32+30) /* "" AMD Retpoline mitigation for Spectre variant 2 */
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -199,6 +199,10 @@ enum ssb_mitigation {
- 	SPEC_STORE_BYPASS_DISABLE,
- };
- 
-+/* AMD specific Speculative Store Bypass MSR data */
-+extern u64 x86_amd_ls_cfg_base;
-+extern u64 x86_amd_ls_cfg_rds_mask;
-+
- extern char __indirect_thunk_start[];
- extern char __indirect_thunk_end[];
- 
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -8,6 +8,7 @@
- #include <asm/processor.h>
- #include <asm/apic.h>
- #include <asm/cpu.h>
-+#include <asm/nospec-branch.h>
- #include <asm/pci-direct.h>
- 
- #ifdef CONFIG_X86_64
-@@ -470,6 +471,26 @@ static void bsp_init_amd(struct cpuinfo_
- 		va_align.mask	  = (upperbit - 1) & PAGE_MASK;
- 		va_align.flags    = ALIGN_VA_32 | ALIGN_VA_64;
- 	}
-+
-+	if (c->x86 >= 0x15 && c->x86 <= 0x17) {
-+		unsigned int bit;
-+
-+		switch (c->x86) {
-+		case 0x15: bit = 54; break;
-+		case 0x16: bit = 33; break;
-+		case 0x17: bit = 10; break;
-+		default: return;
-+		}
-+		/*
-+		 * Try to cache the base value so further operations can
-+		 * avoid RMW. If that faults, do not enable RDS.
-+		 */
-+		if (!rdmsrl_safe(MSR_AMD64_LS_CFG, &x86_amd_ls_cfg_base)) {
-+			setup_force_cpu_cap(X86_FEATURE_RDS);
-+			setup_force_cpu_cap(X86_FEATURE_AMD_RDS);
-+			x86_amd_ls_cfg_rds_mask = 1ULL << bit;
-+		}
-+	}
- }
- 
- static void early_init_amd(struct cpuinfo_x86 *c)
-@@ -780,6 +801,11 @@ static void init_amd(struct cpuinfo_x86
- 		set_cpu_bug(c, X86_BUG_AMD_APIC_C1E);
- 
- 	rdmsr_safe(MSR_AMD64_PATCH_LEVEL, &c->microcode, &dummy);
-+
-+	if (boot_cpu_has(X86_FEATURE_AMD_RDS)) {
-+		set_cpu_cap(c, X86_FEATURE_RDS);
-+		set_cpu_cap(c, X86_FEATURE_AMD_RDS);
-+	}
- }
- 
- #ifdef CONFIG_X86_32
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -40,6 +40,13 @@ static u64 x86_spec_ctrl_base;
-  */
- static u64 x86_spec_ctrl_mask = ~SPEC_CTRL_IBRS;
- 
+ #ifdef CONFIG_X86_PAE
+-/* 44=32+12, the limit we can fit into an unsigned long pfn */
+-#define __PHYSICAL_MASK_SHIFT	44
 +/*
-+ * AMD specific MSR info for Speculative Store Bypass control.
-+ * x86_amd_ls_cfg_rds_mask is initialized in identify_boot_cpu().
++ * This is beyond the 44 bit limit imposed by the 32bit long pfns,
++ * but we need the full mask to make sure inverted PROT_NONE
++ * entries have all the host bits set in a guest.
++ * The real limit is still 44 bits.
 + */
-+u64 x86_amd_ls_cfg_base;
-+u64 x86_amd_ls_cfg_rds_mask;
-+
- #ifdef CONFIG_X86_32
++#define __PHYSICAL_MASK_SHIFT	52
+ #define __VIRTUAL_MASK_SHIFT	32
  
- static double __initdata x = 4195835.0;
-@@ -109,7 +116,8 @@ void __init check_bugs(void)
- 
- 	/*
- 	 * Read the SPEC_CTRL MSR to account for reserved bits which may
--	 * have unknown values.
-+	 * have unknown values. AMD64_LS_CFG MSR is cached in the early AMD
-+	 * init code as it is not enumerated and depends on the family.
- 	 */
- 	if (boot_cpu_has(X86_FEATURE_IBRS))
- 		rdmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-@@ -216,6 +224,14 @@ void x86_spec_ctrl_restore_host(u64 gues
- }
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_restore_host);
- 
-+static void x86_amd_rds_enable(void)
-+{
-+	u64 msrval = x86_amd_ls_cfg_base | x86_amd_ls_cfg_rds_mask;
-+
-+	if (boot_cpu_has(X86_FEATURE_AMD_RDS))
-+		wrmsrl(MSR_AMD64_LS_CFG, msrval);
-+}
-+
- #ifdef RETPOLINE
- static bool spectre_v2_bad_module;
- 
-@@ -481,6 +497,11 @@ static enum ssb_mitigation_cmd __init __
- 
- 	switch (cmd) {
- 	case SPEC_STORE_BYPASS_CMD_AUTO:
-+		/*
-+		 * AMD platforms by default don't need SSB mitigation.
-+		 */
-+		if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+			break;
- 	case SPEC_STORE_BYPASS_CMD_ON:
- 		mode = SPEC_STORE_BYPASS_DISABLE;
- 		break;
-@@ -507,6 +528,7 @@ static enum ssb_mitigation_cmd __init __
- 			x86_spec_ctrl_set(SPEC_CTRL_RDS);
- 			break;
- 		case X86_VENDOR_AMD:
-+			x86_amd_rds_enable();
- 			break;
- 		}
- 	}
-@@ -528,6 +550,9 @@ void x86_spec_ctrl_setup_ap(void)
- {
- 	if (boot_cpu_has(X86_FEATURE_IBRS))
- 		x86_spec_ctrl_set(x86_spec_ctrl_base & ~x86_spec_ctrl_mask);
-+
-+	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
-+		x86_amd_rds_enable();
- }
- 
- #ifdef CONFIG_SYSFS
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -819,6 +819,10 @@ static const __initconst struct x86_cpu_
- 	{ X86_VENDOR_CENTAUR,	5,					},
- 	{ X86_VENDOR_INTEL,	5,					},
- 	{ X86_VENDOR_NSC,	5,					},
-+	{ X86_VENDOR_AMD,	0x12,					},
-+	{ X86_VENDOR_AMD,	0x11,					},
-+	{ X86_VENDOR_AMD,	0x10,					},
-+	{ X86_VENDOR_AMD,	0xf,					},
- 	{ X86_VENDOR_ANY,	4,					},
- 	{}
- };
+ #else  /* !CONFIG_X86_PAE */
 
