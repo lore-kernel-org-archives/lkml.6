@@ -2,152 +2,243 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99383C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCBAC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4538A2084D
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:52:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBje5dZP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4538A2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E4414206B8
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:58:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4414206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbeI2RT4 (ORCPT
+        id S1728066AbeI2R0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 13:19:56 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43932 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727775AbeI2RTz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 13:19:55 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j26-v6so5971714pfi.10
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 03:51:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Zln91acq4o46Cfehz+bcCHEN4qAvsTb14HXagEnlgH0=;
-        b=mBje5dZPJshH+6j1hGqAWvFnqsnQESc8vCCiJMxbxbi0VdLIZVhiauUhM8laGw89Cm
-         jhwpP9lS0+OqtBnTll71RRTtsXwaRNBaElVn5HST9Hpv5L5WtS02iI6pB9XbwVBTFoos
-         CaWb7pv4Ral5HTL7yW0CjzPIe39fFS7HZaOmvMCuVexfXKVFa3eq8Xr2zeXlOoPddkoc
-         xpyaPIWiOOQO8Z/WWlDVrimIHbkriO1IVgOaTK8qrsHqGPpfzpFjU9LfcnAN/5YcLoAL
-         /GNSoWI8mSdRLNIm1n6PB9/HOf2dUYX4yaURFWIt94+uxpJE154K6na+hVJhNxLd/jrP
-         Qz5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zln91acq4o46Cfehz+bcCHEN4qAvsTb14HXagEnlgH0=;
-        b=ALXKhSQwGc0DfqQ+78a/p4t7TMVTbzWmdI0dhL9ShsPnWaLlonhFyIs4Xbi6WqKHAr
-         4mpYM4zoyxxhAcik20ayL/VlRrSGBU8fzn3R1ubDkylHYGlmbAYiVSpfzb6nrNOSIGVU
-         08yGtx6Lp5HXH/szVG5hpeS4xWFwJne8Rg11GnlmogZbox2nFNqJ0hMlGgBku0JH/Jhf
-         3T3r93DIt3XWNzt6TGBNYLb/YzYult3i5YSgLN3k+kYgloAlrSvbFfC1/5yT2OY8DaoY
-         w+xbgW8YKqpizpsx2oGJDS80JlboEDpx6J1p/fvFHGuqFyHJVCdE7Gg+NFcmTwFZQV70
-         a+AQ==
-X-Gm-Message-State: ABuFfog8gPrisBdOtLePrnfOoGV/nrjHfeZMZ/KkMtN6TXYRqU1OHfk4
-        fvHkp59clUIHKnQEkjifojikWeSplTw=
-X-Google-Smtp-Source: ACcGV62j4G5Ul/r65RvEAb3B+Py/wU43EiHvIrQW+lylR7sT0JePDzgOh5NooHnflK+H3xIxgUwlpg==
-X-Received: by 2002:a65:5004:: with SMTP id f4-v6mr2466870pgo.54.1538218316721;
-        Sat, 29 Sep 2018 03:51:56 -0700 (PDT)
-Received: from localhost ([110.70.26.9])
-        by smtp.gmail.com with ESMTPSA id w12-v6sm11084787pfd.110.2018.09.29.03.51.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 29 Sep 2018 03:51:55 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Sat, 29 Sep 2018 19:51:51 +0900
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] printk: inject caller information into the body of
- message
-Message-ID: <20180929105151.GA1392@tigerII.localdomain>
-References: <20180913142802.GB517@tigerII.localdomain>
- <20180914065728.GA515@jagdpanzerIV>
- <49d22738-17ad-410a-be0a-d27d76ba9f37@i-love.sakura.ne.jp>
- <20180914115028.GB20572@tigerII.localdomain>
- <e855cbef-03ff-b4ac-3e06-d2f2f48cfb1f@i-love.sakura.ne.jp>
- <20180914122217.GA518@tigerII.localdomain>
- <a661ed7f-889a-1811-0ada-111cc5185d05@i-love.sakura.ne.jp>
- <7dadfa8c-1f69-ae0f-d747-dbbc9f97c2b6@i-love.sakura.ne.jp>
- <20180928090939.GE1160@jagdpanzerIV>
- <3b378c7d-c613-4a8d-67f8-946fac8ad0b0@i-love.sakura.ne.jp>
+        Sat, 29 Sep 2018 13:26:00 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13173 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727865AbeI2R0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 13:26:00 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id AB95AB575F36A;
+        Sat, 29 Sep 2018 18:57:56 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Sat, 29 Sep 2018
+ 18:57:50 +0800
+Subject: Re: [PATCH] f2fs: cleanup dirty pages if recover failed
+To:     Sheng Yong <shengyong1@huawei.com>, <jaegeuk@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180928023424.28186-1-shengyong1@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <f4867be0-7a93-b335-d278-211d5a2aa4c8@huawei.com>
+Date:   Sat, 29 Sep 2018 18:57:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b378c7d-c613-4a8d-67f8-946fac8ad0b0@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180928023424.28186-1-shengyong1@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/28/18 20:01), Tetsuo Handa wrote:
-> > Yes, this makes sense. At the same time we can keep pr_line buffer
-> > in .bss
-> > 
-> > 	static char buffer[1024];
-> > 	static DEFINE_PR_LINE_BUF(..., buffer);
-> > 
-> > just like you have already mentioned. But that's going to require a
-> > case-by-case handling; so a big list of printk buffers is a simpler
-> > option. Fallback, tho, can be painful. On a system with 1024 CPUs can
-> > one have more than 16 concurrent cont printks? If the answer is yes,
-> > then we are looking at the same broken cont output as before.
+On 2018/9/28 10:34, Sheng Yong wrote:
+> During recover, we will try to create new dentries for inodes with
+> dentry_mark. But if the parent is missing (e.g. killed by fsck),
+> recover will break. But those recovered dirty pages are not cleanup.
+> This will hit f2fs_bug_on:
 > 
-> I'm OK with making "16" configurable (at kernel configuration and/or
-> at kernel boot like log_buf_len= kernel command line parameter).
+> [   53.519566] F2FS-fs (loop0): Found nat_bits in checkpoint
+> [   53.539354] F2FS-fs (loop0): recover_inode: ino = 5, name = file, inline = 3
+> [   53.539402] F2FS-fs (loop0): recover_dentry: ino = 5, name = file, dir = 0, err = -2
+> [   53.545760] F2FS-fs (loop0): Cannot recover all fsync data errno=-2
+> [   53.546105] F2FS-fs (loop0): access invalid blkaddr:4294967295
+> [   53.546171] WARNING: CPU: 1 PID: 1798 at fs/f2fs/checkpoint.c:163 f2fs_is_valid_blkaddr+0x26c/0x320
+> [   53.546174] Modules linked in:
+> [   53.546183] CPU: 1 PID: 1798 Comm: mount Not tainted 4.19.0-rc2+ #1
+> [   53.546186] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+> [   53.546191] RIP: 0010:f2fs_is_valid_blkaddr+0x26c/0x320
+> [   53.546195] Code: 85 bb 00 00 00 48 89 df 88 44 24 07 e8 ad a8 db ff 48 8b 3b 44 89 e1 48 c7 c2 40 03 72 a9 48 c7 c6 e0 01 72 a9 e8 84 3c ff ff <0f> 0b 0f b6 44 24 07 e9 8a 00 00 00 48 8d bf 38 01 00 00 e8 7c a8
+> [   53.546201] RSP: 0018:ffff88006c067768 EFLAGS: 00010282
+> [   53.546208] RAX: 0000000000000000 RBX: ffff880068844200 RCX: ffffffffa83e1a33
+> [   53.546211] RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88006d51e590
+> [   53.546215] RBP: 0000000000000005 R08: ffffed000daa3cb3 R09: ffffed000daa3cb3
+> [   53.546218] R10: 0000000000000001 R11: ffffed000daa3cb2 R12: 00000000ffffffff
+> [   53.546221] R13: ffff88006a1f8000 R14: 0000000000000200 R15: 0000000000000009
+> [   53.546226] FS:  00007fb2f3646840(0000) GS:ffff88006d500000(0000) knlGS:0000000000000000
+> [   53.546229] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   53.546234] CR2: 00007f0fd77f0008 CR3: 00000000687e6002 CR4: 00000000000206e0
+> [   53.546237] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   53.546240] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   53.546242] Call Trace:
+> [   53.546248]  f2fs_submit_page_bio+0x95/0x740
+> [   53.546253]  read_node_page+0x161/0x1e0
+> [   53.546271]  ? truncate_node+0x650/0x650
+> [   53.546283]  ? add_to_page_cache_lru+0x12c/0x170
+> [   53.546288]  ? pagecache_get_page+0x262/0x2d0
+> [   53.546292]  __get_node_page+0x200/0x660
+> [   53.546302]  f2fs_update_inode_page+0x4a/0x160
+> [   53.546306]  f2fs_write_inode+0x86/0xb0
+> [   53.546317]  __writeback_single_inode+0x49c/0x620
+> [   53.546322]  writeback_single_inode+0xe4/0x1e0
+> [   53.546326]  sync_inode_metadata+0x93/0xd0
+> [   53.546330]  ? sync_inode+0x10/0x10
+> [   53.546342]  ? do_raw_spin_unlock+0xed/0x100
+> [   53.546347]  f2fs_sync_inode_meta+0xe0/0x130
+> [   53.546351]  f2fs_fill_super+0x287d/0x2d10
+> [   53.546367]  ? vsnprintf+0x742/0x7a0
+> [   53.546372]  ? f2fs_commit_super+0x180/0x180
+> [   53.546379]  ? up_write+0x20/0x40
+> [   53.546385]  ? set_blocksize+0x5f/0x140
+> [   53.546391]  ? f2fs_commit_super+0x180/0x180
+> [   53.546402]  mount_bdev+0x181/0x200
+> [   53.546406]  mount_fs+0x94/0x180
+> [   53.546411]  vfs_kern_mount+0x6c/0x1e0
+> [   53.546415]  do_mount+0xe5e/0x1510
+> [   53.546420]  ? fs_reclaim_release+0x9/0x30
+> [   53.546424]  ? copy_mount_string+0x20/0x20
+> [   53.546428]  ? fs_reclaim_acquire+0xd/0x30
+> [   53.546435]  ? __might_sleep+0x2c/0xc0
+> [   53.546440]  ? ___might_sleep+0x53/0x170
+> [   53.546453]  ? __might_fault+0x4c/0x60
+> [   53.546468]  ? _copy_from_user+0x95/0xa0
+> [   53.546474]  ? memdup_user+0x39/0x60
+> [   53.546478]  ksys_mount+0x88/0xb0
+> [   53.546482]  __x64_sys_mount+0x5d/0x70
+> [   53.546495]  do_syscall_64+0x65/0x130
+> [   53.546503]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [   53.547639] ---[ end trace b804d1ea2fec893e ]---
+> 
+> So if recover fails, we need to drop all recovered data.
+> 
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+> ---
+>  fs/f2fs/recovery.c | 19 ++++++++++++-------
+>  fs/f2fs/super.c    | 15 ++++++++++++++-
+>  2 files changed, 26 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index fb24a6d734e9..064b91544a84 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -96,8 +96,12 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+>  	return ERR_PTR(err);
+>  }
+>  
+> -static void del_fsync_inode(struct fsync_inode_entry *entry)
+> +static void del_fsync_inode(struct fsync_inode_entry *entry, int drop)
+>  {
+> +	if (drop) {
+> +		make_bad_inode(entry->inode);
+> +		f2fs_inode_synced(entry->inode);
+> +	}
+>  	iput(entry->inode);
+>  	list_del(&entry->list);
+>  	kmem_cache_free(fsync_entry_slab, entry);
+> @@ -337,12 +341,12 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+>  	return err;
+>  }
+>  
+> -static void destroy_fsync_dnodes(struct list_head *head)
+> +static void destroy_fsync_dnodes(struct list_head *head, int drop)
+>  {
+>  	struct fsync_inode_entry *entry, *tmp;
+>  
+>  	list_for_each_entry_safe(entry, tmp, head, list)
+> -		del_fsync_inode(entry);
+> +		del_fsync_inode(entry, drop);
+>  }
+>  
+>  static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+> @@ -631,7 +635,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+>  		}
+>  
+>  		if (entry->blkaddr == blkaddr)
+> -			del_fsync_inode(entry);
+> +			del_fsync_inode(entry, 0);
+>  next:
+>  		/* check next segment */
+>  		blkaddr = next_blkaddr_of_node(page);
+> @@ -697,7 +701,7 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+>  	if (!err)
+>  		f2fs_bug_on(sbi, !list_empty(&inode_list));
+>  skip:
+> -	destroy_fsync_dnodes(&inode_list);
+> +	destroy_fsync_dnodes(&inode_list, err);
+>  
+>  	/* truncate meta pages to be used by the recovery */
+>  	truncate_inode_pages_range(META_MAPPING(sbi),
+> @@ -706,13 +710,14 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+>  	if (err) {
+>  		truncate_inode_pages_final(NODE_MAPPING(sbi));
+>  		truncate_inode_pages_final(META_MAPPING(sbi));
 
-Do we really want this? Why .bss placement doesn't work for you?
+How about removing SB_ACTIVE before destroy_fsync_dnodes() to let iput
+trash all dirty data in inode.
 
-	void oom(...)
-	{
-		static DEFINE_PR_LINE(KERN_ERR, pr);
+Once more thing is, do we need to track all orphan inode in a list, once we
+fail in later flow, we can remove SB_ACTIVE to let iput evicting inode
+immediately, instead there are still dirty inode tracked in
+sbi->inode_list[DIRTY_META] list.
 
-		pr_line(&pr, ....);
-		pr_line(&pr, "\n");
-	}
+Thanks,
 
-the underlying buffer will be static; the pr_line will get re-init
-(offset = 0) every time we call the function, which is OK. And we can
-pass &pr to any function oom() invokes. What am I missing?
+> +	} else {
+> +		clear_sbi_flag(sbi, SBI_POR_DOING);
+>  	}
+>  
+> -	clear_sbi_flag(sbi, SBI_POR_DOING);
+>  	mutex_unlock(&sbi->cp_mutex);
+>  
+>  	/* let's drop all the directory inodes for clean checkpoint */
+> -	destroy_fsync_dnodes(&dir_list);
+> +	destroy_fsync_dnodes(&dir_list, err);
+>  
+>  	if (need_writecp) {
+>  		set_sbi_flag(sbi, SBI_IS_RECOVERED);
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index c47b1ef2685a..9cc3c43a0b35 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1883,6 +1883,19 @@ void f2fs_quota_off_umount(struct super_block *sb)
+>  	}
+>  }
+>  
+> +static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
+> +{
+> +	struct quota_info *dqopt = sb_dqopt(sb);
+> +	int type;
+> +
+> +	for (type = 0; type < MAXQUOTAS; type++) {
+> +		if (!dqopt->files[type])
+> +			continue;
+> +		f2fs_inode_synced(dqopt->files[type]);
+> +		truncate_inode_pages_final(dqopt->files[type]->i_mapping);
+> +	}
+> +}
+> +
+>  static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+>  {
+>  	*projid = F2FS_I(inode)->i_projid;
+> @@ -3135,10 +3148,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  
+>  free_meta:
+>  #ifdef CONFIG_QUOTA
+> +	f2fs_truncate_quota_inode_pages(sb);
+>  	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb))
+>  		f2fs_quota_off_umount(sbi->sb);
+>  #endif
+> -	f2fs_sync_inode_meta(sbi);
+>  	/*
+>  	 * Some dirty meta pages can be produced by f2fs_recover_orphan_inodes()
+>  	 * failed by EIO. Then, iput(node_inode) can trigger balance_fs_bg()
+> 
 
-> We could even allow each "struct task_struct" to have corresponding
-> "struct printk_buffer".
-
-Tetsuo, realistically, we can't. Sorry. No one will let us to have a printk
-buffer on per-task_struct basis. Even if someone will let us to do this,
-a miracle, a single per-task_struct buffer won't work. Because, then
-someone will discover that a very simple API
-
-	buffered_printk(current->printk_buffer, "......");
-
-does not work if buffered_printk() gets interrupted by IRQ, etc. in case
-if that new context also does
-
-	buffered_printk(current->printk_buffer, "......");
-
-So then we will have per-context per-task_struct printk buffer: for task,
-for exceptions, for softirq, for hardirq, for NMI, etc. This is not worth
-it.
-
-Let's just have a very simple seq_buf based pr_line API. No config options,
-no command line arguments - heap, bss or stack for buffer placement. Or even
-simpler.
-
-	-ss
