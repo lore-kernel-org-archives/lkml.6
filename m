@@ -2,85 +2,120 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7089C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A15C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BBFC2064A
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:48:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJB2shC1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BBFC2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 439632064A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 10:48:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439632064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbeI2RQB (ORCPT
+        id S1728081AbeI2RQw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 13:16:01 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45214 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbeI2RQB (ORCPT
+        Sat, 29 Sep 2018 13:16:52 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:50024 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbeI2RQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 13:16:01 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h6-v6so8762987eds.12;
-        Sat, 29 Sep 2018 03:48:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rdMkzZRZyIxeYBm9YL18cJajyC96vIB64xYloC1jxso=;
-        b=dJB2shC1oLsEXc0myzppMYva6r+Sjc9CNTBFEocc2Dn5CJNkcilRz8UrxSITaWqfmT
-         KCx/XHYkJdYaAA/uhHhVJeN25lInLMmr0M2MK2jY+LVmM+VHUSy/6GJsxYAwwzg9l3zK
-         qpFvgEab67vUWBV8WXUPMOomDZdchOBKN/2Bo41R1Nm9RoPTkUk+cKb3mzjhvQQIj2R9
-         mg94HtqVTvajd8d4U6l/scToeqOcN4RyCajV0Lb9w6N9Fj+w/eh9K2+rWFFu5qtO/ZlO
-         xJAjixJsaCHF3H8nadrhm3dlCCvHtTGevpJFotr90Fp5+hxYyAz5mZKRjdO7xTNDqokl
-         5yLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rdMkzZRZyIxeYBm9YL18cJajyC96vIB64xYloC1jxso=;
-        b=PZ5tLW9G6bICpK7/2Wwug6lek+pepRRKCWNZ0Zs9DXt/3w8IkXGz9LSh5e1Lddhx68
-         nSuwM723jcvCjxobnlByCBGp3gyvOOE5ewG2htlR7Fn6HmCPJ35L8LAoVEU9tT+l/K3K
-         qilKtbp64KCWcZNf45gzJUHohr0dUqpHnLUMqT+aI9tcMIRDrao9u7WvySKZGt2SplZD
-         GFPQ3d1tkGP8VGPE26+FXOa07HlQUSik7UzqRw7dBS+Qz33Nl22mBszsNTuMIB2tYhxi
-         kSgQkhie4ixOdvqoOVNL1CHDkS1G/4+p33G3YmBIye0prRz5g6SLeCNmRt56xY6dbqH8
-         yILg==
-X-Gm-Message-State: ABuFfogwgktFK7iGcx7gddHHtJhmqKFvkYI6vUjpQ0bFotilAlNtYePS
-        EZu/cUJdTta4hDxpNm6aHQU=
-X-Google-Smtp-Source: ACcGV60I/+VuQqYkAW1Mn3VjRED5pR/OfGn6yQBHLrgpIIuFBLzrTvpmsylO3iSCVpbG9NVHbk3rqQ==
-X-Received: by 2002:a50:aa22:: with SMTP id o31-v6mr438045edc.23.1538218081867;
-        Sat, 29 Sep 2018 03:48:01 -0700 (PDT)
-Received: from jdlaptop.local.jdieter.net ([80.233.39.62])
-        by smtp.googlemail.com with ESMTPSA id d14-v6sm1120174ejb.35.2018.09.29.03.47.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 29 Sep 2018 03:48:00 -0700 (PDT)
-Message-ID: <6bfc36e2f038506e26b28f29406f112057af22e1.camel@gmail.com>
-Subject: Re: [PATCH] usbip: fix vhci_hcd controller counting
-From:   Jonathan Dieter <jdieter@gmail.com>
-To:     Maciej =?UTF-8?Q?=C5=BBenczykowski?= <zenczykowski@gmail.com>,
-        Maciej =?UTF-8?Q?=C5=BBenczykowski?= <maze@google.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>, linux-usb@vger.kernel.org
-Date:   Sat, 29 Sep 2018 11:47:58 +0100
-In-Reply-To: <20180920202942.208509-1-zenczykowski@gmail.com>
-References: <20180920202942.208509-1-zenczykowski@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Sat, 29 Sep 2018 13:16:52 -0400
+Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8TAmR9G097374;
+        Sat, 29 Sep 2018 19:48:28 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
+ Sat, 29 Sep 2018 19:48:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8TAmN6l097353
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 29 Sep 2018 19:48:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH security-next v3 00/29] LSM: Explict LSM ordering
+To:     Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     James Morris <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180925001832.18322-1-keescook@chromium.org>
+ <e6122c7d-bd29-d081-3c1e-96b7c369d4fe@schaufler-ca.com>
+ <CAGXu5jKQVDW8Wp0ESv2raa0xJnHCCMNqFCzZ5jSVXQ=Dp7FF8A@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <eda428eb-f6e1-f048-a394-251953c388b6@i-love.sakura.ne.jp>
+Date:   Sat, 29 Sep 2018 19:48:23 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5jKQVDW8Wp0ESv2raa0xJnHCCMNqFCzZ5jSVXQ=Dp7FF8A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For whatever it's worth, I've tested this on 4.18.9 and can verify that
-there are no regressions there.
+On 2018/09/29 5:01, Kees Cook wrote:
+> On Fri, Sep 28, 2018 at 8:55 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/24/2018 5:18 PM, Kees Cook wrote:
+>>> v3:
+>>> - add CONFIG_LSM_ENABLE and refactor resulting logic
+>>
+>> Kees, you can add my
+>>
+>>         Reviewed-by:Casey Schaufler <casey@schaufler-ca.com>
+>>
+>> for this entire patch set. Thank you for taking this on, it's
+>> a significant and important chunk of the LSM infrastructure
+>> update.
+> 
+> Thanks!
+> 
+> John, you'd looked at this a bit too -- do the results line up with
+> your expectations?
+> 
+> Any thoughts from SELinux, TOMOYO, or IMA folks?
 
-Tested-by: Jonathan Dieter <jdieter@gmail.com>
+I'm OK with this approach. Thank you.
 
+
+
+Just wondering what is "__lsm_name_##lsm" for...
+
++#define DEFINE_LSM(lsm)                                                        \
++       static const char __lsm_name_##lsm[] __initconst                \
++               __aligned(1) = #lsm;                                    \
++       static struct lsm_info __lsm_##lsm                              \
++               __used __section(.lsm_info.init)                        \
++               __aligned(sizeof(unsigned long))                        \
++               = {                                                     \
++                       .name = __lsm_name_##lsm,                       \
++
++#define END_LSM          }
+
+We could do something like below so that funny END_LSM is not required?
+I felt } like a typo error at the first glance. What we need is to
+gather into one section with appropriate alignment, isn't it?
+
+#define LSM_INFO                                                        \
+	static struct lsm_info __lsm_                                   \
+		__used __section(.lsm_info.init)                        \
+		__aligned(sizeof(unsigned long))                        \
+
+LSM_INFO = {
+	.name = "tomoyo",
+	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+	.init = tomoyo_init,
+};
