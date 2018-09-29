@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9431BC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 963B1C64EAD
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F66520880
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:55:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F66520880
+	by mail.kernel.org (Postfix) with ESMTP id 6348320880
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:55:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6348320880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbeI3EYw (ORCPT
+        id S1728589AbeI3ES3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:24:52 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51821 "EHLO
+        Sun, 30 Sep 2018 00:18:29 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51774 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728567AbeI3ES3 (ORCPT
+        by vger.kernel.org with ESMTP id S1728536AbeI3ES3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Sep 2018 00:18:29 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N68-0000Gx-F6; Sat, 29 Sep 2018 22:48:24 +0100
+        id 1g6N68-0000H0-Kw; Sat, 29 Sep 2018 22:48:24 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5y-0006vr-9B; Sat, 29 Sep 2018 22:48:14 +0100
+        id 1g6N5y-0006vS-36; Sat, 29 Sep 2018 22:48:14 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
+CC:     akpm@linux-foundation.org, "Chen Liqin" <liqin.linux@gmail.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Guan Xuetao" <gxt@mprc.pku.edu.cn>
+        "Lennox Wu" <lennox.wu@gmail.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.38346467@decadent.org.uk>
+Message-ID: <lsq.1538257387.848379423@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 087/131] unicore32: drop pte_file()-related helpers
+Subject: [PATCH 3.16 082/131] score: drop _PAGE_FILE and pte_file()-related
+ helpers
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,52 +61,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-commit 40171798fe11a6dc1d963058b097b2c4c9d34a9c upstream.
+commit 917e401ea75478d4f4575bc8b0ef3d14ecf9ef69 upstream.
 
-We've replaced remap_file_pages(2) implementation with emulation.  Nobody
-creates non-linear mapping anymore.
+We've replaced remap_file_pages(2) implementation with emulation.
+Nobody creates non-linear mapping anymore.
+
+This patch also increase number of bits availble for swap offset.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Guan Xuetao <gxt@mprc.pku.edu.cn>
+Cc: Chen Liqin <liqin.linux@gmail.com>
+Cc: Lennox Wu <lennox.wu@gmail.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/unicore32/include/asm/pgtable-hwdef.h |  1 -
- arch/unicore32/include/asm/pgtable.h       | 14 --------------
- 2 files changed, 15 deletions(-)
+ arch/score/include/asm/pgtable-bits.h |  1 -
+ arch/score/include/asm/pgtable.h      | 18 ++----------------
+ 2 files changed, 2 insertions(+), 17 deletions(-)
 
---- a/arch/unicore32/include/asm/pgtable-hwdef.h
-+++ b/arch/unicore32/include/asm/pgtable-hwdef.h
-@@ -44,7 +44,6 @@
- #define PTE_TYPE_INVALID	(3 << 0)
+--- a/arch/score/include/asm/pgtable-bits.h
++++ b/arch/score/include/asm/pgtable-bits.h
+@@ -6,7 +6,6 @@
+ #define _PAGE_WRITE			(1<<7)	/* implemented in software */
+ #define _PAGE_PRESENT			(1<<9)	/* implemented in software */
+ #define _PAGE_MODIFIED			(1<<10)	/* implemented in software */
+-#define _PAGE_FILE			(1<<10)
  
- #define PTE_PRESENT		(1 << 2)
--#define PTE_FILE		(1 << 3)	/* only when !PRESENT */
- #define PTE_YOUNG		(1 << 3)
- #define PTE_DIRTY		(1 << 4)
- #define PTE_CACHEABLE		(1 << 5)
---- a/arch/unicore32/include/asm/pgtable.h
-+++ b/arch/unicore32/include/asm/pgtable.h
-@@ -283,20 +283,6 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD
- #define MAX_SWAPFILES_CHECK()	\
- 	BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > __SWP_TYPE_BITS)
+ #define _PAGE_GLOBAL			(1<<0)
+ #define _PAGE_VALID			(1<<1)
+--- a/arch/score/include/asm/pgtable.h
++++ b/arch/score/include/asm/pgtable.h
+@@ -90,15 +90,6 @@ static inline void pmd_clear(pmd_t *pmdp
+ 	((pte_t *)page_address(pmd_page(*(dir))) + __pte_offset(address))
+ #define pte_unmap(pte) ((void)(pte))
  
 -/*
-- * Encode and decode a file entry.  File entries are stored in the Linux
-- * page tables as follows:
-- *
-- *   3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
-- *   1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-- *   <----------------------- offset ----------------------> 1 0 0 0
+- * Bits 9(_PAGE_PRESENT) and 10(_PAGE_FILE)are taken,
+- * split up 30 bits of offset into this range:
 - */
--#define pte_file(pte)		(pte_val(pte) & PTE_FILE)
--#define pte_to_pgoff(x)		(pte_val(x) >> 4)
--#define pgoff_to_pte(x)		__pte(((x) << 4) | PTE_FILE)
+-#define PTE_FILE_MAX_BITS	30
+-#define pte_to_pgoff(_pte)		\
+-	(((_pte).pte & 0x1ff) | (((_pte).pte >> 11) << 9))
+-#define pgoff_to_pte(off)		\
+-	((pte_t) {((off) & 0x1ff) | (((off) >> 9) << 11) | _PAGE_FILE})
+ #define __pte_to_swp_entry(pte)		\
+ 	((swp_entry_t) { pte_val(pte)})
+ #define __swp_entry_to_pte(x)	((pte_t) {(x).val})
+@@ -169,8 +160,8 @@ static inline pgprot_t pgprot_noncached(
+ }
+ 
+ #define __swp_type(x)		((x).val & 0x1f)
+-#define __swp_offset(x) 	((x).val >> 11)
+-#define __swp_entry(type, offset) ((swp_entry_t){(type) | ((offset) << 11)})
++#define __swp_offset(x) 	((x).val >> 10)
++#define __swp_entry(type, offset) ((swp_entry_t){(type) | ((offset) << 10)})
+ 
+ extern unsigned long empty_zero_page;
+ extern unsigned long zero_page_mask;
+@@ -198,11 +189,6 @@ static inline int pte_young(pte_t pte)
+ 	return pte_val(pte) & _PAGE_ACCESSED;
+ }
+ 
+-static inline int pte_file(pte_t pte)
+-{
+-	return pte_val(pte) & _PAGE_FILE;
+-}
 -
--#define PTE_FILE_MAX_BITS	28
--
- /* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
- /* FIXME: this is not correct */
- #define kern_addr_valid(addr)	(1)
+ #define pte_special(pte)	(0)
+ 
+ static inline pte_t pte_wrprotect(pte_t pte)
 
