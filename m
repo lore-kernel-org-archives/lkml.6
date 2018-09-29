@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2204BC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 15:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F84C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 15:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBAFD20879
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 15:44:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBAFD20879
+	by mail.kernel.org (Postfix) with ESMTP id 2034120879
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 15:44:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2034120879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728433AbeI2WNB (ORCPT
+        id S1728457AbeI2WNR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 18:13:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46220 "EHLO mx1.redhat.com"
+        Sat, 29 Sep 2018 18:13:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50636 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728246AbeI2WNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 18:13:01 -0400
+        id S1728246AbeI2WNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 18:13:17 -0400
 Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5240A308212D;
-        Sat, 29 Sep 2018 15:44:08 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 98C6B4E919;
+        Sat, 29 Sep 2018 15:44:24 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-12-53.pek2.redhat.com [10.72.12.53])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 159492010DB2;
-        Sat, 29 Sep 2018 15:43:54 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 815772010DA8;
+        Sat, 29 Sep 2018 15:44:08 +0000 (UTC)
 From:   Lianbo Jiang <lijiang@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
@@ -38,172 +38,72 @@ Cc:     kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
         bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
         bp@suse.de, brijesh.singh@amd.com, dyoung@redhat.com,
         bhe@redhat.com, jroedel@suse.de
-Subject: [PATCH 1/4 v8] x86/ioremap: add a function ioremap_encrypted() to remap kdump old memory
-Date:   Sat, 29 Sep 2018 23:43:30 +0800
-Message-Id: <20180929154333.3116-2-lijiang@redhat.com>
+Subject: [PATCH 2/4 v8] kexec: allocate decrypted control pages for kdump in case SME is enabled
+Date:   Sat, 29 Sep 2018 23:43:31 +0800
+Message-Id: <20180929154333.3116-3-lijiang@redhat.com>
 In-Reply-To: <20180929154333.3116-1-lijiang@redhat.com>
 References: <20180929154333.3116-1-lijiang@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Sat, 29 Sep 2018 15:44:08 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Sat, 29 Sep 2018 15:44:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When SME is enabled on AMD machine, the memory is encrypted in the first
-kernel. In this case, SME also needs to be enabled in kdump kernel, and
-the old memory has to be remapped with the memory encryption mask.
-
-Here we only talk about the case that SME is active in the first kernel,
-and only care it's active too in kdump kernel. there are four cases that
-need considered.
-
-a. dump vmcore
-   It is encrypted in the first kernel, and needs be read out in kdump
-   kernel.
-
-b. crash notes
-   When dumping vmcore, the people usually need to read the useful
-   information from notes, and the notes is also encrypted.
-
-c. iommu device table
-   It is allocated by kernel, need fill its pointer into mmio of amd iommu.
-   It's encrypted in the first kernel, need read the old content to analyze
-   and get useful information.
-
-d. mmio of amd iommu
-   Register reported by amd firmware, it's not RAM, which won't be
-   encrypted in both the first kernel and kdump kernel.
-
-To achieve the goal, the solution is:
-1. add a new bool parameter "encrypted" to __ioremap_caller()
-   It is a low level function, and check the newly added parameter, if it's
-   true and in kdump kernel, will remap the memory with sme mask.
-
-2. add a new function ioremap_encrypted() to explicitly passed in a "true"
-   value for "encrypted".
-   For above a, b, c, kdump kernel will call ioremap_encrypted();
-
-3. adjust all existed ioremap wrapper functions, passed in "false" for
-   encrypted to make them as before.
-
-   ioremap_encrypted()\
-   ioremap_cache()     |
-   ioremap_prot()      |
-   ioremap_wt()        |->__ioremap_caller()
-   ioremap_wc()        |
-   ioremap_uc()        |
-   ioremap_nocache()  /
+When SME is enabled in the first kernel, it needs to allocate decrypted
+pages for kdump, because when it boots to the kdump kernel, these pages
+won't be accessed encrypted at the initial stage, in order to boot the
+kdump kernel in the same manner as originally booted.
 
 Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
 Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
 Changes since v7:
-1. Remove a redundant header file "linux/crash_dump.h".(Suggested by
-Borislav)
-2. Modify code style issue.(Suggested by Borislav)
-3. Improve patch log.(Suggested by Baoquan)
+1. Modify comment in the code.(Suggested by Borislav)
+2. Improve patch log.(Suggested by Borislav)
 
- arch/x86/include/asm/io.h |  2 ++
- arch/x86/mm/ioremap.c     | 24 ++++++++++++++++--------
- 2 files changed, 18 insertions(+), 8 deletions(-)
+ kernel/kexec_core.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index 6de64840dd22..b7b0bf36c400 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -192,6 +192,8 @@ extern void __iomem *ioremap_cache(resource_size_t offset, unsigned long size);
- #define ioremap_cache ioremap_cache
- extern void __iomem *ioremap_prot(resource_size_t offset, unsigned long size, unsigned long prot_val);
- #define ioremap_prot ioremap_prot
-+extern void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size);
-+#define ioremap_encrypted ioremap_encrypted
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index 23a83a4da38a..6353daaee7f1 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -471,6 +471,18 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
+ 		}
+ 	}
  
- /**
-  * ioremap     -   map bus memory into CPU space
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index c63a545ec199..24e0920a9b25 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -131,7 +131,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
-  * caller shouldn't need to know that small detail.
-  */
- static void __iomem *__ioremap_caller(resource_size_t phys_addr,
--		unsigned long size, enum page_cache_mode pcm, void *caller)
-+		unsigned long size, enum page_cache_mode pcm,
-+		void *caller, bool encrypted)
- {
- 	unsigned long offset, vaddr;
- 	resource_size_t last_addr;
-@@ -199,7 +200,7 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
- 	 * resulting mapping.
- 	 */
- 	prot = PAGE_KERNEL_IO;
--	if (sev_active() && mem_flags.desc_other)
-+	if ((sev_active() && mem_flags.desc_other) || encrypted)
- 		prot = pgprot_encrypted(prot);
- 
- 	switch (pcm) {
-@@ -291,7 +292,7 @@ void __iomem *ioremap_nocache(resource_size_t phys_addr, unsigned long size)
- 	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC_MINUS;
- 
- 	return __ioremap_caller(phys_addr, size, pcm,
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
++	if (pages) {
++		/*
++		 * For kdump, it needs to ensure that these pages are
++		 * decrypted if SME is enabled.
++		 * By the way, it is unnecessary to call the arch_
++		 * kexec_pre_free_pages(), because these pages are
++		 * reserved memory and once the crash kernel is done,
++		 * it will always remain in these memory until reboot
++		 * or unloading.
++		 */
++		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
++	}
+ 	return pages;
  }
- EXPORT_SYMBOL(ioremap_nocache);
  
-@@ -324,7 +325,7 @@ void __iomem *ioremap_uc(resource_size_t phys_addr, unsigned long size)
- 	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC;
- 
- 	return __ioremap_caller(phys_addr, size, pcm,
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL_GPL(ioremap_uc);
- 
-@@ -341,7 +342,7 @@ EXPORT_SYMBOL_GPL(ioremap_uc);
- void __iomem *ioremap_wc(resource_size_t phys_addr, unsigned long size)
- {
- 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WC,
--					__builtin_return_address(0));
-+					__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_wc);
- 
-@@ -358,14 +359,21 @@ EXPORT_SYMBOL(ioremap_wc);
- void __iomem *ioremap_wt(resource_size_t phys_addr, unsigned long size)
- {
- 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WT,
--					__builtin_return_address(0));
-+					__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_wt);
- 
-+void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size)
-+{
-+	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
-+				__builtin_return_address(0), true);
-+}
-+EXPORT_SYMBOL(ioremap_encrypted);
-+
- void __iomem *ioremap_cache(resource_size_t phys_addr, unsigned long size)
- {
- 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_cache);
- 
-@@ -374,7 +382,7 @@ void __iomem *ioremap_prot(resource_size_t phys_addr, unsigned long size,
- {
- 	return __ioremap_caller(phys_addr, size,
- 				pgprot2cachemode(__pgprot(prot_val)),
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_prot);
- 
+@@ -867,6 +879,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 			result  = -ENOMEM;
+ 			goto out;
+ 		}
++		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+ 		ptr = kmap(page);
+ 		ptr += maddr & ~PAGE_MASK;
+ 		mchunk = min_t(size_t, mbytes,
+@@ -884,6 +897,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 			result = copy_from_user(ptr, buf, uchunk);
+ 		kexec_flush_icache_page(page);
+ 		kunmap(page);
++		arch_kexec_pre_free_pages(page_address(page), 1);
+ 		if (result) {
+ 			result = -EFAULT;
+ 			goto out;
 -- 
 2.17.1
 
