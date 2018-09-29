@@ -2,347 +2,383 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EFEC004D5
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA820C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51BA42087A
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 765052087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:15:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="roLehWvR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51BA42087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=cyphar-com.20150623.gappssmtp.com header.i=@cyphar-com.20150623.gappssmtp.com header.b="xAA8O1FI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 765052087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeI2TfN (ORCPT
+        id S1728259AbeI2ToO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 15:35:13 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34945 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728066AbeI2TfN (ORCPT
+        Sat, 29 Sep 2018 15:44:14 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45782 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728077AbeI2ToO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 15:35:13 -0400
-Received: by mail-pf1-f194.google.com with SMTP id p12-v6so6143789pfh.2
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 06:06:48 -0700 (PDT)
+        Sat, 29 Sep 2018 15:44:14 -0400
+Received: by mail-pg1-f195.google.com with SMTP id t70-v6so6360443pgd.12
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 06:15:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=iHbSHXWXS+E0Z3AAD+JsGbvMrWtu+9UhdiUzoBeW10U=;
-        b=roLehWvR9Gvqg9SU62JgWXAAffmGBpV7plBQ4YHvyDb5TdNIVqNJZKq63fEx84vLbR
-         GuyfFrIoFaZMeipUXHAahd3tFw8bADh9efhTwcc5H2SNsElDHM1Kyu5hfnNT+MrzHXHb
-         1wxCKM+5MEAW74xYSyDtSbCq2sugG5lIBBNxeTfAjNz5394i0d12k73La7836J/3+At6
-         iTHIQU9v9AEeZoAZZpOHLs/EJaFD/OdBmzE9dqk7+5islSh1DXBzcZ0EciKj1Vuj2C7R
-         fDQZrbgqxbPzbYOBEBEHqJZO7TTWkHJ5GwBmzygnriVzenWQZDF/CSFc7uXOUpTv4veM
-         DNjg==
+        d=cyphar-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=kCfBYlLBGG/ZmNnfk2cB3cnEY2JzUCPOh6/KsUth3Tk=;
+        b=xAA8O1FIJKQIk5Yd6s/VAROrt8QJA000J6rCRj8eOs6DGryyAOW3Mu817XDJxtODQ4
+         ja8dGk6QCAFcs9aQw8OT3kxs89pfEhQL9DD+B+CpCK6vGgQn+byVkYSlEyGBd2L66iY1
+         +rZ0PO8Q8MW1Rc0jeRn/zmdY9gGskgaiyQTB9Q3K8TFbS/367//IbT1qeXgr/jASByAk
+         7mDxl2tHVSgAWlTqtdpvSzSSUFJ3TTReWb8pxfqXCfEUY1QN+HYFnyByF/zLAPIv0uUe
+         prcasDNKiSkcduzQAIlQec/XxPeWFFTBZsr59WRFTnatxL3MaPDa4DlHehaoa4B+i8aF
+         nRvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=iHbSHXWXS+E0Z3AAD+JsGbvMrWtu+9UhdiUzoBeW10U=;
-        b=VaggzwZTgfzagEBAs1yACNSbZc7OJyOwbuLYT8gCNViid+gK51wVK5dGDU9o9RntHD
-         CsqJxPzFSNLfpPN82J/PgUwEpfN4wQ1Fldgu+ZYa3h2GpfyH5Ay1UYF6vRO9S3G7Q39Z
-         zwFJs/Cz4m+PPu/UEytk8pIyfmlfAfSXW/f7/f52SQeqnMg1x8LDUGuyhuHd7f6arbgp
-         WF5kbEPuXnQcP5PPglGNUOuMmlj3A1xYl3vJAsQHXrBeZ5tzJFtJpk8X/Mo6HeozXNmT
-         lwjEQgfXnKu7KTtFPKa1O7TEy3WsrKP/BzGYVUXi6foump757GXK3oWaz1A7KrspXvy8
-         95DA==
-X-Gm-Message-State: ABuFfoguZeV67gthVjFTQhToDYSMXgPGu+wCgEG4/jBYkKK/mQBdO4rC
-        GqO5t+5QGdNYmWvwfMl6Nrk=
-X-Google-Smtp-Source: ACcGV62aly+A8ql0KDWC2peyzePdmUNCUyqRc+GUdwpKj6dkv8F1E8J/IV6SQ2+mcwLngysbyVeM1Q==
-X-Received: by 2002:a62:1c06:: with SMTP id c6-v6mr3132003pfc.41.1538226407919;
-        Sat, 29 Sep 2018 06:06:47 -0700 (PDT)
-Received: from dest.didichuxing.com ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id p4-v6sm13828267pgs.75.2018.09.29.06.06.44
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kCfBYlLBGG/ZmNnfk2cB3cnEY2JzUCPOh6/KsUth3Tk=;
+        b=q5pXxpSp790HycCmgzOgQBik97Ttnkm+Y6KzNwPHd87a21dO3NnzEJ0joHjPMKGV/h
+         ZlPVYoAmWorMph4NcFi1AMnG0uU3khoxEsWv5im4w6wH/MV9P6bWkD8tSxQnTRHNnwM2
+         pSqScFhiKVBXcSjOQJ5anZ7+vIK/Whmwk5v5nFIs1y4lrByRCcdV3pmLyd6ZCBCJFmap
+         SG+n3QwPpISfsyOl2oKB5RueG7p0m+8spNdmdlqOw0JtHVoKXljNKpWeV6RtVXiF5Yib
+         m0j7+l2gLehqYtMzWkhMjEwPXiMtL2OEkwlnVdSc/vN52+pjbzcfJ7sfbbXyt6GF07qA
+         JhzA==
+X-Gm-Message-State: ABuFfojJkW/Q/lVgtmJYhFnoRFeCcufl2rLjKdsyvwMI119SPQLFjFxf
+        HfDAF92C4rtSOmCJmTng+h8t3g==
+X-Google-Smtp-Source: ACcGV63yLcx03XNGFOJdQXX9r8uexaqCwTAaWAgBIEt0dhpr3dTRJJwgMba2JAjhFtfnaGBK2PLqog==
+X-Received: by 2002:a17:902:246a:: with SMTP id m39-v6mr3160964plg.57.1538226947444;
+        Sat, 29 Sep 2018 06:15:47 -0700 (PDT)
+Received: from ?redacted? (pa49-199-213-175.pa.vic.optusnet.com.au. [49.199.213.175])
+        by smtp.gmail.com with ESMTPSA id h124-v6sm11335360pfg.112.2018.09.29.06.15.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Sep 2018 06:06:46 -0700 (PDT)
-From:   ufo19890607@gmail.com
-To:     akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        yuzhoujian@didichuxing.com
-Subject: [PATCH v15 1/2] Reorganize the oom report in dump_header
-Date:   Sat, 29 Sep 2018 21:06:26 +0800
-Message-Id: <1538226387-16600-1-git-send-email-ufo19890607@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Sat, 29 Sep 2018 06:15:46 -0700 (PDT)
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Tycho Andersen <tycho@tycho.ws>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
+        containers@lists.linux-foundation.org,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path resolution
+Date:   Sat, 29 Sep 2018 23:15:33 +1000
+Message-Id: <20180929131534.24472-1-cyphar@cyphar.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180929103453.12025-1-cyphar@cyphar.com>
+References: <20180929103453.12025-1-cyphar@cyphar.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yuzhoujian <yuzhoujian@didichuxing.com>
+The primary motivation for the need for this flag is container runtimes
+which have to interact with malicious root filesystems in the host
+namespaces. One of the first requirements for a container runtime to be
+secure against a malicious rootfs is that they correctly scope symlinks
+(that is, they should be scoped as though they are chroot(2)ed into the
+container's rootfs) and ".."-style paths. The already-existing AT_XDEV
+and AT_NO_PROCLINKS help defend against other potential attacks in a
+malicious rootfs scenario.
 
-OOM report contains several sections. The first one is the allocation
-context that has triggered the OOM. Then we have cpuset context
-followed by the stack trace of the OOM path. The tird one is the OOM
-memory information. Followed by the current memory state of all system
-tasks. At last, we will show oom eligible tasks and the information
-about the chosen oom victim.
+Currently most container runtimes try to do this resolution in
+userspace[1], causing many potential race conditions. In addition, the
+"obvious" alternative (actually performing a {ch,pivot_}root(2))
+requires a fork+exec which is *very* costly if necessary for every
+filesystem operation involving a container.
 
-One thing that makes parsing more awkward than necessary is that we do
-not have a single and easily parsable line about the oom context. This
-patch is reorganizing the oom report to
-1) who invoked oom and what was the allocation request
-[  515.902945] tuned invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE), order=0, oom_score_adj=0
+The most significant change in semantics with AT_THIS_ROOT is that
+*at(2) syscalls now no longer have the property that an absolute
+pathname causes the dirfd to be ignored completely (if LOOKUP_CHROOT is
+specified). The reasoning behind this is that AT_THIS_ROOT necessarily
+has to chroot-scope symlinks with absolute paths to dirfd, and so doing
+it for the base path seems to be the most consistent behaviour (and also
+avoids foot-gunning users who want to chroot-scope paths that might be
+absolute).
 
-2) OOM stack trace
-[  515.904273] CPU: 24 PID: 1809 Comm: tuned Not tainted 4.19.0-rc5+ #3
-[  515.905518] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
-[  515.906821] Call Trace:
-[  515.908062]  dump_stack+0x5a/0x73
-[  515.909311]  dump_header+0x55/0x28c
-[  515.914260]  oom_kill_process+0x2d8/0x300
-[  515.916708]  out_of_memory+0x145/0x4a0
-[  515.917932]  __alloc_pages_slowpath+0x7d2/0xa16
-[  515.919157]  __alloc_pages_nodemask+0x277/0x290
-[  515.920367]  filemap_fault+0x3d0/0x6c0
-[  515.921529]  ? filemap_map_pages+0x2b8/0x420
-[  515.922709]  ext4_filemap_fault+0x2c/0x40 [ext4]
-[  515.923884]  __do_fault+0x20/0x80
-[  515.925032]  __handle_mm_fault+0xbc0/0xe80
-[  515.926195]  handle_mm_fault+0xfa/0x210
-[  515.927357]  __do_page_fault+0x233/0x4c0
-[  515.928506]  do_page_fault+0x32/0x140
-[  515.929646]  ? page_fault+0x8/0x30
-[  515.930770]  page_fault+0x1e/0x30
+Currently this is only enabled for the stat(2) and openat(2) family (the
+latter has its own flag O_THISROOT with the same semantics). Ideally
+this flag would be supported by all *at(2) syscalls, but this will
+require adding flags arguments to many of them (and will be done in a
+separate patchset).
 
-3) OOM memory information
-[  515.958093] Mem-Info:
-[  515.959647] active_anon:26501758 inactive_anon:1179809 isolated_anon:0
- active_file:4402672 inactive_file:483963 isolated_file:1344
- unevictable:0 dirty:4886753 writeback:0 unstable:0
- slab_reclaimable:148442 slab_unreclaimable:18741
- mapped:1347 shmem:1347 pagetables:58669 bounce:0
- free:88663 free_pcp:0 free_cma:0
-...
+[1]: https://github.com/cyphar/filepath-securejoin
 
-4) current memory state of all system tasks
-[  516.079544] [    744]     0   744     9211     1345   114688       82             0 systemd-journal
-[  516.082034] [    787]     0   787    31764        0   143360       92             0 lvmetad
-[  516.084465] [    792]     0   792    10930        1   110592      208         -1000 systemd-udevd
-[  516.086865] [   1199]     0  1199    13866        0   131072      112         -1000 auditd
-[  516.089190] [   1222]     0  1222    31990        1   110592      157             0 smartd
-[  516.091477] [   1225]     0  1225     4864       85    81920       43             0 irqbalance
-[  516.093712] [   1226]     0  1226    52612        0   258048      426             0 abrtd
-[  516.112128] [   1280]     0  1280   109774       55   299008      400             0 NetworkManager
-[  516.113998] [   1295]     0  1295    28817       37    69632       24             0 ksmtuned
-[  516.144596] [  10718]     0 10718  2622484  1721372 15998976   267219             0 panic
-[  516.145792] [  10719]     0 10719  2622484  1164767  9818112    53576             0 panic
-[  516.146977] [  10720]     0 10720  2622484  1174361  9904128    53709             0 panic
-[  516.148163] [  10721]     0 10721  2622484  1209070 10194944    54824             0 panic
-[  516.149329] [  10722]     0 10722  2622484  1745799 14774272    91138             0 panic
-
-5) oom context (contrains and the chosen victim).
-oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0-1,task=panic,pid=10737,uid=0
-
-An admin can easily get the full oom context at a single line which
-makes parsing much easier.
-
-Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Christian Brauner <christian@brauner.io>
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
-Changes since v14:
-- add the dump_oom_summary for the single line output of oom context.
-- fix the null pointer in the dump_header.
+ fs/fcntl.c                       |   2 +-
+ fs/namei.c                       | 121 +++++++++++++++++--------------
+ fs/open.c                        |   2 +
+ fs/stat.c                        |   4 +-
+ include/linux/fcntl.h            |   2 +-
+ include/linux/namei.h            |   1 +
+ include/uapi/asm-generic/fcntl.h |   3 +
+ include/uapi/linux/fcntl.h       |   2 +
+ 8 files changed, 81 insertions(+), 56 deletions(-)
 
-Changes since v13:
-- remove the spaces for printing pid and uid.
-
-Changes since v12:
-- print the cpuset and memory allocation information after oom victim comm, pid.
-
-Changes since v11:
-- move the array of const char oom_constraint_text to oom_kill.c
-- add the cpuset information in the one line output.
-
-Changes since v10:
-- divide the patch v8 into two parts. One part is to add the array of const char and put enum
-  oom_constaint into oom.h; the other adds a new func to print the missing information for the system-
-  wide oom report.
-
-Changes since v9:
-- divide the patch v8 into two parts. One part is to move enum oom_constraint into memcontrol.h; the
-  other refactors the output info in the dump_header.
-- replace orgin_memcg and kill_memcg with oom_memcg and task_memcg resptively.
-
-Changes since v8:
-- add the constraint in the oom_control structure.
-- put enum oom_constraint and constraint array into the oom.h file.
-- simplify the description for mem_cgroup_print_oom_context.
-
-Changes since v7:
-- add the constraint parameter to dump_header and oom_kill_process.
-- remove the static char array in the mem_cgroup_print_oom_context, and
-  invoke pr_cont_cgroup_path to print memcg' name.
-- combine the patchset v6 into one.
-
-Changes since v6:
-- divide the patch v5 into two parts. One part is to add an array of const char and
-  put enum oom_constraint into the memcontrol.h; the other refactors the output
-  in the dump_header.
-- limit the memory usage for the static char array by using NAME_MAX in the mem_cgroup_print_oom_context.
-- eliminate the spurious spaces in the oom's output and fix the spelling of "constrain".
-
-Changes since v5:
-- add an array of const char for each constraint.
-- replace all of the pr_cont with a single line print of the pr_info.
-- put enum oom_constraint into the memcontrol.c file for printing oom constraint.
-
-Changes since v4:
-- rename the helper's name to mem_cgroup_print_oom_context.
-- rename the mem_cgroup_print_oom_info to mem_cgroup_print_oom_meminfo.
-- add the constrain info in the dump_header.
-
-Changes since v3:
-- rename the helper's name to mem_cgroup_print_oom_memcg_name.
-- add the rcu lock held to the helper.
-- remove the print info of memcg's name in mem_cgroup_print_oom_info.
-
-Changes since v2:
-- add the mem_cgroup_print_memcg_name helper to print the memcg's
-  name which contains the task that will be killed by the oom-killer.
-
-Changes since v1:
-- replace adding mem_cgroup_print_oom_info with printing the memcg's
-  name only.
-
- include/linux/oom.h    | 10 ++++++++++
- kernel/cgroup/cpuset.c |  4 ++--
- mm/oom_kill.c          | 29 ++++++++++++++++++++---------
- mm/page_alloc.c        |  4 ++--
- 4 files changed, 34 insertions(+), 13 deletions(-)
-
-diff --git a/include/linux/oom.h b/include/linux/oom.h
-index 69864a5..d079920 100644
---- a/include/linux/oom.h
-+++ b/include/linux/oom.h
-@@ -15,6 +15,13 @@
- struct mem_cgroup;
- struct task_struct;
- 
-+enum oom_constraint {
-+	CONSTRAINT_NONE,
-+	CONSTRAINT_CPUSET,
-+	CONSTRAINT_MEMORY_POLICY,
-+	CONSTRAINT_MEMCG,
-+};
-+
- /*
-  * Details of the page allocation that triggered the oom killer that are used to
-  * determine what should be killed.
-@@ -42,6 +49,9 @@ struct oom_control {
- 	unsigned long totalpages;
- 	struct task_struct *chosen;
- 	unsigned long chosen_points;
-+
-+	/* Used to print the constraint info. */
-+	enum oom_constraint constraint;
- };
- 
- extern struct mutex oom_lock;
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 266f10c..9510a5b 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -2666,9 +2666,9 @@ void cpuset_print_current_mems_allowed(void)
- 	rcu_read_lock();
- 
- 	cgrp = task_cs(current)->css.cgroup;
--	pr_info("%s cpuset=", current->comm);
-+	pr_cont(",cpuset=");
- 	pr_cont_cgroup_name(cgrp);
--	pr_cont(" mems_allowed=%*pbl\n",
-+	pr_cont(",mems_allowed=%*pbl",
- 		nodemask_pr_args(&current->mems_allowed));
- 
- 	rcu_read_unlock();
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f10aa53..0935fca 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -245,11 +245,11 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
- 	return points > 0 ? points : 1;
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index e343618736f7..4c36c5b9fdb9 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -1031,7 +1031,7 @@ static int __init fcntl_init(void)
+ 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
+ 	 * is defined as O_NONBLOCK on some platforms and not on others.
+ 	 */
+-	BUILD_BUG_ON(25 - 1 /* for O_RDONLY being 0 */ !=
++	BUILD_BUG_ON(26 - 1 /* for O_RDONLY being 0 */ !=
+ 		HWEIGHT32(
+ 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
+ 			__FMODE_EXEC | __FMODE_NONOTIFY));
+diff --git a/fs/namei.c b/fs/namei.c
+index 757dd783771c..1b984f0dbbb4 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2193,9 +2193,64 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+ 	}
  }
  
--enum oom_constraint {
--	CONSTRAINT_NONE,
--	CONSTRAINT_CPUSET,
--	CONSTRAINT_MEMORY_POLICY,
--	CONSTRAINT_MEMCG,
-+static const char * const oom_constraint_text[] = {
-+	[CONSTRAINT_NONE] = "CONSTRAINT_NONE",
-+	[CONSTRAINT_CPUSET] = "CONSTRAINT_CPUSET",
-+	[CONSTRAINT_MEMORY_POLICY] = "CONSTRAINT_MEMORY_POLICY",
-+	[CONSTRAINT_MEMCG] = "CONSTRAINT_MEMCG",
- };
- 
- /*
-@@ -430,14 +430,12 @@ static void dump_tasks(struct mem_cgroup *memcg, const nodemask_t *nodemask)
- 
- static void dump_header(struct oom_control *oc, struct task_struct *p)
- {
--	pr_warn("%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n",
--		current->comm, oc->gfp_mask, &oc->gfp_mask,
--		nodemask_pr_args(oc->nodemask), oc->order,
-+	pr_warn("%s invoked oom-killer: gfp_mask=%#x(%pGg), order=%d, oom_score_adj=%hd\n",
-+		current->comm, oc->gfp_mask, &oc->gfp_mask, oc->order,
- 			current->signal->oom_score_adj);
- 	if (!IS_ENABLED(CONFIG_COMPACTION) && oc->order)
- 		pr_warn("COMPACTION is disabled!!!\n");
- 
--	cpuset_print_current_mems_allowed();
- 	dump_stack();
- 	if (is_memcg_oom(oc))
- 		mem_cgroup_print_oom_info(oc->memcg, p);
-@@ -450,6 +448,17 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
- 		dump_tasks(oc->memcg, oc->nodemask);
- }
- 
-+static void dump_oom_summary(struct oom_control *oc, struct task_struct *victim)
++/*
++ * Configure nd->path based on the nd->dfd. This is only used as part of
++ * path_init().
++ */
++static inline int dirfd_path_init(struct nameidata *nd)
 +{
-+	/* one line summary of the oom killer context. */
-+	pr_info("oom-kill:constraint=%s,nodemask=%*pbl",
-+			oom_constraint_text[oc->constraint],
-+			nodemask_pr_args(oc->nodemask));
-+	cpuset_print_current_mems_allowed();
-+	pr_cont(",task=%s,pid=%d,uid=%d\n", victim->comm, victim->pid,
-+		from_kuid(&init_user_ns, task_uid(victim)));
++	if (nd->dfd == AT_FDCWD) {
++		if (nd->flags & LOOKUP_RCU) {
++			struct fs_struct *fs = current->fs;
++			unsigned seq;
++
++			do {
++				seq = read_seqcount_begin(&fs->seq);
++				nd->path = fs->pwd;
++				nd->inode = nd->path.dentry->d_inode;
++				nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
++			} while (read_seqcount_retry(&fs->seq, seq));
++		} else {
++			get_fs_pwd(current->fs, &nd->path);
++			nd->inode = nd->path.dentry->d_inode;
++		}
++	} else {
++		/* Caller must check execute permissions on the starting path component */
++		struct fd f = fdget_raw(nd->dfd);
++		struct dentry *dentry;
++
++		if (!f.file)
++			return -EBADF;
++
++		dentry = f.file->f_path.dentry;
++
++		if (*nd->name->name && unlikely(!d_can_lookup(dentry))) {
++			fdput(f);
++			return -ENOTDIR;
++		}
++
++		nd->path = f.file->f_path;
++		if (nd->flags & LOOKUP_RCU) {
++			nd->inode = nd->path.dentry->d_inode;
++			nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
++		} else {
++			path_get(&nd->path);
++			nd->inode = nd->path.dentry->d_inode;
++		}
++		fdput(f);
++	}
++	if (unlikely(nd->flags & (LOOKUP_CHROOT | LOOKUP_BENEATH))) {
++		nd->root = nd->path;
++		if (!(nd->flags & LOOKUP_RCU))
++			path_get(&nd->root);
++	}
++	return 0;
 +}
 +
- /*
-  * Number of OOM victims in flight
-  */
-@@ -951,6 +960,8 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ /* must be paired with terminate_walk() */
+ static const char *path_init(struct nameidata *nd, unsigned flags)
+ {
++	int error;
+ 	const char *s = nd->name->name;
  
- 	if (__ratelimit(&oom_rs))
- 		dump_header(oc, p);
-+	if (oc)
-+		dump_oom_summary(oc, victim);
+ 	if (!*s)
+@@ -2230,65 +2285,25 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 	nd->path.dentry = NULL;
  
- 	pr_err("%s: Kill process %d (%s) score %u or sacrifice child\n",
- 		message, task_pid_nr(p), p->comm, points);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 89d2a2a..ff18663 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3416,13 +3416,13 @@ void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
- 	va_start(args, fmt);
- 	vaf.fmt = fmt;
- 	vaf.va = &args;
--	pr_warn("%s: %pV, mode:%#x(%pGg), nodemask=%*pbl\n",
-+	pr_warn("%s: %pV, mode:%#x(%pGg), nodemask=%*pbl",
- 			current->comm, &vaf, gfp_mask, &gfp_mask,
- 			nodemask_pr_args(nodemask));
- 	va_end(args);
- 
- 	cpuset_print_current_mems_allowed();
+ 	nd->m_seq = read_seqbegin(&mount_lock);
++	if (unlikely(flags & LOOKUP_CHROOT)) {
++		error = dirfd_path_init(nd);
++		if (unlikely(error))
++			return ERR_PTR(error);
++	}
+ 	if (*s == '/') {
+-		int error;
+-		set_root(nd);
++		if (likely(!nd->root.mnt))
++			set_root(nd);
+ 		error = nd_jump_root(nd);
+ 		if (unlikely(error))
+ 			s = ERR_PTR(error);
+ 		return s;
+-	} else if (nd->dfd == AT_FDCWD) {
+-		if (flags & LOOKUP_RCU) {
+-			struct fs_struct *fs = current->fs;
+-			unsigned seq;
 -
-+	pr_cont("\n");
- 	dump_stack();
- 	warn_alloc_show_mem(gfp_mask, nodemask);
+-			do {
+-				seq = read_seqcount_begin(&fs->seq);
+-				nd->path = fs->pwd;
+-				nd->inode = nd->path.dentry->d_inode;
+-				nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
+-			} while (read_seqcount_retry(&fs->seq, seq));
+-		} else {
+-			get_fs_pwd(current->fs, &nd->path);
+-			nd->inode = nd->path.dentry->d_inode;
+-		}
+-		if (unlikely(flags & LOOKUP_BENEATH)) {
+-			nd->root = nd->path;
+-			if (!(flags & LOOKUP_RCU))
+-				path_get(&nd->root);
+-		}
+-		return s;
+-	} else {
+-		/* Caller must check execute permissions on the starting path component */
+-		struct fd f = fdget_raw(nd->dfd);
+-		struct dentry *dentry;
+-
+-		if (!f.file)
+-			return ERR_PTR(-EBADF);
+-
+-		dentry = f.file->f_path.dentry;
+-
+-		if (*s && unlikely(!d_can_lookup(dentry))) {
+-			fdput(f);
+-			return ERR_PTR(-ENOTDIR);
+-		}
+-
+-		nd->path = f.file->f_path;
+-		if (flags & LOOKUP_RCU) {
+-			nd->inode = nd->path.dentry->d_inode;
+-			nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
+-		} else {
+-			path_get(&nd->path);
+-			nd->inode = nd->path.dentry->d_inode;
+-		}
+-		if (unlikely(flags & LOOKUP_BENEATH)) {
+-			nd->root = nd->path;
+-			if (!(flags & LOOKUP_RCU))
+-				path_get(&nd->root);
+-		}
+-		fdput(f);
+-		return s;
+ 	}
++	if (likely(!nd->path.mnt)) {
++		error = dirfd_path_init(nd);
++		if (unlikely(error))
++			return ERR_PTR(error);
++	}
++	return s;
  }
+ 
+ static const char *trailing_symlink(struct nameidata *nd)
+diff --git a/fs/open.c b/fs/open.c
+index 80f5f566a5ff..81d148f626cd 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -996,6 +996,8 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
+ 		lookup_flags |= LOOKUP_NO_PROCLINKS;
+ 	if (flags & O_NOSYMLINKS)
+ 		lookup_flags |= LOOKUP_NO_SYMLINKS;
++	if (flags & O_THISROOT)
++		lookup_flags |= LOOKUP_CHROOT;
+ 	op->lookup_flags = lookup_flags;
+ 	return 0;
+ }
+diff --git a/fs/stat.c b/fs/stat.c
+index 791e61b916ae..e8366e4812c3 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -172,7 +172,7 @@ int vfs_statx(int dfd, const char __user *filename, int flags,
+ 
+ 	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT | AT_EMPTY_PATH |
+ 		      KSTAT_QUERY_FLAGS | AT_BENEATH | AT_XDEV |
+-		      AT_NO_PROCLINKS | AT_NO_SYMLINKS))
++		      AT_NO_PROCLINKS | AT_NO_SYMLINKS | AT_THIS_ROOT))
+ 		return -EINVAL;
+ 
+ 	if (flags & AT_SYMLINK_NOFOLLOW)
+@@ -189,6 +189,8 @@ int vfs_statx(int dfd, const char __user *filename, int flags,
+ 		lookup_flags |= LOOKUP_NO_PROCLINKS;
+ 	if (flags & AT_NO_SYMLINKS)
+ 		lookup_flags |= LOOKUP_NO_SYMLINKS;
++	if (flags & AT_THIS_ROOT)
++		lookup_flags |= LOOKUP_CHROOT;
+ 
+ retry:
+ 	error = user_path_at(dfd, filename, lookup_flags, &path);
+diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+index ad5bba4b5b12..95480cd4c09d 100644
+--- a/include/linux/fcntl.h
++++ b/include/linux/fcntl.h
+@@ -10,7 +10,7 @@
+ 	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
+ 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
+ 	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_BENEATH | O_XDEV | \
+-	 O_NOPROCLINKS | O_NOSYMLINKS)
++	 O_NOPROCLINKS | O_NOSYMLINKS | O_THISROOT)
+ 
+ #ifndef force_o_largefile
+ #define force_o_largefile() (BITS_PER_LONG != 32)
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 5ff7f3362d1b..7ec9e2d84649 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -53,6 +53,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
+ #define LOOKUP_NO_PROCLINKS	0x040000 /* No /proc/$pid/fd/ "symlink" crossing. */
+ #define LOOKUP_NO_SYMLINKS	0x080000 /* No symlink crossing *at all*.
+ 					    Implies LOOKUP_NO_PROCLINKS. */
++#define LOOKUP_CHROOT		0x100000 /* Treat dirfd as %current->fs->root. */
+ 
+ extern int path_pts(struct path *path);
+ 
+diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+index c2bf5983e46a..11206b0e927c 100644
+--- a/include/uapi/asm-generic/fcntl.h
++++ b/include/uapi/asm-generic/fcntl.h
+@@ -113,6 +113,9 @@
+ #ifndef O_NOSYMLINKS
+ #define O_NOSYMLINKS	01000000000
+ #endif
++#ifndef O_THISROOT
++#define O_THISROOT	02000000000
++#endif
+ 
+ #define F_DUPFD		0	/* dup */
+ #define F_GETFD		1	/* get close_on_exec */
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 551a9e2166a8..ea978457b68f 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -99,6 +99,8 @@
+ #define AT_NO_PROCLINKS		0x40000 /* No /proc/$pid/fd/... "symlinks". */
+ #define AT_NO_SYMLINKS		0x80000 /* No symlinks *at all*.
+ 					   Implies AT_NO_PROCLINKS. */
++#define AT_THIS_ROOT		0x100000 /* Path resolution acts as though
++					   it is chroot-ed into dirfd. */
+ 
+ 
+ #endif /* _UAPI_LINUX_FCNTL_H */
 -- 
-1.8.3.1
+2.19.0
 
