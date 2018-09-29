@@ -2,173 +2,74 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EB2C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 06:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6544DC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 06:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80C112073F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 06:16:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XBvNhcr2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C112073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B64AB20879
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 06:19:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B64AB20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbeI2Mng (ORCPT
+        id S1727488AbeI2Mqt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 08:43:36 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:54201 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727393AbeI2Mng (ORCPT
+        Sat, 29 Sep 2018 08:46:49 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55439 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727418AbeI2Mqs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 08:43:36 -0400
-Received: by mail-it1-f195.google.com with SMTP id q70-v6so5233895itb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 23:16:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=XeZyq/qEj2ItjcgGNAv5a4ph8pT+nz7xNN0hcMcL6bI=;
-        b=XBvNhcr202lnJQ2QxFQz0c/oxOqTt1u566xfCi5djYRwqGhNfjtOPlhLg3FQ8U4wUD
-         ZUTdeCydA2kZ9a+5UxE6kPThnEfwuo3Ho9/QGu/wTdvAh3WLRr8JmmycLPMqDC5KFUXC
-         PSpXBAacntM4WE3tszcFUpqMIgFrYSj3aibQ4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=XeZyq/qEj2ItjcgGNAv5a4ph8pT+nz7xNN0hcMcL6bI=;
-        b=AGzskDNAxOtb9yWYCuxC4CijkknbBKG0rhSm8wL41kwxLF2QADwWa0ntPhJvcseAaA
-         UWrIEiV52TUYiQ04BJn3rjDm14y7AOcGrmILnulsb9t58/ta0UCKRmQS4X5RW5EGimF1
-         P8Z/vhMNyIGwl/c9ZSqD1Ba+EuYQU6790PpMzR7tiJWB3R/Hy+uoutOhVL91bJmnPt+W
-         pKECEzofELKx6udfXygTC2AUJxtbhdeYgDEa+VjdJQ7AttH1LQuXDqsetZp41rbyN8L5
-         JYlsze7XDyEp2aLrb7XeC2kjlrapmzUI7RfxeW3RtK78q8DE6KVKpzjLDeCYwySl/9KV
-         a3BQ==
-X-Gm-Message-State: ABuFfohEpFAK2TOD9g2Y9YmkGvgA+jngWZ5ntOGEpE7WF9844vu6C/95
-        8koUh9c2xUbjxpKMiL1J6njHUNbwJZxuCKg5n2FxIA==
-X-Google-Smtp-Source: ACcGV63TM/Ae+4lxzR70epyXb8a5sosf0IbMGg23Z2ZVr7uZrTLlQVIVntlNrazOsBI0OpfqT9kVLkEvabN183/YClE=
-X-Received: by 2002:a24:57cb:: with SMTP id u194-v6mr3947691ita.148.1538201786140;
- Fri, 28 Sep 2018 23:16:26 -0700 (PDT)
+        Sat, 29 Sep 2018 08:46:48 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g68bE-0001EM-Uj; Sat, 29 Sep 2018 08:19:33 +0200
+Date:   Sat, 29 Sep 2018 08:19:32 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andi Kleen <ak@linux.intel.com>
+cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
+In-Reply-To: <20180928204556.GB32651@tassilo.jf.intel.com>
+Message-ID: <alpine.DEB.2.21.1809290817160.1432@nanos.tec.linutronix.de>
+References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com> <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de> <e89ec139-1a97-803e-343c-76eedf244d65@linux.intel.com> <alpine.DEB.2.21.1809281542180.2004@nanos.tec.linutronix.de>
+ <0feb9867-0040-0306-a95b-4b6df1818312@linux.intel.com> <alpine.DEB.2.21.1809281932040.1432@nanos.tec.linutronix.de> <20180928204556.GB32651@tassilo.jf.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 23:16:25
- -0700 (PDT)
-In-Reply-To: <CAHmME9qtN8kiKnMHTa76r9a_5Ou_s3WhAMT_HnH7-1FeoHUOZg@mail.gmail.com>
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
- <CAKv+Gu8knzzmK4_KouFQWKzMdHFgEsk-CtBrcuAvk0bYkDFO=w@mail.gmail.com> <CAHmME9qtN8kiKnMHTa76r9a_5Ou_s3WhAMT_HnH7-1FeoHUOZg@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sat, 29 Sep 2018 08:16:25 +0200
-Message-ID: <CAKv+Gu9FoFQymp2-=rUeh14CkUKON389OCE7stYCOFwKZpaCrg@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 September 2018 at 04:20, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> Hi Ard,
->
-> On Fri, Sep 28, 2018 at 6:02 PM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> Please put comments like this below the ---
->
-> git-notes is nice for this indeed.
->
->> Are these CONFIG_ symbols defined anywhere at this point?
->
-> Yes, they're introduced in the first zinc commit. There's no git-blame
-> on git.kernel.org, presumably because it's expensive to compute, but
-> there is on my personal instance, so this might help:
-> https://git.zx2c4.com/linux-dev/blame/lib/zinc/Kconfig?h=jd/wireguard
->
->> In any case, I don't think these is a reason for these, at least not
->> on ARM/arm64. The 64-bitness is implied in both cases
->
-> You mean to say that since these nobs are def_bool y and are
-> essentially "depends on ARM", then I should just straight up use
-> CONFIG_ARM? I had thought about this, but figured this would make it
-> easier to later make these optional or have other options block them
-> need be, or even if the dependencies and requirements for having them
-> changes (for example, with UML on x86). I think doing it this way
-> gives us some flexibility later on. So if that's a compelling enough
-> reason, I'd like to keep those.
->
+On Fri, 28 Sep 2018, Andi Kleen wrote:
+> So there isn't a single answer, and that is why it is important
+> that this if configurable.
 
-Sure. But probably better to be consistent then, and stop using
-CONFIG_ARM directly in your code.
+I said clearly that I'm not opposed against making it configurable. But
+because there is no single answer, it's even more important to have proper
+documentation. And that's all I'm asking for aside of making it opt-in
+instead of a wholesale expose everything approach.
 
->> and the
->> dependency on !CPU_32v3 you introduce (looking at the version of
->> Kconfig at the end of the series) seems spurious to me. Was that added
->> because of some kbuild robot report? (we don't support ARMv3 in the
->> kernel but ARCH_RPC is built in v3 mode because of historical reasons
->> while the actual core is a v4)
->
-> I added the !CPU_32v3 in my development tree after posting v6, so good
-> to hear you're just looking straight at the updated tree. If you see
-> things jump out in there prior to me posting v7, don't hesitate to let
-> me know.
->
-> The reason it was added was indeed because of:
-> https://lists.01.org/pipermail/kbuild-all/2018-September/053114.html
-> -- exactly what you suspected, ARCH_RPC. Have a better suggestion than
-> !CPU_32v3?
+Thanks,
 
-Yes, you could just add
+	tglx
 
-asflags-$(CONFIG_CPU_32v3) += -march=armv4
 
-with a comment stating that we don't actually support ARMv3 but only
-use it as a code generation target for reasons unrelated to the ISA
-
-> It seems to me like so long as the kernel has CPU_32v3 as a
-> thing in any form, I should mark Zinc as not supporting it, since
-> we'll certainly be at least v4 and up. (Do you guys have any old Acorn
-> ARM610 boxes sitting around for old time's sake at LinaroHQ? ;-)
->
-
-AFAIK we only support the StrongARM flavor of RiscPC which is ARMv4.
-But yes, some people do care deeply about these antiquated platforms,
-including Russell, and there is no particular to leave this one
-behind.
-
->> > +#endif
->> > +
->>
->> No need to make asmlinkage declarations conditional
->
-> Yep, addressed in the IS_ENABLED cleanup.
->
->>
->> if (IS_ENABLED())
->
-> Sorted.
->
->>
->> """
->> if (!IS_ENABLED(CONFIG_ARM))
->>    return false;
->>
->> hchacha20_arm(x, derived_key);
->> return true;
->> """
->>
->> and drop the #ifdefs
->
-> Also sorted.
->
-> Regards,
-> Jason
