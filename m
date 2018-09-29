@@ -2,724 +2,194 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E48AC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 11:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F68CC004D5
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 11:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DA0D20666
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 11:19:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DA0D20666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B2DCD2064A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 11:21:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2DCD2064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728335AbeI2Rrz (ORCPT
+        id S1728179AbeI2RtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 13:47:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36222 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727962AbeI2Rrz (ORCPT
+        Sat, 29 Sep 2018 13:49:04 -0400
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:53998 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727962AbeI2RtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 13:47:55 -0400
-Received: from localhost (c-73-221-170-44.hsd1.wa.comcast.net [73.221.170.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9309ECCA;
-        Sat, 29 Sep 2018 11:19:50 +0000 (UTC)
-Date:   Sat, 29 Sep 2018 04:19:49 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.4.159
-Message-ID: <20180929111949.GB22213@kroah.com>
-References: <20180929111940.GA22213@kroah.com>
+        Sat, 29 Sep 2018 13:49:03 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 2ECC89F2D6B;
+        Sat, 29 Sep 2018 12:20:54 +0100 (BST)
+Date:   Sat, 29 Sep 2018 12:20:53 +0100
+From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To:     Eugen Hristev <eugen.hristev@microchip.com>
+Cc:     <ludovic.desroches@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <nicolas.ferre@microchip.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/2] iio: adc: at91: fix acking DRDY irq on simple
+ conversions
+Message-ID: <20180929122053.44aef855@archlinux>
+In-Reply-To: <5ee8253a-5b07-94ce-a86d-b453911fce0a@microchip.com>
+References: <1537447238-18674-1-git-send-email-eugen.hristev@microchip.com>
+        <20180922113123.2c8da044@archlinux>
+        <9846e106-8baf-b491-29ca-8306be9527ee@microchip.com>
+        <20180924210056.2cae9439@archlinux>
+        <20180924212701.400e21f7@archlinux>
+        <5ee8253a-5b07-94ce-a86d-b453911fce0a@microchip.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180929111940.GA22213@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index d07a6283b67e..06d5c6a6a0f6 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 4
--SUBLEVEL = 158
-+SUBLEVEL = 159
- EXTRAVERSION =
- NAME = Blurry Fish Butt
- 
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index dccd0c2e9023..3028d9b028c7 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -649,6 +649,9 @@ work_pending:
- 	bl	do_notify_resume
- 	b	ret_to_user
- work_resched:
-+#ifdef CONFIG_TRACE_IRQFLAGS
-+	bl	trace_hardirqs_off		// the IRQs are off here, inform the tracing code
-+#endif
- 	bl	schedule
- 
- /*
-diff --git a/arch/x86/xen/pmu.c b/arch/x86/xen/pmu.c
-index 724a08740a04..9c7358110d32 100644
---- a/arch/x86/xen/pmu.c
-+++ b/arch/x86/xen/pmu.c
-@@ -477,7 +477,7 @@ static void xen_convert_regs(const struct xen_pmu_regs *xen_regs,
- irqreturn_t xen_pmu_irq_handler(int irq, void *dev_id)
- {
- 	int err, ret = IRQ_NONE;
--	struct pt_regs regs;
-+	struct pt_regs regs = {0};
- 	const struct xen_pmu_data *xenpmu_data = get_xenpmu_data();
- 	uint8_t xenpmu_flags = get_xenpmu_flags();
- 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index ababdaabe870..1855b475cc0b 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -253,12 +253,16 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
- 		nv_connector->edid = NULL;
- 	}
- 
--	/* Outputs are only polled while runtime active, so acquiring a
--	 * runtime PM ref here is unnecessary (and would deadlock upon
--	 * runtime suspend because it waits for polling to finish).
-+	/* Outputs are only polled while runtime active, so resuming the
-+	 * device here is unnecessary (and would deadlock upon runtime suspend
-+	 * because it waits for polling to finish). We do however, want to
-+	 * prevent the autosuspend timer from elapsing during this operation
-+	 * if possible.
- 	 */
--	if (!drm_kms_helper_is_poll_worker()) {
--		ret = pm_runtime_get_sync(connector->dev->dev);
-+	if (drm_kms_helper_is_poll_worker()) {
-+		pm_runtime_get_noresume(dev->dev);
-+	} else {
-+		ret = pm_runtime_get_sync(dev->dev);
- 		if (ret < 0 && ret != -EACCES)
- 			return conn_status;
- 	}
-@@ -329,10 +333,8 @@ detect_analog:
- 
-  out:
- 
--	if (!drm_kms_helper_is_poll_worker()) {
--		pm_runtime_mark_last_busy(connector->dev->dev);
--		pm_runtime_put_autosuspend(connector->dev->dev);
--	}
-+	pm_runtime_mark_last_busy(dev->dev);
-+	pm_runtime_put_autosuspend(dev->dev);
- 
- 	return conn_status;
- }
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index e4541c6bf3d3..4564ecf71181 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -2011,6 +2011,9 @@ static const struct hid_device_id hid_have_special_driver[] = {
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS3_CONTROLLER) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER) },
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_2) },
-+	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_2) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_DONGLE) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_VAIO_VGX_MOUSE) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_VAIO_VGP_MOUSE) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_STEELSERIES, USB_DEVICE_ID_STEELSERIES_SRWS1) },
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 60e2c9faa95f..00d8366a614e 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -879,6 +879,8 @@
- #define USB_DEVICE_ID_SONY_PS3_BDREMOTE		0x0306
- #define USB_DEVICE_ID_SONY_PS3_CONTROLLER	0x0268
- #define USB_DEVICE_ID_SONY_PS4_CONTROLLER	0x05c4
-+#define USB_DEVICE_ID_SONY_PS4_CONTROLLER_2	0x09cc
-+#define USB_DEVICE_ID_SONY_PS4_CONTROLLER_DONGLE	0x0ba0
- #define USB_DEVICE_ID_SONY_MOTION_CONTROLLER	0x03d5
- #define USB_DEVICE_ID_SONY_NAVIGATION_CONTROLLER	0x042f
- #define USB_DEVICE_ID_SONY_BUZZ_CONTROLLER		0x0002
-diff --git a/drivers/hid/hid-sony.c b/drivers/hid/hid-sony.c
-index 21febbb0d84e..6f3d47185bf0 100644
---- a/drivers/hid/hid-sony.c
-+++ b/drivers/hid/hid-sony.c
-@@ -2460,6 +2460,12 @@ static const struct hid_device_id sony_devices[] = {
- 		.driver_data = DUALSHOCK4_CONTROLLER_USB },
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER),
- 		.driver_data = DUALSHOCK4_CONTROLLER_BT },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_2),
-+		.driver_data = DUALSHOCK4_CONTROLLER_USB },
-+	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_2),
-+		.driver_data = DUALSHOCK4_CONTROLLER_BT },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SONY, USB_DEVICE_ID_SONY_PS4_CONTROLLER_DONGLE),
-+		.driver_data = DUALSHOCK4_CONTROLLER_USB },
- 	{ }
- };
- MODULE_DEVICE_TABLE(hid, sony_devices);
-diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
-index 53aa7515f542..04206c600098 100644
---- a/drivers/infiniband/hw/cxgb4/qp.c
-+++ b/drivers/infiniband/hw/cxgb4/qp.c
-@@ -1183,6 +1183,12 @@ static void flush_qp(struct c4iw_qp *qhp)
- 
- 	t4_set_wq_in_error(&qhp->wq);
- 	if (qhp->ibqp.uobject) {
-+
-+		/* for user qps, qhp->wq.flushed is protected by qhp->mutex */
-+		if (qhp->wq.flushed)
-+			return;
-+
-+		qhp->wq.flushed = 1;
- 		t4_set_cq_in_error(&rchp->cq);
- 		spin_lock_irqsave(&rchp->comp_handler_lock, flag);
- 		(*rchp->ibcq.comp_handler)(&rchp->ibcq, rchp->ibcq.cq_context);
-diff --git a/drivers/net/appletalk/ipddp.c b/drivers/net/appletalk/ipddp.c
-index 2e4649655181..4e98e5aff7c5 100644
---- a/drivers/net/appletalk/ipddp.c
-+++ b/drivers/net/appletalk/ipddp.c
-@@ -284,8 +284,12 @@ static int ipddp_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
-                 case SIOCFINDIPDDPRT:
- 			spin_lock_bh(&ipddp_route_lock);
- 			rp = __ipddp_find_route(&rcp);
--			if (rp)
--				memcpy(&rcp2, rp, sizeof(rcp2));
-+			if (rp) {
-+				memset(&rcp2, 0, sizeof(rcp2));
-+				rcp2.ip    = rp->ip;
-+				rcp2.at    = rp->at;
-+				rcp2.flags = rp->flags;
-+			}
- 			spin_unlock_bh(&ipddp_route_lock);
- 
- 			if (rp) {
-diff --git a/drivers/net/ethernet/hp/hp100.c b/drivers/net/ethernet/hp/hp100.c
-index 3daf2d4a7ca0..884aa809baac 100644
---- a/drivers/net/ethernet/hp/hp100.c
-+++ b/drivers/net/ethernet/hp/hp100.c
-@@ -2636,7 +2636,7 @@ static int hp100_login_to_vg_hub(struct net_device *dev, u_short force_relogin)
- 		/* Wait for link to drop */
- 		time = jiffies + (HZ / 10);
- 		do {
--			if (~(hp100_inb(VG_LAN_CFG_1) & HP100_LINK_UP_ST))
-+			if (!(hp100_inb(VG_LAN_CFG_1) & HP100_LINK_UP_ST))
- 				break;
- 			if (!in_interrupt())
- 				schedule_timeout_interruptible(1);
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index 3270b4333668..0a4bd73caae5 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -892,7 +892,11 @@ static RING_IDX xennet_fill_frags(struct netfront_queue *queue,
- 			BUG_ON(pull_to <= skb_headlen(skb));
- 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
- 		}
--		BUG_ON(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS);
-+		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
-+			queue->rx.rsp_cons = ++cons;
-+			kfree_skb(nskb);
-+			return ~0U;
-+		}
- 
- 		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
- 				skb_frag_page(nfrag),
-@@ -1029,6 +1033,8 @@ err:
- 		skb->len += rx->status;
- 
- 		i = xennet_fill_frags(queue, skb, &tmpq);
-+		if (unlikely(i == ~0U))
-+			goto err;
- 
- 		if (rx->flags & XEN_NETRXF_csum_blank)
- 			skb->ip_summed = CHECKSUM_PARTIAL;
-diff --git a/drivers/platform/x86/alienware-wmi.c b/drivers/platform/x86/alienware-wmi.c
-index 1e1e59423889..3df47c1b04ec 100644
---- a/drivers/platform/x86/alienware-wmi.c
-+++ b/drivers/platform/x86/alienware-wmi.c
-@@ -463,6 +463,7 @@ static acpi_status alienware_hdmi_command(struct hdmi_args *in_args,
- 		if (obj && obj->type == ACPI_TYPE_INTEGER)
- 			*out_data = (u32) obj->integer.value;
- 	}
-+	kfree(output.pointer);
- 	return status;
- 
- }
-diff --git a/drivers/target/iscsi/iscsi_target_auth.c b/drivers/target/iscsi/iscsi_target_auth.c
-index 47e249dccb5f..b380bc7ee10a 100644
---- a/drivers/target/iscsi/iscsi_target_auth.c
-+++ b/drivers/target/iscsi/iscsi_target_auth.c
-@@ -26,18 +26,6 @@
- #include "iscsi_target_nego.h"
- #include "iscsi_target_auth.h"
- 
--static int chap_string_to_hex(unsigned char *dst, unsigned char *src, int len)
--{
--	int j = DIV_ROUND_UP(len, 2), rc;
--
--	rc = hex2bin(dst, src, j);
--	if (rc < 0)
--		pr_debug("CHAP string contains non hex digit symbols\n");
--
--	dst[j] = '\0';
--	return j;
--}
--
- static void chap_binaryhex_to_asciihex(char *dst, char *src, int src_len)
- {
- 	int i;
-@@ -241,9 +229,16 @@ static int chap_server_compute_md5(
- 		pr_err("Could not find CHAP_R.\n");
- 		goto out;
- 	}
-+	if (strlen(chap_r) != MD5_SIGNATURE_SIZE * 2) {
-+		pr_err("Malformed CHAP_R\n");
-+		goto out;
-+	}
-+	if (hex2bin(client_digest, chap_r, MD5_SIGNATURE_SIZE) < 0) {
-+		pr_err("Malformed CHAP_R\n");
-+		goto out;
-+	}
- 
- 	pr_debug("[server] Got CHAP_R=%s\n", chap_r);
--	chap_string_to_hex(client_digest, chap_r, strlen(chap_r));
- 
- 	tfm = crypto_alloc_hash("md5", 0, CRYPTO_ALG_ASYNC);
- 	if (IS_ERR(tfm)) {
-@@ -348,9 +343,7 @@ static int chap_server_compute_md5(
- 		pr_err("Could not find CHAP_C.\n");
- 		goto out;
- 	}
--	pr_debug("[server] Got CHAP_C=%s\n", challenge);
--	challenge_len = chap_string_to_hex(challenge_binhex, challenge,
--				strlen(challenge));
-+	challenge_len = DIV_ROUND_UP(strlen(challenge), 2);
- 	if (!challenge_len) {
- 		pr_err("Unable to convert incoming challenge\n");
- 		goto out;
-@@ -359,6 +352,11 @@ static int chap_server_compute_md5(
- 		pr_err("CHAP_C exceeds maximum binary size of 1024 bytes\n");
- 		goto out;
- 	}
-+	if (hex2bin(challenge_binhex, challenge, challenge_len) < 0) {
-+		pr_err("Malformed CHAP_C\n");
-+		goto out;
-+	}
-+	pr_debug("[server] Got CHAP_C=%s\n", challenge);
- 	/*
- 	 * During mutual authentication, the CHAP_C generated by the
- 	 * initiator must not match the original CHAP_C generated by
-diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
-index 97d5a74558a3..a86bc7afb3b2 100644
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -31,6 +31,8 @@
- #include <asm/io.h>
- #include <asm/uaccess.h>
- 
-+#include <linux/nospec.h>
-+
- #include <linux/kbd_kern.h>
- #include <linux/vt_kern.h>
- #include <linux/kbd_diacr.h>
-@@ -703,6 +705,8 @@ int vt_ioctl(struct tty_struct *tty,
- 		if (vsa.console == 0 || vsa.console > MAX_NR_CONSOLES)
- 			ret = -ENXIO;
- 		else {
-+			vsa.console = array_index_nospec(vsa.console,
-+							 MAX_NR_CONSOLES + 1);
- 			vsa.console--;
- 			console_lock();
- 			ret = vc_allocate(vsa.console);
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index 6d17f31a31d7..8eb768bbf5b5 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -74,7 +74,7 @@ int __ext4_check_dir_entry(const char *function, unsigned int line,
- 	else if (unlikely(rlen < EXT4_DIR_REC_LEN(de->name_len)))
- 		error_msg = "rec_len is too small for name_len";
- 	else if (unlikely(((char *) de - buf) + rlen > size))
--		error_msg = "directory entry across range";
-+		error_msg = "directory entry overrun";
- 	else if (unlikely(le32_to_cpu(de->inode) >
- 			le32_to_cpu(EXT4_SB(dir->i_sb)->s_es->s_inodes_count)))
- 		error_msg = "inode out of bounds";
-@@ -83,18 +83,16 @@ int __ext4_check_dir_entry(const char *function, unsigned int line,
- 
- 	if (filp)
- 		ext4_error_file(filp, function, line, bh->b_blocknr,
--				"bad entry in directory: %s - offset=%u(%u), "
--				"inode=%u, rec_len=%d, name_len=%d",
--				error_msg, (unsigned) (offset % size),
--				offset, le32_to_cpu(de->inode),
--				rlen, de->name_len);
-+				"bad entry in directory: %s - offset=%u, "
-+				"inode=%u, rec_len=%d, name_len=%d, size=%d",
-+				error_msg, offset, le32_to_cpu(de->inode),
-+				rlen, de->name_len, size);
- 	else
- 		ext4_error_inode(dir, function, line, bh->b_blocknr,
--				"bad entry in directory: %s - offset=%u(%u), "
--				"inode=%u, rec_len=%d, name_len=%d",
--				error_msg, (unsigned) (offset % size),
--				offset, le32_to_cpu(de->inode),
--				rlen, de->name_len);
-+				"bad entry in directory: %s - offset=%u, "
-+				"inode=%u, rec_len=%d, name_len=%d, size=%d",
-+				 error_msg, offset, le32_to_cpu(de->inode),
-+				 rlen, de->name_len, size);
- 
- 	return 1;
- }
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index c449bc089c94..1e7a9774119c 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -1756,6 +1756,7 @@ int empty_inline_dir(struct inode *dir, int *has_inline_data)
- {
- 	int err, inline_size;
- 	struct ext4_iloc iloc;
-+	size_t inline_len;
- 	void *inline_pos;
- 	unsigned int offset;
- 	struct ext4_dir_entry_2 *de;
-@@ -1783,8 +1784,9 @@ int empty_inline_dir(struct inode *dir, int *has_inline_data)
- 		goto out;
- 	}
- 
-+	inline_len = ext4_get_inline_size(dir);
- 	offset = EXT4_INLINE_DOTDOT_SIZE;
--	while (offset < dir->i_size) {
-+	while (offset < inline_len) {
- 		de = ext4_get_inline_entry(dir, &iloc, offset,
- 					   &inline_pos, &inline_size);
- 		if (ext4_check_dir_entry(dir, NULL, de,
-diff --git a/fs/ext4/mmp.c b/fs/ext4/mmp.c
-index 0a512aa81bf7..4c9d799955d1 100644
---- a/fs/ext4/mmp.c
-+++ b/fs/ext4/mmp.c
-@@ -48,7 +48,6 @@ static int write_mmp_block(struct super_block *sb, struct buffer_head *bh)
- 	 */
- 	sb_start_write(sb);
- 	ext4_mmp_csum_set(sb, mmp);
--	mark_buffer_dirty(bh);
- 	lock_buffer(bh);
- 	bh->b_end_io = end_buffer_write_sync;
- 	get_bh(bh);
-diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
-index d2421fd38833..783280ebc2fe 100644
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -18,6 +18,7 @@
- 
- int ext4_resize_begin(struct super_block *sb)
- {
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	int ret = 0;
- 
- 	if (!capable(CAP_SYS_RESOURCE))
-@@ -28,7 +29,7 @@ int ext4_resize_begin(struct super_block *sb)
-          * because the user tools have no way of handling this.  Probably a
-          * bad time to do it anyways.
-          */
--	if (EXT4_SB(sb)->s_sbh->b_blocknr !=
-+	if (EXT4_B2C(sbi, sbi->s_sbh->b_blocknr) !=
- 	    le32_to_cpu(EXT4_SB(sb)->s_es->s_first_data_block)) {
- 		ext4_warning(sb, "won't resize using backup superblock at %llu",
- 			(unsigned long long)EXT4_SB(sb)->s_sbh->b_blocknr);
-@@ -1954,6 +1955,26 @@ retry:
- 		}
- 	}
- 
-+	/*
-+	 * Make sure the last group has enough space so that it's
-+	 * guaranteed to have enough space for all metadata blocks
-+	 * that it might need to hold.  (We might not need to store
-+	 * the inode table blocks in the last block group, but there
-+	 * will be cases where this might be needed.)
-+	 */
-+	if ((ext4_group_first_block_no(sb, n_group) +
-+	     ext4_group_overhead_blocks(sb, n_group) + 2 +
-+	     sbi->s_itb_per_group + sbi->s_cluster_ratio) >= n_blocks_count) {
-+		n_blocks_count = ext4_group_first_block_no(sb, n_group);
-+		n_group--;
-+		n_blocks_count_retry = 0;
-+		if (resize_inode) {
-+			iput(resize_inode);
-+			resize_inode = NULL;
-+		}
-+		goto retry;
-+	}
-+
- 	/* extend the last group */
- 	if (n_group == o_group)
- 		add = n_blocks_count - o_blocks_count;
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 8d18f6142da5..a3d905abbaa9 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4024,11 +4024,13 @@ no_journal:
- 	block = ext4_count_free_clusters(sb);
- 	ext4_free_blocks_count_set(sbi->s_es, 
- 				   EXT4_C2B(sbi, block));
-+	ext4_superblock_csum_set(sb);
- 	err = percpu_counter_init(&sbi->s_freeclusters_counter, block,
- 				  GFP_KERNEL);
- 	if (!err) {
- 		unsigned long freei = ext4_count_free_inodes(sb);
- 		sbi->s_es->s_free_inodes_count = cpu_to_le32(freei);
-+		ext4_superblock_csum_set(sb);
- 		err = percpu_counter_init(&sbi->s_freeinodes_counter, freei,
- 					  GFP_KERNEL);
- 	}
-diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-index fe50ded1b4ce..272269f1c310 100644
---- a/fs/ocfs2/buffer_head_io.c
-+++ b/fs/ocfs2/buffer_head_io.c
-@@ -336,6 +336,7 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
- 				 * for this bh as it's not marked locally
- 				 * uptodate. */
- 				status = -EIO;
-+				clear_buffer_needs_validate(bh);
- 				put_bh(bh);
- 				bhs[i] = NULL;
- 				continue;
-diff --git a/include/net/nfc/hci.h b/include/net/nfc/hci.h
-index 316694dafa5b..008f466d1da7 100644
---- a/include/net/nfc/hci.h
-+++ b/include/net/nfc/hci.h
-@@ -87,7 +87,7 @@ struct nfc_hci_pipe {
-  * According to specification 102 622 chapter 4.4 Pipes,
-  * the pipe identifier is 7 bits long.
-  */
--#define NFC_HCI_MAX_PIPES		127
-+#define NFC_HCI_MAX_PIPES		128
- struct nfc_hci_init_data {
- 	u8 gate_count;
- 	struct nfc_hci_gate gates[NFC_HCI_MAX_CUSTOM_GATES];
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index fdaa88f38aec..74b20e3ab8c6 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1513,6 +1513,8 @@ rb_remove_pages(struct ring_buffer_per_cpu *cpu_buffer, unsigned long nr_pages)
- 	tmp_iter_page = first_page;
- 
- 	do {
-+		cond_resched();
-+
- 		to_remove_page = tmp_iter_page;
- 		rb_inc_page(cpu_buffer, &tmp_iter_page);
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 1b11ccc0a3b7..8e506a45a6ef 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1464,6 +1464,8 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
- 			mpol_shared_policy_init(&info->policy, NULL);
- 			break;
- 		}
-+
-+		lockdep_annotate_inode_mutex_key(inode);
- 	} else
- 		shmem_free_inode(sb);
- 	return inode;
-diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-index f60b93627876..78dc184072e8 100644
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -1140,6 +1140,12 @@ int neigh_update(struct neighbour *neigh, const u8 *lladdr, u8 new,
- 		lladdr = neigh->ha;
- 	}
- 
-+	/* Update confirmed timestamp for neighbour entry after we
-+	 * received ARP packet even if it doesn't change IP to MAC binding.
-+	 */
-+	if (new & NUD_CONNECTED)
-+		neigh->confirmed = jiffies;
-+
- 	/* If entry was valid and address is not changed,
- 	   do not change entry state, if new one is STALE.
- 	 */
-@@ -1163,15 +1169,12 @@ int neigh_update(struct neighbour *neigh, const u8 *lladdr, u8 new,
- 		}
- 	}
- 
--	/* Update timestamps only once we know we will make a change to the
-+	/* Update timestamp only once we know we will make a change to the
- 	 * neighbour entry. Otherwise we risk to move the locktime window with
- 	 * noop updates and ignore relevant ARP updates.
- 	 */
--	if (new != old || lladdr != neigh->ha) {
--		if (new & NUD_CONNECTED)
--			neigh->confirmed = jiffies;
-+	if (new != old || lladdr != neigh->ha)
- 		neigh->updated = jiffies;
--	}
- 
- 	if (new != old) {
- 		neigh_del_timer(neigh);
-diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
-index 967a47ff78a4..b12721ecb0b6 100644
---- a/net/ipv4/af_inet.c
-+++ b/net/ipv4/af_inet.c
-@@ -1280,6 +1280,7 @@ static struct sk_buff *inet_gso_segment(struct sk_buff *skb,
- 		if (encap)
- 			skb_reset_inner_headers(skb);
- 		skb->network_header = (u8 *)iph - skb->head;
-+		skb_reset_mac_len(skb);
- 	} while ((skb = skb->next));
- 
- out:
-diff --git a/net/ipv6/ip6_offload.c b/net/ipv6/ip6_offload.c
-index 9e2ea4ae840d..244b9fec9d4d 100644
---- a/net/ipv6/ip6_offload.c
-+++ b/net/ipv6/ip6_offload.c
-@@ -118,6 +118,7 @@ static struct sk_buff *ipv6_gso_segment(struct sk_buff *skb,
- 		ipv6h = (struct ipv6hdr *)(skb_mac_header(skb) + nhoff);
- 		ipv6h->payload_len = htons(skb->len - nhoff - sizeof(*ipv6h));
- 		skb->network_header = (u8 *)ipv6h - skb->head;
-+		skb_reset_mac_len(skb);
- 
- 		if (udpfrag) {
- 			int err = ip6_find_1stfragopt(skb, &prevhdr);
-diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
-index 0feede45bd28..530b62fd6b64 100644
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -193,12 +193,10 @@ int ip6_xmit(const struct sock *sk, struct sk_buff *skb, struct flowi6 *fl6,
- 				kfree_skb(skb);
- 				return -ENOBUFS;
- 			}
-+			if (skb->sk)
-+				skb_set_owner_w(skb2, skb->sk);
- 			consume_skb(skb);
- 			skb = skb2;
--			/* skb_set_owner_w() changes sk->sk_wmem_alloc atomically,
--			 * it is safe to call in our context (socket lock not held)
--			 */
--			skb_set_owner_w(skb, (struct sock *)sk);
- 		}
- 		if (opt->opt_flen)
- 			ipv6_push_frag_opts(skb, opt, &proto);
-diff --git a/net/nfc/hci/core.c b/net/nfc/hci/core.c
-index 2b0f0ac498d2..5a58f9f38095 100644
---- a/net/nfc/hci/core.c
-+++ b/net/nfc/hci/core.c
-@@ -209,6 +209,11 @@ void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
- 		}
- 		create_info = (struct hci_create_pipe_resp *)skb->data;
- 
-+		if (create_info->pipe >= NFC_HCI_MAX_PIPES) {
-+			status = NFC_HCI_ANY_E_NOK;
-+			goto exit;
-+		}
-+
- 		/* Save the new created pipe and bind with local gate,
- 		 * the description for skb->data[3] is destination gate id
- 		 * but since we received this cmd from host controller, we
-@@ -232,6 +237,11 @@ void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
- 		}
- 		delete_info = (struct hci_delete_pipe_noti *)skb->data;
- 
-+		if (delete_info->pipe >= NFC_HCI_MAX_PIPES) {
-+			status = NFC_HCI_ANY_E_NOK;
-+			goto exit;
-+		}
-+
- 		hdev->pipes[delete_info->pipe].gate = NFC_HCI_INVALID_GATE;
- 		hdev->pipes[delete_info->pipe].dest_host = NFC_HCI_INVALID_HOST;
- 		break;
-diff --git a/sound/firewire/bebob/bebob_maudio.c b/sound/firewire/bebob/bebob_maudio.c
-index 07e5abdbceb5..0a576ccca3dc 100644
---- a/sound/firewire/bebob/bebob_maudio.c
-+++ b/sound/firewire/bebob/bebob_maudio.c
-@@ -96,17 +96,13 @@ int snd_bebob_maudio_load_firmware(struct fw_unit *unit)
- 	struct fw_device *device = fw_parent_device(unit);
- 	int err, rcode;
- 	u64 date;
--	__le32 cues[3] = {
--		cpu_to_le32(MAUDIO_BOOTLOADER_CUE1),
--		cpu_to_le32(MAUDIO_BOOTLOADER_CUE2),
--		cpu_to_le32(MAUDIO_BOOTLOADER_CUE3)
--	};
-+	__le32 *cues;
- 
- 	/* check date of software used to build */
- 	err = snd_bebob_read_block(unit, INFO_OFFSET_SW_DATE,
- 				   &date, sizeof(u64));
- 	if (err < 0)
--		goto end;
-+		return err;
- 	/*
- 	 * firmware version 5058 or later has date later than "20070401", but
- 	 * 'date' is not null-terminated.
-@@ -114,20 +110,28 @@ int snd_bebob_maudio_load_firmware(struct fw_unit *unit)
- 	if (date < 0x3230303730343031LL) {
- 		dev_err(&unit->device,
- 			"Use firmware version 5058 or later\n");
--		err = -ENOSYS;
--		goto end;
-+		return -ENXIO;
- 	}
- 
-+	cues = kmalloc_array(3, sizeof(*cues), GFP_KERNEL);
-+	if (!cues)
-+		return -ENOMEM;
-+
-+	cues[0] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE1);
-+	cues[1] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE2);
-+	cues[2] = cpu_to_le32(MAUDIO_BOOTLOADER_CUE3);
-+
- 	rcode = fw_run_transaction(device->card, TCODE_WRITE_BLOCK_REQUEST,
- 				   device->node_id, device->generation,
- 				   device->max_speed, BEBOB_ADDR_REG_REQ,
--				   cues, sizeof(cues));
-+				   cues, 3 * sizeof(*cues));
-+	kfree(cues);
- 	if (rcode != RCODE_COMPLETE) {
- 		dev_err(&unit->device,
- 			"Failed to send a cue to load firmware\n");
- 		err = -EIO;
- 	}
--end:
-+
- 	return err;
- }
- 
-diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
-index 56fc47bd6dba..50b216fc369f 100644
---- a/sound/pci/emu10k1/emufx.c
-+++ b/sound/pci/emu10k1/emufx.c
-@@ -2520,7 +2520,7 @@ static int snd_emu10k1_fx8010_ioctl(struct snd_hwdep * hw, struct file *file, un
- 		emu->support_tlv = 1;
- 		return put_user(SNDRV_EMU10K1_VERSION, (int __user *)argp);
- 	case SNDRV_EMU10K1_IOCTL_INFO:
--		info = kmalloc(sizeof(*info), GFP_KERNEL);
-+		info = kzalloc(sizeof(*info), GFP_KERNEL);
- 		if (!info)
- 			return -ENOMEM;
- 		snd_emu10k1_fx8010_info(emu, info);
-diff --git a/sound/soc/codecs/cs4265.c b/sound/soc/codecs/cs4265.c
-index 55db19ddc5ff..93b02be3a90e 100644
---- a/sound/soc/codecs/cs4265.c
-+++ b/sound/soc/codecs/cs4265.c
-@@ -157,8 +157,8 @@ static const struct snd_kcontrol_new cs4265_snd_controls[] = {
- 	SOC_SINGLE("Validity Bit Control Switch", CS4265_SPDIF_CTL2,
- 				3, 1, 0),
- 	SOC_ENUM("SPDIF Mono/Stereo", spdif_mono_stereo_enum),
--	SOC_SINGLE("MMTLR Data Switch", 0,
--				1, 1, 0),
-+	SOC_SINGLE("MMTLR Data Switch", CS4265_SPDIF_CTL2,
-+				0, 1, 0),
- 	SOC_ENUM("Mono Channel Select", spdif_mono_select_enum),
- 	SND_SOC_BYTES("C Data Buffer", CS4265_C_DATA_BUFF, 24),
- };
+On Tue, 25 Sep 2018 09:50:24 +0300
+Eugen Hristev <eugen.hristev@microchip.com> wrote:
+
+> On 24.09.2018 23:27, Jonathan Cameron wrote:
+> > On Mon, 24 Sep 2018 21:00:56 +0100
+> > Jonathan Cameron <jic23@kernel.org> wrote:
+> >   
+> >> On Mon, 24 Sep 2018 09:19:43 +0300
+> >> Eugen Hristev <eugen.hristev@microchip.com> wrote:
+> >>  
+> >>> On 22.09.2018 13:31, Jonathan Cameron wrote:  
+> >>>> On Thu, 20 Sep 2018 15:40:37 +0300
+> >>>> Eugen Hristev <eugen.hristev@microchip.com> wrote:
+> >>>>        
+> >>>>> When doing simple conversions, the driver did not acknowledge the DRDY irq.
+> >>>>> If this irq is not acked, it will be left pending, and as soon as a trigger
+> >>>>> is enabled, the irq handler will be called, it doesn't know why this irq
+> >>>>> has occurred because no channel is pending, and then we will have irq loop
+> >>>>> and board will hang.
+> >>>>>
+> >>>>> Fixes 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
+> >>>>> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> >>>>> Cc: <stable@vger.kernel.org>
+> >>>>> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> >>>>> ---
+> >>>>>    drivers/iio/adc/at91_adc.c | 5 +++++
+> >>>>>    1 file changed, 5 insertions(+)
+> >>>>>
+> >>>>> diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
+> >>>>> index 44b5168..e85f859 100644
+> >>>>> --- a/drivers/iio/adc/at91_adc.c
+> >>>>> +++ b/drivers/iio/adc/at91_adc.c
+> >>>>> @@ -712,6 +712,11 @@ static int at91_adc_read_raw(struct iio_dev *idev,
+> >>>>>    		at91_adc_writel(st, AT91_ADC_CHDR,
+> >>>>>    				AT91_ADC_CH(chan->channel));
+> >>>>>    		at91_adc_writel(st, AT91_ADC_IDR, BIT(chan->channel));
+> >>>>> +		/*
+> >>>>> +		 * we need to ack the DRDY irq, otherwise it will be
+> >>>>> +		 * left pending and irq handler will be confused
+> >>>>> +		 */
+> >>>>> +		at91_adc_readl(st, AT91_ADC_LCDR);  
+> >>>>
+> >>>> I'm curious as to how things were working before.  Does this only occur
+> >>>> if we do a raw_read whilst the buffer is enabled?  
+> >>>
+> >>> No. The situation is that the read raw does not properly cleans itself
+> >>> up after it's done.
+> >>> The DRDY bit is cleared only when LCDR (last converted data ) is being read.
+> >>> Even if we read the per channel conversion data, the LCDR still needs to
+> >>> be read to clear this irq status.
+> >>> The driver does not use the DRDY irq but this irq status is still being
+> >>> set in the status register.  
+> >>
+> >> Hmm. That is somewhat nasty if it results in false interrupts when you
+> >> then enable them.  
+> > 
+> > I'm talking rubbish here.  Please ignore!
+> >   
+> >>  
+> >>>      
+> >>>>
+> >>>> I would have assumed when it's not enabled, the irq would be masked and
+> >>>> never generated in the first place...
+> >>>>
+> >>>> It may be that what we actually need to do is to prevent read_raw accesses
+> >>>> when the buffer is enabled (like lots of other drivers do precisely to
+> >>>> avoid this sort of condition). The problem there comes if we have
+> >>>> existing applications doing this combination as we are then breaking
+> >>>> userspace. If that's the case we'll need to be a bit more clever.
+> >>>>
+> >>>> Hammering down an irq state in a non irq handling path isn't a good
+> >>>> solution.  
+> >>>
+> >>> Ok, I will move the clearing of the DRDY (LCDR read) in the irq path
+> >>> then, and send a v2.  
+> >>
+> >> If that can be done cleanly, let us go with that approach. If not
+> >> what you have here with the addition of a comments saying that the
+> >> interrupt status is not masked, merely the interrupt and as a result needs
+> >> clearing for when you later enabled the interrupt, is fine.
+> >>
+> >> This definitely sounds like one of those bits of hardware that
+> >> you can write software to use safely but they certainly didn't make
+> >> it easy to do so!  
+> 
+> For what it's worth a small explanation:
+> 
+> The status in the ISR (interrupt status) is updated regardless of 
+> whether the IRQ is enabled in the IER (interrupt enable) or not. 
+> Actually "enabling DRDY" makes the hardware start raising the interrupt 
+> line on DRDY event if it's the case. but DRDY bit is still being 
+> asserted in the ISR. It works like this because someone might want to 
+> write some simple driver without IRQ, just poll the ISR for the status.
+Hmm.  I think the odd blend here that makes this a little unusual is that
+devices normally fall into one of two categories.
+1) Auto reset upon complete reading of output registers. This one works
+   in either interrupt or polled mode.
+2) Interrupt that needs an explicit reset.
+
+Not sure why but it's unusual to need an explicit reset for a status
+register. Not sure why but that's now it is ;)
+
+> 
+> One other thing, in my driver, at91-sama5d2_adc, I had the same issue, 
+> and I am reading the DRDY in the EOC part after waking up from the wait. 
+> This makes the IRQ handler shorter by a few hundred cycles : read LCDR 
+> in the userspace-called read_raw.
+> Do you want me to have a patch at some point to move the LCDR read in 
+> the IRQ handler for at91-sama5d2_adc as well ?
+
+I don't know why I convinced myself before that it was semantically odd
+to do it in this location.
+
+I suppose I felt that it should be handled the same in the triggered
+case (where it is in the interrupt handler - be it very indirectly) and
+in the polled case.  If it's well commented I don't think it matters
+either way.  In some senses you are just making passing out of the interrupt
+into a threaded handler in both paths.
+
+Jonathan
+
+> 
+> Eugen
+> 
+> >>
+> >> Jonathan  
+> >>>
+> >>>      
+> >>>>
+> >>>> Jonathan
+> >>>>        
+> >>>>>    
+> >>>>>    		st->last_value = 0;
+> >>>>>    		st->done = false;  
+> >>>>        
+> >>  
+> > 
+> >   
+
