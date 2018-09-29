@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3334C64EAD
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E692C64EAD
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 903E8206B8
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:01:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 903E8206B8
+	by mail.kernel.org (Postfix) with ESMTP id 3D6EE20895
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 22:01:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D6EE20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728397AbeI3Eb0 (ORCPT
+        id S1728199AbeI3Ebq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:31:26 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51548 "EHLO
+        Sun, 30 Sep 2018 00:31:46 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51535 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726575AbeI3ESU (ORCPT
+        by vger.kernel.org with ESMTP id S1726494AbeI3ESU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Sep 2018 00:18:20 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N60-0000Gu-Ba; Sat, 29 Sep 2018 22:48:16 +0100
+        id 1g6N60-0000H9-Pq; Sat, 29 Sep 2018 22:48:16 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5v-0006oz-6E; Sat, 29 Sep 2018 22:48:11 +0100
+        id 1g6N5v-0006qD-K5; Sat, 29 Sep 2018 22:48:11 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
-        "Borislav Petkov" <bp@suse.de>, "Ingo Molnar" <mingo@kernel.org>,
+CC:     akpm@linux-foundation.org, "Kees Cook" <keescook@chromium.org>,
         "Thomas Gleixner" <tglx@linutronix.de>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.192134744@decadent.org.uk>
+Message-ID: <lsq.1538257387.488254518@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 002/131] x86/bugs: Concentrate bug detection into a
- separate function
+Subject: [PATCH 3.16 017/131] nospec: Allow getting/setting on non-current
+ task
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,70 +57,153 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+From: Kees Cook <keescook@chromium.org>
 
-commit 4a28bfe3267b68e22c663ac26185aa16c9b879ef upstream.
+commit 7bbf1373e228840bb0295a2ca26d548ef37f448e upstream.
 
-Combine the various logic which goes through all those
-x86_cpu_id matching structures in one function.
+Adjust arch_prctl_get/set_spec_ctrl() to operate on tasks other than
+current.
 
-Suggested-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+This is needed both for /proc/$pid/status queries and for seccomp (since
+thread-syncing can trigger seccomp in non-current threads).
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/common.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 27 ++++++++++++++++-----------
+ include/linux/nospec.h     |  7 +++++--
+ kernel/sys.c               |  9 +++++----
+ 3 files changed, 26 insertions(+), 17 deletions(-)
 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -803,21 +803,27 @@ static const __initconst struct x86_cpu_
- 	{}
- };
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -568,31 +568,35 @@ static void ssb_select_mitigation()
  
--static bool __init cpu_vulnerable_to_meltdown(struct cpuinfo_x86 *c)
-+static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ #undef pr_fmt
+ 
+-static int ssb_prctl_set(unsigned long ctrl)
++static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
  {
- 	u64 ia32_cap = 0;
+-	bool rds = !!test_tsk_thread_flag(current, TIF_RDS);
++	bool rds = !!test_tsk_thread_flag(task, TIF_RDS);
  
-+	if (x86_match_cpu(cpu_no_speculation))
-+		return;
-+
-+	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
-+	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
-+
- 	if (x86_match_cpu(cpu_no_meltdown))
--		return false;
-+		return;
+ 	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL)
+ 		return -ENXIO;
  
- 	if (cpu_has(c, X86_FEATURE_ARCH_CAPABILITIES))
- 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+ 	if (ctrl == PR_SPEC_ENABLE)
+-		clear_tsk_thread_flag(current, TIF_RDS);
++		clear_tsk_thread_flag(task, TIF_RDS);
+ 	else
+-		set_tsk_thread_flag(current, TIF_RDS);
++		set_tsk_thread_flag(task, TIF_RDS);
  
- 	/* Rogue Data Cache Load? No! */
- 	if (ia32_cap & ARCH_CAP_RDCL_NO)
--		return false;
-+		return;
+-	if (rds != !!test_tsk_thread_flag(current, TIF_RDS))
++	/*
++	 * If being set on non-current task, delay setting the CPU
++	 * mitigation until it is next scheduled.
++	 */
++	if (task == current && rds != !!test_tsk_thread_flag(task, TIF_RDS))
+ 		speculative_store_bypass_update();
  
--	return true;
-+	setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
+ 	return 0;
  }
  
- /*
-@@ -868,12 +874,7 @@ static void __init early_identify_cpu(st
- 
- 	setup_force_cpu_cap(X86_FEATURE_ALWAYS);
- 
--	if (!x86_match_cpu(cpu_no_speculation)) {
--		if (cpu_vulnerable_to_meltdown(c))
--			setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
--		setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
--		setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
--	}
-+	cpu_set_bug_bits(c);
+-static int ssb_prctl_get(void)
++static int ssb_prctl_get(struct task_struct *task)
+ {
+ 	switch (ssb_mode) {
+ 	case SPEC_STORE_BYPASS_DISABLE:
+ 		return PR_SPEC_DISABLE;
+ 	case SPEC_STORE_BYPASS_PRCTL:
+-		if (test_tsk_thread_flag(current, TIF_RDS))
++		if (test_tsk_thread_flag(task, TIF_RDS))
+ 			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
+ 		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
+ 	default:
+@@ -602,24 +606,25 @@ static int ssb_prctl_get(void)
+ 	}
  }
  
- void __init early_cpu_init(void)
+-int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
++int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
++			     unsigned long ctrl)
+ {
+ 	if (ctrl != PR_SPEC_ENABLE && ctrl != PR_SPEC_DISABLE)
+ 		return -ERANGE;
+ 
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+-		return ssb_prctl_set(ctrl);
++		return ssb_prctl_set(task, ctrl);
+ 	default:
+ 		return -ENODEV;
+ 	}
+ }
+ 
+-int arch_prctl_spec_ctrl_get(unsigned long which)
++int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
+ {
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+-		return ssb_prctl_get();
++		return ssb_prctl_get(task);
+ 	default:
+ 		return -ENODEV;
+ 	}
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -7,6 +7,8 @@
+ #define _LINUX_NOSPEC_H
+ #include <asm/barrier.h>
+ 
++struct task_struct;
++
+ /**
+  * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
+  * @index: array element index
+@@ -57,7 +59,8 @@ static inline unsigned long array_index_
+ })
+ 
+ /* Speculation control prctl */
+-int arch_prctl_spec_ctrl_get(unsigned long which);
+-int arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl);
++int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which);
++int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
++			     unsigned long ctrl);
+ 
+ #endif /* _LINUX_NOSPEC_H */
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1834,12 +1834,13 @@ static int prctl_get_tid_address(struct
+ }
+ #endif
+ 
+-int __weak arch_prctl_spec_ctrl_get(unsigned long which)
++int __weak arch_prctl_spec_ctrl_get(struct task_struct *t, unsigned long which)
+ {
+ 	return -EINVAL;
+ }
+ 
+-int __weak arch_prctl_spec_ctrl_set(unsigned long which, unsigned long ctrl)
++int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
++				    unsigned long ctrl)
+ {
+ 	return -EINVAL;
+ }
+@@ -2025,12 +2026,12 @@ SYSCALL_DEFINE5(prctl, int, option, unsi
+ 	case PR_GET_SPECULATION_CTRL:
+ 		if (arg3 || arg4 || arg5)
+ 			return -EINVAL;
+-		error = arch_prctl_spec_ctrl_get(arg2);
++		error = arch_prctl_spec_ctrl_get(me, arg2);
+ 		break;
+ 	case PR_SET_SPECULATION_CTRL:
+ 		if (arg4 || arg5)
+ 			return -EINVAL;
+-		error = arch_prctl_spec_ctrl_set(arg2, arg3);
++		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
+ 		break;
+ 	default:
+ 		error = -EINVAL;
 
