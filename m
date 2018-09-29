@@ -2,330 +2,166 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB6DC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 23:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAF5C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 23:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 777E0206B8
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 23:38:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B061820879
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 23:49:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="szwYnBi8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 777E0206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ne3Vq7E2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B061820879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbeI3GJD (ORCPT
+        id S1727472AbeI3GUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 02:09:03 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38339 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbeI3GJC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 02:09:02 -0400
-Received: by mail-oi1-f194.google.com with SMTP id u197-v6so8396909oif.5
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 16:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=odLMkhQWTNARMM6YawWc9Ly5igLlSrf3/+eWxTXNQp4=;
-        b=szwYnBi899WIyvDFvM9QoChm0MyYf6jLJvj20lSEkSN4CBdhk0D63AqeloyIutE3/2
-         twIw8p7OmStA4tIrtgVnw7brwjt/NTQ8iBC8qeKk/xIllGoWJkVw1zsPcPbZ0sYxF2BQ
-         DqBht9GdHDQiF72lt7ru6eKgQRxN8MgnRFVfP/lGvNPXlwIUdb+4OwB9CfkERwqJoQoF
-         RhmCkzFQHmfro191ofVkb+aA00nHh2SgY9w8LUDrwKn0tk3aiZSIG55iN9iWoVfjiEwk
-         EWGdF4cd2oR3+OotWx4Irk1KR4pJe6j7+n7Gp9PM2sO2FmSxlHb1udxuCK0954coDrXk
-         VgGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=odLMkhQWTNARMM6YawWc9Ly5igLlSrf3/+eWxTXNQp4=;
-        b=D4DDgtcF31IzjPSUsPtuDaELXiRgnMk9QsfaEp4ylYujloisbhHwTlmSSttIfIPzDh
-         M36M9sjNR36ycahCDv1Az2NlKECpDa/W1a8EFfjaIjkTz6N6mA9V3qFjVdTMuuaV9Bcs
-         evrG7knDS4oJak56rML4PtxMS38ON5iFC798TK278mm2cyTw7cO/0zqyhrmuz7/bv9FX
-         KVs3obmKOl8SulaT1LYhaH2PhLHX2c8T/YqbdwZtuhBi7t6O9dNalidfIkJ9emMtgNRy
-         EsDw3rragGosqhYcRqOF3n20ZFsE9SXNQeYn9eH3zQ0I1iMs2qIdrWpTB6RiZaQ1eaDu
-         dJxA==
-X-Gm-Message-State: ABuFfoivUAQqRMeP08s5F5m9YyoSz1rKN/dxBTJauoEhAIijCaFR3Ht4
-        VUV+fP9t2EHnJvCOWy0VOwwHLvuXe7V3rcSKMlVEtg==
-X-Google-Smtp-Source: ACcGV63ndwuvC3PxFXMaVT2cjwj2VwCqEVPxNciBLVUREp11qqi7lraWMRnEn9uZuKMjdRO89BaUzXGgnCSZ7cAfrV0=
-X-Received: by 2002:aca:b844:: with SMTP id i65-v6mr2126988oif.177.1538264316899;
- Sat, 29 Sep 2018 16:38:36 -0700 (PDT)
+        Sun, 30 Sep 2018 02:20:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726494AbeI3GUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 02:20:24 -0400
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43A6520895;
+        Sat, 29 Sep 2018 23:49:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538264996;
+        bh=K+Kjgwa3ujL/hQTNqUPRv2o3gKjqYCnFMztaLDhbPrA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Ne3Vq7E24sLQ+C4wARCAntj7eoVwOMgWCLUf5qr/lCFvhBU4OMVy2VDr8n26fMp30
+         kHkiTdaasznRS1l5HlmBjcWTqXNLcLbh3mNumwJlY6WK7zAuMR0RZjD7/uxNXp2hAO
+         WjgNTwMtg/rEzbX5XqpEjBGRwqrxGMfS7mfNDBT8=
+Received: by mail-qk1-f170.google.com with SMTP id 204-v6so5406927qkd.5;
+        Sat, 29 Sep 2018 16:49:56 -0700 (PDT)
+X-Gm-Message-State: ABuFfojcnkEVAmvWx49eXZae3ar3jYtyhdbnmP0xKe7SzxZEi+zvq+ov
+        /Mp4eZ2ihiEVE4AIufKYgaZNCP5L/joquPFOsA==
+X-Google-Smtp-Source: ACcGV63Cc9qw/2srwM3W6umFJNJBHTzubhWy2IBd65PZAoAF2+68ZTwgtdj3kQXFW4Cq2vh8bGZ1nkPnSMUgr9B0YGQ=
+X-Received: by 2002:a37:56c7:: with SMTP id k190-v6mr3405755qkb.29.1538264995367;
+ Sat, 29 Sep 2018 16:49:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180929014926.227002-1-jannh@google.com> <201809300728.3lyFpriz%fengguang.wu@intel.com>
-In-Reply-To: <201809300728.3lyFpriz%fengguang.wu@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Sun, 30 Sep 2018 01:38:10 +0200
-Message-ID: <CAG48ez16J=GaemUbXQm71oUeXjnJy6m71gXC7jeAt8sCmA6ZrQ@mail.gmail.com>
-Subject: Re: [PATCH] apparmor: don't try to replace stale label in ptraceme check
-To:     lkp@intel.com
-Cc:     kbuild-all@01.org, John Johansen <john.johansen@canonical.com>,
-        apparmor@lists.ubuntu.com,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>, rong.a.chen@intel.com
+References: <20180918082422.13050-1-songqiang1304521@gmail.com>
+ <20180918082422.13050-2-songqiang1304521@gmail.com> <20180922160523.16b399fc@archlinux>
+ <20180926224618.GA32126@bogus> <20180928093618.GA24536@Eros>
+ <CAL_JsqLpNiGdK9hWTGWZwgbgRr8DNF=XvKGUx=oS2jTJ61yhFg@mail.gmail.com> <20180929121034.6c5e5826@archlinux>
+In-Reply-To: <20180929121034.6c5e5826@archlinux>
+From:   Rob Herring <robh@kernel.org>
+Date:   Sat, 29 Sep 2018 18:49:43 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLNGua++ESBgf5qSqoLdLwq8awyFr29pYR=JVBOwX3eAg@mail.gmail.com>
+Message-ID: <CAL_JsqLNGua++ESBgf5qSqoLdLwq8awyFr29pYR=JVBOwX3eAg@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] iio: proximity: vl53l0x: add interrupt support
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Song Qiang <songqiang1304521@gmail.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Matt Ranostay <matt.ranostay@konsulko.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andreas Klinger <ak@it-klinger.de>, linux-iio@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 1:24 AM kbuild test robot <lkp@intel.com> wrote:
+On Sat, Sep 29, 2018 at 6:10 AM Jonathan Cameron <jic23@kernel.org> wrote:
 >
-> Hi Jann,
+> On Fri, 28 Sep 2018 18:52:13 -0500
+> Rob Herring <robh@kernel.org> wrote:
 >
-> Thank you for the patch! Perhaps something to improve:
+> > On Fri, Sep 28, 2018 at 4:36 AM Song Qiang <songqiang1304521@gmail.com> wrote:
+> > >
+> > > On Wed, Sep 26, 2018 at 05:46:18PM -0500, Rob Herring wrote:
+> > > > On Sat, Sep 22, 2018 at 04:05:23PM +0100, Jonathan Cameron wrote:
+> > > > > On Tue, 18 Sep 2018 16:24:22 +0800
+> > > > > Song Qiang <songqiang1304521@gmail.com> wrote:
+> > > > >
+> > > > > > The first version of this driver issues a measuring request and polling
+> > > > > > for a status register in the device for measuring completes.
+> > > > > > vl53l0x support configuring GPIO1 on it to generate interrupt to
+> > > > > > indicate that new measurement is ready. This patch adds support for
+> > > > > > using this mechanisim to reduce cpu cost.
+> > > > > >
+> > > > > > Signed-off-by: Song Qiang <songqiang1304521@gmail.com>
+> > > > > Hi Song.
+> > > > >
+> > > > > Looks correct in principal but a few things to tidy up before
+> > > > > this is ready to apply.
+> > > > >
+> > > > > Also we have an unrelated change in here to check the devices ID.
+> > > > > That should be in it's own patch.
+> > > > >
+> > > > > Thanks,
+> > > > >
+> > > > > Jonathan
+> > > > > > ---
+> > > > > >  .../bindings/iio/proximity/vl53l0x.txt        |  14 +-
+> > > >
+> > > > This should have been split with the complete binding in one patch
+> > > > rather than piecemeal driver feature by feature.
+> > > >
+> > >
+> > > Hi Rob,
 >
-> [auto build test WARNING on security/next]
-> [also build test WARNING on v4.19-rc5 next-20180928]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> Hi Rob, Song,
+>
+> > >
+> > > A few days ago when I was submitting this driver, I didn't do it very
+> > > well, the function of this driver is limited. I added interrupt support
+> > > the next day after you acked my first patch. I thought it's not polite
+> > > to add something after someone acked that patch, so I send the interrupt
+> > > support as a second patch. The first patch is merged to togreg now, but
+> > > this doesn't. I don't know when can I add new functions to the code that
+> > > just merged to togreg branch, could you offer some suggestions?
+> >
+> > You just needed to state why you didn't add a ack. But really, just
+> > don't send things except as RFC until they are "done".
+>
+> The RFC bit actually disagree on.  This driver could be considered 'done'
+> with just patch 1.  The driver worked, it was useful. When the early
+> versions of that patch came out Song had no idea how much work it would
+> be to add interrupt support.  As it turns out it was simple - it often isn't :(
 
-This looks to me as if something went very wrong in the 0day test bot;
-the warnings below don't have anything to do with my patch, as far as
-I can tell, and the "TO:" and "CC:" lines at the bottom of this
-message are also entirely unrelated.
+I meant specifically in the context of this getting revised within a
+number of days. I agree that drivers don't have to be complete, but
+bindings should be as complete as possible. You can't foresee
+everything, but I don't think that applies in this case.
 
-> url:    https://github.com/0day-ci/linux/commits/Jann-Horn/apparmor-don-t-try-to-replace-stale-label-in-ptraceme-check/20180929-101346
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
-> config: x86_64-allmodconfig (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64
+> > What to do next depends on Jonathan and whether he wants a follow-up
+> > patch or he will drop the first one.
 >
-> All warnings (new ones prefixed by >>):
+> Yeah. I should have picked up on the binding in the second patch and merged
+> it.  I'd seen the first patch a few times before so was happy with it and
+> applied before actually looking at the second.
 >
->    drivers/net/wireless/marvell/mwifiex/usb.c:885:41: warning: incorrect type in assignment (different base types)
->    drivers/net/wireless/marvell/mwifiex/usb.c:885:41:    expected unsigned short [unsigned] [short] [usertype] <noident>
->    drivers/net/wireless/marvell/mwifiex/usb.c:885:41:    got restricted __le16 [usertype] <noident>
->    drivers/net/wireless/marvell/mwifiex/usb.c:886:45: warning: incorrect type in assignment (different base types)
->    drivers/net/wireless/marvell/mwifiex/usb.c:886:45:    expected unsigned short [unsigned] [short] [usertype] <noident>
->    drivers/net/wireless/marvell/mwifiex/usb.c:886:45:    got restricted __le16 [usertype] <noident>
->    drivers/net/wireless/marvell/mwifiex/usb.c:891:41: warning: incorrect type in assignment (different base types)
->    drivers/net/wireless/marvell/mwifiex/usb.c:891:41:    expected unsigned short [unsigned] [short] [usertype] <noident>
->    drivers/net/wireless/marvell/mwifiex/usb.c:891:41:    got restricted __le16 [usertype] <noident>
->    drivers/net/wireless/marvell/mwifiex/usb.c:892:45: warning: incorrect type in assignment (different base types)
->    drivers/net/wireless/marvell/mwifiex/usb.c:892:45:    expected unsigned short [unsigned] [short] [usertype] <noident>
->    drivers/net/wireless/marvell/mwifiex/usb.c:892:45:    got restricted __le16 [usertype] <noident>
->    drivers/net/wireless/marvell/mwifiex/usb.c:1071:37: warning: incorrect type in assignment (different base types)
->    drivers/net/wireless/marvell/mwifiex/usb.c:1071:37:    expected unsigned short [unsigned] [short] [usertype] <noident>
->    drivers/net/wireless/marvell/mwifiex/usb.c:1071:37:    got restricted __le16 [usertype] <noident>
->    drivers/net/wireless/marvell/mwifiex/usb.c:1073:33: warning: incorrect type in assignment (different base types)
->    drivers/net/wireless/marvell/mwifiex/usb.c:1073:33:    expected unsigned short [unsigned] [short] [usertype] <noident>
->    drivers/net/wireless/marvell/mwifiex/usb.c:1073:33:    got restricted __le16 [usertype] <noident>
-> >> drivers/net/wireless/marvell/mwifiex/usb.c:1099:13: warning: context imbalance in 'mwifiex_usb_tx_aggr_tmo' - wrong count at exit
-> --
-> >> drivers/staging/android/ion/ion_cma_heap.c:109:5: warning: symbol '__ion_add_cma_heaps' was not declared. Should it be static?
-> --
-> >> drivers/md/dm.c:1526:28: warning: incorrect type in argument 2 (different base types)
->    drivers/md/dm.c:1526:28:    expected restricted blk_status_t [usertype] error
->    drivers/md/dm.c:1526:28:    got int [signed] [assigned] error
->    drivers/md/dm.c:931:25: warning: context imbalance in 'dm_dax_get_live_target' - wrong count at exit
->    drivers/md/dm.c:971:9: warning: context imbalance in 'dm_dax_direct_access' - unexpected unlock
->    drivers/md/dm.c:995:9: warning: context imbalance in 'dm_dax_copy_from_iter' - unexpected unlock
-> >> drivers/md/dm.c:1015:9: warning: context imbalance in 'dm_dax_flush' - unexpected unlock
-> --
-> >> drivers/md/dm-bufio.c:1323:11: warning: incorrect type in assignment (different base types)
->    drivers/md/dm-bufio.c:1323:11:    expected restricted blk_status_t [usertype] a
->    drivers/md/dm-bufio.c:1323:11:    got int [signed] [assigned] __ret
-> >> drivers/md/dm-bufio.c:1326:24: warning: incorrect type in return expression (different base types)
->    drivers/md/dm-bufio.c:1326:24:    expected int
->    drivers/md/dm-bufio.c:1326:24:    got restricted blk_status_t [usertype] a
-> --
-> >> drivers/gpu/drm/drm_dp_mst_topology.c:3020:6: warning: symbol 'drm_dp_mst_duplicate_state' was not declared. Should it be static?
-> >> drivers/gpu/drm/drm_dp_mst_topology.c:3034:6: warning: symbol 'drm_dp_mst_swap_state' was not declared. Should it be static?
-> >> drivers/gpu/drm/drm_dp_mst_topology.c:3046:6: warning: symbol 'drm_dp_mst_destroy_state' was not declared. Should it be static?
-> --
-> >> sound/soc/codecs/hdmi-codec.c:70:33: warning: symbol 'hdmi_codec_stereo_chmaps' was not declared. Should it be static?
-> >> sound/soc/codecs/hdmi-codec.c:77:33: warning: symbol 'hdmi_codec_8ch_chmaps' was not declared. Should it be static?
-> >> sound/soc/codecs/hdmi-codec.c:343:6: warning: symbol 'hdmi_codec_eld_chmap' was not declared. Should it be static?
-> --
-> >> sound/soc/codecs/zx_aud96p22.c:385:27: warning: symbol 'aud96p22_dt_ids' was not declared. Should it be static?
-> --
-> >> drivers/staging/typec/tcpm.c:1019:49: warning: incorrect type in assignment (different base types)
->    drivers/staging/typec/tcpm.c:1019:49:    expected unsigned int [unsigned] [usertype] <noident>
->    drivers/staging/typec/tcpm.c:1019:49:    got restricted __le32 [usertype] <noident>
-> --
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:465:36: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:466:41: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:478:17: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:480:17: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:492:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:492:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:492:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:499:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:499:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:499:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:506:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:506:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:506:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:513:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:513:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:513:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:521:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:521:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:521:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:521:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:521:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:521:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:527:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:527:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:527:25: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:536:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:536:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:536:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:536:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:536:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:536:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:541:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:541:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:541:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:607:25: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:607:25:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:607:25:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:608:25: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:608:25:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:608:25:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:610:25: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:610:25:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:610:25:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:611:25: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:611:25:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:611:25:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:612:25: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:612:25:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:612:25:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:617:49: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:617:49:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:617:49:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:619:49: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:619:49:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:619:49:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:622:57: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:622:57:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:622:57:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:629:25: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:629:25:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:629:25:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:630:25: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:630:25:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:630:25:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:632:25: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:632:25:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:632:25:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:633:25: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:633:25:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:633:25:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:702:34: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:703:40: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:704:38: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:710:34: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:711:40: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:712:38: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:718:34: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:719:40: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:720:38: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:726:34: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:727:40: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:728:38: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:734:34: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:735:40: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:736:38: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:740:48: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:740:48:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:740:48:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:905:18: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:906:19: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:2028:6: warning: symbol 'gfx_v9_0_rlc_stop' was not declared. Should it be static?
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:2092:28: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:2093:19: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:2185:18: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:2186:19: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:2195:18: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:2196:19: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:2205:18: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:2206:19: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:2374:18: warning: cast to restricted __le32
-> >> drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:4159:27: warning: symbol 'gfx_v9_0_ip_funcs' was not declared. Should it be static?
->    drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:4445:38: warning: symbol 'gfx_v9_0_ip_block' was not declared. Should it be static?
-> --
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:199:53: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:200:58: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:212:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:212:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:212:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:768:27: warning: cast to restricted __le32
-> >> drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:770:33: warning: cast to restricted __le16
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:771:33: warning: cast to restricted __le16
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:775:39: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:782:33: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:863:28: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:863:28:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:863:28:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:881:23: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:925:28: warning: incorrect type in assignment (different base types)
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:925:28:    expected unsigned int volatile [unsigned] [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:925:28:    got restricted __le32 [usertype] <noident>
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:957:15: warning: cast to restricted __le32
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:1545:27: warning: symbol 'sdma_v4_0_ip_funcs' was not declared. Should it be static?
->    drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:1702:38: warning: symbol 'sdma_v4_0_ip_block' was not declared. Should it be static?
-> --
-> >> drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c:252:24: warning: symbol 'pctl0_data' was not declared. Should it be static?
-> >> drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c:277:24: warning: symbol 'pctl1_data' was not declared. Should it be static?
-> ..
+> If they had come in separate series in my view the partial binding then
+> extend with 'optional' elements is fine.  The number of times I've discovered
+> issues with documentation of hardware that would have made any binding written
+> from the docs wrong is non trivial. So in my view it is always a gamble to
+> write bindings until you have tested they work.  I have not problem with
+> people who are confident and want to add them from the start though.
+
+Well, if they were broken is some way, I don't think backwards
+compatibility matters and we can still fix things. I'm not talking
+about complex cases here. It is pretty trivial to determine whether a
+device has an interrupt or not.
+
 >
-> vim +/mwifiex_usb_tx_aggr_tmo +1099 drivers/net/wireless/marvell/mwifiex/usb.c
+> Obviously this only works for optional elements.
 >
-> c5994293 Xinming Hu 2017-05-23  1098
-> a2ca85ad Xinming Hu 2017-05-23 @1099  static void mwifiex_usb_tx_aggr_tmo(unsigned long context)
-> a2ca85ad Xinming Hu 2017-05-23  1100  {
-> a2ca85ad Xinming Hu 2017-05-23  1101    struct urb_context *urb_cnxt = NULL;
-> a2ca85ad Xinming Hu 2017-05-23  1102    struct sk_buff *skb_send = NULL;
-> a2ca85ad Xinming Hu 2017-05-23  1103    struct tx_aggr_tmr_cnxt *timer_context =
-> a2ca85ad Xinming Hu 2017-05-23  1104            (struct tx_aggr_tmr_cnxt *)context;
-> a2ca85ad Xinming Hu 2017-05-23  1105    struct mwifiex_adapter *adapter = timer_context->adapter;
-> a2ca85ad Xinming Hu 2017-05-23  1106    struct usb_tx_data_port *port = timer_context->port;
-> a2ca85ad Xinming Hu 2017-05-23  1107    unsigned long flags;
-> a2ca85ad Xinming Hu 2017-05-23  1108    int err = 0;
-> a2ca85ad Xinming Hu 2017-05-23  1109
-> a2ca85ad Xinming Hu 2017-05-23  1110    spin_lock_irqsave(&port->tx_aggr_lock, flags);
-> a2ca85ad Xinming Hu 2017-05-23  1111    err = mwifiex_usb_prepare_tx_aggr_skb(adapter, port, &skb_send);
-> a2ca85ad Xinming Hu 2017-05-23  1112    if (err) {
-> a2ca85ad Xinming Hu 2017-05-23  1113            mwifiex_dbg(adapter, ERROR,
-> a2ca85ad Xinming Hu 2017-05-23  1114                        "prepare tx aggr skb failed, err=%d\n", err);
-> a2ca85ad Xinming Hu 2017-05-23  1115            return;
-> a2ca85ad Xinming Hu 2017-05-23  1116    }
-> a2ca85ad Xinming Hu 2017-05-23  1117
-> a2ca85ad Xinming Hu 2017-05-23  1118    if (atomic_read(&port->tx_data_urb_pending) >=
-> a2ca85ad Xinming Hu 2017-05-23  1119        MWIFIEX_TX_DATA_URB) {
-> a2ca85ad Xinming Hu 2017-05-23  1120            port->block_status = true;
-> a2ca85ad Xinming Hu 2017-05-23  1121            adapter->data_sent =
-> a2ca85ad Xinming Hu 2017-05-23  1122                    mwifiex_usb_data_sent(adapter);
-> a2ca85ad Xinming Hu 2017-05-23  1123            err = -1;
-> a2ca85ad Xinming Hu 2017-05-23  1124            goto done;
-> a2ca85ad Xinming Hu 2017-05-23  1125    }
-> a2ca85ad Xinming Hu 2017-05-23  1126
-> a2ca85ad Xinming Hu 2017-05-23  1127    if (port->tx_data_ix >= MWIFIEX_TX_DATA_URB)
-> a2ca85ad Xinming Hu 2017-05-23  1128            port->tx_data_ix = 0;
-> a2ca85ad Xinming Hu 2017-05-23  1129
-> a2ca85ad Xinming Hu 2017-05-23  1130    urb_cnxt = &port->tx_data_list[port->tx_data_ix++];
-> a2ca85ad Xinming Hu 2017-05-23  1131    err = mwifiex_usb_construct_send_urb(adapter, port, port->tx_data_ep,
-> a2ca85ad Xinming Hu 2017-05-23  1132                                         urb_cnxt, skb_send);
-> a2ca85ad Xinming Hu 2017-05-23  1133  done:
-> a2ca85ad Xinming Hu 2017-05-23  1134    if (err == -1)
-> a2ca85ad Xinming Hu 2017-05-23  1135            mwifiex_write_data_complete(adapter, skb_send, 0, -1);
-> a2ca85ad Xinming Hu 2017-05-23  1136    spin_unlock_irqrestore(&port->tx_aggr_lock, flags);
-> a2ca85ad Xinming Hu 2017-05-23  1137  }
-> a2ca85ad Xinming Hu 2017-05-23  1138
->
-> :::::: The code at line 1099 was first introduced by commit
-> :::::: a2ca85ad721de50b90d50f3a11b67c4776a1236d mwifiex: usb: add timer to flush aggregation packets
->
-> :::::: TO: Xinming Hu <huxm@marvell.com>
-> :::::: CC: Kalle Valo <kvalo@codeaurora.org>
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> So follow up patch for 'optional' stuff is fine by me.  The only real
+> issue to my mind here is that they were in the same series, so we should
+> have seen a separate precursor patch giving the binding for all of it.
+
+Certainly, that can't be avoided sometimes and is fine. It's really
+the time frame for this particular case and reviewer bandwidth.
+
+Rob
