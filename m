@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 880B0C64EAD
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6DEC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55B5020880
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B5020880
+	by mail.kernel.org (Postfix) with ESMTP id 9ED2220880
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED2220880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbeI3ETp (ORCPT
+        id S1728888AbeI3ESh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:19:45 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52147 "EHLO
+        Sun, 30 Sep 2018 00:18:37 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51918 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728894AbeI3ESi (ORCPT
+        by vger.kernel.org with ESMTP id S1728698AbeI3ESc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 00:18:38 -0400
+        Sun, 30 Sep 2018 00:18:32 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N6H-0000Gz-Gn; Sat, 29 Sep 2018 22:48:33 +0100
+        id 1g6N6B-0000HB-My; Sat, 29 Sep 2018 22:48:27 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5v-0006r1-Vw; Sat, 29 Sep 2018 22:48:11 +0100
+        id 1g6N5x-0006tS-4l; Sat, 29 Sep 2018 22:48:13 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
-        "Borislav Petkov" <bp@suse.de>
+CC:     akpm@linux-foundation.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.473071918@decadent.org.uk>
+Message-ID: <lsq.1538257387.28558439@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 027/131] Documentation/spec_ctrl: Do some minor cleanups
+Subject: [PATCH 3.16 057/131] proc: drop handling non-linear mappings
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,83 +57,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-commit dd0792699c4058e63c0715d9a7c2d40226fcdddc upstream.
+commit 1da4b35b001481df99a6dcab12d5d39a876f7056 upstream.
 
-Fix some typos, improve formulations, end sentences with a fullstop.
+We have to handle non-linear mappings for /proc/PID/{smaps,clear_refs}
+which is unused now.  Let's drop it.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bwh: Backported to 3.16: adjust filename]
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[bwh: Backported to 3.16:
+ - Deleted code is slightly different
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- Documentation/spec_ctrl.rst | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
---- a/Documentation/spec_ctrl.rst
-+++ b/Documentation/spec_ctrl.rst
-@@ -2,13 +2,13 @@
- Speculation Control
- ===================
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -436,7 +436,6 @@ struct mem_size_stats {
+ 	unsigned long anonymous;
+ 	unsigned long anonymous_thp;
+ 	unsigned long swap;
+-	unsigned long nonlinear;
+ 	u64 pss;
+ };
  
--Quite some CPUs have speculation related misfeatures which are in fact
--vulnerabilites causing data leaks in various forms even accross privilege
--domains.
-+Quite some CPUs have speculation-related misfeatures which are in
-+fact vulnerabilities causing data leaks in various forms even across
-+privilege domains.
+@@ -446,7 +445,6 @@ static void smaps_pte_entry(pte_t ptent,
+ {
+ 	struct mem_size_stats *mss = walk->private;
+ 	struct vm_area_struct *vma = mss->vma;
+-	pgoff_t pgoff = linear_page_index(vma, addr);
+ 	struct page *page = NULL;
+ 	int mapcount;
  
- The kernel provides mitigation for such vulnerabilities in various
--forms. Some of these mitigations are compile time configurable and some on
--the kernel command line.
-+forms. Some of these mitigations are compile-time configurable and some
-+can be supplied on the kernel command line.
+@@ -459,9 +457,6 @@ static void smaps_pte_entry(pte_t ptent,
+ 			mss->swap += ptent_size;
+ 		else if (is_migration_entry(swpent))
+ 			page = migration_entry_to_page(swpent);
+-	} else if (pte_file(ptent)) {
+-		if (pte_to_pgoff(ptent) != pgoff)
+-			mss->nonlinear += ptent_size;
+ 	}
  
- There is also a class of mitigations which are very expensive, but they can
- be restricted to a certain set of processes or tasks in controlled
-@@ -32,18 +32,18 @@ the following meaning:
- Bit  Define                Description
- ==== ===================== ===================================================
- 0    PR_SPEC_PRCTL         Mitigation can be controlled per task by
--                           PR_SET_SPECULATION_CTRL
-+                           PR_SET_SPECULATION_CTRL.
- 1    PR_SPEC_ENABLE        The speculation feature is enabled, mitigation is
--                           disabled
-+                           disabled.
- 2    PR_SPEC_DISABLE       The speculation feature is disabled, mitigation is
--                           enabled
-+                           enabled.
- 3    PR_SPEC_FORCE_DISABLE Same as PR_SPEC_DISABLE, but cannot be undone. A
-                            subsequent prctl(..., PR_SPEC_ENABLE) will fail.
- ==== ===================== ===================================================
+ 	if (!page)
+@@ -470,9 +465,6 @@ static void smaps_pte_entry(pte_t ptent,
+ 	if (PageAnon(page))
+ 		mss->anonymous += ptent_size;
  
- If all bits are 0 the CPU is not affected by the speculation misfeature.
+-	if (page->index != pgoff)
+-		mss->nonlinear += ptent_size;
+-
+ 	mss->resident += ptent_size;
+ 	/* Accumulate the size in pages that have been accessed. */
+ 	if (pte_young(ptent) || PageReferenced(page))
+@@ -554,7 +546,6 @@ static void show_smap_vma_flags(struct s
+ 		[ilog2(VM_ACCOUNT)]	= "ac",
+ 		[ilog2(VM_NORESERVE)]	= "nr",
+ 		[ilog2(VM_HUGETLB)]	= "ht",
+-		[ilog2(VM_NONLINEAR)]	= "nl",
+ 		[ilog2(VM_ARCH_1)]	= "ar",
+ 		[ilog2(VM_DONTDUMP)]	= "dd",
+ #ifdef CONFIG_MEM_SOFT_DIRTY
+@@ -628,10 +619,6 @@ static int show_smap(struct seq_file *m,
+ 		   (vma->vm_flags & VM_LOCKED) ?
+ 			(unsigned long)(mss.pss >> (10 + PSS_SHIFT)) : 0);
  
--If PR_SPEC_PRCTL is set, then the per task control of the mitigation is
-+If PR_SPEC_PRCTL is set, then the per-task control of the mitigation is
- available. If not set, prctl(PR_SET_SPECULATION_CTRL) for the speculation
- misfeature will fail.
+-	if (vma->vm_flags & VM_NONLINEAR)
+-		seq_printf(m, "Nonlinear:      %8lu kB\n",
+-				mss.nonlinear >> 10);
+-
+ 	show_smap_vma_flags(m, vma);
  
-@@ -61,9 +61,9 @@ Common error codes
- Value   Meaning
- ======= =================================================================
- EINVAL  The prctl is not implemented by the architecture or unused
--        prctl(2) arguments are not 0
-+        prctl(2) arguments are not 0.
+ 	if (m->count < m->size)  /* vma is copied successfully */
+@@ -735,8 +722,6 @@ static inline void clear_soft_dirty(stru
+ 		ptent = pte_clear_flags(ptent, _PAGE_SOFT_DIRTY);
+ 	} else if (is_swap_pte(ptent)) {
+ 		ptent = pte_swp_clear_soft_dirty(ptent);
+-	} else if (pte_file(ptent)) {
+-		ptent = pte_file_clear_soft_dirty(ptent);
+ 	}
  
--ENODEV  arg2 is selecting a not supported speculation misfeature
-+ENODEV  arg2 is selecting a not supported speculation misfeature.
- ======= =================================================================
- 
- PR_SET_SPECULATION_CTRL error codes
-@@ -74,7 +74,7 @@ Value   Meaning
- 0       Success
- 
- ERANGE  arg3 is incorrect, i.e. it's neither PR_SPEC_ENABLE nor
--        PR_SPEC_DISABLE nor PR_SPEC_FORCE_DISABLE
-+        PR_SPEC_DISABLE nor PR_SPEC_FORCE_DISABLE.
- 
- ENXIO   Control of the selected speculation misfeature is not possible.
-         See PR_GET_SPECULATION_CTRL.
+ 	set_pte_at(vma->vm_mm, addr, pte, ptent);
 
