@@ -2,122 +2,79 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCF8C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 00:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41576C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 00:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79BDC2073F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 00:50:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79BDC2073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BF3102073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 00:54:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pRAxEvNi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF3102073F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbeI2HQu (ORCPT
+        id S1727347AbeI2HVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 03:16:50 -0400
-Received: from mga14.intel.com ([192.55.52.115]:1700 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726360AbeI2HQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 03:16:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 17:50:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,317,1534834800"; 
-   d="scan'208";a="266925073"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.13])
-  by fmsmga005.fm.intel.com with ESMTP; 28 Sep 2018 17:50:29 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: Re: [PATCH -V5 RESEND 03/21] swap: Support PMD swap mapping in swap_duplicate()
-References: <20180925071348.31458-1-ying.huang@intel.com>
-        <20180925071348.31458-4-ying.huang@intel.com>
-        <20180925191953.4ped5ki7u3ymafmd@ca-dmjordan1.us.oracle.com>
-        <874lecifj4.fsf@yhuang-dev.intel.com>
-        <20180926145145.6xp2kxpngyd54f6i@ca-dmjordan1.us.oracle.com>
-        <87r2hfhger.fsf@yhuang-dev.intel.com>
-        <20180927211238.ly3e7cyvfu3rswcv@ca-dmjordan1.us.oracle.com>
-        <87lg7mf30o.fsf@yhuang-dev.intel.com>
-        <20180928213224.tjff2rtfmxmnz5nq@ca-dmjordan1.us.oracle.com>
-Date:   Sat, 29 Sep 2018 08:50:29 +0800
-In-Reply-To: <20180928213224.tjff2rtfmxmnz5nq@ca-dmjordan1.us.oracle.com>
-        (Daniel Jordan's message of "Fri, 28 Sep 2018 14:32:24 -0700")
-Message-ID: <877ej5f7oq.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Sat, 29 Sep 2018 03:21:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59600 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726804AbeI2HVJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 03:21:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=weWlQfXWPB8WxZObWBmotoOgkOGm7aGYyZOmz0b/CIs=; b=pRAxEvNi9JocQHWV2FbCsDu/+d
+        dpiJ6lXUZJimwnbtRr7yHaYIKrHbuGYT+GIkdVPzwWM7avvrQqFt1G0E2QU12GBAFZGzgpIRENSU0
+        RsE7aKkS9idL0/UTyvnkA1PAAwoOWucZNo3Gj5BQqvobMUGNnzyas+BTsyhL1vzo9Nel+gk/+sT+w
+        2NGsUPMKleWFqnG180qK4ypR2NCUuUYeTeeV9rExGgV69SbNGzucX8p2X+KUAKB8KCWptluHMyL/x
+        bQbMA+5SMMwKkafNsBhu8UuKCNhfZQkO9hmVvrHO27B9iQX227pQPhvj2GKLXFOxd28xAMw5h6ULl
+        8aaqZ0bQ==;
+Received: from [38.126.112.138] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g63Wz-0003BF-F3; Sat, 29 Sep 2018 00:54:50 +0000
+Date:   Fri, 28 Sep 2018 17:54:47 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] dma mapping fix for 4.19-rc6
+Message-ID: <20180929005447.GA3397@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel Jordan <daniel.m.jordan@oracle.com> writes:
+The following changes since commit bfb0e9b490bc15f243009359745a9d8a94089dc4:
 
-> On Fri, Sep 28, 2018 at 04:19:03PM +0800, Huang, Ying wrote:
->> Daniel Jordan <daniel.m.jordan@oracle.com> writes:
->> > One way is to change
->> > copy_one_pte's return to int so we can just pass the error code back to
->> > copy_pte_range so it knows whether to try adding the continuation.
->> 
->> There may be even more problems.  After add_swap_count_continuation(),
->> copy_one_pte() will be retried, and the CPU may hang with dead loop.
->
-> That's true, it would do that.
->
->> But before the changes in this patchset, the behavior is,
->> __swap_duplicate() return an error that isn't -ENOMEM, such as -EEXIST.
->> Then copy_one_pte() would thought the operation has been done
->> successfully, and go to call set_pte_at().  This will cause the system
->> state become inconsistent, and the system may panic or hang somewhere
->> later.
->> 
->> So per my understanding, if we thought page table corruption isn't a
->> real problem (that is, __swap_duplicate() will never return e.g. -EEXIST
->> if copied by copy_one_pte() indirectly), both the original and the new
->> code should be OK.
->> 
->> If we thought it is a real problem, we need to fix the original code and
->> keep it fixed in the new code.  Do you agree?
->
-> Yes, if it was a real problem, which seems less and less the case the more I
-> stare at this.
->
->> There's several ways to fix the problem.  But the page table shouldn't
->> be corrupted in practice, unless there's some programming error.  So I
->> suggest to make it as simple as possible via adding,
->> 
->> VM_BUG_ON(error != -ENOMEM);
->> 
->> in swap_duplicate().
->> 
->> Do you agree?
->
-> Yes, I'm ok with that, adding in -ENOTDIR along with it.
+  Merge tag 'usb-4.19-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb (2018-09-25 17:54:55 +0200)
 
-Sure.  I will do this.
+are available in the Git repository at:
 
-> The error handling in __swap_duplicate (before this series) still leaves
-> something to be desired IMHO.  Why all the different returns when callers
-> ignore them or only specifically check for -ENOMEM or -EEXIST?  Could maybe
-> stand a cleanup, but outside this series.
+  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-4.19-3
 
-Yes.  Maybe.  I guess you will work on this?
+for you to fetch changes up to 974c24c5bed75b53e229a6f68a0533b6d5f48feb:
 
-Best Regards,
-Huang, Ying
+  dma-mapping: add the missing ARCH_HAS_SYNC_DMA_FOR_CPU_ALL declaration (2018-09-25 15:11:58 -0700)
+
+----------------------------------------------------------------
+fix a missing Kconfig symbol for commits introduced in 4.19-rc
+
+----------------------------------------------------------------
+Christoph Hellwig (1):
+      dma-mapping: add the missing ARCH_HAS_SYNC_DMA_FOR_CPU_ALL declaration
+
+ kernel/dma/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
