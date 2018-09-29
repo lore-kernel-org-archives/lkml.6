@@ -7,72 +7,68 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AF6C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 19:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B5CC004D5
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 19:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50F21208AE
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 19:54:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41E7C2089D
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 19:55:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ha/G46Bs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50F21208AE
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dr5bTV0R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E7C2089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728405AbeI3CYj (ORCPT
+        id S1728442AbeI3CYk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 22:24:39 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41876 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728361AbeI3CYi (ORCPT
+        Sat, 29 Sep 2018 22:24:40 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44716 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728361AbeI3CYj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 22:24:38 -0400
-Received: by mail-pf1-f194.google.com with SMTP id m77-v6so6495726pfi.8;
-        Sat, 29 Sep 2018 12:54:55 -0700 (PDT)
+        Sat, 29 Sep 2018 22:24:39 -0400
+Received: by mail-pg1-f196.google.com with SMTP id g2-v6so6748073pgu.11;
+        Sat, 29 Sep 2018 12:54:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gaWEwfdxCeE5LcfSqhDthv1uikrxw4vxlpf1btQOKr0=;
-        b=Ha/G46BsYW1kebfdiOqa28uu7diyuojYfXPAF0TDMp1tmfQfKnln1pOkBeJ5eV+yoX
-         LXtMWH/lbBcHpEcuKzuaIMiutsnJbynyxnL6q9YvSnJLNwPi0TWdapdYjRIZyw5b0c79
-         9Poek9DUa/NPdoaQ5aFTQRPplEtLcltX7CS8xWQielB3l4toYvrUdY+CMaqjDapppj9K
-         gx/ds26A4V7grHl1ikg6/KDxcYWYsygBq/A5fheOyJXdUe9rR392D35E+kWseHwIOqXy
-         pU0N6Y1nJViGis/c6c3xzYw0S+ef6jnTD3bLQXjFjWiLNKalrMhjlEw8s2JtfN+9iYTO
-         8+Sw==
+        bh=ek7aMvAhww7wXIT36gN37Bk4zsXEvCBRyTYVNW5/+Jc=;
+        b=dr5bTV0RVtaI4ClLrVtb0fBZUq4d7Ss3bWGHFBVpdYDafLO8KoKuUqEoFqcBtQdITG
+         OtL40G5dQ4n9ce3Me42SJAZt6fPp5Dc8Gvm8KJ0Z8E5DvxpoNNiiNvQjCyuzDVT70M+0
+         17X91BEh8KnY+6Ikd0XUrnfI9STeuWjY94yyDIjgfmB8WUJ2JwVzvUOMMzO2NQMVEvwl
+         7oaMTIGCpkD/hcXH0hj6pvcIiM5DQooJZrlln1v93qd2yWgPPnPgOJoKKIfkEKCDWSXE
+         dgz4LqSXAzhvncHfHHSxI8kEGzQPla/LMf0N5O+nsXCodUJbWzDH0YhmT7hP3YEtfLyS
+         IF1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=gaWEwfdxCeE5LcfSqhDthv1uikrxw4vxlpf1btQOKr0=;
-        b=XvSwrgaj3vmKYVswjhGnQbC5oOnOYV+Sp54nHhWHFwJEG2q72EtY35BV3U750SCOVN
-         GOOKAbtBHDydPwpolFDw498dsyoyO+XpmPHSYyCnh867uNjASkpFYY4BbxNTl63yGUDI
-         OmJSQZqRJ5zva+cnLI/dokg5rgsEWnDd1N/N14E1A8NC7o7t0hGxcA5MajTBxYMeUv3F
-         GiW6A1Gnc7jprHuyufGdZitrpmIzGbs3HmtTn1nPdCH6E/XskOxV+/hnRyP0FKbB3Zt0
-         xNFHXIacrGek2a48/Lm7aMQLuBxwDMX1ucJ+WWnmbD4bJ+6rsKRNskGcyHlcHopZ0xtL
-         PX2A==
-X-Gm-Message-State: ABuFfohO9/v4gIXy7yTJTIvYPnVTmYqDnNgjuHVHLkbtP4BhohfytjOF
-        W3qibCJ1SnsjQNULysPJc9/pOFBM
-X-Google-Smtp-Source: ACcGV62qfkERD9fSfHJbF95y/XABo14tdgbEPsPE1dHCk9ra3bO7dmBh6FSKCCCPoYKfqhQVQ3YJ5Q==
-X-Received: by 2002:aa7:8594:: with SMTP id w20-v6mr4319242pfn.77.1538250894800;
-        Sat, 29 Sep 2018 12:54:54 -0700 (PDT)
+        bh=ek7aMvAhww7wXIT36gN37Bk4zsXEvCBRyTYVNW5/+Jc=;
+        b=OhYGzlJ6TCEDk8TkPGT88ZA6ZVHIcD1koV6MfHraXuo6qJJL/Ez1ste4tobwc/Zoxz
+         NQvSyo0YuKYAUJNOlaFuVp1t+/39UBhSNHM81LO51rJ9h9aTpSI/9SYA9XkYJKjwC5Ho
+         gVnemBioTbd2PNmtZHhVL4jtkUcRBZwO2TASdczrH8H3od+57gh2cDyObrMOWeWPGTLo
+         2YF2uIncxp8oTx7rUb9QQASiH6JD+F8CewQB8orq3zo2DT6HzX1FW/ErDi5sMmGsKRz7
+         dT9rWcj6j3DX2La0808NWzcSuOuOXvLYISYVGR1O3Fu8QLSq7K8yZ3fIW8wBrR5FKeG7
+         4frQ==
+X-Gm-Message-State: ABuFfoiMCVC2CjZJ9TtP/7SROOyLWODKCgTM2t6hkzX8mx6sxZkEizJa
+        q5v9VZn3kGluvmspN/bSJTuDi5k+
+X-Google-Smtp-Source: ACcGV60J2VDHi/BOcGSV7AmQNW//nPcQaF2Z0hJt/C34ZNdd1rMTnlruUwNU0OaQr92mJT4f9Md4mw==
+X-Received: by 2002:a62:898d:: with SMTP id n13-v6mr4315103pfk.57.1538250896631;
+        Sat, 29 Sep 2018 12:54:56 -0700 (PDT)
 Received: from mappy.world.mentorg.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
-        by smtp.gmail.com with ESMTPSA id b126-v6sm18371946pga.49.2018.09.29.12.54.53
+        by smtp.gmail.com with ESMTPSA id b126-v6sm18371946pga.49.2018.09.29.12.54.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Sep 2018 12:54:53 -0700 (PDT)
+        Sat, 29 Sep 2018 12:54:55 -0700 (PDT)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 To:     linux-media@vger.kernel.org
 Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         linux-kernel@vger.kernel.org (open list)
-Subject: [RESEND PATCH v7 07/17] media: platform: video-mux: Register a subdev notifier
-Date:   Sat, 29 Sep 2018 12:54:10 -0700
-Message-Id: <20180929195420.28579-8-slongerbeam@gmail.com>
+Subject: [RESEND PATCH v7 08/17] media: imx: csi: Register a subdev notifier
+Date:   Sat, 29 Sep 2018 12:54:11 -0700
+Message-Id: <20180929195420.28579-9-slongerbeam@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180929195420.28579-1-slongerbeam@gmail.com>
 References: <20180929195420.28579-1-slongerbeam@gmail.com>
@@ -81,104 +77,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Parse neighbor remote devices on the video muxes input ports, add them to a
-subdev notifier, and register the subdev notifier for the video mux, by
-calling v4l2_async_register_fwnode_subdev().
+Parse neighbor remote devices on the CSI port, and add them to a subdev
+notifier, by calling v4l2_async_notifier_parse_fwnode_endpoints_by_port()
+using the CSI's port id. And register the subdev notifier for the CSI.
 
 Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 ---
 Changes since v6:
 - none
 Changes since v5:
-- add missing select V4L2_FWNODE to Kconfig for VIDEO_MUX
+- add call to v4l2_async_notifier_init().
 Changes since v4:
 - none
 Changes since v3:
-- pass num_pads - 1 (num_input_pads) to video_mux_async_register().
-Changes since v2:
-- none
-Changes since v1:
-- add #include <linux/slab.h> for kcalloc() declaration.
+- v4l2_async_register_fwnode_subdev() no longer supports parsing
+  port sub-devices, so call
+  v4l2_async_notifier_parse_fwnode_endpoints_by_port() directly.
 ---
- drivers/media/platform/Kconfig     |  1 +
- drivers/media/platform/video-mux.c | 36 +++++++++++++++++++++++++++++-
- 2 files changed, 36 insertions(+), 1 deletion(-)
+ drivers/staging/media/imx/imx-media-csi.c | 57 ++++++++++++++++++++++-
+ 1 file changed, 56 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index f6275874ec9e..0edacfb01f3a 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -58,6 +58,7 @@ config VIDEO_MUX
- 	select MULTIPLEXER
- 	depends on VIDEO_V4L2 && OF && VIDEO_V4L2_SUBDEV_API && MEDIA_CONTROLLER
- 	select REGMAP
-+	select V4L2_FWNODE
- 	help
- 	  This driver provides support for N:1 video bus multiplexers.
- 
-diff --git a/drivers/media/platform/video-mux.c b/drivers/media/platform/video-mux.c
-index 61a9bf716a05..c33900e3c23e 100644
---- a/drivers/media/platform/video-mux.c
-+++ b/drivers/media/platform/video-mux.c
-@@ -21,8 +21,10 @@
- #include <linux/of.h>
- #include <linux/of_graph.h>
- #include <linux/platform_device.h>
-+#include <linux/slab.h>
- #include <media/v4l2-async.h>
- #include <media/v4l2-device.h>
-+#include <media/v4l2-fwnode.h>
- #include <media/v4l2-subdev.h>
- 
- struct video_mux {
-@@ -316,6 +318,38 @@ static const struct v4l2_subdev_ops video_mux_subdev_ops = {
- 	.video = &video_mux_subdev_video_ops,
+diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+index 4acdd7ae612b..bca13846ce6d 100644
+--- a/drivers/staging/media/imx/imx-media-csi.c
++++ b/drivers/staging/media/imx/imx-media-csi.c
+@@ -1783,6 +1783,61 @@ static const struct v4l2_subdev_internal_ops csi_internal_ops = {
+ 	.unregistered = csi_unregistered,
  };
  
-+static int video_mux_parse_endpoint(struct device *dev,
-+				    struct v4l2_fwnode_endpoint *vep,
-+				    struct v4l2_async_subdev *asd)
++static int imx_csi_parse_endpoint(struct device *dev,
++				  struct v4l2_fwnode_endpoint *vep,
++				  struct v4l2_async_subdev *asd)
 +{
-+	/*
-+	 * it's not an error if remote is missing on a video-mux
-+	 * input port, return -ENOTCONN to skip this endpoint with
-+	 * no error.
-+	 */
-+	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -ENOTCONN;
++	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -EINVAL;
 +}
 +
-+static int video_mux_async_register(struct video_mux *vmux,
-+				    unsigned int num_input_pads)
++static int imx_csi_async_register(struct csi_priv *priv)
 +{
-+	unsigned int i, *ports;
++	struct v4l2_async_notifier *notifier;
++	struct fwnode_handle *fwnode;
++	unsigned int port;
 +	int ret;
 +
-+	ports = kcalloc(num_input_pads, sizeof(*ports), GFP_KERNEL);
-+	if (!ports)
++	notifier = kzalloc(sizeof(*notifier), GFP_KERNEL);
++	if (!notifier)
 +		return -ENOMEM;
-+	for (i = 0; i < num_input_pads; i++)
-+		ports[i] = i;
 +
-+	ret = v4l2_async_register_fwnode_subdev(
-+		&vmux->subdev, sizeof(struct v4l2_async_subdev),
-+		ports, num_input_pads, video_mux_parse_endpoint);
++	v4l2_async_notifier_init(notifier);
 +
-+	kfree(ports);
++	fwnode = dev_fwnode(priv->dev);
++
++	/* get this CSI's port id */
++	ret = fwnode_property_read_u32(fwnode, "reg", &port);
++	if (ret < 0)
++		goto out_free;
++
++	ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
++		priv->dev->parent, notifier, sizeof(struct v4l2_async_subdev),
++		port, imx_csi_parse_endpoint);
++	if (ret < 0)
++		goto out_cleanup;
++
++	ret = v4l2_async_subdev_notifier_register(&priv->sd, notifier);
++	if (ret < 0)
++		goto out_cleanup;
++
++	ret = v4l2_async_register_subdev(&priv->sd);
++	if (ret < 0)
++		goto out_unregister;
++
++	priv->sd.subdev_notifier = notifier;
++
++	return 0;
++
++out_unregister:
++	v4l2_async_notifier_unregister(notifier);
++out_cleanup:
++	v4l2_async_notifier_cleanup(notifier);
++out_free:
++	kfree(notifier);
++
 +	return ret;
 +}
 +
- static int video_mux_probe(struct platform_device *pdev)
+ static int imx_csi_probe(struct platform_device *pdev)
  {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -383,7 +417,7 @@ static int video_mux_probe(struct platform_device *pdev)
+ 	struct ipu_client_platformdata *pdata;
+@@ -1852,7 +1907,7 @@ static int imx_csi_probe(struct platform_device *pdev)
+ 			goto free;
+ 	}
  
- 	vmux->subdev.entity.ops = &video_mux_ops;
+-	ret = v4l2_async_register_subdev(&priv->sd);
++	ret = imx_csi_async_register(priv);
+ 	if (ret)
+ 		goto free;
  
--	return v4l2_async_register_subdev(&vmux->subdev);
-+	return video_mux_async_register(vmux, num_pads - 1);
- }
- 
- static int video_mux_remove(struct platform_device *pdev)
 -- 
 2.17.1
 
