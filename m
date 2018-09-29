@@ -2,109 +2,112 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39391C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8CDC43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC59220879
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:27:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC59220879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id BF12B20879
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:29:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF12B20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbeI2OzN (ORCPT
+        id S1727743AbeI2O5P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 10:55:13 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36470 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727540AbeI2OzN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 10:55:13 -0400
-Received: by mail-wr1-f68.google.com with SMTP id y16so386281wrw.3;
-        Sat, 29 Sep 2018 01:27:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0zRNAhGfRB/2xQjeoBHl7S4YByoOC1qQzhykWEfmOfI=;
-        b=QDKWCH18TuBGiowJcBAukegYVaOtpqXSOWIOXN3gEGmec8aWzOhh0eEgsyLT57pxra
-         JuC+J7AxHXw9c/OjvZwwVAQGQbQM2AVgwoO2xio2XXpTlppFYblj6AOLplvQ62zbjmZi
-         CkbWCUMcM+dNneoL6hhjPkwsAgjhKl2qRc/oMtGUufryeI5XuTpKr3c/HiX4akkzTqnM
-         qNru11PjWUsPhotRD5IJMkjCHp0srkJn899qpKe/PZMNuycNdwj/Ci6MhsWNOvkzTLfO
-         jwlHB7lfV3b5IFmFOAEuhDin2Y2KCjv78MwcOAlU3uJK0AfAp77jsxkuJt4QCVoGkJc8
-         GKiw==
-X-Gm-Message-State: ABuFfojYoO6hLEsprOpyad4mOKduXD4LVLb6B6NXoJv66TPKF6f5E3RW
-        lODl2jP/E+7ZsuqAwA3Wc0I=
-X-Google-Smtp-Source: ACcGV62qglRRpqNCfZZJ/vgd6OaGATEcP5BexhzHyEtc+X+5ouzYgyLe3XXh3B2O0I5O+jO36NgTTg==
-X-Received: by 2002:adf:b643:: with SMTP id i3-v6mr1454867wre.14.1538209658454;
-        Sat, 29 Sep 2018 01:27:38 -0700 (PDT)
-Received: from ryzen ([2a02:2f01:530d:1e00:fdec:1efd:a09c:509a])
-        by smtp.gmail.com with ESMTPSA id v106-v6sm11309671wrc.85.2018.09.29.01.27.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 29 Sep 2018 01:27:37 -0700 (PDT)
-Date:   Sat, 29 Sep 2018 11:27:29 +0300
-From:   Abel Vesa <abelvesa@linux.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Andy Polyakov <appro@openssl.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>
-Subject: Re: [PATCH net-next v6 04/23] zinc: ChaCha20 x86_64 implementation
-Message-ID: <20180929082729.GA22116@ryzen>
-References: <20180925145622.29959-1-Jason@zx2c4.com>
- <20180925145622.29959-5-Jason@zx2c4.com>
- <CAKv+Gu9aOiYdEzHHrHFHUFK=hNfeS=zEsvMe9OWD8hEdAYkffg@mail.gmail.com>
- <CAHmME9rc5zgN4HhBy0_oq+EbEXdS8nePzA7qW39nocx_y4ay1Q@mail.gmail.com>
- <20180929075601.GA11115@zn.tnic>
- <CAKv+Gu_jawg7R1n0qz75=H16J+WNx4aRhEsAt2WMNUkPAhD2og@mail.gmail.com>
- <20180929081118.GB11115@zn.tnic>
+        Sat, 29 Sep 2018 10:57:15 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59342 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727540AbeI2O5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 10:57:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F38AD18A;
+        Sat, 29 Sep 2018 01:29:41 -0700 (PDT)
+Received: from [10.37.8.69] (unknown [10.37.8.69])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A2203F5B7;
+        Sat, 29 Sep 2018 01:29:39 -0700 (PDT)
+Subject: Re: [PATCH v6 06/18] kvm: arm/arm64: Allow arch specific
+ configurations for VM
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        cdall@kernel.org, eric.auger@redhat.com, will.deacon@arm.com,
+        dave.martin@arm.com, peter.maydell@linaro.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, julien.grall@arm.com,
+        linux-kernel@vger.kernel.org
+References: <20180926163258.20218-1-suzuki.poulose@arm.com>
+ <20180926163258.20218-7-suzuki.poulose@arm.com>
+ <fbca190b-473b-5dee-67be-c724392fd297@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <95c89f16-df03-a57b-e373-42cf65769912@arm.com>
+Date:   Sat, 29 Sep 2018 09:30:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180929081118.GB11115@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <fbca190b-473b-5dee-67be-c724392fd297@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-09-29 10:11:18, Borislav Petkov wrote:
-> On Sat, Sep 29, 2018 at 10:00:29AM +0200, Ard Biesheuvel wrote:
-> > Note that this is the author of the *patch* not necessarily the author
-> > of the code.
-> > 
-> > Anyone is free to submit patches adding code authored by others as
-> > long as the author has made it available under a suitable license, and
-> > this is actually the whole point of the S-o-B: you are stating to the
-> > next guy that the code included in your patch was made available to
-> > you under a compatible license.
-> 
-> ... and the actual author could be named with Originally-by or
-> Co-Developed-by:, and even in free text in the commit message.
+Hi Marc,
 
-Or you could just put the original author as the first S-o-b and then
-another (second) S-o-b line where you put yourself as a submitter.
+On 09/28/2018 06:27 PM, Marc Zyngier wrote:
+> Hi Suzuki,
+> 
+> On 26/09/18 17:32, Suzuki K Poulose wrote:
+>> Allow the arch backends to perform VM specific initialisation.
+>> This will be later used to handle IPA size configuration and per-VM
+>> VTCR configuration on arm64.
+>>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Christoffer Dall <cdall@kernel.org>
+>> Reviewed-by: Eric Auger <eric.auger@redhat.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   arch/arm/include/asm/kvm_host.h   | 7 +++++++
+>>   arch/arm64/include/asm/kvm_host.h | 2 ++
+>>   arch/arm64/kvm/reset.c            | 7 +++++++
+>>   virt/kvm/arm/arm.c                | 5 +++--
+>>   4 files changed, 19 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm/include/asm/kvm_host.h 
+>> b/arch/arm/include/asm/kvm_host.h
+>> index 3ad482d2f1eb..72d46418e1ef 100644
+>> --- a/arch/arm/include/asm/kvm_host.h
+>> +++ b/arch/arm/include/asm/kvm_host.h
+>> @@ -354,4 +354,11 @@ static inline void kvm_vcpu_put_sysregs(struct 
+>> kvm_vcpu *vcpu) {}
+>>   struct kvm *kvm_arch_alloc_vm(void);
+>>   void kvm_arch_free_vm(struct kvm *kvm);
+>> +static inline int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
+> 
+> This is a bit of a nit, but VM is a bit of an overloaded term in this 
+> context. Given what we do in the following patch (moving the global 
+> stage-2 init to be on a per VM -- virtual machine), I'd like to rename 
+> this to something less ambiguous.
+> 
+> How about kvm_arm_config_stage2? Or something along those lines?
 
-AFAIK, that's how people usually do it.
+I had something similar in the earlier versions, where we supported
+the "IPA" size for both arm and arm64. But since we restricted this
+feature to arm64, I changed the name to make it more generic to
+let the archs parse the "vm_type" parameter which could potentially have
+more bits defined, not just the IPA size. Hence the change. On arm64, we
+only use it for stage2 configuration and on arm32 we make sure the type
+is empty.
 
 > 
-> But the correct SOB chain denoting who handled the patch on its way up,
-> is important.
+> No need to respin the series on this account, we can address it in a 
+> separate patch. But I think it would help understanding what is done where.
 > 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> Good mailing practices for 400: avoid top-posting and trim the reply.
+
+As such I am fine with suggestion.
+
+Cheers
+Suzuki
