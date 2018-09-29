@@ -6,47 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52769C004D5
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 354BBC004D5
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14AFB2087A
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14AFB2087A
+	by mail.kernel.org (Postfix) with ESMTP id D75A02087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75A02087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728695AbeI3ESa (ORCPT
+        id S1728915AbeI3ESh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:18:30 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51777 "EHLO
+        Sun, 30 Sep 2018 00:18:37 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51933 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728535AbeI3ES3 (ORCPT
+        by vger.kernel.org with ESMTP id S1728703AbeI3ESc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 00:18:29 -0400
+        Sun, 30 Sep 2018 00:18:32 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N68-0000Gu-EV; Sat, 29 Sep 2018 22:48:24 +0100
+        id 1g6N6B-0000HA-Pk; Sat, 29 Sep 2018 22:48:28 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5y-0006w6-DZ; Sat, 29 Sep 2018 22:48:14 +0100
+        id 1g6N5x-0006tW-5u; Sat, 29 Sep 2018 22:48:13 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Paul Mackerras" <paulus@samba.org>,
-        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+CC:     akpm@linux-foundation.org,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.218981167@decadent.org.uk>
+Message-ID: <lsq.1538257387.434296124@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 090/131] powerpc: drop _PAGE_FILE and pte_file()-related
- helpers
+Subject: [PATCH 3.16 058/131] rmap: drop support of non-linear mappings
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -62,193 +59,517 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-commit 780fc5642f59b6c6e2b05794de60b2d2ad5f040e upstream.
+commit 27ba0644ea9dfe6e7693abc85837b60e40583b96 upstream.
 
-We've replaced remap_file_pages(2) implementation with emulation.  Nobody
-creates non-linear mapping anymore.
+We don't create non-linear mappings anymore.  Let's drop code which
+handles them in rmap.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16: adjust context]
+[bwh: Backported to 3.16:
+ - Deleted code is slightly different
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/powerpc/include/asm/pgtable-ppc32.h | 9 ++-------
- arch/powerpc/include/asm/pgtable-ppc64.h | 5 +----
- arch/powerpc/include/asm/pgtable.h       | 1 -
- arch/powerpc/include/asm/pte-40x.h       | 1 -
- arch/powerpc/include/asm/pte-44x.h       | 5 -----
- arch/powerpc/include/asm/pte-8xx.h       | 1 -
- arch/powerpc/include/asm/pte-book3e.h    | 1 -
- arch/powerpc/include/asm/pte-fsl-booke.h | 3 ---
- arch/powerpc/include/asm/pte-hash32.h    | 1 -
- arch/powerpc/include/asm/pte-hash64.h    | 1 -
- arch/powerpc/mm/pgtable_64.c             | 2 +-
- 11 files changed, 4 insertions(+), 26 deletions(-)
-
---- a/arch/powerpc/include/asm/pgtable-ppc32.h
-+++ b/arch/powerpc/include/asm/pgtable-ppc32.h
-@@ -314,8 +314,8 @@ static inline void __ptep_set_access_fla
- /*
-  * Encode and decode a swap entry.
-  * Note that the bits we use in a PTE for representing a swap entry
-- * must not include the _PAGE_PRESENT bit, the _PAGE_FILE bit, or the
-- *_PAGE_HASHPTE bit (if used).  -- paulus
-+ * must not include the _PAGE_PRESENT bit or the _PAGE_HASHPTE bit (if used).
-+ *   -- paulus
-  */
- #define __swp_type(entry)		((entry).val & 0x1f)
- #define __swp_offset(entry)		((entry).val >> 5)
-@@ -323,11 +323,6 @@ static inline void __ptep_set_access_fla
- #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val(pte) >> 3 })
- #define __swp_entry_to_pte(x)		((pte_t) { (x).val << 3 })
+--- a/Documentation/cachetlb.txt
++++ b/Documentation/cachetlb.txt
+@@ -317,10 +317,10 @@ maps this page at its virtual address.
+ 	about doing this.
  
--/* Encode and decode a nonlinear file mapping entry */
--#define PTE_FILE_MAX_BITS	29
--#define pte_to_pgoff(pte)	(pte_val(pte) >> 3)
--#define pgoff_to_pte(off)	((pte_t) { ((off) << 3) | _PAGE_FILE })
+ 	The idea is, first at flush_dcache_page() time, if
+-	page->mapping->i_mmap is an empty tree and ->i_mmap_nonlinear
+-	an empty list, just mark the architecture private page flag bit.
+-	Later, in update_mmu_cache(), a check is made of this flag bit,
+-	and if set the flush is done and the flag bit is cleared.
++	page->mapping->i_mmap is an empty tree, just mark the architecture
++	private page flag bit.  Later, in update_mmu_cache(), a check is
++	made of this flag bit, and if set the flush is done and the flag
++	bit is cleared.
+ 
+ 	IMPORTANT NOTE: It is often important, if you defer the flush,
+ 			that the actual flush occurs on the same CPU
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -352,7 +352,6 @@ void address_space_init_once(struct addr
+ 	INIT_LIST_HEAD(&mapping->private_list);
+ 	spin_lock_init(&mapping->private_lock);
+ 	mapping->i_mmap = RB_ROOT;
+-	INIT_LIST_HEAD(&mapping->i_mmap_nonlinear);
+ }
+ EXPORT_SYMBOL(address_space_init_once);
+ 
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -395,7 +395,6 @@ struct address_space {
+ 	spinlock_t		tree_lock;	/* and lock protecting it */
+ 	unsigned int		i_mmap_writable;/* count VM_SHARED mappings */
+ 	struct rb_root		i_mmap;		/* tree of private and shared mappings */
+-	struct list_head	i_mmap_nonlinear;/*list VM_NONLINEAR mappings */
+ 	struct mutex		i_mmap_mutex;	/* protect tree, count, list */
+ 	/* Protected by tree_lock together with the radix tree */
+ 	unsigned long		nrpages;	/* number of total pages */
+@@ -467,8 +466,7 @@ int mapping_tagged(struct address_space
+  */
+ static inline int mapping_mapped(struct address_space *mapping)
+ {
+-	return	!RB_EMPTY_ROOT(&mapping->i_mmap) ||
+-		!list_empty(&mapping->i_mmap_nonlinear);
++	return	!RB_EMPTY_ROOT(&mapping->i_mmap);
+ }
+ 
+ /*
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1728,12 +1728,6 @@ struct vm_area_struct *vma_interval_tree
+ 	for (vma = vma_interval_tree_iter_first(root, start, last);	\
+ 	     vma; vma = vma_interval_tree_iter_next(vma, start, last))
+ 
+-static inline void vma_nonlinear_insert(struct vm_area_struct *vma,
+-					struct list_head *list)
+-{
+-	list_add_tail(&vma->shared.nonlinear, list);
+-}
 -
- /*
-  * No page table caches to initialise
-  */
---- a/arch/powerpc/include/asm/pgtable-ppc64.h
-+++ b/arch/powerpc/include/asm/pgtable-ppc64.h
-@@ -352,9 +352,6 @@ static inline void __ptep_set_access_fla
- #define __swp_entry(type, offset) ((swp_entry_t){((type)<< 1)|((offset)<<8)})
- #define __pte_to_swp_entry(pte)	((swp_entry_t){pte_val(pte) >> PTE_RPN_SHIFT})
- #define __swp_entry_to_pte(x)	((pte_t) { (x).val << PTE_RPN_SHIFT })
--#define pte_to_pgoff(pte)	(pte_val(pte) >> PTE_RPN_SHIFT)
--#define pgoff_to_pte(off)	((pte_t) {((off) << PTE_RPN_SHIFT)|_PAGE_FILE})
--#define PTE_FILE_MAX_BITS	(BITS_PER_LONG - PTE_RPN_SHIFT)
+ void anon_vma_interval_tree_insert(struct anon_vma_chain *node,
+ 				   struct rb_root *root);
+ void anon_vma_interval_tree_remove(struct anon_vma_chain *node,
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -272,15 +272,13 @@ struct vm_area_struct {
  
- void pgtable_cache_add(unsigned shift, void (*ctor)(void *));
- void pgtable_cache_init(void);
-@@ -389,7 +386,7 @@ void pgtable_cache_init(void);
-  * The last three bits are intentionally left to zero. This memory location
-  * are also used as normal page PTE pointers. So if we have any pointers
-  * left around while we collapse a hugepage, we need to make sure
-- * _PAGE_PRESENT and _PAGE_FILE bits of that are zero when we look at them
-+ * _PAGE_PRESENT bit of that is zero when we look at them
-  */
- static inline unsigned int hpte_valid(unsigned char *hpte_slot_array, int index)
- {
---- a/arch/powerpc/include/asm/pgtable.h
-+++ b/arch/powerpc/include/asm/pgtable.h
-@@ -32,7 +32,6 @@ struct mm_struct;
- static inline int pte_write(pte_t pte)		{ return pte_val(pte) & _PAGE_RW; }
- static inline int pte_dirty(pte_t pte)		{ return pte_val(pte) & _PAGE_DIRTY; }
- static inline int pte_young(pte_t pte)		{ return pte_val(pte) & _PAGE_ACCESSED; }
--static inline int pte_file(pte_t pte)		{ return pte_val(pte) & _PAGE_FILE; }
- static inline int pte_special(pte_t pte)	{ return pte_val(pte) & _PAGE_SPECIAL; }
- static inline int pte_none(pte_t pte)		{ return (pte_val(pte) & ~_PTE_NONE_MASK) == 0; }
- static inline pgprot_t pte_pgprot(pte_t pte)	{ return __pgprot(pte_val(pte) & PAGE_PROT_BITS); }
---- a/arch/powerpc/include/asm/pte-40x.h
-+++ b/arch/powerpc/include/asm/pte-40x.h
-@@ -38,7 +38,6 @@
-  */
- 
- #define	_PAGE_GUARDED	0x001	/* G: page is guarded from prefetch */
--#define _PAGE_FILE	0x001	/* when !present: nonlinear file mapping */
- #define _PAGE_PRESENT	0x002	/* software: PTE contains a translation */
- #define	_PAGE_NO_CACHE	0x004	/* I: caching is inhibited */
- #define	_PAGE_WRITETHRU	0x008	/* W: caching is write-through */
---- a/arch/powerpc/include/asm/pte-44x.h
-+++ b/arch/powerpc/include/asm/pte-44x.h
-@@ -44,9 +44,6 @@
-  *   - PRESENT *must* be in the bottom three bits because swap cache
-  *     entries use the top 29 bits for TLB2.
-  *
-- *   - FILE *must* be in the bottom three bits because swap cache
-- *     entries use the top 29 bits for TLB2.
-- *
-  *   - CACHE COHERENT bit (M) has no effect on original PPC440 cores,
-  *     because it doesn't support SMP. However, some later 460 variants
-  *     have -some- form of SMP support and so I keep the bit there for
-@@ -68,7 +65,6 @@
-  *
-  * There are three protection bits available for SWAP entry:
-  *	_PAGE_PRESENT
-- *	_PAGE_FILE
-  *	_PAGE_HASHPTE (if HW has)
-  *
-  * So those three bits have to be inside of 0-2nd LSB of PTE.
-@@ -77,7 +73,6 @@
- 
- #define _PAGE_PRESENT	0x00000001		/* S: PTE valid */
- #define _PAGE_RW	0x00000002		/* S: Write permission */
--#define _PAGE_FILE	0x00000004		/* S: nonlinear file mapping */
- #define _PAGE_EXEC	0x00000004		/* H: Execute permission */
- #define _PAGE_ACCESSED	0x00000008		/* S: Page referenced */
- #define _PAGE_DIRTY	0x00000010		/* S: Page dirty */
---- a/arch/powerpc/include/asm/pte-8xx.h
-+++ b/arch/powerpc/include/asm/pte-8xx.h
-@@ -29,7 +29,6 @@
- 
- /* Definitions for 8xx embedded chips. */
- #define _PAGE_PRESENT	0x0001	/* Page is valid */
--#define _PAGE_FILE	0x0002	/* when !present: nonlinear file mapping */
- #define _PAGE_NO_CACHE	0x0002	/* I: cache inhibit */
- #define _PAGE_SHARED	0x0004	/* No ASID (context) compare */
- #define _PAGE_SPECIAL	0x0008	/* SW entry, forced to 0 by the TLB miss */
---- a/arch/powerpc/include/asm/pte-book3e.h
-+++ b/arch/powerpc/include/asm/pte-book3e.h
-@@ -10,7 +10,6 @@
- 
- /* Architected bits */
- #define _PAGE_PRESENT	0x000001 /* software: pte contains a translation */
--#define _PAGE_FILE	0x000002 /* (!present only) software: pte holds file offset */
- #define _PAGE_SW1	0x000002
- #define _PAGE_BAP_SR	0x000004
- #define _PAGE_BAP_UR	0x000008
---- a/arch/powerpc/include/asm/pte-fsl-booke.h
-+++ b/arch/powerpc/include/asm/pte-fsl-booke.h
-@@ -13,14 +13,11 @@
-    - PRESENT *must* be in the bottom three bits because swap cache
-      entries use the top 29 bits.
- 
--   - FILE *must* be in the bottom three bits because swap cache
--     entries use the top 29 bits.
- */
- 
- /* Definitions for FSL Book-E Cores */
- #define _PAGE_PRESENT	0x00001	/* S: PTE contains a translation */
- #define _PAGE_USER	0x00002	/* S: User page (maps to UR) */
--#define _PAGE_FILE	0x00002	/* S: when !present: nonlinear file mapping */
- #define _PAGE_RW	0x00004	/* S: Write permission (SW) */
- #define _PAGE_DIRTY	0x00008	/* S: Page dirty */
- #define _PAGE_EXEC	0x00010	/* H: SX permission */
---- a/arch/powerpc/include/asm/pte-hash32.h
-+++ b/arch/powerpc/include/asm/pte-hash32.h
-@@ -18,7 +18,6 @@
- 
- #define _PAGE_PRESENT	0x001	/* software: pte contains a translation */
- #define _PAGE_HASHPTE	0x002	/* hash_page has made an HPTE for this pte */
--#define _PAGE_FILE	0x004	/* when !present: nonlinear file mapping */
- #define _PAGE_USER	0x004	/* usermode access allowed */
- #define _PAGE_GUARDED	0x008	/* G: prohibit speculative access */
- #define _PAGE_COHERENT	0x010	/* M: enforce memory coherence (SMP systems) */
---- a/arch/powerpc/include/asm/pte-hash64.h
-+++ b/arch/powerpc/include/asm/pte-hash64.h
-@@ -16,7 +16,6 @@
-  */
- #define _PAGE_PRESENT		0x0001 /* software: pte contains a translation */
- #define _PAGE_USER		0x0002 /* matches one of the PP bits */
--#define _PAGE_FILE		0x0002 /* (!present only) software: pte holds file offset */
- #define _PAGE_EXEC		0x0004 /* No execute on POWER4 and newer (we invert) */
- #define _PAGE_GUARDED		0x0008
- /* We can derive Memory coherence from _PAGE_NO_CACHE */
---- a/arch/powerpc/mm/pgtable_64.c
-+++ b/arch/powerpc/mm/pgtable_64.c
-@@ -807,7 +807,7 @@ pmd_t pfn_pmd(unsigned long pfn, pgprot_
- {
- 	pmd_t pmd;
  	/*
--	 * For a valid pte, we would have _PAGE_PRESENT or _PAGE_FILE always
-+	 * For a valid pte, we would have _PAGE_PRESENT always
- 	 * set. We use this to check THP page at pmd level.
- 	 * leaf pte for huge page, bottom two bits != 00
+ 	 * For areas with an address space and backing store,
+-	 * linkage into the address_space->i_mmap interval tree, or
+-	 * linkage of vma in the address_space->i_mmap_nonlinear list.
++	 * linkage into the address_space->i_mmap interval tree.
  	 */
+ 	union {
+ 		struct {
+ 			struct rb_node rb;
+ 			unsigned long rb_subtree_last;
+ 		} linear;
+-		struct list_head nonlinear;
+ 	} shared;
+ 
+ 	/*
+--- a/include/linux/rmap.h
++++ b/include/linux/rmap.h
+@@ -232,7 +232,6 @@ int page_mapped_in_vma(struct page *page
+  * arg: passed to rmap_one() and invalid_vma()
+  * rmap_one: executed on each vma where page is mapped
+  * done: for checking traversing termination condition
+- * file_nonlinear: for handling file nonlinear mapping
+  * anon_lock: for getting anon_lock by optimized way rather than default
+  * invalid_vma: for skipping uninterested vma
+  */
+@@ -241,7 +240,6 @@ struct rmap_walk_control {
+ 	int (*rmap_one)(struct page *page, struct vm_area_struct *vma,
+ 					unsigned long addr, void *arg);
+ 	int (*done)(struct page *page);
+-	int (*file_nonlinear)(struct page *, struct address_space *, void *arg);
+ 	struct anon_vma *(*anon_lock)(struct page *page);
+ 	bool (*invalid_vma)(struct vm_area_struct *vma, void *arg);
+ };
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -430,12 +430,8 @@ static int dup_mmap(struct mm_struct *mm
+ 				mapping->i_mmap_writable++;
+ 			flush_dcache_mmap_lock(mapping);
+ 			/* insert tmp into the share list, just after mpnt */
+-			if (unlikely(tmp->vm_flags & VM_NONLINEAR))
+-				vma_nonlinear_insert(tmp,
+-						&mapping->i_mmap_nonlinear);
+-			else
+-				vma_interval_tree_insert_after(tmp, mpnt,
+-							&mapping->i_mmap);
++			vma_interval_tree_insert_after(tmp, mpnt,
++					&mapping->i_mmap);
+ 			flush_dcache_mmap_unlock(mapping);
+ 			mutex_unlock(&mapping->i_mmap_mutex);
+ 		}
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -181,37 +181,6 @@ out:
+ }
+ 
+ /*
+- * Congratulations to trinity for discovering this bug.
+- * mm/fremap.c's remap_file_pages() accepts any range within a single vma to
+- * convert that vma to VM_NONLINEAR; and generic_file_remap_pages() will then
+- * replace the specified range by file ptes throughout (maybe populated after).
+- * If page migration finds a page within that range, while it's still located
+- * by vma_interval_tree rather than lost to i_mmap_nonlinear list, no problem:
+- * zap_pte() clears the temporary migration entry before mmap_sem is dropped.
+- * But if the migrating page is in a part of the vma outside the range to be
+- * remapped, then it will not be cleared, and remove_migration_ptes() needs to
+- * deal with it.  Fortunately, this part of the vma is of course still linear,
+- * so we just need to use linear location on the nonlinear list.
+- */
+-static int remove_linear_migration_ptes_from_nonlinear(struct page *page,
+-		struct address_space *mapping, void *arg)
+-{
+-	struct vm_area_struct *vma;
+-	/* hugetlbfs does not support remap_pages, so no huge pgoff worries */
+-	pgoff_t pgoff = page->index << (PAGE_CACHE_SHIFT - PAGE_SHIFT);
+-	unsigned long addr;
+-
+-	list_for_each_entry(vma,
+-		&mapping->i_mmap_nonlinear, shared.nonlinear) {
+-
+-		addr = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
+-		if (addr >= vma->vm_start && addr < vma->vm_end)
+-			remove_migration_pte(page, vma, addr, arg);
+-	}
+-	return SWAP_AGAIN;
+-}
+-
+-/*
+  * Get rid of all migration entries and replace them by
+  * references to the indicated page.
+  */
+@@ -220,7 +189,6 @@ static void remove_migration_ptes(struct
+ 	struct rmap_walk_control rwc = {
+ 		.rmap_one = remove_migration_pte,
+ 		.arg = old,
+-		.file_nonlinear = remove_linear_migration_ptes_from_nonlinear,
+ 	};
+ 
+ 	rmap_walk(new, &rwc);
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -219,10 +219,7 @@ static void __remove_shared_vm_struct(st
+ 		mapping->i_mmap_writable--;
+ 
+ 	flush_dcache_mmap_lock(mapping);
+-	if (unlikely(vma->vm_flags & VM_NONLINEAR))
+-		list_del_init(&vma->shared.nonlinear);
+-	else
+-		vma_interval_tree_remove(vma, &mapping->i_mmap);
++	vma_interval_tree_remove(vma, &mapping->i_mmap);
+ 	flush_dcache_mmap_unlock(mapping);
+ }
+ 
+@@ -639,10 +636,7 @@ static void __vma_link_file(struct vm_ar
+ 			mapping->i_mmap_writable++;
+ 
+ 		flush_dcache_mmap_lock(mapping);
+-		if (unlikely(vma->vm_flags & VM_NONLINEAR))
+-			vma_nonlinear_insert(vma, &mapping->i_mmap_nonlinear);
+-		else
+-			vma_interval_tree_insert(vma, &mapping->i_mmap);
++		vma_interval_tree_insert(vma, &mapping->i_mmap);
+ 		flush_dcache_mmap_unlock(mapping);
+ 	}
+ }
+@@ -777,14 +771,11 @@ again:			remove_next = 1 + (end > next->
+ 
+ 	if (file) {
+ 		mapping = file->f_mapping;
+-		if (!(vma->vm_flags & VM_NONLINEAR)) {
+-			root = &mapping->i_mmap;
+-			uprobe_munmap(vma, vma->vm_start, vma->vm_end);
+-
+-			if (adjust_next)
+-				uprobe_munmap(next, next->vm_start,
+-							next->vm_end);
+-		}
++		root = &mapping->i_mmap;
++		uprobe_munmap(vma, vma->vm_start, vma->vm_end);
++
++		if (adjust_next)
++			uprobe_munmap(next, next->vm_start, next->vm_end);
+ 
+ 		mutex_lock(&mapping->i_mmap_mutex);
+ 		if (insert) {
+@@ -3187,8 +3178,7 @@ static void vm_lock_mapping(struct mm_st
+  *
+  * mmap_sem in write mode is required in order to block all operations
+  * that could modify pagetables and free pages without need of
+- * altering the vma layout (for example populate_range() with
+- * nonlinear vmas). It's also needed in write mode to avoid new
++ * altering the vma layout. It's also needed in write mode to avoid new
+  * anon_vmas to be associated with existing vmas.
+  *
+  * A single task can't take more than one mm_take_all_locks() in a row
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -597,9 +597,8 @@ unsigned long page_address_in_vma(struct
+ 		if (!vma->anon_vma || !page__anon_vma ||
+ 		    vma->anon_vma->root != page__anon_vma->root)
+ 			return -EFAULT;
+-	} else if (page->mapping && !(vma->vm_flags & VM_NONLINEAR)) {
+-		if (!vma->vm_file ||
+-		    vma->vm_file->f_mapping != page->mapping)
++	} else if (page->mapping) {
++		if (!vma->vm_file || vma->vm_file->f_mapping != page->mapping)
+ 			return -EFAULT;
+ 	} else
+ 		return -EFAULT;
+@@ -1286,7 +1285,6 @@ static int try_to_unmap_one(struct page
+ 		if (pte_soft_dirty(pteval))
+ 			swp_pte = pte_swp_mksoft_dirty(swp_pte);
+ 		set_pte_at(mm, address, pte, swp_pte);
+-		BUG_ON(pte_file(*pte));
+ 	} else if (IS_ENABLED(CONFIG_MIGRATION) &&
+ 		   (flags & TTU_MIGRATION)) {
+ 		/* Establish migration entry for a file page */
+@@ -1328,207 +1326,6 @@ out_mlock:
+ 	return ret;
+ }
+ 
+-/*
+- * objrmap doesn't work for nonlinear VMAs because the assumption that
+- * offset-into-file correlates with offset-into-virtual-addresses does not hold.
+- * Consequently, given a particular page and its ->index, we cannot locate the
+- * ptes which are mapping that page without an exhaustive linear search.
+- *
+- * So what this code does is a mini "virtual scan" of each nonlinear VMA which
+- * maps the file to which the target page belongs.  The ->vm_private_data field
+- * holds the current cursor into that scan.  Successive searches will circulate
+- * around the vma's virtual address space.
+- *
+- * So as more replacement pressure is applied to the pages in a nonlinear VMA,
+- * more scanning pressure is placed against them as well.   Eventually pages
+- * will become fully unmapped and are eligible for eviction.
+- *
+- * For very sparsely populated VMAs this is a little inefficient - chances are
+- * there there won't be many ptes located within the scan cluster.  In this case
+- * maybe we could scan further - to the end of the pte page, perhaps.
+- *
+- * Mlocked pages:  check VM_LOCKED under mmap_sem held for read, if we can
+- * acquire it without blocking.  If vma locked, mlock the pages in the cluster,
+- * rather than unmapping them.  If we encounter the "check_page" that vmscan is
+- * trying to unmap, return SWAP_MLOCK, else default SWAP_AGAIN.
+- */
+-#define CLUSTER_SIZE	min(32*PAGE_SIZE, PMD_SIZE)
+-#define CLUSTER_MASK	(~(CLUSTER_SIZE - 1))
+-
+-static int try_to_unmap_cluster(unsigned long cursor, unsigned int *mapcount,
+-		struct vm_area_struct *vma, struct page *check_page)
+-{
+-	struct mm_struct *mm = vma->vm_mm;
+-	pmd_t *pmd;
+-	pte_t *pte;
+-	pte_t pteval;
+-	spinlock_t *ptl;
+-	struct page *page;
+-	unsigned long address;
+-	unsigned long mmun_start;	/* For mmu_notifiers */
+-	unsigned long mmun_end;		/* For mmu_notifiers */
+-	unsigned long end;
+-	int ret = SWAP_AGAIN;
+-	int locked_vma = 0;
+-
+-	address = (vma->vm_start + cursor) & CLUSTER_MASK;
+-	end = address + CLUSTER_SIZE;
+-	if (address < vma->vm_start)
+-		address = vma->vm_start;
+-	if (end > vma->vm_end)
+-		end = vma->vm_end;
+-
+-	pmd = mm_find_pmd(mm, address);
+-	if (!pmd)
+-		return ret;
+-
+-	mmun_start = address;
+-	mmun_end   = end;
+-	mmu_notifier_invalidate_range_start(mm, mmun_start, mmun_end);
+-
+-	/*
+-	 * If we can acquire the mmap_sem for read, and vma is VM_LOCKED,
+-	 * keep the sem while scanning the cluster for mlocking pages.
+-	 */
+-	if (down_read_trylock(&vma->vm_mm->mmap_sem)) {
+-		locked_vma = (vma->vm_flags & VM_LOCKED);
+-		if (!locked_vma)
+-			up_read(&vma->vm_mm->mmap_sem); /* don't need it */
+-	}
+-
+-	pte = pte_offset_map_lock(mm, pmd, address, &ptl);
+-
+-	/* Update high watermark before we lower rss */
+-	update_hiwater_rss(mm);
+-
+-	for (; address < end; pte++, address += PAGE_SIZE) {
+-		if (!pte_present(*pte))
+-			continue;
+-		page = vm_normal_page(vma, address, *pte);
+-		BUG_ON(!page || PageAnon(page));
+-
+-		if (locked_vma) {
+-			if (page == check_page) {
+-				/* we know we have check_page locked */
+-				mlock_vma_page(page);
+-				ret = SWAP_MLOCK;
+-			} else if (trylock_page(page)) {
+-				/*
+-				 * If we can lock the page, perform mlock.
+-				 * Otherwise leave the page alone, it will be
+-				 * eventually encountered again later.
+-				 */
+-				mlock_vma_page(page);
+-				unlock_page(page);
+-			}
+-			continue;	/* don't unmap */
+-		}
+-
+-		if (ptep_clear_flush_young_notify(vma, address, pte))
+-			continue;
+-
+-		/* Nuke the page table entry. */
+-		flush_cache_page(vma, address, pte_pfn(*pte));
+-		pteval = ptep_clear_flush(vma, address, pte);
+-
+-		/* If nonlinear, store the file page offset in the pte. */
+-		if (page->index != linear_page_index(vma, address)) {
+-			pte_t ptfile = pgoff_to_pte(page->index);
+-			if (pte_soft_dirty(pteval))
+-				ptfile = pte_file_mksoft_dirty(ptfile);
+-			set_pte_at(mm, address, pte, ptfile);
+-		}
+-
+-		/* Move the dirty bit to the physical page now the pte is gone. */
+-		if (pte_dirty(pteval))
+-			set_page_dirty(page);
+-
+-		page_remove_rmap(page);
+-		page_cache_release(page);
+-		dec_mm_counter(mm, MM_FILEPAGES);
+-		(*mapcount)--;
+-	}
+-	pte_unmap_unlock(pte - 1, ptl);
+-	mmu_notifier_invalidate_range_end(mm, mmun_start, mmun_end);
+-	if (locked_vma)
+-		up_read(&vma->vm_mm->mmap_sem);
+-	return ret;
+-}
+-
+-static int try_to_unmap_nonlinear(struct page *page,
+-		struct address_space *mapping, void *arg)
+-{
+-	struct vm_area_struct *vma;
+-	int ret = SWAP_AGAIN;
+-	unsigned long cursor;
+-	unsigned long max_nl_cursor = 0;
+-	unsigned long max_nl_size = 0;
+-	unsigned int mapcount;
+-
+-	list_for_each_entry(vma,
+-		&mapping->i_mmap_nonlinear, shared.nonlinear) {
+-
+-		cursor = (unsigned long) vma->vm_private_data;
+-		if (cursor > max_nl_cursor)
+-			max_nl_cursor = cursor;
+-		cursor = vma->vm_end - vma->vm_start;
+-		if (cursor > max_nl_size)
+-			max_nl_size = cursor;
+-	}
+-
+-	if (max_nl_size == 0) {	/* all nonlinears locked or reserved ? */
+-		return SWAP_FAIL;
+-	}
+-
+-	/*
+-	 * We don't try to search for this page in the nonlinear vmas,
+-	 * and page_referenced wouldn't have found it anyway.  Instead
+-	 * just walk the nonlinear vmas trying to age and unmap some.
+-	 * The mapcount of the page we came in with is irrelevant,
+-	 * but even so use it as a guide to how hard we should try?
+-	 */
+-	mapcount = page_mapcount(page);
+-	if (!mapcount)
+-		return ret;
+-
+-	cond_resched();
+-
+-	max_nl_size = (max_nl_size + CLUSTER_SIZE - 1) & CLUSTER_MASK;
+-	if (max_nl_cursor == 0)
+-		max_nl_cursor = CLUSTER_SIZE;
+-
+-	do {
+-		list_for_each_entry(vma,
+-			&mapping->i_mmap_nonlinear, shared.nonlinear) {
+-
+-			cursor = (unsigned long) vma->vm_private_data;
+-			while (cursor < max_nl_cursor &&
+-				cursor < vma->vm_end - vma->vm_start) {
+-				if (try_to_unmap_cluster(cursor, &mapcount,
+-						vma, page) == SWAP_MLOCK)
+-					ret = SWAP_MLOCK;
+-				cursor += CLUSTER_SIZE;
+-				vma->vm_private_data = (void *) cursor;
+-				if ((int)mapcount <= 0)
+-					return ret;
+-			}
+-			vma->vm_private_data = (void *) max_nl_cursor;
+-		}
+-		cond_resched();
+-		max_nl_cursor += CLUSTER_SIZE;
+-	} while (max_nl_cursor <= max_nl_size);
+-
+-	/*
+-	 * Don't loop forever (perhaps all the remaining pages are
+-	 * in locked vmas).  Reset cursor on all unreserved nonlinear
+-	 * vmas, now forgetting on which ones it had fallen behind.
+-	 */
+-	list_for_each_entry(vma, &mapping->i_mmap_nonlinear, shared.nonlinear)
+-		vma->vm_private_data = NULL;
+-
+-	return ret;
+-}
+-
+ bool is_vma_temporary_stack(struct vm_area_struct *vma)
+ {
+ 	int maybe_stack = vma->vm_flags & (VM_GROWSDOWN | VM_GROWSUP);
+@@ -1574,7 +1371,6 @@ int try_to_unmap(struct page *page, enum
+ 		.rmap_one = try_to_unmap_one,
+ 		.arg = (void *)flags,
+ 		.done = page_not_mapped,
+-		.file_nonlinear = try_to_unmap_nonlinear,
+ 		.anon_lock = page_lock_anon_vma_read,
+ 	};
+ 
+@@ -1620,12 +1416,6 @@ int try_to_munlock(struct page *page)
+ 		.rmap_one = try_to_unmap_one,
+ 		.arg = (void *)TTU_MUNLOCK,
+ 		.done = page_not_mapped,
+-		/*
+-		 * We don't bother to try to find the munlocked page in
+-		 * nonlinears. It's costly. Instead, later, page reclaim logic
+-		 * may call try_to_unmap() and recover PG_mlocked lazily.
+-		 */
+-		.file_nonlinear = NULL,
+ 		.anon_lock = page_lock_anon_vma_read,
+ 
+ 	};
+@@ -1753,14 +1543,6 @@ static int rmap_walk_file(struct page *p
+ 			goto done;
+ 	}
+ 
+-	if (!rwc->file_nonlinear)
+-		goto done;
+-
+-	if (list_empty(&mapping->i_mmap_nonlinear))
+-		goto done;
+-
+-	ret = rwc->file_nonlinear(page, mapping, rwc->arg);
+-
+ done:
+ 	mutex_unlock(&mapping->i_mmap_mutex);
+ 	return ret;
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -1103,10 +1103,8 @@ void __init swap_setup(void)
+ 
+ 	if (bdi_init(swapper_spaces[0].backing_dev_info))
+ 		panic("Failed to init swap bdi");
+-	for (i = 0; i < MAX_SWAPFILES; i++) {
++	for (i = 0; i < MAX_SWAPFILES; i++)
+ 		spin_lock_init(&swapper_spaces[i].tree_lock);
+-		INIT_LIST_HEAD(&swapper_spaces[i].i_mmap_nonlinear);
+-	}
+ #endif
+ 
+ 	/* Use a smaller cluster for small-memory machines */
 
