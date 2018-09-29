@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 736DEC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6766AC64EAD
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21E5B20882
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:54:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21E5B20882
+	by mail.kernel.org (Postfix) with ESMTP id 1AA172087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:54:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AA172087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbeI3EYm (ORCPT
+        id S1729141AbeI3EYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:24:42 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51822 "EHLO
+        Sun, 30 Sep 2018 00:24:53 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51798 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728568AbeI3ES3 (ORCPT
+        by vger.kernel.org with ESMTP id S1728563AbeI3ES3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Sep 2018 00:18:29 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N68-0000Gz-JE; Sat, 29 Sep 2018 22:48:24 +0100
+        id 1g6N68-0000H8-QH; Sat, 29 Sep 2018 22:48:24 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5y-0006vc-5X; Sat, 29 Sep 2018 22:48:14 +0100
+        id 1g6N5x-0006uo-PY; Sat, 29 Sep 2018 22:48:13 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
         "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.162889318@decadent.org.uk>
+Message-ID: <lsq.1538257387.771351616@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 084/131] sparc: drop pte_file()-related helpers
+Subject: [PATCH 3.16 074/131] m68k: drop _PAGE_FILE and pte_file()-related
+ helpers
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,173 +60,161 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
 
-commit 6a8c4820895cf1dd2a128aef67ce079ba6eded80 upstream.
+commit 1eeda0abf4425c91e7ce3ca32f1908c3a51bf84e upstream.
 
 We've replaced remap_file_pages(2) implementation with emulation.  Nobody
 creates non-linear mapping anymore.
 
-This patch also increase number of bits availble for swap offset.
-
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: David S. Miller <davem@davemloft.net>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/sparc/include/asm/pgtable_32.h | 24 -----------------
- arch/sparc/include/asm/pgtable_64.h | 40 -----------------------------
- arch/sparc/include/asm/pgtsrmmu.h   | 14 ++++------
- 3 files changed, 5 insertions(+), 73 deletions(-)
+ arch/m68k/include/asm/mcf_pgtable.h      | 23 ++---------------------
+ arch/m68k/include/asm/motorola_pgtable.h | 15 ---------------
+ arch/m68k/include/asm/pgtable_no.h       |  2 --
+ arch/m68k/include/asm/sun3_pgtable.h     | 15 ---------------
+ 4 files changed, 2 insertions(+), 53 deletions(-)
 
---- a/arch/sparc/include/asm/pgtable_32.h
-+++ b/arch/sparc/include/asm/pgtable_32.h
-@@ -221,14 +221,6 @@ static inline int pte_young(pte_t pte)
- 	return pte_val(pte) & SRMMU_REF;
+--- a/arch/m68k/include/asm/mcf_pgtable.h
++++ b/arch/m68k/include/asm/mcf_pgtable.h
+@@ -35,7 +35,6 @@
+  * hitting hardware.
+  */
+ #define CF_PAGE_DIRTY		0x00000001
+-#define CF_PAGE_FILE		0x00000200
+ #define CF_PAGE_ACCESSED	0x00001000
+ 
+ #define _PAGE_CACHE040		0x020   /* 68040 cache mode, cachable, copyback */
+@@ -243,11 +242,6 @@ static inline int pte_young(pte_t pte)
+ 	return pte_val(pte) & CF_PAGE_ACCESSED;
  }
  
--/*
-- * The following only work if pte_present() is not true.
-- */
 -static inline int pte_file(pte_t pte)
 -{
--	return pte_val(pte) & SRMMU_FILE;
+-	return pte_val(pte) & CF_PAGE_FILE;
 -}
 -
  static inline int pte_special(pte_t pte)
  {
  	return 0;
-@@ -375,22 +367,6 @@ static inline swp_entry_t __swp_entry(un
- #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val(pte) })
- #define __swp_entry_to_pte(x)		((pte_t) { (x).val })
+@@ -391,26 +385,13 @@ static inline void cache_page(void *vadd
+ 	*ptep = pte_mkcache(*ptep);
+ }
  
--/* file-offset-in-pte helpers */
+-#define PTE_FILE_MAX_BITS	21
+-#define PTE_FILE_SHIFT		11
+-
 -static inline unsigned long pte_to_pgoff(pte_t pte)
 -{
--	return pte_val(pte) >> SRMMU_PTE_FILE_SHIFT;
+-	return pte_val(pte) >> PTE_FILE_SHIFT;
 -}
 -
--static inline pte_t pgoff_to_pte(unsigned long pgoff)
+-static inline pte_t pgoff_to_pte(unsigned pgoff)
 -{
--	return __pte((pgoff << SRMMU_PTE_FILE_SHIFT) | SRMMU_FILE);
+-	return __pte((pgoff << PTE_FILE_SHIFT) + CF_PAGE_FILE);
 -}
 -
--/*
-- * This is made a constant because mm/fremap.c required a constant.
-- */
--#define PTE_FILE_MAX_BITS 24
--
- static inline unsigned long
- __get_phys (unsigned long addr)
- {
---- a/arch/sparc/include/asm/pgtable_64.h
-+++ b/arch/sparc/include/asm/pgtable_64.h
-@@ -137,7 +137,6 @@ bool kern_addr_valid(unsigned long addr)
- #define _PAGE_SOFT_4U	  _AC(0x0000000000001F80,UL) /* Software bits:       */
- #define _PAGE_EXEC_4U	  _AC(0x0000000000001000,UL) /* Executable SW bit    */
- #define _PAGE_MODIFIED_4U _AC(0x0000000000000800,UL) /* Modified (dirty)     */
--#define _PAGE_FILE_4U	  _AC(0x0000000000000800,UL) /* Pagecache page       */
- #define _PAGE_ACCESSED_4U _AC(0x0000000000000400,UL) /* Accessed (ref'd)     */
- #define _PAGE_READ_4U	  _AC(0x0000000000000200,UL) /* Readable SW Bit      */
- #define _PAGE_WRITE_4U	  _AC(0x0000000000000100,UL) /* Writable SW Bit      */
-@@ -167,7 +166,6 @@ bool kern_addr_valid(unsigned long addr)
- #define _PAGE_EXEC_4V	  _AC(0x0000000000000080,UL) /* Executable Page      */
- #define _PAGE_W_4V	  _AC(0x0000000000000040,UL) /* Writable             */
- #define _PAGE_SOFT_4V	  _AC(0x0000000000000030,UL) /* Software bits        */
--#define _PAGE_FILE_4V	  _AC(0x0000000000000020,UL) /* Pagecache page       */
- #define _PAGE_PRESENT_4V  _AC(0x0000000000000010,UL) /* Present              */
- #define _PAGE_RESV_4V	  _AC(0x0000000000000008,UL) /* Reserved             */
- #define _PAGE_SZ16GB_4V	  _AC(0x0000000000000007,UL) /* 16GB Page            */
-@@ -332,22 +330,6 @@ static inline pmd_t pmd_modify(pmd_t pmd
- }
- #endif
- 
--static inline pte_t pgoff_to_pte(unsigned long off)
--{
--	off <<= PAGE_SHIFT;
--
--	__asm__ __volatile__(
--	"\n661:	or		%0, %2, %0\n"
--	"	.section	.sun4v_1insn_patch, \"ax\"\n"
--	"	.word		661b\n"
--	"	or		%0, %3, %0\n"
--	"	.previous\n"
--	: "=r" (off)
--	: "0" (off), "i" (_PAGE_FILE_4U), "i" (_PAGE_FILE_4V));
--
--	return __pte(off);
--}
--
- static inline pgprot_t pgprot_noncached(pgprot_t prot)
- {
- 	unsigned long val = pgprot_val(prot);
-@@ -609,22 +591,6 @@ static inline unsigned long pte_exec(pte
- 	return (pte_val(pte) & mask);
- }
- 
--static inline unsigned long pte_file(pte_t pte)
--{
--	unsigned long val = pte_val(pte);
--
--	__asm__ __volatile__(
--	"\n661:	and		%0, %2, %0\n"
--	"	.section	.sun4v_1insn_patch, \"ax\"\n"
--	"	.word		661b\n"
--	"	and		%0, %3, %0\n"
--	"	.previous\n"
--	: "=r" (val)
--	: "0" (val), "i" (_PAGE_FILE_4U), "i" (_PAGE_FILE_4V));
--
--	return val;
--}
--
- static inline unsigned long pte_present(pte_t pte)
- {
- 	unsigned long val = pte_val(pte);
-@@ -964,12 +930,6 @@ pgtable_t pgtable_trans_huge_withdraw(st
- #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val(pte) })
- #define __swp_entry_to_pte(x)		((pte_t) { (x).val })
- 
--/* File offset in PTE support. */
--unsigned long pte_file(pte_t);
--#define pte_to_pgoff(pte)	(pte_val(pte) >> PAGE_SHIFT)
--pte_t pgoff_to_pte(unsigned long);
--#define PTE_FILE_MAX_BITS	(64UL - PAGE_SHIFT - 1UL)
--
- int page_in_phys_avail(unsigned long paddr);
- 
  /*
---- a/arch/sparc/include/asm/pgtsrmmu.h
-+++ b/arch/sparc/include/asm/pgtsrmmu.h
-@@ -80,10 +80,6 @@
- #define SRMMU_PRIV         0x1c
- #define SRMMU_PRIV_RDONLY  0x18
- 
--#define SRMMU_FILE         0x40	/* Implemented in software */
--
--#define SRMMU_PTE_FILE_SHIFT     8	/* == 32-PTE_FILE_MAX_BITS */
--
- #define SRMMU_CHG_MASK    (0xffffff00 | SRMMU_REF | SRMMU_DIRTY)
- 
- /* SRMMU swap entry encoding
-@@ -94,13 +90,13 @@
-  * oooooooooooooooooootttttRRRRRRRR
-  * fedcba9876543210fedcba9876543210
-  *
-- * The bottom 8 bits are reserved for protection and status bits, especially
-- * FILE and PRESENT.
-+ * The bottom 7 bits are reserved for protection and status bits, especially
-+ * PRESENT.
+  * Encode and de-code a swap entry (must be !pte_none(e) && !pte_present(e))
   */
- #define SRMMU_SWP_TYPE_MASK	0x1f
--#define SRMMU_SWP_TYPE_SHIFT	SRMMU_PTE_FILE_SHIFT
--#define SRMMU_SWP_OFF_MASK	0x7ffff
--#define SRMMU_SWP_OFF_SHIFT	(SRMMU_PTE_FILE_SHIFT + 5)
-+#define SRMMU_SWP_TYPE_SHIFT	7
-+#define SRMMU_SWP_OFF_MASK	0xfffff
-+#define SRMMU_SWP_OFF_SHIFT	(SRMMU_SWP_TYPE_SHIFT + 5)
+ #define __swp_type(x)		((x).val & 0xFF)
+-#define __swp_offset(x)		((x).val >> PTE_FILE_SHIFT)
++#define __swp_offset(x)		((x).val >> 11)
+ #define __swp_entry(typ, off)	((swp_entry_t) { (typ) | \
+-					(off << PTE_FILE_SHIFT) })
++					(off << 11) })
+ #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
+ #define __swp_entry_to_pte(x)	(__pte((x).val))
  
- /* Some day I will implement true fine grained access bits for
-  * user pages because the SRMMU gives us the capabilities to
+--- a/arch/m68k/include/asm/motorola_pgtable.h
++++ b/arch/m68k/include/asm/motorola_pgtable.h
+@@ -28,7 +28,6 @@
+ #define _PAGE_CHG_MASK  (PAGE_MASK | _PAGE_ACCESSED | _PAGE_DIRTY | _PAGE_NOCACHE)
+ 
+ #define _PAGE_PROTNONE	0x004
+-#define _PAGE_FILE	0x008	/* pagecache or swap? */
+ 
+ #ifndef __ASSEMBLY__
+ 
+@@ -168,7 +167,6 @@ static inline void pgd_set(pgd_t *pgdp,
+ static inline int pte_write(pte_t pte)		{ return !(pte_val(pte) & _PAGE_RONLY); }
+ static inline int pte_dirty(pte_t pte)		{ return pte_val(pte) & _PAGE_DIRTY; }
+ static inline int pte_young(pte_t pte)		{ return pte_val(pte) & _PAGE_ACCESSED; }
+-static inline int pte_file(pte_t pte)		{ return pte_val(pte) & _PAGE_FILE; }
+ static inline int pte_special(pte_t pte)	{ return 0; }
+ 
+ static inline pte_t pte_wrprotect(pte_t pte)	{ pte_val(pte) |= _PAGE_RONLY; return pte; }
+@@ -266,19 +264,6 @@ static inline void cache_page(void *vadd
+ 	}
+ }
+ 
+-#define PTE_FILE_MAX_BITS	28
+-
+-static inline unsigned long pte_to_pgoff(pte_t pte)
+-{
+-	return pte.pte >> 4;
+-}
+-
+-static inline pte_t pgoff_to_pte(unsigned off)
+-{
+-	pte_t pte = { (off << 4) + _PAGE_FILE };
+-	return pte;
+-}
+-
+ /* Encode and de-code a swap entry (must be !pte_none(e) && !pte_present(e)) */
+ #define __swp_type(x)		(((x).val >> 4) & 0xff)
+ #define __swp_offset(x)		((x).val >> 12)
+--- a/arch/m68k/include/asm/pgtable_no.h
++++ b/arch/m68k/include/asm/pgtable_no.h
+@@ -37,8 +37,6 @@ extern void paging_init(void);
+ #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
+ #define __swp_entry_to_pte(x)	((pte_t) { (x).val })
+ 
+-static inline int pte_file(pte_t pte) { return 0; }
+-
+ /*
+  * ZERO_PAGE is a global shared page that is always zero: used
+  * for zero-mapped memory areas etc..
+--- a/arch/m68k/include/asm/sun3_pgtable.h
++++ b/arch/m68k/include/asm/sun3_pgtable.h
+@@ -38,8 +38,6 @@
+ #define _PAGE_PRESENT	(SUN3_PAGE_VALID)
+ #define _PAGE_ACCESSED	(SUN3_PAGE_ACCESSED)
+ 
+-#define PTE_FILE_MAX_BITS 28
+-
+ /* Compound page protection values. */
+ //todo: work out which ones *should* have SUN3_PAGE_NOCACHE and fix...
+ // is it just PAGE_KERNEL and PAGE_SHARED?
+@@ -168,7 +166,6 @@ static inline void pgd_clear (pgd_t *pgd
+ static inline int pte_write(pte_t pte)		{ return pte_val(pte) & SUN3_PAGE_WRITEABLE; }
+ static inline int pte_dirty(pte_t pte)		{ return pte_val(pte) & SUN3_PAGE_MODIFIED; }
+ static inline int pte_young(pte_t pte)		{ return pte_val(pte) & SUN3_PAGE_ACCESSED; }
+-static inline int pte_file(pte_t pte)		{ return pte_val(pte) & SUN3_PAGE_ACCESSED; }
+ static inline int pte_special(pte_t pte)	{ return 0; }
+ 
+ static inline pte_t pte_wrprotect(pte_t pte)	{ pte_val(pte) &= ~SUN3_PAGE_WRITEABLE; return pte; }
+@@ -202,18 +199,6 @@ static inline pmd_t *pmd_offset (pgd_t *
+ 	return (pmd_t *) pgd;
+ }
+ 
+-static inline unsigned long pte_to_pgoff(pte_t pte)
+-{
+-	return pte.pte & SUN3_PAGE_PGNUM_MASK;
+-}
+-
+-static inline pte_t pgoff_to_pte(unsigned off)
+-{
+-	pte_t pte = { off + SUN3_PAGE_ACCESSED };
+-	return pte;
+-}
+-
+-
+ /* Find an entry in the third-level pagetable. */
+ #define pte_index(address) ((address >> PAGE_SHIFT) & (PTRS_PER_PTE-1))
+ #define pte_offset_kernel(pmd, address) ((pte_t *) __pmd_page(*pmd) + pte_index(address))
 
