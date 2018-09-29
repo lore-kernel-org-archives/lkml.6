@@ -6,47 +6,49 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 489B4C64EAD
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EF8C64EAE
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1671C2087A
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1671C2087A
+	by mail.kernel.org (Postfix) with ESMTP id 203A02087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 203A02087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728850AbeI3ESg (ORCPT
+        id S1728986AbeI3EUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:18:36 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51898 "EHLO
+        Sun, 30 Sep 2018 00:20:45 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52106 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728535AbeI3ESb (ORCPT
+        by vger.kernel.org with ESMTP id S1728818AbeI3ESg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 00:18:31 -0400
+        Sun, 30 Sep 2018 00:18:36 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N68-0000H3-QN; Sat, 29 Sep 2018 22:48:24 +0100
+        id 1g6N6G-0000Gy-Jn; Sat, 29 Sep 2018 22:48:32 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5x-0006v8-UT; Sat, 29 Sep 2018 22:48:13 +0100
+        id 1g6N5w-0006rL-4h; Sat, 29 Sep 2018 22:48:12 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David Howells" <dhowells@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Koichi Yasutake" <yasutake.koichi@jp.panasonic.com>,
-        "Hugh Dickins" <hughd@google.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+CC:     akpm@linux-foundation.org,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jim Mattson" <jmattson@google.com>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.270814758@decadent.org.uk>
+Message-ID: <lsq.1538257387.550512017@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 078/131] mn10300: drop _PAGE_FILE and pte_file()-related
- helpers
+Subject: [PATCH 3.16 031/131] x86/cpu: Make alternative_msr_write work for
+ 32-bit code
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,66 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+From: Jim Mattson <jmattson@google.com>
 
-commit 6bf63a8ccb1dccd6ab81bc8bc46863493629cdb8 upstream.
+commit 5f2b745f5e1304f438f9b2cd03ebc8120b6e0d3b upstream.
 
-We've replaced remap_file_pages(2) implementation with emulation.  Nobody
-creates non-linear mapping anymore.
+Cast val and (val >> 32) to (u32), so that they fit in a
+general-purpose register in both 32-bit and 64-bit code.
 
-This patch also increases the number of bits availble for swap offset.
+[ tglx: Made it u32 instead of uintptr_t ]
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Koichi Yasutake <yasutake.koichi@jp.panasonic.com>
-Cc: Hugh Dickins <hughd@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: c65732e4f721 ("x86/cpu: Restore CPUID_8000_0008_EBX reload")
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/mn10300/include/asm/pgtable.h | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+ arch/x86/include/asm/nospec-branch.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/mn10300/include/asm/pgtable.h
-+++ b/arch/mn10300/include/asm/pgtable.h
-@@ -134,7 +134,6 @@ extern pte_t kernel_vmalloc_ptes[(VMALLO
- #define _PAGE_NX		0			/* no-execute bit */
- 
- /* If _PAGE_VALID is clear, we use these: */
--#define _PAGE_FILE		xPTEL2_C	/* set:pagecache unset:swap */
- #define _PAGE_PROTNONE		0x000		/* If not present */
- 
- #define __PAGE_PROT_UWAUX	0x010
-@@ -241,11 +240,6 @@ static inline int pte_young(pte_t pte)	{
- static inline int pte_write(pte_t pte)	{ return pte_val(pte) & __PAGE_PROT_WRITE; }
- static inline int pte_special(pte_t pte){ return 0; }
- 
--/*
-- * The following only works if pte_present() is not true.
-- */
--static inline int pte_file(pte_t pte)	{ return pte_val(pte) & _PAGE_FILE; }
--
- static inline pte_t pte_rdprotect(pte_t pte)
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -219,8 +219,8 @@ void alternative_msr_write(unsigned int
  {
- 	pte_val(pte) &= ~(__PAGE_PROT_USER|__PAGE_PROT_UWAUX); return pte;
-@@ -338,16 +332,11 @@ static inline int pte_exec_kernel(pte_t
- 	return 1;
+ 	asm volatile(ALTERNATIVE("", "wrmsr", %c[feature])
+ 		: : "c" (msr),
+-		    "a" (val),
+-		    "d" (val >> 32),
++		    "a" ((u32)val),
++		    "d" ((u32)(val >> 32)),
+ 		    [feature] "i" (feature)
+ 		: "memory");
  }
- 
--#define PTE_FILE_MAX_BITS	30
--
--#define pte_to_pgoff(pte)	(pte_val(pte) >> 2)
--#define pgoff_to_pte(off)	__pte((off) << 2 | _PAGE_FILE)
--
- /* Encode and de-code a swap entry */
--#define __swp_type(x)			(((x).val >> 2) & 0x3f)
--#define __swp_offset(x)			((x).val >> 8)
-+#define __swp_type(x)			(((x).val >> 1) & 0x3f)
-+#define __swp_offset(x)			((x).val >> 7)
- #define __swp_entry(type, offset) \
--	((swp_entry_t) { ((type) << 2) | ((offset) << 8) })
-+	((swp_entry_t) { ((type) << 1) | ((offset) << 7) })
- #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val(pte) })
- #define __swp_entry_to_pte(x)		__pte((x).val)
- 
 
