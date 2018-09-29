@@ -2,109 +2,130 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B76BC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8962C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 09:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21634206B7
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:59:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D91C206B7
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 09:01:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgQjIV1F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21634206B7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFKFXm9V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D91C206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbeI2P0l (ORCPT
+        id S1727826AbeI2P2g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 11:26:41 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43590 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbeI2P0l (ORCPT
+        Sat, 29 Sep 2018 11:28:36 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44362 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbeI2P2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 11:26:41 -0400
-Received: by mail-pg1-f195.google.com with SMTP id q19-v6so6093227pgn.10
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 01:59:03 -0700 (PDT)
+        Sat, 29 Sep 2018 11:28:36 -0400
+Received: by mail-pg1-f194.google.com with SMTP id g2-v6so6090133pgu.11;
+        Sat, 29 Sep 2018 02:00:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=53IsQQyZE5DfsCNDxP+Gosi4AGUy+9JSWFnR+jYkryA=;
-        b=FgQjIV1FEuEck3drWkgUKakoOAnTz31xSupc8feJ8SsoRjGFqkJp4IP63qpNd0vwAq
-         yZ+0RI40FjU/gI21kfqkHBkic+ghA4AuaDRYQoijT8vhqxVKjlXic8F3xFezsnfsr2lp
-         LJ/ZMqO8dHYF0WOg3NFQBS1h+MjoGOb49DEWhIySbYFKY/+Y0FKsK5+0tuSt5zTIgTwC
-         sdBcyCOLOqmjOGvXVJEOu+6n4CqwgnHNnVblOOF5sGguA36hhMLMF33DkwaogNoWMTIc
-         x4gjGFOdhukW4mjjJGzburPRo4jxvL9B6OLcjlws05cOfTBtUkq+wjDUGk2fRdUIO8bD
-         INLw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=3xj7uk7bYWSxDBCior/qmqdza4Mc1TrEa5Mr5CgV9DQ=;
+        b=RFKFXm9VI1+hS4OjJKwPOasFkb55OpXif7lvqk5VUVnnX5iYiU4OVcuOd3zKLKgz3x
+         DTYG87++1TYgebsyJ0vI1npNI2ydf3yOYixBgtJcB85qlg1fA7c2pGcPfZd6Z/rCGuYg
+         9bm8+gTZNzlA404vxAiBPCSDhZ/Ie55GmAPT24jvXacBLKDC88p8GXFZpxpibYzpgcBD
+         fWPZ2UNfMreYYuehLQHNqWFR794FypzLFGy/JGM39JIIThI8TjxgFv7I66L44N46cv35
+         PFNMIZ6rF57w1QeKvMP4jRMmsp0W4IkDxG1agPApt+5pEftWBe539tHBBR+A3M/HeC7c
+         beZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=53IsQQyZE5DfsCNDxP+Gosi4AGUy+9JSWFnR+jYkryA=;
-        b=mK6i+GuElGIkChsev4fbP20EGbp06CbF9ibs99TajaA4FF1AJZv+v5mWn+QONmGk1q
-         1Ya+bsiEIYCYm9B/miCAZ6y5AwAHwdP6FU+xUpphTFlT9+3Zf/JZ9NWXmChJPkaIk2JI
-         eGrFCo1KxM/EZW1tOD8bv8C/xgqoL227Odis1mU61TRu3F+/cr/Fl4V6hiK9uk16OQ/G
-         +fznoDpxuxdyHg8K3M8uAixFwGRiSKSheflsuIqzey4pcUuWHeCpdmvauwW9f3fVgjTG
-         Y/ygrcnldvOr6lWCMv7x0VnErIUtX4vaD+7gLsIEvwziqKXBokIZEuR6ZD2Is+Bg66/K
-         6HZw==
-X-Gm-Message-State: ABuFfoht58r3may/d+RJhgzXL7vlqvjuWgUBd+vGLInDh9pgJIW7EC2O
-        AIMoohK6j60gYUFSwUcShexQGXr1y6qJLg==
-X-Google-Smtp-Source: ACcGV60Uhq/q330alvv91bKK8IkZ88Fe47fHHqmiNqqNlhwOOybU4z/0FiOSaNzYdKjb0FBGVfUbEg==
-X-Received: by 2002:a63:a902:: with SMTP id u2-v6mr2081239pge.207.1538211543016;
-        Sat, 29 Sep 2018 01:59:03 -0700 (PDT)
-Received: from Sherlock.localdomain ([14.139.38.159])
-        by smtp.gmail.com with ESMTPSA id y128-v6sm10550206pfb.56.2018.09.29.01.58.59
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=3xj7uk7bYWSxDBCior/qmqdza4Mc1TrEa5Mr5CgV9DQ=;
+        b=BAq0HcBWTmw1e19foHqhu36Ux6ICNmsBFoR9uWhP/uYlkwBJZnmS1jCZgQpWqq9a0K
+         yuJx/OAgk+xtH2i4YAIKV0UsX500RPoqGn6odV7s7FrOOm0kKNPFbB36gSt1NvLtwzzR
+         K2VZkt14eUa7naH5lL83TGB1T5Xv0vDYtmjW6YtNdnozvOpNNlwIQCRKlcax9OYFybUD
+         Cq7Z6842xXKTQzxUmcZOIR1S5SKN7D8CuvBKFzjpWh1a1ShTpGbUmPm9lc/RqSyS5Yug
+         q4iKhgotd+mJZBm98H6d9VdIpIA8kUyz+pwKmCULPGnCVqS8skdn5P+JFrL2dpO5PItb
+         HS+g==
+X-Gm-Message-State: ABuFfojcuK/n6R7HXDktao7ktIQfSPFJE9fFjQzzxS/ZH+fdn096+gjH
+        nJxNIgyewJZSMm0jrxy/GwF3MXya
+X-Google-Smtp-Source: ACcGV60xEv/0cVNHBajUBQdA46Bp/dMXvSi6vF5z/OIMfmWA1cW0uRPvCh6fhZL4l05+XIhLKeE6qw==
+X-Received: by 2002:a65:65c6:: with SMTP id y6-v6mr2055399pgv.233.1538211656613;
+        Sat, 29 Sep 2018 02:00:56 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.37? ([2402:f000:1:1501:200:5efe:a66f:4725])
+        by smtp.gmail.com with ESMTPSA id n13-v6sm9017545pgr.73.2018.09.29.02.00.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Sep 2018 01:59:01 -0700 (PDT)
-From:   Shubham Singh <dhoni.singh094@gmail.com>
-To:     forest@alittletooquite.net
-Cc:     gregkh@linuxfoundation.org, devel@driver.osuosl.org,
-        linux-kernel@vger.kernel.org, shubhsherl <dhoni.singh094@gmail.com>
-Subject: [PATCH] Staging: vt6656: baseband.c: fixed unnecessary paranthesis
-Date:   Sat, 29 Sep 2018 14:28:54 +0530
-Message-Id: <20180929085854.15880-1-dhoni.singh094@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        Sat, 29 Sep 2018 02:00:55 -0700 (PDT)
+Subject: Re: [PATCH V2] hid: hid-core: Fix a sleep-in-atomic-context bug in
+ __hid_request()
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180913033432.16336-1-baijiaju1990@gmail.com>
+ <nycvar.YFH.7.76.1809241124480.15880@cbobk.fhfr.pm>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <4c0096c6-3745-963c-5086-5f579792599b@gmail.com>
+Date:   Sat, 29 Sep 2018 17:00:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <nycvar.YFH.7.76.1809241124480.15880@cbobk.fhfr.pm>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: shubhsherl <dhoni.singh094@gmail.com>
 
-Fixed a coding line issue.
 
-Signed-off-by: shubhsherl <dhoni.singh094@gmail.com>
----
- drivers/staging/vt6656/baseband.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On 2018/9/24 17:26, Jiri Kosina wrote:
+> On Thu, 13 Sep 2018, Jia-Ju Bai wrote:
+>
+>> hid_alloc_report_buf() has to be called with GFP_ATOMIC in
+>> __hid_request(), because there are the following callchains
+>> leading to __hid_request() being an atomic context:
+>>
+>> picolcd_send_and_wait (acquire a spinlock)
+>>    hid_hw_request
+>>      __hid_request
+>>        hid_alloc_report_buf(GFP_KERNEL)
+>>
+>> picolcd_reset (acquire a spinlock)
+>>    hid_hw_request
+>>      __hid_request
+>>        hid_alloc_report_buf(GFP_KERNEL)
+>>
+>> lg4ff_play (acquire a spinlock)
+>>    hid_hw_request
+>>      __hid_request
+>>        hid_alloc_report_buf(GFP_KERNEL)
+>>
+>> lg4ff_set_autocenter_ffex (acquire a spinlock)
+>>    hid_hw_request
+>>      __hid_request
+>>        hid_alloc_report_buf(GFP_KERNEL)
+> Hm, so it's always drivers calling out into core in atomic context. So
+> either we take this, and put our bets on being able to allocate the buffer
+> without sleeping,
 
-diff --git a/drivers/staging/vt6656/baseband.c b/drivers/staging/vt6656/baseband.c
-index b29ba237fa29..540cc9eafd07 100644
---- a/drivers/staging/vt6656/baseband.c
-+++ b/drivers/staging/vt6656/baseband.c
-@@ -382,8 +382,8 @@ int vnt_vt3184_init(struct vnt_private *priv)
- 
- 	dev_dbg(&priv->usb->dev, "RF Type %d\n", priv->rf_type);
- 
--	if ((priv->rf_type == RF_AL2230) ||
--	    (priv->rf_type == RF_AL2230S)) {
-+	if (priv->rf_type == RF_AL2230 ||
-+	    priv->rf_type == RF_AL2230S) {
- 		priv->bb_rx_conf = vnt_vt3184_al2230[10];
- 		length = sizeof(vnt_vt3184_al2230);
- 		addr = vnt_vt3184_al2230;
-@@ -454,8 +454,8 @@ int vnt_vt3184_init(struct vnt_private *priv)
- 	vnt_control_out(priv, MESSAGE_TYPE_WRITE, 0,
- 			MESSAGE_REQUEST_BBAGC, length_agc, array);
- 
--	if ((priv->rf_type == RF_VT3226) ||
--	    (priv->rf_type == RF_VT3342A0)) {
-+	if (priv->rf_type == RF_VT3226 ||
-+	    priv->rf_type == RF_VT3342A0) {
- 		vnt_control_out_u8(priv, MESSAGE_REQUEST_MACREG,
- 				   MAC_REG_ITRTMSET, 0x23);
- 		vnt_mac_reg_bits_on(priv, MAC_REG_PAPEDELAY, 0x01);
--- 
-2.18.0
+In my opinion, I prefer this way.
+
+
+Best wishes,
+Jia-Ju Bai
+
+> or actually fix the few drivers (it's just lg4ff and
+> picolcd at the end of the day) not to do that, and explicitly anotate
+> __hid_request() with might_sleep().
+>
+> Hmm?
+>
+> Thanks,
+>
 
