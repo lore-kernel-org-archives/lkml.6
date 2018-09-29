@@ -2,42 +2,44 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF8AC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 14:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D82C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 14:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 985F02073F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 14:58:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985F02073F
+	by mail.kernel.org (Postfix) with ESMTP id D72662073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 14:58:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D72662073F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbeI2V1U (ORCPT
+        id S1728387AbeI2V10 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 17:27:20 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53272 "EHLO huawei.com"
+        Sat, 29 Sep 2018 17:27:26 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57435 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728197AbeI2V1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 17:27:20 -0400
+        id S1728368AbeI2V1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 17:27:25 -0400
 Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D4E2AA8A78FB6;
-        Sat, 29 Sep 2018 22:58:32 +0800 (CST)
+        by Forcepoint Email with ESMTP id C5B969694B2CC;
+        Sat, 29 Sep 2018 22:58:37 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.47.85.66) by
  DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.399.0; Sat, 29 Sep 2018 22:58:26 +0800
+ 14.3.399.0; Sat, 29 Sep 2018 22:58:30 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>
-Subject: [PATCH V2 net-next 00/10] Cleanups, minor additions & fixes for HNS3 driver
-Date:   Sat, 29 Sep 2018 15:56:12 +0100
-Message-ID: <20180929145622.5448-1-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>, Fuyun Liang <liangfuyun1@huawei.com>
+Subject: [PATCH V2 net-next 01/10] net: hns3: Add support for sctp checksum offload
+Date:   Sat, 29 Sep 2018 15:56:13 +0100
+Message-ID: <20180929145622.5448-2-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20180929145622.5448-1-salil.mehta@huawei.com>
+References: <20180929145622.5448-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.47.85.66]
@@ -47,51 +49,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch-set contains cleans-ups, minor changes and fixes to the HNS3 driver.
+From: Peng Li <lipeng321@huawei.com>
 
-Change Summary:
-v1->v2
-  * Fixed Kbuild error due to missed patch in the current submission.
-    For now, replaced HNAE3_REVISION_ID_21 macro with 0x21
-  * Fixed issues identified by Eric Dumazet and spelling mistakes by David Miller
-    Link: https://lkml.org/lkml/2018/9/28/842
+This patch adds support for sctp checksum offload.
 
-Note:
-Hi David,
-From v1->v2 changes only exists in below patch
-     "net: hns3: Add serdes parallel inner loopback support"
-Thanks.
+Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Fuyun Liang (4):
-  net: hns3: Set extra mac address of pause param for HW
-  net: hns3: Rename loop mode
-  net: hns3: Rename mac loopback to app loopback
-  net: hns3: Add serdes parallel inner loopback support
-
-Huazhong Tan (3):
-  net: hns3: Change return type of hclge_tm_schd_info_update()
-  net: hns3: Modify hns3_get_max_available_channels
-  net: hns3: Fix loss of coal configuration while doing reset
-
-Peng Li (1):
-  net: hns3: Add support for sctp checksum offload
-
-Yunsheng Lin (2):
-  net: hns3: Fix for packet buffer setting bug
-  net: hns3: Fix for netdev not up problem when setting mtu
-
- drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  16 ++--
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 101 ++++++++++-----------
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   2 +
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  24 +++--
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |   1 +
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c |   8 +-
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |  94 ++++++++++++-------
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  |  10 +-
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |   6 +-
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |   4 +-
- 10 files changed, 157 insertions(+), 109 deletions(-)
-
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 5a4773a9b4a5..3fc38228f459 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -1740,7 +1740,7 @@ static void hns3_set_default_feature(struct net_device *netdev)
+ 		NETIF_F_RXCSUM | NETIF_F_SG | NETIF_F_GSO |
+ 		NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_GSO_GRE |
+ 		NETIF_F_GSO_GRE_CSUM | NETIF_F_GSO_UDP_TUNNEL |
+-		NETIF_F_GSO_UDP_TUNNEL_CSUM;
++		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC;
+ 
+ 	netdev->hw_enc_features |= NETIF_F_TSO_MANGLEID;
+ 
+@@ -1752,21 +1752,21 @@ static void hns3_set_default_feature(struct net_device *netdev)
+ 		NETIF_F_RXCSUM | NETIF_F_SG | NETIF_F_GSO |
+ 		NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_GSO_GRE |
+ 		NETIF_F_GSO_GRE_CSUM | NETIF_F_GSO_UDP_TUNNEL |
+-		NETIF_F_GSO_UDP_TUNNEL_CSUM;
++		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC;
+ 
+ 	netdev->vlan_features |=
+ 		NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM | NETIF_F_RXCSUM |
+ 		NETIF_F_SG | NETIF_F_GSO | NETIF_F_GRO |
+ 		NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_GSO_GRE |
+ 		NETIF_F_GSO_GRE_CSUM | NETIF_F_GSO_UDP_TUNNEL |
+-		NETIF_F_GSO_UDP_TUNNEL_CSUM;
++		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC;
+ 
+ 	netdev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
+ 		NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX |
+ 		NETIF_F_RXCSUM | NETIF_F_SG | NETIF_F_GSO |
+ 		NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_GSO_GRE |
+ 		NETIF_F_GSO_GRE_CSUM | NETIF_F_GSO_UDP_TUNNEL |
+-		NETIF_F_GSO_UDP_TUNNEL_CSUM;
++		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC;
+ 
+ 	if (pdev->revision != 0x20)
+ 		netdev->hw_features |= NETIF_F_HW_VLAN_CTAG_FILTER;
 -- 
 2.11.0
 
