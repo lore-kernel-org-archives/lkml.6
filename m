@@ -2,112 +2,97 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8CDC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A61C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF12B20879
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:29:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF12B20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EAC22064E
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 08:30:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EAC22064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeI2O5P (ORCPT
+        id S1727822AbeI2O61 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 10:57:15 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59342 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727540AbeI2O5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 10:57:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F38AD18A;
-        Sat, 29 Sep 2018 01:29:41 -0700 (PDT)
-Received: from [10.37.8.69] (unknown [10.37.8.69])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A2203F5B7;
-        Sat, 29 Sep 2018 01:29:39 -0700 (PDT)
-Subject: Re: [PATCH v6 06/18] kvm: arm/arm64: Allow arch specific
- configurations for VM
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        cdall@kernel.org, eric.auger@redhat.com, will.deacon@arm.com,
-        dave.martin@arm.com, peter.maydell@linaro.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, julien.grall@arm.com,
-        linux-kernel@vger.kernel.org
-References: <20180926163258.20218-1-suzuki.poulose@arm.com>
- <20180926163258.20218-7-suzuki.poulose@arm.com>
- <fbca190b-473b-5dee-67be-c724392fd297@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <95c89f16-df03-a57b-e373-42cf65769912@arm.com>
-Date:   Sat, 29 Sep 2018 09:30:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sat, 29 Sep 2018 10:58:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52108 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727540AbeI2O61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 10:58:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7ADFFAF99;
+        Sat, 29 Sep 2018 08:30:52 +0000 (UTC)
+Date:   Sat, 29 Sep 2018 10:30:52 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     lijiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, thomas.lendacky@amd.com,
+        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
+        brijesh.singh@amd.com, dyoung@redhat.com, bhe@redhat.com,
+        jroedel@suse.de
+Subject: Re: [PATCH v7 RESEND 4/4] kdump/vmcore: support encrypted old memory
+ with SME enabled
+Message-ID: <20180929083052.GA13786@zn.tnic>
+References: <20180927071954.29615-1-lijiang@redhat.com>
+ <20180927071954.29615-5-lijiang@redhat.com>
+ <20180928083852.GA21895@zn.tnic>
+ <1c27b9a9-ae93-011a-b003-a50ecc22ccc5@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <fbca190b-473b-5dee-67be-c724392fd297@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1c27b9a9-ae93-011a-b003-a50ecc22ccc5@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On Sat, Sep 29, 2018 at 02:24:52PM +0800, lijiang wrote:
+> At first, i added an input parameter for read_from_oldmem() because of encryption(SME). But
+> for avoiding to also add the same parameter for copy_oldmem_page(), so i added a new function
+> copy_oldmem_page_encrypted(). Maybe you had noticed that these functions were very similar.
 
-On 09/28/2018 06:27 PM, Marc Zyngier wrote:
-> Hi Suzuki,
-> 
-> On 26/09/18 17:32, Suzuki K Poulose wrote:
->> Allow the arch backends to perform VM specific initialisation.
->> This will be later used to handle IPA size configuration and per-VM
->> VTCR configuration on arm64.
->>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <cdall@kernel.org>
->> Reviewed-by: Eric Auger <eric.auger@redhat.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm/include/asm/kvm_host.h   | 7 +++++++
->>   arch/arm64/include/asm/kvm_host.h | 2 ++
->>   arch/arm64/kvm/reset.c            | 7 +++++++
->>   virt/kvm/arm/arm.c                | 5 +++--
->>   4 files changed, 19 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/include/asm/kvm_host.h 
->> b/arch/arm/include/asm/kvm_host.h
->> index 3ad482d2f1eb..72d46418e1ef 100644
->> --- a/arch/arm/include/asm/kvm_host.h
->> +++ b/arch/arm/include/asm/kvm_host.h
->> @@ -354,4 +354,11 @@ static inline void kvm_vcpu_put_sysregs(struct 
->> kvm_vcpu *vcpu) {}
->>   struct kvm *kvm_arch_alloc_vm(void);
->>   void kvm_arch_free_vm(struct kvm *kvm);
->> +static inline int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
-> 
-> This is a bit of a nit, but VM is a bit of an overloaded term in this 
-> context. Given what we do in the following patch (moving the global 
-> stage-2 init to be on a per VM -- virtual machine), I'd like to rename 
-> this to something less ambiguous.
-> 
-> How about kvm_arm_config_stage2? Or something along those lines?
+If you have two very similar functions, you add a *static* workhorse function:
 
-I had something similar in the earlier versions, where we supported
-the "IPA" size for both arm and arm64. But since we restricted this
-feature to arm64, I changed the name to make it more generic to
-let the archs parse the "vm_type" parameter which could potentially have
-more bits defined, not just the IPA size. Hence the change. On arm64, we
-only use it for stage2 configuration and on arm32 we make sure the type
-is empty.
+static ssize_t __copy_oldmem_page(unsigned long pfn, char *buf, size_t csize, unsigned long offset,
+				  int userbuf, bool encrypted)
 
-> 
-> No need to respin the series on this account, we can address it in a 
-> separate patch. But I think it would help understanding what is done where.
-> 
+and you define two wrappers:
 
-As such I am fine with suggestion.
+copy_oldmem_page()
+copy_oldmem_page_encrypted()
 
-Cheers
-Suzuki
+which both call __copy_oldmem_page() with the appropriate parameters.
+
+But you do *not* do a separate compilation unit just because. None of
+the reasons you've mentioned warrant having a separate compilation
+unit while you already have *the* perfect place to put everything -
+arch/x86/kernel/crash_dump_64.c
+
+> So sorry, here "oldmem encrypted" means the "old memory is encrypted".
+
+I know what it means - I'm trying to explain to you to write it out
+in plain english and not use some strange constructs like "oldmem
+encrypted".
+
+A reader would wonder: why is this thing semi-abbreviated and in
+quotation marks? Does that mean anything special?
+
+Our comments should not be write-only. So after you've written it, try
+to read it as someone who sees the code for the first time and think
+hard whether she/he will understand it.
+
+Do you catch my drift now?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
