@@ -6,48 +6,52 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3257DC64E93
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F40C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 014FD20880
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 014FD20880
+	by mail.kernel.org (Postfix) with ESMTP id 4462220880
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:48:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4462220880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729018AbeI3ESj (ORCPT
+        id S1729043AbeI3ESk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:18:39 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52071 "EHLO
+        Sun, 30 Sep 2018 00:18:40 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52173 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728779AbeI3ESf (ORCPT
+        by vger.kernel.org with ESMTP id S1728951AbeI3ESj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 00:18:35 -0400
+        Sun, 30 Sep 2018 00:18:39 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N6B-0000Gx-PV; Sat, 29 Sep 2018 22:48:28 +0100
+        id 1g6N6E-0000Gw-Nm; Sat, 29 Sep 2018 22:48:30 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5x-0006tq-Ar; Sat, 29 Sep 2018 22:48:13 +0100
+        id 1g6N5w-0006sn-Qy; Sat, 29 Sep 2018 22:48:12 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
-        "Matt Turner" <mattst88@gmail.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Richard Henderson" <rth@twiddle.net>
+CC:     akpm@linux-foundation.org, "Joerg Roedel" <joro@8bytes.org>,
+        "Borislav Petkov" <bp@suse.de>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Tom Lendacky" <thomas.lendacky@amd.com>,
+        "Mikhail Gavrilov" <mikhail.v.gavrilov@gmail.com>,
+        kvm@vger.kernel.org, "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
+        x86@kernel.org, "Matthew Wilcox" <willy@infradead.org>,
+        "Thomas Gleixner" <tglx@xxxxxxxxxxxxx>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.128820809@decadent.org.uk>
+Message-ID: <lsq.1538257387.173395561@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 062/131] alpha: drop _PAGE_FILE and pte_file()-related
- helpers
+Subject: [PATCH 3.16 049/131] KVM: x86: SVM: Call x86_spec_ctrl_set_guest/host()
+ with interrupts disabled
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -61,52 +65,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+From: Thomas Gleixner <tglx@xxxxxxxxxxxxx>
 
-commit b816157a5366550c5ee29a6431ba1abb88721266 upstream.
+commit 024d83cadc6b2af027e473720f3c3da97496c318 upstream.
 
-We've replaced remap_file_pages(2) implementation with emulation.  Nobody
-creates non-linear mapping anymore.
+Mikhail reported the following lockdep splat:
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+WARNING: possible irq lock inversion dependency detected
+CPU 0/KVM/10284 just changed the state of lock:
+  000000000d538a88 (&st->lock){+...}, at:
+  speculative_store_bypass_update+0x10b/0x170
+
+but this lock was taken by another, HARDIRQ-safe lock
+in the past:
+
+(&(&sighand->siglock)->rlock){-.-.}
+
+   and interrupts could create inverse lock ordering between them.
+
+Possible interrupt unsafe locking scenario:
+
+    CPU0                    CPU1
+    ----                    ----
+   lock(&st->lock);
+                           local_irq_disable();
+                           lock(&(&sighand->siglock)->rlock);
+                           lock(&st->lock);
+    <Interrupt>
+     lock(&(&sighand->siglock)->rlock);
+     *** DEADLOCK ***
+
+The code path which connects those locks is:
+
+   speculative_store_bypass_update()
+   ssb_prctl_set()
+   do_seccomp()
+   do_syscall_64()
+
+In svm_vcpu_run() speculative_store_bypass_update() is called with
+interupts enabled via x86_virt_spec_ctrl_set_guest/host().
+
+This is actually a false positive, because GIF=0 so interrupts are
+disabled even if IF=1; however, we can easily move the invocations of
+x86_virt_spec_ctrl_set_guest/host() into the interrupt disabled region to
+cure it, and it's a good idea to keep the GIF=0/IF=1 area as small
+and self-contained as possible.
+
+Fixes: 1f50ddb4f418 ("x86/speculation: Handle HT correctly on AMD")
+Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: kvm@vger.kernel.org
+Cc: x86@kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/alpha/include/asm/pgtable.h | 7 -------
- 1 file changed, 7 deletions(-)
+ arch/x86/kvm/svm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/alpha/include/asm/pgtable.h
-+++ b/arch/alpha/include/asm/pgtable.h
-@@ -73,7 +73,6 @@ struct vm_area_struct;
- /* .. and these are ours ... */
- #define _PAGE_DIRTY	0x20000
- #define _PAGE_ACCESSED	0x40000
--#define _PAGE_FILE	0x80000	/* set:pagecache, unset:swap */
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3983,8 +3983,6 @@ static void svm_vcpu_run(struct kvm_vcpu
  
- /*
-  * NOTE! The "accessed" bit isn't necessarily exact:  it can be kept exactly
-@@ -268,7 +267,6 @@ extern inline void pgd_clear(pgd_t * pgd
- extern inline int pte_write(pte_t pte)		{ return !(pte_val(pte) & _PAGE_FOW); }
- extern inline int pte_dirty(pte_t pte)		{ return pte_val(pte) & _PAGE_DIRTY; }
- extern inline int pte_young(pte_t pte)		{ return pte_val(pte) & _PAGE_ACCESSED; }
--extern inline int pte_file(pte_t pte)		{ return pte_val(pte) & _PAGE_FILE; }
- extern inline int pte_special(pte_t pte)	{ return 0; }
+ 	clgi();
  
- extern inline pte_t pte_wrprotect(pte_t pte)	{ pte_val(pte) |= _PAGE_FOW; return pte; }
-@@ -345,11 +343,6 @@ extern inline pte_t mk_swap_pte(unsigned
- #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
- #define __swp_entry_to_pte(x)	((pte_t) { (x).val })
- 
--#define pte_to_pgoff(pte)	(pte_val(pte) >> 32)
--#define pgoff_to_pte(off)	((pte_t) { ((off) << 32) | _PAGE_FILE })
+-	local_irq_enable();
 -
--#define PTE_FILE_MAX_BITS	32
+ 	/*
+ 	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
+ 	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
+@@ -3993,6 +3991,8 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	 */
+ 	x86_spec_ctrl_set_guest(svm->spec_ctrl, svm->virt_spec_ctrl);
+ 
++	local_irq_enable();
++
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+ 		"mov %c[rbx](%[svm]), %%" _ASM_BX " \n\t"
+@@ -4115,12 +4115,12 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
+ 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ 
+-	x86_spec_ctrl_restore_host(svm->spec_ctrl, svm->virt_spec_ctrl);
 -
- #ifndef CONFIG_DISCONTIGMEM
- #define kern_addr_valid(addr)	(1)
- #endif
+ 	reload_tss(vcpu);
+ 
+ 	local_irq_disable();
+ 
++	x86_spec_ctrl_restore_host(svm->spec_ctrl, svm->virt_spec_ctrl);
++
+ 	vcpu->arch.cr2 = svm->vmcb->save.cr2;
+ 	vcpu->arch.regs[VCPU_REGS_RAX] = svm->vmcb->save.rax;
+ 	vcpu->arch.regs[VCPU_REGS_RSP] = svm->vmcb->save.rsp;
 
