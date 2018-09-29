@@ -2,189 +2,212 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5E1C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 12:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D58B3C64E94
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9D3420879
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 12:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9378720880
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 13:11:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lTFzjX4n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9D3420879
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxX8PwFc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9378720880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbeI2TYl (ORCPT
+        id S1728278AbeI2TfT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 15:24:41 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34444 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbeI2TYk (ORCPT
+        Sat, 29 Sep 2018 15:35:19 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39578 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728251AbeI2TfS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 15:24:40 -0400
-Received: by mail-ed1-f68.google.com with SMTP id q19-v6so10417404edr.1;
-        Sat, 29 Sep 2018 05:56:16 -0700 (PDT)
+        Sat, 29 Sep 2018 15:35:18 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r9-v6so2513524pgv.6
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 06:06:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0Vet9+d8MECqz4x7wr86ALZx7dPHCbSRgY+YnYT74J4=;
-        b=lTFzjX4nu8qowc6x6wKHPzSYAuaWXTbPuRJl8nf5A3I6DqDM1dcoiVp4ifIWKfkwQs
-         mhf4sOwyZlXejNmS0wJ4VcfEFrJbRofhuE8vw7gheJE3/5ikCGVqfztDgLls9x/TKiaU
-         BKL4WGZkPHmJU/Y6DSFnKInmRMhQeisHUlAfl6gLshKXYjtF9QiUl5kGDXScIIrbzQK/
-         +DLDey7+akWzwSYd0OSSedjAOdLTV+r9nH6Ue/HSb4KJQmq/H4CHyaXP2lRbel5kpoYe
-         WgSE+aOMwS4Sv3mPMg4rOzZZxyPX0SI9+8Ye4xGrkww+Klubq8cGDZzvIdxaNa7F1PU2
-         5z9A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=V7aJM82zfDXbiOcRrgJDAzcz0Qx7Ks6G9pLA2RN6nvQ=;
+        b=gxX8PwFcMAxqyFVcN7lJ/A0J6U4xNaGhMLk/c20gNLXdygIJNuYHYL+0bYT/9RbvaF
+         0eMP6Zw/4jR+D2tJ9FAga4rnPVshTPnARvrGpIxiiHwEQ3+4VNmkNpK5PE5JoV47pSTd
+         GUEJdJOvw7r4pOmo4MuVOsvM0U9pvAoytScu2URJ6JSThb3VAkSUCWt7g9gECL4m0R6k
+         +4eWQwNfWwkg9Irotje3aKfyCic2Q4PbgHefFl5rvrYk4uCchqtLmCWwCUZGihaH6K5v
+         HfSPxa2ikKj/UOnauYttp0fR3I2aRFPkwyHH6aFdWiizDWFt0lE+XHzx9DnpiHD+I+Mn
+         YbiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=0Vet9+d8MECqz4x7wr86ALZx7dPHCbSRgY+YnYT74J4=;
-        b=dszfXgbRuL76polIlRAZmtFnWuzNbqCFZMqBQ5u/Yfd97zRPQwIE2Q/+i++zmj2t9e
-         QpnUHkbKjrAA9MuFUcgR0mqKJzM3vqIqop1blXo6uaz+SofbNHf6uAWNt9H2SmUM3pqK
-         E4bvX5y/wVxMt6Gq2ItBRwWX18NUqTZYsRDj3H2sAtLLsJm+hoNGoxFT9gSh4dii8zXn
-         +iiiNse0Uyn9/Ctg5asl+M9MrfM0Zq4uK6cWJDJTQb3pk62YrxDqdojFI641yXh1adpJ
-         Nnc+J5dlko0Eu1jJ2N6ghL11X1zpxZTv5ZxzarJtgbJhTny9xlVWS5n7UNAe84lP8w31
-         D1DQ==
-X-Gm-Message-State: ABuFfoi/kTSOs77n+5SDlLGzhzaA1zTevObI6iQ3Ks3SB/NoLXyKKjxy
-        OuYCRIJ+Qztc/LrB0VYqg3k=
-X-Google-Smtp-Source: ACcGV628047HAuDboDTN1gJaW0Vcs+pxNCW/n7XqS6qvPEhknBhm+ne0unqYPHHjZcqt2lwj35BJ2A==
-X-Received: by 2002:a17:906:1f87:: with SMTP id t7-v6mr1043044ejr.153.1538225776136;
-        Sat, 29 Sep 2018 05:56:16 -0700 (PDT)
-Received: from ziggy.stardust (p54A4E637.dip0.t-ipconnect.de. [84.164.230.55])
-        by smtp.gmail.com with ESMTPSA id n25-v6sm2649074edq.27.2018.09.29.05.56.14
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=V7aJM82zfDXbiOcRrgJDAzcz0Qx7Ks6G9pLA2RN6nvQ=;
+        b=Y/y6O3bCJrzW88UfaKyRiSeYvNwtn4up/6bwK5BFpHq22L3MofLeS6Qes9ev0AccNt
+         UtdO9e+5Ez4luNKvB+zT1KeeZp9h/og32/JwpdKYLbwO7r7JOshf5CQfaC5rDND3OwGP
+         21p5ucjG3llhR7mWhcWMd9Ivdjt8qbUGLYtjme6lyeelAwpsXAYTW219/4m0Xgt7Kohr
+         fswXjC5RoL3vD7BTxj9p/S4Yp4Gn4TcPyVROdjIzBI7I8u+tsWzcaGUvfNXnacQ1CggK
+         5us3iFR7y5MmlD4lKwqu7uNlfzShUrJ8lMX3PqYKefKBNkcQrxzi8vc+aED1Km5Ty8vU
+         iNFw==
+X-Gm-Message-State: ABuFfohfkuk8iHBMOmUKSiK9HG8KDwyBK/yf6NleuPzQo+/rvQh6/5nZ
+        LcP7K8V3wLtOu55D47BgkBM=
+X-Google-Smtp-Source: ACcGV62YU2w79037fKcfAKd1eYixeAwwwSl97N5XwzGHe+i87XbI+Tss5mtL3QJNUffik6EmbD1KZQ==
+X-Received: by 2002:a63:525c:: with SMTP id s28-v6mr2899730pgl.78.1538226414064;
+        Sat, 29 Sep 2018 06:06:54 -0700 (PDT)
+Received: from dest.didichuxing.com ([203.100.54.194])
+        by smtp.gmail.com with ESMTPSA id p4-v6sm13828267pgs.75.2018.09.29.06.06.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Sep 2018 05:56:15 -0700 (PDT)
-Subject: Re: [PATCH v1 2/2] mmc: mediatek: add bus_clk control
-To:     Chaotian Jing <chaotian.jing@mediatek.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sean Wang <sean.wang@mediatek.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        srv_heupstream@mediatek.com
-References: <1538188195-3608-1-git-send-email-chaotian.jing@mediatek.com>
- <1538188195-3608-2-git-send-email-chaotian.jing@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <b9a6e56c-0762-e8d7-08df-7633a8e28ec0@gmail.com>
-Date:   Sat, 29 Sep 2018 14:56:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <1538188195-3608-2-git-send-email-chaotian.jing@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 29 Sep 2018 06:06:53 -0700 (PDT)
+From:   ufo19890607@gmail.com
+To:     akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        yuzhoujian@didichuxing.com
+Subject: [PATCH v15 2/2] Add oom victim's memcg to the oom context information
+Date:   Sat, 29 Sep 2018 21:06:27 +0800
+Message-Id: <1538226387-16600-2-git-send-email-ufo19890607@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1538226387-16600-1-git-send-email-ufo19890607@gmail.com>
+References: <1538226387-16600-1-git-send-email-ufo19890607@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: yuzhoujian <yuzhoujian@didichuxing.com>
 
+The current oom report doesn't display victim's memcg context during the
+global OOM situation. While this information is not strictly needed, it
+can be really helpful for containerized environments to locate which
+container has lost a process. Now that we have a single line for the oom
+context, we can trivially add both the oom memcg (this can be either
+global_oom or a specific memcg which hits its hard limits) and task_memcg
+which is the victim's memcg.
 
-On 29/09/2018 04:29, Chaotian Jing wrote:
-> when gate MSDC0_HCLK, access register will hang, even the MSDC driver
-> will never accessing register after HCLK was gated, but for safety, need
-> gate the bus_clk(which used to access register) too.
-> 
-> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
-> ---
->  drivers/mmc/host/mtk-sd.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-> index 0484138..1c1c967 100644
-> --- a/drivers/mmc/host/mtk-sd.c
-> +++ b/drivers/mmc/host/mtk-sd.c
-> @@ -387,6 +387,7 @@ struct msdc_host {
->  
->  	struct clk *src_clk;	/* msdc source clock */
->  	struct clk *h_clk;      /* msdc h_clk */
-> +	struct clk *bus_clk;	/* bus clock which used to access register */
->  	struct clk *src_clk_cg; /* msdc source clock control gate */
->  	u32 mclk;		/* mmc subsystem clock frequency */
->  	u32 src_clk_freq;	/* source clock frequency */
-> @@ -660,12 +661,14 @@ static void msdc_gate_clock(struct msdc_host *host)
->  {
->  	clk_disable_unprepare(host->src_clk_cg);
->  	clk_disable_unprepare(host->src_clk);
-> +	clk_disable_unprepare(host->bus_clk);
->  	clk_disable_unprepare(host->h_clk);
->  }
->  
->  static void msdc_ungate_clock(struct msdc_host *host)
->  {
->  	clk_prepare_enable(host->h_clk);
-> +	clk_prepare_enable(host->bus_clk);
->  	clk_prepare_enable(host->src_clk);
->  	clk_prepare_enable(host->src_clk_cg);
->  	while (!(readl(host->base + MSDC_CFG) & MSDC_CFG_CKSTB))
-> @@ -1900,6 +1903,9 @@ static int msdc_drv_probe(struct platform_device *pdev)
->  		goto host_free;
->  	}
->  
-> +	host->bus_clk = devm_clk_get(&pdev->dev, "bus_clk");
-> +	if (IS_ERR(host->bus_clk))
-> +		host->bus_clk = NULL;
+Below is the single line output in the oom report after this patch.
+- global oom context information:
+oom-kill:constraint=<constraint>,nodemask=<nodemask>,cpuset=<cpuset>,mems_allowed=<mems_allowed>,global_oom,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
+- memcg oom context information:
+oom-kill:constraint=<constraint>,nodemask=<nodemask>,cpuset=<cpuset>,mems_allowed=<mems_allowed>,oom_memcg=<memcg>,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
 
-That means the bus_clk is not requiered, even for mt2712, although the binding
-says so. Not sure if this is good enough or if we want to enforce the driver to
-actually error out, when the clock is not present in a mt2712 DTS.
+Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
+---
+ include/linux/memcontrol.h | 11 +++++++++--
+ mm/memcontrol.c            | 32 ++++++++++++++++++++------------
+ mm/oom_kill.c              |  3 ++-
+ 3 files changed, 31 insertions(+), 15 deletions(-)
 
-I suppose that's up to the maintainer :)
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 652f602..3adf70a 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -526,9 +526,11 @@ unsigned long mem_cgroup_get_zone_lru_size(struct lruvec *lruvec,
+ 
+ unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
+ 
+-void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
++void mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
+ 				struct task_struct *p);
+ 
++void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg);
++
+ static inline void mem_cgroup_enter_user_fault(void)
+ {
+ 	WARN_ON(current->in_user_fault);
+@@ -970,7 +972,12 @@ static inline unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg)
+ }
+ 
+ static inline void
+-mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
++mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p)
++{
++}
++
++static inline void
++mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
+ {
+ }
+ 
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e79cb59..a7b4ada 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1293,32 +1293,40 @@ static bool mem_cgroup_wait_acct_move(struct mem_cgroup *memcg)
+ 
+ #define K(x) ((x) << (PAGE_SHIFT-10))
+ /**
+- * mem_cgroup_print_oom_info: Print OOM information relevant to memory controller.
++ * mem_cgroup_print_oom_context: Print OOM information relevant to
++ * memory controller.
+  * @memcg: The memory cgroup that went over limit
+  * @p: Task that is going to be killed
+  *
+  * NOTE: @memcg and @p's mem_cgroup can be different when hierarchy is
+  * enabled
+  */
+-void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
++void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p)
+ {
+-	struct mem_cgroup *iter;
+-	unsigned int i;
+-
+ 	rcu_read_lock();
+ 
++	if (memcg) {
++		pr_cont(",oom_memcg=");
++		pr_cont_cgroup_path(memcg->css.cgroup);
++	} else
++		pr_cont(",global_oom");
+ 	if (p) {
+-		pr_info("Task in ");
++		pr_cont(",task_memcg=");
+ 		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
+-		pr_cont(" killed as a result of limit of ");
+-	} else {
+-		pr_info("Memory limit reached of cgroup ");
+ 	}
+ 
+-	pr_cont_cgroup_path(memcg->css.cgroup);
+-	pr_cont("\n");
+-
+ 	rcu_read_unlock();
++}
++
++/**
++ * mem_cgroup_print_oom_meminfo: Print OOM memory information relevant to
++ * memory controller.
++ * @memcg: The memory cgroup that went over limit
++ */
++void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
++{
++	struct mem_cgroup *iter;
++	unsigned int i;
+ 
+ 	pr_info("memory: usage %llukB, limit %llukB, failcnt %lu\n",
+ 		K((u64)page_counter_read(&memcg->memory)),
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 0935fca..820bc87 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -438,7 +438,7 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
+ 
+ 	dump_stack();
+ 	if (is_memcg_oom(oc))
+-		mem_cgroup_print_oom_info(oc->memcg, p);
++		mem_cgroup_print_oom_meminfo(oc->memcg);
+ 	else {
+ 		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
+ 		if (is_dump_unreclaim_slabs())
+@@ -455,6 +455,7 @@ static void dump_oom_summary(struct oom_control *oc, struct task_struct *victim)
+ 			oom_constraint_text[oc->constraint],
+ 			nodemask_pr_args(oc->nodemask));
+ 	cpuset_print_current_mems_allowed();
++	mem_cgroup_print_oom_context(oc->memcg, victim);
+ 	pr_cont(",task=%s,pid=%d,uid=%d\n", victim->comm, victim->pid,
+ 		from_kuid(&init_user_ns, task_uid(victim)));
+ }
+-- 
+1.8.3.1
 
-Regards,
-Matthias
