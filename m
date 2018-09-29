@@ -2,145 +2,214 @@ Return-Path: <SRS0=m5O9=ML=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 957A9C43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 02:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43805C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 02:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AE832073F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 02:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA24E2073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 02:28:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="D58wREGO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AE832073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="TEiOKq/6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA24E2073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbeI2IrO (ORCPT
+        id S1727418AbeI2Iyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 04:47:14 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:39421 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727351AbeI2IrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 04:47:14 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 5ad6ee9b;
-        Sat, 29 Sep 2018 02:01:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=mv2dSoGLO22zS0xIK2LqyVeb/uM=; b=D58wRE
-        GOVeKmNNXdF5ebyEfl4KZKE3p0l9qVKA9g/MKNq9ALZZ4uK/mWWmIupWO6x/zgVM
-        atpOKye7ETKHc0SjIGFEOKtaIcINZJ/aCcHu6mkSTqrKvieH3z+AXvJ2LFeXTlMN
-        mS+h6EZuG+Rxf1H7kUifstDO48smuJNuC115rCDDJ6OLs/35qgyiGFo9iMKSbQ1k
-        8ryiZmqMJd+PoSYXxBxTKKQTUKKJ+oM7ElVQWh+VfcrTZlZNbzWiboVxS2esU0Xy
-        SF0Cn8qcLJGtVU9yLloPp5Qs6HZn6DVNnPEYXPfMcv2Cryjd1LPsarapbjH3iIjf
-        FhdSp4VoaXR19OUQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2ea1a21b (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Sat, 29 Sep 2018 02:01:46 +0000 (UTC)
-Received: by mail-ot1-f43.google.com with SMTP id m23-v6so7907283otf.0;
-        Fri, 28 Sep 2018 19:20:37 -0700 (PDT)
-X-Gm-Message-State: ABuFfojKmokaiIXHnoSygVPUlV0c35TIB7qMNaYSM7QEpEHu+HSqrIu1
-        5EVE7aY+NoVdDXIaxQSLxdLh03eZiTHnYGHyKI8=
-X-Google-Smtp-Source: ACcGV63501DXuehFmFA5b/WOBK/ievuUKSF6OGbGPiU9Vy/Juya3W/pXWDveS97plJ3gJ8fI1+w93GGhZkBDnmqpydk=
-X-Received: by 2002:a9d:fae:: with SMTP id d43-v6mr846041otd.199.1538187636658;
- Fri, 28 Sep 2018 19:20:36 -0700 (PDT)
+        Sat, 29 Sep 2018 04:54:53 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:8598 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726325AbeI2Iyx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 04:54:53 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5baee3410000>; Fri, 28 Sep 2018 19:28:17 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 28 Sep 2018 19:28:17 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 28 Sep 2018 19:28:17 -0700
+Received: from [10.110.48.28] (10.110.48.28) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 29 Sep
+ 2018 02:28:17 +0000
+Subject: Re: [PATCH 0/4] get_user_pages*() and RDMA: first steps
+To:     Jerome Glisse <jglisse@redhat.com>
+CC:     <john.hubbard@gmail.com>, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>
+References: <20180928053949.5381-1-jhubbard@nvidia.com>
+ <20180928152958.GA3321@redhat.com>
+ <4c884529-e2ff-3808-9763-eb0e71f5a616@nvidia.com>
+ <20180928214934.GA3265@redhat.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <dfa6aaef-b97e-ebd4-6cc8-c907a7b3f9bb@nvidia.com>
+Date:   Fri, 28 Sep 2018 19:28:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
- <CAKv+Gu8knzzmK4_KouFQWKzMdHFgEsk-CtBrcuAvk0bYkDFO=w@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8knzzmK4_KouFQWKzMdHFgEsk-CtBrcuAvk0bYkDFO=w@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Sat, 29 Sep 2018 04:20:24 +0200
-X-Gmail-Original-Message-ID: <CAHmME9qtN8kiKnMHTa76r9a_5Ou_s3WhAMT_HnH7-1FeoHUOZg@mail.gmail.com>
-Message-ID: <CAHmME9qtN8kiKnMHTa76r9a_5Ou_s3WhAMT_HnH7-1FeoHUOZg@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180928214934.GA3265@redhat.com>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1538188097; bh=t+MQ6YuetpCFQopdhlrtuzedivNpAF672qcSMiwsNWM=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=TEiOKq/6iHLplxizoaBW9TrcL7ZhJTWVxiNfnuBUXz2A/NscYYOfx9kSsshZjMX8Z
+         v4P5CegwHi1Xfiioyi1ixE0l79chH2/6k4IyTh8mSxv122af25bN2RwBR8nQoTSxao
+         d5Obew8VrKiI4970tQhjMMZQgUSrIMnFrF8e04X82lgf/Gmt/eAt35/U4+yIPJ9z1G
+         ZMAvY4u+VdFxe4lfc/1jKHzkVu1/iLLIVepSxNDsS4awkK/ZauJBFRpAkY9sYljc42
+         kAaN2rtCsfV9IVLOtN9LYPFXQUXXQWKhJwHvvYvSCMCpVxcmMp0M2s83nr4PDNPtfj
+         4mIbwFWOdHCpQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
+On 9/28/18 2:49 PM, Jerome Glisse wrote:
+> On Fri, Sep 28, 2018 at 12:06:12PM -0700, John Hubbard wrote:
+>> On 9/28/18 8:29 AM, Jerome Glisse wrote:
+>>> On Thu, Sep 27, 2018 at 10:39:45PM -0700, john.hubbard@gmail.com wrote:
+>>>> From: John Hubbard <jhubbard@nvidia.com>
+[...]
+>>> So the solution is to wait (possibly for days, months, years) that the
+>>> RDMA or GPU which did GUP and do not have mmu notifier, release the page
+>>> (or put_user_page()) ?
+>>>
+>>> This sounds bads. Like i said during LSF/MM there is no way to properly
+>>> fix hardware that can not be preempted/invalidated ... most GPU are fine.
+>>> Few RDMA are fine, most can not ...
+>>>
+>>
+>> Hi Jerome,
+>>
+>> Personally, I'm think that this particular design is the best one I've seen
+>> so far, but if other, better designs show up, than let's do those instead, sure.
+>>
+>> I guess your main concern is that this might take longer than other approaches.
+>>
+>> As for time frame, perhaps I made it sound worse than it really is. I have patches
+>> staged already for all of the simpler call sites, and for about half of the more
+>> complicated ones. The core solution in mm is not large, and we've gone through a 
+>> few discussion threads about it back in July or so, so it shouldn't take too long
+>> to perfect it.
+>>
+>> So it may be a few months to get it all reviewed and submitted, but I don't
+>> see "years" by any stretch.
+> 
+> Bit of miss-comprehention there :) By month, years, i am talking about
+> the time it will take for some user to release the pin they have on the
+> page. Not the time to push something upstream.
+> 
+> AFAICT RDMA driver do not have any upper bound on how long they can hold
+> a page reference and thus your solution can leave one CPU core stuck for
+> as long as the pin is active. Worst case might lead to all CPU core waiting
+> for something that might never happen.
+> 
 
-On Fri, Sep 28, 2018 at 6:02 PM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> Please put comments like this below the ---
+Actually, the latest direction on that discussion was toward periodically
+writing back, even while under RDMA, via bounce buffers:
 
-git-notes is nice for this indeed.
+  https://lkml.kernel.org/r/20180710082100.mkdwngdv5kkrcz6n@quack2.suse.cz
 
-> Are these CONFIG_ symbols defined anywhere at this point?
+I still think that's viable. Of course, there are other things besides 
+writeback (see below) that might also lead to waiting.
 
-Yes, they're introduced in the first zinc commit. There's no git-blame
-on git.kernel.org, presumably because it's expensive to compute, but
-there is on my personal instance, so this might help:
-https://git.zx2c4.com/linux-dev/blame/lib/zinc/Kconfig?h=jd/wireguard
+>>> If it is just about fixing the set_page_dirty() bug then just looking at
+>>> refcount versus mapcount should already tell you if you can remove the
+>>> buffer head from the page or not. Which would fix the bug without complex
+>>> changes (i still like the put_user_page just for symetry with GUP).
+>>>
+>>
+>> It's about more than that. The goal is to make it safe and correct to
+>> use a non-CPU device to read and write to "pinned" memory, especially when
+>> that memory is backed by a file system.
+>>
+>> I recall there were objections to just narrowly fixing the set_page_dirty()
+>> bug, because the underlying problem is large and serious. So here we are.
+> 
+> Except that you can not solve that issue without proper hardware. GPU are
+> fine. RDMA are broken except the mellanox5 hardware which can invalidate
+> at anytime its page table thus allowing to write protect the page at any
+> time.
 
-> In any case, I don't think these is a reason for these, at least not
-> on ARM/arm64. The 64-bitness is implied in both cases
+Today, people are out there using RDMA without page-fault-capable hardware.
+And they are hitting problems, as we've seen. From the discussions so far,
+I don't think it's impossible to solve the problems, even for "lesser", 
+non-fault-capable hardware. Especially once we decide on what is reasonable
+and supported.  Certainly the existing situation needs *something* to 
+change, even if it's (I don't recommend this) "go forth and tell the world
+to stop using RDMA with their current hardware".
 
-You mean to say that since these nobs are def_bool y and are
-essentially "depends on ARM", then I should just straight up use
-CONFIG_ARM? I had thought about this, but figured this would make it
-easier to later make these optional or have other options block them
-need be, or even if the dependencies and requirements for having them
-changes (for example, with UML on x86). I think doing it this way
-gives us some flexibility later on. So if that's a compelling enough
-reason, I'd like to keep those.
+> 
+> With the solution put forward here you can potentialy wait _forever_ for
+> the driver that holds a pin to drop it. This was the point i was trying to
+> get accross during LSF/MM. 
 
-> and the
-> dependency on !CPU_32v3 you introduce (looking at the version of
-> Kconfig at the end of the series) seems spurious to me. Was that added
-> because of some kbuild robot report? (we don't support ARMv3 in the
-> kernel but ARCH_RPC is built in v3 mode because of historical reasons
-> while the actual core is a v4)
+I agree that just blocking indefinitely is generally unacceptable for kernel
+code, but we can probably avoid it for many cases (bounce buffers), and
+if we think it is really appropriate (file system unmounting, maybe?) then
+maybe tolerate it in some rare cases.  
 
-I added the !CPU_32v3 in my development tree after posting v6, so good
-to hear you're just looking straight at the updated tree. If you see
-things jump out in there prior to me posting v7, don't hesitate to let
-me know.
+>You can not fix broken hardware that decided to
+> use GUP to do a feature they can't reliably do because their hardware is
+> not capable to behave.
+> 
+> Because code is easier here is what i was meaning:
+> 
+> https://cgit.freedesktop.org/~glisse/linux/commit/?h=gup&id=a5dbc0fe7e71d347067579f13579df372ec48389
+> https://cgit.freedesktop.org/~glisse/linux/commit/?h=gup&id=01677bc039c791a16d5f82b3ef84917d62fac826
+> 
 
-The reason it was added was indeed because of:
-https://lists.01.org/pipermail/kbuild-all/2018-September/053114.html
--- exactly what you suspected, ARCH_RPC. Have a better suggestion than
-!CPU_32v3? It seems to me like so long as the kernel has CPU_32v3 as a
-thing in any form, I should mark Zinc as not supporting it, since
-we'll certainly be at least v4 and up. (Do you guys have any old Acorn
-ARM610 boxes sitting around for old time's sake at LinaroHQ? ;-)
+While that may work sometimes, I don't think it is reliable enough to trust for
+identifying pages that have been gup-pinned. There's just too much overloading of
+other mechanisms going on there, and if we pile on top with this constraint of "if you
+have +3 refcounts, and this particular combination of page counts and mapcounts, then
+you're definitely a long-term pinned page", I think users will find a lot of corner
+cases for us that break that assumption. 
 
-> > +#endif
-> > +
->
-> No need to make asmlinkage declarations conditional
+So I think we agree that the put_user_page() approach, to complement the
+get_user_pages*() call sites, is worth doing regardless of the details of the core
+solution. btw, now that I'm refreshing my memory of our earlier discussions: Jan had an
+interesting point that "long-term pinned" is a property of the call site, rather than
+of the page:
 
-Yep, addressed in the IS_ENABLED cleanup.
+  https://lkml.kernel.org/r/20180704104318.f5pnqtnn3unkwauw@quack2.suse.cz
 
->
-> if (IS_ENABLED())
+...which really sounded like a useful way to think about this.
 
-Sorted.
+Here's what I think would help:
 
->
-> """
-> if (!IS_ENABLED(CONFIG_ARM))
->    return false;
->
-> hchacha20_arm(x, derived_key);
-> return true;
-> """
->
-> and drop the #ifdefs
+1) I'll send out a freshened-up RFC for the core implementation (it's hard to talk about
+here without that, although your code above helps), and we can hammer out some answers
+there.
 
-Also sorted.
+2) I'll work through remaining comments (Jason had some) on this and respin this patchset.
 
-Regards,
-Jason
+Basically, I'm hearing "Jerome is totally going to ACK this, but maybe disagree about
+some or all of the upcoming RFC". But then again, I hear what I want to hear! :)
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
