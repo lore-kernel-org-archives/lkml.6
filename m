@@ -6,51 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72655C64EAD
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 164B4C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40C2B20880
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:59:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40C2B20880
+	by mail.kernel.org (Postfix) with ESMTP id D87422087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:59:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D87422087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbeI3E3J (ORCPT
+        id S1728161AbeI3ESY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:29:09 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51665 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728078AbeI3ESY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Sep 2018 00:18:24 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51625 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727991AbeI3ESX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 00:18:23 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N63-0000H7-Bj; Sat, 29 Sep 2018 22:48:19 +0100
+        id 1g6N63-0000H4-AT; Sat, 29 Sep 2018 22:48:19 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5z-0006xx-8t; Sat, 29 Sep 2018 22:48:15 +0100
+        id 1g6N5z-0006yR-Gr; Sat, 29 Sep 2018 22:48:15 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Michal Hocko" <mhocko@kernel.org>,
-        "Christopher Snowhill" <kode54@gmail.com>,
-        "Andi Kleen" <ak@linux.intel.com>,
-        "xxxxxx xxxxxx" <xxxxxx@xxxxxx.xxx>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Vlastimil Babka" <vbabka@suse.cz>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+CC:     akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "Andi Kleen" <ak@linux.intel.com>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.201932437@decadent.org.uk>
+Message-ID: <lsq.1538257387.499840573@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 113/131] x86/speculation/l1tf: Fix off-by-one error
- when warning that system has too much RAM
+Subject: [PATCH 3.16 119/131] x86/speculation/l1tf: Make pmd/pud_mknotpresent()
+ invert
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -64,79 +57,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vlastimil Babka <vbabka@suse.cz>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit b0a182f875689647b014bc01d36b340217792852 upstream.
+commit 0768f91530ff46683e0b372df14fd79fe8d156e5 upstream.
 
-Two users have reported [1] that they have an "extremely unlikely" system
-with more than MAX_PA/2 memory and L1TF mitigation is not effective. In
-fact it's a CPU with 36bits phys limit (64GB) and 32GB memory, but due to
-holes in the e820 map, the main region is almost 500MB over the 32GB limit:
+Some cases in THP like:
+  - MADV_FREE
+  - mprotect
+  - split
 
-[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000081effffff] usable
+mark the PMD non present for temporarily to prevent races. The window for
+an L1TF attack in these contexts is very small, but it wants to be fixed
+for correctness sake.
 
-Suggestions to use 'mem=32G' to enable the L1TF mitigation while losing the
-500MB revealed, that there's an off-by-one error in the check in
-l1tf_select_mitigation().
+Use the proper low level functions for pmd/pud_mknotpresent() to address
+this.
 
-l1tf_pfn_limit() returns the last usable pfn (inclusive) and the range
-check in the mitigation path does not take this into account.
-
-Instead of amending the range check, make l1tf_pfn_limit() return the first
-PFN which is over the limit which is less error prone. Adjust the other
-users accordingly.
-
-[1] https://bugzilla.suse.com/show_bug.cgi?id=1105536
-
-Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
-Reported-by: xxxxxx xxxxxx <xxxxxx@xxxxxx.xxx>
-Reported-by: Christopher Snowhill <kode54@gmail.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Link: https://lkml.kernel.org/r/20180823134418.17008-1-vbabka@suse.cz
+[bwh: Backported to 3.16:
+ - Drop change to pud_mknotpresent()
+ - pmd_mknotpresent() does not touch _PAGE_NONE]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/processor.h | 2 +-
- arch/x86/mm/init.c               | 2 +-
- arch/x86/mm/mmap.c               | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/pgtable.h | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -167,7 +167,7 @@ extern void fpu_detect(struct cpuinfo_x8
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -308,11 +308,6 @@ static inline pmd_t pmd_mkwrite(pmd_t pm
+ 	return pmd_set_flags(pmd, _PAGE_RW);
+ }
  
- static inline unsigned long long l1tf_pfn_limit(void)
+-static inline pmd_t pmd_mknotpresent(pmd_t pmd)
+-{
+-	return pmd_clear_flags(pmd, _PAGE_PRESENT);
+-}
+-
+ static inline pud_t pud_set_flags(pud_t pud, pudval_t set)
  {
--	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
-+	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT);
+ 	pudval_t v = native_pud_val(pud);
+@@ -393,6 +388,12 @@ static inline pud_t pfn_pud(unsigned lon
+ 	return __pud(pfn | massage_pgprot(pgprot));
  }
  
- extern void early_cpu_init(void);
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -710,7 +710,7 @@ unsigned long max_swapfile_size(void)
++static inline pmd_t pmd_mknotpresent(pmd_t pmd)
++{
++	return pfn_pmd(pmd_pfn(pmd),
++		       __pgprot(pmd_flags(pmd) & ~_PAGE_PRESENT));
++}
++
+ static inline u64 flip_protnone_guard(u64 oldval, u64 val, u64 mask);
  
- 	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
- 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
--		unsigned long long l1tf_limit = l1tf_pfn_limit() + 1;
-+		unsigned long long l1tf_limit = l1tf_pfn_limit();
- 		/*
- 		 * We encode swap offsets also with 3 bits below those for pfn
- 		 * which makes the usable limit higher.
---- a/arch/x86/mm/mmap.c
-+++ b/arch/x86/mm/mmap.c
-@@ -131,7 +131,7 @@ bool pfn_modify_allowed(unsigned long pf
- 	/* If it's real memory always allow */
- 	if (pfn_valid(pfn))
- 		return true;
--	if (pfn > l1tf_pfn_limit() && !capable(CAP_SYS_ADMIN))
-+	if (pfn >= l1tf_pfn_limit() && !capable(CAP_SYS_ADMIN))
- 		return false;
- 	return true;
- }
+ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
 
