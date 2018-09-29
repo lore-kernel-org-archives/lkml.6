@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6DEC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BABEC64EAD
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED2220880
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED2220880
+	by mail.kernel.org (Postfix) with ESMTP id 1AD492087A
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:50:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AD492087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbeI3ESh (ORCPT
+        id S1728992AbeI3EU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:18:37 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51918 "EHLO
+        Sun, 30 Sep 2018 00:20:26 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52114 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728698AbeI3ESc (ORCPT
+        by vger.kernel.org with ESMTP id S1728835AbeI3ESh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 00:18:32 -0400
+        Sun, 30 Sep 2018 00:18:37 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N6B-0000HB-My; Sat, 29 Sep 2018 22:48:27 +0100
+        id 1g6N6G-0000Gv-Pl; Sat, 29 Sep 2018 22:48:33 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5x-0006tS-4l; Sat, 29 Sep 2018 22:48:13 +0100
+        id 1g6N5w-0006rG-3Q; Sat, 29 Sep 2018 22:48:12 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+CC:     akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.28558439@decadent.org.uk>
+Message-ID: <lsq.1538257387.141513596@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 057/131] proc: drop handling non-linear mappings
+Subject: [PATCH 3.16 030/131] x86/bugs: Fix the parameters alignment and
+ missing void
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,85 +57,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit 1da4b35b001481df99a6dcab12d5d39a876f7056 upstream.
+commit ffed645e3be0e32f8e9ab068d257aee8d0fe8eec upstream.
 
-We have to handle non-linear mappings for /proc/PID/{smaps,clear_refs}
-which is unused now.  Let's drop it.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16:
- - Deleted code is slightly different
- - Adjust context]
+Fixes: 7bb4d366c ("x86/bugs: Make cpu_show_common() static")
+Fixes: 24f7fc83b ("x86/bugs: Provide boot parameters for the spec_store_bypass_disable mitigation")
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -436,7 +436,6 @@ struct mem_size_stats {
- 	unsigned long anonymous;
- 	unsigned long anonymous_thp;
- 	unsigned long swap;
--	unsigned long nonlinear;
- 	u64 pss;
- };
+ arch/x86/kernel/cpu/bugs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -568,7 +568,7 @@ static enum ssb_mitigation __init __ssb_
+ 	return mode;
+ }
  
-@@ -446,7 +445,6 @@ static void smaps_pte_entry(pte_t ptent,
+-static void ssb_select_mitigation()
++static void ssb_select_mitigation(void)
  {
- 	struct mem_size_stats *mss = walk->private;
- 	struct vm_area_struct *vma = mss->vma;
--	pgoff_t pgoff = linear_page_index(vma, addr);
- 	struct page *page = NULL;
- 	int mapcount;
+ 	ssb_mode = __ssb_select_mitigation();
  
-@@ -459,9 +457,6 @@ static void smaps_pte_entry(pte_t ptent,
- 			mss->swap += ptent_size;
- 		else if (is_migration_entry(swpent))
- 			page = migration_entry_to_page(swpent);
--	} else if (pte_file(ptent)) {
--		if (pte_to_pgoff(ptent) != pgoff)
--			mss->nonlinear += ptent_size;
- 	}
+@@ -678,7 +678,7 @@ void x86_spec_ctrl_setup_ap(void)
+ #ifdef CONFIG_SYSFS
  
- 	if (!page)
-@@ -470,9 +465,6 @@ static void smaps_pte_entry(pte_t ptent,
- 	if (PageAnon(page))
- 		mss->anonymous += ptent_size;
- 
--	if (page->index != pgoff)
--		mss->nonlinear += ptent_size;
--
- 	mss->resident += ptent_size;
- 	/* Accumulate the size in pages that have been accessed. */
- 	if (pte_young(ptent) || PageReferenced(page))
-@@ -554,7 +546,6 @@ static void show_smap_vma_flags(struct s
- 		[ilog2(VM_ACCOUNT)]	= "ac",
- 		[ilog2(VM_NORESERVE)]	= "nr",
- 		[ilog2(VM_HUGETLB)]	= "ht",
--		[ilog2(VM_NONLINEAR)]	= "nl",
- 		[ilog2(VM_ARCH_1)]	= "ar",
- 		[ilog2(VM_DONTDUMP)]	= "dd",
- #ifdef CONFIG_MEM_SOFT_DIRTY
-@@ -628,10 +619,6 @@ static int show_smap(struct seq_file *m,
- 		   (vma->vm_flags & VM_LOCKED) ?
- 			(unsigned long)(mss.pss >> (10 + PSS_SHIFT)) : 0);
- 
--	if (vma->vm_flags & VM_NONLINEAR)
--		seq_printf(m, "Nonlinear:      %8lu kB\n",
--				mss.nonlinear >> 10);
--
- 	show_smap_vma_flags(m, vma);
- 
- 	if (m->count < m->size)  /* vma is copied successfully */
-@@ -735,8 +722,6 @@ static inline void clear_soft_dirty(stru
- 		ptent = pte_clear_flags(ptent, _PAGE_SOFT_DIRTY);
- 	} else if (is_swap_pte(ptent)) {
- 		ptent = pte_swp_clear_soft_dirty(ptent);
--	} else if (pte_file(ptent)) {
--		ptent = pte_file_clear_soft_dirty(ptent);
- 	}
- 
- 	set_pte_at(vma->vm_mm, addr, pte, ptent);
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+-			char *buf, unsigned int bug)
++			       char *buf, unsigned int bug)
+ {
+ 	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
 
