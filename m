@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F013AC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 14:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE79C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 14:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF58620880
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 14:59:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF58620880
+	by mail.kernel.org (Postfix) with ESMTP id 698A52073F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 14:59:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 698A52073F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbeI2V1v (ORCPT
+        id S1728604AbeI2V15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 17:27:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13584 "EHLO huawei.com"
+        Sat, 29 Sep 2018 17:27:57 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13586 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728541AbeI2V1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 17:27:50 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6348F95FEA6A4;
-        Sat, 29 Sep 2018 22:58:57 +0800 (CST)
+        id S1728541AbeI2V15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 17:27:57 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6BC1140708B50;
+        Sat, 29 Sep 2018 22:59:02 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.47.85.66) by
  DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.399.0; Sat, 29 Sep 2018 22:58:51 +0800
+ 14.3.399.0; Sat, 29 Sep 2018 22:58:57 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
@@ -35,9 +35,9 @@ CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>,
         Yunsheng Lin <linyunsheng@huawei.com>
-Subject: [PATCH V2 net-next 08/10] net: hns3: Change return type of hclge_tm_schd_info_update()
-Date:   Sat, 29 Sep 2018 15:56:20 +0100
-Message-ID: <20180929145622.5448-9-salil.mehta@huawei.com>
+Subject: [PATCH V2 net-next 10/10] net: hns3: Fix loss of coal configuration while doing reset
+Date:   Sat, 29 Sep 2018 15:56:22 +0100
+Message-ID: <20180929145622.5448-11-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180929145622.5448-1-salil.mehta@huawei.com>
 References: <20180929145622.5448-1-salil.mehta@huawei.com>
@@ -52,91 +52,179 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huazhong Tan <tanhuazhong@huawei.com>
 
-hclge_tm_schd_info_update should return an error when num_tc is greater
-than alloc_tqps.
+The user's coal configuration will be lost after reset, so the tx_coal
+and rx_coal fields are added to the struct hns_nic_priv to save the coal
+configuration and used to restore the user's configuration after the reset
+is complete.
 
-This patch changes the return type of hnae3_register_ae_algo from void
-to int.
-
+Fixes: bb6b94a896d4 ("net: hns3: Add reset interface implementation in client")
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c | 8 ++++++--
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 9 ++++++++-
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  | 2 +-
- 3 files changed, 15 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 71 ++++++++++++-------------
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h |  2 +
+ 2 files changed, 36 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-index 92f19384e258..e72f724123d7 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-@@ -184,7 +184,9 @@ static int hclge_ieee_setets(struct hnae3_handle *h, struct ieee_ets *ets)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 8273c03bbb4a..1050652274a0 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -225,8 +225,6 @@ void hns3_set_vector_coalesce_tx_gl(struct hns3_enet_tqp_vector *tqp_vector,
+ static void hns3_vector_gl_rl_init(struct hns3_enet_tqp_vector *tqp_vector,
+ 				   struct hns3_nic_priv *priv)
+ {
+-	struct hnae3_handle *h = priv->ae_handle;
+-
+ 	/* initialize the configuration for interrupt coalescing.
+ 	 * 1. GL (Interrupt Gap Limiter)
+ 	 * 2. RL (Interrupt Rate Limiter)
+@@ -239,9 +237,6 @@ static void hns3_vector_gl_rl_init(struct hns3_enet_tqp_vector *tqp_vector,
+ 	tqp_vector->tx_group.coal.int_gl = HNS3_INT_GL_50K;
+ 	tqp_vector->rx_group.coal.int_gl = HNS3_INT_GL_50K;
  
--	hclge_tm_schd_info_update(hdev, num_tc);
-+	ret = hclge_tm_schd_info_update(hdev, num_tc);
-+	if (ret)
-+		return ret;
- 
- 	ret = hclge_ieee_ets_to_tm_info(hdev, ets);
- 	if (ret)
-@@ -310,7 +312,9 @@ static int hclge_setup_tc(struct hnae3_handle *h, u8 tc, u8 *prio_tc)
- 		return -EINVAL;
- 	}
- 
--	hclge_tm_schd_info_update(hdev, tc);
-+	ret = hclge_tm_schd_info_update(hdev, tc);
-+	if (ret)
-+		return ret;
- 
- 	ret = hclge_tm_prio_tc_info_update(hdev, prio_tc);
- 	if (ret)
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index ab7280d7f79c..aa5cb9834d73 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -1280,10 +1280,15 @@ int hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc)
+-	/* Default: disable RL */
+-	h->kinfo.int_rl_setting = 0;
+-
+ 	tqp_vector->int_adapt_down = HNS3_INT_ADAPT_DOWN_START;
+ 	tqp_vector->rx_group.coal.flow_level = HNS3_FLOW_LOW;
+ 	tqp_vector->tx_group.coal.flow_level = HNS3_FLOW_LOW;
+@@ -3490,6 +3485,31 @@ int hns3_nic_reset_all_ring(struct hnae3_handle *h)
  	return 0;
  }
  
--void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc)
-+int hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc)
- {
- 	u8 i, bit_map = 0;
- 
-+	for (i = 0; i < hdev->num_alloc_vport; i++) {
-+		if (num_tc > hdev->vport[i].alloc_tqps)
-+			return -EINVAL;
++static void hns3_store_coal(struct hns3_nic_priv *priv)
++{
++	/* ethtool only support setting and querying one coal
++	 * configuation for now, so save the vector 0' coal
++	 * configuation here in order to restore it.
++	 */
++	memcpy(&priv->tx_coal, &priv->tqp_vector[0].tx_group.coal,
++	       sizeof(struct hns3_enet_coalesce));
++	memcpy(&priv->rx_coal, &priv->tqp_vector[0].rx_group.coal,
++	       sizeof(struct hns3_enet_coalesce));
++}
++
++static void hns3_restore_coal(struct hns3_nic_priv *priv)
++{
++	u16 vector_num = priv->vector_num;
++	int i;
++
++	for (i = 0; i < vector_num; i++) {
++		memcpy(&priv->tqp_vector[i].tx_group.coal, &priv->tx_coal,
++		       sizeof(struct hns3_enet_coalesce));
++		memcpy(&priv->tqp_vector[i].rx_group.coal, &priv->rx_coal,
++		       sizeof(struct hns3_enet_coalesce));
 +	}
++}
 +
- 	hdev->tm_info.num_tc = num_tc;
+ static int hns3_reset_notify_down_enet(struct hnae3_handle *handle)
+ {
+ 	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
+@@ -3536,6 +3556,8 @@ static int hns3_reset_notify_init_enet(struct hnae3_handle *handle)
+ 	/* Carrier off reporting is important to ethtool even BEFORE open */
+ 	netif_carrier_off(netdev);
  
- 	for (i = 0; i < hdev->tm_info.num_tc; i++)
-@@ -1297,6 +1302,8 @@ void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc)
- 	hdev->hw_tc_map = bit_map;
- 
- 	hclge_tm_schd_info_init(hdev);
++	hns3_restore_coal(priv);
 +
-+	return 0;
+ 	ret = hns3_nic_init_vector_data(priv);
+ 	if (ret)
+ 		return ret;
+@@ -3563,6 +3585,8 @@ static int hns3_reset_notify_uninit_enet(struct hnae3_handle *handle)
+ 		return ret;
+ 	}
+ 
++	hns3_store_coal(priv);
++
+ 	ret = hns3_uninit_all_ring(priv);
+ 	if (ret)
+ 		netdev_err(netdev, "uninit ring error\n");
+@@ -3597,24 +3621,7 @@ static int hns3_reset_notify(struct hnae3_handle *handle,
+ 	return ret;
  }
  
- int hclge_tm_init_hw(struct hclge_dev *hdev)
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-index e1568b826aac..25eef13a3e14 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-@@ -132,7 +132,7 @@ int hclge_tm_schd_init(struct hclge_dev *hdev);
- int hclge_pause_setup_hw(struct hclge_dev *hdev);
- int hclge_tm_schd_mode_hw(struct hclge_dev *hdev);
- int hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc);
--void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc);
-+int hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc);
- int hclge_tm_dwrr_cfg(struct hclge_dev *hdev);
- int hclge_tm_map_cfg(struct hclge_dev *hdev);
- int hclge_tm_init_hw(struct hclge_dev *hdev);
+-static void hns3_restore_coal(struct hns3_nic_priv *priv,
+-			      struct hns3_enet_coalesce *tx,
+-			      struct hns3_enet_coalesce *rx)
+-{
+-	u16 vector_num = priv->vector_num;
+-	int i;
+-
+-	for (i = 0; i < vector_num; i++) {
+-		memcpy(&priv->tqp_vector[i].tx_group.coal, tx,
+-		       sizeof(struct hns3_enet_coalesce));
+-		memcpy(&priv->tqp_vector[i].rx_group.coal, rx,
+-		       sizeof(struct hns3_enet_coalesce));
+-	}
+-}
+-
+-static int hns3_modify_tqp_num(struct net_device *netdev, u16 new_tqp_num,
+-			       struct hns3_enet_coalesce *tx,
+-			       struct hns3_enet_coalesce *rx)
++static int hns3_modify_tqp_num(struct net_device *netdev, u16 new_tqp_num)
+ {
+ 	struct hns3_nic_priv *priv = netdev_priv(netdev);
+ 	struct hnae3_handle *h = hns3_get_handle(netdev);
+@@ -3632,7 +3639,7 @@ static int hns3_modify_tqp_num(struct net_device *netdev, u16 new_tqp_num,
+ 	if (ret)
+ 		goto err_alloc_vector;
+ 
+-	hns3_restore_coal(priv, tx, rx);
++	hns3_restore_coal(priv);
+ 
+ 	ret = hns3_nic_init_vector_data(priv);
+ 	if (ret)
+@@ -3664,7 +3671,6 @@ int hns3_set_channels(struct net_device *netdev,
+ 	struct hns3_nic_priv *priv = netdev_priv(netdev);
+ 	struct hnae3_handle *h = hns3_get_handle(netdev);
+ 	struct hnae3_knic_private_info *kinfo = &h->kinfo;
+-	struct hns3_enet_coalesce tx_coal, rx_coal;
+ 	bool if_running = netif_running(netdev);
+ 	u32 new_tqp_num = ch->combined_count;
+ 	u16 org_tqp_num;
+@@ -3696,15 +3702,7 @@ int hns3_set_channels(struct net_device *netdev,
+ 		goto open_netdev;
+ 	}
+ 
+-	/* Changing the tqp num may also change the vector num,
+-	 * ethtool only support setting and querying one coal
+-	 * configuation for now, so save the vector 0' coal
+-	 * configuation here in order to restore it.
+-	 */
+-	memcpy(&tx_coal, &priv->tqp_vector[0].tx_group.coal,
+-	       sizeof(struct hns3_enet_coalesce));
+-	memcpy(&rx_coal, &priv->tqp_vector[0].rx_group.coal,
+-	       sizeof(struct hns3_enet_coalesce));
++	hns3_store_coal(priv);
+ 
+ 	hns3_nic_dealloc_vector_data(priv);
+ 
+@@ -3712,10 +3710,9 @@ int hns3_set_channels(struct net_device *netdev,
+ 	hns3_put_ring_config(priv);
+ 
+ 	org_tqp_num = h->kinfo.num_tqps;
+-	ret = hns3_modify_tqp_num(netdev, new_tqp_num, &tx_coal, &rx_coal);
++	ret = hns3_modify_tqp_num(netdev, new_tqp_num);
+ 	if (ret) {
+-		ret = hns3_modify_tqp_num(netdev, org_tqp_num,
+-					  &tx_coal, &rx_coal);
++		ret = hns3_modify_tqp_num(netdev, org_tqp_num);
+ 		if (ret) {
+ 			/* If revert to old tqp failed, fatal error occurred */
+ 			dev_err(&netdev->dev,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+index 4a56c3d2204f..27d704f4b306 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+@@ -543,6 +543,8 @@ struct hns3_nic_priv {
+ 	/* Vxlan/Geneve information */
+ 	struct hns3_udp_tunnel udp_tnl[HNS3_UDP_TNL_MAX];
+ 	unsigned long active_vlans[BITS_TO_LONGS(VLAN_N_VID)];
++	struct hns3_enet_coalesce tx_coal;
++	struct hns3_enet_coalesce rx_coal;
+ };
+ 
+ union l3_hdr_info {
 -- 
 2.11.0
 
