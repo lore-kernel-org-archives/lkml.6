@@ -6,56 +6,48 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 674FFC43143
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02801C43143
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 299C92087A
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:57:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 299C92087A
+	by mail.kernel.org (Postfix) with ESMTP id C541D206B8
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Sep 2018 21:57:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C541D206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728641AbeI3E0o (ORCPT
+        id S1728783AbeI3E1o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 00:26:44 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51725 "EHLO
+        Sun, 30 Sep 2018 00:27:44 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51699 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728387AbeI3ES0 (ORCPT
+        by vger.kernel.org with ESMTP id S1728337AbeI3ES0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Sep 2018 00:18:26 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N66-0000H3-51; Sat, 29 Sep 2018 22:48:22 +0100
+        id 1g6N66-0000HB-4U; Sat, 29 Sep 2018 22:48:22 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g6N5y-0006wG-Fg; Sat, 29 Sep 2018 22:48:14 +0100
+        id 1g6N5y-0006wU-Hi; Sat, 29 Sep 2018 22:48:14 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Denys Vlasenko" <dvlasenk@redhat.com>,
-        "Peter Zijlstra" <peterz@infradead.org>, linux-mm@kvack.org,
-        mhocko@suse.com, "Brian Gerst" <brgerst@gmail.com>,
-        "Toshi Kani" <toshi.kani@hp.com>,
-        "Luis R. Rodriguez" <mcgrof@suse.com>,
-        "Ingo Molnar" <mingo@kernel.org>, "Dave Hansen" <dave@sr71.net>,
-        dave.hansen@intel.com,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+CC:     akpm@linux-foundation.org, "Josh Poimboeuf" <jpoimboe@redhat.com>,
         "Thomas Gleixner" <tglx@linutronix.de>,
-        "Borislav Petkov" <bp@alien8.de>,
-        "Dave Hansen" <dave.hansen@linux.intel.com>
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Vlastimil Babka" <vbabka@suse.cz>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Michal Hocko" <mhocko@suse.com>, "Andi Kleen" <ak@linux.intel.com>
 Date:   Sat, 29 Sep 2018 22:43:07 +0100
-Message-ID: <lsq.1538257387.740574776@decadent.org.uk>
+Message-ID: <lsq.1538257387.872077619@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 092/131] x86/mm: Move swap offset/type up in PTE to
- work around erratum
+Subject: [PATCH 3.16 095/131] x86/speculation/l1tf: Protect swap entries
+ against L1TF
 In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -69,106 +61,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 00839ee3b299303c6a5e26a0a2485427a3afcbbf upstream.
+commit 2f22b4cd45b67b3496f4aa4c7180a1271c6452f6 upstream.
 
-This erratum can result in Accessed/Dirty getting set by the hardware
-when we do not expect them to be (on !Present PTEs).
+With L1 terminal fault the CPU speculates into unmapped PTEs, and resulting
+side effects allow to read the memory the PTE is pointing too, if its
+values are still in the L1 cache.
 
-Instead of trying to fix them up after this happens, we just
-allow the bits to get set and try to ignore them.  We do this by
-shifting the layout of the bits we use for swap offset/type in
-our 64-bit PTEs.
+For swapped out pages Linux uses unmapped PTEs and stores a swap entry into
+them.
 
-It looks like this:
+To protect against L1TF it must be ensured that the swap entry is not
+pointing to valid memory, which requires setting higher bits (between bit
+36 and bit 45) that are inside the CPUs physical address space, but outside
+any real memory.
 
- bitnrs: |     ...            | 11| 10|  9|8|7|6|5| 4| 3|2|1|0|
- names:  |     ...            |SW3|SW2|SW1|G|L|D|A|CD|WT|U|W|P|
- before: |         OFFSET (9-63)          |0|X|X| TYPE(1-5) |0|
-  after: | OFFSET (14-63)  |  TYPE (9-13) |0|X|X|X| X| X|X|X|0|
+To do this invert the offset to make sure the higher bits are always set,
+as long as the swap file is not too big.
 
-Note that D was already a don't care (X) even before.  We just
-move TYPE up and turn its old spot (which could be hit by the
-A bit) into all don't cares.
+Note there is no workaround for 32bit !PAE, or on systems which have more
+than MAX_PA/2 worth of memory. The later case is very unlikely to happen on
+real systems.
 
-We take 5 bits away from the offset, but that still leaves us
-with 50 bits which lets us index into a 62-bit swapfile (4 EiB).
-I think that's probably fine for the moment.  We could
-theoretically reclaim 5 of the bits (1, 2, 3, 4, 7) but it
-doesn't gain us anything.
+[AK: updated description and minor tweaks by. Split out from the original
+     patch ]
 
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave@sr71.net>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luis R. Rodriguez <mcgrof@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Toshi Kani <toshi.kani@hp.com>
-Cc: dave.hansen@intel.com
-Cc: linux-mm@kvack.org
-Cc: mhocko@suse.com
-Link: http://lkml.kernel.org/r/20160708001911.9A3FD2B6@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: Bit 9 may be reserved for PAGE_BIT_NUMA, which
- no longer exists upstream.  Adjust the bit numbers accordingly,
- incorporating commit ace7fab7a6cd "x86/mm: Fix swap entry comment and
- macro".]
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Andi Kleen <ak@linux.intel.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+[bwh: Backported to 3.16: Bit 9 may be reserved for PAGE_BIT_NUMA here]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
+ arch/x86/include/asm/pgtable_64.h | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
 --- a/arch/x86/include/asm/pgtable_64.h
 +++ b/arch/x86/include/asm/pgtable_64.h
-@@ -162,23 +162,37 @@ static inline int pgd_large(pgd_t pgd) {
- #define pte_offset_map(dir, address) pte_offset_kernel((dir), (address))
- #define pte_unmap(pte) ((void)(pte))/* NOP */
- 
--/* Encode and de-code a swap entry */
--#define SWP_TYPE_BITS 5
-+/*
-+ * Encode and de-code a swap entry
+@@ -167,7 +167,7 @@ static inline int pgd_large(pgd_t pgd) {
+  *
+  * |     ...                | 11| 10|  9|8|7|6|5| 4| 3|2| 1|0| <- bit number
+  * |     ...                |SW3|SW2|SW1|G|L|D|A|CD|WT|U| W|P| <- bit names
+- * | TYPE (59-63) |  OFFSET (10-58) | 0 |0|0|X|X| X| X|X|SD|0| <- swp entry
++ * | TYPE (59-63) | ~OFFSET (10-58) | 0 |0|0|X|X| X| X|X|SD|0| <- swp entry
+  *
+  * G (8) is aliased and used as a PROT_NONE indicator for
+  * !present ptes.  We need to start storing swap entries above
+@@ -180,6 +180,9 @@ static inline int pgd_large(pgd_t pgd) {
+  *
+  * Bit 7 in swp entry should be 0 because pmd_present checks not only P,
+  * but also L and G.
 + *
-+ * |     ...                | 11| 10|  9|8|7|6|5| 4| 3|2|1|0| <- bit number
-+ * |     ...                |SW3|SW2|SW1|G|L|D|A|CD|WT|U|W|P| <- bit names
-+ * | OFFSET (15->63) | TYPE (10-14) | 0 |0|X|X|X| X| X|X|X|0| <- swp entry
-+ *
-+ * G (8) is aliased and used as a PROT_NONE indicator for
-+ * !present ptes.  We need to start storing swap entries above
-+ * there.  We also need to avoid using A and D because of an
-+ * erratum where they can be incorrectly set by hardware on
-+ * non-present PTEs.
-+ */
- #ifdef CONFIG_NUMA_BALANCING
- /* Automatic NUMA balancing needs to be distinguishable from swap entries */
--#define SWP_OFFSET_SHIFT (_PAGE_BIT_PROTNONE + 2)
-+#define SWP_TYPE_FIRST_SHIFT (_PAGE_BIT_PROTNONE + 2)
- #else
--#define SWP_OFFSET_SHIFT (_PAGE_BIT_PROTNONE + 1)
-+#define SWP_TYPE_FIRST_SHIFT (_PAGE_BIT_PROTNONE + 1)
- #endif
-+#define SWP_TYPE_BITS 5
-+/* Place the offset above the type: */
-+#define SWP_OFFSET_FIRST_BIT (SWP_TYPE_FIRST_BIT + SWP_TYPE_BITS)
++ * The offset is inverted by a binary not operation to make the high
++ * physical bits set.
+  */
+ #define SWP_TYPE_BITS		5
  
- #define MAX_SWAPFILES_CHECK() BUILD_BUG_ON(MAX_SWAPFILES_SHIFT > SWP_TYPE_BITS)
+@@ -199,13 +202,15 @@ static inline int pgd_large(pgd_t pgd) {
+ #define __swp_type(x) ((x).val >> (64 - SWP_TYPE_BITS))
  
--#define __swp_type(x)			(((x).val >> (_PAGE_BIT_PRESENT + 1)) \
-+#define __swp_type(x)			(((x).val >> (SWP_TYPE_FIRST_BIT)) \
- 					 & ((1U << SWP_TYPE_BITS) - 1))
--#define __swp_offset(x)			((x).val >> SWP_OFFSET_SHIFT)
-+#define __swp_offset(x)			((x).val >> SWP_OFFSET_FIRST_BIT)
- #define __swp_entry(type, offset)	((swp_entry_t) { \
--					 ((type) << (_PAGE_BIT_PRESENT + 1)) \
--					 | ((offset) << SWP_OFFSET_SHIFT) })
-+					 ((type) << (SWP_TYPE_FIRST_BIT)) \
-+					 | ((offset) << SWP_OFFSET_FIRST_BIT) })
+ /* Shift up (to get rid of type), then down to get value */
+-#define __swp_offset(x) ((x).val << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT)
++#define __swp_offset(x) (~(x).val << SWP_TYPE_BITS >> SWP_OFFSET_SHIFT)
+ 
+ /*
+  * Shift the offset up "too far" by TYPE bits, then down again
++ * The offset is inverted by a binary not operation to make the high
++ * physical bits set.
+  */
+ #define __swp_entry(type, offset) ((swp_entry_t) { \
+-	((unsigned long)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
++	(~(unsigned long)(offset) << SWP_OFFSET_SHIFT >> SWP_TYPE_BITS) \
+ 	| ((unsigned long)(type) << (64-SWP_TYPE_BITS)) })
+ 
  #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val((pte)) })
- #define __swp_entry_to_pte(x)		((pte_t) { .pte = (x).val })
- 
 
