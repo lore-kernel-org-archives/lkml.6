@@ -2,118 +2,169 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4811EC004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 13:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C43DC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 13:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D324A20833
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 13:10:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J6lHNB2P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D324A20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 5857920833
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 13:11:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5857920833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbeI3Tna (ORCPT
+        id S1728507AbeI3Toa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 15:43:30 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:49521 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728380AbeI3Tna (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 15:43:30 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 340A120F1D;
-        Sun, 30 Sep 2018 09:10:31 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Sun, 30 Sep 2018 09:10:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=hDriGazQUFLgqv3w1IgbRO0Yx/XYq
-        VB8Yj6dNq6gxKs=; b=J6lHNB2P4n2sXO/AJXRs45dwrMDqiJ1NKkuO3Skfg45W0
-        Jg2w5n538nMVFqyQfdxDJDMAxJa4+ycJzhCR0IXfcQ+Ip+vnw7QlCXtnyvrZELaP
-        uIyHOD8u6gex/9nP+vVyBtLRbzx2byzXSeCzoPd0reZLbFqfF/+q+TyTNOZAdlJB
-        a1Gq9n6MDm4S8hvY9MBJ2e0ynMM5FPYIgoq2IlbjQl5HrHyNXXZce791OqSD9M2P
-        2G54XgAe078nHiOjKqPVLopQ5JQSvHY9Qu09qZCnjMfLgG4QrLFqfsfj/o+jNu0B
-        PLLUE/wR10OcBPnr/f2cev2ay2wFswSOO7bbALQ1A==
-X-ME-Proxy: <xmx:RMuwWzPZAVi1IglDOn-G9tvw-nRRDX5LieN-lq-G1T43K_l5XFhjGA>
-    <xmx:RMuwW7xaEXCJ8IyT8HZKPPgYHPgWpWacQ2ueef74BqVhzdQmEtrL2Q>
-    <xmx:RMuwW8u_ealkuykrtiI94f5gY4yAkYRFYgE-1GgZOukaW29uSsSuYg>
-    <xmx:RMuwW05Z4bIQFKDjD12ywjenmGoyrABUZC271OG-kxsg6oEiu7v2Pg>
-    <xmx:RMuwW7QtAiCT00PwnOmBUdLpEXs2GmJAtGwxQB8vr5h-Fe_H6TjcBA>
-    <xmx:R8uwWwDHAwBp3sbYogUUwGXLg3W_gJ9sj3EwlONdw-Cmo-bC0LWq6g>
-X-ME-Sender: <xms:RMuwWxLs-zSHS4XSCdhBqDwzFhEJ1yUOskKRO_66Fv7Z2u16OuAVIA>
-Received: from localhost (c-73-221-170-44.hsd1.wa.comcast.net [73.221.170.44])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C4D1E102A0;
-        Sun, 30 Sep 2018 09:10:27 -0400 (EDT)
-Date:   Sun, 30 Sep 2018 06:10:26 -0700
-From:   Greg KH <gregkh@linux-foundation.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     zhong jiang <zhongjiang@huawei.com>, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-        akpm@linux-foundation.org, mhocko@kernel.org, mgorman@suse.de,
-        vbabka@suse.cz, andrea@kernel.org, kirill@shutemov.name,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [STABLE PATCH] slub: make ->cpu_partial unsigned int
-Message-ID: <20180930131026.GA25677@kroah.com>
-References: <1538303301-61784-1-git-send-email-zhongjiang@huawei.com>
- <20180930125038.GA2533@bombadil.infradead.org>
+        Sun, 30 Sep 2018 15:44:30 -0400
+Received: from mga11.intel.com ([192.55.52.93]:12806 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728380AbeI3To3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 15:44:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2018 06:11:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,324,1534834800"; 
+   d="scan'208";a="237307441"
+Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
+  by orsmga004.jf.intel.com with ESMTP; 30 Sep 2018 06:10:54 -0700
+Date:   Sun, 30 Sep 2018 21:16:19 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        H Peter Anvin <hpa@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Stuart R . Anderson" <stuart.r.anderson@intel.com>,
+        alan@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/earlyprintk: Add a force option for pciserial
+ device
+Message-ID: <20180930131619.jecqh4umrkmifavb@shbuild888>
+References: <20180928094008.23138-1-feng.tang@intel.com>
+ <20180929163458.GA25608@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180930125038.GA2533@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180929163458.GA25608@zn.tnic>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 05:50:38AM -0700, Matthew Wilcox wrote:
-> On Sun, Sep 30, 2018 at 06:28:21PM +0800, zhong jiang wrote:
-> > From: Alexey Dobriyan <adobriyan@gmail.com>
+Hi Borislav,
+
+On Sat, Sep 29, 2018 at 06:34:58PM +0200, Borislav Petkov wrote:
+> On Fri, Sep 28, 2018 at 05:40:08PM +0800, Feng Tang wrote:
+> > "pciserial" earlyprintk helps much on many modern x86 platforms,
+> > but unfortunately there are still some platforms whose PCI UART
+> > devices have wrong PCI class code, which will be blocked by current
+> > class code check.
 > > 
-> > [ Upstream commit e5d9998f3e09359b372a037a6ac55ba235d95d57 ]
-> > 
-> >         /*
-> >          * cpu_partial determined the maximum number of objects
-> >          * kept in the per cpu partial lists of a processor.
-> >          */
-> > 
-> > Can't be negative.
-> > 
-> > I hit a real issue that it will result in a large number of memory leak.
-> > Becuase Freeing slabs are in interrupt context. So it can trigger this issue.
-> > put_cpu_partial can be interrupted more than once.
-> > due to a union struct of lru and pobjects in struct page, when other core handles
-> > page->lru list, for eaxmple, remove_partial in freeing slab code flow, It will
-> > result in pobjects being a negative value(0xdead0000). Therefore, a large number
-> > of slabs will be added to per_cpu partial list.
-> > 
-> > I had posted the issue to community before. The detailed issue description is as follows.
-> > 
-> > https://www.spinics.net/lists/kernel/msg2870979.html
-> > 
-> > After applying the patch, The issue is fixed. So the patch is a effective bugfix.
-> > It should go into stable.
-> > 
-> > Link: http://lkml.kernel.org/r/20180305200730.15812-15-adobriyan@gmail.com
-> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > Acked-by: Christoph Lameter <cl@linux.com>
+> > Add a option "force" so that developer could still use a UART device
+> > even it has wrong class code, with format "",B:D.F,force,baud". And
 > 
-> Hang on.  Christoph acked the _original_ patch going into upstream.
-> When he reviewed this patch for _stable_ last week, he asked for more
-> investigation.  Including this patch in stable is misleading.
+> This new parameter and its meaning needs to be documented where
+> pciserial is documented.
 
-But the original patch has been in upstream for a long time now (it went
-into 4.17-rc1).  If there was a real problem here, whouldn't it have
-been resolved already?
+Ok, will change the kernel-parameters.txt in next version.
 
-And the patch in mainline has Christoph's ack...
+> 
+> > the original format ",B:D.F,baud" is kept unchanged.
+> > 
+> > Suggested-by: Borislav Petkov <bp@alien8.de>
+> > Signed-off-by: Feng Tang <feng.tang@intel.com>
+> > ---
+> >  arch/x86/kernel/early_printk.c | 26 ++++++++++++++++++++------
+> >  1 file changed, 20 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
+> > index 5e801c8..35d0f66 100644
+> > --- a/arch/x86/kernel/early_printk.c
+> > +++ b/arch/x86/kernel/early_printk.c
+> > @@ -213,8 +213,10 @@ static unsigned int mem32_serial_in(unsigned long addr, int offset)
+> >   * early_pci_serial_init()
+> >   *
+> >   * This function is invoked when the early_printk param starts with "pciserial"
+> > - * The rest of the param should be ",B:D.F,baud" where B, D & F describe the
+> > - * location of a PCI device that must be a UART device.
+> > + * The rest of the param should be ",B:D.F,baud" or ",B:D.F,force,baud", where
+> > + * B, D & F describe the location of a PCI device that must be a UART device,
+> > + * "force" is optional and means insisting using a UART device with a wrong
+> > + * pci class code.
+> >   */
+> >  static __init void early_pci_serial_init(char *s)
+> >  {
+> > @@ -224,6 +226,7 @@ static __init void early_pci_serial_init(char *s)
+> >  	u32 classcode, bar0;
+> >  	u16 cmdreg;
+> >  	char *e;
+> > +	int force = 0;
+> >  
+> >  
+> >  	/*
+> > @@ -252,6 +255,15 @@ static __init void early_pci_serial_init(char *s)
+> >  	if (*s == ',')
+> >  		s++;
+> >  
+> > +	/* User may insist to use a UART device with wrong class code */
+> > +	if (!strncmp(s, "force", 5)) {
+> > +		force = 1;
+> > +		s += 5;
+> > +
+> > +		if (*s == ',')
+> > +			s++;
+> 
+> No, you need to force the presence of "," otherwise cmdlines like this:
+> 
+> earlyprintk=pciserial,0:XX.X,forcedoodoo
+> 
+> work too.
 
-thanks,
+Got your point. As the following [,baudrate] is also optional, and this
+"force" could be the last option for pciserial. The check may be
 
-greg k-h
+	if (!strncmp(s, "force,", 6) || !strncmp(s, "force ", 6)) {
+		force = 1;
+		s += 6;
+	}
+
+
+> > +	}
+> > +
+> >  	/*
+> >  	 * Second, find the device from the BDF
+> >  	 */
+> > @@ -262,10 +274,12 @@ static __init void early_pci_serial_init(char *s)
+> >  	/*
+> >  	 * Verify it is a UART type device
+> >  	 */
+> > -	if (((classcode >> 16 != PCI_CLASS_COMMUNICATION_MODEM) &&
+> > -	     (classcode >> 16 != PCI_CLASS_COMMUNICATION_SERIAL)) ||
+> > -	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */
+> > -		return;
+> > +	if (!force) {
+> > +		if (((classcode >> 16 != PCI_CLASS_COMMUNICATION_MODEM) &&
+> > +		     (classcode >> 16 != PCI_CLASS_COMMUNICATION_SERIAL)) ||
+> > +		   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */
+> > +			return;
+> 
+> Move the force check in here ^
+
+Do you mean this? 
+
+	if (((classcode >> 16 != PCI_CLASS_COMMUNICATION_MODEM) &&
+	     (classcode >> 16 != PCI_CLASS_COMMUNICATION_SERIAL)) ||
+	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */ {
+		if (!force)
+			return;
+	}
+
+Thanks,
+Feng
+
+
