@@ -6,110 +6,112 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A690C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA756C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2703206B2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:01:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 700C9206B2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:02:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZfuSYd54"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2703206B2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYla5dqC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 700C9206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728435AbeI3VdZ (ORCPT
+        id S1728513AbeI3Vf3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 17:33:25 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35178 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727616AbeI3VdZ (ORCPT
+        Sun, 30 Sep 2018 17:35:29 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:47028 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727616AbeI3Vf3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 17:33:25 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v133-v6so7690876pgb.2;
-        Sun, 30 Sep 2018 08:00:04 -0700 (PDT)
+        Sun, 30 Sep 2018 17:35:29 -0400
+Received: by mail-pg1-f193.google.com with SMTP id b129-v6so7648831pga.13;
+        Sun, 30 Sep 2018 08:02:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=THX5eFZJkQcsuivBldIGI0ag3X3sE2iZ3+bI6UqMf1I=;
-        b=ZfuSYd54J3h+FvDK7BzEIgrlqmyHOhwAt3VY4N9weVU/rJmOxYBeMfyfGYW2ZkHA2i
-         BZORXkWquAD93kU//TaCEUphqe9LIqDmX+XuBHTZS2JmbIm9foQAFZeYLQGFd5qBhtRh
-         a1rkXI9La/T8baq93ZvsLowRnOTB02jBGFSt3aM/kAZbfJpvA/X4FxgQK0duuQzsTrmZ
-         4E54cAzusWSoPdNoGX8CpQvCbx5EhkgJzNzSY4N8DBv3dN5F85N6gA6acLRP7n85aRa9
-         GtDMPrW7fHinoElU/DtX7r4sW4lHey3a7sMwoyq4FTe/v5CcFYqtyLi3m19WL4tAeB8A
-         axQQ==
+        bh=hxt7NXOduPh2Su7WZHwNqtDtuerGZMOFpJ1BPuIcglM=;
+        b=hYla5dqCc7CdZqYhBtpiZy2QL/XA6enXE7ym6w4LAm2ipTpRlE8Whz4kRFU3SKmmOa
+         BYVMJ+qiKrfTBvsPqNmF6c06RKwvw2Ye1eTY4NTSMa+XCCjZQFKHrWD3fFYuUI6gvgqs
+         jpbaLBkFEbhgzoYcxSA9nCMdD1YflyPACcNzYG97X9yNxkweAgmtkFDp3SrJoQ58dUCt
+         cnTFy/8pbs3G2nsdJnBtRRpBwwiZIfwsBDYIGA+i7A/i8IV+5JqFHaosAylDLhb+U9xx
+         y+mq5VKbCPi94q2Hclmmam839kJncHUyxULqDr4Mny/sTEEeC52X1h0eVoZqyJfTpvd1
+         dDQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=THX5eFZJkQcsuivBldIGI0ag3X3sE2iZ3+bI6UqMf1I=;
-        b=GY5y06ka6zT80l25QdnSEyWcRz0sh9XttN/9bdSlKRexJTvewWHJCefGuoWsSunTYg
-         x3V0DO77w/0KBkNSg2/eAEY6ctlRt+4kxsceydbDQT1vzGwll9nXeY3+AnSYZg8QIB/g
-         +CQHKUO5qg+WjeFDlm+hqZ7ZFWHEidB3soAUAfxH5NSGxt/tm88qFZ+nbdxswrLEK1zi
-         jhE/rTG2lx99scVrYUn80o+3WtzocfS1PVb/arLHIuSpVwid5XqAU46E83SwcdSF0BRd
-         10Ys3XdXfsqzLpydW8OnP2Xfr5mDArW5XYmQvfl0t6M2kAPia1SAgNhXX+9rEWlD1vsm
-         +RRg==
-X-Gm-Message-State: ABuFfohNj8sE3+kVJ0dy8dXf+wnfHs368GZHsUnFlYZMrOSmuzYSSLXb
-        dVlk8Q7Nx8Xpt45P6SzBv0A=
-X-Google-Smtp-Source: ACcGV61xPEqlTUo7IK/xSVo0CtnqisauGesOvejMaBh6hbyjnLXe2EIPcO+CltUoEGIoKVXH84+dig==
-X-Received: by 2002:a63:d44:: with SMTP id 4-v6mr6784514pgn.107.1538319604180;
-        Sun, 30 Sep 2018 08:00:04 -0700 (PDT)
+        bh=hxt7NXOduPh2Su7WZHwNqtDtuerGZMOFpJ1BPuIcglM=;
+        b=Gbkp0UrC7O7NtzQOqc0ZfcIrKxTOxIE1sW9xiLM1Z817JLExQIPikeVQEi7p5M6+qv
+         qxfml3t6Ylgg7stlvKhNNH9HfDbLi0Z4e9MycDp121W8M7hfUqqBMRhyPxzvpB1jrXni
+         A4orq6XFu2DeRO0fR4lwtIr/Cst5P5XDbJs+lBIppYeAzt36oQVCuFW3SmOOhOfh1H6h
+         j+1SbuJ99jsv8qHweiIXmYg7P22jXcL9MhoKI+bdR/1bd/7zOUO1dlCwEBzOjkxaN7Fe
+         D5p06QfuvPGEGkir23rilV2Iaxj/cZjB9p4kbOHyzE3VZMvqudOlqwcCsDq+MhXwH5GW
+         wgiQ==
+X-Gm-Message-State: ABuFfohjTpOLWll2xejpGdtrfouqgFApEEY7qXJPgtmfZ478MRhJAOmE
+        Q0OiE4s6MbhbspVdBGiy6Eg=
+X-Google-Smtp-Source: ACcGV60r32Nm8HHDdtxxhARFHplx0ZK2Yo6b1vg9hvWhndxcgBOYvBatc6I5IxATupeS9SBz1lcgPA==
+X-Received: by 2002:a17:902:a03:: with SMTP id 3-v6mr7621819plo.323.1538319727602;
+        Sun, 30 Sep 2018 08:02:07 -0700 (PDT)
 Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id q2-v6sm25337177pfc.17.2018.09.30.08.00.02
+        by smtp.gmail.com with ESMTPSA id s14-v6sm11953149pgv.29.2018.09.30.08.02.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 08:00:03 -0700 (PDT)
-Date:   Sun, 30 Sep 2018 08:00:01 -0700
+        Sun, 30 Sep 2018 08:02:07 -0700 (PDT)
+Date:   Sun, 30 Sep 2018 08:01:59 -0700
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     Nicolin Chen <nicoleotsuka@gmail.com>
 Cc:     jdelvare@suse.com, afd@ti.com, linux-hwmon@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] hwmon: ina3221: Add INA3221_CONFIG to
- volatile_table
-Message-ID: <20180930150001.GA13042@roeck-us.net>
+Subject: Re: [PATCH v2 2/3] hwmon: ina3221: Fix INA3221_CONFIG_MODE macros
+Message-ID: <20180930150159.GA13190@roeck-us.net>
 References: <20180929214407.27208-1-nicoleotsuka@gmail.com>
- <20180929214407.27208-2-nicoleotsuka@gmail.com>
+ <20180929214407.27208-3-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180929214407.27208-2-nicoleotsuka@gmail.com>
+In-Reply-To: <20180929214407.27208-3-nicoleotsuka@gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 02:44:05PM -0700, Nicolin Chen wrote:
-> The MSB (15th bit) of INA3221_CONFIG is a self-clear reset bit.
-> So this register should be added to the volatile_table of the
-> regmap_config. Otherwise, we will see this bit is sticky in the
-> regcache which might accidentally reset the chip when an actual
-> write happens to the register.
+On Sat, Sep 29, 2018 at 02:44:06PM -0700, Nicolin Chen wrote:
+> The three INA3221_CONFIG_MODE macros are not correctly defined here.
+> The MODE3-1 filed is loacted at BIT 2-0 according to the datasheet.
 > 
-> This might not be a severe bug for the current code line since
-> there's no second place touching the INA3221_CONFIG except the
-> reset routine in the probe().
+located
+
+> So this patch just fixes them by shifting all of them with a correct
+> offset. However, this isn't a crital bug fix as the driver does not
+> use any of them at this point.
 > 
 > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 
-Applied to hwmon-next.
+No need to resend; I fixed it up. Applied to hwmon-next.
 
 Thanks,
 Guenter
 
 > ---
->  drivers/hwmon/ina3221.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/hwmon/ina3221.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-> index e6b49500c52a..cfe65ff01051 100644
+> index cfe65ff01051..e0c4f4d83f4e 100644
 > --- a/drivers/hwmon/ina3221.c
 > +++ b/drivers/hwmon/ina3221.c
-> @@ -353,7 +353,7 @@ static struct attribute *ina3221_attrs[] = {
->  ATTRIBUTE_GROUPS(ina3221);
+> @@ -38,9 +38,9 @@
+>  #define INA3221_WARN3			0x0c
+>  #define INA3221_MASK_ENABLE		0x0f
 >  
->  static const struct regmap_range ina3221_yes_ranges[] = {
-> -	regmap_reg_range(INA3221_SHUNT1, INA3221_BUS3),
-> +	regmap_reg_range(INA3221_CONFIG, INA3221_BUS3),
->  	regmap_reg_range(INA3221_MASK_ENABLE, INA3221_MASK_ENABLE),
->  };
+> -#define INA3221_CONFIG_MODE_SHUNT	BIT(1)
+> -#define INA3221_CONFIG_MODE_BUS		BIT(2)
+> -#define INA3221_CONFIG_MODE_CONTINUOUS	BIT(3)
+> +#define INA3221_CONFIG_MODE_SHUNT	BIT(0)
+> +#define INA3221_CONFIG_MODE_BUS		BIT(1)
+> +#define INA3221_CONFIG_MODE_CONTINUOUS	BIT(2)
+>  
+>  #define INA3221_RSHUNT_DEFAULT		10000
 >  
