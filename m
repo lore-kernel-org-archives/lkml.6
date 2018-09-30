@@ -7,66 +7,68 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8E4C64EAD
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E65BC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3C782089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4593A2075E
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:53:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RNzTKVNw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3C782089D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hb0ffGB6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4593A2075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbeJAC1o (ORCPT
+        id S1728624AbeJAC1q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 22:27:44 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45024 "EHLO
+        Sun, 30 Sep 2018 22:27:46 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35468 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728507AbeJAC1n (ORCPT
+        with ESMTP id S1728515AbeJAC1p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 22:27:43 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 63-v6so4239383wra.11
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 12:53:22 -0700 (PDT)
+        Sun, 30 Sep 2018 22:27:45 -0400
+Received: by mail-wr1-f68.google.com with SMTP id w5-v6so2278657wrt.2
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 12:53:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ODaOXCK/z5qbFyH5ZufbnnRib4wNmikxxdpXemJ47Wg=;
-        b=RNzTKVNwJn2x2LFskUtIo8/jQVGII7KGRTJAiTyCqIE9JxCru0tzKEIiBfWVfay2BC
-         H8sR4eDVmnDCvDo3okCQjKMMg8rP0tcw+bCLk1XrVxtjJdh9arzoyLpvw7rXQy7rcvHs
-         /HIGBtJzKJjmR0zrR2S6KG4Hg9upkDJoM/MOUdkqd87PepXJLyUz23evKYhd31l0bh3U
-         G2uBgl1bc3FfCik0ZjECXvEpu5qQiyIYRcgzM/rjuJGxpU190fpZuyhdc6QV/mh7EsDZ
-         iuGPd2jhy7PGU/ZI6Ruol55/jXTudgyBjNJizJmNjbDKDeTY79z1jNWQN9xRo9YG6S3Y
-         IFpw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+s+S/90uZAFDiqhDT+ccemRiKr/6nklizyQUFhX/o7k=;
+        b=Hb0ffGB60PMYFdrFHYUIkVW5/ikEjzUi9G39WhpRj0lcYM5VkooIUa9D00aHysUi9/
+         f5+tLLkFyp63EzOXZl3cxyJeAZt7QkZSgg9DuFt1FtJ5mj/KPlLFMNTyfI49y+Zob+RR
+         lTU8OZ5TKip/xx2HT08w2TvNwa3qIMgqUse4onncu2Radz+btrNE8C7xQv/TH9HOmwSp
+         4MGVi01IyhNibTHkkYVUrIeoX48jPLOgVYFsAr3DP/PzyKIjm4dWEbe+0b6uV6t1Cs5l
+         +bI79Vg2ffrhHSCaVKToxNhhqj0OB5zI6qCr+oFv25CCUh/w2W/REAdYIytwy24HRZRd
+         6ISg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ODaOXCK/z5qbFyH5ZufbnnRib4wNmikxxdpXemJ47Wg=;
-        b=mAU4lsdeYt+4aRd7HiXWwIKdfkeySly7sC2eOk7fWAR00PJRVuA1mSe9pJvdAeVaMs
-         b2b0yQ+7vSRckh97Re4mz4nUZY1zhdb3m5l5lwQ8VWazTAiifPCbHXursLNqINhyymQd
-         pJBVLc7/jlZfA8zp/ySquGieew8fS5Fgo1KgKTrYwHyEv4mB3/8K4Jd+E4E1KUAhaVcB
-         j9T7SZV6B1y7jHKSPrem1h9AVu0MF9kVHrzLYPbuqlfp7h93HcL86g93o+TgwR7P/Nud
-         kmu9gfX9u/uSbkFlJi84m4N1TjA9a6UMkmEy6T48jZlG/Br6v5Hu1l4dq95gU7siNbUV
-         TgPQ==
-X-Gm-Message-State: ABuFfogE7oUPq/gVElFIm+sPPOFg/g1Adw9P6jhOUiGQeqkpOUHKAWGL
-        +hjkcUtd7fQNOA7fqLQRXfY=
-X-Google-Smtp-Source: ACcGV605+nAjaSBkkZeKVDvvnsfl98OVIZG62AxK3moGNy0b64uXFeuMAtn5Np9O5K00JzJz2gTjng==
-X-Received: by 2002:adf:ba87:: with SMTP id p7-v6mr4552988wrg.203.1538337201991;
-        Sun, 30 Sep 2018 12:53:21 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+s+S/90uZAFDiqhDT+ccemRiKr/6nklizyQUFhX/o7k=;
+        b=D8F8zfEraFqymVNcjC+5Oag41y7jT2TZ6/Tep5iPrbvisbfffkVSuvE4siE0JVDdjA
+         gMzDec/LP1a2f47vrsNtmcPgF09npQcSbhyg/v3BHHtJtS4qa7ystjBwV1V4AiyuDxLv
+         3M/qP5ddvtm8yFnqX3qKlCjzFiHyqNFVOnNCtDpyTs8knBdB+72j9sPQbooEe0zbiyj0
+         4lVIoim6K7ynNGQcDRO4ZB27mcD+eym0Zp3WRFPWAgiTaKSq1rJl+5I8ZUfRwg4r5jJJ
+         phgE8ZfMg6gUExi32+tVaZTiu710oD8rHPQkEOfLDAP9CGcFg0fRxm6nU6hFwr6ee+le
+         2ZhQ==
+X-Gm-Message-State: ABuFfojTYlHeSciZ99HGTDsgbsG7jHbV/GjEJplbnAuPl1sCrdQ3eSW4
+        dpCfKtvN60WthpXVV7AKxSA4z29P
+X-Google-Smtp-Source: ACcGV61H4Ci9t2EGPmtvEQUIbUVVc1udPtBoy2mQonjFKElTdloPVfwOv987P3GPe2vPt4Pz4WXakQ==
+X-Received: by 2002:adf:ef0a:: with SMTP id e10-v6mr5040962wro.292.1538337204570;
+        Sun, 30 Sep 2018 12:53:24 -0700 (PDT)
 Received: from localhost.localdomain (ip1f12fd19.dynamic.kabel-deutschland.de. [31.18.253.25])
-        by smtp.gmail.com with ESMTPSA id w26-v6sm6500775wmi.27.2018.09.30.12.53.21
+        by smtp.gmail.com with ESMTPSA id w26-v6sm6500775wmi.27.2018.09.30.12.53.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 12:53:21 -0700 (PDT)
+        Sun, 30 Sep 2018 12:53:24 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 01/19] staging: rtl8188eu: cleanup inconsistent indenting
-Date:   Sun, 30 Sep 2018 21:52:52 +0200
-Message-Id: <20180930195310.1531-1-straube.linux@gmail.com>
+Subject: [PATCH 04/19] staging: rtl8188eu: add spaces around '+' in odm_hwconfig.c
+Date:   Sun, 30 Sep 2018 21:52:55 +0200
+Message-Id: <20180930195310.1531-4-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180930195310.1531-1-straube.linux@gmail.com>
+References: <20180930195310.1531-1-straube.linux@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,325 +76,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup all inconsistent indenting reported by smatch.
+Add spaces around '+' in odm_hwconfig.c to follow kernel coding style.
+Reported by checkpatch.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_efuse.c    |  2 +-
- .../staging/rtl8188eu/core/rtw_ieee80211.c    |  2 +-
- drivers/staging/rtl8188eu/core/rtw_led.c      |  4 ++--
- drivers/staging/rtl8188eu/core/rtw_mlme.c     | 16 +++++++--------
- drivers/staging/rtl8188eu/core/rtw_recv.c     |  2 +-
- drivers/staging/rtl8188eu/core/rtw_security.c |  5 ++---
- .../rtl8188eu/hal/hal8188e_rate_adaptive.c    | 18 +++++++++--------
- drivers/staging/rtl8188eu/hal/odm_HWConfig.c  |  2 +-
- drivers/staging/rtl8188eu/hal/usb_halinit.c   | 20 +++++++++----------
- .../staging/rtl8188eu/os_dep/ioctl_linux.c    | 10 +++++-----
- drivers/staging/rtl8188eu/os_dep/mlme_linux.c |  2 +-
- drivers/staging/rtl8188eu/os_dep/os_intfs.c   |  2 +-
- 12 files changed, 43 insertions(+), 42 deletions(-)
+ drivers/staging/rtl8188eu/hal/odm_hwconfig.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_efuse.c b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-index 4988d97ca0d1..cb6d1fb776da 100644
---- a/drivers/staging/rtl8188eu/core/rtw_efuse.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-@@ -37,7 +37,7 @@ void efuse_power_switch(struct adapter *pAdapter, u8 write, u8 pwrstate)
- 		tmpv16 = usb_read16(pAdapter, REG_SYS_ISO_CTRL);
- 		if (!(tmpv16 & PWC_EV12V)) {
- 			tmpv16 |= PWC_EV12V;
--			 usb_write16(pAdapter, REG_SYS_ISO_CTRL, tmpv16);
-+			usb_write16(pAdapter, REG_SYS_ISO_CTRL, tmpv16);
- 		}
- 		/*  Reset: 0x0000h[28], default valid */
- 		tmpv16 =  usb_read16(pAdapter, REG_SYS_FUNC_EN);
-diff --git a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
-index 20f34d25c369..5c4ff81987bd 100644
---- a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
-@@ -246,7 +246,7 @@ int rtw_generate_ie(struct registry_priv *pregistrypriv)
- 		wireless_mode = pregistrypriv->wireless_mode;
- 	}
- 
--		rtw_set_supported_rate(pdev_network->SupportedRates, wireless_mode);
-+	rtw_set_supported_rate(pdev_network->SupportedRates, wireless_mode);
- 
- 	rateLen = rtw_get_rateset_len(pdev_network->SupportedRates);
- 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_led.c b/drivers/staging/rtl8188eu/core/rtw_led.c
-index 98106e77a9f6..a2e7789aecbd 100644
---- a/drivers/staging/rtl8188eu/core/rtw_led.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_led.c
-@@ -357,7 +357,7 @@ static void SwLedControlMode1(struct adapter *padapter, enum LED_CTL_MODE LedAct
- 		}
- 		if (pLed->bLedLinkBlinkInProgress) {
- 			del_timer_sync(&pLed->BlinkTimer);
--			 pLed->bLedLinkBlinkInProgress = false;
-+			pLed->bLedLinkBlinkInProgress = false;
- 		}
- 		if (pLed->bLedBlinkInProgress) {
- 			del_timer_sync(&pLed->BlinkTimer);
-@@ -383,7 +383,7 @@ static void SwLedControlMode1(struct adapter *padapter, enum LED_CTL_MODE LedAct
- 		}
- 		if (pLed->bLedLinkBlinkInProgress) {
- 			del_timer_sync(&pLed->BlinkTimer);
--			 pLed->bLedLinkBlinkInProgress = false;
-+			pLed->bLedLinkBlinkInProgress = false;
- 		}
- 		if (pLed->bLedBlinkInProgress) {
- 			del_timer_sync(&pLed->BlinkTimer);
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index d18d34313a9e..858b597cb506 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -305,7 +305,7 @@ static int is_same_ess(struct wlan_bssid_ex *a, struct wlan_bssid_ex *b)
- 
- int is_same_network(struct wlan_bssid_ex *src, struct wlan_bssid_ex *dst)
- {
--	 u16 s_cap, d_cap;
-+	u16 s_cap, d_cap;
- 	__le16 le_scap, le_dcap;
- 
- 	memcpy((u8 *)&le_scap, rtw_get_capability_from_ie(src->ies), 2);
-@@ -842,7 +842,7 @@ static struct sta_info *rtw_joinbss_update_stainfo(struct adapter *padapter, str
- 	if (psta) { /* update ptarget_sta */
- 		DBG_88E("%s\n", __func__);
- 		psta->aid  = pnetwork->join_res;
--			psta->mac_id = 0;
-+		psta->mac_id = 0;
- 		/* sta mode */
- 		rtw_hal_set_odm_var(padapter, HAL_ODM_STA_INFO, psta, true);
- 		/* security related */
-@@ -1038,12 +1038,12 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
- 			}
- 
- 			/* s4. indicate connect */
--				if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
--					rtw_indicate_connect(adapter);
--				} else {
--					/* adhoc mode will rtw_indicate_connect when rtw_stassoc_event_callback */
--					RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("adhoc mode, fw_state:%x", get_fwstate(pmlmepriv)));
--				}
-+			if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
-+				rtw_indicate_connect(adapter);
-+			} else {
-+				/* adhoc mode will rtw_indicate_connect when rtw_stassoc_event_callback */
-+				RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("adhoc mode, fw_state:%x", get_fwstate(pmlmepriv)));
-+			}
- 
- 			/* s5. Cancel assoc_timer */
- 			del_timer_sync(&pmlmepriv->assoc_timer);
-diff --git a/drivers/staging/rtl8188eu/core/rtw_recv.c b/drivers/staging/rtl8188eu/core/rtw_recv.c
-index f3eb63f8cf0b..380d544c8ca7 100644
---- a/drivers/staging/rtl8188eu/core/rtw_recv.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_recv.c
-@@ -488,7 +488,7 @@ static struct recv_frame *portctrl(struct adapter *adapter,
- 		prtnframe = precv_frame;
- 	}
- 
--		return prtnframe;
-+	return prtnframe;
+diff --git a/drivers/staging/rtl8188eu/hal/odm_hwconfig.c b/drivers/staging/rtl8188eu/hal/odm_hwconfig.c
+index 6cc1f1f6448d..b227752f3f00 100644
+--- a/drivers/staging/rtl8188eu/hal/odm_hwconfig.c
++++ b/drivers/staging/rtl8188eu/hal/odm_hwconfig.c
+@@ -21,7 +21,7 @@ static u8 odm_QueryRxPwrPercentage(s8 AntPower)
+ 	else if (AntPower >= 0)
+ 		return	100;
+ 	else
+-		return 100+AntPower;
++		return 100 + AntPower;
  }
  
- static int recv_decache(struct recv_frame *precv_frame, u8 bretry,
-diff --git a/drivers/staging/rtl8188eu/core/rtw_security.c b/drivers/staging/rtl8188eu/core/rtw_security.c
-index a2ec0e403718..f7407632e80b 100644
---- a/drivers/staging/rtl8188eu/core/rtw_security.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_security.c
-@@ -353,7 +353,7 @@ void rtw_seccalctkipmic(u8 *key, u8 *header, u8 *data, u32 data_len, u8 *mic_cod
+ /*  2012/01/12 MH MOve some signal strength smooth method to MP HAL layer. */
+@@ -145,7 +145,7 @@ static void odm_RxPhyStatus92CSeries_Parsing(struct odm_dm_struct *dm_odm,
+ 		PWDB_ALL = odm_QueryRxPwrPercentage(rx_pwr_all);
+ 		if (!cck_highpwr) {
+ 			if (PWDB_ALL >= 80)
+-				PWDB_ALL = ((PWDB_ALL-80)<<1)+((PWDB_ALL-80)>>1)+80;
++				PWDB_ALL = ((PWDB_ALL-80)<<1) + ((PWDB_ALL-80)>>1) + 80;
+ 			else if ((PWDB_ALL <= 78) && (PWDB_ALL >= 20))
+ 				PWDB_ALL += 3;
+ 			if (PWDB_ALL > 100)
+@@ -377,7 +377,7 @@ static void odm_Process_RSSIForDM(struct odm_dm_struct *dm_odm,
  
- 	/* Michael MIC pseudo header: DA, SA, 3 x 0, Priority */
- 	if (header[1]&1) {   /* ToDS == 1 */
--			rtw_secmicappend(&micdata, &header[16], 6);  /* DA */
-+		rtw_secmicappend(&micdata, &header[16], 6);  /* DA */
- 		if (header[1]&2)  /* From Ds == 1 */
- 			rtw_secmicappend(&micdata, &header[24], 6);
- 		else
-@@ -1273,8 +1273,7 @@ u32	rtw_aes_encrypt(struct adapter *padapter, u8 *pxmitframe)
- 		}
- 	}
- 
--
--		return res;
-+	return res;
- }
- 
- u32 rtw_aes_decrypt(struct adapter *padapter, u8 *precvframe)
-diff --git a/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c b/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
-index 464c11710398..6dbd7d261f1e 100644
---- a/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
-+++ b/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
-@@ -418,14 +418,16 @@ static int odm_ARFBRefresh_8188E(struct odm_dm_struct *dm_odm, struct odm_ra_inf
- 	} else {
- 		pRaInfo->LowestRate = 0;
- 	}
--		if (pRaInfo->HighestRate > 0x13)
--			pRaInfo->PTModeSS = 3;
--		else if (pRaInfo->HighestRate > 0x0b)
--			pRaInfo->PTModeSS = 2;
--		else if (pRaInfo->HighestRate > 0x0b)
--			pRaInfo->PTModeSS = 1;
--		else
--			pRaInfo->PTModeSS = 0;
-+
-+	if (pRaInfo->HighestRate > 0x13)
-+		pRaInfo->PTModeSS = 3;
-+	else if (pRaInfo->HighestRate > 0x0b)
-+		pRaInfo->PTModeSS = 2;
-+	else if (pRaInfo->HighestRate > 0x0b)
-+		pRaInfo->PTModeSS = 1;
-+	else
-+		pRaInfo->PTModeSS = 0;
-+
- 	ODM_RT_TRACE(dm_odm, ODM_COMP_RATE_ADAPTIVE, ODM_DBG_LOUD,
- 		     ("ODM_ARFBRefresh_8188E(): PTModeSS =%d\n", pRaInfo->PTModeSS));
- 
-diff --git a/drivers/staging/rtl8188eu/hal/odm_HWConfig.c b/drivers/staging/rtl8188eu/hal/odm_HWConfig.c
-index 0464dc41f860..9d63afd4f99f 100644
---- a/drivers/staging/rtl8188eu/hal/odm_HWConfig.c
-+++ b/drivers/staging/rtl8188eu/hal/odm_HWConfig.c
-@@ -185,7 +185,7 @@ static void odm_RxPhyStatus92CSeries_Parsing(struct odm_dm_struct *dm_odm,
- 
- 		/*  (1)Get RSSI for HT rate */
- 
--		 for (i = RF_PATH_A; i < RF_PATH_MAX; i++) {
-+		for (i = RF_PATH_A; i < RF_PATH_MAX; i++) {
- 			/*  2008/01/30 MH we will judge RF RX path now. */
- 			if (dm_odm->RFPathRxEnable & BIT(i))
- 				rf_rx_num++;
-diff --git a/drivers/staging/rtl8188eu/hal/usb_halinit.c b/drivers/staging/rtl8188eu/hal/usb_halinit.c
-index 12864b648fa8..75a28bf095fb 100644
---- a/drivers/staging/rtl8188eu/hal/usb_halinit.c
-+++ b/drivers/staging/rtl8188eu/hal/usb_halinit.c
-@@ -785,13 +785,13 @@ u32 rtl8188eu_hal_init(struct adapter *Adapter)
- 	haldata->RfRegChnlVal[0] = rtw_hal_read_rfreg(Adapter, (enum rf_radio_path)0, RF_CHNLBW, bRFRegOffsetMask);
- 	haldata->RfRegChnlVal[1] = rtw_hal_read_rfreg(Adapter, (enum rf_radio_path)1, RF_CHNLBW, bRFRegOffsetMask);
- 
--HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_TURN_ON_BLOCK);
-+	HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_TURN_ON_BLOCK);
- 	_BBTurnOnBlock(Adapter);
- 
--HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_INIT_SECURITY);
-+	HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_INIT_SECURITY);
- 	invalidate_cam_all(Adapter);
- 
--HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_MISC11);
-+	HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_MISC11);
- 	/*  2010/12/17 MH We need to set TX power according to EFUSE content at first. */
- 	phy_set_tx_power_level(Adapter, haldata->CurrentChannel);
- 
-@@ -816,7 +816,7 @@ HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_MISC11);
- 	/* Nav limit , suggest by scott */
- 	usb_write8(Adapter, 0x652, 0x0);
- 
--HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_INIT_HAL_DM);
-+	HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_INIT_HAL_DM);
- 	rtl8188e_InitHalDm(Adapter);
- 
- 	/*  2010/08/11 MH Merge from 8192SE for Minicard init. We need to confirm current radio status */
-@@ -840,8 +840,8 @@ HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_INIT_HAL_DM);
- 	/* enable tx DMA to drop the redundate data of packet */
- 	usb_write16(Adapter, REG_TXDMA_OFFSET_CHK, (usb_read16(Adapter, REG_TXDMA_OFFSET_CHK) | DROP_DATA_EN));
- 
--HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_IQK);
--		/*  2010/08/26 MH Merge from 8192CE. */
-+	HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_IQK);
-+	/*  2010/08/26 MH Merge from 8192CE. */
- 	if (pwrctrlpriv->rf_pwrstate == rf_on) {
- 		if (haldata->odmpriv.RFCalibrateInfo.bIQKInitialized) {
- 			rtl88eu_phy_iq_calibrate(Adapter, true);
-@@ -850,12 +850,12 @@ HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_IQK);
- 			haldata->odmpriv.RFCalibrateInfo.bIQKInitialized = true;
- 		}
- 
--HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_PW_TRACK);
-+		HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_PW_TRACK);
- 
- 		ODM_TXPowerTrackingCheck(&haldata->odmpriv);
- 
--HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_LCK);
--			rtl88eu_phy_lc_calibrate(Adapter);
-+		HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_LCK);
-+		rtl88eu_phy_lc_calibrate(Adapter);
- 	}
- 
- /* HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_INIT_PABIAS); */
-@@ -866,7 +866,7 @@ HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_LCK);
- 	usb_write32(Adapter, REG_FWHW_TXQ_CTRL, usb_read32(Adapter, REG_FWHW_TXQ_CTRL) | BIT(12));
- 
- exit:
--HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_END);
-+	HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_END);
- 
- 	DBG_88E("%s in %dms\n", __func__,
- 		jiffies_to_msecs(jiffies - init_start_time));
-diff --git a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-index 4801345a2b57..408fabf9f34a 100644
---- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-@@ -421,7 +421,7 @@ static int wpa_set_encryption(struct net_device *dev, struct ieee_param *param,
- 				ret = -EOPNOTSUPP;
- 				goto exit;
- 			}
--		      memcpy(&(psecuritypriv->dot11DefKey[wep_key_idx].skey[0]), pwep->KeyMaterial, pwep->KeyLength);
-+			memcpy(&(psecuritypriv->dot11DefKey[wep_key_idx].skey[0]), pwep->KeyMaterial, pwep->KeyLength);
- 			psecuritypriv->dot11DefKeylen[wep_key_idx] = pwep->KeyLength;
- 			rtw_set_key(padapter, psecuritypriv, wep_key_idx, 0);
- 		}
-@@ -1317,8 +1317,8 @@ static int rtw_wx_set_essid(struct net_device *dev,
- 
- 		RT_TRACE(_module_rtl871x_ioctl_os_c, _drv_info_, ("rtw_wx_set_essid: ssid =[%s]\n", src_ssid));
- 		spin_lock_bh(&queue->lock);
--	       phead = get_list_head(queue);
--	      pmlmepriv->pscanned = phead->next;
-+		phead = get_list_head(queue);
-+		pmlmepriv->pscanned = phead->next;
- 
- 		while (phead != pmlmepriv->pscanned) {
- 			pnetwork = container_of(pmlmepriv->pscanned, struct wlan_network, list);
-@@ -1400,7 +1400,7 @@ static int rtw_wx_set_rate(struct net_device *dev,
- 	u32	target_rate = wrqu->bitrate.value;
- 	u32	fixed = wrqu->bitrate.fixed;
- 	u32	ratevalue = 0;
--	 u8 mpdatarate[NumRates] = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0xff};
-+	u8 mpdatarate[NumRates] = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0xff};
- 
- 	RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, (" rtw_wx_set_rate\n"));
- 	RT_TRACE(_module_rtl871x_ioctl_os_c, _drv_info_, ("target_rate = %d, fixed = %d\n", target_rate, fixed));
-@@ -2278,7 +2278,7 @@ static int rtw_set_encryption(struct net_device *dev, struct ieee_param *param,
- 			/* don't update "psecuritypriv->dot11PrivacyAlgrthm" and */
- 			/* psecuritypriv->dot11PrivacyKeyIndex = keyid", but can rtw_set_key to cam */
- 
--		      memcpy(&(psecuritypriv->dot11DefKey[wep_key_idx].skey[0]), pwep->KeyMaterial, pwep->KeyLength);
-+			memcpy(&(psecuritypriv->dot11DefKey[wep_key_idx].skey[0]), pwep->KeyMaterial, pwep->KeyLength);
- 
- 			psecuritypriv->dot11DefKeylen[wep_key_idx] = pwep->KeyLength;
- 
-diff --git a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
-index 238c1d9cdc7b..d5ceb3beabbc 100644
---- a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
-@@ -78,7 +78,7 @@ void rtw_os_indicate_disconnect(struct adapter *adapter)
- {
- 	netif_carrier_off(adapter->pnetdev); /*  Do it first for tx broadcast pkt after disconnection issue! */
- 	rtw_indicate_wx_disassoc_event(adapter);
--	 rtw_reset_securitypriv(adapter);
-+	rtw_reset_securitypriv(adapter);
- }
- 
- void rtw_report_sec_ie(struct adapter *adapter, u8 authmode, u8 *sec_ie)
-diff --git a/drivers/staging/rtl8188eu/os_dep/os_intfs.c b/drivers/staging/rtl8188eu/os_dep/os_intfs.c
-index 0a9877d85c79..dac9f98b4808 100644
---- a/drivers/staging/rtl8188eu/os_dep/os_intfs.c
-+++ b/drivers/staging/rtl8188eu/os_dep/os_intfs.c
-@@ -643,7 +643,7 @@ int  ips_netdrv_open(struct adapter *padapter)
- 	mod_timer(&padapter->mlmepriv.dynamic_chk_timer,
- 		  jiffies + msecs_to_jiffies(5000));
- 
--	 return _SUCCESS;
-+	return _SUCCESS;
- 
- netdev_open_error:
- 	DBG_88E("-ips_netdrv_open - drv_open failure, bup =%d\n", padapter->bup);
+ 		if (pEntry->rssi_stat.ValidBit == 64) {
+ 			Weighting = min_t(u32, OFDM_pkt << 4, 64);
+-			UndecoratedSmoothedPWDB = (Weighting*UndecoratedSmoothedOFDM+(64-Weighting)*UndecoratedSmoothedCCK)>>6;
++			UndecoratedSmoothedPWDB = (Weighting*UndecoratedSmoothedOFDM + (64-Weighting)*UndecoratedSmoothedCCK)>>6;
+ 		} else {
+ 			if (pEntry->rssi_stat.ValidBit != 0)
+ 				UndecoratedSmoothedPWDB = (OFDM_pkt * UndecoratedSmoothedOFDM +
 -- 
 2.19.0
 
