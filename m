@@ -1,103 +1,301 @@
-Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5686C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 23:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 945D3C004D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98985206B7
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 23:48:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98985206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 3AD9520840
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:01:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMMnIWgZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AD9520840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbeJAGXW (ORCPT
+        id S1726640AbeJAGd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 02:23:22 -0400
-Received: from smtprelay0045.hostedemail.com ([216.40.44.45]:56629 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726745AbeJAGXW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 02:23:22 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 9C4FC100E806B;
-        Sun, 30 Sep 2018 23:48:22 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: thumb11_2be3df0eaed14
-X-Filterd-Recvd-Size: 2500
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 30 Sep 2018 23:48:21 +0000 (UTC)
-Message-ID: <aa1fbf64fc1190674abb9ecae3ffe1a39e1e60c0.camel@perches.com>
-Subject: Re: [PATCH] ARM: disable ARMv6 for Clang older than 8.0
-From:   Joe Perches <joe@perches.com>
-To:     Stefan Agner <stefan@agner.ch>, linux@armlinux.org.uk,
-        arnd@arndb.de
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Sun, 30 Sep 2018 16:48:20 -0700
-In-Reply-To: <20180930222230.24167-1-stefan@agner.ch>
-References: <20180930222230.24167-1-stefan@agner.ch>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 1 Oct 2018 02:33:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37432 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726261AbeJAGd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 02:33:29 -0400
+Received: from localhost (c-67-160-202-76.hsd1.ca.comcast.net [67.160.202.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D713B2083C;
+        Sun, 30 Sep 2018 23:58:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538351908;
+        bh=/X670o3kknfaBVk39HbOAmbFNGpSfEUrW+JAIFqljfw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tMMnIWgZo+zyLYDClXjHKkQRoPRncQsVCrkodAR1rIRrlRD64iCAcbuOuCdmf0cQY
+         GXZYD1xP+IaJrnvrJhfQOWuD6mo9I7cr2K5xqJFftOBwJSIsuj2iqPWgVepAKK5kf4
+         5Z0/XY+av5THLXAWk2FRbGvW3/pDLlThLhFSmPUE=
+Date:   Sun, 30 Sep 2018 16:58:27 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Message-ID: <20180930235827.GB17407@jaegeuk-macbookpro.roam.corp.google.com>
+References: <0c98ab72-9bc4-093d-707f-9c59a38fc7c7@huawei.com>
+ <20180926002909.GC3829@jaegeuk-macbookpro.roam.corp.google.com>
+ <b45beb50-c814-5fb4-63da-060871e33553@huawei.com>
+ <20180926014418.GE3829@jaegeuk-macbookpro.roam.corp.google.com>
+ <e1e855e5-2aaf-6560-d69d-2b7b0f60404e@huawei.com>
+ <20180926020921.GG3829@jaegeuk-macbookpro.roam.corp.google.com>
+ <d4279226-ca5c-8905-f6e9-c660c3aad6a0@huawei.com>
+ <20180928173721.GB64391@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180928234025.GA94043@jaegeuk-macbookpro.roam.corp.google.com>
+ <2c6db622-ef6d-c3c7-cf54-4dd708bd54e3@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2c6db622-ef6d-c3c7-cf54-4dd708bd54e3@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-01 at 00:22 +0200, Stefan Agner wrote:
-> The kernel passes the ArmV6K architecture to the compiler when
-> using the multi platform selection and enabling ARMv6. Clang
-> older than version 8.0 emit assembly with an non-existing CPU,
-> which then makes the assembler fail. Prevent the user from
-> selecting ARMv6 when using Clang before 8.0.
+On 09/29, Chao Yu wrote:
+> On 2018/9/29 7:40, Jaegeuk Kim wrote:
+> > Testing other fix.
+> > 
+> > ---
+> >  fs/f2fs/checkpoint.c |  7 +++++++
+> >  fs/f2fs/f2fs.h       |  1 +
+> >  fs/f2fs/gc.c         | 10 +++++++++-
+> >  fs/f2fs/super.c      | 22 +++++++++++++++++++++-
+> >  4 files changed, 38 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > index 524b87667cf4..3fde91f41a91 100644
+> > --- a/fs/f2fs/checkpoint.c
+> > +++ b/fs/f2fs/checkpoint.c
+> > @@ -1494,6 +1494,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >  {
+> >  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+> >  	unsigned long long ckpt_ver;
+> > +	bool need_up = false;
+> >  	int err = 0;
+> >  
+> >  	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+> > @@ -1506,6 +1507,10 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >  		f2fs_msg(sbi->sb, KERN_WARNING,
+> >  				"Start checkpoint disabled!");
+> >  	}
+> > +	if (!is_sbi_flag_set(sbi, SBI_QUOTA_INIT)) {
+> > +		need_up = true;
+> > +		down_read(&sbi->sb->s_umount);
 > 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> Link: https://github.com/ClangBuiltLinux/linux/issues/55
-> ---
->  arch/arm/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+> This is to avoid show warning when calling dquot_writeback_dquots() in
+> f2fs_quota_sync(), right?
+
+Yup. Unfortunately, this can't fix all the issues, so I'm testing trylock
+simply in this case.
+
 > 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index e8cd55a5b04c..8da160757381 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -671,6 +671,7 @@ config ARCH_MULTI_V4_V5
->  
->  config ARCH_MULTI_V6
->  	bool "ARMv6 based platforms (ARM11)"
-> +	depends on !CC_IS_CLANG || CLANG_VERSION>=80000
->  	select ARCH_MULTI_V6_V7
->  	select CPU_V6K
->  
+> > +	}
+> >  	mutex_lock(&sbi->cp_mutex);
+> >  
+> >  	if (!is_sbi_flag_set(sbi, SBI_IS_DIRTY) &&
+> > @@ -1582,6 +1587,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >  	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish checkpoint");
+> >  out:
+> >  	mutex_unlock(&sbi->cp_mutex);
+> > +	if (need_up)
+> > +		up_read(&sbi->sb->s_umount);
+> >  	return err;
+> >  }
+> >  
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 57c829dd107e..30194f2f108e 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1096,6 +1096,7 @@ enum {
+> >  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
+> >  	SBI_IS_RECOVERED,			/* recovered orphan/data */
+> >  	SBI_CP_DISABLED,			/* CP was disabled last mount */
+> > +	SBI_QUOTA_INIT,				/* avoid sb->s_umount lock */
+> >  	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
+> >  	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
+> >  	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index adaf5a695b12..deece448cb3b 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -55,9 +55,14 @@ static int gc_thread_func(void *data)
+> >  			f2fs_stop_checkpoint(sbi, false);
+> >  		}
+> >  
+> > -		if (!sb_start_write_trylock(sbi->sb))
+> > +		if (!down_read_trylock(&sbi->sb->s_umount))
+> >  			continue;
+> >  
+> > +		set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> > +
+> > +		if (!sb_start_write_trylock(sbi->sb))
+> > +			goto next_umount;
+> > +
+> >  		/*
+> >  		 * [GC triggering condition]
+> >  		 * 0. GC is not conducted currently.
+> > @@ -104,6 +109,9 @@ static int gc_thread_func(void *data)
+> >  		f2fs_balance_fs_bg(sbi);
+> >  next:
+> >  		sb_end_write(sbi->sb);
+> > +next_umount:
+> > +		clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> > +		up_read(&sbi->sb->s_umount);
+> >  
+> >  	} while (!kthread_should_stop());
+> >  	return 0;
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index a28c245b1288..40a77a4eb465 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -1029,6 +1029,8 @@ static void f2fs_put_super(struct super_block *sb)
+> >  	int i;
+> >  	bool dropped;
+> >  
+> > +	set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> > +
+> >  	f2fs_quota_off_umount(sb);
+> >  
+> >  	/* prevent remaining shrinker jobs */
+> > @@ -1122,11 +1124,17 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
+> >  
+> >  	if (sync) {
+> >  		struct cp_control cpc;
+> > +		bool keep = is_sbi_flag_set(sbi, SBI_QUOTA_INIT);
+> >  
+> >  		cpc.reason = __get_cp_reason(sbi);
+> >  
+> >  		mutex_lock(&sbi->gc_mutex);
+> > +		if (sbi->sb->s_writers.frozen >= SB_FREEZE_WRITE)
+> > +			set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> > +
+> >  		err = f2fs_write_checkpoint(sbi, &cpc);
+> > +		if (!keep)
+> > +			clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >  		mutex_unlock(&sbi->gc_mutex);
+> >  	}
+> >  	f2fs_trace_ios(NULL, 1);
+> > @@ -1534,6 +1542,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> >  		}
+> >  	}
+> >  #endif
+> > +	set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >  
+> >  	/* recover superblocks we couldn't write due to previous RO mount */
+> >  	if (!(*flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
+> > @@ -1653,6 +1662,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> >  		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+> >  
+> >  	limit_reserve_root(sbi);
+> > +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >  	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+> >  	return 0;
+> >  restore_gc:
+> > @@ -1673,6 +1683,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> >  #endif
+> >  	sbi->mount_opt = org_mount_opt;
+> >  	sb->s_flags = old_sb_flags;
+> > +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >  	return err;
+> >  }
+> >  
+> > @@ -1706,6 +1717,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+> >  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+> >  				goto repeat;
+> >  			}
+> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >  			return PTR_ERR(page);
+> >  		}
+> >  
+> > @@ -1717,6 +1729,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+> >  		}
+> >  		if (unlikely(!PageUptodate(page))) {
+> >  			f2fs_put_page(page, 1);
+> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >  			return -EIO;
+> >  		}
+> >  
+> > @@ -1758,6 +1771,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+> >  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+> >  				goto retry;
+> >  			}
+> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >  			break;
+> 
+> I added these before, but later I didn't encounter quota corruption w/o
+> them, so I removed them.
+> 
+> Do you still hit corruption after this change?
 
-Perhaps it'd be better to avoid this in selection
-criteria in Kconfig and instead add this to
-include/linux/compiler_clang.h
----
- include/linux/compiler-clang.h | 4 ++++
- 1 file changed, 4 insertions(+)
+I found one issue where we must avoid roll-forward recovery, if fsck overwrote some
+blocks to fix quota which will be used for recovery.
 
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index b1ce500fe8b3..90fd16c85359 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -3,6 +3,10 @@
- #error "Please don't include <linux/compiler-clang.h> directly, include <linux/compiler.h> instead."
- #endif
- 
-+#if defined(CONFIG_ARCH_MULTI_V6) && CLANG_VERSION < 80000
-+# error Sorry, your compiler is too old - please upgrade it.
-+#endif
-+
- /* Some compiler specific definitions are overwritten here
-  * for Clang compiler
-  */
-
-
+> 
+> Thanks,
+> 
+> >  		}
+> >  
+> > @@ -1794,7 +1808,6 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
+> >  
+> >  static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
+> >  {
+> > -
+> >  	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
+> >  		f2fs_msg(sbi->sb, KERN_ERR,
+> >  			"quota sysfile may be corrupted, skip loading it");
+> > @@ -1958,7 +1971,9 @@ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
+> >  	if (err)
+> >  		return err;
+> >  
+> > +	set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_INIT);
+> >  	err = dquot_quota_on(sb, type, format_id, path);
+> > +	clear_sbi_flag(F2FS_SB(sb), SBI_QUOTA_INIT);
+> >  	if (err)
+> >  		return err;
+> >  
+> > @@ -3179,6 +3194,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  		goto free_meta_inode;
+> >  	}
+> >  
+> > +	set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >  	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_QUOTA_NEED_FSCK_FLAG))
+> >  		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> >  
+> > @@ -3370,6 +3386,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  				cur_cp_version(F2FS_CKPT(sbi)));
+> >  	f2fs_update_time(sbi, CP_TIME);
+> >  	f2fs_update_time(sbi, REQ_TIME);
+> > +
+> > +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >  	return 0;
+> >  
+> >  free_meta:
+> > @@ -3434,6 +3452,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  		shrink_dcache_sb(sb);
+> >  		goto try_onemore;
+> >  	}
+> > +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >  	return err;
+> >  }
+> >  
+> > @@ -3449,6 +3468,7 @@ static void kill_f2fs_super(struct super_block *sb)
+> >  		struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> >  
+> >  		set_sbi_flag(sbi, SBI_IS_CLOSE);
+> > +		set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >  		f2fs_stop_gc_thread(sbi);
+> >  		f2fs_stop_discard_thread(sbi);
+> >  
+> > 
