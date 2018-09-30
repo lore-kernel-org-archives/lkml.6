@@ -6,54 +6,43 @@ X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55294C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 06:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AB9C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 06:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 080AD206B2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 06:51:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 080AD206B2
+	by mail.kernel.org (Postfix) with ESMTP id 185E8206B2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 06:56:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185E8206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbeI3NWu (ORCPT
+        id S1727968AbeI3N1n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 09:22:50 -0400
-Received: from mga01.intel.com ([192.55.52.88]:10699 "EHLO mga01.intel.com"
+        Sun, 30 Sep 2018 09:27:43 -0400
+Received: from mga17.intel.com ([192.55.52.151]:28630 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727613AbeI3NWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 09:22:50 -0400
+        id S1727580AbeI3N1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 09:27:43 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Sep 2018 23:51:04 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Sep 2018 23:50:52 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,323,1534834800"; 
-   d="yaml'?scan'208";a="84559495"
+   d="yaml'?scan'208";a="74202130"
 Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.4])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 Sep 2018 23:51:00 -0700
-Date:   Sun, 30 Sep 2018 14:51:20 +0800
+  by fmsmga007.fm.intel.com with ESMTP; 29 Sep 2018 23:50:39 -0700
+Date:   Sun, 30 Sep 2018 14:51:00 +0800
 From:   kernel test robot <rong.a.chen@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, LKML <linux-kernel@vger.kernel.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
-Subject: [LKP] [x86/pti/64]  bf904d2762:  will-it-scale.per_thread_ops 1.7%
- improvement
-Message-ID: <20180930065120.GM15893@shao2-debian>
+Subject: [LKP] [fsnotify]  60f7ed8c7c:  will-it-scale.per_thread_ops -5.9%
+ regression
+Message-ID: <20180930065100.GL15893@shao2-debian>
 Reply-To: kernel test robot <rong.a.chen@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="wAI/bQb0EMvlZCHl"
+Content-Type: multipart/mixed; boundary="hTKW8p8tUZ/8vLMe"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 User-Agent: NeoMutt/20170113 (1.7.2)
@@ -63,17 +52,17 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---wAI/bQb0EMvlZCHl
+--hTKW8p8tUZ/8vLMe
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
 Greeting,
 
-FYI, we noticed a 1.7% improvement of will-it-scale.per_thread_ops due to commit:
+FYI, we noticed a -5.9% regression of will-it-scale.per_thread_ops due to commit:
 
 
-commit: bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6 ("x86/pti/64: Remove the SYSCALL64 entry trampoline")
+commit: 60f7ed8c7c4d06aeda448c6da74621552ee739aa ("fsnotify: send path type events to group with super block marks")
 https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
 
 in testcase: will-it-scale
@@ -82,7 +71,7 @@ with following parameters:
 
 	nr_task: 16
 	mode: thread
-	test: pwrite1
+	test: unlink2
 	cpufreq_governor: performance
 
 test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
@@ -103,111 +92,162 @@ To reproduce:
 
 =========================================================================================
 compiler/cpufreq_governor/kconfig/mode/nr_task/rootfs/tbox_group/test/testcase:
-  gcc-7/performance/x86_64-rhel-7.2/thread/16/debian-x86_64-2018-04-03.cgz/lkp-bdw-ep3d/pwrite1/will-it-scale
+  gcc-7/performance/x86_64-rhel-7.2/thread/16/debian-x86_64-2018-04-03.cgz/lkp-bdw-ep3d/unlink2/will-it-scale
 
 commit: 
-  98f05b5138 ("x86/entry/64: Use the TSS sp2 slot for SYSCALL/SYSRET scratch space")
-  bf904d2762 ("x86/pti/64: Remove the SYSCALL64 entry trampoline")
+  1e6cb72399 ("fsnotify: add super block object type")
+  60f7ed8c7c ("fsnotify: send path type events to group with super block marks")
 
-98f05b5138f0a9b5 bf904d2762ee6fc1e4acfcb077 
+1e6cb72399fd58b3 60f7ed8c7c4d06aeda448c6da7 
 ---------------- -------------------------- 
-       fail:runs  %reproduction    fail:runs
-           |             |             |    
-          1:4          -25%            :4     dmesg.WARNING:at#for_ip_interrupt_entry/0x
-          2:4          -50%            :4     dmesg.WARNING:at_ip_fsnotify/0x
          %stddev     %change         %stddev
              \          |                \  
-   1221307            +1.7%    1242132        will-it-scale.per_thread_ops
-      7349 ±  3%      +3.6%       7616        will-it-scale.time.minor_page_faults
-    675.23            +1.8%     687.28        will-it-scale.time.user_time
-  19540927            +1.7%   19874128        will-it-scale.workload
-      4323 ± 16%     -54.7%       1958 ±103%  numa-numastat.node0.other_node
-     98872 ± 24%     +33.4%     131877 ± 10%  numa-meminfo.node0.AnonPages
-      2292 ±  8%     -10.5%       2050 ±  7%  numa-meminfo.node1.PageTables
-     24718 ± 24%     +33.4%      32969 ± 10%  numa-vmstat.node0.nr_anon_pages
-      7864 ± 12%     +21.7%       9568 ± 15%  numa-vmstat.node1
-    573.00 ±  8%     -10.6%     512.50 ±  7%  numa-vmstat.node1.nr_page_table_pages
-      2.25 ± 15%     -50.0%       1.12 ± 60%  sched_debug.cfs_rq:/.load_avg.min
-    418.57 ± 87%     -81.2%      78.54 ±173%  sched_debug.cfs_rq:/.removed.runnable_sum.avg
-      7842 ± 70%     -76.0%       1885 ±173%  sched_debug.cfs_rq:/.removed.runnable_sum.max
-      1734 ± 77%     -78.3%     376.68 ±173%  sched_debug.cfs_rq:/.removed.runnable_sum.stddev
-  -2477409            -0.1%   -2474518        sched_debug.cfs_rq:/.spread0.min
-    209211 ± 19%     -30.2%     146101 ± 30%  sched_debug.cpu.avg_idle.min
-     70.04 ±  7%     -18.4%      57.17 ±  7%  sched_debug.cpu.cpu_load[2].max
-     66.92 ±  5%     -11.1%      59.46 ±  6%  sched_debug.cpu.cpu_load[3].max
-      6736 ± 23%     +37.8%       9285 ±  9%  sched_debug.cpu.ttwu_local.max
-      1672 ± 12%     +32.2%       2210 ± 11%  sched_debug.cpu.ttwu_local.stddev
-      1.81            -0.3        1.56        perf-stat.branch-miss-rate%
- 4.262e+10           -13.3%  3.696e+10        perf-stat.branch-misses
-      1.27            -1.3%       1.25        perf-stat.cpi
-      0.01 ±  7%      -0.0        0.00 ±  2%  perf-stat.dTLB-load-miss-rate%
- 5.163e+08 ±  7%     -62.1%  1.958e+08 ±  2%  perf-stat.dTLB-load-misses
- 4.318e+12            +1.4%   4.38e+12        perf-stat.dTLB-loads
-      0.01 ±  6%      -0.0        0.00 ±  4%  perf-stat.dTLB-store-miss-rate%
- 4.264e+08 ±  6%     -69.6%  1.294e+08 ±  4%  perf-stat.dTLB-store-misses
- 2.915e+12            +1.1%  2.947e+12        perf-stat.dTLB-stores
-      2.21 ±  3%     +95.5       97.67        perf-stat.iTLB-load-miss-rate%
- 2.564e+08 ±  3%   +2372.0%  6.338e+09        perf-stat.iTLB-load-misses
- 1.136e+10           -98.7%  1.509e+08        perf-stat.iTLB-loads
-  1.18e+13            +1.4%  1.196e+13        perf-stat.instructions
-     46053 ±  3%     -95.9%       1887 ±  2%  perf-stat.instructions-per-iTLB-miss
-      0.79            +1.4%       0.80        perf-stat.ipc
-      8.65 ±  4%      -8.7        0.00        perf-profile.calltrace.cycles-pp.__entry_SYSCALL_64_trampoline
-      0.57 ±  4%      -0.2        0.39 ± 57%  perf-profile.calltrace.cycles-pp.___might_sleep.down_write.generic_file_write_iter.__vfs_write.vfs_write
-      0.00            +8.4        8.41 ±  2%  perf-profile.calltrace.cycles-pp.entry_SYSCALL_64
-      9.48 ±  5%      -9.5        0.00        perf-profile.children.cycles-pp.__entry_SYSCALL_64_trampoline
-      0.03 ±100%      +0.0        0.07 ± 17%  perf-profile.children.cycles-pp.clockevents_program_event
-      0.01 ±173%      +0.1        0.07 ± 23%  perf-profile.children.cycles-pp.ktime_get
-      0.31 ±  6%      +0.1        0.37 ±  6%  perf-profile.children.cycles-pp.smp_apic_timer_interrupt
-      0.35 ±  8%      +0.1        0.42 ±  6%  perf-profile.children.cycles-pp.apic_timer_interrupt
-      0.00            +0.2        0.17 ±  4%  perf-profile.children.cycles-pp.__x86_indirect_thunk_r10
-      0.00            +1.0        0.96        perf-profile.children.cycles-pp.__x86_indirect_thunk_rax
-      0.00            +8.4        8.42 ±  2%  perf-profile.children.cycles-pp.entry_SYSCALL_64
-      9.31 ±  4%      -9.3        0.00        perf-profile.self.cycles-pp.__entry_SYSCALL_64_trampoline
-      1.55 ±  6%      -0.6        0.97        perf-profile.self.cycles-pp.do_syscall_64
-      1.03 ±  5%      -0.2        0.81 ±  4%  perf-profile.self.cycles-pp.entry_SYSCALL_64_after_hwframe
-      0.00            +0.1        0.12 ±  3%  perf-profile.self.cycles-pp.__x86_indirect_thunk_r10
-      0.00            +0.8        0.81 ±  2%  perf-profile.self.cycles-pp.__x86_indirect_thunk_rax
-      0.00            +8.4        8.42 ±  2%  perf-profile.self.cycles-pp.entry_SYSCALL_64
+     54483            -5.9%      51256        will-it-scale.per_thread_ops
+     46266 ±  2%      -4.3%      44270 ±  2%  will-it-scale.time.involuntary_context_switches
+    103.21            -7.8%      95.17        will-it-scale.time.user_time
+    871749            -5.9%     820115        will-it-scale.workload
+     10888           +22.2%      13303 ± 17%  numa-meminfo.node0.Mapped
+      2001 ± 12%     -16.8%       1665 ± 16%  numa-meminfo.node0.PageTables
+    865.75 ± 32%     +42.7%       1235 ± 22%  slabinfo.dmaengine-unmap-16.active_objs
+    865.75 ± 32%     +42.7%       1235 ± 22%  slabinfo.dmaengine-unmap-16.num_objs
+     10974 ± 34%     +60.2%      17584 ± 13%  numa-vmstat.node0
+      2826 ±  3%     +24.6%       3523 ± 16%  numa-vmstat.node0.nr_mapped
+    500.00 ± 12%     -16.9%     415.75 ± 16%  numa-vmstat.node0.nr_page_table_pages
+  20375718            -6.3%   19092155        proc-vmstat.numa_hit
+  20370933            -6.3%   19087362        proc-vmstat.numa_local
+  69383484            -6.3%   65029677        proc-vmstat.pgalloc_normal
+  69362606            -6.3%   65008530        proc-vmstat.pgfree
+      8.39 ±109%  +7.9e+05%      66298 ±140%  sched_debug.cfs_rq:/.MIN_vruntime.avg
+    201.35 ±109%  +2.2e+05%     436949 ± 61%  sched_debug.cfs_rq:/.MIN_vruntime.max
+     40.24 ±109%  +3.4e+05%     135845 ± 97%  sched_debug.cfs_rq:/.MIN_vruntime.stddev
+      8.39 ±109%  +7.9e+05%      66298 ±140%  sched_debug.cfs_rq:/.max_vruntime.avg
+    201.35 ±109%  +2.2e+05%     436949 ± 61%  sched_debug.cfs_rq:/.max_vruntime.max
+     40.24 ±109%  +3.4e+05%     135845 ± 97%  sched_debug.cfs_rq:/.max_vruntime.stddev
+     43805 ±  6%     +35.5%      59365 ± 31%  sched_debug.cpu.load.avg
+    108694 ± 62%    +154.7%     276883 ± 25%  sched_debug.cpu.load.max
+     33945 ± 37%    +119.6%      74560 ± 42%  sched_debug.cpu.load.stddev
+     34287 ±  3%     +10.1%      37761 ±  4%  sched_debug.cpu.nr_switches.max
+     15993 ±  2%     +10.8%      17727 ±  4%  sched_debug.cpu.sched_goidle.max
+      1.36 ±  2%      -0.1        1.24        perf-stat.branch-miss-rate%
+ 1.546e+10 ±  2%     -10.3%  1.387e+10        perf-stat.branch-misses
+ 3.025e+08 ±  8%     -17.7%  2.489e+08 ± 14%  perf-stat.dTLB-load-misses
+ 1.603e+12 ±  2%      -2.6%  1.561e+12        perf-stat.dTLB-loads
+      0.01 ±  7%      -0.0        0.01 ±  6%  perf-stat.dTLB-store-miss-rate%
+  1.02e+08 ±  5%     -34.7%   66552058 ±  6%  perf-stat.dTLB-store-misses
+ 9.269e+11            -5.8%  8.729e+11        perf-stat.dTLB-stores
+ 4.885e+08 ± 33%     -25.3%  3.649e+08 ±  9%  perf-stat.iTLB-load-misses
+  6.92e+08 ±  5%      -9.7%  6.251e+08 ±  2%  perf-stat.node-loads
+  3.66e+09 ±  2%      -8.5%  3.347e+09 ±  2%  perf-stat.node-store-misses
+ 2.464e+09 ±  3%     -11.4%  2.184e+09 ±  2%  perf-stat.node-stores
+   6419017            +3.9%    6671008        perf-stat.path-length
+     11.13 ± 16%      -7.2        3.93 ±  6%  perf-profile.calltrace.cycles-pp.d_instantiate.shmem_mknod.path_openat.do_filp_open.do_sys_open
+     11.80 ± 14%      -7.0        4.76 ±  4%  perf-profile.calltrace.cycles-pp.__destroy_inode.destroy_inode.do_unlinkat.do_syscall_64.entry_SYSCALL_64_after_hwframe
+     11.96 ± 14%      -7.0        4.94 ±  5%  perf-profile.calltrace.cycles-pp.destroy_inode.do_unlinkat.do_syscall_64.entry_SYSCALL_64_after_hwframe
+     10.89 ± 15%      -7.0        3.88 ±  4%  perf-profile.calltrace.cycles-pp.security_inode_free.__destroy_inode.destroy_inode.do_unlinkat.do_syscall_64
+     10.03 ± 17%      -6.7        3.33 ±  7%  perf-profile.calltrace.cycles-pp.inode_doinit_with_dentry.security_d_instantiate.d_instantiate.shmem_mknod.path_openat
+     10.07 ± 16%      -6.7        3.37 ±  6%  perf-profile.calltrace.cycles-pp.security_d_instantiate.d_instantiate.shmem_mknod.path_openat.do_filp_open
+      9.91 ± 16%      -6.7        3.23 ±  5%  perf-profile.calltrace.cycles-pp.selinux_inode_free_security.security_inode_free.__destroy_inode.destroy_inode.do_unlinkat
+      9.17 ± 17%      -6.5        2.66 ±  6%  perf-profile.calltrace.cycles-pp._raw_spin_lock.selinux_inode_free_security.security_inode_free.__destroy_inode.destroy_inode
+      9.24 ± 18%      -6.4        2.81 ±  8%  perf-profile.calltrace.cycles-pp._raw_spin_lock.inode_doinit_with_dentry.security_d_instantiate.d_instantiate.shmem_mknod
+      8.56 ± 19%      -6.3        2.31 ± 10%  perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.inode_doinit_with_dentry.security_d_instantiate.d_instantiate
+      8.57 ± 18%      -6.2        2.33 ±  7%  perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.selinux_inode_free_security.security_inode_free.__destroy_inode
+      1.89 ± 16%      -0.6        1.28 ± 14%  perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.shmem_reserve_inode.shmem_get_inode.shmem_mknod
+      3.08 ± 11%      -0.6        2.48 ± 10%  perf-profile.calltrace.cycles-pp.shmem_evict_inode.evict.do_unlinkat.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      1.80 ± 16%      -0.5        1.26 ± 16%  perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.shmem_free_inode.shmem_evict_inode.evict
+      0.96 ± 11%      -0.3        0.62 ±  5%  perf-profile.calltrace.cycles-pp.__call_rcu.security_inode_free.__destroy_inode.destroy_inode.do_unlinkat
+      0.86 ± 10%      -0.3        0.55 ±  5%  perf-profile.calltrace.cycles-pp.rcu_segcblist_enqueue.__call_rcu.security_inode_free.__destroy_inode.destroy_inode
+      0.75 ±  8%      -0.3        0.47 ± 59%  perf-profile.calltrace.cycles-pp.security_inode_init_security.shmem_mknod.path_openat.do_filp_open.do_sys_open
+      0.70 ±  8%      -0.3        0.43 ± 58%  perf-profile.calltrace.cycles-pp.selinux_inode_init_security.security_inode_init_security.shmem_mknod.path_openat.do_filp_open
+      1.07 ±  6%      -0.2        0.82 ±  7%  perf-profile.calltrace.cycles-pp.security_inode_create.path_openat.do_filp_open.do_sys_open.do_syscall_64
+      1.01 ±  6%      -0.2        0.77 ±  8%  perf-profile.calltrace.cycles-pp.may_create.security_inode_create.path_openat.do_filp_open.do_sys_open
+      0.26 ±100%      +0.4        0.63 ±  7%  perf-profile.calltrace.cycles-pp._raw_spin_lock.new_inode_pseudo.new_inode.shmem_get_inode.shmem_mknod
+      0.77 ±  7%      +0.4        1.16 ±  2%  perf-profile.calltrace.cycles-pp.inode_wait_for_writeback.evict.do_unlinkat.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      0.74 ±  7%      +0.4        1.14 ±  2%  perf-profile.calltrace.cycles-pp._raw_spin_lock.inode_wait_for_writeback.evict.do_unlinkat.do_syscall_64
+      1.30 ±  9%      +0.7        2.00 ±  8%  perf-profile.calltrace.cycles-pp.do_dentry_open.path_openat.do_filp_open.do_sys_open.do_syscall_64
+      0.00            +0.8        0.78 ±  6%  perf-profile.calltrace.cycles-pp.fsnotify.do_sys_open.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      0.94 ±  6%      +0.8        1.72 ±  3%  perf-profile.calltrace.cycles-pp.exit_to_usermode_loop.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      0.86 ±  6%      +0.8        1.64 ±  3%  perf-profile.calltrace.cycles-pp.task_work_run.exit_to_usermode_loop.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      0.00            +0.8        0.79 ± 17%  perf-profile.calltrace.cycles-pp.smp_apic_timer_interrupt.apic_timer_interrupt.native_queued_spin_lock_slowpath._raw_spin_lock.evict
+      0.00            +0.8        0.79 ±  4%  perf-profile.calltrace.cycles-pp.fsnotify.do_dentry_open.path_openat.do_filp_open.do_sys_open
+      0.00            +0.8        0.79 ± 17%  perf-profile.calltrace.cycles-pp.apic_timer_interrupt.native_queued_spin_lock_slowpath._raw_spin_lock.evict.do_unlinkat
+      0.00            +0.8        0.80 ± 18%  perf-profile.calltrace.cycles-pp.smp_apic_timer_interrupt.apic_timer_interrupt.native_queued_spin_lock_slowpath._raw_spin_lock.inode_sb_list_add
+      0.00            +0.8        0.81 ± 18%  perf-profile.calltrace.cycles-pp.apic_timer_interrupt.native_queued_spin_lock_slowpath._raw_spin_lock.inode_sb_list_add.new_inode
+      0.00            +0.9        0.85        perf-profile.calltrace.cycles-pp.fsnotify.__fput.task_work_run.exit_to_usermode_loop.do_syscall_64
+      0.27 ±100%      +1.0        1.29 ±  2%  perf-profile.calltrace.cycles-pp.__fput.task_work_run.exit_to_usermode_loop.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      0.27 ±173%      +1.2        1.50 ± 19%  perf-profile.calltrace.cycles-pp.rcu_process_callbacks.__softirqentry_text_start.irq_exit.smp_apic_timer_interrupt.apic_timer_interrupt
+      0.27 ±173%      +1.2        1.51 ± 18%  perf-profile.calltrace.cycles-pp.irq_exit.smp_apic_timer_interrupt.apic_timer_interrupt.native_queued_spin_lock_slowpath._raw_spin_lock
+      0.27 ±173%      +1.2        1.51 ± 18%  perf-profile.calltrace.cycles-pp.__softirqentry_text_start.irq_exit.smp_apic_timer_interrupt.apic_timer_interrupt.native_queued_spin_lock_slowpath
+      6.36 ±  9%      +8.3       14.64 ±  8%  perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.inode_sb_list_add.new_inode.shmem_get_inode
+     14.67 ±  8%      +8.4       23.08 ±  5%  perf-profile.calltrace.cycles-pp.shmem_get_inode.shmem_mknod.path_openat.do_filp_open.do_sys_open
+      6.72 ±  9%      +8.4       15.14 ±  8%  perf-profile.calltrace.cycles-pp._raw_spin_lock.inode_sb_list_add.new_inode.shmem_get_inode.shmem_mknod
+     11.87 ±  7%      +8.4       20.30 ±  5%  perf-profile.calltrace.cycles-pp.evict.do_unlinkat.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      6.19 ±  7%      +8.5       14.67 ±  7%  perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.evict.do_unlinkat.do_syscall_64
+      7.41 ±  9%      +8.6       15.96 ±  7%  perf-profile.calltrace.cycles-pp.inode_sb_list_add.new_inode.shmem_get_inode.shmem_mknod.path_openat
+     10.33 ±  8%      +8.6       18.95 ±  6%  perf-profile.calltrace.cycles-pp.new_inode.shmem_get_inode.shmem_mknod.path_openat.do_filp_open
+      6.93 ±  7%      +8.8       15.71 ±  7%  perf-profile.calltrace.cycles-pp._raw_spin_lock.evict.do_unlinkat.do_syscall_64.entry_SYSCALL_64_after_hwframe
+     11.14 ± 15%      -7.2        3.93 ±  6%  perf-profile.children.cycles-pp.d_instantiate
+     11.81 ± 14%      -7.0        4.76 ±  4%  perf-profile.children.cycles-pp.__destroy_inode
+     11.97 ± 14%      -7.0        4.95 ±  5%  perf-profile.children.cycles-pp.destroy_inode
+     10.89 ± 15%      -7.0        3.88 ±  4%  perf-profile.children.cycles-pp.security_inode_free
+     10.04 ± 17%      -6.7        3.33 ±  7%  perf-profile.children.cycles-pp.inode_doinit_with_dentry
+     10.07 ± 17%      -6.7        3.37 ±  6%  perf-profile.children.cycles-pp.security_d_instantiate
+      9.91 ± 16%      -6.7        3.24 ±  5%  perf-profile.children.cycles-pp.selinux_inode_free_security
+      3.09 ± 11%      -0.6        2.49 ± 11%  perf-profile.children.cycles-pp.shmem_evict_inode
+      0.84 ±  9%      -0.4        0.46 ± 46%  perf-profile.children.cycles-pp.selinux_determine_inode_label
+      1.32 ±  9%      -0.3        0.99 ±  4%  perf-profile.children.cycles-pp.__call_rcu
+      0.98 ±  9%      -0.3        0.66 ±  5%  perf-profile.children.cycles-pp.rcu_segcblist_enqueue
+      1.07 ±  6%      -0.2        0.83 ±  8%  perf-profile.children.cycles-pp.security_inode_create
+      0.94 ±  7%      -0.2        0.69 ±  9%  perf-profile.children.cycles-pp.__list_del_entry_valid
+      1.01 ±  7%      -0.2        0.77 ±  8%  perf-profile.children.cycles-pp.may_create
+      0.37 ±  6%      -0.2        0.16 ±  6%  perf-profile.children.cycles-pp.__fd_install
+      0.75 ±  8%      -0.2        0.58 ± 16%  perf-profile.children.cycles-pp.security_inode_init_security
+      0.70 ±  8%      -0.2        0.54 ± 17%  perf-profile.children.cycles-pp.selinux_inode_init_security
+      0.42 ±  8%      -0.1        0.36 ±  4%  perf-profile.children.cycles-pp.d_delete
+      0.21 ±  8%      -0.1        0.16 ± 13%  perf-profile.children.cycles-pp._atomic_dec_and_lock
+      0.34 ±  6%      -0.1        0.29 ±  5%  perf-profile.children.cycles-pp.fsnotify_destroy_marks
+      0.24 ±  8%      -0.0        0.21 ±  7%  perf-profile.children.cycles-pp.down_write
+      0.06 ± 14%      +0.0        0.08 ± 15%  perf-profile.children.cycles-pp.prandom_u32_state
+      0.12 ±  8%      +0.0        0.16 ±  7%  perf-profile.children.cycles-pp.__d_instantiate
+      0.77 ±  7%      +0.4        1.17 ±  2%  perf-profile.children.cycles-pp.inode_wait_for_writeback
+      1.30 ±  9%      +0.7        2.00 ±  8%  perf-profile.children.cycles-pp.do_dentry_open
+      0.94 ±  6%      +0.8        1.73 ±  3%  perf-profile.children.cycles-pp.exit_to_usermode_loop
+      0.86 ±  6%      +0.8        1.65 ±  2%  perf-profile.children.cycles-pp.task_work_run
+      0.51 ±  8%      +0.8        1.30 ±  2%  perf-profile.children.cycles-pp.__fput
+      0.23 ± 13%      +2.3        2.52 ±  4%  perf-profile.children.cycles-pp.fsnotify
+     14.69 ±  8%      +8.4       23.11 ±  5%  perf-profile.children.cycles-pp.shmem_get_inode
+     11.88 ±  7%      +8.4       20.30 ±  5%  perf-profile.children.cycles-pp.evict
+      7.42 ±  9%      +8.6       15.97 ±  7%  perf-profile.children.cycles-pp.inode_sb_list_add
+     10.33 ±  8%      +8.6       18.95 ±  6%  perf-profile.children.cycles-pp.new_inode
+      0.74 ±  9%      -0.4        0.37 ± 59%  perf-profile.self.cycles-pp.selinux_determine_inode_label
+      0.97 ±  9%      -0.3        0.66 ±  5%  perf-profile.self.cycles-pp.rcu_segcblist_enqueue
+      0.92 ±  7%      -0.2        0.68 ±  9%  perf-profile.self.cycles-pp.__list_del_entry_valid
+      0.36 ±  5%      -0.2        0.16 ±  7%  perf-profile.self.cycles-pp.__fd_install
+      0.41 ± 18%      -0.2        0.22 ± 14%  perf-profile.self.cycles-pp.inode_doinit_with_dentry
+      0.15 ± 12%      -0.0        0.10 ± 10%  perf-profile.self.cycles-pp._atomic_dec_and_lock
+      0.14 ±  8%      -0.0        0.11 ±  6%  perf-profile.self.cycles-pp.down_write
+      0.08 ± 11%      +0.0        0.11 ±  4%  perf-profile.self.cycles-pp.__d_instantiate
+      0.10 ± 10%      +0.0        0.14 ±  7%  perf-profile.self.cycles-pp.inode_sb_list_add
+      0.22 ± 12%      +2.2        2.47 ±  3%  perf-profile.self.cycles-pp.fsnotify
 
 
                                                                                 
-                              will-it-scale.per_thread_ops                      
+                               will-it-scale.workload                           
                                                                                 
-  1.255e+06 +-+-------------------------------------------------------------+   
-   1.25e+06 +-+         O                                                   |   
-            |    O        O O O                                             |   
-  1.245e+06 O-+ O  O O O                    O   O  O O OO O   O      O      |   
-   1.24e+06 +-O                    O O OO        O          O   OO O   OO   |   
-            |                   OO        O   O                             |   
-  1.235e+06 +-+                                                             |   
-   1.23e+06 +-+                                                             |   
-  1.225e+06 +-+.+                        .+.+                               |   
-            |    +.+.   +.        .+.+.++    +                        .+   .|   
-   1.22e+06 +-+      +.+  +. .+. +            +.      .+ .+.+.+.++.+.+  +.+ |   
-  1.215e+06 +-+             +   +               +   .+  +                   |   
-            |                                    :.+                        |   
-   1.21e+06 +-+                                  +                          |   
-  1.205e+06 +-+-------------------------------------------------------------+   
-                                                                                
-                                                                                                                                                                
-                                will-it-scale.workload                          
-                                                                                
-  2.01e+07 +-+--------------------------------------------------------------+   
-           |                                                                |   
-     2e+07 +-+          OO O O                                              |   
-           O    O     O                     O  O   O  O                     |   
-  1.99e+07 +-O O  O O             O O O O            O  O O O OO O O O OO   |   
-  1.98e+07 +-+                 O O        O  O   O                          |   
-           |                                                                |   
-  1.97e+07 +-+                                                              |   
-           |                              +.+                               |   
-  1.96e+07 +-+.+ .+.   .+         +. .+. +  :                              .|   
-  1.95e+07 +-+  +   +.+  +. .+    : +   +    :             .+.++.+. .+.++.+ |   
-           |               +  + .+           +.+    .++.+.+        +        |   
-  1.94e+07 +-+                 +                :  +                        |   
-           |                                    : +                         |   
-  1.93e+07 +-+--------------------------------------------------------------+   
+  940000 +-+----------------------------------------------------------------+   
+         |                       +                +               ::        |   
+  920000 +-+                     :                ::   .+        : :        |   
+  900000 +-+     +.      +      : :              : :  +  +       :  :       |   
+         |   +  :  +.   : +     : :       .+ .+. :  :+    +. .+.:   +   +.  |   
+  880000 +-+: + :    +. :  +   +  :  +. .+  +   +   +       +   +    :  : + |   
+         |: :  +       +    + +    :+  +                             : :   +|   
+  860000 +-+                 +     +                                  ::    |   
+         |                                                            +     |   
+  840000 +-+       O                                                        |   
+  820000 O-+ O   O         O O   O              O   O   O   O               |   
+         | O           O                   O              O                 |   
+  800000 +-+                       O O O O    O   O   O                     |   
+         |     O     O   O     O            O                               |   
+  780000 +-+----------------------------------------------------------------+   
                                                                                 
                                                                                 
 [*] bisect-good sample
@@ -224,9 +264,9 @@ design or configuration may affect actual performance.
 Thanks,
 Rong Chen
 
---wAI/bQb0EMvlZCHl
+--hTKW8p8tUZ/8vLMe
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="config-4.19.0-rc2-00179-gbf904d2"
+Content-Disposition: attachment; filename="config-4.19.0-rc2-00007-g60f7ed8"
 
 #
 # Automatically generated file; DO NOT EDIT.
@@ -7089,7 +7129,7 @@ CONFIG_UNWINDER_ORC=y
 # CONFIG_UNWINDER_FRAME_POINTER is not set
 # CONFIG_UNWINDER_GUESS is not set
 
---wAI/bQb0EMvlZCHl
+--hTKW8p8tUZ/8vLMe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=job-script
 
@@ -7105,9 +7145,9 @@ export_top_env()
 	export queue='validate'
 	export testbox='lkp-bdw-ep3d'
 	export tbox_group='lkp-bdw-ep3d'
-	export submit_id='5ba203740b9a932f0ab2b4c2'
-	export job_file='/lkp/jobs/scheduled/lkp-bdw-ep3d/will-it-scale-16-thread-pwrite1-performance-debian-x86_64-2018-04-03.cgz-bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6-20180919-12042-1i7fd4h-3.yaml'
-	export id='faa3d28fe8abfc89cbdb345c07601f01a96a18ed'
+	export submit_id='5ba2b1d60b9a934445402b4b'
+	export job_file='/lkp/jobs/scheduled/lkp-bdw-ep3d/will-it-scale-16-thread-unlink2-performance-debian-x86_64-2018-04-03.cgz-60f7ed8c7c4d06aeda448c6da74621552ee739aa-20180920-17477-1v7ruf-3.yaml'
+	export id='5cc9260634b706f0e90c51bf99d01ca43c9894c3'
 	export model='Broadwell-EP'
 	export nr_node=2
 	export nr_cpu=88
@@ -7115,31 +7155,31 @@ export_top_env()
 	export swap_partitions=
 	export rootfs_partition=
 	export brand='Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz'
-	export commit='bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6'
+	export commit='60f7ed8c7c4d06aeda448c6da74621552ee739aa'
 	export kconfig='x86_64-rhel-7.2'
 	export compiler='gcc-7'
 	export rootfs='debian-x86_64-2018-04-03.cgz'
-	export enqueue_time='2018-09-19 16:06:12 +0800'
-	export _id='5ba203750b9a932f0ab2b4c3'
-	export _rt='/result/will-it-scale/16-thread-pwrite1-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6'
+	export enqueue_time='2018-09-20 04:30:15 +0800'
+	export _id='5ba2b1d70b9a934445402b4c'
+	export _rt='/result/will-it-scale/16-thread-unlink2-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa'
 	export user='lkp'
 	export head_commit='e883feb2e42e297f1416202cb548db67c71726a1'
 	export base_commit='7876320f88802b22d4e2daf7eb027dd14175a0f8'
 	export branch='linux-devel/devel-hourly-2018091820'
-	export result_root='/result/will-it-scale/16-thread-pwrite1-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6/3'
+	export result_root='/result/will-it-scale/16-thread-unlink2-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa/3'
 	export LKP_SERVER='inn'
 	export max_uptime=1500
 	export initrd='/osimage/debian/debian-x86_64-2018-04-03.cgz'
 	export bootloader_append='root=/dev/ram0
 user=lkp
-job=/lkp/jobs/scheduled/lkp-bdw-ep3d/will-it-scale-16-thread-pwrite1-performance-debian-x86_64-2018-04-03.cgz-bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6-20180919-12042-1i7fd4h-3.yaml
+job=/lkp/jobs/scheduled/lkp-bdw-ep3d/will-it-scale-16-thread-unlink2-performance-debian-x86_64-2018-04-03.cgz-60f7ed8c7c4d06aeda448c6da74621552ee739aa-20180920-17477-1v7ruf-3.yaml
 ARCH=x86_64
 kconfig=x86_64-rhel-7.2
 branch=linux-devel/devel-hourly-2018091820
-commit=bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6
-BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6/vmlinuz-4.19.0-rc2-00179-gbf904d2
+commit=60f7ed8c7c4d06aeda448c6da74621552ee739aa
+BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa/vmlinuz-4.19.0-rc2-00007-g60f7ed8
 max_uptime=1500
-RESULT_ROOT=/result/will-it-scale/16-thread-pwrite1-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6/3
+RESULT_ROOT=/result/will-it-scale/16-thread-unlink2-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa/3
 LKP_SERVER=inn
 debug
 apic=debug
@@ -7161,16 +7201,16 @@ earlyprintk=ttyS0,115200
 console=ttyS0,115200
 vga=normal
 rw'
-	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6/modules.cgz'
+	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa/modules.cgz'
 	export bm_initrd='/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/will-it-scale_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/will-it-scale-x86_64-decad85_2018-06-07.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/mpstat_2018-06-19.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/turbostat_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/turbostat-x86_64-d5256b2_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/perf_2018-06-26.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/perf-x86_64-6f0d349d922b_2018-06-26.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz'
 	export lkp_initrd='/lkp/lkp/lkp-x86_64.cgz'
 	export site='inn'
 	export LKP_CGI_PORT=80
 	export LKP_CIFS_PORT=139
 	export repeat_to=4
-	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6/vmlinuz-4.19.0-rc2-00179-gbf904d2'
-	export dequeue_time='2018-09-19 16:16:57 +0800'
-	export job_initrd='/lkp/jobs/scheduled/lkp-bdw-ep3d/will-it-scale-16-thread-pwrite1-performance-debian-x86_64-2018-04-03.cgz-bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6-20180919-12042-1i7fd4h-3.cgz'
+	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa/vmlinuz-4.19.0-rc2-00007-g60f7ed8'
+	export dequeue_time='2018-09-20 04:39:58 +0800'
+	export job_initrd='/lkp/jobs/scheduled/lkp-bdw-ep3d/will-it-scale-16-thread-unlink2-performance-debian-x86_64-2018-04-03.cgz-60f7ed8c7c4d06aeda448c6da74621552ee739aa-20180920-17477-1v7ruf-3.cgz'
 
 	[ -n "$LKP_SRC" ] ||
 	export LKP_SRC=/lkp/${user:-lkp}/src
@@ -7217,7 +7257,7 @@ run_job()
 	run_monitor $LKP_SRC/monitors/wrapper oom-killer
 	run_monitor $LKP_SRC/monitors/plain/watchdog
 
-	run_test mode='thread' test='pwrite1' $LKP_SRC/tests/wrapper will-it-scale
+	run_test mode='thread' test='unlink2' $LKP_SRC/tests/wrapper will-it-scale
 }
 
 extract_stats()
@@ -7256,7 +7296,7 @@ extract_stats()
 
 "$@"
 
---wAI/bQb0EMvlZCHl
+--hTKW8p8tUZ/8vLMe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename="job.yaml"
 
@@ -7269,16 +7309,16 @@ category: benchmark
 nr_task: 16
 will-it-scale:
   mode: thread
-  test: pwrite1
+  test: unlink2
 job_origin: "/lkp/lkp/.src-20180914-222948/allot/cyclic:p1:linux-devel:devel-hourly/lkp-bdw-ep3d/will-it-scale-16.yaml"
 
 #! queue options
 queue: bisect
 testbox: lkp-bdw-ep3d
 tbox_group: lkp-bdw-ep3d
-submit_id: 5ba1e0c20b9a9355f6b4e5fd
-job_file: "/lkp/jobs/scheduled/lkp-bdw-ep3d/will-it-scale-16-thread-pwrite1-performance-debian-x86_64-2018-04-03.cgz-bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6-20180919-22006-1se3mzx-0.yaml"
-id: 4950f0233d0fc8e26128a6935492e28e1fdfd9ff
+submit_id: 5ba2a91e0b9a93505002ea79
+job_file: "/lkp/jobs/scheduled/lkp-bdw-ep3d/will-it-scale-16-thread-unlink2-performance-debian-x86_64-2018-04-03.cgz-60f7ed8c7c4d06aeda448c6da74621552ee739aa-20180920-86096-1n1iwg9-0.yaml"
+id: 615ca3d9d964eb09b59bb4be152bce193d92b0b2
 
 #! hosts/lkp-bdw-ep3d
 model: Broadwell-EP
@@ -7321,36 +7361,36 @@ perf-profile:
 cpufreq_governor: performance
 
 #! include/queue/cyclic
-commit: bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6
+commit: 60f7ed8c7c4d06aeda448c6da74621552ee739aa
 
 #! default params
 kconfig: x86_64-rhel-7.2
 compiler: gcc-7
 rootfs: debian-x86_64-2018-04-03.cgz
-enqueue_time: 2018-09-19 13:38:11.511618951 +08:00
-_id: 5ba1e0c20b9a9355f6b4e5fd
-_rt: "/result/will-it-scale/16-thread-pwrite1-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6"
+enqueue_time: 2018-09-20 03:53:04.449481632 +08:00
+_id: 5ba2a91e0b9a93505002ea79
+_rt: "/result/will-it-scale/16-thread-unlink2-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa"
 
 #! schedule options
 user: lkp
 head_commit: e883feb2e42e297f1416202cb548db67c71726a1
 base_commit: 7876320f88802b22d4e2daf7eb027dd14175a0f8
 branch: linux-devel/devel-hourly-2018091820
-result_root: "/result/will-it-scale/16-thread-pwrite1-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6/0"
+result_root: "/result/will-it-scale/16-thread-unlink2-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa/0"
 LKP_SERVER: inn
 max_uptime: 1500
 initrd: "/osimage/debian/debian-x86_64-2018-04-03.cgz"
 bootloader_append:
 - root=/dev/ram0
 - user=lkp
-- job=/lkp/jobs/scheduled/lkp-bdw-ep3d/will-it-scale-16-thread-pwrite1-performance-debian-x86_64-2018-04-03.cgz-bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6-20180919-22006-1se3mzx-0.yaml
+- job=/lkp/jobs/scheduled/lkp-bdw-ep3d/will-it-scale-16-thread-unlink2-performance-debian-x86_64-2018-04-03.cgz-60f7ed8c7c4d06aeda448c6da74621552ee739aa-20180920-86096-1n1iwg9-0.yaml
 - ARCH=x86_64
 - kconfig=x86_64-rhel-7.2
 - branch=linux-devel/devel-hourly-2018091820
-- commit=bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6
-- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6/vmlinuz-4.19.0-rc2-00179-gbf904d2
+- commit=60f7ed8c7c4d06aeda448c6da74621552ee739aa
+- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa/vmlinuz-4.19.0-rc2-00007-g60f7ed8
 - max_uptime=1500
-- RESULT_ROOT=/result/will-it-scale/16-thread-pwrite1-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6/0
+- RESULT_ROOT=/result/will-it-scale/16-thread-unlink2-performance/lkp-bdw-ep3d/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa/0
 - LKP_SERVER=inn
 - debug
 - apic=debug
@@ -7372,7 +7412,7 @@ bootloader_append:
 - console=ttyS0,115200
 - vga=normal
 - rw
-modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6/modules.cgz"
+modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa/modules.cgz"
 bm_initrd: "/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/will-it-scale_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/will-it-scale-x86_64-decad85_2018-06-07.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/mpstat_2018-06-19.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/turbostat_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/turbostat-x86_64-d5256b2_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/perf_2018-06-26.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/perf-x86_64-6f0d349d922b_2018-06-26.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz"
 lkp_initrd: "/lkp/lkp/lkp-x86_64.cgz"
 site: inn
@@ -7387,17 +7427,17 @@ watchdog:
 repeat_to: 2
 
 #! user overrides
-kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/bf904d2762ee6fc1e4acfcb0772bbfb4a27ad8a6/vmlinuz-4.19.0-rc2-00179-gbf904d2"
-dequeue_time: 2018-09-19 13:40:15.420002304 +08:00
+kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/60f7ed8c7c4d06aeda448c6da74621552ee739aa/vmlinuz-4.19.0-rc2-00007-g60f7ed8"
+dequeue_time: 2018-09-20 04:13:27.151695433 +08:00
 
-#! /lkp/lkp/.src-20180919-132616/include/site/inn
+#! /lkp/lkp/.src-20180919-200106/include/site/inn
 job_state: finished
-loadavg: 10.68 9.49 4.39 1/249 8763
-start_time: '1537335770'
-end_time: '1537336072'
-version: "/lkp/lkp/.src-20180919-132616"
+loadavg: 9.84 9.32 4.37 1/247 8852
+start_time: '1537388088'
+end_time: '1537388389'
+version: "/lkp/lkp/.src-20180919-200106"
 
---wAI/bQb0EMvlZCHl
+--hTKW8p8tUZ/8vLMe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=reproduce
 
@@ -7411,6 +7451,6 @@ do
 	[ -f "$file" ] && echo "performance" > "$file"
 done
 
- "python2" "./runtest.py" "pwrite1" "295" "thread" "16"
+ "python2" "./runtest.py" "unlink2" "295" "thread" "16"
 
---wAI/bQb0EMvlZCHl--
+--hTKW8p8tUZ/8vLMe--
