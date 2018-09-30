@@ -2,98 +2,139 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90894C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 23:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F309C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 23:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4705F206B7
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 23:10:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4705F206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id C6C0520666
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 23:18:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6C0520666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbeJAFpr (ORCPT
+        id S1727231AbeJAFxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 01:45:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56812 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbeJAFpr (ORCPT
+        Mon, 1 Oct 2018 01:53:07 -0400
+Received: from smtprelay0063.hostedemail.com ([216.40.44.63]:60026 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726580AbeJAFxH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 01:45:47 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1g6krU-0003lE-DL; Sun, 30 Sep 2018 23:10:52 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org
+        Mon, 1 Oct 2018 01:53:07 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 9DCAC1278F;
+        Sun, 30 Sep 2018 23:18:12 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: brick57_477cad92d7a03
+X-Filterd-Recvd-Size: 4150
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 30 Sep 2018 23:18:11 +0000 (UTC)
+Message-ID: <bd6313064c790b1db5806245b8c3d00e2f82c8f7.camel@perches.com>
+Subject: Re: [PATCH] scsi: arcmsr: clean up clang warning on extraneous
+ parentheses
+From:   Joe Perches <joe@perches.com>
+To:     Colin King <colin.king@canonical.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Ching Huang <ching2048@areca.com.tw>,
+        linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: clean up clang warning on extraneous parentheses
-Date:   Mon,  1 Oct 2018 00:10:51 +0100
-Message-Id: <20180930231051.18867-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Date:   Sun, 30 Sep 2018 16:18:10 -0700
+In-Reply-To: <20180930230307.18664-1-colin.king@canonical.com>
+References: <20180930230307.18664-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 2018-10-01 at 00:03 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are extraneous parantheses that are causing clang to produce a
+> warning so remove these.
+> 
+> Clean up 3 clang warnings:
+> equality comparison with extraneous parentheses [-Wparentheses-equality]
+[]
+> diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+[]
+> @@ -4135,9 +4135,9 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
+>  		pci_read_config_byte(acb->pdev, i, &value[i]);
+>  	}
+>  	/* hardware reset signal */
+> -	if ((acb->dev_id == 0x1680)) {
+> +	if (acb->dev_id == 0x1680) {
+>  		writel(ARCMSR_ARC1680_BUS_RESET, &pmuA->reserved1[0]);
+> -	} else if ((acb->dev_id == 0x1880)) {
+> +	} else if (acb->dev_id == 0x1880) {
+>  		do {
+>  			count++;
+>  			writel(0xF, &pmuC->write_sequence);
+> @@ -4161,7 +4161,7 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
+>  		} while (((readl(&pmuE->host_diagnostic_3xxx) &
+>  			ARCMSR_ARC1884_DiagWrite_ENABLE) == 0) && (count < 5));
+>  		writel(ARCMSR_ARC188X_RESET_ADAPTER, &pmuE->host_diagnostic_3xxx);
+> -	} else if ((acb->dev_id == 0x1214)) {
+> +	} else if (acb->dev_id == 0x1214) {
+>  		writel(0x20, pmuD->reset_request);
+>  	} else {
+>  		pci_write_config_byte(acb->pdev, 0x84, 0x20);
 
-There are extraneous parantheses that are causing clang to produce a
-warning so remove these.
-
-Clean up 3 clang warnings:
-equality comparison with extraneous parentheses [-Wparentheses-equality]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+It'd probably read better using a switch/case like the below:
 ---
- drivers/staging/rtl8723bs/core/rtw_security.c      | 5 ++---
- drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c | 2 +-
- 2 files changed, 3 insertions(+), 4 deletions(-)
+ drivers/scsi/arcmsr/arcmsr_hba.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
-index 6c8ac9e86c9f..240818b4a2c9 100644
---- a/drivers/staging/rtl8723bs/core/rtw_security.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_security.c
-@@ -1543,7 +1543,7 @@ u32 rtw_aes_encrypt(struct adapter *padapter, u8 *pxmitframe)
- 	pframe = ((struct xmit_frame *)pxmitframe)->buf_addr + hw_hdr_offset;
- 
- 	/* 4 start to encrypt each fragment */
--	if ((pattrib->encrypt == _AES_)) {
-+	if (pattrib->encrypt == _AES_) {
- 		RT_TRACE(_module_rtl871x_security_c_, _drv_err_, ("rtw_aes_encrypt: stainfo!= NULL!!!\n"));
- 
- 		if (IS_MCAST(pattrib->ra))
-@@ -1866,8 +1866,7 @@ u32 rtw_aes_decrypt(struct adapter *padapter, u8 *precvframe)
- 
- 	pframe = (unsigned char *)((union recv_frame *)precvframe)->u.hdr.rx_data;
- 	/* 4 start to encrypt each fragment */
--	if ((prxattrib->encrypt == _AES_)) {
--
-+	if (prxattrib->encrypt == _AES_) {
- 		stainfo = rtw_get_stainfo(&padapter->stapriv, &prxattrib->ta[0]);
- 		if (stainfo != NULL) {
- 			RT_TRACE(_module_rtl871x_security_c_, _drv_err_, ("rtw_aes_decrypt: stainfo!= NULL!!!\n"));
-diff --git a/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c b/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c
-index acc64fa8f166..0e674f39ef03 100644
---- a/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c
-+++ b/drivers/staging/rtl8723bs/hal/odm_EdcaTurboCheck.c
-@@ -97,7 +97,7 @@ void odm_EdcaTurboCheckCE(void *pDM_VOID)
- 		return;
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index 12316ef4c893..ad45583f5ae0 100644
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -4135,9 +4135,11 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
+ 		pci_read_config_byte(acb->pdev, i, &value[i]);
  	}
- 
--	if ((pregpriv->wifi_spec == 1)) {
-+	if (pregpriv->wifi_spec == 1) {
- 		precvpriv->bIsAnyNonBEPkts = false;
- 		return;
+ 	/* hardware reset signal */
+-	if ((acb->dev_id == 0x1680)) {
++	switch (acb->dev_id) {
++	case 0x1680:
+ 		writel(ARCMSR_ARC1680_BUS_RESET, &pmuA->reserved1[0]);
+-	} else if ((acb->dev_id == 0x1880)) {
++		break;
++	case 0x1880:
+ 		do {
+ 			count++;
+ 			writel(0xF, &pmuC->write_sequence);
+@@ -4148,7 +4150,8 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
+ 			writel(0xD, &pmuC->write_sequence);
+ 		} while (((readl(&pmuC->host_diagnostic) & ARCMSR_ARC1880_DiagWrite_ENABLE) == 0) && (count < 5));
+ 		writel(ARCMSR_ARC1880_RESET_ADAPTER, &pmuC->host_diagnostic);
+-	} else if (acb->dev_id == 0x1884) {
++		break;
++	case 0x1884:
+ 		struct MessageUnit_E __iomem *pmuE = acb->pmuE;
+ 		do {
+ 			count++;
+@@ -4161,10 +4164,13 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
+ 		} while (((readl(&pmuE->host_diagnostic_3xxx) &
+ 			ARCMSR_ARC1884_DiagWrite_ENABLE) == 0) && (count < 5));
+ 		writel(ARCMSR_ARC188X_RESET_ADAPTER, &pmuE->host_diagnostic_3xxx);
+-	} else if ((acb->dev_id == 0x1214)) {
++		break;
++	case 0x1214:
+ 		writel(0x20, pmuD->reset_request);
+-	} else {
++		break;
++	default:
+ 		pci_write_config_byte(acb->pdev, 0x84, 0x20);
++		break;
  	}
--- 
-2.17.1
+ 	msleep(2000);
+ 	/* write back pci config data */
 
