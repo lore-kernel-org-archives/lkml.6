@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8138C64EAD
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 03:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AECC43143
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 03:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D7B720880
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 03:04:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ED4720880
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 03:04:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkMtvnuQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D7B720880
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBKozE5b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED4720880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727965AbeI3JfP (ORCPT
+        id S1728015AbeI3JfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 05:35:15 -0400
-Received: from mail-qt1-f180.google.com ([209.85.160.180]:35764 "EHLO
-        mail-qt1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727472AbeI3JfO (ORCPT
+        Sun, 30 Sep 2018 05:35:17 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44685 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727472AbeI3JfR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 05:35:14 -0400
-Received: by mail-qt1-f180.google.com with SMTP id z14-v6so10729516qtn.2
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 20:04:07 -0700 (PDT)
+        Sun, 30 Sep 2018 05:35:17 -0400
+Received: by mail-qk1-f195.google.com with SMTP id g184-v6so6163320qkc.11
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Sep 2018 20:04:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=dd7bKtioRklldvqESdgqIRuwzi9xeWLLoSY6BhHdesY=;
-        b=ZkMtvnuQEsytoiuIKwKsNNYEY20MGpOUj52Pa1yf1Xrv8vWunHYwkjSzwiQubjATrf
-         eYTj8iAvEBDr/bhcTb3DFe51hBoi+TetDmAexC02z9b5EHRhEcRfPRRE5e5XZR8cd6+j
-         Rp7hD1A/6GLXiLPkPGqm4j7Y3sQicXaPKuJ3oATV2M+tcgjAPNfTDetEawfGrHjQVZUm
-         XWMZeQMJsjyncIjksQwSzHiqN7vxDqpGHSv69oldKbo1OJ1iwa+8Vrd5Qca6xREuMD7G
-         D8uEWq/3XiqpqoOzkwBeJEbU+2t0ByTV55fHO/+4j9IDspACqbHeLfl2W9D+e/8ZspEv
-         wUnw==
+        bh=Q5P76N37fmmOIrfzPaLtOXsbuGCjX4GjBJQCYXczp3s=;
+        b=dBKozE5bA/V/z2Vlge7xmPNkZ9TqWpGZxt9QdeqZ4tKjTXSU3N0kCDNFVop2uIC/em
+         B58yWcYOfU0/Vd2f2vO164pejCBgkvI2S47OZp+1Tv00UElsvW/KwGnHKQDI62+bd78d
+         tNQScYiEBwUe0J7xn6rYQtYdWY5l7T8DQ4AFCKqbNz3bt/Q2po84hmEVEwDwevjamdQN
+         VB8QVatNsw/QThoKsD8nUD6XSK35K/h4YgkRiUe82gs7pknI/Jqvkqgek3uYWrHM/QhH
+         +dLs/CJz5QbHzoUiFFnOJnlaqCGjiJfzaYfA737okoW1o9aIHqhg9teav6CAGD0bBti/
+         y+Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=dd7bKtioRklldvqESdgqIRuwzi9xeWLLoSY6BhHdesY=;
-        b=oWbvXJPAenzfZbNQ1wr1zExO1CikXQKiP18/PbafuNTBNq7NhK3KEEL04PMP0awLFG
-         Yo6eytDzsfBQtgafvuWifdXO+gnTO8ZGUt4OOTulnFScWvVhACaoJSJF9mtJpjZw9pBp
-         5QcQCR6KHxCNYB83i4h7H5KV8MKi0TtH47GcQkSHmbiEkIM85GFcbmRkxeQWq9RFC/X2
-         MEJrNHcqDBR001zBSR/zFTApwD0+RBAaBSwu720zQOI7A10uqTxMCixY/+wY/f1LLZhs
-         eXJPC6PJIbo9XnnNWjuCnZnJ61EA9M9NMYX3MHBCh/yC7oBrM77xuvc+evjHBeOyDOou
-         qmqg==
-X-Gm-Message-State: ABuFfoizAylVUQqpHBNxX2z8bV6IjeAU/O7TKTQxUcljZWI84r4aEVyZ
-        ee1sRs9RejTcpbX+eTZjwqsnU+nR
-X-Google-Smtp-Source: ACcGV60Gp/bGuaWvvND4yR5B5iB+qA5ya8dCQwb+RGeg5FWcx32vO9u3UaxoV7KE9E+EA1mHhSm1eg==
-X-Received: by 2002:aed:2ce6:: with SMTP id g93-v6mr4252398qtd.288.1538276647484;
-        Sat, 29 Sep 2018 20:04:07 -0700 (PDT)
+        bh=Q5P76N37fmmOIrfzPaLtOXsbuGCjX4GjBJQCYXczp3s=;
+        b=CuAnGv6e2Y9IQ6AJ3PHljYxMq6HRqsQm3GZ+mZStIgs/Rnyg2JjsN5YmnLesK4iqMz
+         8p4DjdTapH2vBvCZnoEIeVDFlx3XL+rhpz+9c+ql9mRetv6jRM2B+9jgRdBSISYSipQE
+         8g6AVOl3hweYL3zsX5C2UEqu2Un5kzBgqH7YWks8BRfUVJR9fNl9+nJpBnWOzut9VSRN
+         dBpPp9L6bdTMgz0mshxPdxWpZo1OC0oEhp0bPp9n8Got3Ikcd149kbZ9Q6wnIdjZ0p7Y
+         kRRuK+c8SOGp0HjjuoirsWiXTPHnwO5hYOJSkhtihAkeiClEde5ua7hz9DrUXXbX8bNX
+         dixw==
+X-Gm-Message-State: ABuFfoj7L9rs7BmiYXEtsCWfhkfWUEK9TXPOupe2MhJ1EyTCChyBs3Pe
+        EDkzRRC1NKy/J1MMc/YOLcE=
+X-Google-Smtp-Source: ACcGV63/AGaMSfj6MVqZb00T/qHf6G/wMhU33TYGFrSx78HWDhtv2ZHXYkHYlSi9ruZobxwWCrfhjQ==
+X-Received: by 2002:a37:d6c2:: with SMTP id p63-v6mr3913868qkl.190.1538276649794;
+        Sat, 29 Sep 2018 20:04:09 -0700 (PDT)
 Received: from localhost.localdomain ([2605:a000:1316:4273:6520:8440:55b8:a001])
-        by smtp.googlemail.com with ESMTPSA id p1-v6sm4782028qkg.82.2018.09.29.20.04.06
+        by smtp.googlemail.com with ESMTPSA id p1-v6sm4782028qkg.82.2018.09.29.20.04.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 29 Sep 2018 20:04:07 -0700 (PDT)
+        Sat, 29 Sep 2018 20:04:09 -0700 (PDT)
 From:   Connor McAdams <conmanx360@gmail.com>
 Cc:     conmanx360@gmail.com, Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
         Takashi Sakamoto <o-takashi@sakamocchi.jp>,
         Alastair Bridgewater <alastair.bridgewater@gmail.com>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 02/11] ALSA: hda/ca0132 - Fix surround sound with output effects
-Date:   Sat, 29 Sep 2018 23:03:17 -0400
-Message-Id: <1538276607-30234-3-git-send-email-conmanx360@gmail.com>
+Subject: [PATCH 03/11] ALSA: hda/ca0132 - Add ZxR quirks + new quirk check function
+Date:   Sat, 29 Sep 2018 23:03:18 -0400
+Message-Id: <1538276607-30234-4-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538276607-30234-1-git-send-email-conmanx360@gmail.com>
 References: <1538276607-30234-1-git-send-email-conmanx360@gmail.com>
@@ -76,68 +76,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes an issue where if surround sound was the selected
-output and output effects were enabled, the sound wasn't sent to all
-channels correctly.
+This patch adds quirk ID's for the ZxR and it's daughter board, the
+DBPro. It also adds a function for determining the quirk for each board
+through HDA subsytem ID's instead of PCI subsystem ID's.
 
 Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 ---
- sound/pci/hda/patch_ca0132.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ sound/pci/hda/patch_ca0132.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
 diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index aebc592..5a3fb56 100644
+index 5a3fb56..08dd85d 100644
 --- a/sound/pci/hda/patch_ca0132.c
 +++ b/sound/pci/hda/patch_ca0132.c
-@@ -4125,6 +4125,7 @@ static int ca0132_select_out(struct hda_codec *codec)
+@@ -1071,6 +1071,8 @@ enum {
+ 	QUIRK_ALIENWARE,
+ 	QUIRK_ALIENWARE_M17XR4,
+ 	QUIRK_SBZ,
++	QUIRK_ZXR,
++	QUIRK_ZXR_DBPRO,
+ 	QUIRK_R3DI,
+ 	QUIRK_R3D,
+ 	QUIRK_AE5,
+@@ -8376,6 +8378,29 @@ static int ca0132_prepare_verbs(struct hda_codec *codec)
+ 	return 0;
  }
  
- static int ae5_headphone_gain_set(struct hda_codec *codec, long val);
-+static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val);
- 
- static void ae5_mmio_select_out(struct hda_codec *codec)
++/*
++ * The Sound Blaster ZxR shares the same PCI subsystem ID as some regular
++ * Sound Blaster Z cards. However, they have different HDA codec subsystem
++ * ID's. So, we check for the ZxR's subsystem ID, as well as the DBPro
++ * daughter boards ID.
++ */
++static void sbz_detect_quirk(struct hda_codec *codec)
++{
++	struct ca0132_spec *spec = codec->spec;
++
++	switch (codec->core.subsystem_id) {
++	case 0x11020033:
++		spec->quirk = QUIRK_ZXR;
++		break;
++	case 0x1102003f:
++		spec->quirk = QUIRK_ZXR_DBPRO;
++		break;
++	default:
++		spec->quirk = QUIRK_SBZ;
++		break;
++	}
++}
++
+ static int patch_ca0132(struct hda_codec *codec)
  {
-@@ -4365,12 +4366,19 @@ static int ca0132_alt_select_out(struct hda_codec *codec)
- 		snd_hda_set_pin_ctl(codec, spec->out_pins[3],
- 				    pin_ctl | PIN_OUT);
+ 	struct ca0132_spec *spec;
+@@ -8401,6 +8426,9 @@ static int patch_ca0132(struct hda_codec *codec)
+ 	else
+ 		spec->quirk = QUIRK_NONE;
  
--		if (spec->effects_switch[PLAY_ENHANCEMENT - EFFECT_START_NID])
--			dspio_set_uint_param(codec, 0x80, 0x04, FLOAT_ONE);
--		else
--			dspio_set_uint_param(codec, 0x80, 0x04, FLOAT_EIGHT);
-+		dspio_set_uint_param(codec, 0x80, 0x04, FLOAT_EIGHT);
- 		break;
- 	}
-+	/*
-+	 * Surround always sets it's scp command to req 0x04 to FLOAT_EIGHT.
-+	 * With this set though, X_BASS cannot be enabled. So, if we have OutFX
-+	 * enabled, we need to make sure X_BASS is off, otherwise everything
-+	 * sounds all muffled. Running ca0132_effects_set with X_BASS as the
-+	 * effect should sort this out.
-+	 */
-+	if (spec->effects_switch[PLAY_ENHANCEMENT - EFFECT_START_NID])
-+		ca0132_effects_set(codec, X_BASS,
-+			spec->effects_switch[X_BASS - EFFECT_START_NID]);
++	if (spec->quirk == QUIRK_SBZ)
++		sbz_detect_quirk(codec);
++
+ 	spec->dsp_state = DSP_DOWNLOAD_INIT;
+ 	spec->num_mixers = 1;
  
- 	/* run through the output dsp commands for the selected output. */
- 	for (i = 0; i < alt_out_presets[spec->cur_out_type].commands; i++) {
-@@ -4409,7 +4417,6 @@ static void ca0132_unsol_hp_delayed(struct work_struct *work)
- 
- static void ca0132_set_dmic(struct hda_codec *codec, int enable);
- static int ca0132_mic_boost_set(struct hda_codec *codec, long val);
--static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val);
- static void resume_mic1(struct hda_codec *codec, unsigned int oldval);
- static int stop_mic1(struct hda_codec *codec);
- static int ca0132_cvoice_switch_set(struct hda_codec *codec);
-@@ -4787,6 +4794,8 @@ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
- 		/* if PE if off, turn off out effects. */
- 		if (!spec->effects_switch[PLAY_ENHANCEMENT - EFFECT_START_NID])
- 			val = 0;
-+		if (spec->cur_out_type == SURROUND_OUT && nid == X_BASS)
-+			val = 0;
- 	}
- 
- 	/* for in effect, qualify with CrystalVoice */
 -- 
 2.7.4
 
