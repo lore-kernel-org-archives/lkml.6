@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A9AC004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 07:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 030E7C64EAD
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 07:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1839A2089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 07:43:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1839A2089D
+	by mail.kernel.org (Postfix) with ESMTP id C558D2089D
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 07:43:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C558D2089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbeI3OPL (ORCPT
+        id S1728201AbeI3OPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 10:15:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36532 "EHLO mx1.redhat.com"
+        Sun, 30 Sep 2018 10:15:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49152 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727651AbeI3OPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 10:15:11 -0400
+        id S1727651AbeI3OPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 10:15:15 -0400
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C26BA81F0B;
-        Sun, 30 Sep 2018 07:43:16 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8D75FA70A;
+        Sun, 30 Sep 2018 07:43:21 +0000 (UTC)
 Received: from xz-x1.nay.redhat.com (dhcp-14-128.nay.redhat.com [10.66.14.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 786306016F;
-        Sun, 30 Sep 2018 07:43:12 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 470DD60164;
+        Sun, 30 Sep 2018 07:43:17 +0000 (UTC)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Shuah Khan <shuah@kernel.org>,
@@ -42,154 +42,64 @@ Cc:     Shuah Khan <shuah@kernel.org>,
         Andrea Arcangeli <aarcange@redhat.com>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v2 2/3] userfaultfd: selftest: generalize read and poll
-Date:   Sun, 30 Sep 2018 15:42:58 +0800
-Message-Id: <20180930074259.18229-3-peterx@redhat.com>
+Subject: [PATCH v2 3/3] userfaultfd: selftest: recycle lock threads first
+Date:   Sun, 30 Sep 2018 15:42:59 +0800
+Message-Id: <20180930074259.18229-4-peterx@redhat.com>
 In-Reply-To: <20180930074259.18229-1-peterx@redhat.com>
 References: <20180930074259.18229-1-peterx@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Sun, 30 Sep 2018 07:43:16 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Sun, 30 Sep 2018 07:43:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We do very similar things in read and poll modes, but we're copying the
-codes around.  Share the codes properly on reading the message and
-handling the page fault to make the code cleaner.  Meanwhile this solves
-previous mismatch of behaviors between the two modes on that the old
-code:
+Now we recycle the uffd servicing threads earlier than the lock
+threads.  It might happen that when the lock thread is still blocked at
+a pthread mutex lock while the servicing thread has already quitted for
+the cpu so the lock thread will be blocked forever and hang the test
+program.  To fix the possible race, recycle the lock threads first.
 
-- did not check EAGAIN case in read() mode
-- ignored BOUNCE_VERIFY check in read() mode
+This never happens with current missing-only tests, but when I start to
+run the write-protection tests (the feature is not yet posted upstream)
+it happens every time of the run possibly because in that new test we'll
+need to service two page faults for each lock operation.
 
+Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- tools/testing/selftests/vm/userfaultfd.c | 77 +++++++++++++-----------
- 1 file changed, 43 insertions(+), 34 deletions(-)
+ tools/testing/selftests/vm/userfaultfd.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index 5ff3a4f9173e..7a8c6937cc67 100644
+index 7a8c6937cc67..5d1db824f73a 100644
 --- a/tools/testing/selftests/vm/userfaultfd.c
 +++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -451,6 +451,43 @@ static int copy_page(int ufd, unsigned long offset)
- 	return __copy_page(ufd, offset, false);
- }
+@@ -626,6 +626,12 @@ static int stress(unsigned long *userfaults)
+ 	if (uffd_test_ops->release_pages(area_src))
+ 		return 1;
  
-+static int uffd_read_msg(int ufd, struct uffd_msg *msg)
-+{
-+	int ret = read(uffd, msg, sizeof(*msg));
 +
-+	if (ret != sizeof(*msg)) {
-+		if (ret < 0) {
-+			if (errno == EAGAIN)
-+				return 1;
-+			else
-+				perror("blocking read error"), exit(1);
-+		} else {
-+			fprintf(stderr, "short read\n"), exit(1);
-+		}
-+	}
++	finished = 1;
++	for (cpu = 0; cpu < nr_cpus; cpu++)
++		if (pthread_join(locking_threads[cpu], NULL))
++			return 1;
 +
-+	return 0;
-+}
-+
-+/* Return 1 if page fault handled by us; otherwise 0 */
-+static int uffd_handle_page_fault(struct uffd_msg *msg)
-+{
-+	unsigned long offset;
-+
-+	if (msg->event != UFFD_EVENT_PAGEFAULT)
-+		fprintf(stderr, "unexpected msg event %u\n",
-+			msg->event), exit(1);
-+
-+	if (bounces & BOUNCE_VERIFY &&
-+	    msg->arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WRITE)
-+		fprintf(stderr, "unexpected write fault\n"), exit(1);
-+
-+	offset = (char *)(unsigned long)msg->arg.pagefault.address - area_dst;
-+	offset &= ~(page_size-1);
-+
-+	return copy_page(uffd, offset);
-+}
-+
- static void *uffd_poll_thread(void *arg)
- {
- 	unsigned long cpu = (unsigned long) arg;
-@@ -458,7 +495,6 @@ static void *uffd_poll_thread(void *arg)
- 	struct uffd_msg msg;
- 	struct uffdio_register uffd_reg;
- 	int ret;
--	unsigned long offset;
- 	char tmp_chr;
- 	unsigned long userfaults = 0;
- 
-@@ -482,25 +518,15 @@ static void *uffd_poll_thread(void *arg)
- 		if (!(pollfd[0].revents & POLLIN))
- 			fprintf(stderr, "pollfd[0].revents %d\n",
- 				pollfd[0].revents), exit(1);
--		ret = read(uffd, &msg, sizeof(msg));
--		if (ret < 0) {
--			if (errno == EAGAIN)
--				continue;
--			perror("nonblocking read error"), exit(1);
--		}
-+		if (uffd_read_msg(uffd, &msg))
-+			continue;
- 		switch (msg.event) {
- 		default:
- 			fprintf(stderr, "unexpected msg event %u\n",
- 				msg.event), exit(1);
- 			break;
- 		case UFFD_EVENT_PAGEFAULT:
--			if (msg.arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WRITE)
--				fprintf(stderr, "unexpected write fault\n"), exit(1);
--			offset = (char *)(unsigned long)msg.arg.pagefault.address -
--				area_dst;
--			offset &= ~(page_size-1);
--			if (copy_page(uffd, offset))
--				userfaults++;
-+			userfaults += uffd_handle_page_fault(&msg);
- 			break;
- 		case UFFD_EVENT_FORK:
- 			close(uffd);
-@@ -528,8 +554,6 @@ static void *uffd_read_thread(void *arg)
- {
- 	unsigned long *this_cpu_userfaults;
- 	struct uffd_msg msg;
--	unsigned long offset;
--	int ret;
- 
- 	this_cpu_userfaults = (unsigned long *) arg;
- 	*this_cpu_userfaults = 0;
-@@ -538,24 +562,9 @@ static void *uffd_read_thread(void *arg)
- 	/* from here cancellation is ok */
- 
- 	for (;;) {
--		ret = read(uffd, &msg, sizeof(msg));
--		if (ret != sizeof(msg)) {
--			if (ret < 0)
--				perror("blocking read error"), exit(1);
--			else
--				fprintf(stderr, "short read\n"), exit(1);
--		}
--		if (msg.event != UFFD_EVENT_PAGEFAULT)
--			fprintf(stderr, "unexpected msg event %u\n",
--				msg.event), exit(1);
--		if (bounces & BOUNCE_VERIFY &&
--		    msg.arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WRITE)
--			fprintf(stderr, "unexpected write fault\n"), exit(1);
--		offset = (char *)(unsigned long)msg.arg.pagefault.address -
--			 area_dst;
--		offset &= ~(page_size-1);
--		if (copy_page(uffd, offset))
--			(*this_cpu_userfaults)++;
-+		if (uffd_read_msg(uffd, &msg))
-+			continue;
-+		(*this_cpu_userfaults) += uffd_handle_page_fault(&msg);
+ 	for (cpu = 0; cpu < nr_cpus; cpu++) {
+ 		char c;
+ 		if (bounces & BOUNCE_POLL) {
+@@ -643,11 +649,6 @@ static int stress(unsigned long *userfaults)
+ 		}
  	}
- 	return (void *)NULL;
+ 
+-	finished = 1;
+-	for (cpu = 0; cpu < nr_cpus; cpu++)
+-		if (pthread_join(locking_threads[cpu], NULL))
+-			return 1;
+-
+ 	return 0;
  }
+ 
 -- 
 2.17.1
 
