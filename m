@@ -2,178 +2,132 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAADC64EB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0104FC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:46:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB488206B7
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:43:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Z9Z1ra1j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB488206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id AEB062082A
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:46:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB062082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbeI3QP6 (ORCPT
+        id S1728018AbeI3QTO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 12:15:58 -0400
-Received: from mail-wr1-f43.google.com ([209.85.221.43]:33310 "EHLO
-        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727793AbeI3QP5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 12:15:57 -0400
-Received: by mail-wr1-f43.google.com with SMTP id f10-v6so10634404wrs.0;
-        Sun, 30 Sep 2018 02:43:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=subject:from:to:references:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=l0tml7J4oPPIbXIUU+biHi/4zEqV1uDLy89VbKIeEiQ=;
-        b=Z9Z1ra1jrZt4H8UVeTxM5g2as7Xfh4jhSv5haALEWhO34wZD8KrkI6/9vm4wnkxyzD
-         MsfXbwiFZtw27rvG3ZQ5f0ByAn8Z5h8DPM3iGtICfYMjRIrwBkvL9TtpfbdnwRoHxOIO
-         VX7NDpLnlVUokIKKQ2wyksVjHOxa1/twO40HDb+N1lDeODaDoLCz6amrWPysKlQZxJpp
-         7XH7ilbMM1N6VFUMpoKlnrnXNNT/513p2T57TlguVIDUOo0XHHIB5azYPxNdFjDlaer2
-         X1jCzPYdohnchRHsv9v0YqW+iRDv+r3iEyAaqD5zam9gb1c5PLAQAty+XGwpINOwXtzu
-         Ez6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=l0tml7J4oPPIbXIUU+biHi/4zEqV1uDLy89VbKIeEiQ=;
-        b=oKlKbijRqsxKfXDScvszjzuU3yb2hzRWPMpR4Lh8e2qRA2xBfEJFRJEJe29LG9U6Ma
-         awF+hHNexs9c7C1tDwjdhZNqiUHR1edBG4LDv3CSJhd2PRqTV5s/oC4JFJUrAVF+znxx
-         TYTcFFcyTzEma/u50uJSQi65+dM0Qww+CDvZfDXPf9ldWvGJ4qsbCyZeITe0qX8JZ+lY
-         EO9DlzCYPyT3fwYy77gP2H/kcElG97FErDpwU9rwSxmmpkQoVoW56w/kG6SyKsZPw+PV
-         WviUEA2nTacblVS3qOUCQAQ0XL7ZKWOWTKR08U/g1PrfizXJB/fzq8Gmibr8MTzqfiLh
-         LHIg==
-X-Gm-Message-State: ABuFfogk18p54QiRQaAXFKRNKWJV+uG0+qvW/DEQ7YIslHH0s+rNNFUC
-        kt7JppzacdceesX6rUq9XfbxVmUs
-X-Google-Smtp-Source: ACcGV60YbV82cMotFndnGL9mggaz0C+/l+mPIoHNMdZKM9/S5K7u92wv78uR26EuNRj4Ou4rqyUjTQ==
-X-Received: by 2002:a5d:4292:: with SMTP id k18-v6mr3778753wrq.225.1538300617622;
-        Sun, 30 Sep 2018 02:43:37 -0700 (PDT)
-Received: from [192.168.200.12] (p57B63A04.dip0.t-ipconnect.de. [87.182.58.4])
-        by smtp.gmail.com with ESMTPSA id v21-v6sm18038544wrd.4.2018.09.30.02.43.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 02:43:37 -0700 (PDT)
-Subject: Re: SIOCGIWRATE (and others) leaking SLAB (kmalloc-2048)
-From:   Stefan Seyfried <stefan.seyfried@googlemail.com>
-To:     LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
-References: <cfbf778f-8817-a6f4-f56a-680f13ef5723@message-id.googlemail.com>
+        Sun, 30 Sep 2018 12:19:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54016 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727793AbeI3QTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 12:19:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6D698AEC8;
+        Sun, 30 Sep 2018 09:46:54 +0000 (UTC)
+Subject: Re: [PATCH] MAINTAINERS: Update clock binding entry for Actions Semi
+ Owl SoCs
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     joe@perches.com, linux-arm-kernel@lists.infradead.org, pn@denx.de,
+        sravanhome@gmail.com, robh@kernel.org, sboyd@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180929073244.7091-1-manivannan.sadhasivam@linaro.org>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
 Openpgp: preference=signencrypt
-Autocrypt: addr=stefan.seyfried@googlemail.com; prefer-encrypt=mutual;
- keydata=
- xsDiBDqoB5ARBACZn/K+5V0uoo0Wr9cI9hw5vPioOmIbPv30x47j/w/XNECPSzos078v9Fr2
- Mlz0MG9Gnpl9S1o0OIh//K5xxj2/LRLO2nL9/nqlnwmJ6W5qrjjn6Ch3mxz5mxMeRMRMY1cZ
- EkSj7GH3ZLviZlzrnpuJd12HWsXhAwVxUyQnvsvNzwCgpIO6EfQT33o9illpG/AxIk2Uu0cD
- /A4cgKbm5VZW5DPTlLe8P92eEgj5cN51SUXHXYgWBI0Fx+QwSYm6ON0U03B4oR5zDWMHkJfZ
- WgXROdwY/NqouBoV7lXvHsyInPzExNixe+1vcrhDJ3ow6nlCW77aCFp22iwumC4ouzFtOMXK
- kih0WPrxPKq27Hw9fq9EaR2oV2tUBACN6ZC+G7J21ruG9slJ+bFcY5cW7M5Um6Czk08T+vtd
- 7fAg+fEUcGCtIdVdHrXBut07K9y6iy5IuqwAV5fJsE+JQO+f+X1pymdRgdWHGEoMMdEW4k3W
- IGjrmmMUtpqzr30h4WFgA4+0nR3jpmcGCWBSa4selQecyyOlM7rcmKyQNs0kU3RlZmFuIFNl
- eWZyaWVkIDxzZWlmZUBvcGVuc3VzZS5vcmc+wmAEExECACAFAkx9Sb0CGyMGCwkIBwMCBBUC
- CAMEFgIDAQIeAQIXgAAKCRAx00vNNldAmFZuAJ9xLbFShKeTTDgfwMUmO37qw07npACgmLIK
- fbArokRryKixiliTvxAgFHHOwE0EOqgHkhAEALGQaS9Hj25lKGsaTOMKMBBvjklv6brH8JdF
- WTA9dr37spc+PFFyc9686bcT+5nkbpjq3ndXUzGdGzfe0YwOlQh4fWXZT/oTXosIBqDWPShE
- ntDU8BX9JVqBBZwJ/ey+QF5tgYrICjCzp8S/mL6sqw8En4/AS84lulAoNJMJsUcDAAMFA/4p
- ik7hBklqJzYC7uNWZDL9dkYwIsUXM64kGenUhpgguLZvhuVeUeHU2iIsdTcNBbeBwvXgLnEu
- vVSdf4wtDwR7SjUYebymbGc/JLkXjqGntaWUr+wfHmAm3oXV2X+WFzZQJ+o8N5dJyBEUbrVX
- YvBD7wErgEuJAL+q/i28U9u7OcJGBBgRAgAGBQI6qAeSAAoJEDHTS802V0CYBL8An1gF2k4s
- UaMjAtoX/ixcOhAv44i4AJ9Yi+OgvhS8CbUp+XkI5Q352XU+BQ==
-Message-ID: <97c6b1b3-d992-2466-81ee-b383ef7bd90c@message-id.googlemail.com>
-Date:   Sun, 30 Sep 2018 11:43:36 +0200
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <3ac263b8-f40d-ec29-d16c-8eae3dcc8e1f@suse.de>
+Date:   Sun, 30 Sep 2018 11:46:53 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <cfbf778f-8817-a6f4-f56a-680f13ef5723@message-id.googlemail.com>
+In-Reply-To: <20180929073244.7091-1-manivannan.sadhasivam@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 30.09.18 um 11:24 schrieb Stefan Seyfried:
-> Hi all,
+Am 29.09.18 um 09:32 schrieb Manivannan Sadhasivam:
+> commit d0e45d686a3e ("dt-bindings: clock: Add S700 support for Actions
+> Semi Soc's")'
 > 
-> I'm running the openSUSE provided latest rc kernels and found, that
-> after 2 weeks, about 4GB of memory had leaked into kmalloc-2048.
-> Investigating with trace-cmd lead me to the gkrellm-wifi plugin, which
-> periodically polls via wireless extension ioctls.
+> renamed the clock binding for Actions Semi Owl SoCs from
+> actions,s900-cmu.txt to actions,owl-cmu.txt inorder to accommodate all
+> members of Owl family SoCs. Hence, update the relevant entry in
+> MAINTAINERS file.
 > 
-> This is an easy to use reproducer:
-> [...]
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> http://paste.opensuse.org/75377254
-> 
-> # grep ^kmalloc-2048 /proc/slabinfo
-> kmalloc-2048 168090 168106 2048 2 1 : tunables 24 12 8 : slabdata 84053
->  84053 0
-> # ./leak air
-> # grep ^kmalloc-2048 /proc/slabinfo
-> kmalloc-2048 178086 178086 2048 2 1 : tunables 24 12 8 : slabdata 89043
->  89043 0
-> 
-> The same happens with SIOCGIWSTATS and when reading /proc/net/wireless:
-> 
-> #!/bin/bash
-> for ((i=0; i<10000; i++)); do
->         while read line; do :; done < /proc/net/wireless
-> done
-> 
-> Thie lets me suspect an issue with rdev_get_station, but OTOH "iw air
-> station dump" which I think also calls rdev_get_station via
-> nl80211_get_station() does not seem to leak.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fff353db7536..e9d6ce3243ce 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1191,7 +1191,7 @@ F:	drivers/soc/actions/
+>  F:	include/dt-bindings/power/owl-*
+>  F:	include/linux/soc/actions/
+>  F:	Documentation/devicetree/bindings/arm/actions.txt
+> -F:	Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+> +F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+>  F:	Documentation/devicetree/bindings/dma/owl-dma.txt
+>  F:	Documentation/devicetree/bindings/i2c/i2c-owl.txt
 
-trace-cmd gives this for the above script:
+These two lines do not yet exist on v4.20/arm64 branch - rebased and
+applied.
 
-  %99.28  (15289) leak.sh                        kmalloc #10001
-         |
-         --- *kmalloc*
-          kmem_cache_alloc_trace
-          cfg80211_sinfo_alloc_tid_stats
-          sta_set_sinfo
-          ieee80211_get_station
-          cfg80211_wireless_stats
-          wireless_dev_seq_show
-          seq_read
-          proc_reg_read
-          __vfs_read
-          vfs_read
-          ksys_read
-          do_syscall_64
-          entry_SYSCALL_64_after_hwframe
+>  F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
 
-("trace-cmd record -T -e kmalloc -f bytes_alloc==2048", then run the
-script, then "trace-cmd hist trace.dat")
+Thanks,
+Andreas
 
-This points me to sta_set_sinfo and then to commit
-
-commit 0fdf1493b41eb64fc7e8c8e1b8830a4bd8c4bbca
-Author: Johannes Berg <johannes.berg@intel.com>
-Date:   Fri May 18 11:40:44 2018 +0200
-
-    mac80211: allocate and fill tidstats only when needed
-
-    This fixes memory leaks in the case where we just have the
-    station info on the stack for internal usage without sending
-    it to cfg80211.
-
-which seems to be incomplete
-
-> I did not see this with 4.18, I have noticed this with 4.19-rc3 after 13
-> days and still see it with -rc5.
-
-Looking at the commit, the bug might have been already in 4.18, which
-I'm trying to confirm right now.
 -- 
-Stefan Seyfried
-
-"For a successful technology, reality must take precedence over
- public relations, for nature cannot be fooled." -- Richard Feynman
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
