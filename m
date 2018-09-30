@@ -2,96 +2,110 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 473ECC43143
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 02:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 189A5C43143
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 02:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2C17206B8
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 02:32:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2C17206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C6278206B8
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 02:33:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VIvyzsiz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6278206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbeI3JD3 (ORCPT
+        id S1727648AbeI3JEf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 05:03:29 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57182 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726348AbeI3JD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 05:03:29 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 65B2E43D6A40E;
-        Sun, 30 Sep 2018 10:32:26 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Sun, 30 Sep 2018
- 10:32:21 +0800
-Message-ID: <5BB035B4.3030201@huawei.com>
-Date:   Sun, 30 Sep 2018 10:32:20 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Sun, 30 Sep 2018 05:04:35 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:46249 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726348AbeI3JEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 05:04:35 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 8778f682;
+        Sun, 30 Sep 2018 02:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=mphiti1i2w2NgrTtpzTMRK1yooE=; b=VIvyzs
+        izujXT1nObdVz//WAUr6bL5mK7RB6+rfGRyRpY1RQR05Ot6pKCnQD2LSw+zLFZgt
+        8umcU1Do9h0GGzlu8pdt53u1Per4pEvgWKKHl53EfiEnLtzeuUq2qQ/soawpb+gZ
+        SmFh09Ov7rWR3W75GEyqB0ZtRCmUR3qXPhdNBGLndJCFJ6sPUX2Cpg1chO6TrKuR
+        /jgdHqwOTJXPybCRNd5h96MyZywI6s3CAt/IaSqzVLgcYRd71gGmPkofenrj+GMo
+        oKfYy6cz5iC6MMnukW2dzF9Y1fx9ew5oFK99q5KV+ifVlrlIU1CYUO64EvHMlN63
+        VXTCCO+1U7LG54Gg==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 372a8dde (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Sun, 30 Sep 2018 02:14:33 +0000 (UTC)
+Received: by mail-oi1-f181.google.com with SMTP id d63-v6so8489100oic.12;
+        Sat, 29 Sep 2018 19:33:32 -0700 (PDT)
+X-Gm-Message-State: ABuFfoj0UryJabTzb6a5yB/TSKRPCt5g+k25SZcD5FCrnnknf/0FzpdK
+        e7HQJ0exnK2CqrgiseOFSilP/NHjSnZddsBPKng=
+X-Google-Smtp-Source: ACcGV61NzGi8Z4givOvsJQ4g/sN59huKHtNdQFdMeK9Q0VsAPPI47HjCdNeV0etioEHYvzVIRIG8ZsMtB2bI9vO0Fmg=
+X-Received: by 2002:aca:d489:: with SMTP id l131-v6mr2265429oig.15.1538274811561;
+ Sat, 29 Sep 2018 19:33:31 -0700 (PDT)
 MIME-Version: 1.0
-To:     Joe Perches <joe@perches.com>
-CC:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <lgirdwood@gmail.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: wm8731: Fix a unused function gcc warning
-References: <1538271918-24033-1-git-send-email-zhongjiang@huawei.com> <0e30a0ab635f0348bcf582efe018e53334a276fe.camel@perches.com>
-In-Reply-To: <0e30a0ab635f0348bcf582efe018e53334a276fe.camel@perches.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
+ <CAKv+Gu8knzzmK4_KouFQWKzMdHFgEsk-CtBrcuAvk0bYkDFO=w@mail.gmail.com>
+ <CAHmME9qtN8kiKnMHTa76r9a_5Ou_s3WhAMT_HnH7-1FeoHUOZg@mail.gmail.com> <CAKv+Gu9FoFQymp2-=rUeh14CkUKON389OCE7stYCOFwKZpaCrg@mail.gmail.com>
+In-Reply-To: <CAKv+Gu9FoFQymp2-=rUeh14CkUKON389OCE7stYCOFwKZpaCrg@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Sun, 30 Sep 2018 04:33:20 +0200
+X-Gmail-Original-Message-ID: <CAHmME9rw=khsP=8PzbWUtwjVh55stzgr1qHcQUi8h7-a--Sr7w@mail.gmail.com>
+Message-ID: <CAHmME9rw=khsP=8PzbWUtwjVh55stzgr1qHcQUi8h7-a--Sr7w@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/30 10:17, Joe Perches wrote:
-> On Sun, 2018-09-30 at 09:45 +0800, zhong jiang wrote:
->> Fix the following compile warning:
->>
->> sound/soc/codecs/wm8731.c:575:12: warning: 'wm8731_request_supplies' defined but not used [-Wunused-function]
->> sound/soc/codecs/wm8731.c:600:12: warning: 'wm8731_hw_init' defined but not used [-Wunused-function]
-> []
->> diff --git a/sound/soc/codecs/wm8731.c b/sound/soc/codecs/wm8731.c
-> []
->> @@ -36,12 +36,15 @@
->>  #include "wm8731.h"
->>  
->>  #define WM8731_NUM_SUPPLIES 4
->> +
->> +#if defined(CONFIG_I2C) || defined(CONFIG_SPI_MASTER)
->>  static const char *wm8731_supply_names[WM8731_NUM_SUPPLIES] = {
->>  	"AVDD",
->>  	"HPVDD",
->>  	"DCVDD",
->>  	"DBVDD",
->>  };
->> +#endif
->>  
->>  /* codec private data */
->>  struct wm8731_priv {
->> @@ -572,6 +575,7 @@ static int wm8731_startup(struct snd_pcm_substream *substream,
->>  	.symmetric_rates = 1,
->>  };
->>  
->> +#if defined(CONFIG_I2C) || defined(CONFIG_SPI_MASTER)
->>  static int wm8731_request_supplies(struct device *dev,
->>  		struct wm8731_priv *wm8731)
->>  {
->> @@ -627,6 +631,7 @@ static int wm8731_hw_init(struct device *dev, struct wm8731_priv *wm8731)
->>  
->>  	return ret;
->>  }
->> +#endif
-> It would be better to move the declaration of
-> wm8731_supply_ fnames into the second #if block so
-> there would only be a single #if block.
+Hi Ard,
+
+On Sat, Sep 29, 2018 at 8:16 AM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> > You mean to say that since these nobs are def_bool y and are
+> > essentially "depends on ARM", then I should just straight up use
+> > CONFIG_ARM? I had thought about this, but figured this would make it
+> > easier to later make these optional or have other options block them
+> > need be, or even if the dependencies and requirements for having them
+> > changes (for example, with UML on x86). I think doing it this way
+> > gives us some flexibility later on. So if that's a compelling enough
+> > reason, I'd like to keep those.
 >
-Yep,  Thanks,  Will repost in v2.
+> Sure. But probably better to be consistent then, and stop using
+> CONFIG_ARM directly in your code.
 
-Sincerely,
-zhong jiang
+Ack.
 
+> > The reason it was added was indeed because of:
+> > https://lists.01.org/pipermail/kbuild-all/2018-September/053114.html
+> > -- exactly what you suspected, ARCH_RPC. Have a better suggestion than
+> > !CPU_32v3?
+>
+> Yes, you could just add
+>
+> asflags-$(CONFIG_CPU_32v3) += -march=armv4
+>
+> with a comment stating that we don't actually support ARMv3 but only
+> use it as a code generation target for reasons unrelated to the ISA
+
+Alright, I'll do exactly that. Though, if the rationale for this has
+to do only with codegen -- with what the C compiler does -- then
+shouldn't this be set globally for CONFIG_CPU_32v3? I couldn't find
+any macros that test against __LINUX_ARM_ARCH__ being 3 in the
+assembly, so this shouldn't be a problem I don't think. Maybe I'll
+send a patch.
+
+Jason
