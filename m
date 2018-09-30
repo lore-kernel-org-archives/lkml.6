@@ -1,84 +1,108 @@
 Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF06C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 12:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 690A2C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 12:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9860E2075E
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 12:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 169242075E
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 12:16:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lkcl.net header.i=@lkcl.net header.b="no1bo5/6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9860E2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lkcl.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8YeIBGf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 169242075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728397AbeI3SmO (ORCPT
+        id S1728412AbeI3Ssy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 14:42:14 -0400
-Received: from lkcl.net ([217.147.94.29]:44453 "EHLO lkcl.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728301AbeI3SmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 14:42:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lkcl.net; s=201607131;
-        h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From; bh=Zn7bzAY+G7ERbwlDGvgLwj0EjHwTc7grRWKStwnB+eA=;
-        b=no1bo5/6ex6ywrL0V17tyRd0hex/8QxEKnPz7LH9CB/zrd+U0tTGjkeh5K12m/mpa42MiG24oYiI92k5vglffKXIYjladLdxNzjr/TSCHeI3jHCeDfoB2xjIUsx9KyvhFtLhiYs7O99QnspC+najC2k4are36DhtX7N/VvIrHEU=;
-Received: from [10.8.0.223] (helo=localhost)
-        by lkcl.net with esmtps (TLS1.2:DHE_RSA_AES_128_CBC_SHA1:128)
-        (Exim 4.84_2)
-        (envelope-from <lkcl@lkcl.net>)
-        id 1g6aXP-0003EQ-LB; Sun, 30 Sep 2018 12:09:28 +0000
-Received: from lkcl by localhost with local (Exim 4.80)
-        (envelope-from <lkcl@localhost>)
-        id 1g6aX7-0007w8-MZ; Sun, 30 Sep 2018 13:09:09 +0100
-From:   lkcl@lkcl.net
-To:     martin@lichtvoll.de
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: Re: Linux 4.19-rc4 released, an apology, and a maintainership note
-Date:   Sun, 30 Sep 2018 13:09:09 +0100
-Message-Id: <20180930120909.30469-1-lkcl@lkcl.net>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <2936237.GcMzexieOU@merkaba>
-References: <2936237.GcMzexieOU@merkaba>
+        Sun, 30 Sep 2018 14:48:54 -0400
+Received: from mail-wr1-f46.google.com ([209.85.221.46]:42271 "EHLO
+        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728269AbeI3Ssy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 14:48:54 -0400
+Received: by mail-wr1-f46.google.com with SMTP id b11-v6so10789125wru.9
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 05:16:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=atcS0JAH7NEuXx5UELM9uZFDih5p+tw6pwMGzc/kcDk=;
+        b=D8YeIBGfjHKTp4MvIa5uo4/GbYz7WQqKSZvkPCuHQ0qUTd0N3EQVDREBHP+zK46W9v
+         3eihVyl6i2jcLm2BFZk2BCNOUlTXVXlyUEkH0Qs0kp4oFiiIZ/37m1nTLJavwiGGXB28
+         ZSt0U24uyxaYZLatAWDY6h0LXI9Zygq32SL+qlcVjHc08aUo6RLkJSxMZuL5K+ZhHryQ
+         S/GrR2qnS+hdX5eVmJTLzKPKn3lYdPKr/SULHRh8XYrCPxeS/dZvEZ+fAFSfw5BbSW+D
+         4dtxoQxac9M6JDb2RXaLbU185znhPxKBEuta8kNM1bcUuw8mvvH+Cgy3cqiRoBQSMuYZ
+         Pjug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=atcS0JAH7NEuXx5UELM9uZFDih5p+tw6pwMGzc/kcDk=;
+        b=uL7Yr9Aphy9E1nnD8KpIpV5PzBOuApAb5x6y10ntiDvwbszRuB/VLDgItRLNZyrP9o
+         CQWinRZJcJ7syhHinbbzSGkAGgJg+1aec2DSb5lzc2Qe8VHhGsf+Q+PiY2H5B95qhg8c
+         vj0Gc2hcxm4CIofMyWzLPFFfRFU0JlYbw4qWLhlyRH3Sbpwe4NWNONP977Ank45vRsgz
+         IQXS+Dm3aLj0FPL6/iUTDBQ+7JQ9EBSgdzxj5J8LS/xYx9WHRXNIxqD6FXH8DgNITJt6
+         WZgHCZJwv5r86Cii2q1v97PAs7Vg2XY3YswcgRz8hJXx+SncTU2p92QT8BWDn7yMAqdM
+         o45Q==
+X-Gm-Message-State: ABuFfohgE6B3asQWVubtm2yTMBkVbgkuE2Jw8iiY6rBfRLj9nPvmEHsC
+        DUyDpWkiVtWAjeqfAHalnScdKeksep4=
+X-Google-Smtp-Source: ACcGV61av467V7eZBJJi1J1fdelJMv/+I6/IRHi4wQDuth+IpqfxS0diI2R01SqqbdhIyYDdm4oxAw==
+X-Received: by 2002:a5d:6848:: with SMTP id o8-v6mr4407509wrw.159.1538309765942;
+        Sun, 30 Sep 2018 05:16:05 -0700 (PDT)
+Received: from gmail.com (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
+        by smtp.gmail.com with ESMTPSA id v6-v6sm5359402wmc.43.2018.09.30.05.16.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 30 Sep 2018 05:16:05 -0700 (PDT)
+Date:   Sun, 30 Sep 2018 14:15:55 +0200
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] auxdisplay for v4.19-rc6
+Message-ID: <20180930121555.GA15969@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Host-Lookup-Failed: Reverse DNS lookup failed for 10.8.0.223 (failed)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: elm/2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> That written: Quite some of the rude mails that contained swearwords I 
-> read from you have been about code, not persons. I think this is an 
-> important distinction. I do not have much of an issue with swearing at 
-> code :), especially when it is in some humorous way.
+Hi Greg,
 
- absolutely, and this is one thing that a lot of people are, sadly,
- trained pretty much from birth to be incapable of understanding:
- namely the difference between criticism of the PERSON and criticism
- of the ACTION.
+Please pull this trivial fix in MAINTAINERS for auxdisplay.
 
- (1) "YOU are bad! GO STAND IN THE NAUGHTY CORNER!"
- (2) "That was a BAD thing to do!"
- (3) "That hurt my feelings that you did that"
+Cheers,
+Miguel
 
- the first is the way that poorly-trained parents and kindergarten
- teachers talk to children.
+The following changes since commit 6bf4ca7fbc85d80446ac01c0d1d77db4d91a6d84:
 
- the second is... only marginally better, but it's a start
+  Linux 4.19-rc5 (2018-09-23 19:15:18 +0200)
 
- the third is how UNICEF trains teachers to treat children as human beings.
+are available in the Git repository at:
 
-> Code quality indeed is important.
-> As are human interactions.
+  https://github.com/ojeda/linux.git tags/auxdisplay-for-greg-v4.19-rc6
 
- absolutely.  it's not about the code, it's always, *always* about people.
- we just happen to be writing code, but ultimately we are doing so in the
- service of other PEOPLE.
+for you to fetch changes up to 03d179a840ce9e694db9d69bb643fdee04cfd28f:
 
- l.
+  MAINTAINERS: fix reference to moved drivers/{misc => auxdisplay}/panel.c (2018-09-30 13:50:05 +0200)
 
+----------------------------------------------------------------
+A trivial fix for auxdisplay
+
+  - MAINTAINERS reference fix for moved file
+    Reported by Joe Perches
+
+----------------------------------------------------------------
+Miguel Ojeda (1):
+      MAINTAINERS: fix reference to moved drivers/{misc => auxdisplay}/panel.c
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
