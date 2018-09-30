@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE96C64EAD
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDD3C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89E002089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:04:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89E002089D
+	by mail.kernel.org (Postfix) with ESMTP id 6E24B208AE
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:04:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E24B208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbeJAEjB (ORCPT
+        id S1728116AbeJAEjE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 00:39:01 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48670 "EHLO
+        Mon, 1 Oct 2018 00:39:04 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48686 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727369AbeJAEjA (ORCPT
+        with ESMTP id S1727369AbeJAEjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 00:39:00 -0400
+        Mon, 1 Oct 2018 00:39:03 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: sre)
-        with ESMTPSA id E7DF127E036
+        with ESMTPSA id 8D461260A8A
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Sebastian Reichel <sre@kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -37,9 +37,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Liam Breck <kernel@networkimprov.net>,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCHv1 07/14] power: supply: bq24257: fix race-condition in sysfs registration
-Date:   Mon,  1 Oct 2018 00:03:42 +0200
-Message-Id: <20180930220349.10515-8-sebastian.reichel@collabora.com>
+Subject: [PATCHv1 08/14] power: supply: charger-manager: simplify generation of sysfs attribute group name
+Date:   Mon,  1 Oct 2018 00:03:43 +0200
+Message-Id: <20180930220349.10515-9-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180930220349.10515-1-sebastian.reichel@collabora.com>
 References: <20180930220349.10515-1-sebastian.reichel@collabora.com>
@@ -50,68 +50,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This registers custom sysfs properties using the native functionality
-of the power-supply framework, which cleans up the code a bit and
-fixes a race-condition. Before this patch the sysfs attributes were
-not properly registered to udev.
+This is a simple cleanup and there should be no functional changes.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- drivers/power/supply/bq24257_charger.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ drivers/power/supply/charger-manager.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/power/supply/bq24257_charger.c b/drivers/power/supply/bq24257_charger.c
-index 6fc31bdc639b..673c7d6ff1a7 100644
---- a/drivers/power/supply/bq24257_charger.c
-+++ b/drivers/power/supply/bq24257_charger.c
-@@ -845,7 +845,7 @@ static DEVICE_ATTR(high_impedance_enable, S_IWUSR | S_IRUGO,
- static DEVICE_ATTR(sysoff_enable, S_IWUSR | S_IRUGO,
- 		   bq24257_sysfs_show_enable, bq24257_sysfs_set_enable);
+diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/supply/charger-manager.c
+index faa1a67cf3d2..7ce0a4a2645c 100644
+--- a/drivers/power/supply/charger-manager.c
++++ b/drivers/power/supply/charger-manager.c
+@@ -1369,8 +1369,7 @@ static int charger_manager_register_sysfs(struct charger_manager *cm)
+ 	struct charger_desc *desc = cm->desc;
+ 	struct charger_regulator *charger;
+ 	int chargers_externally_control = 1;
+-	char buf[11];
+-	char *str;
++	char *name;
+ 	int ret;
+ 	int i;
  
--static struct attribute *bq24257_charger_attr[] = {
-+static struct attribute *bq24257_charger_sysfs_attrs[] = {
- 	&dev_attr_ovp_voltage.attr,
- 	&dev_attr_in_dpm_voltage.attr,
- 	&dev_attr_high_impedance_enable.attr,
-@@ -853,14 +853,13 @@ static struct attribute *bq24257_charger_attr[] = {
- 	NULL,
- };
+@@ -1378,19 +1377,15 @@ static int charger_manager_register_sysfs(struct charger_manager *cm)
+ 	for (i = 0; i < desc->num_charger_regulators; i++) {
+ 		charger = &desc->charger_regulators[i];
  
--static const struct attribute_group bq24257_attr_group = {
--	.attrs = bq24257_charger_attr,
--};
-+ATTRIBUTE_GROUPS(bq24257_charger_sysfs);
+-		snprintf(buf, 10, "charger.%d", i);
+-		str = devm_kzalloc(cm->dev,
+-				strlen(buf) + 1, GFP_KERNEL);
+-		if (!str)
++		name = devm_kasprintf(cm->dev, GFP_KERNEL, "charger.%d", i);
++		if (!name)
+ 			return -ENOMEM;
  
- static int bq24257_power_supply_init(struct bq24257_device *bq)
- {
- 	struct power_supply_config psy_cfg = { .drv_data = bq, };
- 
-+	psy_cfg.attr_grp = bq24257_charger_sysfs_groups;
- 	psy_cfg.supplied_to = bq24257_charger_supplied_to;
- 	psy_cfg.num_supplicants = ARRAY_SIZE(bq24257_charger_supplied_to);
- 
-@@ -1084,12 +1083,6 @@ static int bq24257_probe(struct i2c_client *client,
- 		return ret;
- 	}
- 
--	ret = sysfs_create_group(&bq->charger->dev.kobj, &bq24257_attr_group);
--	if (ret < 0) {
--		dev_err(dev, "Can't create sysfs entries\n");
--		return ret;
--	}
+-		strcpy(str, buf);
 -
- 	return 0;
- }
+ 		charger->attrs[0] = &charger->attr_name.attr;
+ 		charger->attrs[1] = &charger->attr_state.attr;
+ 		charger->attrs[2] = &charger->attr_externally_control.attr;
+ 		charger->attrs[3] = NULL;
+-		charger->attr_g.name = str;
++		charger->attr_g.name = name;
+ 		charger->attr_g.attrs = charger->attrs;
  
-@@ -1100,8 +1093,6 @@ static int bq24257_remove(struct i2c_client *client)
- 	if (bq->iilimit_autoset_enable)
- 		cancel_delayed_work_sync(&bq->iilimit_setup_work);
- 
--	sysfs_remove_group(&bq->charger->dev.kobj, &bq24257_attr_group);
--
- 	bq24257_field_write(bq, F_RESET, 1); /* reset to defaults */
- 
- 	return 0;
+ 		sysfs_attr_init(&charger->attr_name.attr);
 -- 
 2.19.0
 
