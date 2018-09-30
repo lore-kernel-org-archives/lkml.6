@@ -2,93 +2,86 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 416A2C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 05:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AFDC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 06:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E20EC208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 05:39:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E20EC208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id CE4E1206B7
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 06:34:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4E1206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbeI3MLG (ORCPT
+        id S1727694AbeI3NFt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 08:11:06 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36488 "EHLO mail.bootlin.com"
+        Sun, 30 Sep 2018 09:05:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41452 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727702AbeI3MLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 08:11:06 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 46DFE207B4; Sun, 30 Sep 2018 07:39:29 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id CB0C420717;
-        Sun, 30 Sep 2018 07:39:28 +0200 (CEST)
-Date:   Sun, 30 Sep 2018 07:39:27 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Lukasz Majewski <lukma@denx.de>,
-        Fabio Estevam <festevam@gmail.com>, prabhakar.kushwaha@nxp.com,
-        han.xu@nxp.com
-Cc:     Frieder Schrempf <frieder.schrempf@exceet.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yogeshnarayan.gaur@nxp.com,
-        richard@nod.at, Stefan Agner <stefan@agner.ch>,
-        Fabio Estevam <fabio.estevam@nxp.com>, broonie@kernel.org,
-        david.wolfe@nxp.com, computersforpeace@gmail.com,
-        dwmw2@infradead.org, albert.aribaud@3adev.fr
-Subject: Re: [RFC/RFT PATCH v1 0/9] mtd: fsl: quadspi: Fixes for
- fsl-quadspi.c driver (vybrid HW)
-Message-ID: <20180930073927.001c16d2@bbrezillon>
-In-Reply-To: <20180929230240.1c8d844d@jawa>
-References: <20180926220739.620-1-lukma@denx.de>
-        <20180929000359.34fe18ae@bbrezillon>
-        <20180929230240.1c8d844d@jawa>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1726133AbeI3NFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 09:05:49 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F2421308424F;
+        Sun, 30 Sep 2018 06:34:07 +0000 (UTC)
+Received: from xz-x1 (dhcp-14-128.nay.redhat.com [10.66.14.128])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id ADB3A5D985;
+        Sun, 30 Sep 2018 06:34:03 +0000 (UTC)
+Date:   Sun, 30 Sep 2018 14:34:01 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        linux-kselftest@vger.kernel.org, Shaohua Li <shli@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 1/3] userfaultfd: selftest: cleanup help messages
+Message-ID: <20180930063401.GA18728@xz-x1>
+References: <20180929084311.15600-1-peterx@redhat.com>
+ <20180929084311.15600-2-peterx@redhat.com>
+ <20180929102811.GA6429@rapoport-lnx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180929102811.GA6429@rapoport-lnx>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Sun, 30 Sep 2018 06:34:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukasz,
+On Sat, Sep 29, 2018 at 01:28:12PM +0300, Mike Rapoport wrote:
 
-On Sat, 29 Sep 2018 23:02:40 +0200
-Lukasz Majewski <lukma@denx.de> wrote:
+[...]
 
-> > Talking about that, can you try to port your fixes on top of Frieder's
-> > patchset? I'm pretty sure some bug fixes are irrelevant after the
-> > migration to spi-mem (patch 1, 3, 4, 5, 6, 7 and 9 should be dropped I
-> > think).  
+> > +const char *examples =
+> > +    "# 100MiB 99999 bounces\n"
+> > +    "./userfaultfd anon 100 99999\n"
+> > +    "\n"
+> > +    "# 1GiB 99 bounces\n"
+> > +    "./userfaultfd anon 1000 99\n"
+> > +    "\n"
+> > +    "# 10MiB-~6GiB 999 bounces, continue forever unless an error triggers\n"
+> > +    "while ./userfaultfd anon $[RANDOM % 6000 + 10] 999; do true; done\n"
+> > +    "\n";
 > 
-> The problem is that Frieder's patch is using IP command mode for
-> transfers smaller than AHB RX fifo size.
-> This according to the comment in the current driver is broken in HW for
-> Vybrid (so this is a regression).
+> While at it, can you please update the examples to include other test
+> types?
 
-Why not fixing that in the new driver?
+Sure thing.
 
-> 
-> I'm also wondering if other users of vf610 based boards experience
-> issues with QSPI?
-
-Are you sure the 4 I/O lines are wired on your design? Anyway, if it's
-a bug that only hurts vf610, you should mask quad modes in ->hwcaps (or
-patch fsl_qspi_supports_op() in the new driver), not change the SPI NOR
-definition.
-
-> 
-> In my case, after running the UBI/UBIFS tests (on the original and
-> new driver without those "fixes") I cannot mount the volume after
-> creation as the header is wrongly read.
-
-I'm not denying this fact, I'm just saying, now that you've found where
-the issue comes from, you can also port the fix to the new driver.
+Thanks for the quick review!
 
 Regards,
 
-Boris
+-- 
+Peter Xu
