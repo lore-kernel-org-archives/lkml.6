@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D346DC004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE17C64EAD
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC73208B3
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:53:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE0B0208E4
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:53:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tCa4z0Q0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DC73208B3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDTnvgMp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE0B0208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728848AbeJAC17 (ORCPT
+        id S1728876AbeJAC2L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 22:27:59 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51786 "EHLO
+        Sun, 30 Sep 2018 22:28:11 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34987 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728538AbeJAC16 (ORCPT
+        with ESMTP id S1728751AbeJAC14 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 22:27:58 -0400
-Received: by mail-wm1-f67.google.com with SMTP id y25-v6so6625989wmi.1
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 12:53:38 -0700 (PDT)
+        Sun, 30 Sep 2018 22:27:56 -0400
+Received: by mail-wm1-f67.google.com with SMTP id o18-v6so6642504wmc.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 12:53:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=VIYMZGp+qbPwmQ7BP2V/Lu/n6rwo07APGk8OiEHB7Lc=;
-        b=tCa4z0Q0+lok3jB5UkMjmu+xLrgn45zJHnXwTcegGPdHnB4TtfFgAjtozQSNFkbI1e
-         SMURLeD/uKGTNBkF9CpDgT/yrsHheLOVnkTllwfyMOSg5IupUFKMEkKU6b+GOVoV42LA
-         mh7ndHSKki5HhdhOi8y57Irfxwcwe3qgNo+jKMWWP2S/siyEKrJZ0ZrufVWP1KTYPa0U
-         GQfzJXCX5n7Dn4LJMFMm1InZcxQXZIjrZCPIFOxmloHOZsA89Xhod+ffdTM6r1RTyLEl
-         aRpzDNexij8AuYtsP651/x4A+LH8kfczvvuoBIIG1QiAfJSJ0awOsSPWWdw+eepFBA47
-         fArA==
+        bh=NLhYSn4vrHKiXSi3ZrcY1XJB9V1pZ6HSsYBhv/h/tRk=;
+        b=LDTnvgMpsJWoP1XwutBEOD/mxV4kjMWaCzsduVNtV5p/9uMVl0ILYPE7jhA8gHKUlS
+         zJ3h4hwBxGZ4MPyWjBboZBZjYy/JOBJGTnTcD3dEx4iFpC94eX2h6fsrNqy34ZdnTzTb
+         k3L/OwSpJW8H9al4thfryKs1/C1TUsh8Jwutn0JTdmWbye3Y2heeD1jFG5laiT25e3QG
+         0LZ9KLB7DMySSHG1yApB4i3FlCF408byVvMyC4fmv0D3sotT75GIHIJRzOSvOJIxpeB0
+         pNCIhar3qLAC0PzCAbGRn3CEjrhQ0PcNm1WbqZKmnRqFDajmYf+LeHfVfgHxDp5fduGX
+         nryg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VIYMZGp+qbPwmQ7BP2V/Lu/n6rwo07APGk8OiEHB7Lc=;
-        b=qAU/xhmdWj7KuplbwKWJcRdwOKDycAqqZ5eRi5kCo1wBdlv/vb/x2skry19QmvUsuG
-         ztvZZN5m6+lGx0h//cupOJEjM3LxMQ4U2nTkutdnYTr+Y0Kv1r3vWrrICImnrsbCKDfx
-         tO+iAC8umKa/vkJuSeEGSD4rqXswxfyeJn8+ac3+scBbG8IDlMUQ4lP6AIOy3DtEnq/5
-         6+FkzrLy7MFdZ+Z/PxLoxDiquZmx9LQww/9DWx+dxCgXiqIfzhcz/IFAhP18CiHJZ4y1
-         dmJ7UBzEPNlbxFYB5nhQB+U+Z74leM6fo+xE3lyMNiPLkDnD1ki3IG1lT2uHz2rgNXs6
-         58lg==
-X-Gm-Message-State: ABuFfojxLIJ5S5L67yMTuF2d0LqBYJBVTZU8yUN3lNGij3RLWW7cOtjq
-        d1OuYd/xs8CO1Zj7jJCB6xE6GNLt
-X-Google-Smtp-Source: ACcGV60fwdmH4RlIi8DpmV/Zk5PT5aZEylHpuC+2hkv2xeppQUMysIz60fFL9lT41Qo2D8wyUW4oHg==
-X-Received: by 2002:a1c:a386:: with SMTP id m128-v6mr6697181wme.139.1538337217832;
-        Sun, 30 Sep 2018 12:53:37 -0700 (PDT)
+        bh=NLhYSn4vrHKiXSi3ZrcY1XJB9V1pZ6HSsYBhv/h/tRk=;
+        b=SXXD3pJWOl+XlYLTC8LxLlzGMfRSx+hnb93Mp932dJHhkLzkrwpqKnVHigbE3QxHAJ
+         d/Kg6pC0LxKuviDqHMISY8vq2RyxoCVMMBugqO4hua1auHUS7VsVkbWlzoao+cMD4Ofa
+         dhwthw0Nm8QzGtGCK4gqh1txnvrwAWKNn7T1RrwOwGhcmxqm5KnVkvDEQeNSOqbBSWEM
+         Zv2VmbVkMMVyvXO83jKRSuQqPvW+DBdeiYxkSKl+4fvCHCgdMg+B4p6FoxvsliCNdFCJ
+         CfiIumvzTr8GWhIPy8NCtUrvm0II4S+w2WmzvB7HLbaCxx0lpECSimyDR9jEGgoqBuqB
+         E1hg==
+X-Gm-Message-State: ABuFfohYxNn+c7ponA7oMlp7qxYtjf6mu54FYltptPVmFTz273I/Yh9B
+        GPh0/yq2+/dbxhxKot9Y56M=
+X-Google-Smtp-Source: ACcGV63ZXf7GQdLrGjYHZ++ADS7qHS8KuBKzOtjosDDnYzfhnT3sr52K+CNPpCWLPy5xiPoW9YDi/A==
+X-Received: by 2002:a1c:e157:: with SMTP id y84-v6mr6684119wmg.22.1538337216132;
+        Sun, 30 Sep 2018 12:53:36 -0700 (PDT)
 Received: from localhost.localdomain (ip1f12fd19.dynamic.kabel-deutschland.de. [31.18.253.25])
-        by smtp.gmail.com with ESMTPSA id w26-v6sm6500775wmi.27.2018.09.30.12.53.37
+        by smtp.gmail.com with ESMTPSA id w26-v6sm6500775wmi.27.2018.09.30.12.53.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 12:53:37 -0700 (PDT)
+        Sun, 30 Sep 2018 12:53:35 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 19/19] staging: rtl8188eu: fix spelling mistake in comment
-Date:   Sun, 30 Sep 2018 21:53:10 +0200
-Message-Id: <20180930195310.1531-19-straube.linux@gmail.com>
+Subject: [PATCH 17/19] staging: rtl8188eu: remove unnecessary parentheses in odm_rtl8188e.c
+Date:   Sun, 30 Sep 2018 21:53:08 +0200
+Message-Id: <20180930195310.1531-17-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180930195310.1531-1-straube.linux@gmail.com>
 References: <20180930195310.1531-1-straube.linux@gmail.com>
@@ -76,27 +76,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix a spelling mistake reported by checkpatch.
-Caculate -> Calculate
+Remove unnecessary parentheses in odm_rtl8188e.c.
+Reported by checkpatch.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/hal/odm_rtl8188e.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8188eu/hal/odm_rtl8188e.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/hal/odm_rtl8188e.c b/drivers/staging/rtl8188eu/hal/odm_rtl8188e.c
-index 9f674bac3b96..3fb0ed604e3e 100644
+index d5001920f77c..f42668eb37e4 100644
 --- a/drivers/staging/rtl8188eu/hal/odm_rtl8188e.c
 +++ b/drivers/staging/rtl8188eu/hal/odm_rtl8188e.c
-@@ -272,7 +272,7 @@ static void rtl88eu_dm_hw_ant_div(struct odm_dm_struct *dm_odm)
- 	for (i = 0; i < ODM_ASSOCIATE_ENTRY_NUM; i++) {
- 		entry = dm_odm->pODM_StaInfo[i];
- 		if (IS_STA_VALID(entry)) {
--			/* 2 Caculate RSSI per Antenna */
-+			/* 2 Calculate RSSI per Antenna */
- 			main_rssi = (dm_fat_tbl->MainAnt_Cnt[i] != 0) ?
- 				     (dm_fat_tbl->MainAnt_Sum[i]/dm_fat_tbl->MainAnt_Cnt[i]) : 0;
- 			aux_rssi = (dm_fat_tbl->AuxAnt_Cnt[i] != 0) ?
+@@ -13,7 +13,7 @@ static void dm_rx_hw_antena_div_init(struct odm_dm_struct *dm_odm)
+ 	struct adapter *adapter = dm_odm->Adapter;
+ 	u32 value32;
+ 
+-	if (*(dm_odm->mp_mode) == 1) {
++	if (*dm_odm->mp_mode == 1) {
+ 		dm_odm->AntDivType = CGCS_RX_SW_ANTDIV;
+ 		phy_set_bb_reg(adapter, ODM_REG_IGI_A_11N, BIT(7), 0);
+ 		phy_set_bb_reg(adapter, ODM_REG_LNA_SWITCH_11N, BIT(31), 1);
+@@ -44,7 +44,7 @@ static void dm_trx_hw_antenna_div_init(struct odm_dm_struct *dm_odm)
+ 	struct adapter *adapter = dm_odm->Adapter;
+ 	u32	value32;
+ 
+-	if (*(dm_odm->mp_mode) == 1) {
++	if (*dm_odm->mp_mode == 1) {
+ 		dm_odm->AntDivType = CGCS_RX_SW_ANTDIV;
+ 		phy_set_bb_reg(adapter, ODM_REG_IGI_A_11N, BIT(7), 0);
+ 		phy_set_bb_reg(adapter, ODM_REG_RX_ANT_CTRL_11N,
+@@ -90,7 +90,7 @@ static void dm_fast_training_init(struct odm_dm_struct *dm_odm)
+ 	struct fast_ant_train *dm_fat_tbl = &dm_odm->DM_FatTable;
+ 	u32 AntCombination = 2;
+ 
+-	if (*(dm_odm->mp_mode) == 1) {
++	if (*dm_odm->mp_mode == 1) {
+ 		return;
+ 	}
+ 
 -- 
 2.19.0
 
