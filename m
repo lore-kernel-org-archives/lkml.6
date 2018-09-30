@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3DFC004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 13:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9083DC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 13:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8962F2075E
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 13:47:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0015C2075E
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 13:52:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="CG2MfZMt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8962F2075E
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="A5+8Qdzx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0015C2075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728504AbeI3UUG (ORCPT
+        id S1728506AbeI3UZG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 16:20:06 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:34007 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728310AbeI3UUF (ORCPT
+        Sun, 30 Sep 2018 16:25:06 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:26827 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728351AbeI3UZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 16:20:05 -0400
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id w8UDkrPR016527;
-        Sun, 30 Sep 2018 22:46:54 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w8UDkrPR016527
+        Sun, 30 Sep 2018 16:25:05 -0400
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w8UDprnV022001;
+        Sun, 30 Sep 2018 22:51:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w8UDprnV022001
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538315214;
-        bh=gTJVAwHlwBmtWK0rm0gcu9pO9Vs9yxB/0rRyHoRQZ8c=;
+        s=dec2015msa; t=1538315514;
+        bh=LKAXkTaFifrfwH4ca1AKkvb/+hYX94cIkKf+GhzY+O8=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CG2MfZMtFR/31nwr8a3n79Al1JQU8TSRKxC/fWr0SYxz5yiw04G1PqI24tYv1xb5D
-         zY+VM8QtxmnqNK+H5c2n9oq+rtQHZOzClYB+4Ktx6pkqa44R6gxorQKANdjYLbJPR8
-         OliCZWmx1VM1QC6fjE/MQ6inb3qvuFjyUSwWn/0tjsSec01V6fXh1D5K/p4oR2+Jp8
-         cYuNSd5nFyvRVJvhjPmg8nwYzFUDwak8OsU9ek1SvHnpou72/zR3WzMwc+eNfufep9
-         QRbqeNKTX2UtrUIWSWATZL1JSHmxSTHCBJiSAyTqoSr8FzvIq6BAeXXNWRTTc6dFsI
-         XU7+H2Xsh4Yhw==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id w8-v6so6053534vsl.4;
-        Sun, 30 Sep 2018 06:46:53 -0700 (PDT)
-X-Gm-Message-State: ABuFfoghTUh0FJM9jMXMuoy0krpI5rbRGU53ABySbHPrLc7tqt3uGnmi
-        /6DSufRHfJJS0YnTANxRhrclAZPQLZEfnirRrqs=
-X-Google-Smtp-Source: ACcGV62NBhWVZZaMRoq7Jy4gElKIrRw+Nf9aLzpdLF5aQ26nBR4LzweK6DEUE8AVxveFhFH271AiEEWZjGqA5JAWOl8=
-X-Received: by 2002:a67:e0cd:: with SMTP id m13-v6mr2394588vsl.181.1538315212865;
- Sun, 30 Sep 2018 06:46:52 -0700 (PDT)
+        b=A5+8Qdzxubexn+UIbw9RTOYgcCQO7yngdH4Po0n4NS4XphzfY/wg5m5uR7yS679XD
+         NhzwOCHTt2p/0cslEhrBLHrd3um51n721zNg2J91LQNvbUZVwpyBPJXJ5rVGnjzT/P
+         WGDLQAm0N9f31ngw+nJRnZdn8vk56VQCrUFYwrZs+p84aZjQloXB1nNn1utCGutxyp
+         giRsi+jnhpJLO3zhnVKGg3HG9cSVFsqZs9zryCiXo7e8sZ59gTx0XpyDtZN+/r7IBb
+         XptvtR9OoTOFBWB+UMHsgHbl0wUnQPhQMPUd1zIA+g+slIvDVIoStDoAWCY/aURhdi
+         hCqNfS78iZ2QA==
+X-Nifty-SrcIP: [209.85.222.44]
+Received: by mail-ua1-f44.google.com with SMTP id w7-v6so3895936uan.9;
+        Sun, 30 Sep 2018 06:51:53 -0700 (PDT)
+X-Gm-Message-State: ABuFfohfXBe0h/spYR/VHjqirEaFFkidbt9fpMh3w84sjaCV+YkK6ozP
+        lYcLhWoqzopuX8AfhvdwmJbKSJnGGGxQhQOFCSA=
+X-Google-Smtp-Source: ACcGV60eKoOZjVsc6jL4IX8lri8JOEsia0gknUk8AXeyXBY6TA04rw7QT5cJaQJ5LbDYadunU94JlkNRzyln7O+6aSA=
+X-Received: by 2002:ab0:6609:: with SMTP id r9-v6mr2835014uam.6.1538315512738;
+ Sun, 30 Sep 2018 06:51:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <1536906803-29741-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1536906803-29741-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1537260354-30082-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1537260354-30082-1-git-send-email-yamada.masahiro@socionext.com>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 30 Sep 2018 22:46:17 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASBFAc9SYaPn4-htcjbi9ZijPJrddFQuNSRfU96svBAbQ@mail.gmail.com>
-Message-ID: <CAK7LNASBFAc9SYaPn4-htcjbi9ZijPJrddFQuNSRfU96svBAbQ@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: add --include-dir flag only for out-of-tree build
+Date:   Sun, 30 Sep 2018 22:51:17 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARq9OHJG3Ky9RfGbvBq-9xpNtLQhx-sO6x8sp0CKxGpfQ@mail.gmail.com>
+Message-ID: <CAK7LNARq9OHJG3Ky9RfGbvBq-9xpNtLQhx-sO6x8sp0CKxGpfQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] kbuild: remove VERSION and PATCHLEVEL from $(objtree)/Makefile
 To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Cc:     Michal Marek <michal.lkml@markovi.net>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
@@ -65,67 +65,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018=E5=B9=B49=E6=9C=8814=E6=97=A5(=E9=87=91) 15:33 Masahiro Yamada <yamada=
+2018=E5=B9=B49=E6=9C=8818=E6=97=A5(=E7=81=AB) 17:46 Masahiro Yamada <yamada=
 .masahiro@socionext.com>:
 >
-> The --include-dir flag is used to include check-in Makefiles from
-> $(objtree) without $(srctree)/ prefix.  Obviously, this is unneeded
-> for in-tree build.  Add the flag just before changing the working
-> directory.
->
-> This becomes effective after invoking sub-make.  Add a little bit
-> comments about it.
+> Neither VERSION nor PATCHLEVEL is used in any useful way.
 >
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
 
-
-Applied to linux-kbuild.
-
+Series, applies to linux-kbuild.
 
 
-> Changes in v2:
->   - Add some more comments
->
->  Makefile | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
+>  Makefile           | 3 +--
+>  scripts/mkmakefile | 6 ------
+>  2 files changed, 1 insertion(+), 8 deletions(-)
 >
 > diff --git a/Makefile b/Makefile
-> index f8c8e12..233b57d 100644
+> index d2976b5..6e1a059 100644
 > --- a/Makefile
 > +++ b/Makefile
-> @@ -15,10 +15,9 @@ NAME =3D Merciless Moray
->  PHONY :=3D _all
->  _all:
+> @@ -482,8 +482,7 @@ PHONY +=3D outputmakefile
+>  outputmakefile:
+>  ifneq ($(KBUILD_SRC),)
+>         $(Q)ln -fsn $(srctree) source
+> -       $(Q)$(CONFIG_SHELL) $(srctree)/scripts/mkmakefile \
+> -           $(srctree) $(objtree) $(VERSION) $(PATCHLEVEL)
+> +       $(Q)$(CONFIG_SHELL) $(srctree)/scripts/mkmakefile $(srctree) $(ob=
+jtree)
+>  endif
 >
-> -# o Do not use make's built-in rules and variables
-> -#   (this increases performance and avoids hard-to-debug behaviour);
-> -# o Look for make include files relative to root of kernel src
-> -MAKEFLAGS +=3D -rR --include-dir=3D$(CURDIR)
-> +# Do not use make's built-in rules and variables
-> +# (this increases performance and avoids hard-to-debug behaviour)
-> +MAKEFLAGS +=3D -rR
+>  ifeq ($(cc-name),clang)
+> diff --git a/scripts/mkmakefile b/scripts/mkmakefile
+> index e19d656..e2106444 100755
+> --- a/scripts/mkmakefile
+> +++ b/scripts/mkmakefile
+> @@ -7,9 +7,6 @@
+>  # Usage
+>  # $1 - Kernel src directory
+>  # $2 - Output directory
+> -# $3 - version
+> -# $4 - patchlevel
+> -
 >
->  # Avoid funny character set dependencies
->  unexport LC_ALL
-> @@ -136,6 +135,13 @@ KBUILD_OUTPUT :=3D $(shell mkdir -p $(KBUILD_OUTPUT)=
- && cd $(KBUILD_OUTPUT) \
->  $(if $(KBUILD_OUTPUT),, \
->       $(error failed to create output directory "$(saved-output)"))
+>  test ! -r $2/Makefile -o -O $2/Makefile || exit 0
+>  # Only overwrite automatically generated Makefiles
+> @@ -25,9 +22,6 @@ fi
+>  cat << EOF > $2/Makefile
+>  # Automatically generated by $0: don't edit
 >
-> +# Look for make include files relative to root of kernel src
-> +#
-> +# This does not become effective immediately because MAKEFLAGS is re-par=
-sed
-> +# once after the Makefile is read.  It is OK since we are going to invok=
-e
-> +# 'sub-make' below.
-> +MAKEFLAGS +=3D --include-dir=3D$(CURDIR)
-> +
->  PHONY +=3D $(MAKECMDGOALS) sub-make
+> -VERSION =3D $3
+> -PATCHLEVEL =3D $4
+> -
+>  lastword =3D \$(word \$(words \$(1)),\$(1))
+>  makedir :=3D \$(dir \$(call lastword,\$(MAKEFILE_LIST)))
 >
->  $(filter-out _all sub-make $(CURDIR)/Makefile, $(MAKECMDGOALS)) _all: su=
-b-make
 > --
 > 2.7.4
 >
