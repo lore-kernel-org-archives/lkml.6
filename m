@@ -2,104 +2,73 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 030E7C64EAD
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 07:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E02CCC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 08:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C558D2089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 07:43:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C558D2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 99A632082A
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 08:26:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99A632082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbeI3OPQ (ORCPT
+        id S1727968AbeI3O6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 10:15:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49152 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727651AbeI3OPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 10:15:15 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8D75FA70A;
-        Sun, 30 Sep 2018 07:43:21 +0000 (UTC)
-Received: from xz-x1.nay.redhat.com (dhcp-14-128.nay.redhat.com [10.66.14.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 470DD60164;
-        Sun, 30 Sep 2018 07:43:17 +0000 (UTC)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jerome Glisse <jglisse@redhat.com>, peterx@redhat.com,
-        linux-mm@kvack.org, Zi Yan <zi.yan@cs.rutgers.edu>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        linux-kselftest@vger.kernel.org, Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v2 3/3] userfaultfd: selftest: recycle lock threads first
-Date:   Sun, 30 Sep 2018 15:42:59 +0800
-Message-Id: <20180930074259.18229-4-peterx@redhat.com>
-In-Reply-To: <20180930074259.18229-1-peterx@redhat.com>
-References: <20180930074259.18229-1-peterx@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Sun, 30 Sep 2018 07:43:21 +0000 (UTC)
+        Sun, 30 Sep 2018 10:58:34 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:34767 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727651AbeI3O6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 10:58:33 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D427A87F053BC;
+        Sun, 30 Sep 2018 16:26:28 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.399.0; Sun, 30 Sep 2018 16:26:23 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] dump.f2fs: allow dump data on mounted image
+Date:   Sun, 30 Sep 2018 16:26:13 +0800
+Message-ID: <20180930082613.106905-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now we recycle the uffd servicing threads earlier than the lock
-threads.  It might happen that when the lock thread is still blocked at
-a pthread mutex lock while the servicing thread has already quitted for
-the cpu so the lock thread will be blocked forever and hang the test
-program.  To fix the possible race, recycle the lock threads first.
+xfstests assumes it's allow to dump data on mounted image, for example,
+some common functions call dumpe2fs on mounted ext[2|3|4] image to check
+feature lists. To adapt such requirement, let's follow that rule in
+dump.f2fs.
 
-This never happens with current missing-only tests, but when I start to
-run the write-protection tests (the feature is not yet posted upstream)
-it happens every time of the run possibly because in that new test we'll
-need to service two page faults for each lock operation.
-
-Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Signed-off-by: Peter Xu <peterx@redhat.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- tools/testing/selftests/vm/userfaultfd.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ fsck/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index 7a8c6937cc67..5d1db824f73a 100644
---- a/tools/testing/selftests/vm/userfaultfd.c
-+++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -626,6 +626,12 @@ static int stress(unsigned long *userfaults)
- 	if (uffd_test_ops->release_pages(area_src))
- 		return 1;
+diff --git a/fsck/main.c b/fsck/main.c
+index e20f31ca09e4..675c603b1a76 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -744,7 +744,7 @@ int main(int argc, char **argv)
  
-+
-+	finished = 1;
-+	for (cpu = 0; cpu < nr_cpus; cpu++)
-+		if (pthread_join(locking_threads[cpu], NULL))
-+			return 1;
-+
- 	for (cpu = 0; cpu < nr_cpus; cpu++) {
- 		char c;
- 		if (bounces & BOUNCE_POLL) {
-@@ -643,11 +649,6 @@ static int stress(unsigned long *userfaults)
- 		}
- 	}
+ 	f2fs_parse_options(argc, argv);
  
--	finished = 1;
--	for (cpu = 0; cpu < nr_cpus; cpu++)
--		if (pthread_join(locking_threads[cpu], NULL))
--			return 1;
--
- 	return 0;
- }
- 
+-	if (f2fs_devs_are_umounted() < 0) {
++	if (c.func != DUMP && f2fs_devs_are_umounted() < 0) {
+ 		if (errno == EBUSY)
+ 			return -1;
+ 		if (!c.ro || c.func == DEFRAG) {
 -- 
-2.17.1
+2.18.0.rc1
 
