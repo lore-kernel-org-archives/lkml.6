@@ -2,98 +2,189 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DDCC004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 522A4C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71409206B2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:06:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.ca header.i=@yahoo.ca header.b="D4PXt5af"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71409206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=yahoo.ca
+	by mail.kernel.org (Postfix) with ESMTP id 0C4CF2075E
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:21:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C4CF2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbeI3VkI (ORCPT
+        id S1728479AbeI3VyV convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 17:40:08 -0400
-Received: from sonic315-8.consmr.mail.gq1.yahoo.com ([98.137.65.32]:34478 "EHLO
-        sonic315-8.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727746AbeI3VkI (ORCPT
+        Sun, 30 Sep 2018 17:54:21 -0400
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:37760 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726816AbeI3VyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 17:40:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1538320005; bh=CiGhynYwHUd0QbJmWXOqG4dVzbYAs0R2uRMyea4O9s4=; h=Date:From:Subject:To:Cc:From:Subject; b=D4PXt5afVbOjr8AwCOJC3uwOCzDYM+9YtJ5YFQWGpOSvX1Cm8jwcuW6nirNvu+iMsu5TmdUhTKOPSZOESt3C4AUHOS3nlPemusl1hSi4qggcW+uZcREiGrtZnWkqoxu0/2Ffo+8CAPuPqaUVn9g/7ib/r6Kz7WhDPWLA8YVt3lqWqsx5Rhvyb1ya3zOSMuSi5zW5ekttBFmc3A6f6ybqTt2g/zxxEJoXCUHvB7Qfke2nA0WuETi2s1uNj0yswK8ku0n5uk95zW04OcjpZOAjdcYV7nlr6rqm+BSw+UnDMq6cX7b0ErLW0h9s9WgWQbk/LHnySqK6tprYGxJkt+5qyw==
-X-YMail-OSG: TrlKb.8VM1lT4s0dMmASvM8OiH4wSwQ_t.2obIyssGrvjaU81Dpd1Kmi.l3lR.e
- qUaIdx2L1oGLT1nMeFViv1LDIhdcvgK76u5e8PS_qLNrZB8VMwSvEqH8FIR3PxhiIwhWsIpmBPEt
- kZ1l4z6FP5B_vQauO2mcrmTsSKFpT9Vn6FmGoQEVEFSUJluqIVeNOVjhBxP_q3SPWHqcWgsA0wll
- cbl6wdWyhvDf4vrV9Yl57L06quxVEDHDEXPY1NsQFmwMcaCfNGAtqYZf1TuBLMLA7Krc_jsGeI84
- QBMG4gLBQvO.8nNJ3Xk60qkQJGoPyi_2q18lcRUSwAy.krOVBzUyd8JKS0jsmZ8ZpT9FQ.9tWrPv
- 5tezAfwZ5r6CFQeStcAcNLYFBjpdkzQlAbe5iQR4NnxWxCN3pNxEyGai6bIjlm8s8dbCgiuDnzww
- B8fP9MqU0WTAG7P5_wl_OenK8zb0wqKpcZ2dIXpn3nOpVi2M3BYiyTz157vgzclnAKhmIvSvcUxT
- zTLDQZ0PAAgqOTLE178LQkjeFzs6o4h0TdoMZMAJnk34pR0G8xSSnDrv0kHLHpWmrb8lAN8HxGIy
- znU2BI0.LZW5TWF4QCYhOoVBvD_6XIcJSviMnJE.aaKEYi8vwurahLKi.4tAx.vQSpXfGBccZhcu
- 9zUevtZ6qEbJvMowHwUbUHpasT4Lypp_T2BYdQg0fEp0mhNvBmTF.kaK9E0TP_etMNdn2IS38cTY
- 9D6zNibCpacbXexUTpoy1tGO3YPXS4UkKv7exE4fz1F3s3mdiLdRBMp5FNS5haEyEQm8WpE3VgjY
- GgobbyxZqZ9oh62HYq4x2hJxd7Jfar5usUETsuj6jCjCALu3wfPpJDNrjJjkvAWoyAQFJyiXFXTE
- ZhfYGuKC3bj8hEgoAduOfhx_i6ntTZ0GIaRXMTEwmiJzDWMlBiEHl.2Coq2AxC18wMBpJlEZWj9H
- WptlbDf.1uZPAASusoFllOL1ERrn1ei_Covxm5kAQlb8N8vxGwmpFxbDfdLhmEE.5x2MBhsZEbz9
- VGJJQwd.4
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Sun, 30 Sep 2018 15:06:45 +0000
-Received: from CPE00fc8de26033-CM00fc8de26030.cpe.net.cable.rogers.com (EHLO localhost) ([99.228.156.240])
-          by smtp413.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ff2655482ab7b0495e0ed29de7555ab0;
-          Sun, 30 Sep 2018 15:06:43 +0000 (UTC)
-Date:   Sun, 30 Sep 2018 11:06:39 -0400
-From:   "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Subject: [PATCH net v2] r8169: always autoneg on resume
-To:     netdev@vger.kernel.org
-Cc:     hkallweit1@gmail.com, nic_swsd@realtek.com, davem@davemloft.net,
-        linux-kernel@vger.kernel.org
-User-Agent: astroid/0.13.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1538319728.z22jaatdgh.astroid@alex-desktop.none>
+        Sun, 30 Sep 2018 17:54:21 -0400
+Received: from [192.168.0.4] (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id A45EFBDAB;
+        Sun, 30 Sep 2018 16:20:45 +0100 (BST)
+Date:   Sun, 30 Sep 2018 16:20:33 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAL_JsqLNGua++ESBgf5qSqoLdLwq8awyFr29pYR=JVBOwX3eAg@mail.gmail.com>
+References: <20180918082422.13050-1-songqiang1304521@gmail.com> <20180918082422.13050-2-songqiang1304521@gmail.com> <20180922160523.16b399fc@archlinux> <20180926224618.GA32126@bogus> <20180928093618.GA24536@Eros> <CAL_JsqLpNiGdK9hWTGWZwgbgRr8DNF=XvKGUx=oS2jTJ61yhFg@mail.gmail.com> <20180929121034.6c5e5826@archlinux> <CAL_JsqLNGua++ESBgf5qSqoLdLwq8awyFr29pYR=JVBOwX3eAg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v6 2/2] iio: proximity: vl53l0x: add interrupt support
+To:     Rob Herring <robh@kernel.org>, Jonathan Cameron <jic23@kernel.org>
+CC:     Song Qiang <songqiang1304521@gmail.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Matt Ranostay <matt.ranostay@konsulko.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andreas Klinger <ak@it-klinger.de>, linux-iio@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+Message-ID: <7BD7DB08-A320-4088-AE9D-2E4788BC0F1C@jic23.retrosnub.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This affects at least versions 25 and 33, so assume all cards are broken
-and just renegotiate by default.
 
-Fixes: 10bc6a6042c9 ("r8169: fix autoneg issue on resume with RTL8168E")
-Signed-off-by: Alex Xu (Hello71) <alex_y_xu@yahoo.ca>
----
- drivers/net/ethernet/realtek/r8169.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/re=
-altek/r8169.c
-index ab30aaeac6d3..db2f347c1463 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -4072,13 +4072,12 @@ static void rtl8169_init_phy(struct net_device *dev=
-, struct rtl8169_private *tp)
-=20
- 	genphy_soft_reset(dev->phydev);
-=20
--	/* It was reported that chip version 33 ends up with 10MBit/Half on a
-+	/* It was reported that several chips end up with 10MBit/Half on a
- 	 * 1GBit link after resuming from S3. For whatever reason the PHY on
--	 * this chip doesn't properly start a renegotiation when soft-reset.
-+	 * these chips doesn't properly start a renegotiation when soft-reset.
- 	 * Explicitly requesting a renegotiation fixes this.
- 	 */
--	if (tp->mac_version =3D=3D RTL_GIGA_MAC_VER_33 &&
--	    dev->phydev->autoneg =3D=3D AUTONEG_ENABLE)
-+	if (dev->phydev->autoneg =3D=3D AUTONEG_ENABLE)
- 		phy_restart_aneg(dev->phydev);
- }
-=20
---=20
-2.19.0
-=
+On 30 September 2018 00:49:43 BST, Rob Herring <robh@kernel.org> wrote:
+>On Sat, Sep 29, 2018 at 6:10 AM Jonathan Cameron <jic23@kernel.org>
+>wrote:
+>>
+>> On Fri, 28 Sep 2018 18:52:13 -0500
+>> Rob Herring <robh@kernel.org> wrote:
+>>
+>> > On Fri, Sep 28, 2018 at 4:36 AM Song Qiang
+><songqiang1304521@gmail.com> wrote:
+>> > >
+>> > > On Wed, Sep 26, 2018 at 05:46:18PM -0500, Rob Herring wrote:
+>> > > > On Sat, Sep 22, 2018 at 04:05:23PM +0100, Jonathan Cameron
+>wrote:
+>> > > > > On Tue, 18 Sep 2018 16:24:22 +0800
+>> > > > > Song Qiang <songqiang1304521@gmail.com> wrote:
+>> > > > >
+>> > > > > > The first version of this driver issues a measuring request
+>and polling
+>> > > > > > for a status register in the device for measuring
+>completes.
+>> > > > > > vl53l0x support configuring GPIO1 on it to generate
+>interrupt to
+>> > > > > > indicate that new measurement is ready. This patch adds
+>support for
+>> > > > > > using this mechanisim to reduce cpu cost.
+>> > > > > >
+>> > > > > > Signed-off-by: Song Qiang <songqiang1304521@gmail.com>
+>> > > > > Hi Song.
+>> > > > >
+>> > > > > Looks correct in principal but a few things to tidy up before
+>> > > > > this is ready to apply.
+>> > > > >
+>> > > > > Also we have an unrelated change in here to check the devices
+>ID.
+>> > > > > That should be in it's own patch.
+>> > > > >
+>> > > > > Thanks,
+>> > > > >
+>> > > > > Jonathan
+>> > > > > > ---
+>> > > > > >  .../bindings/iio/proximity/vl53l0x.txt        |  14 +-
+>> > > >
+>> > > > This should have been split with the complete binding in one
+>patch
+>> > > > rather than piecemeal driver feature by feature.
+>> > > >
+>> > >
+>> > > Hi Rob,
+>>
+>> Hi Rob, Song,
+>>
+>> > >
+>> > > A few days ago when I was submitting this driver, I didn't do it
+>very
+>> > > well, the function of this driver is limited. I added interrupt
+>support
+>> > > the next day after you acked my first patch. I thought it's not
+>polite
+>> > > to add something after someone acked that patch, so I send the
+>interrupt
+>> > > support as a second patch. The first patch is merged to togreg
+>now, but
+>> > > this doesn't. I don't know when can I add new functions to the
+>code that
+>> > > just merged to togreg branch, could you offer some suggestions?
+>> >
+>> > You just needed to state why you didn't add a ack. But really, just
+>> > don't send things except as RFC until they are "done".
+>>
+>> The RFC bit actually disagree on.  This driver could be considered
+>'done'
+>> with just patch 1.  The driver worked, it was useful. When the early
+>> versions of that patch came out Song had no idea how much work it
+>would
+>> be to add interrupt support.  As it turns out it was simple - it
+>often isn't :(
+>
+>I meant specifically in the context of this getting revised within a
+>number of days. I agree that drivers don't have to be complete, but
+>bindings should be as complete as possible. You can't foresee
+>everything, but I don't think that applies in this case.
+>
+>> > What to do next depends on Jonathan and whether he wants a
+>follow-up
+>> > patch or he will drop the first one.
+>>
+>> Yeah. I should have picked up on the binding in the second patch and
+>merged
+>> it.  I'd seen the first patch a few times before so was happy with it
+>and
+>> applied before actually looking at the second.
+>>
+>> If they had come in separate series in my view the partial binding
+>then
+>> extend with 'optional' elements is fine.  The number of times I've
+>discovered
+>> issues with documentation of hardware that would have made any
+>binding written
+>> from the docs wrong is non trivial. So in my view it is always a
+>gamble to
+>> write bindings until you have tested they work.  I have not problem
+>with
+>> people who are confident and want to add them from the start though.
+>
+>Well, if they were broken is some way, I don't think backwards
+>compatibility matters and we can still fix things. I'm not talking
+>about complex cases here. It is pretty trivial to determine whether a
+>device has an interrupt or not.
+>
+>>
+>> Obviously this only works for optional elements.
+>>
+>> So follow up patch for 'optional' stuff is fine by me.  The only real
+>> issue to my mind here is that they were in the same series, so we
+>should
+>> have seen a separate precursor patch giving the binding for all of
+>it.
+>
+>Certainly, that can't be avoided sometimes and is fine. It's really
+>the time frame for this particular case and reviewer bandwidth.
+
+Agreed. The timing wasn't ideal (in this limited sense)  Song got this done much faster than I normally expect
+when someone says, I'll do this later! 
+
+Thanks for clarifying.
+
+Jonathan
+>
+>Rob
+
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
