@@ -2,147 +2,117 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F59C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CB7C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EF5B208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:42:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MT9yZ3ha"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF5B208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id A6806206B2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 15:46:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6806206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbeI3WPv (ORCPT
+        id S1728554AbeI3WTy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 18:15:51 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41157 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbeI3WPv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 18:15:51 -0400
-Received: by mail-pf1-f195.google.com with SMTP id m77-v6so7423972pfi.8;
-        Sun, 30 Sep 2018 08:42:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wxLcsMoyJBPgRuOROBHGBN9CD6e7NIkPBBXGTZp+Qd8=;
-        b=MT9yZ3haSCYIS6RdudbE/LW81DwqfMvDsKgV3EYUj3ECWvGcXLiLR9tvnFotd5ZoK3
-         3cgi7JeMVU5cgPjv5hILscjiVtiRxsFHYkC2UsqLpAnU6NuXsCuxDmK0zYtfxMRsR7h1
-         B0ZG5Dhf3b//L3LpvbGMZaI8pDfk78dXte2BC+sLB7CMgEJ1GLd/P3en1l3n5992WX6u
-         CbLLDCGJP9DKkfvX8u3FAKiCkL5KOlwzb+Nb/5qg5GXBF48O5qZ2nJ3TqakDOazfSDm0
-         7c8Dw/wxuLz9oz+/uQ4gLrnBqnfeDbbHtcjJZI2CqaQJP1Pj4IqyiJZeevHPLknG6WJp
-         aYBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wxLcsMoyJBPgRuOROBHGBN9CD6e7NIkPBBXGTZp+Qd8=;
-        b=moOVf8DAiN2mwecWVRC0nxdI9vLa+t7WFvjO8YjmIrCSQHfnY9gzwE5LzneubEm8La
-         Eljs7wyV28bM2efRqnjP7MzOTEik8ioga1z2x6ob0TgjpGVLLEdv+jvP5uHn3wenH2kg
-         gtTZvUDBdSYzIjoE5nVQevGLJ6lH0jjLsvN8TxZJC7tSvikc2aQ8mGDau/STOY/PP1UD
-         xkpL250ITrnRqpYZ6eExJ+h0UxSzglVpLx6VggKRDqWV7JaotytXzpyOZEkf/doMctRt
-         PENVsnevLXdcTEF4AnCcaM0Cw6IAtAF16cWyF/EjbA9ZF2A0YUIBOv50xKoFw/3Ce32o
-         KLSw==
-X-Gm-Message-State: ABuFfohiaR+M1ZHDlZXBNZEyrCEcFMd8Fss7KyCk5RqENauWFJWFo7XK
-        hdW/FgmqTVJbrHq8eSyZq0o=
-X-Google-Smtp-Source: ACcGV61wjv3WVNs7Rb0FqisA5HoQ5/+jskEvrsazqKNpCPd6DY9ZAr0MBGzzPNIjzOaQBSnC36+MNg==
-X-Received: by 2002:a65:6204:: with SMTP id d4-v6mr6757819pgv.121.1538322140320;
-        Sun, 30 Sep 2018 08:42:20 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id p7-v6sm16754581pfb.101.2018.09.30.08.42.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 08:42:19 -0700 (PDT)
-Date:   Sun, 30 Sep 2018 08:42:18 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-s390@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v3 8/9] jump_table: move entries into ro_after_init region
-Message-ID: <20180930154218.GA9917@roeck-us.net>
-References: <20180919065144.25010-1-ard.biesheuvel@linaro.org>
- <20180919065144.25010-9-ard.biesheuvel@linaro.org>
+        Sun, 30 Sep 2018 18:19:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49706 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727519AbeI3WTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 18:19:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 36F5AAF99;
+        Sun, 30 Sep 2018 15:46:20 +0000 (UTC)
+Subject: Re: [PATCH 3/4] soc: actions: sps: Add S900 power domains
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        daniel.thompson@linaro.org, manivannanece23@gmail.com,
+        bdong@ucrobotics.com, liuwei@actions-semi.com,
+        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
+        hzhang@ucrobotics.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, linux-arm-kernel@lists.infradead.org
+References: <20180411164036.8046-1-manivannan.sadhasivam@linaro.org>
+ <20180411164036.8046-4-manivannan.sadhasivam@linaro.org>
+ <5e267c76-1c71-2381-ee66-50a5bef1cfc2@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <a8630149-d1b9-ce23-e5a5-4282cbd8bbca@suse.de>
+Date:   Sun, 30 Sep 2018 17:46:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180919065144.25010-9-ard.biesheuvel@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <5e267c76-1c71-2381-ee66-50a5bef1cfc2@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, Sep 18, 2018 at 11:51:43PM -0700, Ard Biesheuvel wrote:
-> The __jump_table sections emitted into the core kernel and into
-> each module consist of statically initialized references into
-> other parts of the code, and with the exception of entries that
-> point into init code, which are defused at post-init time, these
-> data structures are never modified.
+Am 24.06.18 um 15:07 schrieb Andreas Färber:
+> Am 11.04.2018 um 18:40 schrieb Manivannan Sadhasivam:
+>> Add power domains for Actions Semi S900 SoC.
+>>
+>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> ---
+>>  drivers/soc/actions/owl-sps.c | 58 +++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 58 insertions(+)
 > 
-> So let's move them into the ro_after_init section, to prevent them
-> from being corrupted inadvertently by buggy code, or deliberately
-> by an attacker.
-> 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Acked-by: Jessica Yu <jeyu@kernel.org>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Reviewed-by: Andreas Färber <afaerber@suse.de>
 
-This patch results in build failures when trying to build s390
-images.
+Series merged now via topic branch.
 
-s390-linux-ld:./arch/s390/kernel/vmlinux.lds:41: syntax error
+Thanks,
+Andreas
 
-Bisect log is attached.
-
-Guenter
-
----
-# bad: [4794a36bf08dfa89fe636e5080db9d8350e255dd] Add linux-next specific files for 20180928
-# good: [6bf4ca7fbc85d80446ac01c0d1d77db4d91a6d84] Linux 4.19-rc5
-git bisect start 'HEAD' 'v4.19-rc5'
-# good: [d5b0eb1f139e00e8fd18329d446688b19859755e] Merge remote-tracking branch 'crypto/master'
-git bisect good d5b0eb1f139e00e8fd18329d446688b19859755e
-# bad: [d9c3085241c16503e659c2d7f43578f297bf30dc] Merge remote-tracking branch 'tip/auto-latest'
-git bisect bad d9c3085241c16503e659c2d7f43578f297bf30dc
-# good: [db9825c95498280718c4687fcf712016f5b6f5f6] Merge tag 'drm-intel-next-2018-09-21' of git://anongit.freedesktop.org/drm/drm-intel into drm-next
-git bisect good db9825c95498280718c4687fcf712016f5b6f5f6
-# good: [b22777af06f425911c85d8a2c6b4ed929d4e829f] Merge remote-tracking branch 'mmc/next'
-git bisect good b22777af06f425911c85d8a2c6b4ed929d4e829f
-# bad: [14cb9d65a396c00eb44e1af967f1c393593f3a4c] Merge branch 'x86/microcode'
-git bisect bad 14cb9d65a396c00eb44e1af967f1c393593f3a4c
-# good: [c6b5da093a8ba740b71dd0052f3846016986fd21] perf intel-pt: Add decoder flags for trace begin / end
-git bisect good c6b5da093a8ba740b71dd0052f3846016986fd21
-# bad: [441a6b5c97e0136b416a2c12a0c361423a47c717] Merge branch 'sched/core'
-git bisect bad 441a6b5c97e0136b416a2c12a0c361423a47c717
-# bad: [d43b23bddade094b1a64a087bc5626a065c3c6e5] Merge branch 'locking/core'
-git bisect bad d43b23bddade094b1a64a087bc5626a065c3c6e5
-# good: [fa70f0d2ce96a892b38fbbaa60584af536f21f97] Merge tag 'efi-next' of git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi into efi/core
-git bisect good fa70f0d2ce96a892b38fbbaa60584af536f21f97
-# bad: [ecf89ab872e94999366834689198c436c06ab68f] Merge branch 'core/core'
-git bisect bad ecf89ab872e94999366834689198c436c06ab68f
-# good: [9fc0f798ab8a6c042d811e45086260eb59be45c1] x86/jump_label: Switch to jump_entry accessors
-git bisect good 9fc0f798ab8a6c042d811e45086260eb59be45c1
-# good: [19483677684b6ca01606f58503cb79cdfbbc7c72] jump_label: Annotate entries that operate on __init code earlier
-git bisect good 19483677684b6ca01606f58503cb79cdfbbc7c72
-# bad: [13ddb52c165ba47d153b7b040931a5cbe9220866] s390/jump_label: Switch to relative references
-git bisect bad 13ddb52c165ba47d153b7b040931a5cbe9220866
-# bad: [e872267b8bcbb179e21ccc7118f258873d6e7a59] jump_table: Move entries into ro_after_init region
-git bisect bad e872267b8bcbb179e21ccc7118f258873d6e7a59
-# first bad commit: [e872267b8bcbb179e21ccc7118f258873d6e7a59] jump_table: Move entries into ro_after_init region
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
