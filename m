@@ -2,83 +2,93 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA62C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B686CC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DDED20833
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:35:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DDED20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 64155208B3
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:38:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZjD/CE8E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64155208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728604AbeJABJM (ORCPT
+        id S1728574AbeJABMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 21:09:12 -0400
-Received: from smtprelay0236.hostedemail.com ([216.40.44.236]:45001 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728192AbeJABJL (ORCPT
+        Sun, 30 Sep 2018 21:12:12 -0400
+Received: from mail-yb1-f171.google.com ([209.85.219.171]:34490 "EHLO
+        mail-yb1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727470AbeJABMM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 21:09:11 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 502F5180A813E;
-        Sun, 30 Sep 2018 18:35:04 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: hall21_49367db75cc12
-X-Filterd-Recvd-Size: 1736
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf12.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 30 Sep 2018 18:35:02 +0000 (UTC)
-Message-ID: <7c4f645219bb69f31777367d5edc0830c32467db.camel@perches.com>
-Subject: Re: [PATCH] staging: rtlwifi: Removed unused define and code
- efuse_re_pg* from wifi.h
-From:   Joe Perches <joe@perches.com>
-To:     Rick Veens <rickveens92@gmail.com>, gregkh@linuxfoundation.org,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Date:   Sun, 30 Sep 2018 11:35:01 -0700
-In-Reply-To: <20180930182919.GA19383@localhost.localdomain>
-References: <20180930182919.GA19383@localhost.localdomain>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 30 Sep 2018 21:12:12 -0400
+Received: by mail-yb1-f171.google.com with SMTP id 184-v6so4744139ybg.1
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 11:38:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=GbfsERuPsZIWYZ0T58jt2vm7fOpwyIoxNzVNx9PrCLk=;
+        b=ZjD/CE8EqqksZ8Es9w5kCOFKyJacX6hbZ74YyUwZgoG8JevUDe15WWoG2weZB/wcvs
+         IGMXbLUK4Jb0r0tufNT8I2PEGJ+cd8nVS+9f5/kP5yWAfTrdk9USEJ9ossFOc+l1NwbW
+         aqO5iwOwJEDVH5y1nDpUEJzwZjCywSjRZ5IRE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GbfsERuPsZIWYZ0T58jt2vm7fOpwyIoxNzVNx9PrCLk=;
+        b=hG3Vua1GuOCm/hitH4jZMLqsDSY2dreDkCWcWQ0mo8B0Qy3iFTPfkbB+DMKc9LmQyX
+         N/wkEr19yZqgpmVtDh5TA0E0pkP/RLFhtO34DBSXBd+euqek08/2J6VH672q4u99M2HV
+         vw+P/K0EykF+RkYx6XHpo/15fzezXekh7Ejf5bMc6ncBS2RlcUasAZlRrFxcl+b0kx27
+         Tw4CKU+i6sUut4RPfXeftApoPElD/F+ueZ8CYEnEtyAsn4Qr4WZ9MbI56dzVBhW9NkgC
+         B5XTXkdyv6o7M8skC3De6N2TxxTRSL+jZdp2MPCoE24Q+pgrK46lPICf6AboRnAlyKLL
+         kfnA==
+X-Gm-Message-State: ABuFfogwFbW3SC8bAI+AbxgvLyw8iLVkKkr8zzQv4wWvunNFjB5LWE4s
+        0I+AktU2EgvAtypLUMLObvGzcL+QbyE=
+X-Google-Smtp-Source: ACcGV61obQYMS0lgbsbUxxXQfvjxiscX6fmn/DUQlPkmWJv6353/NuBi29Pn//TE+Udn/AHD2o2r9A==
+X-Received: by 2002:a25:3356:: with SMTP id z83-v6mr4136084ybz.218.1538332684669;
+        Sun, 30 Sep 2018 11:38:04 -0700 (PDT)
+Received: from localhost ([2600:1700:141:4960:b19b:8662:2992:bdd8])
+        by smtp.gmail.com with ESMTPSA id g131-v6sm4629316ywh.70.2018.09.30.11.38.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 30 Sep 2018 11:38:03 -0700 (PDT)
+From:   Andy Gross <andy.gross@linaro.org>
+To:     arm@kernel.org
+Cc:     Kevin Hilman <khilman@baylibre.com>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] Qualcomm ARM64 Defconfig updates for 4.20
+Date:   Sun, 30 Sep 2018 13:37:58 -0500
+Message-Id: <1538332682-12018-1-git-send-email-andy.gross@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-09-30 at 20:29 +0200, Rick Veens wrote:
-> The following:
->  bool efuse_re_pg_sec1flag;
->  u8 efuse_re_pg_data[8];
-> are not referenced anywhere in the rtlwifi code.
-> 
-> Signed-off-by: Rick Veens <rickveens92@gmail.com>
-> ---
->  drivers/staging/rtlwifi/wifi.h | 4 ----
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-Presumably the equivalent uses in
-	drivers/net/wireless/realtek/rtlwifi/wifi.h
-should be removed as well.
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
 
-> diff --git a/drivers/staging/rtlwifi/wifi.h b/drivers/staging/rtlwifi/wifi.h
-[]
-> @@ -1840,10 +1840,6 @@ struct rtl_efuse {
->  	u8 efuse_map[2][EFUSE_MAX_LOGICAL_SIZE];
->  	u16 efuse_usedbytes;
->  	u8 efuse_usedpercentage;
-> -#ifdef EFUSE_REPG_WORKAROUND
-> -	bool efuse_re_pg_sec1flag;
-> -	u8 efuse_re_pg_data[8];
-> -#endif
->  
->  	u8 autoload_failflag;
->  	u8 autoload_status;
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-arm64-defconfig-for-4.20
+
+for you to fetch changes up to 1bdf91fd2ae8226f34ed3a760199946c7dfe746d:
+
+  arm64: defconfig: Enable Qualcomm QRTR (2018-09-13 14:38:06 -0500)
+
+----------------------------------------------------------------
+Qualcomm ARM64 Based defconfig Updates for v4.20
+
+* Enable Qualcomm QRTR driver
+
+----------------------------------------------------------------
+Bjorn Andersson (1):
+      arm64: defconfig: Enable Qualcomm QRTR
+
+ arch/arm64/configs/defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
