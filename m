@@ -2,133 +2,127 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD27C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 10:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBF6C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 10:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B8F92089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 10:41:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B8F92089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id DCE1120833
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 10:42:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCE1120833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728475AbeI3RNa (ORCPT
+        id S1728324AbeI3ROe convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 13:13:30 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53076 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727821AbeI3RNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 13:13:30 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9462E810E0566;
-        Sun, 30 Sep 2018 18:40:56 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.399.0; Sun, 30 Sep 2018 18:40:54 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <gregkh@linux-foundation.org>
-CC:     <cl@linux.com>, <penberg@kernel.org>, <rientjes@google.com>,
-        <iamjoonsoo.kim@lge.com>, <akpm@linux-foundation.org>,
-        <mhocko@kernel.org>, <mgorman@suse.de>, <vbabka@suse.cz>,
-        <andrea@kernel.org>, <kirill@shutemov.name>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [STABLE PATCH] slub: make ->cpu_partial unsigned int
-Date:   Sun, 30 Sep 2018 18:28:21 +0800
-Message-ID: <1538303301-61784-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Sun, 30 Sep 2018 13:14:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38772 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727821AbeI3ROd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 13:14:33 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 44578207D8; Sun, 30 Sep 2018 12:42:01 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 043A920379;
+        Sun, 30 Sep 2018 12:41:50 +0200 (CEST)
+Date:   Sun, 30 Sep 2018 12:41:51 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Esben Haabendal <esben.haabendal@gmail.com>
+Cc:     Chuanhua Han <chuanhua.han@nxp.com>,
+        "broonie\@kernel.org" <broonie@kernel.org>,
+        "linux-spi\@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] spi: spi-fsl-dspi: Fix delete the processing of
+ undefined bitmask for rxdata
+Message-ID: <20180930124151.7ffed180@bbrezillon>
+In-Reply-To: <877ej36zkd.fsf@gmail.com>
+References: <20180930092535.24544-1-chuanhua.han@nxp.com>
+        <20180930092535.24544-2-chuanhua.han@nxp.com>
+        <20180930120659.71b0e1e5@bbrezillon>
+        <AM0PR04MB4353B48117292E511AC1E09F97EE0@AM0PR04MB4353.eurprd04.prod.outlook.com>
+        <20180930121707.4724edd6@bbrezillon>
+        <877ej36zkd.fsf@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Dobriyan <adobriyan@gmail.com>
+On Sun, 30 Sep 2018 12:37:38 +0200
+Esben Haabendal <esben.haabendal@gmail.com> wrote:
 
-[ Upstream commit e5d9998f3e09359b372a037a6ac55ba235d95d57 ]
+> Boris Brezillon <boris.brezillon@bootlin.com> writes:
+> 
+> > On Sun, 30 Sep 2018 10:10:14 +0000
+> > Chuanhua Han <chuanhua.han@nxp.com> wrote:
+> >  
+> >> > -----Original Message-----
+> >> > From: Boris Brezillon <boris.brezillon@bootlin.com>
+> >> > Sent: 2018年9月30日 18:07
+> >> > To: Chuanhua Han <chuanhua.han@nxp.com>
+> >> > Cc: broonie@kernel.org; linux-spi@vger.kernel.org;
+> >> > linux-kernel@vger.kernel.org; eha@deif.com
+> >> > Subject: Re: [PATCH v2 2/4] spi: spi-fsl-dspi: Fix delete the processing of
+> >> > undefined bitmask for rxdata
+> >> > 
+> >> > On Sun, 30 Sep 2018 17:25:33 +0800
+> >> > Chuanhua Han <chuanhua.han@nxp.com> wrote:
+> >> >     
+> >> > > This patch fixes the problem of rxdata being equal to 0 during the
+> >> > > XSPI mode transfer of the dspi controller.
+> >> > > In XSPI mode, If it is not deleted, the value of rxdata will be equal
+> >> > > to 0, and the data received will not be received correctly, causing
+> >> > > the receiving transfer of the spi to fail.
+> >> > >
+> >> > > Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
+> >> > > ---
+> >> > > Changes in v2:
+> >> > >  -The original patch is divided into multiple patches(the original
+> >> > > patch theme is "spi: spi-fsl-dspi: Fix support for XSPI transport
+> >> > > mode"),one of which is segmented.
+> >> > >
+> >> > >  drivers/spi/spi-fsl-dspi.c | 3 ---
+> >> > >  1 file changed, 3 deletions(-)
+> >> > >
+> >> > > diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+> >> > > index 3082e72e4f6c..4dc1064bf408 100644
+> >> > > --- a/drivers/spi/spi-fsl-dspi.c
+> >> > > +++ b/drivers/spi/spi-fsl-dspi.c
+> >> > > @@ -243,9 +243,6 @@ static void dspi_push_rx(struct fsl_dspi *dspi, u32    
+> >> > rxdata)    
+> >> > >  	if (!dspi->rx)
+> >> > >  		return;
+> >> > >
+> >> > > -	/* Mask of undefined bits */
+> >> > > -	rxdata &= (1 << dspi->bits_per_word) - 1;
+> >> > > -    
+> >> > 
+> >> > Why not    
+> >> In xspi mode, the value of rxdata after the statement is processed is equal
+> >> to 0 no matter what data is received.  
+> >
+> > Only if dspi->bits_per_word is 0.
+> >
+> > Actually, I just had a look, and xfer->bits_per_word should never be 0
+> > because spi_validate() makes sure it's initialized [1]. Don't know
+> > where dpsi->bits_per_word comes from, but maybe you have a problem
+> > there (dpsi->bits_per_word and xfer->bits_per_word not in sync).
+> >
+> > [1]https://elixir.bootlin.com/linux/v4.19-rc5/source/drivers/spi/spi.c#L2869  
+> 
+> dspi->bits_per_word = xfer->bits_per_word
+> 
+> https://elixir.bootlin.com/linux/v4.19-rc5/source/drivers/spi/spi-fsl-dspi.c#L697
+> 
+> So it should never be out of sync, and it should never be 0.
+> 
+> As I mentioned in another mail, I suspect what Han is observing is
+> caused by byte ordering, so that the mask masks the wrong data.
+> Maybe related to the byte-ordering fix patch.
 
-        /*
-         * cpu_partial determined the maximum number of objects
-         * kept in the per cpu partial lists of a processor.
-         */
-
-Can't be negative.
-
-I hit a real issue that it will result in a large number of memory leak.
-Becuase Freeing slabs are in interrupt context. So it can trigger this issue.
-put_cpu_partial can be interrupted more than once.
-due to a union struct of lru and pobjects in struct page, when other core handles
-page->lru list, for eaxmple, remove_partial in freeing slab code flow, It will
-result in pobjects being a negative value(0xdead0000). Therefore, a large number
-of slabs will be added to per_cpu partial list.
-
-I had posted the issue to community before. The detailed issue description is as follows.
-
-https://www.spinics.net/lists/kernel/msg2870979.html
-
-After applying the patch, The issue is fixed. So the patch is a effective bugfix.
-It should go into stable.
-
-Link: http://lkml.kernel.org/r/20180305200730.15812-15-adobriyan@gmail.com
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Acked-by: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: <stable@vger.kernel.org> # 4.4.x
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- include/linux/slub_def.h | 3 ++-
- mm/slub.c                | 6 +++---
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
-index 3388511..9b681f2 100644
---- a/include/linux/slub_def.h
-+++ b/include/linux/slub_def.h
-@@ -67,7 +67,8 @@ struct kmem_cache {
- 	int size;		/* The size of an object including meta data */
- 	int object_size;	/* The size of an object without meta data */
- 	int offset;		/* Free pointer offset. */
--	int cpu_partial;	/* Number of per cpu partial objects to keep around */
-+	/* Number of per cpu partial objects to keep around */
-+	unsigned int cpu_partial;
- 	struct kmem_cache_order_objects oo;
- 
- 	/* Allocation and freeing of slabs */
-diff --git a/mm/slub.c b/mm/slub.c
-index 2284c43..c33b0e1 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1661,7 +1661,7 @@ static void *get_partial_node(struct kmem_cache *s, struct kmem_cache_node *n,
- {
- 	struct page *page, *page2;
- 	void *object = NULL;
--	int available = 0;
-+	unsigned int available = 0;
- 	int objects;
- 
- 	/*
-@@ -4674,10 +4674,10 @@ static ssize_t cpu_partial_show(struct kmem_cache *s, char *buf)
- static ssize_t cpu_partial_store(struct kmem_cache *s, const char *buf,
- 				 size_t length)
- {
--	unsigned long objects;
-+	unsigned int objects;
- 	int err;
- 
--	err = kstrtoul(buf, 10, &objects);
-+	err = kstrtouint(buf, 10, &objects);
- 	if (err)
- 		return err;
- 	if (objects && !kmem_cache_has_cpu_partial(s))
--- 
-1.7.12.4
-
+Okay. Wait and see then.
