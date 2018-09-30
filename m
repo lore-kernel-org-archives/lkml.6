@@ -2,160 +2,125 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CC5C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA13C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E211C2075E
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:16:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EeGhexD2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E211C2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EBC7C2075E
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:21:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBC7C2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbeI3PtJ (ORCPT
+        id S1727968AbeI3Pxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 11:49:09 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:44461 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727852AbeI3PtJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 11:49:09 -0400
-Received: by mail-yw1-f67.google.com with SMTP id s73-v6so4337602ywg.11
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 02:16:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h95nOSNIzamxLqicNjepKtBqkbtKzyPN4REvdazTE48=;
-        b=EeGhexD2o/srBykbrd8+BvWj/7ZqddZQKQLWBk0xP0uVFcdHVggvFNpTeDyYa2KGHP
-         nUBj7o4ne8iHA5WrEXuUlOOjddETG6buJhwtCj5bLS3DAweQ3ywGwY2/jB83/YvviC6T
-         fTL3JKxn68Za83Mt6MvBWkoXwKgK/jjxHbCjSkohJ4hhWWDEHGe4FpCg4DMjcSBLK+ch
-         E1cLmvLPGmnGIHj9n3Uh6UCrjcUDTNgBzsW7y4HEyEqbTVcoac1gsnJMVI+oVXSsuul2
-         oO4OW14wGGCFMcOA8ht9q+FSgs2swXjLjJVbZa9iWtMssNZTa6aV2Z5g4+aBh0jl3yOe
-         Kx3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h95nOSNIzamxLqicNjepKtBqkbtKzyPN4REvdazTE48=;
-        b=QHE6tqLbLAouwFuc0zIOR7BxLUuluIsBb50H1KTRsApPYb0XwqAyCfdiGi1wRJWinI
-         ow5tvpNadfPXiEjgOS/YUAuv9m0oXDZ12Q3723hzrw4P2y6Pw4KWy54OKtWpqmZfaU8Y
-         nL3eZ/AFqGu/Y2MwDwcLD5u61k0FLe6xZRnMgU5kgrPMR2uT80Z1f0Th0dYptKz5dQar
-         Hm63lpf/pzajYmp9ekj8RDWdg30eGfKL+fV6OHvO38GTpU+ZGOEbvLl+CpnkDaWVqOnH
-         AhamEy+OaGI9sIYVF3u1ZhgJtjsaczfIAlQDla62BetXnldmaC//wOd/Kmq/bfK4jtPG
-         nuoA==
-X-Gm-Message-State: ABuFfog1/rX28cmyvyptV0SyHC6wzdM+gwgLRHo1KPonN88FDzN6/6lb
-        hd1nJXlgJO/mBSvFIzJ91HI6gN9EYaaR2Mpw0nA=
-X-Google-Smtp-Source: ACcGV62PprZKx6pkNxpjBowWI8B5fRZS4ETFT/S5bH2iMcmAG78YWGuSJByyueUGuOGAV5gT00TACbDwKNCv3uafUbE=
-X-Received: by 2002:a81:ae4e:: with SMTP id g14-v6mr3089590ywk.248.1538299017013;
- Sun, 30 Sep 2018 02:16:57 -0700 (PDT)
+        Sun, 30 Sep 2018 11:53:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727755AbeI3Pxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 11:53:32 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ACC3230820C4;
+        Sun, 30 Sep 2018 09:21:20 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-158.pek2.redhat.com [10.72.12.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FAF73091886;
+        Sun, 30 Sep 2018 09:21:14 +0000 (UTC)
+Date:   Sun, 30 Sep 2018 17:21:10 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        brijesh.singh@amd.com, Lianbo Jiang <lijiang@redhat.com>,
+        bhe@redhat.com, thomas.lendacky@amd.com, tiwai@suse.de,
+        x86@kernel.org, kexec@lists.infradead.org, mingo@redhat.com,
+        baiyaowei@cmss.chinamobile.com, hpa@zytor.com, tglx@linutronix.de,
+        bp@suse.de, akpm@linux-foundation.org,
+        Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [PATCH 1/3] x86/kexec: Correct KEXEC_BACKUP_SRC_END off-by-one
+ error
+Message-ID: <20180930092110.GB6950@dhcp-128-65.nay.redhat.com>
+References: <153805773703.1157.14773321497580233478.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <153805811578.1157.6948388946904655969.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-References: <20180930065100.GL15893@shao2-debian> <CAOQ4uxiHkufAtt87bMs9n-0sFxJSHsBxDX6jn8v28vkvy=a_qQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiHkufAtt87bMs9n-0sFxJSHsBxDX6jn8v28vkvy=a_qQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 30 Sep 2018 12:16:45 +0300
-Message-ID: <CAOQ4uxgqBgYiGpf_6zrZk=L2bAQsujzcFE0ZzUXFHu8AnHSk7g@mail.gmail.com>
-Subject: Re: [LKP] [fsnotify] 60f7ed8c7c: will-it-scale.per_thread_ops -5.9% regression
-To:     rong.a.chen@intel.com
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, LKP <lkp@01.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153805811578.1157.6948388946904655969.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Sun, 30 Sep 2018 09:21:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 12:00 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Sun, Sep 30, 2018 at 9:50 AM kernel test robot <rong.a.chen@intel.com> wrote:
-> >
-> > Greeting,
-> >
-> > FYI, we noticed a -5.9% regression of will-it-scale.per_thread_ops due to commit:
-> >
-> >
-> > commit: 60f7ed8c7c4d06aeda448c6da74621552ee739aa ("fsnotify: send path type events to group with super block marks")
-> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> >
-> > in testcase: will-it-scale
-> > on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 64G memory
-> > with following parameters:
-> >
-> >         nr_task: 16
-> >         mode: thread
-> >         test: unlink2
-> >         cpufreq_governor: performance
-> >
-> > test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
-> > test-url: https://github.com/antonblanchard/will-it-scale
-> >
-> >
-> >
-> > Details are as below:
-> > -------------------------------------------------------------------------------------------------->
-> >
-> >
-> > To reproduce:
-> >
-> >         git clone https://github.com/intel/lkp-tests.git
-> >         cd lkp-tests
-> >         bin/lkp install job.yaml  # job file is attached in this email
-> >         bin/lkp run     job.yaml
-> >
-> > =========================================================================================
-> > compiler/cpufreq_governor/kconfig/mode/nr_task/rootfs/tbox_group/test/testcase:
-> >   gcc-7/performance/x86_64-rhel-7.2/thread/16/debian-x86_64-2018-04-03.cgz/lkp-bdw-ep3d/unlink2/will-it-scale
-> >
-> > commit:
-> >   1e6cb72399 ("fsnotify: add super block object type")
-> >   60f7ed8c7c ("fsnotify: send path type events to group with super block marks")
-> >
->
-> I have to admit this looks strange.
-> All this commit does is dereference mnt->mnt.mnt_sb and then
-> sb->s_fsnotify_mask/sb->s_fsnotify_marks to find that they are zero.
-> AFAICT there should be no extra contention added by this commit and it's
-> hard to believe that parallel unlink workload would suffer from this change.
->
-> I will try to install lkp-tests to verify this on my own system, but
-> until proven
-> otherwise I will regard this as false positive.
->
+Hi Bjorn,
 
-Actually, is it possible to ask for a private test with the following patch
-to optimize out an unneeded srcu_derefence().
-This optimization (assuming it is correct) could in fact improve scaling
-compared to upstream, because there are already 2 calls to
-fsnotify_first_mark in the code. The blamed commit just adds a 3rd one.
-I am assuming that() in the test there is an fsnotify mount mark (maybe setup
-by systemd) otherwise, the optimization in line 351 would have not reached
-the extra fsnotify_first_mark() call.
-Can you confirm or disprove the assumption that an fanotify mount mark
-is present during the test?
+On 09/27/18 at 09:21am, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> The only use of KEXEC_BACKUP_SRC_END is as an argument to
+> walk_system_ram_res():
+> 
+>   int crash_load_segments(struct kimage *image)
+>   {
+>     ...
+>     walk_system_ram_res(KEXEC_BACKUP_SRC_START, KEXEC_BACKUP_SRC_END,
+>                         image, determine_backup_region);
+> 
+> walk_system_ram_res() expects "start, end" arguments that are inclusive,
+> i.e., the range to be walked includes both the start and end addresses.
 
-Thanks,
-Amir.
+Looking at the function comment of find_next_iomem_res,  the res->end
+should be exclusive, am I missing something?
 
-----
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 422fbc6dffde..8d45d82e09ff 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -246,6 +246,9 @@ static struct fsnotify_mark
-*fsnotify_first_mark(struct fsnotify_mark_connector
-        struct fsnotify_mark_connector *conn;
-        struct hlist_node *node = NULL;
 
-+       if (!*connp)
-+               return NULL;
-+
-        conn = srcu_dereference(*connp, &fsnotify_mark_srcu);
-        if (conn)
-                node = srcu_dereference(conn->list.first, &fsnotify_mark_srcu);
+/*
+ * Finds the lowest iomem resource existing within [res->start.res->end).
+ * The caller must specify res->start, res->end, res->flags, and optionally
+ * desc.  If found, returns 0, res is overwritten, if not found, returns -1.
+ * This function walks the whole tree and not just first level children until
+ * and unless first_level_children_only is true.
+ */
+static int find_next_iomem_res(struct resource *res, unsigned long desc,
+                               bool first_level_children_only)
+
+
+> 
+> KEXEC_BACKUP_SRC_END was previously defined as (640 * 1024UL), which is the
+> first address *past* the desired 0-640KB range.
+> 
+> Define KEXEC_BACKUP_SRC_END as (640 * 1024UL - 1) so the KEXEC_BACKUP_SRC
+> region is [0-0x9ffff], not [0-0xa0000].
+> 
+> Fixes: dd5f726076cc ("kexec: support for kexec on panic using new system call")
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  arch/x86/include/asm/kexec.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
+> index f327236f0fa7..5125fca472bb 100644
+> --- a/arch/x86/include/asm/kexec.h
+> +++ b/arch/x86/include/asm/kexec.h
+> @@ -67,7 +67,7 @@ struct kimage;
+>  
+>  /* Memory to backup during crash kdump */
+>  #define KEXEC_BACKUP_SRC_START	(0UL)
+> -#define KEXEC_BACKUP_SRC_END	(640 * 1024UL)	/* 640K */
+> +#define KEXEC_BACKUP_SRC_END	(640 * 1024UL - 1)	/* 640K */
+>  
+>  /*
+>   * CPU does not save ss and sp on stack if execution is already
+> 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
+
+Thanks
+Dave
