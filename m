@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC11C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F6EC64EAD
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3723206B2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:50:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CB0D206B2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:50:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNVsSCkP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3723206B2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DdIJzIOk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CB0D206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbeJAFZR (ORCPT
+        id S1726855AbeJAFXs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 01:25:17 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33637 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeJAFXu (ORCPT
+        Mon, 1 Oct 2018 01:23:48 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44993 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbeJAFXq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 01:23:50 -0400
-Received: by mail-lj1-f194.google.com with SMTP id z21-v6so1307224ljz.0;
-        Sun, 30 Sep 2018 15:49:01 -0700 (PDT)
+        Mon, 1 Oct 2018 01:23:46 -0400
+Received: by mail-lf1-f65.google.com with SMTP id m18-v6so1803298lfl.11;
+        Sun, 30 Sep 2018 15:48:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=in1IHH5Z5QVstKfc+wM7AYUa0H//VLMIGKx74XBEHPs=;
-        b=DNVsSCkPFyvVKWeRNgC5eqv8WVEftKrXcF2tdtB9mO3yVEH21tvV3dD5DB6u8WqY11
-         zw5LwhdPzkqbKRiLMQMaQDa/53B5VUe8CyHEEjY/jbWLBSHik9PxGxpo/OstcbGciQ46
-         anQZEe2fb9cFtaKP18zP/0TVBWWLGuBcq4HpO1qDt2V5A7p5NdiUAr/fs+epxohsNY9T
-         6zZO4MdWFmDp8e5bFPwywGJEXz/ZlmZgMKB51Fpop1WH1jud6UWMUWmxsCzHVVMw+Vn7
-         Und3/7eEzB7zgBs2reE78vB/NH0Ve/TyGPkPikcVrVEbAyPVxht3Cz+kdQeXxWA8hNlE
-         uzbA==
+        bh=MTEaimgMLC5itx08UKiy+ogELReEsfmbYnueAAu86WA=;
+        b=DdIJzIOkGhthRxR4k4XX7XXVfezkTB+RLdQjtZD7nDdbjfS6zICyB2GCOqmnFy1QzJ
+         3PoS1nmaZ23KCGrNkA22jeW/tPx7SeT2JK58za5WjhIVabmMIxTU+tfYbGqv+7UT5ZCg
+         uMu6gHWxcEbBz4StoIsYzpkZk63yMtrOYZbLAugorVrZqcckijZRkOvkEZxRXwNweu0I
+         7gdEmjzw5okmjP2HABLVthsw5vAGQ/Vm90BwPR/Tr/XcDkn1TGbqPhE09i9Ey1psDW2k
+         6yhl6bo5C4xGcrfVFxS7fc3wzO1zozQrBfYqXMUfJ5zdTmW9faakWKbiijbBt4K975Gj
+         HzgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=in1IHH5Z5QVstKfc+wM7AYUa0H//VLMIGKx74XBEHPs=;
-        b=jyHMBs0Dopn1z3PowPnmcuxW0cWhOVu6s7CsMxpcUkOZ2a/UMyhUXI9X8uJNUqs1o2
-         bTGn57zMPtAu4LSa4RxvXX8GU3tJX1QLRWdWNOL6Xh4LIFCWaAZ4GyFw6+FNlsbHeaN2
-         SfwCTChGL/a4IxWfEwsk0whIrspDdugpNNcDngEzd2G5R0nVl8pD9b38ZyA12W5DhGQ5
-         Be8j2pWg1GgajaTndnTn4R/4j9JyEB9zHEZBbT6O7lizHfmXJipy6ujggeI6+9Jooesk
-         MLiH+H2ZpKxC4Ke+p3HmJmLTEFd5sAqgb+K+7aDDS8Haqcx67A0FuKeyyBETWkTLGkcO
-         46zw==
-X-Gm-Message-State: ABuFfojQZtrlubX6Ardx/TvmYpziZsIMRX9bta+0TvGowgSbQ5fuVQ6o
-        gHB/9ocKE1+e1p+rq9emUi0mYCgM
-X-Google-Smtp-Source: ACcGV61MG6l/S1lpLwQEzloZjuYHzKujzt5D3HH+24TCGR5fdmNRZrh48BfxrwFsf7Gm6RRkI4STwA==
-X-Received: by 2002:a2e:5859:: with SMTP id x25-v6mr5036918ljd.7.1538347740732;
-        Sun, 30 Sep 2018 15:49:00 -0700 (PDT)
+        bh=MTEaimgMLC5itx08UKiy+ogELReEsfmbYnueAAu86WA=;
+        b=ZB4iSZvsg0i+NbjXQOhCIhCQKAEOXeXssVpfbibqef84cbk9Dy/kaVgyBJgvCLy5+0
+         hR3MoggwmjHwtJBIuakI5LVAxbVKNiebizkAyGPypQp3CfZe7FT21cUpnhna8rvm9y4V
+         dYZgg6UlZ/H0YTijeE7XDfDjBFQn2dQ5qzS2tEORYk/JjiQ25y3EO3Kpa3hYGdUonHt2
+         carupx/kgNmsdMdAUfweljZJhin5Z6h93QLZKL5m+k7BKgt6N5zAVYuv/lKgUyLmbgp1
+         x2YBiLLVG+BT0gq7TPNJCdtaAQ7DntoWCd7POI1QejCgghMBBWvbytSO09LB6dGUiCTA
+         1yOQ==
+X-Gm-Message-State: ABuFfoh/RUUPWyohAA7ui5mbGpbORFIExzdnekR0EWA38Wvq2imGGali
+        HbJ6uS2go4KsTMiJbIdRNwc=
+X-Google-Smtp-Source: ACcGV614eLZiA8KehXP3HzEe/Ln38CAkFSQ3BCO6Cw/2quubMq7CB2wMWKyvP9Cig/OiBAtccQCyEg==
+X-Received: by 2002:a19:d824:: with SMTP id p36-v6mr3844656lfg.23.1538347736905;
+        Sun, 30 Sep 2018 15:48:56 -0700 (PDT)
 Received: from localhost.localdomain (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
-        by smtp.gmail.com with ESMTPSA id i2-v6sm2356829lji.88.2018.09.30.15.48.59
+        by smtp.gmail.com with ESMTPSA id i2-v6sm2356829lji.88.2018.09.30.15.48.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 15:49:00 -0700 (PDT)
+        Sun, 30 Sep 2018 15:48:56 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,9 +66,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Robin Murphy <robin.murphy@arm.com>
 Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 07/21] ARM: dts: tegra20: Update Memory Controller node to the new binding
-Date:   Mon,  1 Oct 2018 01:48:19 +0300
-Message-Id: <20180930224833.28809-8-digetx@gmail.com>
+Subject: [PATCH v5 03/21] iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
+Date:   Mon,  1 Oct 2018 01:48:15 +0300
+Message-Id: <20180930224833.28809-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180930224833.28809-1-digetx@gmail.com>
 References: <20180930224833.28809-1-digetx@gmail.com>
@@ -79,43 +79,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Device tree binding of Memory Controller has been changed: GART has been
-squashed into the MC, there are a new mandatory clock and #iommu-cells
-properties, the compatible has been changed to 'tegra20-mc-gart'.
+GART can't handle all devices, hence ignore devices that aren't related
+to GART. IOMMU phandle must be explicitly assign to devices in the device
+tree.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ drivers/iommu/tegra-gart.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index dcad6d6128cf..8c942e60703e 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -616,17 +616,14 @@
- 	};
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index e9524ed264cf..f6cf5cd5aaca 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -342,8 +342,12 @@ static bool gart_iommu_capable(enum iommu_cap cap)
  
- 	mc: memory-controller@7000f000 {
--		compatible = "nvidia,tegra20-mc";
--		reg = <0x7000f000 0x024
--		       0x7000f03c 0x3c4>;
-+		compatible = "nvidia,tegra20-mc-gart";
-+		reg = <0x7000f000 0x400		/* controller registers */
-+		       0x58000000 0x02000000>;	/* GART aperture */
-+		clocks = <&tegra_car TEGRA20_CLK_MC>;
-+		clock-names = "mc";
- 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
- 		#reset-cells = <1>;
--	};
--
--	iommu@7000f024 {
--		compatible = "nvidia,tegra20-gart";
--		reg = <0x7000f024 0x00000018	/* controller registers */
--		       0x58000000 0x02000000>;	/* GART aperture */
-+		#iommu-cells = <0>;
- 	};
+ static int gart_iommu_add_device(struct device *dev)
+ {
+-	struct iommu_group *group = iommu_group_get_for_dev(dev);
++	struct iommu_group *group;
  
- 	memory-controller@7000f400 {
++	if (!dev->iommu_fwspec)
++		return -ENODEV;
++
++	group = iommu_group_get_for_dev(dev);
+ 	if (IS_ERR(group))
+ 		return PTR_ERR(group);
+ 
+@@ -360,6 +364,12 @@ static void gart_iommu_remove_device(struct device *dev)
+ 	iommu_device_unlink(&gart_handle->iommu, dev);
+ }
+ 
++static int gart_iommu_of_xlate(struct device *dev,
++			       struct of_phandle_args *args)
++{
++	return 0;
++}
++
+ static const struct iommu_ops gart_iommu_ops = {
+ 	.capable	= gart_iommu_capable,
+ 	.domain_alloc	= gart_iommu_domain_alloc,
+@@ -373,6 +383,7 @@ static const struct iommu_ops gart_iommu_ops = {
+ 	.unmap		= gart_iommu_unmap,
+ 	.iova_to_phys	= gart_iommu_iova_to_phys,
+ 	.pgsize_bitmap	= GART_IOMMU_PGSIZES,
++	.of_xlate	= gart_iommu_of_xlate,
+ };
+ 
+ static int tegra_gart_suspend(struct device *dev)
+@@ -438,6 +449,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	iommu_device_set_ops(&gart->iommu, &gart_iommu_ops);
++	iommu_device_set_fwnode(&gart->iommu, dev->fwnode);
+ 
+ 	ret = iommu_device_register(&gart->iommu);
+ 	if (ret) {
 -- 
 2.19.0
 
