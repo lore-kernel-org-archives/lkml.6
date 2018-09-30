@@ -2,70 +2,60 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46205C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 12:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E0FC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 12:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD39B20685
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 12:46:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7672920685
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 12:50:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="C2ikLI1x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD39B20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C1egZHW+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7672920685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728435AbeI3TTg (ORCPT
+        id S1728455AbeI3TXn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 15:19:36 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:51575 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728299AbeI3TTg (ORCPT
+        Sun, 30 Sep 2018 15:23:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40136 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728220AbeI3TXn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 15:19:36 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 3A2E920DC2;
-        Sun, 30 Sep 2018 08:37:49 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Sun, 30 Sep 2018 08:37:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=B5IsJsfB3cNAguwaT3hrkonVwWpmR
-        af7ckui15xNVDY=; b=C2ikLI1x4L4/0eL6bIRouII0xBn6+VNmTd3Kh4o8DJffU
-        4THpHv9NG5Ao6vu1bnP+z4geFbYuDy00EaBwxFoUQ3CvP/Veo5cRZivkxO9NuYGT
-        d886z+hC9v2bdEP4D4+O3KcW8JKrK/b67da1vPaEidvqwiPHM63XAUPLzc4yjzwW
-        kb5Ht6NIE/NGSObCXoU0hcxvFdVNVyg4+agKYJeUwnfB+gsUg361ZFSh/bR4Nw6W
-        jnuuanOF/MxRewt1Elt7f4NMnVpsc1RVwAVf4g1tnpJM4UMVCD3+VXUL7aLYJf+8
-        MYrCZ995cxRtpHvwn6zJeM8DQ7kDicizIVaKQGFqw==
-X-ME-Proxy: <xmx:mcOwW-c-wLLw7jf7Mqp6B1s6qWjoZl9QCACTh0HzvbZhvUKz2Zcg_w>
-    <xmx:mcOwW8cp-W72mAK-RyLFJ2ZgMCmULWbxrc1IlAyk8P0Vb4vbLQ273A>
-    <xmx:mcOwWyo4CXlZuyp0VJqSSIBBEBp5oJkAux9ZclTP2Q0-978k8kTiDw>
-    <xmx:mcOwW6Td_Mn20zlrOxLW3E9LY5_g1MxQMYc2QlgKQp4mGJybpRpCfw>
-    <xmx:mcOwWz6Kv0orw0eOkEDhxOnnxUp-DH5tR_wMSsVkdJIqSDUHRdcwuA>
-    <xmx:ncOwW1t_MfZxJ24GSeAEhWCEncphXZKI9kB4Hr48kitCNykZelzsZA>
-X-ME-Sender: <xms:mcOwWz3PSdapqSGNCYtrKOOT0mReCTSfagnm5374JvIrcl79oVtw4A>
-Received: from localhost (c-73-221-170-44.hsd1.wa.comcast.net [73.221.170.44])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5F52FE46B8;
-        Sun, 30 Sep 2018 08:37:45 -0400 (EDT)
-Date:   Sun, 30 Sep 2018 05:37:44 -0700
-From:   Greg KH <gregkh@linux-foundation.org>
+        Sun, 30 Sep 2018 15:23:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DjUZGSScEpQLqDmJD+VJ5m38dox3hRnNG/K6lMNqylg=; b=C1egZHW+JU3PUhMXkotpxaxoe
+        HsTdy73LUAppDgJP5R7XPXsB6tjZwmkZXU2gkkEFgoU/rxU1DIuzdqrKSdqYTRyP3PWXD65f1gY2x
+        hCR/oPGRU/pnD59Sxzf4i7QA+Mf14D0FyE92VPfn/niIB+el2zYKxY/o/VP/sKeWlEaf9bRfKb5PZ
+        wTmTaRoqHHNwqkO4rbrDoclRrvfZBeyMWiXrM7utEl+7Nxpj2ezF0cOaqM6G2wLIWajb4psVPhDzx
+        XUdCEffa1l8ST8KmbJzan23o1wfI+L8EmydXP0Fr7ErQml7AoutzKDervgj26ose/sM3JFz0iiE0J
+        s50K4ToSQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g6bBG-0000vy-Sr; Sun, 30 Sep 2018 12:50:38 +0000
+Date:   Sun, 30 Sep 2018 05:50:38 -0700
+From:   Matthew Wilcox <willy@infradead.org>
 To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-        mhocko@kernel.org, mgorman@suse.de, vbabka@suse.cz,
-        andrea@kernel.org, kirill@shutemov.name, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
+Cc:     gregkh@linux-foundation.org, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com,
+        akpm@linux-foundation.org, mhocko@kernel.org, mgorman@suse.de,
+        vbabka@suse.cz, andrea@kernel.org, kirill@shutemov.name,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Subject: Re: [STABLE PATCH] slub: make ->cpu_partial unsigned int
-Message-ID: <20180930123744.GA20353@kroah.com>
+Message-ID: <20180930125038.GA2533@bombadil.infradead.org>
 References: <1538303301-61784-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1538303301-61784-1-git-send-email-zhongjiang@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -101,17 +91,63 @@ On Sun, Sep 30, 2018 at 06:28:21PM +0800, zhong jiang wrote:
 > Link: http://lkml.kernel.org/r/20180305200730.15812-15-adobriyan@gmail.com
 > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 > Acked-by: Christoph Lameter <cl@linux.com>
+
+Hang on.  Christoph acked the _original_ patch going into upstream.
+When he reviewed this patch for _stable_ last week, he asked for more
+investigation.  Including this patch in stable is misleading.
+
 > Cc: Pekka Enberg <penberg@kernel.org>
 > Cc: David Rientjes <rientjes@google.com>
 > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 > Cc: <stable@vger.kernel.org> # 4.4.x
-
-This didn't apply to 4.14.y and any reason you didn't cc: the stable
-mailing list for the other stable developers to see it?
-
-I've fixed up the patch, but next time please always cc: the stable
-list.
-
-thanks,
-
-greg k-h
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  include/linux/slub_def.h | 3 ++-
+>  mm/slub.c                | 6 +++---
+>  2 files changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
+> index 3388511..9b681f2 100644
+> --- a/include/linux/slub_def.h
+> +++ b/include/linux/slub_def.h
+> @@ -67,7 +67,8 @@ struct kmem_cache {
+>  	int size;		/* The size of an object including meta data */
+>  	int object_size;	/* The size of an object without meta data */
+>  	int offset;		/* Free pointer offset. */
+> -	int cpu_partial;	/* Number of per cpu partial objects to keep around */
+> +	/* Number of per cpu partial objects to keep around */
+> +	unsigned int cpu_partial;
+>  	struct kmem_cache_order_objects oo;
+>  
+>  	/* Allocation and freeing of slabs */
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 2284c43..c33b0e1 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -1661,7 +1661,7 @@ static void *get_partial_node(struct kmem_cache *s, struct kmem_cache_node *n,
+>  {
+>  	struct page *page, *page2;
+>  	void *object = NULL;
+> -	int available = 0;
+> +	unsigned int available = 0;
+>  	int objects;
+>  
+>  	/*
+> @@ -4674,10 +4674,10 @@ static ssize_t cpu_partial_show(struct kmem_cache *s, char *buf)
+>  static ssize_t cpu_partial_store(struct kmem_cache *s, const char *buf,
+>  				 size_t length)
+>  {
+> -	unsigned long objects;
+> +	unsigned int objects;
+>  	int err;
+>  
+> -	err = kstrtoul(buf, 10, &objects);
+> +	err = kstrtouint(buf, 10, &objects);
+>  	if (err)
+>  		return err;
+>  	if (objects && !kmem_cache_has_cpu_partial(s))
+> -- 
+> 1.7.12.4
+> 
