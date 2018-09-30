@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAEE5C64EAD
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E14C64EAD
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:38:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99A2E20833
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:38:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DAFE20833
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:38:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V+A0Tkd/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99A2E20833
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZFTRbtHh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DAFE20833
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728652AbeJABMS (ORCPT
+        id S1728697AbeJABM2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 21:12:18 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:32782 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728625AbeJABMR (ORCPT
+        Sun, 30 Sep 2018 21:12:28 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:32784 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728630AbeJABMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 21:12:17 -0400
-Received: by mail-yb1-f194.google.com with SMTP id u88-v6so415929ybi.0
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 11:38:09 -0700 (PDT)
+        Sun, 30 Sep 2018 21:12:18 -0400
+Received: by mail-yb1-f196.google.com with SMTP id u88-v6so415939ybi.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 11:38:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lhxg0Wty1FLqZKr/TCLAd0dBs1+mJbyQ0l+4sGgov1w=;
-        b=V+A0Tkd/0LNS85aw2Bb/FfC7+5xJXni6wtPU85/E9Mp0L/V4EeG5SBLlm9k3JeNuRl
-         63E8pUVF4QrOl+bZqoW7nryNBihGBaj4MpsBF0Hwp/Ql437Dbvz6Wpt+J/mVvWeggUmN
-         vMJzSPWp3aUdtUXZ/ubjxQ2egEcnGI/qVaoMw=
+        bh=bTTvx51xrr3feNxW1j9YOiVhoDbbxXqIrUT5IdtNKeo=;
+        b=ZFTRbtHhtgXqeNwQhEaWml6EQfb0uMrIH167bOVvGeT1gjvyxPMPlcnuoZStvbnBgu
+         MK+alPm/MSk1kB1mcbTdIGaB3m546b9Kn//jIF+lNogPUG50nDxmFYDl7jJWYTWHbl8p
+         YauMYLdm2x5wdgK7/cXWwzi6lXWy0L2G/bN/4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=lhxg0Wty1FLqZKr/TCLAd0dBs1+mJbyQ0l+4sGgov1w=;
-        b=QDgUU3pZDo1trTuhnuX7VUCVRgq0c+MSyU+MS+Upt4Cv77yfovTXMSMEMLeSpOOoJC
-         gxIrzU+MS7ROhL9WVVnaeWPQSbjZ21p83Ot4gppHj9y/rVwv/axoEXLS7b1NgrDCkk7G
-         Q2MRCoK8Qz3kMQSD6GCYFFimBPa/ml77piwiK1j/FrmvZpBiRTIshVLIc+HW9R/4Xh9z
-         0p1wC+IENeyOdEXppJuQVbSLUbEsB9Y+AW4V5QzimdmqnVdWz7hbc1ASi++DuBytSD6+
-         wW5BcLcVvhEsAJxSlkK42eRyXT3JYnx34av6h8X8Z3llE1vtUByiRd44vMfW3VbV7jEx
-         ND0A==
-X-Gm-Message-State: ABuFfohUMOKZ2fO6unyCjo1ZTwKHJZi/Xo6QKFNlDMPvtsTNvQStsuOk
-        0wu6QhEwUzGWoQm+vyXK4xcerA==
-X-Google-Smtp-Source: ACcGV63FYs5PizZu2XNnEZ9MDYC0X9AUSxCc+WAWSTmM/RJEh1T6r7KNpfTIPwY/iVQXbyBXWVdwGg==
-X-Received: by 2002:a25:b2a8:: with SMTP id k40-v6mr4174984ybj.497.1538332689328;
-        Sun, 30 Sep 2018 11:38:09 -0700 (PDT)
+        bh=bTTvx51xrr3feNxW1j9YOiVhoDbbxXqIrUT5IdtNKeo=;
+        b=ik32ueOts7KGCC+RRDcZKa4GYyLniXyVGtKHcyXyXy+EvZtaY432rSiZOu/I7iLh9Z
+         PK6cuQzOq54YGfmx8erpSDfPFjlE2LK8I4/qrgnT2Lh7VZG9aAPhW1QDqA8SiS2eEcsh
+         x4bvtayTVw91btWxEC4lTM0fNLflB6rcoIteuQyMTzjGAPiaJAHDOkv0Bc4e6KRYk+6t
+         awn60xczni5/7cGcttL+3o2T4K9o79X3NxsR5eUVI+2l00aT00v5Zr8yTGawZkGwtbGk
+         f7SiJkJPgrQn+WuRQB9hENXSZBzh+81VfdWkpRYG+Q8hQ9YvdxDu6SmEMye8sIaKKmQK
+         wkbA==
+X-Gm-Message-State: ABuFfojfoGcxxojWkEDHNv7g/YTUvoMMhVz+set66mpI3co2KAKPb53d
+        rZPzM0rMTMdm86McV4poCcj8cz9zKqA=
+X-Google-Smtp-Source: ACcGV60/gMhc0qej3T7ncgAgEMckXjvMRHIJMDEn3lztxfr0WhNtGsiOyMczfr9yCJFeTYerlSyHTA==
+X-Received: by 2002:a5b:ac2:: with SMTP id a2-v6mr4134736ybr.233.1538332690742;
+        Sun, 30 Sep 2018 11:38:10 -0700 (PDT)
 Received: from localhost ([2600:1700:141:4960:b19b:8662:2992:bdd8])
-        by smtp.gmail.com with ESMTPSA id w201-v6sm1814235ywa.79.2018.09.30.11.38.08
+        by smtp.gmail.com with ESMTPSA id o202-v6sm26758222ywo.38.2018.09.30.11.38.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 11:38:08 -0700 (PDT)
+        Sun, 30 Sep 2018 11:38:10 -0700 (PDT)
 From:   Andy Gross <andy.gross@linaro.org>
 To:     arm@kernel.org
 Cc:     Kevin Hilman <khilman@baylibre.com>, Arnd Bergmann <arnd@arndb.de>,
@@ -61,9 +61,9 @@ Cc:     Kevin Hilman <khilman@baylibre.com>, Arnd Bergmann <arnd@arndb.de>,
         linux-kernel@vger.kernel.org,
         Doug Anderson <dianders@chromium.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] Qualcomm Driver updates for 4.20
-Date:   Sun, 30 Sep 2018 13:38:01 -0500
-Message-Id: <1538332682-12018-4-git-send-email-andy.gross@linaro.org>
+Subject: [GIT PULL] Qualcomm Device Tree updates for 4.20
+Date:   Sun, 30 Sep 2018 13:38:02 -0500
+Message-Id: <1538332682-12018-5-git-send-email-andy.gross@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538332682-12018-1-git-send-email-andy.gross@linaro.org>
 References: <1538332682-12018-1-git-send-email-andy.gross@linaro.org>
@@ -78,105 +78,63 @@ The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-drivers-for-4.20
+  git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-dts-for-4.20
 
-for you to fetch changes up to 579fde69dc1467a033ff44ced75ff368b9d3d072:
+for you to fetch changes up to ca02f96b95ca1a50344e7e2a7bb43fbb825aa3a2:
 
-  Merge branch 'drivers-for-4.20' into drivers-for-4.20-final (2018-09-30 12:44:33 -0500)
-
-----------------------------------------------------------------
-Qualcomm ARM Based Driver Updates for v4.20
-
-* Refactor of SCM compatibles and clock requirements
-* SMEM cleanup
-* Add LLCC EDAC driver
-* Fixes for GENI clocks and macros
-* Fix includes for llcc-slice and smem
-* String overflow fixes for APR and wcnss_ctrl
-* Fixup for COMPILE_TEST of qcom driver Kconfigs
-* Cleanup of Kconfig depends of rpmh, smd_rpm, smsm, and smp2p
-* Add SCM dependencies to SPM and rmtfs-mem
+  ARM: dts: qcom: Update coresight bindings for hardware ports (2018-09-30 13:14:05 -0500)
 
 ----------------------------------------------------------------
-Alex Elder (12):
-      soc: qcom: smem: rename variable in qcom_smem_get_global()
-      soc: qcom: smem: initialize region struct only when successful
-      soc: qcom: smem: always ignore partitions with 0 offset or size
-      soc: qcom: smem: small refactor in qcom_smem_enumerate_partitions()
-      soc: qcom: smem: verify both host ids in partition header
-      soc: qcom: smem: require order of host ids to match
-      soc: qcom: smem: introduce qcom_smem_partition_header()
-      soc: qcom: smem: verify partition header size
-      soc: qcom: smem: verify partition offset_free_uncached
-      soc: qcom: smem: small change in global entry loop
-      soc: qcom: smem: verify partition host ids match
-      soc: qcom: smem: a few last cleanups
+Qualcomm Device Tree Changes for v4.20
 
-Andy Gross (2):
-      Merge tag 'qcom-geni-immutable-for-mark-brown' into drivers-for-4.20-final
-      Merge branch 'drivers-for-4.20' into drivers-for-4.20-final
+* Fix IRQ constants usage on MSM8974
+* Add led, gpio-button, sdcc, and pcie nodes for IPQ8064
+* Move/cleanup common nodes for IPQ8064
+* Add i2c sensor nodes for MSM8974 Hammerhead
+* Fixes for SAW, kpss, opp, pci range, and space/tab on IPQ4019
+* Update coresight bindings
 
-Bjorn Andersson (4):
-      soc: qcom: rmtfs-mem: Validate that scm is available
-      dt-bindings: firmware: scm: Refactor compatibles and clocks
-      firmware: qcom: scm: Refactor clock handling
-      dt-bindings: firmware: scm: Add MSM8998 and SDM845
+----------------------------------------------------------------
+Brian Masney (3):
+      ARM: dts: qcom: msm8974-hammerhead: add device tree bindings for mpu6515
+      ARM: dts: qcom: msm8974-hammerhead: add device tree bindings for ALS / proximity
+      ARM: dts: qcom-msm8974: change invalid flag IRQ NONE to valid value
 
-Channagoud Kadabi (1):
-      drivers: edac: Add EDAC driver support for QCOM SoCs
+Christian Lamparter (1):
+      ARM: dts: qcom: ipq4019: fix cpu0's qcom,saw2 reg value
 
-Colin Ian King (1):
-      soc: qcom: apr: fix spelling mistake: "paket" -> "packet"
+Frank Rowand (6):
+      ARM: dts: qcom-msm8974: use named constant for interrupt type GIC_PPI
+      ARM: dts: qcom-msm8974: use named constant for interrupt type GIC_SPI
+      ARM: dts: qcom-msm8974: use named constant for interrupt flag EDGE RISING
+      ARM: dts: qcom-msm8974: use named constant for interrupt flag LEVEL HIGH
+      ARM: dts: qcom-msm8974: use named constant for interrupt flag NONE
+      ARM: dts: qcom-msm8974: change invalid flag IRQ NONE to valid value
 
-Douglas Anderson (4):
-      soc: qcom: geni: Don't ignore clk_round_rate() errors in geni_se_clk_tbl_get()
-      soc: qcom: geni: geni_se_clk_freq_match() should always accept multiples
-      soc: qcom: geni: Don't ignore clk_round_rate() errors in geni_se_clk_tbl_get()
-      soc: qcom: geni: geni_se_clk_freq_match() should always accept multiples
+John Crispin (1):
+      ARM: dts: qcom: ipq4019: fix space vs tab indenting inside qcom-ipq4019.dtsi
 
-Felix Fietkau (1):
-      soc: qcom: spm: add SCM probe dependency
+Mathias Kresin (1):
+      ARM: dts: qcom: ipq4019: fix PCI range
 
-Lina Iyer (1):
-      drivers: qcom: rpmh-rsc: clear wait_for_compl after use
+Matthew McClintock (2):
+      ARM: dts: qcom: ipq4019: use v2 of the kpss bringup mechanism
+      ARM: dts: qcom: ipq4019: add cpu operating points for cpufreq support
 
-Niklas Cassel (9):
-      soc: qcom: smem: Add missing include of sizes.h
-      soc: qcom: llcc-slice: Add missing include of sizes.h
-      soc: qcom: smp2p: Add select IRQ_DOMAIN
-      soc: qcom: smsm: Add select IRQ_DOMAIN
-      soc: qcom: Remove bogus depends on OF from QCOM_SMD_RPM
-      soc: qcom: Remove depends on OF from QCOM_RPMH
-      soc: qcom: wcnss_ctrl: Avoid string overflow
-      soc: qcom: apr: Avoid string overflow
-      soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs
+Sricharan R (4):
+      ARM: dts: qcom: Add pcie nodes for ipq8064
+      ARM: dts: qcom: Add sdcc nodes for ipq8064
+      ARM: dts: qcom: Move common nodes to ipq8064-v.1.0.dtsi
+      ARM: dts: qcom: Add led and gpio-button nodes to ipq8064 boards
 
-Stephen Boyd (2):
-      soc: qcom: geni: Make version macros simpler
-      soc: qcom: geni: Make version macros simpler
+Suzuki K Poulose (1):
+      ARM: dts: qcom: Update coresight bindings for hardware ports
 
-Venkata Narendra Kumar Gutta (3):
-      soc: qcom: Add broadcast base for Last Level Cache Controller (LLCC)
-      soc: qcom: Add support to register LLCC EDAC driver
-      dt-bindings: msm: Update documentation of qcom,llcc
-
- .../devicetree/bindings/arm/msm/qcom,llcc.txt      |  19 +-
- .../devicetree/bindings/firmware/qcom,scm.txt      |  33 +-
- MAINTAINERS                                        |   8 +
- drivers/edac/Kconfig                               |  14 +
- drivers/edac/Makefile                              |   1 +
- drivers/edac/qcom_edac.c                           | 414 +++++++++++++++++++++
- drivers/firmware/qcom_scm.c                        |  74 ++--
- drivers/soc/qcom/Kconfig                           |  21 +-
- drivers/soc/qcom/apr.c                             |   6 +-
- drivers/soc/qcom/llcc-slice.c                      |  74 ++--
- drivers/soc/qcom/qcom-geni-se.c                    |  41 +-
- drivers/soc/qcom/rmtfs_mem.c                       |   5 +
- drivers/soc/qcom/rpmh-rsc.c                        |   2 +
- drivers/soc/qcom/smem.c                            | 174 +++++----
- drivers/soc/qcom/spm.c                             |   3 +
- drivers/soc/qcom/wcnss_ctrl.c                      |   2 +-
- include/linux/qcom-geni-se.h                       |  13 +-
- include/linux/soc/qcom/llcc-qcom.h                 |  30 +-
- 18 files changed, 732 insertions(+), 202 deletions(-)
- create mode 100644 drivers/edac/qcom_edac.c
+ arch/arm/boot/dts/qcom-apq8064.dtsi                |  71 ++---
+ arch/arm/boot/dts/qcom-ipq4019.dtsi                | 143 ++++++-----
+ arch/arm/boot/dts/qcom-ipq8064-ap148.dts           |  83 +-----
+ arch/arm/boot/dts/qcom-ipq8064-v1.0.dtsi           | 125 +++++++++
+ arch/arm/boot/dts/qcom-ipq8064.dtsi                | 286 +++++++++++++++++++++
+ .../dts/qcom-msm8974-lge-nexus5-hammerhead.dts     |  83 ++++++
+ arch/arm/boot/dts/qcom-msm8974.dtsi                | 198 ++++++++------
+ 7 files changed, 731 insertions(+), 258 deletions(-)
