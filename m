@@ -4,65 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C62BC004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 11:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C62BDC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 11:16:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F290D20666
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 11:13:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FA5620666
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 11:16:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8GRaYJd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F290D20666
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hGVef39Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA5620666
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728351AbeI3RqY (ORCPT
+        id S1728361AbeI3RtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 13:46:24 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38493 "EHLO
+        Sun, 30 Sep 2018 13:49:04 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42281 "EHLO
         mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728145AbeI3RqY (ORCPT
+        with ESMTP id S1727991AbeI3RtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 13:46:24 -0400
-Received: by mail-qt1-f193.google.com with SMTP id l9-v6so663748qtf.5;
-        Sun, 30 Sep 2018 04:13:47 -0700 (PDT)
+        Sun, 30 Sep 2018 13:49:03 -0400
+Received: by mail-qt1-f193.google.com with SMTP id z8-v6so11136517qto.9;
+        Sun, 30 Sep 2018 04:16:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=BZc4TX06dDpgdIGafOY81Qt0PHB7lsXPf/GX6Jhu2zY=;
-        b=c8GRaYJdQFuMRErsPrmrZlLaGJV03+QmqR21s+Jgw34s73qjupJ5zmo7Qhw2FcqbA+
-         O4J29cASVGg2ubkLBl0uZmhv195ZGWg6jbe1sk5GlKVwo5hcLrbNPxSBX7ESiJSOEYAm
-         3dXIbt1IaHD6Sc18K91VynXZ4vNRZvhjl0/DmXpX49HQoH2Vh80/Gim2q5q+4qsehFfD
-         V9LtyPxPlNG2trxxn+9NK1AytY5V7IvF0cbddOV1HMc8bOsrhKZPgSV5fa/5ANxT/LRq
-         Zp1hsd2Jfdj2BQot6safwuRHefoseEID/mLKsB6BOSHsk9ujpwPWSOAD0pBESv+pqz+s
-         343A==
+        bh=o83ntsX5hLfAFFT/V5gbY42k+0A97ALRZnJZhtGVxXo=;
+        b=hGVef39ZrQQ+wCqFI5z7CciRMPgeon08IvjZFbbQBwP2L3ljkOOdRW/vBf9WqFjGAz
+         OGSy5HOnXntFIHAPndWMINuEfDaRdxc8Yhl96U2h23K77xWADcN61qh/w6otfMevZfT1
+         ZM4I2AF5p/v+bS+pi/LpIga1EEot84pIFTpMsaziBT3QVXbxMblwy4RASbvKeZgNoZUb
+         XWmWThddeB3wmGv3bkBz706yr/zzm6bD3oAzKwf9GVxb+ihfHC+i6+7tZtOZpHD2l73i
+         MWzFPFBj5m7HleK5POwp3amgzcPH+1y0IR0RYWAMWU/O0b/fHHt2NA6WT13xDDyCTk8f
+         or2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=BZc4TX06dDpgdIGafOY81Qt0PHB7lsXPf/GX6Jhu2zY=;
-        b=idNs8ix4taZob2MMkIitAG8zjKXFwTlTIIvRjugTgKvxB30UiUz9/YUPhYTu17hT3+
-         vxidhU9bI2/oIXFYt/PwWlrS/0l45jPCrm5NVB4+1JmXyrXTiSClbP80qkJL+CTHsc/l
-         IJOHNozEgcZYb9eo3TPYATwKvkqbt81yjkP+tDUZJcQwcX4V0DYlTQazcAvJw4YOzqFo
-         U6kHlNRmWGCWFT8BFXr4QyrqJFAONMD8EKkTw5jBZAqvVefmE16DQNLcpOF5NEkZtyMc
-         19l5C9BloG41FxsmMXZK7bexvWrn/MfROa0QiJ9TIwPatuTqyP6SYhjCJ2yF/QhxVxP0
-         p4jg==
-X-Gm-Message-State: ABuFfogB3OwFdv0zxuOPTzHRhSfS4/W8VBZuzPrgBBNKlhqwsD9xPNU7
-        9a6IK67yXa3Kx3h6eHoL2gkwTMDv36zn+pA140c=
-X-Google-Smtp-Source: ACcGV60n8I/ed+nUdMh3xOjlW1TUMi1xSMVnersLGbvq9RagpzFdkdcwz8Ec/t6mXgWxp0BkEc368yU0Gt+ftNFIHnA=
-X-Received: by 2002:ac8:435b:: with SMTP id a27-v6mr4719883qtn.295.1538306027553;
- Sun, 30 Sep 2018 04:13:47 -0700 (PDT)
+        bh=o83ntsX5hLfAFFT/V5gbY42k+0A97ALRZnJZhtGVxXo=;
+        b=lms2UAHXsFAjs3wavp+espmWBOxNx0Y5FTVBVjrKKC/14Z60VIcUuzZmuOLxTrQIRM
+         J6YxzZ2MeEgBfQntLqKbZWpx4ydqld25CX4m5YJf7V4Ce2jKWWLVX0b+ohm8P9VoShdi
+         +dvp/WKwtVInoiCkZlZO5PRKAN5toH01dJ7ap5AfHbmMLSVkRKgN8pWcI9zqh1t0uF9m
+         KQdrYhu9Xwkq7pV/fxxejZSbS6u84Eo0K9y8PWFSe3JOUI+KZ7In4JdPe0llVcdBtc5d
+         WL6+hfyegCFPHyRLOxmbuJbELwBAFA+V+LLrbwpxt8mVm6JEHQhyz8fBUhRuNc3pdnZZ
+         c/zg==
+X-Gm-Message-State: ABuFfogh6qwPMXChR5iDiCNQoo43FqF4GkIZPT3F7bbf6stsHNwXrogZ
+        20cOZXZri4MJtItzXiqU41t+bWsH5SuQ7tXwavg=
+X-Google-Smtp-Source: ACcGV638kfuV8n3AzPdZ6h2MTkB0z6WBNjttj6/nchtJfMRzvpGgWvmLNRSTX9JstxnRYmGG9QIsoQp/JTEvqGhSM0Q=
+X-Received: by 2002:aed:3c1b:: with SMTP id t27-v6mr673041qte.226.1538306186777;
+ Sun, 30 Sep 2018 04:16:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com> <20180924143608.aiyehiibgc7isk7k@ltop.local>
-In-Reply-To: <20180924143608.aiyehiibgc7isk7k@ltop.local>
+References: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
+ <20180920172301.21868-13-miguel.ojeda.sandonis@gmail.com> <CAGXu5jJEXFXnOVZrjoUyyuQ-=L=Lou3iLsA2Jjzci_McSgn2XA@mail.gmail.com>
+In-Reply-To: <CAGXu5jJEXFXnOVZrjoUyyuQ-=L=Lou3iLsA2Jjzci_McSgn2XA@mail.gmail.com>
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sun, 30 Sep 2018 13:13:36 +0200
-Message-ID: <CANiq72=Aom+D8LsvMDgD3Am9n3DH13CzZKuL3dfanyqFEGyNbA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/15] Compiler Attributes
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Date:   Sun, 30 Sep 2018 13:16:15 +0200
+Message-ID: <CANiq72nT12vjxjyPr2_nPFQroiiPbba7uoF0V-y_5+4yid=1iw@mail.gmail.com>
+Subject: Re: [PATCH v5 12/15] Compiler Attributes: add support for __nonstring
+ (gcc >= 8)
+To:     Kees Cook <keescook@chromium.org>
 Cc:     Greg KH <gregkh@linuxfoundation.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Andreas Dilger <adilger.kernel@dilger.ca>,
@@ -74,7 +76,6 @@ Cc:     Greg KH <gregkh@linuxfoundation.org>,
         Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
         David Miller <davem@davemloft.net>,
         Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         Paul Lawrence <paullawrence@google.com>,
@@ -93,6 +94,7 @@ Cc:     Greg KH <gregkh@linuxfoundation.org>,
         Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Stefan Agner <stefan@agner.ch>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -105,42 +107,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 4:36 PM Luc Van Oostenryck
-<luc.vanoostenryck@gmail.com> wrote:
+On Thu, Sep 20, 2018 at 10:08 PM Kees Cook <keescook@chromium.org> wrote:
 >
-> On Thu, Sep 20, 2018 at 07:22:46PM +0200, Miguel Ojeda wrote:
-> > The Compiler Attributes series is an effort to disentangle
-> > the include/linux/compiler*.h headers and bring them up to date.
-> >
-> > The main idea behind the series is to use feature checking macros
-> > (i.e. __has_attribute) instead of compiler version checks (e.g. GCC_VERSION),
-> > which are compiler-agnostic (so they can be shared, reducing the size
-> > of compiler-specific headers) and version-agnostic.
-> >
-> > Other related improvements have been performed in the headers as well,
-> > which on top of the use of __has_attribute it has amounted to a significant
-> > simplification of these headers (e.g. GCC_VERSION is now only guarding 4
-> > non-attribute macros).
-> >
-> > This series should also help the efforts to support compiling the kernel
-> > with clang and icc. A fair amount of documentation and comments have also
-> > been added, clarified or removed; and the headers are now more readable,
-> > which should help kernel developers in general.
-> >
-> > The series was triggered due to the move to gcc >= 4.6. In turn, this series
-> > has also triggered Sparse to gain the ability to recognize __has_attribute
-> > on its own.
-> >
-> > Finally, the nonstring variable attribute series has been applied on top
-> > of this one.
->
-> Hi Miguel,
-> Feel free to add my
->   Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> on patches 11-15 (I think the others ones already have it).
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 >
 
-Done for both Nick and you!
+Done! Thanks!
 
 Cheers,
 Miguel
