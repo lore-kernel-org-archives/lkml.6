@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B84EC64EB5
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62969C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60181206B2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:49:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27DB42089D
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:49:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DmKLeeyy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60181206B2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iMRdmb3V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27DB42089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbeJAFXy (ORCPT
+        id S1728651AbeJAFX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 01:23:54 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43899 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbeJAFXx (ORCPT
+        Mon, 1 Oct 2018 01:23:56 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44306 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbeJAFXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 01:23:53 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r8-v6so10355153ljc.10;
-        Sun, 30 Sep 2018 15:49:03 -0700 (PDT)
+        Mon, 1 Oct 2018 01:23:54 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v6-v6so1273493ljc.11;
+        Sun, 30 Sep 2018 15:49:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=a2m75vP+vhO9R4rPd3Yk3+I0Wa14hKEFn6WSeRYz02s=;
-        b=DmKLeeyycrzy/XxaaiFE7lOj6uWrRNkXXBdbFydNjnxxkZ686/odiq67joUUly52hK
-         aTlcEUyO7OFneQU2Od3Clu82ixKJnFkLvO4SDensuauoZlGk1wvkITtEHkxBcN4RIHoJ
-         gEqzkufCx5U9TtTiFMEE2JgIKkaNKRSWtcdpl69bpGR3CEu5uPh4kULHAwnDWPdi/RP1
-         grYGefmScTgfk8EBFL9lo2OKD2DM65DTuTycNUbaDLdrJzoReVWBRK6ABT/A+Q0FSeM6
-         FcV1kE+B0AI2/ArHKUwYVdOpB7soIS+gl3HuDJva6kvI7eas9AjppMUGVi0HEZBGcBrx
-         rfjQ==
+        bh=RsgdinMofIP7nr3aY1U1WRqrvWUpybzDl0Q6gbyrGkU=;
+        b=iMRdmb3VFDrlpRuF7tx/29vupYRZOzpDLyMOkWoP96y5UUizzHMXpmzH4Ne7Yril2c
+         EDMbjRLaxnwxKoQGDVzJiHFmM4Nw25jVmoo5Y9VaGrAGs3HKzWUSlIQs2dG29k2ab8wW
+         O7CIVg9bgdAv7K7rBrce2suQvJS1AxI2+l+Wf+p5YEp2Qc3Z+y2Kbe4FhU1OjD5sz9gu
+         h1uqLmw4oOmVCJhmE4sI/B333Ij8HDttGHX1E7agReIjZv50UGq2R2VVzTM2l/krZ9wI
+         TMQ1I5bAFIwcn1YnwTrnXLUTuEevQcjidkmUT1+Kkkdfnho7SY4LEYd6nzEx23DlhF0t
+         Opjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=a2m75vP+vhO9R4rPd3Yk3+I0Wa14hKEFn6WSeRYz02s=;
-        b=dax9S2dzfLaXaB6WtDhxuBGsxACHy3u1gc0xvbYe1kcVGJp/s2BfnEIm/AImRa2Nbx
-         SuaVN3YSaQGpX+q1Bk3wV5POCcMKA+b5lTq1/Eo18hUa4IwJ60s5rbi6AJmmvS2JXpQO
-         mi6lR2kXBwwM4SiijLi1kThAhWj6jwQs7PgGaKEk8fWvnqi5pdv5NB66wciFXdC7LEmb
-         hfo27ZGZuHN6hV17zbX+YJ0j7ydT6s9N7acM0e0TFPgo2IiebJEtMQXIwf5TLEOZdnHo
-         CtgxEcVvfPGKzT0QG1Cb4v3QLDMSYufpqrgwcCB7KCIEJWJhV4+7lTngmzlr78dwuARy
-         D2aw==
-X-Gm-Message-State: ABuFfogdXe8KQTyDjb3SsnmgFfPWz2ZJ8DxJfuRobNob60F5IvPlPTuz
-        dLOBNf3kst9pqt/pbVke4Jc=
-X-Google-Smtp-Source: ACcGV61/kbMQ9h/LkkWOl5SVOdF5wAWcMMh+NWvhmsfd6u4JA9gb8LKsz2mMbxuwOd7zMe1T5QYzAg==
-X-Received: by 2002:a2e:47:: with SMTP id 68-v6mr5006247lja.123.1538347742551;
-        Sun, 30 Sep 2018 15:49:02 -0700 (PDT)
+        bh=RsgdinMofIP7nr3aY1U1WRqrvWUpybzDl0Q6gbyrGkU=;
+        b=tiPWF7RXgaWanbKoM0ysurQav9BiNmuiEhGLp+161TjN0SxfZcqmdoYe1elgThyRIW
+         Nex4NfvamtUaBlAW05UsJrLk8iHOgoaca5XwBfw1KI04M9rjizj5hmzJnYQG1RRyDnBu
+         iPeVmvvFZFILlM8KS8w+xTUv0DCBDuMMI9S7Rvj6hrzfUQaS6MuT+c113iyrl5J2B4u6
+         607ZzXMsgXrOaC+EVuTySL87MGyZvgcXa68seYI2WwjxVhNRi35MeW5lfzis63uAciF3
+         WOoM8Bcd81Pvw2RjujEz3IP2+JTlehULxNkBfAWqjzL0C4CsunB3JvfTQcqZrEFS3aFv
+         cseA==
+X-Gm-Message-State: ABuFfogZuLXusjzEe/jUzd30on/DaB1I3sb34vrQzeQ7Aow7hFGet+rT
+        aMIh2vjRW9P/7UCxWwLbLK7ddwdX
+X-Google-Smtp-Source: ACcGV60fr2ZHEPXZybTDxn5eSL9G0n6DZ/xZPoPTtaRGC3o1uUJylFUwm345gn5O2VDamJubRAt6Ug==
+X-Received: by 2002:a2e:811:: with SMTP id 17-v6mr4518411lji.140.1538347744546;
+        Sun, 30 Sep 2018 15:49:04 -0700 (PDT)
 Received: from localhost.localdomain (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
-        by smtp.gmail.com with ESMTPSA id i2-v6sm2356829lji.88.2018.09.30.15.49.01
+        by smtp.gmail.com with ESMTPSA id i2-v6sm2356829lji.88.2018.09.30.15.49.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 15:49:02 -0700 (PDT)
+        Sun, 30 Sep 2018 15:49:04 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,9 +66,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Robin Murphy <robin.murphy@arm.com>
 Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 09/21] memory: tegra: Adapt to Tegra20 device-tree binding changes
-Date:   Mon,  1 Oct 2018 01:48:21 +0300
-Message-Id: <20180930224833.28809-10-digetx@gmail.com>
+Subject: [PATCH v5 11/21] memory: tegra: Use of_device_get_match_data()
+Date:   Mon,  1 Oct 2018 01:48:23 +0300
+Message-Id: <20180930224833.28809-12-digetx@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180930224833.28809-1-digetx@gmail.com>
 References: <20180930224833.28809-1-digetx@gmail.com>
@@ -79,99 +79,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tegra20-mc device-tree binding has been changed, GART has been
-squashed into Memory Controller and now the clock property is mandatory
-for Tegra20, the DT compatible has been changed as well. Adapt driver to
-the DT changes.
+There is no need to match device with the DT node since it was already
+matched, use of_device_get_match_data() helper to get the match-data.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/mc.c | 21 ++++++++-------------
- drivers/memory/tegra/mc.h |  6 ------
- include/soc/tegra/mc.h    |  2 +-
- 3 files changed, 9 insertions(+), 20 deletions(-)
+ drivers/memory/tegra/mc.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index e56862495f36..1b4ceefd82f9 100644
+index 5454ffe5b2e0..bb45cbd3d5de 100644
 --- a/drivers/memory/tegra/mc.c
 +++ b/drivers/memory/tegra/mc.c
-@@ -51,7 +51,7 @@
+@@ -12,6 +12,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/sort.h>
+@@ -619,23 +620,18 @@ static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
  
- static const struct of_device_id tegra_mc_of_match[] = {
- #ifdef CONFIG_ARCH_TEGRA_2x_SOC
--	{ .compatible = "nvidia,tegra20-mc", .data = &tegra20_mc_soc },
-+	{ .compatible = "nvidia,tegra20-mc-gart", .data = &tegra20_mc_soc },
- #endif
- #ifdef CONFIG_ARCH_TEGRA_3x_SOC
- 	{ .compatible = "nvidia,tegra30-mc", .data = &tegra30_mc_soc },
-@@ -638,24 +638,19 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 	if (IS_ERR(mc->regs))
- 		return PTR_ERR(mc->regs);
- 
-+	mc->clk = devm_clk_get(&pdev->dev, "mc");
-+	if (IS_ERR(mc->clk)) {
-+		dev_err(&pdev->dev, "failed to get MC clock: %ld\n",
-+			PTR_ERR(mc->clk));
-+		return PTR_ERR(mc->clk);
-+	}
-+
- #ifdef CONFIG_ARCH_TEGRA_2x_SOC
- 	if (mc->soc == &tegra20_mc_soc) {
--		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--		mc->regs2 = devm_ioremap_resource(&pdev->dev, res);
--		if (IS_ERR(mc->regs2))
--			return PTR_ERR(mc->regs2);
--
- 		isr = tegra20_mc_irq;
- 	} else
- #endif
- 	{
--		mc->clk = devm_clk_get(&pdev->dev, "mc");
--		if (IS_ERR(mc->clk)) {
--			dev_err(&pdev->dev, "failed to get MC clock: %ld\n",
--				PTR_ERR(mc->clk));
--			return PTR_ERR(mc->clk);
--		}
--
- 		err = tegra_mc_setup_latency_allowance(mc);
- 		if (err < 0) {
- 			dev_err(&pdev->dev, "failed to setup latency allowance: %d\n",
-diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-index 01065f12ebeb..9856f085e487 100644
---- a/drivers/memory/tegra/mc.h
-+++ b/drivers/memory/tegra/mc.h
-@@ -26,18 +26,12 @@
- 
- static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+ static int tegra_mc_probe(struct platform_device *pdev)
  {
--	if (mc->regs2 && offset >= 0x24)
--		return readl(mc->regs2 + offset - 0x3c);
+-	const struct of_device_id *match;
+ 	struct resource *res;
+ 	struct tegra_mc *mc;
+ 	void *isr;
+ 	int err;
+ 
+-	match = of_match_node(tegra_mc_of_match, pdev->dev.of_node);
+-	if (!match)
+-		return -ENODEV;
 -
- 	return readl(mc->regs + offset);
- }
+ 	mc = devm_kzalloc(&pdev->dev, sizeof(*mc), GFP_KERNEL);
+ 	if (!mc)
+ 		return -ENOMEM;
  
- static inline void mc_writel(struct tegra_mc *mc, u32 value,
- 			     unsigned long offset)
- {
--	if (mc->regs2 && offset >= 0x24)
--		return writel(value, mc->regs2 + offset - 0x3c);
--
- 	writel(value, mc->regs + offset);
- }
+ 	platform_set_drvdata(pdev, mc);
+ 	spin_lock_init(&mc->lock);
+-	mc->soc = match->data;
++	mc->soc = of_device_get_match_data(&pdev->dev);
+ 	mc->dev = &pdev->dev;
  
-diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
-index b43f37fea096..db5bfdf589b4 100644
---- a/include/soc/tegra/mc.h
-+++ b/include/soc/tegra/mc.h
-@@ -144,7 +144,7 @@ struct tegra_mc_soc {
- struct tegra_mc {
- 	struct device *dev;
- 	struct tegra_smmu *smmu;
--	void __iomem *regs, *regs2;
-+	void __iomem *regs;
- 	struct clk *clk;
- 	int irq;
- 
+ 	/* length of MC tick in nanoseconds */
 -- 
 2.19.0
 
