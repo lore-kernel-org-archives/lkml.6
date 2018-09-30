@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DF3C004D2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F89C64EB0
 	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 12:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 468C520833
+	by mail.kernel.org (Postfix) with ESMTP id 7E4A82089D
 	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 12:29:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RF+ZgeYF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 468C520833
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfnEeRH3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E4A82089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728491AbeI3TCg (ORCPT
+        id S1728522AbeI3TCh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 15:02:36 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33334 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728269AbeI3TCf (ORCPT
+        Sun, 30 Sep 2018 15:02:37 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42632 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728299AbeI3TCg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 15:02:35 -0400
-Received: by mail-lj1-f196.google.com with SMTP id z21-v6so568775ljz.0;
-        Sun, 30 Sep 2018 05:29:44 -0700 (PDT)
+        Sun, 30 Sep 2018 15:02:36 -0400
+Received: by mail-lf1-f66.google.com with SMTP id s10-v6so444864lfc.9;
+        Sun, 30 Sep 2018 05:29:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Ov2E+Hw2gTRg717M7nwl/CIyTDdH/8VFGvMxw7MErr0=;
-        b=RF+ZgeYF7ue8iBVfEFWYWekyIr2O353cOSzaORmNVixhjW5lijC+rt3mH5ABXLAAbs
-         8NconmlBq++KhpgH4r+z8X2iGJLjYc5Jzc2xYuZuaGoqRGF9B6huq0UWexhYulABAKWU
-         YVj5wsOUR2fJarMcf5cL27Lq8vczLGfu3AZlpGlQFmJ7YJo7mq5g9pENdxxuLgQW+40d
-         hBfQsg+KiyuvkvGIsvpUUwAumxwFrvPm4k7N6UgW0Vd48OXMoQijtiPvw63apQRAN4Al
-         qTe33XZRdcpmBeMtm1qkCe+9drhHG06T+HCM8f2R2GbiV8/mFbX64Su8540xIkTULiML
-         ENXw==
+        bh=rVyblo+VQ+yESTzADioS2/MobtKe4/7BSVHQtoGYLrc=;
+        b=OfnEeRH3hMPGYrN8oxRDB0yNZd2SYWUyaME0cj0i2+MEEcaGXljeYbA5YATrcZC12A
+         pLRLZ7Cn2lk48xICp1pADV9vUwO08iA5Vu+jEl/HUmQvxwB2t1kQhkA2k0FIt3Z0y7pB
+         7YIoArp9+nWabXceRtGfbDDuuKFOZViUoTM7jFWN0LgIUw7nr2rGfTfMS11mFSib4wGF
+         6ZJ6rckvZGLJhcPeybKZ1o6KHKT7T4Ws6mZS8Kyb6JXyQI1TeKOsozw0tT1gWzBXrq0j
+         NQNgl3JRetzWM6E//H2LJEXAaXHgWHx23L7AgXzwAQ4P3lS8WQjCrM+IzlFurchQr5yf
+         sc7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=Ov2E+Hw2gTRg717M7nwl/CIyTDdH/8VFGvMxw7MErr0=;
-        b=M3JexRP1cgPYTlDKVesOF/zbdp+JH7qpsoxz0ZwWmqpUZ3QV5x/o6r7LEjc+Lu7kHq
-         sBx9CFuuCQfGsCygGFmdfmnAFHmjZpAfUfrRYPj/4yuyCr3jQcbymlOt/QDKzwuyJqb5
-         cYnGPpn7NAKLvvJNh7xSZlW0QzmNJSsJVbd50VlVazHHtrasmJuU2VsI2P/VZbVjvuHp
-         VS7KFvGzQDCWXmdpc2RYSMWszatyKz5O6FgLqSdyc0e+jv7QPKtZEWlxzHONVb5zUA+B
-         MuqAxpYmH9RO7akfyuqXSgw8GEGj0MIznYcfkotfcl1abp06+DT6Kn/5iyhKTSIdIwVo
-         6Cig==
-X-Gm-Message-State: ABuFfohbbmGzhx0QeZEGOy4h/O5jyGwji+9hKub+4vtyYtH1kkEr63uz
-        UFUo871P09sS0eXGxB6ghiQykcTD
-X-Google-Smtp-Source: ACcGV60kDR3rLf9Dgs6ecLHxOeFM0tNTFPjBgisgkZxVmEoxqrllMYQZfzzN+mJvNw4llUOos1DRCA==
-X-Received: by 2002:a2e:5614:: with SMTP id k20-v6mr3667403ljb.48.1538310583630;
-        Sun, 30 Sep 2018 05:29:43 -0700 (PDT)
+        bh=rVyblo+VQ+yESTzADioS2/MobtKe4/7BSVHQtoGYLrc=;
+        b=Xgw0UuhW4kZ0RvrhIhwD2q5h7urK8Dwd/gSknJnK2/DtKjtKApcAmNrpkgg81A+mIE
+         U1z85ES1CFDgpzeskrvYCdX+yN+Rjs1g43ZWR49YQGRm2RsuHjtkikv1nAEf3vFG/cT5
+         //Gf9mjGk5FJ27SIv/U9PlJNcaRt7ksrZ0fOMVYdgVZp736+Qdn8ubu/t0DdKMZHuBH0
+         PtKsrhwk9orw8Q+5WVy2mIZ7tNlBkObwxio38oJHOooo/YHG6AQ7EQqSau/F/gLx5wlm
+         rEfqdRHU9M1DxrDgDB329e2G1zLEZOOEH5XNXMaTaqQiPRP5BRGG9gnfkbIgeNxHDg63
+         Y73A==
+X-Gm-Message-State: ABuFfogOsusHl6F27fhWFZIW42O++dW9LinUlNaxhfz4jX1McoqZ8qI/
+        jDIPWtsAqlPV0WtWOqquNBP7NiEB
+X-Google-Smtp-Source: ACcGV60xWq5m3vsbqoj0xi1n05s7EjM4U6NHDJS6FxCWyzKH1yIJp9tOY1sGfRTvhYVPJQg0j1Jyqw==
+X-Received: by 2002:a19:2a12:: with SMTP id f18-v6mr3356455lfl.28.1538310584482;
+        Sun, 30 Sep 2018 05:29:44 -0700 (PDT)
 Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id w202-v6sm482230lff.71.2018.09.30.05.29.42
+        by smtp.gmail.com with ESMTPSA id g68-v6sm890337lje.44.2018.09.30.05.29.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Sun, 30 Sep 2018 05:29:42 -0700 (PDT)
 Received: from johan by xi.terra with local (Exim 4.91)
         (envelope-from <johan@xi.terra>)
-        id 1g6aqz-0001sP-9Y; Sun, 30 Sep 2018 14:29:41 +0200
+        id 1g6aqz-0001sT-Bj; Sun, 30 Sep 2018 14:29:41 +0200
 From:   Johan Hovold <johan@kernel.org>
 To:     linux-usb@vger.kernel.org
 Cc:     Karoly Pados <pados@pados.hu>,
@@ -68,9 +68,9 @@ Cc:     Karoly Pados <pados@pados.hu>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Johan Hovold <johan@kernel.org>
-Subject: [PATCH 1/2] USB: serial: ftdi_sio: fix gpio name collisions
-Date:   Sun, 30 Sep 2018 14:27:02 +0200
-Message-Id: <20180930122703.7115-2-johan@kernel.org>
+Subject: [PATCH 2/2] USB: serial: ftdi_sio: add support for FT232R CBUS gpios
+Date:   Sun, 30 Sep 2018 14:27:03 +0200
+Message-Id: <20180930122703.7115-3-johan@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180930122703.7115-1-johan@kernel.org>
 References: <20180930122703.7115-1-johan@kernel.org>
@@ -81,50 +81,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop the gpio line names, which cause gpiolib to complain loudly
-whenever a second ftdi gpiochip is registered:
+Enable support for cbus gpios on FT232R. The cbus configuration is
+stored in one word in the EEPROM at offset 0x0a (byte-offset 0x14) with
+the mux config for CBUS0, CBUS1, CBUS2 and CBUS3 in bits 0..3, 4..7,
+8..11 and 12..15, respectively.
 
-	gpio gpiochip5: Detected name collision for GPIO name 'CBUS0'
-	gpio gpiochip5: Detected name collision for GPIO name 'CBUS1'
-	gpio gpiochip5: Detected name collision for GPIO name 'CBUS2'
-	gpio gpiochip5: Detected name collision for GPIO name 'CBUS3'
-
-and also prevents the legacy sysfs interface from being used (as the
-line names are used as device names whenever they are set):
-
-	sysfs: cannot create duplicate filename '/class/gpio/CBUS0'
-
-Until non-unique names are supported by gpiolib (without warnings and
-stack dumps), let's leave the gpio lines unnamed.
+Tested using FT232RL by configuring one cbus pin at a time.
 
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/usb/serial/ftdi_sio.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/usb/serial/ftdi_sio.c | 40 +++++++++++++++++++++++++++++++++--
+ drivers/usb/serial/ftdi_sio.h |  3 ++-
+ 2 files changed, 40 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index 6b727ada20cf..be50b2a200aa 100644
+index be50b2a200aa..f1eb20acb3bb 100644
 --- a/drivers/usb/serial/ftdi_sio.c
 +++ b/drivers/usb/serial/ftdi_sio.c
-@@ -1778,10 +1778,6 @@ static void remove_sysfs_attrs(struct usb_serial_port *port)
+@@ -2007,7 +2007,40 @@ static int ftdi_read_eeprom(struct usb_serial *serial, void *dst, u16 addr,
+ 	return 0;
+ }
  
- #ifdef CONFIG_GPIOLIB
- 
--static const char * const ftdi_ftx_gpio_names[] = {
--	"CBUS0", "CBUS1", "CBUS2", "CBUS3"
--};
--
- static int ftdi_set_bitmode(struct usb_serial_port *port, u8 mode)
+-static int ftx_gpioconf_init(struct usb_serial_port *port)
++static int ftdi_gpio_init_ft232r(struct usb_serial_port *port)
++{
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++	u16 cbus_config;
++	u8 *buf;
++	int ret;
++	int i;
++
++	buf = kmalloc(2, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	ret = ftdi_read_eeprom(port->serial, buf, 0x14, 2);
++	if (ret < 0)
++		goto out_free;
++
++	cbus_config = le16_to_cpup((__le16 *)buf);
++	dev_dbg(&port->dev, "cbus_config = 0x%04x\n", cbus_config);
++
++	priv->gc.ngpio = 4;
++
++	priv->gpio_altfunc = 0xff;
++	for (i = 0; i < priv->gc.ngpio; ++i) {
++		if ((cbus_config & 0xf) == FTDI_FT232R_CBUS_MUX_GPIO)
++			priv->gpio_altfunc &= ~BIT(i);
++		cbus_config >>= 4;
++	}
++out_free:
++	kfree(buf);
++
++	return ret;
++}
++
++static int ftdi_gpio_init_ftx(struct usb_serial_port *port)
  {
  	struct ftdi_private *priv = usb_get_serial_port_data(port);
-@@ -2032,7 +2028,6 @@ static int ftx_gpioconf_init(struct usb_serial_port *port)
+ 	struct usb_serial *serial = port->serial;
+@@ -2049,8 +2082,11 @@ static int ftdi_gpio_init(struct usb_serial_port *port)
+ 	int result;
  
- 	/* FIXME: FT234XD alone has 1 GPIO, but how to recognize this IC? */
- 	priv->gc.ngpio = 4;
--	priv->gc.names = ftdi_ftx_gpio_names;
+ 	switch (priv->chip_type) {
++	case FT232RL:
++		result = ftdi_gpio_init_ft232r(port);
++		break;
+ 	case FTX:
+-		result = ftx_gpioconf_init(port);
++		result = ftdi_gpio_init_ftx(port);
+ 		break;
+ 	default:
+ 		return 0;
+diff --git a/drivers/usb/serial/ftdi_sio.h b/drivers/usb/serial/ftdi_sio.h
+index 6cfe682f8348..a79a1325b4d9 100644
+--- a/drivers/usb/serial/ftdi_sio.h
++++ b/drivers/usb/serial/ftdi_sio.h
+@@ -457,7 +457,8 @@ enum ftdi_sio_baudrate {
+ #define FTDI_SIO_READ_EEPROM_REQUEST_TYPE 0xc0
+ #define FTDI_SIO_READ_EEPROM_REQUEST FTDI_SIO_READ_EEPROM
  
- 	/* Determine which pins are configured for CBUS bitbanging */
- 	priv->gpio_altfunc = 0xff;
+-#define FTDI_FTX_CBUS_MUX_GPIO		8
++#define FTDI_FTX_CBUS_MUX_GPIO		0x8
++#define FTDI_FT232R_CBUS_MUX_GPIO	0xa
+ 
+ 
+ /* Descriptors returned by the device
 -- 
 2.19.0
 
