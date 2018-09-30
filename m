@@ -6,53 +6,49 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C12EBC004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72827C64EAD
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FB7B2089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:25:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FB7B2089D
+	by mail.kernel.org (Postfix) with ESMTP id 41D9F2064D
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 09:25:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41D9F2064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbeI3P5n (ORCPT
+        id S1728203AbeI3P5o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 11:57:43 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:33512 "EHLO inva020.nxp.com"
+        Sun, 30 Sep 2018 11:57:44 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:44768 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728001AbeI3P5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 11:57:42 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 77D0C1A013D;
-        Sun, 30 Sep 2018 11:25:28 +0200 (CEST)
+        id S1727997AbeI3P5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 11:57:43 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AE589200042;
+        Sun, 30 Sep 2018 11:25:27 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0BE0A1A0003;
-        Sun, 30 Sep 2018 11:25:25 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4101D200003;
+        Sun, 30 Sep 2018 11:25:24 +0200 (CEST)
 Received: from mega.ap.freescale.net (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6F3F9402F2;
-        Sun, 30 Sep 2018 17:25:20 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id AA29B402C1;
+        Sun, 30 Sep 2018 17:25:19 +0800 (SGT)
 From:   Chuanhua Han <chuanhua.han@nxp.com>
 To:     broonie@kernel.org
 Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
         boris.brezillon@bootlin.com, eha@deif.com,
         Chuanhua Han <chuanhua.han@nxp.com>
-Subject: [PATCH v2 2/4] spi: spi-fsl-dspi: Fix delete the processing of undefined bitmask for rxdata
-Date:   Sun, 30 Sep 2018 17:25:33 +0800
-Message-Id: <20180930092535.24544-2-chuanhua.han@nxp.com>
+Subject: [PATCH v2 1/4] spi: spi-mem: Add the spi_set_xfer_bpw function
+Date:   Sun, 30 Sep 2018 17:25:32 +0800
+Message-Id: <20180930092535.24544-1-chuanhua.han@nxp.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180930092535.24544-1-chuanhua.han@nxp.com>
-References: <20180930092535.24544-1-chuanhua.han@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the problem of rxdata being equal to 0 during the XSPI
-mode transfer of the dspi controller.
-In XSPI mode, If it is not deleted, the value of rxdata will be equal
-to 0, and the data received will not be received correctly, causing the
-receiving transfer of the spi to fail.
+Before we add this spi_transfer to the spi_message chain table, we need
+bits_per_word_mask based on spi_control to set the bits_per_word of
+this spi_transfer.
 
 Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
 ---
@@ -61,23 +57,87 @@ Changes in v2:
 patch theme is "spi: spi-fsl-dspi: Fix support for XSPI transport
 mode"),one of which is segmented.
 
- drivers/spi/spi-fsl-dspi.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/spi/spi-mem.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 3082e72e4f6c..4dc1064bf408 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -243,9 +243,6 @@ static void dspi_push_rx(struct fsl_dspi *dspi, u32 rxdata)
- 	if (!dspi->rx)
- 		return;
+diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+index eb72dba71d83..717e711c0952 100644
+--- a/drivers/spi/spi-mem.c
++++ b/drivers/spi/spi-mem.c
+@@ -175,6 +175,41 @@ bool spi_mem_supports_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ }
+ EXPORT_SYMBOL_GPL(spi_mem_supports_op);
  
--	/* Mask of undefined bits */
--	rxdata &= (1 << dspi->bits_per_word) - 1;
--
- 	if (dspi->bytes_per_word == 1)
- 		*(u8 *)dspi->rx = rxdata;
- 	else if (dspi->bytes_per_word == 2)
++/**
++ * spi_set_xfer_bpw() - Set the bits_per_word for each transfer based on
++ *			the bits_per_word_mask of the spi controller
++ * @ctrl: the spi controller
++ * @xfer: the spi transfer
++ *
++ * This function sets the bits_per_word for each transfer based on the spi
++ * controller's bits_per_word_mask to improve the efficiency of spi transport.
++ *
++ * Return: 0 in case of success, a negative error code otherwise.
++ */
++int spi_set_xfer_bpw(struct spi_controller *ctlr, struct spi_transfer *xfer)
++{
++	if (!ctlr || !xfer) {
++		dev_err(&ctlr->dev,
++			"Fail to set bits_per_word for spi transfer\n");
++		return -EINVAL;
++	}
++
++	if (ctlr->bits_per_word_mask) {
++		if (!(xfer->len % 4)) {
++			if (ctlr->bits_per_word_mask & SPI_BPW_MASK(32))
++				xfer->bits_per_word = 32;
++		} else if (!(xfer->len % 2)) {
++			if (ctlr->bits_per_word_mask & SPI_BPW_MASK(16))
++				xfer->bits_per_word = 16;
++		} else {
++			xfer->bits_per_word = 8;
++		}
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(spi_set_xfer_bpw);
++
+ /**
+  * spi_mem_exec_op() - Execute a memory operation
+  * @mem: the SPI memory
+@@ -252,6 +287,7 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ 	xfers[xferpos].tx_buf = tmpbuf;
+ 	xfers[xferpos].len = sizeof(op->cmd.opcode);
+ 	xfers[xferpos].tx_nbits = op->cmd.buswidth;
++	spi_set_xfer_bpw(ctlr, &xfers[xferpos]);
+ 	spi_message_add_tail(&xfers[xferpos], &msg);
+ 	xferpos++;
+ 	totalxferlen++;
+@@ -266,6 +302,7 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ 		xfers[xferpos].tx_buf = tmpbuf + 1;
+ 		xfers[xferpos].len = op->addr.nbytes;
+ 		xfers[xferpos].tx_nbits = op->addr.buswidth;
++		spi_set_xfer_bpw(ctlr, &xfers[xferpos]);
+ 		spi_message_add_tail(&xfers[xferpos], &msg);
+ 		xferpos++;
+ 		totalxferlen += op->addr.nbytes;
+@@ -276,6 +313,7 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ 		xfers[xferpos].tx_buf = tmpbuf + op->addr.nbytes + 1;
+ 		xfers[xferpos].len = op->dummy.nbytes;
+ 		xfers[xferpos].tx_nbits = op->dummy.buswidth;
++		spi_set_xfer_bpw(ctlr, &xfers[xferpos]);
+ 		spi_message_add_tail(&xfers[xferpos], &msg);
+ 		xferpos++;
+ 		totalxferlen += op->dummy.nbytes;
+@@ -291,6 +329,7 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ 		}
+ 
+ 		xfers[xferpos].len = op->data.nbytes;
++		spi_set_xfer_bpw(ctlr, &xfers[xferpos]);
+ 		spi_message_add_tail(&xfers[xferpos], &msg);
+ 		xferpos++;
+ 		totalxferlen += op->data.nbytes;
 -- 
 2.17.1
 
