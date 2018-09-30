@@ -2,121 +2,136 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3E6C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7144EC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D830F20833
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:23:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20CFF206B7
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 19:26:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jNsadYBP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D830F20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="jSaqd+DO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20CFF206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728601AbeJAB4s (ORCPT
+        id S1728615AbeJACAi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 21:56:48 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35739 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728412AbeJAB4s (ORCPT
+        Sun, 30 Sep 2018 22:00:38 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41416 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728412AbeJACAh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 21:56:48 -0400
-Received: by mail-wr1-f65.google.com with SMTP id w5-v6so2232258wrt.2
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 12:22:33 -0700 (PDT)
+        Sun, 30 Sep 2018 22:00:37 -0400
+Received: by mail-pg1-f194.google.com with SMTP id z3-v6so7888718pgv.8
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 12:26:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=Y9HmUaHsstDV8xrpCtkeo2/dz+ABYjh6/92j9s4IGTo=;
-        b=jNsadYBPEG3C980KdT2W+/YG3QmfSYq5yWUSIGBvJP6kGjXlOwZj0CxJe/J55sGtVa
-         Z6MVJ2G7Wmw1U/68jk2OnZXdfWyDJ3rvwA2qXArkUt+CEXeoGULseT5c59JoWym/Ym7G
-         pILXa2bL5UKnMoP3oPJIwS/NUgVDHUO/J8PIM=
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=gYZc+HQeXwt2AvdzV7lk8qTTd0a8TFLExx7nncRk9/w=;
+        b=jSaqd+DOoxLV02QMKjjDNr0yNLbgIQcpuGHGLSHINcYR2Z1tWtilcSnADcuus/EtEY
+         XBkX7m076UKX+TgtbaJFYNa8LVg7X77THRbrsv5hR0ob7OE7v4YaPXArKBMS+1eywSmS
+         bDO2Bo/C1iLFN+AoNZKgfGCy93grfKTPFLlauvXHmw+hJPhG7k0LQJZxJoa7N1Obj6Mo
+         tdmBvEwIhIykqNg0BaQVt8vgW5NQBNKAiuCY/qKGyBCO2SUDsOu8t46vvqDvXzQWFmPu
+         o3qsYqDVqpcWNals2KJkJYo/o+IAVX4ay8whyuHKbzQGsLLNr0+3BMXRyQZUDfkwNCPA
+         MR0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y9HmUaHsstDV8xrpCtkeo2/dz+ABYjh6/92j9s4IGTo=;
-        b=Iry+uWVHr73GDKL/3ulTrfySYG5uL8j55JcG+YvYc4xaHv6l/3eePwf5StlIcrfWtV
-         wanViDWlgWXo4ia7zhdUdmubeeNCMrE6BiY6nc8i64t7K2gSbxU+bavpre+PP7XA+ydl
-         IboKs18firhW/+a4axCaAKi37ZiNVRcla6qcGMpe/6IS4A6EwZgmnmz0GDrODOeWshu9
-         MD3ulpOLv67Bn24a9KkmHZHJcEULnwyCTIvfltQ+1TlSIjI+4pdOv0JvyXefqkOcylyD
-         6Ilm4oFaDkg8cAKxNECzRsTTCNQ8LIQ70DtWjwzXedsFssTgRknWW9FS7gQBAURJfqcg
-         QdfA==
-X-Gm-Message-State: ABuFfogf/HKSa/elX2mlqY/F9bUQ0N3WTw6lk0+6wuMjbox1bSDuoP/M
-        qfCM5ouGCJHe0y6qQfKXNl4nWw==
-X-Google-Smtp-Source: ACcGV63Jg7OfTy0yclb6InN00INGlJzcFysyFvxuonr9zuZX8e7ci5NTCAfrIrgIp40SG7JOzdhpQA==
-X-Received: by 2002:adf:f346:: with SMTP id e6-v6mr4676481wrp.49.1538335352782;
-        Sun, 30 Sep 2018 12:22:32 -0700 (PDT)
-Received: from [192.168.0.41] (210.183.88.92.rev.sfr.net. [92.88.183.210])
-        by smtp.googlemail.com with ESMTPSA id 62-v6sm16281198wra.48.2018.09.30.12.22.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 12:22:31 -0700 (PDT)
-Subject: Re: [PATCH V7 3/8] clocksource: add C-SKY SMP timer
-To:     Guo Ren <ren_guo@c-sky.com>, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, anurup.m@huawei.com,
-        Jonathan.Cameron@huawei.com, will.deacon@arm.com,
-        zhangshaokun@hisilicon.com, jhogan@kernel.org,
-        paul.burton@mips.com, peterz@infradead.org, f.fainelli@gmail.com,
-        arnd@arndb.de, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <9d68bdd87a8c91f4ee35ff4311e273ea81ab9eb4.1538323894.git.ren_guo@c-sky.com>
- <eee964dd57d12bc630280ab84235b5356799b1fb.1538323894.git.ren_guo@c-sky.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <a15b5e43-0721-8638-f5d2-8bb72df87f4d@linaro.org>
-Date:   Sun, 30 Sep 2018 21:22:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=gYZc+HQeXwt2AvdzV7lk8qTTd0a8TFLExx7nncRk9/w=;
+        b=KumdHbNRvZ8ww0Fb2EWesUHM3+06fEDpqrjSODDi4oewfikKGjSqKGL4eeef2nIAiN
+         +HYbcEl7F4fYfkOunQz0tFODXfxt/FASKnsQpk+YAc4OivvizNrmEI3F8RQo/mjSRujA
+         lBZVYVn24WohdsN0NROKwJrTIroHtUW0lGcO20gPt0k5x8wFwq9bf2YKu4PhaHpW5c2h
+         p80uJC6L7sVpiHSGZl3ODT2oI03PkZpvVRTiQX1Be6YcczyTglNqUDXIksXFpOZqgd1I
+         DikMh/Zwj0pezE6KCycJeV6b+NgZ5vK55g8/Q6fvCHZtnrM27/2w7rWaT7Pj3taVHZAH
+         PSIA==
+X-Gm-Message-State: ABuFfoj+aDxI/teZ3wQpLUp7DXUa8Qza6TJvjIYKNCxy/yR+CzBz9sWI
+        ASjPyZwF8r37OoLjj6pnAV7qjg==
+X-Google-Smtp-Source: ACcGV637Ctz3iArewfrSu231xqiHxdrSxYIQKjcVGeu11LpGeS/9CtIetf6VNRbA9u3cCa9C0f2BMQ==
+X-Received: by 2002:a63:4044:: with SMTP id n65-v6mr7139910pga.90.1538335582302;
+        Sun, 30 Sep 2018 12:26:22 -0700 (PDT)
+Received: from localhost (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
+        by smtp.gmail.com with ESMTPSA id 20-v6sm3074925pge.77.2018.09.30.12.26.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 30 Sep 2018 12:26:19 -0700 (PDT)
+Date:   Sun, 30 Sep 2018 12:23:43 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org
+Cc:     olof@lixom.net, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: SoC fixes
+Message-ID: <20180930192343.erige7yfbrnvil2m@localhost>
 MIME-Version: 1.0
-In-Reply-To: <eee964dd57d12bc630280ab84235b5356799b1fb.1538323894.git.ren_guo@c-sky.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/09/2018 18:18, Guo Ren wrote:
-> This timer is used by SMP system and use mfcr/mtcr instruction
-> to access the regs.
-> 
-> Changelog:
->  - Remove #define CPUHP_AP_CSKY_TIMER_STARTING
->  - Add CPUHP_AP_CSKY_TIMER_STARTING in cpuhotplug.h
->  - Support csky mp timer alpha version.
->  - Just use low-counter with 32bit width as clocksource.
->  - Coding convention with upstream feed-back.
-> 
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> ---
+Hi Linus, Greg,
 
+The following changes since commit a132bb90414bfad4f8ee23cb45fe6946a89b167d:
 
-Guo,
+  Merge tag 'sunxi-fixes-for-4.19' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into fixes (2018-09-08 10:04:37 -0700)
 
-what is the flow of your patches ?
+are available in the git repository at:
 
-You sent me a V8 with two patches and those timers which I commented.
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-fixes
 
-And now there is this V7 with the patches previously sent as V8 without
-the comments take into account.
+for you to fetch changes up to 082dc55e3c5e559b0e6855c0de23ebd674bcc91e:
 
-I'm a bit lost. Can you clarify ?
+  ARM: dts: stm32: update SPI6 dmas property on stm32mp157c (2018-09-25 20:39:06 -0700)
 
-Thanks
+----------------------------------------------------------------
+ARM: SoC fixes
 
-  -- Daniel
+A handful of fixes that have been coming in the last couple of weeks:
 
+ - Freescale fixes for on-chip accellerators
+ - A DT fix for stm32 to avoid fallback to non-DMA SPI mode
+ - Fixes for badly specified interrupts on BCM63xx SoCs
+ - Allwinner A64 HDMI was incorrectly specified as fully compatble with R40
+ - Drive strength fix for SAMA5D2 NAND pins on one board
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+----------------------------------------------------------------
+Alexandre Belloni (1):
+      soc: fsl: qbman: qman: avoid allocating from non existing gen_pool
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Amelie Delaunay (1):
+      ARM: dts: stm32: update SPI6 dmas property on stm32mp157c
 
+Antoine Tenart (1):
+      MAINTAINERS: update the Annapurna Labs maintainer email
+
+Florian Fainelli (1):
+      ARM: dts: BCM63xx: Fix incorrect interrupt specifiers
+
+Icenowy Zheng (1):
+      ARM: dts: sun8i: drop A64 HDMI PHY fallback compatible from R40 DT
+
+Ludovic Desroches (1):
+      ARM: dts: at91: sama5d2_ptc_ek: fix nand pinctrl
+
+Olof Johansson (3):
+      Merge tag 'sunxi-fixes-for-4.19-2' of https://git.kernel.org/.../sunxi/linux into fixes
+      Merge tag 'at91-4.19-fixes' of git://git.kernel.org/.../at91/linux into fixes
+      Merge tag 'arm-soc/for-4.19/devicetree-fixes' of https://github.com/Broadcom/stblinux into fixes
+
+Zhao Qiang (1):
+      soc: fsl: qe: Fix copy/paste bug in ucc_get_tdm_sync_shift()
+
+ MAINTAINERS                               |  2 +-
+ arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts |  2 ++
+ arch/arm/boot/dts/bcm63138.dtsi           | 14 ++++++++------
+ arch/arm/boot/dts/stm32mp157c.dtsi        |  4 ++--
+ arch/arm/boot/dts/sun8i-r40.dtsi          |  3 +--
+ drivers/soc/fsl/qbman/qman.c              |  3 +++
+ drivers/soc/fsl/qe/ucc.c                  |  2 +-
+ 7 files changed, 18 insertions(+), 12 deletions(-)
