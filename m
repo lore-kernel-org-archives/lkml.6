@@ -2,210 +2,109 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACC5C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 21:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB63AC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5EEB2075E
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 21:47:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LUaJrmNU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5EEB2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 87E762089D
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:04:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87E762089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbeJAEVq (ORCPT
+        id S1726427AbeJAEim (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 00:21:46 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:46087 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726204AbeJAEVp (ORCPT
+        Mon, 1 Oct 2018 00:38:42 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48558 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbeJAEim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 00:21:45 -0400
-Received: by mail-ot1-f67.google.com with SMTP id q4-v6so11059211otf.13
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 14:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4eLJSmpVq05G3oAfZ2oUeKHayRkNOjswTF65wFdXrz8=;
-        b=LUaJrmNUPcMw54nzeU4nude71Q03D/rn5qmEV98kbaFygiopTalR8aPGlcMsw2K5Di
-         DnRVek5GbNLmuCrH2M9ugJqh/m9PPOocuY8SmzNT7Ma31gS2Z3B/3CMtoLcz7+q27HES
-         4YE8J3jVFjwfPUBuAI4LgLY94zdN6lGRDNgv/6tyIwmPh6DbwX3IP4NPV1IRdCo+BqDG
-         /3wpl/LGKX2VJGHAPlNY81WZ5r3AQMZFrCMS0EMJBndzZ5MscFGAPopNV5Tc+ccvp9fC
-         bqbMa75O8NyWRwpICT9IQ9vsNGAQgDTQ2CCMys48VUt0/gCo5fUvmYUjiAakAq+XmSHh
-         2t0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4eLJSmpVq05G3oAfZ2oUeKHayRkNOjswTF65wFdXrz8=;
-        b=iLbN2WVKjeUB51t3BulwrqimM7U15tMscEZ4cl1gNPhm4hjD9wyTu1Qle3FxPzPNnO
-         OYOYCMef87qseaiTlL68UGexmJVVE8peHCWngX9wMe1FvlYVaZJYCOaBZhS1cUrRyzIl
-         sQPzQLHv54gfMEOFw5BaMM5C9WxSCEhOhgpWd+S6lGgsdlJI8mrMzuulED3BjkXlmVvR
-         JQrPCAPzO4TfmGq4gHyxAvAWP9OfQ4k6HWiFP+j9PTJy4ipY2ddJPW1ErzHssz+K4dyv
-         b6oQCcdB9ZyMI6iJEL4HEWWsVuNcmfHMkhoVa7GATBx0x/aYvQz1sRoE9HU5IC3h3aNR
-         p2fw==
-X-Gm-Message-State: ABuFfogxlr5Q9/Nk3/dBBbTF/IcAE7/YmQ2Rw4xlRaXXt81e+FyrHgwv
-        JAMn2Xpl+dLGxWp4dBKIDV1EVzArtjf4Is20QdgIwQ==
-X-Google-Smtp-Source: ACcGV634jHfR/pLadNewLp2nohsUxyNwRtXsJcZ1UYDiqSqTH3cfOHGkR/21gtlNNVXffqQCCpwJ4zQ+xUfLlUZ7w40=
-X-Received: by 2002:a9d:4e94:: with SMTP id v20-v6mr5136924otk.255.1538344027382;
- Sun, 30 Sep 2018 14:47:07 -0700 (PDT)
+        Mon, 1 Oct 2018 00:38:42 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id DBDF6260A8A
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Milo Kim <milo.kim@ti.com>,
+        Andreas Dannenberg <dannenberg@ti.com>,
+        Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Liam Breck <kernel@networkimprov.net>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCHv1 00/14] power: supply: Fix custom sysfs attribute registration
+Date:   Mon,  1 Oct 2018 00:03:35 +0200
+Message-Id: <20180930220349.10515-1-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-References: <20180929103453.12025-1-cyphar@cyphar.com> <39d64180-73d5-6f27-e455-956143a5b5d3@digikod.net>
-In-Reply-To: <39d64180-73d5-6f27-e455-956143a5b5d3@digikod.net>
-From:   Jann Horn <jannh@google.com>
-Date:   Sun, 30 Sep 2018 23:46:41 +0200
-Message-ID: <CAG48ez1CUHTKrpbwJxXkYoUKm5eYV15LuRRO+dXveo=MQvjJkA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] namei: implement various scoping AT_* flags
-To:     mic@digikod.net
-Cc:     cyphar@cyphar.com, jlayton@kernel.org,
-        Bruce Fields <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 10:39 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
- wrote:
-> As a side note, I'm still working on Landlock which can achieve the same
-> goal but in a more flexible and dynamic way: https://landlock.io
+Hi,
 
-Isn't Landlock mostly intended for userspace that wants to impose a
-custom Mandatory Access Control policy on itself, restricting the
-whole process?
+Udev may not detect sysfs attributes, that have been added
+after the device has been created. Code doing that is racy [0].
+The power-supply class properly registers its attributes
+when the device is created, but some drivers add additional
+custom attributes in a racy way.
 
-As far as I can tell, a major usecase for AT_BENEATH are privileged
-processes that do not want to restrict all filesystem operations they
-perform, but want to sometimes impose limits on filesystem traversal
-for the duration of a single system call. For example, a process might
-want to first open a file from an untrusted filesystem area with
-AT_BENEATH, and afterwards open a configuration file without
-AT_BENEATH.
+The first patch from this series adds native support for custom
+sysfs attributes to the power-supply subsystem. This feature
+allows cleaner code and avoids a race condition preventing udev
+from noticing the custom properties.
 
-How would you do this in Landlock? Use a BPF map to store per-thread
-filesystem restrictions, and then do bpf() calls before and after
-every restricted filesystem access to set and unset the policy for the
-current syscall?
+The following patches replace all instances of sysfs_create_*
+in drivers/power/supply to use the new feature and a couple
+of small cleanups.
 
-> On 9/29/18 12:34, Aleksa Sarai wrote:
-> > The need for some sort of control over VFS's path resolution (to avoid
-> > malicious paths resulting in inadvertent breakouts) has been a very
-> > long-standing desire of many userspace applications. This patchset is a
-> > revival of Al Viro's old AT_NO_JUMPS[1] patchset with a few additions.
-> >
-> > The most obvious change is that AT_NO_JUMPS has been split as dicussed
-> > in the original thread, along with a further split of AT_NO_PROCLINKS
-> > which means that each individual property of AT_NO_JUMPS is now a
-> > separate flag:
-> >
-> >   * Path-based escapes from the starting-point using "/" or ".." are
-> >     blocked by AT_BENEATH.
-> >   * Mountpoint crossings are blocked by AT_XDEV.
-> >   * /proc/$pid/fd/$fd resolution is blocked by AT_NO_PROCLINKS (more
-> >       correctly it actually blocks any user of nd_jump_link() because i=
-t
-> >       allows out-of-VFS path resolution manipulation).
-> >
-> > AT_NO_JUMPS is now effectively (AT_BENEATH|AT_XDEV|AT_NO_PROCLINKS). At
-> > Linus' suggestion in the original thread, I've also implemented
-> > AT_NO_SYMLINKS which just denies _all_ symlink resolution (including
-> > "proclink" resolution).
-> >
-> > An additional improvement was made to AT_XDEV. The original AT_NO_JUMPS
-> > path didn't consider "/tmp/.." as a mountpoint crossing -- this patch
-> > blocks this as well (feel free to ask me to remove it if you feel this
-> > is not sane).
-> >
-> > Currently I've only enabled these for openat(2) and the stat(2) family.
-> > I would hope we could enable it for basically every *at(2) syscall --
-> > but many of them appear to not have a @flags argument and thus we'll
-> > need to add several new syscalls to do this. I'm more than happy to sen=
-d
-> > those patches, but I'd prefer to know that this preliminary work is
-> > acceptable before doing a bunch of copy-paste to add new sets of *at(2)
-> > syscalls.
-> >
-> > One additional feature I've implemented is AT_THIS_ROOT (I imagine this
-> > is probably going to be more contentious than the refresh of
-> > AT_NO_JUMPS, so I've included it in a separate patch). The patch itself
-> > describes my reasoning, but the shortened version of the premise is tha=
-t
-> > continer runtimes need to have a way to resolve paths within a
-> > potentially malicious rootfs. Container runtimes currently do this in
-> > userspace[2] which has implicit race conditions that are not resolvable
-> > in userspace (or use fork+exec+chroot and SCM_RIGHTS passing which is
-> > inefficient). AT_THIS_ROOT allows for per-call chroot-like semantics fo=
-r
-> > path resolution, which would be invaluable for us -- and the
-> > implementation is basically identical to AT_BENEATH (except that we
-> > don't return errors when someone actually hits the root).
-> >
-> > I've added some selftests for this, but it's not clear to me whether
-> > they should live here or in xfstests (as far as I can tell there are no
-> > other VFS tests in selftests, while there are some tests that look like
-> > generic VFS tests in xfstests). If you'd prefer them to be included in
-> > xfstests, let me know.
-> >
-> > [1]: https://lore.kernel.org/patchwork/patch/784221/
-> > [2]: https://github.com/cyphar/filepath-securejoin
-> >
-> > Aleksa Sarai (3):
-> >   namei: implement O_BENEATH-style AT_* flags
-> >   namei: implement AT_THIS_ROOT chroot-like path resolution
-> >   selftests: vfs: add AT_* path resolution tests
-> >
-> >  fs/fcntl.c                                    |   2 +-
-> >  fs/namei.c                                    | 158 ++++++++++++------
-> >  fs/open.c                                     |  10 ++
-> >  fs/stat.c                                     |  15 +-
-> >  include/linux/fcntl.h                         |   3 +-
-> >  include/linux/namei.h                         |   8 +
-> >  include/uapi/asm-generic/fcntl.h              |  20 +++
-> >  include/uapi/linux/fcntl.h                    |  10 ++
-> >  tools/testing/selftests/Makefile              |   1 +
-> >  tools/testing/selftests/vfs/.gitignore        |   1 +
-> >  tools/testing/selftests/vfs/Makefile          |  13 ++
-> >  tools/testing/selftests/vfs/at_flags.h        |  40 +++++
-> >  tools/testing/selftests/vfs/common.sh         |  37 ++++
-> >  .../selftests/vfs/tests/0001_at_beneath.sh    |  72 ++++++++
-> >  .../selftests/vfs/tests/0002_at_xdev.sh       |  54 ++++++
-> >  .../vfs/tests/0003_at_no_proclinks.sh         |  50 ++++++
-> >  .../vfs/tests/0004_at_no_symlinks.sh          |  49 ++++++
-> >  .../selftests/vfs/tests/0005_at_this_root.sh  |  66 ++++++++
-> >  tools/testing/selftests/vfs/vfs_helper.c      | 154 +++++++++++++++++
-> >  19 files changed, 707 insertions(+), 56 deletions(-)
-> >  create mode 100644 tools/testing/selftests/vfs/.gitignore
-> >  create mode 100644 tools/testing/selftests/vfs/Makefile
-> >  create mode 100644 tools/testing/selftests/vfs/at_flags.h
-> >  create mode 100644 tools/testing/selftests/vfs/common.sh
-> >  create mode 100755 tools/testing/selftests/vfs/tests/0001_at_beneath.s=
-h
-> >  create mode 100755 tools/testing/selftests/vfs/tests/0002_at_xdev.sh
-> >  create mode 100755 tools/testing/selftests/vfs/tests/0003_at_no_procli=
-nks.sh
-> >  create mode 100755 tools/testing/selftests/vfs/tests/0004_at_no_symlin=
-ks.sh
-> >  create mode 100755 tools/testing/selftests/vfs/tests/0005_at_this_root=
-.sh
-> >  create mode 100644 tools/testing/selftests/vfs/vfs_helper.c
-> >
->
+TL;DR: This patchsets replaces all sysfs_create_* in power-supply.
+
+[0] http://kroah.com/log/blog/2013/06/26/how-to-create-a-sysfs-file-correctly/
+
+-- Sebastian
+
+Sebastian Reichel (14):
+  power: supply: core: add support for custom sysfs attributes
+  power: supply: bq2415x: fix race-condition in sysfs registration
+  power: supply: ds2780: fix race-condition in sysfs registration
+  power: supply: ds2781: fix race-condition in sysfs registration
+  power: supply: lp8788: fix race-condition in sysfs registration
+  power: supply: bq24190_charger: fix race-condition in sysfs
+    registration
+  power: supply: bq24257: fix race-condition in sysfs registration
+  power: supply: charger-manager: simplify generation of sysfs attribute
+    group name
+  power: supply: charger-manager: fix race-condition in sysfs
+    registration
+  power: supply: pcf50633: fix race-condition in sysfs registration
+  power: supply: ds2780: fix race-condition in bin attribute
+    registration
+  power: supply: ds2781: fix race-condition in bin attribute
+    registration
+  power: supply: ds2780: switch to devm_power_supply_register
+  power: supply: ds2781: switch to devm_power_supply_register
+
+ drivers/power/supply/bq2415x_charger.c   | 119 ++++++++++-------------
+ drivers/power/supply/bq24190_charger.c   |  43 ++------
+ drivers/power/supply/bq24257_charger.c   |  15 +--
+ drivers/power/supply/charger-manager.c   |  62 +++++-------
+ drivers/power/supply/ds2780_battery.c    |  87 +++++------------
+ drivers/power/supply/ds2781_battery.c    |  82 +++++-----------
+ drivers/power/supply/lp8788-charger.c    |  62 +++++-------
+ drivers/power/supply/pcf50633-charger.c  |  17 ++--
+ drivers/power/supply/power_supply_core.c |   1 +
+ include/linux/power/charger-manager.h    |   3 +-
+ include/linux/power_supply.h             |   3 +
+ 11 files changed, 172 insertions(+), 322 deletions(-)
+
+-- 
+2.19.0
+
