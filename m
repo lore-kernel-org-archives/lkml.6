@@ -2,125 +2,162 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74647C004D2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBECC64EB0
 	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 20:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27D8C20685
+	by mail.kernel.org (Postfix) with ESMTP id 657172089D
 	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 20:55:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LEqEC48X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27D8C20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/J0FX+U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 657172089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbeJAD3g (ORCPT
+        id S1728682AbeJAD3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 23:29:36 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51792 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728553AbeJAD3f (ORCPT
+        Sun, 30 Sep 2018 23:29:51 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34604 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728553AbeJAD3v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 23:29:35 -0400
-Received: by mail-wm1-f68.google.com with SMTP id y25-v6so6701793wmi.1;
-        Sun, 30 Sep 2018 13:55:05 -0700 (PDT)
+        Sun, 30 Sep 2018 23:29:51 -0400
+Received: by mail-pg1-f195.google.com with SMTP id g12-v6so2298691pgs.1;
+        Sun, 30 Sep 2018 13:55:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=U2D71XIIQtLKUEAvdLd4evIDaeA42zh5dCO98SLM2nM=;
-        b=LEqEC48XbjyUjlwKxcNpn6ZN5dr8eKJejtQ3eRySLCP+0AfFFilxQHGuDcNpkJ8pCV
-         fLV+dfw5mgVdXJKjjPzYmqERbPOXVSlJS8lcc9XNqp08D6lES1oKYFpnmlJTsL47rECO
-         eGzzLXqhUWRgnigzx4CW4E3MTd5NvT94TNF2gg2gCK7zLKAoggWivdgJAlOzMfpFXTNd
-         Iqym7/wvxdgVQUQSFru75JGem/b85qbIBQ3wfpTclq3vrLQNosS3oTR4m2ebYD5Mtkhe
-         +L+ssMDyY1DSLAh5GOV2sKtb3P0Mk+sAkNzgY3QZXxaxVXDF+dN1vW+XhAAiEiZbXyw1
-         OXgg==
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rDu36eOsDS1MNpXaGfplBUdNu4gp6zaz+E8K9+WDZFg=;
+        b=E/J0FX+U2cutFiRwbl3wEu8MKDT+gcGyKTOUS6oW4Imco6q+mydpOEh5AItdIQVkDz
+         inmilyI2T2ROe7G8WlqaDl8s7hdZh/u/vAc31Ol4mNw56L/QdcUrK7a+RbYsiKpIc8lV
+         /B5Wmr2SFYr+qYOshAEMp53aClVCLgXJ2Ukz/53YweFYGRsawsr9RVB2ve+hcSiyPzrw
+         LGEFm8tynDFiUEeZ48A889lQufu7pKo2gaIScvKYmIO02IxZaubAEWs3bNvXgF/GnrXJ
+         BpRCYoT2mHYkSMWzEpE4cywThY69K4hoN2T/nA+TpgPx0hmhzct8tZhlJ3WUgQSHUSma
+         ZqqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=U2D71XIIQtLKUEAvdLd4evIDaeA42zh5dCO98SLM2nM=;
-        b=jw/k358KMH+Q1wF12ZSbX8SFB8nIHmBAC2k369c7aBYco6RImudl7G+FSLW6sI3I/I
-         mG120je/ylwQFGnw1v+ehAdVcWwmWFspF4La6SGoR/EQqGHvkSqyLYhlIro8P2/iOSYI
-         VHDPkA43mIO9y4ChVs0u5tKTK1CXprVk4aqVxlIqMjJxO3Uk7ChIlj31J6XdJCWqGt6h
-         iJ9B4EIc16BNA1uuzN4+u/JJtcP7Zdnj9LUn7sDDXT5WBwoNptikijnVg6CQbfAW50b1
-         zxzGYnYqSo/EA/S5dE5JbdFDH5zCO2YwaW0BbEabHCKaolGjJg4Yrgyt2ii22uUpGALA
-         QJQQ==
-X-Gm-Message-State: ABuFfohzQmQtxXyRU/UuFQLGFH8y3ONDVwuFg8wu2lLTmKp3Mt2ghLjW
-        8EdhjmhmvfBK8YxF6UoylHs=
-X-Google-Smtp-Source: ACcGV63oUGWnO8Wsw7fq1KY87svGX++R3gisO5QM+vlw+ZXrXZO3sdBaaEjGFDhsJTqXsLH5IGZGtQ==
-X-Received: by 2002:a1c:c243:: with SMTP id s64-v6mr7063894wmf.36.1538340904016;
-        Sun, 30 Sep 2018 13:55:04 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id a105-v6sm29779858wrc.23.2018.09.30.13.55.03
+        bh=rDu36eOsDS1MNpXaGfplBUdNu4gp6zaz+E8K9+WDZFg=;
+        b=FQJ9KEqJK74KJFTRqML2ufgm+AIAlhTrr4X1Yk9JYKwkcMXtJoFQ4be771qhbw7ZjB
+         JO9fds46oH8qWbuv2n8SdAcYzE85XjCLelP/F0NHcVDgpnG7zWKcVOoHGODWLnqEite3
+         s57jmRzTpTWETS+jYSci+KZJgg6UtOktnGxm94jF+S/M4KQ/J9kk8m6YjMVQ4Z/XhBjO
+         XblbBMDwlIG01kiSVbI818mWHYdbzRck+KK1dfzS+G4QB9rjFnXHWV2Bay4Bo1Vjk5Ps
+         HIRchZrd6yYMfYfPEwQ2U9H9G/TiG1ZxbsyHHYL2npCnR57XmgOc4zrY03PWpbbIfdPh
+         SUVg==
+X-Gm-Message-State: ABuFfohCnVCvI7x9BursYCIxmmyE5P42WxA18uqJF/GFsZmPqnd9G9nA
+        2SpqGtYuYwZQrJgCQXMCuWTV7kId
+X-Google-Smtp-Source: ACcGV60iaFw66uDHEUZ/+NOk75Ig9X5+ZQFqBCjYTErVmAO5ICp4Eo1qLe63xlXoyV3LMy/oMnzsSQ==
+X-Received: by 2002:a17:902:722:: with SMTP id 31-v6mr8536744pli.207.1538340920725;
+        Sun, 30 Sep 2018 13:55:20 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id r81-v6sm2312717pfa.110.2018.09.30.13.55.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 13:55:03 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Boaz Harrosh <ooo@electrozaur.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] libosd: Remove ignored __weak attribute
-Date:   Sun, 30 Sep 2018 13:54:48 -0700
-Message-Id: <20180930205448.26205-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Sun, 30 Sep 2018 13:55:19 -0700 (PDT)
+Subject: Re: [PATCH v8 2/2] hwmon: ina3221: Read channel input source info
+ from DT
+To:     Nicolin Chen <nicoleotsuka@gmail.com>, jdelvare@suse.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, corbet@lwn.net
+Cc:     afd@ti.com, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20180929013937.29289-1-nicoleotsuka@gmail.com>
+ <20180929013937.29289-3-nicoleotsuka@gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <ab3a36dc-fa5a-4669-2f99-aa55a4083db2@roeck-us.net>
+Date:   Sun, 30 Sep 2018 13:55:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180929013937.29289-3-nicoleotsuka@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns that the __weak attribute is going to be ignored on
-osd_root_object because it's not in the correct location (needs to be
-after the type).
+Hi Nicolin,
 
-./include/scsi/osd_types.h:31:21: warning: 'weak' attribute only applies
-to variables, functions, and classes [-Wignored-attributes]
-static const struct __weak osd_obj_id osd_root_object = {0, 0};
-                    ^
+On 09/28/2018 06:39 PM, Nicolin Chen wrote:
+> An ina3221 chip has three input ports. Each port is used
+> to measure the voltage and current of its input source.
+> 
+> The DT binding now has defined bindings for their input
+> sources, so the driver should read these information and
+> handle accordingly.
+> 
+> This patch adds a new structure of input source specific
+> information including input source label, shunt resistor
+> value and its connection status. It exposes these labels
+> via in[123]_label sysfs nodes upon available, and also
+> disables those channels where there are no input source
+> being connected. Meanwhile, it also adds in[123]_enable
+> sysfs nodes for users to get control of three channels,
+> and returns -ENODATA code for any sensor read according
+> to hwmon ABI.
+> 
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 
-Turns out that GCC ignores the attribute too albeit silently because
-moving the attribute after either osd_obj_id or osd_root_object like
-all other uses of __weak on variables in the kernel causes a build
-error on both GCC and Clang because static variables cannot be weak
-since weak definitions rely on not having internal linkage:
+[ ... ]
 
-./include/scsi/osd_types.h:31:32: error: weak declaration cannot have
-internal linkage
-static const struct osd_obj_id __weak osd_root_object = {0, 0};
-                               ^
+> +
+> +static ssize_t ina3221_set_enable(struct device *dev,
+> +				  struct device_attribute *attr,
+> +				  const char *buf, size_t count)
+> +{
+> +	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
+> +	struct ina3221_data *ina = dev_get_drvdata(dev);
+> +	unsigned int channel = sd_attr->index;
+> +	u16 config = ina->reg_config;
+> +	bool enable;
+> +	int ret;
+> +
+> +	ret = kstrtobool(buf, &enable);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (enable)
+> +		config |= INA3221_CONFIG_CHx_EN(channel);
+> +	else
+> +		config &= ~INA3221_CONFIG_CHx_EN(channel);
+> +
+> +	ret = regmap_write(ina->regmap, INA3221_CONFIG, config);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ina->reg_config = config;
+> +
 
-Just remove the attribute because it hasn't been correct since the
-initial addition of this file in commit de258bf5e638 ("[SCSI] libosd:
-OSDv1 Headers").
+Sorry it too me so long to realize this: The code above is racy.
+There could be multiple threads enabling and disabling a channel.
+Without a mutex, there is no guarantee that the final value of
+reg_config matches the value written into the chip.
 
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- include/scsi/osd_types.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You'll have to introduce a mutex and implement something like
 
-diff --git a/include/scsi/osd_types.h b/include/scsi/osd_types.h
-index 48e8a165e136..6b6fdcafa6cc 100644
---- a/include/scsi/osd_types.h
-+++ b/include/scsi/osd_types.h
-@@ -28,7 +28,7 @@ struct osd_obj_id {
- 	osd_id id;
- };
- 
--static const struct __weak osd_obj_id osd_root_object = {0, 0};
-+static const struct osd_obj_id osd_root_object = {0, 0};
- 
- struct osd_attr {
- 	u32 attr_page;
--- 
-2.19.0
+	...
+	ret = kstrtobool(buf, &enable);
+	if (ret)
+		return ret;
 
+	mutex_lock(&ina->update_lock);
+	config = ina->reg_config;
+	...
+	ret = regmap_write(ina->regmap, INA3221_CONFIG, config);
+	if (ret) {
+		count = ret;
+		goto error;
+	}
+	ina->reg_config = config;
+error:
+	mutex_unlock(&ina->update_lock);
+	return count;
+
+Guenter
