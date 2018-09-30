@@ -2,46 +2,47 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CAEFC004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3F6C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01254206B7
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:39:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9554D206B7
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 18:43:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="hWRe4hNz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01254206B7
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="STuGRrJ6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9554D206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbeJABOD (ORCPT
+        id S1728598AbeJABR4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 21:14:03 -0400
-Received: from cock.li ([185.100.85.212]:53896 "EHLO cock.li"
+        Sun, 30 Sep 2018 21:17:56 -0400
+Received: from cock.li ([185.100.85.212]:56550 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728528AbeJABOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 21:14:03 -0400
+        id S1728427AbeJABRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Sep 2018 21:17:55 -0400
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1538332793; bh=ev4ZchU/AR3bUFqrambRt2HKZ1IAKKEyiWaI1xiVbjw=;
+        t=1538333024; bh=1FVktq3M71bvJ8fdn30853yR/JgVbp6s0GLb3vw03to=;
         h=Date:From:To:Subject:From;
-        b=hWRe4hNzT4RXxPS1OsyaxlWtjFWScIiIx/VvzlFJj9DKRBF2LwJyTUQzkL2DCEG7R
-         Wt6V4LkO2eHZ2sVA7x+y0Oc1KGuUKdq6mrWY2LY9UTnSdx59sxRMvLjEv0lu4DpHoX
-         /nWiJBOWggmNDyt2N3GJAxE6na6W9aKfhOmvn5GdEjFoCB6P350cgz0OOWHw5qtEKi
-         OQtlF9fufHx/7AUQ8U1OQktfqNGTi5KT8NxiHE+/PU7o4AngaxvKALEolR1y/2/r1N
-         cNj2RRljsSg2a09mKtAME/kO+gkXUs2k2ztnh9JU7OD+rlZOMKJ80Kx2jnDX1LJpoI
-         oIh1m5sqBC62Q==
+        b=STuGRrJ6gXH5tJylLlpwHu+UZrH/RpvBmxAFm7JsDnyycapgSkv4IGX/j3X9EJvex
+         q45gcOFBqUuVZDufXKqlHSv5XaNRZfwTPjQDEdu9Ag3Zfr88Gpu9+lX/1anj8T26yk
+         nPKH2L+fy8x8tXGikAgT2prKT1f3QyOIF56Dpb7CUPSzsS3iUCWNRVGMSvq4k0hFlx
+         FQ8n+/w90DPJfnyrFTLXgKhdPPFL1lIny3s7kC5U6ZOwkFl9ohhVy3PoTVsVNGELay
+         SBV2+IoKYZF4CBc+nKJP7BNhF6zV1ZPKtOQd3sOWqm57Pq5CTcDLRefczpguZ2kuVp
+         /lkIHopLKiIKw==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Sun, 30 Sep 2018 18:39:53 +0000
+Date:   Sun, 30 Sep 2018 18:43:44 +0000
 From:   freedomfromruin@redchan.it
 To:     linux-kernel@vger.kernel.org
-Subject: Licenses and revocability, in a paragraph or less. (for the lay-man)
-Message-ID: <473dcf0918da3b4beaaa1fd0576c06ba@redchan.it>
+Subject: "You are easily replacable" Bruce Peren's message to past
+ contributors.
+Message-ID: <170cdf1c8c5a87ba667067cf1bf45eff@redchan.it>
 X-Sender: freedomfromruin@redchan.it
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,22 +50,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As has been stated in easily accessible terms elsewhere:
-"Most courts hold that simple, non-exclusive licenses with unspecified 
-durations that are silent on revocability are revocable at will. This 
-means that the licensor may terminate the license at any time, with or 
-without cause." +
+"Any actual kernel developers who leave will be replaced by one of the 
+other 4000 active this year. If they have been vociferous about their 
+rights to entirely unlimited conduct (and all of the side-issues that 
+seem to come with that) it may be that the folks on the kernel mailing 
+list are already tired of them and won't miss them."
 
-Version 2 of the GPL specifies no duration, nor does it declare that it 
-is non-revocable by the grantor.
-
-(Also note: A perpetual license may violate the rule against 
-perpetuities in various jurisdictions where it is applied not only to 
-real property but additionally to personal property (and the like), 
-which is why the GPL-3's term of duration is set as the duration of 
-copyright on the program (and not "forever"))
-
-+[https://www.sidley.com/en/insights/newsupdates/2013/02/the-terms-revocable-and-irrevocable-in-license-agreements-tips-and-pitfalls]
-
-
-
+https://news.slashdot.org/comments.pl?sid=12682608&cid=57394936
