@@ -7,69 +7,69 @@ X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D09EDC004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 10:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC5EC004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 10:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E36E2075E
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 10:29:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1B382075E
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 10:30:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnDN5ipG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E36E2075E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ml+rpY2f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1B382075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbeI3RBp (ORCPT
+        id S1728277AbeI3RDO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 13:01:45 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:34848 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbeI3RBp (ORCPT
+        Sun, 30 Sep 2018 13:03:14 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36432 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbeI3RDO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 13:01:45 -0400
-Received: by mail-ed1-f67.google.com with SMTP id y19-v6so543348edd.2;
-        Sun, 30 Sep 2018 03:29:17 -0700 (PDT)
+        Sun, 30 Sep 2018 13:03:14 -0400
+Received: by mail-ed1-f68.google.com with SMTP id f4-v6so11671164edq.3;
+        Sun, 30 Sep 2018 03:30:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
          :user-agent:mime-version;
-        bh=L03/iIZ5wIox/kok3JI+Cru7RDwaRW1PuAdZk4oPZ0I=;
-        b=RnDN5ipGsH+rFhRK2GSoA4o/JRBrKZ0L1BzyBLQS3KXgVINC1k6zsX5EEHkaQxhPOf
-         qsCodg6q60xeQwBumOUSq0zjeQSFObIb7D+ZZThTFjKnLEu3TNvIgDFcCpNxluPRGDU/
-         M4W0CTgYn30ZDMJlTfqNMXoJ3ddZkiR3uxt5BvDLSfmSD9UbC1zV9Ot0Ykgmxsed2tD6
-         FnCKocEnkUu1CihXhAu+K62uP6rb0ZgibVIAd0PqIFQg75r+uEbNdlI9JDBsym89g1a6
-         NhwM0/Uugx7NEw6x8JpTzkcRRhNHohKUlK7mvr0c4epYMLfWzSmhtSuC2XVpbKx8Bg6q
-         KAVw==
+        bh=CtDIY6VHEmx10DsPywWZfJFRj2Hwb5YG9AvD3LNPVTM=;
+        b=ml+rpY2fKttgGtXoYjd1FlzrxIr1zU9MjWZ11JDoCefq3V9vWYP2295edlH0Gzh7lJ
+         RV3kV7eDXD60OAJXjPv9eOBjnfCPxdO4gJ3uG8AvybOfcQ/wMYLEUHeT8I/8DMDMAZlh
+         +7AE3Q9CR/2dKln+bHCZOgB7OBsKKwJXb8tTdhwb1Thg/4hxrMVVTXI9m9BdotAHKaxO
+         x5DggK0aHzl7PewHU8X+N4HDp6vFYmm5OUs6xDzsE6EN6KJYfeizsh1i3OjgK3o8AOFM
+         nALiFPzFa9IO24h/hTZZWxL8KvquLnpoueXcxQi8zhG64tMDADHz/nl2dMBDCOauU+41
+         hHUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:references:date
          :in-reply-to:message-id:user-agent:mime-version;
-        bh=L03/iIZ5wIox/kok3JI+Cru7RDwaRW1PuAdZk4oPZ0I=;
-        b=uA3eT54bsYubGksgMrt+pgNVugZVm8kVswgLbjTaMj+HhyRl0CKvPIg+IZ96z0Cdjp
-         5foUxrIFAB0QqfEMuEsBQMUOUC3I6ayBN3yaaidfL+Zz0eDgo+OgoImPUqG5QlCgfKGL
-         Fz9s3e/4oOJln2Mv1ax3EAC4aDTYYmEzRQ82Shvugsuoxh1VpsYzOHYKKiRkqcwnkKgn
-         8oUpAHr/oF4xeE79/8VqQy1iVRaCdTN/MLT+exFUISyaROIYUNe5eNRQdyxvpSx0deIX
-         vdsVs7XLoM0CXwr/BegrzJkOhf46yxiLxzDFXf0ptPC9xo+jVN6QSbOYqz98Wyzma5QZ
-         61BA==
-X-Gm-Message-State: ABuFfohTou1XvX4ZpxvMQ1/d2ovunFeHb+XOICwOgHeToXjj75IxP/91
-        uKSuZIb46YSdo2ofuT080NjXbcUF
-X-Google-Smtp-Source: ACcGV60wOAErxfXCHbMegUaijkRIM1SpvO6z2eRI3xhO717VxpfF33dppX5JkMmGCNZNZQ7DV/cHDQ==
-X-Received: by 2002:a50:eb96:: with SMTP id y22-v6mr12116309edr.38.1538303356623;
-        Sun, 30 Sep 2018 03:29:16 -0700 (PDT)
+        bh=CtDIY6VHEmx10DsPywWZfJFRj2Hwb5YG9AvD3LNPVTM=;
+        b=fVZgfqUHzfUTAXLfyo6VnfipM8aV+jLkD6gcLhdjlhXNe5hBxf9d2TRQiu/dbRA/xM
+         6TT8awLgy8kY8OAq8rd+P+8vDBwIBGHlyPzw8eaAV+eJTG1WsYV2nVeLXewdaOmR5Vts
+         4AyTEWsrK3R/8ApWmEKQIHUo6y+VUFQE+50Wi56Wv+LuaXZiQq9uVCOg0vSAgJkCCbF5
+         KXjdR4Lo1OBAlcecRzbHZDBlJm81J5E44L59Q3Kn7tjqGDbUy8YRFtyPXrL0c68GdFbP
+         GOJhya/yJ6+LQXAZdJnyd1NWOUeIexwQ9O+ZJZU0ZFJ+jC/4fkvgXICDQC2eqsmi8f9Z
+         No1w==
+X-Gm-Message-State: ABuFfog6jMd3hf9czu6pPX4qL8/YEJec5E5fGtNA7E+m/iA/Z9mU3MNX
+        cJutF8rLe/4Hrr9PN5aP0xU=
+X-Google-Smtp-Source: ACcGV63HcorTea4F+VnHHayeq55jEnw8SBg/eAwL4eQyIL+FOkNmlfb1rUMVAxiR8HQWeLc1xhi+yA==
+X-Received: by 2002:a50:ac2d:: with SMTP id v42-v6mr12468934edc.119.1538303445374;
+        Sun, 30 Sep 2018 03:30:45 -0700 (PDT)
 Received: from localhost (87-49-147-65-mobile.dk.customer.tdc.net. [87.49.147.65])
-        by smtp.gmail.com with ESMTPSA id n25-v6sm3341057edq.27.2018.09.30.03.29.15
+        by smtp.gmail.com with ESMTPSA id i22-v6sm1542889ejz.6.2018.09.30.03.30.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 30 Sep 2018 03:29:15 -0700 (PDT)
+        Sun, 30 Sep 2018 03:30:44 -0700 (PDT)
 From:   Esben Haabendal <esben.haabendal@gmail.com>
 To:     Chuanhua Han <chuanhua.han@nxp.com>
 Cc:     broonie@kernel.org, linux-spi@vger.kernel.org,
         linux-kernel@vger.kernel.org, boris.brezillon@bootlin.com
-Subject: Re: [PATCH v2 2/4] spi: spi-fsl-dspi: Fix delete the processing of undefined bitmask for rxdata
+Subject: Re: [PATCH v2 3/4] spi: spi-fsl-dspi: Fix cmd_fifo is written before tx_fifo
 References: <20180930092535.24544-1-chuanhua.han@nxp.com>
-        <20180930092535.24544-2-chuanhua.han@nxp.com>
-Date:   Sun, 30 Sep 2018 12:29:14 +0200
-In-Reply-To: <20180930092535.24544-2-chuanhua.han@nxp.com> (Chuanhua Han's
-        message of "Sun, 30 Sep 2018 17:25:33 +0800")
-Message-ID: <87ftxr6zyd.fsf@gmail.com>
+        <20180930092535.24544-3-chuanhua.han@nxp.com>
+Date:   Sun, 30 Sep 2018 12:30:43 +0200
+In-Reply-To: <20180930092535.24544-3-chuanhua.han@nxp.com> (Chuanhua Han's
+        message of "Sun, 30 Sep 2018 17:25:34 +0800")
+Message-ID: <87bm8f6zvw.fsf@gmail.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -80,11 +80,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Chuanhua Han <chuanhua.han@nxp.com> writes:
 
-> This patch fixes the problem of rxdata being equal to 0 during the XSPI
+> This patch fixes the problem of invalid data writing during the XSPI
 > mode transfer of the dspi controller.
-> In XSPI mode, If it is not deleted, the value of rxdata will be equal
-> to 0, and the data received will not be received correctly, causing the
-> receiving transfer of the spi to fail.
+> In XSPI mode,When I executed TX FIFO first and then CMD FIFO for XSPI
+> transmission, I found that SPIx_SR[TFIWF]=1(Invalid Data present in TX
+> FIFO since CMD FIFO is empty).
+> This is the time when no data can be read or written (all the data
+> obtained is equal to 0).
 >
 > Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
 > ---
@@ -93,25 +95,30 @@ Chuanhua Han <chuanhua.han@nxp.com> writes:
 > patch theme is "spi: spi-fsl-dspi: Fix support for XSPI transport
 > mode"),one of which is segmented.
 >
->  drivers/spi/spi-fsl-dspi.c | 3 ---
->  1 file changed, 3 deletions(-)
+>  drivers/spi/spi-fsl-dspi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
 > diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-> index 3082e72e4f6c..4dc1064bf408 100644
+> index 4dc1064bf408..96e790e90997 100644
 > --- a/drivers/spi/spi-fsl-dspi.c
 > +++ b/drivers/spi/spi-fsl-dspi.c
-> @@ -243,9 +243,6 @@ static void dspi_push_rx(struct fsl_dspi *dspi, u32 rxdata)
->  	if (!dspi->rx)
->  		return;
+> @@ -590,6 +590,7 @@ static void dspi_tcfq_write(struct fsl_dspi *dspi)
+>  		 */
+>  		u32 data = dspi_pop_tx(dspi);
 >  
-> -	/* Mask of undefined bits */
-> -	rxdata &= (1 << dspi->bits_per_word) - 1;
+> +		cmd_fifo_write(dspi);
+>  		if (dspi->cur_chip->ctar_val & SPI_CTAR_LSBFE(1)) {
+>  			/* LSB */
+>  			tx_fifo_write(dspi, data & 0xFFFF);
+> @@ -599,7 +600,6 @@ static void dspi_tcfq_write(struct fsl_dspi *dspi)
+>  			tx_fifo_write(dspi, data >> 16);
+>  			tx_fifo_write(dspi, data & 0xFFFF);
+>  		}
+> -		cmd_fifo_write(dspi);
+>  	} else {
+>  		/* Write one entry to both TX FIFO and CMD FIFO
+>  		 * simultaneously.
 
-What is the dspi->bits_per_word value when your rxdata is set equal to
-0?  Could this perhaps also be related to byte ordering problems?
-
->  	if (dspi->bytes_per_word == 1)
->  		*(u8 *)dspi->rx = rxdata;
->  	else if (dspi->bytes_per_word == 2)
+I will try and find time to test this on our systems at work.
 
 /Esben
