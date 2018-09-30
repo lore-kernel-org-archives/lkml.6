@@ -2,162 +2,210 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBECC64EB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 20:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACC5C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 21:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 657172089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 20:55:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5EEB2075E
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 21:47:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/J0FX+U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 657172089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LUaJrmNU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5EEB2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbeJAD3v (ORCPT
+        id S1726415AbeJAEVq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 23:29:51 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34604 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728553AbeJAD3v (ORCPT
+        Mon, 1 Oct 2018 00:21:46 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46087 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726204AbeJAEVp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 23:29:51 -0400
-Received: by mail-pg1-f195.google.com with SMTP id g12-v6so2298691pgs.1;
-        Sun, 30 Sep 2018 13:55:21 -0700 (PDT)
+        Mon, 1 Oct 2018 00:21:45 -0400
+Received: by mail-ot1-f67.google.com with SMTP id q4-v6so11059211otf.13
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 14:47:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rDu36eOsDS1MNpXaGfplBUdNu4gp6zaz+E8K9+WDZFg=;
-        b=E/J0FX+U2cutFiRwbl3wEu8MKDT+gcGyKTOUS6oW4Imco6q+mydpOEh5AItdIQVkDz
-         inmilyI2T2ROe7G8WlqaDl8s7hdZh/u/vAc31Ol4mNw56L/QdcUrK7a+RbYsiKpIc8lV
-         /B5Wmr2SFYr+qYOshAEMp53aClVCLgXJ2Ukz/53YweFYGRsawsr9RVB2ve+hcSiyPzrw
-         LGEFm8tynDFiUEeZ48A889lQufu7pKo2gaIScvKYmIO02IxZaubAEWs3bNvXgF/GnrXJ
-         BpRCYoT2mHYkSMWzEpE4cywThY69K4hoN2T/nA+TpgPx0hmhzct8tZhlJ3WUgQSHUSma
-         ZqqA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4eLJSmpVq05G3oAfZ2oUeKHayRkNOjswTF65wFdXrz8=;
+        b=LUaJrmNUPcMw54nzeU4nude71Q03D/rn5qmEV98kbaFygiopTalR8aPGlcMsw2K5Di
+         DnRVek5GbNLmuCrH2M9ugJqh/m9PPOocuY8SmzNT7Ma31gS2Z3B/3CMtoLcz7+q27HES
+         4YE8J3jVFjwfPUBuAI4LgLY94zdN6lGRDNgv/6tyIwmPh6DbwX3IP4NPV1IRdCo+BqDG
+         /3wpl/LGKX2VJGHAPlNY81WZ5r3AQMZFrCMS0EMJBndzZ5MscFGAPopNV5Tc+ccvp9fC
+         bqbMa75O8NyWRwpICT9IQ9vsNGAQgDTQ2CCMys48VUt0/gCo5fUvmYUjiAakAq+XmSHh
+         2t0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rDu36eOsDS1MNpXaGfplBUdNu4gp6zaz+E8K9+WDZFg=;
-        b=FQJ9KEqJK74KJFTRqML2ufgm+AIAlhTrr4X1Yk9JYKwkcMXtJoFQ4be771qhbw7ZjB
-         JO9fds46oH8qWbuv2n8SdAcYzE85XjCLelP/F0NHcVDgpnG7zWKcVOoHGODWLnqEite3
-         s57jmRzTpTWETS+jYSci+KZJgg6UtOktnGxm94jF+S/M4KQ/J9kk8m6YjMVQ4Z/XhBjO
-         XblbBMDwlIG01kiSVbI818mWHYdbzRck+KK1dfzS+G4QB9rjFnXHWV2Bay4Bo1Vjk5Ps
-         HIRchZrd6yYMfYfPEwQ2U9H9G/TiG1ZxbsyHHYL2npCnR57XmgOc4zrY03PWpbbIfdPh
-         SUVg==
-X-Gm-Message-State: ABuFfohCnVCvI7x9BursYCIxmmyE5P42WxA18uqJF/GFsZmPqnd9G9nA
-        2SpqGtYuYwZQrJgCQXMCuWTV7kId
-X-Google-Smtp-Source: ACcGV60iaFw66uDHEUZ/+NOk75Ig9X5+ZQFqBCjYTErVmAO5ICp4Eo1qLe63xlXoyV3LMy/oMnzsSQ==
-X-Received: by 2002:a17:902:722:: with SMTP id 31-v6mr8536744pli.207.1538340920725;
-        Sun, 30 Sep 2018 13:55:20 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id r81-v6sm2312717pfa.110.2018.09.30.13.55.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 13:55:19 -0700 (PDT)
-Subject: Re: [PATCH v8 2/2] hwmon: ina3221: Read channel input source info
- from DT
-To:     Nicolin Chen <nicoleotsuka@gmail.com>, jdelvare@suse.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, corbet@lwn.net
-Cc:     afd@ti.com, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-References: <20180929013937.29289-1-nicoleotsuka@gmail.com>
- <20180929013937.29289-3-nicoleotsuka@gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <ab3a36dc-fa5a-4669-2f99-aa55a4083db2@roeck-us.net>
-Date:   Sun, 30 Sep 2018 13:55:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4eLJSmpVq05G3oAfZ2oUeKHayRkNOjswTF65wFdXrz8=;
+        b=iLbN2WVKjeUB51t3BulwrqimM7U15tMscEZ4cl1gNPhm4hjD9wyTu1Qle3FxPzPNnO
+         OYOYCMef87qseaiTlL68UGexmJVVE8peHCWngX9wMe1FvlYVaZJYCOaBZhS1cUrRyzIl
+         sQPzQLHv54gfMEOFw5BaMM5C9WxSCEhOhgpWd+S6lGgsdlJI8mrMzuulED3BjkXlmVvR
+         JQrPCAPzO4TfmGq4gHyxAvAWP9OfQ4k6HWiFP+j9PTJy4ipY2ddJPW1ErzHssz+K4dyv
+         b6oQCcdB9ZyMI6iJEL4HEWWsVuNcmfHMkhoVa7GATBx0x/aYvQz1sRoE9HU5IC3h3aNR
+         p2fw==
+X-Gm-Message-State: ABuFfogxlr5Q9/Nk3/dBBbTF/IcAE7/YmQ2Rw4xlRaXXt81e+FyrHgwv
+        JAMn2Xpl+dLGxWp4dBKIDV1EVzArtjf4Is20QdgIwQ==
+X-Google-Smtp-Source: ACcGV634jHfR/pLadNewLp2nohsUxyNwRtXsJcZ1UYDiqSqTH3cfOHGkR/21gtlNNVXffqQCCpwJ4zQ+xUfLlUZ7w40=
+X-Received: by 2002:a9d:4e94:: with SMTP id v20-v6mr5136924otk.255.1538344027382;
+ Sun, 30 Sep 2018 14:47:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180929013937.29289-3-nicoleotsuka@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180929103453.12025-1-cyphar@cyphar.com> <39d64180-73d5-6f27-e455-956143a5b5d3@digikod.net>
+In-Reply-To: <39d64180-73d5-6f27-e455-956143a5b5d3@digikod.net>
+From:   Jann Horn <jannh@google.com>
+Date:   Sun, 30 Sep 2018 23:46:41 +0200
+Message-ID: <CAG48ez1CUHTKrpbwJxXkYoUKm5eYV15LuRRO+dXveo=MQvjJkA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] namei: implement various scoping AT_* flags
+To:     mic@digikod.net
+Cc:     cyphar@cyphar.com, jlayton@kernel.org,
+        Bruce Fields <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Tycho Andersen <tycho@tycho.ws>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolin,
+On Sun, Sep 30, 2018 at 10:39 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
+ wrote:
+> As a side note, I'm still working on Landlock which can achieve the same
+> goal but in a more flexible and dynamic way: https://landlock.io
 
-On 09/28/2018 06:39 PM, Nicolin Chen wrote:
-> An ina3221 chip has three input ports. Each port is used
-> to measure the voltage and current of its input source.
-> 
-> The DT binding now has defined bindings for their input
-> sources, so the driver should read these information and
-> handle accordingly.
-> 
-> This patch adds a new structure of input source specific
-> information including input source label, shunt resistor
-> value and its connection status. It exposes these labels
-> via in[123]_label sysfs nodes upon available, and also
-> disables those channels where there are no input source
-> being connected. Meanwhile, it also adds in[123]_enable
-> sysfs nodes for users to get control of three channels,
-> and returns -ENODATA code for any sensor read according
-> to hwmon ABI.
-> 
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Isn't Landlock mostly intended for userspace that wants to impose a
+custom Mandatory Access Control policy on itself, restricting the
+whole process?
 
-[ ... ]
+As far as I can tell, a major usecase for AT_BENEATH are privileged
+processes that do not want to restrict all filesystem operations they
+perform, but want to sometimes impose limits on filesystem traversal
+for the duration of a single system call. For example, a process might
+want to first open a file from an untrusted filesystem area with
+AT_BENEATH, and afterwards open a configuration file without
+AT_BENEATH.
 
-> +
-> +static ssize_t ina3221_set_enable(struct device *dev,
-> +				  struct device_attribute *attr,
-> +				  const char *buf, size_t count)
-> +{
-> +	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
-> +	struct ina3221_data *ina = dev_get_drvdata(dev);
-> +	unsigned int channel = sd_attr->index;
-> +	u16 config = ina->reg_config;
-> +	bool enable;
-> +	int ret;
-> +
-> +	ret = kstrtobool(buf, &enable);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (enable)
-> +		config |= INA3221_CONFIG_CHx_EN(channel);
-> +	else
-> +		config &= ~INA3221_CONFIG_CHx_EN(channel);
-> +
-> +	ret = regmap_write(ina->regmap, INA3221_CONFIG, config);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ina->reg_config = config;
-> +
+How would you do this in Landlock? Use a BPF map to store per-thread
+filesystem restrictions, and then do bpf() calls before and after
+every restricted filesystem access to set and unset the policy for the
+current syscall?
 
-Sorry it too me so long to realize this: The code above is racy.
-There could be multiple threads enabling and disabling a channel.
-Without a mutex, there is no guarantee that the final value of
-reg_config matches the value written into the chip.
-
-You'll have to introduce a mutex and implement something like
-
-	...
-	ret = kstrtobool(buf, &enable);
-	if (ret)
-		return ret;
-
-	mutex_lock(&ina->update_lock);
-	config = ina->reg_config;
-	...
-	ret = regmap_write(ina->regmap, INA3221_CONFIG, config);
-	if (ret) {
-		count = ret;
-		goto error;
-	}
-	ina->reg_config = config;
-error:
-	mutex_unlock(&ina->update_lock);
-	return count;
-
-Guenter
+> On 9/29/18 12:34, Aleksa Sarai wrote:
+> > The need for some sort of control over VFS's path resolution (to avoid
+> > malicious paths resulting in inadvertent breakouts) has been a very
+> > long-standing desire of many userspace applications. This patchset is a
+> > revival of Al Viro's old AT_NO_JUMPS[1] patchset with a few additions.
+> >
+> > The most obvious change is that AT_NO_JUMPS has been split as dicussed
+> > in the original thread, along with a further split of AT_NO_PROCLINKS
+> > which means that each individual property of AT_NO_JUMPS is now a
+> > separate flag:
+> >
+> >   * Path-based escapes from the starting-point using "/" or ".." are
+> >     blocked by AT_BENEATH.
+> >   * Mountpoint crossings are blocked by AT_XDEV.
+> >   * /proc/$pid/fd/$fd resolution is blocked by AT_NO_PROCLINKS (more
+> >       correctly it actually blocks any user of nd_jump_link() because i=
+t
+> >       allows out-of-VFS path resolution manipulation).
+> >
+> > AT_NO_JUMPS is now effectively (AT_BENEATH|AT_XDEV|AT_NO_PROCLINKS). At
+> > Linus' suggestion in the original thread, I've also implemented
+> > AT_NO_SYMLINKS which just denies _all_ symlink resolution (including
+> > "proclink" resolution).
+> >
+> > An additional improvement was made to AT_XDEV. The original AT_NO_JUMPS
+> > path didn't consider "/tmp/.." as a mountpoint crossing -- this patch
+> > blocks this as well (feel free to ask me to remove it if you feel this
+> > is not sane).
+> >
+> > Currently I've only enabled these for openat(2) and the stat(2) family.
+> > I would hope we could enable it for basically every *at(2) syscall --
+> > but many of them appear to not have a @flags argument and thus we'll
+> > need to add several new syscalls to do this. I'm more than happy to sen=
+d
+> > those patches, but I'd prefer to know that this preliminary work is
+> > acceptable before doing a bunch of copy-paste to add new sets of *at(2)
+> > syscalls.
+> >
+> > One additional feature I've implemented is AT_THIS_ROOT (I imagine this
+> > is probably going to be more contentious than the refresh of
+> > AT_NO_JUMPS, so I've included it in a separate patch). The patch itself
+> > describes my reasoning, but the shortened version of the premise is tha=
+t
+> > continer runtimes need to have a way to resolve paths within a
+> > potentially malicious rootfs. Container runtimes currently do this in
+> > userspace[2] which has implicit race conditions that are not resolvable
+> > in userspace (or use fork+exec+chroot and SCM_RIGHTS passing which is
+> > inefficient). AT_THIS_ROOT allows for per-call chroot-like semantics fo=
+r
+> > path resolution, which would be invaluable for us -- and the
+> > implementation is basically identical to AT_BENEATH (except that we
+> > don't return errors when someone actually hits the root).
+> >
+> > I've added some selftests for this, but it's not clear to me whether
+> > they should live here or in xfstests (as far as I can tell there are no
+> > other VFS tests in selftests, while there are some tests that look like
+> > generic VFS tests in xfstests). If you'd prefer them to be included in
+> > xfstests, let me know.
+> >
+> > [1]: https://lore.kernel.org/patchwork/patch/784221/
+> > [2]: https://github.com/cyphar/filepath-securejoin
+> >
+> > Aleksa Sarai (3):
+> >   namei: implement O_BENEATH-style AT_* flags
+> >   namei: implement AT_THIS_ROOT chroot-like path resolution
+> >   selftests: vfs: add AT_* path resolution tests
+> >
+> >  fs/fcntl.c                                    |   2 +-
+> >  fs/namei.c                                    | 158 ++++++++++++------
+> >  fs/open.c                                     |  10 ++
+> >  fs/stat.c                                     |  15 +-
+> >  include/linux/fcntl.h                         |   3 +-
+> >  include/linux/namei.h                         |   8 +
+> >  include/uapi/asm-generic/fcntl.h              |  20 +++
+> >  include/uapi/linux/fcntl.h                    |  10 ++
+> >  tools/testing/selftests/Makefile              |   1 +
+> >  tools/testing/selftests/vfs/.gitignore        |   1 +
+> >  tools/testing/selftests/vfs/Makefile          |  13 ++
+> >  tools/testing/selftests/vfs/at_flags.h        |  40 +++++
+> >  tools/testing/selftests/vfs/common.sh         |  37 ++++
+> >  .../selftests/vfs/tests/0001_at_beneath.sh    |  72 ++++++++
+> >  .../selftests/vfs/tests/0002_at_xdev.sh       |  54 ++++++
+> >  .../vfs/tests/0003_at_no_proclinks.sh         |  50 ++++++
+> >  .../vfs/tests/0004_at_no_symlinks.sh          |  49 ++++++
+> >  .../selftests/vfs/tests/0005_at_this_root.sh  |  66 ++++++++
+> >  tools/testing/selftests/vfs/vfs_helper.c      | 154 +++++++++++++++++
+> >  19 files changed, 707 insertions(+), 56 deletions(-)
+> >  create mode 100644 tools/testing/selftests/vfs/.gitignore
+> >  create mode 100644 tools/testing/selftests/vfs/Makefile
+> >  create mode 100644 tools/testing/selftests/vfs/at_flags.h
+> >  create mode 100644 tools/testing/selftests/vfs/common.sh
+> >  create mode 100755 tools/testing/selftests/vfs/tests/0001_at_beneath.s=
+h
+> >  create mode 100755 tools/testing/selftests/vfs/tests/0002_at_xdev.sh
+> >  create mode 100755 tools/testing/selftests/vfs/tests/0003_at_no_procli=
+nks.sh
+> >  create mode 100755 tools/testing/selftests/vfs/tests/0004_at_no_symlin=
+ks.sh
+> >  create mode 100755 tools/testing/selftests/vfs/tests/0005_at_this_root=
+.sh
+> >  create mode 100644 tools/testing/selftests/vfs/vfs_helper.c
+> >
+>
