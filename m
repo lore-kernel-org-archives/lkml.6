@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40193C004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1549C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B53206B2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8FAE206B2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 22:50:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dXGGGzf3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B53206B2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K6R3Idbq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8FAE206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbeJAFYo (ORCPT
+        id S1728889AbeJAFYw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 01:24:44 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41744 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728627AbeJAFX5 (ORCPT
+        Mon, 1 Oct 2018 01:24:52 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43899 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728576AbeJAFXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 01:23:57 -0400
-Received: by mail-lj1-f193.google.com with SMTP id u21-v6so3318928lja.8;
-        Sun, 30 Sep 2018 15:49:08 -0700 (PDT)
+        Mon, 1 Oct 2018 01:23:55 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r8-v6so10355200ljc.10;
+        Sun, 30 Sep 2018 15:49:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=B4Mi4UuJVD9VS+LyrubAJEL0CQgvXXiykgp+9dSMsmo=;
-        b=dXGGGzf3YfmAQoyGecYZhVMg7tdwvRWnQaBZBfpy9SaUeOZpeidP/KWVWAtpBW8N89
-         7gMAR8XEUlbP7vyJ83N0amzLnfBnpoaCa1Oyn0Vio0p8K+kIkNfia5OMFvNd4PM2YEYJ
-         VLby6Hwg0ADb+SojXOr9FJ+LKraBj6R9V/sqx7BTnNGQ2jHneXMw1dvwLQOp0YjgYan/
-         sMA8TfIwwanwlq1M3yCgJav9ut5NdrAGEJCd5D337TAfsO8cEi35aPQqRnnj4Bx5m6RV
-         FhUEv2J6p61bX1KX13tvqYIPCNgDd3LYOO0VXALctb0prFIrsuejTJsH3QKALCsfVzhX
-         P4QA==
+        bh=cbH0hajpnTl0zJfBVdsDy+MT/NpTwMHZcOU8d9ol1jw=;
+        b=K6R3IdbqUa3uuSC9JGYJqT0QcDaOushqrC1s/ZwePWgo7lNtgs7csaPte3AnyyvJ7K
+         EjZcsVyT9N+oZJgEulcqsuSAaskhNdjWNqKI0kfJIabeQoNDfTKMDZnGmo8KpoOaXAeN
+         kZw03m+EQ9GLY6YsVZPYs11QSMPnvdNMTowStJIGs7qMrMuSC+hbGiwCLDtwq9xy7KX3
+         EIUVejF+B+8YmVKzuofTUfk/8bH++6bKOTeyhUA5RZgYWpBvXHEY0MwIDTbF1a0jg+Af
+         n65K15QoIwLjrl46YaxJbdspbGd1Q5E5bfP557RG0vLgeyjib2lwnTFsL5SrGmTZsg8g
+         MZJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=B4Mi4UuJVD9VS+LyrubAJEL0CQgvXXiykgp+9dSMsmo=;
-        b=X/1+CwwrfHlL0tD1bRWtqRBWMaJPXeBvOwNrpj66G3dg1ehyIRmUc+A3ooBoUwsSe/
-         99uHurHJxxJ370dLMC+GewL4fMG7x/5yCn6jINAknaAMLsah3Ty3T6EUA5F7pMR1DX/Q
-         zl0N9Ps9yhM/DjQr+RGXER6b2Fth/o1FXOf5faPLRn4teP6Z3bIe9lD+FYRZaKFEWFm8
-         AZyF5w7vXrlXNTiZtHlDyr5KUQhQGMMPrgrxL+TRKGETZ5S7D0njJ9rwTJ8wu9AGv7km
-         N7vhIO2ETlgikLrJSwi7URIMw4+FNoYmuEFlY6PbG7NZGX/l0OOUH3FnOsyg32nQ1LsX
-         KIRw==
-X-Gm-Message-State: ABuFfogDSOSv8QBe5ikYx59tZXwBMECSTtcNyl0TuH6DF6/7QwO37LBT
-        VRtN56SkVYBl9ULyAY4mWvTD0Rnu
-X-Google-Smtp-Source: ACcGV61wUMRovLON1MElFsQ0WsQ4JydXWFsUxdNDTfn7tlPq6FgiXoVnTKjSpVNHcvsAyLTcbu+sVA==
-X-Received: by 2002:a2e:6c07:: with SMTP id h7-v6mr4516688ljc.81.1538347747554;
-        Sun, 30 Sep 2018 15:49:07 -0700 (PDT)
+        bh=cbH0hajpnTl0zJfBVdsDy+MT/NpTwMHZcOU8d9ol1jw=;
+        b=iWH/+UfFJnk/X37SRUeuh2kJfutYhviUpKOneCQsxtxJTT9ZSeWsjwrh1DadJbjs/s
+         husSRK2LPPVVEtQNMhzTiVwb5YbNBFVBsiCudIK4bpT2HuxCvTF2vo8XNAYhldFmApNA
+         AnfGxzryCCFC02SI160iURxYI1xpHIS2ngYARY5Le1AsZRg/0HcQjIyCm8hSLiZuforq
+         0uduNOCoo95dgOXMvNx8TCX0i2MiSRhiNEHiOqktEGTzUZ98YtQAcRhzTAgvHNmzDDSv
+         5IBaxbwGP1kDI8+IbzKZh632NdiamFdt/C1z09Bq6PJlpBJ5lenXw0R5vUTSPXruCfgH
+         k8hw==
+X-Gm-Message-State: ABuFfog0z/rC9qs8REfcV5WbsRzxXbYjCAL2pivq6e77qJ40rzmqfSTm
+        ljUckKO4nASC/EbIKOVrzsTlfR1M
+X-Google-Smtp-Source: ACcGV625+Rq/rTqDq4VRpb7zVsHpBAoMy3zA3xqVw/10nBIN5B1KtjGix9psFZ07rl/NX4IsDznY4Q==
+X-Received: by 2002:a2e:8606:: with SMTP id a6-v6mr3973366lji.43.1538347745519;
+        Sun, 30 Sep 2018 15:49:05 -0700 (PDT)
 Received: from localhost.localdomain (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
-        by smtp.gmail.com with ESMTPSA id i2-v6sm2356829lji.88.2018.09.30.15.49.06
+        by smtp.gmail.com with ESMTPSA id i2-v6sm2356829lji.88.2018.09.30.15.49.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 15:49:06 -0700 (PDT)
+        Sun, 30 Sep 2018 15:49:05 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,9 +66,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Robin Murphy <robin.murphy@arm.com>
 Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 14/21] iommu/tegra: gart: Fix spinlock recursion
-Date:   Mon,  1 Oct 2018 01:48:26 +0300
-Message-Id: <20180930224833.28809-15-digetx@gmail.com>
+Subject: [PATCH v5 12/21] memory: tegra: Use relaxed versions of readl/writel
+Date:   Mon,  1 Oct 2018 01:48:24 +0300
+Message-Id: <20180930224833.28809-13-digetx@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180930224833.28809-1-digetx@gmail.com>
 References: <20180930224833.28809-1-digetx@gmail.com>
@@ -79,69 +79,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix spinlock recursion bug that happens on IOMMU domain destruction if
-any of the allocated domains have devices attached to them.
+There is no need for inserting of memory barriers to access registers of
+Memory Controller. Hence use the relaxed versions of the accessors.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/iommu/tegra-gart.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/memory/tegra/mc.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 1c89b20ba4bb..e6fe139576c3 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -195,25 +195,33 @@ static int gart_iommu_attach_dev(struct iommu_domain *domain,
- 	return err;
- }
+diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+index 9856f085e487..887a3b07334f 100644
+--- a/drivers/memory/tegra/mc.h
++++ b/drivers/memory/tegra/mc.h
+@@ -26,13 +26,13 @@
  
--static void gart_iommu_detach_dev(struct iommu_domain *domain,
--				  struct device *dev)
-+static void __gart_iommu_detach_dev(struct iommu_domain *domain,
-+				    struct device *dev)
+ static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
  {
- 	struct gart_domain *gart_domain = to_gart_domain(domain);
- 	struct gart_device *gart = gart_domain->gart;
- 	struct gart_client *c;
- 
--	spin_lock(&gart->client_lock);
--
- 	list_for_each_entry(c, &gart->client, list) {
- 		if (c->dev == dev) {
- 			list_del(&c->list);
- 			devm_kfree(gart->dev, c);
- 			dev_dbg(gart->dev, "Detached %s\n", dev_name(dev));
--			goto out;
-+			return;
- 		}
- 	}
--	dev_err(gart->dev, "Couldn't find\n");
--out:
-+
-+	dev_err(gart->dev, "Couldn't find %s to detach\n", dev_name(dev));
-+}
-+
-+static void gart_iommu_detach_dev(struct iommu_domain *domain,
-+				  struct device *dev)
-+{
-+	struct gart_domain *gart_domain = to_gart_domain(domain);
-+	struct gart_device *gart = gart_domain->gart;
-+
-+	spin_lock(&gart->client_lock);
-+	__gart_iommu_detach_dev(domain, dev);
- 	spin_unlock(&gart->client_lock);
+-	return readl(mc->regs + offset);
++	return readl_relaxed(mc->regs + offset);
  }
  
-@@ -253,7 +261,7 @@ static void gart_iommu_domain_free(struct iommu_domain *domain)
- 			struct gart_client *c;
+ static inline void mc_writel(struct tegra_mc *mc, u32 value,
+ 			     unsigned long offset)
+ {
+-	writel(value, mc->regs + offset);
++	writel_relaxed(value, mc->regs + offset);
+ }
  
- 			list_for_each_entry(c, &gart->client, list)
--				gart_iommu_detach_dev(domain, c->dev);
-+				__gart_iommu_detach_dev(domain, c->dev);
- 		}
- 		spin_unlock(&gart->client_lock);
- 	}
+ extern const struct tegra_mc_reset_ops terga_mc_reset_ops_common;
 -- 
 2.19.0
 
