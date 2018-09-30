@@ -2,98 +2,98 @@ Return-Path: <SRS0=A0hX=MM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C34CDC004D2
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 14:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AC3C004D2
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 14:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75BE020833
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 14:06:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jdc0wvK+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75BE020833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 381A120833
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Sep 2018 14:07:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381A120833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728543AbeI3UkE (ORCPT
+        id S1728582AbeI3UlB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Sep 2018 16:40:04 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36044 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728220AbeI3UkD (ORCPT
+        Sun, 30 Sep 2018 16:41:01 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:57099 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728220AbeI3UlB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Sep 2018 16:40:03 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b7-v6so7357520pfo.3;
-        Sun, 30 Sep 2018 07:06:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=d9qI2vd2GksWJES3cf2+T4OsS5CWi6qJXxoZFkL3Crc=;
-        b=Jdc0wvK+xf81Q7JKjJ5mDdfto4BW+W8W/gFrMMuXFWcZ33k9zQ99zbO22rSd9/8/Tu
-         r8u3Bk9HaxCqERED4nf3IUwk2GVZoFcxQDFQzCjNL+lFQONc+ZGwlXzS1xTSe+242oWo
-         HuYtbrgtwxQJvg3SkCYZW4a76NJ+mGYETtl6qCoLxaw0YGWORmGDSXLV9JQ/jFdBJoYc
-         OXK8SF6X4F7Hnaa5Fjcmj7Ap1yTyYewjarWYKU2YeTyqO0Yrh0t8Ymv9NrIh0alGxG9v
-         3BlzecLWCpIroZ8HqQbIaPR9KedE5wgC+GBUw7A2RqwrS8sDXcooY6CnHgb7BUTGk1ak
-         pX/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=d9qI2vd2GksWJES3cf2+T4OsS5CWi6qJXxoZFkL3Crc=;
-        b=MvY+fWLfniL44b/JWkyCplS6U1/DHY0aFpygjGO3ywMNwrjnmvEB9AyAZiRFhGU1U2
-         gpsv0Cl7xaMS3iZ3nImngjDa9HeDXAbiWhhWMDT8cK+X0Cl425umd/DSq4BqIjo7Na3U
-         QDh1kmBlH43j7xtEE40pgnRffWcHlJk3akP9ben8uS3ePeCr+c3XNgZP/1hPYxwxA/c8
-         0UItiwUTSKAOYymCiA9R7+7lnDzyVmJxeuasUFHnuw/ysZGTMtBZM65lyYiUK0NTAI5l
-         SwwCD4c3C4WkaFEUB8MA49+BXK13MZn9Iw+psBtKDvOuqjmxH040wjk8gg74yzwmKbTV
-         viMg==
-X-Gm-Message-State: ABuFfogarfR6RC4D9RX6U3ndX1HCCUJIvzeQCTY1qBQG/g4chdiDsi7I
-        LU6Yw2rXHNE31+3o61OaWfM=
-X-Google-Smtp-Source: ACcGV60QgR3XYh1E6iZkOt+bOfgp3z2BCqMZ+dKzMo1LThZ9WYtMcyHZ0YyEdExJtlLJILGCqEvApg==
-X-Received: by 2002:a63:af5b:: with SMTP id s27-v6mr6530478pgo.448.1538316413254;
-        Sun, 30 Sep 2018 07:06:53 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id y185-v6sm12272531pgd.8.2018.09.30.07.06.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 07:06:52 -0700 (PDT)
-Subject: Re: [PATCH 3.16 000/131] 3.16.59-rc1 review
-To:     Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org
-References: <lsq.1538257386.330095874@decadent.org.uk>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <c10b2127-8db4-4d52-d03c-3139dca51f43@roeck-us.net>
-Date:   Sun, 30 Sep 2018 07:06:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 30 Sep 2018 16:41:01 -0400
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mail.lichtvoll.de (Postfix) with ESMTPSA id 3D1D93BD915;
+        Sun, 30 Sep 2018 16:07:49 +0200 (CEST)
+From:   Martin Steigerwald <martin@lichtvoll.de>
+To:     lkcl@lkcl.net
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: Linux 4.19-rc4 released, an apology, and a maintainership note
+Date:   Sun, 30 Sep 2018 16:07:48 +0200
+Message-ID: <8998740.bsg6g2nRDU@merkaba>
+In-Reply-To: <20180930120909.30469-1-lkcl@lkcl.net>
+References: <2936237.GcMzexieOU@merkaba> <20180930120909.30469-1-lkcl@lkcl.net>
 MIME-Version: 1.0
-In-Reply-To: <lsq.1538257386.330095874@decadent.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/29/2018 02:43 PM, Ben Hutchings wrote:
-> This is the start of the stable review cycle for the 3.16.59 release.
-> There are 131 patches in this series, which will be posted as responses
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+lkcl@lkcl.net - 30.09.18, 14:09:
+> > That written: Quite some of the rude mails that contained swearwords
+> > I read from you have been about code, not persons. I think this is
+> > an important distinction. I do not have much of an issue with
+> > swearing at code :), especially when it is in some humorous way.
 > 
-> Responses should be made by Mon Oct 01 21:43:06 UTC 2018.
-> Anything received after that time might be too late.
+>  absolutely, and this is one thing that a lot of people are, sadly,
+>  trained pretty much from birth to be incapable of understanding:
+>  namely the difference between criticism of the PERSON and criticism
+>  of the ACTION.
 > 
+>  (1) "YOU are bad! GO STAND IN THE NAUGHTY CORNER!"
+>  (2) "That was a BAD thing to do!"
+>  (3) "That hurt my feelings that you did that"
+> 
+>  the first is the way that poorly-trained parents and kindergarten
+>  teachers talk to children.
+> 
+>  the second is... only marginally better, but it's a start
+> 
+>  the third is how UNICEF trains teachers to treat children as human
+> beings.
 
-Build results:
-	total: 139 pass: 139 fail: 0
-Qemu test results:
-	total: 217 pass: 217 fail: 0
+During releasing a lot of limiting "stuff" I found that probably nothing 
+written or said can hurt my feelings unless I let it do so or even… 
+unless I choose (!) to feel hurt about it. So at times I am clear about 
+this, I´d say: "I have chosen to feel hurt about what you did."
 
-Details are available at https://kerneltests.org/builders/.
+However in this human experience a lot of people, including myself, 
+still hold on to a lot of limiting "stuff" which invites feeling hurt. 
+We, as humankind, have a history of hurting each other.
 
-Guenter
+During this releasing work I also learned about two key ingredients of 
+successful relationships: Harmlessness and mutuality. I opted out of the 
+hurting cycle as best I can. And so I choose to write in a way that 
+moves around what from my own experience of feeling hurt I know could 
+hurt others. I choose to write in a harmless way so to say. While still 
+aiming to bring my point across. A very important ingredient for this is 
+to write from my own experience. 
+
+Of course others can feel hurt about something I would not feel hurt 
+about and I may not be aware that the other might feel hurt about. That 
+is why in such a case it is important to give and receive feedback. 
+Still when writing from my own experience without saying that anything 
+is wrong with the other, it appears to be unlikely to trigger hurt. That 
+is at least my experience so far.
+
+Thanks,
+-- 
+Martin
+
+
