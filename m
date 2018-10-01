@@ -2,187 +2,124 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68297C0044B
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45627C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FC262089C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB4C1208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:58:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cesnet.cz header.i=@cesnet.cz header.b="mTFka4Mp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC262089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cesnet.cz
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1/4qrix"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB4C1208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729126AbeJARdy (ORCPT
+        id S1729133AbeJARft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 13:33:54 -0400
-Received: from office2.cesnet.cz ([195.113.144.244]:55434 "EHLO
-        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728921AbeJARdy (ORCPT
+        Mon, 1 Oct 2018 13:35:49 -0400
+Received: from mail-wr1-f43.google.com ([209.85.221.43]:33830 "EHLO
+        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728791AbeJARft (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 13:33:54 -0400
-Received: from localhost (unknown [IPv6:2001:718:1:2e:618c:c23d:a7ac:fd26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by office2.cesnet.cz (Postfix) with ESMTPSA id 2C596400052;
-        Mon,  1 Oct 2018 12:56:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
-        s=office2; t=1538391398;
-        bh=3A6M1Vfh9xUz8J314WuAp1cXCiOOkZfm3McYgyNjY9M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=mTFka4Mp7idrybu0HmWuMSBbVtQjYUQF7hJgimUZHZD8vo6XmI4EYkMaPU6R5PmiJ
-         Om0MutcClbcUWVZZSnlkE1ouGKBj0rpBnWCy6p+IMxmjaFvZFKt7Yp/+vDNpF+Wla5
-         0MGBqnKE7GTNbWzV9B9YuhUn1KtjF/1Zbrm5i1T8=
-From:   =?iso-8859-1?Q?Jan_Kundr=E1t?= <jan.kundrat@cesnet.cz>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Baruch Siach <baruch@tkos.co.il>,
-        Jason Cooper <jason@lakedaemon.net>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since =?iso-8859-1?Q?"PCI:_mvebu:_Only_remap_I/O_space_if_configured"?=
-Date:   Mon, 01 Oct 2018 12:56:37 +0200
+        Mon, 1 Oct 2018 13:35:49 -0400
+Received: by mail-wr1-f43.google.com with SMTP id z4-v6so12018553wrb.1;
+        Mon, 01 Oct 2018 03:58:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DhroON450Y9M6snKQmG8LksL4MmKsKuRBb2uogCUSOw=;
+        b=N1/4qrix9wP1gtrYbdgG0uvu13dnxIUgSb3RHntBWN54Id6hgiM8MHwueTyTi+XLqU
+         aAJi9I/xRoTgimzIvfYrSQURPQYv0gEv+3DEnE3LNkir9R7nlyhzQFj0ohtRueLwM0M8
+         ebmNo509Zo7EBfsL3YPHIBXk4A6XaEtmVu8Pm3dffXyl/14R0v+mAG09IpPCr3QCY9tQ
+         K4773bwrvLXGxRU5KmjeQX6MiOgiEaBRrmMgfGIIFYpXuN2qOy7rh7ZKp3Z0PHzylxFT
+         da6hjMZJ9cFOTVatxJnvWJtugmWdP7ip7aqDNOY9VL8vgb9PRkjNNgGUY1t96DjycyrS
+         cORg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DhroON450Y9M6snKQmG8LksL4MmKsKuRBb2uogCUSOw=;
+        b=f5OF/veEEKEyB6BUeVvhwqK/rMIxSLTlsU6wHjRxBbgTUGH7i1lCpUmtEMA0ZEwjKw
+         OjZlsqK2vKHDXytjw90y4xOzxAd9FjnwnxIR4IVrxciklRSTLjwMTN8FiXDpZ3OGu0KE
+         TQ3+2aJlcqtHvk54SffOvNpyYgE2Bj3n0uWbpGYjjvWq2k1EZS3slqYFRlNvQBx7n5KL
+         +3F2i88cdYqqKPQqD01KsWrFajkFUE907QLLmTZoIz9FjRfDpNYqNq4/xaeek2WSIF0d
+         +37KKcM41Zycv1nmluVLLi0gCykBlwDBqRQZOdLlYVM1HDFhij9V/gBkFiHxrKmCuNlN
+         N5dw==
+X-Gm-Message-State: ABuFfojfiCg1Cya8O6Hb/hf2We8XHnwotZsIKKdWWCvq/yJgZeMcxBqA
+        4NWk3AIEvgFb05q5TP0zBECrn9Q4
+X-Google-Smtp-Source: ACcGV603HAZZRZ8sC1S01+TdiNfCupVUx8u045Y0sj8rH0ad/j9mAW1jBPaOsYG3RE0LX66n08xkqw==
+X-Received: by 2002:adf:eec4:: with SMTP id a4-v6mr7093740wrp.242.1538391513680;
+        Mon, 01 Oct 2018 03:58:33 -0700 (PDT)
+Received: from [192.168.1.4] (ip-86-49-30-92.net.upcbroadband.cz. [86.49.30.92])
+        by smtp.gmail.com with ESMTPSA id c19-v6sm12467447wre.86.2018.10.01.03.58.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 03:58:32 -0700 (PDT)
+Subject: Re: Bad MAINTAINERS pattern in section 'RENESAS R-CAR GYROADC DRIVER'
+To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
+Cc:     linux-iio@vger.kernel.org
+References: <20180928220152.31151-1-joe@perches.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <6b5b6ff4-1575-706e-defe-03fe4223c155@gmail.com>
+Date:   Mon, 1 Oct 2018 12:58:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Message-ID: <0f80dc88-dffe-4ca6-bb85-c4e5c967e0e1@cesnet.cz>
-In-Reply-To: <20180924165218.26c7c418@windsurf>
-References: <20180912231050.GX30658@n2100.armlinux.org.uk>
- <20180913094515.351967bb@windsurf>
- <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
- <20180913104241.65db8243@windsurf>
- <20180924101213.GO30658@n2100.armlinux.org.uk>
- <20180924122614.70738b5c@windsurf>
- <20180924111341.GP30658@n2100.armlinux.org.uk>
- <20180924141203.3df9707a@windsurf>
- <20180924124620.GA10322@e107981-ln.cambridge.arm.com>
- <20180924151040.5e57462b@windsurf>
- <20180924141512.GA11875@e107981-ln.cambridge.arm.com>
- <20180924165218.26c7c418@windsurf>
-Organization: CESNET
-User-Agent: Trojita/v0.7-361-gfee56b6f-dirty; Qt/5.11.0; xcb; Linux; Gentoo Base System release 2.4.1
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180928220152.31151-1-joe@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On pond=C4=9Bl=C3=AD 24. z=C3=A1=C5=99=C3=AD 2018 16:52:18 CEST, Thomas Petaz=
-zoni wrote:
-> Hello,
->
-> On Mon, 24 Sep 2018 15:15:12 +0100, Lorenzo Pieralisi wrote:
->
->> I understand that, I wanted to make sure we come up with a fix asap
->> and what I put forward would cover everything discussed in this thread,
->> at least temporarily, giving us time to check ISA related issues while
->> unmapping IO space.
->
-> Something like this should implemented what you suggest I guess:
->
-> diff --git a/drivers/pci/controller/pci-mvebu.c=20
-> b/drivers/pci/controller/pci-mvebu.c
-> index 50eb0729385b..a41d79b8d46a 100644
-> --- a/drivers/pci/controller/pci-mvebu.c
-> +++ b/drivers/pci/controller/pci-mvebu.c
-> @@ -1145,7 +1145,6 @@ static int=20
-> mvebu_pcie_parse_request_resources(struct mvebu_pcie *pcie)
->  {
->         struct device *dev =3D &pcie->pdev->dev;
->         struct device_node *np =3D dev->of_node;
-> -       unsigned int i;
->         int ret;
-> =20
->         INIT_LIST_HEAD(&pcie->resources);
-> @@ -1179,13 +1178,58 @@ static int=20
-> mvebu_pcie_parse_request_resources(struct mvebu_pcie *pcie)
->                                          resource_size(&pcie->io) - 1);
->                 pcie->realio.name =3D "PCI I/O";
-> =20
-> +               pci_add_resource(&pcie->resources, &pcie->realio);
-> +       }
-> +
-> +       return devm_request_pci_bus_resources(dev, &pcie->resources);
-> +}
-> +
-> +/*
-> + * This is a copy of pci_host_probe(), except that it does the I/O
-> + * remap as the last step, once we are sure we won't fail.
-> + *
-> + * It should be removed once the I/O remap error handling issue has
-> + * been sorted out.
-> + */
-> +static int mvebu_pci_host_probe(struct pci_host_bridge *bridge)
-> +{
-> +       struct mvebu_pcie *pcie;
-> +       struct pci_bus *bus, *child;
-> +       int ret;
-> +
-> +       ret =3D pci_scan_root_bus_bridge(bridge);
-> +       if (ret < 0) {
-> +               dev_err(bridge->dev.parent, "Scanning root bridge failed");=
+On 09/29/2018 12:01 AM, Joe Perches wrote:
+> Please fix this defect appropriately.
+> 
+> linux-next MAINTAINERS section:
+> 
+> 	12496	RENESAS R-CAR GYROADC DRIVER
+> 	12497	M:	Marek Vasut <marek.vasut@gmail.com>
+> 	12498	L:	linux-iio@vger.kernel.org
+> 	12499	S:	Supported
+> -->	12500	F:	drivers/iio/adc/rcar_gyro_adc.c
+> 
+> Commit that introduced this:
+> 
+> commit 059c53b3232960cfd38cc46de0a7bedd642021f5
+>  Author: Marek Vasut <marek.vasut+renesas@gmail.com>
+>  Date:   Sat Jan 28 00:08:37 2017 +0100
+>  
+>      iio: adc: Add Renesas GyroADC driver
+>      
+>      Add IIO driver for the Renesas RCar GyroADC block. This block is a
+>      simple 4/8-channel ADC which samples 12/15/24 bits of data every
+>      cycle from all channels.
+>      
+>      Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>      Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>      Cc: Simon Horman <horms+renesas@verge.net.au>
+>      Cc: Jonathan Cameron <jic23@kernel.org>
+>      Cc: linux-renesas-soc@vger.kernel.org
+>      Cc: Wolfram Sang <wsa@the-dreams.de>
+>      Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+>  
+>   MAINTAINERS                    |   6 +
+>   drivers/iio/adc/Kconfig        |  13 +
+>   drivers/iio/adc/Makefile       |   1 +
+>   drivers/iio/adc/rcar-gyroadc.c | 631 +++++++++++++++++++++++++++++++++++++++++
+>   4 files changed, 651 insertions(+)
+> 
+> No commit with drivers/iio/adc/rcar_gyro_adc.c found
+> 
+Fixed, thanks for the heads up.
 
-> +               return ret;
-> +       }
-> +
-> +       pcie =3D pci_host_bridge_priv(bridge);
-> +       if (resource_size(&pcie->io) !=3D 0) {
-> +               unsigned int i;
-> +
->                 for (i =3D 0; i < resource_size(&pcie->realio); i +=3D SZ_6=
-4K)
->                         pci_ioremap_io(i, pcie->io.start + i);
-> +       }
-> =20
-> -               pci_add_resource(&pcie->resources, &pcie->realio);
-> +       bus =3D bridge->bus;
-> +
-> +       /*
-> +        * We insert PCI resources into the iomem_resource and
-> +        * ioport_resource trees in either pci_bus_claim_resources()
-> +        * or pci_bus_assign_resources().
-> +        */
-> +       if (pci_has_flag(PCI_PROBE_ONLY)) {
-> +               pci_bus_claim_resources(bus);
-> +       } else {
-> +               pci_bus_size_bridges(bus);
-> +               pci_bus_assign_resources(bus);
-> +
-> +               list_for_each_entry(child, &bus->children, node)
-> +                       pcie_bus_configure_settings(child);
->         }
-> =20
-> -       return devm_request_pci_bus_resources(dev, &pcie->resources);
-> +       pci_bus_add_devices(bus);
-> +       return 0;
->  }
-> =20
->  static int mvebu_pcie_probe(struct platform_device *pdev)
-> @@ -1268,7 +1312,7 @@ static int mvebu_pcie_probe(struct=20
-> platform_device *pdev)
->         bridge->align_resource =3D mvebu_pcie_align_resource;
->         bridge->msi =3D pcie->msi;
-> =20
-> -       return pci_host_probe(bridge);
-> +       return mvebu_pci_host_probe(bridge);
->  }
-> =20
->  static const struct of_device_id mvebu_pcie_of_match_table[] =3D {
->
-> If that's what you meant, I'll go ahead and test on actual hardware and
-> submit as a proper patch.
-
-Thomas, Russell, Lorenzo,
-did you have time to convert this into a patch which can hit 4.19? I don't=20=
-
-see anything related in 4.19-rc6, but perhaps I missed something. Is there=20=
-
-something that I should test or otherwise help?
-
-With kind regards,
-Jan
+-- 
+Best regards,
+Marek Vasut
