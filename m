@@ -2,115 +2,123 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C22C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA3EC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E16E220C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23C1E20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:31:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="G3us9/xz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16E220C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rbCk7IQJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23C1E20C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbeJAWJY (ORCPT
+        id S1729630AbeJAWJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:09:24 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35816 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729567AbeJAWJY (ORCPT
+        Mon, 1 Oct 2018 18:09:43 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:33934 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729550AbeJAWJn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:09:24 -0400
-Received: by mail-it1-f196.google.com with SMTP id p64-v6so4948960itp.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 08:31:03 -0700 (PDT)
+        Mon, 1 Oct 2018 18:09:43 -0400
+Received: by mail-qk1-f202.google.com with SMTP id y130-v6so14879494qka.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 08:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=egz5UaCHM4kavXJolPXkFKphUnyDndM4NLb6iC9iBcQ=;
-        b=G3us9/xzO7czjVNMLY+S9Z1vjhgR85+fm9VrhLhfBJfzFOxkrGyli0WNOTc6E66OFf
-         6b5mo08qVw6HLOdGiCRjzjUPAzN9R3i8GSjog+n9coaBALIQTkdUkPcaJhIweG4GPZ+R
-         a4/VInlPpnSJv2bnnxd6U1ZYG93ObUKmXA1Obb/Pje2Ez5hqCJODBzR0b4pt8dW16DtG
-         RjWXkCC36Yq3cliInFCKnOcYx0Zm/IGEReF3eZJdbqAjaZ6JJEtLT/wYRF0Rn7wQxC6y
-         ZhWuB7e9L0UyT+ueVtV+Hlw2ZJL0pxxEt76S8/kFwRLbe4vrFJVf+0XYnz43JGxhm8tT
-         WAtg==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=b12hY9rsC65YWw5Ssm5MZ1/8YLuu+f6XdUruah2EdEs=;
+        b=rbCk7IQJ9g7WKLh1ybyA7TrMCsMR5kJbU6hUfxnzlEU9S0mC1BKI+CW645Pa/x8r6K
+         lkN7C4BTh3F4+HLPOnQ9y3FtiX6ULIQ4oDeOxjCJ0owefzJqBUk48ngn1yQqvrDZAdDb
+         dLe4kzhQ1+yS2axXgGCWmT7VlxmLxfKx2CnOaYI5b7qMDRIRrjWp+8RMeOhJxVJ+eTuZ
+         rsxSaIEDMSWWErir19zz5m8fzfR8k/fypJ2/481yWpjgv+tbiJ9/FPeM6o/aj5lBiejh
+         2TyfmMSVJ+W+OAP07/cSy67A/Ds5Jmz8vMtcObhp44SpDWfr2nUqbmbbrFa97Y7nDJsM
+         lSgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=egz5UaCHM4kavXJolPXkFKphUnyDndM4NLb6iC9iBcQ=;
-        b=kQlgkOi0l/EoyeDMstS/5lPhz8/spK6m2OZfbz+9Em6meib0+EMA57yrsqgjugRQe7
-         BhBVm0qBEQbY/FZpC3LW+kW7eIfaWR3KoU84lp4Wg30nQI6Nz0LMF5HOZg2ZXWmOqcjz
-         aPOnpwpfXPzeSaD1pmVDgvRvCuVK1z3c3bdEpwObl9yfR010q5CsFeLh3qol7dv3ozSb
-         mFNTUGQkydUlj5lFyr1lF1RZRsQXz+FZGM+5QSCaCKLYgdt9am9cLLHBlTJCyJEp93vM
-         fPZaMWZZZia05pkxNSIrUb7DCeP4znMi0m8VBKhIpYzNvV/b/NsC1nxBuL2Zj2uZXE8V
-         hMSw==
-X-Gm-Message-State: ABuFfojD8a7Lc3XH41TD3MzA1oZPn4fB0skcoGoJzJpALW6aLMltXVdj
-        x26fUH/j6R9uazgBwgXhlM721Q==
-X-Google-Smtp-Source: ACcGV607DdKJYv99zEkgeCdk7fAnfuvb1o43Gv0ra9gFr+MUik2Pkk75hK0fPy+asQznD6zyNx/g+Q==
-X-Received: by 2002:a02:129d:: with SMTP id 29-v6mr8771876jap.126.1538407863283;
-        Mon, 01 Oct 2018 08:31:03 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id q205-v6sm2555646itc.2.2018.10.01.08.31.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 08:31:02 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g70A1-0006Me-Lp; Mon, 01 Oct 2018 09:31:01 -0600
-Date:   Mon, 1 Oct 2018 09:31:01 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jerome Glisse <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Benvenuti <benve@cisco.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>
-Subject: Re: [PATCH 0/4] get_user_pages*() and RDMA: first steps
-Message-ID: <20181001153101.GA23286@ziepe.ca>
-References: <20180928053949.5381-1-jhubbard@nvidia.com>
- <20180928152958.GA3321@redhat.com>
- <4c884529-e2ff-3808-9763-eb0e71f5a616@nvidia.com>
- <20180928214934.GA3265@redhat.com>
- <dfa6aaef-b97e-ebd4-6cc8-c907a7b3f9bb@nvidia.com>
- <20180929084608.GA3188@redhat.com>
- <20181001061127.GQ31060@dastard>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181001061127.GQ31060@dastard>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=b12hY9rsC65YWw5Ssm5MZ1/8YLuu+f6XdUruah2EdEs=;
+        b=NxhUFGa3aauc9+QwBDwSIth5stx1nRbETHlwbQs1X85XU64AHI3QtFa3x9ixkqO7fj
+         6mPr8Vmc02ASMyG4v45FpoZY+keGXbGFX7VMNxlwuZ1TS83Kl+40sY+XPSMG+PiwmPyd
+         DdhWsWIwSdIX7VNNRghAoi8JrMGEsxGrn8Wm7NOJTmbjiV4IRfX2/Yqy8bd/NZaq6/vm
+         sqmOsBnpoeih4knL6wwbQjagROnWqdKcfg8/ZZxoyx3lrGbkFePbwj13Hp8aRMXT73Vy
+         fWs+s7GSC9p72b6+aGJHYnXsdiF3sUGX3+vb97kwO6EvdcBOhhG0JKwcQ7Ibq/Ou+VVK
+         4C3A==
+X-Gm-Message-State: ABuFfog8/zQyCeH0dQimWtLSlt/VA4U3D4NeyI7RmjmCTdwP9NKMu/xi
+        CUeoY/1aqLNcAn9cyihjOSHj9bwIFQ==
+X-Google-Smtp-Source: ACcGV60a3St0XvEEQSfJCAn0zcf/lXprW1gZijoWlDOezlNpIVbUaJljf5klZHt9c6uGjOTXwcZW4Bhzgw==
+X-Received: by 2002:a37:109c:: with SMTP id 28-v6mr8679609qkq.38.1538407882290;
+ Mon, 01 Oct 2018 08:31:22 -0700 (PDT)
+Date:   Mon,  1 Oct 2018 17:31:17 +0200
+Message-Id: <20181001153117.216923-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+Subject: [PATCH] drm: fix use-after-free read in drm_mode_create_lease_ioctl()
+From:   Jann Horn <jannh@google.com>
+To:     Keith Packard <keithp@keithp.com>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, jannh@google.com
+Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 04:11:27PM +1000, Dave Chinner wrote:
+fd_install() moves the reference given to it into the file descriptor table
+of the current process. If the current process is multithreaded, then
+immediately after fd_install(), another thread can close() the file
+descriptor and cause the file's resources to be cleaned up.
 
-> This reminds me so much of Linux mmap() in the mid-2000s - mmap()
-> worked for ext3 without being aware of page faults, so most mm/
-> developers at the time were of the opinion that all the other
-> filesystems should work just fine without being aware of page
-> faults.
+Since the reference to "lessee" is held by the file, we must not access
+"lessee" after the fd_install() call.
 
-This is probably because RDMA was introduced around that time, before
-page_mkwrite was added.. It kind of sounds like page_mkwrite() broke
-all the writing get_user_pages users and it wasn't realized at the
-time.
+As far as I can tell, to reach this codepath, the caller must have an open
+file descriptor to a DRI device in master mode. I'm not sure what the
+requirements for that are.
 
-BTW, we are hosting a session on this at Plumbers during the RDMA
-track, hope everyone interested will be able to attend.
+Signed-off-by: Jann Horn <jannh@google.com>
+Fixes: 62884cd386b8 ("drm: Add four ioctls for managing drm mode object leases [v7]")
+Cc: stable@vger.kernel.org
+---
+I'm not sure how to actually use this ioctl, so I have neither verified
+the bug experimentally nor experimentally verified the fix. I would
+appreciate it if someone could confirm my analysis.
 
-Jason
+There have been a number of fd_install() bugs over time; I think it's
+probably time to rename fd_install() to fd_install_dropref(), or
+something like that.
+
+ drivers/gpu/drm/drm_lease.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
+index b54fb78a283c..b82da96ded5c 100644
+--- a/drivers/gpu/drm/drm_lease.c
++++ b/drivers/gpu/drm/drm_lease.c
+@@ -566,14 +566,14 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
+ 	lessee_priv->is_master = 1;
+ 	lessee_priv->authenticated = 1;
+ 
+-	/* Hook up the fd */
+-	fd_install(fd, lessee_file);
+-
+ 	/* Pass fd back to userspace */
+ 	DRM_DEBUG_LEASE("Returning fd %d id %d\n", fd, lessee->lessee_id);
+ 	cl->fd = fd;
+ 	cl->lessee_id = lessee->lessee_id;
+ 
++	/* Hook up the fd */
++	fd_install(fd, lessee_file);
++
+ 	DRM_DEBUG_LEASE("drm_mode_create_lease_ioctl succeeded\n");
+ 	return 0;
+ 
+-- 
+2.19.0.605.g01d371f741-goog
+
