@@ -2,63 +2,63 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A712C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3A3C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9AC320666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00D25208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:00:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="tj30xD9p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9AC320666
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="bU3wV3xl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00D25208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbeJBAjb (ORCPT
+        id S1726630AbeJBAjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:39:31 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40020 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725740AbeJBAjb (ORCPT
+        Mon, 1 Oct 2018 20:39:45 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39556 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726217AbeJBAjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:39:31 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n31-v6so9996934pgm.7
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:00:34 -0700 (PDT)
+        Mon, 1 Oct 2018 20:39:44 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j8-v6so9799087pff.6
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:00:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=q4MDyK/xpZ2rJeVO6MpkOTduxc1guqAC/giITauVW44=;
-        b=tj30xD9pcDHGyPcFmZM2qpxBuDA4ap8T+j6Li2TC8PGMb6nBPmALsBxlKJW8/8183Z
-         JscOrrTI3FJTBgywd8A6fYuLkjefaiTTrdAJRscO2KI+0WdZH6rN2svfDSiDSujx89we
-         uaZpGSkkyW8RpdTpj5Puwhrshy1CUgTwOnu3f1BByZ75MXoYwHhKJViKihXiuYQYYaLs
-         1conwfxVgZU9EX6f73v7Xz5LWZ2ayIdf1VMr1sHR0o17VRcRHxVKMgyhKqjOhiBy97Ae
-         +QBmaVOlA5Kw1fGUICKGRrfNZDeUHMT7artoWjhcxiyciy4kGY3DKxEv/8vnshe1DKMw
-         OetQ==
+        bh=dTi+2ILrncv8BjpVVeZl4XFDbUlKrxXN+oV7m6eWTl4=;
+        b=bU3wV3xlwcX2YHaRu+Mj8iTAkbPTQTGnIinK3/TOMMCMdPXYcsrOeNH81jiI3euCaF
+         nQfnPn5UmHctx1ydvpXsY4E/5jEKG34na8T5zTegbIFdSv3LxjrRSdB+O1Vu7pLYbkSZ
+         IUuZL9OqDqZdYPcpydVArtJLucd/kSQMlMFD1ViNyzro6zxuKbU+7boIFhG6RpwDaDvi
+         T31JNhCYdZhzYszLJy9P+3/nfCt2gDl0AsZ1c7zNpJz30Z2whCglEyaBypdCzWcfsS+a
+         PlPQHXagsPVxkRSAX1Me85terWiA45i5B27hy5YG0FwIPUcSY/3YCuci15C8I2/rXqbR
+         FTvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=q4MDyK/xpZ2rJeVO6MpkOTduxc1guqAC/giITauVW44=;
-        b=ZvW+4d5lBsXyleO8WnlI4DzAvsgY55/dpt58CFgz22Xz/0ckypVEwO5C2Cjx+RVIVs
-         df9/FqqRSI+6UlKUFiOQJyiaoWL2BRSDUxSxVQ2V91fHsDGwdAJOQsQN3kKIdsD7pUZh
-         xdPCfUfen0ilzfCRqKn840JY/sn+xN/ZmT0YLQMhZUJw0E/TfqjBNVflZOu9e38Z6nH0
-         gFbhJLenKkoiPHUzGoznNV0uQ1gvQpcjdKsm3V7Rk8SwGuPMYQt6MN252+J21dyuOet/
-         tpvy/8E4KKgFZlBXkhweKXW+aCHuIg/T4oFAkNBswBl0wLDSb15QSvRMlBFpCTuicXFl
-         habg==
-X-Gm-Message-State: ABuFfoj71vD02zZZbBi18SbpHLSg5w7gThx0VEZQi9AfZWlLv6QS2lOC
-        mpgR395S4u00ieX6EpBuEbkMJG/Ho2w=
-X-Google-Smtp-Source: ACcGV63p6PiO4kRynN1SImA1bh+u7lfmvLd67LFZhHAhNZG1ru/jmBYEsyYKLf3kbZ2G2G45MLBwsw==
-X-Received: by 2002:a62:6547:: with SMTP id z68-v6mr12539030pfb.20.1538416833339;
-        Mon, 01 Oct 2018 11:00:33 -0700 (PDT)
+        bh=dTi+2ILrncv8BjpVVeZl4XFDbUlKrxXN+oV7m6eWTl4=;
+        b=COFgUci6Kd4T9H/4e01XYT3gA8t6V5rHl+pcbUKvuCX0yGpy/dZwj1ahZThz3Bs93O
+         1SV9g9vHYPPaTSVEXcyi68/vdOh7OCLdJu957rlDKwg5/u1P9EVg65tXjjba39s7N6iR
+         KlM9pkullJTtuyxYoqsTwaShjX0WUflhTXs7NfFhLBvM88dXrbboMiu+QK/PjDaIP4oK
+         88zgX1vKYVIrMOOPdNGJJGCrtH4enexvlSgxhns+197D4OwCXUewyKElAr02xE525iD2
+         r43yCmKtMWajdFE3Fqkr4pDLEt5r+iMU50s9nKCRd01dyfGS94PtV55DuBhUYnElWX7k
+         hFBA==
+X-Gm-Message-State: ABuFfohTa9Bmci6luwKSMEyPuofrl7ODcM382194dff5cnvfRU9ZW1r+
+        uwxUJQ+SEaNzVlW+oLOilP2pLtwJ80c=
+X-Google-Smtp-Source: ACcGV61rbFrW58WqVWWarddGh/lPQq2HKqTQbJkTKYsRTrGcntfB5iZkjj3ZidKDLulxY0T5AJFSIQ==
+X-Received: by 2002:a17:902:720b:: with SMTP id ba11-v6mr12763459plb.199.1538416846629;
+        Mon, 01 Oct 2018 11:00:46 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
-        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.00.32
+        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.00.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 11:00:32 -0700 (PDT)
+        Mon, 01 Oct 2018 11:00:46 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Mark Salyzyn <salyzyn@android.com>,
@@ -82,9 +82,9 @@ Cc:     Mark Salyzyn <salyzyn@android.com>,
         android-kernel@android.com,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Ingo Molnar <mingo@kernel.org>
-Subject: RESEND [PATCH v5 03/12] arm: vdso: inline assembler operations to compiler.h
-Date:   Mon,  1 Oct 2018 10:58:23 -0700
-Message-Id: <20181001175845.168430-4-salyzyn@android.com>
+Subject: RESEND [PATCH v5 04/12] arm: vdso: do calculations outside reader loops
+Date:   Mon,  1 Oct 2018 10:58:24 -0700
+Message-Id: <20181001175845.168430-5-salyzyn@android.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 In-Reply-To: <20181001175845.168430-1-salyzyn@android.com>
 References: <20181001175845.168430-1-salyzyn@android.com>
@@ -102,20 +102,12 @@ for each architecture. But instead of landing it in arm64, land the
 result into lib/vdso and unify both implementations to simplify
 future maintenance.
 
-Move compiler-specific code to a local compiler.h file:
+In variable timer reading loops, pick up just the values until all
+are synchronized, then outside of loop pick up cntvct and perform
+calculations to determine final offset, shifted and multiplied
+output value.
 
-- CONFIG_AEABI dependency check.
-- System call fallback functions standardized into a
-  DEFINE_FALLBACK macro.
-- Replace arch_counter_get_cntvct() with arch_vdso_read_counter.
-- Deal with architecture specific unresolved references emitted
-  by GCC.
-- Optimize handling of fallback calls in callers.
-- For time functions that always return success, do not waste time
-  checking return value for switch to fallback.
-- Optimize unlikely nullptr checking in __vdso_gettimeofday,
-  if tv null no need to proceed to fallback, as vdso is still
-  capable of filling in the tv values.
+This replaces get_ns with get_clock_shifted_nsec as cntvct reader.
 
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
 Tested-by: Mark Salyzyn <salyzyn@android.com>
@@ -140,268 +132,227 @@ Cc: Jeremy Linton <Jeremy.Linton@arm.com>
 Cc: android-kernel@android.com
 
 v2:
-- split first CL into 3 of 7 pieces
+- split first CL into 5 of 7 pieces
 
 v4:
-- switch to arch_vdso_read_counter as common API
+- split into two, moving ARCH_CLOCK_FIXED_MASK to later
 - update commit message to reflect overall reasoning
+- adjust for dropping forced inline
+- replace typeof() with types vdso_wtm_clock_nsec_t,
+  vdso_xtime_clock_sec and __kernel_time_t.
 
 v5:
-- comment about asm/arch_timer.h and asm/processor.h regarding why
-  they have been added in compiler.h for porting clarity.
-- add linux/compiler.h in vgettimeofday.c because of notrace.
-- remove unnecessary dependency on linux/hrtimer.h
+- drop including linux/time.h in favour of uapi/linux/time.h in
+  vgettimeofday.c to limit architectural includes.
+- add linux/time.h to compiler.h for NSEC_PER_SEC definition.
+- replace last timespec_add_ns with __iter_div_u64_rem.
 ---
- arch/arm/vdso/compiler.h      |  69 +++++++++++++++++++++
- arch/arm/vdso/vgettimeofday.c | 109 +++++++++-------------------------
- 2 files changed, 96 insertions(+), 82 deletions(-)
- create mode 100644 arch/arm/vdso/compiler.h
+ arch/arm/include/asm/vdso_datapage.h | 18 +++++-
+ arch/arm/vdso/compiler.h             |  1 +
+ arch/arm/vdso/vgettimeofday.c        | 90 ++++++++++++++++++----------
+ 3 files changed, 76 insertions(+), 33 deletions(-)
 
-diff --git a/arch/arm/vdso/compiler.h b/arch/arm/vdso/compiler.h
-new file mode 100644
-index 000000000000..af24502797e8
---- /dev/null
-+++ b/arch/arm/vdso/compiler.h
-@@ -0,0 +1,69 @@
-+/*
-+ * Userspace implementations of fallback calls
-+ *
-+ * Copyright (C) 2017 Cavium, Inc.
-+ * Copyright (C) 2012 ARM Limited
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ * Author: Will Deacon <will.deacon@arm.com>
-+ * Rewriten into C by: Andrew Pinski <apinski@cavium.com>
-+ */
-+
-+#ifndef __VDSO_COMPILER_H
-+#define __VDSO_COMPILER_H
-+
-+#include <asm/arch_timer.h>	/* for arch_counter_get_cntvct()	*/
-+#include <asm/processor.h>	/* for cpu_relax()			*/
-+#include <asm/unistd.h>
-+#include <linux/compiler.h>
-+
-+#ifndef CONFIG_AEABI
-+#error This code depends on AEABI system call conventions
+diff --git a/arch/arm/include/asm/vdso_datapage.h b/arch/arm/include/asm/vdso_datapage.h
+index fa3e1856244d..8dd7303db4ec 100644
+--- a/arch/arm/include/asm/vdso_datapage.h
++++ b/arch/arm/include/asm/vdso_datapage.h
+@@ -24,6 +24,16 @@
+ 
+ #include <asm/page.h>
+ 
++#ifndef _VDSO_WTM_CLOCK_SEC_T
++#define _VDSO_WTM_CLOCK_SEC_T
++typedef u32 vdso_wtm_clock_nsec_t;
 +#endif
 +
-+#define DEFINE_FALLBACK(name, type_arg1, name_arg1, type_arg2, name_arg2) \
-+static notrace long name##_fallback(type_arg1 _##name_arg1,		  \
-+				    type_arg2 _##name_arg2)		  \
-+{									  \
-+	register type_arg1 name_arg1 asm("r0") = _##name_arg1;		  \
-+	register type_arg2 name_arg2 asm("r1") = _##name_arg2;		  \
-+	register long ret asm ("r0");					  \
-+	register long nr asm("r7") = __NR_##name;			  \
-+									  \
-+	asm volatile(							  \
-+	"	swi #0\n"						  \
-+	: "=r" (ret)							  \
-+	: "r" (name_arg1), "r" (name_arg2), "r" (nr)			  \
-+	: "memory");							  \
-+									  \
-+	return ret;							  \
-+}
++#ifndef _VDSO_XTIME_CLOCK_SEC_T
++#define _VDSO_XTIME_CLOCK_SEC_T
++typedef u32 vdso_xtime_clock_sec_t;
++#endif
 +
-+#define arch_vdso_read_counter() arch_counter_get_cntvct()
-+
-+/* Avoid unresolved references emitted by GCC */
-+
-+void __aeabi_unwind_cpp_pr0(void)
-+{
-+}
-+
-+void __aeabi_unwind_cpp_pr1(void)
-+{
-+}
-+
-+void __aeabi_unwind_cpp_pr2(void)
-+{
-+}
-+
-+#endif /* __VDSO_COMPILER_H */
+ /* Try to be cache-friendly on systems that don't implement the
+  * generic timer: fit the unconditionally updated fields in the first
+  * 32 bytes.
+@@ -35,9 +45,11 @@ struct vdso_data {
+ 	u32 xtime_coarse_sec;	/* coarse time */
+ 	u32 xtime_coarse_nsec;
+ 
+-	u32 wtm_clock_sec;	/* wall to monotonic offset */
+-	u32 wtm_clock_nsec;
+-	u32 xtime_clock_sec;	/* CLOCK_REALTIME - seconds */
++	/* wall to monotonic offset */
++	u32 wtm_clock_sec;
++	vdso_wtm_clock_nsec_t	wtm_clock_nsec;
++	/* CLOCK_REALTIME - seconds */
++	vdso_xtime_clock_sec_t	xtime_clock_sec;
+ 	u32 cs_mono_mult;	/* clocksource multiplier */
+ 
+ 	u64 cs_cycle_last;	/* last cycle value */
+diff --git a/arch/arm/vdso/compiler.h b/arch/arm/vdso/compiler.h
+index af24502797e8..3edddb705a1b 100644
+--- a/arch/arm/vdso/compiler.h
++++ b/arch/arm/vdso/compiler.h
+@@ -27,6 +27,7 @@
+ #include <asm/processor.h>	/* for cpu_relax()			*/
+ #include <asm/unistd.h>
+ #include <linux/compiler.h>
++#include <linux/time.h>		/* for NSEC_PER_SEC			*/
+ 
+ #ifndef CONFIG_AEABI
+ #error This code depends on AEABI system call conventions
 diff --git a/arch/arm/vdso/vgettimeofday.c b/arch/arm/vdso/vgettimeofday.c
-index 2474c17dc356..522094b147a2 100644
+index 522094b147a2..59893fca03b3 100644
 --- a/arch/arm/vdso/vgettimeofday.c
 +++ b/arch/arm/vdso/vgettimeofday.c
-@@ -22,21 +22,16 @@
-  * Reworked and rebased over arm version by: Mark Salyzyn <salyzyn@android.com>
-  */
+@@ -24,7 +24,8 @@
  
--#include <linux/compiler.h>
--#include <linux/hrtimer.h>
--#include <linux/time.h>
--#include <asm/arch_timer.h>
  #include <asm/barrier.h>
--#include <asm/bug.h>
--#include <asm/page.h>
--#include <asm/unistd.h>
--
--#ifndef CONFIG_AEABI
--#error This code depends on AEABI system call conventions
--#endif
-+#include <linux/compiler.h>	/* for notrace				*/
-+#include <linux/time.h>
+ #include <linux/compiler.h>	/* for notrace				*/
+-#include <linux/time.h>
++#include <linux/math64.h>	/* for __iter_div_u64_rem()		*/
++#include <uapi/linux/time.h>	/* for struct timespec			*/
  
-+#include "compiler.h"
+ #include "compiler.h"
  #include "datapage.h"
- 
-+DEFINE_FALLBACK(gettimeofday, struct timeval *, tv, struct timezone *, tz)
-+DEFINE_FALLBACK(clock_gettime, clockid_t, clock, struct timespec *, ts)
-+
- static notrace u32 vdso_read_begin(const struct vdso_data *vd)
+@@ -79,6 +80,7 @@ static notrace int do_monotonic_coarse(const struct vdso_data *vd,
  {
+ 	struct timespec tomono;
  	u32 seq;
-@@ -63,23 +58,6 @@ static notrace int vdso_read_retry(const struct vdso_data *vd, u32 start)
- 	return seq != start;
++	u64 nsec;
+ 
+ 	do {
+ 		seq = vdso_read_begin(vd);
+@@ -92,33 +94,41 @@ static notrace int do_monotonic_coarse(const struct vdso_data *vd,
+ 	} while (vdso_read_retry(vd, seq));
+ 
+ 	ts->tv_sec += tomono.tv_sec;
+-	timespec_add_ns(ts, tomono.tv_nsec);
++	/* open coding timespec_add_ns */
++	ts->tv_sec += __iter_div_u64_rem(ts->tv_nsec + tomono.tv_nsec,
++					 NSEC_PER_SEC, &nsec);
++	ts->tv_nsec = nsec;
+ 
+ 	return 0;
  }
  
--static notrace long clock_gettime_fallback(clockid_t _clkid,
--					   struct timespec *_ts)
--{
--	register struct timespec *ts asm("r1") = _ts;
--	register clockid_t clkid asm("r0") = _clkid;
--	register long ret asm ("r0");
--	register long nr asm("r7") = __NR_clock_gettime;
--
--	asm volatile(
--	"	swi #0\n"
--	: "=r" (ret)
--	: "r" (clkid), "r" (ts), "r" (nr)
--	: "memory");
--
--	return ret;
--}
--
- static notrace int do_realtime_coarse(const struct vdso_data *vd,
- 				      struct timespec *ts)
+ #ifdef CONFIG_ARM_ARCH_TIMER
+ 
+-static notrace u64 get_ns(const struct vdso_data *vd)
++/*
++ * Returns the clock delta, in nanoseconds left-shifted by the clock
++ * shift.
++ */
++static notrace u64 get_clock_shifted_nsec(const u64 cycle_last,
++					  const u32 mult,
++					  const u64 mask)
  {
-@@ -127,7 +105,7 @@ static notrace u64 get_ns(const struct vdso_data *vd)
- 	u64 cycle_now;
- 	u64 nsec;
- 
--	cycle_now = arch_counter_get_cntvct();
-+	cycle_now = arch_vdso_read_counter();
- 
- 	cycle_delta = (cycle_now - vd->cs_cycle_last) & vd->cs_mask;
- 
-@@ -200,85 +178,52 @@ static notrace int do_monotonic(const struct vdso_data *vd, struct timespec *ts)
- 
- #endif /* CONFIG_ARM_ARCH_TIMER */
- 
--notrace int __vdso_clock_gettime(clockid_t clkid, struct timespec *ts)
-+notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
- {
--	int ret = -1;
+-	u64 cycle_delta;
+-	u64 cycle_now;
+-	u64 nsec;
 -
- 	const struct vdso_data *vd = __get_datapage();
+-	cycle_now = arch_vdso_read_counter();
++	u64 res;
  
--	switch (clkid) {
-+	switch (clock) {
- 	case CLOCK_REALTIME_COARSE:
--		ret = do_realtime_coarse(vd, ts);
-+		do_realtime_coarse(vd, ts);
- 		break;
- 	case CLOCK_MONOTONIC_COARSE:
--		ret = do_monotonic_coarse(vd, ts);
-+		do_monotonic_coarse(vd, ts);
- 		break;
- 	case CLOCK_REALTIME:
--		ret = do_realtime(vd, ts);
-+		if (do_realtime(vd, ts))
-+			goto fallback;
- 		break;
- 	case CLOCK_MONOTONIC:
--		ret = do_monotonic(vd, ts);
-+		if (do_monotonic(vd, ts))
-+			goto fallback;
- 		break;
- 	default:
--		break;
-+		goto fallback;
- 	}
+-	cycle_delta = (cycle_now - vd->cs_cycle_last) & vd->cs_mask;
++	/* Read the virtual counter. */
++	res = arch_vdso_read_counter();
  
--	if (ret)
--		ret = clock_gettime_fallback(clkid, ts);
--
--	return ret;
--}
--
--static notrace long gettimeofday_fallback(struct timeval *_tv,
--					  struct timezone *_tz)
--{
--	register struct timezone *tz asm("r1") = _tz;
--	register struct timeval *tv asm("r0") = _tv;
--	register long ret asm ("r0");
--	register long nr asm("r7") = __NR_gettimeofday;
--
--	asm volatile(
--	"	swi #0\n"
--	: "=r" (ret)
--	: "r" (tv), "r" (tz), "r" (nr)
--	: "memory");
--
--	return ret;
-+	return 0;
-+fallback:
-+	return clock_gettime_fallback(clock, ts);
+-	nsec = (cycle_delta * vd->cs_mono_mult) + vd->xtime_clock_snsec;
+-	nsec >>= vd->cs_shift;
++	res = res - cycle_last;
+ 
+-	return nsec;
++	res &= mask;
++	return res * mult;
  }
  
- notrace int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
+ static notrace int do_realtime(const struct vdso_data *vd, struct timespec *ts)
  {
--	struct timespec ts;
--	int ret;
--
- 	const struct vdso_data *vd = __get_datapage();
+-	u64 nsecs;
+-	u32 seq;
++	u32 seq, mult, shift;
++	u64 nsec, cycle_last;
++	u64 mask;
++	vdso_xtime_clock_sec_t sec;
  
--	ret = do_realtime(vd, &ts);
--	if (ret)
--		return gettimeofday_fallback(tv, tz);
-+	if (likely(tv != NULL)) {
-+		struct timespec ts;
+ 	do {
+ 		seq = vdso_read_begin(vd);
+@@ -126,22 +136,33 @@ static notrace int do_realtime(const struct vdso_data *vd, struct timespec *ts)
+ 		if (vd->use_syscall)
+ 			return -1;
+ 
+-		ts->tv_sec = vd->xtime_clock_sec;
+-		nsecs = get_ns(vd);
++		cycle_last = vd->cs_cycle_last;
+ 
+-	} while (vdso_read_retry(vd, seq));
++		mult = vd->cs_mono_mult;
++		shift = vd->cs_shift;
++		mask = vd->cs_mask;
 +
-+		if (do_realtime(vd, &ts))
-+			return gettimeofday_fallback(tv, tz);
- 
--	if (tv) {
- 		tv->tv_sec = ts.tv_sec;
- 		tv->tv_usec = ts.tv_nsec / 1000;
- 	}
--	if (tz) {
++		sec = vd->xtime_clock_sec;
++		nsec = vd->xtime_clock_snsec;
 +
-+	if (unlikely(tz != NULL)) {
- 		tz->tz_minuteswest = vd->tz_minuteswest;
- 		tz->tz_dsttime = vd->tz_dsttime;
- 	}
++	} while (unlikely(vdso_read_retry(vd, seq)));
  
--	return ret;
--}
--
--/* Avoid unresolved references emitted by GCC */
--
--void __aeabi_unwind_cpp_pr0(void)
--{
--}
--
--void __aeabi_unwind_cpp_pr1(void)
--{
--}
--
--void __aeabi_unwind_cpp_pr2(void)
--{
-+	return 0;
+-	ts->tv_nsec = 0;
+-	timespec_add_ns(ts, nsecs);
++	nsec += get_clock_shifted_nsec(cycle_last, mult, mask);
++	nsec >>= shift;
++	/* open coding timespec_add_ns to save a ts->tv_nsec = 0 */
++	ts->tv_sec = sec + __iter_div_u64_rem(nsec, NSEC_PER_SEC, &nsec);
++	ts->tv_nsec = nsec;
+ 
+ 	return 0;
+ }
+ 
+ static notrace int do_monotonic(const struct vdso_data *vd, struct timespec *ts)
+ {
+-	struct timespec tomono;
+-	u64 nsecs;
+-	u32 seq;
++	u32 seq, mult, shift;
++	u64 nsec, cycle_last;
++	u64 mask;
++	vdso_wtm_clock_nsec_t wtm_nsec;
++	__kernel_time_t sec;
+ 
+ 	do {
+ 		seq = vdso_read_begin(vd);
+@@ -149,17 +170,26 @@ static notrace int do_monotonic(const struct vdso_data *vd, struct timespec *ts)
+ 		if (vd->use_syscall)
+ 			return -1;
+ 
+-		ts->tv_sec = vd->xtime_clock_sec;
+-		nsecs = get_ns(vd);
++		cycle_last = vd->cs_cycle_last;
+ 
+-		tomono.tv_sec = vd->wtm_clock_sec;
+-		tomono.tv_nsec = vd->wtm_clock_nsec;
++		mult = vd->cs_mono_mult;
++		shift = vd->cs_shift;
++		mask = vd->cs_mask;
+ 
+-	} while (vdso_read_retry(vd, seq));
++		sec = vd->xtime_clock_sec;
++		nsec = vd->xtime_clock_snsec;
+ 
+-	ts->tv_sec += tomono.tv_sec;
+-	ts->tv_nsec = 0;
+-	timespec_add_ns(ts, nsecs + tomono.tv_nsec);
++		sec += vd->wtm_clock_sec;
++		wtm_nsec = vd->wtm_clock_nsec;
++
++	} while (unlikely(vdso_read_retry(vd, seq)));
++
++	nsec += get_clock_shifted_nsec(cycle_last, mult, mask);
++	nsec >>= shift;
++	nsec += wtm_nsec;
++	/* open coding timespec_add_ns to save a ts->tv_nsec = 0 */
++	ts->tv_sec = sec + __iter_div_u64_rem(nsec, NSEC_PER_SEC, &nsec);
++	ts->tv_nsec = nsec;
+ 
+ 	return 0;
  }
 -- 
 2.19.0.605.g01d371f741-goog
