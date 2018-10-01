@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A042EC64EB0
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9230CC64EB0
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 663BC206B2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:35:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 663BC206B2
+	by mail.kernel.org (Postfix) with ESMTP id 619AC2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:36:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 619AC2089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbeJANL6 (ORCPT
+        id S1729066AbeJANMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 09:11:58 -0400
-Received: from mga07.intel.com ([134.134.136.100]:3862 "EHLO mga07.intel.com"
+        Mon, 1 Oct 2018 09:12:00 -0400
+Received: from mga12.intel.com ([192.55.52.136]:10732 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728866AbeJANL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 09:11:57 -0400
+        id S1728901AbeJANL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 09:11:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2018 23:35:45 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2018 23:35:45 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,326,1534834800"; 
-   d="scan'208";a="77466532"
+   d="scan'208";a="77466514"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.98])
-  by orsmga007.jf.intel.com with ESMTP; 30 Sep 2018 23:31:25 -0700
+  by orsmga007.jf.intel.com with ESMTP; 30 Sep 2018 23:31:12 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 19/19] perf scripts python: exported-sql-viewer.py: Add help window
-Date:   Mon,  1 Oct 2018 09:28:53 +0300
-Message-Id: <20181001062853.28285-20-adrian.hunter@intel.com>
+Subject: [PATCH 13/19] perf scripts python: exported-sql-viewer.py: Add support for multiple sub-windows
+Date:   Mon,  1 Oct 2018 09:28:47 +0300
+Message-Id: <20181001062853.28285-14-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181001062853.28285-1-adrian.hunter@intel.com>
 References: <20181001062853.28285-1-adrian.hunter@intel.com>
@@ -47,193 +47,236 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a window to display help. It is also possible to display the help only, by
-using the option "--help-only" instead of a database name.
+Use Qt MDI (multiple document interface) to support multiple sub-windows.
+Put the data model in a cache so that each sub-window can share the same
+data. This allows mutiple views of the call-graph at the same time and
+paves the way to add more reports.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- .../scripts/python/exported-sql-viewer.py     | 144 +++++++++++++++++-
- 1 file changed, 143 insertions(+), 1 deletion(-)
+ .../scripts/python/exported-sql-viewer.py     | 182 +++++++++++++++++-
+ 1 file changed, 173 insertions(+), 9 deletions(-)
 
 diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
-index 933066ee26bd..ffead063f21a 100755
+index 03e7a1de7f31..c2f44351821e 100755
 --- a/tools/perf/scripts/python/exported-sql-viewer.py
 +++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -2025,6 +2025,136 @@ class WindowMenu():
- 	def setActiveSubWindow(self, nr):
- 		self.mdi_area.setActiveSubWindow(self.mdi_area.subWindowList()[nr - 1])
+@@ -47,6 +47,8 @@
+ #       functions that it calls
  
-+# Help text
+ import sys
++import weakref
++import threading
+ from PySide.QtCore import *
+ from PySide.QtGui import *
+ from PySide.QtSql import *
+@@ -138,6 +140,23 @@ class TreeModel(QAbstractItemModel):
+ 		item = index.internalPointer()
+ 		return self.DisplayData(item, index)
+ 
++# Model cache
 +
-+glb_help_text = """
-+<h1>Contents</h1>
-+<style>
-+p.c1 {
-+    text-indent: 40px;
-+}
-+p.c2 {
-+    text-indent: 80px;
-+}
-+}
-+</style>
-+<p class=c1><a href=#reports>1. Reports</a></p>
-+<p class=c2><a href=#callgraph>1.1 Context-Sensitive Call Graph</a></p>
-+<p class=c2><a href=#allbranches>1.2 All branches</a></p>
-+<p class=c2><a href=#selectedbranches>1.3 Selected branches</a></p>
-+<p class=c1><a href=#tables>2. Tables</a></p>
-+<h1 id=reports>1. Reports</h1>
-+<h2 id=callgraph>1.1 Context-Sensitive Call Graph</h2>
-+The result is a GUI window with a tree representing a context-sensitive
-+call-graph. Expanding a couple of levels of the tree and adjusting column
-+widths to suit will display something like:
-+<pre>
-+                                         Call Graph: pt_example
-+Call Path                          Object      Count   Time(ns)  Time(%)  Branch Count   Branch Count(%)
-+v- ls
-+    v- 2638:2638
-+        v- _start                  ld-2.19.so    1     10074071   100.0         211135            100.0
-+          |- unknown               unknown       1        13198     0.1              1              0.0
-+          >- _dl_start             ld-2.19.so    1      1400980    13.9          19637              9.3
-+          >- _d_linit_internal     ld-2.19.so    1       448152     4.4          11094              5.3
-+          v-__libc_start_main@plt  ls            1      8211741    81.5         180397             85.4
-+             >- _dl_fixup          ld-2.19.so    1         7607     0.1            108              0.1
-+             >- __cxa_atexit       libc-2.19.so  1        11737     0.1             10              0.0
-+             >- __libc_csu_init    ls            1        10354     0.1             10              0.0
-+             |- _setjmp            libc-2.19.so  1            0     0.0              4              0.0
-+             v- main               ls            1      8182043    99.6         180254             99.9
-+</pre>
-+<h3>Points to note:</h3>
-+<ul>
-+<li>The top level is a command name (comm)</li>
-+<li>The next level is a thread (pid:tid)</li>
-+<li>Subsequent levels are functions</li>
-+<li>'Count' is the number of calls</li>
-+<li>'Time' is the elapsed time until the function returns</li>
-+<li>Percentages are relative to the level above</li>
-+<li>'Branch Count' is the total number of branches for that function and all functions that it calls
-+</ul>
-+<h3>Find</h3>
-+Ctrl-F displays a Find bar which finds function names by either an exact match or a pattern match.
-+The pattern matching symbols are ? for any character and * for zero or more characters.
-+<h2 id=allbranches>1.2 All branches</h2>
-+The All branches report displays all branches in chronological order.
-+Not all data is fetched immediately. More records can be fetched using the Fetch bar provided.
-+<h3>Disassembly</h3>
-+Open a branch to display disassembly. This only works if:
-+<ol>
-+<li>The disassembler is available. Currently, only Intel XED is supported - see <a href=#xed>Intel XED Setup</a></li>
-+<li>The object code is available. Currently, only the perf build ID cache is searched for object code.
-+The default directory ~/.debug can be overridden by setting environment variable PERF_BUILDID_DIR.
-+One exception is kcore where the DSO long name is used (refer dsos_view on the Tables menu),
-+or alternatively, set environment variable PERF_KCORE to the kcore file name.</li>
-+</ol>
-+<h4 id=xed>Intel XED Setup</h4>
-+To use Intel XED, libxed.so must be present.  To build and install libxed.so:
-+<pre>
-+git clone https://github.com/intelxed/mbuild.git mbuild
-+git clone https://github.com/intelxed/xed
-+cd xed
-+./mfile.py --share
-+sudo ./mfile.py --prefix=/usr/local install
-+sudo ldconfig
-+</pre>
-+<h3>Find</h3>
-+Ctrl-F displays a Find bar which finds substrings by either an exact match or a regular expression match.
-+Refer to Python documentation for the regular expression syntax.
-+All columns are searched, but only currently fetched rows are searched.
-+<h2 id=selectedbranches>1.3 Selected branches</h2>
-+This is the same as the <a href=#allbranches>All branches</a> report but with the data reduced
-+by various selection criteria. A dialog box displays available criteria which are AND'ed together.
-+<h1 id=tables>2. Tables</h1>
-+The Tables menu shows all tables and views in the database. Most tables have an associated view
-+which displays the information in a more friendly way. Not all data for large tables is fetched
-+immediately. More records can be fetched using the Fetch bar provided. Columns can be sorted,
-+but that can be slow for large tables.
-+<p>There are also tables of database meta-information.
-+For SQLite3 databases, the sqlite_master table is included.
-+For PostgreSQL databases, information_schema.tables/views/columns are included.
-+<h3>Find</h3>
-+Ctrl-F displays a Find bar which finds substrings by either an exact match or a regular expression match.
-+Refer to Python documentation for the regular expression syntax.
-+All columns are searched, but only currently fetched rows are searched.
-+"""
++model_cache = weakref.WeakValueDictionary()
++model_cache_lock = threading.Lock()
 +
-+# Help window
++def LookupCreateModel(model_name, create_fn):
++	model_cache_lock.acquire()
++	try:
++		model = model_cache[model_name]
++	except:
++		model = None
++	if model is None:
++		model = create_fn()
++		model_cache[model_name] = model
++	model_cache_lock.release()
++	return model
 +
-+class HelpWindow(QMdiSubWindow):
+ # Context-sensitive call graph data model item base
+ 
+ class CallGraphLevelItemBase(object):
+@@ -289,6 +308,144 @@ class CallGraphModel(TreeModel):
+ 		alignment = [ Qt.AlignLeft, Qt.AlignLeft, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight ]
+ 		return alignment[column]
+ 
++# Context-sensitive call graph window
++
++class CallGraphWindow(QMdiSubWindow):
 +
 +	def __init__(self, glb, parent=None):
-+		super(HelpWindow, self).__init__(parent)
++		super(CallGraphWindow, self).__init__(parent)
 +
-+		self.text = QTextBrowser()
-+		self.text.setHtml(glb_help_text)
-+		self.text.setReadOnly(True)
-+		self.text.setOpenExternalLinks(True)
++		self.model = LookupCreateModel("Context-Sensitive Call Graph", lambda x=glb: CallGraphModel(x))
 +
-+		self.setWidget(self.text)
++		self.view = QTreeView()
++		self.view.setModel(self.model)
 +
-+		AddSubWindow(glb.mainwindow.mdi_area, self, "Exported SQL Viewer Help")
++		for c, w in ((0, 250), (1, 100), (2, 60), (3, 70), (4, 70), (5, 100)):
++			self.view.setColumnWidth(c, w)
 +
-+# Main window that only displays the help text
++		self.setWidget(self.view)
 +
-+class HelpOnlyWindow(QMainWindow):
++		AddSubWindow(glb.mainwindow.mdi_area, self, "Context-Sensitive Call Graph")
 +
-+	def __init__(self, parent=None):
-+		super(HelpOnlyWindow, self).__init__(parent)
++# Action Definition
 +
-+		self.setMinimumSize(200, 100)
-+		self.resize(800, 600)
-+		self.setWindowTitle("Exported SQL Viewer Help")
-+		self.setWindowIcon(self.style().standardIcon(QStyle.SP_MessageBoxInformation))
++def CreateAction(label, tip, callback, parent=None, shortcut=None):
++	action = QAction(label, parent)
++	if shortcut != None:
++		action.setShortcuts(shortcut)
++	action.setStatusTip(tip)
++	action.triggered.connect(callback)
++	return action
 +
-+		self.text = QTextBrowser()
-+		self.text.setHtml(glb_help_text)
-+		self.text.setReadOnly(True)
-+		self.text.setOpenExternalLinks(True)
++# Typical application actions
 +
-+		self.setCentralWidget(self.text)
++def CreateExitAction(app, parent=None):
++	return CreateAction("&Quit", "Exit the application", app.closeAllWindows, parent, QKeySequence.Quit)
 +
- # Font resize
++# Typical MDI actions
++
++def CreateCloseActiveWindowAction(mdi_area):
++	return CreateAction("Cl&ose", "Close the active window", mdi_area.closeActiveSubWindow, mdi_area)
++
++def CreateCloseAllWindowsAction(mdi_area):
++	return CreateAction("Close &All", "Close all the windows", mdi_area.closeAllSubWindows, mdi_area)
++
++def CreateTileWindowsAction(mdi_area):
++	return CreateAction("&Tile", "Tile the windows", mdi_area.tileSubWindows, mdi_area)
++
++def CreateCascadeWindowsAction(mdi_area):
++	return CreateAction("&Cascade", "Cascade the windows", mdi_area.cascadeSubWindows, mdi_area)
++
++def CreateNextWindowAction(mdi_area):
++	return CreateAction("Ne&xt", "Move the focus to the next window", mdi_area.activateNextSubWindow, mdi_area, QKeySequence.NextChild)
++
++def CreatePreviousWindowAction(mdi_area):
++	return CreateAction("Pre&vious", "Move the focus to the previous window", mdi_area.activatePreviousSubWindow, mdi_area, QKeySequence.PreviousChild)
++
++# Typical MDI window menu
++
++class WindowMenu():
++
++	def __init__(self, mdi_area, menu):
++		self.mdi_area = mdi_area
++		self.window_menu = menu.addMenu("&Windows")
++		self.close_active_window = CreateCloseActiveWindowAction(mdi_area)
++		self.close_all_windows = CreateCloseAllWindowsAction(mdi_area)
++		self.tile_windows = CreateTileWindowsAction(mdi_area)
++		self.cascade_windows = CreateCascadeWindowsAction(mdi_area)
++		self.next_window = CreateNextWindowAction(mdi_area)
++		self.previous_window = CreatePreviousWindowAction(mdi_area)
++		self.window_menu.aboutToShow.connect(self.Update)
++
++	def Update(self):
++		self.window_menu.clear()
++		sub_window_count = len(self.mdi_area.subWindowList())
++		have_sub_windows = sub_window_count != 0
++		self.close_active_window.setEnabled(have_sub_windows)
++		self.close_all_windows.setEnabled(have_sub_windows)
++		self.tile_windows.setEnabled(have_sub_windows)
++		self.cascade_windows.setEnabled(have_sub_windows)
++		self.next_window.setEnabled(have_sub_windows)
++		self.previous_window.setEnabled(have_sub_windows)
++		self.window_menu.addAction(self.close_active_window)
++		self.window_menu.addAction(self.close_all_windows)
++		self.window_menu.addSeparator()
++		self.window_menu.addAction(self.tile_windows)
++		self.window_menu.addAction(self.cascade_windows)
++		self.window_menu.addSeparator()
++		self.window_menu.addAction(self.next_window)
++		self.window_menu.addAction(self.previous_window)
++		if sub_window_count == 0:
++			return
++		self.window_menu.addSeparator()
++		nr = 1
++		for sub_window in self.mdi_area.subWindowList():
++			label = str(nr) + " " + sub_window.name
++			if nr < 10:
++				label = "&" + label
++			action = self.window_menu.addAction(label)
++			action.setCheckable(True)
++			action.setChecked(sub_window == self.mdi_area.activeSubWindow())
++			action.triggered.connect(lambda x=nr: self.setActiveSubWindow(x))
++			self.window_menu.addAction(action)
++			nr += 1
++
++	def setActiveSubWindow(self, nr):
++		self.mdi_area.setActiveSubWindow(self.mdi_area.subWindowList()[nr - 1])
++
++# Unique name for sub-windows
++
++def NumberedWindowName(name, nr):
++	if nr > 1:
++		name += " <" + str(nr) + ">"
++	return name
++
++def UniqueSubWindowName(mdi_area, name):
++	nr = 1
++	while True:
++		unique_name = NumberedWindowName(name, nr)
++		ok = True
++		for sub_window in mdi_area.subWindowList():
++			if sub_window.name == unique_name:
++				ok = False
++				break
++		if ok:
++			return unique_name
++		nr += 1
++
++# Add a sub-window
++
++def AddSubWindow(mdi_area, sub_window, name):
++	unique_name = UniqueSubWindowName(mdi_area, name)
++	sub_window.setMinimumSize(200, 100)
++	sub_window.resize(800, 600)
++	sub_window.setWindowTitle(unique_name)
++	sub_window.setAttribute(Qt.WA_DeleteOnClose)
++	sub_window.setWindowIcon(sub_window.style().standardIcon(QStyle.SP_FileIcon))
++	sub_window.name = unique_name
++	mdi_area.addSubWindow(sub_window)
++	sub_window.show()
++
+ # Main window
  
- def ResizeFont(widget, diff):
-@@ -2111,6 +2241,9 @@ class MainWindow(QMainWindow):
+ class MainWindow(QMainWindow):
+@@ -298,21 +455,28 @@ class MainWindow(QMainWindow):
  
- 		self.window_menu = WindowMenu(self.mdi_area, menu)
+ 		self.glb = glb
  
-+		help_menu = menu.addMenu("&Help")
-+		help_menu.addAction(CreateAction("&Exported SQL Viewer Help", "Helpful information", self.Help, self, QKeySequence.HelpContents))
+-		self.setWindowTitle("Call Graph: " + glb.dbname)
+-		self.move(100, 100)
+-		self.resize(800, 600)
++		self.setWindowTitle("Exported SQL Viewer: " + glb.dbname)
+ 		self.setWindowIcon(self.style().standardIcon(QStyle.SP_ComputerIcon))
+ 		self.setMinimumSize(200, 100)
+ 
+-		self.model = CallGraphModel(glb)
++		self.mdi_area = QMdiArea()
++		self.mdi_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
++		self.mdi_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+ 
+-		self.view = QTreeView()
+-		self.view.setModel(self.model)
++		self.setCentralWidget(self.mdi_area)
+ 
+-		for c, w in ((0, 250), (1, 100), (2, 60), (3, 70), (4, 70), (5, 100)):
+-			self.view.setColumnWidth(c, w)
++		menu = self.menuBar()
 +
- 	def Find(self):
- 		win = self.mdi_area.activeSubWindow()
- 		if win:
-@@ -2169,6 +2302,9 @@ class MainWindow(QMainWindow):
- 	def NewTableView(self, table_name):
- 		TableWindow(self.glb, table_name, self)
- 
-+	def Help(self):
-+		HelpWindow(self.glb, self)
++		file_menu = menu.addMenu("&File")
++		file_menu.addAction(CreateExitAction(glb.app, self))
 +
- # XED Disassembler
++		reports_menu = menu.addMenu("&Reports")
++		reports_menu.addAction(CreateAction("Context-Sensitive Call &Graph", "Create a new window containing a context-sensitive call graph", self.NewCallGraph, self))
++
++		self.window_menu = WindowMenu(self.mdi_area, menu)
  
- class xed_state_t(Structure):
-@@ -2363,10 +2499,16 @@ class DBRef():
+-		self.setCentralWidget(self.view)
++	def NewCallGraph(self):
++		CallGraphWindow(self.glb, self)
  
- def Main():
- 	if (len(sys.argv) < 2):
--		print >> sys.stderr, "Usage is: exported-sql-viewer.py <database name>"
-+		print >> sys.stderr, "Usage is: exported-sql-viewer.py {<database name> | --help-only}"
- 		raise Exception("Too few arguments")
+ # Global data
  
- 	dbname = sys.argv[1]
-+	if dbname == "--help-only":
-+		app = QApplication(sys.argv)
-+		mainwindow = HelpOnlyWindow()
-+		mainwindow.show()
-+		err = app.exec_()
-+		sys.exit(err)
- 
- 	is_sqlite3 = False
- 	try:
 -- 
 2.17.1
 
