@@ -2,326 +2,157 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FC5C004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A35C004D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A850320666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:35:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0035420666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:38:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qhno1eov"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A850320666
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="OlzF9Pxw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0035420666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbeJAHKU (ORCPT
+        id S1726835AbeJAHNL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 03:10:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726080AbeJAHKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 03:10:20 -0400
-Received: from [192.168.0.101] (unknown [121.237.253.201])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBF822083C;
-        Mon,  1 Oct 2018 00:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538354113;
-        bh=iVPe2kvaFLwUchsYovohDH7KikPBIcXGjBuvMPHVmOA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Qhno1eovTMJ4/iNmyi0KFZRF4qWM2Bm3CHyMmUf3MrYwNw9C8h4JhGi838W/fQaMg
-         Bl/fwdw/E759ZKV1xGFsaSs0Chv5+m1EdCveJJwOo838FH3baWqNEyPRqdbq5do8mC
-         Yv1hpc6fgl8wMhi0GItmraL9/u6pHT6AMXsBmEAE=
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <0c98ab72-9bc4-093d-707f-9c59a38fc7c7@huawei.com>
- <20180926002909.GC3829@jaegeuk-macbookpro.roam.corp.google.com>
- <b45beb50-c814-5fb4-63da-060871e33553@huawei.com>
- <20180926014418.GE3829@jaegeuk-macbookpro.roam.corp.google.com>
- <e1e855e5-2aaf-6560-d69d-2b7b0f60404e@huawei.com>
- <20180926020921.GG3829@jaegeuk-macbookpro.roam.corp.google.com>
- <d4279226-ca5c-8905-f6e9-c660c3aad6a0@huawei.com>
- <20180928173721.GB64391@jaegeuk-macbookpro.roam.corp.google.com>
- <20180928234025.GA94043@jaegeuk-macbookpro.roam.corp.google.com>
- <2c6db622-ef6d-c3c7-cf54-4dd708bd54e3@huawei.com>
- <20180930235827.GB17407@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <227e112e-a462-6803-5c41-dad47569a55b@kernel.org>
-Date:   Mon, 1 Oct 2018 08:35:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180930235827.GB17407@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 1 Oct 2018 03:13:11 -0400
+Received: from mail-eopbgr700117.outbound.protection.outlook.com ([40.107.70.117]:52496
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726080AbeJAHNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 03:13:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hhcw3H9kmZK3csNVI1Zx4P2m7Xqsa1sKt/25AKLbj8s=;
+ b=OlzF9Pxw/29mqf9fqTS3xa4+fAWu3aoP4NA5xYlXQAqQSgnLGtnBCWhBxJM9NYbVK03H0lAfoxCVkXAkX4ICU3xiX9K0EqNy0tlFkYlgNZrNl0JtfbI2xiC3MueIL6/bBGmb84TNXP9Qu5wS1MUSeMhpgduVWUqLPi8FVmimgXM=
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
+ CY4PR21MB0469.namprd21.prod.outlook.com (10.172.121.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.3; Mon, 1 Oct 2018 00:38:02 +0000
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1228.006; Mon, 1 Oct 2018
+ 00:38:02 +0000
+From:   Sasha Levin <Alexander.Levin@microsoft.com>
+To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Martin Willi <martin@strongswan.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 01/65] netfilter: xt_cluster: add dependency on
+ conntrack module
+Thread-Topic: [PATCH AUTOSEL 4.18 01/65] netfilter: xt_cluster: add dependency
+ on conntrack module
+Thread-Index: AQHUWR8Ckkacs9MKu0O8y9QVXJ88vA==
+Date:   Mon, 1 Oct 2018 00:38:02 +0000
+Message-ID: <20181001003754.146961-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0469;6:MRyesJ6zMwPqB7l0kmri10QVFqkXPLy9cNAAZMyig43ksRPrdTf5hzriZE8yVi0K/YHrAzajUFQ0vhdtcdbCSlaPXKIblFX6NsJ1goN+o8xu1BY94urcRli0Ee9wiCAYLMrCIVl/8sm1TcOFVERxs6CLI7jbFSf2estwXcfWmC2lvmZSE2PV4Cbt47lVEduc4UJMyhbuvE+HvGVdzZFEedUS+mGzNNJyuIJbPZLmdd/IltyuyTTQiV2F3DHC9qwAKqVWCPgOjPAeqIaDuPWfLuvTD1jr7B+vGK/+V5zkHiN7ru5r7n2nicpWvKDfoAjYSly5o4TjfRvCLKg2XsQsyu5Y3fs5yJhC0KP1AEpSQ937f2/ruqb/1SR99UbLr45Yf8kzBoFePg31bsKdcPaQgcc6N/jNbVU+HLSM1kx7cjargMbt+rhLkcmgEbZpGIkf+cGoEwZJFrn0x1Aw/jdxkw==;5:81Eh11Q4ySG/Vv11LZ3wm7SqBlKN0twaLBzo8jTs7sug6S8VVTHOkaO9mTm0jSJybYgJYWXPlV5fHYw24OPLbC3/7GBo55gJ2YTY7YzmFwiWj174aWd+ABplpNvDR34qT2eRkqRJVJAxZELbXB/qPIuia2hv8T07d8qC2MjFDvU=;7:cOMz/aFChwlp11yqkE4Bft1WMOgkQO49NaO0NVibX02CbLdpOCAN+fwrbjobJ6v9e2L/3WUH5jHJabGws8L8Toti9nUzl4uBv2ChO9g0RH2Rem8WwkNPF735wB63xtTJdmJF1coVHVYDrKOGs+Nv5efn653IX5zh3tbzbFaXPsesszP0+ypRA/pj7D1NeIum0/30hVQLASI9A1SSHY3mHcH8T4mpvUMo1g+vprCdKd6JDax9mWxhbVRt9/pU5MhF
+x-ms-office365-filtering-correlation-id: f285f201-6077-44cc-1c36-08d62736253f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0469;
+x-ms-traffictypediagnostic: CY4PR21MB0469:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-prvs: <CY4PR21MB0469EF237267DBD924060D02FBEF0@CY4PR21MB0469.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0469;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0469;
+x-forefront-prvs: 0812095267
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(39860400002)(366004)(136003)(199004)(189003)(5250100002)(106356001)(81166006)(14454004)(10290500003)(316002)(54906003)(22452003)(110136005)(25786009)(305945005)(2501003)(217873002)(256004)(72206003)(68736007)(14444005)(478600001)(6506007)(2906002)(7736002)(86612001)(575784001)(1076002)(86362001)(4326008)(99286004)(97736004)(3846002)(6116002)(8936002)(81156014)(105586002)(8676002)(71200400001)(5660300001)(71190400001)(10090500001)(36756003)(6512007)(107886003)(2900100001)(102836004)(6486002)(6436002)(53936002)(26005)(66066001)(2616005)(476003)(486006)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0469;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: kutiqLyEeElWwS7F5pM/avBTgat9zJZl5Hnxt1x33UzsTBDLGYdEU6hz60saIoheVpZNCod7pabdYotbNf6FtfW1DHxzneHS6VaaaeM1V2GTpzXJqEkrRTjvhkIHhAb/fMyT257z7kbZ7Cuh4OHfoRocFT6ZSjGMGx4/9nYfDLBEPIHZl2DxjBsulxLcOwsdxn1mbc083LvW3V71MaBUvPX5EddLHKJY82ksd2wXYAVOUr1dC720+M5Fxb9sXMkbhLKxER8fjBgjoGuEQeOYVOaCBBtCv6SjwpruvcLctHS85CzXOgFCES3HzKremtJQ5rStrod6FJRVSFBIgVs72qrdOMZGJLhwjEZKS9ciXYc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f285f201-6077-44cc-1c36-08d62736253f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:38:02.4792
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0469
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-1 7:58, Jaegeuk Kim wrote:
-> On 09/29, Chao Yu wrote:
->> On 2018/9/29 7:40, Jaegeuk Kim wrote:
->>> Testing other fix.
->>>
->>> ---
->>>  fs/f2fs/checkpoint.c |  7 +++++++
->>>  fs/f2fs/f2fs.h       |  1 +
->>>  fs/f2fs/gc.c         | 10 +++++++++-
->>>  fs/f2fs/super.c      | 22 +++++++++++++++++++++-
->>>  4 files changed, 38 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>> index 524b87667cf4..3fde91f41a91 100644
->>> --- a/fs/f2fs/checkpoint.c
->>> +++ b/fs/f2fs/checkpoint.c
->>> @@ -1494,6 +1494,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>>  {
->>>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
->>>  	unsigned long long ckpt_ver;
->>> +	bool need_up = false;
->>>  	int err = 0;
->>>  
->>>  	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
->>> @@ -1506,6 +1507,10 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>>  		f2fs_msg(sbi->sb, KERN_WARNING,
->>>  				"Start checkpoint disabled!");
->>>  	}
->>> +	if (!is_sbi_flag_set(sbi, SBI_QUOTA_INIT)) {
->>> +		need_up = true;
->>> +		down_read(&sbi->sb->s_umount);
->>
->> This is to avoid show warning when calling dquot_writeback_dquots() in
->> f2fs_quota_sync(), right?
-> 
-> Yup. Unfortunately, this can't fix all the issues, so I'm testing trylock
-> simply in this case.
+From: Martin Willi <martin@strongswan.org>
 
-Oh, that's just warning, it could not be harmful, I think we can simply remove
-WARN_ON_ONCE in dquot_writeback_dquots to fix this?
+[ Upstream commit c1dc2912059901f97345d9e10c96b841215fdc0f ]
 
-> 
->>
->>> +	}
->>>  	mutex_lock(&sbi->cp_mutex);
->>>  
->>>  	if (!is_sbi_flag_set(sbi, SBI_IS_DIRTY) &&
->>> @@ -1582,6 +1587,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>>  	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish checkpoint");
->>>  out:
->>>  	mutex_unlock(&sbi->cp_mutex);
->>> +	if (need_up)
->>> +		up_read(&sbi->sb->s_umount);
->>>  	return err;
->>>  }
->>>  
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index 57c829dd107e..30194f2f108e 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -1096,6 +1096,7 @@ enum {
->>>  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
->>>  	SBI_IS_RECOVERED,			/* recovered orphan/data */
->>>  	SBI_CP_DISABLED,			/* CP was disabled last mount */
->>> +	SBI_QUOTA_INIT,				/* avoid sb->s_umount lock */
->>>  	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
->>>  	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
->>>  	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
->>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>> index adaf5a695b12..deece448cb3b 100644
->>> --- a/fs/f2fs/gc.c
->>> +++ b/fs/f2fs/gc.c
->>> @@ -55,9 +55,14 @@ static int gc_thread_func(void *data)
->>>  			f2fs_stop_checkpoint(sbi, false);
->>>  		}
->>>  
->>> -		if (!sb_start_write_trylock(sbi->sb))
->>> +		if (!down_read_trylock(&sbi->sb->s_umount))
->>>  			continue;
->>>  
->>> +		set_sbi_flag(sbi, SBI_QUOTA_INIT);
->>> +
->>> +		if (!sb_start_write_trylock(sbi->sb))
->>> +			goto next_umount;
->>> +
->>>  		/*
->>>  		 * [GC triggering condition]
->>>  		 * 0. GC is not conducted currently.
->>> @@ -104,6 +109,9 @@ static int gc_thread_func(void *data)
->>>  		f2fs_balance_fs_bg(sbi);
->>>  next:
->>>  		sb_end_write(sbi->sb);
->>> +next_umount:
->>> +		clear_sbi_flag(sbi, SBI_QUOTA_INIT);
->>> +		up_read(&sbi->sb->s_umount);
->>>  
->>>  	} while (!kthread_should_stop());
->>>  	return 0;
->>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>> index a28c245b1288..40a77a4eb465 100644
->>> --- a/fs/f2fs/super.c
->>> +++ b/fs/f2fs/super.c
->>> @@ -1029,6 +1029,8 @@ static void f2fs_put_super(struct super_block *sb)
->>>  	int i;
->>>  	bool dropped;
->>>  
->>> +	set_sbi_flag(sbi, SBI_QUOTA_INIT);
->>> +
->>>  	f2fs_quota_off_umount(sb);
->>>  
->>>  	/* prevent remaining shrinker jobs */
->>> @@ -1122,11 +1124,17 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
->>>  
->>>  	if (sync) {
->>>  		struct cp_control cpc;
->>> +		bool keep = is_sbi_flag_set(sbi, SBI_QUOTA_INIT);
->>>  
->>>  		cpc.reason = __get_cp_reason(sbi);
->>>  
->>>  		mutex_lock(&sbi->gc_mutex);
->>> +		if (sbi->sb->s_writers.frozen >= SB_FREEZE_WRITE)
->>> +			set_sbi_flag(sbi, SBI_QUOTA_INIT);
->>> +
->>>  		err = f2fs_write_checkpoint(sbi, &cpc);
->>> +		if (!keep)
->>> +			clear_sbi_flag(sbi, SBI_QUOTA_INIT);
->>>  		mutex_unlock(&sbi->gc_mutex);
->>>  	}
->>>  	f2fs_trace_ios(NULL, 1);
->>> @@ -1534,6 +1542,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->>>  		}
->>>  	}
->>>  #endif
->>> +	set_sbi_flag(sbi, SBI_QUOTA_INIT);
->>>  
->>>  	/* recover superblocks we couldn't write due to previous RO mount */
->>>  	if (!(*flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
->>> @@ -1653,6 +1662,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->>>  		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
->>>  
->>>  	limit_reserve_root(sbi);
->>> +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
->>>  	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
->>>  	return 0;
->>>  restore_gc:
->>> @@ -1673,6 +1683,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->>>  #endif
->>>  	sbi->mount_opt = org_mount_opt;
->>>  	sb->s_flags = old_sb_flags;
->>> +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
->>>  	return err;
->>>  }
->>>  
->>> @@ -1706,6 +1717,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
->>>  				congestion_wait(BLK_RW_ASYNC, HZ/50);
->>>  				goto repeat;
->>>  			}
->>> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>>  			return PTR_ERR(page);
->>>  		}
->>>  
->>> @@ -1717,6 +1729,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
->>>  		}
->>>  		if (unlikely(!PageUptodate(page))) {
->>>  			f2fs_put_page(page, 1);
->>> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>>  			return -EIO;
->>>  		}
->>>  
->>> @@ -1758,6 +1771,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
->>>  				congestion_wait(BLK_RW_ASYNC, HZ/50);
->>>  				goto retry;
->>>  			}
->>> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>>  			break;
->>
->> I added these before, but later I didn't encounter quota corruption w/o
->> them, so I removed them.
->>
->> Do you still hit corruption after this change?
-> 
-> I found one issue where we must avoid roll-forward recovery, if fsck overwrote some
-> blocks to fix quota which will be used for recovery.
+The cluster match requires conntrack for matching packets. If the
+netns does not have conntrack hooks registered, the match does not
+work at all.
 
-That's correct, IMO, the right way is that fsck needs to be aware of whole dnode
-chain and block address in dnode block, when doing allocation, it needs to
-bypass those block address of dnode and block which can be recovered later by
-kernel, so that fsynced data can not be lost.
+Implicitly load the conntrack hook for the family, exactly as many
+other extensions do. This ensures that the match works even if the
+hooks have not been registered by other means.
 
-But, in order to trouble shoot current problem more quickly, we can just disable
-kernel recovery once fsck recovers quota file for now.
+Signed-off-by: Martin Willi <martin@strongswan.org>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ net/netfilter/xt_cluster.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-Thanks,
-
-> 
->>
->> Thanks,
->>
->>>  		}
->>>  
->>> @@ -1794,7 +1808,6 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
->>>  
->>>  static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
->>>  {
->>> -
->>>  	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
->>>  		f2fs_msg(sbi->sb, KERN_ERR,
->>>  			"quota sysfile may be corrupted, skip loading it");
->>> @@ -1958,7 +1971,9 @@ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
->>>  	if (err)
->>>  		return err;
->>>  
->>> +	set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_INIT);
->>>  	err = dquot_quota_on(sb, type, format_id, path);
->>> +	clear_sbi_flag(F2FS_SB(sb), SBI_QUOTA_INIT);
->>>  	if (err)
->>>  		return err;
->>>  
->>> @@ -3179,6 +3194,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  		goto free_meta_inode;
->>>  	}
->>>  
->>> +	set_sbi_flag(sbi, SBI_QUOTA_INIT);
->>>  	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_QUOTA_NEED_FSCK_FLAG))
->>>  		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
->>>  
->>> @@ -3370,6 +3386,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  				cur_cp_version(F2FS_CKPT(sbi)));
->>>  	f2fs_update_time(sbi, CP_TIME);
->>>  	f2fs_update_time(sbi, REQ_TIME);
->>> +
->>> +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
->>>  	return 0;
->>>  
->>>  free_meta:
->>> @@ -3434,6 +3452,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  		shrink_dcache_sb(sb);
->>>  		goto try_onemore;
->>>  	}
->>> +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
->>>  	return err;
->>>  }
->>>  
->>> @@ -3449,6 +3468,7 @@ static void kill_f2fs_super(struct super_block *sb)
->>>  		struct f2fs_sb_info *sbi = F2FS_SB(sb);
->>>  
->>>  		set_sbi_flag(sbi, SBI_IS_CLOSE);
->>> +		set_sbi_flag(sbi, SBI_QUOTA_INIT);
->>>  		f2fs_stop_gc_thread(sbi);
->>>  		f2fs_stop_discard_thread(sbi);
->>>  
->>>
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+diff --git a/net/netfilter/xt_cluster.c b/net/netfilter/xt_cluster.c
+index dfbdbb2fc0ed..51d0c257e7a5 100644
+--- a/net/netfilter/xt_cluster.c
++++ b/net/netfilter/xt_cluster.c
+@@ -125,6 +125,7 @@ xt_cluster_mt(const struct sk_buff *skb, struct xt_acti=
+on_param *par)
+ static int xt_cluster_mt_checkentry(const struct xt_mtchk_param *par)
+ {
+ 	struct xt_cluster_match_info *info =3D par->matchinfo;
++	int ret;
+=20
+ 	if (info->total_nodes > XT_CLUSTER_NODES_MAX) {
+ 		pr_info_ratelimited("you have exceeded the maximum number of cluster nod=
+es (%u > %u)\n",
+@@ -135,7 +136,17 @@ static int xt_cluster_mt_checkentry(const struct xt_mt=
+chk_param *par)
+ 		pr_info_ratelimited("node mask cannot exceed total number of nodes\n");
+ 		return -EDOM;
+ 	}
+-	return 0;
++
++	ret =3D nf_ct_netns_get(par->net, par->family);
++	if (ret < 0)
++		pr_info_ratelimited("cannot load conntrack support for proto=3D%u\n",
++				    par->family);
++	return ret;
++}
++
++static void xt_cluster_mt_destroy(const struct xt_mtdtor_param *par)
++{
++	nf_ct_netns_put(par->net, par->family);
+ }
+=20
+ static struct xt_match xt_cluster_match __read_mostly =3D {
+@@ -144,6 +155,7 @@ static struct xt_match xt_cluster_match __read_mostly =
+=3D {
+ 	.match		=3D xt_cluster_mt,
+ 	.checkentry	=3D xt_cluster_mt_checkentry,
+ 	.matchsize	=3D sizeof(struct xt_cluster_match_info),
++	.destroy	=3D xt_cluster_mt_destroy,
+ 	.me		=3D THIS_MODULE,
+ };
+=20
+--=20
+2.17.1
