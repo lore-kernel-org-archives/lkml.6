@@ -2,99 +2,92 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6732C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BDDC64EAD
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E49F2084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:12:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="bB3d3XYj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E49F2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 078632084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:14:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 078632084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbeJAMsy (ORCPT
+        id S1728812AbeJAMuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 08:48:54 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:55319 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727693AbeJAMsy (ORCPT
+        Mon, 1 Oct 2018 08:50:37 -0400
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:44813 "EHLO
+        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728709AbeJAMug (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 08:48:54 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id w916BMB8020398;
-        Mon, 1 Oct 2018 15:11:23 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w916BMB8020398
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538374283;
-        bh=vxJNdGOViqpKuCBNPTBCV/Q20ql4OXtHOHBA7JAiwk0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bB3d3XYjIWxM3JZPO7P09ThnPzTHs+MvOWF2LaRA8WeBeGP6laj/y/AMDWOBEVeyR
-         y4eDn2c+NDEKCU0Ra0r1Zmhzk8QCMyssQxVjWjRCOQAper3rFX6IaU8u4CgCRH/59i
-         4ZPCLrWI5JuvZmX8cIQmi9kgT5wa4hYCM0X8J8kRb5TcDSR9pRVwPbzVentBxaEIyn
-         bHAt0n9kUe/SbW7VXgqrxSWmtR/dEYHSpbP69Z3Dar3HRoszzVVYCu8t4c+C5K1N3m
-         soxzP4udedRVqMIeMl0jwu4HbZIoXH1ijL45pqwWIL0iqOQu0rQjXHEoV7nRsgYgoZ
-         TzqKU3ZnaHXbA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc: remove leftover code of old GCC version checks
-Date:   Mon,  1 Oct 2018 15:10:24 +0900
-Message-Id: <1538374224-3742-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 1 Oct 2018 08:50:36 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl2.internode.on.net with ESMTP; 01 Oct 2018 15:44:28 +0930
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1g6rTP-0005cO-O4; Mon, 01 Oct 2018 16:14:27 +1000
+Date:   Mon, 1 Oct 2018 16:14:27 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Tycho Andersen <tycho@tycho.ws>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
+        containers@lists.linux-foundation.org
+Subject: Re: [PATCH 0/3] namei: implement various scoping AT_* flags
+Message-ID: <20181001061427.GR31060@dastard>
+References: <20180929103453.12025-1-cyphar@cyphar.com>
+ <20181001040821.GP31060@dastard>
+ <20181001054723.lekp3nqgctdyly7m@ryuk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001054723.lekp3nqgctdyly7m@ryuk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clean up the leftover of commit f2910f0e6835 ("powerpc: remove old
-GCC version checks").
+On Mon, Oct 01, 2018 at 03:47:23PM +1000, Aleksa Sarai wrote:
+> On 2018-10-01, Dave Chinner <david@fromorbit.com> wrote:
+> > > I've added some selftests for this, but it's not clear to me whether
+> > > they should live here or in xfstests (as far as I can tell there are no
+> > > other VFS tests in selftests, while there are some tests that look like
+> > > generic VFS tests in xfstests). If you'd prefer them to be included in
+> > > xfstests, let me know.
+> > 
+> > xfstests, please. That way the new functionality will get immediate
+> > coverage by all the main filesystem development and distro QA
+> > teams....
+> 
+> Sure, will do. Do you want me to submit them in parallel --
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+That's usually the way we do things, but we don't tend to commit the
+fstests changes until the thing it is testing has landed upstream.
 
-My patch had been sent earlier, with more clean-ups:
-https://lore.kernel.org/patchwork/patch/977805/
+> and what is
+> the correct ML to submit changes to xfstests?
 
-Anyway, this cleans up the left-over of the Nicholas' one.
+fstests@vger.kernel.org
 
+> Sorry for the silly questions. :P
 
- arch/powerpc/Makefile | 8 --------
- 1 file changed, 8 deletions(-)
+You're going to have many more of them when you start moving the
+tests across to fstests :P
 
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index 2ecd0976..b094375 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -400,10 +400,6 @@ archclean:
- 
- archprepare: checkbin
- 
--# Use the file '.tmp_gas_check' for binutils tests, as gas won't output
--# to stdout and these checks are run even on install targets.
--TOUT	:= .tmp_gas_check
--
- # Check toolchain versions:
- # - gcc-4.6 is the minimum kernel-wide version so nothing required.
- checkbin:
-@@ -414,7 +410,3 @@ checkbin:
- 		echo -n '*** Please use a different binutils version.' ; \
- 		false ; \
- 	fi
--
--
--CLEAN_FILES += $(TOUT)
--
+Cheers,
+
+Dave.
 -- 
-2.7.4
-
+Dave Chinner
+david@fromorbit.com
