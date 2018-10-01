@@ -2,170 +2,189 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A24F1C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBAD0C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46B6F213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:40:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BC5B213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:41:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IGcg+1qH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46B6F213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEIRuyBJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BC5B213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbeJAUS1 (ORCPT
+        id S1729470AbeJAUSz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:18:27 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:33515 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729228AbeJAUS0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:18:26 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181001134032euoutp02880c78012725561a710659204e269d1d~Zf8VGtUIQ0865208652euoutp02R
-        for <linux-kernel@vger.kernel.org>; Mon,  1 Oct 2018 13:40:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181001134032euoutp02880c78012725561a710659204e269d1d~Zf8VGtUIQ0865208652euoutp02R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1538401233;
-        bh=Imz5q2FEfhLr6GoFk4bXsrIFoLHjQlT1MUN3EHlp8e8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=IGcg+1qH9GrEylHDriIVVCf61zFSghtjIUE2IMwhmiPr0YXt1BezV4vY+M+oaItZp
-         ywD+T99HMtJqqxGV+mxpKNmoIMsF+sr3O2TjWGT1r06qIqfLo8Esnwd+KeaGzlNFZ9
-         oGQ9AIoW08y+8INYqao/XCWHcYTgrwd3jeorgf3Q=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181001134032eucas1p2ac4c398c2ac1c7457f8eb8261f993aed~Zf8UPgnAm3107031070eucas1p2c;
-        Mon,  1 Oct 2018 13:40:32 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id BA.9F.04806.FC322BB5; Mon,  1
-        Oct 2018 14:40:31 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181001134031eucas1p20355222b5692ca99bbeb915b9dbc6818~Zf8TZ4bLI3108031080eucas1p2e;
-        Mon,  1 Oct 2018 13:40:31 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181001134030eusmtrp1df020fdcfadc5cf4075a50c458324c43~Zf8TIar_A1625116251eusmtrp1n;
-        Mon,  1 Oct 2018 13:40:30 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-90-5bb223cf9e61
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 1E.4A.04128.EC322BB5; Mon,  1
-        Oct 2018 14:40:30 +0100 (BST)
-Received: from [106.120.51.30] (unknown [106.120.51.30]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181001134030eusmtip2f1b86a14bdca2b79345faeebd3eb79b9~Zf8ShjEJJ1430414304eusmtip2b;
-        Mon,  1 Oct 2018 13:40:30 +0000 (GMT)
-Subject: Re: [PATCH v2 7/7] arm64: uprobes - ARM32 instruction probing
-To:     Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     b.zolnierkie@samsung.com, peterz@infradead.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux@armlinux.org.uk, acme@kernel.org, oleg@redhat.com,
-        alexander.shishkin@linux.intel.com, mingo@redhat.com,
-        k.lewandowsk@samsung.com, namhyung@kernel.org, jolsa@redhat.com,
-        m.szyprowski@samsung.com
-From:   Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
-Date:   Mon, 1 Oct 2018 15:40:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.9.1
+        Mon, 1 Oct 2018 16:18:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49028 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728979AbeJAUSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 16:18:55 -0400
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 960D620C0A;
+        Mon,  1 Oct 2018 13:41:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538401262;
+        bh=SqvE6Nnvl5NLnoBosPLtPOBDjJ27QWfxGhZkNt0YNz8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OEIRuyBJ2pM4bKp8KNW1yTYc43UIdwCWDq7dU4yTsU/+75DJpKF37sNsnSaWwTaza
+         o32W/gySkF44b+Meue7HTyDaIcu1P2WlI/dqMtAdvOZeZCF7EzAwkJyOk7q8cZdjVP
+         TEIFC2fHmVMTOAa/c3vOZCWOw3p3qORgcABGAIpQ=
+Date:   Mon, 1 Oct 2018 08:40:58 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
+Cc:     linux-scsi@vger.kernel.org, linux-pci@vger.kernel.org,
+        lukas@wunner.de, Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Sathya Prakash <Sathya.Prakash@broadcom.com>,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/6] mpt3sas: Introdude _scsih_get_shost_and_ioc.
+Message-ID: <20181001134058.GA142872@bhelgaas-glaptop.roam.corp.google.com>
+References: <1537935759-14754-1-git-send-email-suganath-prabu.subramani@broadcom.com>
+ <1537935759-14754-4-git-send-email-suganath-prabu.subramani@broadcom.com>
+ <20180926210918.GH28024@bhelgaas-glaptop.roam.corp.google.com>
+ <CA+RiK66toWULgXRa+nZVOEom70ntQW8PTO7N_8qFn2AvXB_8QA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <89110505-da2e-3266-c2aa-6e5128c520a4@arm.com>
-Content-Language: pl
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRT2d+/d9bqa/FyLHTQKV5FKatHr9qAHVNz+KaOCUqKW3mbkVDYf
-        WUSz1FRUUlFzlimKyVKmt6ampLa0WdHDbJGGjx4kSqa9Xyq5XSX/+75zzne+88FhSPmQxJM5
-        ERnD6yLVESpaStXd//3E/+liIWTFt/rlbHpfA82mCoUStvayWcKOVmQgtv3xBMEmfrlKssK7
-        lxK2q/EKzVrz7iC2uq3XlX3eWkKw5yssFGtpSUasLbOVYO+OvZewQ587qK2YqyquQlzXy06S
-        u1npxwmmNJorfrCXu1l+jhttttNc1i0T4r4KC4PcgqWbwviIE3G8LnDzUWl489s+Ivq8+6nc
-        nmpkQPVz0pEbA3g1lPSWEulIyshxJYKi18WUSL4h+FhVT4vkK4LcH78kMxKTedBVbFxHkDL8
-        DIlkBMFkWf8UYZh5eCeY78odAgXWwqC90TlDYoGApsRq5yYar4P69iTKgSm8BFpGBmgHno8P
-        QttAKXJgGfaAB4XvnTNueCNc+3zRqSWxAl69TUIiXgQXLEWkwwBwNgN5gx9IURwH9pIeJJ69
-        HUwVjdMR5sGw7ZariBfAo9wMSsTx0NTR7SouSkKQl9hKiI2NMG7Kph3JSOwL5sZAsbwNqscG
-        nYEBu8OrEQ/xHnfIqSsgxbIMUlPk4rQ/3PljmHbyAntiPnEJqYyzUhpnJTPOSmb871uCKBNS
-        8rF6rYbXr4rk4wP0aq0+NlITEBqlFdDUAz6atH1vQM3jx6wIM0g1V+aySAiRS9Rx+gStFQFD
-        qhSy246SLEydcJrXRR3RxUbweivyYiiVUlZRXBsixxp1DH+S56N53UyXYNw8DWiZwT7SpVRE
-        RRgnTL7r8Rtb25WUv147fILbPXbV9GYd0CjTQvabMmtyj3da+k+Grl1R3mTLCw8IV+VYugvK
-        6n6l/25/57Im39PnnLdUcbYw6+eGlsylhy8JfU2GT/5P93krl2tdJFtCb0SXe12NTU2Wdux+
-        cahTU3VoT6Vn0L3+Mw9VlD5cvdKP1OnV/wDVB9c5fAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDIsWRmVeSWpSXmKPExsVy+t/xe7rnlDdFG+xdZGzRdW8Hm0XHppms
-        FhtnrGe1eL+sh9Hi6Nm/TBaNn+YyW2x6fI3V4vKuOWwWh6buZbRYe+Quu8WlAwuYLJqWbWWx
-        2Lq/ldHieO8BJouDH56wWrz8eILFQcBjzbw1jB6Xr11k9ti8Qstj06pONo95JwM9Ni+p93i/
-        7yqbR9+WVYwenzfJBXBG6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mk
-        pOZklqUW6dsl6GXse3SPqaCJr2LyrbWMDYzbubsYOTkkBEwkVq1/zt7FyMUhJLCUUeLI16PM
-        EAlpiZNvN7FB2MISf651sUEUvWaU+PTpHpDDwSEs4Cax/qAQSI2IQK7E/4lvWEBqmAU2MUns
-        OnqWBaJhFpPE+1VXwaayCZhLbD/awgJi8wI1z35znAnEZhFQkdj/9gHYNlGBCInVy1+wQtQI
-        Spyc+QSsnlPAWmL+x3awOLOAmcS8zQ+ZIWwRiRuPWhghbHmJ5q2zmScwCs1C0j4LScssJC2z
-        kLQsYGRZxSiSWlqcm55bbKRXnJhbXJqXrpecn7uJERjz24793LKDsetd8CFGAQ5GJR5eBvlN
-        0UKsiWXFlbmHGCU4mJVEeHeChHhTEiurUovy44tKc1KLDzGaAj03kVlKNDkfmI7ySuINTQ3N
-        LSwNzY3Njc0slMR5zxtURgkJpCeWpGanphakFsH0MXFwSjUwKsz+YCz63Vb346unD8r6pS8a
-        /rt0zaPuTu2+xNUXJ9z7OGeyD2/C9E9KaT+Uu6VPfX6yefnkj1z/XuT+uyBmya56vFw4++Cj
-        8xGZ5Ymb/5xrUBa9sEzF8M/2S3LdIu1L3dxWn9Kd6CVxQCyy+e+tRZO1jQq1ZuTJ/5q89FT3
-        7+uzNu1I/M940kWJpTgj0VCLuag4EQABZmSBDwMAAA==
-Message-Id: <20181001134031eucas1p20355222b5692ca99bbeb915b9dbc6818~Zf8TZ4bLI3108031080eucas1p2e@eucas1p2.samsung.com>
-X-CMS-MailID: 20181001134031eucas1p20355222b5692ca99bbeb915b9dbc6818
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180926121218eucas1p1b20a88cfec17c6403a35e4f23de96ade
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180926121218eucas1p1b20a88cfec17c6403a35e4f23de96ade
-References: <1537963925-25313-1-git-send-email-m.slodczyk2@partner.samsung.com>
-        <CGME20180926121218eucas1p1b20a88cfec17c6403a35e4f23de96ade@eucas1p1.samsung.com>
-        <1537963925-25313-8-git-send-email-m.slodczyk2@partner.samsung.com>
-        <89110505-da2e-3266-c2aa-6e5128c520a4@arm.com>
+In-Reply-To: <CA+RiK66toWULgXRa+nZVOEom70ntQW8PTO7N_8qFn2AvXB_8QA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+[+cc LKML]
 
-Thank you for having a look at my patchset.
+On Mon, Oct 01, 2018 at 12:57:01PM +0530, Suganath Prabu Subramani wrote:
+> On Thu, Sep 27, 2018 at 2:39 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Wed, Sep 26, 2018 at 09:52:36AM +0530, Suganath Prabu S wrote:
+> > > The code for getting shost and IOC is redundant so
+> > > moved that to function "scsih_get_shost_and_ioc".
+> > > Also checks for NULL are added to IOC and shost.
+> > >
+> > > Signed-off-by: Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
+> > > ---
+> > >  drivers/scsi/mpt3sas/mpt3sas_scsih.c | 98 ++++++++++++++++++++++++++++++------
+> > >  1 file changed, 82 insertions(+), 16 deletions(-)
+> > >
+> > > diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+> > > index 566a550..f6e92eb 100644
+> > > --- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+> > > +++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+> > > @@ -9809,6 +9809,35 @@ _scsih_ir_shutdown(struct MPT3SAS_ADAPTER *ioc)
+> > >  }
+> > >
+> > >  /**
+> > > + * _scsih_get_shost_and_ioc - get shost and ioc
+> > > + *                   and verify whether they are NULL or not
+> > > + * @pdev: PCI device struct
+> > > + * @shost: address of scsi host pointer
+> > > + * @ioc: address of HBA adapter pointer
+> > > + *
+> > > + * Return zero if *shost and *ioc are not NULL otherwise return error number.
+> > > + */
+> > > +static int
+> > > +_scsih_get_shost_and_ioc(struct pci_dev *pdev,
+> > > +     struct Scsi_Host **shost, struct MPT3SAS_ADAPTER **ioc)
+> > > +{
+> > > +     *shost = pci_get_drvdata(pdev);
+> > > +     if (*shost == NULL) {
+> > > +             dev_err(&pdev->dev, "pdev's driver data is null\n");
+> > > +             return -ENXIO;
+> > > +     }
+> > > +
+> > > +     *ioc = shost_priv(*shost);
+> > > +     if (*ioc == NULL) {
+> > > +             dev_err(&pdev->dev, "shost's private data is null\n");
+> > > +             return -ENXIO;
+> >
+> > I think it's better to omit NULL pointer checks like these because
+> > there should not be a path where we can execute this code when these
+> > pointers are NULL.
+> >
+> > If there *is* such a path, I think that's a serious bug and it's
+> > better to oops when we try to dereference the NULL pointer.  If we
+> > just return an error code, it's likely the bug will be ignored and
+> > never fixed.
+> >
+> We have added the ioc and shost checks, because of kernel panic in
+> below scenario.
+> Have 3 HBA's in system and perform below operation.
+> 1) Run “poweroff”.
+> 2) Immediate hot unplug HBA.
+> We have observed, kernel's shutdown process has removed all the 3
+> HBA devices smoothly, and also user have unplugged the HBA device
+> during this time. PCI subsystem's hot-plug thread is also trying to
+> remove the hot plugged PCI device which is already removed/cleaned
+> by the shutdown process. (Which is not expected for the already
+> removed device) Due to this kernel panic is observed. And we are not
+> sure whether it has to fixed from pciehp layer, so we added sanity
+> checks in driver.
 
-On 27.09.2018 19:01, Robin Murphy wrote:
-> On 26/09/18 13:12, Maciej Slodczyk wrote:
-> [...]
->> @@ -38,16 +78,44 @@ int arch_uprobe_analyze_insn(struct arch_uprobe 
->> *auprobe, struct mm_struct *mm,
->>           unsigned long addr)
->>   {
->>       probes_opcode_t insn;
->> +    enum probes_insn retval;
->> +    unsigned int bpinsn;
->> -    /* TODO: Currently we do not support AARCH32 instruction probing */
->> -    if (mm->context.flags & MMCF_AARCH32)
->> -        return -ENOTSUPP;
->> -    else if (!IS_ALIGNED(addr, AARCH64_INSN_SIZE))
->> +    insn = *(probes_opcode_t *)(&auprobe->insn[0]);
->> +
->> +    if (!IS_ALIGNED(addr, AARCH64_INSN_SIZE))
->>           return -EINVAL;
->> -    insn = *(probes_opcode_t *)(&auprobe->insn[0]);
->> +    /* check if AARCH32 */
->> +    if (is_compat_task()) {
->> +
->> +        /* Thumb is not supported yet */
->> +        if (addr & 0x3)
-> 
-> I'm only skimming, so forgive me if I'm missing something which should 
-> be obvious, but this has a big red flag all over it. If "addr" is the 
-> actual instruction address (or even a branch target, for a 
-> non-interworking branch), plenty of Thumb instructions will just happen 
-> to lie at 4-byte-aligned addresses anyway.
-> 
-That's the same way Thumb instructions are filtered out in arch/arm 
-uprobes and kprobes code. I believe that at this point all Thumb 
-instruction have bit 0 set. Please correct me if I'm wrong.
+This is a great example.  scsih_remove() is the mpt3sas_driver.remove
+method.  It sounds like it's getting called twice for the same HBA.
+I think that's a PCI core defect and we should fix it there instead of
+trying to work around it in every driver.
 
-> Furthermore, how would this check ever catch anything anyway given 
-> !IS_ALIGNED(addr, AARCH64_INSN_SIZE) above?
+The trace below is from v4.4.55.  Can you reproduce the same problem
+with a current tree, e.g., v4.19-rc?  There have been many changes
+since v4.4 that may have fixed this problem.
 
-You're right, there's no point in checking it here. I'll fix it in v3.
-
-Thank you,
-Maciej
-
+> [ 1745.605510] BUG: unable to handle kernel NULL pointer dereference
+> at 0000000000000a98
+> [ 1745.606554] IP: [<ffffffffa054c750>] scsih_remove+0x20/0x2d0 [mpt3sas]
+> [ 1745.607609] PGD 0
+> [ 1745.608621] Oops: 0000 [#1] SMP
+> [ 1745.622989] CPU: 0 PID: 668 Comm: kworker/0:2 Tainted: G
+> O    4.4.55-1.el7.elrepo.x86_64 #1
+> [ 1745.624800] Hardware name: PRO-MNU65930231
+> PRO-NME69559126/BRD-PRO55212588, BIOS 0.51e 05/08/2017
+> [ 1745.626673] Workqueue: pciehp-3 pciehp_power_thread
+> [ 1745.628566] task: ffff881fe50dd880 ti: ffff881fe88e4000 task.ti:
+> ffff881fe88e4000
+> [ 1745.630530] RIP: 0010:[<ffffffffa054c750>]  [<ffffffffa054c750>]
+> scsih_remove+0x20/0x2d0 [mpt3sas]
+> [ 1745.632577] RSP: 0018:ffff881fe88e7c98  EFLAGS: 00010292
+> [ 1745.634639] RAX: 0000000000000001 RBX: ffff881feef5c000 RCX: 0000000000000000
+> [ 1745.636718] RDX: 0000000000000000 RSI: 0000000000000202 RDI: ffff881feef5c000
+> [ 1745.638832] RBP: ffff881fe88e7cc8 R08: 0000000000000000 R09: 0000000180220002
+> [ 1745.640972] R10: 00000000eaf4a401 R11: ffffea007fabd280 R12: 0000000000000000
+> [ 1745.643136] R13: ffffffffa0576020 R14: ffff881fe9af8240 R15: 0000000000000000
+> [ 1745.645320] FS:  0000000000000000(0000) GS:ffff881ffde00000(0000)
+> knlGS:0000000000000000
+> [ 1745.647572] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 1745.649833] CR2: 0000000000000a98 CR3: 0000001fe76df000 CR4: 00000000003406f0
+> [ 1745.652147] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [ 1745.654476] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [ 1745.656825] Stack:
+> [ 1745.659138]  ffff881fe88e7cc8 ffff881feef5c098 ffff881feef5c000
+> ffffffffa0576020
+> [ 1745.661562]  ffff881fe9af8240 0000000000000000 ffff881fe88e7cf0
+> ffffffff8137f9d9
+> [ 1745.663990]  ffff881feef5c098 ffffffffa0576088 ffff881feef5c000
+> ffff881fe88e7d10
+> [ 1745.666428] Call Trace:
+> [ 1745.668830]  [<ffffffff8137f9d9>] pci_device_remove+0x39/0xc0
+> [ 1745.671256]  [<ffffffff8147db36>] __device_release_driver+0x96/0x130
+> [ 1745.673664]  [<ffffffff8147dbf3>] device_release_driver+0x23/0x30
+> [ 1745.676071]  [<ffffffff8137851c>] pci_stop_bus_device+0x8c/0xa0
+> [ 1745.678485]  [<ffffffff81378612>] pci_stop_and_remove_bus_device+0x12/0x20
+> [ 1745.680909]  [<ffffffff81392eea>] pciehp_unconfigure_device+0xaa/0x1b0
+> [ 1745.683331]  [<ffffffff813929e2>] pciehp_disable_slot+0x52/0xd0
+> [ 1745.685767]  [<ffffffff81392aed>] pciehp_power_thread+0x8d/0xb0
+> [ 1745.688210]  [<ffffffff8109728f>] process_one_work+0x14f/0x400
+> [ 1745.690633]  [<ffffffff81097b04>] worker_thread+0x114/0x470
+> [ 1745.693080]  [<ffffffff810979f0>] ? rescuer_thread+0x310/0x310
+> [ 1745.695518]  [<ffffffff8109d648>] kthread+0xd8/0xf0
+> [ 1745.697936]  [<ffffffff8109d570>] ? kthread_park+0x60/0x60
+> [ 1745.700359]  [<ffffffff816f854f>] ret_from_fork+0x3f/0x70
+> [ 1745.702747]  [<ffffffff8109d570>] ? kthread_park+0x60/0x60
