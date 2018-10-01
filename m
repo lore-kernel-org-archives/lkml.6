@@ -2,117 +2,107 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D41C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CD1C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 379602089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A3A92089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:55:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wRQin6Ys"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 379602089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="MH8Clibc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A3A92089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729013AbeJAPbX (ORCPT
+        id S1729043AbeJAPcV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 11:31:23 -0400
-Received: from mail-oi1-f181.google.com ([209.85.167.181]:46652 "EHLO
-        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728961AbeJAPbX (ORCPT
+        Mon, 1 Oct 2018 11:32:21 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52553 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728804AbeJAPcV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 11:31:23 -0400
-Received: by mail-oi1-f181.google.com with SMTP id k64-v6so10481779oia.13
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 01:54:42 -0700 (PDT)
+        Mon, 1 Oct 2018 11:32:21 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 189-v6so7583132wmw.2;
+        Mon, 01 Oct 2018 01:55:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9kjuGIsTVxo36jiEwcA4SKK8936mQEpwwOmxgXhaa/Q=;
-        b=wRQin6Ys+/gpxQvFRLa0UJcC0rqvauvSVNgqY0G3W/vT8gSVtTiI5EBpkqAGDd9GwR
-         fSyI5bN/+4pKHZbALpi1r850cpbFE6wxSuR97LR4fXkMPJIvfTVnrvWWtwl1gl2mxaMt
-         uG+C0oBLWmJpQyqIr1YwICh3MMF1uExmMpaN5cbvp3hrWJ5dlBmJSsXehMIQ20wn81Nm
-         YdJIvSw/kRIUw5u4KNFElffkPsRn7FulEkPNL2H5a4sqUE4c98lhi2mcTQaF+XmUyThP
-         ss1dl360wt8BJI1zHG/df+5e3XGVViALs6VCApwf2QWL+LOfbMdiHXeBhVKne1D5Nv9r
-         AD2Q==
+        d=googlemail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=B8Wox00i0Sk5edRkDeLf769LH2deC03DBzqZKVh5780=;
+        b=MH8ClibcEIv2XbB45JMwFiLN/i6YsdXUqrjTdVee9uwlXISRhwrXw1PChB4jYCpXE+
+         vgUW4nVBn996bGJWW8CKrTygTnhhqutYzp98bCfA7jC92B9KPsoMQmi2EnmjgraBmk6G
+         OgpBUOr60Be0JCEgFeSbYwLhofX3wsxZmzJ2B2GO/XSkxNC9R6qIl6ecIBwtiXbUQQ+n
+         s/PBIF+VSqkRcMdGVBAlL6N3KqqQqU1xKUqB0HbDw6td0waewOABP6iSi2VlP32VEno0
+         i0Lj7m934GeB+2fd/o7tKoWEpA2XNjrc8xo3VpSOleeYZbB+Bjz1yqS3xHIY7fBKRy99
+         xfCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9kjuGIsTVxo36jiEwcA4SKK8936mQEpwwOmxgXhaa/Q=;
-        b=Oph2MmCuqmPoqldsQoFzFiZmU0cvOIlWBY8meu+ItS2TESgoIHqaPvgakekoFqAQNs
-         hRfh2/IK4nrBHqm1/TofPPiPCmXsBR5yv0c6sA79VvjsLPkYlPpaa43gyKwdBC5b+nNS
-         NIE9bLuMu3XMhpBabPqbVRXgdxcmOVqL5hjMFBja4bw12lIpePSHE9ubQG17AZbrAsZ7
-         UZZYthJG3nW1CML46rEpCy2M6ZQN72yDiwXvDNX114IbZLktwZYTLzOCl10BNikAQcON
-         pw5pBm7X/ug/ZKH0eA+NB6jPr9kfABnoy8TeIk0TydqP21P7x96s/Wt6Apj+AwLIPrEV
-         q3zw==
-X-Gm-Message-State: ABuFfohTHag89uKnG0O0n42NmlVGzzIAbKdmjlzKQUEMhT4Pgen/1lp/
-        ixAp0EzC6qOnNvVyeB62YcRdOFBIBmwwK4OJcPDRhkyIofc=
-X-Google-Smtp-Source: ACcGV63V2j9YSaI1kb0tkOtWwHGBj0nU+SBDUcL1PLcvBvXF48MSzrkdA9qKmI4mRH8zxiUtbfTi+ZvmQMKw0LSTnt8=
-X-Received: by 2002:aca:d513:: with SMTP id m19-v6mr4804339oig.82.1538384081375;
- Mon, 01 Oct 2018 01:54:41 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=B8Wox00i0Sk5edRkDeLf769LH2deC03DBzqZKVh5780=;
+        b=FP3deyNMut0XwVlZRxCyjpLI/kid22YiPhpFdY7dlxFZF3JLPpOPHvUz0svlJSKatN
+         4WhmGe6Pe0xRjuSi99/GociDfXt4BcSIbT45S+Z6arBBHvVkoJz1v8uOyBd9ic8BEznJ
+         aGl2sP6p7VnvISCnJVr3lI9tTFIVukFw7n6xQ8BPB3pdBhQ1VR4Usrwgb8pYhHtuhnuR
+         fzwAblUgvZwZQbm8fucYCRvPJXUMccKvI7hppe7lww1XTlo6vRoprIjoOcJ10awPLHXl
+         FNEdEFriP62RzylVhnn+0uMXj3p6k/+IrMJnwIq9v5lWt5hrsuRM/xWVKL8FZ7meRPdH
+         2mmw==
+X-Gm-Message-State: ABuFfohi/WLE6zCy7EiOB1YhTIL8gZOJry3m1BSiSsE+bMt000p60W2b
+        a5AAGRT7SBSxURiXGuOwxlMVBzCP
+X-Google-Smtp-Source: ACcGV60QbtcbfEo6BR0Wl1wFqhjPtxzoG9PcE2hFzEQDxsVIBo46R7XGkF8tva+r8rUjc9QCWy7Mgg==
+X-Received: by 2002:a1c:8bcc:: with SMTP id n195-v6mr8873080wmd.118.1538384137935;
+        Mon, 01 Oct 2018 01:55:37 -0700 (PDT)
+Received: from [192.168.201.5] (p57B63A04.dip0.t-ipconnect.de. [87.182.58.4])
+        by smtp.googlemail.com with ESMTPSA id 198-v6sm12097859wmm.0.2018.10.01.01.55.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 01:55:37 -0700 (PDT)
+Subject: Re: [PATCH] cfg80211: fix wext-compat memory leak
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+Cc:     Stefan Seyfried <seife+kernel@b1-systems.com>
+References: <20180930105300.30797-1-stefan.seyfried@googlemail.com>
+ <1538377946.3126.0.camel@sipsolutions.net>
+From:   Stefan Seyfried <stefan.seyfried@googlemail.com>
+Openpgp: preference=signencrypt
+Message-ID: <e7bb48f5-3933-6d0b-160f-8d0801e3c1a7@message-id.googlemail.com>
+Date:   Mon, 1 Oct 2018 10:55:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20180930234628.25528-1-laurent@vivier.eu> <20180930234628.25528-3-laurent@vivier.eu>
-In-Reply-To: <20180930234628.25528-3-laurent@vivier.eu>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 1 Oct 2018 10:54:14 +0200
-Message-ID: <CAG48ez3hmmSndm2dS1Jr6AFuXY8_wFQwndLbO5v0GO-NmDtO-g@mail.gmail.com>
-Subject: Re: [RFC 2/2] binfmt_misc: move data to binfmt_namespace
-To:     laurent@vivier.eu
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, dima@arista.com,
-        Andrei Vagin <avagin@openvz.org>,
-        containers@lists.linux-foundation.org,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1538377946.3126.0.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 1:47 AM Laurent Vivier <laurent@vivier.eu> wrote:
-> @@ -716,7 +711,8 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
->         if (!inode)
->                 goto out2;
->
-> -       err = simple_pin_fs(&bm_fs_type, &bm_mnt, &entry_count);
-> +       err = simple_pin_fs(&bm_fs_type, &binfmt_ns(bm_mnt),
-> +                           &binfmt_ns(entry_count));
->         if (err) {
->                 iput(inode);
->                 inode = NULL;
-> @@ -730,7 +726,8 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
->                 if (IS_ERR(f)) {
->                         err = PTR_ERR(f);
->                         pr_notice("register: failed to install interpreter file %s\n", e->interpreter);
-> -                       simple_release_fs(&bm_mnt, &entry_count);
-> +                       simple_release_fs(&binfmt_ns(bm_mnt),
-> +                                         &binfmt_ns(entry_count));
->                         iput(inode);
->                         inode = NULL;
->                         goto out2;
-> @@ -743,9 +740,9 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
->         inode->i_fop = &bm_entry_operations;
->
->         d_instantiate(dentry, inode);
-> -       write_lock(&entries_lock);
-> -       list_add(&e->list, &entries);
-> -       write_unlock(&entries_lock);
-> +       write_lock(&binfmt_ns(entries_lock));
-> +       list_add(&e->list, &binfmt_ns(entries));
-> +       write_unlock(&binfmt_ns(entries_lock));
+Hi Johannes,
 
-This looks wrong. A write handler's behavior should not depend on the
-namespace of the process that is using it.
+Am 01.10.18 um 09:12 schrieb Johannes Berg:
+> Hi Stefan,
+> 
+> Thanks for the investigation & fix. I've changed the fix to use
+> cfg80211_sinfo_release_content(),
 
-Ideally, the affected namespace should depend on the file you're writing to.
-If that's not possible, the affected namespace should at least be the
-namespace of the process that opened the file.
+Being totally unfamiliar with the code, I was not sure about that :-)
+
+> take care of the error path in
+> cfg80211_wext_giwrate() and added a Fixes tag :-)
+
+That's certainly much better.
+
+Thanks!
+
+(kudos to Vlastimil Babka who pointed out trace-cmd to me on the
+ opensuse-kernel malinglist, which made the investigation quite easy)
+-- 
+Stefan Seyfried
+
+"For a successful technology, reality must take precedence over
+ public relations, for nature cannot be fooled." -- Richard Feynman
