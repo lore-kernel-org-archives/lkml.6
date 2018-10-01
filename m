@@ -2,101 +2,137 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DA7C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A41DCC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9350208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:49:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9350208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 68A3A213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:49:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68A3A213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729434AbeJAU1D (ORCPT
+        id S1729450AbeJAU12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:27:03 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49386 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729298AbeJAU1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:27:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2FC231596;
-        Mon,  1 Oct 2018 06:49:09 -0700 (PDT)
-Received: from [10.4.12.81] (melchizedek.Emea.Arm.com [10.4.12.81])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 012E33F774;
-        Mon,  1 Oct 2018 06:49:06 -0700 (PDT)
-Subject: Re: [PATCH v5 3/6] arm64/mm: Create the initial page table in the
- init_pg_dir.
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Jun Yao <yaojun8558363@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org
-References: <20180917044333.30051-1-yaojun8558363@gmail.com>
- <20180917044333.30051-4-yaojun8558363@gmail.com>
- <20180924133437.zr2u5c42rfmhro6o@lakrids.cambridge.arm.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <d3e8eae0-3429-d0ab-9e77-a56e26791450@arm.com>
-Date:   Mon, 1 Oct 2018 14:49:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180924133437.zr2u5c42rfmhro6o@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 1 Oct 2018 16:27:28 -0400
+Received: from mga02.intel.com ([134.134.136.20]:24322 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729291AbeJAU12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 16:27:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 06:49:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,327,1534834800"; 
+   d="scan'208";a="77544806"
+Received: from rchan-mobl1.amr.corp.intel.com ([10.252.138.92])
+  by orsmga007.jf.intel.com with ESMTP; 01 Oct 2018 06:49:24 -0700
+Message-ID: <f360d9c67bb9bc3418fad290399b8f27cb61c80f.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 0/5] tracing: Unifying dynamic event interface
+From:   Tom Zanussi <tom.zanussi@linux.intel.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Date:   Mon, 01 Oct 2018 08:49:24 -0500
+In-Reply-To: <153806391326.18458.3927382953014694981.stgit@devbox>
+References: <153806391326.18458.3927382953014694981.stgit@devbox>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+Hi Masami,
 
-On 24/09/18 14:34, Mark Rutland wrote:
-> On Mon, Sep 17, 2018 at 12:43:30PM +0800, Jun Yao wrote:
->> Create the initial page table in the init_pg_dir. And update the
->> init_mm.pgd to make sure that pgd_offset_k() works correctly. When
->> the final page table is created, we redirect the init_mm.pgd to the
->> swapper_pg_dir.
-
->> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
->> index de2aaea00bd2..cf8a58211b80 100644
->> --- a/arch/arm64/kernel/head.S
->> +++ b/arch/arm64/kernel/head.S
->> @@ -376,7 +376,7 @@ __create_page_tables:
->>  	/*
->>  	 * Map the kernel image (starting with PHYS_OFFSET).
->>  	 */
->> -	adrp	x0, swapper_pg_dir
->> +	adrp	x0, init_pg_dir
->>  	mov_q	x5, KIMAGE_VADDR + TEXT_OFFSET	// compile time __va(_text)
->>  	add	x5, x5, x23			// add KASLR displacement
->>  	mov	x4, PTRS_PER_PGD
->> @@ -439,6 +439,11 @@ __primary_switched:
->>  	bl	__pi_memset
->>  	dsb	ishst				// Make zero page visible to PTW
->>  
->> +	// Update init_mm.pgd
->> +	adrp	x0, init_pg_dir
->> +	adr_l	x1, init_mm
->> +	str	x0, [x1, #MM_PGD]
->> +
+On Fri, 2018-09-28 at 00:58 +0900, Masami Hiramatsu wrote:
+> Hi,
 > 
-> We should be able to set this up statically with INIT_MM_CONTEXT(). i.e.
-> in <asm/mmu.h> have:
+> This is an RFC series of unifying dynamic event interface on ftrace.
+> Currently ftrace has 3 dynamic event interfaces, kprobes, uprobes
+> and synthetic. This series unifies kprobes and uprobes event
+> interface on "dynamic_events". This enables us to add new dynamic
+> events easily on same interface, e.g. function events.
+
+This seems like a nice idea to me and I don't see any problems with the
+patches themselves, so consider it
+
+Acked-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+
+> The older interfaces are left on the tracefs for backward
+> compatibility at this moment.
 > 
-> #define INIT_MM_CONTEXT(name)	\
-> 	.pgd = init_pg_dir
+> dynamic_events syntax has no different from kprobe_events and
+> uprobe_events. You can use same syntax for dynamic_events interface.
+> 
+> I think we can integrate synthetic events to this dynamic_events
+> interface but it will requires new syntax. e.g.
+> 
+> echo "s:<event-name> <args>" >> dynamic_events
+> 
 
-Aha, I didn't think this would be possible because we end up setting .pgd twice,
-but gcc says that's fine, it gets the last value:
-https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html
+So that's just the existing syntax, prefaced by s: , right?
 
-(and it looks like clang has a test for this)
+> If it is OK, I'll add it in next version.
+> 
 
+Makes sense to me.
+
+> BTW, since this dynamic_events interface derived from *probe_events,
+> it inherits "all clear when truncate file open" behavior. But if you
+> think this is too aggressive, I can drop it. (even in that case,
+> kprobe_events/uprobe_events behavior is not changed)
+> 
+> I also introduced a widely used way to erase entries in other
+> interfaces of ftrace, that is '!'. So you can now use '!event-name'
+> or '!group/event' to erase an entry in dynamic_events.
+> (Wait... it has to be '!p:event' as others do??)
+> 
+
+I'd think the full form should always be accepted, but would only be
+necessary in cases requiring disambiguation.
 
 Thanks,
 
-James
+Tom
+
+> Any thought?
+> 
+> Thank you,
+> 
+> ---
+> 
+> Masami Hiramatsu (5):
+>       tracing/uprobes: Add busy check when cleanup all uprobes
+>       tracing: Add a unified dynamic event framework
+>       tracing/kprobes: Use dyn_event framework for kprobe events
+>       tracing/uprobes: Use dyn_event framework for uprobe events
+>       tracing: Add generic event-name based remove event method
+> 
+> 
+>  Documentation/trace/kprobetrace.rst  |    3 +
+>  Documentation/trace/uprobetracer.rst |    4 +
+>  kernel/trace/Kconfig                 |    4 +
+>  kernel/trace/Makefile                |    1 
+>  kernel/trace/trace.c                 |    4 +
+>  kernel/trace/trace_dynevent.c        |  183
+> +++++++++++++++++++++++++++++++++
+>  kernel/trace/trace_dynevent.h        |   89 ++++++++++++++++
+>  kernel/trace/trace_kprobe.c          |  191 +++++++++++++++++++++++-
+> ----------
+>  kernel/trace/trace_uprobe.c          |  175 +++++++++++++++++++++++-
+> -------
+>  9 files changed, 547 insertions(+), 107 deletions(-)
+>  create mode 100644 kernel/trace/trace_dynevent.c
+>  create mode 100644 kernel/trace/trace_dynevent.h
+> 
+> --
+> Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+
