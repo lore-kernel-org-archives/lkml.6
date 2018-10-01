@@ -2,144 +2,135 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1686DC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DFBC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C253320652
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:33:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA50A208D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:35:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="F9oB2UrO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C253320652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="lWGO7EpJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA50A208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729601AbeJAWLf (ORCPT
+        id S1729558AbeJAWNa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:11:35 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54472 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729517AbeJAWLe (ORCPT
+        Mon, 1 Oct 2018 18:13:30 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57680 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729480AbeJAWNa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:11:34 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r63-v6so5237257wma.4
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 08:33:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=+FIFbQ65mMe5ZYlTSYZP/ejW67TLwtgZHYuN0iEMkjY=;
-        b=F9oB2UrOGi4kD36d1jDLf11eh6QV9XAOlmz0bebLD9nrYmkya8z+xqvVixoSfU5CKr
-         vuGCSyq7tG5ziJg72uao7kghkl5NEREsbaKDipjAWlhmhwacNofIk7iuA9pIzmCA09LG
-         QV4VguaErbXfyD9kihOCAixvVGH6PIHGhTuNlHvee4U1B4DroBLY/TykkiQg/FN7Bb+S
-         HegLf+HZYqtjP1ZJh+E6ERioOzdplOqexO/n1qJa2+OitFd5wiwM4stUv1PjVvk4CC6o
-         ty77jSylHguV6iM2M0l2Q/WXSPPp5hAGJk+bwLjN4qhVnBQjrhi/1Mcj4OdCWFqhbpww
-         WE8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=+FIFbQ65mMe5ZYlTSYZP/ejW67TLwtgZHYuN0iEMkjY=;
-        b=KPWZFM/Cb+MJgFrtIqAvu9blBJMB18t09Dxh9QUUrsf78uzwR/Jk8AlpHZrt27OKL7
-         R/gOsU++8jcY0tGoEvR8C5gWMM5HkeoA42k2rzFnSQaZuVe2k8uYhk/DEYq0LzQ4WlI1
-         wOEVijQzguxLyCYFHu/r9IR+cllqgrTDC9sPfFDWQOLFW9bTWCStV4yILwMjkOlPW7NG
-         qMjPOp4uogIqQqCWbD5ahATDLhZg0/lUTYQZlDcbvwpu26UfGO7z56omfsVRrJhMOckb
-         I4pkIez4luQ2l1mGSK+ewtcmOFAwgiieMy+vGWaC69bTv9BMMoEEoJjdKDd4M5nJbGSi
-         Pe0w==
-X-Gm-Message-State: ABuFfoib8tSyqojti9J+lvBpU4IGkti/IZNCgjmbRClvQvM18GBLBKVQ
-        k9l/tvNmhEVJuP7lB5yYWUTWYg==
-X-Google-Smtp-Source: ACcGV63uW3EFx22Pq/DMg3Boq9afiWfYKmzFx/8q7zzzg5NcUiRAEAAQACpUZ46pspqfHLAhoO00MQ==
-X-Received: by 2002:a1c:80d4:: with SMTP id b203-v6mr9785426wmd.100.1538407992211;
-        Mon, 01 Oct 2018 08:33:12 -0700 (PDT)
-Received: from pathfinder (host-78-148-28-244.as13285.net. [78.148.28.244])
-        by smtp.gmail.com with ESMTPSA id 20-v6sm13405094wml.10.2018.10.01.08.33.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 08:33:11 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 16:33:10 +0100
-From:   Phillip Potter <phil@philpotter.co.uk>
-To:     dushistov@mail.ru
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: ufs: Convert ufs_set_de_type to use lookup table
-Message-ID: <20181001153310.GA13006@pathfinder>
+        Mon, 1 Oct 2018 18:13:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VgzU1MDDX0ITpmlBsARB7c2IRse31LXcqUNo/1Eq9N4=; b=lWGO7EpJED8aC33I/kTx7urMe
+        oia9DXOZrj4UAa/9uXjqJjMxy0Z8Wq33kLoCJwgoRIh1YYtIP5MiYNF4dAgSqqQ31M037pnesuQeR
+        /3q5PheaKXF/c99ds6yXAxlnzZ1K4MZuaPe7htOGB+d2alc/KZ6dPtSWkeNmLvnsFMyuA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g70Dt-0007xM-LD; Mon, 01 Oct 2018 15:35:01 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 341B91121CA5; Mon,  1 Oct 2018 16:35:01 +0100 (BST)
+Date:   Mon, 1 Oct 2018 16:35:01 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     masonccyang@mxic.com.tw
+Cc:     tpiepho@impinj.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
+        juliensu@mxic.com.tw, zhengxunli@mxic.com.tw
+Subject: Re: [PATCH v3 1/2] spi: Add MXIC controller driver
+Message-ID: <20181001153501.GD19099@sirena.org.uk>
+References: <1538120112-15530-1-git-send-email-masonccyang@mxic.com.tw>
+ <1538120112-15530-2-git-send-email-masonccyang@mxic.com.tw>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="0IvGJv3f9h+YhkrH"
 Content-Disposition: inline
+In-Reply-To: <1538120112-15530-2-git-send-email-masonccyang@mxic.com.tw>
+X-Cookie: No lifeguard on duty.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify ufs_set_de_type function in fs/ufs/util.h to use a lookup
-table rather than a switch statement, as per the TODO comment.
 
-Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
----
-diff --git a/fs/ufs/util.h b/fs/ufs/util.h
-index 1907be6d5808..1edf4c6454e3 100644
---- a/fs/ufs/util.h
-+++ b/fs/ufs/util.h
-@@ -155,37 +155,31 @@ ufs_set_de_namlen(struct super_block *sb, struct ufs_dir_entry *de, u16 value)
- static inline void
- ufs_set_de_type(struct super_block *sb, struct ufs_dir_entry *de, int mode)
- {
-+	/* type lookup table, DT_UNKNOWN is default type if no case holds */
-+	const int mode_table[] = {
-+		DT_UNKNOWN,
-+		DT_FIFO,	/* mode & S_IFMT == S_IFIFO case */
-+		DT_CHR,		/* mode & S_IFMT == S_IFCHR case */
-+		DT_UNKNOWN,
-+		DT_DIR,		/* mode & S_IFMT == S_IFDIR case */
-+		DT_UNKNOWN,
-+		DT_BLK,		/* mode & S_IFMT == S_IFBLK case */
-+		DT_UNKNOWN,
-+		DT_REG,		/* mode & S_IFMT == S_IFREG case */
-+		DT_UNKNOWN,
-+		DT_LNK,		/* mode & S_IFMT == S_IFLNK case */
-+		DT_UNKNOWN,
-+		DT_SOCK,	/* mode & S_IFMT == S_IFSOCK case */
-+		DT_UNKNOWN,
-+		DT_UNKNOWN,
-+		DT_UNKNOWN
-+	};
-+
- 	if ((UFS_SB(sb)->s_flags & UFS_DE_MASK) != UFS_DE_44BSD)
- 		return;
- 
--	/*
--	 * TODO turn this into a table lookup
--	 */
--	switch (mode & S_IFMT) {
--	case S_IFSOCK:
--		de->d_u.d_44.d_type = DT_SOCK;
--		break;
--	case S_IFLNK:
--		de->d_u.d_44.d_type = DT_LNK;
--		break;
--	case S_IFREG:
--		de->d_u.d_44.d_type = DT_REG;
--		break;
--	case S_IFBLK:
--		de->d_u.d_44.d_type = DT_BLK;
--		break;
--	case S_IFDIR:
--		de->d_u.d_44.d_type = DT_DIR;
--		break;
--	case S_IFCHR:
--		de->d_u.d_44.d_type = DT_CHR;
--		break;
--	case S_IFIFO:
--		de->d_u.d_44.d_type = DT_FIFO;
--		break;
--	default:
--		de->d_u.d_44.d_type = DT_UNKNOWN;
--	}
-+	/* shift (mode & S_IFMT) right 12 bits to index into table */
-+	de->d_u.d_44.d_type = mode_table[(mode & S_IFMT) >> 12];
- }
- 
- static inline u32
+--0IvGJv3f9h+YhkrH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Sep 28, 2018 at 03:35:11PM +0800, masonccyang@mxic.com.tw wrote:
+
+This looks mostly good, a couple of fairly small things:
+
+> +static int mxic_spi_clk_enable(struct mxic_spi *mxic)
+> +{
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(mxic->send_clk);
+> +	if (ret)
+> +		goto err_send_clk;
+> +
+> +	ret = clk_prepare_enable(mxic->send_dly_clk);
+> +	if (ret)
+> +		goto err_send_dly_clk;
+> +
+> +	return ret;
+> +
+> +err_send_dly_clk:
+> +	clk_disable_unprepare(mxic->send_dly_clk);
+> +err_send_clk:
+> +	clk_disable_unprepare(mxic->send_clk);
+
+You should only undo operations that succeeded in the error path, if
+something failed you don't need to revert it.
+
+> +static int mxic_spi_setup(struct spi_device *spi)
+> +{
+> +	struct mxic_spi *mxic = spi_master_get_devdata(spi->master);
+> +	unsigned long freq = spi->max_speed_hz;
+> +	int ret;
+> +
+> +	ret = clk_set_rate(mxic->send_clk, freq);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = clk_set_rate(mxic->send_dly_clk, freq);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * A constant delay range from 0x0 ~ 0x1F for input delay,
+> +	 * the unit is 78 ps, the max input delay is 2.418 ns.
+> +	 */
+> +	mxic_spi_set_input_delay_dqs(mxic, 0xf);
+
+This is changing the hardware state for all slaves, not just the device
+being configured - setup() isn't supposed to do that (yes, it's a
+confusing API but unfortunately a legacy one that'll be a pain to clean
+up).  prepare_transfer_hardware() is usually a better place to do this.
+
+--0IvGJv3f9h+YhkrH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluyPqQACgkQJNaLcl1U
+h9D+OAf+OsIceza4zPHL128gdHi4SlAfaeWnDUGRfFSOdl18iGjgRQC+7WpCexxK
+qMYJ5/rdWJYZp5PunuGP2c9shVpCwLjfvfWRnAGPkvIhTrF1YlLH3weDDemaHg9p
+YsyCdRzj9lrQes2LixuTk1YmET3BncPCEMQ+1dV9cNP9TlY6UrTfiBloMOfgWtrJ
+eYL8i3dXnpuyXhT47xdeuX5s0gbhumZK8R4cQvFnVg34ctQiekn9RRLs0RtmDwIZ
+PyJ7FFjn+llo2X72XrmUl3sGUadsF5UEDrW0F1aCmH4n4VaaAnk5XhoaT3EiLHVr
+gHjBC7zA5IIrmJVnYcPNwa99s2N7Iw==
+=AGZk
+-----END PGP SIGNATURE-----
+
+--0IvGJv3f9h+YhkrH--
