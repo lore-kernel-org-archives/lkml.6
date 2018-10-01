@@ -2,37 +2,38 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8417C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DEBC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82FD42089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82FD42089D
+	by mail.kernel.org (Postfix) with ESMTP id 408A22089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:37:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408A22089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbeJAON0 (ORCPT
+        id S1728851AbeJAOOD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 10:13:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60916 "EHLO mx1.suse.de"
+        Mon, 1 Oct 2018 10:14:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32936 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726386AbeJAON0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 10:13:26 -0400
+        id S1728804AbeJAOOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 10:14:03 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D9F97ADCE;
-        Mon,  1 Oct 2018 07:37:01 +0000 (UTC)
-Subject: Re: [PATCH 0/2] xen: fix two issues in Xen pv qspinlock handling
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 03534ADCE;
+        Mon,  1 Oct 2018 07:37:38 +0000 (UTC)
+Subject: Re: [PATCH 1/2] xen: fix race in xen_qlock_wait()
 To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
         x86@kernel.org
 Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, Borislav Petkov <bp@alien8.de>,
-        peterz@infradead.org, Waiman Long <longman@redhat.com>
+        mingo@redhat.com, bp@alien8.de, stable@vger.kernel.org,
+        Waiman Long <longman@redhat.com>, peterz@infradead.org
 References: <20181001071641.19282-1-jgross@suse.com>
+ <20181001071641.19282-2-jgross@suse.com>
 From:   Juergen Gross <jgross@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
@@ -66,12 +67,12 @@ Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
  pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
  jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
  hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <9840f232-acc4-310d-d87d-8fbf329a9664@suse.com>
-Date:   Mon, 1 Oct 2018 09:37:01 +0200
+Message-ID: <517372ba-4aad-d60c-6543-eb82942ebd20@suse.com>
+Date:   Mon, 1 Oct 2018 09:37:37 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181001071641.19282-1-jgross@suse.com>
+In-Reply-To: <20181001071641.19282-2-jgross@suse.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
@@ -83,21 +84,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Correcting Waiman's mail address
 
 On 01/10/2018 09:16, Juergen Gross wrote:
-> The Xen specific queue spinlock wait function has two issues which
-> could result in a hanging system.
+> In the following situation a vcpu waiting for a lock might not be
+> woken up from xen_poll_irq():
 > 
-> They have a similar root cause of clearing a pending wakeup of a
-> waiting vcpu and later going to sleep waiting for the just cleared
-> wakeup event, which of course won't ever happen.
+> CPU 1:                CPU 2:                      CPU 3:
+> takes a spinlock
+>                       tries to get lock
+>                       -> xen_qlock_wait()
+>                         -> xen_clear_irq_pending()
+> frees the lock
+> -> xen_qlock_kick(cpu2)
 > 
-> Juergen Gross (2):
->   xen: fix race in xen_qlock_wait()
->   xen: make xen_qlock_wait() nestable
+> takes lock again
+>                                                   tries to get lock
+>                                                   -> *lock = _Q_SLOW_VAL
+>                         -> *lock == _Q_SLOW_VAL ?
+>                         -> xen_poll_irq()
+> frees the lock
+> -> xen_qlock_kick(cpu3)
 > 
->  arch/x86/xen/spinlock.c | 33 ++++++++++++---------------------
->  1 file changed, 12 insertions(+), 21 deletions(-)
+> And cpu 2 will sleep forever.
 > 
+> This can be avoided easily by modifying xen_qlock_wait() to call
+> xen_poll_irq() only if the related irq was not pending and to call
+> xen_clear_irq_pending() only if it was pending.
+> 
+> Cc: stable@vger.kernel.org
 > Cc: longman@redhat.com
 > Cc: peterz@infradead.org
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> ---
+>  arch/x86/xen/spinlock.c | 15 +++++----------
+>  1 file changed, 5 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
+> index 973f10e05211..cd210a4ba7b1 100644
+> --- a/arch/x86/xen/spinlock.c
+> +++ b/arch/x86/xen/spinlock.c
+> @@ -45,17 +45,12 @@ static void xen_qlock_wait(u8 *byte, u8 val)
+>  	if (irq == -1)
+>  		return;
+>  
+> -	/* clear pending */
+> -	xen_clear_irq_pending(irq);
+> -	barrier();
+> +	/* If irq pending already clear it and return. */
+> +	if (xen_test_irq_pending(irq)) {
+> +		xen_clear_irq_pending(irq);
+> +		return;
+> +	}
+>  
+> -	/*
+> -	 * We check the byte value after clearing pending IRQ to make sure
+> -	 * that we won't miss a wakeup event because of the clearing.
+> -	 *
+> -	 * The sync_clear_bit() call in xen_clear_irq_pending() is atomic.
+> -	 * So it is effectively a memory barrier for x86.
+> -	 */
+>  	if (READ_ONCE(*byte) != val)
+>  		return;
+>  
 > 
 
