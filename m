@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89572C64EAD
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 112C1C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4803B2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB3ED2064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:45:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="gHLvUYXM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4803B2064A
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1i+0bhjY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB3ED2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729187AbeJAQWY (ORCPT
+        id S1729211AbeJAQWY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 1 Oct 2018 12:22:24 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:64025 "EHLO
+Received: from conuserg-11.nifty.com ([210.131.2.78]:64049 "EHLO
         conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729050AbeJAQWX (ORCPT
+        with ESMTP id S1729035AbeJAQWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:22:23 -0400
+        Mon, 1 Oct 2018 12:22:24 -0400
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id w919iipJ005108;
-        Mon, 1 Oct 2018 18:44:45 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w919iipJ005108
+        by conuserg-11.nifty.com with ESMTP id w919iipK005108;
+        Mon, 1 Oct 2018 18:44:46 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w919iipK005108
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538387085;
-        bh=SpZLur+sbJBSYyU7Lxk/b7C7/dHU+CrpWov6wcdLp/0=;
+        s=dec2015msa; t=1538387086;
+        bh=4lVB2aFznZ03R0jO3ZE1lpLOFkM4t8EYXVBngQ9ssaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gHLvUYXM8wWsdtMDUcST736bPxk8/3DXBmeZhA2+/IbM7x7PWUZigq3BGBCMxl12c
-         dLbf3ve2ZrGPqbgQ2RKApbnm64u6PidFbkvg/EzFEHZpF6oHsijjuLDyu9ZzBv6uyN
-         2IhKUi/hwQJlcWXZE0nDHzxqfhFPQYlmm60riPQVkzhPh8YRlWIA9g4uGHjQzSXcAI
-         p37IjL8obA08CWdP4XtMHdMOPkPGjs0NSrhNjxahC1NYz6RfajRW/osuYunZSHzKQJ
-         jymK5oW/uH2I6iQUKc47lEG77RjPlF9PtH7DKlb+Srkyf7+pxQArzC1VsnCtjRLD1h
-         8Yfk8PWzuobDg==
+        b=1i+0bhjYXKFw4qk3zw+9tpdVx9sqsT2gcGC+SMY5e9xVWNjs23T0pQ1Rp7NAPPurG
+         lnSsSerOLxy3ASjXShB691YYT02M3Lnyuur0NvzkBQWNQqgNjTVfXNu/nQ+L1PdOyX
+         4v0iVTSaa55oZvJL14Khf5JGxLV5IY/iFdCz7te8kNIJn9axJuewHz375Vcmc91vUH
+         1DvMFExtIsmizZ780FC7ivFQnfj3luLznovMykFKTb3ckX8zZr5m0D9AzP8APk64XW
+         ksOw/5VcpYEaBsyZkZRG6pwLJGLxf/AkH0/bQNULzY5oQ6jNZpssorWMsxazv5qDzw
+         S8O/RhrR6FvNw==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
@@ -48,9 +48,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] kbuild: add -Wdeclaration-after-statement flag unconditionally
-Date:   Mon,  1 Oct 2018 18:44:37 +0900
-Message-Id: <1538387078-21892-2-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 3/3] kbuild: add -Wno-unused-but-set-variable compiler flag unconditionally
+Date:   Mon,  1 Oct 2018 18:44:38 +0900
+Message-Id: <1538387078-21892-3-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538387078-21892-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1538387078-21892-1-git-send-email-yamada.masahiro@socionext.com>
@@ -63,11 +63,11 @@ We have raised the compiler requirement from time to time.
 With commit cafa0010cd51 ("Raise the minimum required gcc version
 to 4.6"), the minimum for GCC is 4.6 now.
 
-This flag has been here since the pre-git era.  It is documented in
-the GCC 4.6 manual, and it is recognized by Clang and ICC as well.
+This flag was added by GCC 4.6, and it is recognized by Clang and
+ICC as well.
 
-Let's rip off the cc-option switch, and see if somebody complains
-about it.
+Let's rip off the cc-disable-warning switch, and see if somebody
+complains about it.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
@@ -76,18 +76,18 @@ Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index 505a324..8a23fee 100644
+index 8a23fee..2627266 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -797,7 +797,7 @@ endif
- NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
+@@ -716,7 +716,7 @@ else
  
- # warn about C99 declaration after statement
--KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
-+KBUILD_CFLAGS += -Wdeclaration-after-statement
+ # These warnings generated too much noise in a regular build.
+ # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
+-KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
++KBUILD_CFLAGS += -Wno-unused-but-set-variable
+ endif
  
- # disable pointer signed / unsigned warnings in gcc 4.0
- KBUILD_CFLAGS += -Wno-pointer-sign
+ KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
 -- 
 2.7.4
 
