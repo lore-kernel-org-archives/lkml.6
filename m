@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1613C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F264C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6E7F208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:14:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6E7F208AE
+	by mail.kernel.org (Postfix) with ESMTP id D3999208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:15:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3999208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbeJBDyI (ORCPT
+        id S1726715AbeJBDyn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 23:54:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51156 "EHLO
+        Mon, 1 Oct 2018 23:54:43 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51168 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbeJBDyH (ORCPT
+        with ESMTP id S1726251AbeJBDym (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 23:54:07 -0400
+        Mon, 1 Oct 2018 23:54:42 -0400
 Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
         by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
         (Exim 4.76)
         (envelope-from <john.johansen@canonical.com>)
-        id 1g75WI-0007dn-Vk; Mon, 01 Oct 2018 21:14:23 +0000
-Subject: Re: [PATCH security-next v3 09/29] LSM: Provide init debugging
- infrastructure
+        id 1g75Wq-0007fE-Vz; Mon, 01 Oct 2018 21:14:57 +0000
+Subject: Re: [PATCH security-next v3 10/29] LSM: Don't ignore initialization
+ failures
 To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
 Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
@@ -40,7 +40,7 @@ Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20180925001832.18322-1-keescook@chromium.org>
- <20180925001832.18322-10-keescook@chromium.org>
+ <20180925001832.18322-11-keescook@chromium.org>
 From:   John Johansen <john.johansen@canonical.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
@@ -86,12 +86,12 @@ Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
  qJciYE8TGHkZw1hOku+4OoM2GB5nEDlj+2TF/jLQ+EipX9PkPJYvxfRlC6dK8PKKfX9KdfmA
  IcgHfnV1jSn+8yH2djBPtKiqW0J69aIsyx7iV/03paPCjJh7Xq9vAzydN5U/UA==
 Organization: Canonical
-Message-ID: <db53ecb3-e3b9-54f6-2873-d28ccfe6d6fe@canonical.com>
-Date:   Mon, 1 Oct 2018 14:14:19 -0700
+Message-ID: <9f1ca560-28bc-a95b-cc3b-f886e90fbbf9@canonical.com>
+Date:   Mon, 1 Oct 2018 14:14:53 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180925001832.18322-10-keescook@chromium.org>
+In-Reply-To: <20180925001832.18322-11-keescook@chromium.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -101,79 +101,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 09/24/2018 05:18 PM, Kees Cook wrote:
-> Booting with "lsm.debug" will report future details on how LSM ordering
-> decisions are being made.
+> LSM initialization failures have traditionally been ignored. We should
+> at least WARN when something goes wrong.
 > 
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 
+about time
+
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 
-
 > ---
->  .../admin-guide/kernel-parameters.txt          |  2 ++
->  security/security.c                            | 18 ++++++++++++++++++
->  2 files changed, 20 insertions(+)
+>  security/security.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 9871e649ffef..32d323ee9218 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2274,6 +2274,8 @@
->  	ltpc=		[NET]
->  			Format: <io>,<irq>,<dma>
->  
-> +	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
-> +
->  	machvec=	[IA-64] Force the use of a particular machine-vector
->  			(machvec) in a generic kernel.
->  			Example: machvec=hpzx1_swiotlb
 > diff --git a/security/security.c b/security/security.c
-> index e74f46fba591..ee49b921d750 100644
+> index ee49b921d750..1f055936a746 100644
 > --- a/security/security.c
 > +++ b/security/security.c
-> @@ -12,6 +12,8 @@
->   *	(at your option) any later version.
->   */
->  
-> +#define pr_fmt(fmt) "LSM: " fmt
-> +
->  #include <linux/bpf.h>
->  #include <linux/capability.h>
->  #include <linux/dcache.h>
-> @@ -43,11 +45,19 @@ char *lsm_names;
->  static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
->  	CONFIG_DEFAULT_SECURITY;
->  
-> +static bool debug __initdata;
-> +#define init_debug(...)						\
-> +	do {							\
-> +		if (debug)					\
-> +			pr_info(__VA_ARGS__);			\
-> +	} while (0)
-> +
+> @@ -55,10 +55,12 @@ static bool debug __initdata;
 >  static void __init major_lsm_init(void)
 >  {
 >  	struct lsm_info *lsm;
+> +	int ret;
 >  
 >  	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> +		init_debug("initializing %s\n", lsm->name);
->  		lsm->init();
+>  		init_debug("initializing %s\n", lsm->name);
+> -		lsm->init();
+> +		ret = lsm->init();
+> +		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
 >  	}
 >  }
-> @@ -91,6 +101,14 @@ static int __init choose_lsm(char *str)
->  }
->  __setup("security=", choose_lsm);
 >  
-> +/* Enable LSM order debugging. */
-> +static int __init enable_debug(char *str)
-> +{
-> +	debug = true;
-> +	return 1;
-> +}
-> +__setup("lsm.debug", enable_debug);
-> +
->  static bool match_last_lsm(const char *list, const char *lsm)
->  {
->  	const char *last;
 > 
 
