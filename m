@@ -2,75 +2,71 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF08EC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4D1C64EB6
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD673208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:05:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD673208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B2F932145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:08:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1r1cPjX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F932145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbeJBEpe (ORCPT
+        id S1726349AbeJBEsn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 00:45:34 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45634 "EHLO mail.bootlin.com"
+        Tue, 2 Oct 2018 00:48:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbeJBEpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 00:45:34 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 168BA207CC; Tue,  2 Oct 2018 00:05:37 +0200 (CEST)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E57CB209D6;
-        Tue,  2 Oct 2018 00:05:26 +0200 (CEST)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] rtc: mv: let the core handle invalid alarms
-Date:   Tue,  2 Oct 2018 00:05:25 +0200
-Message-Id: <20181001220525.6735-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.19.0
+        id S1725936AbeJBEsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 00:48:43 -0400
+Received: from localhost (unknown [104.132.0.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 050AA208AE;
+        Mon,  1 Oct 2018 22:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538431727;
+        bh=G2tSjNwkzyR9gfCrKcyGNEXAjYzIxnoSh9i4zi2XV/M=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=D1r1cPjXuPklFYnE4Q538Mibe68ujykta28dt3SkPvi8XoF8ghTWZE6douXclkCLD
+         34tKAFRsqaptw3qHsbpc/457jfhe3Cez0QWCB9K8kShFvI1kmwPcLi8NZkxGcNspys
+         keG2ZEBYiXHit+SqGGf2jS8MIkNHCHy0rjPY1Qao=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        ryang <decatf@gmail.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180921220037.16862-1-decatf@gmail.com>
+Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ryang <decatf@gmail.com>
+References: <20180921220037.16862-1-decatf@gmail.com>
+Message-ID: <153843172633.119890.17243129066234373128@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: tegra: Fix an infinite loop when clock rate is zero
+Date:   Mon, 01 Oct 2018 15:08:46 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of lying to the core when the alarm is invalid, let it handle that
-by returning the error.
+Quoting ryang (2018-09-21 15:00:37)
+> Calling clk_set_rate or clk_round_rate will lock up the kernel when the
+> rate is zero. This avoids the infinite loop and uses a slightly more
+> optimized p divider calculation.
+> =
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-mv.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+> Signed-off-by: ryang <decatf@gmail.com>
 
-diff --git a/drivers/rtc/rtc-mv.c b/drivers/rtc/rtc-mv.c
-index 4b198b3778d3..e7f14bd12fe3 100644
---- a/drivers/rtc/rtc-mv.c
-+++ b/drivers/rtc/rtc-mv.c
-@@ -125,13 +125,9 @@ static int mv_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alm)
- 	/* hw counts from year 2000, but tm_year is relative to 1900 */
- 	alm->time.tm_year = bcd2bin(year) + 100;
- 
--	if (rtc_valid_tm(&alm->time) < 0) {
--		dev_err(dev, "retrieved alarm date/time is not valid.\n");
--		rtc_time_to_tm(0, &alm->time);
--	}
--
- 	alm->enabled = !!readl(ioaddr + RTC_ALARM_INTERRUPT_MASK_REG_OFFS);
--	return 0;
-+
-+	return rtc_valid_tm(&alm->time);
- }
- 
- static int mv_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
--- 
-2.19.0
+Do you have a more proper name? Or you want the author name to show up as
+"ryang"?
 
