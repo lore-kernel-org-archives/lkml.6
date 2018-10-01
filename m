@@ -2,148 +2,178 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE62C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B1EC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9A1A208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:51:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EJi71KkL";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BYil3AUH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9A1A208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id E58C9208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E58C9208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729415AbeJAU3K (ORCPT
+        id S1729420AbeJAUbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:29:10 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50016 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729253AbeJAU3K (ORCPT
+        Mon, 1 Oct 2018 16:31:40 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50371 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728979AbeJAUbk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:29:10 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 59DB860128; Mon,  1 Oct 2018 13:51:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538401875;
-        bh=ExW6SnUp8lMc7bPWEfR1QYwUAsuREaNx3m3j625zmWs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=EJi71KkLxH6vokVFkxmZ5XDkAQLqNqBXUVACpVhXevybKqWYvDc/JvGn83S3wt8Qz
-         05GQQeX9B/p6RQ6KNWu5+DmSyhL0YBWyN4vVvXEctdrsy0k9S/cFbrxH+EUEBSSG6l
-         brCPQl1pD+j0x3i692n4oaUE1+21A4yycF5weTKE=
-Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 094B160866;
-        Mon,  1 Oct 2018 13:51:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538401874;
-        bh=ExW6SnUp8lMc7bPWEfR1QYwUAsuREaNx3m3j625zmWs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BYil3AUHuxcw/ZM9MyBMAXSVP5goBhPabgS/y5/773n3GrHOOLAUXw7J0Az/o5v6u
-         YcecpOuY7GnKSD4XT44pROUra8WoGKKxAxoeEpy5ovGCTRlrIjYdhLXRV6Y0zAs2wh
-         urhxr2TI3EtI5c0KjqlbER4m+U3/yGg8HgdETNsQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 094B160866
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Harish Bandi <c-hbandi@codeaurora.org>
-Subject: [PATCH v1] Bluetooth: hci_qca: Add support for controller debug logs.
-Date:   Mon,  1 Oct 2018 19:21:02 +0530
-Message-Id: <20181001135102.17453-1-bgodavar@codeaurora.org>
-X-Mailer: git-send-email 2.18.0
+        Mon, 1 Oct 2018 16:31:40 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w91DnBVN006987;
+        Mon, 1 Oct 2018 15:53:25 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2mu1bjmf1j-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 01 Oct 2018 15:53:25 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 14B1D31;
+        Mon,  1 Oct 2018 13:53:24 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DCC7E4DEF;
+        Mon,  1 Oct 2018 13:53:23 +0000 (GMT)
+Received: from [10.48.0.237] (10.75.127.44) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 1 Oct
+ 2018 15:53:23 +0200
+Subject: Re: [PATCH V2 27/27] mmc: mmci: add stm32 sdmmc variant
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com>
+ <1537523181-14578-28-git-send-email-ludovic.Barre@st.com>
+ <CAPDyKFqGY2o7TcUVW9bCZM9-4xtyJJ4PaCtWWQvV3VMd+cK99A@mail.gmail.com>
+ <50222b8d-3b53-acea-7935-092fa149d54c@st.com>
+ <CAPDyKFr45FF-wbhT7C=+G5ptbCMRiKie304UM9P2vRypKd=PvQ@mail.gmail.com>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <9e64085d-c137-6117-644d-78f796210277@st.com>
+Date:   Mon, 1 Oct 2018 15:53:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFr45FF-wbhT7C=+G5ptbCMRiKie304UM9P2vRypKd=PvQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-01_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch will prevent error messages splashing on console.
 
-[   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
-[   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
-[   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
-[   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
 
-QCA wcn3990 will send the debug logs in the form of ACL packets.
-While decoding packet in qca_recv(), marking the received debug log
-packet as diagnostic packet.
+On 10/01/2018 03:39 PM, Ulf Hansson wrote:
+> [...]
+> 
+>>>>    struct variant_data {
+>>>>           unsigned int            clkreg;
+>>>> @@ -348,6 +350,8 @@ struct variant_data {
+>>>>           unsigned int            irq_pio_mask;
+>>>>           u32                     start_err;
+>>>>           u32                     opendrain;
+>>>> +       bool                    dma_lli;
+>>>> +       u32                     stm32_idmabsize_mask;
+>>>
+>>>
+>>> What are these?
+>>
+>>
+>> This property is specific for sdmmc variants:
+>> sdmmc has a Internal DMA and the number bytes per buffer
+>> could be different between sdmmc variants
+>> (depend of SDMMC_IDMABSIZER register).
+> 
+> Okay. Thanks for clarifying.
+> 
+> Could you please add some information about this in the changelog as well?
 
-Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
----
- drivers/bluetooth/hci_qca.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+OK
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index d98ed0442201..a00910aaed54 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -63,6 +63,10 @@
- /* susclk rate */
- #define SUSCLK_RATE_32KHZ	32768
- 
-+/* Controller debug log header */
-+#define QCA_DEBUG_HDR_MSB	0xDC
-+#define QCA_DEBUG_HDR_LSB	0x2E
-+
- /* HCI_IBS transmit side sleep protocol states */
- enum tx_ibs_states {
- 	HCI_IBS_TX_ASLEEP,
-@@ -849,6 +853,20 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, struct sk_buff *skb)
- 	return 0;
- }
- 
-+static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff *skb)
-+{
-+	/* We receive debug logs from chip as an ACL packets.
-+	 * Instead of sending the data to ACL to decode the
-+	 * received data, we are pushing them to the above layers
-+	 * as a diagnostic packet.
-+	 */
-+	if ((skb->len > 2) && (skb->data[0] == QCA_DEBUG_HDR_MSB) &&
-+	    (skb->data[1] == QCA_DEBUG_HDR_LSB))
-+		return hci_recv_diag(hdev, skb);
-+	else
-+		return hci_recv_frame(hdev, skb);
-+}
-+
- #define QCA_IBS_SLEEP_IND_EVENT \
- 	.type = HCI_IBS_SLEEP_IND, \
- 	.hlen = 0, \
-@@ -870,13 +888,20 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, struct sk_buff *skb)
- 	.lsize = 0, \
- 	.maxlen = HCI_MAX_IBS_SIZE
- 
-+#define QCA_RECV_ACL_DATA \
-+	.type = HCI_ACLDATA_PKT, \
-+	.hlen = HCI_ACL_HDR_SIZE, \
-+	.loff = 2, \
-+	.lsize = 2, \
-+	.maxlen = HCI_MAX_FRAME_SIZE
-+
- static const struct h4_recv_pkt qca_recv_pkts[] = {
--	{ H4_RECV_ACL,             .recv = hci_recv_frame    },
- 	{ H4_RECV_SCO,             .recv = hci_recv_frame    },
- 	{ H4_RECV_EVENT,           .recv = hci_recv_frame    },
- 	{ QCA_IBS_WAKE_IND_EVENT,  .recv = qca_ibs_wake_ind  },
- 	{ QCA_IBS_WAKE_ACK_EVENT,  .recv = qca_ibs_wake_ack  },
- 	{ QCA_IBS_SLEEP_IND_EVENT, .recv = qca_ibs_sleep_ind },
-+	{ QCA_RECV_ACL_DATA,       .recv = qca_recv_acl_data },
- };
- 
- static int qca_recv(struct hci_uart *hu, const void *data, int count)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+> [...]
+> 
+>>>> +
+>>>> +static int _sdmmc_idma_prep_data(struct mmci_host *host,
+>>>> +                                struct mmc_data *data)
+>>>> +{
+>>>> +       int n_elem;
+>>>> +
+>>>> +       n_elem = dma_map_sg(mmc_dev(host->mmc),
+>>>> +                           data->sg,
+>>>> +                           data->sg_len,
+>>>> +                           mmc_get_dma_dir(data));
+>>>> +
+>>>> +       if (!n_elem) {
+>>>> +               dev_err(mmc_dev(host->mmc), "dma_map_sg failed\n");
+>>>> +               return -EINVAL;
+>>>> +       }
+>>>> +
+>>>> +       return 0;
+>>>> +}
+>>>> +
+>>>> +static int sdmmc_idma_prep_data(struct mmci_host *host,
+>>>> +                               struct mmc_data *data, bool next)
+>>>> +{
+>>>> +       /* Check if job is already prepared. */
+>>>> +       if (!next && data->host_cookie == host->next_cookie)
+>>>> +               return 0;
+>>>> +
+>>>> +       return _sdmmc_idma_prep_data(host, data);
+>>>> +}
+>>>> +
+>>>> +static void sdmmc_idma_unprep_data(struct mmci_host *host,
+>>>> +                                  struct mmc_data *data, int err)
+>>>> +{
+>>>> +       dma_unmap_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
+>>>> +                    mmc_get_dma_dir(data));
+>>>> +}
+>>>
+>>>
+>>> The sdmmc_idma_prep_data() and sdmmc_idma_unprep_data(), seems very
+>>> similar to what the mmci core driver needs to do in this regards.
+>>>
+>>> Can we perhaps avoid adding these callbacks altogether, but rather
+>>> rely on common code in the mmci core driver?
+>>
+>>
+>> Actually, these callbacks allow to manage prepare/unprepare of
+>> dmaengine interface for mmci variant, (not needed for sdmmc which uses an
+>> internal dma).
+>>
+>> For Sdmmc, today there are no special case, just dma_map/unmap.
+>> But in the future, I hope manage the lli list in these callback.
+>>
+>> Only dma_map/unmap could be common, but the error management may
+>> be complicated (in mmci variant).
+>>
+>> Personally, I prefer keep prep_data/unprep_data mmci_host_ops
+>> interfaces.
+>> What do you suggest ?
+> 
+> Okay, let's keep them for now. We can always change things on top, in
+> case we see later that those callbacks can be removed.
 
+Okay, that make sense.
+
+> 
+> [...]
+> 
+> Kind regards
+> Uffe
+> 
