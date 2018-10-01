@@ -2,144 +2,104 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA833C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A77C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91768208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:11:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="DvsbQFq4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91768208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 93AFA208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:12:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93AFA208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726246AbeJAWt3 (ORCPT
+        id S1726276AbeJAWul (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:49:29 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40260 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725777AbeJAWt3 (ORCPT
+        Mon, 1 Oct 2018 18:50:41 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58050 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725777AbeJAWuk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:49:29 -0400
-Received: by mail-io1-f68.google.com with SMTP id w16-v6so9864040iom.7
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 09:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=28ikbkritnwd0X0sDqtZ2GOJdZgiK1O30ZJZmBmHzCo=;
-        b=DvsbQFq4WR1P4zaro854x10NWgaBW5qdCo8GMmb4N/MpacWUkcG3COITmoSgjnDJEc
-         m3ArTfRMiSfsekJe2b5+cO54s3UeVq3qEiV1wwjf2ELOd1F76i+/YoDIiT+l2eDPkIbz
-         asrPdZ3vsw6som3MzmmDWC9Hrc8Qy7ZJ+frttWUTs/HHlXOZo6e1/DEFoSaD9Fx3esb4
-         CTOt878RQkPHbujaq5+S9zfdB0wV/3dBH/qLr9oeyGwdzd2sZdeQkjkNfJWZ2LPzKOc5
-         cKlU+N/zDI7TWk+cVRQOYGg147k4ukkUgTrkBpYHAXDBiPDLsXBgFANA2gxrEdH8Mn5+
-         fpUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=28ikbkritnwd0X0sDqtZ2GOJdZgiK1O30ZJZmBmHzCo=;
-        b=Nh8CokNwfHv27Pl9E8rwBgOV+ChydGVRbubkQe2ZkYlAng4kHMPhVF0C5vMcpB+B/Y
-         16k/9TVu8kg7bdml8xBwWr4+t84GVjAyXCt/DbfSBxqgHKn0T5/3sGWaNyaWw/ILTBVV
-         YCI3FF+DKYaZ3CvfBZT1QubUudzyxdFMqZgqcTXkQBpPKZK+bNIHTfxywpVGxqLO4wHv
-         mJ6TdKV0SPDw2sy0KmGrA93GmjpElNPruE46tWYmH6YzxfZjRY7FOjkDapDcpTUiBBfi
-         aNieRZv/eB/6BME5z50jn3Hs+6m7SvPiFXlMF9UMjy/y21WyDBfzHAu2V6YzOlGcFeac
-         qBsA==
-X-Gm-Message-State: ABuFfoi2Az/rzbHIz6Mjp9lzOdVW0iIdfB/v9BN694Ss0BSzy3ciC10E
-        RuVF+dijvSTU8nymIxelAKls7YqNqxVOf51qDSnwZw==
-X-Google-Smtp-Source: ACcGV63q62iaoQPF8aWWv66BAGnOkWti5UzYq1Ic84D4lHB8XJL3hTbt7ePvuC1HUIZ+j1yyrFkwCXcW41oJ9zR6asc=
-X-Received: by 2002:a5e:8d11:: with SMTP id m17-v6mr4019218ioj.258.1538410257133;
- Mon, 01 Oct 2018 09:10:57 -0700 (PDT)
+        Mon, 1 Oct 2018 18:50:40 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g70ni-0007Zo-Rl; Mon, 01 Oct 2018 18:12:03 +0200
+Date:   Mon, 1 Oct 2018 18:11:59 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+cc:     Jann Horn <jannh@google.com>, Andi Kleen <ak@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>, tursulin@ursulin.net,
+        kernel list <linux-kernel@vger.kernel.org>,
+        tvrtko.ursulin@linux.intel.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, maddy@linux.vnet.ibm.com,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
+In-Reply-To: <22155f49-2f57-73b8-6e89-ddd8a127967b@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1810011741070.32062@nanos.tec.linutronix.de>
+References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com> <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de> <20180928164111.i6nba2j6mnegwslw@lakrids.cambridge.arm.com> <20180928172340.GA32651@tassilo.jf.intel.com>
+ <20180928174016.i7d24puv7y3jwzf6@lakrids.cambridge.arm.com> <20180928204930.GC32651@tassilo.jf.intel.com> <CAG48ez16ECnLMNggTZQQJOuPK5ZJ8dLSkGDzvxwK1zVh1BFExw@mail.gmail.com> <20180928205907.GD32651@tassilo.jf.intel.com> <CAG48ez1xJ+Y=snnHJ5k6J6O3qqD=bHdjRioLFuzPZpxU9v7xxA@mail.gmail.com>
+ <20180928212757.GE32651@tassilo.jf.intel.com> <22155f49-2f57-73b8-6e89-ddd8a127967b@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181001100052.3580-1-brgl@bgdev.pl> <44adbace-6849-e37f-70f0-d11661e6bdc9@lechnology.com>
-In-Reply-To: <44adbace-6849-e37f-70f0-d11661e6bdc9@lechnology.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 1 Oct 2018 18:10:45 +0200
-Message-ID: <CAMRc=Mec1AYX20ZVf0BJmMpovtONW5VifB70-dRXp+PJ-zGvYA@mail.gmail.com>
-Subject: Re: [PATCH] nvmem: fix nvmem_cell_get_from_lookup()
-To:     David Lechner <david@lechnology.com>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pon., 1 pa=C5=BA 2018 o 18:03 David Lechner <david@lechnology.com> napisa=
-=C5=82(a):
->
-> On 10/01/2018 05:00 AM, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > We check if the pointer returned by __nvmem_device_get() is not NULL
-> > while we should actually check if it is not IS_ERR(nvmem). Fix it.
-> >
-> > While we're at it: fix the next error path where we should assign an
-> > error value to cell before returning.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >   drivers/nvmem/core.c | 5 +++--
-> >   1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> > index ad1227df1984..8249621d11a6 100644
-> > --- a/drivers/nvmem/core.c
-> > +++ b/drivers/nvmem/core.c
-> > @@ -952,9 +952,9 @@ nvmem_cell_get_from_lookup(struct device *dev, cons=
-t char *con_id)
-> >                   (strcmp(lookup->con_id, con_id) =3D=3D 0)) {
-> >                       /* This is the right entry. */
-> >                       nvmem =3D __nvmem_device_get(NULL, lookup->nvmem_=
-name);
-> > -                     if (!nvmem) {
-> > +                     if (IS_ERR(nvmem)) {
-> >                               /* Provider may not be registered yet. */
-> > -                             cell =3D ERR_PTR(-EPROBE_DEFER);
-> > +                             cell =3D (struct nvmem_cell *)nvmem;
->
-> perhaps ERR_CAST() would better indicate the intent here?
->
+Alexey,
 
-Wow so that exists too...
+On Mon, 1 Oct 2018, Alexey Budankov wrote:
+> > On Fri, Sep 28, 2018 at 11:22:37PM +0200, Jann Horn wrote:
+> >> <blasphemy>
+> >> Is that true? IIRC if you want to use the perf tools after a kernel
+> >> update, you have to install a new version of perf anyway, no?
+> 
+> There are usages in production where perf_event_open() syscall 
+> accompanied with read(), mmap() etc. is embedded into application 
+> on per-thread basis and is used for self monitoring and dynamic 
+> execution tuning.
+> 
+> There are also other Perf tools around that, for example, are 
+> statically linked and then used as on Linux as on Android.
+> 
+> Backward compatibility does matter in these cases.
 
-Thanks, I'll resend tomorrow.
+Well, it's nothing fundamentally new, that new features require changes to
+applications, libraries etc. It's nice if it can be avoided of course.
 
-Bart
+From a design POV, Jann's idea to have a per PMU special file which you
+need to open for getting access is way better than the extra knobs. It
+allows to use all existing security mechanisms to be used.
 
-> >                               goto out;
-> >                       }
-> >
-> > @@ -962,6 +962,7 @@ nvmem_cell_get_from_lookup(struct device *dev, cons=
-t char *con_id)
-> >                                                      lookup->cell_name)=
-;
-> >                       if (!cell) {
-> >                               __nvmem_device_put(nvmem);
-> > +                             cell =3D ERR_PTR(-ENOENT);
-> >                               goto out;
-> >                       }
-> >               }
-> >
->
+Peter and I discussed that and we came up with the idea that the file
+descriptor is not even required, i.e. you could make it backward
+compatible.
+
+perf_event_open() knows which PMU is associated with the event the caller
+tries to open. So perf_event_open() can try to access/open the special per
+PMU file on behalf of the caller. That should get the same security
+treatment like a regular open() from user space. If that succeeds, access
+is granted.
+
+The magic file could still be writeable for root to give general
+restrictions aside of the file based ones similar to what you are
+proposing.
+
+The analysis and documentation requirements still remain of course.
+
+Thanks,
+
+	tglx
+
+
