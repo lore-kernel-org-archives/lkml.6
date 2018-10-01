@@ -2,123 +2,125 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 451B9C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABF1C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 018782089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:17:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 007242089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:17:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pQVfFSsu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 018782089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="QV3sCOdA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 007242089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbeJAX4L (ORCPT
+        id S1726473AbeJAX4f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 19:56:11 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42995 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbeJAX4L (ORCPT
+        Mon, 1 Oct 2018 19:56:35 -0400
+Received: from mail-ed1-f52.google.com ([209.85.208.52]:45993 "EHLO
+        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeJAX4f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 19:56:11 -0400
-Received: by mail-pf1-f195.google.com with SMTP id l9-v6so9688031pff.9
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 10:17:24 -0700 (PDT)
+        Mon, 1 Oct 2018 19:56:35 -0400
+Received: by mail-ed1-f52.google.com with SMTP id h6-v6so13455659eds.12
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 10:17:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tRtggt4FXN3bTBKNXdfJdZQx2PWHARKCnRCpA0Ez/+g=;
-        b=pQVfFSsuvsMZ1FGzaoYZ53PVOwzaEKb/f81ZystARA7YjLh1CAP5us02ExPNAD1cqF
-         iaZAQJ4/dqvlB8LpGtq8yqGXVjrrncfaKeinvI+wIfiRdKjoDU6Fq/ydixZi2gseowdI
-         0B3b5rWnkzsr+ajD9fN8WRM52mTAQLxnpX/KwxwhDj/NPAz4H/MolXyVcjRdyeCA+WLK
-         vaGhH5iBzbTkTG+4ZSRNtfMWzVwZvQEND4+zNZ/kzozrU5HsyvyxWJRoaEnS90BD5eph
-         E+Vv3LKP/ugQcLg10VNrKDf4zvuZWH6BoCm9BWOOyoZxnd8zZ6HmNIGPA5/BGX23g2aL
-         lPJQ==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WjSBADx5iAwpC9f8+0fMFQ4KnaPWdti3y5/ED67vFjk=;
+        b=QV3sCOdAX+OZyOfDKyxLU9T1kRu+UkiakoTRS6KlkqkfRvLUrKSLBwCZEo5mP4Ol3L
+         YItHCr0+sru4rg3G/GVFRGvQr5HMT0dQ5/GyOHQnxRnntYtSYw7r/6oAwRvIwqm2v94q
+         VKmo8XshsV/UI0kokEoiuYMnXUaxU8JvbPljI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tRtggt4FXN3bTBKNXdfJdZQx2PWHARKCnRCpA0Ez/+g=;
-        b=MM2B4NBlN05l0H29Si0ILEQm29Wz/R2TFD5JzCkJbNkf86ylj4E9SY2dPQybpVIfhr
-         IBBiwJW5bZfr+7Wj0bTA0bkkndjRD/ST0Cm43lCjuecRGEw4TzS92J4Tigqoy4lrec4h
-         4h1Jfoa50Bsu5xC8aYalpaGPTqghp5ZmqUNLFH11IpxurXpyye1Htb8zxJUbPqrStY9l
-         zZrG9S9YCEYQIxA6NBxVC8lqXt+SWjPCxlzhRWk7oUCRGdSKg3DsYtQJMhpXasXwvsMb
-         hhP6YAExUYXDJDcxU3AyNGtuff7RvThgJWMWvh7X29UpjFZONlAhoXXGyMjEjUVaDl6r
-         xsIg==
-X-Gm-Message-State: ABuFfoit+hU+zMFg/cBmQHR7FBTHWR6EHzleDTooAnxLflic314JWc4K
-        oCEnpQkxJus417PiuSP9hT1TxbT+/2+SWaQCYC0O1QihPJY=
-X-Google-Smtp-Source: ACcGV63TTHQ846ZGLBTQVBU1hVeznNM7T/PIYrly4YVmMiyVazOXi3TQxUjtaFPGXJ0bLKMy1VbnN6whtGUk5oyrSuQ=
-X-Received: by 2002:a17:902:b7c2:: with SMTP id v2-v6mr12892871plz.238.1538414244049;
- Mon, 01 Oct 2018 10:17:24 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=WjSBADx5iAwpC9f8+0fMFQ4KnaPWdti3y5/ED67vFjk=;
+        b=A7B7OwiHsR9FYR8uzabEQ8J/RTzqvbLyvmjmvhY/a33vE6z5CgrLTl609VYDyNtCKH
+         dgAK06MvUfMaVxlCfiM2Cz8G7whYyixVV7y7pgzz8f/FluP9y9GZAOuCLzyJgH6OW2je
+         ypGQpixH0dpWF2tThg6MaXVejQFdFalQ0TZ7mztoZIxIAoJwuZde6tR6cmFX33x/Ngud
+         eWLtaXn9xDbAFrWwbAPE3HDdmrbsi00c+Ul2najaMvnpke3fPtS2p6vzn776lfx2rOE8
+         giIMXkPWPg1rFsH7iJpcc9CBrZiMLDJNm8cMfBNYRAq9rHlCDZ9o2hllwN9G4zHoihv5
+         HzJQ==
+X-Gm-Message-State: ABuFfogE7kdAjoXyctzyCN01yBrPnKczlt5pzx0qXb7iAXWtenoldhyt
+        6fDE7fICUkc7Fht1odDQ+F734w==
+X-Google-Smtp-Source: ACcGV62KmT36OHIlzs6KAYHJDiy0d0XV53fNWmRwsc/qIvnFgyFRdWRil0MmiEZN4a9ppj75ntAVTw==
+X-Received: by 2002:aa7:d1cf:: with SMTP id g15-v6mr4709760edp.163.1538414266464;
+        Mon, 01 Oct 2018 10:17:46 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id t8-v6sm2095281ejx.62.2018.10.01.10.17.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 01 Oct 2018 10:17:45 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 19:17:43 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        Sean Paul <sean@poorly.run>
+Subject: Re: [PATCH 1/2] drm: virtual connectors can have edid too
+Message-ID: <20181001171743.GG11082@phenom.ffwll.local>
+Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        Sean Paul <sean@poorly.run>
+References: <20181001121911.27140-1-kraxel@redhat.com>
+ <20181001121911.27140-2-kraxel@redhat.com>
 MIME-Version: 1.0
-References: <1538387078-21892-1-git-send-email-yamada.masahiro@socionext.com> <1538387078-21892-3-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1538387078-21892-3-git-send-email-yamada.masahiro@socionext.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 1 Oct 2018 10:17:12 -0700
-Message-ID: <CAKwvOd=R1FN_nmR4Wkpb=nTt+v2f2+uWOcQCFoB+B1hWzCXCXA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] kbuild: add -Wno-unused-but-set-variable compiler
- flag unconditionally
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001121911.27140-2-kraxel@redhat.com>
+X-Operating-System: Linux phenom 4.14.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 2:45 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> We have raised the compiler requirement from time to time.
-> With commit cafa0010cd51 ("Raise the minimum required gcc version
-> to 4.6"), the minimum for GCC is 4.6 now.
->
-> This flag was added by GCC 4.6, and it is recognized by Clang and
-> ICC as well.
+On Mon, Oct 01, 2018 at 02:19:10PM +0200, Gerd Hoffmann wrote:
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 
-This doesn't seem to be the case for Clang:
-https://godbolt.org/z/qesF5o
+This will add edid support to all virtual connectors. Probably a bit much,
+and I don't think what everyone else wants for their virtual hw drivers.
 
-Nacked-by: Nick Desaulniers <ndesaulniers@google.com>
+I think better to wrap a new drm_connector_attach_edid_property(), which
+virtual drivers can call when needed. Also: Might be good to update the
+kerneldoc, and perhaps double-check no userspace will go boom on this
+change (yes I'm paranoid).
+-Daniel
 
-
->
-> Let's rip off the cc-disable-warning switch, and see if somebody
-> complains about it.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
->
->  Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Makefile b/Makefile
-> index 8a23fee..2627266 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -716,7 +716,7 @@ else
->
->  # These warnings generated too much noise in a regular build.
->  # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
-> -KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
-> +KBUILD_CFLAGS += -Wno-unused-but-set-variable
->  endif
->
->  KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
-> --
-> 2.7.4
->
-
+>  drivers/gpu/drm/drm_connector.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+> index 6011d769d5..95cbbf7ee5 100644
+> --- a/drivers/gpu/drm/drm_connector.c
+> +++ b/drivers/gpu/drm/drm_connector.c
+> @@ -254,8 +254,7 @@ int drm_connector_init(struct drm_device *dev,
+>  	config->num_connector++;
+>  	spin_unlock_irq(&config->connector_list_lock);
+>  
+> -	if (connector_type != DRM_MODE_CONNECTOR_VIRTUAL &&
+> -	    connector_type != DRM_MODE_CONNECTOR_WRITEBACK)
+> +	if (connector_type != DRM_MODE_CONNECTOR_WRITEBACK)
+>  		drm_object_attach_property(&connector->base,
+>  					      config->edid_property,
+>  					      0);
+> -- 
+> 2.9.3
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-Thanks,
-~Nick Desaulniers
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
