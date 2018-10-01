@@ -2,159 +2,112 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B52C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DC1C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F2F5206B2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:29:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bgSYRfBL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F2F5206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D05A2082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:30:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D05A2082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbeJBFJN (ORCPT
+        id S1726533AbeJBFKM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 01:09:13 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:40560 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726398AbeJBFJM (ORCPT
+        Tue, 2 Oct 2018 01:10:12 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42336 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726291AbeJBFKM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 01:09:12 -0400
-Received: by mail-yw1-f66.google.com with SMTP id l79-v6so2108589ywc.7
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=UUva3qayWTJuNRO5vFXagr7UNP6gpnhjrr3F5TYlkQo=;
-        b=bgSYRfBLOAWqKUmuKkY1DNiSeeZjZ/x6tv1TSP+ME5eKcUc3EpCeI96Wf9AyhkH6o9
-         TgJIGZJlztMAwnN/xmMyjqLRE2PJUDQ03SdGv1OhKOndOQkBmakZvPEe18/ZkRvQzVHT
-         dOWqg2UbYRM84UGf4WePEGn/8SjGzzU+4gpOk=
+        Tue, 2 Oct 2018 01:10:12 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w81-v6so10937873oiw.9
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:30:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UUva3qayWTJuNRO5vFXagr7UNP6gpnhjrr3F5TYlkQo=;
-        b=GwndErgk3xQhHOTmbRJPy7cYuhzc34DrJB6owtvQ6eOlfsdBzi6KEDi1abJ1F55X6f
-         rfu7c2F4J2NS6sXwZmJLOw4Ybd1PBNuwvwrHLAKsBo0Mx+ymMSsqVJhOjiOJa+kQQce9
-         TKYfrRJy7xZkBZETB0zHBy5MGGA7zVd5ozbw03/GmFRF7AQv3bVq4TzS0WSrfrVrOvrI
-         xO9oQ8SSI+VXk+OEEWleFh9GbqTKMas1b+lE0PUTZUihPZ9FYjZ4IT3ZFtW0feO5x3DU
-         do/xIy7xFY62DNDWdY9NT+GjL2w1P9jbOviFx2bja1rnjbKUkcBy4M0uGs1Z1GSn5D1a
-         B28Q==
-X-Gm-Message-State: ABuFfoj7ZMFwwhuRoMYM0bgcYqqpcX9yHAeBHwUV+T3mKLz5TBvffNqC
-        0zsXAr2yGwbrj7x7fSxTOzapWdFU1J8=
-X-Google-Smtp-Source: ACcGV60XA+p1D/vwnx0woqFspxhFgobjvppg0X0E7+157jLr/EcZj3c3jjZK5cX/mtWuOhTUtjW8ZQ==
-X-Received: by 2002:a81:c845:: with SMTP id k5-v6mr7284805ywl.376.1538432951702;
-        Mon, 01 Oct 2018 15:29:11 -0700 (PDT)
-Received: from mail-yw1-f41.google.com (mail-yw1-f41.google.com. [209.85.161.41])
-        by smtp.gmail.com with ESMTPSA id l21-v6sm3730547ywk.2.2018.10.01.15.29.09
+        bh=EBMuyxcw3gTNEnsYJL9HAsaFTeTTjjUiMjGbPctuLCE=;
+        b=FeTb04O3lhkx6c/nLEBq9gm/fm2RFyF3tBr9Cr6aOz9954g7eHnC8xj0twJcYvPWAU
+         VbOSLoy4ZZSjvg3+dpcrTCuDitLBTGqVHgefbYc6epaRkdx3sZ+VeD5Vl7fV4AS5pMYO
+         qnlP6SThHx/DRwbE28fn5SNiDFkOq2kp/c7xJw4dp5wmPTGGVmAaN+ceTPMWUkVxJrqZ
+         8M7Iokc59/Foy/8hcqVvUCCT7VdNBgla7a2ftOu3AL47qH88Y5m3BDr0yW5s5ps3E8vB
+         ithjnd8RMpU7qZ95dpjTfmANICXxjNO13lgjz7Ba0lPnFfbBpI0Nqymnt3/CnUfWsy8n
+         EzgA==
+X-Gm-Message-State: ABuFfoj7GkxL69+IA3jE83d9Q8RI9va+MIyPMBNuMnaHfqBmnQjB58pE
+        zPcXVzary27SW076uOJBR31/395eiL0=
+X-Google-Smtp-Source: ACcGV62nQbfD3wg4azCEHz2+lLoDDxB+WvLTjcvISF9GGUyMPzY/rqdl6rtGhZhsSkl9ah88LdSZzw==
+X-Received: by 2002:aca:5107:: with SMTP id f7-v6mr6520884oib.223.1538433011547;
+        Mon, 01 Oct 2018 15:30:11 -0700 (PDT)
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com. [209.85.167.177])
+        by smtp.gmail.com with ESMTPSA id j79-v6sm2307698oiy.13.2018.10.01.15.30.10
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 15:29:09 -0700 (PDT)
-Received: by mail-yw1-f41.google.com with SMTP id s73-v6so6204184ywg.11
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:29:09 -0700 (PDT)
-X-Received: by 2002:a81:98cb:: with SMTP id p194-v6mr2351311ywg.353.1538432948785;
- Mon, 01 Oct 2018 15:29:08 -0700 (PDT)
+        Mon, 01 Oct 2018 15:30:11 -0700 (PDT)
+Received: by mail-oi1-f177.google.com with SMTP id l197-v6so12626785oib.8
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:30:10 -0700 (PDT)
+X-Received: by 2002:aca:e310:: with SMTP id a16-v6mr1108411oih.79.1538433010858;
+ Mon, 01 Oct 2018 15:30:10 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 15:29:08 -0700 (PDT)
-In-Reply-To: <822e8ef3-5035-736e-1bea-dcb4af5c36ac@canonical.com>
-References: <20180925001832.18322-1-keescook@chromium.org> <20180925001832.18322-15-keescook@chromium.org>
- <alpine.LRH.2.21.1810020747380.20364@namei.org> <CAGXu5jJKvb=3vu3_b-NNdr_=KwvgO9qa96Qo5qzSZuiy2=+Oig@mail.gmail.com>
- <822e8ef3-5035-736e-1bea-dcb4af5c36ac@canonical.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 1 Oct 2018 15:29:08 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKm3yp8VFjTrRd1dibMVQeCmsHawNMyvtiCcEjxT7S57Q@mail.gmail.com>
-Message-ID: <CAGXu5jKm3yp8VFjTrRd1dibMVQeCmsHawNMyvtiCcEjxT7S57Q@mail.gmail.com>
-Subject: Re: [PATCH security-next v3 14/29] LSM: Plumb visibility into
- optional "enabled" state
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <1538124204-31406-1-git-send-email-madalin.bucur@nxp.com>
+In-Reply-To: <1538124204-31406-1-git-send-email-madalin.bucur@nxp.com>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Mon, 1 Oct 2018 17:29:59 -0500
+X-Gmail-Original-Message-ID: <CADRPPNTn99q=6fungYr-xcwY6vFiw9KTUp8UCEQ2u0+sv7vd4Q@mail.gmail.com>
+Message-ID: <CADRPPNTn99q=6fungYr-xcwY6vFiw9KTUp8UCEQ2u0+sv7vd4Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] soc/fsl/qbman: DPAA QBMan fixes and additions
+To:     madalin.bucur@nxp.com
+Cc:     Roy Pledge <roy.pledge@nxp.com>, claudiu.manoil@nxp.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Scott Wood <oss@buserror.net>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 3:20 PM, John Johansen
-<john.johansen@canonical.com> wrote:
-> On 10/01/2018 02:56 PM, Kees Cook wrote:
->> On Mon, Oct 1, 2018 at 2:47 PM, James Morris <jmorris@namei.org> wrote:
->>> On Mon, 24 Sep 2018, Kees Cook wrote:
->>>
->>>> In preparation for lifting the "is this LSM enabled?" logic out of the
->>>> individual LSMs, pass in any special enabled state tracking (as needed
->>>> for SELinux, AppArmor, and LoadPin). This should be an "int" to include
->>>> handling any future cases where "enabled" is exposed via sysctl which
->>>> has no "bool" type.
->>>>
->>>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>>> ---
->>>>  include/linux/lsm_hooks.h | 1 +
->>>>  security/apparmor/lsm.c   | 5 +++--
->>>>  security/selinux/hooks.c  | 1 +
->>>>  3 files changed, 5 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->>>> index 5056f7374b3d..2a41e8e6f6e5 100644
->>>> --- a/include/linux/lsm_hooks.h
->>>> +++ b/include/linux/lsm_hooks.h
->>>> @@ -2044,6 +2044,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
->>>>  struct lsm_info {
->>>>       const char *name;       /* Populated automatically. */
->>>>       unsigned long flags;    /* Optional: flags describing LSM */
->>>> +     int *enabled;           /* Optional: NULL means enabled. */
->>>
->>> This seems potentially confusing.
->>>
->>> Perhaps initialize 'enabled' to a default int pointer, like:
->>>
->>>         static int lsm_default_enabled = 1;
->>>
->>> Then,
->>>
->>>         DEFINE_LSM(foobar)
->>>         flags = LSM_FLAG_LEGACY_MAJOR,
->>>         .enabled = &lsm_default_enabled,
->>>         .init = foobar_init,
->>>         END_LSM;
->>
->> The reason I didn't do this is because there are only two LSMs that
->> expose this "enabled" variable, so I didn't like making the other LSMs
->> have to declare this. Internally, though, this is exactly what the
->> infrastructure does: if it finds a NULL, it aims it at
->> &lsm_default_enabled (in a later patch).
->>
->> However, it seems more discussion is needed on the "enable" bit of
->> this, so I'll reply to John in a moment...
->>
-> fwiw the apparmor.enabled config is really only a meant to be used to
-> disable apparmor. I'd drop it entirely except its part of the userspace
-> api now and needs to show up in
+On Fri, Sep 28, 2018 at 3:44 AM Madalin Bucur <madalin.bucur@nxp.com> wrote:
 >
->   /sys/module/apparmor/parameters/enabled
 
-Showing the enabled-ness there can be wired up. What should happen if
-someone sets apparmor.enabled=0/1 in new-series-world? (See other
-thread...)
+Applied 1-4 to for-next while waiting for clarification on 5/5.   And
+updated the prefix to "soc: fsl:" style to be aligned with arm-soc
+convention.  Please try to use that style in the future for soc/fsl
+patches.
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
+> This patch set brings a number of fixes and the option to control
+> the QMan portal interrupt coalescing.
+>
+> Changes from v1:
+>  - change CPU 0 with any online CPU to allow CPU 0 to be taken offline
+>  - move common code in a function
+>  - address all places in the code where the portal interrupt was affined
+>    to CPU 0
+>  - remove unrelated change from patch adding 64 bit DMA addressing
+>    requirement
+>
+> Madalin Bucur (2):
+>   soc/fsl/qbman: replace CPU 0 with any online CPU in hotplug handlers
+>   soc/fsl_qbman: export coalesce change API
+>
+> Roy Pledge (3):
+>   soc/fsl/qbman: Check if CPU is offline when initializing portals
+>   soc/fsl/qbman: Add 64 bit DMA addressing requirement to QBMan
+>   soc/fsl/qbman: Use last response to determine valid bit
+>
+>  drivers/soc/fsl/qbman/Kconfig       |  2 +-
+>  drivers/soc/fsl/qbman/bman.c        |  6 ++---
+>  drivers/soc/fsl/qbman/bman_portal.c |  4 ++-
+>  drivers/soc/fsl/qbman/dpaa_sys.h    | 20 ++++++++++++++
+>  drivers/soc/fsl/qbman/qman.c        | 53 ++++++++++++++++++++++++++++++++-----
+>  drivers/soc/fsl/qbman/qman_portal.c |  6 +++--
+>  include/soc/fsl/qman.h              | 27 +++++++++++++++++++
+>  7 files changed, 104 insertions(+), 14 deletions(-)
+>
+> --
+> 2.1.0
+>
