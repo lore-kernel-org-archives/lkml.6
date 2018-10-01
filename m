@@ -2,73 +2,119 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92977C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 19:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAD8C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 19:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 301382146D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 19:08:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 301382146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id CE5DA21470
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 19:10:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f023MubY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE5DA21470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbeJBBrp (ORCPT
+        id S1726303AbeJBBtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 21:47:45 -0400
-Received: from www62.your-server.de ([213.133.104.62]:42329 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeJBBrp (ORCPT
+        Mon, 1 Oct 2018 21:49:46 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41950 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbeJBBtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 21:47:45 -0400
-Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g73YU-0008Di-Jr; Mon, 01 Oct 2018 21:08:30 +0200
-Received: from [62.203.87.61] (helo=linux.home)
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g73YU-0000Cc-DZ; Mon, 01 Oct 2018 21:08:30 +0200
-Subject: Re: [PATCH v4 bpf-next 00/10] bpf: per-cpu cgroup local storage
-To:     Roman Gushchin <guro@fb.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-References: <20180928144452.5284-1-guro@fb.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <11d203fa-829d-1113-4b1e-c15c0f53916d@iogearbox.net>
-Date:   Mon, 1 Oct 2018 21:08:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 1 Oct 2018 21:49:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XSIPo5XTYma74Gs4FlsKj1QTEmicGED5k/z4/PzTjjg=; b=f023MubYCciajxi9xUErdSccl
+        XoHPuQEoMZnrO5K/GGmy/HXW1Jdr5OCRVRJHXis+AQdb0+GA75qql4FHD7pDRhXUk2VIKozdPmR4Q
+        nT9p6hXcdj7kjDTPD38PV8raZW2cMnFawLoDwB60Z56p+GTu7fc4gRMF1tdU1LSZX+vHiQ6ROor0f
+        2UTMWOBkYk6SEdvk+mDAWKlbvDzVXUCbdy8noQ1ETWT2OgJyNdD5FFBnlKeRwHgMPo3gyGErixE55
+        euiVxwI3OtiR+InVInRDou/krgmfTViP3zMGwg2q7yKsc53slta9IrG6XSJxoFkt/f03zJVWEEmK+
+        o3IUXTT7Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g73aL-0000OT-3E; Mon, 01 Oct 2018 19:10:25 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 303262075FAA1; Mon,  1 Oct 2018 21:10:22 +0200 (CEST)
+Date:   Mon, 1 Oct 2018 21:10:22 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, longman@redhat.com,
+        andrea.parri@amarulasolutions.com, tglx@linutronix.de
+Subject: Re: [RFC][PATCH 2/3] locking/qspinlock: Rework some comments
+Message-ID: <20181001191022.GN3439@hirez.programming.kicks-ass.net>
+References: <20180926110117.405325143@infradead.org>
+ <20180926111307.457488877@infradead.org>
+ <20181001171707.GE13918@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180928144452.5284-1-guro@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.1/24998/Mon Oct  1 10:58:25 2018)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001171707.GE13918@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/28/2018 04:45 PM, Roman Gushchin wrote:
-> This patchset implements per-cpu cgroup local storage and provides
-> an example how per-cpu and shared cgroup local storage can be used
-> for efficient accounting of network traffic.
+On Mon, Oct 01, 2018 at 06:17:08PM +0100, Will Deacon wrote:
+> On Wed, Sep 26, 2018 at 01:01:19PM +0200, Peter Zijlstra wrote:
+> > +
+> >  	/*
+> > -	 * If we observe any contention; undo and queue.
+> > +	 * If we observe contention, there was a concurrent lock.
 > 
-> v4->v3:
->   1) incorporated Alexei's feedback
-> 
-> v3->v2:
->   1) incorporated Song's feedback
->   2) rebased on top of current bpf-next
-> 
-> v2->v1:
->   1) added a selftest implementing network counters
->   2) added a missing free() in cgroup local storage selftest
+> Nit: I think "concurrent lock" is confusing here, because that implies to
+> me that the lock was actually taken behind our back, which isn't necessarily
+> the case. How about "there is a concurrent locker"?
 
-Applied to bpf-next, thanks!
+Yes, that's better.
+
+> > +	 *
+> > +	 * Undo and queue; our setting of PENDING might have made the
+> > +	 * n,0,0 -> 0,0,0 transition fail and it will now be waiting
+> > +	 * on @next to become !NULL.
+> >  	 */
+> 
+> Hmm, but it could also fail another concurrent set of PENDING (and the lock
+> could just be held the entire time).
+
+Right. What I wanted to convey was that is we observe _any_ contention,
+we must abort and queue, because of that above condition failing and
+waiting on @next.
+
+The other cases weren't as critical, but that one really does require us
+to queue in order to make forward progress.
+
+Or did I misunderstand your concern?
+
+> >  	if (unlikely(val & ~_Q_LOCKED_MASK)) {
+> > +
+> > +		/* Undo PENDING if we set it. */
+> >  		if (!(val & _Q_PENDING_MASK))
+> >  			clear_pending(lock);
+> > +
+> >  		goto queue;
+> >  	}
+> >  
+> > @@ -466,7 +473,7 @@ void queued_spin_lock_slowpath(struct qs
+> >  	 * claim the lock:
+> >  	 *
+> >  	 * n,0,0 -> 0,0,1 : lock, uncontended
+> > -	 * *,*,0 -> *,*,1 : lock, contended
+> > +	 * *,0,0 -> *,0,1 : lock, contended
+> 
+> Pending can be set behind our back in the contended case, in which case
+> we take the lock with a single byte store and don't clear pending. You
+> mention this in the updated comment below, but I think we should leave this
+> comment alone.
+
+Ah, so the reason I write it like so is because when we get here,
+val.locked_pending == 0, per the atomic_cond_read_acquire() condition.
+
+
