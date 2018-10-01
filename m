@@ -2,35 +2,35 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D42EC64EAD
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8939AC64EB0
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CF9A20666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:39:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45AFD2083C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:40:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Jetldfq+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CF9A20666
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="aIgFoPc0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45AFD2083C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729625AbeJAHPE (ORCPT
+        id S1729640AbeJAHPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 03:15:04 -0400
+        Mon, 1 Oct 2018 03:15:05 -0400
 Received: from mail-by2nam01on0116.outbound.protection.outlook.com ([104.47.34.116]:2013
         "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729608AbeJAHPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 03:15:03 -0400
+        id S1728834AbeJAHPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 03:15:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9jLgRmJL77mHHhk80p3tf7+/FVSnQOOV/HjXnnKkgsc=;
- b=Jetldfq+bugm8fAA3sW+ec+OSTGY6ykc5i/CTrZ60AELmxI6pPpuAhvzA10H8LnDIOkBYJh/dOifFyVojGE2Jxot10o8fimXkf8tW0LdO4IKzJCjmKAaeN5eV4v6sOD8gx+nuBVtPvcoh0X/cQ+S4Er8yb0A/mOBIHZTTsLRAZU=
+ bh=RINT2NZKGGtnj4GK4Py/XxU9QoiDdRV5UJYihBd4fGI=;
+ b=aIgFoPc0RWmKo+JB4c1xW3qotX5qk7Qw952AKZx8IyvlPVaLcKW+9jFv6mfpVFhfSBsoaOLNRgN8Cuc5bTmdb0xvFxDycm8MPEbJWUTu+lxwfJkzy6JtFhQZqW35OARF9zLqXtOLPLpxI++EUot6zoJ3d4flla5+c2Izzfzvn3A=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0854.namprd21.prod.outlook.com (10.173.192.143) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -42,16 +42,16 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Steven French <Steven.French@microsoft.com>,
+CC:     Netanel Belgazal <netanel@amazon.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 21/37] fs/cifs: suppress a string overflow
- warning
-Thread-Topic: [PATCH AUTOSEL 4.14 21/37] fs/cifs: suppress a string overflow
- warning
-Thread-Index: AQHUWR8okvfzSNCz5k+Zu4JvNfhUNA==
+Subject: [PATCH AUTOSEL 4.14 22/37] net: ena: fix driver when PAGE_SIZE ==
+ 64kB
+Thread-Topic: [PATCH AUTOSEL 4.14 22/37] net: ena: fix driver when PAGE_SIZE
+ == 64kB
+Thread-Index: AQHUWR8prgWzhO8Bv0+87sVI+S0KKA==
 Date:   Mon, 1 Oct 2018 00:39:06 +0000
-Message-ID: <20181001003850.147107-21-alexander.levin@microsoft.com>
+Message-ID: <20181001003850.147107-22-alexander.levin@microsoft.com>
 References: <20181001003850.147107-1-alexander.levin@microsoft.com>
 In-Reply-To: <20181001003850.147107-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,13 +60,13 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0854;6:3YRLSO8ydCF82TgFUGVXj2tag46xlPRRF09TIFifONlFcDsDsEH4ilKDQYoOsnYLskwVTzyAILs11e/bO0x+EswyLVrJ059G7AJAp/MM/GDowovtF7Cu81kEJTicbReKKQGX/L7pBt/jcLI0sS46z1GStzZUF+a25xpfg6kOmSB2jtcM+DJlus6bgPhk67EQex6dufTW/QrYpSY5as4dthXZE5II7hkZ1OsZCHM3EZb4XunfAnuN+pc4PCtpLLkKVCcO4yx1BqYWQsUxdH6SKUTl3MsoBg7TJyURGCSJ/QGRCOUT1DLvVWT3A8BJ152Pa+lbMwkHLy2iDL2HhAOuEq7FdhQd+g615LRmyIOE3H/XAUwJ1TBj232zSr2lrpDJVg5dkn8oRyEpzXezyZ9KwyybIe7tUS9aMpSOkvl535UXMZJQJjfc/xSEZzAG2Rp4B01/svSEJabUJl5ozhD3vg==;5:WS4sA7IdQkzM2/HtYA9ofPGju3qA0d7CoUJWnjhjU2ct+mwhq4pEsFbTQ849tPo54CSN4upAO9oapkRTRUopAW+bB1qSevpZK3f0Wkd+sabikBlsrc1lnvmtDCzHIfAuMypqCg7PYILIe/40fsRoIOsNLkx9x6JMcK7TKNv18b8=;7:4GTpS+0iDaJgyyb4ZV2syNeHxQTKpHAXYq33GygOapSJY6wTpA0cnkogeaIxQZ20xKBPgzH4cPHh2fhxkd4tqFGkAhmqCvp7HkKI2HUarDrtsC8g8TyxZr3Uudvo7p8H10A3ektljV58ydtpeH3yYcnoi8t1PybiPOKe1YX81MYIcsfgR9/C7a9+4eJBQ24HgomIfoyxpKnyTk4njkkMlwO/tWUWaWuhOduVCsz87ptfKv7aEBwavkYre1MTPLbW
-x-ms-office365-filtering-correlation-id: a0d07031-fa0d-4312-d19e-08d627366260
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0854;6:FzSZ5gTKZXlln/mOI2CfCT9EvMTVqWHIh3MDDWk2wF8ItQbbnICFPcd1OPJX5CUBCOtKkAQsgveTshnvK9P92GhGcqXzWkgSRlg8wy624jM4truzkZXUoxfH478+gW30/ZF3wU2XMq8PeiNTjAlwzxwRYpTbfqXbzRxNqfOx6vNikqEHJGNVoPyOKOL2ug/IeVbt3KdknkGgyE+EhAYVphzrfI6sCamRzr0Gt9+WRFU7fufMrkAs/TnL7FL0Gm1lxI9SiYnEMj0kyCaitnEFFnZ3YcCNWNRxaDWwThZb3Wd7Qy90s/b9dJkvu1sJsoEKZRbFCLAxTt3Xsdjb1nxo1IJVsHqlngrBytMgtKpuq0R7SsCq5cpWirjLBNAtcJWcFyUrGsnaWBOZPlWvoiOZLRB+4v9R4SE1CgNLqY9L0JdfuYex/Jl0xU+t9jMiAGLYXTog39DvzZCssRlsSQu2mg==;5:Ffv/WrDFqQitPGh0HJGBKIVKpZ6tsoe3OTQC7jwjGTAQZMRWUOKK9vIHZpNBKOLo963qzQkoUixmKofvJs6jz24lB0kHacw5Bhq78yd4lsrXp90eUWIs35xBKzBYfCMmnsT5C5twtZWlmHWzGRViubwQEJr560MuSDD83Pk/QAU=;7:FhV42tg8FJLRKM9Bre+gVg6kmtewTKURbdjn/W/RykZFTuDNZlMKrp/UHiCBS/NnUzPrVXmdieVZZ+1KwzJTblkaKymPc7T8ZqeR1jVsEW4HC3/PXlNNBsAy4zNPYUhvGQUrA3As+iQnL7Y6tP4NCLZa1eJuq27PTE+X+CIjFvK9BGJEwEZaNT7WupsK7nGYoRiyGm450izZQiwxZfj2KwmmG1QpUQJ8QAu2Tq9Az/E1zOQ/8jTB1KvbZRX7ICRW
+x-ms-office365-filtering-correlation-id: e70fef65-bf8c-4115-1620-08d62736629a
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0854;
 x-ms-traffictypediagnostic: CY4PR21MB0854:
-x-microsoft-antispam-prvs: <CY4PR21MB0854D90A85EE887B37BD82A5FBEF0@CY4PR21MB0854.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB085421EF6B4F8E23F8175EDBFBEF0@CY4PR21MB0854.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(47284530071512)(33061846794335)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0854;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0854;
 x-forefront-prvs: 0812095267
@@ -75,16 +75,15 @@ received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: +gs8CFmL3up8TNV2yJU1YcnStuQH/jMYlYp4OiNmlL0ftDkv+Hq+zF786dLjak2gCtBjMhRwvktBZeyZOYKXFIWkud5n+3fuWj9wY8EpcEkKeTG8SkafWhGLfK5b1qBxI3gnaI0ReY1qB/VRChNbCURAiakBPZXc+BnR1g7p3zfv/sksiMMmoGILk9cfcmmdf+Bf3SZo1YJeTvvBo5fP9guBm+206TStnu10Ah++c1t6M42unVuhV/2CtyWtggLQzTLQ2Hb6q0JG9dqHh9+6n4BlGXe4spcQL7G6kaxbXmQP1SXF5s5uU1008NNS1WjtwDNiMSoECX9Rihzo/6C3NR2jo139nJWJQSt9dQH90jE=
+x-microsoft-antispam-message-info: TZUcmRdvvL3l0pXW/n08cZtrivtElxq5JFaeOPObCWG4jW/ndBhBPAxRh6pdn/NR4yGpyXyovuzV499xBy2ZTx2SAps5mZ3QiaY9iL9ZRdk0LhJORRsIFkR0FmEWfW4Dw+wb4FSHTi97+YKmvfn5YbizgmUqSQ317auDYeHCwjImIWsom8a04s1b9wVxt0OIH9gRCCyCRc0GA2Kx342CG10o9uJ/SCBrAHTpxQEUWacAisped/Gv7q9/XYlyYCzgzPcMk1HokZMw0mn5rSNhaNQL7Usz9M3/iv/WY1guB0w+CP7rlI/UI3uAUbDPwIyYNdHW9y/MPuCZqGASveTW6LLN/mfVxVJrOde3dIbp404=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5FCDBFD2CD43AC418D929D2DB31A0C56@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0d07031-fa0d-4312-d19e-08d627366260
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:39:06.1900
+X-MS-Exchange-CrossTenant-Network-Message-Id: e70fef65-bf8c-4115-1620-08d62736629a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:39:06.7875
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -94,33 +93,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQoNClsgVXBzdHJl
-YW0gY29tbWl0IGJjZmI4NGE5OTZmNmZhOTBiNWU2ZTI5NTRiMmFjY2I3YTQ3MTEwOTcgXQ0KDQpB
-IHBvd2VycGMgYnVpbGQgb2YgY2lmcyB3aXRoIGdjYyB2OC4yLjAgcHJvZHVjZXMgdGhpcyB3YXJu
-aW5nOg0KDQpmcy9jaWZzL2NpZnNzbWIuYzogSW4gZnVuY3Rpb24g4oCYQ0lGU1NNQk5lZ290aWF0
-ZeKAmToNCmZzL2NpZnMvY2lmc3NtYi5jOjYwNTozOiB3YXJuaW5nOiDigJhzdHJuY3B54oCZIHdy
-aXRpbmcgMTYgYnl0ZXMgaW50byBhIHJlZ2lvbiBvZiBzaXplIDEgb3ZlcmZsb3dzIHRoZSBkZXN0
-aW5hdGlvbiBbLVdzdHJpbmdvcC1vdmVyZmxvdz1dDQogICBzdHJuY3B5KHBTTUItPkRpYWxlY3Rz
-QXJyYXkrY291bnQsIHByb3RvY29sc1tpXS5uYW1lLCAxNik7DQogICBefn5+fn5+fn5+fn5+fn5+
-fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn4NCg0KU2luY2Ugd2UgYXJl
-IGFscmVhZHkgZG9pbmcgYSBzdHJsZW4oKSBvbiB0aGUgc291cmNlLCBjaGFuZ2UgdGhlIHN0cm5j
-cHkNCnRvIGEgbWVtY3B5KCkuDQoNClNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gUm90aHdlbGwgPHNm
-ckBjYW5iLmF1dWcub3JnLmF1Pg0KU2lnbmVkLW9mZi1ieTogU3RldmUgRnJlbmNoIDxzdGZyZW5j
-aEBtaWNyb3NvZnQuY29tPg0KU2lnbmVkLW9mZi1ieTogU2FzaGEgTGV2aW4gPGFsZXhhbmRlci5s
-ZXZpbkBtaWNyb3NvZnQuY29tPg0KLS0tDQogZnMvY2lmcy9jaWZzc21iLmMgfCAxMSArKysrKysr
-Ky0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQoN
-CmRpZmYgLS1naXQgYS9mcy9jaWZzL2NpZnNzbWIuYyBiL2ZzL2NpZnMvY2lmc3NtYi5jDQppbmRl
-eCBiNWE0MzY1ODM0NjkuLjJlOTM2Zjk0ZjEwMiAxMDA2NDQNCi0tLSBhL2ZzL2NpZnMvY2lmc3Nt
-Yi5jDQorKysgYi9mcy9jaWZzL2NpZnNzbWIuYw0KQEAgLTU4OSwxMCArNTg5LDE1IEBAIENJRlNT
-TUJOZWdvdGlhdGUoY29uc3QgdW5zaWduZWQgaW50IHhpZCwgc3RydWN0IGNpZnNfc2VzICpzZXMp
-DQogCX0NCiANCiAJY291bnQgPSAwOw0KKwkvKg0KKwkgKiBXZSBrbm93IHRoYXQgYWxsIHRoZSBu
-YW1lIGVudHJpZXMgaW4gdGhlIHByb3RvY29scyBhcnJheQ0KKwkgKiBhcmUgc2hvcnQgKDwgMTYg
-Ynl0ZXMgYW55d2F5KSBhbmQgYXJlIE5VTCB0ZXJtaW5hdGVkLg0KKwkgKi8NCiAJZm9yIChpID0g
-MDsgaSA8IENJRlNfTlVNX1BST1Q7IGkrKykgew0KLQkJc3RybmNweShwU01CLT5EaWFsZWN0c0Fy
-cmF5K2NvdW50LCBwcm90b2NvbHNbaV0ubmFtZSwgMTYpOw0KLQkJY291bnQgKz0gc3RybGVuKHBy
-b3RvY29sc1tpXS5uYW1lKSArIDE7DQotCQkvKiBudWxsIGF0IGVuZCBvZiBzb3VyY2UgYW5kIHRh
-cmdldCBidWZmZXJzIGFueXdheSAqLw0KKwkJc2l6ZV90IGxlbiA9IHN0cmxlbihwcm90b2NvbHNb
-aV0ubmFtZSkgKyAxOw0KKw0KKwkJbWVtY3B5KHBTTUItPkRpYWxlY3RzQXJyYXkrY291bnQsIHBy
-b3RvY29sc1tpXS5uYW1lLCBsZW4pOw0KKwkJY291bnQgKz0gbGVuOw0KIAl9DQogCWluY19yZmMx
-MDAxX2xlbihwU01CLCBjb3VudCk7DQogCXBTTUItPkJ5dGVDb3VudCA9IGNwdV90b19sZTE2KGNv
-dW50KTsNCi0tIA0KMi4xNy4xDQo=
+From: Netanel Belgazal <netanel@amazon.com>
+
+[ Upstream commit ef5b0771d247379c90c8bf1332ff32f7f74bff7f ]
+
+The buffer length field in the ena rx descriptor is 16 bit, and the
+current driver passes a full page in each ena rx descriptor.
+When PAGE_SIZE equals 64kB or more, the buffer length field becomes
+zero.
+To solve this issue, limit the ena Rx descriptor to use 16kB even
+when allocating 64kB kernel pages. This change would not impact ena
+device functionality, as 16kB is still larger than maximum MTU.
+
+Signed-off-by: Netanel Belgazal <netanel@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/net/ethernet/amazon/ena/ena_netdev.c | 10 +++++-----
+ drivers/net/ethernet/amazon/ena/ena_netdev.h | 11 +++++++++++
+ 2 files changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/eth=
+ernet/amazon/ena/ena_netdev.c
+index 67df5053dc30..60b3ee29d82c 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -456,7 +456,7 @@ static inline int ena_alloc_rx_page(struct ena_ring *rx=
+_ring,
+ 		return -ENOMEM;
+ 	}
+=20
+-	dma =3D dma_map_page(rx_ring->dev, page, 0, PAGE_SIZE,
++	dma =3D dma_map_page(rx_ring->dev, page, 0, ENA_PAGE_SIZE,
+ 			   DMA_FROM_DEVICE);
+ 	if (unlikely(dma_mapping_error(rx_ring->dev, dma))) {
+ 		u64_stats_update_begin(&rx_ring->syncp);
+@@ -473,7 +473,7 @@ static inline int ena_alloc_rx_page(struct ena_ring *rx=
+_ring,
+ 	rx_info->page_offset =3D 0;
+ 	ena_buf =3D &rx_info->ena_buf;
+ 	ena_buf->paddr =3D dma;
+-	ena_buf->len =3D PAGE_SIZE;
++	ena_buf->len =3D ENA_PAGE_SIZE;
+=20
+ 	return 0;
+ }
+@@ -490,7 +490,7 @@ static void ena_free_rx_page(struct ena_ring *rx_ring,
+ 		return;
+ 	}
+=20
+-	dma_unmap_page(rx_ring->dev, ena_buf->paddr, PAGE_SIZE,
++	dma_unmap_page(rx_ring->dev, ena_buf->paddr, ENA_PAGE_SIZE,
+ 		       DMA_FROM_DEVICE);
+=20
+ 	__free_page(page);
+@@ -910,10 +910,10 @@ static struct sk_buff *ena_rx_skb(struct ena_ring *rx=
+_ring,
+ 	do {
+ 		dma_unmap_page(rx_ring->dev,
+ 			       dma_unmap_addr(&rx_info->ena_buf, paddr),
+-			       PAGE_SIZE, DMA_FROM_DEVICE);
++			       ENA_PAGE_SIZE, DMA_FROM_DEVICE);
+=20
+ 		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, rx_info->page,
+-				rx_info->page_offset, len, PAGE_SIZE);
++				rx_info->page_offset, len, ENA_PAGE_SIZE);
+=20
+ 		netif_dbg(rx_ring->adapter, rx_status, rx_ring->netdev,
+ 			  "rx skb updated. len %d. data_len %d\n",
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.h b/drivers/net/eth=
+ernet/amazon/ena/ena_netdev.h
+index 29bb5704260b..3404376c28ca 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.h
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.h
+@@ -350,4 +350,15 @@ void ena_dump_stats_to_buf(struct ena_adapter *adapter=
+, u8 *buf);
+=20
+ int ena_get_sset_count(struct net_device *netdev, int sset);
+=20
++/* The ENA buffer length fields is 16 bit long. So when PAGE_SIZE =3D=3D 6=
+4kB the
++ * driver passas 0.
++ * Since the max packet size the ENA handles is ~9kB limit the buffer leng=
+th to
++ * 16kB.
++ */
++#if PAGE_SIZE > SZ_16K
++#define ENA_PAGE_SIZE SZ_16K
++#else
++#define ENA_PAGE_SIZE PAGE_SIZE
++#endif
++
+ #endif /* !(ENA_H) */
+--=20
+2.17.1
