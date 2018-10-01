@@ -2,204 +2,148 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6D9C0044B
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A94C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71E932084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:06:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E932084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 63ED32084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:07:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="iBQxcxQ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63ED32084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729298AbeJAQnz (ORCPT
+        id S1729216AbeJAQou (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 12:43:55 -0400
-Received: from foss.arm.com ([217.140.101.70]:46170 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729237AbeJAQnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:43:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 639307A9;
-        Mon,  1 Oct 2018 03:06:53 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.Emea.Arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E7BC23F5B3;
-        Mon,  1 Oct 2018 03:06:50 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 11:06:45 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mon, 1 Oct 2018 12:44:50 -0400
+Received: from mail-eopbgr680077.outbound.protection.outlook.com ([40.107.68.77]:59840
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728791AbeJAQot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 12:44:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XQfWRCP1N/F9N5vY0l5NTFNPlLcNkypF4Bx4T/votZM=;
+ b=iBQxcxQ1WNtokjptw5cP3XZ7DHABB/A2qYrdaavZopyW4itcdOqcFJyxzPI4cUWyRwHI+sDTMhFf13wwowVxBX1VftDLvVJfdcy5gKnOVxLwzdLK5T2pcAItNLltRZTCPGEG98Y8dIt/0mEm83ltcmSVcmDsOZepU3HnmMHcOTE=
+Received: from BN7PR07MB5298.namprd07.prod.outlook.com (20.176.177.92) by
+ BN7PR07MB5332.namprd07.prod.outlook.com (20.176.177.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.25; Mon, 1 Oct 2018 10:07:43 +0000
+Received: from BN7PR07MB5298.namprd07.prod.outlook.com
+ ([fe80::6d92:d509:3a4a:2c7c]) by BN7PR07MB5298.namprd07.prod.outlook.com
+ ([fe80::6d92:d509:3a4a:2c7c%2]) with mapi id 15.20.1164.029; Mon, 1 Oct 2018
+ 10:07:43 +0000
+From:   "Kulkarni, Ganapatrao" <Ganapatrao.Kulkarni@cavium.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Murali Karicheri <m-karicheri2@ti.com>
-Subject: Re: [PATCH v2 2/2] PCI: controller: dwc: add UniPhier PCIe host
- controller support
-Message-ID: <20181001100645.GA8030@e107981-ln.cambridge.arm.com>
-References: <b869b273-e681-0b8c-52f5-6e02f9de5485@synopsys.com>
- <20180926213135.A4B4.4A936039@socionext.com>
- <20180927164426.ECD6.4A936039@socionext.com>
- <20180928110640.GA18840@e107981-ln.cambridge.arm.com>
- <bb081d21-7c03-0357-4294-7e92d95d838c@arm.com>
+        <linux-arm-kernel@lists.infradead.org>
+CC:     "Will.Deacon@arm.com" <Will.Deacon@arm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>,
+        "Richter, Robert" <Robert.Richter@cavium.com>,
+        "Lomovtsev, Vadim" <Vadim.Lomovtsev@cavium.com>,
+        Jan Glauber <Jan.Glauber@cavium.com>,
+        "gklkml16@gmail.com" <gklkml16@gmail.com>
+Subject: [PATCH] arm_pmu: Delete incorrect cache event mapping for some
+ armv8_pmuv3 events.
+Thread-Topic: [PATCH] arm_pmu: Delete incorrect cache event mapping for some
+ armv8_pmuv3 events.
+Thread-Index: AQHUWW6YXEMNiP6AC0u/a7CvXSbMkA==
+Date:   Mon, 1 Oct 2018 10:07:43 +0000
+Message-ID: <20181001100707.16840-1-ganapatrao.kulkarni@cavium.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BN3PR03CA0068.namprd03.prod.outlook.com
+ (2a01:111:e400:7a4d::28) To BN7PR07MB5298.namprd07.prod.outlook.com
+ (2603:10b6:408:2d::28)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Ganapatrao.Kulkarni@cavium.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [111.93.218.67]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN7PR07MB5332;6:ddikCsa9cfu5CBk6aC3NLurg6i/l80ak25vWK/AHnLPHvVcSFtLZmfkRF+1l7lMDYl7O9vnZpSBCIK7u+bIAYBGP5JQCfeJgfVc++/4sZeLlTQHACjk2eGolN8yIPqu2Td6tMVKFKIlg8DcDXEsu3ldMVPOteSuvLQvgR5vTN/XckHAeNkYHDxjdqljuByaS/KKCrh+j7wRuzfwGyGvrm0V8J/vYX75magJYXQzIS0zMRZaXUyHOjmFJAY4+ETa4TMY24ABsrimqZSRK9BSVa1J1A8vuHgIoX9lKtc05AEwjh6VeciUGUjMAsiwawpcbJO0D8K0hQqdW2F/l9g//ooWw44USeTKPSs+dZ61BKPNz8s/oB8pkqP7VFzzxsvcO7ERcXZA7CKp7MLBVFzYhj/aBHm2nRy15jhaYnjTkZ+5pIBxR8ueo9CgwNncrpCBQwpFwDrwyF+qU7VetE8TqbA==;5:ZcIrhf4Pt8d4SsTSWLtcSBZ7SM7SCDSLEyk7bZ3P3AEdZ8u7WeQ/l1EGfdB7AFw7t/N0qQ3OXScKY819qLuMseCg5fk23TiHBvyLuEF4Qldq71SOR8/ionb46VPGhfZJ3/KXvvD2WT5Yq6fJ1WY5qt3b8oeMbcOmFXegMa3LYvQ=;7:hvrGR5aXMB+Tqahij1LwIFJnpmriPMLyAjmZYHaESLtrnw6t37Yl+OOdBBmBEuJ9ev9q4n3jFmEUh6xpZXJVra8DsHncsYHmmOUzTVK2lGOoG3BudLMk46GPBLIAVcT45B7D58NB7scCTqaLs1YLufO3O2Jr8qahKRhD6pDYf+sOW+Lo7uA9n0e44ctEW48UTHM/jyaoDpPU8oB0f7uWpQj5UJx7t1MANEaqQcKTRnL0EZ2/u3zhdpZfhFtrR0fg
+x-ms-office365-filtering-correlation-id: 5ab27667-363e-4d61-f8a3-08d62785ba1f
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN7PR07MB5332;
+x-ms-traffictypediagnostic: BN7PR07MB5332:
+x-microsoft-antispam-prvs: <BN7PR07MB5332AD442476EA801B0AE9F683EF0@BN7PR07MB5332.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051);SRVR:BN7PR07MB5332;BCL:0;PCL:0;RULEID:;SRVR:BN7PR07MB5332;
+x-forefront-prvs: 0812095267
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(396003)(136003)(39860400002)(189003)(199004)(25786009)(102836004)(6512007)(86362001)(305945005)(8676002)(7736002)(66066001)(8936002)(81166006)(81156014)(26005)(53936002)(1857600001)(476003)(14454004)(2616005)(486006)(256004)(14444005)(186003)(36756003)(72206003)(106356001)(34290500001)(6486002)(316002)(5250100002)(110136005)(4326008)(6436002)(71200400001)(2501003)(71190400001)(97736004)(105586002)(1076002)(2906002)(99286004)(6116002)(52116002)(3846002)(2900100001)(6506007)(39060400002)(386003)(68736007)(478600001)(5660300001)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB5332;H:BN7PR07MB5298.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: cavium.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: isA0wZNrPkHmcHctSo71cBkRPu4L/Uj7F9qWfvyjMSoU/OB93p4MiqNIdSNczluhtaA1rEtKvEbusuB6H/e0ogw1lAJWpHL1F4fAcqO2YVsYv35pK7LV4HXUDiReyfhB8dCApC9nQKbJhm6W4lyd/+pDtjf6++u9Riy850sEk3NIlxLroYipEzl2Rpzaw6vxdmqk3j1PrKeF+OVQY3zymp2VCfqmrfXj3jUXvkOZy65ctrtE4WFUAq4pxusi5/vXd2iK9QrP37l17rrn5EniKrcHjjlT8KzCl0P246RWy+i9eRG/LPLXL+06jd26rPAU2+6XDhuWcLlUpAAqAOmpTbZHKPDpifiXn3UVk68BN+4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bb081d21-7c03-0357-4294-7e92d95d838c@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: cavium.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ab27667-363e-4d61-f8a3-08d62785ba1f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 10:07:43.7701
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB5332
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 02:17:16PM +0100, Marc Zyngier wrote:
-> On 28/09/18 12:06, Lorenzo Pieralisi wrote:
-> >[+Murali, Marc]
-> >
-> >On Thu, Sep 27, 2018 at 04:44:26PM +0900, Kunihiko Hayashi wrote:
-> >>Hi Lorenzo, Gustavo,
-> >>
-> >>On Wed, 26 Sep 2018 21:31:36 +0900 <hayashi.kunihiko@socionext.com> wrote:
-> >>
-> >>>Hi Lorenzo, Gustavo,
-> >>>
-> >>>Thank you for reviewing.
-> >>>
-> >>>On Tue, 25 Sep 2018 18:53:01 +0100
-> >>>Gustavo Pimentel <gustavo.pimentel@synopsys.com> wrote:
-> >>>
-> >>>>On 25/09/2018 17:14, Lorenzo Pieralisi wrote:
-> >>>>>[+Gustavo, please have a look at INTX/MSI management]
-> >>>>>
-> >>>>>On Thu, Sep 06, 2018 at 06:40:32PM +0900, Kunihiko Hayashi wrote:
-> >>>>>>This introduces specific glue layer for UniPhier platform to support
-> >>>>>>PCIe host controller that is based on the DesignWare PCIe core, and
-> >>>>>>this driver supports Root Complex (host) mode.
-> >>>>>
-> >>>>>Please read this thread and apply it to next versions:
-> >>>>>
-> >>>>>https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Dpci-26m-3D150905742808166-26w-3D2&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=H8UNDDUGQnQnqfWr4CBios689dJcjxu4qeTTRGulLmU&s=CgcXc_2LThyOpW-4bCriJNo9H1lzROEdy_cG9p-Y5hU&e=
-> >>>
-> >>>I also found this thread in previous linux-pci, and I think it's helpful for me.
-> >>>I'll check it carefully.
-> >>
-> >>[snip]
-> >>
-> >>>>>>+	ret = devm_request_irq(dev, pp->irq, uniphier_pcie_irq_handler,
-> >>>>>>+			       IRQF_SHARED, "pcie", priv);
-> >>>>>
-> >>>>>This is wrong, you should set-up a chained IRQ for INTX.
-> >>>>>
-> >>>>>I *think* that
-> >>>>>
-> >>>>>ks_pcie_setup_interrupts()
-> >>>>>
-> >>>>>is a good example to start with but I wonder whether it is worth
-> >>>>>generalizing the INTX approach to designware as a whole as it was
-> >>>>>done for MSIs.
-> >>>>>
-> >>>>>Thoughts ?
-> >>>>
-> >>>> From what I understood this is for legacy IRQ, right?
-> >>>
-> >>>Yes. For legacy IRQ.
-> >>>
-> >>>>Like you (Lorenzo) said there is 2 drivers (pci-keystone-dw.c and pci-dra7xx.c)
-> >>>>that uses it and can be use as a template for handling this type of interrupts.
-> >>>>
-> >>>>We can try to pass some kind of generic INTX function to the DesignWare host
-> >>>>library to handling this, but this will require some help from keystone and
-> >>>>dra7xx maintainers, since my setup doesn't have legacy IRQ HW support.
-> >>>
-> >>>Now I think it's difficult to make a template for INTX function,
-> >>>and at first, I'll try to re-write this part with reference to pci-keystone-dw.c.
-> >>
-> >>I understand that there are 2 types of interrupt and the drivers.
-> >>
-> >>One like pci-keystone-dw.c is:
-> >>
-> >>  - there are 4 interrupts for legacy,
-> >>  - invoke handlers for each interrupt, and handle the interrupt,
-> >>  - call irq_set_chained_handler_and_data() to make a chain of the interrupts
-> >>   when initializing
-> >>
-> >>The other like pci-dra7xx.c is:
-> >>
-> >>  - there is 1 IRQ for legacy as a parent,
-> >>  - check an interrupt factor register, and handle the interrupt correspond
-> >>    to the factor,
-> >>  - call request_irq() for the parent IRQ and irq_domain_add_linear() for
-> >>    the factor when initializing
-> >>
-> >>The pcie-uniphier.c is the same type as the latter (like pci-dra7xx.c).
-> >>
-> >>However, in pci-dra7xx.c, MSI and legacy IRQ share the same interrupt number,
-> >>so the same handler is called and the handler divides these IRQs.
-> >>(found in dra7xx_pcie_msi_irq_handler())
-> >>
-> >>In pcie-uniphier.c, MSI and legacy IRQ are independent.
-> >>Therefore it's necessary to prepare the handler for the legacy IRQ.
-> >>
-> >>I think that it's difficult to apply the way of pci-keystone-dw.c, and
-> >>uniphier_pcie_irq_handler() and calling devm_request_irq() are still
-> >>necessary to handle legacy IRQ.
-> >
-> >I do not think it is difficult, the difference is that keystone has
-> >1 GIC irq line allocated per legacy IRQ, your set-up has one for
-> >all INTX.
-> >
-> >*However*, I would like some clarifications from Murali on this code
-> >in drivers/pci/controller/dwc/pci-keystone.c:
-> >
-> >static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
-> >{
-> >	unsigned int irq = irq_desc_get_irq(desc);
-> >	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
-> >	struct dw_pcie *pci = ks_pcie->pci;
-> >	struct device *dev = pci->dev;
-> >	u32 irq_offset = irq - ks_pcie->legacy_host_irqs[0];
-> >
-> >Here the IRQ numbers are virtual IRQs, is it correct to consider
-> >the virq numbers as sequential values ? The "offset" is used to
-> >handle the PCI controller interrupt registers, so it must be a value
-> >between 0-3 IIUC.
-> 
-> There is absolutely no reason why virtual interrupt numbers should be
-> contiguous. Shake the allocator hard enough, and you'll see gaps appearing.
-> 
-> In general, the only thing that makes sense is to compute this offset based
-> on the hwirq which is HW-specific.
+Perf events L1-dcache-load-misses, L1-dcache-store-misses are mapped to
+armv8_pmuv3 (both DT and ACPI) event L1D_CACHE_REFILL. This is incorrect,
+since L1D_CACHE_REFILL counts both load and store misses.
+Similarly the events L1-dcache-loads, L1-dcache-stores, dTLB-load-misses
+and dTLB-loads are wrongly mapped. Hence Deleting all these cache events
+from armv8_pmuv3 cache mapping.
 
-More to it, AFAIK the list of HW irqs in the PCI host bridge controller
-"interrupts" property is not necessarily a sequential list of numbers
-either.
+Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+---
+ arch/arm64/kernel/perf_event.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-If I understand how these bindings/code works, the PCI INTX legacy IRQs
-are mapped to IRQ lines {0,1,2,3} of the PCI host bridge interrupt
-controller through the "interrupt-map" property.
+diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.=
+c
+index 33147aacdafd..6a67ad22d1eb 100644
+--- a/arch/arm64/kernel/perf_event.c
++++ b/arch/arm64/kernel/perf_event.c
+@@ -207,17 +207,9 @@ static const unsigned armv8_pmuv3_perf_cache_map[PERF_=
+COUNT_HW_CACHE_MAX]
+ 						[PERF_COUNT_HW_CACHE_RESULT_MAX] =3D {
+ 	PERF_CACHE_MAP_ALL_UNSUPPORTED,
+=20
+-	[C(L1D)][C(OP_READ)][C(RESULT_ACCESS)]	=3D ARMV8_PMUV3_PERFCTR_L1D_CACHE,
+-	[C(L1D)][C(OP_READ)][C(RESULT_MISS)]	=3D ARMV8_PMUV3_PERFCTR_L1D_CACHE_RE=
+FILL,
+-	[C(L1D)][C(OP_WRITE)][C(RESULT_ACCESS)]	=3D ARMV8_PMUV3_PERFCTR_L1D_CACHE=
+,
+-	[C(L1D)][C(OP_WRITE)][C(RESULT_MISS)]	=3D ARMV8_PMUV3_PERFCTR_L1D_CACHE_R=
+EFILL,
+-
+ 	[C(L1I)][C(OP_READ)][C(RESULT_ACCESS)]	=3D ARMV8_PMUV3_PERFCTR_L1I_CACHE,
+ 	[C(L1I)][C(OP_READ)][C(RESULT_MISS)]	=3D ARMV8_PMUV3_PERFCTR_L1I_CACHE_RE=
+FILL,
+=20
+-	[C(DTLB)][C(OP_READ)][C(RESULT_MISS)]	=3D ARMV8_PMUV3_PERFCTR_L1D_TLB_REF=
+ILL,
+-	[C(DTLB)][C(OP_READ)][C(RESULT_ACCESS)]	=3D ARMV8_PMUV3_PERFCTR_L1D_TLB,
+-
+ 	[C(ITLB)][C(OP_READ)][C(RESULT_MISS)]	=3D ARMV8_PMUV3_PERFCTR_L1I_TLB_REF=
+ILL,
+ 	[C(ITLB)][C(OP_READ)][C(RESULT_ACCESS)]	=3D ARMV8_PMUV3_PERFCTR_L1I_TLB,
+=20
+--=20
+2.18.0
 
-Those IRQ lines are cascaded to the GIC through the HW irq in the
-PCI host controller "interrupts" property:
-
-IRQ line 0 <-> first cell of "interrupts" property
-IRQ line 1 <-> second cell of "interrupts" property
-
-and so forth.
-
-I am not sure there is anything formal defining this behaviour other
-than implicit expectactions.
-
-@Murali: can you clarify please ?
-
-Lorenzo
