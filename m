@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F46C004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35C1C004D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FD5F20666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:38:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F7E720666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:38:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="XMPp5WJ3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FD5F20666
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="mCeHDPri"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7E720666
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbeJAHNn (ORCPT
+        id S1729006AbeJAHNy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 03:13:43 -0400
-Received: from mail-dm3nam03on0127.outbound.protection.outlook.com ([104.47.41.127]:62504
+        Mon, 1 Oct 2018 03:13:54 -0400
+Received: from mail-dm3nam03on0101.outbound.protection.outlook.com ([104.47.41.101]:12851
         "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726726AbeJAHNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 03:13:41 -0400
+        id S1728670AbeJAHNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 03:13:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mHc0tNT3Ga59e8PhNdSpQHybxey8gocL3Pd463MRgVI=;
- b=XMPp5WJ3xB3cpRNFjQSNLmoX3lO1Zz44xnen7vwFnDAiPWJPdoaQ7N9faaaw+/NceDtQKpvfov/qkuCUksxtgqjcgUXn5CDR1LimZl7ebTvP94m/xMCCL5p9stGz9sDFC/bINWEcNVF6EMwjVFmdZfsVmvEVVqeilCplHj2WuUY=
+ bh=yQuxpq9rZDJavEcPFivtKmZCDsWf2Ijq6pE/yvsH0SE=;
+ b=mCeHDPriwPbGdPqcyAsvRTLliNopUUlj96DN+AE5Gi/tqs3xPBt8eD+mERsWvPOvZiyfF3a6+0EBhSb8YiTgiWS9M2VCd4B5sXpMvpnuQHb4D4g71eL7s6hPhFRROxymxRg8OF9MkgJXV75oEd+GzxCnKOz7s0kSvI4ufSsoKi8=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0472.namprd21.prod.outlook.com (10.172.121.150) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.3; Mon, 1 Oct 2018 00:38:15 +0000
+ 15.20.1228.3; Mon, 1 Oct 2018 00:38:18 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1228.006; Mon, 1 Oct 2018
- 00:38:15 +0000
+ 00:38:18 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Jann Horn <jannh@google.com>, Jason Gunthorpe <jgg@mellanox.com>,
+CC:     Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 20/65] RDMA/ucma: check fd type in
- ucma_migrate_id()
-Thread-Topic: [PATCH AUTOSEL 4.18 20/65] RDMA/ucma: check fd type in
- ucma_migrate_id()
-Thread-Index: AQHUWR8KCuC8scS8D0KB3uZT6TdIUA==
-Date:   Mon, 1 Oct 2018 00:38:15 +0000
-Message-ID: <20181001003754.146961-20-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 25/65] nvmet-rdma: fix possible bogus dereference
+ under heavy load
+Thread-Topic: [PATCH AUTOSEL 4.18 25/65] nvmet-rdma: fix possible bogus
+ dereference under heavy load
+Thread-Index: AQHUWR8M1YbDM/QOO0K5FnY7xLZ5OA==
+Date:   Mon, 1 Oct 2018 00:38:18 +0000
+Message-ID: <20181001003754.146961-25-alexander.levin@microsoft.com>
 References: <20181001003754.146961-1-alexander.levin@microsoft.com>
 In-Reply-To: <20181001003754.146961-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,30 +59,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0472;6:1PYAwOXBLjRnRKsULW6dI12N2Gjp2f0BGc4fatgZ4JcrdHCRWO139CSycfplJZXBaOZ5Rg5eUNdps13XEuB5//Xw8EqTbSceEp/A2alcjgbp/5x5zSgLRiDQ8YrfgwOMipAN/+K2sc9g6ykFQdIdaRROrwOfhhHUzSpkNPzhirEIZ+nfe8f0CQAoQlh4cedZOrnLrvoxNYMq4eqiAERia5xb87M5QDWBCkyauRgqStsHCucc6qOOqs27ul8e8D9e6801J1f8xuBiEp8Y1tZWFVB8Oy4xKhKHgTV+yU9agZAfW8VgQGwBjC9bZL9XBg9REgkwhj+4FcDUqYMSM3Ik0bAfqabpOdV1l08tKbZTXwDpCQEMAIPFB70Hj7PNHc2sf1o7ANWtTH9j81mzNKhEEMpfZ3CyH74iTqE8LdrYZQKrIanYLNjgCcbr05GEF/jqPwqrPF5CVNFtez/Sevme5g==;5:PGEOAdgkk68v8b/3soxAtFUEPK1HCtoM2HW9H4cocCAy7oON1AmRtdaMLRnnaj0xtup9qCaUK4fGJsgqIlPgk2xgZF4xatuahd3izJnrkkNcL7RYh/u7blPQX11CUjUg/OO3DRLA2lV44tHFK+w7sj3hM/vQCdVwYZxtfLNjoKE=;7:Ibj1Kds4sExLvrkvHyhIijE+qeDEgI+I01uGeqx4sslDb8TCP3TTBEgzTwr/gz2QZ1QsF5E3IoZbjBx0wfqg87AwdT4F7xnEPuN+0oIpCMX4s5ycHf8xRs+1yrCND3Ckb01fVptm4fYNkK7/VyH+C7dascn0qGi/W03lLQr3IpGjovsR5ymnlttn0ODM1EzC+acSPEfbwBSI2z5qhCyW53vhxzIQxaNNMMrbO+BVKUTBgLKBUPy162Bx7gCdTaLj
-x-ms-office365-filtering-correlation-id: 9dbd87e0-c4f2-41f6-ca24-08d627362cd5
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0472;6:KqgR6vnH1R/eUHMxreyXiOQ8dmPVfmUew3eP7LwQ76lE+hxS2tjRvbjV3vqAHJGq2jlLSd7I7P0qXZIbGjEcLTHe8WB30IREhc1ERDV4x2qRrevNMOGPJX6tG+RTbKvWpWj0xN5qAQ/AflGUrKm+x6J8Rq1Zx/7LDsgBFxcxPPBwh8H4blo2wyeP9ybNO6IQ90mZiukkudhPYBPwG7ZJMrftFyBgJ4vK2zXlP5hQoOBin4RgijPJwU6Dnvh6LPCWKoM9ANLnycf5WLQRCTHhXc1zyfvrDZdmiK5YEVbdrxuQ0mwNqW4oN/V4r5+SHxUreqt+Pyke1HeHALQy5SpzXZRsf50a+MZgJKO1wgrn304eaxUblN9o+cor4bzUJGVfPTvibT1FbfrFmbeDCwpZVNLlPBujejBpEtVWizgE58ixDm+KuP+c6kfExcnELz5gamO3qKcFWuppXO+SiImy2g==;5:PkubEoSm0i2puO72hkgJPM3u3rjFJIcI9dTvty8DXjQhTKwRPtFhk3zkehEokjoP6X7O+Ftq0B2GA//LRwzA5KapmtsbJaDWUe5fpk2dWswVMACcJfXcI0QqUlJ8dU/apup3SVSIEgGosMcp+9Z0kqOSVa7mBbCpdgVF6pIBaFk=;7:jiOq6+p8KH0ATGz9kNyCv7tGZ7oVPrNCYkDaXO1uGJ5YnuGN+QGEbZnH1kVIpbpyz7+/FC2sU0lu+GzGLHNwA8wcQfhwN81E2pbdrYfQDzbcCc2syaWAhRO80U1T8I4veYotDEM2HiwQ9pRhlvW1WXDpwGWg3oHj7zwb+AD+EMfY+dkM6nHxxONVhYL/eupd5Bsc8RPrA+jX971f0wme5aKsPemlR+4QIsxP4Vwx6qBTe1M/AySC6ZG/eVL+i2P7
+x-ms-office365-filtering-correlation-id: 6e5c6a0f-dd91-4b60-e8db-08d627362eb7
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0472;
 x-ms-traffictypediagnostic: CY4PR21MB0472:
-x-microsoft-antispam-prvs: <CY4PR21MB0472CAA562A8CE928C916A99FBEF0@CY4PR21MB0472.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(211936372134217)(153496737603132)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB0472B7289FFFC831EA8A38F4FBEF0@CY4PR21MB0472.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(2018427008)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0472;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0472;
 x-forefront-prvs: 0812095267
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(396003)(376002)(39860400002)(346002)(199004)(189003)(5660300001)(6486002)(8936002)(68736007)(486006)(6436002)(2616005)(6506007)(6346003)(8676002)(6512007)(81166006)(81156014)(5250100002)(6116002)(2906002)(3846002)(107886003)(2501003)(1076002)(22452003)(478600001)(102836004)(25786009)(4326008)(97736004)(10090500001)(11346002)(256004)(14444005)(106356001)(105586002)(99286004)(86362001)(53936002)(316002)(71200400001)(71190400001)(305945005)(2900100001)(217873002)(7736002)(10290500003)(14454004)(34290500001)(446003)(66066001)(72206003)(110136005)(54906003)(186003)(86612001)(476003)(76176011)(26005)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0472;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(396003)(376002)(39860400002)(346002)(199004)(189003)(5660300001)(6486002)(8936002)(68736007)(486006)(6436002)(2616005)(6506007)(6346003)(8676002)(6512007)(81166006)(81156014)(5250100002)(6116002)(2906002)(3846002)(107886003)(2501003)(1076002)(22452003)(478600001)(102836004)(25786009)(4326008)(97736004)(10090500001)(11346002)(256004)(14444005)(106356001)(105586002)(99286004)(86362001)(575784001)(53936002)(316002)(71200400001)(71190400001)(305945005)(2900100001)(217873002)(7736002)(10290500003)(14454004)(34290500001)(446003)(66066001)(72206003)(110136005)(54906003)(186003)(86612001)(476003)(76176011)(26005)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0472;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: 7WqQm+kPQWechF8knHoRTlmlCL28fIu2agYOvFg/akB0x93rEaQW7AYqvtu8BiY748ZF23vyEGhFazIxKpXjDLWUR31WNse9PpMNKolbA/P2S2T2LPARGhM4bLCB2msX6x7iSh/fRHnd1g8bOG6foHJMEaC28keUgP9JXzZIzDfYb1jhzAMA6nlezjP3zLVhzxCD+JK/LlQ6ZvCVdIMGGhD+ujb+ovk/7e3eWxAhDu+RClAb+MKA3LPzB7bRHvkq3r/lMZ40Ue4mY15g3ri8PES5B30O/HfD/h86eMpjmbB86gj2v2cPntfXgA6avgAxvP5Y/tmvpy6h9sgsMzUKBeOOcsTsqUAyeC/DQVOdOsU=
+x-microsoft-antispam-message-info: S1EPqOq5ZJkdQRPHQdY0/b0W9ZXiACOZbd23X5H3xpe0C9yPQ5h+yyRv61oZE8xypsnOdn/IolCor6AEVx0oeFeATCNFBRqcabDORtJtSPSykszkVm4j4I7l1g57l3L+GLVeoVDkPvp0h7RIUdZ3w3XJ8CGvCoErItiBmfus07nLF7jGSfFUotiVe9g8jv3daHncHShWe0n03ZwRAGnllrPe/ECNUnT53hArl56zipubJwm62KFa4WqBc+FfrZ063rlEcFX5CjkkWIrrcnsvW096cCnhmWq3k1I5a7iX+sq9gjJ3gBa7e905a0VHVI+xP5EPW9QiKoSJGJhUEu32wB7ASY4g76mxYwhxNMqXXBg=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9dbd87e0-c4f2-41f6-ca24-08d627362cd5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:38:15.2228
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e5c6a0f-dd91-4b60-e8db-08d627362eb7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:38:18.3474
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -92,58 +92,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Sagi Grimberg <sagi@grimberg.me>
 
-[ Upstream commit 0d23ba6034b9cf48b8918404367506da3e4b3ee5 ]
+[ Upstream commit 8407879c4e0d7731f6e7e905893cecf61a7762c7 ]
 
-The current code grabs the private_data of whatever file descriptor
-userspace has supplied and implicitly casts it to a `struct ucma_file *`,
-potentially causing a type confusion.
+Currently we always repost the recv buffer before we send a response
+capsule back to the host. Since ordering is not guaranteed for send
+and recv completions, it is posible that we will receive a new request
+from the host before we got a send completion for the response capsule.
 
-This is probably fine in practice because the pointer is only used for
-comparisons, it is never actually dereferenced; and even in the
-comparisons, it is unlikely that a file from another filesystem would have
-a ->private_data pointer that happens to also be valid in this context.
-But ->private_data is not always guaranteed to be a valid pointer to an
-object owned by the file's filesystem; for example, some filesystems just
-cram numbers in there.
+Today, we pre-allocate 2x rsps the length of the queue, but in reality,
+under heavy load there is nothing that is really preventing the gap to
+expand until we exhaust all our rsps.
 
-Check the type of the supplied file descriptor to be safe, analogous to how
-other places in the kernel do it.
+To fix this, if we don't have any pre-allocated rsps left, we dynamically
+allocate a rsp and make sure to free it when we are done. If under memory
+pressure we fail to allocate a rsp, we silently drop the command and
+wait for the host to retry.
 
-Fixes: 88314e4dda1e ("RDMA/cma: add support for rdma_migrate_id()")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Reported-by: Steve Wise <swise@opengridcomputing.com>
+Tested-by: Steve Wise <swise@opengridcomputing.com>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+[hch: dropped a superflous assignment]
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/infiniband/core/ucma.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/nvme/target/rdma.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.=
-c
-index ec8fb289621f..5f437d1570fb 100644
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -124,6 +124,8 @@ static DEFINE_MUTEX(mut);
- static DEFINE_IDR(ctx_idr);
- static DEFINE_IDR(multicast_idr);
+diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
+index 52e0c5d579a7..1d909e5ba657 100644
+--- a/drivers/nvme/target/rdma.c
++++ b/drivers/nvme/target/rdma.c
+@@ -65,6 +65,7 @@ struct nvmet_rdma_rsp {
 =20
-+static const struct file_operations ucma_fops;
-+
- static inline struct ucma_context *_ucma_find_context(int id,
- 						      struct ucma_file *file)
- {
-@@ -1581,6 +1583,10 @@ static ssize_t ucma_migrate_id(struct ucma_file *new=
-_file,
- 	f =3D fdget(cmd.fd);
- 	if (!f.file)
- 		return -ENOENT;
-+	if (f.file->f_op !=3D &ucma_fops) {
-+		ret =3D -EINVAL;
-+		goto file_put;
+ 	struct nvmet_req	req;
+=20
++	bool			allocated;
+ 	u8			n_rdma;
+ 	u32			flags;
+ 	u32			invalidate_rkey;
+@@ -166,11 +167,19 @@ nvmet_rdma_get_rsp(struct nvmet_rdma_queue *queue)
+ 	unsigned long flags;
+=20
+ 	spin_lock_irqsave(&queue->rsps_lock, flags);
+-	rsp =3D list_first_entry(&queue->free_rsps,
++	rsp =3D list_first_entry_or_null(&queue->free_rsps,
+ 				struct nvmet_rdma_rsp, free_list);
+-	list_del(&rsp->free_list);
++	if (likely(rsp))
++		list_del(&rsp->free_list);
+ 	spin_unlock_irqrestore(&queue->rsps_lock, flags);
+=20
++	if (unlikely(!rsp)) {
++		rsp =3D kmalloc(sizeof(*rsp), GFP_KERNEL);
++		if (unlikely(!rsp))
++			return NULL;
++		rsp->allocated =3D true;
 +	}
++
+ 	return rsp;
+ }
 =20
- 	/* Validate current fd and prevent destruction of id. */
- 	ctx =3D ucma_get_ctx(f.file->private_data, cmd.id);
+@@ -179,6 +188,11 @@ nvmet_rdma_put_rsp(struct nvmet_rdma_rsp *rsp)
+ {
+ 	unsigned long flags;
+=20
++	if (rsp->allocated) {
++		kfree(rsp);
++		return;
++	}
++
+ 	spin_lock_irqsave(&rsp->queue->rsps_lock, flags);
+ 	list_add_tail(&rsp->free_list, &rsp->queue->free_rsps);
+ 	spin_unlock_irqrestore(&rsp->queue->rsps_lock, flags);
+@@ -702,6 +716,15 @@ static void nvmet_rdma_recv_done(struct ib_cq *cq, str=
+uct ib_wc *wc)
+=20
+ 	cmd->queue =3D queue;
+ 	rsp =3D nvmet_rdma_get_rsp(queue);
++	if (unlikely(!rsp)) {
++		/*
++		 * we get here only under memory pressure,
++		 * silently drop and have the host retry
++		 * as we can't even fail it.
++		 */
++		nvmet_rdma_post_recv(queue->dev, cmd);
++		return;
++	}
+ 	rsp->queue =3D queue;
+ 	rsp->cmd =3D cmd;
+ 	rsp->flags =3D 0;
 --=20
 2.17.1
