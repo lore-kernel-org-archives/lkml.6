@@ -2,138 +2,173 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAE6C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE19C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EFF12064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:53:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EFF12064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DBCD206B2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:54:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DBCD206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729203AbeJAQaP (ORCPT
+        id S1729221AbeJAQa5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 12:30:15 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:50734 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728826AbeJAQaP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:30:15 -0400
-X-UUID: 949f58c949fa4796a5dd25306c8ef0fc-20181001
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 76860920; Mon, 01 Oct 2018 17:53:03 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 1 Oct 2018 17:53:01 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 1 Oct 2018 17:53:01 +0800
-From:   <miles.chen@mediatek.com>
-To:     Hugh Dickins <hughd@google.com>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, <linux-mediatek@lists.infradead.org>,
-        Mark Salyzyn <salyzyn@google.com>,
-        Miles Chen <miles.chen@mediatek.com>
-Subject: [RFC/PATCH] mm/shmem: add a NULL pointer test to shmem_free_inode
-Date:   Mon, 1 Oct 2018 17:52:55 +0800
-Message-ID: <1538387575-28914-1-git-send-email-miles.chen@mediatek.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 1 Oct 2018 12:30:57 -0400
+Received: from mga17.intel.com ([192.55.52.151]:18648 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729076AbeJAQa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 12:30:57 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 02:53:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,327,1534834800"; 
+   d="scan'208";a="94962764"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 01 Oct 2018 02:53:55 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 01 Oct 2018 12:53:54 +0300
+Date:   Mon, 1 Oct 2018 12:53:54 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Badhri Jagan Sridharan <badhri@google.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Li Jun <jun.li@nxp.com>,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 2/3] [PATCH v2 2/3] usb: typec: tcpm: Do not disconnect
+ link for self powered devices
+Message-ID: <20181001095354.GB15780@kuha.fi.intel.com>
+References: <20180928234703.15970-1-badhri@google.com>
+ <20180928234703.15970-2-badhri@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928234703.15970-2-badhri@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miles Chen <miles.chen@mediatek.com>
+On Fri, Sep 28, 2018 at 04:47:02PM -0700, Badhri Jagan Sridharan wrote:
+> During HARD_RESET the data link is disconnected.
+> For self powered device, the spec is advising against doing that.
+> 
+> >From USB_PD_R3_0
+> 7.1.5 Response to Hard Resets
+> Device operation during and after a Hard Reset is defined as follows:
+> Self-powered devices Should Not disconnect from USB during a Hard Reset
+> (see Section 9.1.2).
+> Bus powered devices will disconnect from USB during a Hard Reset due to the
+> loss of their power source.
+> 
+> Tackle this by letting TCPM know whether the device is self or bus powered.
+> 
+> This overcomes unnecessary port disconnections from hard reset.
+> Also, speeds up the enumeration time when connected to Type-A ports.
+> 
+> Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
 
-We noticed a kernel panic when unmounting tmpfs. It looks like a
-race condition in the following scenario:
+Could you rebase these on top of the latest usb-next. These are not
+going to apply cleanly on top of it because tcpm.c and all port
+drivers are now in their own directory drivers/usb/typec/tcpm/.
 
-shmem_put_super() set sb->s_fs_info to NULL and shmem_evict_inode() tries
-to access sb->s_fs_info right after the sb->s_fs_info becomes NULL.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-CPU1				CPU2
+> ---------
+> Version history:
+> 
+> V2:
+> Based on feedback from heikki.krogerus@linux.intel.com
+> - self_powered added to the struct tcpm_port which is populated from
+>   a. "connector" node of the device tree in tcpm_fw_get_caps()
+>   b. "self_powered" node of the tcpc_config in tcpm_copy_caps
+> 
+> Based on feedbase from linux@roeck-us.net
+> - Code was refactored
+> - SRC_HARD_RESET_VBUS_OFF sets the link state to false based
+>   on self_powered flag
+> 
+> V1 located here:
+> https://lkml.org/lkml/2018/9/13/94
+> ---
+>  drivers/usb/typec/tcpm.c | 12 ++++++++++--
+>  include/linux/usb/tcpm.h |  1 +
+>  2 files changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
+> index 4f1f4215f3d6e..c3ac0e46106b4 100644
+> --- a/drivers/usb/typec/tcpm.c
+> +++ b/drivers/usb/typec/tcpm.c
+> @@ -317,6 +317,9 @@ struct tcpm_port {
+>  	/* Deadline in jiffies to exit src_try_wait state */
+>  	unsigned long max_wait;
+>  
+> +	/* port belongs to a self powered device */
+> +	bool self_powered;
+> +
+>  #ifdef CONFIG_DEBUG_FS
+>  	struct dentry *dentry;
+>  	struct mutex logbuffer_lock;	/* log buffer access lock */
+> @@ -3257,7 +3260,8 @@ static void run_state_machine(struct tcpm_port *port)
+>  	case SRC_HARD_RESET_VBUS_OFF:
+>  		tcpm_set_vconn(port, true);
+>  		tcpm_set_vbus(port, false);
+> -		tcpm_set_roles(port, false, TYPEC_SOURCE, TYPEC_HOST);
+> +		tcpm_set_roles(port, port->self_powered, TYPEC_SOURCE,
+> +			       TYPEC_HOST);
+>  		tcpm_set_state(port, SRC_HARD_RESET_VBUS_ON, PD_T_SRC_RECOVER);
+>  		break;
+>  	case SRC_HARD_RESET_VBUS_ON:
+> @@ -3270,7 +3274,8 @@ static void run_state_machine(struct tcpm_port *port)
+>  		memset(&port->pps_data, 0, sizeof(port->pps_data));
+>  		tcpm_set_vconn(port, false);
+>  		tcpm_set_charge(port, false);
+> -		tcpm_set_roles(port, false, TYPEC_SINK, TYPEC_DEVICE);
+> +		tcpm_set_roles(port, port->self_powered, TYPEC_SINK,
+> +			       TYPEC_DEVICE);
+>  		/*
+>  		 * VBUS may or may not toggle, depending on the adapter.
+>  		 * If it doesn't toggle, transition to SNK_HARD_RESET_SINK_ON
+> @@ -4409,6 +4414,8 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
+>  		return -EINVAL;
+>  	port->operating_snk_mw = mw / 1000;
+>  
+> +	port->self_powered = fwnode_property_read_bool(fwnode, "self-powered");
+> +
+>  	return 0;
+>  }
+>  
+> @@ -4717,6 +4724,7 @@ static int tcpm_copy_caps(struct tcpm_port *port,
+>  	port->typec_caps.prefer_role = tcfg->default_role;
+>  	port->typec_caps.type = tcfg->type;
+>  	port->typec_caps.data = tcfg->data;
+> +	port->self_powered = port->tcpc->config->self_powered;
+>  
+>  	return 0;
+>  }
+> diff --git a/include/linux/usb/tcpm.h b/include/linux/usb/tcpm.h
+> index 7e7fbfb84e8e3..50c74a77db55c 100644
+> --- a/include/linux/usb/tcpm.h
+> +++ b/include/linux/usb/tcpm.h
+> @@ -89,6 +89,7 @@ struct tcpc_config {
+>  	enum typec_port_data data;
+>  	enum typec_role default_role;
+>  	bool try_role_hw;	/* try.{src,snk} implemented in hardware */
+> +	bool self_powered;	/* port belongs to a self powered device */
+>  
+>  	const struct typec_altmode_desc *alt_modes;
+>  };
 
-work_pending			work_pending
-do_notify_resume		do_notify_resume
-____fput			task_work_run
-__fput				__cleanup_mnt
-inotify_release			cleanup_mnt
-fsnotify_destroy_group		deactivate_super
-fsnotify_detach_group_marks	deactivate_locked_super
-fsnotify_detach_mark		kill_litter_super /* sb->s_fs_info = NULL */
-iput
-evict /* use sb->s_fs_info */
+Thanks,
 
-Add a NULL pointer test in shmem_evict_inode(). We have stress-tested
-the patch for 5 days with no panic.
-
-Please note that this patch is a band-aid patch.
-
-VFS: Busy inodes after unmount of tmpfs. Self-destruct in 5 seconds.
-Have a nice day...
-[name:traps&]Internal error: Accessing user space memory outside uaccess.h
-routines:
-[name:aee&]disable aee kernel api
-[name:mrdump&]Kernel Offset: 0x1326000000 from 0xffffff8008000000
-[name:mrdump&]Non-crashing CPUs did not react to IPI
-CPU: 7 PID: 552 Comm: HwBinder:426_1 Tainted: G        W  O    4.9.117+ #2
-Hardware name: MT6765 (DT)
-task: ffffffc62d340000 task.stack: ffffffc62d2b4000
-PC is at shmem_evict_inode+0x150/0x19c
-LR is at evict+0xa4/0x1f4
-[<ffffff932e083148>] el1_da+0x24/0x40
-[<ffffff932e2acbac>] evict+0xa4/0x1f4
-[<ffffff932e2aadc8>] iput+0x338/0x384
-[<ffffff932e2db110>] fsnotify_detach_mark+0xac/0xe0
-[<ffffff932e2dba20>] fsnotify_detach_group_marks+0x78/0xdc
-[<ffffff932e2daac4>] fsnotify_destroy_group+0x34/0x98
-[<ffffff932e2dd810>] inotify_release+0x28/0x5c
-[<ffffff932e289614>] __fput+0xcc/0x1c8
-[<ffffff932e2894f4>] ____fput+0xc/0x14
-[<ffffff932e0da7cc>] task_work_run+0x88/0x11c
-[<ffffff932e08b53c>] do_notify_resume+0x5c/0x165c
-[<ffffff932e083c54>] work_pending+0x8/0x14
-
-If we put a BUG() after after "VFS: Busy inodes after unmount of tmpfs.
-Self-destruct in 5 seconds.  Have a nice day...", we can get another
-backtrace:
-[<ffffff94de6830e8>] el1_dbg+0x18/0xb8
-[<ffffff94de8875ec>] kill_litter_super+0x28/0x74
-[<ffffff94de885b40>] deactivate_locked_super+0x58/0x110
-[<ffffff94de885c64>] deactivate_super+0x6c/0x78
-[<ffffff94de8b20a0>] cleanup_mnt+0xb4/0x130
-[<ffffff94de8b1fe4>] __cleanup_mnt+0x10/0x18
-[<ffffff94de6d9bd0>] task_work_run+0x88/0x11c
-[<ffffff94de68ad64>] do_notify_resume+0x5c/0x1664
-[<ffffff94de683a28>] work_pending+0x8/0x14
-
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
----
- mm/shmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 4469426..a50a2c8 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -257,7 +257,7 @@ static int shmem_reserve_inode(struct super_block *sb)
- static void shmem_free_inode(struct super_block *sb)
- {
- 	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
--	if (sbinfo->max_inodes) {
-+	if (sbinfo && sbinfo->max_inodes) {
- 		spin_lock(&sbinfo->stat_lock);
- 		sbinfo->free_inodes++;
- 		spin_unlock(&sbinfo->stat_lock);
 -- 
-1.9.1
-
+heikki
