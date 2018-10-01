@@ -2,125 +2,91 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3ADBC004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 01:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90128C004D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 01:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 804DC20840
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 01:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 409AB2145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 01:04:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h1R3G9vq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 804DC20840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="M7sGlDM0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 409AB2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbeJAHgs (ORCPT
+        id S1726950AbeJAHjT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 03:36:48 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:37504 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbeJAHgs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 03:36:48 -0400
-Received: by mail-yw1-f68.google.com with SMTP id y14-v6so4853052ywa.4
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 18:01:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=hrDNhPObw6e1fWHKYJ1uWfvaXZbb4Utsc/+r7Rmskdw=;
-        b=h1R3G9vqqazOU05O83Sa8ly0oQTdyB9kCm7HW1a+/205zbM4n1UkY76CTYRQ8E8cWH
-         63Ag3zvrjvff4t3a5S11whIW/PtjpJENrlToTEDrOJN5kFdgXRH2UIkaITmmuCZLvXzv
-         FIfJYnIWbJ9KSBIUbJ4sYYoMnb0dldLiPC1Lc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=hrDNhPObw6e1fWHKYJ1uWfvaXZbb4Utsc/+r7Rmskdw=;
-        b=EQoKgE9FDGQEY2h1XsJJMCrRQ9D7c4si1Cngxmib6iAqN1bXbJU8zHMDwS0xM+jnX7
-         GJz/qlgcY7wksfy6ILN2Kd6oML9drbp4lAOX+0UMA0Y5Bw6rPkniJyWD44OpPHG0JGaz
-         XjEq1/7gOdgaQvWrtipzxA8K35RSBBFchFhwHDxt/3WpcuxfFXXu4MuRhc0XQoKFqPVs
-         yrwqvDHABqjH88lS7jHKtPpJcWrqeKx5Hub+WnLZICVZeXMQxCYQE/BOyQzb+yjoWfJW
-         fxIEiG02j0X08GuZRp0xgzbBUc8YNTn4KHSxLXlrkcSe/3X8cIeQSyTsMfbHYLi6eF3m
-         Yc1w==
-X-Gm-Message-State: ABuFfoj7ex5JwM9i2p6hv7dTfKM2Enmf6V9EJJXACXE3528GShRi7rjU
-        +dEmf7WoqLTZGg6USRD7SPAZmMRcqas=
-X-Google-Smtp-Source: ACcGV61E0k0TC/TT7c4/wqBso/JIX2oAH73AhPpBezZIV45b6fobOGZHKcs4IOVRtQxkjtJiqIQGsQ==
-X-Received: by 2002:a81:5a89:: with SMTP id o131-v6mr4721307ywb.121.1538355694740;
-        Sun, 30 Sep 2018 18:01:34 -0700 (PDT)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id l69-v6sm2836527ywl.51.2018.09.30.18.01.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 18:01:31 -0700 (PDT)
-Received: by mail-yw1-f48.google.com with SMTP id l79-v6so735901ywc.7
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 18:01:30 -0700 (PDT)
-X-Received: by 2002:a0d:d302:: with SMTP id v2-v6mr4726475ywd.124.1538355690627;
- Sun, 30 Sep 2018 18:01:30 -0700 (PDT)
+        Mon, 1 Oct 2018 03:39:19 -0400
+Received: from ozlabs.org ([203.11.71.1]:60487 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726478AbeJAHjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 03:39:19 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42NkZB3ntDz9s3C;
+        Mon,  1 Oct 2018 11:04:02 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538355842;
+        bh=OKK5ZY0WPJwGMF0JXUvU/jSbyuUwWODhE6Chav3fN2A=;
+        h=Date:From:To:Cc:Subject:From;
+        b=M7sGlDM0JzMqI0SB/JVo0/+zpwlIE/YbT3AkAJNJy48mB/sJEpNZpUGGJp8ZwV0qW
+         gW7L6HBcpdYY6SjYo6l3mmN9NrbcZKSl2RpSockpE+VShVxnnUO9iY2na2zavMiylp
+         tXcizB5gbk2WnFEAdEKAVUnLblUYM7I5u7wo3EMQz75qRELMKXCjgAwsrfi/02bpLn
+         I/FM0ysdpLLymQj4ZiT6ohku/6YfUKtdsYfPh0FN8N/exTGXR8hjlpV9IFo7MELVqg
+         n9pIcKXJE/oKPmJ6maA0ThZ9+1CyUpRG6iIYW0/pMv/5+63iKb9Z6Xgtc3USdnXhqI
+         oedAXaw2zt3gQ==
+Date:   Mon, 1 Oct 2018 11:04:01 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Helge Deller <deller@gmx.de>,
+        Parisc List <linux-parisc@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the parisc-hd tree
+Message-ID: <20181001110401.046aa075@canb.auug.org.au>
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Sun, 30 Sep 2018 18:01:29
- -0700 (PDT)
-In-Reply-To: <20180930192526.4480231c@vmware.local.home>
-References: <20180925001832.18322-1-keescook@chromium.org> <20180925001832.18322-5-keescook@chromium.org>
- <20180926123522.4080d9eb@vmware.local.home> <CAGXu5jJyL7FuLRj1XxujpGs9=wUQgS4dRfeGB+HUBqy4mkEBhQ@mail.gmail.com>
- <20180930192526.4480231c@vmware.local.home>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sun, 30 Sep 2018 18:01:29 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJsVv9bMh831yx1y8KjhgA204hkpOEVpWzvifATw-w0cw@mail.gmail.com>
-Message-ID: <CAGXu5jJsVv9bMh831yx1y8KjhgA204hkpOEVpWzvifATw-w0cw@mail.gmail.com>
-Subject: Re: [PATCH security-next v3 04/29] LSM: Remove initcall tracing
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/75A6QhBLrMneuYPivE7KPNd"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 4:25 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Wed, 26 Sep 2018 11:35:21 -0700
-> Kees Cook <keescook@chromium.org> wrote:
->
->> On Wed, Sep 26, 2018 at 9:35 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
->> > On Mon, 24 Sep 2018 17:18:07 -0700
->> > Kees Cook <keescook@chromium.org> wrote:
->> >
->> >> This partially reverts commit 58eacfffc417 ("init, tracing: instrument
->> >> security and console initcall trace events") since security init calls
->> >> are about to no longer resemble regular init calls.
->> >
->> > I'm not against the change, but how much are they going to "no longer
->> > resemble regular init calls"?
->>
->> My take on "regular" init calls is that they're always run, link-time
->> ordered, etc. The changes proposed here will make it so not all
->> initialization are run depending on runtime configurations, ordering
->> will be flexible, etc.
->>
->
-> Will it still be a good idea to have a tracepoint for those calls?
-> Perhaps not an  initcall tracepoint but some other kind?
+--Sig_/75A6QhBLrMneuYPivE7KPNd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm not opposed. It could be a follow-up patch, I assume?
+Hi all,
 
--Kees
+Commit
 
--- 
-Kees Cook
-Pixel Security
+  f17bbdb5eea2 ("parisc: Remove PTE load and fault check from L2_ptep macro=
+")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/75A6QhBLrMneuYPivE7KPNd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluxcoEACgkQAVBC80lX
+0Gx07wf/atOF3j4/DKTGL3PsMcgrtLoTQI2qaCbwjfqLMNg/UglIM51SqGvsuLe/
+LiuF3u+QWJ/A5xgvIoG6q1Bra+wQcUM20I8gZedWwajGeQn3IXfqZKoLBwDFHOCE
+I8qTGnP1jYLXOAeP9kuOqvLmWoJBfIluOicMxcasCZVn+A+eshac1e/UW5Wkqymb
+J+AInORTJ5Fhl+C/X5qFpbvemyV6GJhlZULXfO9gKT2ovfTEq/9VSwClzBNO7R32
+s0+WPdUNSXJBCECxSE06LFMCTkwHhLBDomSHUVSsy0AfJIvrBpXkK/Mz/og3VrDH
+7GCZ33AQvpzQN/Ls5ZytVpbptmozxg==
+=VbdX
+-----END PGP SIGNATURE-----
+
+--Sig_/75A6QhBLrMneuYPivE7KPNd--
