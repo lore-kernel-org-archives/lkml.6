@@ -2,125 +2,142 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB15C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09804C0044B
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36582213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:52:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9dtBJ43"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36582213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CF67A20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:52:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF67A20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729493AbeJAVak (ORCPT
+        id S1729531AbeJAVbJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 17:30:40 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:36064 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729439AbeJAVak (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 17:30:40 -0400
-Received: by mail-it1-f196.google.com with SMTP id c85-v6so11819697itd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 07:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=nuQMH4QyUZbI9PbzAUc4fniTl9pvLrgey7B00sVGezI=;
-        b=S9dtBJ43cBMbBIDbp0SI5ULlMJ8M3zqP6cyJ01GxhFAKzTQ1aNztI6FJAaVFBCAey2
-         W0YI+zItupfpfk48mhc7ZsZd18Z+Da7si2+MQo0V//Vz90Aa0ymj7vV/ZSC47omE0qDQ
-         7vhnr43UK5MzK/5jFmFDgSoN1OYlUYK3J5ImY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=nuQMH4QyUZbI9PbzAUc4fniTl9pvLrgey7B00sVGezI=;
-        b=H03eOTha6JEpBSE3Hvyqd9DZ9AHpIneVghcsG5XgLCMi5X6oeFXmAu/2XfAu09CqY5
-         rqgFdnchsX6ynOtdryo7C3lHoryJ+3d8J547tPb/gnH+rtehEadVlzzswYCc2X5Cukfu
-         d8BjbqLibbDv9txyoTswfz0+cs3NhXMNQ8ZT7QkyqLugl18yAVj4Q+fHYH1MRDqJlr3Q
-         7B+xkQDi2WeXSA7astyEMiGHWLrWs9j+MyllNHxn3px8gtTYkbgh/nZ+H/qGDpTAOhDL
-         R+QbcJooIFiJcwLobHhW9CzPrD+vjf4YIKd9QnpNxQQUdmqu2mSbjDQiSbgG27gsWEY2
-         jZ4Q==
-X-Gm-Message-State: ABuFfog+LDmfF49xBzG7f2IdaKkiCCbt4bLqwD7xdBvc4CzzzvxlR2gh
-        Akjg/dyw/BJbEvFvxaRrrQPJAMBWbVzCZJWjoAcDUw==
-X-Google-Smtp-Source: ACcGV60BSfa1IQCcqPz0sLhsT6JITK0OFrIsJDAsAUS4NDvJMD0GLA/hjN0+ACPhG/+V2/tCowzhukUv/pQub85YdIA=
-X-Received: by 2002:a24:e48e:: with SMTP id o136-v6mr10130760ith.58.1538405548344;
- Mon, 01 Oct 2018 07:52:28 -0700 (PDT)
+        Mon, 1 Oct 2018 17:31:09 -0400
+Received: from foss.arm.com ([217.140.101.70]:50792 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729504AbeJAVbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 17:31:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F10B18A;
+        Mon,  1 Oct 2018 07:52:57 -0700 (PDT)
+Received: from red-moon (red-moon.emea.arm.com [10.4.13.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6C7F3F5B3;
+        Mon,  1 Oct 2018 07:52:55 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 15:53:41 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        songxiaowei@hisilicon.com, wangbinghui@hisilicon.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        paul.gortmaker@windriver.com
+Subject: Re: [PATCH v2] PCI: kirin: Fix section mismatch warning
+Message-ID: <20181001145341.GC13049@red-moon>
+References: <20180919185341.31298-1-natechancellor@gmail.com>
+ <CAKwvOdkeM3sj8M-LzTQd9M9-sM_K6n6FTz=TrNHd-3xPwg_VNw@mail.gmail.com>
+ <20180920105828.GB838@e107981-ln.cambridge.arm.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 07:52:27 -0700 (PDT)
-In-Reply-To: <20181001141643.331EE68BC7@newverein.lst.de>
-References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141643.331EE68BC7@newverein.lst.de>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 1 Oct 2018 16:52:27 +0200
-Message-ID: <CAKv+Gu-ZtJ-BpfPWU=soDCb2+dAd81p8OtaarWhmTe+Fk6A8ig@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] DYNAMIC_FTRACE configurable with and without REGS
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180920105828.GB838@e107981-ln.cambridge.arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Torsten,
+On Thu, Sep 20, 2018 at 11:58:28AM +0100, Lorenzo Pieralisi wrote:
+> [+Paul]
+> 
+> On Wed, Sep 19, 2018 at 02:08:08PM -0700, Nick Desaulniers wrote:
+> > On Wed, Sep 19, 2018 at 11:55 AM Nathan Chancellor
+> > <natechancellor@gmail.com> wrote:
+> > >
+> > > WARNING: vmlinux.o(.text+0x4758cc): Section mismatch in reference from
+> > > the function kirin_pcie_probe() to the function
+> > > .init.text:kirin_add_pcie_port()
+> > > The function kirin_pcie_probe() references
+> > > the function __init kirin_add_pcie_port().
+> > > This is often because kirin_pcie_probe lacks a __init
+> > > annotation or the annotation of kirin_add_pcie_port is wrong.
+> > >
+> > > Add the __init annotation to both kirin_pcie_probe and
+> > > kirin_pcie_add_msi then use builtin_platform_driver_probe
+> > > instead of builtin_platform_driver + .probe to avoid a section
+> > > mismatch warning with kirin_pcie_driver.
+> > >
+> > > Fixes: fc5165db245a ("PCI: kirin: Add HiSilicon Kirin SoC PCIe controller driver")
+> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > ---
+> > >
+> > > v1 -> v2:
+> > >
+> > > Instead of removing the annotation on kirin_add_pcie_port, add it to
+> > > kirin_pcie_add_msi and kirin_pcie_probe. To avoid a warning with this
+> > > configuration, use builtin_platform_driver_probe.
+> > >
+> > >  drivers/pci/controller/dwc/pcie-kirin.c | 9 ++++-----
+> > >  1 file changed, 4 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+> > > index 5352e0c3be82..f64fed12de51 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-kirin.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-kirin.c
+> > > @@ -448,8 +448,8 @@ static const struct dw_pcie_host_ops kirin_pcie_host_ops = {
+> > >         .host_init = kirin_pcie_host_init,
+> > >  };
+> > >
+> > > -static int kirin_pcie_add_msi(struct dw_pcie *pci,
+> > > -                               struct platform_device *pdev)
+> > > +static int __init kirin_pcie_add_msi(struct dw_pcie *pci,
+> > > +                                    struct platform_device *pdev)
+> > >  {
+> > >         int irq;
+> > >
+> > > @@ -481,7 +481,7 @@ static int __init kirin_add_pcie_port(struct dw_pcie *pci,
+> > >         return dw_pcie_host_init(&pci->pp);
+> > >  }
+> > >
+> > > -static int kirin_pcie_probe(struct platform_device *pdev)
+> > > +static int __init kirin_pcie_probe(struct platform_device *pdev)
+> > >  {
+> > >         struct device *dev = &pdev->dev;
+> > >         struct kirin_pcie *kirin_pcie;
+> > > @@ -533,11 +533,10 @@ static const struct of_device_id kirin_pcie_match[] = {
+> > >  };
+> > >
+> > >  static struct platform_driver kirin_pcie_driver = {
+> > > -       .probe                  = kirin_pcie_probe,
+> > >         .driver                 = {
+> > >                 .name                   = "kirin-pcie",
+> > >                 .of_match_table = kirin_pcie_match,
+> > >                 .suppress_bind_attrs = true,
+> > >         },
+> > >  };
+> > > -builtin_platform_driver(kirin_pcie_driver);
+> > > +builtin_platform_driver_probe(kirin_pcie_driver, kirin_pcie_probe);
+> > 
+> > It would be good to get additional review from someone who knows more
+> > about driver callback lifecycles, but I think this is the correct fix.
+> > Thanks Nathan.
+> > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> 
+> AFAICS we can't use builtin_platform_driver_probe() if the probe()
+> itself may need deferral (and I *reckon* it may need that, see eg
+> clk_get()) so I suspect we have to go back to v1 for the patch,
+> apologies if so.
 
-On 1 October 2018 at 16:16, Torsten Duwe <duwe@lst.de> wrote:
-> In commit 06aeaaeabf69da4, many ftrace-related config options are
-> consolidated. By accident, I guess, the choice about DYNAMIC_FTRACE
-> and DYNAMIC_FTRACE_WITH_REGS is no longer available explicitly but
-> determined by the sole availability on the architecture.
->
-> This makes it hard to introduce DYNAMIC_FTRACE_WITH_REGS if it depends
-> on new compiler features or other new properties of the toolchain
-> without breaking existing configurations.
->
-> This patch turns the def_bool into an actual choice. Should the toolchain
-> not meet the requirements for _WITH_REGS it can be turned off.
->
+I think that the best course of action consists in merging v1 since
+we have not reached a definitive conclusion on v2, please let me
+know.
 
-I guess we now have Kbuild/Kconfig support for this, no? I mean, we
-can now show/hide options depending on the capabilities of the
-toolchain.
-
-I am not saying it would be a better approach, though - I'd rather
-have a warning than have things silently disabled, but other people
-may think differently.
-
-
-> Signed-off-by: Torsten Duwe <duwe@suse.de>
->
->
-> --- a/kernel/trace/Kconfig
-> +++ b/kernel/trace/Kconfig
-> @@ -508,9 +508,15 @@ config DYNAMIC_FTRACE
->           otherwise has native performance as long as no tracing is active.
->
->  config DYNAMIC_FTRACE_WITH_REGS
-> -       def_bool y
-> +       bool "Include register content tracking in dynamic ftrace facility"
-> +       default y
->         depends on DYNAMIC_FTRACE
->         depends on HAVE_DYNAMIC_FTRACE_WITH_REGS
-> +       help
-> +         This architecture supports the inspection of register contents,
-> +         as passed between functions, at the dynamic ftrace points.
-> +         This is also a prerequisite for Kernel Live Patching (KLP).
-> +         When in doubt, say Y.
->
->  config FUNCTION_PROFILER
->         bool "Kernel function profiler"
+Thanks,
+Lorenzo
