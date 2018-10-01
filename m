@@ -2,101 +2,138 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18049C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAE6C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF88A2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:52:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aRvP6y2d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF88A2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EFF12064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:53:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EFF12064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbeJAQ3q (ORCPT
+        id S1729203AbeJAQaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 12:29:46 -0400
-Received: from mail-yw1-f41.google.com ([209.85.161.41]:39433 "EHLO
-        mail-yw1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729045AbeJAQ3q (ORCPT
+        Mon, 1 Oct 2018 12:30:15 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:50734 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728826AbeJAQaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:29:46 -0400
-Received: by mail-yw1-f41.google.com with SMTP id v1-v6so5207962ywv.6
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 02:52:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Kcqd3Pcfb9xxD6yrIN5Zh0buM8KoteGB3Gfwl/+108g=;
-        b=aRvP6y2dgw3/BG+E6XzF2ggDmSPXnM/Z+cAg8PGUuZfD7tsd3z/eHQ6XkAArIGUAAD
-         6d26o1XwuU39y324ABp3pRYR6++t6Qi5gSk6PVQfStPiMvNny41RtmomQp1m+BQte/hK
-         /f5ollY5RBjwWhcU3MgwouWWzC6LzqxVfxfrqZRx5oySGAaTWtFJaw39iN+d0hIr0sBc
-         BmXTUTJrUZDszDLoKAOFwrR+GAqdNASPR0kNJ9wa3Yj/8NgpIQFWqQI6W8AckrExvt5n
-         9BsIQ6pxa4eHVdP0sYZa3sSHJ0rnR8MCmSL75aWexjwcFHPv0aRvFJmYp1Vq0bQDoxKi
-         0SKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kcqd3Pcfb9xxD6yrIN5Zh0buM8KoteGB3Gfwl/+108g=;
-        b=mi3vRdAALPD2lSncFSvxSzngmup3M5edNohcH8onZt75NWmEa1OaE3JiczWMDK1KZL
-         upue/CBcu092U4uhsUSVA64lA3xb+eJgUx12q4FkKdzbVVHWyL4LonE4VUMVIa2BjBg8
-         aGDMTZBfV2tpYBvkwH57tcDCRJDFXoiAr26SLERXXcpx17Jjti6+KFANPuMJhSKuA0fF
-         PeHceSxkA0gB9Gu/St++nvaTGXg5XNE/NlII+aCPxqYZuXW7RGLr0+QTHxsm7xOKUPdp
-         7694ZP4g4XLkCjzc7qZ5VvBrKBhTEu17YZILUEc35g0EfbTr9VZTDoSFmdNvQOooiP/q
-         AyQg==
-X-Gm-Message-State: ABuFfoiPmQ1oUZhQfv5mXVZKLpnHvAu40QBiQhhLAc/TJfFNkIiiDRGD
-        32eLtN8fKue0vruY4nI8L0wsY8hGgSkir3gKAzkNYbom
-X-Google-Smtp-Source: ACcGV60MmPKQ2gRlcMLwwKsiGkymY991QLpZIyI0RmFe0pjA6dUZSiqDLIyBqW7f9r/eGSid3dVo7kuJoVQBkgGKa+w=
-X-Received: by 2002:a81:2989:: with SMTP id p131-v6mr5200875ywp.176.1538387568168;
- Mon, 01 Oct 2018 02:52:48 -0700 (PDT)
+        Mon, 1 Oct 2018 12:30:15 -0400
+X-UUID: 949f58c949fa4796a5dd25306c8ef0fc-20181001
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 76860920; Mon, 01 Oct 2018 17:53:03 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 1 Oct 2018 17:53:01 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 1 Oct 2018 17:53:01 +0800
+From:   <miles.chen@mediatek.com>
+To:     Hugh Dickins <hughd@google.com>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <linux-mediatek@lists.infradead.org>,
+        Mark Salyzyn <salyzyn@google.com>,
+        Miles Chen <miles.chen@mediatek.com>
+Subject: [RFC/PATCH] mm/shmem: add a NULL pointer test to shmem_free_inode
+Date:   Mon, 1 Oct 2018 17:52:55 +0800
+Message-ID: <1538387575-28914-1-git-send-email-miles.chen@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <20180930065100.GL15893@shao2-debian> <CAOQ4uxiHkufAtt87bMs9n-0sFxJSHsBxDX6jn8v28vkvy=a_qQ@mail.gmail.com>
- <20181001093249.GD3913@quack2.suse.cz>
-In-Reply-To: <20181001093249.GD3913@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 1 Oct 2018 12:52:35 +0300
-Message-ID: <CAOQ4uxiY=-=F6v4enQkcw4VjhP6gp4E31fdRxM=_ShutbT2QXw@mail.gmail.com>
-Subject: Re: [LKP] [fsnotify] 60f7ed8c7c: will-it-scale.per_thread_ops -5.9% regression
-To:     Jan Kara <jack@suse.cz>
-Cc:     rong.a.chen@intel.com, linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, LKP <lkp@01.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 12:32 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Sun 30-09-18 12:00:46, Amir Goldstein wrote:
-[...]
-> > > commit:
-> > >   1e6cb72399 ("fsnotify: add super block object type")
-> > >   60f7ed8c7c ("fsnotify: send path type events to group with super block marks")
-> > >
-> >
-> > I have to admit this looks strange.
-> > All this commit does is dereference mnt->mnt.mnt_sb and then
-> > sb->s_fsnotify_mask/sb->s_fsnotify_marks to find that they are zero.
-> > AFAICT there should be no extra contention added by this commit and it's
-> > hard to believe that parallel unlink workload would suffer from this change.
->
-> Well, it could be those additional fetches of
-> sb->s_fsnotify_mask/sb->s_fsnotify_marks if they happen to be cache cold.
-> Or it could be just code layout differences (i.e., compiler is not able to
-> optimize resulting code as good or the code layout just happens to align
-> with cache lines in a wrong way or something like that). Anyway, without
-> being able to reproduce this and do detailed comparison of perf profiles I
-> don't think we'll be able to tell.
->
+From: Miles Chen <miles.chen@mediatek.com>
 
-Indeed, I am still trying to figure out how to run lkp in my test env.
+We noticed a kernel panic when unmounting tmpfs. It looks like a
+race condition in the following scenario:
 
-Thanks,
-Amir.
+shmem_put_super() set sb->s_fs_info to NULL and shmem_evict_inode() tries
+to access sb->s_fs_info right after the sb->s_fs_info becomes NULL.
+
+CPU1				CPU2
+
+work_pending			work_pending
+do_notify_resume		do_notify_resume
+____fput			task_work_run
+__fput				__cleanup_mnt
+inotify_release			cleanup_mnt
+fsnotify_destroy_group		deactivate_super
+fsnotify_detach_group_marks	deactivate_locked_super
+fsnotify_detach_mark		kill_litter_super /* sb->s_fs_info = NULL */
+iput
+evict /* use sb->s_fs_info */
+
+Add a NULL pointer test in shmem_evict_inode(). We have stress-tested
+the patch for 5 days with no panic.
+
+Please note that this patch is a band-aid patch.
+
+VFS: Busy inodes after unmount of tmpfs. Self-destruct in 5 seconds.
+Have a nice day...
+[name:traps&]Internal error: Accessing user space memory outside uaccess.h
+routines:
+[name:aee&]disable aee kernel api
+[name:mrdump&]Kernel Offset: 0x1326000000 from 0xffffff8008000000
+[name:mrdump&]Non-crashing CPUs did not react to IPI
+CPU: 7 PID: 552 Comm: HwBinder:426_1 Tainted: G        W  O    4.9.117+ #2
+Hardware name: MT6765 (DT)
+task: ffffffc62d340000 task.stack: ffffffc62d2b4000
+PC is at shmem_evict_inode+0x150/0x19c
+LR is at evict+0xa4/0x1f4
+[<ffffff932e083148>] el1_da+0x24/0x40
+[<ffffff932e2acbac>] evict+0xa4/0x1f4
+[<ffffff932e2aadc8>] iput+0x338/0x384
+[<ffffff932e2db110>] fsnotify_detach_mark+0xac/0xe0
+[<ffffff932e2dba20>] fsnotify_detach_group_marks+0x78/0xdc
+[<ffffff932e2daac4>] fsnotify_destroy_group+0x34/0x98
+[<ffffff932e2dd810>] inotify_release+0x28/0x5c
+[<ffffff932e289614>] __fput+0xcc/0x1c8
+[<ffffff932e2894f4>] ____fput+0xc/0x14
+[<ffffff932e0da7cc>] task_work_run+0x88/0x11c
+[<ffffff932e08b53c>] do_notify_resume+0x5c/0x165c
+[<ffffff932e083c54>] work_pending+0x8/0x14
+
+If we put a BUG() after after "VFS: Busy inodes after unmount of tmpfs.
+Self-destruct in 5 seconds.  Have a nice day...", we can get another
+backtrace:
+[<ffffff94de6830e8>] el1_dbg+0x18/0xb8
+[<ffffff94de8875ec>] kill_litter_super+0x28/0x74
+[<ffffff94de885b40>] deactivate_locked_super+0x58/0x110
+[<ffffff94de885c64>] deactivate_super+0x6c/0x78
+[<ffffff94de8b20a0>] cleanup_mnt+0xb4/0x130
+[<ffffff94de8b1fe4>] __cleanup_mnt+0x10/0x18
+[<ffffff94de6d9bd0>] task_work_run+0x88/0x11c
+[<ffffff94de68ad64>] do_notify_resume+0x5c/0x1664
+[<ffffff94de683a28>] work_pending+0x8/0x14
+
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+---
+ mm/shmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 4469426..a50a2c8 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -257,7 +257,7 @@ static int shmem_reserve_inode(struct super_block *sb)
+ static void shmem_free_inode(struct super_block *sb)
+ {
+ 	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
+-	if (sbinfo->max_inodes) {
++	if (sbinfo && sbinfo->max_inodes) {
+ 		spin_lock(&sbinfo->stat_lock);
+ 		sbinfo->free_inodes++;
+ 		spin_unlock(&sbinfo->stat_lock);
+-- 
+1.9.1
+
