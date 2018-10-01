@@ -2,170 +2,165 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DEBC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6AA4C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4122146D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:50:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4122146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 7DED920666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:51:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="STxw33gR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H2PTlUVA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DED920666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbeJBEab (ORCPT
+        id S1726510AbeJBEbO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 00:30:31 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34156 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbeJBEaa (ORCPT
+        Tue, 2 Oct 2018 00:31:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46236 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726238AbeJBEbO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 00:30:30 -0400
-Received: by mail-ot1-f65.google.com with SMTP id i12-v6so14784203otl.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 14:50:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/O6QRlDqLd5gAz8+kYofksX8uV70Hv28i08lFxCk0tU=;
-        b=d2OqIGTVxKwDQB8VNuY/+ZXOp5d++cswCo5VJYQRqPsMPibRVxOsYteAXlqlG7LUOR
-         oBfUpMjvvnLVyp/wc7gmoycQc7wJgvdjN7fMddvcN6osj389J9WmgX7XRCYVLqc4CSL2
-         +QeUmMNb06pwN/0lXPck2n00ADOgzYVt4UU/rDtyVrinvG1DpfUiyHqCsY4Ncsdx+t6c
-         XRKUCERkJFKjMOpZVDEftdmFTVTgL4l4oA165RSWogh9FKwmPmgl92fm7hdUhehe73dP
-         Fn511nhuRIxq+vsRFptN7FDGZ9OltDgBifTRZ/Pg3YwgPJU/xg6pokKLUWuIERjHb/OV
-         DZ3w==
-X-Gm-Message-State: ABuFfog64IA1PDdzf55yjfFJMqMhrrcvBb7j6j0jV4XNlIiYYrUOWHde
-        TvQ6bnlSrFr/x37irJ/MHPih1H3+YeI=
-X-Google-Smtp-Source: ACcGV62KQjfWio6rS1WWiqr+fPU+Xip4WjcGrnUhWfPWuDaF4OPj0mutSle3ypCoTFxIc5m8hWk9Qw==
-X-Received: by 2002:a9d:4008:: with SMTP id m8-v6mr7976533ote.283.1538430635373;
-        Mon, 01 Oct 2018 14:50:35 -0700 (PDT)
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com. [209.85.167.180])
-        by smtp.gmail.com with ESMTPSA id e7-v6sm4248724oii.26.2018.10.01.14.50.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 14:50:34 -0700 (PDT)
-Received: by mail-oi1-f180.google.com with SMTP id v69-v6so5218854oif.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 14:50:34 -0700 (PDT)
-X-Received: by 2002:aca:2cc6:: with SMTP id s189-v6mr6444310ois.72.1538430634410;
- Mon, 01 Oct 2018 14:50:34 -0700 (PDT)
+        Tue, 2 Oct 2018 00:31:14 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C6B1260C72; Mon,  1 Oct 2018 21:51:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538430681;
+        bh=18qwtbyJA6Neu3eAgm48WX8RVDBbjj//ujdpvzTd+8Y=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=STxw33gRTqhRT14R9VNcjqfNbn+430gdDyM+FkPWNHKulPykUVQ8vxPM6gIwh6LSt
+         P3na1HlhWI4C6d5QrUekJifdPonvebx7hevWONbmmAi/a8bu5+hJ5EkvcbI70BRGmU
+         iZBzPqja6oHL7icjr3v2i4AQ2E9l5XHE4WaO0vDs=
+Received: from [10.134.64.210] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: skannan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8F36D6076A;
+        Mon,  1 Oct 2018 21:51:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538430679;
+        bh=18qwtbyJA6Neu3eAgm48WX8RVDBbjj//ujdpvzTd+8Y=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=H2PTlUVAkvai8o5Iypz6W9B5444pOdiTHiqb75oHcbU+tGHpBWk0Z+pONyqkhLIXN
+         hwf028zd0THHKHqqWuwTrH+89BZH1A2q+jMLVfeIGr6B/GhROF1gVjrkXv+8y2nRdm
+         CI7qPx35xvsCoRBFnvlSStjjW/Z+WTovXUfUtCO4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F36D6076A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+Subject: Re: [PATCH v9 2/8] dt-bindings: Introduce interconnect binding
+To:     Rob Herring <robh@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        rjw@rjwysocki.net, mturquette@baylibre.com, khilman@baylibre.com,
+        vincent.guittot@linaro.org, bjorn.andersson@linaro.org,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, evgreen@chromium.org,
+        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        abailon@baylibre.com, maxime.ripard@bootlin.com, arnd@arndb.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, robdclark@gmail.com
+References: <20180831140151.13972-1-georgi.djakov@linaro.org>
+ <20180831140151.13972-3-georgi.djakov@linaro.org>
+ <20180925180215.GA12435@bogus>
+ <20180926143432.GH10761@jcrouse-lnx.qualcomm.com>
+ <1ae0a36a-1178-4db5-1ae9-8f19e561a18b@codeaurora.org>
+ <20181001212608.GF31641@jcrouse-lnx.qualcomm.com>
+From:   Saravana Kannan <skannan@codeaurora.org>
+Message-ID: <d9f3d732-0a70-f823-d8e0-2d1b10d82e00@codeaurora.org>
+Date:   Mon, 1 Oct 2018 14:51:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1538124204-31406-1-git-send-email-madalin.bucur@nxp.com> <1538124204-31406-6-git-send-email-madalin.bucur@nxp.com>
-In-Reply-To: <1538124204-31406-6-git-send-email-madalin.bucur@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Mon, 1 Oct 2018 16:50:22 -0500
-X-Gmail-Original-Message-ID: <CADRPPNQgGAYTCmppyxPwQnnC433QLm21D5iq_4EvSj0LrsAxGQ@mail.gmail.com>
-Message-ID: <CADRPPNQgGAYTCmppyxPwQnnC433QLm21D5iq_4EvSj0LrsAxGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] soc/fsl_qbman: export coalesce change API
-To:     madalin.bucur@nxp.com
-Cc:     Roy Pledge <roy.pledge@nxp.com>, claudiu.manoil@nxp.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Scott Wood <oss@buserror.net>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181001212608.GF31641@jcrouse-lnx.qualcomm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 3:45 AM Madalin Bucur <madalin.bucur@nxp.com> wrote:
->
-> Export the API required to control the QMan portal interrupt coalescing
-> settings.
 
-These are new APIs not just old APIs being exported.  What is the user
-of these APIs?  Is the user being submitted?  We cannot have APIs in
-kernel that has no users.
 
->
-> Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
-> ---
->  drivers/soc/fsl/qbman/qman.c | 31 +++++++++++++++++++++++++++++++
->  include/soc/fsl/qman.h       | 27 +++++++++++++++++++++++++++
->  2 files changed, 58 insertions(+)
->
-> diff --git a/drivers/soc/fsl/qbman/qman.c b/drivers/soc/fsl/qbman/qman.c
-> index 99d0f87889b8..8ab75bb44c4d 100644
-> --- a/drivers/soc/fsl/qbman/qman.c
-> +++ b/drivers/soc/fsl/qbman/qman.c
-> @@ -1012,6 +1012,37 @@ static inline void put_affine_portal(void)
->
->  static struct workqueue_struct *qm_portal_wq;
->
-> +void qman_dqrr_set_ithresh(struct qman_portal *portal, u8 ithresh)
-> +{
-> +       if (!portal)
-> +               return;
-> +
-> +       qm_dqrr_set_ithresh(&portal->p, ithresh);
-> +       portal->p.dqrr.ithresh = ithresh;
-> +}
-> +EXPORT_SYMBOL(qman_dqrr_set_ithresh);
-> +
-> +void qman_dqrr_get_ithresh(struct qman_portal *portal, u8 *ithresh)
-> +{
-> +       if (portal && ithresh)
-> +               *ithresh = portal->p.dqrr.ithresh;
-> +}
-> +EXPORT_SYMBOL(qman_dqrr_get_ithresh);
-> +
-> +void qman_portal_get_iperiod(struct qman_portal *portal, u32 *iperiod)
-> +{
-> +       if (portal && iperiod)
-> +               *iperiod = qm_in(&portal->p, QM_REG_ITPR);
-> +}
-> +EXPORT_SYMBOL(qman_portal_get_iperiod);
-> +
-> +void qman_portal_set_iperiod(struct qman_portal *portal, u32 iperiod)
-> +{
-> +       if (portal)
-> +               qm_out(&portal->p, QM_REG_ITPR, iperiod);
-> +}
-> +EXPORT_SYMBOL(qman_portal_set_iperiod);
-> +
->  int qman_wq_alloc(void)
->  {
->         qm_portal_wq = alloc_workqueue("qman_portal_wq", 0, 1);
-> diff --git a/include/soc/fsl/qman.h b/include/soc/fsl/qman.h
-> index d4dfefdee6c1..42f50eb51529 100644
-> --- a/include/soc/fsl/qman.h
-> +++ b/include/soc/fsl/qman.h
-> @@ -1186,4 +1186,31 @@ int qman_alloc_cgrid_range(u32 *result, u32 count);
->   */
->  int qman_release_cgrid(u32 id);
->
-> +/**
-> + * qman_dqrr_get_ithresh - Get coalesce interrupt threshold
-> + * @portal: portal to get the value for
-> + * @ithresh: threshold pointer
-> + */
-> +void qman_dqrr_get_ithresh(struct qman_portal *portal, u8 *ithresh);
-> +
-> +/**
-> + * qman_dqrr_set_ithresh - Set coalesce interrupt threshold
-> + * @portal: portal to set the new value on
-> + * @ithresh: new threshold value
-> + */
-> +void qman_dqrr_set_ithresh(struct qman_portal *portal, u8 ithresh);
-> +
-> +/**
-> + * qman_dqrr_get_iperiod - Get coalesce interrupt period
-> + * @portal: portal to get the value for
-> + * @iperiod: period pointer
-> + */
-> +void qman_portal_get_iperiod(struct qman_portal *portal, u32 *iperiod);
-> +/*
-> + * qman_dqrr_set_iperiod - Set coalesce interrupt period
-> + * @portal: portal to set the new value on
-> + * @ithresh: new period value
-> + */
-> +void qman_portal_set_iperiod(struct qman_portal *portal, u32 iperiod);
-> +
->  #endif /* __FSL_QMAN_H */
-> --
-> 2.1.0
->
+On 10/01/2018 02:26 PM, Jordan Crouse wrote:
+> On Mon, Oct 01, 2018 at 01:56:32PM -0700, Saravana Kannan wrote:
+>>
+>> On 09/26/2018 07:34 AM, Jordan Crouse wrote:
+>>> On Tue, Sep 25, 2018 at 01:02:15PM -0500, Rob Herring wrote:
+>>>> On Fri, Aug 31, 2018 at 05:01:45PM +0300, Georgi Djakov wrote:
+>>>>> This binding is intended to represent the relations between the interconnect
+>>>>> controllers (providers) and consumer device nodes. It will allow creating links
+>>>>> between consumers and interconnect paths (exposed by interconnect providers).
+>>>> As I mentioned in person, I want to see other SoC families using this
+>>>> before accepting. They don't have to be ready for upstream, but WIP
+>>>> patches or even just a "yes, this works for us and we're going to use
+>>>> this binding on X".
+>>>>
+>>>> Also, I think the QCom GPU use of this should be fully sorted out. Or
+>>>> more generically how this fits into OPP binding which seems to be never
+>>>> ending extended...
+>>> This is a discussion I wouldn't mind having now.  To jog memories, this is what
+>>> I posted a few weeks ago:
+>>>
+>>> https://patchwork.freedesktop.org/patch/246117/
+>>>
+>>> This seems like the easiest way to me to tie the frequency and the bandwidth
+>>> quota together for GPU devfreq scaling but I'm not married to the format and
+>>> I'll happily go a few rounds on the bikeshed if we can get something we can
+>>> be happy with.
+>>>
+>>> Jordan
+>> Been meaning to send this out for a while, but caught up with other stuff.
+>>
+>> That GPU BW patch is very specific to device to device mapping and
+>> doesn't work well for different use cases (Eg: those that  can
+>> calculate based on use case, etc).
+>>
+>> Interconnect paths have different BW (bandwidth) operating points
+>> that they can support. For example: 1 GB/s, 1.7 GB/s, 5GB/s, etc.
+>> Having a mapping from GPU or CPU to those are fine/necessary, but we
+>> still need a separate BW OPP table for interconnect paths to list
+>> what they can actually support.
+>>
+>> Two different ways we could represent BW OPP tables for interconnect paths:
+>> 1.  Represent interconnect paths (CPU to DDR, GPU to DDR, etc) as
+>> devices and have OPPs for those devices.
+>>
+>> 2. We can have a "interconnect-opp-tables" DT binding similar to
+>> "interconnects" and "interconnect-names". So if a device GPU or
+>> Video decoder or I2C device needs to vote on an interconnect path,
+>> they can also list the OPP tables that those paths can support.
+>>
+>> I know Rob doesn't like (1). But I'm hoping at least (2) is
+>> acceptable. I'm open to other suggestions too.
+>>
+>> Both (1) and (2) need BW OPP tables similar to frequency OPP tables.
+>> That should be easy to add and Viresh is open to that. I'm open to
+>> other options too, but the fundamental missing part is how to tie a
+>> list of BW OPPs to interconnect paths in DT.
+>>
+>> Once we have one of the above two options, we can use the
+>> required-opps field (already present in kernel) for the mapping
+>> between GPU to a particular BW need (suggested by Viresh during an
+>> in person conversation).
+> Assuming we are willing to maintain the bandwidth OPP tables and the
+> names / phandles needed to describe a 1:1 GPU -> bandwidth mapping
+> I'm okay with required-opps but for the sake of argument how would
+> required-opps work for a device that needs to vote multiple paths
+> for a given OPP?
+
+You can list multiple required-opps per device OPP. It's an array of 
+phandles to OPP entries in other tables.
+
+-Saravana
+
+-- 
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
