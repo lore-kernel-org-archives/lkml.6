@@ -2,102 +2,100 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0477BC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58762C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9809E208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:54:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ozxAked3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E9HNdly/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9809E208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 28CF7208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:56:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28CF7208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729444AbeJAUcN (ORCPT
+        id S1729401AbeJAUdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:32:13 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52192 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728979AbeJAUcN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:32:13 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 88D9260B7A; Mon,  1 Oct 2018 13:54:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538402058;
-        bh=h9TrJKkulq3XtSXVb5WcJsx2fNqpmsQhnUPRyv3JIAU=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=ozxAked3G3NXbWdC108IsF57TkmnKsqSujm/+68xn8FwnjYPQySG7loNSE8o8x/kw
-         T8n1KEKKTkIgiiXkfgykEz11umjPf1Haj3ccf9GeE/m9VJkf9k+NDfzzFsnwl8Q2ID
-         qeetUU7DGbEmz3pxi+t2njqTmREnrJqbv5zM/li8=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0829A6079B;
-        Mon,  1 Oct 2018 13:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538402057;
-        bh=h9TrJKkulq3XtSXVb5WcJsx2fNqpmsQhnUPRyv3JIAU=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=E9HNdly/C143VS/Z1RluXZr8uHGzcQj/jerGgYbZbW7PocUrzJ+8ra9QCoo8is/Im
-         u7M77ymqaP8snaugYLhDer1MMkLlVScMSWKBILvD9Y/7BtzASphQ9T98yapjZUBvOG
-         CXWRv5TXqM/swJN4BTEkNMrDof+VLYdZKe2D3oQ0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0829A6079B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Mon, 1 Oct 2018 16:33:54 -0400
+Received: from fieldses.org ([173.255.197.46]:54602 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729182AbeJAUdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 16:33:54 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id DBE312015; Mon,  1 Oct 2018 09:55:58 -0400 (EDT)
+Date:   Mon, 1 Oct 2018 09:55:58 -0400
+From:   Bruce Fields <bfields@fieldses.org>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jann Horn <jannh@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, jlayton@kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
+        Tycho Andersen <tycho@tycho.ws>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path
+ resolution
+Message-ID: <20181001135558.GB25003@fieldses.org>
+References: <20180929103453.12025-1-cyphar@cyphar.com>
+ <20180929131534.24472-1-cyphar@cyphar.com>
+ <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
+ <20181001054246.gfinmx3api7kjhmc@ryuk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath10k: utilize random MAC address if none is provided
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180907172157.203785-1-briannorris@chromium.org>
-References: <20180907172157.203785-1-briannorris@chromium.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org,
-        Govind Singh <govinds@codeaurora.org>,
-        <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181001135418.88D9260B7A@smtp.codeaurora.org>
-Date:   Mon,  1 Oct 2018 13:54:18 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001054246.gfinmx3api7kjhmc@ryuk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Brian Norris <briannorris@chromium.org> wrote:
-
-> Since commit 9d5804662ce1 ("ath10k: retrieve MAC address from system
-> firmware if provided"), we support pulling our MAC address from system
-> firmware. Along with this, we should admit that it's possible for system
-> firmware to be screwed up as well, omitting the MAC address there.
+On Mon, Oct 01, 2018 at 03:44:28PM +1000, Aleksa Sarai wrote:
+> On 2018-09-29, Jann Horn <jannh@google.com> wrote:
+> > The problem is what happens if a folder you are walking through is
+> > concurrently moved out of the chroot. Consider the following scenario:
+> > 
+> > You attempt to open "C/../../etc/passwd" under the root "/A/B".
+> > Something else concurrently moves /A/B/C to /A/C. This can result in
+> > the following:
+> > 
+> > 1. You start the path walk and reach /A/B/C.
+> > 2. The other process moves /A/B/C to /A/C. Your path walk is now at /A/C.
+> > 3. Your path walk follows the first ".." up into /A. This is outside
+> > the process root, but you never actually encountered the process root,
+> > so you don't notice.
+> > 4. Your path walk follows the second ".." up to /. Again, this is
+> > outside the process root, but you don't notice.
+> > 5. Your path walk walks down to /etc/passwd, and the open completes
+> > successfully. You now have an fd pointing outside your chroot.
+> > 
+> > If the root of your walk is below an attacker-controlled directory,
+> > this of course means that you lose instantly. If you point the root of
+> > the walk at a directory out of which a process in the container
+> > wouldn't be able to move the file, you're probably kinda mostly fine -
+> > as long as you know, for certain, that nothing else on the system
+> > would ever do that. But I still wouldn't feel good about that.
 > 
-> Provide a fallback, such that we choose a randomly-generated MAC
-> address, with the local assignment bit set.
-> 
-> This is not a preferred mode of operation and really should only serve
-> the purpose of keeping the system chugging along while someone figures
-> out what's wrong with the system. Grepping through other wireless
-> drivers shows very similar fallback logic though, so why not?
-> 
->   git grep eth_random_addr drivers/net/wireless/
-> 
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> Please correct me if I'm wrong here (this is the first patch I've
+> written for VFS). Isn't the retry/LOOKUP_REVAL code meant to handle this
 
-Patch applied to ath-next branch of ath.git, thanks.
+No.
 
-234e4307cf7f ath10k: utilize random MAC address if none is provided
+...
+> Speaking naively, doesn't it make sense to invalidate the walk if a path
+> component was modified? Or is this something that would be far too
+> costly with little benefit?
 
--- 
-https://patchwork.kernel.org/patch/10592411/
+Lookups and renames can definitely proceed in parallel, and yes I
+suspect it would be difficult to get good performance and guaranteed
+forward progress if you required lookup of the full path to be atomic
+with respect to renames.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+--b.
