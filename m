@@ -2,264 +2,199 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7055C64EB1
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759E3C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 924822089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:18:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EF4F2089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:18:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFKFkkyQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 924822089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=cyphar-com.20150623.gappssmtp.com header.i=@cyphar-com.20150623.gappssmtp.com header.b="bZ9DsDa/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF4F2089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbeJAW5W (ORCPT
+        id S1726636AbeJAW50 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:57:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53060 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbeJAW5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:57:21 -0400
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32B5D21471;
-        Mon,  1 Oct 2018 16:18:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538410727;
-        bh=dxJSRWuqIsE6cgkBrDDlAw+Yl8VllHhFnUJBtSNdVv8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=dFKFkkyQbQXNfuodV7MOT578CKhIM4XOB+ReuThSGJw18x5u4CgdozXFpHcXlPyK9
-         A99X43yQaX2rA6mGT852Ge+u47zi1gZ7yLhhOTdR+c/z/eNNYU4ykwJy3Twx7phELq
-         e26KV3pnJO4hxESk79bsBKM1GoVyKwzsMuWvOTxo=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: [PATCH v5 8/8] trace: Add alternative synthetic event trace action syntax
-Date:   Mon,  1 Oct 2018 11:18:08 -0500
-Message-Id: <28c253343a3fce1e88a9194995abb420780ddf70.1538403550.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1538403550.git.tom.zanussi@linux.intel.com>
-References: <cover.1538403550.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1538403550.git.tom.zanussi@linux.intel.com>
-References: <cover.1538403550.git.tom.zanussi@linux.intel.com>
+        Mon, 1 Oct 2018 18:57:26 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43106 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726367AbeJAW5Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 18:57:25 -0400
+Received: by mail-pf1-f196.google.com with SMTP id p24-v6so1070905pff.10
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 09:18:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cyphar-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=I6GrG+gQD9xKwEFBUogR5ek5OrySfcEy7QQ3sXz5IL8=;
+        b=bZ9DsDa/Za5uwtH+ZegoPWJMgJ71S9PWox2SE+vG6NfcJEAdU1tZwhR/Jkg58NWrl+
+         AwCFP/eSA9fiRbV6JLGjY7+jzVNngtYM9rOtQdJo4Lmdi3xpxvMYKv4o2sefzRgVDkDc
+         Dv87lqDwPDGOooUQDWjDqaDDHlmzQJP56fbi8Q+4bFBJ9VS29BLGJ6830o17ccKBfAxl
+         khG6phWwDC1dNMFBYNDea29WYMh05vXMyVnG7bZKZrC/YfBAUQ92kDJZlKl4VYcrD/c1
+         BGkjeXjBlWMCqaoVmoAGX5P3pMpmREn4s4u8C5bgu1lpTQ6ZqF5WQO6bOA8TaHFuP6G8
+         JNow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I6GrG+gQD9xKwEFBUogR5ek5OrySfcEy7QQ3sXz5IL8=;
+        b=UHg4PRJ176htULzqXJNOeeNH/FRhI5VLL39TZoJ4vUMMIBXFLC45SXPD+xs/fpqgao
+         U7YmW4kxi3eJqwz0r35Sml4TCupgxsgHJSGTuPMNcruxFBvYAj2yD9bOCtmiY4xIijcp
+         oltVCX4MptdEfxouZtuMk2STHxCY37wS+gYuuvAB4/UV5GWU5QNFA2Zb9Y3AtOayeRsY
+         014cbRwGJGbSNNbx5feDP+DTpYngOcr2Nj+U73Y6x6gc/QBmOCulw+pwRys/j0A2CH+0
+         Pcnt+fjAriabpJWX9KMfe3mB6nLq78O8EyjMsk91/PIQHikLofoBAPgiQlmCycouL6jk
+         vSnA==
+X-Gm-Message-State: ABuFfoiYq8zxIEMAxeMabq6wX060RYB+yXEcbh8fJkC+3xSXDW2+J0Tq
+        qxscpDCYwxQFEn5JhR0bxDzEOQ==
+X-Google-Smtp-Source: ACcGV60UzybwBzqpFyba+24Zo5UsJa/NGf5Ch8KpA73q5FbWcBT4c1U2slMgBKhoaVLaRb6Sm5+Fyg==
+X-Received: by 2002:a17:902:6b03:: with SMTP id o3-v6mr12699573plk.333.1538410731660;
+        Mon, 01 Oct 2018 09:18:51 -0700 (PDT)
+Received: from ryuk ([220.240.25.129])
+        by smtp.gmail.com with ESMTPSA id i123-v6sm17720213pgd.91.2018.10.01.09.18.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 01 Oct 2018 09:18:50 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 02:18:33 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, jlayton@kernel.org,
+        Bruce Fields <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
+        Tycho Andersen <tycho@tycho.ws>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path
+ resolution
+Message-ID: <20181001161833.sg5iy6gk7n7crcvy@ryuk>
+References: <20180929103453.12025-1-cyphar@cyphar.com>
+ <20180929131534.24472-1-cyphar@cyphar.com>
+ <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
+ <20181001054246.gfinmx3api7kjhmc@ryuk>
+ <CAG48ez3ApZC5cGzTxyt1ej0CyhYPD4PUEf5nbkqPmNbO+daOXQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vthx2kfvccrg2h7c"
+Content-Disposition: inline
+In-Reply-To: <CAG48ez3ApZC5cGzTxyt1ej0CyhYPD4PUEf5nbkqPmNbO+daOXQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add a 'trace(synthetic_event_name, params)' alternative to
-synthetic_event_name(params).
+--vthx2kfvccrg2h7c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Currently, the syntax used for generating synthetic events is to
-invoke synthetic_event_name(params) i.e. use the synthetic event name
-as a function call.
+On 2018-10-01, Jann Horn <jannh@google.com> wrote:
+> > If this is an issue for AT_THIS_ROOT, I believe this might also be an
+> > issue for AT_BENEATH since they are effectively both using the same
+> > nd->root trick (so you could similarly trick AT_BENEATH to not error
+> > out). So we'd need to figure out how to solve this problem in order for
+> > AT_BENEATH to be safe.
+>=20
+> Oh, wait, what? I think I didn't notice that the semantics of
+> AT_BENEATH changed like that since the original posting of David
+> Drysdale's O_BENEATH_ONLY patch
+> (https://lore.kernel.org/lkml/1439458366-8223-2-git-send-email-drysdale@g=
+oogle.com/).
+> David's patch had nice, straightforward semantics, blocking any form
+> of upwards traversal. Why was that changed? Does anyone actually want
+> to use paths that contain ".." with AT_BENEATH? I would strongly
+> prefer something that blocks any use of "..".
+>=20
+> @Al: It looks like this already changed back when you posted
+> https://lore.kernel.org/lkml/20170429220414.GT29622@ZenIV.linux.org.uk/
+> ?
 
-Users requested a new form that more explicitly shows that the
-synthetic event is in effect being traced.  In this version, a new
-'trace()' keyword is used, and the synthetic event name is passed in
-as the first argument.
+Yes, I copied the semantics from Al's patchset. I don't know why he felt
+strongly that this was the best idea, but in my opinion allowing paths
+like "a/../b/../c" seems like it's quite useful because otherwise you
+wouldn't be able to operate on most distribution root filesystems (many
+have symlinks that have ".." components). Looking at my own (openSUSE)
+machine there are something like 100k such symlinks (~37% of symlinks on
+my machine).
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- Documentation/trace/histogram.rst                  | 20 +++++++++++
- kernel/trace/trace_events_hist.c                   | 42 +++++++++++++++++++---
- .../inter-event/trigger-onmatch-action-hist.tc     | 13 +++++++
- 3 files changed, 71 insertions(+), 4 deletions(-)
+While I do understand that the easiest way of solving this problem is to
+disallow ".." entirely with AT_BENEATH, given that support ".." has
+utility, I would like to know whether it's actually not possible to have
+this work safely.
 
-diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index e73a840a3598..98f960af0072 100644
---- a/Documentation/trace/histogram.rst
-+++ b/Documentation/trace/histogram.rst
-@@ -1849,6 +1849,10 @@ hist trigger specification.
- 
-   - onmatch(matching.event).<synthetic_event_name>(param list)
- 
-+    or
-+
-+  - onmatch(matching.event).trace(<synthetic_event_name>,(param list))
-+
-     The 'onmatch(matching.event).<synthetic_event_name>(params)' hist
-     trigger action is invoked whenever an event matches and the
-     histogram entry would be added or updated.  It causes the named
-@@ -1857,6 +1861,16 @@ hist trigger specification.
-     that consists of the values contained in those variables at the
-     time the invoking event was hit.
- 
-+    There are two equivalent forms available for generating synthetic
-+    events.  In the first form, the synthetic event name is used as if
-+    it were a function name.  For example, if the synthetic event name
-+    is 'wakeup_latency', the wakeup_latency event would be generated
-+    by invoking it as if it were a function call, with the event field
-+    values passed in as arguments: wakeup_latency(arg1,arg2).  The
-+    second form simply uses the 'trace' keyword as the function name
-+    and passes in the synthetic event name as the first argument,
-+    followed by the field values: trace(wakeup_latency,arg1,arg2).
-+
-     The 'param list' consists of one or more parameters which may be
-     either variables or fields defined on either the 'matching.event'
-     or the target event.  The variables or fields specified in the
-@@ -1896,6 +1910,12 @@ hist trigger specification.
-               wakeup_new_test($testpid) if comm=="cyclictest"' >> \
-               /sys/kernel/debug/tracing/events/sched/sched_wakeup_new/trigger
- 
-+    Or, equivalently, using the 'trace' keyword syntax:
-+
-+    # echo 'hist:keys=$testpid:testpid=pid:onmatch(sched.sched_wakeup_new).\
-+            trace(wakeup_new_test,$testpid) if comm=="cyclictest"' >> \
-+            /sys/kernel/debug/tracing/events/sched/sched_wakeup_new/trigger
-+
-     Creating and displaying a histogram based on those events is now
-     just a matter of using the fields and new synthetic event in the
-     tracing/events/synthetic directory, as usual::
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 90f1a0cf34c0..05234538505e 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -352,6 +352,8 @@ struct action_data {
- 
- 	unsigned int		var_ref_idx;
- 	struct synth_event	*synth_event;
-+	bool			use_trace_keyword;
-+	char			*synth_event_name;
- 
- 	union {
- 		struct {
-@@ -3584,6 +3586,8 @@ static void action_data_destroy(struct action_data *data)
- 	if (data->synth_event)
- 		data->synth_event->ref--;
- 
-+	kfree(data->synth_event_name);
-+
- 	kfree(data);
- 
- 	mutex_unlock(&synth_event_mutex);
-@@ -3678,6 +3682,7 @@ static int track_data_create(struct hist_trigger_data *hist_data,
- static int parse_action_params(char *params, struct action_data *data)
- {
- 	char *param, *saved_param;
-+	bool first_param = true;
- 	int ret = 0;
- 
- 	while (params) {
-@@ -3706,6 +3711,13 @@ static int parse_action_params(char *params, struct action_data *data)
- 			goto out;
- 		}
- 
-+		if (first_param && data->use_trace_keyword) {
-+			data->synth_event_name = saved_param;
-+			first_param = false;
-+			continue;
-+		}
-+		first_param = false;
-+
- 		data->params[data->n_params++] = saved_param;
- 	}
-  out:
-@@ -3789,6 +3801,9 @@ static int action_parse(char *str, struct action_data *data,
- 	} else {
- 		char *params = strsep(&str, ")");
- 
-+		if (strncmp(action_name, "trace", strlen("trace")) == 0)
-+			data->use_trace_keyword = true;
-+
- 		if (params) {
- 			ret = parse_action_params(params, data);
- 			if (ret)
-@@ -4007,13 +4022,19 @@ static int trace_action_create(struct hist_trigger_data *hist_data,
- 	unsigned int i, var_ref_idx;
- 	unsigned int field_pos = 0;
- 	struct synth_event *event;
-+	char *synth_event_name;
- 	int ret = 0;
- 
- 	mutex_lock(&synth_event_mutex);
- 
--	event = find_synth_event(data->action_name);
-+	if (data->use_trace_keyword)
-+		synth_event_name = data->synth_event_name;
-+	else
-+		synth_event_name = data->action_name;
-+
-+	event = find_synth_event(synth_event_name);
- 	if (!event) {
--		hist_err("trace action: Couldn't find synthetic event: ", data->action_name);
-+		hist_err("trace action: Couldn't find synthetic event: ", synth_event_name);
- 		mutex_unlock(&synth_event_mutex);
- 		return -EINVAL;
- 	}
-@@ -4781,8 +4802,10 @@ static void print_action_spec(struct seq_file *m,
- 				seq_puts(m, ",");
- 		}
- 	} else if (data->action == ACTION_TRACE) {
-+		if (data->use_trace_keyword)
-+			seq_printf(m, "%s", data->synth_event_name);
- 		for (i = 0; i < data->n_params; i++) {
--			if (i)
-+			if (i || data->use_trace_keyword)
- 				seq_puts(m, ",");
- 			seq_printf(m, "%s", data->params[i]);
- 		}
-@@ -4830,6 +4853,7 @@ static bool actions_match(struct hist_trigger_data *hist_data,
- 	for (i = 0; i < hist_data->n_actions; i++) {
- 		struct action_data *data = hist_data->actions[i];
- 		struct action_data *data_test = hist_data_test->actions[i];
-+		char *action_name, *action_name_test;
- 
- 		if (data->handler != data_test->handler)
- 			return false;
-@@ -4844,7 +4868,17 @@ static bool actions_match(struct hist_trigger_data *hist_data,
- 				return false;
- 		}
- 
--		if (strcmp(data->action_name, data_test->action_name) != 0)
-+		if (data->use_trace_keyword)
-+			action_name = data->synth_event_name;
-+		else
-+			action_name = data->action_name;
-+
-+		if (data_test->use_trace_keyword)
-+			action_name_test = data_test->synth_event_name;
-+		else
-+			action_name_test = data_test->action_name;
-+
-+		if (strcmp(action_name, action_name_test) != 0)
- 			return false;
- 
- 		if (data->handler == HANDLER_ONMATCH) {
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
-index e84e7d048566..28beb83b61aa 100644
---- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
-@@ -47,4 +47,17 @@ fi
- 
- do_reset
- 
-+echo "Test create histogram for synthetic event using trace action"
-+echo "Test histogram variables,simple expression support and trace action"
-+
-+echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="ping"' > events/sched/sched_wakeup/trigger
-+echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_wakeup).trace(wakeup_latency,$wakeup_lat,next_pid,next_comm) if next_comm=="ping"' > events/sched/sched_switch/trigger
-+echo 'hist:keys=comm,pid,lat:wakeup_lat=lat:sort=lat' > events/synthetic/wakeup_latency/trigger
-+ping localhost -c 5
-+if ! grep -q "ping" events/synthetic/wakeup_latency/hist; then
-+    fail "Failed to create trace action inter-event histogram"
-+fi
-+
-+do_reset
-+
- exit 0
--- 
-2.14.1
+> > Speaking naively, doesn't it make sense to invalidate the walk if a path
+> > component was modified? Or is this something that would be far too
+> > costly with little benefit? What if we do more aggressive nd->root
+> > checks when resolving with AT_BENEATH or AT_THIS_ROOT (or if nd->root !=
+=3D
+> > current->mnt_ns->root)?
+>=20
+> It seems to me like doing that would basically require looking at each
+> node in the path walk twice? And it'd be difficult to guarantee
+> forward progress unless you're willing to do some fairly heavy
+> locking.
 
+I had another idea since I wrote my previous mail -- since the issue (at
+least the way I understand it) is that ".." can "skip" over nd->root
+because of the rename, what if we had some sort of is_descendant() check
+within follow_dotdot()? (FWIW, ".." already has some pretty interesting
+"hand-over-hand" locking semantics.) This should be effectively similar
+to how prepend_path() deals with a path that is not reachable from @root
+(I'm not sure if the locking is acceptable for the namei path though).
+
+Since ".." with AT_THIS_ROOT (or AT_BENEATH) is not going to be the most
+common component type (and we only need to do these checks for those
+flags), I would think that the extra cost would not be _that_ awful.
+
+Would this work?
+
+> > You're right about this -- for C runtimes. In Go we cannot do a raw
+> > clone() or fork() (if you do it manually with RawSyscall you'll end with
+> > broken runtime state). So you're forced to do fork+exec (which then
+> > means that you can't use CLONE_FILES and must use SCM_RIGHTS). Same goes
+> > for CLONE_VFORK.
+>=20
+> If you insist on implementing every last bit of your code in Go, I guess.
+
+Fair enough, though I believe this would affect most multi-threaded
+programs as well (regardless of the language they're written in).
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--vthx2kfvccrg2h7c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAluySNkACgkQnhiqJn3b
+jbQGrQ/8DfvGXFadKu6bEEYB9Kfrd6a6m3oIhQWRukSMW96NcqgL84kKLP8wcfJY
+SsRGv9CDyiGZAeW2MHH8T08w7M4P1ysfRVwBlQs+X41r/iRUMoMTVMaBX0VcmUiQ
+SznLG//7brkKgwDovB2rK9BssUlgGMy1trvF57grMY/C0S6Qf/2eTnAzBtAGbIuI
+TQ8NQYHx5eXvWpTkyF9gCpeFaEzQKxQAkufMiGazdQea9OxOu9LeE3B6SZZrnAwM
+mWhqVwfX6jfHYZX/46vzUzebK13z5726nBbO2cFoWuZMHQn7mmuOzWu8+/C+BTao
+sUq7sDBLhtO4qlCGVRYzSdXRgRX+24v04ar83EluUeRmWbDhDUhcoXpeyCLQb9Ae
+w6JiH7GupLPzHJ2omat3r48rgnCl15sgB0BshxPo2wZ/HZ2XBUHLg2rW6PX75N9O
+XFrndHdNAbcO6KCGqWb0+1mUJ0ASG3Pc0JOnkA3SSnvXrS1quaG6Qq515JFBFtiF
++kLjWJ9zcRaF5votbcwYcXdwjczbweafx2ra1ICzlhrPDVB0wXQCg7QiPHLHvFk7
+s4I8RsjSeoqaI76r13KV+81Zs4po/FGy7HrOWDFr+g2oFQdAefEPKeCDAJ8lZM2R
+7GKit9omR6QGkFb6v1DrTuXmreOuMy+2y4Y5BC9Gs4U4pl7469I=
+=avQm
+-----END PGP SIGNATURE-----
+
+--vthx2kfvccrg2h7c--
