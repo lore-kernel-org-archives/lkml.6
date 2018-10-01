@@ -2,248 +2,186 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98AFCC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BECC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 402382083C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:24:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28B952083C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:25:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="brmzu3Jl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 402382083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLnPe+dk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28B952083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729087AbeJAQAs (ORCPT
+        id S1729112AbeJAQBy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 12:00:48 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46302 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729020AbeJAQAs (ORCPT
+        Mon, 1 Oct 2018 12:01:54 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37125 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728960AbeJAQBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:00:48 -0400
-Received: by mail-io1-f65.google.com with SMTP id t7-v6so1329768ioj.13
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 02:23:58 -0700 (PDT)
+        Mon, 1 Oct 2018 12:01:53 -0400
+Received: by mail-wr1-f66.google.com with SMTP id u12-v6so13040371wrr.4;
+        Mon, 01 Oct 2018 02:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SqPRUIRlDKRPmbgbHQnBbf1GLEpAOoWT/dJthUvbDL8=;
-        b=brmzu3JlGL9vng3q2TnTfQz4nY7IANgXhX3hFKovYnsCcFNeMAmZWOt3mAE8fRTZJr
-         acu9lXUk98L8P9ii5rh/1BgOlM1+5QJlxW6oXtQooT7iTjn5xA9Kbhh2hpInLWKef8ea
-         X+oZIdul2gLSaDviI+VAuFLLFnU0ewiy9vytY=
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=OhEgUOB92QopJxDtkpB/kyOIyuMWKtWWsN3PGIRlWBw=;
+        b=kLnPe+dkYCEOCvcI7eAaPv/TjTybwXi9/8+YLm/CFZ4J8ecACyJLfgrkw1sGtAmgQJ
+         OLqvFLXSsSpDxsyAGipT6gACLv4YleuKMnFWP9pA+7PibUfSTCDBwbJewzNXjFRTTGWw
+         kIYwRopI/VRvQYwx+9meWsnaUkKxkpUUpTFMQHNq+7p54HceFFCWA7jz2wgJTgPRzk2A
+         mpQUK4FL8EKE6N0T6yi3Hl+AMZqyIwN1uKEE8Mm91OYKmaB/qE19QOlAE15l1aCTBaS2
+         +kXAanjp/l+q0m9PJAeIU6C4zCuVavNz57EBDpLCDlc50MDTa6xCyQUep4pI2/5IL8/Z
+         xwMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SqPRUIRlDKRPmbgbHQnBbf1GLEpAOoWT/dJthUvbDL8=;
-        b=K027UdxFN0O+QW6V11YWYTP4xR3jI97nrrwaSFLaZI67pbnpIXDPIAD3gCgfqpFk2g
-         xu1EcTPju2QbQAXuT3yFKM/9PNf009+boTA5o9fvV0L5voaelI9WNe+RGaAwrtCm0jLV
-         eZDmVzVwfFF0CPTiRiY89o1uTn1wUAj2rohHQadWotX1MWsepOAyJoRYOV/4O5xMHU63
-         6PZ+XFfuldwYT3vkC1mBOymV4Vv7N3AJnCZ6K2O46pXMCLr4IurgpkKZ/GHEXneo++rN
-         SPqGoY0j+dhnv+Oqp0fjHrpIQWJsqzD0KisdUsKRNTUqjrTu11eU2pvcSTbgTEB6AgGQ
-         MoSw==
-X-Gm-Message-State: ABuFfog/I4WJfGl6ogTYaVgsOAoAYc6tWc66yxgxHjgKWUZFCkY2rVWj
-        rfi99RkPJKZn8HEczyvSupcAiLZ3aFd1Bhp5byxdAw==
-X-Google-Smtp-Source: ACcGV621RxPAbnugNlWwT5K7TZXt2w7EnT0zMvNcfMIYdMAZ2TSysvgNbsP0+VPBg9kv0QgFloG3m+UQIcKDFDpau8E=
-X-Received: by 2002:a5e:d50d:: with SMTP id e13-v6mr6981472iom.291.1538385837849;
- Mon, 01 Oct 2018 02:23:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180430195649.17445-1-daniel.vetter@ffwll.ch>
- <20180430211754.GB54182@dtor-ws> <CAKMK7uFDwANOAF3j43g4S0jQ4V40b-_oiX+QSy8SRkL26Zwxzg@mail.gmail.com>
-In-Reply-To: <CAKMK7uFDwANOAF3j43g4S0jQ4V40b-_oiX+QSy8SRkL26Zwxzg@mail.gmail.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Mon, 1 Oct 2018 11:23:46 +0200
-Message-ID: <CAKMK7uGnFAJsXZx1Vcj036Ubd0zYYQJe3G6fcAxa-ksZJ8yJSw@mail.gmail.com>
-Subject: Re: [PATCH] input/psmouse: Don't hold the mutex while calling ->disconnect
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Stephen Lyons <slysven@virginmedia.com>,
-        linux-input@vger.kernel.org
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=OhEgUOB92QopJxDtkpB/kyOIyuMWKtWWsN3PGIRlWBw=;
+        b=SQgSTIMeyuobmHshO8Rd5NSlnchhZTZIEpvDthGHePhIlgHLG0ct7A3tDDR/cCkJoH
+         bLgPxukMhZ+zkI7bT+iZXOOS3gAeP5ka94gnU0783rZav1xWKhUCnryA1EUlimuRqfBd
+         zS1rSGHaFSufl50GbjpUQV4t3QFBST4IoNxcKW8Ch9ccWJl1IMRm48CvC651faT8krhP
+         MlR3EQSn0zrhabo8TsA5KKa54mD9Xx6a8UJmaXkeBNDP0Nt4WrBZ2820oZg3LY0rQ0PN
+         W7Rz/AamubOrbvDdymYSRIgy/5brXhYI7+7RcnFS74hdoT20/FDmiCRBjyw0orsVSVfm
+         +dBw==
+X-Gm-Message-State: ABuFfoicuAzH1AvuSPcKxx4BjXbjQfGLYeLQW5ci+sMzjZtyxgD9JT3+
+        sM1rm8dLQCiKVL9JLtohd/M=
+X-Google-Smtp-Source: ACcGV62G299+enXKRwlsf4p88HeqDdbJR0LYyf/+Y8gYw+MoknJFdSzaw+D4LNcD70JKOXXrECR6ew==
+X-Received: by 2002:adf:ec11:: with SMTP id x17-v6mr6381768wrn.266.1538385901779;
+        Mon, 01 Oct 2018 02:25:01 -0700 (PDT)
+Received: from laptop ([37.122.159.87])
+        by smtp.gmail.com with ESMTPSA id k25-v6sm10742636wre.18.2018.10.01.02.24.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 01 Oct 2018 02:25:01 -0700 (PDT)
+Message-ID: <a7854b26769c0baec6ad03cc1eee03b78f89b194.camel@gmail.com>
+Subject: Re: [RFC 5/5] MIPS: Add Realtek RTL8186 SoC support
+From:   Yasha Cherikovsky <yasha.che3@gmail.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 01 Oct 2018 12:24:58 +0300
+In-Reply-To: <351da67a-b1e6-7972-5c91-0f204690080f@arm.com>
+References: <20180930141510.2690-1-yasha.che3@gmail.com>
+         <20180930141510.2690-6-yasha.che3@gmail.com>
+         <a7bba9bd-dab3-4f92-465f-e05beee2b9e3@arm.com>
+         <ceced0d550bc30d4f3e66d2c7f569c39ca890ce4.camel@gmail.com>
+         <351da67a-b1e6-7972-5c91-0f204690080f@arm.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 11:06 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->
-> On Mon, Apr 30, 2018 at 11:17 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> > Hi Daniel,
-> >
-> > On Mon, Apr 30, 2018 at 09:56:49PM +0200, Daniel Vetter wrote:
-> >> At least trackpoint_disconnect wants to remove some sysfs files, and
-> >> we can't remove sysfs files while holding psmouse_mutex:
-> >>
-> >> ======================================================
-> >> WARNING: possible circular locking dependency detected
-> >> 4.16.0-rc5-g613eb885b69e-drmtip_1+ #1 Tainted: G     U
-> >> ------------------------------------------------------
-> >> kworker/0:3/102 is trying to acquire lock:
-> >>  (kn->count#130){++++}, at: [<000000009679748b>] kernfs_remove_by_name_ns+0x3b/0x80
-> >>
-> >> but task is already holding lock:
-> >>  (psmouse_mutex){+.+.}, at: [<0000000014f44bcc>] psmouse_disconnect+0x62/0x160
-> >>
-> >> which lock already depends on the new lock.
-> >>
-> >> the existing dependency chain (in reverse order) is:
-> >>
-> >> -> #1 (psmouse_mutex){+.+.}:
-> >>        psmouse_attr_set_helper+0x28/0x140
-> >>        kernfs_fop_write+0xfe/0x180
-> >>        __vfs_write+0x1e/0x130
-> >>        vfs_write+0xbd/0x1b0
-> >>        SyS_write+0x40/0xa0
-> >>        do_syscall_64+0x65/0x1a0
-> >>        entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> >>
-> >> -> #0 (kn->count#130){++++}:
-> >>        __kernfs_remove+0x243/0x2b0
-> >>        kernfs_remove_by_name_ns+0x3b/0x80
-> >>        remove_files.isra.0+0x2b/0x60
-> >>        sysfs_remove_group+0x38/0x80
-> >>        sysfs_remove_groups+0x24/0x40
-> >>        trackpoint_disconnect+0x2c/0x50
-> >>        psmouse_disconnect+0x8f/0x160
-> >>        serio_disconnect_driver+0x28/0x40
-> >>        serio_driver_remove+0xc/0x10
-> >>        device_release_driver_internal+0x15b/0x230
-> >>        serio_handle_event+0x1c8/0x260
-> >>        process_one_work+0x215/0x620
-> >>        worker_thread+0x48/0x3a0
-> >>        kthread+0xfb/0x130
-> >>        ret_from_fork+0x3a/0x50
-> >>
-> >> other info that might help us debug this:
-> >>
-> >>  Possible unsafe locking scenario:
-> >>
-> >>        CPU0                    CPU1
-> >>        ----                    ----
-> >>   lock(psmouse_mutex);
-> >>                                lock(kn->count#130);
-> >>                                lock(psmouse_mutex);
-> >>   lock(kn->count#130);
-> >>
-> >>  *** DEADLOCK ***
-> >>
-> >> 6 locks held by kworker/0:3/102:
-> >>  #0:  ((wq_completion)"events_long"){+.+.}, at: [<000000002e408bfa>] process_one_work+0x191/0x620
-> >>  #1:  (serio_event_work){+.+.}, at: [<000000002e408bfa>] process_one_work+0x191/0x620
-> >>  #2:  (serio_mutex){+.+.}, at: [<00000000c8a49847>] serio_handle_event+0x23/0x260
-> >>  #3:  (&dev->mutex){....}, at: [<00000000b55eee75>] device_release_driver_internal+0x2f/0x230
-> >>  #4:  (&serio->drv_mutex){+.+.}, at: [<000000009719f997>] serio_disconnect_driver+0x16/0x40
-> >>  #5:  (psmouse_mutex){+.+.}, at: [<0000000014f44bcc>] psmouse_disconnect+0x62/0x160
-> >>
-> >> stack backtrace:
-> >> CPU: 0 PID: 102 Comm: kworker/0:3 Tainted: G     U           4.16.0-rc5-g613eb885b69e-drmtip_1+ #1
-> >> Hardware name: LENOVO 74591P0/74591P0, BIOS 6DET28WW (1.05 ) 07/30/2008
-> >> Workqueue: events_long serio_handle_event
-> >> Call Trace:
-> >>  dump_stack+0x5f/0x86
-> >>  print_circular_bug.isra.18+0x1d0/0x2c0
-> >>  __lock_acquire+0x14ae/0x1b60
-> >>  ? kernfs_remove_by_name_ns+0x20/0x80
-> >>  ? lock_acquire+0xaf/0x200
-> >>  lock_acquire+0xaf/0x200
-> >>  ? kernfs_remove_by_name_ns+0x3b/0x80
-> >>  __kernfs_remove+0x243/0x2b0
-> >>  ? kernfs_remove_by_name_ns+0x3b/0x80
-> >>  ? kernfs_name_hash+0xd/0x70
-> >>  ? kernfs_find_ns+0x7e/0x100
-> >>  kernfs_remove_by_name_ns+0x3b/0x80
-> >>  remove_files.isra.0+0x2b/0x60
-> >>  sysfs_remove_group+0x38/0x80
-> >>  sysfs_remove_groups+0x24/0x40
-> >>  trackpoint_disconnect+0x2c/0x50
-> >>  psmouse_disconnect+0x8f/0x160
-> >>  serio_disconnect_driver+0x28/0x40
-> >>  serio_driver_remove+0xc/0x10
-> >>  device_release_driver_internal+0x15b/0x230
-> >>  serio_handle_event+0x1c8/0x260
-> >>  process_one_work+0x215/0x620
-> >>  worker_thread+0x48/0x3a0
-> >>  ? _raw_spin_unlock_irqrestore+0x4c/0x60
-> >>  kthread+0xfb/0x130
-> >>  ? process_one_work+0x620/0x620
-> >>  ? _kthread_create_on_node+0x30/0x30
-> >>  ret_from_fork+0x3a/0x50
-> >>
-> >> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> >> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >> Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> >> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> >> Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> >> Cc: Stephen Lyons <slysven@virginmedia.com>
-> >> Cc: linux-input@vger.kernel.org
-> >> ---
-> >>  drivers/input/mouse/psmouse-base.c | 2 ++
-> >>  1 file changed, 2 insertions(+)
-> >>
-> >> diff --git a/drivers/input/mouse/psmouse-base.c b/drivers/input/mouse/psmouse-base.c
-> >> index 8900c3166ebf..06ccd8e22f3c 100644
-> >> --- a/drivers/input/mouse/psmouse-base.c
-> >> +++ b/drivers/input/mouse/psmouse-base.c
-> >> @@ -1484,8 +1484,10 @@ static void psmouse_disconnect(struct serio *serio)
-> >>               psmouse_deactivate(parent);
-> >>       }
-> >>
-> >> +     mutex_unlock(&psmouse_mutex);
-> >>       if (psmouse->disconnect)
-> >>               psmouse->disconnect(psmouse);
-> >> +     mutex_lock(&psmouse_mutex);
-> >
-> > Why do you think it is proper to drop this mutex? It is introduced for a
-> > reason.
-> >
-> > I think the trace you are seeing is due to:
-> >
-> > commit 988cd7afb3f37598891ca70b4c6eb914c338c46a
-> > Author: Tejun Heo <tj@kernel.org>
-> > Date:   Mon Feb 3 14:02:58 2014 -0500
-> >
-> >     kernfs: remove kernfs_addrm_cxt
-> >
-> > where we started taking kernfs_mutex when adding/removing sysfs files.
-> > Ultimately I think we may have to change switching protocol to a work
-> > item to be done asynchronously from writing to sysfs attribute.
->
-> Well "holding a lock while adding/removing sysfs files and holding the
-> same lock from sysfs read/write callbacks" is a classic deadlock. I've
-> made lockdep shut up about it, I have no idea how to fix it properly.
-> kernfs switching it's locking doesn't change anything here.
->
-> Generally the fix is to untangle the locking: You need 1 set of locks
-> to protect the datastructures exposed through sysfs, and another thing
-> (maybe that's provided by serio already, I have no idea) to make sure
-> you're ordering connect/disconnect handling correct and there's not
-> concurrent calls to this hooks. Assuming serio does give that
-> guarantee then there's no need to hold the lock while unregistering
-> the sysfs files (we could perhaps push the lock dropping down into
-> trackpoint_disconnect, but that's less maintainable imo since it's not
-> obvious in psmouse_disconnect what's going on), and my patch is
-> correct.
->
-> But I didn't do a full locking audit of what exactly serio guarantees,
-> and what exactly psmouse_mutex needs to protect (and where
-> psmouse_mutex is only held because it's convenient).
+On Mon, 2018-10-01 at 10:15 +0100, Marc Zyngier wrote:
+> On 01/10/18 09:48, Yasha Cherikovsky wrote:
+> > Hi Marc,
+> > 
+> > On Mon, 2018-10-01 at 09:19 +0100, Marc Zyngier wrote:
+> > > Hi Yasha,
+> > > 
+> > > On 30/09/18 15:15, Yasha Cherikovsky wrote:
+> > > > The Realtek RTL8186 SoC is a MIPS based SoC
+> > > > used in some home routers [1][2].
+> > > > 
+> > > > The hardware includes Lexra LX5280 CPU with a TLB,
+> > > > two Ethernet controllers, a WLAN controller and more.
+> > > > 
+> > > > With this patch, it is possible to successfully boot
+> > > > the kernel and load userspace on the Edimax BR-6204Wg
+> > > > router.
+> > > > Network drivers support will come in future patches.
+> > > > 
+> > > > This patch includes:
+> > > > - New MIPS rtl8186 platform
+> > > >       - Core platform setup code (mostly DT based)
+> > > >       - New Kconfig option
+> > > >       - defconfig file
+> > > >       - MIPS zboot UART support
+> > > > - RTL8186 interrupt controller driver
+> > > > - RTL8186 timer driver
+> > > > - Device tree files for the RTL8186 SoC and Edimax BR-6204Wg
+> > > >     router
+> > > > 
+> > > > [1] https://www.linux-mips.org/wiki/Realtek_SOC#Realtek_RTL8186
+> > > > [2] https://wikidevi.com/wiki/Realtek_RTL8186
+> > > > 
+> > > > Signed-off-by: Yasha Cherikovsky <yasha.che3@gmail.com>
+> > > > Cc: Ralf Baechle <ralf@linux-mips.org>
+> > > > Cc: Paul Burton <paul.burton@mips.com>
+> > > > Cc: James Hogan <jhogan@kernel.org>
+> > > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > > Cc: Jason Cooper <jason@lakedaemon.net>
+> > > > Cc: Marc Zyngier <marc.zyngier@arm.com>
+> > > > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > > > Cc: Rob Herring <robh+dt@kernel.org>
+> > > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > > Cc: linux-mips@linux-mips.org
+> > > > Cc: devicetree@vger.kernel.org
+> > > > Cc: linux-kernel@vger.kernel.org
+> > > > ---
+> > > >    arch/mips/Kbuild.platforms                    |   1 +
+> > > >    arch/mips/Kconfig                             |  17 ++
+> > > >    arch/mips/boot/compressed/uart-16550.c        |   5 +
+> > > >    arch/mips/boot/dts/Makefile                   |   1 +
+> > > >    arch/mips/boot/dts/realtek/Makefile           |   4 +
+> > > >    arch/mips/boot/dts/realtek/rtl8186.dtsi       |  86 +++++++
+> > > >    .../dts/realtek/rtl8186_edimax_br_6204wg.dts  |  45 ++++
+> > > >    arch/mips/configs/rtl8186_defconfig           | 112 +++++++++
+> > > >    arch/mips/include/asm/mach-rtl8186/rtl8186.h  |  37 +++
+> > > >    arch/mips/rtl8186/Makefile                    |   2 +
+> > > >    arch/mips/rtl8186/Platform                    |   7 +
+> > > >    arch/mips/rtl8186/irq.c                       |   8 +
+> > > >    arch/mips/rtl8186/prom.c                      |  15 ++
+> > > >    arch/mips/rtl8186/setup.c                     |  80 +++++++
+> > > >    arch/mips/rtl8186/time.c                      |  10 +
+> > > >    drivers/clocksource/Kconfig                   |   9 +
+> > > >    drivers/clocksource/Makefile                  |   1 +
+> > > >    drivers/clocksource/timer-rtl8186.c           | 220
+> > > > ++++++++++++++++++
+> > > >    drivers/irqchip/Kconfig                       |   5 +
+> > > >    drivers/irqchip/Makefile                      |   1 +
+> > > >    drivers/irqchip/irq-rtl8186.c                 | 107 +++++++++
+> > > 
+> > > Could you please split this into at least three patches (arch code,
+> > > clocksource, irqchip) to ease the review?
+> > > 
+> > > Thanks,
+> > > 
+> > > 	M.
+> > 
+> > Currently the RTL8186_IRQ and the RTL8186_TIMER Kconfig entries depend
+> > on
+> > MACH_RTL8186 (which is added in the MIPS portion of the same patch).
+> > Also, MACH_RTL8186 in MIPS selects these two options.
+> > 
+> > What is the best way to split that?
+> 
+> It is absolutely fine to have something depending on a non-selectable 
+> config option, which would allow you to split things up as finely as you 
+> want. Just have the patch enabling the config option last.
+> 
+> Thanks,
+> 
+> 	M.
 
-Ping? Just noticed that I still have this bugfix hanging around.
-bugfix as in "make lockdep more useful", not necessarily fixing the
-locking here properly. I guess I could respin to add a FIXME comment,
-but not sure how useful that would be.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Good to know, thanks.
+I'll send a v2 soon.
+
+Yasha
+
