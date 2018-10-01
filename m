@@ -2,173 +2,141 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D4FC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A56D4C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 576932089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:36:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5203621476
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:39:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ubmWw/Cr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 576932089A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/n9KFQJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5203621476
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726246AbeJAXOh (ORCPT
+        id S1726184AbeJAXRw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 19:14:37 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43580 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725735AbeJAXOh (ORCPT
+        Mon, 1 Oct 2018 19:17:52 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34425 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725735AbeJAXRv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 19:14:37 -0400
-Received: by mail-ed1-f65.google.com with SMTP id a4-v6so961648eds.10;
-        Mon, 01 Oct 2018 09:35:57 -0700 (PDT)
+        Mon, 1 Oct 2018 19:17:51 -0400
+Received: by mail-oi1-f195.google.com with SMTP id v69-v6so4405534oif.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 09:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4Aj8shganbvjDsN9UJ/Pvy0xgWfxpZesL1v8N/0NCPY=;
-        b=ubmWw/CrbHYOdrdoBJ2QrweZxPB1sylchXosUsFNsEeMHA/o5PgJVDun45KXFdLoDi
-         0RF6eZuGIUTbLG4pMVm+zy5ZSLYGU50dhY3Gq2hG1FEFOMn2JfctChZguVeS5B+vc3Sm
-         mJYDIEZ+GlHCNAggvMOBElN6wWLMB2bpdh7rGuDZk8YBV0HV2a3B8PxZFRrWiaEQekkm
-         kO3BPG8QteSN9y72p8R3annwOSDDdHB/rcZFgL2M/OFNhICJ1MWPHLDiLsl9yx2mDRwT
-         N05S5+C5/iuXBqOdB8JzS22eJBw8NQ0TCpBOLQh5s2tnFqTKeoY1I+jIZymcBIuPtyPx
-         aeiQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4KhTcfpLGn0eMyXPsK757drELarbtFUbS9NqFGBVYh8=;
+        b=k/n9KFQJWGQ4kdAoZiADr1x7a9yGw2DVWzfNX2DZdlK+dQ78x90wdFtmvC+uLbCFhx
+         GaSNjoKJHBBK7OKixNdvc0HRGGYN5HOgKL0R80Pp0MEFU0Um6FhSs8XgrcMZlLqo1EOC
+         b2ugWJXeTqB2Zde97ApBRbHst7vsltNVUEjJuuE0QFGb1hantl+Iv6khKKVxy1UVyXri
+         XISluzQXDNLFp5pca0rRxL4rPeWU7hvE99WZSb6YlgQUQtROy08pog3N39xHPlo9WfXh
+         KDhuh3hINi35uMg9MJbdz2L/e0Kygm4edgD9pzh4Sxk/VyH3URym1zw/9Oqt76w077Sf
+         pXqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=4Aj8shganbvjDsN9UJ/Pvy0xgWfxpZesL1v8N/0NCPY=;
-        b=Ryyp7QtsQsVCX4cYLjH9/gLEyvZfrw2EnXZCYF3tGwio5QKG8vo3aIe+bigIIiM2Rr
-         aAiG/p3YKXxtCO3FnE7ctFdzEudvcZsxTbt8af+Eh1lWZMnFJTMSW+UjFoYgRAh9aLLw
-         +iNGcsdqfeK59XYIZZ/oYTgJVEdiDkBjjkIMGT5fbMqZIDS60hF8w6J38IrFMZAPLYni
-         9Kfx2PIWUQv6RP3F1EqmnxYmQkxAngmfHLOYS3Dk9GWclq/0A2xjxoAEOOKTGmLN8ZNP
-         QE2k6naaX7NYey8/2+J/5EzTOtuk/Znq4SA+llZIw8wqyEa9aOBeWcLYdD4i8oTf41/B
-         +W6w==
-X-Gm-Message-State: ABuFfoj36FGac59IvoQpoo2c7Gabr955VNq/KddQcGMZO9koLBnCOkHd
-        CwQid9b0r7LIuS2W5bu/laG9s0d/
-X-Google-Smtp-Source: ACcGV63xvuYdpJznHTRqniRZPLm+n4SKB4CtxZX1LHJHohuvf3+1IxNNLCUTzFhlwtfoY+YQjnh9bw==
-X-Received: by 2002:a17:906:3105:: with SMTP id 5-v6mr15164075ejx.227.1538411756678;
-        Mon, 01 Oct 2018 09:35:56 -0700 (PDT)
-Received: from [10.67.50.87] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id n41-v6sm2255697edd.7.2018.10.01.09.35.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 09:35:55 -0700 (PDT)
-Subject: Re: [PATCH net-next] net: mscc: allow extracting the FCS into the skb
-To:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, alexandre.belloni@bootlin.com,
-        quentin.schulz@bootlin.com, allan.nielsen@microchip.com
-References: <20181001095714.26024-1-antoine.tenart@bootlin.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <25a88126-2397-a1fb-0c0d-06504bb348ca@gmail.com>
-Date:   Mon, 1 Oct 2018 09:35:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4KhTcfpLGn0eMyXPsK757drELarbtFUbS9NqFGBVYh8=;
+        b=IIqSafds5Towf50hFER6CWHuygScE6aq+z/1+9m0RyANecZVr3PMeFwbu+/GbN5Xc1
+         BHte0PzNnnNthDHP3xtMPszjr6+v2Qy6bCaTEvPZdc5v1uIo//KUT+dOwy/vi1K3Q7Gm
+         0jmSc3YR8lngtTFZAzmgZixNseH4Kd970XElLYmGeiz4+DyJVDM5zDrGP4H+m6ebdPI5
+         l/CvwqljxTmum1CJD/xaXu6kf3Rj3uRkaq7ZJDsF2mWzKEFsvDR6ecVi/hPfxFRdMosx
+         omzoV5euW+ueafFl2ZWeasPlbvoohI02HxYn9JNbfnJfQbURl+P7ZXZ9CKitC8/mpmfH
+         46IQ==
+X-Gm-Message-State: ABuFfogJyTcYamHpJAhrFK7yigXaMU2wIA0d09TccIzwzM6zTwLYjbXg
+        JcFTyfBXYi4FCx7biU/CWUsrt7C+DSSQE7atICY=
+X-Google-Smtp-Source: ACcGV62aGlhO+dSJ7RaY975ZfJQmJIqHRcKTYYmC+HzFIYaUbkwx8vW0D3glMRXJs+XPkBBAOLvSs0+L8cBFILurQwM=
+X-Received: by 2002:aca:bec2:: with SMTP id o185-v6mr5708555oif.22.1538411952830;
+ Mon, 01 Oct 2018 09:39:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181001095714.26024-1-antoine.tenart@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181001100707.16840-1-ganapatrao.kulkarni@cavium.com> <20181001142914.GD9716@arm.com>
+In-Reply-To: <20181001142914.GD9716@arm.com>
+From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date:   Mon, 1 Oct 2018 22:09:01 +0530
+Message-ID: <CAKTKpr6SQUc9EgdYL2N32a=szUmSs82Mbb4y89htbVQhTPp2rQ@mail.gmail.com>
+Subject: Re: [PATCH] arm_pmu: Delete incorrect cache event mapping for some
+ armv8_pmuv3 events.
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Ganapatrao Kulkarni <Ganapatrao.Kulkarni@cavium.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>, catalin.marinas@arm.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/01/2018 02:57 AM, Antoine Tenart wrote:
-> This patch adds support for the NETIF_F_RXFCS feature in the Mscc
-> Ethernet driver. This feature is disabled by default and allow an user
-> to request the driver not to drop the FCS and to extract it into the skb
-> for debugging purposes.
-> 
-> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-> ---
->  drivers/net/ethernet/mscc/ocelot.c       | 2 +-
->  drivers/net/ethernet/mscc/ocelot_board.c | 7 ++++++-
->  2 files changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
-> index 1a4f2bb48ead..eb5119e7e60b 100644
-> --- a/drivers/net/ethernet/mscc/ocelot.c
-> +++ b/drivers/net/ethernet/mscc/ocelot.c
-> @@ -1606,7 +1606,7 @@ int ocelot_probe_port(struct ocelot *ocelot, u8 port,
->  	dev->ethtool_ops = &ocelot_ethtool_ops;
->  	dev->switchdev_ops = &ocelot_port_switchdev_ops;
->  
-> -	dev->hw_features |= NETIF_F_HW_VLAN_CTAG_FILTER;
-> +	dev->hw_features |= NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_RXFCS;
->  	dev->features |= NETIF_F_HW_VLAN_CTAG_FILTER;
->  
->  	memcpy(dev->dev_addr, ocelot->base_mac, ETH_ALEN);
-> diff --git a/drivers/net/ethernet/mscc/ocelot_board.c b/drivers/net/ethernet/mscc/ocelot_board.c
-> index 3cdf63e35b53..245452a0f244 100644
-> --- a/drivers/net/ethernet/mscc/ocelot_board.c
-> +++ b/drivers/net/ethernet/mscc/ocelot_board.c
-> @@ -126,11 +126,16 @@ static irqreturn_t ocelot_xtr_irq_handler(int irq, void *arg)
->  			len += sz;
->  		} while (len < buf_len);
->  
-> -		/* Read the FCS and discard it */
-> +		/* Read the FCS */
->  		sz = ocelot_rx_frame_word(ocelot, grp, false, &val);
->  		/* Update the statistics if part of the FCS was read before */
->  		len -= ETH_FCS_LEN - sz;
->  
-Don't this needs to be len -= sz;
+Hi Will,
 
+On Mon, Oct 1, 2018 at 7:58 PM Will Deacon <will.deacon@arm.com> wrote:
+>
+> Hi Ganapat,
+>
+> On Mon, Oct 01, 2018 at 10:07:43AM +0000, Kulkarni, Ganapatrao wrote:
+> > Perf events L1-dcache-load-misses, L1-dcache-store-misses are mapped to
+> > armv8_pmuv3 (both DT and ACPI) event L1D_CACHE_REFILL. This is incorrect,
+> > since L1D_CACHE_REFILL counts both load and store misses.
+> > Similarly the events L1-dcache-loads, L1-dcache-stores, dTLB-load-misses
+> > and dTLB-loads are wrongly mapped. Hence Deleting all these cache events
+> > from armv8_pmuv3 cache mapping.
+> >
+> > Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+> > ---
+> >  arch/arm64/kernel/perf_event.c | 8 --------
+> >  1 file changed, 8 deletions(-)
+>
+> The "generic" events are really implemented on a best-effort basis, as
+> they rarely tend to map exactly to what the hardware supports. I think
+> they originally stemmed from the x86 CPU PMU, but that doesn't really
+> help us.
 
-> +		if (unlikely(dev->features & NETIF_F_RXFCS)) {
-> +			buf = (u32 *)skb_put(skb, ETH_FCS_LEN);
-> +			*buf = val;
+This works fairly well for DT based boots, since almost all SoCs have
+added remapping using custom dt object binding.
+However we have concluded in the past to drop SoC specific from the
+ACPI mapping and use json to add SoC/micro architecture specific
+events support.
+At present ,  When we boot with ACPI,  it is misleading for these events.
 
-and here len -= ETH_FCS_LEN
+In fact, this has been pointed internally from benchmark team and
+reported it as hardware bug!
+IMHO, it would be much simpler to delete these misleading events
+mapping rather explaining to perf tool users.
 
-since "len" is later used for accounting how many bytes have been
-received by the network device?
+We already have proper mapping for these events,
+armv8_pmuv3_0/l1d_cache_refill/
+armv8_pmuv3_0/l1d_cache/
+[core imp def:]
+l1d_cache_rd
+l1d_cache_wr
+l1d_cache_refill_rd
+l1d_cache_refill_wr
 
-I am bit confused by the use of "buf", but presumably if NETIF_F_RXCFS
-is turned on, the FCS needs to be part of the buffer passed to the
-network stack, so adjusting len accordingly is required anyway.
--- 
-Florian
+>
+> I had a discussion with Ingo back when we originally implemented perf
+> because I actually preferred not to implement the generic events at all.
+> However, he was strongly of the opinion that a best-effort approach was
+> sufficient to get casual users going with the tool, so that's what we went
+> with.
+
+thanks for the background info, these generic mapping fairly works
+except these events.
+
+>
+> Will
+
+thanks,
+Ganapat
