@@ -2,63 +2,63 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20B8C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF74C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975E22145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60274208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:59:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="JYpM9c8a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975E22145D
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="mlP92VlV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60274208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726517AbeJBAiT (ORCPT
+        id S1726552AbeJBAie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:38:19 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45596 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725740AbeJBAiS (ORCPT
+        Mon, 1 Oct 2018 20:38:34 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41952 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725740AbeJBAie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:38:18 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t70-v6so9980462pgd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 10:59:22 -0700 (PDT)
+        Mon, 1 Oct 2018 20:38:34 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 23-v6so1095765pgc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 10:59:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jn1CvemxeYjFr3HnKh8g7N/aFB2ivLzlaWIOdkbU1Ps=;
-        b=JYpM9c8aYeIC8IgU0zmtjJYVVqhu+w6HUlrg4U9dpB3MqJxrvU2L2fcdWsYH86mUBz
-         lo4zDA5mCaJ2v+tZtqGt6NUQFiR2YLYN6zckJNt8K38Amhtplzn4BEHjDalP6JRjW9ev
-         ACdQdgihFgXYMCN5nOXqKbxdGSA+an7bRvysWdlyRBlt8bdy2UbyEa1dL+SAojgpJrOT
-         urA1nYy/CVsZfE0c7jJbr90lzQ6ZmOHVsMpVYSpK/EpZG+E5Mu77aqr00j68JPg6+oEg
-         CDKzuMre68jGFCULjK22H3LgVhDmIq5p+cy1ORMfFG7urICuVDgNTJ8KzcW1XQYUPJIg
-         i0xw==
+        bh=oZOtf7ah3p60a8nucj+K3KxH/R2xiRaSEqaXYCRrbhg=;
+        b=mlP92VlVxrtlA3qN0Qt9QmXLcg5GML1geEcKZI0WAAa25dwC8ay1zUQ5onqO8SybjO
+         +ZXKL4E9tfLkFIE+vcRTkCjeCoaJf4wp+rKbNgrj6OFiq2G2bpAVDFfCqp3B+b7/KCkC
+         l2m35ntxGwX9K36ZchHEPrXsovkUK24uoD7WdfDF7rwGqE320jH4maAlR8pw0zMMdjdl
+         PQc/f0myc0Ta6vuuJU7ylm6fOgW9iGJh8Y6X/fgzWvOJ5zvQdxxFgq0ovNb7VYGhXOui
+         ltUiECcecwwKusS0gQaDVAP6tKnROJAys/DUJbVP0XWb0Z+iq5jLk4UKFR0Zy/v4pDpD
+         HP/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jn1CvemxeYjFr3HnKh8g7N/aFB2ivLzlaWIOdkbU1Ps=;
-        b=ns33LL4i3TR71+H/bqMw0XM9Fw3LhXI2dUzFWBfi4YAnUrQI1k6FW6KMVsQpnrwHrF
-         u4Demzu8S7hkNGmsya8eR2WXaqbsGXPSQ4jnkM5mIg8KoQYwGfD/TFcvVMEPvQnXq0tQ
-         QcyEoEfXNTQ9+cM/WQOueolFSdG2YJsAPcMBMmquTvd6BQHOhW/UyFt3MEdXvoqPc06L
-         l2EQtTER/sSmu4wadutDHCHC/FBQyg22ZnManlu1rrDyQkSHOUV/ZscnG8FP3XR96h09
-         U3GLoNgG7xVPCkMbZ/QZAUzMOS/qB01fny6Ld7gUPlpJwt3nP/yC6gDdEAuXW+bFlElC
-         BQaA==
-X-Gm-Message-State: ABuFfohc4YOkOnpiIKdhfu7LZZfYpF3q0hdL1sIBJWNLD+qXS8H9mcOu
-        444VOi7Qk2zqpS2Cqwoctc1EqZzc45c=
-X-Google-Smtp-Source: ACcGV631kxCOA3y7ZPN0lDwI791Gppj5wkS1fk+FHxcoCIT1uhE8TqeJYOtq67puYA9odNEBaHUBnQ==
-X-Received: by 2002:a17:902:162:: with SMTP id 89-v6mr12768078plb.91.1538416761191;
-        Mon, 01 Oct 2018 10:59:21 -0700 (PDT)
+        bh=oZOtf7ah3p60a8nucj+K3KxH/R2xiRaSEqaXYCRrbhg=;
+        b=nUF8a+/snxO1EKdrEyccJs+THhR07a5haPmdFHjccvyxBc3ln9bvChn9B+P7l05e2E
+         4jNfDNNSyBcHxg7FdMIcNErqwK1kXxDplBZuIFMVGtmxdzHx2HoVsNeVTLPt2VUBKEJr
+         d9994cAeYN4O0leyHmoWAgeWmFdauF+nU0qjHyLAAlFojhILXXYB1eeQnhiBHRIWHMB2
+         hDuf1+/ip44+99bpoxO2QxDPUT+yL/8A4cH8sw7r6OU1LfR6a2KjeAPMGxJ40nHbELdI
+         pqpmFEG7RsfCiWyKlCPNLvzWfxDUzDf9OfIXD+VlvTm/3zKovvJc9iO9jxct7ZiK+6U2
+         opBw==
+X-Gm-Message-State: ABuFfojNYaOQfEQQp5PgusCKdDfpW/Ysxq46giWzIiJT0OBmPpJ6KDv/
+        eKVc8W82a4q3mTVeF5LFrDkctRqIOyk=
+X-Google-Smtp-Source: ACcGV61h/YWYpx1QbW5aaYI2jGJFY/YwssINhNnjkfcf83aYo/BsX5UOeajvZSutNoeeXfBkQ23xQg==
+X-Received: by 2002:a63:5d03:: with SMTP id r3-v6mr11346828pgb.445.1538416776120;
+        Mon, 01 Oct 2018 10:59:36 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
-        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.10.59.20
+        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.10.59.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 10:59:20 -0700 (PDT)
+        Mon, 01 Oct 2018 10:59:35 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Mark Salyzyn <salyzyn@android.com>,
@@ -79,12 +79,15 @@ Cc:     Mark Salyzyn <salyzyn@android.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org,
         Jeremy Linton <Jeremy.Linton@arm.com>,
-        android-kernel@android.com, Jinbum Park <jinb.park7@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: RESEND [PATCH v5 01/12] arm: vdso: rename vdso_datapage variables
-Date:   Mon,  1 Oct 2018 10:58:21 -0700
-Message-Id: <20181001175845.168430-2-salyzyn@android.com>
+        android-kernel@android.com,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: RESEND [PATCH v5 02/12] arm: vdso: add include file defining __get_datapage()
+Date:   Mon,  1 Oct 2018 10:58:22 -0700
+Message-Id: <20181001175845.168430-3-salyzyn@android.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 In-Reply-To: <20181001175845.168430-1-salyzyn@android.com>
 References: <20181001175845.168430-1-salyzyn@android.com>
@@ -102,13 +105,12 @@ for each architecture. But instead of landing it in arm64, land the
 result into lib/vdso and unify both implementations to simplify
 future maintenance.
 
-Rename seq_count to tb_seq_count. Rename tk_is_cntvct to use_syscall.
-Rename cs_mult to cs_mono_mult. All to align with the variables in the
-arm64 vdso datapage. Rework vdso_read_begin() and vdso_read_retry()
-functions to reflect modern access patterns for tb_seq_count field.
-
-Update copyright message to reflect the start of the contributions in
-this series.
+Define the prototype for __get_datapage() in local datapage.h header.
+Rename all vdata variable that point to the datapage shortened to vd
+to relect a consistent and concise style. Make sure that all
+references to the datapage in vdso operations are readonly (const).
+Make sure datapage is first parameter to all subroutines to also
+be consistent.
 
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
 Tested-by: Mark Salyzyn <salyzyn@android.com>
@@ -133,122 +135,28 @@ Cc: Jeremy Linton <Jeremy.Linton@arm.com>
 Cc: android-kernel@android.com
 
 v2:
-- split first CL into 1 of 7 pieces
+- split first CL into 2 of 7 pieces
 
 v4:
-- update commit message to reflect reasoning
+- update commit message to reflect overall reasoning
 
 v5:
 - rebase
 ---
- arch/arm/include/asm/vdso_datapage.h |  6 +--
- arch/arm/kernel/vdso.c               | 17 ++++----
- arch/arm/vdso/vgettimeofday.c        | 61 +++++++++++++++-------------
- 3 files changed, 45 insertions(+), 39 deletions(-)
+ arch/arm/vdso/datapage.h      | 25 +++++++++
+ arch/arm/vdso/vgettimeofday.c | 99 +++++++++++++++++------------------
+ 2 files changed, 73 insertions(+), 51 deletions(-)
+ create mode 100644 arch/arm/vdso/datapage.h
 
-diff --git a/arch/arm/include/asm/vdso_datapage.h b/arch/arm/include/asm/vdso_datapage.h
-index 9be259442fca..fa3e1856244d 100644
---- a/arch/arm/include/asm/vdso_datapage.h
-+++ b/arch/arm/include/asm/vdso_datapage.h
-@@ -29,8 +29,8 @@
-  * 32 bytes.
-  */
- struct vdso_data {
--	u32 seq_count;		/* sequence count - odd during updates */
--	u16 tk_is_cntvct;	/* fall back to syscall if false */
-+	u32 tb_seq_count;	/* sequence count - odd during updates */
-+	u16 use_syscall;	/* fall back to syscall if true */
- 	u16 cs_shift;		/* clocksource shift */
- 	u32 xtime_coarse_sec;	/* coarse time */
- 	u32 xtime_coarse_nsec;
-@@ -38,7 +38,7 @@ struct vdso_data {
- 	u32 wtm_clock_sec;	/* wall to monotonic offset */
- 	u32 wtm_clock_nsec;
- 	u32 xtime_clock_sec;	/* CLOCK_REALTIME - seconds */
--	u32 cs_mult;		/* clocksource multiplier */
-+	u32 cs_mono_mult;	/* clocksource multiplier */
- 
- 	u64 cs_cycle_last;	/* last cycle value */
- 	u64 cs_mask;		/* clocksource mask */
-diff --git a/arch/arm/kernel/vdso.c b/arch/arm/kernel/vdso.c
-index f4dd7f9663c1..c2c57f6b8c60 100644
---- a/arch/arm/kernel/vdso.c
-+++ b/arch/arm/kernel/vdso.c
-@@ -276,14 +276,14 @@ void arm_install_vdso(struct mm_struct *mm, unsigned long addr)
- 
- static void vdso_write_begin(struct vdso_data *vdata)
- {
--	++vdso_data->seq_count;
-+	++vdso_data->tb_seq_count;
- 	smp_wmb(); /* Pairs with smp_rmb in vdso_read_retry */
- }
- 
- static void vdso_write_end(struct vdso_data *vdata)
- {
- 	smp_wmb(); /* Pairs with smp_rmb in vdso_read_begin */
--	++vdso_data->seq_count;
-+	++vdso_data->tb_seq_count;
- }
- 
- static bool tk_is_cntvct(const struct timekeeper *tk)
-@@ -307,10 +307,10 @@ static bool tk_is_cntvct(const struct timekeeper *tk)
-  * counter again, making it even, indicating to userspace that the
-  * update is finished.
-  *
-- * Userspace is expected to sample seq_count before reading any other
-- * fields from the data page.  If seq_count is odd, userspace is
-+ * Userspace is expected to sample tb_seq_count before reading any other
-+ * fields from the data page.  If tb_seq_count is odd, userspace is
-  * expected to wait until it becomes even.  After copying data from
-- * the page, userspace must sample seq_count again; if it has changed
-+ * the page, userspace must sample tb_seq_count again; if it has changed
-  * from its previous value, userspace must retry the whole sequence.
-  *
-  * Calls to update_vsyscall are serialized by the timekeeping core.
-@@ -328,18 +328,19 @@ void update_vsyscall(struct timekeeper *tk)
- 
- 	vdso_write_begin(vdso_data);
- 
--	vdso_data->tk_is_cntvct			= tk_is_cntvct(tk);
-+	vdso_data->use_syscall			= !tk_is_cntvct(tk);
- 	vdso_data->xtime_coarse_sec		= tk->xtime_sec;
- 	vdso_data->xtime_coarse_nsec		= (u32)(tk->tkr_mono.xtime_nsec >>
- 							tk->tkr_mono.shift);
- 	vdso_data->wtm_clock_sec		= wtm->tv_sec;
- 	vdso_data->wtm_clock_nsec		= wtm->tv_nsec;
- 
--	if (vdso_data->tk_is_cntvct) {
-+	if (!vdso_data->use_syscall) {
- 		vdso_data->cs_cycle_last	= tk->tkr_mono.cycle_last;
- 		vdso_data->xtime_clock_sec	= tk->xtime_sec;
- 		vdso_data->xtime_clock_snsec	= tk->tkr_mono.xtime_nsec;
--		vdso_data->cs_mult		= tk->tkr_mono.mult;
-+		vdso_data->cs_mono_mult		= tk->tkr_mono.mult;
-+		/* tkr_mono.shift == tkr_raw.shift */
- 		vdso_data->cs_shift		= tk->tkr_mono.shift;
- 		vdso_data->cs_mask		= tk->tkr_mono.mask;
- 	}
-diff --git a/arch/arm/vdso/vgettimeofday.c b/arch/arm/vdso/vgettimeofday.c
-index a9dd619c6c29..8cf13af1323c 100644
---- a/arch/arm/vdso/vgettimeofday.c
-+++ b/arch/arm/vdso/vgettimeofday.c
-@@ -1,18 +1,25 @@
- /*
-- * Copyright 2015 Mentor Graphics Corporation.
-+ * Userspace implementations of gettimeofday() and friends.
-  *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; version 2 of the
-- * License.
-+ * Copyright (C) 2017 Cavium, Inc.
-+ * Copyright (C) 2015 Mentor Graphics Corporation
-+ * Copyright (C) 2012 ARM Limited
-  *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
+diff --git a/arch/arm/vdso/datapage.h b/arch/arm/vdso/datapage.h
+new file mode 100644
+index 000000000000..e3088bdfb946
+--- /dev/null
++++ b/arch/arm/vdso/datapage.h
+@@ -0,0 +1,25 @@
++/*
++ * Userspace implementations of __get_datapage
++ *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
@@ -257,90 +165,268 @@ index a9dd619c6c29..8cf13af1323c 100644
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
 + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 + * GNU General Public License for more details.
-  *
-  * You should have received a copy of the GNU General Public License
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 + *
-+ * Author: Will Deacon <will.deacon@arm.com>
-+ * Rewriten from arch64 version into C by: Andrew Pinski <apinski@cavium.com>
-+ * Reworked and rebased over arm version by: Mark Salyzyn <salyzyn@android.com>
-  */
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef __VDSO_DATAPAGE_H
++#define __VDSO_DATAPAGE_H
++
++#include <linux/types.h>
++#include <asm/vdso_datapage.h>
++
++extern const struct vdso_data *__get_datapage(void);
++
++#endif /* __VDSO_DATAPAGE_H */
+diff --git a/arch/arm/vdso/vgettimeofday.c b/arch/arm/vdso/vgettimeofday.c
+index 8cf13af1323c..2474c17dc356 100644
+--- a/arch/arm/vdso/vgettimeofday.c
++++ b/arch/arm/vdso/vgettimeofday.c
+@@ -30,20 +30,19 @@
+ #include <asm/bug.h>
+ #include <asm/page.h>
+ #include <asm/unistd.h>
+-#include <asm/vdso_datapage.h>
  
- #include <linux/compiler.h>
-@@ -31,32 +38,30 @@
+ #ifndef CONFIG_AEABI
+ #error This code depends on AEABI system call conventions
+ #endif
  
- extern struct vdso_data *__get_datapage(void);
+-extern struct vdso_data *__get_datapage(void);
++#include "datapage.h"
  
--static notrace u32 __vdso_read_begin(const struct vdso_data *vdata)
--{
--	u32 seq;
--repeat:
--	seq = READ_ONCE(vdata->seq_count);
--	if (seq & 1) {
--		cpu_relax();
--		goto repeat;
--	}
--	return seq;
--}
--
- static notrace u32 vdso_read_begin(const struct vdso_data *vdata)
+-static notrace u32 vdso_read_begin(const struct vdso_data *vdata)
++static notrace u32 vdso_read_begin(const struct vdso_data *vd)
  {
  	u32 seq;
  
--	seq = __vdso_read_begin(vdata);
-+	do {
-+		seq = READ_ONCE(vdata->tb_seq_count);
-+
-+		if ((seq & 1) == 0)
-+			break;
+ 	do {
+-		seq = READ_ONCE(vdata->tb_seq_count);
++		seq = READ_ONCE(vd->tb_seq_count);
  
--	smp_rmb(); /* Pairs with smp_wmb in vdso_write_end */
-+		cpu_relax();
-+	} while (true);
-+
-+	smp_rmb(); /* Pairs with second smp_wmb in update_vsyscall */
+ 		if ((seq & 1) == 0)
+ 			break;
+@@ -55,12 +54,12 @@ static notrace u32 vdso_read_begin(const struct vdso_data *vdata)
  	return seq;
  }
  
- static notrace int vdso_read_retry(const struct vdso_data *vdata, u32 start)
+-static notrace int vdso_read_retry(const struct vdso_data *vdata, u32 start)
++static notrace int vdso_read_retry(const struct vdso_data *vd, u32 start)
  {
--	smp_rmb(); /* Pairs with smp_wmb in vdso_write_begin */
--	return vdata->seq_count != start;
-+	u32 seq;
-+
-+	smp_rmb(); /* Pairs with first smp_wmb in update_vsyscall */
-+	seq = READ_ONCE(vdata->tb_seq_count);
-+	return seq != start;
+ 	u32 seq;
+ 
+ 	smp_rmb(); /* Pairs with first smp_wmb in update_vsyscall */
+-	seq = READ_ONCE(vdata->tb_seq_count);
++	seq = READ_ONCE(vd->tb_seq_count);
+ 	return seq != start;
  }
  
- static notrace long clock_gettime_fallback(clockid_t _clkid,
-@@ -127,7 +132,7 @@ static notrace u64 get_ns(struct vdso_data *vdata)
+@@ -81,38 +80,38 @@ static notrace long clock_gettime_fallback(clockid_t _clkid,
+ 	return ret;
+ }
  
- 	cycle_delta = (cycle_now - vdata->cs_cycle_last) & vdata->cs_mask;
+-static notrace int do_realtime_coarse(struct timespec *ts,
+-				      struct vdso_data *vdata)
++static notrace int do_realtime_coarse(const struct vdso_data *vd,
++				      struct timespec *ts)
+ {
+ 	u32 seq;
  
--	nsec = (cycle_delta * vdata->cs_mult) + vdata->xtime_clock_snsec;
-+	nsec = (cycle_delta * vdata->cs_mono_mult) + vdata->xtime_clock_snsec;
- 	nsec >>= vdata->cs_shift;
+ 	do {
+-		seq = vdso_read_begin(vdata);
++		seq = vdso_read_begin(vd);
+ 
+-		ts->tv_sec = vdata->xtime_coarse_sec;
+-		ts->tv_nsec = vdata->xtime_coarse_nsec;
++		ts->tv_sec = vd->xtime_coarse_sec;
++		ts->tv_nsec = vd->xtime_coarse_nsec;
+ 
+-	} while (vdso_read_retry(vdata, seq));
++	} while (vdso_read_retry(vd, seq));
+ 
+ 	return 0;
+ }
+ 
+-static notrace int do_monotonic_coarse(struct timespec *ts,
+-				       struct vdso_data *vdata)
++static notrace int do_monotonic_coarse(const struct vdso_data *vd,
++				       struct timespec *ts)
+ {
+ 	struct timespec tomono;
+ 	u32 seq;
+ 
+ 	do {
+-		seq = vdso_read_begin(vdata);
++		seq = vdso_read_begin(vd);
+ 
+-		ts->tv_sec = vdata->xtime_coarse_sec;
+-		ts->tv_nsec = vdata->xtime_coarse_nsec;
++		ts->tv_sec = vd->xtime_coarse_sec;
++		ts->tv_nsec = vd->xtime_coarse_nsec;
+ 
+-		tomono.tv_sec = vdata->wtm_clock_sec;
+-		tomono.tv_nsec = vdata->wtm_clock_nsec;
++		tomono.tv_sec = vd->wtm_clock_sec;
++		tomono.tv_nsec = vd->wtm_clock_nsec;
+ 
+-	} while (vdso_read_retry(vdata, seq));
++	} while (vdso_read_retry(vd, seq));
+ 
+ 	ts->tv_sec += tomono.tv_sec;
+ 	timespec_add_ns(ts, tomono.tv_nsec);
+@@ -122,7 +121,7 @@ static notrace int do_monotonic_coarse(struct timespec *ts,
+ 
+ #ifdef CONFIG_ARM_ARCH_TIMER
+ 
+-static notrace u64 get_ns(struct vdso_data *vdata)
++static notrace u64 get_ns(const struct vdso_data *vd)
+ {
+ 	u64 cycle_delta;
+ 	u64 cycle_now;
+@@ -130,29 +129,29 @@ static notrace u64 get_ns(struct vdso_data *vdata)
+ 
+ 	cycle_now = arch_counter_get_cntvct();
+ 
+-	cycle_delta = (cycle_now - vdata->cs_cycle_last) & vdata->cs_mask;
++	cycle_delta = (cycle_now - vd->cs_cycle_last) & vd->cs_mask;
+ 
+-	nsec = (cycle_delta * vdata->cs_mono_mult) + vdata->xtime_clock_snsec;
+-	nsec >>= vdata->cs_shift;
++	nsec = (cycle_delta * vd->cs_mono_mult) + vd->xtime_clock_snsec;
++	nsec >>= vd->cs_shift;
  
  	return nsec;
-@@ -141,7 +146,7 @@ static notrace int do_realtime(struct timespec *ts, struct vdso_data *vdata)
- 	do {
- 		seq = vdso_read_begin(vdata);
+ }
  
--		if (!vdata->tk_is_cntvct)
-+		if (vdata->use_syscall)
+-static notrace int do_realtime(struct timespec *ts, struct vdso_data *vdata)
++static notrace int do_realtime(const struct vdso_data *vd, struct timespec *ts)
+ {
+ 	u64 nsecs;
+ 	u32 seq;
+ 
+ 	do {
+-		seq = vdso_read_begin(vdata);
++		seq = vdso_read_begin(vd);
+ 
+-		if (vdata->use_syscall)
++		if (vd->use_syscall)
  			return -1;
  
- 		ts->tv_sec = vdata->xtime_clock_sec;
-@@ -164,7 +169,7 @@ static notrace int do_monotonic(struct timespec *ts, struct vdso_data *vdata)
- 	do {
- 		seq = vdso_read_begin(vdata);
+-		ts->tv_sec = vdata->xtime_clock_sec;
+-		nsecs = get_ns(vdata);
++		ts->tv_sec = vd->xtime_clock_sec;
++		nsecs = get_ns(vd);
  
--		if (!vdata->tk_is_cntvct)
-+		if (vdata->use_syscall)
+-	} while (vdso_read_retry(vdata, seq));
++	} while (vdso_read_retry(vd, seq));
+ 
+ 	ts->tv_nsec = 0;
+ 	timespec_add_ns(ts, nsecs);
+@@ -160,25 +159,25 @@ static notrace int do_realtime(struct timespec *ts, struct vdso_data *vdata)
+ 	return 0;
+ }
+ 
+-static notrace int do_monotonic(struct timespec *ts, struct vdso_data *vdata)
++static notrace int do_monotonic(const struct vdso_data *vd, struct timespec *ts)
+ {
+ 	struct timespec tomono;
+ 	u64 nsecs;
+ 	u32 seq;
+ 
+ 	do {
+-		seq = vdso_read_begin(vdata);
++		seq = vdso_read_begin(vd);
+ 
+-		if (vdata->use_syscall)
++		if (vd->use_syscall)
  			return -1;
  
- 		ts->tv_sec = vdata->xtime_clock_sec;
+-		ts->tv_sec = vdata->xtime_clock_sec;
+-		nsecs = get_ns(vdata);
++		ts->tv_sec = vd->xtime_clock_sec;
++		nsecs = get_ns(vd);
+ 
+-		tomono.tv_sec = vdata->wtm_clock_sec;
+-		tomono.tv_nsec = vdata->wtm_clock_nsec;
++		tomono.tv_sec = vd->wtm_clock_sec;
++		tomono.tv_nsec = vd->wtm_clock_nsec;
+ 
+-	} while (vdso_read_retry(vdata, seq));
++	} while (vdso_read_retry(vd, seq));
+ 
+ 	ts->tv_sec += tomono.tv_sec;
+ 	ts->tv_nsec = 0;
+@@ -189,12 +188,12 @@ static notrace int do_monotonic(struct timespec *ts, struct vdso_data *vdata)
+ 
+ #else /* CONFIG_ARM_ARCH_TIMER */
+ 
+-static notrace int do_realtime(struct timespec *ts, struct vdso_data *vdata)
++static notrace int do_realtime(const struct vdso_data *vd, struct timespec *ts)
+ {
+ 	return -1;
+ }
+ 
+-static notrace int do_monotonic(struct timespec *ts, struct vdso_data *vdata)
++static notrace int do_monotonic(const struct vdso_data *vd, struct timespec *ts)
+ {
+ 	return -1;
+ }
+@@ -203,23 +202,22 @@ static notrace int do_monotonic(struct timespec *ts, struct vdso_data *vdata)
+ 
+ notrace int __vdso_clock_gettime(clockid_t clkid, struct timespec *ts)
+ {
+-	struct vdso_data *vdata;
+ 	int ret = -1;
+ 
+-	vdata = __get_datapage();
++	const struct vdso_data *vd = __get_datapage();
+ 
+ 	switch (clkid) {
+ 	case CLOCK_REALTIME_COARSE:
+-		ret = do_realtime_coarse(ts, vdata);
++		ret = do_realtime_coarse(vd, ts);
+ 		break;
+ 	case CLOCK_MONOTONIC_COARSE:
+-		ret = do_monotonic_coarse(ts, vdata);
++		ret = do_monotonic_coarse(vd, ts);
+ 		break;
+ 	case CLOCK_REALTIME:
+-		ret = do_realtime(ts, vdata);
++		ret = do_realtime(vd, ts);
+ 		break;
+ 	case CLOCK_MONOTONIC:
+-		ret = do_monotonic(ts, vdata);
++		ret = do_monotonic(vd, ts);
+ 		break;
+ 	default:
+ 		break;
+@@ -251,12 +249,11 @@ static notrace long gettimeofday_fallback(struct timeval *_tv,
+ notrace int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
+ {
+ 	struct timespec ts;
+-	struct vdso_data *vdata;
+ 	int ret;
+ 
+-	vdata = __get_datapage();
++	const struct vdso_data *vd = __get_datapage();
+ 
+-	ret = do_realtime(&ts, vdata);
++	ret = do_realtime(vd, &ts);
+ 	if (ret)
+ 		return gettimeofday_fallback(tv, tz);
+ 
+@@ -265,8 +262,8 @@ notrace int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
+ 		tv->tv_usec = ts.tv_nsec / 1000;
+ 	}
+ 	if (tz) {
+-		tz->tz_minuteswest = vdata->tz_minuteswest;
+-		tz->tz_dsttime = vdata->tz_dsttime;
++		tz->tz_minuteswest = vd->tz_minuteswest;
++		tz->tz_dsttime = vd->tz_dsttime;
+ 	}
+ 
+ 	return ret;
 -- 
 2.19.0.605.g01d371f741-goog
 
