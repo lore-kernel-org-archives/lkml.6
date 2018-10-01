@@ -2,150 +2,123 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17816C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 451B9C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC81E2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:16:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC81E2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 018782089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:17:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pQVfFSsu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 018782089A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbeJAXzc (ORCPT
+        id S1726442AbeJAX4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 19:55:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53074 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726274AbeJAXzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 19:55:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9B9715AD;
-        Mon,  1 Oct 2018 10:16:44 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8A8413F5B7;
-        Mon,  1 Oct 2018 10:16:44 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 427E61AE3C57; Mon,  1 Oct 2018 18:17:08 +0100 (BST)
-Date:   Mon, 1 Oct 2018 18:17:08 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, longman@redhat.com,
-        andrea.parri@amarulasolutions.com, tglx@linutronix.de
-Subject: Re: [RFC][PATCH 2/3] locking/qspinlock: Rework some comments
-Message-ID: <20181001171707.GE13918@arm.com>
-References: <20180926110117.405325143@infradead.org>
- <20180926111307.457488877@infradead.org>
+        Mon, 1 Oct 2018 19:56:11 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42995 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeJAX4L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 19:56:11 -0400
+Received: by mail-pf1-f195.google.com with SMTP id l9-v6so9688031pff.9
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 10:17:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tRtggt4FXN3bTBKNXdfJdZQx2PWHARKCnRCpA0Ez/+g=;
+        b=pQVfFSsuvsMZ1FGzaoYZ53PVOwzaEKb/f81ZystARA7YjLh1CAP5us02ExPNAD1cqF
+         iaZAQJ4/dqvlB8LpGtq8yqGXVjrrncfaKeinvI+wIfiRdKjoDU6Fq/ydixZi2gseowdI
+         0B3b5rWnkzsr+ajD9fN8WRM52mTAQLxnpX/KwxwhDj/NPAz4H/MolXyVcjRdyeCA+WLK
+         vaGhH5iBzbTkTG+4ZSRNtfMWzVwZvQEND4+zNZ/kzozrU5HsyvyxWJRoaEnS90BD5eph
+         E+Vv3LKP/ugQcLg10VNrKDf4zvuZWH6BoCm9BWOOyoZxnd8zZ6HmNIGPA5/BGX23g2aL
+         lPJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tRtggt4FXN3bTBKNXdfJdZQx2PWHARKCnRCpA0Ez/+g=;
+        b=MM2B4NBlN05l0H29Si0ILEQm29Wz/R2TFD5JzCkJbNkf86ylj4E9SY2dPQybpVIfhr
+         IBBiwJW5bZfr+7Wj0bTA0bkkndjRD/ST0Cm43lCjuecRGEw4TzS92J4Tigqoy4lrec4h
+         4h1Jfoa50Bsu5xC8aYalpaGPTqghp5ZmqUNLFH11IpxurXpyye1Htb8zxJUbPqrStY9l
+         zZrG9S9YCEYQIxA6NBxVC8lqXt+SWjPCxlzhRWk7oUCRGdSKg3DsYtQJMhpXasXwvsMb
+         hhP6YAExUYXDJDcxU3AyNGtuff7RvThgJWMWvh7X29UpjFZONlAhoXXGyMjEjUVaDl6r
+         xsIg==
+X-Gm-Message-State: ABuFfoit+hU+zMFg/cBmQHR7FBTHWR6EHzleDTooAnxLflic314JWc4K
+        oCEnpQkxJus417PiuSP9hT1TxbT+/2+SWaQCYC0O1QihPJY=
+X-Google-Smtp-Source: ACcGV63TTHQ846ZGLBTQVBU1hVeznNM7T/PIYrly4YVmMiyVazOXi3TQxUjtaFPGXJ0bLKMy1VbnN6whtGUk5oyrSuQ=
+X-Received: by 2002:a17:902:b7c2:: with SMTP id v2-v6mr12892871plz.238.1538414244049;
+ Mon, 01 Oct 2018 10:17:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180926111307.457488877@infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1538387078-21892-1-git-send-email-yamada.masahiro@socionext.com> <1538387078-21892-3-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1538387078-21892-3-git-send-email-yamada.masahiro@socionext.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 1 Oct 2018 10:17:12 -0700
+Message-ID: <CAKwvOd=R1FN_nmR4Wkpb=nTt+v2f2+uWOcQCFoB+B1hWzCXCXA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] kbuild: add -Wno-unused-but-set-variable compiler
+ flag unconditionally
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 01:01:19PM +0200, Peter Zijlstra wrote:
-> While working my way through the code again; I felt the comments could
-> use help.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+On Mon, Oct 1, 2018 at 2:45 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> We have raised the compiler requirement from time to time.
+> With commit cafa0010cd51 ("Raise the minimum required gcc version
+> to 4.6"), the minimum for GCC is 4.6 now.
+>
+> This flag was added by GCC 4.6, and it is recognized by Clang and
+> ICC as well.
+
+This doesn't seem to be the case for Clang:
+https://godbolt.org/z/qesF5o
+
+Nacked-by: Nick Desaulniers <ndesaulniers@google.com>
+
+
+>
+> Let's rip off the cc-disable-warning switch, and see if somebody
+> complains about it.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
->  kernel/locking/qspinlock.c |   40 ++++++++++++++++++++++++++++------------
->  1 file changed, 28 insertions(+), 12 deletions(-)
-> 
-> --- a/kernel/locking/qspinlock.c
-> +++ b/kernel/locking/qspinlock.c
-> @@ -326,16 +326,23 @@ void queued_spin_lock_slowpath(struct qs
->  	/*
->  	 * trylock || pending
->  	 *
-> -	 * 0,0,0 -> 0,0,1 ; trylock
-> -	 * 0,0,1 -> 0,1,1 ; pending
-> +	 * 0,0,* -> 0,1,* -> 0,0,1 pending, trylock
->  	 */
->  	val = atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
-> +
->  	/*
-> -	 * If we observe any contention; undo and queue.
-> +	 * If we observe contention, there was a concurrent lock.
+>
+>  Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 8a23fee..2627266 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -716,7 +716,7 @@ else
+>
+>  # These warnings generated too much noise in a regular build.
+>  # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
+> -KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+> +KBUILD_CFLAGS += -Wno-unused-but-set-variable
+>  endif
+>
+>  KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+> --
+> 2.7.4
+>
 
-Nit: I think "concurrent lock" is confusing here, because that implies to
-me that the lock was actually taken behind our back, which isn't necessarily
-the case. How about "there is a concurrent locker"?
 
-> +	 *
-> +	 * Undo and queue; our setting of PENDING might have made the
-> +	 * n,0,0 -> 0,0,0 transition fail and it will now be waiting
-> +	 * on @next to become !NULL.
->  	 */
-
-Hmm, but it could also fail another concurrent set of PENDING (and the lock
-could just be held the entire time).
-
->  	if (unlikely(val & ~_Q_LOCKED_MASK)) {
-> +
-> +		/* Undo PENDING if we set it. */
->  		if (!(val & _Q_PENDING_MASK))
->  			clear_pending(lock);
-> +
->  		goto queue;
->  	}
->  
-> @@ -466,7 +473,7 @@ void queued_spin_lock_slowpath(struct qs
->  	 * claim the lock:
->  	 *
->  	 * n,0,0 -> 0,0,1 : lock, uncontended
-> -	 * *,*,0 -> *,*,1 : lock, contended
-> +	 * *,0,0 -> *,0,1 : lock, contended
-
-Pending can be set behind our back in the contended case, in which case
-we take the lock with a single byte store and don't clear pending. You
-mention this in the updated comment below, but I think we should leave this
-comment alone.
-
-Will
-
->  	 *
->  	 * If the queue head is the only one in the queue (lock value == tail)
->  	 * and nobody is pending, clear the tail code and grab the lock.
-> @@ -474,16 +481,25 @@ void queued_spin_lock_slowpath(struct qs
->  	 */
->  
->  	/*
-> -	 * In the PV case we might already have _Q_LOCKED_VAL set.
-> +	 * In the PV case we might already have _Q_LOCKED_VAL set, because
-> +	 * of lock stealing; therefore we must also allow:
->  	 *
-> -	 * The atomic_cond_read_acquire() call above has provided the
-> -	 * necessary acquire semantics required for locking.
-> -	 */
-> -	if (((val & _Q_TAIL_MASK) == tail) &&
-> -	    atomic_try_cmpxchg_relaxed(&lock->val, &val, _Q_LOCKED_VAL))
-> -		goto release; /* No contention */
-> +	 * n,0,1 -> 0,0,1
-> +	 *
-> +	 * Note: at this point: (val & _Q_PENDING_MASK) == 0, because of the
-> +	 *       above wait condition, therefore any concurrent setting of
-> +	 *       PENDING will make the uncontended transition fail.
-> +	 */
-> +	if ((val & _Q_TAIL_MASK) == tail) {
-> +		if (atomic_try_cmpxchg_relaxed(&lock->val, &val, _Q_LOCKED_VAL))
-> +			goto release; /* No contention */
-> +	}
->  
-> -	/* Either somebody is queued behind us or _Q_PENDING_VAL is set */
-> +	/*
-> +	 * Either somebody is queued behind us or _Q_PENDING_VAL got set
-> +	 * which will then detect the remaining tail and queue behind us
-> +	 * ensuring we'll see a @next.
-> +	 */
->  	set_locked(lock);
->  
->  	/*
-> 
-> 
+-- 
+Thanks,
+~Nick Desaulniers
