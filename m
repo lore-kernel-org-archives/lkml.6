@@ -2,79 +2,108 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC08FC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6ACC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B188B20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:27:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HyRVuB0M";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Wq2mZ8GL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B188B20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id C8376208D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8376208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729462AbeJAVFp (ORCPT
+        id S1729480AbeJAVGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 17:05:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37052 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729378AbeJAVFp (ORCPT
+        Mon, 1 Oct 2018 17:06:17 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:41417 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729378AbeJAVGR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 17:05:45 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 80EA8601DA; Mon,  1 Oct 2018 14:27:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538404060;
-        bh=V60tHifDm3NlAkqi+4FxBHwYykHmND9jnXP4yC66Rr4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HyRVuB0MrgF4853ufifIDO5U9K1V6wekoFctt2++kxv7A1Sdlqct0qAyChLOLmiFe
-         9uPU6/FSTOfyYA+9Ap6Pn6T4345n50QG2SYGVV1xZgH8WXO7e16KwYBk0TKVT/CHkb
-         +jXUPD7B6DYzgYw2izvy82ERi7I6/QECfPTdTy80=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4A32F60128;
-        Mon,  1 Oct 2018 14:27:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538404059;
-        bh=V60tHifDm3NlAkqi+4FxBHwYykHmND9jnXP4yC66Rr4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Wq2mZ8GLh3sgA/PFM1t1F1mR33UQJmFqviR4FAGRnkVcSv7oHPWPLOELmj9rZD2He
-         KUa+MmfvOZ1t8PoOYJRu+DLMbEWBfzNs8jM4N8ZD6ILeHOjPy8Bg4+OKi/yAFzcrCK
-         nuPc7Ws1oq2SSmbggHSD72ByRzLa/fXHsggZml4o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A32F60128
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v2] gpiolib: Show correct direction from the beginning
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Timur Tabi <timur@kernel.org>, Stephen Boyd <swboyd@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>
-References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
- <20180921103604.13361-2-ricardo.ribalda@gmail.com>
- <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
- <ffe11a8c-368b-8c74-54a7-a088c3997032@kernel.org>
- <3e07cab8-0f3e-7474-8f6d-e6bb16e8f998@codeaurora.org>
- <5aea282d-6fc9-cd70-cec4-10f28aa819b9@codeaurora.org>
- <CAOZdJXUUWUWHzus+3sbEXbW_q92e+SSzTQJCqCyQp6Y6_HOo3g@mail.gmail.com>
- <D3E6F4C4-E1C4-4D88-B118-878576BF5281@gmail.com>
- <CACRpkdawwrpEe6AAfdaxw6OMFXkCnq0gpznk1Up5p1=Wigx_2g@mail.gmail.com>
- <CAPybu_1P-RWCP8yjQKkFYAX11KtYGhAfASY24Q_NZ19PD09gxA@mail.gmail.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <79878ad4-1c2a-39fa-5baa-042140a6f1ad@codeaurora.org>
-Date:   Mon, 1 Oct 2018 08:27:39 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 1 Oct 2018 17:06:17 -0400
+Received: by mail-yw1-f68.google.com with SMTP id q129-v6so5531759ywg.8
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 07:28:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=pnUyy63nV0ASgHMX4OU7rJuubaauBOh5id8/u7V+nQw=;
+        b=efGyXneVWA7wQPqtKBfpMHPWcQpaHbmLF/YdjoWO4d8f/KVpQ9YS94BB8ncpuvNiCu
+         DNjc7r+QgQutXUqBb8avzCYR31kf501HTms23RT7SIhVp+JswGQarrf+7oDUp2+/kPFM
+         SCrr+iSqOYm029QldBNcKgCucMuZXuZVwGsB72Bwz8/YPKSu9cIJUA4fUJrhlIZvBXDH
+         InLhyu7VxK0kcDx5LTCucrZA7CnGEaU11KEYp1ooyLJlb78UzHmZireo9o0TiXM6RH1j
+         wYzKdKE2ZLiV10TTkXkVweI3Qpow0IKiRBond5q1JZ/Fj28n+dyvnt8TVbyhF2ru4V8x
+         cngQ==
+X-Gm-Message-State: ABuFfoj1QvZW+UMhKh9bs+mnxM9hvnbDoVRR/untO8KCSv5E/47l0sIJ
+        indE1P7anmPQFpa70vYF/yKfapC9sPA=
+X-Google-Smtp-Source: ACcGV62iPZOS9Igw2b/6ArfNcDv2+RDqMN5Dt7TpPbDp3cBybMoaagD56y4C5+WH5F1Pt0ypV+FlCA==
+X-Received: by 2002:a0d:fac3:: with SMTP id k186-v6mr5882218ywf.456.1538404091353;
+        Mon, 01 Oct 2018 07:28:11 -0700 (PDT)
+Received: from laptop.jcline.org (075-177-179-204.res.spectrum.com. [75.177.179.204])
+        by smtp.gmail.com with ESMTPSA id q1-v6sm343863ywa.92.2018.10.01.07.28.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 07:28:10 -0700 (PDT)
+Subject: Re: [PATCH] scripts: spdxcheck: resovle decode warning for python3
+To:     Shubham Singh <dhoni.singh094@gmail.com>, tglx@linutronix.de
+Cc:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+References: <20181001083846.9650-1-dhoni.singh094@gmail.com>
+From:   Jeremy Cline <jcline@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jcline@redhat.com; keydata=
+ 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
+ X/87hZ4pdW/aOXUAgQ==
+Message-ID: <0923f0fe-53dc-a1e8-4db6-895d63db2b0d@redhat.com>
+Date:   Mon, 1 Oct 2018 10:28:09 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAPybu_1P-RWCP8yjQKkFYAX11KtYGhAfASY24Q_NZ19PD09gxA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181001083846.9650-1-dhoni.singh094@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -82,62 +111,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/1/2018 7:36 AM, Ricardo Ribalda Delgado wrote:
-> Hi Linus
-> On Mon, Oct 1, 2018 at 1:54 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->>
->> On Fri, Sep 28, 2018 at 9:30 PM Ricardo Ribalda Delgado
->> <ricardo.ribalda@gmail.com> wrote:
->>
->>> How do we proceed from here? Can you fix your driver somehow to
->>> init the valid mask before enabling the gpio?
->>
->> Just include a hunk to the qcom driver reordering this call
->> at the same time. No need to make it separate patches,
->> it need to be tested together anyways.
->>
->> I guess just switch the order of these two:
->>
->>          ret = gpiochip_add_data(&pctrl->chip, pctrl);
->>          if (ret) {
->>                  dev_err(pctrl->dev, "Failed register gpiochip\n");
->>                  return ret;
->>          }
->>
->>          ret = msm_gpio_init_valid_mask(chip, pctrl);
->>          if (ret) {
->>                  dev_err(pctrl->dev, "Failed to setup irq valid bits\n");
->>                  gpiochip_remove(&pctrl->chip);
->>                  return ret;
->>          }
->>
+Hi Shubham,
+
+On 10/01/2018 04:38 AM, Shubham Singh wrote:
+> From: shubhsherl <dhoni.singh094@gmail.com>
 > 
-> the problem is that valid_mask is not a long/integer, is a struct that
-> needs to be malloced, and is malloc at gpiochip_add_data :(
+> Resolve a warning issue by spdxcheck in Python3
+> FAIL: 'str' object has no attribute 'decode'
 > 
-> Maybe we need a callback from the driver to init that mask just after
-> the allocation?
+> Signed-off-by: Shubham Singh <dhoni.singh094@gmail.com>
+> ---
+>  scripts/spdxcheck.py | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> A fast grep shows that the only driver using need_valid_mask (not for
-> irq) is msm:
-> 
-> ricardo@neopili:~/curro/kernel-upstream$ git grep "need_valid_mask ="
-> | grep -v irq
-> drivers/gpio/gpiolib.c: gpiochip->need_valid_mask = true;
-> drivers/pinctrl/intel/pinctrl-cherryview.c: bool need_valid_mask =
-> !dmi_check_system(chv_no_valid_mask);
-> drivers/pinctrl/qcom/pinctrl-msm.c: chip->need_valid_mask =
-> msm_gpio_needs_valid_mask(pctrl);
-> 
-> so hacking something in the driver might not be a terrible idea.
+> diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
+> index 839e190bbd7a..6eea4073f28a 100755
+> --- a/scripts/spdxcheck.py
+> +++ b/scripts/spdxcheck.py
+> @@ -168,7 +168,8 @@ class id_parser(object):
+>          self.curline = 0
+>          try:
+>              for line in fd:
+> -                line = line.decode(locale.getpreferredencoding(False), errors='ignore')
+> +                if type(line) != str:
+> +                    line = line.decode(locale.getpreferredencoding(False), errors='ignore')
+>                  self.curline += 1
+>                  if self.curline > maxlines:
+>                      break
 > 
 
-IMO, hack up the driver and I'll test it.  We can figure out what is 
-needed to work, then determine what is the proper solution for that.
+This looks to be a fix for the same issue addressed by
+"[PATCH] scripts/spdxcheck.py: improve Python 3 compat"[0].
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Can you reproduce the warning with that patch?
+
+[0] https://marc.info/?l=linux-kernel&m=153713239404809
