@@ -2,126 +2,103 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 837FBC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D67AC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:12:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B42E208D9
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:09:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f/Q+eqld"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B42E208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 40A2E208D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:12:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A2E208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbeJAUrR (ORCPT
+        id S1729421AbeJAUuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:47:17 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43666 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729510AbeJAUrR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:47:17 -0400
-Received: by mail-qt1-f193.google.com with SMTP id q41-v6so9248717qtq.10
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 07:09:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RY3HKB+TyUP3amVnvz9Y2c9t1655d5bAFZ+R+AscHTU=;
-        b=f/Q+eqldULC5lasigz27PLcZVVOevnudQOQUgyy+LMUe0NRvzgqsSKg10PDsMQtcZ3
-         aQIffzaazM8G+OC3Fdt7IHjbncTfjHTFoLbEofy1/LLzYnaB+p+4xxha3fOPCIhir2y4
-         7hRBzQc0b6IFCUOywRLZHHhICsW7W3knjFYtDNLnRlkWxxlQ9fQfMYz3WURDLoIXSIIx
-         nmLwEt0LcRRUDZhkDlq+p5IyG5CVDKCRveXPYtQAmxcgN8y1ZdedPlFjjfja727L/IGt
-         1LH1H4HJXfG/tKWvgMACBP7Rw54rGDaaWprIHIElENoyfwY8UKu50Iw4mnlu38e58teL
-         KCiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=RY3HKB+TyUP3amVnvz9Y2c9t1655d5bAFZ+R+AscHTU=;
-        b=K+ar5QXGgaTWMEVGhsGihTBm6yz0O8mQp2Glh6p2GkrZBrx92n9HbnZRKwJoVNRWXE
-         YkLXTHdmn8SZz0CDL4A7ybzauBaNF6P4lvGChvoH9IXB3JJmUSJnCPtTalCJlalRdZMx
-         /3xNVRU9m7ySmNCFxH+gzeBN0d1b5Q8ZNBX4JTuYoR53agTBhZbPQ1x9L+fzSeQM62Fl
-         XdggknXbmIjhN6PrJzQnpS/gHQj5KBY+kb2iHABVB4KrdKz5aCPMh7RNHhFWz3x+Nuvh
-         HgN/0dI4O5rvm7qR4Q/a1Dx4dtaBf/vhsE0SZDS4ccD3j5YNv6KOJ4vUyGQ3NeaMyAiT
-         ZyoA==
-X-Gm-Message-State: ABuFfojdwrpkKQTPCqqxhtPx5vR03sQY2N5nVaw36Ku+gZWKDV7qFtDB
-        Gm6Qg+KKwpJWFB02wTCe1g==
-X-Google-Smtp-Source: ACcGV62+/LhwTeWdIHl0J/HbcLevvzUSuwR64skHH/zr/y7Yx7fOtC4wvBMLNhrOJgYc/2ACTlr7KA==
-X-Received: by 2002:a0c:88a5:: with SMTP id 34-v6mr8611855qvn.220.1538402957334;
-        Mon, 01 Oct 2018 07:09:17 -0700 (PDT)
-Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id j19-v6sm5714496qtr.6.2018.10.01.07.09.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 07:09:16 -0700 (PDT)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Baoquan He <bhe@redhat.com>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/3] docs: kernel-parameters.txt: document rand_mem_physical_padding
-Date:   Mon,  1 Oct 2018 10:08:43 -0400
-Message-Id: <20181001140843.26137-4-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181001140843.26137-1-msys.mizuma@gmail.com>
-References: <20181001140843.26137-1-msys.mizuma@gmail.com>
+        Mon, 1 Oct 2018 16:50:46 -0400
+Received: from mga12.intel.com ([192.55.52.136]:22296 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729386AbeJAUup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 16:50:45 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 07:12:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,327,1534834800"; 
+   d="scan'208";a="91115618"
+Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
+  by fmsmga002.fm.intel.com with ESMTP; 01 Oct 2018 07:12:42 -0700
+Date:   Mon, 1 Oct 2018 22:18:10 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        H Peter Anvin <hpa@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Stuart R . Anderson" <stuart.r.anderson@intel.com>,
+        alan@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/earlyprintk: Add a force option for pciserial
+ device
+Message-ID: <20181001141810.fbo3amfqnr5243mc@shbuild888>
+References: <20180928094008.23138-1-feng.tang@intel.com>
+ <20180929163458.GA25608@zn.tnic>
+ <20180930131619.jecqh4umrkmifavb@shbuild888>
+ <20181001123916.GC7269@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001123916.GC7269@zn.tnic>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Hi Boris,
 
-This kernel parameter allows to change the padding used
-for the physical memory mapping section when KASLR
-memory is enabled.
+On Mon, Oct 01, 2018 at 02:39:16PM +0200, Borislav Petkov wrote:
+> On Sun, Sep 30, 2018 at 09:16:19PM +0800, Feng Tang wrote:
+> > Got your point. As the following [,baudrate] is also optional, and this
+> > "force" could be the last option for pciserial. The check may be
+> > 
+> > 	if (!strncmp(s, "force,", 6) || !strncmp(s, "force ", 6)) {
+> > 		force = 1;
+> > 		s += 6;
+> > 	}
+> 
+> You have !strncmp(s, "force,", 6) twice in there. I have no clue what
+> you're trying to say.
 
-For memory hotplug capable systems, the default padding size,
-CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING, may not be enough.
-The option is useful to adjust the padding size.
+I was trying to address your last comments:
 
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
----
- .../admin-guide/kernel-parameters.txt          | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+"No, you need to force the presence of "," otherwise cmdlines like this:
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 92eb1f4..4c4c5e6 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3529,6 +3529,24 @@
- 			fully seed the kernel's CRNG. Default is controlled
- 			by CONFIG_RANDOM_TRUST_CPU.
- 
-+	rand_mem_physical_padding=
-+			[KNL] Define the padding size in terabytes
-+			used for the physical memory mapping section
-+			when KASLR is enabled.
-+			If the padding size is not enough, you can see
-+			'Set rand_mem_physical_padding=XX ...' in system
-+			boot message, so set the parameter as the message.
-+
-+			This parameter is useful for the memory hot-add capable
-+			system. Such system may have more space than
-+			actual memory size to hot-add memory. If the
-+			padding size is not enough and a memory is hot-added,
-+			the hot-adding will fail because it destroys the
-+			system memory map. So, the padding size is needed to
-+			adjust in such system.
-+			The default value is
-+			CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING.
-+
- 	ras=option[,option,...]	[KNL] RAS-specific options
- 
- 		cec_disable	[X86]
--- 
-2.18.0
+earlyprintk=pciserial,0:XX.X,forcedoodoo
 
+work too."
+
+As I rechecked, the baud rate for pciserial is optional, so there may
+be no ",baudrate" following the "force". So this 2 strncmp is to
+cover conditions for with and without baudrate.
+
+> 
+> > Do you mean this? 
+> > 
+> > 	if (((classcode >> 16 != PCI_CLASS_COMMUNICATION_MODEM) &&
+> > 	     (classcode >> 16 != PCI_CLASS_COMMUNICATION_SERIAL)) ||
+> > 	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */ {
+> > 		if (!force)
+> > 			return;
+> > 	}
+> 
+> Yes.
+
+Ok, thanks
+
+
+Thanks,
+Feng
