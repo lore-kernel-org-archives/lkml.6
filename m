@@ -2,137 +2,171 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA2EC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 816BDC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B456206B2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:47:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FD55206B2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:49:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar-com.20150623.gappssmtp.com header.i=@cyphar-com.20150623.gappssmtp.com header.b="XwnmqFNW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B456206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="X2MVzJlJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FD55206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbeJAMXg (ORCPT
+        id S1728732AbeJAMZu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 08:23:36 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38115 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728632AbeJAMXg (ORCPT
+        Mon, 1 Oct 2018 08:25:50 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:48235 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728593AbeJAMZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 08:23:36 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x17-v6so8358698pfh.5
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 22:47:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cyphar-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Oub3t6UK/hXUbaNzlHXW0mdpmVCxoVTuxVMCOjtYxPM=;
-        b=XwnmqFNW58WVDFh6U5VucsJIt+LoAWXqQOZc0ljct3QpE+aYcn81TvV3UlSNYDpwSE
-         sgl4BFOs+Ojkvt2L9ScoiLDjPZZ/RcwKlJXqc1raZU3bEhdKC22Ou/bZemA6AwbEFsI+
-         MACz28aqZR49eXB0UZi4JVTw64a5hdgQySTy3+XJGLlaUUXEwTnHSyXZy+Lp0epoP8ak
-         x9TL1/aCtrPc74R/FNj1LqgYpoLrGBvM0k/c2FB0fzaqWmBrT1cIaJjpZ2bYpQKE1e86
-         67naodYWuPjcdVe6q+KqMM3qtFgi5BG1q+6br5OK8rTLa8oCFTaIDTIufPKdzUX+Ii0+
-         VkeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Oub3t6UK/hXUbaNzlHXW0mdpmVCxoVTuxVMCOjtYxPM=;
-        b=B+wqN5QXsLlusyJ+eIKjE1szE7zSzzdScq68SZeZzWQIIGEsrnyV2kl9ets2lqzpiI
-         9tMSxOED+gLWojPx49ihjBs6KfXay2xfkn20yMt4I3YH6fQ2OMUzvN2mAghnIWy6/B/+
-         NYdeP14ryjiOlRMuViSslRAStW7Tsr91LoTu3kKjYMrrRog8RT9ABvysXB/m1OntEPRs
-         ckGdC+GyszAhpTPZpvuE/j/39lKyTHSp+T5TMmyoXM82dRiTJOdSKFwg7WvnlqiZ4Eix
-         Rs885kLCv4lbHW6A/GMO0PZOxCmOVpyzpnYsFD95iS3B9BaxKahR/QVWwGpJcxTQjTJC
-         b2KA==
-X-Gm-Message-State: ABuFfogwR6CL2APrx4n/UEZdc+jRyyDwg2CN40+S2+vpwsk1KBxyWu+X
-        M1/r2fTOGg6pnAhgk+BaQWVS8w==
-X-Google-Smtp-Source: ACcGV63i+AP83syi4h87bMc7i/rt4+e+yDxUPyWJkfhdLiU1U6JaLp5MqDK3isH0DXpUdebP27R48A==
-X-Received: by 2002:a62:6948:: with SMTP id e69-v6mr9733696pfc.166.1538372853942;
-        Sun, 30 Sep 2018 22:47:33 -0700 (PDT)
-Received: from ryuk (pa49-199-140-183.pa.vic.optusnet.com.au. [49.199.140.183])
-        by smtp.gmail.com with ESMTPSA id y19-v6sm22622694pff.14.2018.09.30.22.47.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 30 Sep 2018 22:47:33 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 15:47:23 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Tycho Andersen <tycho@tycho.ws>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
-        containers@lists.linux-foundation.org
-Subject: Re: [PATCH 0/3] namei: implement various scoping AT_* flags
-Message-ID: <20181001054723.lekp3nqgctdyly7m@ryuk>
-References: <20180929103453.12025-1-cyphar@cyphar.com>
- <20181001040821.GP31060@dastard>
+        Mon, 1 Oct 2018 08:25:50 -0400
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id w915nhl9026741;
+        Mon, 1 Oct 2018 14:49:43 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w915nhl9026741
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1538372984;
+        bh=Qnw6nfv2f5Qfhbl6CcKxxBJpYuyhxpkGAFyiVgJV+BE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=X2MVzJlJn2/a1+FprtsEbUVyFee8l4lY0RG8UJgIjEom/1NzC6EUIYq/RS6lHis5c
+         jFVdFzePf8tg5WTjx8+xQ2BReCX48uMSMh4ddvoFCJqDjQfxYk3C3n/5zxXkYOMkNp
+         CDqz8D4xZUtp2Ii1hmH9UoUMyoMzxh8kXa4MulNqGwTQwblQ/dlHGwTPHYmfQb6Uqq
+         dJmpzkfdKV7IzNdeODt9aAzspuAT45rd+0cTC36a+vps8z5nJLm0L6SvsxlQidPoYJ
+         RuVXLMikOdN1C/82GeDy0hFBuP3sme/07u2XxBSJdd9UeKoVYFP5jZxFyi+IvJCxl8
+         FqaOeD62HAiUQ==
+X-Nifty-SrcIP: [209.85.221.178]
+Received: by mail-vk1-f178.google.com with SMTP id 125-v6so390145vkx.13;
+        Sun, 30 Sep 2018 22:49:43 -0700 (PDT)
+X-Gm-Message-State: ABuFfojj2FjYUlMx61R87hCVhLMqkFOdAgct4BdNWD7UFFV8/F7DPYxl
+        gxVbD8HjLF6hYeMryUeV84r9plv8JonjEMzizXg=
+X-Google-Smtp-Source: ACcGV62iRmxiHkB3QMTJljzoGoephgbyQk5RidQoVpOMzclvUjQgLINmFzCENJujD3tHwm/uyOI4PiPdrnFhgJZdJcU=
+X-Received: by 2002:a1f:28e:: with SMTP id 136-v6mr3353329vkc.34.1538372982761;
+ Sun, 30 Sep 2018 22:49:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tnspunvdzgqmlf36"
-Content-Disposition: inline
-In-Reply-To: <20181001040821.GP31060@dastard>
-User-Agent: NeoMutt/20180716
+References: <20180910150403.19476-1-robh@kernel.org> <20180910150403.19476-7-robh@kernel.org>
+ <CAL_Jsq+=VbdcVLiwXbOA5d+R2YY6=2Pw2bQpci-jj-JvereD1A@mail.gmail.com>
+ <CAK7LNAQFqhWw+LwDoypGG=OP6tH4qf2tT=LvtchK2GoiNyzDXg@mail.gmail.com>
+ <CAMuHMdWEnoh97_jiDWMq=ke4PrhSFbToYnx91CPLBuq3mOGzoQ@mail.gmail.com>
+ <CAK7LNATkkOiYPj2RLubcgZ_z59Bhz4GkgWqPMbnaHBk7EisXLg@mail.gmail.com> <20180928154150.GA25013@bogus>
+In-Reply-To: <20180928154150.GA25013@bogus>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 1 Oct 2018 14:49:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATiSbwVfCRNsDOyksfq5wcv0pnNQYnMXdo2yRyE7fcn-Q@mail.gmail.com>
+Message-ID: <CAK7LNATiSbwVfCRNsDOyksfq5wcv0pnNQYnMXdo2yRyE7fcn-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 6/9] kbuild: consolidate Devicetree dtb build rules
+To:     Rob Herring <robh@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Michal Simek <monstr@monstr.eu>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:H8/300 ARCHITECTURE" 
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        nios2-dev@lists.rocketboards.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-xtensa@linux-xtensa.org, Will Deacon <will.deacon@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ley Foon Tan <ley.foon.tan@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Rob,
 
---tnspunvdzgqmlf36
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2018-10-01, Dave Chinner <david@fromorbit.com> wrote:
-> > I've added some selftests for this, but it's not clear to me whether
-> > they should live here or in xfstests (as far as I can tell there are no
-> > other VFS tests in selftests, while there are some tests that look like
-> > generic VFS tests in xfstests). If you'd prefer them to be included in
-> > xfstests, let me know.
->=20
-> xfstests, please. That way the new functionality will get immediate
-> coverage by all the main filesystem development and distro QA
-> teams....
+2018=E5=B9=B49=E6=9C=8829=E6=97=A5(=E5=9C=9F) 0:43 Rob Herring <robh@kernel=
+.org>:
 
-Sure, will do. Do you want me to submit them in parallel -- and what is
-the correct ML to submit changes to xfstests? Sorry for the silly
-questions. :P
+> +#
+> -------------------------------------------------------------------------=
+--
+> +# Devicetree files
+> +
+> +ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/boot/dts/),)
+> +dtstree :=3D arch/$(SRCARCH)/boot/dts
+> +endif
+> +
+> +ifneq ($(dtstree),)
+> +
+> +%.dtb : scripts_dtc
+
+%.dtb: prepare3 prepare
+
+
+because we need to make sure KERNELRELEASE
+is correctly defined before dtbs_install happens.
+
+
+> +       $(Q)$(MAKE) $(build)=3D$(dtstree) $(dtstree)/$@
+> +
+> +PHONY +=3D dtbs dtbs_install
+> +dtbs: scripts_dtc
+
+
+dtbs: prepare3 scripts_dtc
+
+
+
+> +       $(Q)$(MAKE) $(build)=3D$(dtstree)
+> +
+> +dtbs_install: dtbs
+
+
+Please do not have dtbs_install to depend on dtbs.
+
+No install targets should ever trigger building anything
+in the source tree.
+
+
+For the background, see the commit log of
+19514fc665ffbce624785f76ee7ad0ea6378a527
+
+
+
+
+> +       $(Q)$(MAKE) $(dtbinst)=3D$(dtstree)
+> +
+> +ifdef CONFIG_OF_EARLY_FLATTREE
+> +all: dtbs
+> +endif
+> +
+> +endif
+> +
+> +PHONY +=3D scripts_dtc
+> +scripts_dtc: scripts_basic
+> +       $(Q)$(MAKE) $(build)=3Dscripts/dtc
+> +
+>  #
+> -------------------------------------------------------------------------=
+--
+>  # Modules
+>
+
 
 --=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---tnspunvdzgqmlf36
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAluxtOsACgkQnhiqJn3b
-jbQqAg//WFcKNlV1tSPzHG9JTv//wyGl9FY6gqg86/RbsjUwLuAPhlMi+hSqSvgB
-7WMN1zMF5fnW1wxMqsj8vkL6WkYpcWxDxrVp4OBIi7iN3g734edhe5UZEpGgHm5S
-QJqOQEfPwaVTOSJZojNnxoU7mzJGT20BptjhgRSlPR0MpnvA5rYfnZClYgfY0+zr
-kdo1DQ2KbRt9kes+PxbTMre+COcVfXQvtV37Ydsyx7+PR8x1sCBBIQgGrELIF87t
-EOrWy84gOja/4YSMqdXfqcwBiTI+UxmP8ulpC3nNKSwuDvwPRXNUUnJy1RHYlfCt
-Zb3c2WTRZU0RhHjttajJGyAzF/ZERRBOWpBxePFgtP5z2Q5djuQohDP6ugqV9XFu
-SgSG1wOKM9ptJlm1/NdC4Y47JrUuBxuQ0BU8uIjVpJssuyPXj7NGW1DHbL4i0PNm
-uD9KdpKzYGVEvNHcywFHKabG6AqNOriki8h/BUc5GR79xadeEjpr2SUXD+0NSw4O
-YKl677M45mQcasqzNlJrz+ASGJO18xnXrGIeCO1NtvjOCDsYoCOdaygQ27J4rXxo
-2UrvoUyiaAzC1FhQceqq+LaPl+kY1DBtfTvKxIc6pS/WHVS+ntUOJgRVrPpdqZ0B
-//8nJAGOjETFHFRKkWz5jaOsXJL4gl2JhJId88X1FIW97C2fbf4=
-=hNmN
------END PGP SIGNATURE-----
-
---tnspunvdzgqmlf36--
+Best Regards
+Masahiro Yamada
