@@ -2,123 +2,256 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7E4C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F303C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77E962064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:41:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77E962064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C7242064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:42:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="OVYru40/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C7242064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbeJARSx (ORCPT
+        id S1729124AbeJARTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 13:18:53 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46728 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728999AbeJARSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 13:18:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ADADC18A;
-        Mon,  1 Oct 2018 03:41:42 -0700 (PDT)
-Received: from [10.4.12.81] (melchizedek.Emea.Arm.com [10.4.12.81])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FB573F5B3;
-        Mon,  1 Oct 2018 03:41:41 -0700 (PDT)
-Subject: Re: [PATCH v5 5/6] arm64/mm: Populate the swapper_pg_dir by fixmap.
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org
-References: <20180917044333.30051-1-yaojun8558363@gmail.com>
- <20180917044333.30051-6-yaojun8558363@gmail.com>
- <20180924163619.rx7bae67i5isq2fy@lakrids.cambridge.arm.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <24c91d6c-85c8-afb4-74d1-202e4d780ab6@arm.com>
-Date:   Mon, 1 Oct 2018 11:41:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 1 Oct 2018 13:19:22 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38669 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729060AbeJARTW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 13:19:22 -0400
+Received: by mail-wr1-f65.google.com with SMTP id a13-v6so2645190wrt.5
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 03:42:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KPUXJxFzfx17HCf3DduXRicvGC+b8niBfxP/R2v4zdU=;
+        b=OVYru40/5Q55qASQI9RUW7wL48iiHx2GTaDvaFvSlYtgHRp4pJhLLMpv3hC4UR3maA
+         sJsAR/UiP5ssGeljyApiV8N2hqleBw9FN2G+98nhaaRDQh9Ou9nN8xDY0EBDLv/fhmQq
+         Fu8aOccpBXH3gYwqGkakiszDnoTR+hOL5TgaW7LpjuxNYI6SLXcsDNBpA6cEKl6I8a1c
+         nz9kEbxxLqGfylNtZtsd3dJa8BshLA6vTu6L8Ep8OxKyXqXwSFDnhDUq2z1PdU2wsoTO
+         Cb5E+muN6eIYsrJrNVyjeoq9QqOv2AcS9hsAGstt/xbrrDghHbu3zfYwOY+y+Xak5/KX
+         yNiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KPUXJxFzfx17HCf3DduXRicvGC+b8niBfxP/R2v4zdU=;
+        b=b14/W4mer5o/isgDa4kQncvxodAHHPl24xCNNxjSCNpVf6JaTuqccZ+9uBqjIyelT+
+         fnVKjN5cdbQBHfhJJ4Ghbk9tqakkRNYecpfl5Pu6Rcrlyf7kOMvjs68k8Xj+RFzRD3+b
+         TLFxAW284UgbQRXg3qOlrz0q8D7V+ZFyjp9EHk2tbZTuscCBCPE8WHg/60t+XpUQbSB4
+         3AabXTcacAKSRDBE1dfQ6ZECnuY880jtz0HdVzij3QDM1cKxFWsKxAEaSFhf+2P2hEjM
+         sYAFrKEXNPHRQ8iakr2gY+SBpVONF2NhYSGLmp2sYguFNIRZqw0LY4FWnhAUHSLast09
+         kEiQ==
+X-Gm-Message-State: ABuFfoi1Razuc2fHIiT4uieaMOIk+i/gLy52dPuv2g2IzJxcjnOI/qm/
+        zRqUjb2VG3JypRXpWtaG9cZo3A==
+X-Google-Smtp-Source: ACcGV63bop5XwYkPbtZZ2vL7LBviIsXKLoUrjblgc0pX1XCFyD7pDOGLNbDgXIh8pTlNeMzoWts1vQ==
+X-Received: by 2002:a5d:450d:: with SMTP id s13-v6mr6632763wrq.82.1538390530127;
+        Mon, 01 Oct 2018 03:42:10 -0700 (PDT)
+Received: from brauner.io (u-087-c227.eap.uni-tuebingen.de. [134.2.87.227])
+        by smtp.gmail.com with ESMTPSA id t2-v6sm12555070wre.96.2018.10.01.03.42.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 01 Oct 2018 03:42:09 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 12:42:03 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jann Horn <jannh@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, jlayton@kernel.org,
+        Bruce Fields <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path
+ resolution
+Message-ID: <20181001104202.f6tz54s3fbvld56g@brauner.io>
+References: <20180929103453.12025-1-cyphar@cyphar.com>
+ <20180929131534.24472-1-cyphar@cyphar.com>
+ <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
+ <20181001054246.gfinmx3api7kjhmc@ryuk>
 MIME-Version: 1.0
-In-Reply-To: <20180924163619.rx7bae67i5isq2fy@lakrids.cambridge.arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20181001054246.gfinmx3api7kjhmc@ryuk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
-
-On 24/09/18 17:36, Mark Rutland wrote:
-> On Mon, Sep 17, 2018 at 12:43:32PM +0800, Jun Yao wrote:
->> Since we will move the swapper_pg_dir to rodata section, we need a
->> way to update it. The fixmap can handle it. When the swapper_pg_dir
->> needs to be updated, we map it dynamically. The map will be
->> canceled after the update is complete. In this way, we can defend
->> against KSMA(Kernel Space Mirror Attack).
-
->> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> index 71532bcd76c1..a8a60927f716 100644
->> --- a/arch/arm64/mm/mmu.c
->> +++ b/arch/arm64/mm/mmu.c
->> @@ -67,6 +67,24 @@ static pte_t bm_pte[PTRS_PER_PTE] __page_aligned_bss;
->>  static pmd_t bm_pmd[PTRS_PER_PMD] __page_aligned_bss __maybe_unused;
->>  static pud_t bm_pud[PTRS_PER_PUD] __page_aligned_bss __maybe_unused;
->>  
->> +static DEFINE_SPINLOCK(swapper_pgdir_lock);
->> +
->> +void set_swapper_pgd(pgd_t *pgdp, pgd_t pgd)
->> +{
->> +	pgd_t *fixmap_pgdp;
->> +
->> +	spin_lock(&swapper_pgdir_lock);
->> +	fixmap_pgdp = pgd_set_fixmap(__pa(pgdp));
->> +	WRITE_ONCE(*fixmap_pgdp, pgd);
->> +	/*
->> +	 * We need dsb(ishst) here to ensure the page-table-walker sees
->> +	 * our new entry before set_p?d() returns. The fixmap's
->> +	 * flush_tlb_kernel_range() via clear_fixmap() does this for us.
->> +	 */
->> +	pgd_clear_fixmap();
->> +	spin_unlock(&swapper_pgdir_lock);
->> +}
+On Mon, Oct 01, 2018 at 03:44:28PM +1000, Aleksa Sarai wrote:
+> On 2018-09-29, Jann Horn <jannh@google.com> wrote:
+> > The problem is what happens if a folder you are walking through is
+> > concurrently moved out of the chroot. Consider the following scenario:
+> > 
+> > You attempt to open "C/../../etc/passwd" under the root "/A/B".
+> > Something else concurrently moves /A/B/C to /A/C. This can result in
+> > the following:
+> > 
+> > 1. You start the path walk and reach /A/B/C.
+> > 2. The other process moves /A/B/C to /A/C. Your path walk is now at /A/C.
+> > 3. Your path walk follows the first ".." up into /A. This is outside
+> > the process root, but you never actually encountered the process root,
+> > so you don't notice.
+> > 4. Your path walk follows the second ".." up to /. Again, this is
+> > outside the process root, but you don't notice.
+> > 5. Your path walk walks down to /etc/passwd, and the open completes
+> > successfully. You now have an fd pointing outside your chroot.
+> > 
+> > If the root of your walk is below an attacker-controlled directory,
+> > this of course means that you lose instantly. If you point the root of
+> > the walk at a directory out of which a process in the container
+> > wouldn't be able to move the file, you're probably kinda mostly fine -
+> > as long as you know, for certain, that nothing else on the system
+> > would ever do that. But I still wouldn't feel good about that.
 > 
-> I'm rather worried that we could deadlock here.
+> Please correct me if I'm wrong here (this is the first patch I've
+> written for VFS). Isn't the retry/LOOKUP_REVAL code meant to handle this
+> -- or does that only handle if a particular path component changes
+> *while* it's being walked through? Is it possible for a path walk to
+> succeed after a path component was unmounted (obviously you can't delete
+> a directory path component since you'd get -ENOTEMPTY)?
+> 
+> If this is an issue for AT_THIS_ROOT, I believe this might also be an
+> issue for AT_BENEATH since they are effectively both using the same
+> nd->root trick (so you could similarly trick AT_BENEATH to not error
+> out). So we'd need to figure out how to solve this problem in order for
+> AT_BENEATH to be safe.
+> 
+> Speaking naively, doesn't it make sense to invalidate the walk if a path
+> component was modified? Or is this something that would be far too
+> costly with little benefit? What if we do more aggressive nd->root
+> checks when resolving with AT_BENEATH or AT_THIS_ROOT (or if nd->root !=
+> current->mnt_ns->root)?
+> 
+> Regarding chroot attacks, I was aware of the trivial
+> chroot-open-chroot-fchdir attack but I was not aware that there was a
+> rename attack for chroot. Thanks for bringing this up!
+> 
+> > I believe that the only way to robustly use this would be to point the
+> > dirfd at a mount point, such that you know that being moved out of the
+> > chroot is impossible because the mount point limits movement of
+> > directories under it. (Well, technically, it doesn't, but it ensures
+> > that if a directory does dangerously move away, the syscall fails.) It
+> > might make sense to hardcode this constraint in the implementation of
+> > AT_THIS_ROOT, to keep people from shooting themselves in the foot.
+> 
+> Unless I'm missing something, would this not also affect using a
+> mountpoint as a dirfd-root (with MS_MOVE of an already-walked-through
+> path component) -- or does MS_MOVE cause a rewalk in a way that rename
+> does not?
+> 
+> I wouldn't mind tying AT_THIS_ROOT to only work on mountpoints (I
+> thought that bind-mounts would be an issue but you also get -EXDEV when
+> trying to rename across bind-mounts even if they are on the same
+> underlying filesystem). But AT_BENEATH might be a more bitter pill to
+> swallow. I'm not sure.
+> 
+> In the usecase of container runtimes, we wouldn't generally be doing
+> resolution of attacker-controlled paths but it still definitely doesn't
+> hurt to consider this part of the threat model -- to avoid foot-gunning
+> as you've said. (There also might be some nested-container cases where
+> you might want to do that.)
+> 
+> > > Currently most container runtimes try to do this resolution in
+> > > userspace[1], causing many potential race conditions. In addition, the
+> > > "obvious" alternative (actually performing a {ch,pivot_}root(2))
+> > > requires a fork+exec which is *very* costly if necessary for every
+> > > filesystem operation involving a container.
+> > 
+> > Wait. fork() I understand, but why exec? And actually, you don't need
+> > a full fork() either, clone() lets you do this with some process parts
+> > shared. And then you also shouldn't need to use SCM_RIGHTS, just keep
+> > the file descriptor table shared. And why chroot()/pivot_root(),
+> > wouldn't you want to use setns()?
+> 
+> You're right about this -- for C runtimes. In Go we cannot do a raw
+> clone() or fork() (if you do it manually with RawSyscall you'll end with
+> broken runtime state). So you're forced to do fork+exec (which then
+> means that you can't use CLONE_FILES and must use SCM_RIGHTS). Same goes
+> for CLONE_VFORK.
+> 
+> (It should be noted that multi-threaded C runtimes have somewhat similar
+> issues -- AFAIK you can technically only use AS-Safe glibc functions
+> after a fork() but that's more of a theoretical concern here. If you
+> just use raw syscalls there isn't an issue.)
+> 
+> As for why use setns() rather than pivot_root(), there are cases where
+> you're operating on a container's image without a running container
+> (think image extraction or snapshotting tools). In those cases, you
+> would need to set up a dummy container process in order to setns() into
+> its namespaces. You are right that setns() would be a better option if
+> you want the truthful state of what mounts the container sees.
+> 
+> [I also don't like the idea of joining the user namespace of a malicious
+> container unless it's necessary but that's probably just needless
+> paranoia more than anything -- since you're not joining the pidns you
+> aren't trivially addressable by a malicious container.]
+> 
+> > // Ensure that we are non-dumpable. Together with
+> > // commit bfedb589252c, this ensures that container root
+> > // can't trace our child once it enters the container.
+> > // My patch
+> > // https://lore.kernel.org/lkml/1451098351-8917-1-git-send-email-jann@thejh.net/
+> > // would make this unnecessary, but that patch didn't
+> > // land because Eric nacked it (for political reasons,
+> > // because people incorrectly claimed that this was a
+> > // security fix):
+> 
+> Unless I'm very much mistaken this was fixed by bfedb589252c ("mm: Add a
+> user_ns owner to mm_struct and fix ptrace permission checks"). If you
+> join a user namespace then processes within that user namespace won't
+> have ptrace_may_access() permissions because your mm is owned by an
+> ancestor user namespace -- only after exec() will you be traceable.
 
-We can use the irqsave versions if you're worried, but I think any code doing
-this is already broken.
+That is not _completely_ true. 
+Iirc (Please someone do yell at me if I'm wrong!), this is as follows.
+You will in fact be dumpable as long as you don't set{g,u}id() to an
+effective uid that is different from the effective uid of the process
+that created the task. For example, if you clone(CLONE_NEWUSER) as an
+unprivileged user with uid and euid 1000 you are in fact dumpable and
+thus traceable *but* if you do a setuid(0) in the new task then you will
+end up with old->euid = 1000 and new->euid = 0 at which point the kernel
+will remove the dumpable flag and the creating process cannot trace you
+anymore (which has funny consequences for lsm isolation and sending fds
+around). Iiuc, The same logic applies when you do a setns() to another
+user namespace.
 
-(I'd like to eventually depend on the init_mm.page_table_lock for this, but it
-isn't held when the vmemmap is being populated.)
+	/* dumpability changes */
+	if (!uid_eq(old->euid, new->euid) ||
+	    !gid_eq(old->egid, new->egid) ||
+	    !uid_eq(old->fsuid, new->fsuid) ||
+	    !gid_eq(old->fsgid, new->fsgid) ||
+	    !cred_cap_issubset(old, new)) {
+		if (task->mm)
+			set_dumpable(task->mm, suid_dumpable); <<< suid_dumpable == 0 at this point
+		task->pdeath_signal = 0;
+		smp_wmb();
+	}
+
+> 
+> We still use PR_SET_DUMPABLE in runc but that's because we support older
+> kernels (and people don't use user namespaces under Docker) but with
+> user namespaces this should not be required anymore.
+> 
+> -- 
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> <https://www.cyphar.com/>
 
 
-> Are we certain we never poke the kernel page tables in IRQ context?
-
-The RAS code was doing this, but was deemed unsafe, and changed to use the
-fixmap: https://lkml.org/lkml/2017/10/30/500
-The fixmap only ever touches the last level, so can't hit this.
-
-x86 can't do its IPI tlb-maintenance from IRQ context, so anything trying to
-unmap from irq context is already broken: https://lkml.org/lkml/2018/9/6/324
-
-vunmap()/vfree() is allowed from irq context, but it defers its work.
-
-I can't find any way to pass GFP_ATOMIC into ioremap(),
-I didn't think vmalloc() could either, ...  but now I spot __vmalloc() does...
-
-This __vmalloc() path is used by the percpu allocator, which starting from
-pcpu_alloc() can be passed something other than GFP_KERNEL, and uses
-spin_lock_irqsave(), so it is expecting to be called in irq context.
-
-... so yes it looks like this can happen.
-
-I'll post a fix
-
-
-Thanks!
-
-James
