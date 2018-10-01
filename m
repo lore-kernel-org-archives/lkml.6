@@ -2,96 +2,82 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE47C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE1FC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E362082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:36:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zYE4+uDa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E362082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3922F2082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:39:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3922F2082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbeJBAPQ (ORCPT
+        id S1726354AbeJBARy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:15:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60202 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725740AbeJBAPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:15:15 -0400
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A125321476;
-        Mon,  1 Oct 2018 17:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538415383;
-        bh=MvrhLc7wACbzdQ0HyvEfh+Q4uODZP/Sa/Hz9E2Jyp+Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zYE4+uDa3+GWqFrivcPoDkwAiq3mSNVNY4oLrkt1l/HczKkhNUDDPuc4FXaxwEaV8
-         HJo1k4/gELgvwjnyDWC6u8R2pnthYcrNA6iPvXGLUDmC7WJgBATShbUREuAcb8IkKR
-         PAzTa8fSYyBKsE39adSATNvMZ3x5xcdTfl9mNN6w=
-Received: by mail-qk1-f179.google.com with SMTP id q12-v6so8599402qkl.13;
-        Mon, 01 Oct 2018 10:36:23 -0700 (PDT)
-X-Gm-Message-State: ABuFfohocoRNpxPB/BZ2ofmSaTwujBStPRi1bZqZDWPmbs7olOK+n/HS
-        WiTRNPChdiYh56BSW2egNAi5tLLXNqEb1SjUTQ==
-X-Google-Smtp-Source: ACcGV62ixXGyF8N9W3rgDQU+4hFHArJNZ8U0VCEBW/0Y8jYdXHwRnO5XV+92STiD22Snjjpk6E/xEnvktYE8whTwQj0=
-X-Received: by 2002:a37:ddcf:: with SMTP id u76-v6mr8830136qku.184.1538415382819;
- Mon, 01 Oct 2018 10:36:22 -0700 (PDT)
+        Mon, 1 Oct 2018 20:17:54 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43141 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725740AbeJBARy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 20:17:54 -0400
+Received: from hanvin-mobl2.amr.corp.intel.com (jfdmzpr03-ext.jf.intel.com [134.134.139.72])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w91HccaW1651456
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Mon, 1 Oct 2018 10:38:39 -0700
+Subject: Re: [PATCH v2] x86/boot: define CC_HAVE_ASM_GOTO
+To:     ndesaulniers@google.com, bp@alien8.de, mingo@redhat.com,
+        tglx@linutronix.de
+Cc:     x86@kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+References: <20180927204800.32210-1-ndesaulniers@google.com>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <d98d47ea-b639-8afd-2851-1f7ceaf66fd0@zytor.com>
+Date:   Mon, 1 Oct 2018 10:38:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
- <20180830144541.17740-5-vivek.gautam@codeaurora.org> <20181001121857.GA31488@arm.com>
-In-Reply-To: <20181001121857.GA31488@arm.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 1 Oct 2018 12:36:09 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+dSGXCiWsjLt00wu=s-ZW8M1pkQqKFWboc54M8gHFTYg@mail.gmail.com>
-Message-ID: <CAL_Jsq+dSGXCiWsjLt00wu=s-ZW8M1pkQqKFWboc54M8gHFTYg@mail.gmail.com>
-Subject: Re: [PATCH v16 4/5] dt-bindings: arm-smmu: Add bindings for qcom,smmu-v2
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Clark <robdclark@gmail.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sricharan <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180927204800.32210-1-ndesaulniers@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 7:18 AM Will Deacon <will.deacon@arm.com> wrote:
->
-> On Thu, Aug 30, 2018 at 08:15:40PM +0530, Vivek Gautam wrote:
-> > Add bindings doc for Qcom's smmu-v2 implementation.
-> >
-> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> > Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > ---
-> >  .../devicetree/bindings/iommu/arm,smmu.txt         | 39 ++++++++++++++++++++++
-> >  1 file changed, 39 insertions(+)
->
-> It would be nice to have an Ack from a DT maintainer on this, since it's
-> adding new compatible strings...
+On 09/27/18 13:47, ndesaulniers@google.com wrote:
+> Early prototypes of Clang with asm goto support produce 6 instances of
+> the following warning:
+> 
+> In file included from arch/x86/boot/compressed/misc.h:20:
+> In file included from ./include/linux/elf.h:5:
+> In file included from ./arch/x86/include/asm/elf.h:8:
+> In file included from ./include/linux/thread_info.h:38:
+> In file included from ./arch/x86/include/asm/thread_info.h:53:
+> ./arch/x86/include/asm/cpufeature.h:150:2: warning: "Compiler lacks
+> ASM_GOTO support. Add -D __BPF_TRACING__ to your compiler arguments"
+> [-W#warnings]
+> your compiler arguments"
+>  ^
+> 
+> Since 6 files under arch/x86/boot/compressed/ include
+> arch/x86/boot/compressed/misc.h AND
+> arch/x86/boot/compressed/Makefile happens to redefine KBUILD_CFLAGS,
+> which set these variables in the top level MAKEFILE.
+> 
 
-I did...
+The Right Thing[TM] would probably be to split the CFLAGS into those
+that are independent of x86_64 vs i386. After all, there is no
+fundamental reason we couldn't want to use asm goto in the setup or
+real-mode code in the future.  In addition to BIOS entry code there is
+the EFI32 code.
 
-Rob
+	-hpa
