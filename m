@@ -3,186 +3,142 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C69C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B15C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDCEC205C9
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:06:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDCEC205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 8316720666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:21:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8316720666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729155AbeJARoK (ORCPT
+        id S1729143AbeJAR6b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 13:44:10 -0400
-Received: from mx.socionext.com ([202.248.49.38]:27883 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728921AbeJARoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 13:44:09 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 01 Oct 2018 20:06:52 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id F18BB180B60;
-        Mon,  1 Oct 2018 20:06:52 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 1 Oct 2018 20:06:52 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 54C92402FD;
-        Mon,  1 Oct 2018 20:06:52 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 0F607120487;
-        Mon,  1 Oct 2018 20:06:52 +0900 (JST)
-Date:   Mon, 01 Oct 2018 20:06:51 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH v2 2/2] PCI: controller: dwc: add UniPhier PCIe host controller support
-Cc:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Murali Karicheri <m-karicheri2@ti.com>, <marc.zyngier@arm.com>
-In-Reply-To: <20180928110640.GA18840@e107981-ln.cambridge.arm.com>
-References: <20180927164426.ECD6.4A936039@socionext.com> <20180928110640.GA18840@e107981-ln.cambridge.arm.com>
-Message-Id: <20181001200651.368C.4A936039@socionext.com>
+        Mon, 1 Oct 2018 13:58:31 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:36378 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728921AbeJAR6b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 13:58:31 -0400
+Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w91BLBRe043815;
+        Mon, 1 Oct 2018 20:21:11 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp);
+ Mon, 01 Oct 2018 20:21:11 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w91BL6pR043803
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 1 Oct 2018 20:21:11 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <49d22738-17ad-410a-be0a-d27d76ba9f37@i-love.sakura.ne.jp>
+ <20180914115028.GB20572@tigerII.localdomain>
+ <e855cbef-03ff-b4ac-3e06-d2f2f48cfb1f@i-love.sakura.ne.jp>
+ <20180914122217.GA518@tigerII.localdomain>
+ <a661ed7f-889a-1811-0ada-111cc5185d05@i-love.sakura.ne.jp>
+ <7dadfa8c-1f69-ae0f-d747-dbbc9f97c2b6@i-love.sakura.ne.jp>
+ <20180928090939.GE1160@jagdpanzerIV>
+ <3b378c7d-c613-4a8d-67f8-946fac8ad0b0@i-love.sakura.ne.jp>
+ <20180929105151.GA1392@tigerII.localdomain>
+ <91efcff8-dc6d-b7b4-9ac8-2f3882289f95@i-love.sakura.ne.jp>
+ <20181001023721.GA6409@jagdpanzerIV>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <880ef52f-dff7-af91-5353-f63513265ffe@i-love.sakura.ne.jp>
+Date:   Mon, 1 Oct 2018 20:21:05 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+In-Reply-To: <20181001023721.GA6409@jagdpanzerIV>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
-
-On Fri, 28 Sep 2018 12:06:40 +0100 <lorenzo.pieralisi@arm.com> wrote:
-
-> [+Murali, Marc]
+On 2018/10/01 11:37, Sergey Senozhatsky wrote:
+> On (09/29/18 20:15), Tetsuo Handa wrote:
+>>
+>> Because there is no guarantee that memory information is dumped under the
+>> oom_lock mutex. The oom_lock is held when calling out_of_memory(), and it
+>> cannot be held when reporting GFP_ATOMIC memory allocation failures.
 > 
-> On Thu, Sep 27, 2018 at 04:44:26PM +0900, Kunihiko Hayashi wrote:
-> > Hi Lorenzo, Gustavo,
-> > 
-> > On Wed, 26 Sep 2018 21:31:36 +0900 <hayashi.kunihiko@socionext.com> wrote:
-> > 
-> > > Hi Lorenzo, Gustavo,
-> > > 
-> > > Thank you for reviewing.
-> > > 
-> > > On Tue, 25 Sep 2018 18:53:01 +0100
-> > > Gustavo Pimentel <gustavo.pimentel@synopsys.com> wrote:
-> > > 
-> > > > On 25/09/2018 17:14, Lorenzo Pieralisi wrote:
-> > > > > [+Gustavo, please have a look at INTX/MSI management]
-> > > > > 
-> > > > > On Thu, Sep 06, 2018 at 06:40:32PM +0900, Kunihiko Hayashi wrote:
-> > > > >> This introduces specific glue layer for UniPhier platform to support
-> > > > >> PCIe host controller that is based on the DesignWare PCIe core, and
-> > > > >> this driver supports Root Complex (host) mode.
-> > > > > 
-> > > > > Please read this thread and apply it to next versions:
-> > > > > 
-> > > > > https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Dpci-26m-3D150905742808166-26w-3D2&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=H8UNDDUGQnQnqfWr4CBios689dJcjxu4qeTTRGulLmU&s=CgcXc_2LThyOpW-4bCriJNo9H1lzROEdy_cG9p-Y5hU&e=
-> > > 
-> > > I also found this thread in previous linux-pci, and I think it's helpful for me.
-> > > I'll check it carefully.
-> > 
-> > [snip]
-> > 
-> > > > >> +	ret = devm_request_irq(dev, pp->irq, uniphier_pcie_irq_handler,
-> > > > >> +			       IRQF_SHARED, "pcie", priv);
-> > > > > 
-> > > > > This is wrong, you should set-up a chained IRQ for INTX.
-> > > > > 
-> > > > > I *think* that
-> > > > > 
-> > > > > ks_pcie_setup_interrupts()
-> > > > > 
-> > > > > is a good example to start with but I wonder whether it is worth
-> > > > > generalizing the INTX approach to designware as a whole as it was
-> > > > > done for MSIs.
-> > > > > 
-> > > > > Thoughts ?
-> > > > 
-> > > > From what I understood this is for legacy IRQ, right?
-> > > 
-> > > Yes. For legacy IRQ.
-> > > 
-> > > > Like you (Lorenzo) said there is 2 drivers (pci-keystone-dw.c and pci-dra7xx.c)
-> > > > that uses it and can be use as a template for handling this type of interrupts.
-> > > > 
-> > > > We can try to pass some kind of generic INTX function to the DesignWare host
-> > > > library to handling this, but this will require some help from keystone and
-> > > > dra7xx maintainers, since my setup doesn't have legacy IRQ HW support.
-> > > 
-> > > Now I think it's difficult to make a template for INTX function,
-> > > and at first, I'll try to re-write this part with reference to pci-keystone-dw.c.
-> > 
-> > I understand that there are 2 types of interrupt and the drivers.
-> > 
-> > One like pci-keystone-dw.c is:
-> > 
-> >  - there are 4 interrupts for legacy,
-> >  - invoke handlers for each interrupt, and handle the interrupt,
-> >  - call irq_set_chained_handler_and_data() to make a chain of the interrupts
-> >   when initializing
-> > 
-> > The other like pci-dra7xx.c is:
-> > 
-> >  - there is 1 IRQ for legacy as a parent,
-> >  - check an interrupt factor register, and handle the interrupt correspond
-> >    to the factor,
-> >  - call request_irq() for the parent IRQ and irq_domain_add_linear() for
-> >    the factor when initializing
-> > 
-> > The pcie-uniphier.c is the same type as the latter (like pci-dra7xx.c).
-> > 
-> > However, in pci-dra7xx.c, MSI and legacy IRQ share the same interrupt number,
-> > so the same handler is called and the handler divides these IRQs.
-> > (found in dra7xx_pcie_msi_irq_handler())
-> > 
-> > In pcie-uniphier.c, MSI and legacy IRQ are independent.
-> > Therefore it's necessary to prepare the handler for the legacy IRQ.
-> > 
-> > I think that it's difficult to apply the way of pci-keystone-dw.c, and
-> > uniphier_pcie_irq_handler() and calling devm_request_irq() are still
-> > necessary to handle legacy IRQ.
+> IOW, static pr_line buffer needs additional synchronization for OOM. Correct?
+
+Yes (assuming that your OOM refer to both out_of_memory() and warn_alloc()).
+And since warn_alloc() might be called from atomic/intrrupt contexts, we can't
+use locks for synchronization.
+
 > 
-> I do not think it is difficult, the difference is that keystone has
-> 1 GIC irq line allocated per legacy IRQ, your set-up has one for
-> all INTX.
+> If we are about to have a list of printk buffers then we probably can
+> define a list of NR_CPUS cont buffers. And we probably can reuse the
+> existing struct cont for buffered printk, having 2 different struct-s
+> for the same thing - struct cont and struct printk_buffer - is not very
+> cool.
 
-I read other drivers to handle INTX like pcie-mediatek.c, pcie-altera.c,
-and so forth, and understood the common way to rewrite it with chained IRQ.
+My plan is to remove "struct cont" after most of KERN_CONT users are
+converted to use buffered_printk(). There will be 2 different struct-s
+only during transition period.
 
-Using irq_set_chained_handler_and_data() instead of devm_request_irq()
-and adding chained_irq_{enter, exit}() to the handler can allow INTX
-to handle chained IRQ.
+By the way, only up to two threads (the active printer thread and a thread
+which is marked as console_waiter) can stall inside printk(), doesn't it?
+Then, can you imagine a situation where 1024 (NR_CPUS) threads are stalling
+inside printk() waiting for flush? Such system is already dead. All callers
+but the two should release printk_buffer as soon as their printk() added their
+message to the log buffer.
 
-Now I can rewrite INTX part with the above way in v3, though,
-I'm not sure whether there is a way to generalize INTX of all dwc drivers,
-because of the followings:
+Maybe "struct printk_buffer" after all becomes identical to "struct cont". But
+I guess that even 16 printk_buffer-s is practically sufficient for 1024 CPUs
+system, and allocating NR_CPUS printk_buffer-s will be too wasteful.
 
-- the handler needs to read SoC-dependent register to check which an IRQ line
-  of {0,1,2,3},
-- domain_ops functions are different for each driver
-  (using handle_simple_irq or handle_level_irq, etc.)
-- the way to get child interrupt-controller node might be different.
+> 
+>> But I don't want line buffered printk() API to truncate upon out of
+>> space for line buffered printk() API.
+> 
+> All printk()-s are limited by LOG_LINE_MAX. Buffered printk() is not
+> special.
 
-Anyway I think we need to leave these topics until clarifying keystone's
-linear irq topic.
+I'm saying that I don't like discarding overflowed part because you are
+using seq_buf_vprintf() which just marks "overflowed" rather than
+"flush incomplete line" and "store the new data".
 
----
-Best Regards,
-Kunihiko Hayashi
+ DEFINE_PR_LINE(pr);
 
+ pr_line(&pr, "1234567890123456789012345678901234567890123456789012345678901234567890");
+ pr_line(&pr, "1234567890abcde\n");
+
+will discard "1234567890abcde\n" part, won't it?
+I think that getting
+
+ 1234567890123456789012345678901234567890123456789012345678901234567890\n
+ 1234567890abcde\n
+
+is better than getting
+
+ 1234567890123456789012345678901234567890123456789012345678901234567890\n
+
+because we can still understand such output by prefixing caller information.
+
+Your DEFINE_PR_LINE() is limiting to far smaller than LOG_LINE_MAX.
+Since your version has to worry about "buffer full" (i.e. hitting
+seq_buf_set_overflow()) case, it might become a headache for API users.
 
