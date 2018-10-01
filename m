@@ -2,151 +2,134 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8047DC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EF6C64EAD
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:15:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DC5E2083C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:15:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DC5E2083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CD1C82083C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:15:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1C82083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbeJAPwU (ORCPT
+        id S1729099AbeJAPwe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 11:52:20 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45356 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728808AbeJAPwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 11:52:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61AD37A9;
-        Mon,  1 Oct 2018 02:15:33 -0700 (PDT)
-Received: from [10.4.13.85] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E3E33F5B3;
-        Mon,  1 Oct 2018 02:15:31 -0700 (PDT)
-Subject: Re: [RFC 5/5] MIPS: Add Realtek RTL8186 SoC support
-To:     Yasha Cherikovsky <yasha.che3@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180930141510.2690-1-yasha.che3@gmail.com>
- <20180930141510.2690-6-yasha.che3@gmail.com>
- <a7bba9bd-dab3-4f92-465f-e05beee2b9e3@arm.com>
- <ceced0d550bc30d4f3e66d2c7f569c39ca890ce4.camel@gmail.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <351da67a-b1e6-7972-5c91-0f204690080f@arm.com>
-Date:   Mon, 1 Oct 2018 10:15:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 1 Oct 2018 11:52:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50260 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728808AbeJAPwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 11:52:34 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7D95E20828; Mon,  1 Oct 2018 11:15:43 +0200 (CEST)
+Received: from qschulz (AAubervilliers-681-1-24-95.w90-88.abo.wanadoo.fr [90.88.144.95])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 23851206A2;
+        Mon,  1 Oct 2018 11:15:43 +0200 (CEST)
+Date:   Mon, 1 Oct 2018 11:15:43 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, f.fainelli@gmail.com,
+        allan.nielsen@microchip.com, linux-mips@linux-mips.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        antoine.tenart@bootlin.com
+Subject: Re: [PATCH net-next 2/7] net: phy: mscc: add support for VSC8584 PHY
+Message-ID: <20181001091543.q4mshrpmbn7tlkdn@qschulz>
+References: <cover.b921b010b6d6bde1c11e69551ae38f3b2818645b.1536916714.git-series.quentin.schulz@bootlin.com>
+ <a61d9affd3f1ec9deb60c882cce1daf37fbe2427.1536916714.git-series.quentin.schulz@bootlin.com>
+ <20180914172754.GC3811@lunn.ch>
 MIME-Version: 1.0
-In-Reply-To: <ceced0d550bc30d4f3e66d2c7f569c39ca890ce4.camel@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hgwqmmf3egdwz2lm"
+Content-Disposition: inline
+In-Reply-To: <20180914172754.GC3811@lunn.ch>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/10/18 09:48, Yasha Cherikovsky wrote:
-> Hi Marc,
-> 
-> On Mon, 2018-10-01 at 09:19 +0100, Marc Zyngier wrote:
->> Hi Yasha,
->>
->> On 30/09/18 15:15, Yasha Cherikovsky wrote:
->>> The Realtek RTL8186 SoC is a MIPS based SoC
->>> used in some home routers [1][2].
->>>
->>> The hardware includes Lexra LX5280 CPU with a TLB,
->>> two Ethernet controllers, a WLAN controller and more.
->>>
->>> With this patch, it is possible to successfully boot
->>> the kernel and load userspace on the Edimax BR-6204Wg
->>> router.
->>> Network drivers support will come in future patches.
->>>
->>> This patch includes:
->>> - New MIPS rtl8186 platform
->>>       - Core platform setup code (mostly DT based)
->>>       - New Kconfig option
->>>       - defconfig file
->>>       - MIPS zboot UART support
->>> - RTL8186 interrupt controller driver
->>> - RTL8186 timer driver
->>> - Device tree files for the RTL8186 SoC and Edimax BR-6204Wg
->>>     router
->>>
->>> [1] https://www.linux-mips.org/wiki/Realtek_SOC#Realtek_RTL8186
->>> [2] https://wikidevi.com/wiki/Realtek_RTL8186
->>>
->>> Signed-off-by: Yasha Cherikovsky <yasha.che3@gmail.com>
->>> Cc: Ralf Baechle <ralf@linux-mips.org>
->>> Cc: Paul Burton <paul.burton@mips.com>
->>> Cc: James Hogan <jhogan@kernel.org>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: Jason Cooper <jason@lakedaemon.net>
->>> Cc: Marc Zyngier <marc.zyngier@arm.com>
->>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>> Cc: Rob Herring <robh+dt@kernel.org>
->>> Cc: Mark Rutland <mark.rutland@arm.com>
->>> Cc: linux-mips@linux-mips.org
->>> Cc: devicetree@vger.kernel.org
->>> Cc: linux-kernel@vger.kernel.org
->>> ---
->>>    arch/mips/Kbuild.platforms                    |   1 +
->>>    arch/mips/Kconfig                             |  17 ++
->>>    arch/mips/boot/compressed/uart-16550.c        |   5 +
->>>    arch/mips/boot/dts/Makefile                   |   1 +
->>>    arch/mips/boot/dts/realtek/Makefile           |   4 +
->>>    arch/mips/boot/dts/realtek/rtl8186.dtsi       |  86 +++++++
->>>    .../dts/realtek/rtl8186_edimax_br_6204wg.dts  |  45 ++++
->>>    arch/mips/configs/rtl8186_defconfig           | 112 +++++++++
->>>    arch/mips/include/asm/mach-rtl8186/rtl8186.h  |  37 +++
->>>    arch/mips/rtl8186/Makefile                    |   2 +
->>>    arch/mips/rtl8186/Platform                    |   7 +
->>>    arch/mips/rtl8186/irq.c                       |   8 +
->>>    arch/mips/rtl8186/prom.c                      |  15 ++
->>>    arch/mips/rtl8186/setup.c                     |  80 +++++++
->>>    arch/mips/rtl8186/time.c                      |  10 +
->>>    drivers/clocksource/Kconfig                   |   9 +
->>>    drivers/clocksource/Makefile                  |   1 +
->>>    drivers/clocksource/timer-rtl8186.c           | 220
->>> ++++++++++++++++++
->>>    drivers/irqchip/Kconfig                       |   5 +
->>>    drivers/irqchip/Makefile                      |   1 +
->>>    drivers/irqchip/irq-rtl8186.c                 | 107 +++++++++
->>
->> Could you please split this into at least three patches (arch code,
->> clocksource, irqchip) to ease the review?
->>
->> Thanks,
->>
->> 	M.
-> 
-> Currently the RTL8186_IRQ and the RTL8186_TIMER Kconfig entries depend on
-> MACH_RTL8186 (which is added in the MIPS portion of the same patch).
-> Also, MACH_RTL8186 in MIPS selects these two options.
-> 
-> What is the best way to split that?
 
-It is absolutely fine to have something depending on a non-selectable 
-config option, which would allow you to split things up as finely as you 
-want. Just have the patch enabling the config option last.
+--hgwqmmf3egdwz2lm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Andrew,
+
+On Fri, Sep 14, 2018 at 07:27:54PM +0200, Andrew Lunn wrote:
+>=20
+> >  struct vsc8531_private {
+> >  	int rate_magic;
+> >  	u16 supp_led_modes;
+> > @@ -181,6 +354,7 @@ struct vsc8531_private {
+> >  	struct vsc85xx_hw_stat *hw_stats;
+> >  	u64 *stats;
+> >  	int nstats;
+> > +	bool pkg_init;
+>=20
+> > +/* bus->mdio_lock should be locked when using this function */
+> > +static int vsc8584_cmd(struct mii_bus *bus, int phy, u16 val)
+> > +{
+> > +	unsigned long deadline;
+> > +	u16 reg_val;
+> > +
+> > +	__mdiobus_write(bus, phy, MSCC_EXT_PAGE_ACCESS,
+> > +			MSCC_PHY_PAGE_EXTENDED_GPIO);
+> > +
+> > +	__mdiobus_write(bus, phy, MSCC_PHY_PROC_CMD, PROC_CMD_NCOMPLETED | va=
+l);
+>=20
+> Hi Quentin
+>=20
+> All the __mdiobus_write() look a bit ugly.
+
+I agree :)
+
+> Maybe add bus and base_addr
+> to the vsc8531_private structure. Then add helpers
+> phy_write_base_phy(priv, reg, val) and phy_read_base_phy(priv, reg).
+>=20
+
+ACK.
+
+> You could also add in:
+>=20
+>         if (unlikely(!mutex_is_locked(&priv->bus->mdio_lock))) {
+>                 dev_err(bus->dev, "MDIO bus lock not held!\n");
+>                 dump_stack();
+>         }
+>=20
+> Having such code in the mv88e6xxx driver has found a few bugs for me.
+>=20
+
+ACK.
 
 Thanks,
+Quentin
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+--hgwqmmf3egdwz2lm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlux5b4ACgkQhLiadT7g
+8aM6XBAAptT581qBE7XY42MTueijWuoRMYjMOlA7VzybiZ80bMxZtrhQMHZIvWiq
+GMOU26VIK+N253/u3oQMKIO8eSX3lRRuG2Tp7UN44LNtIfeFX2LhTfeuvVkyAjvJ
+JY/ZXxq4r9Vkos1QEHoJOR91/289iDB2JYdf1JZ01nXfmA677FSrIzbCm8iGO4aF
+muMuW2i9X2gEaTZargBfM6JNsIwWZJlRimzPlOuzhQQB3R8o8DK2XABHrB8AoiTn
+Q1r54EsLPlL2i4V7zUlRyybrU+O+6q0uYA+0Q2SGhBmX8SlTMwF7B1VZHZVyrITm
+df1EMiOlnwqprzao36mClnOnvREz2/j/oh6nbxS2LD6tBR+hEa4cTL3TdZuAky6i
+Omr400D3nedo9QMG9l2iHaVdHbaW3xWZINnA46SzmO+CcO0E0KQBwXgimoGRHkgE
+Zlj/eD2hPVu1zZgeAtwiBjTl76nM6vo37OmVaOgiJaovz74VW/dzpOfICiAU5hza
+jWdxHRyYcWJuRWCoYk9hiKP6pt2MkRaUHrANGlq+4X0Bfjw/E9yzo4qSlikN0INi
+8RrfNCK61mSxZhjPzjs0iW/3jVIYUTi3xJ2iIAa7Il8tiNAp2ofTqA9xldfpKm6T
+JeAAKcSgLZvRqpvNEAtgFsyOadGzzF7yu0xys5h5op9VKHDKHHk=
+=xTTz
+-----END PGP SIGNATURE-----
+
+--hgwqmmf3egdwz2lm--
