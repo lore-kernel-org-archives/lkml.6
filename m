@@ -2,59 +2,59 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCC1C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E785C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13ECE20684
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:38:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAB0F2089C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:38:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ao1xQ2Ll"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13ECE20684
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ktz7qqlS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB0F2089C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729381AbeJATQV (ORCPT
+        id S1729412AbeJATQ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 15:16:21 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:32775 "EHLO
+        Mon, 1 Oct 2018 15:16:27 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37951 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729333AbeJATQV (ORCPT
+        with ESMTP id S1729320AbeJATQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:16:21 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y18-v6so9414491pge.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 05:38:43 -0700 (PDT)
+        Mon, 1 Oct 2018 15:16:26 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r77-v6so9400409pgr.5
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 05:38:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=G+ZhbjziC642b1eH4/+/2vgJPs1mdcz2f+MeBZpXx04=;
-        b=ao1xQ2LlTlpMDkVxJEG+bk984hAcHv1qrEkfU/NYsxPAMQeoTjO4fOemHHthNkuDyR
-         scx1IP0LQ6awQpOTCEYtzzfLHwO1z9Rvdk+5P1HSnew9AaaptmsHeiuufwA0OJ0HyGwG
-         yYqOro8qmUwaDn6z5fQT3pZtVgYbxnqd4+W5E=
+        bh=C9OBy+U1NW8in6jPZ1eqMRPpUZk14fgu1Kgje70cQpo=;
+        b=Ktz7qqlSeqbvhayLW4R9we1ZkpVT1cEBnCutO+7B7nEAXw0akgn1wUaWjg7Z6QGcOc
+         Uw67HQpq+YV8XFxp1rTvGum1fkMs/SVeeXRRKXoRKOQyytCl9HxZS1YLleM5/OPwcBsv
+         maSih6z+E5kWODaIHqaxBkctc6j5AXRqnTGN4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=G+ZhbjziC642b1eH4/+/2vgJPs1mdcz2f+MeBZpXx04=;
-        b=bhKFgH5n//ZeKD3ogHV6MEico4Pew/XENOMIIh54w6SlSDekziX2PEGzvBaulH9TJT
-         PvezpgPfJFqgHveCBhLBGDauJFykGJChwoDEXYcJ7LlNOFMse6b+ousGOJCcOlJa8CgZ
-         Up0U28yDCJNS3l5oLZUgf52O90b2IYgZtwIISYUO4/OPPFza9LkkyZcFmQrvuLlCUeiI
-         /64SBOz5vO3EhrDp5GZUjp4UD2j66X70fKASk5GXYgy1hwL2WEO64iO8PSh7gpza2AND
-         WeLTOqHxBO4mxD+bjQIMMSMxno0FeIU/NufBllKLJjy77uHN27OjryRNFZQhQ04h/49q
-         AaCg==
-X-Gm-Message-State: ABuFfohvSgTV79f0nmGpz1PULydqwnRSyazCp8mbiFLNThxqvaXKfFvX
-        lcuVlB0vBPwv0jOC5p0O0l+Ubw==
-X-Google-Smtp-Source: ACcGV62qTK2X5wSv88CQpsCd0uvVEzyd1I9joGklUIn4C31/jsdWWXNkc240B73QSWmXax294SRF1g==
-X-Received: by 2002:a62:1c06:: with SMTP id c6-v6mr11408987pfc.41.1538397523566;
-        Mon, 01 Oct 2018 05:38:43 -0700 (PDT)
+        bh=C9OBy+U1NW8in6jPZ1eqMRPpUZk14fgu1Kgje70cQpo=;
+        b=W989RVggTrgHJw2oQw/FEtAs1ey/2wSaXTO3fOQCCf0yVr8Ad8ItrM96gFDTA9I8Yb
+         LezMLd0GSfPRZKJaO/0odxeKYUGonNmv+qN4e2wV7tiaEJuOtI56ZxT3SvDZ4G+KsfMX
+         JtPxGKy+2G7znC1auNXeNjtOxa1LYg8ylqoR7rdjXi97t2gHsM6l33So4I/j7E4jUgRK
+         5orWOmBx+GbKWWf+N5Yu0Ni2ryhkt+H+UkuikLnV2T7LIccm0AcF4gWpsadBx1mEPIxa
+         cFcXyby6ygRYpElrAS9GlGeINOXqLDmfI8oUO+GH+D9B/nJIWbijw7su6sBx6/DpE0ii
+         Z/7g==
+X-Gm-Message-State: ABuFfohlSZBVFRHx5bW0ManAAPyRUbb8MCQEZ8sPDun6sc/mqe0LlG1k
+        4FztqBxWnPBv+8HH+0JpYCzq+A==
+X-Google-Smtp-Source: ACcGV62E9uJdWGoGrTUoZTxLy1w3Ql4sg8ViBQ/R9dxTQ1cchz3lxkG27x7ogyswAAsZ7I/dOBTEhQ==
+X-Received: by 2002:a17:902:1ab:: with SMTP id b40-v6mr11799943plb.82.1538397528898;
+        Mon, 01 Oct 2018 05:38:48 -0700 (PDT)
 Received: from qualcomm-HP-ZBook-14-G2.domain.name ([49.207.59.231])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm21329345pfh.20.2018.10.01.05.38.38
+        by smtp.gmail.com with ESMTPSA id o12-v6sm21329345pfh.20.2018.10.01.05.38.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 01 Oct 2018 05:38:43 -0700 (PDT)
+        Mon, 01 Oct 2018 05:38:48 -0700 (PDT)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-m68k@lists.linux-m68k.org,
@@ -65,9 +65,9 @@ To:     Geert Uytterhoeven <geert@linux-m68k.org>,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v3 1/5] m68k: rename system call table file name
-Date:   Mon,  1 Oct 2018 18:07:53 +0530
-Message-Id: <1538397477-4003-2-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH v3 2/5] m68k: replace NR_syscalls macro from asm/unistd.h
+Date:   Mon,  1 Oct 2018 18:07:54 +0530
+Message-Id: <1538397477-4003-3-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538397477-4003-1-git-send-email-firoz.khan@linaro.org>
 References: <1538397477-4003-1-git-send-email-firoz.khan@linaro.org>
@@ -76,39 +76,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The system call table entries are present in syscalltable.S. One of
-the patch in this patch series will auto-generate the system call
-table entries using the system call table generation script and
-which'll replace the existig table file.
+NR_syscalls macro holds the number of system call exist in m68k
+architecture. This macro is currently the part of asm/unistd.h file.
+We have to change the value of NR_syscalls, if we add or delete a
+system call.
 
-In order to come up with a common naming convention across all
-architecture, we need to change the file name to syscall_table.S.
-This change will unify the implementation across all architecture.
+One of patch in this patch series has a script which will generate
+a uapi header based on syscall.tbl file. The syscall.tbl file
+contains the number of system call information. So we have two
+option to update NR_syscalls value.
+
+1. Update NR_syscalls in asm/unistd.h manually by counting the
+   no.of system calls. No need to update NR_syscalls until
+   we either add a new system call or delete an existing system
+   call.
+
+2. We can keep this feature it above mentioned script, that'll
+   count the number of syscalls and keep it in a generated file.
+   In this case we don't need to explicitly update NR_syscalls
+   in asm/unistd.h file.
+
+The 2nd option will be the recommended one. For that, I come up
+with another macro - __NR_syscalls which will be updated by the
+script and it will be present in api/asm/unistd.h. While __NR_syscalls
+isn't strictly part of the uapi, having it as part of the generated
+header to simplifies the implementation. So we need to enclose this
+macro with #ifdef __KERNEL__ to avoid side effects.
 
 Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- arch/m68k/kernel/Makefile                            | 2 +-
- arch/m68k/kernel/{syscalltable.S => syscall_table.S} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename arch/m68k/kernel/{syscalltable.S => syscall_table.S} (100%)
+ arch/m68k/include/asm/unistd.h      | 3 +--
+ arch/m68k/include/uapi/asm/unistd.h | 4 ++++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/m68k/kernel/Makefile b/arch/m68k/kernel/Makefile
-index dbac7f8..5f40ce6 100644
---- a/arch/m68k/kernel/Makefile
-+++ b/arch/m68k/kernel/Makefile
-@@ -15,7 +15,7 @@ extra-$(CONFIG_SUN3)	:= sun3-head.o
- extra-y			+= vmlinux.lds
+diff --git a/arch/m68k/include/asm/unistd.h b/arch/m68k/include/asm/unistd.h
+index 30d0d3f..5072e94 100644
+--- a/arch/m68k/include/asm/unistd.h
++++ b/arch/m68k/include/asm/unistd.h
+@@ -4,8 +4,7 @@
  
- obj-y	:= entry.o irq.o module.o process.o ptrace.o
--obj-y	+= setup.o signal.o sys_m68k.o syscalltable.o time.o traps.o
-+obj-y	+= setup.o signal.o sys_m68k.o syscall_table.o time.o traps.o
+ #include <uapi/asm/unistd.h>
  
- obj-$(CONFIG_MMU_MOTOROLA) += ints.o vectors.o
- obj-$(CONFIG_MMU_SUN3) += ints.o vectors.o
-diff --git a/arch/m68k/kernel/syscalltable.S b/arch/m68k/kernel/syscall_table.S
-similarity index 100%
-rename from arch/m68k/kernel/syscalltable.S
-rename to arch/m68k/kernel/syscall_table.S
+-
+-#define NR_syscalls		380
++#define NR_syscalls __NR_syscalls
+ 
+ #define __ARCH_WANT_OLD_READDIR
+ #define __ARCH_WANT_OLD_STAT
+diff --git a/arch/m68k/include/uapi/asm/unistd.h b/arch/m68k/include/uapi/asm/unistd.h
+index de3054f..ba4176aa 100644
+--- a/arch/m68k/include/uapi/asm/unistd.h
++++ b/arch/m68k/include/uapi/asm/unistd.h
+@@ -387,4 +387,8 @@
+ #define __NR_pwritev2		378
+ #define __NR_statx		379
+ 
++#ifdef __KERNEL__
++#define __NR_syscalls		380
++#endif
++
+ #endif /* _UAPI_ASM_M68K_UNISTD_H_ */
 -- 
 1.9.1
 
