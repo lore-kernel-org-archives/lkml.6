@@ -2,169 +2,93 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D55C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B63D0C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB192089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:38:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB192089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 6786E2083C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:46:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CQh2ltdB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6786E2083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728902AbeJAOOh (ORCPT
+        id S1728830AbeJAOXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 10:14:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:32986 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728731AbeJAOOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 10:14:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 11151ADCE;
-        Mon,  1 Oct 2018 07:38:12 +0000 (UTC)
-Subject: Re: [PATCH 2/2] xen: make xen_qlock_wait() nestable
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, stable@vger.kernel.org,
-        Waiman Long <longman@redhat.com>, peterz@infradead.org
-References: <20181001071641.19282-1-jgross@suse.com>
- <20181001071641.19282-3-jgross@suse.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <8ae7807d-9f0d-e6f2-ef0d-9dce56d06165@suse.com>
-Date:   Mon, 1 Oct 2018 09:38:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20181001071641.19282-3-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+        Mon, 1 Oct 2018 10:23:17 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39551 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728593AbeJAOXR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 10:23:17 -0400
+Received: by mail-wr1-f67.google.com with SMTP id s14-v6so12699391wrw.6
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 00:46:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=9kGGJIEenHcnisA1eMhu6dmnNh5loyWbzbjSC7WoTcM=;
+        b=CQh2ltdBJzUvBDf5kwPmChIPkhSL/jbFc+xQ0bdlAXa/G4lOYbNcXFbBwE9PYyCb5e
+         tS3IvSLAM93ZWl/x04X8SAbUy7BDcjGsFF8Ib3Q5oBUyP2OGIpLEzLF0FlinzH7jIzT1
+         oGlz5PwGGNIGVb5ZO2GqNB0Q01gf68EYaWrQE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9kGGJIEenHcnisA1eMhu6dmnNh5loyWbzbjSC7WoTcM=;
+        b=UIYjMTIZ0tyRs3Uq4si+250HPSMXWoMzciQXBrln1XZbg1KIcO6z/y4VBVGTbyZqhx
+         jg2jwKRIXQpxbZ3Cgh3oaup8S+lEAmNUpF7E0ohpOuQmGZwWnpYyXZUO7t1IWO9orDJz
+         21SzRyVhN/O0OxPnERRvnDcMA7zHrM2RCo9w9dj//e3N5uViE4JMxxTNb6wjCX9wkyVv
+         znvSV7PF3aBaSGAp/BjLLqs5kXWZ6tYOsM+EfBYCeSD//mgDfi/g5dZg8WmsBK7vs0hD
+         cS2jJDxAGB2jvnKGN61ebf8NjpvLuVE7dMXBy+XBgyTE7y7yr336r31/snENtbd9i2nK
+         HY/Q==
+X-Gm-Message-State: ABuFfoi8guC/Rj856VQT1tKRktT4HXM7SW1qpB1reZnLEBU5lAw7VEHw
+        qqh5/4kDLY3nYShA4lDERHxFCQ==
+X-Google-Smtp-Source: ACcGV602d6k32+aggSjy1LLYkZ9NDliVh7UNjMBmXMPCah6WGM9KC2OKl9HkeXA+PAS9e88B1jLUkA==
+X-Received: by 2002:adf:bb02:: with SMTP id r2-v6mr6177304wrg.24.1538380010865;
+        Mon, 01 Oct 2018 00:46:50 -0700 (PDT)
+Received: from lmecxl0911.lme.st.com ([2a04:cec0:1144:47cb:69e8:4e2f:ed2d:bf00])
+        by smtp.gmail.com with ESMTPSA id q15-v6sm9668395wrw.2.2018.10.01.00.46.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 01 Oct 2018 00:46:50 -0700 (PDT)
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     gregkh@linuxfoundation.org, mchehab+samsung@kernel.org,
+        akpm@linux-foundation.org, hans.verkuil@cisco.com, joe@perches.com
+Cc:     linux-kernel@vger.kernel.org,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] MAINTAINERS: fix reference to STI CEC driver
+Date:   Mon,  1 Oct 2018 09:46:40 +0200
+Message-Id: <20181001074640.16342-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Correcting Waiman's mail address
+STI CEC driver has move from staging directory to media/platform/sti/cec/
 
-On 01/10/2018 09:16, Juergen Gross wrote:
-> xen_qlock_wait() isn't safe for nested calls due to interrupts. A call
-> of xen_qlock_kick() might be ignored in case a deeper nesting level
-> was active right before the call of xen_poll_irq():
-> 
-> CPU 1:                                   CPU 2:
-> spin_lock(lock1)
->                                          spin_lock(lock1)
->                                          -> xen_qlock_wait()
->                                             -> xen_clear_irq_pending()
->                                             Interrupt happens
-> spin_unlock(lock1)
-> -> xen_qlock_kick(CPU 2)
-> spin_lock_irqsave(lock2)
->                                          spin_lock_irqsave(lock2)
->                                          -> xen_qlock_wait()
->                                             -> xen_clear_irq_pending()
->                                                clears kick for lock1
->                                             -> xen_poll_irq()
-> spin_unlock_irq_restore(lock2)
-> -> xen_qlock_kick(CPU 2)
->                                             wakes up
->                                          spin_unlock_irq_restore(lock2)
->                                          IRET
->                                            resumes in xen_qlock_wait()
->                                            -> xen_poll_irq()
->                                            never wakes up
-> 
-> The solution is to disable interrupts in xen_qlock_wait() and not to
-> poll for the irq in case xen_qlock_wait() is called in nmi context.
-> 
-> Cc: stable@vger.kernel.org
-> Cc: longman@redhat.com
-> Cc: peterz@infradead.org
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
->  arch/x86/xen/spinlock.c | 24 ++++++++++--------------
->  1 file changed, 10 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
-> index cd210a4ba7b1..e8d880e98057 100644
-> --- a/arch/x86/xen/spinlock.c
-> +++ b/arch/x86/xen/spinlock.c
-> @@ -39,29 +39,25 @@ static void xen_qlock_kick(int cpu)
->   */
->  static void xen_qlock_wait(u8 *byte, u8 val)
->  {
-> +	unsigned long flags;
->  	int irq = __this_cpu_read(lock_kicker_irq);
->  
->  	/* If kicker interrupts not initialized yet, just spin */
-> -	if (irq == -1)
-> +	if (irq == -1 || in_nmi())
->  		return;
->  
-> -	/* If irq pending already clear it and return. */
-> +	/* Guard against reentry. */
-> +	local_irq_save(flags);
-> +
-> +	/* If irq pending already clear it. */
->  	if (xen_test_irq_pending(irq)) {
->  		xen_clear_irq_pending(irq);
-> -		return;
-> +	} else if (READ_ONCE(*byte) == val) {
-> +		/* Block until irq becomes pending (or a spurious wakeup) */
-> +		xen_poll_irq(irq);
->  	}
->  
-> -	if (READ_ONCE(*byte) != val)
-> -		return;
-> -
-> -	/*
-> -	 * If an interrupt happens here, it will leave the wakeup irq
-> -	 * pending, which will cause xen_poll_irq() to return
-> -	 * immediately.
-> -	 */
-> -
-> -	/* Block until irq becomes pending (or perhaps a spurious wakeup) */
-> -	xen_poll_irq(irq);
-> +	local_irq_restore(flags);
->  }
->  
->  static irqreturn_t dummy_handler(int irq, void *dev_id)
-> 
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b22e7fdfd2ea..8aa973410e2f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13870,7 +13870,7 @@ F:	sound/soc/sti/
+ STI CEC DRIVER
+ M:	Benjamin Gaignard <benjamin.gaignard@linaro.org>
+ S:	Maintained
+-F:	drivers/staging/media/st-cec/
++F:	drivers/media/platform/sti/cec/
+ F:	Documentation/devicetree/bindings/media/stih-cec.txt
+ 
+ STK1160 USB VIDEO CAPTURE DRIVER
+-- 
+2.15.0
 
