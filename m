@@ -4,33 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE39CC004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4815EC004D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AFCC2083C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01181208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:46:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Mo1aje4P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AFCC2083C
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="WUmsXtj7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01181208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbeJAHVI (ORCPT
+        id S1730094AbeJAHVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 03:21:08 -0400
-Received: from mail-by2nam03on0114.outbound.protection.outlook.com ([104.47.42.114]:28569
+        Mon, 1 Oct 2018 03:21:20 -0400
+Received: from mail-by2nam03on0104.outbound.protection.outlook.com ([104.47.42.104]:65184
         "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729043AbeJAHPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 03:15:48 -0400
+        id S1729832AbeJAHPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 03:15:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IQHsVPw4SfZu6CTWyd78lNDBrlT0mcTnEB3b3TvAjPA=;
- b=Mo1aje4PMu0iytVECL2imJtWMeQnRdOnCiCM8DyZX6vbH9nuej7LGyt/7icfxme6f/BcWEYm4p8C3a0AyDm6w17je/5wOXhs8QIfd60rxA5JCx5Q16Xw88ViwB9ik14/3OAyMjtjP/64i0EbDcSXDOglFLaFTMUZTW2s7A+J0z8=
+ bh=J4v6POGrY3fh0P49bcRSV1BHShuk6fB6gRlAzYOX6Gw=;
+ b=WUmsXtj7HDz+cJoq8rPFNgnaDuHd7CcBBbsibL9HuHYSozQyy0W/Y8/UjevUhvyzrcXuoE0T/PSQyCx1Tys0JFWy34z6prhaoo7PknHeeUpvxD9bK76iv7OhawE5NcUl39s03P8ucp4Qgd42Dl+S790/rhUI9sgBLGyav0ik0K4=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0120.namprd21.prod.outlook.com (10.173.189.14) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -42,15 +42,18 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Jann Horn <jannh@google.com>, Jason Gunthorpe <jgg@mellanox.com>,
+CC:     Sandipan Das <sandipan@linux.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 07/26] RDMA/ucma: check fd type in
- ucma_migrate_id()
-Thread-Topic: [PATCH AUTOSEL 4.9 07/26] RDMA/ucma: check fd type in
- ucma_migrate_id()
-Thread-Index: AQHUWR9cZqdJM4vHuEqB0yNWzRsuPw==
-Date:   Mon, 1 Oct 2018 00:40:33 +0000
-Message-ID: <20181001004026.147201-7-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 06/26] perf probe powerpc: Ignore SyS symbols
+ irrespective of endianness
+Thread-Topic: [PATCH AUTOSEL 4.9 06/26] perf probe powerpc: Ignore SyS symbols
+ irrespective of endianness
+Thread-Index: AQHUWR9ca3Zt0+ZICkShXfpRvkT/ag==
+Date:   Mon, 1 Oct 2018 00:40:32 +0000
+Message-ID: <20181001004026.147201-6-alexander.levin@microsoft.com>
 References: <20181001004026.147201-1-alexander.levin@microsoft.com>
 In-Reply-To: <20181001004026.147201-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,30 +62,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0120;6:zO+zOwnuquBkiqt6XwZwuZPg7cJI6263f0MSsbfhIpYyV+Kl8ok+bk0IaoyUftB4j1yNReAs6QNavRKdk/XKgPMHWXFJwUJWMy9uUq+lfGPFtR0b60K/dRwCZIkY2z3rf/WIIjk/TSMNwzUcMM92Fq99oUJ6DtZTQCNDJZMQkldk8/NjpBqZN2RAtGyWifOmabBtsMZe+jddY5VTcMF05pYhZr4Kf515BCY/Lk80Nhe+fc5cJn+jdOgUIxV5qtp18D5g6qxqzsvZylV9LtANWNlCWEJM+YorGswPyfJusHXkz16hmvvzis5PTUImD0gmkFwR0XX7TupW8vPLD5eyylJdgoHOjro97sIweP03X92h8+LBILwuOBW3vIWpppol3z/pAOJKG+VzdmYlTh+gGKGSyrn1e62ZPcMayopAL1t0noXd4Qeblw9vvQaAnyIKUpkfqs0qKe9figCCZ3gArw==;5:bR+S39zB2C/SavkCzZz+103ODKKpsi6sHlROjGd9RS1NOKM43O+wcYEhA3XXp/W11I5MendHND5wxmxbshQWRJUu6Nl49DHfGXVMV6Drm+XYxyMB03Aw+RREDdFN6bOEMk1BfqMezvW2hJ2EsaBC8gjHYMr/Nv1bQa7/psPWgyI=;7:Pw7k/ETsrUhJ03zRURbuMA9EHDe3MGryvv+zC4jw7n1MBRjtJQvprSwp3Fi+j6xdTnvQvYc4jMoQKc79jQ8yn5jzWqzjT1LApHENQdnMxKKVmYGIt2g1FyES2Gv0jSqf/MJtde4BF2A+sKpvyF3skbrX2tu63fRKSM0tKvf0WNTmXVgyELGF5Z1yrIGOEN6D1ZidoQPF/dBb+/7sSWgxhooiJpIVsI+ya/PyGAko/kUQ5uzhD2svpHnE4ZpIA87U
-x-ms-office365-filtering-correlation-id: 18ab59b2-e26e-4716-cb47-08d627367f3e
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0120;6:6F0Rx0KD/gX258ffrpnluVEh8oTvslm24kadROSp1O/qmnmYNRf/IblgffwaZ5pvEtPksd8DrpCcOI/l0+ERQwk0DgWeXZOwu9TGNE5y4gK67BofDldt8ex81XZZ9GCwcR9dKt9tT6U90zS90q11XSqLXjAjfmRbETdAHsf97uYVYDw2IKYzGrhDo0pPc0TKiNez57t2aWF87ir1qicL2tjXHv/rs+cXRsJ1sxS95ImXhSC03LodKa14MrpaaKboTCiZnIzqdc4njv1h+J6AtLlyim3a+4JL2Vd3f48fFrY7yD9MimQPesazo1Tv7FPhCqUuDcaMK3KblzyC9NXqU4l94McajBNXycOnjqr5QPb9MvMAqOIT8byQp6LSxU7NCjpIhYbrovWpi3/Ug8nKEKhtYL56X5ktcp9ptQEMs5xFnDaiYJJre9AXhFiOM2sMXUPNd5Jh55yKWonllfcUUA==;5:Gn6CjYKzjlX9Z2zawKuTUY0tHYKVq1qNG8b81+APYrT/IuzkffjYO+yvkIFP1CGsP+rA8GbJcqDzoboVJEgXbQt7jXM1+8BxtqhvmpEUgSWb1sIHd3GNSu07TIT8ld1IDd3G59aPpZYhLFVf0Pk1SwNrkrmRMRBr2THxK87igBk=;7:i1IGVZt1ZOLW9RYoJtKdSlRfQbLxwLA5z/+URWy/EEm3jEMXqUfQM9kugXh+XYCN7rNbWVQG3fHzkNQ9qBGKhXNdd/x3m5XOuUqMpZmyMlcoMZl7aov+TJmx8CBZfuolZsFECJyLZpwkM68fIXpdvWWQFEH6+AJyHfwVNMF/rc2R+biXR4Mlo6tXaWXftbpUdH07fT4HTZG0TpmrRlbfY+I9HJ5eQg4GtsZ1u95pCs+B+W6fXjVy5qmOFws3Peks
+x-ms-office365-filtering-correlation-id: aec6404f-ae9e-4dad-d062-08d627367ee8
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0120;
 x-ms-traffictypediagnostic: CY4PR21MB0120:
-x-microsoft-antispam-prvs: <CY4PR21MB0120FEF1EF8A4E028F89E0D2FBEF0@CY4PR21MB0120.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(211936372134217)(153496737603132)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB012074570A416B227F6C6D42FBEF0@CY4PR21MB0120.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(42068640409301)(104084551191319)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0120;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0120;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(4982022)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0120;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0120;
 x-forefront-prvs: 0812095267
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(346002)(39860400002)(376002)(199004)(189003)(575784001)(86362001)(8936002)(6436002)(99286004)(6512007)(305945005)(76176011)(2616005)(68736007)(53936002)(34290500001)(186003)(10090500001)(105586002)(106356001)(86612001)(6486002)(81156014)(81166006)(8676002)(71200400001)(36756003)(54906003)(5250100002)(2501003)(26005)(110136005)(97736004)(6346003)(6116002)(3846002)(1076002)(5660300001)(102836004)(71190400001)(107886003)(2906002)(486006)(6506007)(2900100001)(4326008)(66066001)(446003)(11346002)(14454004)(7736002)(476003)(25786009)(14444005)(256004)(478600001)(72206003)(10290500003)(316002)(22452003)(217873002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0120;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(346002)(39860400002)(376002)(199004)(189003)(86362001)(8936002)(6436002)(99286004)(6512007)(305945005)(76176011)(2616005)(68736007)(53936002)(6306002)(34290500001)(186003)(10090500001)(105586002)(106356001)(86612001)(6486002)(81156014)(81166006)(8676002)(71200400001)(36756003)(54906003)(5250100002)(2501003)(26005)(110136005)(97736004)(6346003)(6116002)(3846002)(1076002)(5660300001)(102836004)(71190400001)(107886003)(2906002)(486006)(6506007)(2900100001)(4326008)(66066001)(446003)(11346002)(14454004)(7736002)(476003)(25786009)(14444005)(256004)(966005)(478600001)(72206003)(10290500003)(316002)(22452003)(217873002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0120;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: tzqeOSfjsiOgJ7MYAIzK5xWpubPVRlGLVYbfbDlHkbrFaBTJ4a4vjM4NuCk+nnioIHoa714VpXfxCyMb6/MSrRRubORAnQlwp4qHynyeqLjEmSANs8WUh1Be1NjdNYbsv1fO65MYUFXVFV5j/1d794l38rJOxiJ+UeJaS4GIakry84gkIpxA4ElNkQ50idqpLosn3xvcSzPUqSQgflA2OcF8c+r8/JwZ6Y4AK0JI6sSQ4+py6tsQYFwWxC4ecbu7fN7C1R/iH32/+6NrCY0Urrov+i/8oU4SX4kRYOf2IBBhslIW01hrOuc/6tHlsF3EJMDVq+K5LKmdk9Bj7VRxvpktWbGpWbRMPbmi+iMkBCg=
+x-microsoft-antispam-message-info: jNbOyB4oafFUrnNdVMjVCTD5cAAonW5h4Wxd4DXde7wfC99PjYrrfIVPnKAPx5WL8EBvozI+ldhKBLj0hY3d9Ke5mAFImX9LuKV33aF9vE8HhhjkjrEjew7hFrPcGlskPqRi1D5ebBM891IXK1/EYYxabw67bVKqZ7jDhjEy5JTcDUXcfgd1afvfUjdqzvz+JwcQb0M6eUiuqjFM3OsCLOX0j8VPVdqEl22m6ObfEcdAB/4aIrwADp05vx/g/g2QD72ulNw+xmCzWcykiYNWJac53BQmrHKNwJqjM7xsK8EMdErD+EwpfZZUAAsrU7ZyzCt4jsEp6wsaCD7tsaFUzk58+r6dp3mZBWXX2ej8+E0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18ab59b2-e26e-4716-cb47-08d627367f3e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:40:33.5001
+X-MS-Exchange-CrossTenant-Network-Message-Id: aec6404f-ae9e-4dad-d062-08d627367ee8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:40:32.8976
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -92,58 +95,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Sandipan Das <sandipan@linux.ibm.com>
 
-[ Upstream commit 0d23ba6034b9cf48b8918404367506da3e4b3ee5 ]
+[ Upstream commit fa694160cca6dbba17c57dc7efec5f93feaf8795 ]
 
-The current code grabs the private_data of whatever file descriptor
-userspace has supplied and implicitly casts it to a `struct ucma_file *`,
-potentially causing a type confusion.
+This makes sure that the SyS symbols are ignored for any powerpc system,
+not just the big endian ones.
 
-This is probably fine in practice because the pointer is only used for
-comparisons, it is never actually dereferenced; and even in the
-comparisons, it is unlikely that a file from another filesystem would have
-a ->private_data pointer that happens to also be valid in this context.
-But ->private_data is not always guaranteed to be a valid pointer to an
-object owned by the file's filesystem; for example, some filesystems just
-cram numbers in there.
-
-Check the type of the supplied file descriptor to be safe, analogous to how
-other places in the kernel do it.
-
-Fixes: 88314e4dda1e ("RDMA/cma: add support for rdma_migrate_id()")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Reported-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Fixes: fb6d59423115 ("perf probe ppc: Use the right prefix when ignoring Sy=
+S symbols on ppc")
+Link: http://lkml.kernel.org/r/20180828090848.1914-1-sandipan@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/infiniband/core/ucma.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/arch/powerpc/util/sym-handling.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.=
-c
-index 3bef6d4ffe6f..0fd0d82f80d2 100644
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -124,6 +124,8 @@ static DEFINE_MUTEX(mut);
- static DEFINE_IDR(ctx_idr);
- static DEFINE_IDR(multicast_idr);
+diff --git a/tools/perf/arch/powerpc/util/sym-handling.c b/tools/perf/arch/=
+powerpc/util/sym-handling.c
+index de477a3dc968..01a288c79dc5 100644
+--- a/tools/perf/arch/powerpc/util/sym-handling.c
++++ b/tools/perf/arch/powerpc/util/sym-handling.c
+@@ -21,15 +21,16 @@ bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
 =20
-+static const struct file_operations ucma_fops;
-+
- static inline struct ucma_context *_ucma_find_context(int id,
- 						      struct ucma_file *file)
+ #endif
+=20
+-#if !defined(_CALL_ELF) || _CALL_ELF !=3D 2
+ int arch__choose_best_symbol(struct symbol *syma,
+ 			     struct symbol *symb __maybe_unused)
  {
-@@ -1545,6 +1547,10 @@ static ssize_t ucma_migrate_id(struct ucma_file *new=
-_file,
- 	f =3D fdget(cmd.fd);
- 	if (!f.file)
- 		return -ENOENT;
-+	if (f.file->f_op !=3D &ucma_fops) {
-+		ret =3D -EINVAL;
-+		goto file_put;
-+	}
+ 	char *sym =3D syma->name;
 =20
- 	/* Validate current fd and prevent destruction of id. */
- 	ctx =3D ucma_get_ctx(f.file->private_data, cmd.id);
++#if !defined(_CALL_ELF) || _CALL_ELF !=3D 2
+ 	/* Skip over any initial dot */
+ 	if (*sym =3D=3D '.')
+ 		sym++;
++#endif
+=20
+ 	/* Avoid "SyS" kernel syscall aliases */
+ 	if (strlen(sym) >=3D 3 && !strncmp(sym, "SyS", 3))
+@@ -40,6 +41,7 @@ int arch__choose_best_symbol(struct symbol *syma,
+ 	return SYMBOL_A;
+ }
+=20
++#if !defined(_CALL_ELF) || _CALL_ELF !=3D 2
+ /* Allow matching against dot variants */
+ int arch__compare_symbol_names(const char *namea, const char *nameb)
+ {
 --=20
 2.17.1
