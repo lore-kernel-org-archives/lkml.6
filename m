@@ -2,234 +2,315 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD254C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95BEC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EAF020652
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:32:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EAF020652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DCBC20652
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:32:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NwXAxC/u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DCBC20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbeJAQJM (ORCPT
+        id S1729267AbeJAQJS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 12:09:12 -0400
-Received: from mga03.intel.com ([134.134.136.65]:31514 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728978AbeJAQJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:09:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 02:32:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,327,1534834800"; 
-   d="scan'208";a="96414385"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 01 Oct 2018 02:31:26 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 6EE9D2D1; Mon,  1 Oct 2018 12:31:23 +0300 (EEST)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] thunderbolt: Add Intel as copyright holder
-Date:   Mon,  1 Oct 2018 12:31:22 +0300
-Message-Id: <20181001093122.65833-6-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181001093122.65833-1-mika.westerberg@linux.intel.com>
-References: <20181001093122.65833-1-mika.westerberg@linux.intel.com>
+        Mon, 1 Oct 2018 12:09:18 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39051 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728978AbeJAQJS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 12:09:18 -0400
+Received: by mail-io1-f67.google.com with SMTP id z16-v6so3181957iol.6
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 02:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=a6B9eFCfwy+91HljvxI9fNHxjHis4C1w5UsXMZigrWY=;
+        b=NwXAxC/uhrSdw0zh4A9EbCRfvwv+IyncbgWbcwBzsf7UbWCdVSiM3HN3V89fmbIRna
+         TKpRaPsQq0o1wipbBbwVCTW1fc7/C/3i+mRlDMndI5K6ugeFOCN9xCb4yd5UX3JjURr/
+         vhctq1hun5JqNQPogdr6AeoQpM5viKxoW9yqA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=a6B9eFCfwy+91HljvxI9fNHxjHis4C1w5UsXMZigrWY=;
+        b=dKGUhiussYQqy5aRfeoSJCb2Kt73LN3oEBuiknfQCslAnTHLEc9m/9aHdWM/lO3Fgf
+         IO4IxPMkolQGpWOi9+OUU3/kcOuAb0Vzk3uqiXi4sS2CercKHeeOl6khODRiA6GafaUt
+         WrrUMSlZMqybadVxuqIYSLcutkT+Q9ln2bEl/IiWNC+TTrlJ24DA9uP9aCxY01U4Kr4M
+         xp4/nqdYz5wNKo75uw9k6ya6s6VoInEk/R1tjAU50sMah4rRWqZA4D7C+LQ7ZHkS2lBv
+         u9YkSU9jwQcf8caLxb7wW7ec1cJNw/eNiS4oY4D9hNTf4xogZaW0eXmPLl4pb7smQQiF
+         JUBg==
+X-Gm-Message-State: ABuFfoib0HFAIkQBypiSSesi29DH6GUk/Nhivut2QKnCYkIUKCMyg2ZF
+        p+isns7V3GthS6hxHDkI/0Dri8ntmJOBuNqpAnFkHw==
+X-Google-Smtp-Source: ACcGV62C0V93jgKao6zw9ZO0U2idbFPPFq9qllb3C8hywMYRynxQy5CJX0ceVuX9Z/cWxlezBrYzPb4RW0sdn6Rswk4=
+X-Received: by 2002:a6b:144b:: with SMTP id 72-v6mr6264255iou.218.1538386345077;
+ Mon, 01 Oct 2018 02:32:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 02:31:44 -0700 (PDT)
+In-Reply-To: <1537523181-14578-28-git-send-email-ludovic.Barre@st.com>
+References: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com> <1537523181-14578-28-git-send-email-ludovic.Barre@st.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 1 Oct 2018 11:31:44 +0200
+Message-ID: <CAPDyKFqGY2o7TcUVW9bCZM9-4xtyJJ4PaCtWWQvV3VMd+cK99A@mail.gmail.com>
+Subject: Re: [PATCH V2 27/27] mmc: mmci: add stm32 sdmmc variant
+To:     Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Intel has done pretty major changes to the driver and we continue to do
-so in the future as well. Add Intel as copyright holder of the files we
-have done changes.
+On 21 September 2018 at 11:46, Ludovic Barre <ludovic.Barre@st.com> wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
+>
+> This patch adds a stm32 sdmmc variant, rev 1.1.
+> Introduces a new Manufacturer id "0x53, ascii 'S' to define
+> new stm32 sdmmc family with clean range of amba
+> revision/configurations bits (corresponding to sdmmc_ver
+> register with major/minor fields).
+>
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> ---
+>  drivers/mmc/host/Kconfig            |  10 ++
+>  drivers/mmc/host/Makefile           |   1 +
+>  drivers/mmc/host/mmci.c             |  25 ++++
+>  drivers/mmc/host/mmci.h             |   5 +
+>  drivers/mmc/host/mmci_stm32_sdmmc.c | 282 ++++++++++++++++++++++++++++++++++++
+>  5 files changed, 323 insertions(+)
+>  create mode 100644 drivers/mmc/host/mmci_stm32_sdmmc.c
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 5ab2eb0..e59671a 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -34,6 +34,16 @@ config MMC_QCOM_DML
+>
+>           if unsure, say N.
+>
+> +config MMC_STM32_SDMMC
+> +       bool "STMicroelectronics STM32 SDMMC Controller"
+> +       depends on MMC_ARMMMCI
+> +       default y
+> +       help
+> +         This selects the STMicroelectronics STM32 SDMMC host controller.
+> +         If you have a STM32 sdmmc host with internal dma say Y or M here.
+> +
+> +         If unsure, say N.
+> +
+>  config MMC_PXA
+>         tristate "Intel PXA25x/26x/27x Multimedia Card Interface support"
+>         depends on ARCH_PXA
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index ce8398e..f14410f 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -6,6 +6,7 @@
+>  obj-$(CONFIG_MMC_ARMMMCI) += armmmci.o
+>  armmmci-y := mmci.o
+>  armmmci-$(CONFIG_MMC_QCOM_DML) += mmci_qcom_dml.o
+> +armmmci-$(CONFIG_MMC_STM32_SDMMC) += mmci_stm32_sdmmc.o
+>  obj-$(CONFIG_MMC_PXA)          += pxamci.o
+>  obj-$(CONFIG_MMC_MXC)          += mxcmmc.o
+>  obj-$(CONFIG_MMC_MXS)          += mxs-mmc.o
+> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+> index 4057456..ca2e483 100644
+> --- a/drivers/mmc/host/mmci.c
+> +++ b/drivers/mmc/host/mmci.c
+> @@ -254,6 +254,26 @@ static struct variant_data variant_stm32 = {
+>         .init                   = mmci_variant_init,
+>  };
+>
+> +static struct variant_data variant_stm32_sdmmc = {
+> +       .fifosize               = 16 * 4,
+> +       .fifohalfsize           = 8 * 4,
+> +       .f_max                  = 208000000,
+> +       .stm32_clkdiv           = true,
+> +       .reset                  = true,
+> +       .cmdreg_cpsm_enable     = MCI_CPSM_STM32_ENABLE,
+> +       .cmdreg_lrsp_crc        = MCI_CPSM_STM32_LRSP_CRC,
+> +       .cmdreg_srsp_crc        = MCI_CPSM_STM32_SRSP_CRC,
+> +       .cmdreg_srsp            = MCI_CPSM_STM32_SRSP,
+> +       .data_cmd_enable        = MCI_CPSM_STM32_CMDTRANS,
+> +       .irq_pio_mask           = MCI_IRQ_PIO_STM32_MASK,
+> +       .datactrl_first         = true,
+> +       .datacnt_useless        = true,
+> +       .datalength_bits        = 25,
+> +       .datactrl_blocksz       = 14,
+> +       .stm32_idmabsize_mask   = GENMASK(12, 5),
+> +       .init                   = sdmmc_variant_init,
+> +};
+> +
+>  static struct variant_data variant_qcom = {
+>         .fifosize               = 16 * 4,
+>         .fifohalfsize           = 8 * 4,
+> @@ -2180,6 +2200,11 @@ static const struct amba_id mmci_ids[] = {
+>                 .mask   = 0x00ffffff,
+>                 .data   = &variant_stm32,
+>         },
+> +       {
+> +               .id     = 0x10153180,
+> +               .mask   = 0xf0ffffff,
+> +               .data   = &variant_stm32_sdmmc,
+> +       },
+>         /* Qualcomm variants */
+>         {
+>                 .id     = 0x00051180,
+> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+> index 017d9b8..581b9b1 100644
+> --- a/drivers/mmc/host/mmci.h
+> +++ b/drivers/mmc/host/mmci.h
+> @@ -305,6 +305,8 @@ struct mmci_host;
+>   *            register.
+>   * @opendrain: bitmask identifying the OPENDRAIN bit inside MMCIPOWER register
+>   * @reset: true if variant has need reset signal.
+> + * @dma_lli: true if variant has dma link list feature.
+> + * @stm32_idmabsize_mask: stm32 sdmmc idma buffer size.
+>   */
+>  struct variant_data {
+>         unsigned int            clkreg;
+> @@ -348,6 +350,8 @@ struct variant_data {
+>         unsigned int            irq_pio_mask;
+>         u32                     start_err;
+>         u32                     opendrain;
+> +       bool                    dma_lli;
+> +       u32                     stm32_idmabsize_mask;
 
-While there drop "Cactus Ridge" from the headers because this driver
-works also with other Thunderbolt controllers.
+What are these?
 
-No functional changes intended.
+>         void (*init)(struct mmci_host *host);
+>  };
+>
+> @@ -421,6 +425,7 @@ void mmci_write_clkreg(struct mmci_host *host, u32 clk);
+>  void mmci_write_pwrreg(struct mmci_host *host, u32 pwr);
+>
+>  void mmci_variant_init(struct mmci_host *host);
+> +void sdmmc_variant_init(struct mmci_host *host);
+>
+>  int mmci_dmae_prep_data(struct mmci_host *host, struct mmc_data *data,
+>                         bool next);
+> diff --git a/drivers/mmc/host/mmci_stm32_sdmmc.c b/drivers/mmc/host/mmci_stm32_sdmmc.c
+> new file mode 100644
+> index 0000000..cfbfc6f
+> --- /dev/null
+> +++ b/drivers/mmc/host/mmci_stm32_sdmmc.c
+> @@ -0,0 +1,282 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
+> + * Author: Ludovic.barre@st.com for STMicroelectronics.
+> + */
+> +#include <linux/delay.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/mmc/host.h>
+> +#include <linux/mmc/card.h>
+> +#include <linux/reset.h>
+> +#include <linux/scatterlist.h>
+> +#include "mmci.h"
+> +
+> +#define SDMMC_LLI_BUF_LEN      PAGE_SIZE
+> +#define SDMMC_IDMA_BURST       BIT(MMCI_STM32_IDMABNDT_SHIFT)
+> +
+> +struct sdmmc_lli_desc {
+> +       u32 idmalar;
+> +       u32 idmabase;
+> +       u32 idmasize;
+> +};
+> +
+> +struct sdmmc_priv {
+> +       dma_addr_t sg_dma;
+> +       void *sg_cpu;
+> +};
+> +
+> +int sdmmc_idma_validate_data(struct mmci_host *host,
+> +                            struct mmc_data *data)
+> +{
+> +       struct scatterlist *sg;
+> +       int i;
+> +
+> +       /*
+> +        * idma has constraints on idmabase & idmasize for each element
+> +        * excepted the last element which has no constraint on idmasize
+> +        */
+> +       for_each_sg(data->sg, sg, data->sg_len - 1, i) {
+> +               if (!IS_ALIGNED(sg_dma_address(data->sg), sizeof(u32)) ||
+> +                   !IS_ALIGNED(sg_dma_len(data->sg), SDMMC_IDMA_BURST)) {
+> +                       dev_err(mmc_dev(host->mmc),
+> +                               "unaligned scatterlist: ofst:%x length:%d\n",
+> +                               data->sg->offset, data->sg->length);
+> +                       return -EINVAL;
+> +               }
+> +       }
+> +
+> +       if (!IS_ALIGNED(sg_dma_address(data->sg), sizeof(u32))) {
+> +               dev_err(mmc_dev(host->mmc),
+> +                       "unaligned last scatterlist: ofst:%x length:%d\n",
+> +                       data->sg->offset, data->sg->length);
+> +               return -EINVAL;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int _sdmmc_idma_prep_data(struct mmci_host *host,
+> +                                struct mmc_data *data)
+> +{
+> +       int n_elem;
+> +
+> +       n_elem = dma_map_sg(mmc_dev(host->mmc),
+> +                           data->sg,
+> +                           data->sg_len,
+> +                           mmc_get_dma_dir(data));
+> +
+> +       if (!n_elem) {
+> +               dev_err(mmc_dev(host->mmc), "dma_map_sg failed\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int sdmmc_idma_prep_data(struct mmci_host *host,
+> +                               struct mmc_data *data, bool next)
+> +{
+> +       /* Check if job is already prepared. */
+> +       if (!next && data->host_cookie == host->next_cookie)
+> +               return 0;
+> +
+> +       return _sdmmc_idma_prep_data(host, data);
+> +}
+> +
+> +static void sdmmc_idma_unprep_data(struct mmci_host *host,
+> +                                  struct mmc_data *data, int err)
+> +{
+> +       dma_unmap_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
+> +                    mmc_get_dma_dir(data));
+> +}
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Acked-by: Yehezkel Bernat <yehezkelshb@gmail.com>
----
- drivers/thunderbolt/cap.c      | 3 ++-
- drivers/thunderbolt/ctl.c      | 3 ++-
- drivers/thunderbolt/ctl.h      | 3 ++-
- drivers/thunderbolt/eeprom.c   | 3 ++-
- drivers/thunderbolt/nhi.c      | 3 ++-
- drivers/thunderbolt/nhi.h      | 3 ++-
- drivers/thunderbolt/nhi_regs.h | 1 +
- drivers/thunderbolt/switch.c   | 3 ++-
- drivers/thunderbolt/tb.h       | 3 ++-
- drivers/thunderbolt/tb_regs.h  | 3 ++-
- 10 files changed, 19 insertions(+), 9 deletions(-)
+The sdmmc_idma_prep_data() and sdmmc_idma_unprep_data(), seems very
+similar to what the mmci core driver needs to do in this regards.
 
-diff --git a/drivers/thunderbolt/cap.c b/drivers/thunderbolt/cap.c
-index c2277b8ee88d..9553305c63ea 100644
---- a/drivers/thunderbolt/cap.c
-+++ b/drivers/thunderbolt/cap.c
-@@ -1,8 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Thunderbolt Cactus Ridge driver - capabilities lookup
-+ * Thunderbolt driver - capabilities lookup
-  *
-  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
-+ * Copyright (C) 2018, Intel Corporation
-  */
- 
- #include <linux/slab.h>
-diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
-index 7456c094e232..73b386de4d15 100644
---- a/drivers/thunderbolt/ctl.c
-+++ b/drivers/thunderbolt/ctl.c
-@@ -1,8 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Thunderbolt Cactus Ridge driver - control channel and configuration commands
-+ * Thunderbolt driver - control channel and configuration commands
-  *
-  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
-+ * Copyright (C) 2018, Intel Corporation
-  */
- 
- #include <linux/crc32.h>
-diff --git a/drivers/thunderbolt/ctl.h b/drivers/thunderbolt/ctl.h
-index 3062e0b5f71e..2f1a1e111110 100644
---- a/drivers/thunderbolt/ctl.h
-+++ b/drivers/thunderbolt/ctl.h
-@@ -1,8 +1,9 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Thunderbolt Cactus Ridge driver - control channel and configuration commands
-+ * Thunderbolt driver - control channel and configuration commands
-  *
-  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
-+ * Copyright (C) 2018, Intel Corporation
-  */
- 
- #ifndef _TB_CFG
-diff --git a/drivers/thunderbolt/eeprom.c b/drivers/thunderbolt/eeprom.c
-index d2dd40390783..81e8ac4c5805 100644
---- a/drivers/thunderbolt/eeprom.c
-+++ b/drivers/thunderbolt/eeprom.c
-@@ -1,8 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Thunderbolt Cactus Ridge driver - eeprom access
-+ * Thunderbolt driver - eeprom access
-  *
-  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
-+ * Copyright (C) 2018, Intel Corporation
-  */
- 
- #include <linux/crc32.h>
-diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
-index 02379aa27120..2874f9400123 100644
---- a/drivers/thunderbolt/nhi.c
-+++ b/drivers/thunderbolt/nhi.c
-@@ -1,10 +1,11 @@
- /*
-- * Thunderbolt Cactus Ridge driver - NHI driver
-+ * Thunderbolt driver - NHI driver
-  *
-  * The NHI (native host interface) is the pci device that allows us to send and
-  * receive frames from the thunderbolt bus.
-  *
-  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
-+ * Copyright (C) 2018, Intel Corporation
-  */
- 
- #include <linux/pm_runtime.h>
-diff --git a/drivers/thunderbolt/nhi.h b/drivers/thunderbolt/nhi.h
-index 1696a4560948..1b5d47ecd3ed 100644
---- a/drivers/thunderbolt/nhi.h
-+++ b/drivers/thunderbolt/nhi.h
-@@ -1,8 +1,9 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Thunderbolt Cactus Ridge driver - NHI driver
-+ * Thunderbolt driver - NHI driver
-  *
-  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
-+ * Copyright (C) 2018, Intel Corporation
-  */
- 
- #ifndef DSL3510_H_
-diff --git a/drivers/thunderbolt/nhi_regs.h b/drivers/thunderbolt/nhi_regs.h
-index b3e49d19c01e..a60bd98c1d04 100644
---- a/drivers/thunderbolt/nhi_regs.h
-+++ b/drivers/thunderbolt/nhi_regs.h
-@@ -3,6 +3,7 @@
-  * Thunderbolt driver - NHI registers
-  *
-  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
-+ * Copyright (C) 2018, Intel Corporation
-  */
- 
- #ifndef NHI_REGS_H_
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index 9f44a2924dac..52ff854f0d6c 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -1,8 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Thunderbolt Cactus Ridge driver - switch/port utility functions
-+ * Thunderbolt driver - switch/port utility functions
-  *
-  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
-+ * Copyright (C) 2018, Intel Corporation
-  */
- 
- #include <linux/delay.h>
-diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index 5a99245573c0..52584c4003e3 100644
---- a/drivers/thunderbolt/tb.h
-+++ b/drivers/thunderbolt/tb.h
-@@ -1,8 +1,9 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Thunderbolt Cactus Ridge driver - bus logic (NHI independent)
-+ * Thunderbolt driver - bus logic (NHI independent)
-  *
-  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
-+ * Copyright (C) 2018, Intel Corporation
-  */
- 
- #ifndef TB_H_
-diff --git a/drivers/thunderbolt/tb_regs.h b/drivers/thunderbolt/tb_regs.h
-index 693b0353c3fe..6f1ff04ee195 100644
---- a/drivers/thunderbolt/tb_regs.h
-+++ b/drivers/thunderbolt/tb_regs.h
-@@ -1,12 +1,13 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Thunderbolt Cactus Ridge driver - Port/Switch config area registers
-+ * Thunderbolt driver - Port/Switch config area registers
-  *
-  * Every thunderbolt device consists (logically) of a switch with multiple
-  * ports. Every port contains up to four config regions (HOPS, PORT, SWITCH,
-  * COUNTERS) which are used to configure the device.
-  *
-  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
-+ * Copyright (C) 2018, Intel Corporation
-  */
- 
- #ifndef _TB_REGS
--- 
-2.19.0
+Can we perhaps avoid adding these callbacks altogether, but rather
+rely on common code in the mmci core driver?
 
+[...]
+
+Kind regards
+Uffe
