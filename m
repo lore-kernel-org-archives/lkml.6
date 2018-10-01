@@ -2,129 +2,86 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03CECC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBAAC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:25:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF194208D9
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:25:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MHYZT5v6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="M8TVr6gw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF194208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id A61F4208D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:25:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A61F4208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rockbox.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729520AbeJAVDT (ORCPT
+        id S1729555AbeJAVDp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 17:03:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36016 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728979AbeJAVDS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 17:03:18 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1390C60C87; Mon,  1 Oct 2018 14:25:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538403914;
-        bh=Hm3QyFLIKnIfgzKeWJUsdHvzcKKxgPn0UEHE8nJYm+g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MHYZT5v6BTWqEL7RynJKeZPN3XvBADioCOec/PvXFF38ACfTmyNi+jo03uP5WUVX1
-         1Z+DupGQzd9pDzQAOO7AQjsXMyHXGOx5IWZlV/OFHbUobm2vggxvQxt4AkXwLselOf
-         vwqp/7acDN8SsitE1e8mC00SvdSPWVTsLP1UhNrw=
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Mon, 1 Oct 2018 17:03:45 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:59078 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729182AbeJAVDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 17:03:45 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B9F3760C1D;
-        Mon,  1 Oct 2018 14:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538403912;
-        bh=Hm3QyFLIKnIfgzKeWJUsdHvzcKKxgPn0UEHE8nJYm+g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=M8TVr6gwDxkgtE9eIHSOAW0M+KNGR7DYaYjpBwMAXF13fhbvcb0uSToIFziZ0/PJ/
-         4kpxmvSEzQZGTVymlHZeFeSvYUzh6WvFRFQ/iyjIBCbcHVuZ1UZzUwCUwsdxv7QIIU
-         AwHJ/4vtOvLMjY3lZCeV5R4xkqss/E/ZdDFPoXFc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9F3760C1D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org
-Cc:     ohad@wizery.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH] remoteproc: qcom: q6v5: Fix a race condition on fatal crash
-Date:   Mon,  1 Oct 2018 19:55:00 +0530
-Message-Id: <20181001142500.25457-1-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.18.0
+        by mx1.mailbox.org (Postfix) with ESMTPS id 65E15499FC;
+        Mon,  1 Oct 2018 16:25:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id 79zojJ75-bhP; Mon,  1 Oct 2018 16:25:31 +0200 (CEST)
+Subject: Re: [PATCH v3] PCI: Reprogram bridge prefetch registers on resume
+To:     Daniel Drake <drake@endlessm.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        nouveau@lists.freedesktop.org, Linux PM <linux-pm@vger.kernel.org>,
+        Peter Wu <peter@lekensteyn.nl>, kherbst@redhat.com,
+        andy.shevchenko@linux.intel.com,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Jon Derrick <jonathan.derrick@intel.com>,
+        David Miller <davem@davemloft.net>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        netdev <netdev@vger.kernel.org>, nic_swsd@realtek.com,
+        rchang@marvell.com, Linux Kernel <linux-kernel@vger.kernel.org>
+References: <20180913033745.11178-1-drake@endlessm.com>
+ <20180918213244.GE13616@bhelgaas-glaptop.roam.corp.google.com>
+ <20180927205247.GA18434@bhelgaas-glaptop.roam.corp.google.com>
+ <3f8efcd6-7cd2-b41a-d984-28c9e1740d6c@rockbox.org>
+ <CAD8Lp47uL3DQTBiVTduO1+Cg8px4CDpv26qVJsgT+RJ4WZx9oA@mail.gmail.com>
+From:   Thomas Martitz <kugel@rockbox.org>
+Organization: Rockbox
+Message-ID: <7b0a5388-5b3a-a6e0-347f-94f87fc2e540@rockbox.org>
+Date:   Mon, 1 Oct 2018 16:25:06 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAD8Lp47uL3DQTBiVTduO1+Cg8px4CDpv26qVJsgT+RJ4WZx9oA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently with GLINK_SSR enabled each fatal crash results in servicing
-a crash from wdog as well. This is due to a race that occurs in setting
-the running flag in the shutdown path. Fix this by moving the running
-flag to the end of fatal interrupt handler.
+Am 01.10.18 um 06:57 schrieb Daniel Drake:
+> On Sun, Sep 30, 2018 at 5:07 AM Thomas Martitz <kugel@rockbox.org> wrote:
+>> The latest iteration does not work on my HP system. The GPU fails to
+>> power up just like the unpatched kernel.
+> 
+> That's weird, I would not expect a behaviour change in the latest
+> patch. pci_restore_config_dword() has some debug messages, could you
+> please make them visible and show logs again?
+> Also remind us of the PCI device address of the parent bridge (lspci -vt)
+> 
 
-Crash Logs:
-qcom-q6v5-pil 4080000.remoteproc: fatal error without message
-remoteproc remoteproc0: crash detected in 4080000.remoteproc: type fatal
-	error
-remoteproc remoteproc0: handling crash #1 in 4080000.remoteproc
-remoteproc remoteproc0: recovering 4080000.remoteproc
-qcom-q6v5-pil 4080000.remoteproc: watchdog without message
-remoteproc remoteproc0: crash detected in 4080000.remoteproc: type watchdog
-remoteproc:glink-edge: intent request timed out
-qcom_glink_ssr remoteproc:glink-edge.glink_ssr.-1.-1: failed to send
-	cleanup message
-qcom_glink_ssr remoteproc:glink-edge.glink_ssr.-1.-1: timeout waiting
-	for cleanup done message
-qcom-q6v5-pil 4080000.remoteproc: timed out on wait
-qcom-q6v5-pil 4080000.remoteproc: port failed halt
-remoteproc remoteproc0: stopped remote processor 4080000.remoteproc
-qcom-q6v5-pil 4080000.remoteproc: MBA booted, loading mpss
-remoteproc remoteproc0: remote processor 4080000.remoteproc is now up
-remoteproc remoteproc0: handling crash #2 in 4080000.remoteproc
-remoteproc remoteproc0: recovering 4080000.remoteproc
-qcom-q6v5-pil 4080000.remoteproc: port failed halt
-remoteproc remoteproc0: stopped remote processor 4080000.remoteproc
-qcom-q6v5-pil 4080000.remoteproc: MBA booted, loading mpss
-remoteproc remoteproc0: remote processor 4080000.remoteproc is now up
+I'll follow up with more the requested information on bugzilla
+(Link: https://bugzilla.kernel.org/show_bug.cgi?id=201069).
 
-[bjorn: move running flag to the end of fatal interrupt handler]
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On a quick re-check, it seems to depend on if I used the eGPU before
+the initial suspend. If I run glxgears (with DRI_PRIME=1) before suspend 
+it seems fine.
 
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index e9ab90c19304..edeb2e43209e 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -84,6 +84,7 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
- 	else
- 		dev_err(q6v5->dev, "fatal error without message\n");
- 
-+	q6v5->running = false;
- 	rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
- 
- 	return IRQ_HANDLED;
-@@ -150,8 +151,6 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
- {
- 	int ret;
- 
--	q6v5->running = false;
--
- 	qcom_smem_state_update_bits(q6v5->state,
- 				    BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Best regards.
