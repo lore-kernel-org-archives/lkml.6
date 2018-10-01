@@ -6,43 +6,42 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91ED6C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4703EC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60E7720666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:12:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60E7720666
+	by mail.kernel.org (Postfix) with ESMTP id 1825A20666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:14:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1825A20666
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbeJBDwG (ORCPT
+        id S1726525AbeJBDxp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 23:52:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51097 "EHLO
+        Mon, 1 Oct 2018 23:53:45 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51136 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbeJBDwG (ORCPT
+        with ESMTP id S1726251AbeJBDxo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 23:52:06 -0400
+        Mon, 1 Oct 2018 23:53:44 -0400
 Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
         by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
         (Exim 4.76)
         (envelope-from <john.johansen@canonical.com>)
-        id 1g75UL-0007Z8-LJ; Mon, 01 Oct 2018 21:12:21 +0000
-Subject: Re: [PATCH security-next v3 07/29] LSM: Convert security_initcall()
- into DEFINE_LSM()
+        id 1g75Vu-0007ca-VH; Mon, 01 Oct 2018 21:13:59 +0000
+Subject: Re: [PATCH security-next v3 08/29] LSM: Record LSM name in struct
+ lsm_info
 To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+Cc:     James Morris <james.morris@microsoft.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
         "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20180925001832.18322-1-keescook@chromium.org>
- <20180925001832.18322-8-keescook@chromium.org>
+ <20180925001832.18322-9-keescook@chromium.org>
 From:   John Johansen <john.johansen@canonical.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
@@ -88,12 +87,12 @@ Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
  qJciYE8TGHkZw1hOku+4OoM2GB5nEDlj+2TF/jLQ+EipX9PkPJYvxfRlC6dK8PKKfX9KdfmA
  IcgHfnV1jSn+8yH2djBPtKiqW0J69aIsyx7iV/03paPCjJh7Xq9vAzydN5U/UA==
 Organization: Canonical
-Message-ID: <bec8663b-ef33-769d-fe7f-10fb1a6eda35@canonical.com>
-Date:   Mon, 1 Oct 2018 14:12:17 -0700
+Message-ID: <a286ab41-b012-8a76-3e61-5a755525b20c@canonical.com>
+Date:   Mon, 1 Oct 2018 14:13:55 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180925001832.18322-8-keescook@chromium.org>
+In-Reply-To: <20180925001832.18322-9-keescook@chromium.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -103,47 +102,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 09/24/2018 05:18 PM, Kees Cook wrote:
-> Instead of using argument-based initializers, switch to defining the
-> contents of struct lsm_info on a per-LSM basis. This also drops
-> the final use of the now inaccurate "initcall" naming.
+> In preparation for making LSM selections outside of the LSMs, include
+> the name of LSMs in struct lsm_info.
 > 
-> Cc: John Johansen <john.johansen@canonical.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: linux-security-module@vger.kernel.org
-> Cc: selinux@tycho.nsa.gov
+> Cc: James Morris <james.morris@microsoft.com>
 > Signed-off-by: Kees Cook <keescook@chromium.org>
+
+I'll leave this one until after the changes you have already discussed with Tetsuo around, END_LSM and .name
+
 > ---
->  include/linux/lsm_hooks.h  | 6 ++++--
->  security/apparmor/lsm.c    | 4 +++-
->  security/integrity/iint.c  | 4 +++-
->  security/selinux/hooks.c   | 4 +++-
->  security/smack/smack_lsm.c | 4 +++-
->  security/tomoyo/tomoyo.c   | 4 +++-
->  6 files changed, 19 insertions(+), 7 deletions(-)
+>  include/linux/lsm_hooks.h | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
 > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index ad04761e5587..02ec717189f9 100644
+> index 02ec717189f9..543636f18152 100644
 > --- a/include/linux/lsm_hooks.h
 > +++ b/include/linux/lsm_hooks.h
-> @@ -2045,11 +2045,13 @@ struct lsm_info {
+> @@ -2040,16 +2040,20 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+>  				char *lsm);
+>  
+>  struct lsm_info {
+> +	const char *name;	/* Populated automatically. */
+>  	int (*init)(void);
+>  };
 >  
 >  extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
 >  
-> -#define security_initcall(lsm)						\
-> +#define DEFINE_LSM(lsm)							\
+>  #define DEFINE_LSM(lsm)							\
+> +	static const char __lsm_name_##lsm[] __initconst		\
+> +		__aligned(1) = #lsm;					\
 >  	static struct lsm_info __lsm_##lsm				\
 >  		__used __section(.lsm_info.init)			\
 >  		__aligned(sizeof(unsigned long))			\
-> -		= { .init = lsm, }
-> +		= {							\
-> +
-> +#define END_LSM	  }
+>  		= {							\
+> +			.name = __lsm_name_##lsm,			\
 >  
+>  #define END_LSM	  }
+>  
+> 
 
-I am with Tetsuo on this one, I really don't like the END_LSM thing.
