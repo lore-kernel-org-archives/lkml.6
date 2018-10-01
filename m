@@ -2,112 +2,98 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DC1C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235DDC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D05A2082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:30:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D05A2082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id D17802084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:35:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LczL+K6L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17802084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbeJBFKM (ORCPT
+        id S1726502AbeJBFP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 01:10:12 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42336 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbeJBFKM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 01:10:12 -0400
-Received: by mail-oi1-f194.google.com with SMTP id w81-v6so10937873oiw.9
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:30:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EBMuyxcw3gTNEnsYJL9HAsaFTeTTjjUiMjGbPctuLCE=;
-        b=FeTb04O3lhkx6c/nLEBq9gm/fm2RFyF3tBr9Cr6aOz9954g7eHnC8xj0twJcYvPWAU
-         VbOSLoy4ZZSjvg3+dpcrTCuDitLBTGqVHgefbYc6epaRkdx3sZ+VeD5Vl7fV4AS5pMYO
-         qnlP6SThHx/DRwbE28fn5SNiDFkOq2kp/c7xJw4dp5wmPTGGVmAaN+ceTPMWUkVxJrqZ
-         8M7Iokc59/Foy/8hcqVvUCCT7VdNBgla7a2ftOu3AL47qH88Y5m3BDr0yW5s5ps3E8vB
-         ithjnd8RMpU7qZ95dpjTfmANICXxjNO13lgjz7Ba0lPnFfbBpI0Nqymnt3/CnUfWsy8n
-         EzgA==
-X-Gm-Message-State: ABuFfoj7GkxL69+IA3jE83d9Q8RI9va+MIyPMBNuMnaHfqBmnQjB58pE
-        zPcXVzary27SW076uOJBR31/395eiL0=
-X-Google-Smtp-Source: ACcGV62nQbfD3wg4azCEHz2+lLoDDxB+WvLTjcvISF9GGUyMPzY/rqdl6rtGhZhsSkl9ah88LdSZzw==
-X-Received: by 2002:aca:5107:: with SMTP id f7-v6mr6520884oib.223.1538433011547;
-        Mon, 01 Oct 2018 15:30:11 -0700 (PDT)
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com. [209.85.167.177])
-        by smtp.gmail.com with ESMTPSA id j79-v6sm2307698oiy.13.2018.10.01.15.30.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 15:30:11 -0700 (PDT)
-Received: by mail-oi1-f177.google.com with SMTP id l197-v6so12626785oib.8
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:30:10 -0700 (PDT)
-X-Received: by 2002:aca:e310:: with SMTP id a16-v6mr1108411oih.79.1538433010858;
- Mon, 01 Oct 2018 15:30:10 -0700 (PDT)
+        Tue, 2 Oct 2018 01:15:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:46445 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726291AbeJBFP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 01:15:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42PHDC4TtHz9s3l;
+        Tue,  2 Oct 2018 08:35:23 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538433323;
+        bh=WNkrlg5XmptQsClbl5sKJz36BrBoAwiELegUKKWJ1YE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=LczL+K6LmJW8p+MFBagh562l/apQWKY1g9LDKr5VL8kOs1Zer7PnrZQleHTLGUnFA
+         oGjM0Q0udGXo15kRNCVj98CyVs6z3I5BEHeM0seyp5u+JCZSF4vZxg/+wcTnyyXURc
+         Q5FSEIHPqjs55EHlgjqaFls51zzxFNUr4I3DGqdSuekCOHxOJUUzuVmJrFTVQP+AFh
+         t2MO5+ysu/cS0bojdrA+HB1M56H69MAjocbo8gY3LvqRh61NyvmrnONoWuafAMJJXO
+         SYQzY/AFGldUTKl1xDcpakEcqvTNUPaCgpab1FbBo7yEISJ6UlD2keNlBtihAmQ77O
+         yWsP+9p4NAapg==
+Date:   Tue, 2 Oct 2018 08:35:17 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build warning after merge of the dma-mapping tree
+Message-ID: <20181002083517.1807848f@canb.auug.org.au>
 MIME-Version: 1.0
-References: <1538124204-31406-1-git-send-email-madalin.bucur@nxp.com>
-In-Reply-To: <1538124204-31406-1-git-send-email-madalin.bucur@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Mon, 1 Oct 2018 17:29:59 -0500
-X-Gmail-Original-Message-ID: <CADRPPNTn99q=6fungYr-xcwY6vFiw9KTUp8UCEQ2u0+sv7vd4Q@mail.gmail.com>
-Message-ID: <CADRPPNTn99q=6fungYr-xcwY6vFiw9KTUp8UCEQ2u0+sv7vd4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] soc/fsl/qbman: DPAA QBMan fixes and additions
-To:     madalin.bucur@nxp.com
-Cc:     Roy Pledge <roy.pledge@nxp.com>, claudiu.manoil@nxp.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Scott Wood <oss@buserror.net>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/yz89m_hRQyoF9ou0R1hxWk1"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 3:44 AM Madalin Bucur <madalin.bucur@nxp.com> wrote:
->
+--Sig_/yz89m_hRQyoF9ou0R1hxWk1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied 1-4 to for-next while waiting for clarification on 5/5.   And
-updated the prefix to "soc: fsl:" style to be aligned with arm-soc
-convention.  Please try to use that style in the future for soc/fsl
-patches.
+Hi Christoph,
 
-> This patch set brings a number of fixes and the option to control
-> the QMan portal interrupt coalescing.
->
-> Changes from v1:
->  - change CPU 0 with any online CPU to allow CPU 0 to be taken offline
->  - move common code in a function
->  - address all places in the code where the portal interrupt was affined
->    to CPU 0
->  - remove unrelated change from patch adding 64 bit DMA addressing
->    requirement
->
-> Madalin Bucur (2):
->   soc/fsl/qbman: replace CPU 0 with any online CPU in hotplug handlers
->   soc/fsl_qbman: export coalesce change API
->
-> Roy Pledge (3):
->   soc/fsl/qbman: Check if CPU is offline when initializing portals
->   soc/fsl/qbman: Add 64 bit DMA addressing requirement to QBMan
->   soc/fsl/qbman: Use last response to determine valid bit
->
->  drivers/soc/fsl/qbman/Kconfig       |  2 +-
->  drivers/soc/fsl/qbman/bman.c        |  6 ++---
->  drivers/soc/fsl/qbman/bman_portal.c |  4 ++-
->  drivers/soc/fsl/qbman/dpaa_sys.h    | 20 ++++++++++++++
->  drivers/soc/fsl/qbman/qman.c        | 53 ++++++++++++++++++++++++++++++++-----
->  drivers/soc/fsl/qbman/qman_portal.c |  6 +++--
->  include/soc/fsl/qman.h              | 27 +++++++++++++++++++
->  7 files changed, 104 insertions(+), 14 deletions(-)
->
-> --
-> 2.1.0
->
+After merging the dma-mapping tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
+
+drivers/base/platform.c:1182:12: warning: 'dma_default_get_required_mask' d=
+efined but not used [-Wunused-function]
+ static u64 dma_default_get_required_mask(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Introduced by commit
+
+  dma_default_get_required_mask ("dma-mapping: make the get_required_mask m=
+ethod available unconditionally")
+
+It is only used in the case ARCH_HAS_DMA_GET_REQUIRED_MASK is not defined.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/yz89m_hRQyoF9ou0R1hxWk1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluyoSUACgkQAVBC80lX
+0GyNFAgApnKu/WiOJ9KOcgKaqN7lGP7creL9JROP8x03SX/3svrY6QEZJn0tR/4a
+jVNROcwpP/tE1/jhrv0CobT85SuUxLETbCHkC+5BYTMXiOcOyskkBbwyjXSbSRA5
+nw2nhuJGvNOj6spWJhmN9TEQK7wqLSUPLc5820Oy/pWE52KubbhDRgF8h+RvZAsd
+rXERQVL2m0jSykEhxS23JKA9p0OkoR0AJZ9iZjFHwviXh5GNFMrroeaTXemoIwnz
+CnPMaP7L3j04SEv5FuX6DjSTROEly6PeocTlWuAeK1mJVgkGUBa7RZJ42AV2XSjX
+ENhcxPyM3YjrKYtW2rF7b99yQHH5HQ==
+=fO6V
+-----END PGP SIGNATURE-----
+
+--Sig_/yz89m_hRQyoF9ou0R1hxWk1--
