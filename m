@@ -2,132 +2,116 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C02C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BD2C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B918208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:32:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EE4D+wDo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B918208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id DDAF2208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:42:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDAF2208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726471AbeJBBLZ (ORCPT
+        id S1726461AbeJBBVX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 21:11:25 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:47006 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726308AbeJBBLY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 21:11:24 -0400
-Received: by mail-pg1-f193.google.com with SMTP id a5-v6so1499967pgv.13
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:32:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mdx2QaCA/V3pIaAAVa1il4XPojE1oXFXIaI6oUWb55o=;
-        b=EE4D+wDowS1qHfRw5zY0awFyPg+zf7rJqIT1bkAU2lkxA7FcIALJSseztnP4fAHMP/
-         T+3BQJSUvDIr3mjxJFupbEhUugfr39YsrVvakpgXEdZ4wrGYYLKPRrvEsRa8v0SKrR7h
-         1C8bYuUDwTrk41D122KZOHOxus/bo9DLHDeHA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mdx2QaCA/V3pIaAAVa1il4XPojE1oXFXIaI6oUWb55o=;
-        b=VkK8OvDs+qNbv5me+1qQ+zDhRRHPq8t8PurnbO/09Kmvab5cYlc+JHIVsVi/0G2vBq
-         sHVpdSXdxj0bjdWXv3eh0DqM95XsjXHksGte1el9VYOIuVTDBPfSV4G3ZXKEiaG+KaKU
-         wPr5HuUhEFN3zA81eYwAkLmHJ/TkeqS+5oSu5K3s7TSrCDNbyjQFimT8dLut6FoD2Btw
-         RR2IpzglrjdvDBp8J8nT36fvDTB/L0uY7AfVju9dUmJOrxMbuIhEtDGcOtyvgWDjpoGu
-         0JACwQVzNkulVqeyxspHKuSvBu7tRZH8ow+lTvNAa5u3pL8BnFPynkff5E6lEsp4pFnJ
-         HjZg==
-X-Gm-Message-State: ABuFfoidWACi2C+7V/Xs/nZk6u4z/kh/0zkTSJEva2AQLFtyvk4MV34u
-        A1+W4eC3SVfau99mKbJLaeY3Jg==
-X-Google-Smtp-Source: ACcGV63cu4+AG3TstpyJ9GH0o4J+DbmGfeMxOitM3lg/doi8v2jUgSJm5DXssdXDA6czf6Uadfdr4w==
-X-Received: by 2002:a63:c84c:: with SMTP id l12-v6mr11066680pgi.77.1538418738972;
-        Mon, 01 Oct 2018 11:32:18 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id q25-v6sm26637063pfk.154.2018.10.01.11.32.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 11:32:18 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 11:32:16 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        stable@vger.kernel.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: Re: [PATCH] firmware: Always initialize the fw_priv list object
-Message-ID: <20181001183216.GM2523@minitux>
-References: <20180920010938.10315-1-bjorn.andersson@linaro.org>
- <20180920052204.GA15695@kroah.com>
- <20180920073415.GC1367@tuxbook-pro>
- <20181001132703.GA12193@centauri.lan>
- <20181001181835.GG5238@garbanzo.do-not-panic.com>
+        Mon, 1 Oct 2018 21:21:23 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42308 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726233AbeJBBVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 21:21:23 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 419AC207BF; Mon,  1 Oct 2018 20:42:13 +0200 (CEST)
+Received: from localhost (LFbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 13D072039F;
+        Mon,  1 Oct 2018 20:42:13 +0200 (CEST)
+Date:   Mon, 1 Oct 2018 17:45:45 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     jorik@kippendief.biz
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2] ARM: dts: sun8i-h3: add sy8106a to orange pi plus
+Message-ID: <20181001154545.iwxjgw5exg4psfy4@flea>
+References: <20180929131830.13924-1-jorik@kippendief.biz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fmtks3qffvmnpfjl"
 Content-Disposition: inline
-In-Reply-To: <20181001181835.GG5238@garbanzo.do-not-panic.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180929131830.13924-1-jorik@kippendief.biz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 01 Oct 11:18 PDT 2018, Luis Chamberlain wrote:
 
-> On Mon, Oct 01, 2018 at 03:27:03PM +0200, Niklas Cassel wrote:
-> > On Thu, Sep 20, 2018 at 12:34:15AM -0700, Bjorn Andersson wrote:
-> > > On Wed 19 Sep 22:22 PDT 2018, Greg Kroah-Hartman wrote:
-> > > 
-> > > > On Wed, Sep 19, 2018 at 06:09:38PM -0700, Bjorn Andersson wrote:
-> > > > > When freeing the fw_priv the item is taken off the list. This causes an
-> > > > > oops in the FW_OPT_NOCACHE case as the list object is not initialized.
-> > > > > 
-> > > > > Make sure to initialize the list object regardless of this flag.
-> > > > > 
-> > > > > Fixes: 422b3db2a503 ("firmware: Fix security issue with request_firmware_into_buf()")
-> > > > > Cc: stable@vger.kernel.org
-> > > > > Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> > > > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > > > ---
-> > > > >  drivers/base/firmware_loader/main.c | 7 +++++--
-> > > > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > > > 
-> > > > Is this being triggered by some hardware somewhere today?  Or is this
-> > > > just a fix found by code inspection?
-> > > > 
-> > > 
-> > > Hi Greg,
-> > > 
-> > > Yes, I found this issue while attempting to load the firmware and boot
-> > > one of the DSPs on one of my Qualcomm dev boards after v4.19-rc4 and it
-> > > can be reproduced on the upstream Dragonboard 820c.
-> > 
-> > I still see this issue on v4.19-rc6.
-> > 
-> > It would be nice if this fix gets merged before v4.19 gets released.
-> 
-> This is the first I hear of this and this patch, so you should re-send
-> it and I can review it. Also please Cc Rishabh.
-> 
-> Rishabh, had you heard of this and can you confirm as well as
-> 422b3db2a503 was your commit?
-> 
+--fmtks3qffvmnpfjl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Luis,
+On Sat, Sep 29, 2018 at 03:18:30PM +0200, jorik@kippendief.biz wrote:
+> From: Jorik Jonker <jorik@kippendief.biz>
+>=20
+> The Orange Pi Plus board lacks voltage scaling capabilities in its
+> current form. This results in random freezes during boot when cpufreq is
+> enabled, probably due to wrong voltages.
+>=20
+> This patch (more or less copy/paste from 06139c) does the following
+> things on this board:
+> - enable r_i2c
+> - add sy8106a to the r_i2c bus
+> - have the sy8106a regulate VDD of cpu
+>=20
+> Since the Orange Pi Plus has the same PMU setup as the Orange Pi PC, I
+> simply took min/max/fixed/ramp from the latter DTS. In that file the
+> origin of the values are described by the following comment:
+>=20
+>   "The datasheet uses 1.1V as the minimum value of VDD-CPUX,
+>   however both the Armbian DVFS table and the official one
+>   have operating points with voltage under 1.1V, and both
+>   DVFS table are known to work properly at the lowest
+>   operating point.
+>   Use 1.0V as the minimum voltage instead."
+>=20
+> I have tested this on patch two Orange Pi Plus boards, by running a
+> kernel with this patch and do intermettent runs of cpuburn while
+> monitoring voltage, frequency and temperature. The board runs stable
+> across its operatiing points while showing a reasonable (< 40C)
+> temperature. My Orange Pi PC, when put to the same test, yields similar
+> stable results.
+>=20
+> Signed-off-by: Jorik Jonker <jorik@kippendief.biz>
 
-It seems like Greg did pick the patch yesterday [1], so hopefully he
-sends himself a pull request this week for inclusion in v4.19-rc7.
+Queued for 4.21, thanks!
+Maxime
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/log/?h=char-misc-linus
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Regards,
-Bjorn
+--fmtks3qffvmnpfjl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluyQSgACgkQ0rTAlCFN
+r3S65BAAkGP/ueMCgEolqSLvfgtp4VuXNguTnW77nmoGGCxntZplJl8ywIgNbnLd
+44gudDip4b+Qz+48x9SdeTyyVqjFGySuQoMtFGO/greDCdVaJoGySU9yKBt9JqKK
+YR9FEJezYMGsRZLc2I1WqvZX6Ec37OxAlkPuctGq47eqPc3+rSxIS2v76pYBBEkq
+ZeF7j4ezw4sIwnDDQaBCsh9N4NQgDahKCTLUE7p57zwtoduXMYwW90Ez+2F0WqHS
+GV7plvFV/PDSR27F2VAjCw+tjjVjbvjLg3GyMZ2vmkIFglk1s7vAAZx/rW6kNENe
+59Pc8TPU0W8X1o6JFrOczkjPzXpbQmzSPpoPWyzq7j16TeAqpztce6VF7GLeXXUq
+0BMlgfhkYXzZ00HkM8XLqLcdjk6O6TCzhus7MMLIJeGH6riJ5BmFjbiehU+Fmddt
+LTceSIPIWA2PklGkNqJCge5n9QdF+UJdDrlzfBZbo1Z9NPoLKtWxjeBHjT263T2v
+9tnqrs/O0682b/4FaU/TGvfU/VrQKXvjZgps4+HkVEZjj0ZXVeluQ7L4epaLJ0sN
+qHr+Pt4tzHAWIkDqccD89OJMVRWTltNbPVjkrgxLAdLTvqqFGX9vwV8JqFmQ4jcj
+jmPF74OQc5EjpXp0MG+10RnebpLELVpoqv/vPFnSo+Rm1lurT3Q=
+=yFLZ
+-----END PGP SIGNATURE-----
+
+--fmtks3qffvmnpfjl--
