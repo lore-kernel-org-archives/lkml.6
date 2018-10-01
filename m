@@ -2,211 +2,567 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13E1C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71746C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CAA820C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:57:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0781220C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:57:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="asqNesoN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CAA820C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SoqlmPfk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0781220C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbeJAWgD (ORCPT
+        id S1726305AbeJAWgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:36:03 -0400
-Received: from mail-ve1eur02hn0209.outbound.protection.outlook.com ([104.47.6.209]:35909
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725266AbeJAWgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:36:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XeO9BaRd4eA3Oh3FQJfuasYBPFiyJQoYPRQoS6NGcBs=;
- b=asqNesoNRG+vPNUz5NsgNe0qm7nOzS+hklO8i7+S8Pp/L/XRR+ibv3mTRcI2qRWH0oBDL85Kzp+xw7RtHdZMj58Lk8b26g06VGB2gYJNJHIQNVgEmMlXGxSxXs4mNAs9lWhSC8AoiwwkZw+wQkbWHuh2i1zdF0ZvubyE9c5KVkw=
-Received: from VI1PR08MB3599.eurprd08.prod.outlook.com (20.177.61.74) by
- VI1PR08MB0976.eurprd08.prod.outlook.com (10.166.143.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.20; Mon, 1 Oct 2018 15:57:19 +0000
-Received: from VI1PR08MB3599.eurprd08.prod.outlook.com
- ([fe80::d453:c2b:518c:b64]) by VI1PR08MB3599.eurprd08.prod.outlook.com
- ([fe80::d453:c2b:518c:b64%3]) with mapi id 15.20.1185.024; Mon, 1 Oct 2018
- 15:57:19 +0000
-From:   Roman Kagan <rkagan@virtuozzo.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-CC:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        =?iso-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>,
-        Cathy Avery <cavery@redhat.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 4/7] KVM: x86: hyperv: keep track of mismatched VP
- indexes
-Thread-Topic: [PATCH v6 4/7] KVM: x86: hyperv: keep track of mismatched VP
- indexes
-Thread-Index: AQHUVbrTeaVBNfWXhkKXGMfpSWKXvqUD9seA///juoCABraMAIAAM8eA///OjwA=
-Date:   Mon, 1 Oct 2018 15:57:19 +0000
-Message-ID: <20181001155715.GA9741@rkaganb.sw.ru>
-References: <20180926170259.29796-1-vkuznets@redhat.com>
- <20180926170259.29796-5-vkuznets@redhat.com>
- <20180927075911.GB4186@rkaganb.sw.ru> <87sh1vfge0.fsf@vitty.brq.redhat.com>
- <d39dcde2-695e-019e-419f-60ce3712eff3@redhat.com>
- <20181001155413.GA2314@rkaganb.sw.ru>
-In-Reply-To: <20181001155413.GA2314@rkaganb.sw.ru>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.10.1 (2018-07-13)
-mail-followup-to: =?iso-8859-2?Q?Roman_Kagan_<rkagan@virtuozzo.com>,=09Paolo_Bonzini_<pbonz?=
- =?iso-8859-2?Q?ini@redhat.com>,=09Vitaly_Kuznetsov_<vkuznets@redhat.com>,?=
- =?iso-8859-2?Q?=09"kvm@vger.kernel.org"_<kvm@vger.kernel.org>,=09Radim_Kr?=
- =?iso-8859-2?Q?=E8m=E1=F8_<rkrcmar@redhat.com>,=09"K._Y._Srinivasan"_<kys?=
- =?iso-8859-2?Q?@microsoft.com>,=09Haiyang_Zhang_<haiyangz@microsoft.com>,?=
- =?iso-8859-2?Q?=09Stephen_Hemminger_<sthemmin@microsoft.com>,=09"Michael_?=
- =?iso-8859-2?Q?Kelley_(EOSG)"_<Michael.H.Kelley@microsoft.com>,=09Mohamme?=
- =?iso-8859-2?Q?d_Gamal_<mmorsy@redhat.com>,_Cathy_Avery_<cavery@redhat.co?=
- =?iso-8859-2?Q?m>,=09Wanpeng_Li_<wanpeng.li@hotmail.com>,=09"linux-kernel?=
- =?iso-8859-2?Q?@vger.kernel.org"_<linux-kernel@vger.kernel.org>?=
-x-originating-ip: [185.231.240.5]
-x-clientproxiedby: VI1PR04CA0104.eurprd04.prod.outlook.com
- (2603:10a6:803:64::39) To VI1PR08MB3599.eurprd08.prod.outlook.com
- (2603:10a6:803:85::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=rkagan@virtuozzo.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR08MB0976;7:wWdb4hxSO771c3UZPU6wuEffqKXMRL3HBZtqCVdtRZVktaOzatZl4xQTH4HPLYCuqkUgnGCDjJASEnxzoFRL70/apzhGP1PpdfAtB1WgU5reL87UKHKmrINzzEudT31QjO5AMkUtyLrySf7pSvy3YWN+z1vi1UpflVnb5YqQKpYimzkbmwPQ1eq5ppndw6qEbi7A8e9qfA+bv/Z6d/x8NPhgTeB2++Oqn7jyCubUHalXJ7IjobAtkB3Bkn+/p6mv;20:19Lx/27ULIAHCmgvxASRvY3mlgWV1gOmWH5u/k6VCf6jRGQdD8uX1lsNlIhYLpFd6hn2V5rm0r3Lol2orpNeDROhcQRR1S5vOz+BwzuZw+dyITjJiiVD4jTurNZSu/MBFza41bhJbX5RobjJvzL2b1/9KhXRvJrGQvA2p6sVwo0=
-x-ms-office365-filtering-correlation-id: f6c6d01c-7902-419e-ae1a-08d627b6912c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB0976;
-x-ms-traffictypediagnostic: VI1PR08MB0976:|VI1PR08MB0976:
-x-microsoft-antispam-prvs: <VI1PR08MB0976B8235F432AB9D1D4BCB0C9EF0@VI1PR08MB0976.eurprd08.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051);SRVR:VI1PR08MB0976;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB0976;
-x-forefront-prvs: 0812095267
-x-forefront-antispam-report: SFV:SPM;SFS:(10019020)(136003)(39840400004)(366004)(346002)(376002)(396003)(189003)(199004)(106356001)(81166006)(7736002)(39060400002)(305945005)(6436002)(71200400001)(71190400001)(4326008)(8936002)(76176011)(7416002)(33656002)(11346002)(81156014)(34290500001)(33896004)(478600001)(25786009)(52116002)(6916009)(53546011)(8676002)(6506007)(386003)(58126008)(36756003)(54906003)(5660300001)(68736007)(446003)(6486002)(66066001)(102836004)(186003)(26005)(2906002)(316002)(476003)(3846002)(53936002)(14454004)(5250100002)(486006)(229853002)(99286004)(6116002)(256004)(2900100001)(6246003)(105586002)(86362001)(97736004)(6512007)(1076002)(9686003)(93886005)(14444005)(30126002);DIR:OUT;SFP:1501;SCL:5;SRVR:VI1PR08MB0976;H:VI1PR08MB3599.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: +aA048iI44e8k0Bh4Pi/hDrtHTlViBYj8g9WASQos49ifCrm8IQQ3y3T5yhm9RhxzB6QTAixO3vLYVTEs1b+3pyT1PSMmLoQZ29k8Rtn7sJANQLwfrVUEqTJ0Knvwuy5ilXEHvaUhYrASdbbtMIwybVzPc4K2ne8LmdZR+7bLX4BXfwX89JxNt7JCnmyRSP/h5qRmg4JMqkNC2NBQoWd7VsKw3HU+05ma/zJouZst0OYg06rz+JnS+zWeglU4JKdu8SCvN6v+ZAP8gBtd0DPB9AWOb5y8LSbJWjgn7PfbmiO702ZeSj8oNc6UgCFQeP4zn6HrYXZu0cUcsJBThbOVlQvtrLrlzZqyy6EiGg+yAl0ZdVjVU+I/fbBiPPvWchO0X3uIAXy/sw3PvtaAhaPkVkRFlJnIiFJLWUFzTAJzb7tHlCHtoHLpOWgV0xyzALlEyUw/WKK+H8kYATjphTSktM0+8yv8Fpqpj12x36IZkDbRiy3MhqCv+Hn9HqO+9CQTHlZwU1NghnWufolf7fyKQVXC1uEpMJQgSrNjNyC2ji+Oojsm2qcb+Hd6NQ9LSDEaAZzaE6++UHxVmJZNVw2pA==
-spamdiagnosticoutput: 1:22
-Content-Type: text/plain; charset="iso-8859-2"
-Content-ID: <27DFC9A6DD8D9E47B8CD2D6995558702@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 1 Oct 2018 18:36:23 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:33631 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725266AbeJAWgX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 18:36:23 -0400
+Received: by mail-it1-f194.google.com with SMTP id h6-v6so6590161ith.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 08:57:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=6yu8DsZHIVt14CGGjPnqldgJZlXk9cz2iZ+swCodgnA=;
+        b=SoqlmPfkeeSEmjk+ArrizInjv4yHPMTytoHetwyctCBg9BjnlLeu3o0R590SgtaWXP
+         qJ05+ZMjHp7xLEzWt/Ft7A5bFcV4CO8d0g9+n0ySGq4i5/LPFBcYxjM9CHXxOb1GcTOa
+         K2M1ORl+HykyRAPuxMFqE8g1NyJIwaA0XUWK8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=6yu8DsZHIVt14CGGjPnqldgJZlXk9cz2iZ+swCodgnA=;
+        b=NAOsbxMwDVKwuhQtAmoTz0dmAE4nyg5MFngqWTxPKqZgqBs4iGfegsSKA0nIHrOgqY
+         sYVabzmYmrzL5prhZw1cSFKqKbceQmFkE4RlOMoAcUVAFEZxCpe0irvfbJGwy3NYD0Vg
+         A9p5aMFgowst0sdF3/dmGvwT0M3dvSvNLgNDPpBjV7p4PLNXGK9K2phPD/YwImi/sPyW
+         inG46aVgS+T//b9VnJUBrWYrLaRys9uSeIw96aMrA/n5eWsovpBQ0GqKWrX6uU4x4eep
+         OCm7QOxqc9ekw8efImfILNxZLSFI4FlllqP4gsDJxpJ5hyoo+RY58H0SNgVzu3Dl7zeT
+         O1yw==
+X-Gm-Message-State: ABuFfojMgoTlB1Sno9TpZ8ZXRJmMiVfqZLG0etUwAqw4VLB5Svn+vm08
+        0yLk3A2Y0GvnOq/bgmvM3dX3cLqA61lUS38SBZCkVQ==
+X-Google-Smtp-Source: ACcGV62ZnO8DUMVDSdZQ+Jw7r3IJU9lvMXUVeoy80GZPIf2fdGV0BK39KFnZtOPFJ/qnK+yE85i92mRlIN9AuQtzwwA=
+X-Received: by 2002:a24:e48e:: with SMTP id o136-v6mr10375391ith.58.1538409473868;
+ Mon, 01 Oct 2018 08:57:53 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6c6d01c-7902-419e-ae1a-08d627b6912c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 15:57:19.6161
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB0976
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 08:57:52 -0700 (PDT)
+In-Reply-To: <20181001141648.1DBED68BDF@newverein.lst.de>
+References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141648.1DBED68BDF@newverein.lst.de>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 1 Oct 2018 17:57:52 +0200
+Message-ID: <CAKv+Gu8ji7fz_-THmvd-wvod3LqrtBQq4g38UTuo+ke+NZfE9w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] arm64: implement ftrace with regs
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 03:54:26PM +0000, Roman Kagan wrote:
-> On Mon, Oct 01, 2018 at 05:48:54PM +0200, Paolo Bonzini wrote:
-> > On 27/09/2018 11:17, Vitaly Kuznetsov wrote:
-> > > Roman Kagan <rkagan@virtuozzo.com> writes:
-> > >=20
-> > >> On Wed, Sep 26, 2018 at 07:02:56PM +0200, Vitaly Kuznetsov wrote:
-> > >>> In most common cases VP index of a vcpu matches its vcpu index. Use=
-rspace
-> > >>> is, however, free to set any mapping it wishes and we need to accou=
-nt for
-> > >>> that when we need to find a vCPU with a particular VP index. To kee=
-p search
-> > >>> algorithms optimal in both cases introduce 'num_mismatched_vp_index=
-es'
-> > >>> counter showing how many vCPUs with mismatching VP index we have. I=
-n case
-> > >>> the counter is zero we can assume vp_index =3D=3D vcpu_idx.
-> > >>>
-> > >>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > >>> ---
-> > >>>  arch/x86/include/asm/kvm_host.h |  3 +++
-> > >>>  arch/x86/kvm/hyperv.c           | 26 +++++++++++++++++++++++---
-> > >>>  2 files changed, 26 insertions(+), 3 deletions(-)
-> > >>>
-> > >>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm=
-/kvm_host.h
-> > >>> index 09b2e3e2cf1b..711f79f1b5e6 100644
-> > >>> --- a/arch/x86/include/asm/kvm_host.h
-> > >>> +++ b/arch/x86/include/asm/kvm_host.h
-> > >>> @@ -781,6 +781,9 @@ struct kvm_hv {
-> > >>>  	u64 hv_reenlightenment_control;
-> > >>>  	u64 hv_tsc_emulation_control;
-> > >>>  	u64 hv_tsc_emulation_status;
-> > >>> +
-> > >>> +	/* How many vCPUs have VP index !=3D vCPU index */
-> > >>> +	atomic_t num_mismatched_vp_indexes;
-> > >>>  };
-> > >>> =20
-> > >>>  enum kvm_irqchip_mode {
-> > >>> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-> > >>> index c8764faf783b..6a19c8e3c432 100644
-> > >>> --- a/arch/x86/kvm/hyperv.c
-> > >>> +++ b/arch/x86/kvm/hyperv.c
-> > >>> @@ -1045,11 +1045,31 @@ static int kvm_hv_set_msr(struct kvm_vcpu *=
-vcpu, u32 msr, u64 data, bool host)
-> > >>>  	struct kvm_vcpu_hv *hv_vcpu =3D &vcpu->arch.hyperv;
-> > >>> =20
-> > >>>  	switch (msr) {
-> > >>> -	case HV_X64_MSR_VP_INDEX:
-> > >>> -		if (!host || (u32)data >=3D KVM_MAX_VCPUS)
-> > >>> +	case HV_X64_MSR_VP_INDEX: {
-> > >>> +		struct kvm_hv *hv =3D &vcpu->kvm->arch.hyperv;
-> > >>> +		int vcpu_idx =3D kvm_vcpu_get_idx(vcpu);
-> > >>> +		u32 new_vp_index =3D (u32)data;
-> > >>> +
-> > >>> +		if (!host || new_vp_index >=3D KVM_MAX_VCPUS)
-> > >>>  			return 1;
-> > >>> -		hv_vcpu->vp_index =3D (u32)data;
-> > >>> +
-> > >>> +		if (new_vp_index =3D=3D hv_vcpu->vp_index)
-> > >>> +			return 0;
-> > >>> +
-> > >>> +		/*
-> > >>> +		 * VP index is changing, increment num_mismatched_vp_indexes in
-> > >>> +		 * case it was equal to vcpu_idx before; on the other hand, if
-> > >>> +		 * the new VP index matches vcpu_idx num_mismatched_vp_indexes
-> > >>> +		 * needs to be decremented.
-> > >>
-> > >> It may be worth mentioning that the initial balance is provided by
-> > >> kvm_hv_vcpu_postcreate setting vp_index =3D vcpu_idx.
-> > >>
-> > >=20
-> > > Of course, yes, will update the comment in case I'll be re-submitting=
-.
-> >=20
-> > 	/*
-> > 	 * VP index is initialized to hv_vcpu->vp_index by
-                                      ^^^^^^^^^^^^^^^^^
-				      vcpu_idx
+On 1 October 2018 at 16:16, Torsten Duwe <duwe@lst.de> wrote:
+> Check for compiler support of -fpatchable-function-entry and use it
+> to intercept functions immediately on entry, saving the LR in x9.
+> patchable-function-entry in GCC disables IPA-RA, which means ABI
+> register calling conventions are obeyed *and* scratch registers are
+> available.
+> Disable ftracing in efi/libstub, because this triggers cross-section
+> linker errors now (-pg is disabled already for those files).
+> Add an ftrace_caller which can handle LR in x9, as well as an
+> ftrace_regs_caller that additionally writes out a set of pt_regs
+> for inspection.
+> Introduce and handle an ftrace_regs_trampoline for module PLTs.
+>
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
+>
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -110,6 +110,7 @@ config ARM64
+>         select HAVE_DEBUG_KMEMLEAK
+>         select HAVE_DMA_CONTIGUOUS
+>         select HAVE_DYNAMIC_FTRACE
+> +       select HAVE_DYNAMIC_FTRACE_WITH_REGS
+>         select HAVE_EFFICIENT_UNALIGNED_ACCESS
+>         select HAVE_FTRACE_MCOUNT_RECORD
+>         select HAVE_FUNCTION_TRACER
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -78,6 +78,15 @@ ifeq ($(CONFIG_ARM64_MODULE_PLTS),y)
+>  KBUILD_LDFLAGS_MODULE  += -T $(srctree)/arch/arm64/kernel/module.lds
+>  endif
+>
+> +ifeq ($(CONFIG_DYNAMIC_FTRACE_WITH_REGS),y)
+> +  CC_FLAGS_FTRACE := -fpatchable-function-entry=2
+> +  KBUILD_CPPFLAGS += -DCC_USING_PATCHABLE_FUNCTION_ENTRY
+> +  ifeq ($(call cc-option,-fpatchable-function-entry=2),)
+> +    $(error Cannot use CONFIG_DYNAMIC_FTRACE_WITH_REGS: \
+> +             -fpatchable-function-entry not supported by compiler)
+> +  endif
+> +endif
+> +
+>  # Default value
+>  head-y         := arch/arm64/kernel/head.o
+>
+> --- a/arch/arm64/include/asm/ftrace.h
+> +++ b/arch/arm64/include/asm/ftrace.h
+> @@ -16,6 +16,17 @@
+>  #define MCOUNT_ADDR            ((unsigned long)_mcount)
+>  #define MCOUNT_INSN_SIZE       AARCH64_INSN_SIZE
+>
+> +/* DYNAMIC_FTRACE_WITH_REGS is implemented by adding 2 NOPs at the beginning
+> +   of each function, with the second NOP actually calling ftrace. In contrary
+> +   to a classic _mcount call, the call instruction to be modified is thus
+> +   the second one, and not the only one. */
 
-> > 	 * kvm_hv_vcpu_postcreate so they initially match.  Now the
-> > 	 * VP index is changing, adjust num_mismatched_vp_indexes if
-> > 	 * it now matches or no longer matches vcpu_idx.
-> > 	 */
-> >=20
-> > ?
->=20
-> To my taste - perfect :)
+OK, so the first slot will be patched unconditionally to do the 'mov x9, x30' ?
 
-Well, almost :)
+> +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+> +#define ARCH_SUPPORTS_FTRACE_OPS 1
+> +#define REC_IP_BRANCH_OFFSET AARCH64_INSN_SIZE
+> +#else
+> +#define REC_IP_BRANCH_OFFSET 0
+> +#endif
+> +
+>  #ifndef __ASSEMBLY__
+>  #include <linux/compat.h>
+>
+> --- a/arch/arm64/kernel/Makefile
+> +++ b/arch/arm64/kernel/Makefile
+> @@ -7,9 +7,9 @@ CPPFLAGS_vmlinux.lds    := -DTEXT_OFFSET=$(
+>  AFLAGS_head.o          := -DTEXT_OFFSET=$(TEXT_OFFSET)
+>  CFLAGS_armv8_deprecated.o := -I$(src)
+>
+> -CFLAGS_REMOVE_ftrace.o = -pg
+> -CFLAGS_REMOVE_insn.o = -pg
+> -CFLAGS_REMOVE_return_address.o = -pg
+> +CFLAGS_REMOVE_ftrace.o = -pg $(CC_FLAGS_FTRACE)
+> +CFLAGS_REMOVE_insn.o = -pg $(CC_FLAGS_FTRACE)
+> +CFLAGS_REMOVE_return_address.o = -pg $(CC_FLAGS_FTRACE)
+>
+>  # Object file lists.
+>  arm64-obj-y            := debug-monitors.o entry.o irq.o fpsimd.o              \
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -11,7 +11,8 @@ cflags-$(CONFIG_X86)          += -m$(BITS) -D__K
+>                                    -fPIC -fno-strict-aliasing -mno-red-zone \
+>                                    -mno-mmx -mno-sse -fshort-wchar
+>
+> -cflags-$(CONFIG_ARM64)         := $(subst -pg,,$(KBUILD_CFLAGS)) -fpie
+> +cflags-$(CONFIG_ARM64)         := $(filter-out -pg $(CC_FLAGS_FTRACE)\
+> +                                 ,$(KBUILD_CFLAGS)) -fpie
+>  cflags-$(CONFIG_ARM)           := $(subst -pg,,$(KBUILD_CFLAGS)) \
+>                                    -fno-builtin -fpic -mno-single-pic-base
+>
+> --- a/arch/arm64/kernel/entry-ftrace.S
+> +++ b/arch/arm64/kernel/entry-ftrace.S
+> @@ -13,6 +13,8 @@
+>  #include <asm/assembler.h>
+>  #include <asm/ftrace.h>
+>  #include <asm/insn.h>
+> +#include <asm/asm-offsets.h>
+> +#include <asm/assembler.h>
+>
+>  /*
+>   * Gcc with -pg will put the following code in the beginning of each function:
+> @@ -123,6 +125,7 @@ skip_ftrace_call:                   // }
+>  ENDPROC(_mcount)
+>
+>  #else /* CONFIG_DYNAMIC_FTRACE */
+> +#ifndef CC_USING_PATCHABLE_FUNCTION_ENTRY
+>  /*
+>   * _mcount() is used to build the kernel with -pg option, but all the branch
+>   * instructions to _mcount() are replaced to NOP initially at kernel start up,
+> @@ -162,6 +165,92 @@ ftrace_graph_call:                 // ftrace_graph_cal
+>
+>         mcount_exit
+>  ENDPROC(ftrace_caller)
+> +#else /* CC_USING_PATCHABLE_FUNCTION_ENTRY */
+> +
+> +/* Since no -pg or similar compiler flag is used, there should really be
+> +   no reference to _mcount; so do not define one. Only a function address
+> +   is needed in order to refer to it. */
+> +ENTRY(_mcount)
+> +       ret     /* just in case, prevent any fall through. */
+> +ENDPROC(_mcount)
+> +
+> +ENTRY(ftrace_regs_caller)
+> +       sub     sp, sp, #S_FRAME_SIZE
+> +       stp     x29, x9, [sp, #-16]     /* FP/LR link */
+> +
 
-Roman.
+You cannot write below the stack pointer. So you are missing a
+trailing ! here. Note that you can fold the sub
+
+stp x29, x9, [sp, #-(S_FRAME_SIZE+16)]!
+
+> +       stp     x10, x11, [sp, #S_X10]
+> +       stp     x12, x13, [sp, #S_X12]
+> +       stp     x14, x15, [sp, #112]
+> +       stp     x16, x17, [sp, #128]
+> +       stp     x18, x19, [sp, #144]
+> +       stp     x20, x21, [sp, #160]
+> +       stp     x22, x23, [sp, #176]
+> +       stp     x24, x25, [sp, #192]
+> +       stp     x26, x27, [sp, #208]
+> +
+
+All these will shift by 16 bytes though
+
+I am now wondering if it wouldn't be better to create 2 stack frames:
+one for the interrupted function, and one for this function.
+
+So something like
+
+stp x29, x9, [sp, #-16]!
+mov x29, sp
+
+stp x29, x30, [sp, #-(S_FRAME_SIZE + 16]!
+
+... store all registers including x29 ...
+
+and do another mov x29, sp before calling into the handler. That way
+everything should be visible on the call stack when we do a backtrace.
+
+
+> +       b       ftrace_common
+> +ENDPROC(ftrace_regs_caller)
+> +
+> +ENTRY(ftrace_caller)
+> +       sub     sp, sp, #S_FRAME_SIZE
+> +       stp     x29, x9, [sp, #-16]     /* FP/LR link */
+> +
+
+Same as above
+
+> +ftrace_common:
+> +       stp     x28, x29, [sp, #224]    /* FP in pt_regs + "our" x28 */
+> +
+> +       /* save function arguments */
+> +       stp     x0, x1, [sp]
+> +       stp     x2, x3, [sp, #16]
+> +       stp     x4, x5, [sp, #32]
+> +       stp     x6, x7, [sp, #48]
+> +       stp     x8, x9, [sp, #64]
+> +
+> +       /* The link Register at callee entry */
+> +       str     x9, [sp, #S_LR]         /* to pt_regs.r[30] */
+> +       /* The program counter just after the ftrace call site */
+> +       str     lr, [sp, #S_PC]
+> +       /* The stack pointer as it was on ftrace_caller entry... */
+> +       add     x29, sp, #S_FRAME_SIZE
+> +       str     x29, [sp, #S_SP]
+> +
+> +       ldr_l   x2, function_trace_op, x0
+> +       mov     x1, x9          /* saved LR == parent IP */
+> +       sub     x0, lr, #8      /* function entry == IP */
+> +       mov     x3, sp          /* pt_regs are @sp */
+> +       sub     sp, sp, #16     /* skip over FP/LR link */
+> +
+> +       .global ftrace_call
+> +ftrace_call:
+> +
+> +       bl      ftrace_stub
+> +
+> +#ifdef CONFIG_FUNCTION_GRAPH_TRACER
+> +       .global ftrace_graph_call
+> +ftrace_graph_call:                     // ftrace_graph_caller();
+> +       nop                             // If enabled, this will be replaced
+> +                                       // "b ftrace_graph_caller"
+> +#endif
+> +
+> +ftrace_common_return:
+> +       add     sp, sp, #16     /* advance to pt_regs for restore */
+> +
+> +       ldp     x0, x1, [sp]
+> +       ldp     x2, x3, [sp, #16]
+> +       ldp     x4, x5, [sp, #32]
+> +       ldp     x6, x7, [sp, #48]
+> +       ldp     x8, x9, [sp, #64]
+> +
+> +       ldp     x28, x29, [sp, #224]
+> +
+> +       ldr     x9, [sp, #S_PC]
+> +       ldr     lr, [sp, #S_LR]
+> +       add     sp, sp, #S_FRAME_SIZE
+> +
+> +       ret     x9
+> +
+> +ENDPROC(ftrace_caller)
+> +
+> +#endif /* CC_USING_PATCHABLE_FUNCTION_ENTRY */
+>  #endif /* CONFIG_DYNAMIC_FTRACE */
+>
+>  ENTRY(ftrace_stub)
+> @@ -197,12 +286,20 @@ ENDPROC(ftrace_stub)
+>   * and run return_to_handler() later on its exit.
+>   */
+>  ENTRY(ftrace_graph_caller)
+> +#ifndef CC_USING_PATCHABLE_FUNCTION_ENTRY
+>         mcount_get_lr_addr        x0    //     pointer to function's saved lr
+>         mcount_get_pc             x1    //     function's pc
+>         mcount_get_parent_fp      x2    //     parent's fp
+>         bl      prepare_ftrace_return   // prepare_ftrace_return(&lr, pc, fp)
+>
+>         mcount_exit
+> +#else
+> +       add     x0, sp, #S_LR+16        /* address of (LR pointing into caller) */
+> +       ldr     x1, [sp, #S_PC+16]
+> +       ldr     x2, [sp, #S_X28 + 8+16] /* caller's frame pointer */
+> +       bl      prepare_ftrace_return
+> +       b       ftrace_common_return
+> +#endif
+>  ENDPROC(ftrace_graph_caller)
+>
+>  /*
+> --- a/arch/arm64/kernel/ftrace.c
+> +++ b/arch/arm64/kernel/ftrace.c
+> @@ -65,18 +65,66 @@ int ftrace_update_ftrace_func(ftrace_fun
+>         return ftrace_modify_code(pc, 0, new, false);
+>  }
+>
+> +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+> +/* Have the assembler generate a known "mov x9,x30" at compile time. */
+> +static void notrace noinline __attribute__((used)) mov_x9_x30(void)
+> +{
+> +       asm(" .global insn_mov_x9_x30\n"
+> +                    "insn_mov_x9_x30: mov x9,x30\n" : : : "x9");
+> +}
+
+You cannot rely on the compiler putting the mov at the beginning. I
+think some well commented #define should do for the opcode (or did you
+just remove that?)
+
+> +#endif
+> +
+> +#ifdef CONFIG_ARM64_MODULE_PLTS
+> +int use_ftrace_trampoline(struct module *mod, unsigned long *addr)
+> +{
+> +       struct plt_entry trampoline;
+> +       trampoline = get_plt_entry(*addr);
+> +       if (*addr == FTRACE_ADDR) {
+> +               if (!plt_entries_equal(mod->arch.ftrace_trampoline,
+> +                                      &trampoline)) {
+> +
+> +                       /* point the trampoline to our ftrace entry point */
+> +                       module_disable_ro(mod);
+> +                       *mod->arch.ftrace_trampoline = trampoline;
+> +                       module_enable_ro(mod, true);
+> +
+> +                       /* update trampoline before patching in the branch */
+> +                       smp_wmb();
+> +               }
+> +               *addr = (unsigned long)(void *)mod->arch.ftrace_trampoline;
+> +       }
+> +       else if (*addr == FTRACE_REGS_ADDR) {
+> +               if (!plt_entries_equal(mod->arch.ftrace_regs_trampoline,
+> +                                      &trampoline)) {
+> +
+> +                       /* point the trampoline to our ftrace entry point */
+> +                       module_disable_ro(mod);
+> +                       *mod->arch.ftrace_regs_trampoline = trampoline;
+> +                       module_enable_ro(mod, true);
+> +
+> +                       /* update trampoline before patching in the branch */
+> +                       smp_wmb();
+> +               }
+> +               *addr = (unsigned long)(void *)mod->arch.ftrace_regs_trampoline;
+> +       }
+> +       else
+> +               return -EINVAL;
+> +       return 0;
+> +}
+> +#endif
+> +
+>  /*
+>   * Turn on the call to ftrace_caller() in instrumented function
+>   */
+>  int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
+>  {
+> -       unsigned long pc = rec->ip;
+> +       unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
+> +       int ret;
+>         u32 old, new;
+>         long offset = (long)pc - (long)addr;
+>
+>         if (offset < -SZ_128M || offset >= SZ_128M) {
+>  #ifdef CONFIG_ARM64_MODULE_PLTS
+> -               struct plt_entry trampoline;
+>                 struct module *mod;
+>
+>                 /*
+> @@ -96,54 +144,67 @@ int ftrace_make_call(struct dyn_ftrace *
+>                 if (WARN_ON(!mod))
+>                         return -EINVAL;
+>
+> -               /*
+> -                * There is only one ftrace trampoline per module. For now,
+> -                * this is not a problem since on arm64, all dynamic ftrace
+> -                * invocations are routed via ftrace_caller(). This will need
+> -                * to be revisited if support for multiple ftrace entry points
+> -                * is added in the future, but for now, the pr_err() below
+> -                * deals with a theoretical issue only.
+> -                */
+> -               trampoline = get_plt_entry(addr);
+> -               if (!plt_entries_equal(mod->arch.ftrace_trampoline,
+> -                                      &trampoline)) {
+> -                       if (!plt_entries_equal(mod->arch.ftrace_trampoline,
+> -                                              &(struct plt_entry){})) {
+> -                               pr_err("ftrace: far branches to multiple entry points unsupported inside a single module\n");
+> -                               return -EINVAL;
+> -                       }
+> -
+> -                       /* point the trampoline to our ftrace entry point */
+> -                       module_disable_ro(mod);
+> -                       *mod->arch.ftrace_trampoline = trampoline;
+> -                       module_enable_ro(mod, true);
+> -
+> -                       /* update trampoline before patching in the branch */
+> -                       smp_wmb();
+> +               /* Check against our well-known list of ftrace entry points */
+> +               if (addr == FTRACE_ADDR || addr == FTRACE_REGS_ADDR) {
+> +                       ret = use_ftrace_trampoline(mod, &addr);
+> +                       if (ret < 0)
+> +                               return ret;
+>                 }
+> -               addr = (unsigned long)(void *)mod->arch.ftrace_trampoline;
+> +               else
+> +                       return -EINVAL;
+> +
+>  #else /* CONFIG_ARM64_MODULE_PLTS */
+>                 return -EINVAL;
+>  #endif /* CONFIG_ARM64_MODULE_PLTS */
+>         }
+>
+>         old = aarch64_insn_gen_nop();
+> +       if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_REGS)) {
+> +               new = *(u32*)&mov_x9_x30;
+> +               ret = ftrace_modify_code(pc - REC_IP_BRANCH_OFFSET,
+> +                                        old, new, true);
+> +               if (ret)
+> +                       return ret;
+> +               smp_wmb(); /* ensure LR saver is in place before ftrace call */
+> +       }
+>         new = aarch64_insn_gen_branch_imm(pc, addr, AARCH64_INSN_BRANCH_LINK);
+>
+>         return ftrace_modify_code(pc, old, new, true);
+>  }
+>
+> +int ftrace_modify_call(struct dyn_ftrace *rec, unsigned long old_addr,
+> +                       unsigned long addr)
+> +{
+> +       unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
+> +       u32 old, new;
+> +
+> +       old = aarch64_insn_gen_branch_imm(pc, old_addr, true);
+> +       new = aarch64_insn_gen_branch_imm(pc, addr, true);
+> +
+> +       return ftrace_modify_code(pc, old, new, true);
+> +}
+> +
+> +
+>  /*
+>   * Turn off the call to ftrace_caller() in instrumented function
+>   */
+>  int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec,
+>                     unsigned long addr)
+>  {
+> -       unsigned long pc = rec->ip;
+> +       unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
+>         bool validate = true;
+> +       int ret;
+>         u32 old = 0, new;
+>         long offset = (long)pc - (long)addr;
+>
+> +#ifdef CC_USING_PATCHABLE_FUNCTION_ENTRY
+> +       /* -fpatchable-function-entry= does not generate a profiling call
+> +        *  initially; the NOPs are already there.
+> +        */
+> +       if (addr == MCOUNT_ADDR)
+> +               return 0;
+> +#endif
+> +
+>         if (offset < -SZ_128M || offset >= SZ_128M) {
+>  #ifdef CONFIG_ARM64_MODULE_PLTS
+>                 u32 replaced;
+> @@ -188,7 +249,16 @@ int ftrace_make_nop(struct module *mod,
+>
+>         new = aarch64_insn_gen_nop();
+>
+> -       return ftrace_modify_code(pc, old, new, validate);
+> +       ret = ftrace_modify_code(pc, old, new, validate);
+> +       if (ret)
+> +               return ret;
+> +       if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_REGS)) {
+> +               smp_wmb(); /* ftrace call must not remain without LR saver. */
+> +               old = *(u32*)&mov_x9_x30;
+> +               ret = ftrace_modify_code(pc - REC_IP_BRANCH_OFFSET,
+> +                                        old, new, true);
+> +       }
+> +       return ret;
+>  }
+>
+>  void arch_ftrace_update_code(int command)
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -115,6 +115,7 @@
+>  #define MCOUNT_REC()   . = ALIGN(8);                           \
+>                         __start_mcount_loc = .;                 \
+>                         KEEP(*(__mcount_loc))                   \
+> +                       KEEP(*(__patchable_function_entries))   \
+>                         __stop_mcount_loc = .;
+>  #else
+>  #define MCOUNT_REC()
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -61,8 +61,12 @@ extern void __chk_io_ptr(const volatile
+>  #if defined(CC_USING_HOTPATCH) && !defined(__CHECKER__)
+>  #define notrace __attribute__((hotpatch(0,0)))
+>  #else
+> +#ifdef CC_USING_PATCHABLE_FUNCTION_ENTRY
+> +#define notrace __attribute__((patchable_function_entry(0)))
+> +#else
+>  #define notrace __attribute__((no_instrument_function))
+>  #endif
+> +#endif
+>
+>  /* Intel compiler defines __GNUC__. So we will overwrite implementations
+>   * coming from above header files here
+> --- a/arch/arm64/include/asm/module.h
+> +++ b/arch/arm64/include/asm/module.h
+> @@ -33,6 +33,7 @@ struct mod_arch_specific {
+>
+>         /* for CONFIG_DYNAMIC_FTRACE */
+>         struct plt_entry        *ftrace_trampoline;
+> +       struct plt_entry        *ftrace_regs_trampoline;
+>  };
+>  #endif
+>
+> --- a/arch/arm64/kernel/module.c
+> +++ b/arch/arm64/kernel/module.c
+> @@ -454,6 +454,10 @@ int module_finalize(const Elf_Ehdr *hdr,
+>                 if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
+>                     !strcmp(".text.ftrace_trampoline", secstrs + s->sh_name))
+>                         me->arch.ftrace_trampoline = (void *)s->sh_addr;
+> +               if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_REGS) &&
+> +                   !strcmp(".text.ftrace_regs_trampoline",
+> +                               secstrs + s->sh_name))
+> +                       me->arch.ftrace_regs_trampoline = (void *)s->sh_addr;
+>  #endif
+>         }
+>
