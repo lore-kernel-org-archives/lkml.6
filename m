@@ -2,77 +2,95 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E76BC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 04:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA299C64EAD
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 04:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D65FF2084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 04:46:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A12662084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 04:57:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0pmRQYt3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D65FF2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="zKrK+SqC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A12662084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbeJALVt (ORCPT
+        id S1728696AbeJALdQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 07:21:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60568 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728555AbeJALVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 07:21:49 -0400
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 775242084C
-        for <linux-kernel@vger.kernel.org>; Mon,  1 Oct 2018 04:45:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538369157;
-        bh=Oz4MD9ulqgiPpBV4N6UJT6EIyCAPxpMNroxld2O3ViY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0pmRQYt3sqQ0X1M8SR8awWaejILf746CPihCUPxyVFEdoWQfthpA1dIitVN8GLovB
-         IoSvjEJTr7ZsHxApnKUyDzRsezQ2qFjPk6DQe+Z9PQn+96et3rSpBDbzdDrB50ef7i
-         hdMs1No5yV53OWhPVM7EeBG+pzEqHH+bDJOCLzbg=
-Received: by mail-wm1-f43.google.com with SMTP id n23-v6so7245752wmc.1
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 21:45:57 -0700 (PDT)
-X-Gm-Message-State: ABuFfohgNjWkOKGQwMwY64k8Vodi9Px1SZPlNNFALwST3pOqTcALY7Ph
-        ScmLHFxjhXIilwoMogoDbZkdK6Epib23JKCCdWtO0w==
-X-Google-Smtp-Source: ACcGV60lbbgQmoa4r/7+A+WzlhaSBaZjpSlJqo4jkEagf2bWaaGFPGXV9xm3Xt71jA2/TNO10YqmyGmPH3We/uxnXpM=
-X-Received: by 2002:a1c:9355:: with SMTP id v82-v6mr7613505wmd.128.1538369155896;
- Sun, 30 Sep 2018 21:45:55 -0700 (PDT)
+        Mon, 1 Oct 2018 07:33:16 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41547 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728593AbeJALdQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 07:33:16 -0400
+Received: by mail-qk1-f194.google.com with SMTP id n3-v6so7316569qkn.8
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 21:57:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jnrjBvxLkgEYqcoy4gP3bz3vkNJm9uQLA53NunoyuBk=;
+        b=zKrK+SqCw0pXqtxApE8AZ6kpFcMmAAF0VugdUfcdSrp8elS80jJnue3yDLnBjgXn8A
+         MH3l626cilo7fTZO/DvyDpPh6LrY7KT4kSMdhQWxn9k5R5RvSbR+yHfqlOsMXYHgqw+q
+         USpViqU4f8ugY/v6e5cXx6o/gSXGb/IiITZHuoddfVUYCFKwGL1RsX2J9ggD8erjlgRQ
+         37ck3pAhAtVFtJjWuSNHAydMuLz/rGrCLSm6p/RS44Jj4U71QO6xAsnzNZt7dF1tCUBo
+         w5P81zR1Ikb3JJ3cYj60oU7cLAmGGh2Zt+Fk+6q3U8KZ7HDT84Xkq6WNfkn0p69HjVRo
+         aNlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jnrjBvxLkgEYqcoy4gP3bz3vkNJm9uQLA53NunoyuBk=;
+        b=sfSI5hzgTupc+hn9i9yPFf9H/xp8aVpEvQI+32j3cVAXoMiwvMoIylj1UeeDigrtjX
+         o6IRmbjJ6wYC1FdjT0MopYVz3d8gN7jX0HNwGLu2VzBUNIQp3BDBEno9n3TupE4BY4CC
+         1EgV2B6MFakq0j3TNQI0OTu+d+IWHr19aTCpRbJV5g+6crFag37dSL7qSQ38Vhc4GRWQ
+         xVEkygXc1HUssPFSDfmJVt16wux5zAf90VIm/ZaBWwd6aSiX1LRaZzz07T34p+L1+uTW
+         0s+Tokp8n74Zs/zF5Vu+B9OoO1OzCD/oaBEJNlk55ZjxnbtFLyQvCh5SNYj19oqVO22O
+         a3tQ==
+X-Gm-Message-State: ABuFfoi05NLJoFNCqPPe9vHBpvakmM0oYMDUQP2JDPSDAHN2Yi3JRBX4
+        VqvEPJ34E/B0TgQ1lymFgw+QIZAo7TCtat7bEG+6MA==
+X-Google-Smtp-Source: ACcGV62AH/lpTJqfs7LctyFks9p2g1nLlHZ/w5vWgh3mI0EGsxzcvvOiwWgzTwkWcJViUyEW+7rFMBKXETX29hwPYL0=
+X-Received: by 2002:a37:1f88:: with SMTP id n8-v6mr7012136qkh.64.1538369842479;
+ Sun, 30 Sep 2018 21:57:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180930234628.25528-1-laurent@vivier.eu>
-In-Reply-To: <20180930234628.25528-1-laurent@vivier.eu>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 30 Sep 2018 21:45:44 -0700
-X-Gmail-Original-Message-ID: <CALCETrWcQtLTVJU14ytWxu_gqoLuAYZJpyAvRsKwwgYZz7FEFg@mail.gmail.com>
-Message-ID: <CALCETrWcQtLTVJU14ytWxu_gqoLuAYZJpyAvRsKwwgYZz7FEFg@mail.gmail.com>
-Subject: Re: [RFC 0/2] ns: introduce binfmt_misc namespace
-To:     laurent@vivier.eu
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Andrey Vagin <avagin@openvz.org>,
-        Linux Containers <containers@lists.linux-foundation.org>
+References: <20180913033745.11178-1-drake@endlessm.com> <20180918213244.GE13616@bhelgaas-glaptop.roam.corp.google.com>
+ <20180927205247.GA18434@bhelgaas-glaptop.roam.corp.google.com> <3f8efcd6-7cd2-b41a-d984-28c9e1740d6c@rockbox.org>
+In-Reply-To: <3f8efcd6-7cd2-b41a-d984-28c9e1740d6c@rockbox.org>
+From:   Daniel Drake <drake@endlessm.com>
+Date:   Mon, 1 Oct 2018 12:57:11 +0800
+Message-ID: <CAD8Lp47uL3DQTBiVTduO1+Cg8px4CDpv26qVJsgT+RJ4WZx9oA@mail.gmail.com>
+Subject: Re: [PATCH v3] PCI: Reprogram bridge prefetch registers on resume
+To:     Thomas Martitz <kugel@rockbox.org>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        nouveau@lists.freedesktop.org, Linux PM <linux-pm@vger.kernel.org>,
+        Peter Wu <peter@lekensteyn.nl>, kherbst@redhat.com,
+        andy.shevchenko@linux.intel.com,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Jon Derrick <jonathan.derrick@intel.com>,
+        David Miller <davem@davemloft.net>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        netdev <netdev@vger.kernel.org>, nic_swsd@realtek.com,
+        rchang@marvell.com, Linux Kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 4:47 PM Laurent Vivier <laurent@vivier.eu> wrote:
->
-> This series introduces a new namespace for binfmt_misc.
->
+On Sun, Sep 30, 2018 at 5:07 AM Thomas Martitz <kugel@rockbox.org> wrote:
+> The latest iteration does not work on my HP system. The GPU fails to
+> power up just like the unpatched kernel.
 
-This seems conceptually quite reasonable, but I'm wondering if the
-number of namespace types is getting out of hand given the current
-API.  Should we be considering whether we need a new set of namespace
-creation APIs that scale better to larger numbers of namespace types?
+That's weird, I would not expect a behaviour change in the latest
+patch. pci_restore_config_dword() has some debug messages, could you
+please make them visible and show logs again?
+Also remind us of the PCI device address of the parent bridge (lspci -vt)
+
+Thanks
+Daniel
