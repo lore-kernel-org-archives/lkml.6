@@ -2,130 +2,112 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 995E4C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDFBC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6625E2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:21:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6625E2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 14AC02089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:24:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="0IaUCnca"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14AC02089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbeJAS6p (ORCPT
+        id S1729250AbeJATCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 14:58:45 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:40013 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729099AbeJAS6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 14:58:45 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42P1bN2fYwz9ttBw;
-        Mon,  1 Oct 2018 14:21:04 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id t48jS16Cu-_L; Mon,  1 Oct 2018 14:21:04 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42P1bN22sqz9ttBl;
-        Mon,  1 Oct 2018 14:21:04 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7B8638B96B;
-        Mon,  1 Oct 2018 14:21:11 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id RSRckGY-HKbw; Mon,  1 Oct 2018 14:21:11 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 43CE78B968;
-        Mon,  1 Oct 2018 14:21:11 +0200 (CEST)
-Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 13FB46F36D; Mon,  1 Oct 2018 12:21:10 +0000 (UTC)
-Message-Id: <6acad0a13b7f6c2845b2022737c6a11a445ed3c2.1538394860.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/lib: fix book3s/32 boot failure due to code patching
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Neuling <mikey@neuling.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon,  1 Oct 2018 12:21:10 +0000 (UTC)
+        Mon, 1 Oct 2018 15:02:08 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:18488 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729124AbeJATCI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 15:02:08 -0400
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w91COF1R029341;
+        Mon, 1 Oct 2018 21:24:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w91COF1R029341
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1538396656;
+        bh=7imcWw06lVx6JT0Y1dRWh4GrAUMT26bnc7/MsrPmKYU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0IaUCncamnThbmCrrd875ulLNDeRaHbm9VmeuE4rd0mcwCCVg61B0oGrQ9GZ2rOKm
+         oaRTMTtCeqwutrjps3m/49HswsLq6y1RScHvkQ4Am80sLTY3e4jhYp5Ja0Btu3WlIl
+         8MXEAcAUVZbyzkTadpKcdPZS6h4HRcvO+02oLrlYMRIgTj0AvL0BK+kUnIWT5HdqSN
+         hQUazAZTJ8stgo3XZyK8dfNlHAsUFJTLq/CeRyyo0+1aTs67qK54h3vvYNmCG0B8/X
+         PmdO26PVckVnBipJtCrjCfd6nZFxmxBFNRD7NoRoRFy6yp0Xj0qyEdK3aQe/SBSoex
+         bgpeVuMFUi8Rw==
+X-Nifty-SrcIP: [209.85.217.42]
+Received: by mail-vs1-f42.google.com with SMTP id z130-v6so7337957vsc.7;
+        Mon, 01 Oct 2018 05:24:16 -0700 (PDT)
+X-Gm-Message-State: ABuFfoiWEIGdfEa7jLjqsDC7GXA5p4Ubn7zz3eAk7KlLjwzye7UVDs9h
+        AXiWGrQw+77Zhl00vHG5OTR58CQJM3jz01Wb0AM=
+X-Google-Smtp-Source: ACcGV62J6+qROByNJzHEtb10h6E/2Vhd8qarwR//ddKRnHMiHgnHKitCYKUqsol5dS+wtznTLjcw0TMMEmEktkbN/7s=
+X-Received: by 2002:a67:e0cd:: with SMTP id m13-v6mr3794912vsl.181.1538396654884;
+ Mon, 01 Oct 2018 05:24:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <1536799869-10643-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1536799869-10643-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 1 Oct 2018 21:23:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQsGKSnBmrfEAwgoieizho8WCif_M3NuxtSe3+6Qo6vxg@mail.gmail.com>
+Message-ID: <CAK7LNAQsGKSnBmrfEAwgoieizho8WCif_M3NuxtSe3+6Qo6vxg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] dmaengine: add UniPhier MIO DMAC driver
+To:     Vinod Koul <vkoul@kernel.org>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 51c3c62b58b3 ("powerpc: Avoid code patching freed init
-sections") accesses 'init_mem_is_free' flag too early, before the
-kernel is relocated. This provokes early boot failure (before the
-console is active).
+Hi Vinod,
 
-As it is not necessary to do this verification that early, this
-patch moves the test into patch_instruction() instead of
-__patch_instruction().
 
-This modification also has the advantage of avoiding unnecessary
-remappings.
+2018=E5=B9=B49=E6=9C=8813=E6=97=A5(=E6=9C=A8) 9:52 Masahiro Yamada <yamada.=
+masahiro@socionext.com>:
+>
+> 1/2: DT-binding
+> 2/2: driver
 
-Fixes: 51c3c62b58b3 ("powerpc: Avoid code patching freed init sections")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/lib/code-patching.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/arch/powerpc/lib/code-patching.c b/arch/powerpc/lib/code-patching.c
-index 6ae2777c220d..5ffee298745f 100644
---- a/arch/powerpc/lib/code-patching.c
-+++ b/arch/powerpc/lib/code-patching.c
-@@ -28,12 +28,6 @@ static int __patch_instruction(unsigned int *exec_addr, unsigned int instr,
- {
- 	int err;
- 
--	/* Make sure we aren't patching a freed init section */
--	if (init_mem_is_free && init_section_contains(exec_addr, 4)) {
--		pr_debug("Skipping init section patching addr: 0x%px\n", exec_addr);
--		return 0;
--	}
--
- 	__put_user_size(instr, patch_addr, 4, err);
- 	if (err)
- 		return err;
-@@ -148,7 +142,7 @@ static inline int unmap_patch_area(unsigned long addr)
- 	return 0;
- }
- 
--int patch_instruction(unsigned int *addr, unsigned int instr)
-+static int do_patch_instruction(unsigned int *addr, unsigned int instr)
- {
- 	int err;
- 	unsigned int *patch_addr = NULL;
-@@ -188,12 +182,22 @@ int patch_instruction(unsigned int *addr, unsigned int instr)
- }
- #else /* !CONFIG_STRICT_KERNEL_RWX */
- 
--int patch_instruction(unsigned int *addr, unsigned int instr)
-+static int do_patch_instruction(unsigned int *addr, unsigned int instr)
- {
- 	return raw_patch_instruction(addr, instr);
- }
- 
- #endif /* CONFIG_STRICT_KERNEL_RWX */
-+
-+int patch_instruction(unsigned int *addr, unsigned int instr)
-+{
-+	/* Make sure we aren't patching a freed init section */
-+	if (init_mem_is_free && init_section_contains(addr, 4)) {
-+		pr_debug("Skipping init section patching addr: 0x%px\n", addr);
-+		return 0;
-+	}
-+	return do_patch_instruction(addr, instr);
-+}
- NOKPROBE_SYMBOL(patch_instruction);
- 
- int patch_branch(unsigned int *addr, unsigned long target, int flags)
--- 
-2.13.3
+If there is no more comment,
+is this series applicable for v4.20-rc1 ?
 
+
+>
+> Masahiro Yamada (2):
+>   dt-bindings: dmaengine: add DT binding for UniPhier MIO DMAC
+>   dmaengine: uniphier-mdmac: add UniPhier MIO DMAC driver
+>
+>  .../devicetree/bindings/dma/uniphier-mio-dmac.txt  |  25 ++
+>  MAINTAINERS                                        |   1 +
+>  drivers/dma/Kconfig                                |  11 +
+>  drivers/dma/Makefile                               |   1 +
+>  drivers/dma/uniphier-mdmac.c                       | 495 +++++++++++++++=
+++++++
+>  5 files changed, 533 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/uniphier-mio-dm=
+ac.txt
+>  create mode 100644 drivers/dma/uniphier-mdmac.c
+>
+> --
+> 2.7.4
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
