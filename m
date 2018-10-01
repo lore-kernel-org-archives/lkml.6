@@ -2,123 +2,114 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09762C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 504E3C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:47:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4F72089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:46:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4F72089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0ABD52084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:47:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCcny8+G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ABD52084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729334AbeJATYH (ORCPT
+        id S1729373AbeJATZF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 15:24:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38632 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729289AbeJATYH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:24:07 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w91CYbgB006083
-        for <linux-kernel@vger.kernel.org>; Mon, 1 Oct 2018 08:46:27 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2muhm95vpy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 08:46:27 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Mon, 1 Oct 2018 13:46:24 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 1 Oct 2018 13:46:20 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w91CkJjD48824392
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 1 Oct 2018 12:46:19 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 64D2842049;
-        Mon,  1 Oct 2018 15:46:00 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F2A1242041;
-        Mon,  1 Oct 2018 15:45:59 +0100 (BST)
-Received: from osiris (unknown [9.152.212.171])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon,  1 Oct 2018 15:45:59 +0100 (BST)
-Date:   Mon, 1 Oct 2018 14:46:17 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Leonardo =?iso-8859-1?Q?Br=E1s?= <leobras.c@gmail.com>
-Cc:     lkcamp@lists.libreplanetbr.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Robert Richter <rric@kernel.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3 5/7] drivers: s390: Avoids building drivers if ARCH is
- not s390.
-References: <20180928020816.11251-1-leobras.c@gmail.com>
- <20180928020816.11251-6-leobras.c@gmail.com>
+        Mon, 1 Oct 2018 15:25:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37262 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729017AbeJATZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 15:25:05 -0400
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 926202084C;
+        Mon,  1 Oct 2018 12:47:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538398044;
+        bh=xIZYzG+IYgZwySQQsE8Ut/LwUtRgwBNhkyuzJRcHtTU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=oCcny8+GPcy3TSwTx15feIh2HLBm6pLeOpgObTJr5LFWhKaZ5VrO4GZW4qxVZwoCg
+         Xwd9c0KOsJEDwGI5p9ZktIm5sELwvyVkX5M3JQXjK/lNVfqOT0PKI5hGfI+xRnV5C0
+         5uTKe/gP0r3BLV3SWsNj9bgmX2+WQZ+/J1wznSUc=
+Received: by mail-qk1-f175.google.com with SMTP id a85-v6so7962966qkg.3;
+        Mon, 01 Oct 2018 05:47:24 -0700 (PDT)
+X-Gm-Message-State: ABuFfoheXFsSBxcOBAW5zHpIFjlVDjSJN78lu9dnd+wp0L5vVRPDAd5n
+        f12J762+sN/MaKa2BAgE3+2ml7j/r9r6dhghDg==
+X-Google-Smtp-Source: ACcGV63B4D6JVwfKBIQt494SKFH0HAWmphIRZ4F6DGsAgTNpxwmo/v1YGDJRU4b2qo1tmcKrM7ut2gyXbOLAw2I9Vmk=
+X-Received: by 2002:a37:12d1:: with SMTP id 78-v6mr8077829qks.147.1538398043752;
+ Mon, 01 Oct 2018 05:47:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180928020816.11251-6-leobras.c@gmail.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18100112-0012-0000-0000-000002B0D6D3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100112-0013-0000-0000-000020E503FD
-Message-Id: <20181001124617.GA3185@osiris>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-01_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=661 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810010126
+References: <CGME20181001080750epcas2p21b4c3e14be32859f31bede0656ffa09d@epcas2p2.samsung.com>
+ <20180928220330.31325-1-joe@perches.com> <875zym5bue.fsf%l.stelmach@samsung.com>
+In-Reply-To: <875zym5bue.fsf%l.stelmach@samsung.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 1 Oct 2018 07:47:12 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLoZfU+DMxHJg7ZqD06dgcsxiDbYYW99x8H4C0sOwdiiw@mail.gmail.com>
+Message-ID: <CAL_JsqLoZfU+DMxHJg7ZqD06dgcsxiDbYYW99x8H4C0sOwdiiw@mail.gmail.com>
+Subject: Re: Bad MAINTAINERS pattern in section 'SAMSUNG EXYNOS TRUE RANDOM
+ NUMBER GENERATOR (TRNG) DRIVER'
+To:     =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Cc:     Joe Perches <joe@perches.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 11:08:14PM -0300, Leonardo Brás wrote:
-> Avoids building s390 drivers if 'make drivers/s390/' is called but
-> ARCH is not s390.
-> 
-> Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
-> ---
->  drivers/s390/Makefile | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/s390/Makefile b/drivers/s390/Makefile
-> index a863b0462b43..0575f02dba45 100644
-> --- a/drivers/s390/Makefile
-> +++ b/drivers/s390/Makefile
-> @@ -3,7 +3,7 @@
->  # Makefile for the S/390 specific device drivers
->  #
->  
-> -obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
-> -
-> -drivers-y += drivers/s390/built-in.a
-> -
-> +ifeq ($(ARCH),s390)
-> +	obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
-> +	drivers-y += drivers/s390/built-in.a
-> +endif
+On Mon, Oct 1, 2018 at 3:07 AM =C5=81ukasz Stelmach <l.stelmach@samsung.com=
+> wrote:
+>
+> It was <2018-09-29 sob 00:03>, when Joe Perches wrote:
+> > Please fix this defect appropriately.
+> >
+> > linux-next MAINTAINERS section:
+> >
+> >       12851   SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
+> >       12852   M:      =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+> >       12853   L:      linux-samsung-soc@vger.kernel.org
+> >       12854   S:      Maintained
+> >       12855   F:      drivers/char/hw_random/exynos-trng.c
+> > -->   12856   F:      Documentation/devicetree/bindings/rng/samsung,exy=
+nos5250-trng.txt
+> >
+> > Commit that introduced this:
+> >
+> > commit 6cd225cc5d8a6526b2bea41955882be55d4f109e
+> >  Author: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+> >  Date:   Fri Dec 22 17:48:35 2017 +0100
+> >
+> >      hwrng: exynos - add Samsung Exynos True RNG driver
+> >
+> >      Add support for True Random Number Generator found in Samsung Exyn=
+os
+> >      5250+ SoCs.
+> >
+> >      Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+> >      Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >      Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
+> >      Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> >
+> >   MAINTAINERS                          |   7 ++
+> >   drivers/char/hw_random/Kconfig       |  12 ++
+> >   drivers/char/hw_random/Makefile      |   1 +
+> >   drivers/char/hw_random/exynos-trng.c | 237 ++++++++++++++++++++++++++=
++++++++++
+> >   4 files changed, 257 insertions(+)
+> >
+> > No commit with Documentation/devicetree/bindings/rng/samsung,exynos5250=
+-trng.txt found
+>
+> Please merge the version 3[1] of the patch you've acked[2].
 
-And then somebody wants to build with e.g. "make drivers/s390/cio/" and it
-still doesn't work. So _if_ this should be supported then it should work
-with all directory levels and all configuration options. Otherwise this is
-going to be a never ending story.
+Bindings in a series go in with the rest of the series. If you want me
+to apply please resend as I don't have year old patches in my inbox.
 
+Rob
