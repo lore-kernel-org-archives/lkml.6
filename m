@@ -2,110 +2,161 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B837FC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A6EC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CECB2089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:24:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CECB2089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id B3CF420666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:25:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ru8JS84H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3CF420666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726459AbeJBDDb (ORCPT
+        id S1726442AbeJBDEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 23:03:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60106 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725994AbeJBDDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 23:03:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5F923AEE9;
-        Mon,  1 Oct 2018 20:23:57 +0000 (UTC)
-Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
- owner and waiter logic to load balance console writes"
-To:     Pavel Machek <pavel@ucw.cz>, Steven Rostedt <rostedt@goodmis.org>
-Cc:     Daniel Wang <wonderfly@google.com>, stable@vger.kernel.org,
-        pmladek@suse.com, Alexander.Levin@microsoft.com,
-        akpm@linux-foundation.org, byungchul.park@lge.com,
-        dave.hansen@intel.com, hannes@cmpxchg.org, jack@suse.cz,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mathieu.desnoyers@efficios.com, mgorman@suse.de, mhocko@kernel.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, peterz@infradead.org,
-        tj@kernel.org, torvalds@linux-foundation.org,
-        xiyou.wangcong@gmail.com, pfeiner@google.com
-References: <20180927194601.207765-1-wonderfly@google.com>
- <20181001152324.72a20bea@gandalf.local.home> <20181001201309.GA9835@amd>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <85b9ab27-ec57-647b-4c92-1afb9b595a2a@suse.cz>
-Date:   Mon, 1 Oct 2018 22:21:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 1 Oct 2018 23:04:36 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:35219 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726238AbeJBDEg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 23:04:36 -0400
+Received: by mail-yw1-f67.google.com with SMTP id y76-v6so6092977ywd.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 13:25:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=hjY4lzU/sfNIL0UgF406c5hYxrb3YbgauVtL0B1K3fA=;
+        b=Ru8JS84HsxnScxcrZ9Vj6axAD6eiyCGQoJ4CKtP2ix9DYoJjVW5g1nVtWlTqqGh5V3
+         s6bmg++sG7WZY+mpLivWUK9D1mVTzaPsGQ+imgM2G7VQZ+dSfvG1Vzs1pwM4EG1OcoCj
+         JYq34mYgmZyql9PyoKCtHy5apFpo/vuRV7ejc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=hjY4lzU/sfNIL0UgF406c5hYxrb3YbgauVtL0B1K3fA=;
+        b=AxUrpIHHU/0D7lDUeL7Va80w0RWoNOzWKLWM8JDV/nDIYVckwUYIwEQnkHlRKxXVCT
+         oKs2I71AfXRJOnuCkStZ8772Oschsj0xMYSYrYT8ulaI9TdGI/BNs/gVhwurh07vqsk1
+         e1cLckPPGy3whotNIeZPzm+WV6zHxE/QmxjyiwOxMv3wx6W/5mz2kJFQbSNJ8/LR1Kcx
+         LB3sKftfMyylUePKMe5+dz3rqd9d3OFwP6iPccIerP+c7UXUGDSg0zL9VsPKjMYC/iZ2
+         z8OJ1CsChF4PO8y9DGU8kKVSCDQrsHKrenlTZIn7bEtHkjyeDKLJzBQ181Uk+8R5/5jC
+         dRkw==
+X-Gm-Message-State: ABuFfohJk30XUpeESlz6gCWydjHDlx8UVtDYMsnum5GXbTboEpmwFQmW
+        q7WnJl2MvWx+R7MD7NJbF9NTPKS3wu0=
+X-Google-Smtp-Source: ACcGV61KWK4zXUSCPfXcmhGoIslBNtjlQZilhA0D6LSHvhEpDmJfAYPnetz/R8Uf+X3ZsVGMeUzBMA==
+X-Received: by 2002:a0d:e547:: with SMTP id o68-v6mr6686099ywe.403.1538425504773;
+        Mon, 01 Oct 2018 13:25:04 -0700 (PDT)
+Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
+        by smtp.gmail.com with ESMTPSA id l30-v6sm13237915ywa.104.2018.10.01.13.25.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 13:25:03 -0700 (PDT)
+Received: by mail-yw1-f44.google.com with SMTP id y14-v6so6084077ywa.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 13:25:03 -0700 (PDT)
+X-Received: by 2002:a81:2288:: with SMTP id i130-v6mr7015532ywi.288.1538425502937;
+ Mon, 01 Oct 2018 13:25:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181001201309.GA9835@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 13:25:02 -0700 (PDT)
+In-Reply-To: <20180927214917.10486-1-zsm@chromium.org>
+References: <20180927214917.10486-1-zsm@chromium.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 1 Oct 2018 13:25:02 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+MftDkJXP-ufpCwKV=yXWXavwpfnauGXJqbZjeXrkY4A@mail.gmail.com>
+Message-ID: <CAGXu5j+MftDkJXP-ufpCwKV=yXWXavwpfnauGXJqbZjeXrkY4A@mail.gmail.com>
+Subject: Re: [PATCH] apparmor: Fix uninitialized value in aa_split_fqname
+To:     John Johansen <john.johansen@canonical.com>,
+        Zubin Mithra <zsm@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/1/18 10:13 PM, Pavel Machek wrote:
-> 
-> Dunno. Is the patch perhaps a bit too complex? This is not exactly
-> trivial bugfix.
-> 
-> pavel@duo:/data/l/clean-cg$ git show dbdda842fe96f | diffstat
->  printk.c |  108
->  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
-> 
-> I see that it is pretty critical to Daniel, but maybe kernel with
-> console locking redone should no longer be called 4.4?
+On Thu, Sep 27, 2018 at 2:49 PM, Zubin Mithra <zsm@chromium.org> wrote:
+> Syzkaller reported a OOB-read with the stacktrace below. This occurs
+> inside __aa_lookupn_ns as `n` is not initialized. `n` is obtained from
+> aa_splitn_fqname. In cases where `name` is invalid, aa_splitn_fqname
+> returns without initializing `ns_name` and `ns_len`.
+>
+> Fix this by always initializing `ns_name` and `ns_len`.
+>
+>         __dump_stack lib/dump_stack.c:77 [inline]
+>         dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+>         print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+>         kasan_report_error mm/kasan/report.c:354 [inline]
+>         kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+>         __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+>         memcmp+0xe3/0x160 lib/string.c:861
+>         strnstr+0x4b/0x70 lib/string.c:934
+>         __aa_lookupn_ns+0xc1/0x570 security/apparmor/policy_ns.c:209
+>         aa_lookupn_ns+0x88/0x1e0 security/apparmor/policy_ns.c:240
+>         aa_fqlookupn_profile+0x1b9/0x1010 security/apparmor/policy.c:468
+>         fqlookupn_profile+0x80/0xc0 security/apparmor/label.c:1844
+>         aa_label_strn_parse+0xa3a/0x1230 security/apparmor/label.c:1908
+>         aa_label_parse+0x42/0x50 security/apparmor/label.c:1943
+>         aa_change_profile+0x513/0x3510 security/apparmor/domain.c:1362
+>         apparmor_setprocattr+0xaa4/0x1150 security/apparmor/lsm.c:658
+>         security_setprocattr+0x66/0xc0 security/security.c:1298
+>         proc_pid_attr_write+0x301/0x540 fs/proc/base.c:2555
+>         __vfs_write+0x119/0x9f0 fs/read_write.c:485
+>         vfs_write+0x1fc/0x560 fs/read_write.c:549
+>         ksys_write+0x101/0x260 fs/read_write.c:598
+>         __do_sys_write fs/read_write.c:610 [inline]
+>         __se_sys_write fs/read_write.c:607 [inline]
+>         __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Fixes: 3b0aaf5866bf ("apparmor: add lib fn to find the "split" for fqnames")
+> Reported-by: syzbot+61e4b490d9d2da591b50@syzkaller.appspotmail.com
+> Signed-off-by: Zubin Mithra <zsm@chromium.org>
 
-In that case it probably should no longer be called 4.4 since at least
-Meltdown/Spectre fixes :)
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
+-Kees
+
+
+> ---
+>  security/apparmor/lib.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+> index 974affe50531..76491e7f4177 100644
+> --- a/security/apparmor/lib.c
+> +++ b/security/apparmor/lib.c
+> @@ -90,10 +90,12 @@ const char *aa_splitn_fqname(const char *fqname, size_t n, const char **ns_name,
+>         const char *end = fqname + n;
+>         const char *name = skipn_spaces(fqname, n);
+>
+> -       if (!name)
+> -               return NULL;
+>         *ns_name = NULL;
+>         *ns_len = 0;
+> +
+> +       if (!name)
+> +               return NULL;
+> +
+>         if (name[0] == ':') {
+>                 char *split = strnchr(&name[1], end - &name[1], ':');
+>                 *ns_name = skipn_spaces(&name[1], end - &name[1]);
+> --
+> 2.19.0.605.g01d371f741-goog
+>
+
+
+
+-- 
+Kees Cook
+Pixel Security
