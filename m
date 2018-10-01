@@ -3,128 +3,350 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4EBC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E70C64EB5
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC8E208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:29:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC8E208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 965D72089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:34:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965D72089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726459AbeJBEIr (ORCPT
+        id S1726374AbeJBEON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 00:08:47 -0400
-Received: from foss.arm.com ([217.140.101.70]:56128 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbeJBEIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 00:08:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12CA080D;
-        Mon,  1 Oct 2018 14:29:00 -0700 (PDT)
-Received: from [10.37.10.63] (unknown [10.37.10.63])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 526073F5D3;
-        Mon,  1 Oct 2018 14:28:58 -0700 (PDT)
-Subject: Re: [PATCH v8 9/9] KVM: arm64: Add support for creating PUD hugepages
- at stage 2
-To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
-Cc:     marc.zyngier@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>
-References: <20181001155443.23032-1-punit.agrawal@arm.com>
- <20181001155443.23032-10-punit.agrawal@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <3bd022cd-e470-479a-d7a5-680810db6a42@arm.com>
-Date:   Mon, 1 Oct 2018 22:30:00 +0100
+        Tue, 2 Oct 2018 00:14:13 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:39601 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbeJBEON (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 00:14:13 -0400
+Received: by mail-yw1-f67.google.com with SMTP id v1-v6so6162525ywv.6;
+        Mon, 01 Oct 2018 14:34:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SRl2zR+8efKdS4fBXOuklAsbbknPlsQ+nCp6upTcdcQ=;
+        b=li11RwiSD+spZq+2fxioQN/Ofl6im4owNdqIaVZbjIVrje6ckc5CJ2xZUDVLLfBFno
+         0kjPGS2viVeAHJO95saaiupjC2PGufGr9W7F8cQEcTzujaJQC3nSgSQPJEtDzE+uG9h/
+         6wYHVmxj7kb0Oj+53ygHdFFZgUFT8o4HSDZW1VwN66Jeykdl6q39aif6MKpATHDiVPYG
+         CALMXx11f46pIQbsxm7TIHMsA6I0UMAqTr/SImPNmBWIszD+1dUR/P3+dWGmFRTar4GS
+         StbsSsSRT0FAx04Gmel3EfvheA3q7ftWONv8YDVEADvDHSfY/U13L4wGkt0639EEiuHz
+         jq9g==
+X-Gm-Message-State: ABuFfohJVYtxL0FoZT5oS2B8BRZdFgulAW35475358HKh7vOYKT5/xd9
+        9N72Gieve+M15Opa2vmLYoE=
+X-Google-Smtp-Source: ACcGV60dEvnNZjSiVTkVqUmA/cfWdW72sUNslQJEWhKTxrAqwqHl85HFpFK7fbM+pE7GRmjy8PsAOQ==
+X-Received: by 2002:a81:a089:: with SMTP id x131-v6mr6875775ywg.476.1538429664225;
+        Mon, 01 Oct 2018 14:34:24 -0700 (PDT)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id o202-v6sm33495588ywo.38.2018.10.01.14.34.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 14:34:23 -0700 (PDT)
+Subject: Re: [PATCH v8 13/13] nvmet: Optionally use PCI P2P memory
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Steve Wise <swise@opengridcomputing.com>
+References: <20180927165420.5290-1-logang@deltatee.com>
+ <20180927165420.5290-14-logang@deltatee.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <5ddeed51-0580-9581-cf12-c75e18b4f7cc@grimberg.me>
+Date:   Mon, 1 Oct 2018 14:34:20 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181001155443.23032-10-punit.agrawal@arm.com>
+In-Reply-To: <20180927165420.5290-14-logang@deltatee.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/01/2018 04:54 PM, Punit Agrawal wrote:
-> KVM only supports PMD hugepages at stage 2. Now that the various page
-> handling routines are updated, extend the stage 2 fault handling to
-> map in PUD hugepages.
+
+
+On 09/27/2018 09:54 AM, Logan Gunthorpe wrote:
+> We create a configfs attribute in each nvme-fabrics target port to
+> enable p2p memory use. When enabled, the port will only then use the
+> p2p memory if a p2p memory device can be found which is behind the
+> same switch hierarchy as the RDMA port and all the block devices in
+> use. If the user enabled it and no devices are found, then the system
+> will silently fall back on using regular memory.
 > 
-> Addition of PUD hugepage support enables additional page sizes (e.g.,
-> 1G with 4K granule) which can be useful on cores that support mapping
-> larger block sizes in the TLB entries.
+> If appropriate, that port will allocate memory for the RDMA buffers
+> for queues from the p2pmem device falling back to system memory should
+> anything fail.
 > 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
+> Ideally, we'd want to use an NVME CMB buffer as p2p memory. This would
+> save an extra PCI transfer as the NVME card could just take the data
+> out of it's own memory. However, at this time, only a limited number
+> of cards with CMB buffers seem to be available.
+> 
+> Signed-off-by: Stephen Bates <sbates@raithlin.com>
+> Signed-off-by: Steve Wise <swise@opengridcomputing.com>
+> [hch: partial rewrite of the initial code]
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 > ---
->   arch/arm/include/asm/kvm_mmu.h         |  20 +++++
->   arch/arm/include/asm/stage2_pgtable.h  |   9 +++
->   arch/arm64/include/asm/kvm_mmu.h       |  16 ++++
->   arch/arm64/include/asm/pgtable-hwdef.h |   2 +
->   arch/arm64/include/asm/pgtable.h       |   2 +
->   virt/kvm/arm/mmu.c                     | 106 +++++++++++++++++++++++--
->   6 files changed, 149 insertions(+), 6 deletions(-)
+>   drivers/nvme/target/configfs.c    |  36 ++++++++
+>   drivers/nvme/target/core.c        | 138 +++++++++++++++++++++++++++++-
+>   drivers/nvme/target/io-cmd-bdev.c |   3 +
+>   drivers/nvme/target/nvmet.h       |  13 +++
+>   drivers/nvme/target/rdma.c        |   2 +
+>   5 files changed, 191 insertions(+), 1 deletion(-)
 > 
-
-...
-
-> diff --git a/arch/arm/include/asm/stage2_pgtable.h b/arch/arm/include/asm/stage2_pgtable.h
-> index f6a7ea805232..a4ec25360e50 100644
-> --- a/arch/arm/include/asm/stage2_pgtable.h
-> +++ b/arch/arm/include/asm/stage2_pgtable.h
-> @@ -68,4 +68,13 @@ stage2_pmd_addr_end(struct kvm *kvm, phys_addr_t addr, phys_addr_t end)
->   #define stage2_pmd_table_empty(kvm, pmdp)	kvm_page_empty(pmdp)
->   #define stage2_pud_table_empty(kvm, pudp)	false
+> diff --git a/drivers/nvme/target/configfs.c b/drivers/nvme/target/configfs.c
+> index b37a8e3e3f80..0dfb0e0c3d21 100644
+> --- a/drivers/nvme/target/configfs.c
+> +++ b/drivers/nvme/target/configfs.c
+> @@ -17,6 +17,8 @@
+>   #include <linux/slab.h>
+>   #include <linux/stat.h>
+>   #include <linux/ctype.h>
+> +#include <linux/pci.h>
+> +#include <linux/pci-p2pdma.h>
 >   
-> +static inline bool kvm_stage2_has_pud(struct kvm *kvm)
+>   #include "nvmet.h"
+>   
+> @@ -1094,6 +1096,37 @@ static void nvmet_port_release(struct config_item *item)
+>   	kfree(port);
+>   }
+>   
+> +#ifdef CONFIG_PCI_P2PDMA
+> +static ssize_t nvmet_p2pmem_show(struct config_item *item, char *page)
 > +{
-> +#if CONFIG_PGTABLE_LEVELS > 3
-> +	return true;
-> +#else
-> +	return false;
-> +#endif
-
-nit: We can only have PGTABLE_LEVELS=3 on ARM with LPAE.
-AFAIT, this can be set to false always for ARM.
-
+> +	struct nvmet_port *port = to_nvmet_port(item);
+> +
+> +	return pci_p2pdma_enable_show(page, port->p2p_dev, port->use_p2pmem);
 > +}
 > +
-
-...
-
-> @@ -1669,7 +1752,18 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->   	needs_exec = exec_fault ||
->   		(fault_status == FSC_PERM && stage2_is_exec(kvm, fault_ipa));
+> +static ssize_t nvmet_p2pmem_store(struct config_item *item,
+> +		const char *page, size_t count)
+> +{
+> +	struct nvmet_port *port = to_nvmet_port(item);
+> +	struct pci_dev *p2p_dev = NULL;
+> +	bool use_p2pmem;
+> +	int error;
+> +
+> +	error = pci_p2pdma_enable_store(page, &p2p_dev, &use_p2pmem);
+> +	if (error)
+> +		return error;
+> +
+> +	down_write(&nvmet_config_sem);
+> +	port->use_p2pmem = use_p2pmem;
+> +	pci_dev_put(port->p2p_dev);
+> +	port->p2p_dev = p2p_dev;
+> +	up_write(&nvmet_config_sem);
+> +
+> +	return count;
+> +}
+> +CONFIGFS_ATTR(nvmet_, p2pmem);
+> +#endif /* CONFIG_PCI_P2PDMA */
+> +
+>   static struct configfs_attribute *nvmet_port_attrs[] = {
+>   	&nvmet_attr_addr_adrfam,
+>   	&nvmet_attr_addr_treq,
+> @@ -1101,6 +1134,9 @@ static struct configfs_attribute *nvmet_port_attrs[] = {
+>   	&nvmet_attr_addr_trsvcid,
+>   	&nvmet_attr_addr_trtype,
+>   	&nvmet_attr_param_inline_data_size,
+> +#ifdef CONFIG_PCI_P2PDMA
+> +	&nvmet_attr_p2pmem,
+> +#endif
+>   	NULL,
+>   };
 >   
-> -	if (hugetlb && vma_pagesize == PMD_SIZE) {
-> +	if (hugetlb && vma_pagesize == PUD_SIZE) {
-> +		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
-> +
-> +		new_pud = kvm_pud_mkhuge(new_pud);
-> +		if (writable)
-> +			new_pud = kvm_s2pud_mkwrite(new_pud);
-> +
-> +		if (needs_exec)
-> +			new_pud = kvm_s2pud_mkexec(new_pud);
-> +
-> +		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
-> +	} else if (hugetlb && vma_pagesize == PMD_SIZE) {
->   		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
+> diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+> index bddd1599b826..7ade16cb4ed3 100644
+> --- a/drivers/nvme/target/core.c
+> +++ b/drivers/nvme/target/core.c
+> @@ -15,6 +15,7 @@
+>   #include <linux/module.h>
+>   #include <linux/random.h>
+>   #include <linux/rculist.h>
+> +#include <linux/pci-p2pdma.h>
 >   
->   		new_pmd = kvm_pmd_mkhuge(new_pmd);
-> 
+>   #include "nvmet.h"
+>   
+> @@ -365,9 +366,29 @@ static void nvmet_ns_dev_disable(struct nvmet_ns *ns)
+>   	nvmet_file_ns_disable(ns);
+>   }
+>   
+> +static int nvmet_p2pdma_add_client(struct nvmet_ctrl *ctrl,
+> +		struct nvmet_ns *ns)
+> +{
+> +	int ret;
+> +
+> +	if (!blk_queue_pci_p2pdma(ns->bdev->bd_queue)) {
+> +		pr_err("peer-to-peer DMA is not supported by %s\n",
+> +		       ns->device_path);
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = pci_p2pdma_add_client(&ctrl->p2p_clients, nvmet_ns_dev(ns));
+> +	if (ret)
+> +		pr_err("failed to add peer-to-peer DMA client %s: %d\n",
+> +		       ns->device_path, ret);
+> +
+> +	return ret;
+> +}
+> +
+>   int nvmet_ns_enable(struct nvmet_ns *ns)
+>   {
+>   	struct nvmet_subsys *subsys = ns->subsys;
+> +	struct nvmet_ctrl *ctrl;
+>   	int ret;
+>   
+>   	mutex_lock(&subsys->lock);
+> @@ -389,6 +410,14 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
+>   	if (ret)
+>   		goto out_dev_put;
+>   
+> +	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
+> +		if (ctrl->p2p_dev) {
+> +			ret = nvmet_p2pdma_add_client(ctrl, ns);
+> +			if (ret)
+> +				goto out_remove_clients;
+> +		}
+> +	}
+> +
+>   	if (ns->nsid > subsys->max_nsid)
+>   		subsys->max_nsid = ns->nsid;
+>   
+> @@ -417,6 +446,9 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
+>   out_unlock:
+>   	mutex_unlock(&subsys->lock);
+>   	return ret;
+> +out_remove_clients:
+> +	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry)
+> +		pci_p2pdma_remove_client(&ctrl->p2p_clients, nvmet_ns_dev(ns));
+>   out_dev_put:
+>   	nvmet_ns_dev_disable(ns);
+>   	goto out_unlock;
+> @@ -425,6 +457,7 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
+>   void nvmet_ns_disable(struct nvmet_ns *ns)
+>   {
+>   	struct nvmet_subsys *subsys = ns->subsys;
+> +	struct nvmet_ctrl *ctrl;
+>   
+>   	mutex_lock(&subsys->lock);
+>   	if (!ns->enabled)
+> @@ -450,6 +483,12 @@ void nvmet_ns_disable(struct nvmet_ns *ns)
+>   	percpu_ref_exit(&ns->ref);
+>   
+>   	mutex_lock(&subsys->lock);
+> +
+> +	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
+> +		pci_p2pdma_remove_client(&ctrl->p2p_clients, nvmet_ns_dev(ns));
+> +		nvmet_add_async_event(ctrl, NVME_AER_TYPE_NOTICE, 0, 0);
+
+Hi Logan, what is this event here?
+
+> +	}
+> +
+>   	subsys->nr_namespaces--;
+>   	nvmet_ns_changed(subsys, ns->nsid);
+>   	nvmet_ns_dev_disable(ns);
+> @@ -727,6 +766,23 @@ EXPORT_SYMBOL_GPL(nvmet_req_execute);
+>   
+>   int nvmet_req_alloc_sgl(struct nvmet_req *req, struct nvmet_sq *sq)
+>   {
+> +	struct pci_dev *p2p_dev = NULL;
+> +
+> +	if (IS_ENABLED(CONFIG_PCI_P2PDMA)) {
+> +		if (sq->ctrl)
+> +			p2p_dev = sq->ctrl->p2p_dev;
+> +
+> +		req->p2p_dev = NULL;
+> +		if (sq->qid && p2p_dev) {
+> +			req->sg = pci_p2pmem_alloc_sgl(p2p_dev, &req->sg_cnt,
+> +						       req->transfer_len);
+> +			if (req->sg) {
+> +				req->p2p_dev = p2p_dev;
+> +				return 0;
+> +			}
+
+Would be useful to comment that we fall to normal sgl allocation.
+
+> +		}
+> +	}
+> +
+>   	req->sg = sgl_alloc(req->transfer_len, GFP_KERNEL, &req->sg_cnt);
+>   	if (!req->sg)
+>   		return -ENOMEM;
+> @@ -737,7 +793,11 @@ EXPORT_SYMBOL_GPL(nvmet_req_alloc_sgl);
+>   
+>   void nvmet_req_free_sgl(struct nvmet_req *req)
+>   {
+> -	sgl_free(req->sg);
+> +	if (req->p2p_dev)
+> +		pci_p2pmem_free_sgl(req->p2p_dev, req->sg);
+> +	else
+> +		sgl_free(req->sg);
+> +
+>   	req->sg = NULL;
+>   	req->sg_cnt = 0;
+>   }
+> @@ -939,6 +999,79 @@ bool nvmet_host_allowed(struct nvmet_req *req, struct nvmet_subsys *subsys,
+>   		return __nvmet_host_allowed(subsys, hostnqn);
+>   }
+>   
+> +/*
+> + * If allow_p2pmem is set, we will try to use P2P memory for the SGL lists for
+> + * Ι/O commands. This requires the PCI p2p device to be compatible with the
+> + * backing device for every namespace on this controller.
+> + */
+> +static void nvmet_setup_p2pmem(struct nvmet_ctrl *ctrl, struct nvmet_req *req)
+> +{
+> +	struct nvmet_ns *ns;
+> +	int ret;
+> +
+> +	if (!req->port->use_p2pmem || !req->p2p_client)
+> +		return;
+
+Nit, IMO would be better to check at the call-site, but not a hard
+must...
+
+I still do not fully understand why p2p_dev has to be ctrl-wide and not
+per namespace. Sorry to keep bringing this up (again). But if people are
+OK with it then I guess I can stop asking about this...
 
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> +
+> +	mutex_lock(&ctrl->subsys->lock);
+> +
+> +	ret = pci_p2pdma_add_client(&ctrl->p2p_clients, req->p2p_client);
+> +	if (ret) {
+> +		pr_err("failed adding peer-to-peer DMA client %s: %d\n",
+> +		       dev_name(req->p2p_client), ret);
+> +		goto free_devices;
+> +	}
+> +
+> +	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link) {
+> +		ret = nvmet_p2pdma_add_client(ctrl, ns);
+> +		if (ret)
+> +			goto free_devices;
+
+I think that at some point we said that this looks like it should fall
+back to host memory for those namespaces.. when we allocate the sgl we
+already assigned a namespace to the request (nvmet_req_init).
+
+Aside from my questions the patch looks good.
