@@ -6,90 +6,74 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B28C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25733C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DFC520684
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:18:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DFC520684
+	by mail.kernel.org (Postfix) with ESMTP id D1F9520684
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:18:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F9520684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbeJATzs (ORCPT
+        id S1729387AbeJAT4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 15:55:48 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34452 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729233AbeJATzs (ORCPT
+        Mon, 1 Oct 2018 15:56:38 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37442 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729243AbeJAT4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:55:48 -0400
-Received: by mail-qt1-f194.google.com with SMTP id x23-v6so13901687qtr.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 06:18:01 -0700 (PDT)
+        Mon, 1 Oct 2018 15:56:38 -0400
+Received: by mail-qk1-f196.google.com with SMTP id x8-v6so367132qka.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 06:18:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=clpmkpYr4SKKPLCQoDmcJmgtfc0PJ0l1GfiPvNa19Sc=;
-        b=n5KApk0zC+K8JnkfxT+OLeSb4x3Puvre72uhRnsF8o5VNzPQBydLTJrArok52cGv0A
-         t5LcXYPzh6rtelOjqGoz9FfXp/S7fBo3l6qiV1dRFnz6a1JrxgZBMwQQnSQ5OIV7Uj4k
-         9OYwjsPgnYvOT7NKc3g+qGkq9cfgb9YN2v4xe/SdGM+9lNtky2UF3zMYW0R7lDxoi5Uc
-         435fHCGFR5NMOH2DEi/9SjUrhXh23j/EgTp7n3UYCx+jRLI1bX14JOBjxjdBpA47XsF3
-         3zs599wXcYPUCTVkzHR0ydOlaAN8LjdFRl0vSdnj/S8ApbwIpzM743/s+IiIGH4FuE+2
-         awjQ==
-X-Gm-Message-State: ABuFfojbU4CVzaA8c5uGZ1tfovVANTyoOPxqb3/IMi6LrGxtm25meRNl
-        +vGXbySpVbhkyop9pjnwb5KDmA3LYwGHhnt0BTQ=
-X-Google-Smtp-Source: ACcGV61Po3q6iZDQqOh3KyU+0gG+jUIe6ILjW/ogsK0yGpMXAwWMcQCyy1R3teFW/ryueGUqK6SBxFcVgBFRW9VZiqk=
-X-Received: by 2002:aed:3f08:: with SMTP id p8-v6mr8388491qtf.185.1538399880567;
- Mon, 01 Oct 2018 06:18:00 -0700 (PDT)
+        bh=kRGB4dav7QSf1qmMkkWNST9N54xSf9XfAWira5Xq398=;
+        b=Zw9JzCESZK9ubMw8BJ/N7KQLSOG9lju6TSmQz3YegupAh/4ZZaAUIqyUd13gv6MnOy
+         nqlPEYCd+EskotGRrmJjRvViZhAvl/A55TbcZkuqva1wVVPpjJNKnX7HbzSIhFJIJ7PL
+         ZcHn7nyxCkEpQpAskdZFRKhp1F4+NjJsaXbsc7g34Nu4gwRg3j3NTzNPfWGDvCMbDAB/
+         bHp0edDUCeBvOSsB06qfQNzaMRtFVkutnsaTV/xEG1ORn3DLGFKhK1fjr/hF4eTJF+ep
+         NFCMiY9kDL8O4Cocc6z9EIv47yysf/fVytvWeZG2wsji4iwt3AO+Ln5FJtIOtz8mSUo5
+         TW0g==
+X-Gm-Message-State: ABuFfogg19xfXtI3vmJtTXj0idNEnDEBqB5Rvx/0bvnNWzJD4OeAR/Ol
+        yJuei7JiK3nwsXPU6Dc2uobirBc2FiIQQmfJRUV0aw==
+X-Google-Smtp-Source: ACcGV62j7BWluF85O4Y3JhrKXceQSC/OL7Y1HjjTffztN69YHINDeSw7TTv7XkoRz2GigvQ45xKjsViF2J7nNBEkPwM=
+X-Received: by 2002:a37:6b03:: with SMTP id g3-v6mr8167002qkc.107.1538399930602;
+ Mon, 01 Oct 2018 06:18:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180928224615.19862-1-nm@ti.com> <19176740-b38f-8ae9-a9a2-85d6f7a9c590@oracle.com>
-In-Reply-To: <19176740-b38f-8ae9-a9a2-85d6f7a9c590@oracle.com>
+References: <20180929130003.5dc79bed@xhacker.debian>
+In-Reply-To: <20180929130003.5dc79bed@xhacker.debian>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 1 Oct 2018 15:17:44 +0200
-Message-ID: <CAK8P3a0CqDFbNOcLH-mEGfxb2HyzDNiuUWf5zAo1ndehQs9S2g@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Drop dt-bindings/genpd/k2g.h
-To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Date:   Mon, 1 Oct 2018 15:18:34 +0200
+Message-ID: <CAK8P3a2dPpcV08vhsdtr9CD-+-u5VUhSNRhRptmP8bodfF+DSw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: fix pattern in ARM/Synaptics berlin SoC section
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 Cc:     arm-soc <arm@kernel.org>, Olof Johansson <olof@lixom.net>,
-        Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh@kernel.org>, Dave Gerlach <d-gerlach@ti.com>,
-        Tero Kristo <t-kristo@ti.com>
+        Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 2:07 AM Santosh Shilimkar
-<santosh.shilimkar@oracle.com> wrote:
-> On 9/28/2018 3:46 PM, Nishanth Menon wrote:
-> > Drop include/dt-bindings/genpd/k2g.h which disappeared from kernel tree
-> > some time back, however MAINTAINERS file was missed to be updated.
-> >
-> > Fixes: d16645054d2f ("dt-bindings: Drop k2g genpd device ID macros")
-> > Cc: Rob Herring <robh@kernel.org>
-> > Cc: Dave Gerlach <d-gerlach@ti.com>
-> > Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> > Cc: Tero Kristo <t-kristo@ti.com>
-> > Reported-by: Joe Perches <joe@perches.com>
-> > Signed-off-by: Nishanth Menon <nm@ti.com>
-> > ---
-> >
-> > A big oops.. Sorry about that. will do better next time. I tried to relook and
-> > I think we have'nt missed any other files.
-> >
-> > Based off next-20180928 tag.
-> >
-> > Santosh, any chance you could pick this up -> Thread:
-> > https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1776470.html
-> >
-> Could you please apply this to arm-soc tree if its not too
-> late ?
+On Sat, Sep 29, 2018 at 7:03 AM Jisheng Zhang
+<Jisheng.Zhang@synaptics.com> wrote:
 >
-> Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+> Berlin SoC files has been moved from marvell dir to synaptics dir, but
+> commit bc52497a595d ("MAINTAINERS: update entry for ARM/berlin") didn't
+> update the dir accordingly. This patch fixes it.
+>
+> From another side, new derivative SoCs from Synaptics may not be named
+> as berlin*, so let's update the entries accordingly.
+>
+> Fixes: bc52497a595d ("MAINTAINERS: update entry for ARM/berlin")
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> Reported-by: Joe Perches <joe@perches.com>
+
 
 Applied to next/soc, thanks!
 
-      Arnd
+       Arnd
