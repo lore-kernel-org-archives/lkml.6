@@ -2,118 +2,97 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C2BC004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42765C004D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E7DB20840
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:38:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D38C20833
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:40:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUf+3VmH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E7DB20840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HNKitz/W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D38C20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbeJAJM6 (ORCPT
+        id S1728592AbeJAJPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 05:12:58 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44848 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726945AbeJAJM6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 05:12:58 -0400
-Received: by mail-pg1-f195.google.com with SMTP id g2-v6so8323187pgu.11
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 19:37:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rPdcmrltulzJkEuEmVXOPPDqv5gYoeLZfgs9OSIgqwA=;
-        b=FUf+3VmHmUofAbU/3vTAYBnUIUfpu7RxrsvWIOwIS/aYoN8Z1gyoNPzlI3QYL8+XBt
-         BnMfwgE4IUeokD00oucNQfFZF8Q0g2oDG5/abza33JTcPtNXzR04es+4lvI/KQTsjHCF
-         4g6QHXTic+1d6Dm3+lh+4IsBDCVgYh7HUvjPe/o1rz45jObmBmKXzoECi6dXIP0n8Asb
-         Y4QjxxX/wm9biUmtXCAe8Ke8E4grJ+U2NOc9H6J50uGj+ilpl542GTjhOcraFp6ie4hL
-         gd7ji4zQB17hlDruKFgBGU/cxQ81gx+/VG3I3QoumN8MU6Q44JJ++UNMEjIP5DnMAyF7
-         oq/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rPdcmrltulzJkEuEmVXOPPDqv5gYoeLZfgs9OSIgqwA=;
-        b=BaBNYpduhmDiHGXo1OUYBPumXsDjW+rnYjzgjfbvI2+U0tl9OQ9+VX6iPnVQMtecwA
-         vhg5utJ464izyA9NnqQMc9tTuZ9C1VB8uOFLpMysqROBQc64xJ/ZZMHZa6dLYXQ7xDRU
-         e+4ZucTtG3H2WyttyzhZWcaSwhu3yJg9cAIg8zzTIwXtEsHqksb+3HoaAtKU40OGhQuy
-         jItz2oVzw1kT+O7gYyDYDq0rgM0AGfxCbyPmnCQxuOoHQZ67DXa6dkHaOl65xlpONkFq
-         1yYBhZJnPr5jRgvrq2EFVuFKiVOuzPh57klGqchZ4P10Nem0vWjH4jy8vk7RAahUPgOU
-         H1+Q==
-X-Gm-Message-State: ABuFfoiY6ZQ7/Gk6yRdVSsTzjCxYUowEqtLIgJkfrN4w0Gfv/nQsBWds
-        WleZwjzINcn1H7RxqfgIdR4=
-X-Google-Smtp-Source: ACcGV61rFNQzBxfVja5CgIjGw6VUBxSzrDX0z0W/JBEnP0hneKeW/qf8xWhyNqiBb/7CKvfZGKnRAg==
-X-Received: by 2002:a63:c20:: with SMTP id b32-v6mr8355759pgl.400.1538361447102;
-        Sun, 30 Sep 2018 19:37:27 -0700 (PDT)
-Received: from localhost ([39.7.15.30])
-        by smtp.gmail.com with ESMTPSA id d81-v6sm19235958pfj.122.2018.09.30.19.37.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 30 Sep 2018 19:37:25 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 11:37:21 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] printk: inject caller information into the body of
- message
-Message-ID: <20181001023721.GA6409@jagdpanzerIV>
-References: <49d22738-17ad-410a-be0a-d27d76ba9f37@i-love.sakura.ne.jp>
- <20180914115028.GB20572@tigerII.localdomain>
- <e855cbef-03ff-b4ac-3e06-d2f2f48cfb1f@i-love.sakura.ne.jp>
- <20180914122217.GA518@tigerII.localdomain>
- <a661ed7f-889a-1811-0ada-111cc5185d05@i-love.sakura.ne.jp>
- <7dadfa8c-1f69-ae0f-d747-dbbc9f97c2b6@i-love.sakura.ne.jp>
- <20180928090939.GE1160@jagdpanzerIV>
- <3b378c7d-c613-4a8d-67f8-946fac8ad0b0@i-love.sakura.ne.jp>
- <20180929105151.GA1392@tigerII.localdomain>
- <91efcff8-dc6d-b7b4-9ac8-2f3882289f95@i-love.sakura.ne.jp>
+        Mon, 1 Oct 2018 05:15:33 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:49959 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726992AbeJAJPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 05:15:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=GZ/rk/85NbBa0c92rLzr1BHEU6re5yZOYnzz8NEDv3g=;
+        b=HNKitz/Wa967ymOnUAnStAlZPDx6f/3zxqhUNPT9ATxVOTv5X1uCXfYZQY5z6GbDPEwTcmHBfnlXe0fPFWMzEK/8FVTdm77WnzyQJNSJVgqLAA4m+yPSOGERj9MfeQXI+bhqWnEGj/Adtg3WUeBfi/Zcq5UETk8CihBUE3VOD3k=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1g6o7f-0001Pt-Uh; Mon, 01 Oct 2018 04:39:47 +0200
+Date:   Mon, 1 Oct 2018 04:39:47 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Alex Xu <alex_y_xu@yahoo.ca>
+Cc:     Daan Wendelen <daanwendelen@gmail.com>, netdev@vger.kernel.org,
+        hkallweit1@gmail.com, nic_swsd@realtek.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2] r8169: always autoneg on resume
+Message-ID: <20181001023947.GA4943@lunn.ch>
+References: <1538319728.z22jaatdgh.astroid@alex-desktop.none>
+ <20180930221751.rd7wva3zolephj6q@scappy>
+ <153834665886.421.6376790866713055481@pink.alxu.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <91efcff8-dc6d-b7b4-9ac8-2f3882289f95@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <153834665886.421.6376790866713055481@pink.alxu.ca>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/29/18 20:15), Tetsuo Handa wrote:
+On Sun, Sep 30, 2018 at 10:30:58PM +0000, Alex Xu wrote:
+> Quoting Daan Wendelen (2018-09-30 22:17:51)
+> > Hi Alex,
+> > 
+> > I randomly opened your patch even though I have absolutely no idea what this patch is about, but I
+> > found a mistake in one of the comments:
+> > 
+> > On Sun, Sep 30, 2018 at 11:06:39AM -0400, Alex Xu (Hello71) wrote:
+> > > This affects at least versions 25 and 33, so assume all cards are broken
+> >                      ...
+> > >        * 1GBit link after resuming from S3. For whatever reason the PHY on
+> > > -      * this chip doesn't properly start a renegotiation when soft-reset.
+> > > +      * these chips doesn't properly start a renegotiation when soft-reset.
+> >                        ~~~~~~~ 
+> > I believe it should be "these chips don't"
+> > 
+> > With kind regards,
+> > Daan
 > 
-> Because there is no guarantee that memory information is dumped under the
-> oom_lock mutex. The oom_lock is held when calling out_of_memory(), and it
-> cannot be held when reporting GFP_ATOMIC memory allocation failures.
+> The grammar is correct as is. The subject of the sentence is "the PHY",
+> which is singular. However, I think it should be "the PHYs" instead,
+> assuming that they are different.
 
-IOW, static pr_line buffer needs additional synchronization for OOM. Correct?
+I keep reading the patch wrong, so here is the end state:
 
-If we are about to have a list of printk buffers then we probably can
-define a list of NR_CPUS cont buffers. And we probably can reuse the
-existing struct cont for buffered printk, having 2 different struct-s
-for the same thing - struct cont and struct printk_buffer - is not very
-cool.
+        /* It was reported that several chips end up with 10MBit/Half on a
+         * 1GBit link after resuming from S3. For whatever reason the PHY on
+         * these chips doesn't properly start a renegotiation when soft-reset.
+         * Explicitly requesting a renegotiation fixes this.
+         */
 
-> But I don't want line buffered printk() API to truncate upon out of
-> space for line buffered printk() API.
+I would also say 'don't'. For me the subject is 'PHY on these chips',
+which is plural.
 
-All printk()-s are limited by LOG_LINE_MAX. Buffered printk() is not
-special.
+However:
 
-	-ss
+For whatever reason the PHY, on these chips, doesn't properly start a
+renegotiation when soft-reset.
+
+Now just 'the PHY' is the subject, so singular.
+
+But i'm just a native speaker who never actually learnt the rules of
+grammar, it just sounds right or wrong, and i have no idea why.
+
+	 Andrew
