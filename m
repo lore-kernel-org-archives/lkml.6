@@ -2,121 +2,337 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F6FC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58647C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 761192089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:52:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761192089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 07AD42089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:57:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AD42089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbeJATaQ (ORCPT
+        id S1729298AbeJATfB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 15:30:16 -0400
-Received: from foss.arm.com ([217.140.101.70]:48304 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729204AbeJATaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:30:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DC4D7A9;
-        Mon,  1 Oct 2018 05:52:34 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 485873F5A0;
-        Mon,  1 Oct 2018 05:52:31 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 13:52:26 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
-        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
-        james.morse@arm.com, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v15 07/16] arm64: add image head flag definitions
-Message-ID: <20181001125225.7tlfzt5n25sckhyy@lakrids.cambridge.arm.com>
-References: <20180928064841.14117-1-takahiro.akashi@linaro.org>
- <20180928064841.14117-8-takahiro.akashi@linaro.org>
+        Mon, 1 Oct 2018 15:35:01 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:48088 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728979AbeJATfB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 15:35:01 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w91CsNED009758;
+        Mon, 1 Oct 2018 14:56:57 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2msxuxk85n-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 01 Oct 2018 14:56:57 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AEFD934;
+        Mon,  1 Oct 2018 12:56:56 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 823952CDB;
+        Mon,  1 Oct 2018 12:56:56 +0000 (GMT)
+Received: from [10.48.0.237] (10.75.127.45) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 1 Oct
+ 2018 14:56:55 +0200
+Subject: Re: [PATCH V2 27/27] mmc: mmci: add stm32 sdmmc variant
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com>
+ <1537523181-14578-28-git-send-email-ludovic.Barre@st.com>
+ <CAPDyKFqGY2o7TcUVW9bCZM9-4xtyJJ4PaCtWWQvV3VMd+cK99A@mail.gmail.com>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <50222b8d-3b53-acea-7935-092fa149d54c@st.com>
+Date:   Mon, 1 Oct 2018 14:56:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928064841.14117-8-takahiro.akashi@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAPDyKFqGY2o7TcUVW9bCZM9-4xtyJJ4PaCtWWQvV3VMd+cK99A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-01_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 03:48:32PM +0900, AKASHI Takahiro wrote:
-> Those image head's flags will be used later by kexec_file loader.
+
+
+On 10/01/2018 11:31 AM, Ulf Hansson wrote:
+> On 21 September 2018 at 11:46, Ludovic Barre <ludovic.Barre@st.com> wrote:
+>> From: Ludovic Barre <ludovic.barre@st.com>
+>>
+>> This patch adds a stm32 sdmmc variant, rev 1.1.
+>> Introduces a new Manufacturer id "0x53, ascii 'S' to define
+>> new stm32 sdmmc family with clean range of amba
+>> revision/configurations bits (corresponding to sdmmc_ver
+>> register with major/minor fields).
+>>
+>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+>> ---
+>>   drivers/mmc/host/Kconfig            |  10 ++
+>>   drivers/mmc/host/Makefile           |   1 +
+>>   drivers/mmc/host/mmci.c             |  25 ++++
+>>   drivers/mmc/host/mmci.h             |   5 +
+>>   drivers/mmc/host/mmci_stm32_sdmmc.c | 282 ++++++++++++++++++++++++++++++++++++
+>>   5 files changed, 323 insertions(+)
+>>   create mode 100644 drivers/mmc/host/mmci_stm32_sdmmc.c
+>>
+>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+>> index 5ab2eb0..e59671a 100644
+>> --- a/drivers/mmc/host/Kconfig
+>> +++ b/drivers/mmc/host/Kconfig
+>> @@ -34,6 +34,16 @@ config MMC_QCOM_DML
+>>
+>>            if unsure, say N.
+>>
+>> +config MMC_STM32_SDMMC
+>> +       bool "STMicroelectronics STM32 SDMMC Controller"
+>> +       depends on MMC_ARMMMCI
+>> +       default y
+>> +       help
+>> +         This selects the STMicroelectronics STM32 SDMMC host controller.
+>> +         If you have a STM32 sdmmc host with internal dma say Y or M here.
+>> +
+>> +         If unsure, say N.
+>> +
+>>   config MMC_PXA
+>>          tristate "Intel PXA25x/26x/27x Multimedia Card Interface support"
+>>          depends on ARCH_PXA
+>> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+>> index ce8398e..f14410f 100644
+>> --- a/drivers/mmc/host/Makefile
+>> +++ b/drivers/mmc/host/Makefile
+>> @@ -6,6 +6,7 @@
+>>   obj-$(CONFIG_MMC_ARMMMCI) += armmmci.o
+>>   armmmci-y := mmci.o
+>>   armmmci-$(CONFIG_MMC_QCOM_DML) += mmci_qcom_dml.o
+>> +armmmci-$(CONFIG_MMC_STM32_SDMMC) += mmci_stm32_sdmmc.o
+>>   obj-$(CONFIG_MMC_PXA)          += pxamci.o
+>>   obj-$(CONFIG_MMC_MXC)          += mxcmmc.o
+>>   obj-$(CONFIG_MMC_MXS)          += mxs-mmc.o
+>> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+>> index 4057456..ca2e483 100644
+>> --- a/drivers/mmc/host/mmci.c
+>> +++ b/drivers/mmc/host/mmci.c
+>> @@ -254,6 +254,26 @@ static struct variant_data variant_stm32 = {
+>>          .init                   = mmci_variant_init,
+>>   };
+>>
+>> +static struct variant_data variant_stm32_sdmmc = {
+>> +       .fifosize               = 16 * 4,
+>> +       .fifohalfsize           = 8 * 4,
+>> +       .f_max                  = 208000000,
+>> +       .stm32_clkdiv           = true,
+>> +       .reset                  = true,
+>> +       .cmdreg_cpsm_enable     = MCI_CPSM_STM32_ENABLE,
+>> +       .cmdreg_lrsp_crc        = MCI_CPSM_STM32_LRSP_CRC,
+>> +       .cmdreg_srsp_crc        = MCI_CPSM_STM32_SRSP_CRC,
+>> +       .cmdreg_srsp            = MCI_CPSM_STM32_SRSP,
+>> +       .data_cmd_enable        = MCI_CPSM_STM32_CMDTRANS,
+>> +       .irq_pio_mask           = MCI_IRQ_PIO_STM32_MASK,
+>> +       .datactrl_first         = true,
+>> +       .datacnt_useless        = true,
+>> +       .datalength_bits        = 25,
+>> +       .datactrl_blocksz       = 14,
+>> +       .stm32_idmabsize_mask   = GENMASK(12, 5),
+>> +       .init                   = sdmmc_variant_init,
+>> +};
+>> +
+>>   static struct variant_data variant_qcom = {
+>>          .fifosize               = 16 * 4,
+>>          .fifohalfsize           = 8 * 4,
+>> @@ -2180,6 +2200,11 @@ static const struct amba_id mmci_ids[] = {
+>>                  .mask   = 0x00ffffff,
+>>                  .data   = &variant_stm32,
+>>          },
+>> +       {
+>> +               .id     = 0x10153180,
+>> +               .mask   = 0xf0ffffff,
+>> +               .data   = &variant_stm32_sdmmc,
+>> +       },
+>>          /* Qualcomm variants */
+>>          {
+>>                  .id     = 0x00051180,
+>> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+>> index 017d9b8..581b9b1 100644
+>> --- a/drivers/mmc/host/mmci.h
+>> +++ b/drivers/mmc/host/mmci.h
+>> @@ -305,6 +305,8 @@ struct mmci_host;
+>>    *            register.
+>>    * @opendrain: bitmask identifying the OPENDRAIN bit inside MMCIPOWER register
+>>    * @reset: true if variant has need reset signal.
+>> + * @dma_lli: true if variant has dma link list feature.
+>> + * @stm32_idmabsize_mask: stm32 sdmmc idma buffer size.
+>>    */
+>>   struct variant_data {
+>>          unsigned int            clkreg;
+>> @@ -348,6 +350,8 @@ struct variant_data {
+>>          unsigned int            irq_pio_mask;
+>>          u32                     start_err;
+>>          u32                     opendrain;
+>> +       bool                    dma_lli;
+>> +       u32                     stm32_idmabsize_mask;
 > 
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Acked-by: James Morse <james.morse@arm.com>
-> ---
->  arch/arm64/include/asm/boot.h | 15 +++++++++++++++
->  arch/arm64/kernel/head.S      |  2 +-
->  2 files changed, 16 insertions(+), 1 deletion(-)
+> What are these?
+
+This property is specific for sdmmc variants:
+sdmmc has a Internal DMA and the number bytes per buffer
+could be different between sdmmc variants
+(depend of SDMMC_IDMABSIZER register).
+
 > 
-> diff --git a/arch/arm64/include/asm/boot.h b/arch/arm64/include/asm/boot.h
-> index 355e552a9175..0bab7eed3012 100644
-> --- a/arch/arm64/include/asm/boot.h
-> +++ b/arch/arm64/include/asm/boot.h
-> @@ -5,6 +5,21 @@
->  
->  #include <asm/sizes.h>
->  
-> +#define ARM64_MAGIC		"ARM\x64"
-> +
-> +#define HEAD_FLAG_BE_SHIFT		0
-> +#define HEAD_FLAG_PAGE_SIZE_SHIFT	1
-> +#define HEAD_FLAG_BE_MASK		0x1
-> +#define HEAD_FLAG_PAGE_SIZE_MASK	0x3
-> +
-> +#define HEAD_FLAG_BE			1
+>>          void (*init)(struct mmci_host *host);
+>>   };
+>>
+>> @@ -421,6 +425,7 @@ void mmci_write_clkreg(struct mmci_host *host, u32 clk);
+>>   void mmci_write_pwrreg(struct mmci_host *host, u32 pwr);
+>>
+>>   void mmci_variant_init(struct mmci_host *host);
+>> +void sdmmc_variant_init(struct mmci_host *host);
+>>
+>>   int mmci_dmae_prep_data(struct mmci_host *host, struct mmc_data *data,
+>>                          bool next);
+>> diff --git a/drivers/mmc/host/mmci_stm32_sdmmc.c b/drivers/mmc/host/mmci_stm32_sdmmc.c
+>> new file mode 100644
+>> index 0000000..cfbfc6f
+>> --- /dev/null
+>> +++ b/drivers/mmc/host/mmci_stm32_sdmmc.c
+>> @@ -0,0 +1,282 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
+>> + * Author: Ludovic.barre@st.com for STMicroelectronics.
+>> + */
+>> +#include <linux/delay.h>
+>> +#include <linux/dma-mapping.h>
+>> +#include <linux/mmc/host.h>
+>> +#include <linux/mmc/card.h>
+>> +#include <linux/reset.h>
+>> +#include <linux/scatterlist.h>
+>> +#include "mmci.h"
+>> +
+>> +#define SDMMC_LLI_BUF_LEN      PAGE_SIZE
+>> +#define SDMMC_IDMA_BURST       BIT(MMCI_STM32_IDMABNDT_SHIFT)
+>> +
+>> +struct sdmmc_lli_desc {
+>> +       u32 idmalar;
+>> +       u32 idmabase;
+>> +       u32 idmasize;
+>> +};
+>> +
+>> +struct sdmmc_priv {
+>> +       dma_addr_t sg_dma;
+>> +       void *sg_cpu;
+>> +};
+>> +
+>> +int sdmmc_idma_validate_data(struct mmci_host *host,
+>> +                            struct mmc_data *data)
+>> +{
+>> +       struct scatterlist *sg;
+>> +       int i;
+>> +
+>> +       /*
+>> +        * idma has constraints on idmabase & idmasize for each element
+>> +        * excepted the last element which has no constraint on idmasize
+>> +        */
+>> +       for_each_sg(data->sg, sg, data->sg_len - 1, i) {
+>> +               if (!IS_ALIGNED(sg_dma_address(data->sg), sizeof(u32)) ||
+>> +                   !IS_ALIGNED(sg_dma_len(data->sg), SDMMC_IDMA_BURST)) {
+>> +                       dev_err(mmc_dev(host->mmc),
+>> +                               "unaligned scatterlist: ofst:%x length:%d\n",
+>> +                               data->sg->offset, data->sg->length);
+>> +                       return -EINVAL;
+>> +               }
+>> +       }
+>> +
+>> +       if (!IS_ALIGNED(sg_dma_address(data->sg), sizeof(u32))) {
+>> +               dev_err(mmc_dev(host->mmc),
+>> +                       "unaligned last scatterlist: ofst:%x length:%d\n",
+>> +                       data->sg->offset, data->sg->length);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int _sdmmc_idma_prep_data(struct mmci_host *host,
+>> +                                struct mmc_data *data)
+>> +{
+>> +       int n_elem;
+>> +
+>> +       n_elem = dma_map_sg(mmc_dev(host->mmc),
+>> +                           data->sg,
+>> +                           data->sg_len,
+>> +                           mmc_get_dma_dir(data));
+>> +
+>> +       if (!n_elem) {
+>> +               dev_err(mmc_dev(host->mmc), "dma_map_sg failed\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int sdmmc_idma_prep_data(struct mmci_host *host,
+>> +                               struct mmc_data *data, bool next)
+>> +{
+>> +       /* Check if job is already prepared. */
+>> +       if (!next && data->host_cookie == host->next_cookie)
+>> +               return 0;
+>> +
+>> +       return _sdmmc_idma_prep_data(host, data);
+>> +}
+>> +
+>> +static void sdmmc_idma_unprep_data(struct mmci_host *host,
+>> +                                  struct mmc_data *data, int err)
+>> +{
+>> +       dma_unmap_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
+>> +                    mmc_get_dma_dir(data));
+>> +}
+> 
+> The sdmmc_idma_prep_data() and sdmmc_idma_unprep_data(), seems very
+> similar to what the mmci core driver needs to do in this regards.
+> 
+> Can we perhaps avoid adding these callbacks altogether, but rather
+> rely on common code in the mmci core driver?
 
-These already exist in some form in arch/arm64/kernel/image.h; can we
-please factor those out rather than duplicating them?
+Actually, these callbacks allow to manage prepare/unprepare of
+dmaengine interface for mmci variant, (not needed for sdmmc which uses 
+an internal dma).
 
-I'd be happy if you'd update image.h to use the new HEAD_FLAG_* names,
-and removed the old definitions.
+For Sdmmc, today there are no special case, just dma_map/unmap.
+But in the future, I hope manage the lli list in these callback.
 
-> +#define HEAD_FLAG_PAGE_SIZE_4K		1
-> +#define HEAD_FLAG_PAGE_SIZE_16K		2
-> +#define HEAD_FLAG_PAGE_SIZE_64K		3
+Only dma_map/unmap could be common, but the error management may
+be complicated (in mmci variant).
 
-I appreciate these are new, since we didn't previously need definitions.
+Personally, I prefer keep prep_data/unprep_data mmci_host_ops
+interfaces.
+What do you suggest ?
 
-Thanks,
-Mark.
-
-> +
-> +#define head_flag_field(flags, field) \
-> +		(((flags) >> field##_SHIFT) & field##_MASK)
-> +
->  /*
->   * arm64 requires the DTB to be 8 byte aligned and
->   * not exceed 2MB in size.
-> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-> index b0853069702f..8cbac6232ed1 100644
-> --- a/arch/arm64/kernel/head.S
-> +++ b/arch/arm64/kernel/head.S
-> @@ -91,7 +91,7 @@ _head:
->  	.quad	0				// reserved
->  	.quad	0				// reserved
->  	.quad	0				// reserved
-> -	.ascii	"ARM\x64"			// Magic number
-> +	.ascii	ARM64_MAGIC			// Magic number
->  #ifdef CONFIG_EFI
->  	.long	pe_header - _head		// Offset to the PE header.
->  
-> -- 
-> 2.19.0
+> 
+> [...]
+> 
+> Kind regards
+> Uffe
 > 
