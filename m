@@ -2,159 +2,120 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 051F9C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE8AC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB6FC208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:03:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBFAC208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:03:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="SuFqG7pF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB6FC208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lgiy8jMh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBFAC208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbeJBEmx (ORCPT
+        id S1726455AbeJBEnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 00:42:53 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38836 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeJBEmw (ORCPT
+        Tue, 2 Oct 2018 00:43:37 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33125 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeJBEnh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 00:42:52 -0400
-Received: by mail-oi1-f194.google.com with SMTP id u197-v6so12596416oif.5
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:02:57 -0700 (PDT)
+        Tue, 2 Oct 2018 00:43:37 -0400
+Received: by mail-yw1-f66.google.com with SMTP id m127-v6so2595447ywb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:03:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=2RkkFyiSuSjZDFXQ7/F9AJqBd90KKZAOUQfjKYppXWA=;
-        b=SuFqG7pFrdjpryB/HWQOkPx1t2xPPVMfoKwSFdGNxvW4E681Fdl2/gX8Q7r5O+7sOZ
-         Dh0U33Q9gwdgnLTKe7TteAGWNkHKXZshWpda6S2X3nb1ru8UrSi6W5VpotyNErLPVIQc
-         wvav55K6vHmDZlOwC0Lr0aRC+q69yRg6l4Fo2h/p/38YB7/5XDPj1SLC3yCthQ4F0xRp
-         fljAMEF2b0x6XbE/qhTaBINoHHhSGsDxnMh7acaRUoKk8TTw2SADSa4SXksC1Bb7oR4q
-         dha/JhMgWjVAeFO+aOk0KAg3s3relPuxBiGzEnzW3PKPOV688A2UAxveFkuWwKx8eOKr
-         IevA==
+        bh=G4WcYotR03OEiNZiei9M0bOlxNlJjM/PINeXng+gx/M=;
+        b=lgiy8jMhzBgIGEBGrPZhMcj8TTB261UftqDh5TzpBimaxjJ1FIwdJ/GRff2r1AC6Bc
+         B5R4sUiLA/1U83AoKpyhFreRdDY0RNHuj0RFSKVOEkB10C6Ds1DjNO2Xam/Tt18aLhDT
+         cltTpHVsiCm5bW317fIcdRaho9chmr7VjzWhc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=2RkkFyiSuSjZDFXQ7/F9AJqBd90KKZAOUQfjKYppXWA=;
-        b=Mun54Ss1Vr95aQ88VdkdYDe+0HSlPgSAdkkdYfO6TbiGz8+ZUpEY96y1nJE1oS2hCF
-         sY2DIahwT1iNc5llOf+jDyozvpG63m0tAtzJjA1ifJ4zxWyrLYpH9JKK2imEmEkR1xgN
-         fDYHS28RghgY7eX0Y0BGWfZJKN+dy24rG5jXLbgo0bKpFM9IMWtVn+ZI0tHRWZ6Inanb
-         DCkj/iH7YhqUDPmhstwXDWvUYT/ZFdKUJ1lsTAGVtJ0CrOy+uD3EIL6udlknjJMwsaEY
-         mj5l763TfOVH+fCERfsRgslwmtrCtWPf6QYEQaEtCm4Mssyi1RzKM8b/hg4HCd1X38uj
-         colg==
-X-Gm-Message-State: ABuFfogUwoOQ2G7KOoJ9+ChK2gH5O50DEEEhRQy3o0BcfBHKtWZrVxI5
-        a1eFdKSQ9e2LS2jVlmnF610OVbvNpIVC02jazfIoPHsl
-X-Google-Smtp-Source: ACcGV63f07qxrATNKf0KPQuyn/8YsPoSq+pnygiRZNG2JAVUpwkMx5hQyGCkJ999tz6WaaBwIYEWoA9L6ilst3HLTWI=
-X-Received: by 2002:aca:60c1:: with SMTP id u184-v6mr5614167oib.99.1538431377406;
- Mon, 01 Oct 2018 15:02:57 -0700 (PDT)
+        bh=G4WcYotR03OEiNZiei9M0bOlxNlJjM/PINeXng+gx/M=;
+        b=lHGfG/XqmAIypxQz5sVlrFvY8L92zfXQa+z+F6x0VEsiGo8zzWdtriiLeJE34lMzmV
+         /iHNfX2JEQzATcQ2qsD/fIAjOKiRz1UZEyzmtuTiv7XP/5rCLEaD2mErkhYIUPcNSgBy
+         oTUWsMOlbmJ3kHvgLkhIIImcye+16D8SOYiNVPUiplHYHBsU8mbPs1lKljtA1XL1NNgU
+         SKT4KPOVnhj9EW/2ffbHs2jRYLXoDmBTdmHC6M3W44Sruw1KJ9skFv7UFuKJLoGNZ+V+
+         NrSKCh6hEPqJ+RouMpaOsWamG/8DDwRQrDevpq19qomaK8hxocjEPI7pfljEdVPQWXu+
+         viQQ==
+X-Gm-Message-State: ABuFfog5j9pwcEoikI/IQ+hQrY+eoQUOFBRcsLFgqE897f8sqtrFOXvO
+        Le2Dd2rGEYyzKJqWH+GGz208r/Aeduk=
+X-Google-Smtp-Source: ACcGV63PT9vSdSKUcRy5btuuuz3CDUcOMgD3PmvEoPAq2soNH760rlCURqsMwF8tsRoSMu/DEPRaJg==
+X-Received: by 2002:a0d:ce87:: with SMTP id q129-v6mr7040213ywd.50.1538431421792;
+        Mon, 01 Oct 2018 15:03:41 -0700 (PDT)
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
+        by smtp.gmail.com with ESMTPSA id d6-v6sm5465048ywa.85.2018.10.01.15.03.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 15:03:40 -0700 (PDT)
+Received: by mail-yw1-f48.google.com with SMTP id m129-v6so6219070ywc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:03:40 -0700 (PDT)
+X-Received: by 2002:a0d:fec6:: with SMTP id o189-v6mr7157668ywf.237.1538431419933;
+ Mon, 01 Oct 2018 15:03:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <153842839852.2679462.16816747305002065908.stgit@dwillia2-desk3.amr.corp.intel.com>
- <71e2a4b6-68d9-d90d-b927-90840d8c6ee1@linux.intel.com>
-In-Reply-To: <71e2a4b6-68d9-d90d-b927-90840d8c6ee1@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 1 Oct 2018 15:02:45 -0700
-Message-ID: <CAPcyv4jQ7eAbEaUUP0R_JFKRADGU1kXhMd_Q=Gw5+1Xki5WYjA@mail.gmail.com>
-Subject: Re: [PATCH v2] libnvdimm, dimm: Maximize label transfer size
-To:     alexander.h.duyck@linux.intel.com
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 15:03:39 -0700 (PDT)
+In-Reply-To: <110c9903-0fbb-8d6f-1fd0-7731402d600f@canonical.com>
+References: <20180925001832.18322-1-keescook@chromium.org> <20180925001832.18322-13-keescook@chromium.org>
+ <110c9903-0fbb-8d6f-1fd0-7731402d600f@canonical.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 1 Oct 2018 15:03:39 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jK+WT-1QkapORpzBJDCeZSAXUf_tN0mwRU+cWy=phRdgA@mail.gmail.com>
+Message-ID: <CAGXu5jK+WT-1QkapORpzBJDCeZSAXUf_tN0mwRU+cWy=phRdgA@mail.gmail.com>
+Subject: Re: [PATCH security-next v3 12/29] LSM: Provide separate ordered initialization
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 2:54 PM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
+On Mon, Oct 1, 2018 at 2:17 PM, John Johansen
+<john.johansen@canonical.com> wrote:
+> On 09/24/2018 05:18 PM, Kees Cook wrote:
+>> This provides a place for ordered LSMs to be initialized, separate from
+>> the "major" LSMs. This is mainly a copy/paste from major_lsm_init() to
+>> ordered_lsm_init(), but it will change drastically in later patches.
+>>
+>> What is not obvious in the patch is that this change moves the integrity
+>> LSM from major_lsm_init() into ordered_lsm_init(), since it is not marked
+>> with the LSM_FLAG_LEGACY_MAJOR. As it is the only LSM in the "ordered"
+>> list, there is no reordering yet created.
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
 >
->
->
-> On 10/1/2018 2:14 PM, Dan Williams wrote:
-> > Use kvzalloc() to bypass the arbitrary PAGE_SIZE limit of label transfer
-> > operations. Given the expense of calling into firmware, maximize the
-> > amount of label data we transfer per call to be up to the total label
-> > space if allowed by the firmware, or 256K whichever is smaller.
-> >
-> > Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > ---
-> > Changes in v2:
-> > * clamp the max allocation size at 256K in case large label areas with
-> >    unlimited transfer sizes appear in the future.
-> >
-> >   drivers/nvdimm/dimm_devs.c       |   14 ++++++++------
-> >   tools/testing/nvdimm/test/nfit.c |    2 +-
-> >   2 files changed, 9 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
-> > index 863cabc35215..3616e2e47788 100644
-> > --- a/drivers/nvdimm/dimm_devs.c
-> > +++ b/drivers/nvdimm/dimm_devs.c
-> > @@ -111,8 +111,9 @@ int nvdimm_init_config_data(struct nvdimm_drvdata *ndd)
-> >       if (!ndd->data)
-> >               return -ENOMEM;
-> >
-> > -     max_cmd_size = min_t(u32, PAGE_SIZE, ndd->nsarea.max_xfer);
-> > -     cmd = kzalloc(max_cmd_size + sizeof(*cmd), GFP_KERNEL);
-> > +     max_cmd_size = min_t(u32, ndd->nsarea.config_size, SZ_256K);
-> > +     max_cmd_size = min_t(u32, max_cmd_size, ndd->nsarea.max_xfer);
-> > +     cmd = kvzalloc(max_cmd_size + sizeof(*cmd), GFP_KERNEL);
-> >       if (!cmd)
-> >               return -ENOMEM;
-> >
->
-> So I wouldn't use 256K as the limit, maybe 256K minus the sizeof(*cmd).
-> Otherwise you are still allocating additional memory to take care of
-> that little trailing bit that is being added.
+> I know its already being done, but I don't like splitting the init
+> order
 
-Does it matter? This is a slow / infrequently used path and I do don't
-see the practical difference of 256K vs slightly less than 256K.
+Can you describe what you mean here? Do you mean having two init
+functions? This is only done temporarily while the other pieces are
+reorganized. The later patches reintegrate this. (Before this series,
+we effectively had three implicit init paths: minor, major, and
+integrity, so even this patch "alone" is an improvement IMO.)
 
-> > @@ -134,7 +135,7 @@ int nvdimm_init_config_data(struct nvdimm_drvdata *ndd)
-> >               memcpy(ndd->data + offset, cmd->out_buf, cmd->in_length);
-> >       }
-> >       dev_dbg(ndd->dev, "len: %zu rc: %d\n", offset, rc);
-> > -     kfree(cmd);
-> > +     kvfree(cmd);
-> >
-> >       return rc;
-> >   }
-> > @@ -157,9 +158,10 @@ int nvdimm_set_config_data(struct nvdimm_drvdata *ndd, size_t offset,
-> >       if (offset + len > ndd->nsarea.config_size)
-> >               return -ENXIO;
-> >
-> > -     max_cmd_size = min_t(u32, PAGE_SIZE, len);
-> > +     max_cmd_size = min_t(u32, ndd->nsarea.config_size, SZ_256K);
-> >       max_cmd_size = min_t(u32, max_cmd_size, ndd->nsarea.max_xfer);
-> > -     cmd = kzalloc(max_cmd_size + sizeof(*cmd) + sizeof(u32), GFP_KERNEL);
-> > +     max_cmd_size = min_t(u32, max_cmd_size, len);
-> > +     cmd = kvzalloc(max_cmd_size + sizeof(*cmd) + sizeof(u32), GFP_KERNEL);
-> >       if (!cmd)
-> >               return -ENOMEM;
-> >
->
-> For the set operation I am not sure you have any code that is going to
-> be updating things multiple labels at a time. From what I can tell the
-> largest set call you ever make is probably for a namespace index and
-> odds are that will only ever be 256 or 512 bytes.
+Thanks for the reviews!
 
-Inside the kernel, true, but we do perform large sets from userspace.
-That said I don't see why this low level routine should encode
-layering violation knowledge of how it might be used.
+-Kees
 
-> Also the limitations here could probably use some additional clean-up.
-> For example you have a check for offset + len > config_size above this
-> min_t calls. As such it should be impossible for length to ever be
-> greater than config_size so you shouldn't need to test for the min of
-> both and could just use the min of len versus the max_xfer.
-
-Again that's a case of this leaf routine encoding assumptions about
-how it might be used. I'd rather be pedantic since this is not a hot
-path.
+-- 
+Kees Cook
+Pixel Security
