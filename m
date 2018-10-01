@@ -2,82 +2,134 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB59C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9206FC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A3642064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:30:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57FDD2064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:31:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WyGH34+w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A3642064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMwW5LBA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57FDD2064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729374AbeJARIC (ORCPT
+        id S1729383AbeJARIJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 13:08:02 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:55518 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728928AbeJARIB (ORCPT
+        Mon, 1 Oct 2018 13:08:09 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41079 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728993AbeJARH1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 13:08:01 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w91ATW9F192604;
-        Mon, 1 Oct 2018 10:30:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=g/QnWL633DATk/D0Ttai9VtCMe1kqYKn1pLuJll4508=;
- b=WyGH34+wReM5Lc/mcMSORyH3THY4OF2YrEztq+/iFcaW5+TFcsbFXqudnrMClPnxALnZ
- GwsFYdAeHT9tALE7nrsP6uzc3iG9c78gwc01EVRQNQ68SIg/NOsxMnP0PMdqyYp102ZB
- y5WJKGRPZG66HuEt5DoNjxKn1Ch5zqjyiK1Bi3tFwkFMFW9ltyVtQhonS2Lo0dTzK8yl
- JbyTZFFGW+QGOxQGVmxA96NYTHPrvxjeNfBVOZo8P2WdCQ5/Ay/hvpUK2xXna5ajk7my
- VVVDUFK/n971rM0jjBUX4eS2eu2goqgBlQcmpSvf5leakhnDQe2TeXVauB6t6PngMB+H FQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2mt0tte59a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Oct 2018 10:30:51 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w91AUojQ032143
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 1 Oct 2018 10:30:50 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w91AUni4007253;
-        Mon, 1 Oct 2018 10:30:50 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Oct 2018 03:30:49 -0700
-Date:   Mon, 1 Oct 2018 13:30:42 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Andrey Abramov <st5pub@yandex.ru>
-Cc:     mchehab@kernel.org, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH v3] Staging: media: replace deprecated probe method
-Message-ID: <20181001103042.jw5sqge5a2f2srvy@mwanda>
-References: <20181001101531.12596-1-st5pub@yandex.ru>
+        Mon, 1 Oct 2018 13:07:27 -0400
+Received: by mail-wr1-f65.google.com with SMTP id j15-v6so13301430wrt.8;
+        Mon, 01 Oct 2018 03:30:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=eE/ETHLbMl3NJJvo+UMJ+v7fpw1vrx7CW0hC0Ws6guA=;
+        b=nMwW5LBA8WrGgwePmDgiisPk20YadWq/BoIoR2xiCHcd3dVahu1j7gm3Ptj8UyG2Kk
+         aDbVRCXsGw/K14OOcrI9onnJGTXQAoe97X2vusHOz91XlO9HQkWfo1wKWD9QH5b17cUv
+         ioiA9JMAndcT3I8yORBY8Maf+3y/sk5lmJV0D/3DX9rS7Q5zS8FAyFUIfvWu7a9lNKex
+         hUOMfoBrrKbYu/PWqVs+EUfFLj1+MxaidtMCaifeqZdvM6wWnA41RjTd933NYI9rwVW/
+         7Cos9wND2zaFb0D1rDVqYRGq8xgJKk0nlTSXL8RoIeoRTYqhjysxGSpLStgr3DUpCsQi
+         OzMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=eE/ETHLbMl3NJJvo+UMJ+v7fpw1vrx7CW0hC0Ws6guA=;
+        b=TETszzp2dt93wpkR+Dfi7mk+bb97oWfBS5by5LyvtZkw6HRdBvhBNQSG4Ufom7W8IN
+         JxduSbEf1U5HsmHihYkC/S/qrs4uLbWOBlbQdjeNCanoV3Guyu2Iijbue6Hbfdvxq99R
+         t8RFIw8+oBrUoDGW3o6hi3y1f7EhzqTeNsrlcpQpmnUz3pWQprQqv9dlTurhVKSSReiJ
+         mamVXNOv+X3K6uE7a9iiNnBmomULgt4aVt9xEkD0hpKDCJ7QhR8ZMvLCvIJNrrfFrwEw
+         ztCTapmNC+gN8qnnNqUNIMrrEk6KYGZPLDeOmFALCExSEwFRhwFsCOJvWX5AQgNRjQnx
+         xgzg==
+X-Gm-Message-State: ABuFfogqskpBqAqZZiNVjBGYRbbQVbaSyzlY9eqS3ggqfKp+P8SoNQEQ
+        Hd3Pkhssvj/zdAn31cGW5uI=
+X-Google-Smtp-Source: ACcGV63/RMHbOik+vGmGQqIGsQNnD0Fe03xJoZK71lbaIqBrkaoXo3pXhiUsog7bMr2UAR3HymSzLQ==
+X-Received: by 2002:a5d:5342:: with SMTP id t2-v6mr6469966wrv.257.1538389818383;
+        Mon, 01 Oct 2018 03:30:18 -0700 (PDT)
+Received: from laptop.localdomain ([37.122.159.87])
+        by smtp.gmail.com with ESMTPSA id g8-v6sm2461169wmf.45.2018.10.01.03.30.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 03:30:18 -0700 (PDT)
+From:   Yasha Cherikovsky <yasha.che3@gmail.com>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-mips@linux-mips.org,
+        devicetree@vger.kernel.org
+Cc:     Yasha Cherikovsky <yasha.che3@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC v2 2/7] dt-binding: interrupt-controller: Document RTL8186 SoC DT bindings
+Date:   Mon,  1 Oct 2018 13:29:47 +0300
+Message-Id: <20181001102952.7913-3-yasha.che3@gmail.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181001102952.7913-1-yasha.che3@gmail.com>
+References: <20181001102952.7913-1-yasha.che3@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181001101531.12596-1-st5pub@yandex.ru>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9032 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=18 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=510
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810010108
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks!
+This patch adds device tree binding doc for the
+Realtek RTL8186 SoC interrupt controller.
 
-regards,
-dan carpenter
+Signed-off-by: Yasha Cherikovsky <yasha.che3@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+---
+ .../interrupt-controller/realtek,rtl8186-intc  | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/realtek,rtl8186-intc
+
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/realtek,rtl8186-intc b/Documentation/devicetree/bindings/interrupt-controller/realtek,rtl8186-intc
+new file mode 100644
+index 000000000000..21956d210021
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/realtek,rtl8186-intc
+@@ -0,0 +1,18 @@
++Realtek RTL8186 SoC interrupt controller
++
++Required properties:
++
++- compatible : should be "realtek,rtl8186-intc"
++- interrupt-controller : Identifies the node as an interrupt controller.
++- #interrupt-cells : Specifies the number of cells needed to encode an
++  interrupt source. The value shall be 1.
++- reg : Specifies base physical address and size of the registers.
++
++Example:
++
++intc: interrupt-controller@1d010000 {
++	compatible = "realtek,rtl8186-intc";
++	interrupt-controller;
++	#interrupt-cells = <1>;
++	reg = <0x1d010000 0x8>;
++};
+-- 
+2.19.0
 
