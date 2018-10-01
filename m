@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA255C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE068C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73BDE208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:03:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 879C62089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:03:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="GshEb5qY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73BDE208AE
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="v3ynzaGT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879C62089A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbeJBAmT (ORCPT
+        id S1726724AbeJBAmd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:42:19 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36358 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeJBAmS (ORCPT
+        Mon, 1 Oct 2018 20:42:33 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38930 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeJBAmd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:42:18 -0400
-Received: by mail-pf1-f194.google.com with SMTP id b7-v6so9802765pfo.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:03:20 -0700 (PDT)
+        Mon, 1 Oct 2018 20:42:33 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r9-v6so6150452pgv.6
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:03:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ijUdNdbgwzalLKcfY2p5LLIba6a37k6wFwoZbX38RZY=;
-        b=GshEb5qYf0a3DJm1Erm6SE3myXILl5hYsKhYDizWVJqBfGqtByl/nM+U7KLYOxVnYl
-         lCIUdffTPGC2rC/EF9WhcW1smqOr49cepA6aI/JtM1zSQBvJHskvV70PoMtYcNkqE99z
-         rdpxFpqKoSUzrN27SE/Rnr7DwUgpliOLdBIDSlDSOuwxECaxCiZnUu1qYA6MMdv4LTtB
-         uaxFSXxEJ7jpgGU59OVvXvH7FX2HxWyXwL1q1uTaAX4Pp7OAdzLzjKLq3mmbfjn1Ra7P
-         TB9DxjGVJeOBbYBgepCLrtxOYSpXy+gNOh/jqNhPEnqnTjjTWE6p6d1RAQDo3jTfTLTs
-         bymg==
+        bh=5rn1oW1z/hfRaBPwTBKTipnUr4t21lKeFoJSkkSjMpo=;
+        b=v3ynzaGTlkcGo0UU48t1BVwwVGVk810EOYZ2SqsI8fQG8dl99D1V8mgt310ofEK6g1
+         d7PljvmyL65ppcuewi6YcIyHzkHoQWCrnVfPHEXsH1B3MQCwFVANO8RbM1/zR7xwCQOl
+         1yHCFyVnphrc+5Vh7D4WOtkhW0yLAooIYD03XYWVjdIwmUxYesXR0SwhmaTL1dhQevRH
+         9Jw393Kz6vu1M5gWeZW8pLsmed+xxwQvE57DY3nI6rtei52xD/ENfYl9QG/eGq7WoqjQ
+         dh7NNKDCLZs5tuSzVgImseTEEuLDZb07s5+vHrdzNaejUaaWeC2p0gJ6BDwwaiun6msu
+         2Vog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ijUdNdbgwzalLKcfY2p5LLIba6a37k6wFwoZbX38RZY=;
-        b=FDPuIVmAgX51njNL0EUrElDeSSOLj2YCq47fix0Z0S/d5CO4oSVabx2+4Biy0qIpCs
-         d32rZci+GHa6kL0eHBfw8hz6sGrDfqrBm5qcWv6Ox9XHRhjJzC1fPArfZ3wxIw/TorLs
-         1PD/sBmkFSYnAYYW6SidzLIM/KpoKAnsyz75q/3xgK2/bUImZWj7/9e3B+PmZtKemG4f
-         00i6UZgWKORRe9xsAvkZws7GCchcRx0K7NO3w8DxArTsHVh4CEVthrll28Huzh/VwFjV
-         4o0tIIP1U2w/6sprP06xfUmARktw5jNpRp6TY8z0px0KwilOid7DnuAK2/71DpNL/9Z3
-         X2mA==
-X-Gm-Message-State: ABuFfoi6bAUpfEeFHWqKIugNl9zByzU9LLcrVT7dbMZNkJS73wsOzjmR
-        xYHM8C6z8m1dEoKpv16mUTNU4yPaW7M=
-X-Google-Smtp-Source: ACcGV625ibJ8slOq/3lsjQXMrnuiIKhRtiQufCv62/Qb4cAhiWmdzcSFVTwxy2dMEVW5PhVqfGtN+A==
-X-Received: by 2002:a62:db46:: with SMTP id f67-v6mr12503273pfg.1.1538416999547;
-        Mon, 01 Oct 2018 11:03:19 -0700 (PDT)
+        bh=5rn1oW1z/hfRaBPwTBKTipnUr4t21lKeFoJSkkSjMpo=;
+        b=ir0c1dWBSuBy6hbM1b/WvNoaSvXGG0bzysqEBs1SC4VDjbpk7TTN7DN+0FtviStCWs
+         kFAc0muUcUdOQwCGWJ4YhFfReB2818QX6knXiCoQy9pXOKprhiRlEHuEuDSwxIKJxtcX
+         meOdV7UFV2P14FO84qGA92ShawyUbQQFac16RlpbtJDBBVS4e84sUOQ/V1fmaVPRKvvK
+         5cePBmLx8cSvPVqQfv20YDLVgfNlklV3UoaSpBUDeacPx91oS94OYRxW+8K4ma9d6pAY
+         NIiZiIuqKmoGSvqr8k6rDMOx49GdnfwTe0e8RSUWTFgRHwYpXTwMJwUBWOBY3pT1wMer
+         /hwQ==
+X-Gm-Message-State: ABuFfoiULNBuRwRV7A448C6pgdiay2GZNIS3flB+QRqaREweX0GRiBS/
+        xJmMbderTJf0mdZXRt0rEN73fyK1Znc=
+X-Google-Smtp-Source: ACcGV611YhJQVPoAdkA9DYVNcjrH0BFPz3RoC0gDkrYQ9nYe435Kw6D6YQ2pnTecPfKFTF3hqhXXhA==
+X-Received: by 2002:a63:3747:: with SMTP id g7-v6mr11309249pgn.59.1538417014294;
+        Mon, 01 Oct 2018 11:03:34 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
-        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.03.18
+        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.03.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 11:03:18 -0700 (PDT)
+        Mon, 01 Oct 2018 11:03:33 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
@@ -79,14 +79,11 @@ Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org,
         Jeremy Linton <Jeremy.Linton@arm.com>,
-        android-kernel@android.com, Dave Martin <Dave.Martin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: RESEND [PATCH v3 1/3] arm64: compat: Split the sigreturn trampolines and kuser helpers (C sources)
-Date:   Mon,  1 Oct 2018 10:58:34 -0700
-Message-Id: <20181001175845.168430-15-salyzyn@android.com>
+        android-kernel@android.com, Marc Zyngier <marc.zyngier@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: RESEND [PATCH v3 2/3] arm64: compat: Split the sigreturn trampolines and kuser helpers (assembler sources)
+Date:   Mon,  1 Oct 2018 10:58:35 -0700
+Message-Id: <20181001175845.168430-16-salyzyn@android.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 In-Reply-To: <20181001175845.168430-1-salyzyn@android.com>
 References: <20181001175845.168430-1-salyzyn@android.com>
@@ -112,18 +109,9 @@ because:
 * A future 32-bit vDSO would provide the sigreturn trampolines itself,
   making those in [vectors] redundant.
 
-This patch addresses the problem by moving the sigreturn trampolines to
-a separate [sigpage] page, mirroring [sigpage] on arm.
-
-Even though [vectors] has always been a misnomer on arm64/compat, as
-there is no AArch32 vector there (and now only the kuser helpers),
-its name has been left unchanged, for compatibility with arm (there
-are reports of software relying on [vectors] being there as the last
-mapping in /proc/maps).
-
-mm->context.vdso used to point to the [vectors] page, which is
-unnecessary (as its address is fixed). It now points to the [sigpage]
-page (whose address is randomized like a vDSO).
+This patch addresses the problem by moving the sigreturn trampolines
+sources to its own file.  Wrapped the comments to reduce the wrath of
+checkpatch.pl.
 
 Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
@@ -148,192 +136,174 @@ Cc: Jeremy Linton <Jeremy.Linton@arm.com>
 Cc: android-kernel@android.com
 
 v2:
-- reduce churniness (and defer later to vDSO patches)
-- vectors_page and compat_vdso_spec as array of 2
-- free sigpage if vectors allocation failed
+- split off from previous v1 'arm64: compat: Add CONFIG_KUSER_HELPERS'
+- adjust makefile so one line for each of the assembler source modules
 
 v3:
 - rebase
 ---
- arch/arm64/include/asm/processor.h |  4 +-
- arch/arm64/include/asm/signal32.h  |  2 -
- arch/arm64/kernel/signal32.c       |  5 +-
- arch/arm64/kernel/vdso.c           | 82 ++++++++++++++++++++----------
- 4 files changed, 60 insertions(+), 33 deletions(-)
+ arch/arm64/kernel/Makefile      |  4 +-
+ arch/arm64/kernel/kuser32.S     | 48 ++---------------------
+ arch/arm64/kernel/sigreturn32.S | 67 +++++++++++++++++++++++++++++++++
+ 3 files changed, 73 insertions(+), 46 deletions(-)
+ create mode 100644 arch/arm64/kernel/sigreturn32.S
 
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index 79657ad91397..bc6bb256ea4c 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -66,9 +66,9 @@
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index 4c8b13bede80..b89a79424912 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -27,8 +27,10 @@ OBJCOPYFLAGS := --prefix-symbols=__efistub_
+ $(obj)/%.stub.o: $(obj)/%.o FORCE
+ 	$(call if_changed,objcopy)
  
- #define STACK_TOP_MAX		TASK_SIZE_64
- #ifdef CONFIG_COMPAT
--#define AARCH32_VECTORS_BASE	0xffff0000
-+#define AARCH32_KUSER_HELPERS_BASE 0xffff0000
- #define STACK_TOP		(test_thread_flag(TIF_32BIT) ? \
--				AARCH32_VECTORS_BASE : STACK_TOP_MAX)
-+				AARCH32_KUSER_HELPERS_BASE : STACK_TOP_MAX)
- #else
- #define STACK_TOP		STACK_TOP_MAX
- #endif /* CONFIG_COMPAT */
-diff --git a/arch/arm64/include/asm/signal32.h b/arch/arm64/include/asm/signal32.h
-index 81abea0b7650..58e288aaf0ba 100644
---- a/arch/arm64/include/asm/signal32.h
-+++ b/arch/arm64/include/asm/signal32.h
-@@ -20,8 +20,6 @@
- #ifdef CONFIG_COMPAT
- #include <linux/compat.h>
- 
--#define AARCH32_KERN_SIGRET_CODE_OFFSET	0x500
--
- int compat_setup_frame(int usig, struct ksignal *ksig, sigset_t *set,
- 		       struct pt_regs *regs);
- int compat_setup_rt_frame(int usig, struct ksignal *ksig, sigset_t *set,
-diff --git a/arch/arm64/kernel/signal32.c b/arch/arm64/kernel/signal32.c
-index 24b09003f821..52f0d44417c8 100644
---- a/arch/arm64/kernel/signal32.c
-+++ b/arch/arm64/kernel/signal32.c
-@@ -398,14 +398,13 @@ static void compat_setup_return(struct pt_regs *regs, struct k_sigaction *ka,
- 		retcode = ptr_to_compat(ka->sa.sa_restorer);
- 	} else {
- 		/* Set up sigreturn pointer */
-+		void *sigreturn_base = current->mm->context.vdso;
- 		unsigned int idx = thumb << 1;
- 
- 		if (ka->sa.sa_flags & SA_SIGINFO)
- 			idx += 3;
- 
--		retcode = AARCH32_VECTORS_BASE +
--			  AARCH32_KERN_SIGRET_CODE_OFFSET +
--			  (idx << 2) + thumb;
-+		retcode = ptr_to_compat(sigreturn_base) + (idx << 2) + thumb;
- 	}
- 
- 	regs->regs[0]	= usig;
-diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index 8dd2ad220a0f..5398f6454ce1 100644
---- a/arch/arm64/kernel/vdso.c
-+++ b/arch/arm64/kernel/vdso.c
-@@ -1,5 +1,7 @@
- /*
-- * VDSO implementation for AArch64 and vector page setup for AArch32.
-+ * Additional userspace pages setup for AArch64 and AArch32.
-+ *  - AArch64: vDSO pages setup, vDSO data page update.
-+ *  - AArch32: sigreturn and kuser helpers pages setup.
+-arm64-obj-$(CONFIG_COMPAT)		+= sys32.o kuser32.o signal32.o 	\
++arm64-obj-$(CONFIG_COMPAT)		+= sys32.o signal32.o 	\
+ 					   sys_compat.o
++arm64-obj-$(CONFIG_COMPAT)		+= sigreturn32.o
++arm64-obj-$(CONFIG_COMPAT)		+= kuser32.o
+ arm64-obj-$(CONFIG_FUNCTION_TRACER)	+= ftrace.o entry-ftrace.o
+ arm64-obj-$(CONFIG_MODULES)		+= arm64ksyms.o module.o
+ arm64-obj-$(CONFIG_ARM64_MODULE_PLTS)	+= module-plts.o
+diff --git a/arch/arm64/kernel/kuser32.S b/arch/arm64/kernel/kuser32.S
+index 997e6b27ff6a..d15b5c2935b3 100644
+--- a/arch/arm64/kernel/kuser32.S
++++ b/arch/arm64/kernel/kuser32.S
+@@ -20,16 +20,13 @@
   *
-  * Copyright (C) 2012 ARM Limited
+  * AArch32 user helpers.
   *
-@@ -53,32 +55,51 @@ struct vdso_data *vdso_data = &vdso_data_store.data;
- /*
-  * Create and map the vectors page for AArch32 tasks.
+- * Each segment is 32-byte aligned and will be moved to the top of the high
+- * vector page.  New segments (if ever needed) must be added in front of
+- * existing ones.  This mechanism should be used only for things that are
+- * really small and justified, and not be abused freely.
++ * These helpers are provided for compatibility with AArch32 binaries that
++ * still need them. They are installed at a fixed address by
++ * aarch32_setup_additional_pages().
+  *
+  * See Documentation/arm/kernel_user_helpers.txt for formal definitions.
   */
--static struct page *vectors_page[1] __ro_after_init;
-+static struct page *vectors_page[] __ro_after_init;
-+static const struct vm_special_mapping compat_vdso_spec[] = {
-+	{
-+		/* Must be named [sigpage] for compatibility with arm. */
-+		.name	= "[sigpage]",
-+		.pages	= &vectors_page[0],
-+	},
-+	{
-+		.name	= "[kuserhelpers]",
-+		.pages	= &vectors_page[1],
-+	},
-+};
-+static struct page *vectors_page[ARRAY_SIZE(compat_vdso_spec)] __ro_after_init;
  
- static int __init alloc_vectors_page(void)
- {
- 	extern char __kuser_helper_start[], __kuser_helper_end[];
--	extern char __aarch32_sigret_code_start[], __aarch32_sigret_code_end[];
-+	size_t kuser_sz = __kuser_helper_end - __kuser_helper_start;
-+	unsigned long kuser_vpage;
- 
--	int kuser_sz = __kuser_helper_end - __kuser_helper_start;
--	int sigret_sz = __aarch32_sigret_code_end - __aarch32_sigret_code_start;
--	unsigned long vpage;
+-#include <asm/unistd.h>
 -
--	vpage = get_zeroed_page(GFP_ATOMIC);
-+	extern char __aarch32_sigret_code_start[], __aarch32_sigret_code_end[];
-+	size_t sigret_sz =
-+		__aarch32_sigret_code_end - __aarch32_sigret_code_start;
-+	unsigned long sigret_vpage;
- 
--	if (!vpage)
-+	sigret_vpage = get_zeroed_page(GFP_ATOMIC);
-+	if (!sigret_vpage)
- 		return -ENOMEM;
- 
--	/* kuser helpers */
--	memcpy((void *)vpage + 0x1000 - kuser_sz, __kuser_helper_start,
--		kuser_sz);
-+	kuser_vpage = get_zeroed_page(GFP_ATOMIC);
-+	if (!kuser_vpage) {
-+		free_page(sigret_vpage);
-+		return -ENOMEM;
-+	}
- 
- 	/* sigreturn code */
--	memcpy((void *)vpage + AARCH32_KERN_SIGRET_CODE_OFFSET,
--               __aarch32_sigret_code_start, sigret_sz);
-+	memcpy((void *)sigret_vpage, __aarch32_sigret_code_start, sigret_sz);
-+	flush_icache_range(sigret_vpage, sigret_vpage + PAGE_SIZE);
-+	vectors_page[0] = virt_to_page(sigret_vpage);
- 
--	flush_icache_range(vpage, vpage + PAGE_SIZE);
--	vectors_page[0] = virt_to_page(vpage);
-+	/* kuser helpers */
-+	memcpy((void *)kuser_vpage + 0x1000 - kuser_sz, __kuser_helper_start,
-+		kuser_sz);
-+	flush_icache_range(kuser_vpage, kuser_vpage + PAGE_SIZE);
-+	vectors_page[1] = virt_to_page(kuser_vpage);
- 
- 	return 0;
- }
-@@ -87,23 +108,32 @@ arch_initcall(alloc_vectors_page);
- int aarch32_setup_vectors_page(struct linux_binprm *bprm, int uses_interp)
- {
- 	struct mm_struct *mm = current->mm;
--	unsigned long addr = AARCH32_VECTORS_BASE;
--	static const struct vm_special_mapping spec = {
--		.name	= "[vectors]",
--		.pages	= vectors_page,
+ 	.align	5
+ 	.globl	__kuser_helper_start
+ __kuser_helper_start:
+@@ -77,42 +74,3 @@ __kuser_helper_version:			// 0xffff0ffc
+ 	.word	((__kuser_helper_end - __kuser_helper_start) >> 5)
+ 	.globl	__kuser_helper_end
+ __kuser_helper_end:
 -
--	};
-+	unsigned long addr;
- 	void *ret;
- 
- 	if (down_write_killable(&mm->mmap_sem))
- 		return -EINTR;
--	current->mm->context.vdso = (void *)addr;
-+	addr = get_unmapped_area(NULL, 0, PAGE_SIZE, 0, 0);
-+	if (IS_ERR_VALUE(addr)) {
-+		ret = ERR_PTR(addr);
-+		goto out;
-+	}
- 
--	/* Map vectors page at the high address. */
- 	ret = _install_special_mapping(mm, addr, PAGE_SIZE,
--				       VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYEXEC,
--				       &spec);
-+				       VM_READ|VM_EXEC|
-+				       VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
-+				       &compat_vdso_spec[0]);
-+	if (IS_ERR(ret))
-+		goto out;
- 
-+	current->mm->context.vdso = (void *)addr;
+-/*
+- * AArch32 sigreturn code
+- *
+- * For ARM syscalls, the syscall number has to be loaded into r7.
+- * We do not support an OABI userspace.
+- *
+- * For Thumb syscalls, we also pass the syscall number via r7. We therefore
+- * need two 16-bit instructions.
+- */
+-	.globl __aarch32_sigret_code_start
+-__aarch32_sigret_code_start:
+-
+-	/*
+-	 * ARM Code
+-	 */
+-	.byte	__NR_compat_sigreturn, 0x70, 0xa0, 0xe3	// mov	r7, #__NR_compat_sigreturn
+-	.byte	__NR_compat_sigreturn, 0x00, 0x00, 0xef	// svc	#__NR_compat_sigreturn
+-
+-	/*
+-	 * Thumb code
+-	 */
+-	.byte	__NR_compat_sigreturn, 0x27			// svc	#__NR_compat_sigreturn
+-	.byte	__NR_compat_sigreturn, 0xdf			// mov	r7, #__NR_compat_sigreturn
+-
+-	/*
+-	 * ARM code
+-	 */
+-	.byte	__NR_compat_rt_sigreturn, 0x70, 0xa0, 0xe3	// mov	r7, #__NR_compat_rt_sigreturn
+-	.byte	__NR_compat_rt_sigreturn, 0x00, 0x00, 0xef	// svc	#__NR_compat_rt_sigreturn
+-
+-	/*
+-	 * Thumb code
+-	 */
+-	.byte	__NR_compat_rt_sigreturn, 0x27			// svc	#__NR_compat_rt_sigreturn
+-	.byte	__NR_compat_rt_sigreturn, 0xdf			// mov	r7, #__NR_compat_rt_sigreturn
+-
+-        .globl __aarch32_sigret_code_end
+-__aarch32_sigret_code_end:
+diff --git a/arch/arm64/kernel/sigreturn32.S b/arch/arm64/kernel/sigreturn32.S
+new file mode 100644
+index 000000000000..6ecda4d84cd5
+--- /dev/null
++++ b/arch/arm64/kernel/sigreturn32.S
+@@ -0,0 +1,67 @@
++/*
++ * sigreturn trampolines for AArch32.
++ *
++ * Copyright (C) 2005-2011 Nicolas Pitre <nico@fluxnic.net>
++ * Copyright (C) 2012 ARM Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ *
++ * AArch32 sigreturn code
++ *
++ * For ARM syscalls, the syscall number has to be loaded into r7.
++ * We do not support an OABI userspace.
++ *
++ * For Thumb syscalls, we also pass the syscall number via r7. We therefore
++ * need two 16-bit instructions.
++ */
 +
-+	/* Map the kuser helpers at the ABI-defined high address. */
-+	ret = _install_special_mapping(mm, AARCH32_KUSER_HELPERS_BASE,
-+				       PAGE_SIZE,
-+				       VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYEXEC,
-+				       &compat_vdso_spec[1]);
-+out:
- 	up_write(&mm->mmap_sem);
- 
- 	return PTR_ERR_OR_ZERO(ret);
++#include <asm/unistd.h>
++
++	.globl __aarch32_sigret_code_start
++__aarch32_sigret_code_start:
++
++	/*
++	 * ARM Code
++	 */
++	// mov	r7, #__NR_compat_sigreturn
++	.byte	__NR_compat_sigreturn, 0x70, 0xa0, 0xe3
++	// svc	#__NR_compat_sigreturn
++	.byte	__NR_compat_sigreturn, 0x00, 0x00, 0xef
++
++	/*
++	 * Thumb code
++	 */
++	// svc	#__NR_compat_sigreturn
++	.byte	__NR_compat_sigreturn, 0x27
++	// mov	r7, #__NR_compat_sigreturn
++	.byte	__NR_compat_sigreturn, 0xdf
++
++	/*
++	 * ARM code
++	 */
++	// mov	r7, #__NR_compat_rt_sigreturn
++	.byte	__NR_compat_rt_sigreturn, 0x70, 0xa0, 0xe3
++	// svc	#__NR_compat_rt_sigreturn
++	.byte	__NR_compat_rt_sigreturn, 0x00, 0x00, 0xef
++
++	/*
++	 * Thumb code
++	 */
++	// svc	#__NR_compat_rt_sigreturn
++	.byte	__NR_compat_rt_sigreturn, 0x27
++	// mov	r7, #__NR_compat_rt_sigreturn
++	.byte	__NR_compat_rt_sigreturn, 0xdf
++
++        .globl __aarch32_sigret_code_end
++__aarch32_sigret_code_end:
 -- 
 2.19.0.605.g01d371f741-goog
 
