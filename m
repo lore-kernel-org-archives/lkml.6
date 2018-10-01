@@ -2,98 +2,119 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5164C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3782EC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD1752089C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:20:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD1752089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id EE7172145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:21:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kQ44yXYW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE7172145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbeJAX71 (ORCPT
+        id S1726423AbeJBAAD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 19:59:27 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44879 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725740AbeJAX71 (ORCPT
+        Mon, 1 Oct 2018 20:00:03 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44959 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725740AbeJBAAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 19:59:27 -0400
-Received: by mail-pf1-f195.google.com with SMTP id k21-v6so9692931pff.11;
-        Mon, 01 Oct 2018 10:20:39 -0700 (PDT)
+        Mon, 1 Oct 2018 20:00:03 -0400
+Received: by mail-pf1-f196.google.com with SMTP id k21-v6so9694135pff.11
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 10:21:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zjFxLEbSrzzNRdUb5i2NywdnyovHqjCF0ZZdimTUJLU=;
+        b=kQ44yXYWm4AY8Ssvs5Ig1impinGQxtCa+i21O35W+vZbPuSmeIRlQC3kIU3oEnmKY7
+         4EfFZFHQeAqCNGCZVWrRaoutDpHebWF4zmx/7atCv6ovkZxb2ibQ1VqFtMup/wSvVPfL
+         DyN2EJmiyJQdDEB9psnVCl2iYHAf6sP9qmjHcj/EQSPuZwZ7NS13kY/gWmxjDv9AJwfk
+         36wExmxWXeeZ82kL8sTbLm9p7sTj3sRAFYgBI0rkapmZJbvwYojI3hGaZxfPF/Z7tV+Z
+         BpJ04c/vXV6XKWCXduS4h4kxzQGuS9DuigrbbxvHhGX7t17RTFb9+O2reQ+4fa/QYP0v
+         XI7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2F0KBjPfuaBKDsO0Jh3P7CxhnUYNgsmykt8qK3Lf4dI=;
-        b=YLGoayx0OBo+AHgme3N8EZRZirsZJ6c7Dfruxslglf7f8ZrFgMF/LqwL4d2lZkuUvB
-         IkgOzDuIGdx/sMb9X/qz3yXG8wtzVlA8NUgjk+ieK2GyhkyeoatBptUa8ZIzMnvCeFap
-         DfYZN3R+yw2lSqs+ybxvqpKWUI/uB4/9XWjR74odHBdGo7OTSYbEEefhJIFkc8wrkp8x
-         3IUprMAABxXutevTTpxrCQAOcOezLi+D9rWvU54xRyhVtFZbkz2xnARcx38x6JAX+zYF
-         tkQmXaJ8GC5EJNfZb6yn+fz4sLnJ1Hvq45Qg4QVskqYJYQbT0Cnmbo4t8HHNryrIKeb/
-         su7A==
-X-Gm-Message-State: ABuFfoigx5Az3I7fJhULy8ZEghQIhcvfsuRfz9k9mbwK4MDc9q3CNYfR
-        AOaBvSHlccTUf+Cw/JWq98s=
-X-Google-Smtp-Source: ACcGV63lz/53EfBxoXD9I54soUvUmCktusoob1e1EWoWAavOXoV8f8TB5Fy0Wp8UO2TFp/KOoG3xkA==
-X-Received: by 2002:a62:9fc4:: with SMTP id v65-v6mr12324361pfk.130.1538414438757;
-        Mon, 01 Oct 2018 10:20:38 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm6140540pfd.35.2018.10.01.10.20.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 10:20:38 -0700 (PDT)
-Message-ID: <1538414437.171728.7.camel@acm.org>
-Subject: Re: [PATCH RESEND] scsi: sg: Prevent potential double frees in sg
- driver
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>, hch@infradead.org
-Cc:     Doug Gilbert <dgilbert@interlog.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Robb Glasser <rglasser@google.com>, evgreen@chromium.org,
-        stable@vger.kernel.org
-Date:   Mon, 01 Oct 2018 10:20:37 -0700
-In-Reply-To: <CAKwvOdmtF-s4amu-zXbyUNe+jvCuC3hXUez6fVVq0sjuoYc3eg@mail.gmail.com>
-References: <20181001161506.100284-1-evgreen@chromium.org>
-         <CAKwvOdmtF-s4amu-zXbyUNe+jvCuC3hXUez6fVVq0sjuoYc3eg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zjFxLEbSrzzNRdUb5i2NywdnyovHqjCF0ZZdimTUJLU=;
+        b=g4YrjksyOgQPv2REHZBUElXSRvQe750LAKNRYx8U3Q0zdP8rFmOayo1ZkLejSDXvyO
+         I5H2EgRWdEh8Tf3Cqm/z497YU0suSXXpWa9pKn/K71vz66docuCOZkmk5ZJYYd13rr05
+         aah7q9htH2dOMiPPNR2E19iyiea7YDmPML5y87pJ150mgYxl+7rU70rQi8NrBXxIVBNC
+         dVZ0mkHQbLjV+1Pcbziaa6sBiRhLav7RK6rvRtzA2vaFlFLdrVdmY38NTlXOCjz/uIN9
+         fGBzF2nf0+qAIF5fm+DnJERSKg/Q0ZlU7/TWOG6gupQuBnUhtTubBDadtX5HLXrYeEEE
+         rbvQ==
+X-Gm-Message-State: ABuFfohNqWB3+AZaUeBAnPdw4VNDx12UTsYgg3C3svGsceIpKqmAJxOz
+        8AbD2LKhvXFJ+fADRHtwQJhJCT95gH8KUXbpmYlrhQ==
+X-Google-Smtp-Source: ACcGV632m8GzP8e9nJseuB8zv92tyKMY3MvFGmG9JsjQwsYZnUYDSz7VFkT3Cck0PIZF9pmbmA0bWQB+109bLy9nR2U=
+X-Received: by 2002:a63:f347:: with SMTP id t7-v6mr11131363pgj.255.1538414474569;
+ Mon, 01 Oct 2018 10:21:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <1538387078-21892-1-git-send-email-yamada.masahiro@socionext.com> <1538387078-21892-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1538387078-21892-2-git-send-email-yamada.masahiro@socionext.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 1 Oct 2018 10:21:02 -0700
+Message-ID: <CAKwvOd=tpuVaEey2cMLJ5=MF6XZ_sYXd-Qw5xww=+LHZ3rWHdQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] kbuild: add -Wdeclaration-after-statement flag unconditionally
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-01 at 10:12 -0700, Nick Desaulniers wrote:
-+AD4 On Mon, Oct 1, 2018 at 9:16 AM Evan Green +ADw-evgreen+AEA-chromium.org+AD4 wrote:
-+AD4 +AD4 
-+AD4 +AD4 From: Robb Glasser +ADw-rglasser+AEA-google.com+AD4
-+AD4 +AD4 
-+AD4 +AD4 sg+AF8-ioctl could be spammed by requests, leading to a double free in
-+AD4 +AD4 +AF8AXw-free+AF8-pages. This protects the entry points of sg+AF8-ioctl where the
-+AD4 +AD4 memory could be corrupted by a double call to +AF8AXw-free+AF8-pages if multiple
-+AD4 +AD4 requests are happening concurrently.
-+AD4 +AD4 
-+AD4 +AD4 Signed-off-by: Robb Glasser +ADw-rglasser+AEA-google.com+AD4
-+AD4 +AD4 Signed-off-by: Nick Desaulniers +ADw-ndesaulniers+AEA-google.com+AD4
-+AD4 +AD4 Signed-off-by: Evan Green +ADw-evgreen+AEA-chromium.org+AD4
-+AD4 +AD4 Cc: stable+AEA-vger.kernel.org
-+AD4 +AD4 
-+AD4 +AD4 ---
-+AD4 +AD4 Reposting this patch from last summer, as it looks like it fell in between
-+AD4 +AD4 the cracks.
-+AD4 
-+AD4 Christoph, do you still feel strongly about: https://lkml.org/lkml/2017/8/5/75 ?
+On Mon, Oct 1, 2018 at 2:45 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> We have raised the compiler requirement from time to time.
+> With commit cafa0010cd51 ("Raise the minimum required gcc version
+> to 4.6"), the minimum for GCC is 4.6 now.
+>
+> This flag has been here since the pre-git era.  It is documented in
+> the GCC 4.6 manual, and it is recognized by Clang and ICC as well.
+>
+> Let's rip off the cc-option switch, and see if somebody complains
+> about it.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 505a324..8a23fee 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -797,7 +797,7 @@ endif
+>  NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
+>
+>  # warn about C99 declaration after statement
+> -KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
+> +KBUILD_CFLAGS += -Wdeclaration-after-statement
 
-I don't know how Christoph feels about it, but serializing all SG I/O seems
-like a regression to me. If one sg command hangs I usually try to send
-another sg command to the same SCSI device from another shell to get more
-information about the nature of the hang. Serializing all SG I/O would make
-that impossible.
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+https://godbolt.org/z/TP5722
 
-Bart.
+>
+>  # disable pointer signed / unsigned warnings in gcc 4.0
+>  KBUILD_CFLAGS += -Wno-pointer-sign
+> --
+> 2.7.4
+>
+
+
+-- 
+Thanks,
+~Nick Desaulniers
