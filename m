@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D94DC004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DFCC004D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 278DC20666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:43:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C23F720666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:43:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="i2GXdvrG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 278DC20666
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="QhieipbP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C23F720666
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729361AbeJAHSl (ORCPT
+        id S1730122AbeJAHQq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 03:18:41 -0400
+        Mon, 1 Oct 2018 03:16:46 -0400
 Received: from mail-cys01nam02on0106.outbound.protection.outlook.com ([104.47.37.106]:26608
         "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730083AbeJAHQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 03:16:47 -0400
+        id S1730083AbeJAHQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 03:16:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UwPIKI20Sc24cOhklHdJLkn2YVb1SoRGuNKWtQDQI24=;
- b=i2GXdvrGiIoxjmnYDiDdPDUvbFaoFAwehz3PR9oRi83jd9f2Fb4rInXK6nL/3VvDNwNiSmcZPBz796Sxus1pH70zLb+Fm4QolDkLTa0CI4Cf2jVjgTPuk+xa7cFhD2WkPrmuDf+7vfZ44VRLD0DdjL9QbOFXfdkFYQnXWvoNMg8=
+ bh=+oZZVT8FmPvmbMjGrp715cvVFb+nMb6oNm19y0+1EXA=;
+ b=QhieipbPhlcSoJ9BAvwlmCSvugyfjZvZcieg6gunA0TEbATBrjU/3bsG8nnv+AWiqUBjhkA5HQF/UP2l9lfP5AJDJouKibKwI6YPipRX0ZIbMGlUnA6ozDzp7djIVHoBt22DSChEDrGfIcX5ZSrbUvs+sRgUv9wmNLldjBpypTs=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0791.namprd21.prod.outlook.com (10.175.121.145) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.3; Mon, 1 Oct 2018 00:41:34 +0000
+ 15.20.1228.3; Mon, 1 Oct 2018 00:41:32 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1228.006; Mon, 1 Oct 2018
- 00:41:34 +0000
+ 00:41:32 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Olaf Hering <olaf@aepfle.de>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+CC:     Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 16/17] xen: avoid crash in disable_hotplug_cpu
-Thread-Topic: [PATCH AUTOSEL 4.4 16/17] xen: avoid crash in
- disable_hotplug_cpu
-Thread-Index: AQHUWR+AN47QJUsPmEaJP3sqnt9ZQA==
-Date:   Mon, 1 Oct 2018 00:41:34 +0000
-Message-ID: <20181001004122.147276-16-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.4 13/17] s390/qeth: don't dump past end of unknown
+ HW header
+Thread-Topic: [PATCH AUTOSEL 4.4 13/17] s390/qeth: don't dump past end of
+ unknown HW header
+Thread-Index: AQHUWR9/5LExO6njw0+kapDw3T9Smg==
+Date:   Mon, 1 Oct 2018 00:41:32 +0000
+Message-ID: <20181001004122.147276-13-alexander.levin@microsoft.com>
 References: <20181001004122.147276-1-alexander.levin@microsoft.com>
 In-Reply-To: <20181001004122.147276-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,30 +60,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0791;6:t1nUr+Xm4yAioSb7hYcpT2eiqYcsq6auWEOLEPjC0kVJnvwJwCseugqC6VOxnVOYn0CEU/cZSIR2d7FuaU+7q7CxVaX4gzAaaQ9fuPyWMp7S3UgN06/PkiDcAyLjTiuQopzwldHMUiLaDznvaDMsaSwihjrSnLFRoFrswRwxSuXx4Ch4T/bhEiMyDbbhw9NJjbn43uii049VYQcmBfwSciwEQ6HJsEo0s7IVVdT7MvYzP4FOTMGdn9Qx5d0hFEnZqd83MDvBIi65oRCeQyVe2aTdMXXVegrQVnsm24VNMpSeKHuZ08fiS4NsWclEzq1CRFW+Ou7F1/W3R9cGMSVj/mIpD4u1pK6meP53HeFaV7aVcfFSNd8j2h4ioAIUEp41U0+FeSr50funewswWJCtDz59DXWnNEIaYugu/k3FUrdR8ChUKLferjO48Z+HzRq88blfmBe3tuldiMkN2wHPIA==;5:L2g2aUinErAgy1A5PdGzM4yfpclK524lsDvYh+IWeMyMPZFX9X+BE7X16rTHGFsG7osbSAjAtvJGwClVpaD1J3h7rapsLTtBYkDAcUaaco7vky2G5BYzcINfp8+Yv/b4dYWIQhNkNYZFo0qPhRb9+lDflVWS6j1n9BW4UF9ymII=;7:BI69e7hTA4v1LSk5qsdXG9ft3bLDlC4SNWPLkmoZExDzh8fTFHO1oRIv2zQgLeqZSAXkhP6ybePT8cVY181uMF4jr3IBMhLE9uta6f1hYAEen+4Km4cAtWPRkM9PPm7Hq4/rtilXMnGM4JJA7cuuWpW/GPlSRz5oaqYXmA7kOkJ7T4EInvZBe9VIBxYxhdimRmlAIWxsfkXnlD+X0mzwFAnk3oILIDm1UIJENigjilD1/jQJgPGbeCQi9eazNX0y
-x-ms-office365-filtering-correlation-id: d39c5306-672a-4be2-6d80-08d62736a372
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0791;6:NJi4rCE9RIQxtC+i2xbN8FCS8iDkL2JMgi3S6R52bPdAMy/TfpZEVrh/uJRPkul27WuWznnZo1dJwEIc6TY59HwP19JkHVKO79x/THuz+rEusPqKwbGkmcuJFdrn7kPIruiFX3G6bG3qazdjSntsz2XQHaRkGGoD54pzHZwtq38iYMfUxh/FOE5Gf6LxJve6+ybmLbGlCqOP3Kt43nMQ3ra7jwfpWpDpP/K+kK2GV/LWbpGk0l0l2+KracivCucqOJ/5ahqM3ERPj2RRNLv1RNf5WNwZOGmsfzRFOhp9TS/YaEvOg49SZO2v5MqQG6DD1t8ZlQ4+xgpwolSpgJGvHITMDg9rwdcZGQAqOm6/PUT33lUqWTjcetWASTGeoP6JqtUg39V6SIQpy5CtJ5GtwmbwLjicwFcVvhAN6yj4AggYkH6qwB6qvcw3WPp4eaOuBPOMDcyWFdwFhHGA5N9YKQ==;5:KOVmom8oDb658yCrc9O9K0+WFa2zLOUDb03ZtfXi8l6KUZUhNOKmYNV3qoOP315I/WNrCtGSn4frHMWkAJoI1kK15YEythjr8rwM/Bmx47jo5CoMAFqDmj+wRLJql++O6Zl+7dou3UheI/CYdZpEFZqFVSMdh4NSB0kb4fvJDr8=;7:Yl7rLX8T5O07xm2s4H6JUnBzYOJ/ye60AVSUk0Wsejelc1mUDoA5JiQyXA4rIn/VomOstAKe4EyERq6IvGSEHso5LU8Enpj4spbwdel/teDlpV++jKdgXU5Adt4/wiT0caGDFd4yWA/FuTxpBknikLpS/Jj7qDl6719B23y2wq5WaxF8r83VQvWHC2kTRGKfyrPlNyR4qMOBY1GoFk1/eBLrFscYHhws9Ey1feUO6/5cnDsNkKkMI9kAX0bqTgem
+x-ms-office365-filtering-correlation-id: e515201d-b4bc-4709-e636-08d62736a281
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0791;
 x-ms-traffictypediagnostic: CY4PR21MB0791:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB079158F1CAD1B59E8F6D2786FBEF0@CY4PR21MB0791.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(146099531331640)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB079102F3DC942DA750F3ABC2FBEF0@CY4PR21MB0791.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(104084551191319)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0791;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0791;
 x-forefront-prvs: 0812095267
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(396003)(366004)(376002)(39860400002)(189003)(199004)(72206003)(71190400001)(478600001)(316002)(110136005)(14454004)(2616005)(54906003)(105586002)(107886003)(106356001)(186003)(305945005)(26005)(34290500001)(71200400001)(22452003)(7736002)(256004)(14444005)(25786009)(10290500003)(99286004)(68736007)(53936002)(486006)(6512007)(446003)(66066001)(36756003)(6506007)(81166006)(81156014)(6486002)(5250100002)(86362001)(2501003)(5660300001)(4326008)(11346002)(6116002)(476003)(3846002)(10090500001)(97736004)(1076002)(8676002)(8936002)(102836004)(217873002)(6436002)(76176011)(86612001)(2900100001)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0791;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(396003)(366004)(376002)(39860400002)(189003)(199004)(72206003)(71190400001)(478600001)(316002)(110136005)(14454004)(2616005)(54906003)(105586002)(107886003)(106356001)(186003)(305945005)(26005)(34290500001)(71200400001)(22452003)(7736002)(256004)(14444005)(25786009)(10290500003)(99286004)(68736007)(53936002)(486006)(6512007)(446003)(66066001)(36756003)(6506007)(81166006)(81156014)(6486002)(5250100002)(575784001)(86362001)(2501003)(5660300001)(4326008)(11346002)(6116002)(476003)(3846002)(10090500001)(97736004)(1076002)(8676002)(8936002)(102836004)(217873002)(6436002)(76176011)(86612001)(2900100001)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0791;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: Gw+4IvNOY9xZYaKONtPysO/9UUEeoibI2YauIve/NHwR34Qn00KHDHNkNWc+x/xc9r6hotP5lZDyJckmunJ03Y1EyES1QcoVUuE7hqGeJjMOUO+htbZzUw5wlRtiSNw9QL7ypIE7YOi1DC1c/3JPOnb7hoNIoXncRwUYaOc2n+zBY/IwJCc/coMd3x83gsi5/jJ/Kss1EXnAXcXyrogTK4ekNzNRevoQGHKuZyzXM9Ic9MXcRLtFz/tkzZSwKyffQpwu16D4aVY3Z/p8SFiDyWvOt5UA1X7gefmXyg5nooS9ATq2NCoqarvdDPv5iU4w7Nz3MiFc9LwnuL35pp5ArHdCCHB8GYRnuD5W1qBHR7w=
+x-microsoft-antispam-message-info: FGFAhqe2SyUy38f+J4eSxe4Xd7Hq93KfBfs+tNg3Pf2K9CdbwgPKcH7F9clCUgYJULDNdr6NQ4B3sH0MILMDiOvw5CoLtnsbGgoLSCC7XJbZAVLZDe7uoV9/DrJCj03y8fTraKEiNQcyw/3WE493UbioBiAZOLJMpflt6VbxJDCunUiF6sX4RPCjKhlfzITu9wSriMObpqrt1PM5oKSLTB/RXPT5crupy/VDAzqbGLrleJ3/gPhgR80gd9K+0k9mfBsorenRHRcy0Fpwkr4L2ZDfEpMGuH2YRNIP2PieuFWoloHW80zBZB1nay49sy3VTDrwcW386VXaAxZhhvud0P02GFVRREsDr4Rt7YBJKM4=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d39c5306-672a-4be2-6d80-08d62736a372
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:41:34.2425
+X-MS-Exchange-CrossTenant-Network-Message-Id: e515201d-b4bc-4709-e636-08d62736a281
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:41:32.6602
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -92,89 +93,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olaf Hering <olaf@aepfle.de>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit 3366cdb6d350d95466ee430ac50f3c8415ca8f46 ]
+[ Upstream commit 0ac1487c4b2de383b91ecad1be561b8f7a2c15f4 ]
 
-The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
+For inbound data with an unsupported HW header format, only dump the
+actual HW header. We have no idea how much payload follows it, and what
+it contains. Worst case, we dump past the end of the Inbound Buffer and
+access whatever is located next in memory.
 
-BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
-PGD 0 P4D 0
-Oops: 0000 [#1] PREEMPT SMP NOPTI
-CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 =
-openSUSE Tumbleweed (unreleased)
-Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050=
-.050620101605 05/06/2010
-RIP: e030:device_offline+0x9/0xb0
-Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff =
-ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 0=
-0 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
-RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
-R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
-R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
-FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:000000000000000=
-0
-CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
-Call Trace:
- handle_vcpu_hotplug_event+0xb5/0xc0
- xenwatch_thread+0x80/0x140
- ? wait_woken+0x80/0x80
- kthread+0x112/0x130
- ? kthread_create_worker_on_cpu+0x40/0x40
- ret_from_fork+0x3a/0x50
-
-This happens because handle_vcpu_hotplug_event is called twice. In the
-first iteration cpu_present is still true, in the second iteration
-cpu_present is false which causes get_cpu_device to return NULL.
-In case of cpu#0, cpu_online is apparently always true.
-
-Fix this crash by checking if the cpu can be hotplugged, which is false
-for a cpu that was just removed.
-
-Also check if the cpu was actually offlined by device_remove, otherwise
-leave the cpu_present state as it is.
-
-Rearrange to code to do all work with device_hotplug_lock held.
-
-Signed-off-by: Olaf Hering <olaf@aepfle.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/xen/cpu_hotplug.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/s390/net/qeth_l2_main.c | 2 +-
+ drivers/s390/net/qeth_l3_main.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
-index 5676aefdf2bc..f4e59c445964 100644
---- a/drivers/xen/cpu_hotplug.c
-+++ b/drivers/xen/cpu_hotplug.c
-@@ -18,15 +18,16 @@ static void enable_hotplug_cpu(int cpu)
-=20
- static void disable_hotplug_cpu(int cpu)
- {
--	if (cpu_online(cpu)) {
--		lock_device_hotplug();
-+	if (!cpu_is_hotpluggable(cpu))
-+		return;
-+	lock_device_hotplug();
-+	if (cpu_online(cpu))
- 		device_offline(get_cpu_device(cpu));
--		unlock_device_hotplug();
--	}
--	if (cpu_present(cpu))
-+	if (!cpu_online(cpu) && cpu_present(cpu)) {
- 		xen_arch_unregister_cpu(cpu);
--
--	set_cpu_present(cpu, false);
-+		set_cpu_present(cpu, false);
-+	}
-+	unlock_device_hotplug();
- }
-=20
- static int vcpu_online(unsigned int cpu)
+diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_mai=
+n.c
+index acdb5ccb0ab9..34d3b7aff513 100644
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -523,7 +523,7 @@ static int qeth_l2_process_inbound_buffer(struct qeth_c=
+ard *card,
+ 		default:
+ 			dev_kfree_skb_any(skb);
+ 			QETH_CARD_TEXT(card, 3, "inbunkno");
+-			QETH_DBF_HEX(CTRL, 3, hdr, QETH_DBF_CTRL_LEN);
++			QETH_DBF_HEX(CTRL, 3, hdr, sizeof(*hdr));
+ 			continue;
+ 		}
+ 		work_done++;
+diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_mai=
+n.c
+index bbdb3b6c54bb..2cc9bc1ef1e3 100644
+--- a/drivers/s390/net/qeth_l3_main.c
++++ b/drivers/s390/net/qeth_l3_main.c
+@@ -1902,7 +1902,7 @@ static int qeth_l3_process_inbound_buffer(struct qeth=
+_card *card,
+ 		default:
+ 			dev_kfree_skb_any(skb);
+ 			QETH_CARD_TEXT(card, 3, "inbunkno");
+-			QETH_DBF_HEX(CTRL, 3, hdr, QETH_DBF_CTRL_LEN);
++			QETH_DBF_HEX(CTRL, 3, hdr, sizeof(*hdr));
+ 			continue;
+ 		}
+ 		work_done++;
 --=20
 2.17.1
