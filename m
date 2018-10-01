@@ -2,92 +2,130 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9542BC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0A4C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37F812089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:13:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 710682089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:13:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UObLbnvI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37F812089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lQoNHlVg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 710682089A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbeJBAwK (ORCPT
+        id S1726398AbeJBAwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:52:10 -0400
-Received: from ozlabs.org ([203.11.71.1]:35859 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbeJBAwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:52:10 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42P9Pb2FPzz9s3x;
-        Tue,  2 Oct 2018 04:13:07 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538417587;
-        bh=efXrSr/Lx9UBLzE0tVE3Qx6nBfdI99oUYqyMoLD88Fk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UObLbnvIR1dNibv6xx11JElsp3OlUwrewrla/aifV2YFPhqbuuIGi43NTbGXzCRL+
-         fBJswtVYCt4CEJiFOYy8wf2QcskyhIyV26MnyR0hQhzeqPJ6Ct8c2XB0pZxN3hbH0N
-         TtoAEvZHsB+HPwzDa1ASIegfhSEOlCbdOTlqdIVX/y2t2+JkzGHyjtQTUeeRB4IZzj
-         joVBunDuXLQVU7CrrIiZrJogrL+Jh6M7/lk+x+L1PpbmHR8JCrSyKVHADSu6jKL4cZ
-         w+OdSE9BJPk3mWDUVv646lqCFv9A/c+ks0u1QIJA9RAFZBZPBv0H4U14L318KPYLwy
-         UY2CHgtOAk4dA==
-Date:   Tue, 2 Oct 2018 04:12:31 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     dwalker@fifo99.com
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: commits in the cisco tree
-Message-ID: <20181002041231.01ce209b@canb.auug.org.au>
-In-Reply-To: <20181001144257.GA13523@fifo99.com>
-References: <20180930112419.6f880e46@canb.auug.org.au>
-        <20181001144257.GA13523@fifo99.com>
+        Mon, 1 Oct 2018 20:52:22 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45463 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeJBAwW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 20:52:22 -0400
+Received: by mail-qt1-f193.google.com with SMTP id l2-v6so15024300qtr.12;
+        Mon, 01 Oct 2018 11:13:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iOecgNoGrgdYyAQWQQm7pSL2i3FJxrnIrIYc9B99SCc=;
+        b=lQoNHlVgXyizZbeUlkQscn6gi4SyBkpJgZcX2LAGa9hPdrQSHrNOQNOQtJi5VTcwnk
+         NEjiad8UgZRykgWFeLkezkLN8IEgOtqx8kqOBnkI3Vq+RMpxUoh1r80xccEZ98u6Er/m
+         pCLY/ZPt4vYZGV8dBjBdklc9BOfLqrB+BMfyaiujSCFgCRgezdhj7kTQexR7LgXMLgIY
+         ZnQQ8AHyWoOVetcOUrs07Nc52PD02QE2d2bcpix8aAk0xSdLD+LCpAx1BZgZoSj9nAKe
+         W5bKMIuf/kB04erJPr8wPzHUQpjChszazk9Xbk508vQv5RWTZ8CL1igVkppNwWrAh80q
+         FcDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iOecgNoGrgdYyAQWQQm7pSL2i3FJxrnIrIYc9B99SCc=;
+        b=umZdy1fW0l/jqFM6bkvQn85WoHlj6ZUE0Y61HXN5bfOSsL/t9SteM7poHblaIE7EVz
+         4QpOnquh19EkyfpPVXM3XaS9e9ZuOw6l3r16xa/sop51z/SposwCEm2G6MWLUVA67Yko
+         JY1P0KufCl044oq5EIwAZ9oS3/DGpzlDavfq3gUdqslx52xEKbUnvyFVF/xmMhQ5gODN
+         BkJJ9Ggqy6xvNjeDubWFdQ/Naq0IVoZu4GLBCKnCzX6MM3n8lv2r+D5Lmnhwug2cHm6b
+         O6vYL1laRN+pakdgJJsKpdpQEECDSQ+ohT3mb9AmnCBffXe0pRJ7PyiLt5m6HxHvp0NO
+         rS/g==
+X-Gm-Message-State: ABuFfog/ifp6ruyb109ahr0W+Yk20u6PU+RnF9nhXM6WfeaEmmY4PEh3
+        9ZJaN1BMgZxSztt4qkBYPWpb3Qsh31G7twGrN6k=
+X-Google-Smtp-Source: ACcGV60iTnXuD+7pPyZDYY/96uH8JYoXMhbSSd8rwROosiwezVY1A1t8eoiiyJM2/MKNt4hF6UYb2cm+bSpUVLq+bRU=
+X-Received: by 2002:ac8:2f86:: with SMTP id l6-v6mr9633944qta.83.1538417600393;
+ Mon, 01 Oct 2018 11:13:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jl1j3_uG+4GvEw7VEYYHbVU"; protocol="application/pgp-signature"
+References: <20181001174349.26357-1-f.fainelli@gmail.com>
+In-Reply-To: <20181001174349.26357-1-f.fainelli@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 1 Oct 2018 21:13:09 +0300
+Message-ID: <CAHp75Vd2js3QCJYjPDea5xapYLiOObSUF7_Q2hjG8RS=QYyPaQ@mail.gmail.com>
+Subject: Re: [PATCH v2] i2c: brcmstb: Allow enabling the driver on DSL SoCs
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Jean Delvare <jdelvare@suse.de>, kramasub@codeaurora.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Eddie James <eajames@linux.vnet.ibm.com>,
+        James Hogan <jhogan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/jl1j3_uG+4GvEw7VEYYHbVU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Daniel,
-
-On Mon, 1 Oct 2018 07:42:57 -0700 dwalker@fifo99.com wrote:
+On Mon, Oct 1, 2018 at 8:44 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
 >
-> Is this just an alert , or are you not merging for these reasons ?
+> ARCH_BCM_63XX which is used by ARM-based DSL SoCs from Broadcom uses the
+> same controller, make it possible to select the STB driver and update
+> the Kconfig and help text a bit.
+>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+> Changes in v2:
+>
+> - Make COMPILE_TEST last, as per Geert's recommendation
+>
+>  drivers/i2c/busses/Kconfig | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index 451d4ae50e66..56ccb1ea7da5 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -432,12 +432,13 @@ config I2C_BCM_KONA
+>           If you do not need KONA I2C interface, say N.
+>
+>  config I2C_BRCMSTB
+> -       tristate "BRCM Settop I2C controller"
+> -       depends on ARCH_BRCMSTB || BMIPS_GENERIC || COMPILE_TEST
+> +       tristate "BRCM Settop/DSL I2C controller"
+> +       depends on ARCH_BRCMSTB || BMIPS_GENERIC || ARCH_BCM_63XX || \
+> +                  COMPILE_TEST
 
-Just an alert.
+I would rather split this to two 'depends' entries, though it's
+cosmetic and up to you.
 
---=20
-Cheers,
-Stephen Rothwell
+>         default y
+>         help
+>           If you say yes to this option, support will be included for the
+> -         I2C interface on the Broadcom Settop SoCs.
+> +         I2C interface on the Broadcom Settop/DSL SoCs.
+>
+>           If you do not need I2C interface, say N.
+>
+> --
+> 2.17.1
+>
 
---Sig_/jl1j3_uG+4GvEw7VEYYHbVU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluyY48ACgkQAVBC80lX
-0Gz4Sgf9G+j8mhtM5y9n9zCX/CujBV1hVbLHg7WcmK81EbNIRr+IHpc8YVcU9pwi
-kNzhaaOHbM8gNl00/4p3HrIFqQ4mgfgUY96bUF0QfQRanU2VcA+jH3M8bJYHyg1w
-sHhiVpFM6sfypjLuNfJH0Np+SlTe5e3wj6hIr8J8H+mkYCvh3GigBBBhKEFmrwQX
-mFjDUJxjt1tP6pAzg1McL0rKfPcslJFngF+HqFnh2U7ySPsLuz710r4+4u2I3t2V
-6P8hbtZNYVeGBMUt1IsRB8AS6xQI0FZtua9SfAIrptZy3pr163ILy8OWm6Rc7Onk
-b81Oh89e24QLLJ+6y+vsbhmUSWxRwQ==
-=NtTp
------END PGP SIGNATURE-----
-
---Sig_/jl1j3_uG+4GvEw7VEYYHbVU--
+-- 
+With Best Regards,
+Andy Shevchenko
