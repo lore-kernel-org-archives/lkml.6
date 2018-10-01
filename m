@@ -2,137 +2,148 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A41DCC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE62C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68A3A213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:49:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68A3A213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B9A1A208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:51:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EJi71KkL";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BYil3AUH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9A1A208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729450AbeJAU12 (ORCPT
+        id S1729415AbeJAU3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:27:28 -0400
-Received: from mga02.intel.com ([134.134.136.20]:24322 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729291AbeJAU12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:27:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 06:49:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,327,1534834800"; 
-   d="scan'208";a="77544806"
-Received: from rchan-mobl1.amr.corp.intel.com ([10.252.138.92])
-  by orsmga007.jf.intel.com with ESMTP; 01 Oct 2018 06:49:24 -0700
-Message-ID: <f360d9c67bb9bc3418fad290399b8f27cb61c80f.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 0/5] tracing: Unifying dynamic event interface
-From:   Tom Zanussi <tom.zanussi@linux.intel.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Date:   Mon, 01 Oct 2018 08:49:24 -0500
-In-Reply-To: <153806391326.18458.3927382953014694981.stgit@devbox>
-References: <153806391326.18458.3927382953014694981.stgit@devbox>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 1 Oct 2018 16:29:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50016 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729253AbeJAU3K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 16:29:10 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 59DB860128; Mon,  1 Oct 2018 13:51:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538401875;
+        bh=ExW6SnUp8lMc7bPWEfR1QYwUAsuREaNx3m3j625zmWs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EJi71KkLxH6vokVFkxmZ5XDkAQLqNqBXUVACpVhXevybKqWYvDc/JvGn83S3wt8Qz
+         05GQQeX9B/p6RQ6KNWu5+DmSyhL0YBWyN4vVvXEctdrsy0k9S/cFbrxH+EUEBSSG6l
+         brCPQl1pD+j0x3i692n4oaUE1+21A4yycF5weTKE=
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 094B160866;
+        Mon,  1 Oct 2018 13:51:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538401874;
+        bh=ExW6SnUp8lMc7bPWEfR1QYwUAsuREaNx3m3j625zmWs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BYil3AUHuxcw/ZM9MyBMAXSVP5goBhPabgS/y5/773n3GrHOOLAUXw7J0Az/o5v6u
+         YcecpOuY7GnKSD4XT44pROUra8WoGKKxAxoeEpy5ovGCTRlrIjYdhLXRV6Y0zAs2wh
+         urhxr2TI3EtI5c0KjqlbER4m+U3/yGg8HgdETNsQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 094B160866
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Harish Bandi <c-hbandi@codeaurora.org>
+Subject: [PATCH v1] Bluetooth: hci_qca: Add support for controller debug logs.
+Date:   Mon,  1 Oct 2018 19:21:02 +0530
+Message-Id: <20181001135102.17453-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
+This patch will prevent error messages splashing on console.
 
-On Fri, 2018-09-28 at 00:58 +0900, Masami Hiramatsu wrote:
-> Hi,
-> 
-> This is an RFC series of unifying dynamic event interface on ftrace.
-> Currently ftrace has 3 dynamic event interfaces, kprobes, uprobes
-> and synthetic. This series unifies kprobes and uprobes event
-> interface on "dynamic_events". This enables us to add new dynamic
-> events easily on same interface, e.g. function events.
+[   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+[   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+[   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+[   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
 
-This seems like a nice idea to me and I don't see any problems with the
-patches themselves, so consider it
+QCA wcn3990 will send the debug logs in the form of ACL packets.
+While decoding packet in qca_recv(), marking the received debug log
+packet as diagnostic packet.
 
-Acked-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
+Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+---
+ drivers/bluetooth/hci_qca.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-> The older interfaces are left on the tracefs for backward
-> compatibility at this moment.
-> 
-> dynamic_events syntax has no different from kprobe_events and
-> uprobe_events. You can use same syntax for dynamic_events interface.
-> 
-> I think we can integrate synthetic events to this dynamic_events
-> interface but it will requires new syntax. e.g.
-> 
-> echo "s:<event-name> <args>" >> dynamic_events
-> 
-
-So that's just the existing syntax, prefaced by s: , right?
-
-> If it is OK, I'll add it in next version.
-> 
-
-Makes sense to me.
-
-> BTW, since this dynamic_events interface derived from *probe_events,
-> it inherits "all clear when truncate file open" behavior. But if you
-> think this is too aggressive, I can drop it. (even in that case,
-> kprobe_events/uprobe_events behavior is not changed)
-> 
-> I also introduced a widely used way to erase entries in other
-> interfaces of ftrace, that is '!'. So you can now use '!event-name'
-> or '!group/event' to erase an entry in dynamic_events.
-> (Wait... it has to be '!p:event' as others do??)
-> 
-
-I'd think the full form should always be accepted, but would only be
-necessary in cases requiring disambiguation.
-
-Thanks,
-
-Tom
-
-> Any thought?
-> 
-> Thank you,
-> 
-> ---
-> 
-> Masami Hiramatsu (5):
->       tracing/uprobes: Add busy check when cleanup all uprobes
->       tracing: Add a unified dynamic event framework
->       tracing/kprobes: Use dyn_event framework for kprobe events
->       tracing/uprobes: Use dyn_event framework for uprobe events
->       tracing: Add generic event-name based remove event method
-> 
-> 
->  Documentation/trace/kprobetrace.rst  |    3 +
->  Documentation/trace/uprobetracer.rst |    4 +
->  kernel/trace/Kconfig                 |    4 +
->  kernel/trace/Makefile                |    1 
->  kernel/trace/trace.c                 |    4 +
->  kernel/trace/trace_dynevent.c        |  183
-> +++++++++++++++++++++++++++++++++
->  kernel/trace/trace_dynevent.h        |   89 ++++++++++++++++
->  kernel/trace/trace_kprobe.c          |  191 +++++++++++++++++++++++-
-> ----------
->  kernel/trace/trace_uprobe.c          |  175 +++++++++++++++++++++++-
-> -------
->  9 files changed, 547 insertions(+), 107 deletions(-)
->  create mode 100644 kernel/trace/trace_dynevent.c
->  create mode 100644 kernel/trace/trace_dynevent.h
-> 
-> --
-> Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index d98ed0442201..a00910aaed54 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -63,6 +63,10 @@
+ /* susclk rate */
+ #define SUSCLK_RATE_32KHZ	32768
+ 
++/* Controller debug log header */
++#define QCA_DEBUG_HDR_MSB	0xDC
++#define QCA_DEBUG_HDR_LSB	0x2E
++
+ /* HCI_IBS transmit side sleep protocol states */
+ enum tx_ibs_states {
+ 	HCI_IBS_TX_ASLEEP,
+@@ -849,6 +853,20 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, struct sk_buff *skb)
+ 	return 0;
+ }
+ 
++static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff *skb)
++{
++	/* We receive debug logs from chip as an ACL packets.
++	 * Instead of sending the data to ACL to decode the
++	 * received data, we are pushing them to the above layers
++	 * as a diagnostic packet.
++	 */
++	if ((skb->len > 2) && (skb->data[0] == QCA_DEBUG_HDR_MSB) &&
++	    (skb->data[1] == QCA_DEBUG_HDR_LSB))
++		return hci_recv_diag(hdev, skb);
++	else
++		return hci_recv_frame(hdev, skb);
++}
++
+ #define QCA_IBS_SLEEP_IND_EVENT \
+ 	.type = HCI_IBS_SLEEP_IND, \
+ 	.hlen = 0, \
+@@ -870,13 +888,20 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, struct sk_buff *skb)
+ 	.lsize = 0, \
+ 	.maxlen = HCI_MAX_IBS_SIZE
+ 
++#define QCA_RECV_ACL_DATA \
++	.type = HCI_ACLDATA_PKT, \
++	.hlen = HCI_ACL_HDR_SIZE, \
++	.loff = 2, \
++	.lsize = 2, \
++	.maxlen = HCI_MAX_FRAME_SIZE
++
+ static const struct h4_recv_pkt qca_recv_pkts[] = {
+-	{ H4_RECV_ACL,             .recv = hci_recv_frame    },
+ 	{ H4_RECV_SCO,             .recv = hci_recv_frame    },
+ 	{ H4_RECV_EVENT,           .recv = hci_recv_frame    },
+ 	{ QCA_IBS_WAKE_IND_EVENT,  .recv = qca_ibs_wake_ind  },
+ 	{ QCA_IBS_WAKE_ACK_EVENT,  .recv = qca_ibs_wake_ack  },
+ 	{ QCA_IBS_SLEEP_IND_EVENT, .recv = qca_ibs_sleep_ind },
++	{ QCA_RECV_ACL_DATA,       .recv = qca_recv_acl_data },
+ };
+ 
+ static int qca_recv(struct hci_uart *hu, const void *data, int count)
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
