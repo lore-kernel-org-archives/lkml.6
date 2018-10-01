@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F98EC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A975DC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4506208D9
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:20:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DFF6213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:20:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="FXCd5Bct"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4506208D9
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="YTZ91v5+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DFF6213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=ysoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729528AbeJAU6L (ORCPT
+        id S1729550AbeJAU6Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:58:11 -0400
+        Mon, 1 Oct 2018 16:58:16 -0400
 Received: from mail-eopbgr00050.outbound.protection.outlook.com ([40.107.0.50]:42264
         "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729272AbeJAU6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:58:09 -0400
+        id S1729496AbeJAU6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 16:58:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aCe8FG4/Mz4NvX5trCge4u7yH0hCkDIqhLumUMeuZYs=;
- b=FXCd5Bct/5D51uivs8LossmEx6W9l1mA9Scc6Ovqc6BVBsPIzEbMhGNIKa2pXalmLyROQ/Ed2UAxoQAULzy5p+S/jnImjfYRnoMb+3315wchYEemUuYeqDMNVUKAzatcHal+7Iujh6DJZ2C7kyzytsTNeAXNHmr08f+wIVzrRXA=
+ bh=y4WpLoYFGh3+O1tIs9fwPAsNirbxGRcpPCs8xFqOTHI=;
+ b=YTZ91v5+rZlB+jr24xdEXO0hQ882GSnFL2HSHF+zR6YM+DojnsmdK8SwO/X4EUZbRgrZbxXq+5HT1oiQXsp/rtZdMbMfM4gSK+w5OAxuhH6SVhDz3Ic8EbZTZTj7tqbHw4fQUWAtIHMVKrwKibwzQwyZTSrA+v5XSoFN3q5WT4Y=
 Received: from iota-build.ysoft.local (89.24.100.190) by
  AM0PR04MB4659.eurprd04.prod.outlook.com (2603:10a6:208:75::13) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -39,9 +39,9 @@ From:   =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-Subject: [PATCH 2/3] pwm: imx: Use bitops and bitfield macros to define register values
-Date:   Mon,  1 Oct 2018 16:19:47 +0200
-Message-Id: <1538403588-68850-2-git-send-email-michal.vokac@ysoft.com>
+Subject: [PATCH 3/3] pwm: imx: Implement get_state() function for hardware readout
+Date:   Mon,  1 Oct 2018 16:19:48 +0200
+Message-Id: <1538403588-68850-3-git-send-email-michal.vokac@ysoft.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1538403588-68850-1-git-send-email-michal.vokac@ysoft.com>
 References: <1538403588-68850-1-git-send-email-michal.vokac@ysoft.com>
@@ -53,58 +53,58 @@ X-ClientProxiedBy: VI1PR03CA0048.eurprd03.prod.outlook.com
  (2603:10a6:803:50::19) To AM0PR04MB4659.eurprd04.prod.outlook.com
  (2603:10a6:208:75::13)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 87be7f75-4dde-40df-79b4-08d627a8f8e4
+X-MS-Office365-Filtering-Correlation-Id: cdf55130-912a-49f7-2755-08d627a8f933
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4659;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4659;3:SdhUADnb51ebN5HKfszolJcqSaRsDJK8irdr+uJUsr1Xp/Acx5hpvWKSn84kuMXO3SfR9Ut0AhwTZpFT0FliGZmzNLKbfxRlhmZ8m/Ci/FKj9nKhh7+kE/IaPiA1EY8DJ7M6UFIwB/Y33Jx3taVXoYOPMTxpu+GM+nVJhbf7kfFHvjGblqQTP5YPrr/3VBm1TacoL8NeKB9T6JOVR75VMl7JxGnzxgN193jZ4LcTg9XZnoCUymRUpCNDome+/MNO;25:CkL2/SeUwSn6ESox4NiXwN0Ab0hOVH/4QfX276WzxrZyUV6oxfQyjKRvgEGSuW8HWbIDOgXBwcZvrBUja65Q+6pwsjpxdrlcKFlCqiZ5gB28NiYExVPtCI7CYCPPeHu2L8T1APpllvJsYLZ7uwDjxQuvR6+B8rGszhwQY4bVW1dCBOhDMe9boLiGGWYN8SKrRt6krkGw/SJhVMqv+kLs22hBBfPysWYXZf5hf9qlrl9YUu/8K1a5473hosvVT5wEMyJ4HowhFwozz4BbyFt/HfAMSkw3oDzH6kRfEYe9Do5wx9kohNa/+kwF4E/U4MUUpMyWOxpBew/19AygFbreAg==;31:ecKo36ZwBXqgBycuMZ9XONYAVuIAxrXQ6ao73BHFASuYAEUueBp37aFLGs1Nx+dd2KpJi4oELzBDfnvYSOSNwp32n5GMfZhD4DI3uAaHTIJ37Dflp2dh4TJxh2A4kiDQp06CufH8SaxdXj+udJvgeLJ42BddCHjJSl/laBx6Vb5T6cxpSwJxCEtiRdTT7iGIHQw5VZ0/9iZoYx3n4S3bFwS7jqS5l7UU1bE61rgIFDc=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4659;3:KWnIfWLzffn/jqNt0oHdqR64XHJ6lAnwplgqALaTiqxvfDmNdpTdbYTy1QpzboX+ZVRJQP4c7uYBEKh5B4dzk95Xg3yydu+sGuMkWQOl0JGa83LMbAYPZXn1ciQ+Pey6B02kiD4cAiIrrKoFZb9kDgIfYNo4lT3FgY+Pzt2V8I7mwnvW15D9FKzEzcWo6q+XDVKL6grYiFzv/4dRrpaI9ENPDgWWaBhOphLdd1qXqDFzaWts24afK1Tom3ftdCH+;25:u3apLlDa9POzpKsWr7rw8SDx8Gd+D1gNuO6fSp0fsUwEEQdAnfZfQ9U/SDgYQB79WRNO7nFpXfdAlk2Pu43BNG+CgW5nTBhV59P5rCYJU2kCIRt8BqdiPE197a0cBvhux17QbL5UYRZ0NX3Gj6xJnltP4zzXVPagI1bfYxPiBwLu0d7uiF2WSTYLxVUeIaciZEilwTvv/u40fEEwnCDan1le9UDCuvF5X65W0+2u80junJvFiTrFNkwY/JUtnD4eGlCei5u4t3G9+4xwvWUC8kJezLndnbWL9r2HtSvUBeWmSTGbGADccOB3xyZdqNsdTbNbZ4YG2+CzAhmH/DuExg==;31:uKsvvpy4JF1dqyhlLv7zhZgmqvq0LOBcRGHvt/yJ3kwfs0erqnVevSj1u9058QdDfTcDjXWsxmzr6uJNqSHn0F8WzphigkPwMaPSYXitTQIKunejnXh5bPq1W69x1iGEyQl6AterCAJxiku9gUZs425OmDnfl1gCCRmm2XkrRSw3hKk5QMhmuM1FFpfeA3gdzslrAAJ2Iw9OfBr7YJuUONrUdC2VpHMnwZ6Q6nQO2CQ=
 X-MS-TrafficTypeDiagnostic: AM0PR04MB4659:
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4659;20:LoAXQWvdkxmjvKgRjq7O5QZZgarFOkvEbXNXyISeS4ENiuHsU164w1elm+gJX7h0yz0x/bK5DmR16sKMgZ4CQCP4BrXCZJuS2emfx9i2z/0fu+DbWYVYLtgv4E48awkcKw7PHTu2samNri1fSUuRbQ3qY2IoGUtz3dm1jfEDF+s2VYKP8puAFDCUxLDD/5LJEC+3kShdjeqxNVGq+fk16V43pNdr42CkWQpsh3o7aIHsfJApNGLiaNMFC7kpFLUa;4:nj/wr69/6fuyyqYOwNsjkVigF/+si8LxuiP1Bjq5Mln5/SISXxgULCC9KoqVz5Bc4n2Dt7e5pq83DOflU7Utv8FQxP7nhRc8Hhht+lIZi+Ma4f+tw3E6w5GP8BBRRAe/iTEEPZPL9dt2E7q8qvv39MxXeaMa/Ca6rBJ5GCy+ggWfXW8lomjeMcBgFbiAJHRbX8H+Lgy4TrxU8aCBgWu5xdw+X06xVLgjPKd2zGHGsMAoYBrCdF2ME96F2/DOqdB8RZP8vkIHY2FXXiARoxrLuA==
-X-Microsoft-Antispam-PRVS: <AM0PR04MB4659F0EF4DFA5F4E9F0A0C499EEF0@AM0PR04MB4659.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4659;20:EgEkInByUYkw6KcVF3H9sGcJlog3J7ZSMsGNBnl1s+lSvdkDV+Zee39zMtg95aeDhzNuZp8ORqyO/JTSKWrTsTUonOLqSZg6RVtmE+bFfhxkUrjSxC58IdTl1s2z7ClzTjsjudLsFUrgqkw3He5H4n1JTyy9Twim8PHLBDp618vpZp/fcCd02vLpJoLMRKqfqde7Tw1qJD+VIvTsjIjafmqBzLQxAsi0BpNhwwi0VmPu9IAw7ay3XDbkv1+tJHzq;4:Bt49ulKmmWjmGHD8yMVPqSc17aJVSK33AsO8SVpx1lMBZ/K4x20/dsZd02fGyHrBnfk3cOlA8POKwd6e2PIGgSQ1mIoWCX2M3eyWUVsfGh18x0jxogL+dIYhb8q37sQrHQp5Og2CHt19ZNuDSDf5Iya/YaUfU/3lIrKyQtF7EEofRZIcl42yW4d6SYdnt/J+nrXuhjE2RKI0sJ/2eZsC1yIJmngjMPDz5QojqgPkvUtlp3uZ1x7uyUVkXxbzsX/Wjw0LPAKkOORG8OY8C8/6GA==
+X-Microsoft-Antispam-PRVS: <AM0PR04MB4659C3C8EC8B65F63470F53F9EEF0@AM0PR04MB4659.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991041);SRVR:AM0PR04MB4659;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4659;
 X-Forefront-PRVS: 0812095267
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(39850400004)(376002)(346002)(199004)(189003)(6506007)(386003)(6512007)(316002)(36756003)(3846002)(6116002)(53936002)(34290500001)(23676004)(575784001)(86362001)(52116002)(6486002)(76176011)(11346002)(6916009)(476003)(2616005)(956004)(6666003)(50226002)(68736007)(2906002)(8936002)(5660300001)(446003)(81166006)(8676002)(81156014)(486006)(97736004)(105586002)(106356001)(478600001)(72206003)(25786009)(4326008)(39060400002)(186003)(16526019)(6346003)(26005)(7736002)(305945005)(2870700001)(107886003)(50466002)(47776003)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4659;H:iota-build.ysoft.local;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(39850400004)(376002)(346002)(199004)(189003)(6506007)(386003)(6512007)(316002)(36756003)(3846002)(6116002)(53936002)(34290500001)(23676004)(86362001)(52116002)(6486002)(76176011)(11346002)(6916009)(476003)(2616005)(956004)(6666003)(50226002)(68736007)(2906002)(8936002)(5660300001)(446003)(81166006)(8676002)(81156014)(486006)(97736004)(105586002)(106356001)(478600001)(72206003)(25786009)(4326008)(39060400002)(186003)(16526019)(6346003)(26005)(14444005)(7736002)(305945005)(2870700001)(107886003)(50466002)(47776003)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4659;H:iota-build.ysoft.local;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: ysoft.com does not designate
  permitted sender hosts)
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Michal.Vokac@ysoft.com; 
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTBQUjA0TUI0NjU5OzIzOmZZV0RFOTRoVWRNdmRTcXlRZ2FKM1JvUUh2?=
- =?utf-8?B?bDcreVAzN3FsZ1FkWlJOR055K2dvaktEeEJyYWVycFRCV0xXNmFjM2xrMHBF?=
- =?utf-8?B?VnRoNmRGcW1yODlTLzRlUkRXWmIxOHpJWjFaQTZWa2ZNRGIwbHhONWdXcHRt?=
- =?utf-8?B?K21RMDZ6T2JmY1BZSnhYd0FyUE8zN2hoaXJ6UXIwSEFtTStpdEJhSUt5Q0d1?=
- =?utf-8?B?NW5SSnZ6Q2tjSGhwcm80R3hIb2x4QVMzNzB3cEZ6UFlKNVo4UkJYeENUV1hP?=
- =?utf-8?B?YmtVOFlzbUYweDZlY1hTVlFaT2g2Q2hQWHlRcFAzaVowRkNRa3NmcEZ1Z2ty?=
- =?utf-8?B?U2VuQzhLY01wcmxvZWE5eWVKZkZ4NVlQYjVweExybHVaci8yZ3ZuSCsxejlU?=
- =?utf-8?B?RGNFWnBGdU5ZVms5K0hnM3YzRW41bXorYlhuaVZTbFdkSmJpYzZSZFBjNmUz?=
- =?utf-8?B?UjlBZWxVT05tTWtob1psdHhOSmlxckh5elBacmRodVZ0UVlGanlEd3dWTW1t?=
- =?utf-8?B?WmpSSHB4Rk1zSnpWc1psT1F2WUlUSkN3ditjUlFoU1RiazZNQlljQVhKTW1W?=
- =?utf-8?B?eEVJTTFRYi9qdE5SdkhwVlh2OHBtdk4yWlczdjF2YkNiTWhQelljZ3YxRzd1?=
- =?utf-8?B?TmNSeXFjdytYL1ZyZXBqcEFIZGh4c05QbWVvYmlDaHVybXpQaG5lc2t1aGtk?=
- =?utf-8?B?SU1zQ0ZiY3F4UEgyK0tKZzBsaWdkUVpqQmE0K1pRc0F0alVSRzlsdW9QTWhy?=
- =?utf-8?B?Rkd4VFR4akxLQ3grb2Z0eTFJSmdwMGN2MHExY3BuZTRvZnlxaEtmV1UrOTg2?=
- =?utf-8?B?blFJcTFYWGNjc2RUTTZQQXBZMy92YzBpWktyL3M0bWZQRmRSSXB3Y2c1UTRU?=
- =?utf-8?B?b1g3aEZBaDlrMkpRSUhEcU5VanpwWDl5cmloQldobVB4MDBSc2YyMnJ4WEth?=
- =?utf-8?B?VVVsSzMzRWh5MnNvUTVjVkpSdmZTd1cxZEFYV2FQUDVGMWN2aHdnV3BSZEg2?=
- =?utf-8?B?akNDMTVlVzVzR3V0dloxbUlGUEV5ak9UQmp1NFE5UzNQZlRiTW9JcTNDWnpS?=
- =?utf-8?B?Q2JMSE5QT0s0L0NYeDA4cllzUmVaS0dtdmpvb3FncHRsZHJRMzJyR3h1V3VK?=
- =?utf-8?B?N1JMajNxWGlRR3c2MG5POXFYNUFpS1V4c0Rnb0tpRklhbndiOEpQRUQwK252?=
- =?utf-8?B?N1JCZlk3TlU5NnhDREZraHdJR01RZU9ob1lpTlNFb3hMbHJxbU1FeVc3dDdK?=
- =?utf-8?B?WG93S1dzSmhoQmZ3MytCM29qTUJJd1BGQXlyZ041YWZ6a3NjVDRMK0xESHRl?=
- =?utf-8?B?REJIMHlQY1U0blhvQ0NncmFXVkNnM0xRVXpic1YrODEwZHg0UHJaMmtlbWpm?=
- =?utf-8?B?Z3VHWGQ1aFBXN3AvSGlmRTgxRE8wUDF6RWNpS2Fnb2o4TXBYMkVrYURNWGov?=
- =?utf-8?B?ZUFJalI1V2FhdllPVkM0ZHNCUDk2NTRjd3YvR2NZK0diYVdFVlBZTjNEclZL?=
- =?utf-8?B?Wm1kdUxKZlVRNmZ0L2VtYVBjbjJaU3F5N25iQ1lYMnhLcStxdmhZdS9Ob0NJ?=
- =?utf-8?B?Y3dsaHRVOXpHdjQ5enFodUR6WmI4Y1JQWHlwaVJ6R0xwdEhndkwyUmQvbVJZ?=
- =?utf-8?B?RG5lck1DaDBzdG9rSGJiMlR5WGcvcWU1aGdZb09NamphZkIwZFMxcHdxYzBo?=
- =?utf-8?B?TFdrdjdCa2hkRTNoY3NLRjVtV2YyUEloK0ovbWNmOFVWZ3NhaXdvdHA1UE5O?=
- =?utf-8?B?c3Voc2RqMHkyS0t0WDRhUT09?=
-X-Microsoft-Antispam-Message-Info: +bwC/NJ/WQUEAmW6s3alT7czpeCyOP0nbFYMm5KbVx0Yptg+ZwVjRlhcnN6h6NlJE0qY/aayMHpxpX57Cdsr3ua+P5eVNMllj1WbXJs1ZGeUoq58jlK9/619nWlb88W7w4bT9W/RqLvUcpOO9hL5i7gKUgsSPA3HTcOZR9FkTXmFGllz3/MBMmyliMGDUit4W97f/zSzzxJff/oK3LFEpd6lGyr721bXw9KSg2KD65iY9fNiFkf26zNAqnt696hmMB/D2ioy0k7Sull1CYSKTzb62qWFgAVYIZkp4xxf99+5CDuDP4k/nb3NdsApAtYrv+j2xkwxKKwZkHyg3Dsep4x8/v4yXauHhWep+tvXXJg=
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4659;6:06CjYxb8GmARXJb0Zo6VrVyCo+n+gLKskuUnK0LjXbZOl3lq1vTWuVb8Tbd2eCbDJs72N8wHBnnMBYfIztuVzU6g5KY5YuCqT/sVOTXyWbPOEfMs/b8UI8CFJ7bb+tF5Bm5NrIbw0QWRIGLbGE19JX5RYNArn432rXZpquk9ich/S2GmjSJ3AfZ4FTC1yiRypU6j01imsyHhpH4FpWw7+xnlqd9o8DNy1lXkAuMqyQLsGuTxSuPoUPG7SaRwxSj+ZWQVR4TlwBrkJOR/nckRXGnnbD9m6EfLLxMmh+QWQOXQO5Gg3TgmzHNXSbX57Q7GLZniWtRfOFv5p2H5P+OBLdr/XSZwPy/RSzN5Q23CprOXjUZ9DSjHQ/NjCfzxvcxJ9hzCJ1X/2yoKyABJFNWGG7/2Jot/ooLKYepoSHRq3lYzcfGu9IQKjf/kVmLhZD6P4LpjDMsV0KdjCHZ/HKHiFQ==;5:UpOh/QKUceqngDocpHVtrQ/hzYTzkNthTUk+3WSuHcMMbla2m9MdtWxooCNb7WLi2nO8o1wF5TQCst0o+WgF2W2q7IT/h9jdHgetAvvX0ghuUbNA2b4KUEBa2L9pN9RHYmeItR1N5V/3Y7+4BERrkKoK7wnDk8k+2d5/SsToLJc=;7:lWj40ecI3MP8D3WGdN/jEZlfkJARunigUlPODBDTpJgsJIi6sFbs9fZriNCQ6UcRmW1ZN1wW7bVn1g8+YnwaWm7U5YBxwxoE0AxDGvE5EMUyjI23j278OEm7L4bGnLYhR4Kt/jPZomxgWbPyFi5NdhspPPsj+z1CP0EbK3GcPVvlQZanFWdKBIGzlwq2guu9T4IfH1DqL26q3CYyTiNp53ysHO32a5GH/xAz9w8O8q4JYfF7VNV38XsGsoHCYB3h
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTBQUjA0TUI0NjU5OzIzOnUwa1hPY29xN0dFZktpOWdBTzg1dmlHTnlD?=
+ =?utf-8?B?MHEzN2Jpa2RNV1R6KzA1TzN2eWxLd0lCNG1TUmd5KzRVN0xQaCtPTWlMaWp3?=
+ =?utf-8?B?T25INVl3ZFFlMy9OUWVlblIyVld6Q21hTml1Q0F0NVArMlkvN0RMMUJqRW5U?=
+ =?utf-8?B?QTVTY0FJMDh1d2x4WDJnNThPKy9hUEdpbFpDQWNKN3VCVWFwb0JieDgzakht?=
+ =?utf-8?B?c21mOURFVXdtb1NXVnNMS2NVYmdwQ1FjNWozZUdmUjNaaUJ5S2YvdldZU0Fp?=
+ =?utf-8?B?Wk9scFFMcGNNR0dOMHJqZHQycVB3VjgyTCs2OWROSUZYU2Npby8xQVpYYkJW?=
+ =?utf-8?B?MlEwNmZ6WGJnNjFjMnNCa0FEcnNna3JTcEx1eFJ5d29HaHpMRVhCY21xcHRD?=
+ =?utf-8?B?MExhSDZlYkV1S01qM05vMmZYQUxIdmI4Z0wySm1yVFh4bzg5YTg3V2oxenp3?=
+ =?utf-8?B?azVOQlUvblZpbVNkeTBUaWYwOGFhY0NJRUJ6VENJemIrU1pRV003NlhZSVRh?=
+ =?utf-8?B?cDhsTU84QXFvVG8vTFhjS0lOSlBpWGhwRFlDOXh1ZUpncElHQ1NyTVUzREJj?=
+ =?utf-8?B?elcyemlObWU3eUZHZVJNTXJRSEx6ZmVzQS9yc2VQYWFrMi9iRVNWN3gxanlr?=
+ =?utf-8?B?bkVsd0k0WXBkSnkvejc0Rm5OVWRFMXZDeVNrUzZKcGJ0U0E0RFpKbndKLzEy?=
+ =?utf-8?B?YlpUSUlnZnVJYW0zbVExdHNXd1VpenhVNVBRZGJZK3lpY3c2MnViS0ZhcW95?=
+ =?utf-8?B?UnBVS09DRERqTHJJZkw5YXRDT0lsdXNDcGZXL1J1Y2tHbDFMd01pTWZTZFZz?=
+ =?utf-8?B?M3JkS1A4L3lJY2F1b1RTTCtQQjYzUXFXQkhBUE5WSTdPMW9LT2p3Y2d0ZkNq?=
+ =?utf-8?B?ODFPZlpmSlZnVks4UmJHRkNUVVFIYzEzYUM1WkxkMVNSVHovS01HNEtMbTYr?=
+ =?utf-8?B?d0hEejJXc0lZMjdHZ0E2bURpNnFqcmVxV3NhUSsxVFhtd2greGtCQ0R2MXZ5?=
+ =?utf-8?B?Y0pTOVBocU43Wk5FS0U1eWZ6QTdJTHNQVkpRcXFnaG1pKzYvdjd2Y2c5Y1V1?=
+ =?utf-8?B?RVpiVEJ1eDZ4QytvQzFnN1d1NWpnRUl5dVBHeTZ2OUgvNTJyWnRjRkFtU1Za?=
+ =?utf-8?B?bXVTVmNaL01aMEF2dUZZS2VOMDlaYVhaMEw5a1lBUTQyMStQZ0dIMlVFaG9h?=
+ =?utf-8?B?WVRia0pFNlFPRXEydUI3QzRvcW5MN3hXNTJYeGkxbTlQTGJUdlpkVTllMnIz?=
+ =?utf-8?B?Y0V2VzNOMzRYV3FheHcrbnI5YkIyMWM4bkN3cTkrWU9xSERGY1hTKy84T3Bz?=
+ =?utf-8?B?bGF0ZEc5cFJneG5JOTRBVU1ER2dMREtFQzdtMVdJekh4N1lQTFlpUk5VOENx?=
+ =?utf-8?B?MFlqcCtZMmxOMlRQWVZsUmtESkxEY3FoSlBmTURpTlJ3RGo3akNqMXExcDhL?=
+ =?utf-8?B?a3E0bHJ5LzlGby9oNXYwYWljeE1PbXIzVkFtUEdWMXgvb0xueXhqcTFRZUVY?=
+ =?utf-8?B?RjNCaElzNVNrOXRkbGJOeUZjOUlSU0daWFZESEdDdEpGaTV3bTllM21lVmI4?=
+ =?utf-8?B?Y3l0ckNQYVdKTFZkQnZXVzNkc0hlbEh0cDRkME1uT3dHQ2t5WkhSRTVucFgw?=
+ =?utf-8?B?ODNMb2VVRXdQY3RZVjJGQmxmRjhWU3N0Smd0UmFGZ2g4aU1tb1FBdy9JblhN?=
+ =?utf-8?B?eWxDZUFHSnc5T3hvMWpUd296d2hEOVhBRVM4UENISDVRWHZtT00vR3pOUk5N?=
+ =?utf-8?B?WlRlK0hjSzNVdGhDWURNdz09?=
+X-Microsoft-Antispam-Message-Info: XIyNYGUAORSoUkOVRpKsKDKXH2MsRbgOOmS12gwBXqyWfa5SJaR7IugP5tQGCzDe/YSDKlCk893TUKvOEoIm/ReYRvAVaEUanINRFVpZmVfTHkLqd1Gn5JqhF8K5WLGOx73pkhc2GM8WHgWQj37hv2VdbB8ezhmJAoAnCbK+qUvAjeuel0Yf5D/mWpwAtwUkC3DLqzZc3w0bYTF7KtnAcK+VKJe/h6vILb4TLcLwRaKefDro0Jm7mxvzHUV2EyI8321+Or91OZTtue0z3eiP5EWrHlwDLZ9qOb4zX8I7dIi9eK1me+sSuLOhCj3f5NNs5Q5t5Zp212GV4gpfRz8TMAdqJnl6J9xqvkIlVEyuQ8k=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4659;6:zJPCFckMsxQhl8nNHTwSxCjQMrhbNoYwFHiVot0YJ1ydr3m7O/QXzcZOHyrASO+hMUs3vg9eQ4CEMzGnOmb7nQrTsVQKNd2j4uL0mSToybd8VLkUeQ27nxbsD472oy7NrJQiZTzcNXccjcl9BUM3AJqj5oHhvt0gCv8A4EblIwRmSHb0zaQRgmcHpF2JZtQRyXz1ayfS4IZPbwx+d8yZMkFqAQtM6US1sFr8iYp34HiJquDLY6bJX6vfsCA2LYS3PaN2niFp01IPqkNwBAiNnUjmvZvu6qYyN41onYBfYVw8fcmYHfzIYdFhn8Z8GDFC6nObiYTkCMnCGzvBewrxlC7djXEkiYPK2yKtzbbpQ8Hhq5EsqeFEnlYnVRNuz3NrZmA76mTVylmfXUS8bKbLgTJlVlWTPFS8hgftjqhidRmNf8yfMn1r2DJ4owxkvUkIiOoI+BxesHd9MFipkzydNg==;5:5rLNKW3WFyGGglN1ZXqaY3lUGvyy44y3P64gbTH/OJywhl0FmoRymnCwxFpqBktnAfEiJ6NXTzCg/xybUNhEGSMkm1J5ToJCzTWrf0A35+O9T2SJwwpiSs/DdFp7Qn/jG4djsfpRadyApSk9ByelmYA1Fs4voOuDJZqyONSq/9s=;7:jX83CtraiCxmOdIm1jJoEx0/K2b39rdE6S/Mx81ZNR+yxAfLhuIUbt9OFfiMuY4utm+p29EriCxshZe6/21CDFLvpj1iPVJwirTC/3ppLXWIR8fEQRT5i9WQUpWh2RlWz/HdHaaSccV+8l+MKMY3bbLvVGFjNoWXGUXr7s+5OEB2S0iSQ1qEiK8/cbaZAOK3j2uYTFnmhnA3o62+6YCbSZ1EnOi76RlEGuDFYcMxXbxXt0MpnZV0W1eupAM7NGwD
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: ysoft.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2018 14:20:00.0715 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87be7f75-4dde-40df-79b4-08d627a8f8e4
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2018 14:20:00.6028 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdf55130-912a-49f7-2755-08d627a8f933
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: b5839965-430f-4be2-b282-d7a3149f2b37
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4659
@@ -113,139 +113,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use existing macros to define register fields instead of manually shifting
-the bit masks. Also define some more register bits.
+Implement the get_state() function and set the initial state to reflect
+real state of the hardware. This allows to keep the PWM running if it was
+enabled in bootloader. It is very similar to the GPIO behavior. GPIO pin
+set as output in bootloader keep the same setting in Linux unless it is
+reconfigured.
+
+If we find the PWM block enabled we need to prepare and enable its source
+clock otherwise the clock will be disabled late in the boot as unused.
+That will leave the PWM in enabled state but with disabled clock. That has
+a side effect that the PWM output is left at its current level at which
+the clock was disabled. It is totally non-deterministic and it may be LOW
+or HIGH.
 
 Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
 ---
- drivers/pwm/pwm-imx.c | 78 ++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 58 insertions(+), 20 deletions(-)
+ drivers/pwm/pwm-imx.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
 diff --git a/drivers/pwm/pwm-imx.c b/drivers/pwm/pwm-imx.c
-index bcbcac4..7a4907b 100644
+index 7a4907b..6cd3b72 100644
 --- a/drivers/pwm/pwm-imx.c
 +++ b/drivers/pwm/pwm-imx.c
-@@ -5,6 +5,8 @@
-  * Derived from pxa PWM driver by eric miao <eric.miao@marvell.com>
-  */
- 
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/err.h>
-@@ -23,7 +25,7 @@
- #define MX1_PWMS			0x04   /* PWM Sample Register */
- #define MX1_PWMP			0x08   /* PWM Period Register */
- 
--#define MX1_PWMC_EN			(1 << 4)
-+#define MX1_PWMC_EN			BIT(4)
- 
- /* i.MX27, i.MX31, i.MX35 share the same PWM function block: */
- 
-@@ -31,18 +33,53 @@
- #define MX3_PWMSR			0x04    /* PWM Status Register */
- #define MX3_PWMSAR			0x0C    /* PWM Sample Register */
- #define MX3_PWMPR			0x10    /* PWM Period Register */
--#define MX3_PWMCR_PRESCALER(x)		((((x) - 1) & 0xFFF) << 4)
--#define MX3_PWMCR_STOPEN		(1 << 25)
--#define MX3_PWMCR_DOZEEN		(1 << 24)
--#define MX3_PWMCR_WAITEN		(1 << 23)
--#define MX3_PWMCR_DBGEN			(1 << 22)
--#define MX3_PWMCR_POUTC			(1 << 18)
--#define MX3_PWMCR_CLKSRC_IPG_HIGH	(2 << 16)
--#define MX3_PWMCR_CLKSRC_IPG		(1 << 16)
--#define MX3_PWMCR_SWR			(1 << 3)
--#define MX3_PWMCR_EN			(1 << 0)
--#define MX3_PWMSR_FIFOAV_4WORDS		0x4
--#define MX3_PWMSR_FIFOAV_MASK		0x7
-+
-+#define MX3_PWMCR_FWM			GENMASK(27, 26)
-+#define MX3_PWMCR_STOPEN		BIT(25)
-+#define MX3_PWMCR_DOZEN			BIT(24)
-+#define MX3_PWMCR_WAITEN		BIT(23)
-+#define MX3_PWMCR_DBGEN			BIT(22)
-+#define MX3_PWMCR_BCTR			BIT(21)
-+#define MX3_PWMCR_HCTR			BIT(20)
-+
-+#define MX3_PWMCR_POUTC			GENMASK(19, 18)
-+#define MX3_PWMCR_POUTC_NORMAL		0
-+#define MX3_PWMCR_POUTC_INVERTED	1
-+#define MX3_PWMCR_POUTC_OFF		2
-+
-+#define MX3_PWMCR_CLKSRC		GENMASK(17, 16)
-+#define MX3_PWMCR_CLKSRC_OFF		0
-+#define MX3_PWMCR_CLKSRC_IPG		1
-+#define MX3_PWMCR_CLKSRC_IPG_HIGH	2
-+#define MX3_PWMCR_CLKSRC_IPG_32K	3
-+
-+#define MX3_PWMCR_PRESCALER		GENMASK(15, 4)
-+
-+#define MX3_PWMCR_SWR			BIT(3)
-+
-+#define MX3_PWMCR_REPEAT		GENMASK(2, 1)
-+#define MX3_PWMCR_REPEAT_1X		0
-+#define MX3_PWMCR_REPEAT_2X		1
-+#define MX3_PWMCR_REPEAT_4X		2
-+#define MX3_PWMCR_REPEAT_8X		3
-+
-+#define MX3_PWMCR_EN			BIT(0)
-+
-+#define MX3_PWMSR_FWE			BIT(6)
-+#define MX3_PWMSR_CMP			BIT(5)
-+#define MX3_PWMSR_ROV			BIT(4)
-+#define MX3_PWMSR_FE			BIT(3)
-+
-+#define MX3_PWMSR_FIFOAV		GENMASK(2, 0)
-+#define MX3_PWMSR_FIFOAV_EMPTY		0
-+#define MX3_PWMSR_FIFOAV_1WORD		1
-+#define MX3_PWMSR_FIFOAV_2WORDS		2
-+#define MX3_PWMSR_FIFOAV_3WORDS		3
-+#define MX3_PWMSR_FIFOAV_4WORDS		4
-+
-+#define MX3_PWMCR_PRESCALER_SET(x)	FIELD_PREP(MX3_PWMCR_PRESCALER, (x) - 1)
-+#define MX3_PWMCR_PRESCALER_GET(x)	(FIELD_GET(MX3_PWMCR_PRESCALER, \
-+						   (x)) + 1)
+@@ -83,6 +83,9 @@
  
  #define MX3_PWM_SWR_LOOP		5
  
-@@ -142,14 +179,14 @@ static void imx_pwm_wait_fifo_slot(struct pwm_chip *chip,
- 	u32 sr;
++/* PWMPR register value of 0xffff has the same effect as 0xfffe */
++#define MX3_PWMPR_MAX			0xfffe
++
+ struct imx_chip {
+ 	struct clk	*clk_per;
  
- 	sr = readl(imx->mmio_base + MX3_PWMSR);
--	fifoav = sr & MX3_PWMSR_FIFOAV_MASK;
-+	fifoav = FIELD_GET(MX3_PWMSR_FIFOAV, sr);
- 	if (fifoav == MX3_PWMSR_FIFOAV_4WORDS) {
- 		period_ms = DIV_ROUND_UP(pwm_get_period(pwm),
- 					 NSEC_PER_MSEC);
- 		msleep(period_ms);
+@@ -93,6 +96,55 @@ struct imx_chip {
  
- 		sr = readl(imx->mmio_base + MX3_PWMSR);
--		if (fifoav == (sr & MX3_PWMSR_FIFOAV_MASK))
-+		if (fifoav == FIELD_GET(MX3_PWMSR_FIFOAV, sr))
- 			dev_warn(dev, "there is no free FIFO slot\n");
- 	}
- }
-@@ -207,13 +244,14 @@ static int imx_pwm_apply_v2(struct pwm_chip *chip, struct pwm_device *pwm,
- 		writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
- 		writel(period_cycles, imx->mmio_base + MX3_PWMPR);
+ #define to_imx_chip(chip)	container_of(chip, struct imx_chip, chip)
  
--		cr = MX3_PWMCR_PRESCALER(prescale) |
--		     MX3_PWMCR_STOPEN | MX3_PWMCR_DOZEEN | MX3_PWMCR_WAITEN |
--		     MX3_PWMCR_DBGEN | MX3_PWMCR_CLKSRC_IPG_HIGH |
--		     MX3_PWMCR_EN;
-+		cr = MX3_PWMCR_PRESCALER_SET(prescale) |
-+		     MX3_PWMCR_STOPEN | MX3_PWMCR_DOZEN | MX3_PWMCR_WAITEN |
-+		     FIELD_PREP(MX3_PWMCR_CLKSRC, MX3_PWMCR_CLKSRC_IPG_HIGH) |
-+		     MX3_PWMCR_DBGEN | MX3_PWMCR_EN;
++static void imx_pwm_get_state(struct pwm_chip *chip,
++		struct pwm_device *pwm, struct pwm_state *state)
++{
++	struct imx_chip *imx = to_imx_chip(chip);
++	u32 period, prescaler, pwm_clk, ret, val;
++	u64 tmp;
++
++	val = readl(imx->mmio_base + MX3_PWMCR);
++
++	if (val & MX3_PWMCR_EN) {
++		state->enabled = true;
++		ret = clk_prepare_enable(imx->clk_per);
++		if (ret)
++			return;
++	} else {
++		state->enabled = false;
++	}
++
++	switch (FIELD_GET(MX3_PWMCR_POUTC, val)) {
++	case MX3_PWMCR_POUTC_NORMAL:
++		state->polarity = PWM_POLARITY_NORMAL;
++		break;
++	case MX3_PWMCR_POUTC_INVERTED:
++		state->polarity = PWM_POLARITY_INVERSED;
++		break;
++	default:
++		dev_warn(chip->dev, "can't set polarity, output disconnected");
++	}
++
++	prescaler = MX3_PWMCR_PRESCALER_GET(val);
++	pwm_clk = clk_get_rate(imx->clk_per);
++	pwm_clk = DIV_ROUND_CLOSEST_ULL(pwm_clk, prescaler);
++	val = readl(imx->mmio_base + MX3_PWMPR);
++	period = val >= MX3_PWMPR_MAX ? MX3_PWMPR_MAX : val;
++
++	/* PWMOUT (Hz) = PWMCLK / (PWMPR + 2) */
++	tmp = NSEC_PER_SEC * (u64)(period + 2);
++	state->period = DIV_ROUND_CLOSEST_ULL(tmp, pwm_clk);
++
++	/* PWMSAR can be read only if PWM is enabled */
++	if (state->enabled) {
++		val = readl(imx->mmio_base + MX3_PWMSAR);
++		tmp = NSEC_PER_SEC * (u64)(val);
++		state->duty_cycle = DIV_ROUND_CLOSEST_ULL(tmp, pwm_clk);
++	} else {
++		state->duty_cycle = 0;
++	}
++}
++
+ static int imx_pwm_config_v1(struct pwm_chip *chip,
+ 		struct pwm_device *pwm, int duty_ns, int period_ns)
+ {
+@@ -272,6 +324,7 @@ static const struct pwm_ops imx_pwm_ops_v1 = {
  
- 		if (state->polarity == PWM_POLARITY_INVERSED)
--			cr |= MX3_PWMCR_POUTC;
-+			cr |= FIELD_PREP(MX3_PWMCR_POUTC,
-+					MX3_PWMCR_POUTC_INVERTED);
+ static const struct pwm_ops imx_pwm_ops_v2 = {
+ 	.apply = imx_pwm_apply_v2,
++	.get_state = imx_pwm_get_state,
+ 	.owner = THIS_MODULE,
+ };
  
- 		writel(cr, imx->mmio_base + MX3_PWMCR);
- 	} else if (cstate.enabled) {
 -- 
 2.1.4
 
