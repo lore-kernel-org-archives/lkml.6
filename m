@@ -2,41 +2,42 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CF0C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7432C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EDC42145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:18:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56D582089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:18:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaqVbDL6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EDC42145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rcQIbfmP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56D582089A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbeJAW5T (ORCPT
+        id S1726546AbeJAW5U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:57:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52972 "EHLO mail.kernel.org"
+        Mon, 1 Oct 2018 18:57:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbeJAW5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:57:18 -0400
+        id S1726243AbeJAW5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 18:57:19 -0400
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1272213A2;
-        Mon,  1 Oct 2018 16:18:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B35C2146D;
+        Mon,  1 Oct 2018 16:18:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538410723;
-        bh=LSNt/oGW3v1p6Cgu5jATvDJfBjAaivum4UwQqCqGv3k=;
+        s=default; t=1538410725;
+        bh=SEqvg+loV7g9G5DTOWydgHXVMQYEOXLrAkOp3ZE3utE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=OaqVbDL6H6GD/W0YHYuUWjQDaR1dt9SUUX34QviuZOP/ZOy/bXsZX3HYEelT+rymb
-         1pgk45hV8Q0AlaQOwdzfkD9XQ7uYSfQLrT1hcOoloDZFaL9gsWcDeOQeGXEm+4mqmU
-         /SsK1lvOEmd1+67QV5e2vQ2atUwr3ZwrSCT/nMAM=
+        b=rcQIbfmPq8p0abVZ3XmeknDyJdF9lYN4yBaxarBWofJMWFDRDiIxEZruUuXUS00UN
+         Ms8rY3O3yyjdCrjg9/y0gnmBbhirbKuREgRoaO1AMP1PF2VqoTWpblobv+jGaXQgSQ
+         /TtnDG1Yr6XC2akQT5We8Ob7oUOBnxhumQXj1ZDY=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -44,9 +45,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v5 6/8] tracing: Add snapshot action
-Date:   Mon,  1 Oct 2018 11:18:06 -0500
-Message-Id: <4b4fe3dd97c1005aae363b66651a8feafe590f17.1538403550.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v5 7/8] tracing: Add hist trigger onchange() handler
+Date:   Mon,  1 Oct 2018 11:18:07 -0500
+Message-Id: <0a17743dc24db781ebe72dcae1306ea5d9a0f7ef.1538403550.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1538403550.git.tom.zanussi@linux.intel.com>
 References: <cover.1538403550.git.tom.zanussi@linux.intel.com>
@@ -59,554 +60,381 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add support for hist:handlerXXX($var).snapshot(), which will take a
-snapshot of the current trace buffer whenever handlerXXX is hit.
+Add support for a hist:onchange($var) handler, similar to the onmax()
+handler but triggering whenever there's any change in $var, not just a
+max.
 
-As a first user, this also adds snapshot() action support for the
-onmax() handler i.e. hist:onmax($var).snapshot().
+Also, add a testcase for it.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- Documentation/trace/histogram.rst | 109 ++++++++++++++
- kernel/trace/trace_events_hist.c  | 290 ++++++++++++++++++++++++++++++++++++--
- 2 files changed, 391 insertions(+), 8 deletions(-)
+ Documentation/trace/histogram.rst                  | 97 ++++++++++++++++++++++
+ kernel/trace/trace_events_hist.c                   | 68 ++++++++++++---
+ .../inter-event/trigger-onchange-action-hist.tc    | 43 ++++++++++
+ 3 files changed, 195 insertions(+), 13 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
 
 diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 5ac724baea7d..ce715dc0ec2c 100644
+index ce715dc0ec2c..e73a840a3598 100644
 --- a/Documentation/trace/histogram.rst
 +++ b/Documentation/trace/histogram.rst
-@@ -2000,6 +2000,115 @@ hist trigger specification.
-             Entries: 2
-             Dropped: 0
+@@ -2109,6 +2109,103 @@ hist trigger specification.
+       <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
+      <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
  
-+  - onmax(var).snapshot()
++  - onchange(var).save(field,..	.)
 +
-+    The 'onmax(var).snapshot()' hist trigger action is invoked
++    The 'onchange(var).save(field,...)' hist trigger action is invoked
 +    whenever the value of 'var' associated with a histogram entry
-+    exceeds the current maximum contained in that variable.
++    changes.
++
++    The end result is that the trace event fields specified as the
++    onchange.save() params will be saved if 'var' changes for that
++    hist trigger entry.  This allows context from the event that
++    changed the value to be saved for later reference.  When the
++    histogram is displayed, additional fields displaying the saved
++    values will be printed.
++
++  - onchange(var).snapshot()
++
++    The 'onchange(var).snapshot()' hist trigger action is invoked
++    whenever the value of 'var' associated with a histogram entry
++    changes.
 +
 +    The end result is that a global snapshot of the trace buffer will
-+    be saved in the tracing/snapshot file if 'var' exceeds the current
-+    maximum for any hist trigger entry.
++    be saved in the tracing/snapshot file if 'var' changes for any
++    hist trigger entry.
 +
-+    Note that in this case the maximum is a global maximum for the
-+    current trace instance, which is the maximum across all buckets of
-+    the histogram.  The key of the specific trace event that caused
-+    the global maximum and the global maximum itself are displayed,
-+    along with a message stating that a snapshot has been taken and
-+    where to find it.  The user can use the key information displayed
-+    to locate the corresponding bucket in the histogram for even more
-+    detail.
++    Note that in this case the changed value is a global variable
++    associated withe current trace instance.  The key of the specific
++    trace event that caused the value to change and the global value
++    itself are displayed, along with a message stating that a snapshot
++    has been taken and where to find it.  The user can use the key
++    information displayed to locate the corresponding bucket in the
++    histogram for even more detail.
 +
-+    As an example the below defines a couple of hist triggers, one for
-+    sched_waking and another for sched_switch, keyed on pid.  Whenever
-+    a sched_waking event occurs, the timestamp is saved in the entry
-+    corresponding to the current pid, and when the scheduler switches
-+    back to that pid, the timestamp difference is calculated.  If the
-+    resulting latency, stored in wakeup_lat, exceeds the current
-+    maximum latency, a snapshot is taken.  As part of the setup, all
-+    the scheduler events are also enabled, which are the events that
-+    will show up in the snapshot when it is taken at some point:
++    As an example the below defines a hist trigger on the tcp_probe
++    event, keyed on dport.  Whenever a tcp_probe event occurs, the
++    cwnd field is checked against the current value stored in the
++    $cwnd variable.  If the value has changed, a snapshot is taken.
++    As part of the setup, all the scheduler and tcp events are also
++    enabled, which are the events that will show up in the snapshot
++    when it is taken at some point:
 +
 +    # echo 1 > /sys/kernel/debug/tracing/events/sched/enable
++    # echo 1 > /sys/kernel/debug/tracing/events/tcp/enable
 +
-+    # echo 'hist:keys=pid:ts0=common_timestamp.usecs \
-+            if comm=="cyclictest"' >> \
-+            /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
++    # echo 'hist:keys=dport:cwnd=snd_cwnd: \
++            onchange($cwnd).save(snd_wnd,srtt,rcv_wnd): \
++	    onchange($cwnd).snapshot()' >> \
++	    /sys/kernel/debug/tracing/events/tcp/tcp_probe/trigger
 +
-+    # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0: \
-+            onmax($wakeup_lat).save(next_prio,next_comm,prev_pid,prev_prio, \
-+	    prev_comm):onmax($wakeup_lat).snapshot() \
-+	    if next_comm=="cyclictest"' >> \
-+	    /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-+
-+    When the histogram is displayed, for each bucket the max value
-+    and the saved values corresponding to the max are displayed
++    When the histogram is displayed, for each bucket the tracked value
++    and the saved values corresponding to that value are displayed
 +    following the rest of the fields.
 +
 +    If a snaphot was taken, there is also a message indicating that,
-+    along with the value and event that triggered the global maximum:
++    along with the value and event that triggered the snapshot:
 +
-+    # cat /sys/kernel/debug/tracing/events/sched/sched_switch/hist
-+      { next_pid:       2101 } hitcount:        200
-+	max:         52  next_prio:        120  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/6
++    # cat /sys/kernel/debug/tracing/events/tcp/tcp_probe/hist
++      { dport:       1521 } hitcount:          8
++	changed:         10  snd_wnd:      35456  srtt:     154262  rcv_wnd:      42112
 +
-+      { next_pid:       2103 } hitcount:       1326
-+	max:        572  next_prio:         19  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/1
++      { dport:         80 } hitcount:         23
++	changed:         10  snd_wnd:      28960  srtt:      19604  rcv_wnd:      29312
 +
-+      { next_pid:       2102 } hitcount:       1982 \
-+	max:         74  next_prio:         19  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/5
++      { dport:       9001 } hitcount:        172
++	changed:         10  snd_wnd:      48384  srtt:     260444  rcv_wnd:      55168
++
++      { dport:        443 } hitcount:        211
++	changed:         10  snd_wnd:      26960  srtt:      17379  rcv_wnd:      28800
 +
 +    Snapshot taken (see tracing/snapshot).  Details:
-+	triggering value { onmax($wakeup_lat) }:        572	\
-+	triggered by event with key: { next_pid:       2103 }
++        triggering value { onchange($cwnd) }:         10
++        triggered by event with key: { dport:         80 }
 +
 +    Totals:
-+        Hits: 3508
-+        Entries: 3
++        Hits: 414
++        Entries: 4
 +        Dropped: 0
 +
-+    In the above case, the event that triggered the global maximum has
-+    the key with next_pid == 2103.  If you look at the bucket that has
-+    2103 as the key, you'll find the additional values save()'d along
-+    with the local maximum for that bucket, which should be the same
-+    as the global maximum (since that was the same value that
-+    triggered the global snapshot).
++    In the above case, the event that triggered the snapshot has the
++    key with dport == 80.  If you look at the bucket that has 80 as
++    the key, you'll find the additional values save()'d along with the
++    changed value for that bucket, which should be the same as the
++    global changed value (since that was the same value that triggered
++    the global snapshot).
 +
 +    And finally, looking at the snapshot data should show at or near
-+    the end the event that triggered the snapshot (in this case you
-+    can verify the timestamps between the sched_waking and
-+    sched_switch events, which should match the time displayed in the
-+    global maximum):
++    the end the event that triggered the snapshot:
 +
 +    # cat /sys/kernel/debug/tracing/snapshot
 +
-+     <...>-2103  [005] d..3   309.873125: sched_switch: prev_comm=cyclictest prev_pid=2103 prev_prio=19 prev_state=D ==> next_comm=swapper/5 next_pid=0 next_prio=120
-+     <idle>-0     [005] d.h3   309.873611: sched_waking: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.873613: sched_wakeup: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] d..3   309.873616: sched_switch: prev_comm=swapper/5 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2102 next_prio=19
-+     <...>-2102  [005] d..3   309.873625: sched_switch: prev_comm=cyclictest prev_pid=2102 prev_prio=19 prev_state=D ==> next_comm=swapper/5 next_pid=0 next_prio=120
-+     <idle>-0     [005] d.h3   309.874624: sched_waking: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.874626: sched_wakeup: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh3   309.874628: sched_waking: comm=cyclictest pid=2103 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.874630: sched_wakeup: comm=cyclictest pid=2103 prio=19 target_cpu=005
-+     <idle>-0     [005] d..3   309.874633: sched_switch: prev_comm=swapper/5 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2102 next_prio=19
-+     <idle>-0     [004] d.h3   309.874757: sched_waking: comm=gnome-terminal- pid=1699 prio=120 target_cpu=004
-+     <idle>-0     [004] dNh4   309.874762: sched_wakeup: comm=gnome-terminal- pid=1699 prio=120 target_cpu=004
-+     <idle>-0     [004] d..3   309.874766: sched_switch: prev_comm=swapper/4 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=gnome-terminal- next_pid=1699 next_prio=120
-+ gnome-terminal--1699  [004] d.h2   309.874941: sched_stat_runtime: comm=gnome-terminal- pid=1699 runtime=180706 [ns] vruntime=1126870572 [ns]
-+     <idle>-0     [003] d.s4   309.874956: sched_waking: comm=rcu_sched pid=9 prio=120 target_cpu=007
-+     <idle>-0     [003] d.s5   309.874960: sched_wake_idle_without_ipi: cpu=7
-+     <idle>-0     [003] d.s5   309.874961: sched_wakeup: comm=rcu_sched pid=9 prio=120 target_cpu=007
-+     <idle>-0     [007] d..3   309.874963: sched_switch: prev_comm=swapper/7 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=rcu_sched next_pid=9 next_prio=120
-+  rcu_sched-9     [007] d..3   309.874973: sched_stat_runtime: comm=rcu_sched pid=9 runtime=13646 [ns] vruntime=22531430286 [ns]
-+  rcu_sched-9     [007] d..3   309.874978: sched_switch: prev_comm=rcu_sched prev_pid=9 prev_prio=120 prev_state=R+ ==> next_comm=swapper/7 next_pid=0 next_prio=120
-+      <...>-2102  [005] d..4   309.874994: sched_migrate_task: comm=cyclictest pid=2103 prio=19 orig_cpu=5 dest_cpu=1
-+      <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
-+     <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
++       gnome-shell-1261  [006] dN.3    49.823113: sched_stat_runtime: comm=gnome-shell pid=1261 runtime=49347 [ns] vruntime=1835730389 [ns]
++     kworker/u16:4-773   [003] d..3    49.823114: sched_switch: prev_comm=kworker/u16:4 prev_pid=773 prev_prio=120 prev_state=R+ ==> next_comm=kworker/3:2 next_pid=135 next_prio=120
++       gnome-shell-1261  [006] d..3    49.823114: sched_switch: prev_comm=gnome-shell prev_pid=1261 prev_prio=120 prev_state=R+ ==> next_comm=kworker/6:2 next_pid=387 next_prio=120
++       kworker/3:2-135   [003] d..3    49.823118: sched_stat_runtime: comm=kworker/3:2 pid=135 runtime=5339 [ns] vruntime=17815800388 [ns]
++       kworker/6:2-387   [006] d..3    49.823120: sched_stat_runtime: comm=kworker/6:2 pid=387 runtime=9594 [ns] vruntime=14589605367 [ns]
++       kworker/6:2-387   [006] d..3    49.823122: sched_switch: prev_comm=kworker/6:2 prev_pid=387 prev_prio=120 prev_state=R+ ==> next_comm=gnome-shell next_pid=1261 next_prio=120
++       kworker/3:2-135   [003] d..3    49.823123: sched_switch: prev_comm=kworker/3:2 prev_pid=135 prev_prio=120 prev_state=T ==> next_comm=swapper/3 next_pid=0 next_prio=120
++            <idle>-0     [004] ..s7    49.823798: tcp_probe: src=10.0.0.10:54326 dest=23.215.104.193:80 mark=0x0 length=32 snd_nxt=0xe3ae2ff5 snd_una=0xe3ae2ecd snd_cwnd=10 ssthresh=2147483647 snd_wnd=28960 srtt=19604 rcv_wnd=29312
 +
  3. User space creating a trigger
  --------------------------------
  
 diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 5ec462cb7672..8d6e9fde0826 100644
+index 8d6e9fde0826..90f1a0cf34c0 100644
 --- a/kernel/trace/trace_events_hist.c
 +++ b/kernel/trace/trace_events_hist.c
-@@ -336,12 +336,14 @@ enum handler_id {
+@@ -331,6 +331,7 @@ typedef u64 (*get_track_val_fn_t) (struct hist_trigger_data *hist_data,
+ enum handler_id {
+ 	HANDLER_ONMATCH = 1,
+ 	HANDLER_ONMAX,
++	HANDLER_ONCHANGE,
+ };
+ 
  enum action_id {
- 	ACTION_SAVE = 1,
- 	ACTION_TRACE,
-+	ACTION_SNAPSHOT,
- };
+@@ -1886,7 +1887,8 @@ static int parse_action(char *str, struct hist_trigger_attrs *attrs)
+ 		return ret;
  
- struct action_data {
- 	enum handler_id		handler;
- 	enum action_id		action;
- 	char			*action_name;
-+	void			*key;
- 	action_fn_t		fn;
- 
- 	unsigned int		n_params;
-@@ -366,10 +368,85 @@ struct action_data {
- 			check_track_val_fn_t	check_val;
- 			save_track_val_fn_t	save_val;
- 			get_track_val_fn_t	get_val;
-+
-+			struct cond_snapshot	cond_snapshot;
- 		} track_data;
- 	};
- };
- 
-+struct track_data {
-+	u64				track_val;
-+
-+	unsigned int			key_len;
-+	void				*key;
-+	struct tracing_map_elt		elt;
-+	struct tracing_map_elt		*cur_elt;
-+
-+	struct action_data		*action_data;
-+	struct hist_trigger_data	*hist_data;
-+};
-+
-+struct hist_elt_data {
-+	char *comm;
-+	u64 *var_ref_vals;
-+	char *field_var_str[SYNTH_FIELDS_MAX];
-+};
-+
-+static void track_data_free(struct track_data *track_data)
-+{
-+	struct hist_elt_data *elt_data;
-+
-+	if (!track_data)
-+		return;
-+
-+	kfree(track_data->key);
-+
-+	elt_data = track_data->elt.private_data;
-+	if (elt_data) {
-+		kfree(elt_data->comm);
-+		kfree(elt_data);
-+	}
-+
-+	kfree(track_data);
-+}
-+
-+static struct track_data *track_data_alloc(unsigned int key_len,
-+					   struct action_data *action_data,
-+					   struct hist_trigger_data *hist_data)
-+{
-+	struct track_data *data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	unsigned int size = TASK_COMM_LEN;
-+	struct hist_elt_data *elt_data;
-+
-+	if (!data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	data->key = kzalloc(key_len, GFP_KERNEL);
-+	if (!data->key) {
-+		track_data_free(data);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	data->key_len = key_len;
-+	data->action_data = action_data;
-+	data->hist_data = hist_data;
-+
-+	elt_data = kzalloc(sizeof(*elt_data), GFP_KERNEL);
-+	if (!elt_data) {
-+		track_data_free(data);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+	data->elt.private_data = elt_data;
-+
-+	elt_data->comm = kzalloc(size, GFP_KERNEL);
-+	if (!elt_data->comm) {
-+		track_data_free(data);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	return data;
-+}
-+
- static char last_hist_cmd[MAX_FILTER_STR_VAL];
- static char hist_err_str[MAX_FILTER_STR_VAL];
- 
-@@ -1624,12 +1701,6 @@ static struct hist_field *find_event_var(struct hist_trigger_data *hist_data,
- 	return hist_field;
+ 	if ((strncmp(str, "onmatch(", strlen("onmatch(")) == 0) ||
+-	    (strncmp(str, "onmax(", strlen("onmax(")) == 0)) {
++	    (strncmp(str, "onmax(", strlen("onmax(")) == 0) ||
++	    (strncmp(str, "onchange(", strlen("onchange(")) == 0)) {
+ 		attrs->action_str[attrs->n_actions] = kstrdup(str, GFP_KERNEL);
+ 		if (!attrs->action_str[attrs->n_actions]) {
+ 			ret = -ENOMEM;
+@@ -3346,6 +3348,14 @@ static bool check_track_val_max(u64 track_val, u64 var_val)
+ 	return true;
  }
  
--struct hist_elt_data {
--	char *comm;
--	u64 *var_ref_vals;
--	char *field_var_str[SYNTH_FIELDS_MAX];
--};
--
- static u64 hist_field_var_ref(struct hist_field *hist_field,
- 			      struct tracing_map_elt *elt,
- 			      struct ring_buffer_event *rbe,
-@@ -3319,6 +3390,126 @@ static bool update_track_val(struct hist_trigger_data *hist_data,
- 					 track_var_idx, var_val);
- }
- 
-+static void cond_snapshot_save_track_data(struct track_data *old_data,
-+					  struct track_data *data)
++static bool check_track_val_changed(u64 track_val, u64 var_val)
 +{
-+	struct hist_elt_data *elt_data, *old_elt_data;
-+	struct tracing_map_elt *elt;
-+
-+	old_data->track_val = data->track_val;
-+
-+	memcpy(old_data->key, data->key, old_data->key_len);
-+	elt = data->cur_elt;
-+	elt_data = elt->private_data;
-+	old_elt_data = old_data->elt.private_data;
-+
-+	if (elt_data->comm)
-+		memcpy(old_elt_data->comm, elt_data->comm, TASK_COMM_LEN);
-+}
-+
-+static bool cond_snapshot_update(struct trace_array *tr, void *cond_data)
-+{
-+	/* called with tr->max_lock held */
-+	struct track_data *old_data = tr->cond_snapshot->cond_data;
-+	struct track_data *data = cond_data;
-+	struct action_data *action_data = old_data->action_data;
-+	bool updated;
-+
-+	if (!old_data)
++	if (var_val == track_val)
 +		return false;
-+
-+	updated = action_data->track_data.check_val(old_data->track_val, data->track_val);
-+	if (!updated)
-+		return false;
-+
-+	cond_snapshot_save_track_data(old_data, data);
 +
 +	return true;
 +}
 +
-+static u64 get_track_val_snapshot(struct hist_trigger_data *hist_data,
-+				  struct tracing_map_elt *elt,
-+				  struct action_data *data)
-+{
-+	struct trace_event_file *file = hist_data->event_file;
-+	struct track_data *track_data;
-+
-+	track_data = tracing_cond_snapshot_data(file->tr);
-+	if (WARN_ON(!track_data))
-+		return 0;
-+
-+	return track_data->track_val;
-+}
-+
-+static bool save_track_val_snapshot(struct hist_trigger_data *hist_data,
-+				    struct tracing_map_elt *elt,
-+				    struct action_data *data,
-+				    unsigned int track_var_idx, u64 var_val)
-+{
-+	struct trace_event_file *file = hist_data->event_file;
-+	struct track_data *track_data;
-+	bool ret = false;
-+
-+	track_data = data->track_data.cond_snapshot.cond_data;
-+	track_data->track_val = var_val;
-+	memcpy(track_data->key, data->key, track_data->key_len);
-+	track_data->cur_elt = elt;
-+
-+	tracing_snapshot_cond(file->tr, track_data);
-+
-+	return ret;
-+}
-+
-+static void hist_trigger_print_key(struct seq_file *m,
-+				   struct hist_trigger_data *hist_data,
-+				   void *key,
-+				   struct tracing_map_elt *elt);
-+
-+static struct action_data *snapshot_action(struct hist_trigger_data *hist_data)
-+{
-+	unsigned int i;
-+
-+	if (!hist_data->n_actions)
-+		return NULL;
-+
-+	for (i = 0; i < hist_data->n_actions; i++) {
-+		struct action_data *data = hist_data->actions[i];
-+
-+		if (data->action == ACTION_SNAPSHOT)
-+			return data;
-+	}
-+
-+	return NULL;
-+}
-+
-+static void track_data_snapshot_print(struct seq_file *m,
-+				      struct hist_trigger_data *hist_data)
-+{
-+	struct trace_event_file *file = hist_data->event_file;
-+	struct track_data *track_data;
-+	struct action_data *action;
-+
-+	track_data = tracing_cond_snapshot_data(file->tr);
-+	if (!track_data)
-+		return;
-+
-+	if (!track_data->track_val)
-+		return;
-+
-+	action = snapshot_action(hist_data);
-+	if (!action)
-+		return;
-+
-+	seq_puts(m, "\nSnapshot taken (see tracing/snapshot).  Details:\n");
-+	seq_printf(m, "\ttriggering value { %s(%s) }: %10llu",
-+		   action->handler == HANDLER_ONMAX ? "onmax" : "onchange",
-+		   action->track_data.var_str, track_data->track_val);
-+
-+	seq_puts(m, "\ttriggered by event with key: ");
-+	hist_trigger_print_key(m, hist_data, track_data->key, &track_data->elt);
-+	seq_putc(m, '\n');
-+}
-+
- static void track_data_print(struct seq_file *m,
- 			     struct hist_trigger_data *hist_data,
- 			     struct tracing_map_elt *elt,
-@@ -3330,6 +3521,9 @@ static void track_data_print(struct seq_file *m,
+ static u64 get_track_val_local(struct hist_trigger_data *hist_data,
+ 			       struct tracing_map_elt *elt,
+ 			       struct action_data *data)
+@@ -3520,6 +3530,8 @@ static void track_data_print(struct seq_file *m,
+ 
  	if (data->handler == HANDLER_ONMAX)
  		seq_printf(m, "\n\tmax: %10llu", track_val);
++	else if (data->handler == HANDLER_ONCHANGE)
++		seq_printf(m, "\n\tchanged: %10llu", track_val);
  
-+	if (data->action == ACTION_SNAPSHOT)
-+		return;
-+
- 	for (i = 0; i < hist_data->n_save_vars; i++) {
- 		struct hist_field *save_val = hist_data->save_vars[i]->val;
- 		struct hist_field *save_var = hist_data->save_vars[i]->var;
-@@ -3356,6 +3550,14 @@ static void ontrack_save(struct hist_trigger_data *hist_data,
+ 	if (data->action == ACTION_SNAPSHOT)
+ 		return;
+@@ -3550,10 +3562,10 @@ static void ontrack_save(struct hist_trigger_data *hist_data,
  		update_save_vars(hist_data, elt, rbe, rec);
  }
  
-+static void onmax_snapshot(struct hist_trigger_data *hist_data,
-+			   struct tracing_map_elt *elt, void *rec,
-+			   struct ring_buffer_event *rbe,
-+			   struct action_data *data, u64 *var_ref_vals)
-+{
-+	update_track_val(hist_data, elt, data, var_ref_vals);
-+}
-+
- static void action_data_destroy(struct action_data *data)
+-static void onmax_snapshot(struct hist_trigger_data *hist_data,
+-			   struct tracing_map_elt *elt, void *rec,
+-			   struct ring_buffer_event *rbe,
+-			   struct action_data *data, u64 *var_ref_vals)
++static void ontrack_snapshot(struct hist_trigger_data *hist_data,
++			     struct tracing_map_elt *elt, void *rec,
++			     struct ring_buffer_event *rbe,
++			     struct action_data *data, u64 *var_ref_vals)
  {
- 	unsigned int i;
-@@ -3378,9 +3580,20 @@ static void action_data_destroy(struct action_data *data)
- static void track_data_destroy(struct hist_trigger_data *hist_data,
- 			       struct action_data *data)
- {
-+	struct trace_event_file *file = hist_data->event_file;
-+
- 	destroy_hist_field(data->track_data.track_var, 0);
- 	destroy_hist_field(data->track_data.var_ref, 0);
+ 	update_track_val(hist_data, elt, data, var_ref_vals);
+ }
+@@ -3614,14 +3626,14 @@ static int track_data_create(struct hist_trigger_data *hist_data,
  
-+	if (data->action == ACTION_SNAPSHOT) {
-+		struct track_data *track_data;
-+
-+		track_data = tracing_cond_snapshot_data(file->tr);
-+		tracing_snapshot_cond_disable(file->tr);
-+		track_data_free(track_data);
-+		track_data_free(data->track_data.cond_snapshot.cond_data);
-+	}
-+
- 	kfree(data->track_data.var_str);
+ 	track_data_var_str = data->track_data.var_str;
+ 	if (track_data_var_str[0] != '$') {
+-		hist_err("For onmax(x), x must be a variable: ", track_data_var_str);
++		hist_err("For onmax(x) or onchange(x), x must be a variable: ", track_data_var_str);
+ 		return -EINVAL;
+ 	}
+ 	track_data_var_str++;
  
- 	action_data_destroy(data);
-@@ -3526,6 +3739,29 @@ static int action_parse(char *str, struct action_data *data,
- 		data->fn = ontrack_save;
+ 	var_field = find_target_event_var(hist_data, NULL, NULL, track_data_var_str);
+ 	if (!var_field) {
+-		hist_err("Couldn't find onmax variable: ", track_data_var_str);
++		hist_err("Couldn't find onmax or onchange variable: ", track_data_var_str);
+ 		return -EINVAL;
+ 	}
  
- 		data->action = ACTION_SAVE;
-+	} else if (strncmp(action_name, "snapshot", strlen("snapshot")) == 0) {
-+		char *params = strsep(&str, ")");
-+
-+		if (!str) {
-+			hist_err("action parsing: No closing paren found: %s", params);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (handler == HANDLER_ONMAX)
-+			data->track_data.check_val = check_track_val_max;
-+		else {
-+			hist_err("action parsing: Handler doesn't support action: ", action_name);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		data->track_data.save_val = save_track_val_snapshot;
-+		data->track_data.get_val = get_track_val_snapshot;
-+
-+		data->fn = onmax_snapshot;
-+
-+		data->action = ACTION_SNAPSHOT;
- 	} else {
- 		char *params = strsep(&str, ")");
- 
-@@ -3842,6 +4078,8 @@ static int trace_action_create(struct hist_trigger_data *hist_data,
- static int action_create(struct hist_trigger_data *hist_data,
- 			 struct action_data *data)
- {
-+	struct trace_event_file *file = hist_data->event_file;
-+	struct track_data *track_data;
- 	struct field_var *field_var;
- 	unsigned int i;
- 	char *param;
-@@ -3852,6 +4090,32 @@ static int action_create(struct hist_trigger_data *hist_data,
+@@ -3648,6 +3660,14 @@ static int track_data_create(struct hist_trigger_data *hist_data,
+ 		ret = PTR_ERR(track_var);
  		goto out;
  	}
- 
-+	if (data->action == ACTION_SNAPSHOT) {
-+		ret = tracing_alloc_snapshot_instance(file->tr);
-+		if (ret)
-+			goto out;
 +
-+		data->track_data.cond_snapshot.cond_data = track_data_alloc(hist_data->key_size, NULL, NULL);
-+		if (IS_ERR(data->track_data.cond_snapshot.cond_data)) {
-+			ret = PTR_ERR(data->track_data.cond_snapshot.cond_data);
-+			goto out;
-+		}
-+
-+		track_data = track_data_alloc(hist_data->key_size, data,
-+					      hist_data);
-+		if (IS_ERR(track_data)) {
-+			ret = PTR_ERR(track_data);
-+			goto out;
-+		}
-+
-+		ret = tracing_snapshot_cond_enable(file->tr, track_data,
-+						   cond_snapshot_update);
-+		if (ret)
-+			track_data_free(track_data);
-+
++	if (data->handler == HANDLER_ONCHANGE)
++		track_var = create_var(hist_data, file, "__change", sizeof(u64), "u64");
++	if (IS_ERR(track_var)) {
++		hist_err("Couldn't create onchange variable: ", "__change");
++		ret = PTR_ERR(track_var);
 +		goto out;
 +	}
-+
- 	if (data->action == ACTION_SAVE) {
- 		if (hist_data->n_save_vars) {
+ 	data->track_data.track_var = track_var;
+ 
+ 	ret = action_create(hist_data, data);
+@@ -3727,6 +3747,8 @@ static int action_parse(char *str, struct action_data *data,
+ 
+ 		if (handler == HANDLER_ONMAX)
+ 			data->track_data.check_val = check_track_val_max;
++		else if (handler == HANDLER_ONCHANGE)
++			data->track_data.check_val = check_track_val_changed;
+ 		else {
+ 			hist_err("action parsing: Handler doesn't support action: ", action_name);
  			ret = -EINVAL;
-@@ -4450,11 +4714,17 @@ static void print_actions(struct seq_file *m,
- 			  struct hist_trigger_data *hist_data,
- 			  struct tracing_map_elt *elt)
- {
-+	struct action_data *snapshot_action = NULL;
- 	unsigned int i;
+@@ -3750,6 +3772,8 @@ static int action_parse(char *str, struct action_data *data,
  
- 	for (i = 0; i < hist_data->n_actions; i++) {
- 		struct action_data *data = hist_data->actions[i];
+ 		if (handler == HANDLER_ONMAX)
+ 			data->track_data.check_val = check_track_val_max;
++		else if (handler == HANDLER_ONCHANGE)
++			data->track_data.check_val = check_track_val_changed;
+ 		else {
+ 			hist_err("action parsing: Handler doesn't support action: ", action_name);
+ 			ret = -EINVAL;
+@@ -3759,7 +3783,7 @@ static int action_parse(char *str, struct action_data *data,
+ 		data->track_data.save_val = save_track_val_snapshot;
+ 		data->track_data.get_val = get_track_val_snapshot;
  
-+		if (data->action == ACTION_SNAPSHOT) {
-+			snapshot_action = data; /* we can only have one */
-+			continue;
-+		}
+-		data->fn = onmax_snapshot;
++		data->fn = ontrack_snapshot;
+ 
+ 		data->action = ACTION_SNAPSHOT;
+ 	} else {
+@@ -3773,6 +3797,8 @@ static int action_parse(char *str, struct action_data *data,
+ 
+ 		if (handler == HANDLER_ONMAX)
+ 			data->track_data.check_val = check_track_val_max;
++		else if (handler == HANDLER_ONCHANGE)
++			data->track_data.check_val = check_track_val_changed;
+ 
+ 		data->track_data.save_val = save_track_val_local;
+ 		data->track_data.get_val = get_track_val_local;
+@@ -4638,7 +4664,8 @@ static void destroy_actions(struct hist_trigger_data *hist_data)
+ 
+ 		if (data->handler == HANDLER_ONMATCH)
+ 			onmatch_destroy(data);
+-		else if (data->handler == HANDLER_ONMAX)
++		else if (data->handler == HANDLER_ONMAX ||
++			 data->handler == HANDLER_ONCHANGE)
+ 			track_data_destroy(hist_data, data);
+ 		else
+ 			kfree(data);
+@@ -4673,6 +4700,15 @@ static int parse_actions(struct hist_trigger_data *hist_data)
+ 				ret = PTR_ERR(data);
+ 				break;
+ 			}
++		} else if (strncmp(str, "onchange(", strlen("onchange(")) == 0) {
++			char *action_str = str + strlen("onchange(");
 +
- 		if (data->handler == HANDLER_ONMAX)
++			data = track_data_parse(hist_data, action_str,
++						HANDLER_ONCHANGE);
++			if (IS_ERR(data)) {
++				ret = PTR_ERR(data);
++				break;
++			}
+ 		} else {
+ 			ret = -EINVAL;
+ 			break;
+@@ -4697,7 +4733,8 @@ static int create_actions(struct hist_trigger_data *hist_data)
+ 			ret = onmatch_create(hist_data, data);
+ 			if (ret)
+ 				return ret;
+-		} else if (data->handler == HANDLER_ONMAX) {
++		} else if (data->handler == HANDLER_ONMAX ||
++			   data->handler == HANDLER_ONCHANGE) {
+ 			ret = track_data_create(hist_data, data);
+ 			if (ret)
+ 				return ret;
+@@ -4725,7 +4762,8 @@ static void print_actions(struct seq_file *m,
+ 			continue;
+ 		}
+ 
+-		if (data->handler == HANDLER_ONMAX)
++		if (data->handler == HANDLER_ONMAX ||
++		    data->handler == HANDLER_ONCHANGE)
  			track_data_print(m, hist_data, elt, data);
  	}
-@@ -4760,13 +5030,15 @@ static inline void add_to_key(char *compound_key, void *key,
- static void
- hist_trigger_actions(struct hist_trigger_data *hist_data,
- 		     struct tracing_map_elt *elt, void *rec,
--		     struct ring_buffer_event *rbe, u64 *var_ref_vals)
-+		     struct ring_buffer_event *rbe, u64 *var_ref_vals,
-+		     void *key)
+ }
+@@ -4757,6 +4795,8 @@ static void print_track_data_spec(struct seq_file *m,
  {
- 	struct action_data *data;
- 	unsigned int i;
+ 	if (data->handler == HANDLER_ONMAX)
+ 		seq_puts(m, ":onmax(");
++	else if (data->handler == HANDLER_ONCHANGE)
++		seq_puts(m, ":onchange(");
+ 	seq_printf(m, "%s", data->track_data.var_str);
+ 	seq_printf(m, ").%s(", data->action_name);
  
- 	for (i = 0; i < hist_data->n_actions; i++) {
- 		data = hist_data->actions[i];
-+		data->key = key;
- 		data->fn(hist_data, elt, rec, rbe, data, var_ref_vals);
+@@ -4814,7 +4854,8 @@ static bool actions_match(struct hist_trigger_data *hist_data,
+ 			if (strcmp(data->match_data.event,
+ 				   data_test->match_data.event) != 0)
+ 				return false;
+-		} else if (data->handler == HANDLER_ONMAX) {
++		} else if (data->handler == HANDLER_ONMAX ||
++			   data->handler == HANDLER_ONCHANGE) {
+ 			if (strcmp(data->track_data.var_str,
+ 				   data_test->track_data.var_str) != 0)
+ 				return false;
+@@ -4835,7 +4876,8 @@ static void print_actions_spec(struct seq_file *m,
+ 
+ 		if (data->handler == HANDLER_ONMATCH)
+ 			print_onmatch_spec(m, hist_data, data);
+-		else if (data->handler == HANDLER_ONMAX)
++		else if (data->handler == HANDLER_ONMAX ||
++			 data->handler == HANDLER_ONCHANGE)
+ 			print_track_data_spec(m, hist_data, data);
  	}
  }
-@@ -4828,7 +5100,7 @@ static void event_hist_trigger(struct event_trigger_data *data, void *rec,
- 	hist_trigger_elt_update(hist_data, elt, rec, rbe, var_ref_vals);
- 
- 	if (resolve_var_refs(hist_data, key, var_ref_vals, true))
--		hist_trigger_actions(hist_data, elt, rec, rbe, var_ref_vals);
-+		hist_trigger_actions(hist_data, elt, rec, rbe, var_ref_vals, key);
- }
- 
- static void hist_trigger_stacktrace_print(struct seq_file *m,
-@@ -5005,6 +5277,8 @@ static void hist_trigger_show(struct seq_file *m,
- 	if (n_entries < 0)
- 		n_entries = 0;
- 
-+	track_data_snapshot_print(m, hist_data);
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
+new file mode 100644
+index 000000000000..585f77f064f2
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
+@@ -0,0 +1,43 @@
++#!/bin/sh
++# description: event trigger - test inter-event histogram trigger onchange action
 +
- 	seq_printf(m, "\nTotals:\n    Hits: %llu\n    Entries: %u\n    Dropped: %llu\n",
- 		   (u64)atomic64_read(&hist_data->map->hits),
- 		   n_entries, (u64)atomic64_read(&hist_data->map->drops));
++do_reset() {
++    reset_trigger
++    echo > set_event
++    clear_trace
++}
++
++fail() { #msg
++    do_reset
++    echo $1
++    exit_fail
++}
++
++if [ ! -f set_event ]; then
++    echo "event tracing is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f synthetic_events ]; then
++    echo "synthetic event is not supported"
++    exit_unsupported
++fi
++
++clear_synthetic_events
++reset_tracer
++do_reset
++
++echo "Test onchange action"
++
++echo 'hist:keys=comm:newprio=prio:onchange($newprio).save(comm,prio) if comm=="ping"' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
++
++ping localhost -c 3
++nice -n 1 ping localhost -c 3
++
++if ! grep -q "changed:" events/sched/sched_waking/hist; then
++    fail "Failed to create onchange action inter-event histogram"
++fi
++
++do_reset
++
++exit 0
 -- 
 2.14.1
 
