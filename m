@@ -2,164 +2,123 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6850BC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09762C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 297D32084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:46:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 297D32084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id CE4F72089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:46:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4F72089A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729287AbeJATXr (ORCPT
+        id S1729334AbeJATYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 15:23:47 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56345 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729169AbeJATXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:23:47 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 67C9020725; Mon,  1 Oct 2018 14:46:05 +0200 (CEST)
-Received: from qschulz (AAubervilliers-681-1-24-95.w90-88.abo.wanadoo.fr [90.88.144.95])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0BE29206A2;
-        Mon,  1 Oct 2018 14:46:05 +0200 (CEST)
-Date:   Mon, 1 Oct 2018 14:46:05 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, mark.rutland@arm.com,
-        davem@davemloft.net, kishon@ti.com, andrew@lunn.ch,
-        f.fainelli@gmail.com, allan.nielsen@microchip.com,
-        linux-mips@linux-mips.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH net-next v3 07/11] dt-bindings: phy: add DT binding for
- Microsemi Ocelot SerDes muxing
-Message-ID: <20181001124605.jxiechvp6ztvh77p@qschulz>
-References: <cover.ff40d591b548a6da31716e6e600f11a303e0e643.1536912834.git-series.quentin.schulz@bootlin.com>
- <f392dafca9165800439fc09cd7d16e6a9506d457.1536912834.git-series.quentin.schulz@bootlin.com>
- <20180926213509.GA7454@bogus>
+        Mon, 1 Oct 2018 15:24:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38632 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729289AbeJATYH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 15:24:07 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w91CYbgB006083
+        for <linux-kernel@vger.kernel.org>; Mon, 1 Oct 2018 08:46:27 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2muhm95vpy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 08:46:27 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Mon, 1 Oct 2018 13:46:24 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 1 Oct 2018 13:46:20 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w91CkJjD48824392
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 1 Oct 2018 12:46:19 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 64D2842049;
+        Mon,  1 Oct 2018 15:46:00 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F2A1242041;
+        Mon,  1 Oct 2018 15:45:59 +0100 (BST)
+Received: from osiris (unknown [9.152.212.171])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  1 Oct 2018 15:45:59 +0100 (BST)
+Date:   Mon, 1 Oct 2018 14:46:17 +0200
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Leonardo =?iso-8859-1?Q?Br=E1s?= <leobras.c@gmail.com>
+Cc:     lkcamp@lists.libreplanetbr.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Robert Richter <rric@kernel.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] drivers: s390: Avoids building drivers if ARCH is
+ not s390.
+References: <20180928020816.11251-1-leobras.c@gmail.com>
+ <20180928020816.11251-6-leobras.c@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4hoevmel2quxjye3"
+In-Reply-To: <20180928020816.11251-6-leobras.c@gmail.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18100112-0012-0000-0000-000002B0D6D3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100112-0013-0000-0000-000020E503FD
+Message-Id: <20181001124617.GA3185@osiris>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
-In-Reply-To: <20180926213509.GA7454@bogus>
-User-Agent: NeoMutt/20171215
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-01_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=661 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810010126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 27, 2018 at 11:08:14PM -0300, Leonardo Brás wrote:
+> Avoids building s390 drivers if 'make drivers/s390/' is called but
+> ARCH is not s390.
+> 
+> Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
+> ---
+>  drivers/s390/Makefile | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/s390/Makefile b/drivers/s390/Makefile
+> index a863b0462b43..0575f02dba45 100644
+> --- a/drivers/s390/Makefile
+> +++ b/drivers/s390/Makefile
+> @@ -3,7 +3,7 @@
+>  # Makefile for the S/390 specific device drivers
+>  #
+>  
+> -obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
+> -
+> -drivers-y += drivers/s390/built-in.a
+> -
+> +ifeq ($(ARCH),s390)
+> +	obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
+> +	drivers-y += drivers/s390/built-in.a
+> +endif
 
---4hoevmel2quxjye3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+And then somebody wants to build with e.g. "make drivers/s390/cio/" and it
+still doesn't work. So _if_ this should be supported then it should work
+with all directory levels and all configuration options. Otherwise this is
+going to be a never ending story.
 
-Hi Rob,
-
-I'm not sure I've understood the way you wanted me to so let me know if
-I'm not on the right path.
-
-On Wed, Sep 26, 2018 at 04:35:09PM -0500, Rob Herring wrote:
-> On Fri, Sep 14, 2018 at 10:16:05AM +0200, Quentin Schulz wrote:
-> > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> > ---
-> >  Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt | 40 +++++=
-++-
-> >  1 file changed, 40 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/phy-ocelot-se=
-rdes.txt
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/phy/phy-ocelot-serdes.tx=
-t b/Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt
-> > new file mode 100644
-> > index 0000000..2a88cc3
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt
-> > @@ -0,0 +1,40 @@
-> > +Microsemi Ocelot SerDes muxing driver
-> > +-------------------------------------
-> > +
-> > +On Microsemi Ocelot, there is a handful of registers in HSIO address
-> > +space for setting up the SerDes to switch port muxing.
-> > +
-> > +A SerDes X can be "muxed" to work with switch port Y or Z for example.
-> > +One specific SerDes can also be used as a PCIe interface.
-> > +
-> > +Hence, a SerDes represents an interface, be it an Ethernet or a PCIe o=
-ne.
-> > +
-> > +There are two kinds of SerDes: SERDES1G supports 10/100Mbps in
-> > +half/full-duplex and 1000Mbps in full-duplex mode while SERDES6G suppo=
-rts
-> > +10/100Mbps in half/full-duplex and 1000/2500Mbps in full-duplex mode.
-> > +
-> > +Also, SERDES6G number (aka "macro") 0 is the only interface supporting
-> > +QSGMII.
-> > +
-> > +Required properties:
-> > +
-> > +- compatible: should be "mscc,vsc7514-serdes"
-> > +- #phy-cells : from the generic phy bindings, must be 2.
-> > +	       The first number defines the input port to use for a given
-> > +	       SerDes macro. The second defines the macro to use. They are
-> > +	       defined in dt-bindings/phy/phy-ocelot-serdes.h
->=20
-> You need to define what this is a child of.
->=20
-
-This is a child of the HSIO syscon on the Microsemi Ocelot. I don't
-expect all Microsemi SoCs that could use this driver to have the SerDes
-node in the HSIO syscon.
-
-Among the latest additions in Documentation/devicetree/bindings/phy I
-couldn't find anything close to my understanding of "define what this is
-a child of", could you elaborate on what you want exactly?
-
-> > +
-> > +Example:
-> > +
-> > +	serdes: serdes {
-> > +		compatible =3D "mscc,vsc7514-serdes";
-> > +		#phy-cells =3D <2>;
->=20
-> However, if there are no other resources associated with this, then you=
-=20
-> don't even need this child node. The parent can be a phy provider and=20
-> provider of other functions too.
->=20
-
-The parent is a syscon with multiple features (SerDes, PLL
-configuration, temp sensor, SyncE, ...) so I'm not sure it's possible to
-do what you're asking me to. For now, there is only a SerDes node but
-ultimately there'll be more than one I guess.
-
-Thanks,
-Quentin
-
---4hoevmel2quxjye3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAluyFwwACgkQhLiadT7g
-8aOHrw//emXaFPG2jxUdu2NUdXCh79WYloOxKpbDEEbAW5Lfs4GZLCRy3NeEBqhU
-2WxS6RuY9FonPdgZKx5OkFA5iL+KeOS/sVz22xN3IOSZPFZlc9hzBt9gUC/vvbM1
-eFrkPDmXtIfCCpDdZ0L4ogzNdr6F7JSUwMUmds3mYWrjPORyyILutLTxgleuZryN
-lM1N7Rb5u4ASDn4KhMIla9UcFEhRPVOwfJPydqPRsboc4UknbpdRkEljzfAkBkjr
-DvhGjoAW6tWTKIk+UK0L0pJmILwFOt0+Iwptu/ZSAHHA8nnvnP/vGXIpvHrwHa4A
-MLQVHGMScSQYnpVqcrjXYOHrClt7QhUujZIU8ZqH07CQhsU3HuoMHm8uICigbKfI
-u9KvNSzkG2C1Otfb6j3cGSEWf71R4RzqVHnFxAQtwS3U1PLRb5zCj+TwyMZqxI2I
-vnvokFgGugyK7stymZQ2zWYjtIVDMvEebN9JxR1gak5gRb8PjDi0KHifCC6oJcZm
-c4ulWoEtsT+8GwTxiTfetyT4YIM0WjtzXq/19pcMd20tHoXka5BeD7pyA4DiuxhU
-Awh1ecgZ44OVjl9rK7J2yvX/wLF6toD4eeQl9S8oVNtODwZkWj45xnL+6V4HTCRw
-WGA2gcxnvteaFkGs5jnOAlBGoqzDDMf/r00jyDr1EdWd3SRIigY=
-=vZEA
------END PGP SIGNATURE-----
-
---4hoevmel2quxjye3--
