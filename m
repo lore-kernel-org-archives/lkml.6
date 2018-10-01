@@ -2,95 +2,144 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704D7C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1686DC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:33:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2675520652
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:32:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C253320652
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:33:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cq3NpQxG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E5LuBjyb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2675520652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="F9oB2UrO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C253320652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729651AbeJAWKY (ORCPT
+        id S1729601AbeJAWLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:10:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33930 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729536AbeJAWKY (ORCPT
+        Mon, 1 Oct 2018 18:11:35 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54472 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729517AbeJAWLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:10:24 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C727D60C86; Mon,  1 Oct 2018 15:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538407922;
-        bh=lSIulFUMZDeHC3jcU5LtyALqdUJhjBTM6HxAnkQAim4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=cq3NpQxGIFoJ3l4py2BB+bFE7DQeULmFOYzZe1x4T1S7TRNaKnhD9iWAL054epu6D
-         Sxh4xNMeXkWazI/aPl/zbfB/f2bi0QUQ5xbWWbvtVrmy97Ux86tM7zibzNzlfJ4tWO
-         F6kOM9cIsIlQvd326CmbLrpBQtgFAO1RmvirmXps=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 24F6960C1B;
-        Mon,  1 Oct 2018 15:31:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538407917;
-        bh=lSIulFUMZDeHC3jcU5LtyALqdUJhjBTM6HxAnkQAim4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=E5LuBjybNVRD8Cq1m98c84l/qa2WqknIOQO6V1dhEIAeEuPC5TjALtjqXsq/Jaso7
-         +kF7wVu616bhOPEA3M6bkLS/GP+VfIMKwAcsnk2Kj/aoXlfvTPfXRluDNwiDzhAzWb
-         c8ymxxK+PE9ap/IQQOEdqp4xh9jmpJ88F8hQ2eZg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 24F6960C1B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Mon, 1 Oct 2018 18:11:34 -0400
+Received: by mail-wm1-f66.google.com with SMTP id r63-v6so5237257wma.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 08:33:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=+FIFbQ65mMe5ZYlTSYZP/ejW67TLwtgZHYuN0iEMkjY=;
+        b=F9oB2UrOGi4kD36d1jDLf11eh6QV9XAOlmz0bebLD9nrYmkya8z+xqvVixoSfU5CKr
+         vuGCSyq7tG5ziJg72uao7kghkl5NEREsbaKDipjAWlhmhwacNofIk7iuA9pIzmCA09LG
+         QV4VguaErbXfyD9kihOCAixvVGH6PIHGhTuNlHvee4U1B4DroBLY/TykkiQg/FN7Bb+S
+         HegLf+HZYqtjP1ZJh+E6ERioOzdplOqexO/n1qJa2+OitFd5wiwM4stUv1PjVvk4CC6o
+         ty77jSylHguV6iM2M0l2Q/WXSPPp5hAGJk+bwLjN4qhVnBQjrhi/1Mcj4OdCWFqhbpww
+         WE8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=+FIFbQ65mMe5ZYlTSYZP/ejW67TLwtgZHYuN0iEMkjY=;
+        b=KPWZFM/Cb+MJgFrtIqAvu9blBJMB18t09Dxh9QUUrsf78uzwR/Jk8AlpHZrt27OKL7
+         R/gOsU++8jcY0tGoEvR8C5gWMM5HkeoA42k2rzFnSQaZuVe2k8uYhk/DEYq0LzQ4WlI1
+         wOEVijQzguxLyCYFHu/r9IR+cllqgrTDC9sPfFDWQOLFW9bTWCStV4yILwMjkOlPW7NG
+         qMjPOp4uogIqQqCWbD5ahATDLhZg0/lUTYQZlDcbvwpu26UfGO7z56omfsVRrJhMOckb
+         I4pkIez4luQ2l1mGSK+ewtcmOFAwgiieMy+vGWaC69bTv9BMMoEEoJjdKDd4M5nJbGSi
+         Pe0w==
+X-Gm-Message-State: ABuFfoib8tSyqojti9J+lvBpU4IGkti/IZNCgjmbRClvQvM18GBLBKVQ
+        k9l/tvNmhEVJuP7lB5yYWUTWYg==
+X-Google-Smtp-Source: ACcGV63uW3EFx22Pq/DMg3Boq9afiWfYKmzFx/8q7zzzg5NcUiRAEAAQACpUZ46pspqfHLAhoO00MQ==
+X-Received: by 2002:a1c:80d4:: with SMTP id b203-v6mr9785426wmd.100.1538407992211;
+        Mon, 01 Oct 2018 08:33:12 -0700 (PDT)
+Received: from pathfinder (host-78-148-28-244.as13285.net. [78.148.28.244])
+        by smtp.gmail.com with ESMTPSA id 20-v6sm13405094wml.10.2018.10.01.08.33.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 01 Oct 2018 08:33:11 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 16:33:10 +0100
+From:   Phillip Potter <phil@philpotter.co.uk>
+To:     dushistov@mail.ru
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: ufs: Convert ufs_set_de_type to use lookup table
+Message-ID: <20181001153310.GA13006@pathfinder>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] rsi: Remove unnecessary boolean condition
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180921094828.16976-1-natechancellor@gmail.com>
-References: <20180921094828.16976-1-natechancellor@gmail.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181001153202.C727D60C86@smtp.codeaurora.org>
-Date:   Mon,  1 Oct 2018 15:32:02 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nathan Chancellor <natechancellor@gmail.com> wrote:
+Modify ufs_set_de_type function in fs/ufs/util.h to use a lookup
+table rather than a switch statement, as per the TODO comment.
 
-> Clang warns that the address of a pointer will always evaluated as true
-> in a boolean context.
-> 
-> drivers/net/wireless/rsi/rsi_91x_mac80211.c:927:50: warning: address of
-> array 'key->key' will always evaluate to 'true'
-> [-Wpointer-bool-conversion]
->         if (vif->type == NL80211_IFTYPE_STATION && key->key &&
->                                                 ~~ ~~~~~^~~
-> 1 warning generated.
-> 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/136
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-
-Patch applied to wireless-drivers-next.git, thanks.
-
-f613e4803dd6 rsi: Remove unnecessary boolean condition
-
--- 
-https://patchwork.kernel.org/patch/10609513/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
+---
+diff --git a/fs/ufs/util.h b/fs/ufs/util.h
+index 1907be6d5808..1edf4c6454e3 100644
+--- a/fs/ufs/util.h
++++ b/fs/ufs/util.h
+@@ -155,37 +155,31 @@ ufs_set_de_namlen(struct super_block *sb, struct ufs_dir_entry *de, u16 value)
+ static inline void
+ ufs_set_de_type(struct super_block *sb, struct ufs_dir_entry *de, int mode)
+ {
++	/* type lookup table, DT_UNKNOWN is default type if no case holds */
++	const int mode_table[] = {
++		DT_UNKNOWN,
++		DT_FIFO,	/* mode & S_IFMT == S_IFIFO case */
++		DT_CHR,		/* mode & S_IFMT == S_IFCHR case */
++		DT_UNKNOWN,
++		DT_DIR,		/* mode & S_IFMT == S_IFDIR case */
++		DT_UNKNOWN,
++		DT_BLK,		/* mode & S_IFMT == S_IFBLK case */
++		DT_UNKNOWN,
++		DT_REG,		/* mode & S_IFMT == S_IFREG case */
++		DT_UNKNOWN,
++		DT_LNK,		/* mode & S_IFMT == S_IFLNK case */
++		DT_UNKNOWN,
++		DT_SOCK,	/* mode & S_IFMT == S_IFSOCK case */
++		DT_UNKNOWN,
++		DT_UNKNOWN,
++		DT_UNKNOWN
++	};
++
+ 	if ((UFS_SB(sb)->s_flags & UFS_DE_MASK) != UFS_DE_44BSD)
+ 		return;
+ 
+-	/*
+-	 * TODO turn this into a table lookup
+-	 */
+-	switch (mode & S_IFMT) {
+-	case S_IFSOCK:
+-		de->d_u.d_44.d_type = DT_SOCK;
+-		break;
+-	case S_IFLNK:
+-		de->d_u.d_44.d_type = DT_LNK;
+-		break;
+-	case S_IFREG:
+-		de->d_u.d_44.d_type = DT_REG;
+-		break;
+-	case S_IFBLK:
+-		de->d_u.d_44.d_type = DT_BLK;
+-		break;
+-	case S_IFDIR:
+-		de->d_u.d_44.d_type = DT_DIR;
+-		break;
+-	case S_IFCHR:
+-		de->d_u.d_44.d_type = DT_CHR;
+-		break;
+-	case S_IFIFO:
+-		de->d_u.d_44.d_type = DT_FIFO;
+-		break;
+-	default:
+-		de->d_u.d_44.d_type = DT_UNKNOWN;
+-	}
++	/* shift (mode & S_IFMT) right 12 bits to index into table */
++	de->d_u.d_44.d_type = mode_table[(mode & S_IFMT) >> 12];
+ }
+ 
+ static inline u32
