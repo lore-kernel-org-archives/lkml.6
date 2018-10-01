@@ -2,50 +2,48 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE1FC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77455C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3922F2082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:39:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3922F2082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 303722082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:43:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 303722082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbeJBARy (ORCPT
+        id S1726217AbeJBAWH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:17:54 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43141 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725740AbeJBARy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:17:54 -0400
-Received: from hanvin-mobl2.amr.corp.intel.com (jfdmzpr03-ext.jf.intel.com [134.134.139.72])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w91HccaW1651456
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Mon, 1 Oct 2018 10:38:39 -0700
-Subject: Re: [PATCH v2] x86/boot: define CC_HAVE_ASM_GOTO
-To:     ndesaulniers@google.com, bp@alien8.de, mingo@redhat.com,
-        tglx@linutronix.de
-Cc:     x86@kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-References: <20180927204800.32210-1-ndesaulniers@google.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <d98d47ea-b639-8afd-2851-1f7ceaf66fd0@zytor.com>
-Date:   Mon, 1 Oct 2018 10:38:33 -0700
+        Mon, 1 Oct 2018 20:22:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53248 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725740AbeJBAWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 20:22:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C8997A9;
+        Mon,  1 Oct 2018 10:43:14 -0700 (PDT)
+Received: from [10.37.10.63] (unknown [10.37.10.63])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8FBA83F5B7;
+        Mon,  1 Oct 2018 10:43:12 -0700 (PDT)
+Subject: Re: [PATCH v8 2/9] KVM: arm/arm64: Share common code in
+ user_mem_abort()
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     marc.zyngier@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Christoffer Dall <christoffer.dall@arm.com>
+References: <20181001155443.23032-1-punit.agrawal@arm.com>
+ <20181001155443.23032-3-punit.agrawal@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <e7b9cc5a-594c-42c8-a36b-931370a0e817@arm.com>
+Date:   Mon, 1 Oct 2018 18:44:14 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180927204800.32210-1-ndesaulniers@google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181001155443.23032-3-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,31 +51,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/27/18 13:47, ndesaulniers@google.com wrote:
-> Early prototypes of Clang with asm goto support produce 6 instances of
-> the following warning:
+On 10/01/2018 04:54 PM, Punit Agrawal wrote:
+> The code for operations such as marking the pfn as dirty, and
+> dcache/icache maintenance during stage 2 fault handling is duplicated
+> between normal pages and PMD hugepages.
 > 
-> In file included from arch/x86/boot/compressed/misc.h:20:
-> In file included from ./include/linux/elf.h:5:
-> In file included from ./arch/x86/include/asm/elf.h:8:
-> In file included from ./include/linux/thread_info.h:38:
-> In file included from ./arch/x86/include/asm/thread_info.h:53:
-> ./arch/x86/include/asm/cpufeature.h:150:2: warning: "Compiler lacks
-> ASM_GOTO support. Add -D __BPF_TRACING__ to your compiler arguments"
-> [-W#warnings]
-> your compiler arguments"
->  ^
+> Instead of creating another copy of the operations when we introduce
+> PUD hugepages, let's share them across the different pagesizes.
 > 
-> Since 6 files under arch/x86/boot/compressed/ include
-> arch/x86/boot/compressed/misc.h AND
-> arch/x86/boot/compressed/Makefile happens to redefine KBUILD_CFLAGS,
-> which set these variables in the top level MAKEFILE.
-> 
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> ---
 
-The Right Thing[TM] would probably be to split the CFLAGS into those
-that are independent of x86_64 vs i386. After all, there is no
-fundamental reason we couldn't want to use asm goto in the setup or
-real-mode code in the future.  In addition to BIOS entry code there is
-the EFI32 code.
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-	-hpa
