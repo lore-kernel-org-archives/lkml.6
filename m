@@ -2,175 +2,255 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC06C64EAD
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8ADC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 525052083C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:42:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 525052083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F938206B2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:44:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cyphar-com.20150623.gappssmtp.com header.i=@cyphar-com.20150623.gappssmtp.com header.b="Hf7dbbUt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F938206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbeJAMSw (ORCPT
+        id S1728737AbeJAMUo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 08:18:52 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39190 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728114AbeJAMSw (ORCPT
+        Mon, 1 Oct 2018 08:20:44 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44950 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728621AbeJAMUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 08:18:52 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w915dDG9099175
-        for <linux-kernel@vger.kernel.org>; Mon, 1 Oct 2018 01:42:50 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mu7a9jey1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 01:42:50 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Mon, 1 Oct 2018 06:42:48 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 1 Oct 2018 06:42:44 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w915ggG366912342
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 1 Oct 2018 05:42:42 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1BDC042042;
-        Mon,  1 Oct 2018 08:42:24 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 60E4C4203F;
-        Mon,  1 Oct 2018 08:42:22 +0100 (BST)
-Received: from [9.124.35.37] (unknown [9.124.35.37])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  1 Oct 2018 08:42:22 +0100 (BST)
-Subject: Re: [PATCH 4/6] perf report: Use the offset address to find inline
- frames
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Milian Wolff <milian.wolff@kdab.com>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180928122539.29326-1-acme@kernel.org>
- <20180928122539.29326-5-acme@kernel.org>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Mon, 1 Oct 2018 11:12:40 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 1 Oct 2018 08:20:44 -0400
+Received: by mail-pg1-f194.google.com with SMTP id g2-v6so8602903pgu.11
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 22:44:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cyphar-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FHXE84Pom3s/UPIkjHArpTjSoC4EiIbl72Ua+QMnuWA=;
+        b=Hf7dbbUt79pETFhhNHVCB6nQqC0S0BuLRj9lS/TBqwxwKutIwRoCpN39Ut3rhKpzGq
+         w4oS9oStlerhHtCVJxevO5HO47jT8VWhcdr5+5Uj6FVlZccjL4zS0ektkZPG4x7Mr9J+
+         O/QFgcyTXBzo/WK473GCVIuQ7z75+pwnOuH08H+j1PFQ0mWJ39oB+vtuHhG/pmbKq0eS
+         NcnDL8/12Yud3z/dR0ff+MfOdEP27grCM20teIR3DBy9VmA57jlCJhpuntcasnNstf9v
+         jMNvTN4lWHFsXDLqwiLO/U3sqrpS/UTVVRG12CmOdNqyrfgKBaXNlBvQ6jt8nW4x0111
+         OHBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FHXE84Pom3s/UPIkjHArpTjSoC4EiIbl72Ua+QMnuWA=;
+        b=EdEB7VC6Cxz5kG/XvomL/5XNfwDvBwNIe4OB0WI0q+R09cNyXPGEiXMiJSoGZZ/WdZ
+         zzi2l2+VQKSli8IhiCBRtWOFUjKR06wIt1dqRTtuO9jdLsnHjDR4mKSWFUoANidFg7Ui
+         3YTKwrDOHVcsvEApnu4K2wu/w3Pc3K5nSpiBY8Z7AqeZMqYcI//JWK+xDqr2QfBA/imu
+         fx2MAT59i+GyPNuwMrfmKPgGZDUPObElfUxOERUXizERlynLSilP5FldkdGCMep4RSI4
+         dkBmBPWHNVGjG2SDeqFfhbCXXWuRYRwwHLQwbJ1X1bOFd7gMdca7O2VZVwsTruf6Ryna
+         a52A==
+X-Gm-Message-State: ABuFfoiWJdc2I7DJNZ2vfo1Vvh4ZhNYTlQ3dR5hq9/hqXYiM4Zldt8zI
+        MBsidIrxa5sKR7pGf8JaEOFy0LlOsSJyp0wV
+X-Google-Smtp-Source: ACcGV61Y+6U1KRehWgPFVtTHK1J4dCDDHcDE1n32nCUIJxQCB7rmE3oerBp6BSvjsHiwnhHFoyk76w==
+X-Received: by 2002:a63:cd12:: with SMTP id i18-v6mr7363922pgg.319.1538372681968;
+        Sun, 30 Sep 2018 22:44:41 -0700 (PDT)
+Received: from ryuk (pa49-199-140-183.pa.vic.optusnet.com.au. [49.199.140.183])
+        by smtp.gmail.com with ESMTPSA id d10-v6sm13403969pgo.2.2018.09.30.22.44.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 30 Sep 2018 22:44:40 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 15:44:28 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>, jlayton@kernel.org,
+        Bruce Fields <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
+        Tycho Andersen <tycho@tycho.ws>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path
+ resolution
+Message-ID: <20181001054246.gfinmx3api7kjhmc@ryuk>
+References: <20180929103453.12025-1-cyphar@cyphar.com>
+ <20180929131534.24472-1-cyphar@cyphar.com>
+ <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180928122539.29326-5-acme@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18100105-0020-0000-0000-000002CDA6B3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100105-0021-0000-0000-0000211BDFA5
-Message-Id: <ab64d0a8-f810-2868-59ff-cb2e28811e1d@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-01_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810010058
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="t73bxnc3vrj4rh47"
+Content-Disposition: inline
+In-Reply-To: <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Milian, 
 
-Seems this has a regression:
+--t73bxnc3vrj4rh47
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-With acme/perf/urgent:
+On 2018-09-29, Jann Horn <jannh@google.com> wrote:
+> The problem is what happens if a folder you are walking through is
+> concurrently moved out of the chroot. Consider the following scenario:
+>=20
+> You attempt to open "C/../../etc/passwd" under the root "/A/B".
+> Something else concurrently moves /A/B/C to /A/C. This can result in
+> the following:
+>=20
+> 1. You start the path walk and reach /A/B/C.
+> 2. The other process moves /A/B/C to /A/C. Your path walk is now at /A/C.
+> 3. Your path walk follows the first ".." up into /A. This is outside
+> the process root, but you never actually encountered the process root,
+> so you don't notice.
+> 4. Your path walk follows the second ".." up to /. Again, this is
+> outside the process root, but you don't notice.
+> 5. Your path walk walks down to /etc/passwd, and the open completes
+> successfully. You now have an fd pointing outside your chroot.
+>=20
+> If the root of your walk is below an attacker-controlled directory,
+> this of course means that you lose instantly. If you point the root of
+> the walk at a directory out of which a process in the container
+> wouldn't be able to move the file, you're probably kinda mostly fine -
+> as long as you know, for certain, that nothing else on the system
+> would ever do that. But I still wouldn't feel good about that.
 
-  $ ./perf record -e cycles:u --call-graph=dwarf ls
-  $ ./perf script
-  ls 13585 602082.534478:      28032 cycles:u: 
-                   1f1f4 __GI___tunables_init+0xffff0000d3dc00a4 (/usr/lib64/ld-2.26.so)
-                   20e2b _dl_sysdep_start+0xffff0000d3dc04ab (/usr/lib64/ld-2.26.so)
-                    1ca7 _dl_start_final+0xffff0000d3dc00f7 (/usr/lib64/ld-2.26.so)
-                    29b3 _dl_start+0xffff0000d3dc0553 (/usr/lib64/ld-2.26.so)
-                    1437 _start+0xffff0000d3dc0017 (/usr/lib64/ld-2.26.so)
+Please correct me if I'm wrong here (this is the first patch I've
+written for VFS). Isn't the retry/LOOKUP_REVAL code meant to handle this
+-- or does that only handle if a particular path component changes
+*while* it's being walked through? Is it possible for a path walk to
+succeed after a path component was unmounted (obviously you can't delete
+a directory path component since you'd get -ENOTEMPTY)?
 
-After reverting this patch:
+If this is an issue for AT_THIS_ROOT, I believe this might also be an
+issue for AT_BENEATH since they are effectively both using the same
+nd->root trick (so you could similarly trick AT_BENEATH to not error
+out). So we'd need to figure out how to solve this problem in order for
+AT_BENEATH to be safe.
 
-  $ git revert d9c910d5f8c3a1858f115dc9d3b157df32da70a3
-  [a/perf/urgent 72cada4e6b30] Revert "perf report: Use the offset address to find inline frames"
+Speaking naively, doesn't it make sense to invalidate the walk if a path
+component was modified? Or is this something that would be far too
+costly with little benefit? What if we do more aggressive nd->root
+checks when resolving with AT_BENEATH or AT_THIS_ROOT (or if nd->root !=3D
+current->mnt_ns->root)?
 
-  $ ./perf script
-  ls 13585 602082.534478:      28032 cycles:u: 
-            7fff9613f1f4 __GI___tunables_init+0xa4 (/usr/lib64/ld-2.26.so)
-            7fff96140e2b _dl_sysdep_start+0x4ab (/usr/lib64/ld-2.26.so)
-            7fff96121ca7 _dl_start_final+0xf7 (/usr/lib64/ld-2.26.so)
-            7fff961229b3 _dl_start+0x553 (/usr/lib64/ld-2.26.so)
-            7fff96121437 _start+0x17 (/usr/lib64/ld-2.26.so)
+Regarding chroot attacks, I was aware of the trivial
+chroot-open-chroot-fchdir attack but I was not aware that there was a
+rename attack for chroot. Thanks for bringing this up!
 
-Thanks,
-Ravi
+> I believe that the only way to robustly use this would be to point the
+> dirfd at a mount point, such that you know that being moved out of the
+> chroot is impossible because the mount point limits movement of
+> directories under it. (Well, technically, it doesn't, but it ensures
+> that if a directory does dangerously move away, the syscall fails.) It
+> might make sense to hardcode this constraint in the implementation of
+> AT_THIS_ROOT, to keep people from shooting themselves in the foot.
 
+Unless I'm missing something, would this not also affect using a
+mountpoint as a dirfd-root (with MS_MOVE of an already-walked-through
+path component) -- or does MS_MOVE cause a rewalk in a way that rename
+does not?
 
-On 09/28/2018 05:55 PM, Arnaldo Carvalho de Melo wrote:
-> From: Milian Wolff <milian.wolff@kdab.com>
-> 
-> To correctly find inlined frames, we have to use the file offset instead
-> of the virtual memory address. This was already fixed for displaying
-> srcline information while displaying in commit 2a9d5050dc84fa20 ("perf
-> script: Show correct offsets for DWARF-based unwinding"). We just need
-> to use the same corrected address also when trying to find inline
-> frames.
-> 
-> This is another follow-up to commit 19610184693c ("perf script: Show
-> virtual addresses instead of offsets").
-> 
-> Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
-> Cc: Jin Yao <yao.jin@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Sandipan Das <sandipan@linux.ibm.com>
-> Fixes: 19610184693c ("perf script: Show virtual addresses instead of offsets")
-> Link: http://lkml.kernel.org/r/20180926135207.30263-2-milian.wolff@kdab.com
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/util/machine.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 0cb4f8bf3ca7..73a651f10a0f 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -2317,9 +2317,6 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
->  	if (symbol_conf.hide_unresolved && entry->sym == NULL)
->  		return 0;
->  
-> -	if (append_inlines(cursor, entry->map, entry->sym, entry->ip) == 0)
-> -		return 0;
-> -
->  	/*
->  	 * Convert entry->ip from a virtual address to an offset in
->  	 * its corresponding binary.
-> @@ -2327,6 +2324,9 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
->  	if (entry->map)
->  		addr = map__map_ip(entry->map, entry->ip);
->  
-> +	if (append_inlines(cursor, entry->map, entry->sym, addr) == 0)
-> +		return 0;
-> +
->  	srcline = callchain_srcline(entry->map, entry->sym, addr);
->  	return callchain_cursor_append(cursor, entry->ip,
->  				       entry->map, entry->sym,
-> 
+I wouldn't mind tying AT_THIS_ROOT to only work on mountpoints (I
+thought that bind-mounts would be an issue but you also get -EXDEV when
+trying to rename across bind-mounts even if they are on the same
+underlying filesystem). But AT_BENEATH might be a more bitter pill to
+swallow. I'm not sure.
 
+In the usecase of container runtimes, we wouldn't generally be doing
+resolution of attacker-controlled paths but it still definitely doesn't
+hurt to consider this part of the threat model -- to avoid foot-gunning
+as you've said. (There also might be some nested-container cases where
+you might want to do that.)
+
+> > Currently most container runtimes try to do this resolution in
+> > userspace[1], causing many potential race conditions. In addition, the
+> > "obvious" alternative (actually performing a {ch,pivot_}root(2))
+> > requires a fork+exec which is *very* costly if necessary for every
+> > filesystem operation involving a container.
+>=20
+> Wait. fork() I understand, but why exec? And actually, you don't need
+> a full fork() either, clone() lets you do this with some process parts
+> shared. And then you also shouldn't need to use SCM_RIGHTS, just keep
+> the file descriptor table shared. And why chroot()/pivot_root(),
+> wouldn't you want to use setns()?
+
+You're right about this -- for C runtimes. In Go we cannot do a raw
+clone() or fork() (if you do it manually with RawSyscall you'll end with
+broken runtime state). So you're forced to do fork+exec (which then
+means that you can't use CLONE_FILES and must use SCM_RIGHTS). Same goes
+for CLONE_VFORK.
+
+(It should be noted that multi-threaded C runtimes have somewhat similar
+issues -- AFAIK you can technically only use AS-Safe glibc functions
+after a fork() but that's more of a theoretical concern here. If you
+just use raw syscalls there isn't an issue.)
+
+As for why use setns() rather than pivot_root(), there are cases where
+you're operating on a container's image without a running container
+(think image extraction or snapshotting tools). In those cases, you
+would need to set up a dummy container process in order to setns() into
+its namespaces. You are right that setns() would be a better option if
+you want the truthful state of what mounts the container sees.
+
+[I also don't like the idea of joining the user namespace of a malicious
+container unless it's necessary but that's probably just needless
+paranoia more than anything -- since you're not joining the pidns you
+aren't trivially addressable by a malicious container.]
+
+> // Ensure that we are non-dumpable. Together with
+> // commit bfedb589252c, this ensures that container root
+> // can't trace our child once it enters the container.
+> // My patch
+> // https://lore.kernel.org/lkml/1451098351-8917-1-git-send-email-jann@the=
+jh.net/
+> // would make this unnecessary, but that patch didn't
+> // land because Eric nacked it (for political reasons,
+> // because people incorrectly claimed that this was a
+> // security fix):
+
+Unless I'm very much mistaken this was fixed by bfedb589252c ("mm: Add a
+user_ns owner to mm_struct and fix ptrace permission checks"). If you
+join a user namespace then processes within that user namespace won't
+have ptrace_may_access() permissions because your mm is owned by an
+ancestor user namespace -- only after exec() will you be traceable.
+
+We still use PR_SET_DUMPABLE in runc but that's because we support older
+kernels (and people don't use user namespaces under Docker) but with
+user namespaces this should not be required anymore.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--t73bxnc3vrj4rh47
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAluxtDwACgkQnhiqJn3b
+jbTZIxAArmxLc+mBBcfWYPIpM74Ucomwg3OuI7QevIPkqP91a/NNcaaOp8yfs+yx
+dDKMde7i8F2tfmteGGx0FRKqzeSzfQuDcP2gDi32lfQAzltGjtdFcpdIEWBUn5CN
+24ZrLhaNDNV4SGK8xySiGFXTmDRTdhoNPwyE4keC2Ty6wQhoNnko4XAs1kKr9fwT
+MyhNbX176+mVPGipanmhpGlWixTnkubypkHZOAmIEBSMSsQGOHQ/8qLXmQl9Hao7
+JVNb6HdbrwgwKUbVJWwjNDOVmxZZL/Do4FU6bg75AmhyJu7dYs/WRkT8ykgabkQn
+dkp7jcaXrDIVX2YXaLwO+0azthUjidbBZ5pdjQRns3ZQ4Sq+1Y9kPjcBQbecb+KH
+g/v44GDFXYh+pRhF+ATnJaYvdj2Z85VkcWMBjqAy4YljXZ3INDOi5z69+e+4MTl7
++Wn3tYO1cTTqPp3yfTaRFsj+SvM2HvBgLQOXoUhkB0f75sdA3QnWIdRUNqRwPdXU
+wOrEncCybyga2uyJylmNnNCXYvD2F9kuSheCCkj7QFt4wwnwj+VK6WFW48c7EXMf
+/oR9zYZB/1VWlSHltpFnqgc+FQLHWZSGG0RsPY7awPEtzwo7cefEPue+Vjz9JjNu
+M/DND5OZgujKRMsz5/nkz2WWSp9MxVeV1QWrd2EXpV4K94EdnHY=
+=0lfj
+-----END PGP SIGNATURE-----
+
+--t73bxnc3vrj4rh47--
