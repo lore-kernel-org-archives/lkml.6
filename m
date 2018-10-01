@@ -2,112 +2,176 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD81C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D86C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:11:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 031BD2082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 936AB206B2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:11:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="NH5KUHyN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 031BD2082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1bW1Tjx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 936AB206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbeJAXgg (ORCPT
+        id S1726287AbeJAXtz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 19:36:36 -0400
-Received: from mail-cys01nam02on0102.outbound.protection.outlook.com ([104.47.37.102]:30702
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725906AbeJAXgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 19:36:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xy5dMP9yOoSuWZHjYQ1yvHhxbQtm6TdU5Yy8AbOde/I=;
- b=NH5KUHyNqabJYPiOctQLt00xh1mdUPdUXE2e2LQMk8o0Y/MGePVcJ3ruFKaYbZ3Ic6NvWwunIcCfAoMv4WFbTnMjU+LzZhwHhdgqADsMXn5a/TIMMKZHqjSjvVU9FAUtxVIUCfP+J6Iu+D2RelQIXTQUS4qKFeTp36AWPM8xxho=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
- MWHPR2201MB1455.namprd22.prod.outlook.com (10.174.170.140) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.18; Mon, 1 Oct 2018 16:57:49 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::1886:62b2:fbe4:9627]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::1886:62b2:fbe4:9627%9]) with mapi id 15.20.1164.029; Mon, 1 Oct 2018
- 16:57:49 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Joe Perches <joe@perches.com>
-CC:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        linux-mips <linux-mips@linux-mips.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: MIPS/LOONGSON2 ARCHITECTURE - Use the normal
- wildcard style
-Thread-Topic: [PATCH] MAINTAINERS: MIPS/LOONGSON2 ARCHITECTURE - Use the
- normal wildcard style
-Thread-Index: AQHUWNm140eMuj4cxUiV2sr2DrgbeKUKng0A
-Date:   Mon, 1 Oct 2018 16:57:49 +0000
-Message-ID: <20181001165746.t7nqhvw5hktj2bdk@pburton-laptop>
-References: <ae2126ad8eab7d87b8a13cbe75d3ba27e2df22a7.camel@perches.com>
-In-Reply-To: <ae2126ad8eab7d87b8a13cbe75d3ba27e2df22a7.camel@perches.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CY4PR1101CA0007.namprd11.prod.outlook.com
- (2603:10b6:910:15::17) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:24::17)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [4.16.204.77]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1455;6:KFaNldsWlsonMec0GiAxAeyNeWAOiGi0A/KFwfWjbLCrGXYGsxK8IUap5JnAeTFLArRr2VGCDcNQ+UGjBCl2iAKM3sbpNACrfut99TE40FgCSStl2f55mwXwLIeBrOUOFhzRpKeXW1efwbi4DjW7VtYBS8t0k8YeYbarSVgjRsrN8xtwRDcNZTGJdkQsVobr4C5OywDORPPJPeVzBmhsF7ISGZp/PATrYRvWg2kVk1h5BKw9wzXuKRU6TAgJcT1qxy0IaNL+qSN949KUtd516xDQGFGU79x3JbYJgUJCeSILtMu14smkElfbf1mSk8V1uFnfXmSz/SePQpQ5s0Crkh2hAG8OaMT6CRtoPfZU8EsTk8045yJeW2Jai4M5IQvjAYAc1YWmVlB1t2Vyibbi757HcOYTZ7SnXyAX3yMVT2H9b88F+lwS5Sl83hsOjVGzlEPzReANt2hiTAJFY4TK/Q==;5:1WgSQCa8lUZmxg0IL1wbrqDLzsMIYsoO51AcRe2LgefUE4idUohoV3jZ09sW1oFQs6uTe534w+yThgqsdFuIE2sV2b+qLsZKL/aGXod5mUyWdAx50cpLgLdVcOk0CYR4rd2z5nLzDuGw3Ke+PP/HAN76q8wysrWUc9zKHb0neDI=;7:ikFU1G2Pn/Tbv1tCsccXXT2dO26AehE+R5/YhUGei3Gixo+4CMNEg6zuYEcx+vYhpheAE5zGAc0B87LqQWfjyUBCAulIOp0enDbefvM3yNNDYGiES2gApP3OlcC9ahE4xOq9noqMmoGUg4Whw5coeFa7sjnwYDQWiqNEEeFblwRC4AQc4RWYEePrWIbBbS/ozl+VPEQXl2dA5gfA29cpKGwSaqBBzVVBManjIhmiGcWWr8HHYeT0s8f+IiW4lQK/
-x-ms-office365-filtering-correlation-id: 90ff773f-080e-4558-379c-08d627bf047a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989299)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1455;
-x-ms-traffictypediagnostic: MWHPR2201MB1455:
-x-microsoft-antispam-prvs: <MWHPR2201MB1455739E085341887B06420EC1EF0@MWHPR2201MB1455.namprd22.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(10201501046)(3231355)(944501410)(52105095)(3002001)(149066)(150057)(6041310)(2016111802025)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6043046)(201708071742011)(7699051);SRVR:MWHPR2201MB1455;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1455;
-x-forefront-prvs: 0812095267
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(346002)(376002)(366004)(136003)(39840400004)(396003)(189003)(199004)(33716001)(102836004)(6486002)(68736007)(6506007)(42882007)(5250100002)(53936002)(6916009)(386003)(34290500001)(229853002)(6436002)(105586002)(6246003)(106356001)(11346002)(76176011)(54906003)(316002)(97736004)(58126008)(3846002)(476003)(8676002)(1076002)(8936002)(81166006)(186003)(99286004)(26005)(33896004)(81156014)(446003)(6116002)(52116002)(71190400001)(71200400001)(44832011)(5660300001)(14444005)(256004)(2906002)(14454004)(25786009)(305945005)(9686003)(6512007)(66066001)(508600001)(2900100001)(7736002)(4326008)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1455;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: k+hDis8OtnVAo+O6dsgBhASuIu0yjX5JEdsFRxUZ9D1KbbcfBwUyU/iFVT5Gkmt/rk1cPHZ8LiEcloPx/QDmKx+NFIsbzFcyZJ7Ot3ifQzTLP0j5BCJrKG6vlLX3HnjAAb8qiBRwmb/cxuw9eEthNm8FWJNdbSFspQUGC7lIbEnTFMX7vzNFrgvX+vlAoI2LQqSQUbA8r4eqeC9TKSeof02/U7xroxlk/+tVSpfcotbltfRO0POsgnR6T0cyYuNRBRHfl4Z9LpTUoBBjtyqHBSAJ4h123IKkSJs5U5yN0tWLvzjgZmliZOV5rOqTvPbGcf5uZL5rV46/PVZiNZJfHqERMI2kXWaKDTuADJkFtiY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F74004492B8C194881F500E4899EED00@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 1 Oct 2018 19:49:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbeJAXtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 19:49:55 -0400
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68ED42145D;
+        Mon,  1 Oct 2018 17:11:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538413868;
+        bh=JiNqzpBDwcNPo4raTWE6okV3EIt1/ouSQDUVcYWMmNQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=M1bW1Tjx5rF8O+0XPU7moIFhoKHSGCioCoAZzAC1foGR3Tqr3N/5PtxDv6dNlK0cj
+         5lTuxNrC/4oWa0kar5ECMArVdfTXe4wlLi/jwG5qppm+fUkrp7RhFc06bxjhUJ2typ
+         HpBWHDrAVxYEYX0/+XqV7tjGJUdXMyCQU5hkKokM=
+Received: by mail-qt1-f171.google.com with SMTP id l2-v6so14780060qtr.12;
+        Mon, 01 Oct 2018 10:11:08 -0700 (PDT)
+X-Gm-Message-State: ABuFfogjj3c48IAqPtAm/cDaorFMrNi8d37RXf3hXqW8Mhz7wbUiGT53
+        v3b7Ctx6UBHykMiNff1gBkMlUy94JaqpCJP2kg==
+X-Google-Smtp-Source: ACcGV60lO+BPU6O8XsXefBW0T3/yU8b7Wctk79plwgNua7poYYFXr58PXWC5/j+J5r+NG5i4hu01jTzqMxaWkYiZ9TA=
+X-Received: by 2002:ac8:190e:: with SMTP id t14-v6mr9398912qtj.327.1538413867616;
+ Mon, 01 Oct 2018 10:11:07 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90ff773f-080e-4558-379c-08d627bf047a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 16:57:49.5536
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1455
+References: <cover.ff40d591b548a6da31716e6e600f11a303e0e643.1536912834.git-series.quentin.schulz@bootlin.com>
+ <f392dafca9165800439fc09cd7d16e6a9506d457.1536912834.git-series.quentin.schulz@bootlin.com>
+ <20180926213509.GA7454@bogus> <20181001124605.jxiechvp6ztvh77p@qschulz>
+In-Reply-To: <20181001124605.jxiechvp6ztvh77p@qschulz>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 1 Oct 2018 12:10:52 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLKNfFDPqev9uubrMn0cz04E5-BKA5dbcwfkzVePKy4LA@mail.gmail.com>
+Message-ID: <CAL_JsqLKNfFDPqev9uubrMn0cz04E5-BKA5dbcwfkzVePKy4LA@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 07/11] dt-bindings: phy: add DT binding for
+ Microsemi Ocelot SerDes muxing
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Miller <davem@davemloft.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        allan.nielsen@microchip.com,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
+On Mon, Oct 1, 2018 at 7:46 AM Quentin Schulz
+<quentin.schulz@bootlin.com> wrote:
+>
+> Hi Rob,
+>
+> I'm not sure I've understood the way you wanted me to so let me know if
+> I'm not on the right path.
+>
+> On Wed, Sep 26, 2018 at 04:35:09PM -0500, Rob Herring wrote:
+> > On Fri, Sep 14, 2018 at 10:16:05AM +0200, Quentin Schulz wrote:
+> > > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt | 40 +++++++-
+> > >  1 file changed, 40 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt b/Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt
+> > > new file mode 100644
+> > > index 0000000..2a88cc3
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt
+> > > @@ -0,0 +1,40 @@
+> > > +Microsemi Ocelot SerDes muxing driver
+> > > +-------------------------------------
+> > > +
+> > > +On Microsemi Ocelot, there is a handful of registers in HSIO address
+> > > +space for setting up the SerDes to switch port muxing.
+> > > +
+> > > +A SerDes X can be "muxed" to work with switch port Y or Z for example.
+> > > +One specific SerDes can also be used as a PCIe interface.
+> > > +
+> > > +Hence, a SerDes represents an interface, be it an Ethernet or a PCIe one.
+> > > +
+> > > +There are two kinds of SerDes: SERDES1G supports 10/100Mbps in
+> > > +half/full-duplex and 1000Mbps in full-duplex mode while SERDES6G supports
+> > > +10/100Mbps in half/full-duplex and 1000/2500Mbps in full-duplex mode.
+> > > +
+> > > +Also, SERDES6G number (aka "macro") 0 is the only interface supporting
+> > > +QSGMII.
+> > > +
+> > > +Required properties:
+> > > +
+> > > +- compatible: should be "mscc,vsc7514-serdes"
+> > > +- #phy-cells : from the generic phy bindings, must be 2.
+> > > +          The first number defines the input port to use for a given
+> > > +          SerDes macro. The second defines the macro to use. They are
+> > > +          defined in dt-bindings/phy/phy-ocelot-serdes.h
+> >
+> > You need to define what this is a child of.
+> >
+>
+> This is a child of the HSIO syscon on the Microsemi Ocelot. I don't
+> expect all Microsemi SoCs that could use this driver to have the SerDes
+> node in the HSIO syscon.
+>
+> Among the latest additions in Documentation/devicetree/bindings/phy I
+> couldn't find anything close to my understanding of "define what this is
+> a child of", could you elaborate on what you want exactly?
 
-On Sun, Sep 30, 2018 at 09:21:34AM -0700, Joe Perches wrote:
-> Neither git nor get_maintainer understands the curly brace style.
->=20
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  MAINTAINERS | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Essentially what you've said here, but specifically what is the
+compatible property of the HSIO syscon (the specific one, not
+"syscon").
 
-Thanks - applied to mips-fixes, which I intend to submit a pull request
-for later this week.
+> > > +
+> > > +Example:
+> > > +
+> > > +   serdes: serdes {
+> > > +           compatible = "mscc,vsc7514-serdes";
+> > > +           #phy-cells = <2>;
+> >
+> > However, if there are no other resources associated with this, then you
+> > don't even need this child node. The parent can be a phy provider and
+> > provider of other functions too.
+> >
+>
+> The parent is a syscon with multiple features (SerDes, PLL
+> configuration, temp sensor, SyncE, ...) so I'm not sure it's possible to
+> do what you're asking me to. For now, there is only a SerDes node but
+> ultimately there'll be more than one I guess.
 
-Paul
+There's no reason you can't have:
+
+syscon {
+  compatible = "some-soc-syscon-block";
+  #clock-cells = <1>;
+  #phy-cells = <2>;
+  ...
+};
+
+As it stands, you only have a child node because you want to
+instantiate some driver. A single node can be multiple providers and
+DT is not the only way to instantiate drivers.
+
+This could change if your sub-nodes need child nodes as well (e.g.
+pinctrl) or have their own resources such as clocks, interrupts, etc.
+But with an incomplete binding, I can't really tell you what makes
+sense.
+
+Rob
