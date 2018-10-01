@@ -2,104 +2,114 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF28C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF64C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB7EB21470
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:39:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="v5XYFqqn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7EB21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id E87372084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:43:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E87372084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbeJBFTw (ORCPT
+        id S1726618AbeJBFXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 01:19:52 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45728 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbeJBFTw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 01:19:52 -0400
-Received: by mail-pf1-f195.google.com with SMTP id a23-v6so10270823pfi.12
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:39:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=D5F4ud7WwLrz4o/DYl5aN/SBeLUGNS/qsxpjBmfl5D4=;
-        b=v5XYFqqnOHaUtcwk3bColCCNgKZB8poWJNKP5PIy7VlyTDhzzS+RuxqxizyQ07DWue
-         4m9lMvBVQEjQAGtr7MNpnsiT+rdQ6Sz6TT3BWdldkWcXASzWXL0Y9b6qgoQj/s2BJ5PG
-         jqnBDeRRcesb3e5clsrdD4qS+w1oY+X2XpjXrXwyqDGYzawGtKbRVa8mWN0+IqYKllrV
-         3vTABjH3Q2nN3qLCh28Y+aOy1FvcgqC6eM1OC4p9vleee8qFoiSS2kX3/GTXzXcPiBDh
-         HF2mA1NzqPtPzUDLJDG4HsQI3DhL2bxaD93qoZMcvPjYJKvRzq3SNUEfyH+3cEUmKmUH
-         7+lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=D5F4ud7WwLrz4o/DYl5aN/SBeLUGNS/qsxpjBmfl5D4=;
-        b=IenUiOKePZiYDyBqAoDi3bPFYj8dt/c9UDkY8kIpE9uy5ByHDgAo2lRNNLRLW87IjL
-         X/gCz3/x7GlnmWDHgXzWmmNdVmLYEd+UPfJzr7z5acvmqFYFA8hudRvOxEZ/DsS5KJb3
-         jHcDioPihH5PvJejeQrCAwxnjEcbNadCoZ4xKzofc2wTLrAWm5d+5+K7Ju1X9BemSFNN
-         qs6Bjo+E3/HZ0oFSxcwjGNXl62ZqoqhrVN7hSjmn5YLu/AkD6nXI7mQnKZaQTnIszD0P
-         a2gikDKDwpCrz8hXDRxfFMcD23n5DI4Z2/Atw/yZXHkrxW6w5vS2IlXdZsNqhRg9vKkl
-         P5hQ==
-X-Gm-Message-State: ABuFfogVMA8jjnLBosdtaJKyVbv02GXfjTJBrVXND9RM70RX5Z2mg2mN
-        m9GaVNpPOPU37pAmb/UETZjaQX00/ZI=
-X-Google-Smtp-Source: ACcGV63BZmajDQQPao93K8aTNGiT75ZyXDr8saMHbgSmBT27+YuupxM/78ialVuMidXbjIv9pNU3Bw==
-X-Received: by 2002:a17:902:286a:: with SMTP id e97-v6mr13921369plb.340.1538433590024;
-        Mon, 01 Oct 2018 15:39:50 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.22.static.utbb.net. [107.191.0.22])
-        by smtp.gmail.com with ESMTPSA id l16-v6sm9934644pfb.75.2018.10.01.15.39.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 15:39:48 -0700 (PDT)
-Subject: Re: [PATCH v2 0/4] AHCI support for BCM63138
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        linux-kernel@vger.kernel.org
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-References: <20181001173302.25398-1-f.fainelli@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1f741f17-0374-f519-504b-adee93340d68@kernel.dk>
-Date:   Mon, 1 Oct 2018 16:39:46 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 2 Oct 2018 01:23:17 -0400
+Received: from mga14.intel.com ([192.55.52.115]:2168 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725878AbeJBFXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 01:23:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 15:43:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,329,1534834800"; 
+   d="scan'208";a="267577834"
+Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
+  by fmsmga005.fm.intel.com with ESMTP; 01 Oct 2018 15:43:13 -0700
+Date:   Mon, 1 Oct 2018 15:43:13 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Russ Anderson <rja@hpe.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Justin Ernst <justin.ernst@hpe.com>, russ.anderson@hpe.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aristeu Rozanski Filho <arozansk@redhat.com>
+Subject: [PATCH] EDAC: Don't add devices under /sys/bus/edac
+Message-ID: <20181001224313.GA9487@agluck-desk>
+References: <20180926130340.6b22918b@coco.lan>
+ <20180926161749.GI5584@zn.tnic>
+ <20180926181035.GA1132@agluck-desk>
+ <20180926182317.patqjso7nzw2oxiz@hpe.com>
+ <20180926230257.GA5666@agluck-desk>
+ <20180927045244.GA30912@zn.tnic>
+ <20180927214400.GA2249@agluck-desk>
+ <20180927220355.GF19687@zn.tnic>
+ <20180927221054.580220e5@coco.lan>
+ <20181001124754.GD7269@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20181001173302.25398-1-f.fainelli@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001124754.GD7269@zn.tnic>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/1/18 11:32 AM, Florian Fainelli wrote:
-> Hi Jens,
-> 
-> This is a resend of the previous series posted here:
-> 
-> https://lkml.org/lkml/2018/9/20/1060
-> 
-> With a few minor changes:
-> 
-> - rebased against your for-4.20/libata branch
-> - added Rob's Reviewed-by to patch
-> - fixed the use of the reset controller API
+Nobody(*) uses them.  Dropping this will allow us to make the total
+number of memory controllers configurable (as we won't have to
+worry about duplicated device names under this directory).
 
-Thanks, applied for 4.20.
+(*) https://marc.info/?l=linux-edac&m=153809709903987&w=2
 
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+---
+
+Boris: Apply this, then your earlier patch to get rid of the
+hard coded limit on the number of memory controllers:
+  https://marc.info/?l=linux-edac&m=153797567628947&w=2
+the combination works on my 4 socket machine. Perhaps HPE
+can test on their superdome.
+
+ drivers/edac/edac_mc_sysfs.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
+index 20374b8248f0..4c1bee59c2e6 100644
+--- a/drivers/edac/edac_mc_sysfs.c
++++ b/drivers/edac/edac_mc_sysfs.c
+@@ -405,7 +405,6 @@ static int edac_create_csrow_object(struct mem_ctl_info *mci,
+ 				    struct csrow_info *csrow, int index)
+ {
+ 	csrow->dev.type = &csrow_attr_type;
+-	csrow->dev.bus = mci->bus;
+ 	csrow->dev.groups = csrow_dev_groups;
+ 	device_initialize(&csrow->dev);
+ 	csrow->dev.parent = &mci->dev;
+@@ -636,7 +635,6 @@ static int edac_create_dimm_object(struct mem_ctl_info *mci,
+ 	dimm->mci = mci;
+ 
+ 	dimm->dev.type = &dimm_attr_type;
+-	dimm->dev.bus = mci->bus;
+ 	device_initialize(&dimm->dev);
+ 
+ 	dimm->dev.parent = &mci->dev;
+@@ -940,7 +938,6 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
+ 	device_initialize(&mci->dev);
+ 
+ 	mci->dev.parent = mci_pdev;
+-	mci->dev.bus = mci->bus;
+ 	mci->dev.groups = groups;
+ 	dev_set_name(&mci->dev, "mc%d", mci->mc_idx);
+ 	dev_set_drvdata(&mci->dev, mci);
 -- 
-Jens Axboe
+2.17.1
 
