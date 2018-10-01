@@ -2,114 +2,327 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02B7C004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 01:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEF6C004D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 01:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 897E620666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 01:22:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 251C920840
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 01:27:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dqIwlVvW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 897E620666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HStWlu/O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 251C920840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbeJAH6H (ORCPT
+        id S1727413AbeJAICy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 03:58:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:49181 "EHLO ozlabs.org"
+        Mon, 1 Oct 2018 04:02:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726992AbeJAH6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 03:58:07 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1726675AbeJAICy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 04:02:54 -0400
+Received: from localhost (c-67-160-202-76.hsd1.ca.comcast.net [67.160.202.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42Nkzq4Qwjz9s3C;
-        Mon,  1 Oct 2018 11:22:47 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538356967;
-        bh=y23vuuEddFZzlqpDsxDAv5Pns1bo8I6X87C7XwSmCLs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dqIwlVvWaql9ZpP5/t1SCMyA5tOd4yTYRDPHcGz4dq+5A9nPKVr8SOKNfHJvGTKda
-         K6k0vHeAXXk3lkV+xil1rgoufFs/B4tecRv0r3BnsRbB7RHw+xFJ0XaDSGj+r5IbJO
-         9IorXbCha0AL5qLy4sAAlxHFP2oxfw4mDUYuqa3jCW+0URobjEmbQsV/HvjjIgtA3N
-         c6dW59rKx0IXAm4G4Tfdr3pn7xQztsWpliR1YLT0Q6ybMltMviDfCaVxKSNDXE8VjP
-         HWeEAXV25ax/A/OEGf7Kr8UtpbHDgo0wLHLDopTeBlW+p456A0DgONj5wYUavy98Eo
-         XfW3Y8FaK22XQ==
-Date:   Mon, 1 Oct 2018 11:22:46 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Sasha Levin <Alexander.Levin@microsoft.com>
-Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Steven French <Steven.French@microsoft.com>
-Subject: Re: [PATCH AUTOSEL 4.18 39/65] fs/cifs: suppress a string overflow
- warning
-Message-ID: <20181001112246.4dcbc4fd@canb.auug.org.au>
-In-Reply-To: <20181001003754.146961-39-alexander.levin@microsoft.com>
-References: <20181001003754.146961-1-alexander.levin@microsoft.com>
-        <20181001003754.146961-39-alexander.levin@microsoft.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 973B920666;
+        Mon,  1 Oct 2018 01:27:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538357254;
+        bh=fehzkP+PfUMuwwcLhdq8DtA0arUGS9vYQV3UgRgvzlw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HStWlu/OTf0gHq3Ux5L+UtoPRahS4NdqzcXyKxA3UKIJBlOin4f71SNf4tStORvsw
+         TcPFbaS1M2He60FLUcNf+/8ZGHC/KXhpnCsYLOqsPQBKUIrGX+jGS6zwhe+nmfAgha
+         KwLkNzZ2CY7yDVdzS9AaefJ+n3rpO82d8hryb66A=
+Date:   Sun, 30 Sep 2018 18:27:34 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Message-ID: <20181001012734.GE17407@jaegeuk-macbookpro.roam.corp.google.com>
+References: <b45beb50-c814-5fb4-63da-060871e33553@huawei.com>
+ <20180926014418.GE3829@jaegeuk-macbookpro.roam.corp.google.com>
+ <e1e855e5-2aaf-6560-d69d-2b7b0f60404e@huawei.com>
+ <20180926020921.GG3829@jaegeuk-macbookpro.roam.corp.google.com>
+ <d4279226-ca5c-8905-f6e9-c660c3aad6a0@huawei.com>
+ <20180928173721.GB64391@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180928234025.GA94043@jaegeuk-macbookpro.roam.corp.google.com>
+ <2c6db622-ef6d-c3c7-cf54-4dd708bd54e3@huawei.com>
+ <20180930235827.GB17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <227e112e-a462-6803-5c41-dad47569a55b@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FB.wSKEEne+ng3sjN0gw3au"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <227e112e-a462-6803-5c41-dad47569a55b@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/FB.wSKEEne+ng3sjN0gw3au
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On 10/01, Chao Yu wrote:
+> On 2018-10-1 7:58, Jaegeuk Kim wrote:
+> > On 09/29, Chao Yu wrote:
+> >> On 2018/9/29 7:40, Jaegeuk Kim wrote:
+> >>> Testing other fix.
+> >>>
+> >>> ---
+> >>>  fs/f2fs/checkpoint.c |  7 +++++++
+> >>>  fs/f2fs/f2fs.h       |  1 +
+> >>>  fs/f2fs/gc.c         | 10 +++++++++-
+> >>>  fs/f2fs/super.c      | 22 +++++++++++++++++++++-
+> >>>  4 files changed, 38 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >>> index 524b87667cf4..3fde91f41a91 100644
+> >>> --- a/fs/f2fs/checkpoint.c
+> >>> +++ b/fs/f2fs/checkpoint.c
+> >>> @@ -1494,6 +1494,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  {
+> >>>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+> >>>  	unsigned long long ckpt_ver;
+> >>> +	bool need_up = false;
+> >>>  	int err = 0;
+> >>>  
+> >>>  	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+> >>> @@ -1506,6 +1507,10 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  		f2fs_msg(sbi->sb, KERN_WARNING,
+> >>>  				"Start checkpoint disabled!");
+> >>>  	}
+> >>> +	if (!is_sbi_flag_set(sbi, SBI_QUOTA_INIT)) {
+> >>> +		need_up = true;
+> >>> +		down_read(&sbi->sb->s_umount);
+> >>
+> >> This is to avoid show warning when calling dquot_writeback_dquots() in
+> >> f2fs_quota_sync(), right?
+> > 
+> > Yup. Unfortunately, this can't fix all the issues, so I'm testing trylock
+> > simply in this case.
+> 
+> Oh, that's just warning, it could not be harmful, I think we can simply remove
+> WARN_ON_ONCE in dquot_writeback_dquots to fix this?
 
-Hi Sasha,
+Well, I think it'd be better to keep it.
 
-On Mon, 1 Oct 2018 00:38:27 +0000 Sasha Levin <Alexander.Levin@microsoft.co=
-m> wrote:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
->=20
-> [ Upstream commit bcfb84a996f6fa90b5e6e2954b2accb7a4711097 ]
->=20
-> A powerpc build of cifs with gcc v8.2.0 produces this warning:
->=20
-> fs/cifs/cifssmb.c: In function =E2=80=98CIFSSMBNegotiate=E2=80=99:
-> fs/cifs/cifssmb.c:605:3: warning: =E2=80=98strncpy=E2=80=99 writing 16 by=
-tes into a region of size 1 overflows the destination [-Wstringop-overflow=
-=3D]
->    strncpy(pSMB->DialectsArray+count, protocols[i].name, 16);
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->=20
-> Since we are already doing a strlen() on the source, change the strncpy
-> to a memcpy().
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Steve French <stfrench@microsoft.com>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-
-Just wondering if this should be included as it only fixes a build
-warning, there is no actual bug.  Same for the 4.9 and 4.14 versions.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/FB.wSKEEne+ng3sjN0gw3au
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluxduYACgkQAVBC80lX
-0Gx2Vgf/Uj49VQIpbqz6RklI7JG/+T6uaGbCoiHF5pM56P7nSI6sfo5uNUscI0pc
-nmmHrkiyR8jtps79hcyaaqjsQU5hPzxD108ruKMJaOQmDeyKTmsgqPUS8hcaa1vd
-RNvrktZ/76h/TJzn1Cb9VA8B/ylUIIKq8oS5M3cUc698vUhuZruCUTiIiHlFFB8N
-DSPpaB+KJbsQZUoBIXQ/J1WKGYJ0tN16xutpsaYXgLXZanhudBDtoQRh6lpvxsnB
-+nu/P7M96Rk4zs5mXhQFEkNVR8gQlDUf5E0zOsA0D+shR6XyetNlUwIvNdml3kjs
-bhagg+KCUlO9h4DzODmW02mzli4Ryg==
-=KRsJ
------END PGP SIGNATURE-----
-
---Sig_/FB.wSKEEne+ng3sjN0gw3au--
+> 
+> > 
+> >>
+> >>> +	}
+> >>>  	mutex_lock(&sbi->cp_mutex);
+> >>>  
+> >>>  	if (!is_sbi_flag_set(sbi, SBI_IS_DIRTY) &&
+> >>> @@ -1582,6 +1587,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish checkpoint");
+> >>>  out:
+> >>>  	mutex_unlock(&sbi->cp_mutex);
+> >>> +	if (need_up)
+> >>> +		up_read(&sbi->sb->s_umount);
+> >>>  	return err;
+> >>>  }
+> >>>  
+> >>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>> index 57c829dd107e..30194f2f108e 100644
+> >>> --- a/fs/f2fs/f2fs.h
+> >>> +++ b/fs/f2fs/f2fs.h
+> >>> @@ -1096,6 +1096,7 @@ enum {
+> >>>  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
+> >>>  	SBI_IS_RECOVERED,			/* recovered orphan/data */
+> >>>  	SBI_CP_DISABLED,			/* CP was disabled last mount */
+> >>> +	SBI_QUOTA_INIT,				/* avoid sb->s_umount lock */
+> >>>  	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
+> >>>  	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
+> >>>  	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
+> >>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> >>> index adaf5a695b12..deece448cb3b 100644
+> >>> --- a/fs/f2fs/gc.c
+> >>> +++ b/fs/f2fs/gc.c
+> >>> @@ -55,9 +55,14 @@ static int gc_thread_func(void *data)
+> >>>  			f2fs_stop_checkpoint(sbi, false);
+> >>>  		}
+> >>>  
+> >>> -		if (!sb_start_write_trylock(sbi->sb))
+> >>> +		if (!down_read_trylock(&sbi->sb->s_umount))
+> >>>  			continue;
+> >>>  
+> >>> +		set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>> +
+> >>> +		if (!sb_start_write_trylock(sbi->sb))
+> >>> +			goto next_umount;
+> >>> +
+> >>>  		/*
+> >>>  		 * [GC triggering condition]
+> >>>  		 * 0. GC is not conducted currently.
+> >>> @@ -104,6 +109,9 @@ static int gc_thread_func(void *data)
+> >>>  		f2fs_balance_fs_bg(sbi);
+> >>>  next:
+> >>>  		sb_end_write(sbi->sb);
+> >>> +next_umount:
+> >>> +		clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>> +		up_read(&sbi->sb->s_umount);
+> >>>  
+> >>>  	} while (!kthread_should_stop());
+> >>>  	return 0;
+> >>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> >>> index a28c245b1288..40a77a4eb465 100644
+> >>> --- a/fs/f2fs/super.c
+> >>> +++ b/fs/f2fs/super.c
+> >>> @@ -1029,6 +1029,8 @@ static void f2fs_put_super(struct super_block *sb)
+> >>>  	int i;
+> >>>  	bool dropped;
+> >>>  
+> >>> +	set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>> +
+> >>>  	f2fs_quota_off_umount(sb);
+> >>>  
+> >>>  	/* prevent remaining shrinker jobs */
+> >>> @@ -1122,11 +1124,17 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
+> >>>  
+> >>>  	if (sync) {
+> >>>  		struct cp_control cpc;
+> >>> +		bool keep = is_sbi_flag_set(sbi, SBI_QUOTA_INIT);
+> >>>  
+> >>>  		cpc.reason = __get_cp_reason(sbi);
+> >>>  
+> >>>  		mutex_lock(&sbi->gc_mutex);
+> >>> +		if (sbi->sb->s_writers.frozen >= SB_FREEZE_WRITE)
+> >>> +			set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>> +
+> >>>  		err = f2fs_write_checkpoint(sbi, &cpc);
+> >>> +		if (!keep)
+> >>> +			clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>>  		mutex_unlock(&sbi->gc_mutex);
+> >>>  	}
+> >>>  	f2fs_trace_ios(NULL, 1);
+> >>> @@ -1534,6 +1542,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> >>>  		}
+> >>>  	}
+> >>>  #endif
+> >>> +	set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>>  
+> >>>  	/* recover superblocks we couldn't write due to previous RO mount */
+> >>>  	if (!(*flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
+> >>> @@ -1653,6 +1662,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> >>>  		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+> >>>  
+> >>>  	limit_reserve_root(sbi);
+> >>> +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>>  	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+> >>>  	return 0;
+> >>>  restore_gc:
+> >>> @@ -1673,6 +1683,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> >>>  #endif
+> >>>  	sbi->mount_opt = org_mount_opt;
+> >>>  	sb->s_flags = old_sb_flags;
+> >>> +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>>  	return err;
+> >>>  }
+> >>>  
+> >>> @@ -1706,6 +1717,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+> >>>  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+> >>>  				goto repeat;
+> >>>  			}
+> >>> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >>>  			return PTR_ERR(page);
+> >>>  		}
+> >>>  
+> >>> @@ -1717,6 +1729,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+> >>>  		}
+> >>>  		if (unlikely(!PageUptodate(page))) {
+> >>>  			f2fs_put_page(page, 1);
+> >>> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >>>  			return -EIO;
+> >>>  		}
+> >>>  
+> >>> @@ -1758,6 +1771,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+> >>>  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+> >>>  				goto retry;
+> >>>  			}
+> >>> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >>>  			break;
+> >>
+> >> I added these before, but later I didn't encounter quota corruption w/o
+> >> them, so I removed them.
+> >>
+> >> Do you still hit corruption after this change?
+> > 
+> > I found one issue where we must avoid roll-forward recovery, if fsck overwrote some
+> > blocks to fix quota which will be used for recovery.
+> 
+> That's correct, IMO, the right way is that fsck needs to be aware of whole dnode
+> chain and block address in dnode block, when doing allocation, it needs to
+> bypass those block address of dnode and block which can be recovered later by
+> kernel, so that fsynced data can not be lost.
+> 
+> But, in order to trouble shoot current problem more quickly, we can just disable
+> kernel recovery once fsck recovers quota file for now.
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>>  		}
+> >>>  
+> >>> @@ -1794,7 +1808,6 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
+> >>>  
+> >>>  static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
+> >>>  {
+> >>> -
+> >>>  	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
+> >>>  		f2fs_msg(sbi->sb, KERN_ERR,
+> >>>  			"quota sysfile may be corrupted, skip loading it");
+> >>> @@ -1958,7 +1971,9 @@ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
+> >>>  	if (err)
+> >>>  		return err;
+> >>>  
+> >>> +	set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_INIT);
+> >>>  	err = dquot_quota_on(sb, type, format_id, path);
+> >>> +	clear_sbi_flag(F2FS_SB(sb), SBI_QUOTA_INIT);
+> >>>  	if (err)
+> >>>  		return err;
+> >>>  
+> >>> @@ -3179,6 +3194,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >>>  		goto free_meta_inode;
+> >>>  	}
+> >>>  
+> >>> +	set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>>  	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_QUOTA_NEED_FSCK_FLAG))
+> >>>  		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> >>>  
+> >>> @@ -3370,6 +3386,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >>>  				cur_cp_version(F2FS_CKPT(sbi)));
+> >>>  	f2fs_update_time(sbi, CP_TIME);
+> >>>  	f2fs_update_time(sbi, REQ_TIME);
+> >>> +
+> >>> +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>>  	return 0;
+> >>>  
+> >>>  free_meta:
+> >>> @@ -3434,6 +3452,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >>>  		shrink_dcache_sb(sb);
+> >>>  		goto try_onemore;
+> >>>  	}
+> >>> +	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>>  	return err;
+> >>>  }
+> >>>  
+> >>> @@ -3449,6 +3468,7 @@ static void kill_f2fs_super(struct super_block *sb)
+> >>>  		struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> >>>  
+> >>>  		set_sbi_flag(sbi, SBI_IS_CLOSE);
+> >>> +		set_sbi_flag(sbi, SBI_QUOTA_INIT);
+> >>>  		f2fs_stop_gc_thread(sbi);
+> >>>  		f2fs_stop_discard_thread(sbi);
+> >>>  
+> >>>
+> > 
+> > 
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > 
