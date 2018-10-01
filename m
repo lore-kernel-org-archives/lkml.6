@@ -2,96 +2,80 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CE1C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0175FC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:25:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 612C32089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3206205C9
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:25:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KdxsoKZq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 612C32089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="F6C2FUXp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3206205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbeJARBh (ORCPT
+        id S1729083AbeJARCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 13:01:37 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:36395 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728860AbeJARBh (ORCPT
+        Mon, 1 Oct 2018 13:02:42 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:29890 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728826AbeJARCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 13:01:37 -0400
-Received: by mail-io1-f66.google.com with SMTP id p4-v6so3131573iom.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 03:24:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=THM6kc82mMstt4+zJoSfqZigSugW3/mfNxEP+tVrN74=;
-        b=KdxsoKZqk8t+2eIMUQP9++XuiiWF6j5GYR/NaLmlWgDxUl5uOVHI7q+JGfSJirX9tN
-         FqMNrp1SL6XLvHN0mBjQXJPrddiFZUV+rSYqYQUEQToatQzTYtae0jluNEN/Dpc35n2N
-         pL0x6a3xwD/BtoEw/lY+t765VcnlZZu2M8bRA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=THM6kc82mMstt4+zJoSfqZigSugW3/mfNxEP+tVrN74=;
-        b=cpikPr/xbppsNHZddS2wwsnvU8JLsyLHUfd1IImY1e6rX25FJjqkPhCMM0VPrx5tVN
-         51A6lGb1tLEG3vSP4r5KyXyRclW9yUYUsQk6OnkDHKrFIS1wyudDJt0e0r7SRO0IJZl9
-         NC6tZaL86C8UeYHPv+VOx4H2XrRQPnbAaTrmqtXfMB9gA082zZOVG12rrwYUCFxTWhD4
-         BZ4jdbWFFeNvxc9Wq85RXVphLtq/I2z+rqEgXPeZPB8fjVp0DltQx9lxEHU+YWSY7JdF
-         nLZBvLbdv5qnFjCDeevEwYfhK99Y2fnQcwcUsq8SZXC+gwglpnpYUlN2fp259kHewWXr
-         i0yQ==
-X-Gm-Message-State: ABuFfoiKQpT5v9Sb2hVG8xvHiO50L3Dxg10EUZcKBpSUqygQO/seVWq4
-        GXzv5DLPq3f8Ozed6YgC1rAtfKsPWvSBUX8ernmw6Q==
-X-Google-Smtp-Source: ACcGV61L2gQrvU1Niq7Y35IOGz4oyPzHhoNiQZa1c1ji58cobp2MSbOPeWcudsA1SWkFF7f6qWFWdz1nDUX7Rk9pkeY=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr6326932iof.304.1538389471412;
- Mon, 01 Oct 2018 03:24:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180927113810.30721-1-geert+renesas@glider.be>
-In-Reply-To: <20180927113810.30721-1-geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 1 Oct 2018 12:24:18 +0200
-Message-ID: <CACRpkdYgX6aMACDdE6yMkur9txQq1hKCMfaLj_+FTg4vg-+Mzw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] gpio: Fix VLA removal fallout
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-doc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 1 Oct 2018 13:02:42 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id w91AO8Y3032372;
+        Mon, 1 Oct 2018 19:24:09 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w91AO8Y3032372
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1538389449;
+        bh=ULTMewL42Fo19v7Ruh3OqprQvPf1MpIZbX64M6oAqks=;
+        h=From:To:Cc:Subject:Date:From;
+        b=F6C2FUXpGKZa4MqNvP2V3dYqD16yYiRUpUlvNtTF2bVFlYNCr88zLhA4z/U2b+twR
+         iTW0p5zDPDsM4N4koYkG2MuRgGvNTyHHgUKyNAa+Yo5TqqoC8FlkzJc/LHfCA6d/Ue
+         HVs2U4lsp4SNIJ8W3vNU+HS9c++yks6iikKqgs+qLH24WqKX4erLS/tCEFvhjwZTxn
+         Xu34uHCUXzxpJ1L1X18KJuXvNPjiSKxxGKwyu8SDBi5w6Faor8wLp0eUSK2kOsBfuj
+         59hxzZ5/mMZaydcC+f5LnzT1gnZDtcAi/GfOW3StsD9HEZ2iZyURVAkZZHlWyrii8C
+         UGc57CTVCPiDQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/build: remove unused CONFIG_AS_CRC32
+Date:   Mon,  1 Oct 2018 19:24:03 +0900
+Message-Id: <1538389443-28514-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 1:38 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+CONFIG_AS_CRC32 is not used anywhere.
 
-> This patch series fixes various (mostly harmless) issues introduced by
-> commit 3027743f83f867d8 ("gpio: Remove VLA from gpiolib").
->
-> As per the "one patch should fix one issue"-policy, this series contains 3
-> patches, although they all have the same Fixes: tag.
->
-> Changes compared to v1:
->   - Rebase on top of gpio array rework.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Patches applied, thanks Geert!
+ arch/x86/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
 
-> W.r.t. propagating errors: while gpiod_set_array_value_complex() and its
-> callers can now return an error code, this is currently limited to -ENOMEM.
-> Actual failures setting a GPIO output value cannot be propagated, as
-> gpio_chip.set() still returns void.  Do you want to change that?
-> E.g. gen_74x164_set_value() can fail.
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index bbdb780..bf0265f 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -189,7 +189,6 @@ cfi-sections := $(call as-instr,.cfi_sections .debug_frame,-DCONFIG_AS_CFI_SECTI
+ # does binutils support specific instructions?
+ asinstr := $(call as-instr,fxsaveq (%rax),-DCONFIG_AS_FXSAVEQ=1)
+ asinstr += $(call as-instr,pshufb %xmm0$(comma)%xmm0,-DCONFIG_AS_SSSE3=1)
+-asinstr += $(call as-instr,crc32l %eax$(comma)%eax,-DCONFIG_AS_CRC32=1)
+ avx_instr := $(call as-instr,vxorps %ymm0$(comma)%ymm1$(comma)%ymm2,-DCONFIG_AS_AVX=1)
+ avx2_instr :=$(call as-instr,vpbroadcastb %xmm0$(comma)%ymm1,-DCONFIG_AS_AVX2=1)
+ avx512_instr :=$(call as-instr,vpmovm2b %k1$(comma)%zmm5,-DCONFIG_AS_AVX512=1)
+-- 
+2.7.4
 
-I think we discussed it at one point and said that it's something
-we should fix some day, just nobody has got around to do it.
-
-Yours,
-Linus Walleij
