@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF674C004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8187C64EAD
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82F9020666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:40:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930362064D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:40:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Fiksn6Th"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82F9020666
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="CkrX/gqE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930362064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729718AbeJAHPa (ORCPT
+        id S1729730AbeJAHPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 03:15:30 -0400
-Received: from mail-by2nam03on0114.outbound.protection.outlook.com ([104.47.42.114]:28569
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        Mon, 1 Oct 2018 03:15:32 -0400
+Received: from mail-by2nam01on0090.outbound.protection.outlook.com ([104.47.34.90]:27744
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728942AbeJAHP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 03:15:29 -0400
+        id S1729720AbeJAHPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 03:15:30 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VjzAildGQZDty8EJd+2BJl+wbduIUqkrhQu4tOdv52Y=;
- b=Fiksn6Th6OXFJJP3DuF9gZVTpsK68hGRJi4TTMMWhgeOGrCcWM/qfbLrbyq4O/1JalEDELnWCMn+or4kSz4z8W5iaRJaGVxm14Iyl15sWpqrHcFbW6K48Q2GMLC6+9W6bxDMoBgdYKZcbQ6h6f260KUsE/SO80JogcKLamEk7NU=
+ bh=ZvITsx1Va7IGlEkkTpNP/yacvTJstAKis3tkcVhk2FI=;
+ b=CkrX/gqEInFw41DriaLYjxl32s5oaacKTqSI8FL9e79hYDlk843YHmF2A1P93HvWKU00NeOlA+l+/nxRr3bhKdrrOS7XUADLygGIuwXAQNCqETvTcg8ZZkuXp7cOskU6d9hxAZ5DrUfdI2RQ9See30IWfS1SYNvygDTjonYIOUg=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0120.namprd21.prod.outlook.com (10.173.189.14) with Microsoft SMTP
+ CY4PR21MB0854.namprd21.prod.outlook.com (10.173.192.143) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.3; Mon, 1 Oct 2018 00:40:19 +0000
+ 15.20.1228.4; Mon, 1 Oct 2018 00:40:18 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1228.006; Mon, 1 Oct 2018
- 00:40:19 +0000
+ 00:40:18 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 33/37] s390/qeth: don't dump past end of unknown
- HW header
-Thread-Topic: [PATCH AUTOSEL 4.14 33/37] s390/qeth: don't dump past end of
- unknown HW header
-Thread-Index: AQHUWR8tFW0v63gjhUC/iHsrsuvy7w==
-Date:   Mon, 1 Oct 2018 00:39:13 +0000
-Message-ID: <20181001003850.147107-33-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 29/37] arm64: jump_label.h: use asm_volatile_goto
+ macro instead of "asm goto"
+Thread-Topic: [PATCH AUTOSEL 4.14 29/37] arm64: jump_label.h: use
+ asm_volatile_goto macro instead of "asm goto"
+Thread-Index: AQHUWR8rRyWj7rASE0SwjynRXvNcGA==
+Date:   Mon, 1 Oct 2018 00:39:11 +0000
+Message-ID: <20181001003850.147107-29-alexander.levin@microsoft.com>
 References: <20181001003850.147107-1-alexander.levin@microsoft.com>
 In-Reply-To: <20181001003850.147107-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,85 +61,82 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0120;6:Ei+wAIMlC1qqxKdrM00qtUJ5p+BFkz05zwUJ9mpdgBq0jF6vHq+azPm05gzfPvZqGnhE0r7EGzo8A2KM7Lo6+ieo+YFNOdOCsJENdm1NFrtzW+wrNcW3cmSpqZ/UHwlTaKHgJGvCpNlPc51Au7mBsIfxXneipUf8L991Ig0u1ce5PNLnvGS3YEo8kLNB2yjWtWfC0vi5+hHWpnGo18/oqFwQd/1234IuMF1ccYoM6iZwW9J2si3te6zanbE9zRkJS2HIcC3hCL4PfqPTBWUtXN4Xfy4MZUMSiL0Lb7WLLU/iZIUlNQw6pF+8jDCOGCnMMeaxBIZ167MSJDPFl6tQhfpFUHDjC59JkysAzCQ66vUGW/LQAsiVZf4LsV4jFqYE/gF/agYXDxzsG6P6p2Pi993RT7Wxnr8ndDxyxcMmj3LA90a+rogtk9MNvt+sApEaIbZxZap66qJaoZBckw9bDA==;5:hhhhRZS0zdSoMQSwNe9YsJdJl6v9RTWLxvhOwfCBhGvcKG2TyomgtavcWwKW/cryjR/qcsOJdPVeoCGwlorbY86oweDuXhqmkCuTUON8FK9pjRyvj6q7s2AS2JJY4vEWG0NgW4ZU38ky7r7Z9nIo/mOWh70r7VEcVmX3PDmhW1U=;7:EYu8QU0vgUQ4rhagbgSzzbndeRmL0ktD+SXf3+3AEkzid1A5PbK21rCz1RyIk3c+sGIqQJ0xXj5W21YXysfO/J8rv0XxfOf92sevlnj5pOLRt0JAtcjYUFOnZDsfD2MvncTMqdQamKOVR9K23r0DszKe+PXOZmeSO31+PpSKVcgCw/ilVGxyFuOcqglxexFl6XuKPGmjPnoZdA1Jxt2gwokhD8CiU6Lfr8mf9kQ8IsaeomoysEHq5ZiYxtokUuRo
-x-ms-office365-filtering-correlation-id: e5f72452-fb20-4163-2d72-08d6273676ef
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0854;6:ZYEsic+nIm0sC3V5+Hf8q6wBJTeJW30CimDXLUsOTQzJ2ZlaITW1ehVJVSz586ka68sXWxYRRfn4b9KSUB/gCPxUl8AFwtXD4ojIP1qyOE7R2im2LAT6s1rCaDe35v05RrIQPGdyfNAIreQjaxzrggcEMp4NdVncB578es/bTpXp2/pH972p2NvkhDbnTro6pyAD0bkKrRuYVdLXrdZeVHgb4oRwlZSgoyWv7DdVFpxRgBlrVg1Y0yAjHa1Y1vYYE/BL/enrAUeGj04TV4s58yCZSXIIUlK1WvnY1wVwtePsqBaXqpNkMACZovp0oeJv7CLaUPMrV9oZeiB8txSQKcb6HFtW7FgXQ+IuXJB7snv5K0pl8951mGC90HWYPBlF6IqXrg07q+0r7Za6odX3aVnX0kSYV2JJGpdugbLT4pSC+nu/cxE4LD/e570FC2wC5ZILOYwGzqU1a+mySwJiOw==;5:cU5Gu7QWNC4Gyj5GkmhXHcpZUZVV4tEGGcsY6QPL75aWw2xo31GKy+/UNjxpcNHs/4dsY7pIZimOzzYw3r2xY4zAxY3uoJUghkXfVJBmRoPc8kSU7jaE+TTHGepIyzo+CQ5G4V0KaeShG47mJwnzSmcX//xDaa11uV+dlCLbFzY=;7:+GgCoHAi+saXkbJwg9kOOF5ktf6xR/dt5ySAqFDK8KrsDqNceEUKda9yBKx4MPpybx+HpR9TEosk3SqryipkK18uf02zqOjWc0JjD0mj5xXT6wIpVJMud34YwUg+SeKW37OvJSQ2BMGj6TSUiD2ROeyTfEEUe96DxneiHenHmOtUSGvetbdKudkD4ODHP7GvNPiiZPwXawdyberGpoEmhC1N5/pi0e7ypWelAd+ENPO+sapfv/O3/XAQCzetPYxr
+x-ms-office365-filtering-correlation-id: f5637050-7022-428a-2a7a-08d627367602
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0120;
-x-ms-traffictypediagnostic: CY4PR21MB0120:
-x-microsoft-antispam-prvs: <CY4PR21MB01209512E6FF7DB3BAA73F2BFBEF0@CY4PR21MB0120.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(104084551191319)(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0854;
+x-ms-traffictypediagnostic: CY4PR21MB0854:
+x-microsoft-antispam-prvs: <CY4PR21MB08545E28EDD2C844EBC44221FBEF0@CY4PR21MB0854.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(788757137089)(85827821059158)(180628864354917)(211936372134217)(153496737603132)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0120;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0120;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0854;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0854;
 x-forefront-prvs: 0812095267
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(346002)(39860400002)(376002)(199004)(189003)(86362001)(8936002)(6436002)(99286004)(6512007)(305945005)(76176011)(2616005)(68736007)(53936002)(34290500001)(186003)(10090500001)(105586002)(106356001)(86612001)(6486002)(81156014)(81166006)(8676002)(71200400001)(36756003)(54906003)(5250100002)(2501003)(26005)(110136005)(97736004)(6346003)(6116002)(3846002)(1076002)(5660300001)(102836004)(71190400001)(107886003)(2906002)(486006)(6506007)(2900100001)(4326008)(6666003)(66066001)(446003)(11346002)(14454004)(7736002)(476003)(25786009)(14444005)(256004)(478600001)(72206003)(10290500003)(316002)(22452003)(217873002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0120;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(39860400002)(136003)(366004)(199004)(189003)(6116002)(3846002)(217873002)(5250100002)(1076002)(71200400001)(97736004)(71190400001)(76176011)(6506007)(99286004)(36756003)(6346003)(26005)(39060400002)(2906002)(575784001)(446003)(86362001)(11346002)(476003)(102836004)(2616005)(14454004)(2501003)(10090500001)(107886003)(4326008)(22452003)(486006)(316002)(34290500001)(186003)(256004)(66066001)(86612001)(305945005)(25786009)(2900100001)(6486002)(106356001)(7736002)(6512007)(53936002)(81166006)(81156014)(6666003)(8936002)(8676002)(5660300001)(68736007)(54906003)(110136005)(10290500003)(6436002)(478600001)(72206003)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0854;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: EjMoAiiSUdHlaj4v1XDlClLSkKPEmb9L1CaprMnsG4GTfmNPkKGIpWRupAohF4MPt7mMLnHEM70o56iWHd1nmIXbuueiZPzpABgqjKjsUvgykbdxWJ3LHmoSpZjigzLv1lHoCFerFW7+TehM0OSu0OJUwSQpYYLoXnI9jNlaHJe9lLEiLIqAcb33D0/wVuUkVsstNuVKOMrYx0vaUjl6fqd4StMUU7kzRyJYIMsaHshNie5zN0ATBmOgiXQ4IatxKOjqjm/18S/m/sbpUPvkeDmz/T7CO9hUqDtL4X0bcj7wrxvdeXb+deEoOoGIbkWqpJyVWVVXnadSOfWi2pt+iVrFZJDHl2+Br2PLW88LWLU=
+x-microsoft-antispam-message-info: J7WWU31AfQjRCZ0zQJxagKVAs4yPl98TQuDYEH2hbgs5LNGGGq/DO+3fOGaCQCJX1YFZ0za5G2FXMOfbKL9wyRalCJOowVqqP9AYnzXdw4A7x8ZpyRTB8PGjzj/s3ECdGnbNUxJzHYylZqdz1nL+AZrLDMomW40JxGK6hL2ixihKeYKTvXoABGAhJUY9TLt6myDTw4BSNC/sDgeQdAjLEUU8q+SiJpSqvBeFKt49ajZ8mmYjQQFQVn/PtN5NThL4/KJj1bq1SXRLlFjyQg/xHSIB9gByxWSSW0oRfKc3diaviYCyFhhwuhWaRpPDWTVFYLWZdAyaUxqTCAHOeGUMHYIdnMHIN6cEiAi+5cWD+Qk=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5f72452-fb20-4163-2d72-08d6273676ef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:39:13.5681
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5637050-7022-428a-2a7a-08d627367602
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:39:11.1842
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0120
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0854
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 
-[ Upstream commit 0ac1487c4b2de383b91ecad1be561b8f7a2c15f4 ]
+[ Upstream commit 13aceef06adfaf93d52e01e28a8bc8a0ad471d83 ]
 
-For inbound data with an unsupported HW header format, only dump the
-actual HW header. We have no idea how much payload follows it, and what
-it contains. Worst case, we dump past the end of the Inbound Buffer and
-access whatever is located next in memory.
+All other uses of "asm goto" go through asm_volatile_goto, which avoids
+a miscompile when using GCC < 4.8.2. Replace our open-coded "asm goto"
+statements with the asm_volatile_goto macro to avoid issues with older
+toolchains.
 
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/s390/net/qeth_l2_main.c | 2 +-
- drivers/s390/net/qeth_l3_main.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/jump_label.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_mai=
-n.c
-index 521293b1f4fa..11ae67842edf 100644
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -484,7 +484,7 @@ static int qeth_l2_process_inbound_buffer(struct qeth_c=
-ard *card,
- 		default:
- 			dev_kfree_skb_any(skb);
- 			QETH_CARD_TEXT(card, 3, "inbunkno");
--			QETH_DBF_HEX(CTRL, 3, hdr, QETH_DBF_CTRL_LEN);
-+			QETH_DBF_HEX(CTRL, 3, hdr, sizeof(*hdr));
- 			continue;
- 		}
- 		work_done++;
-diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_mai=
-n.c
-index 1c62cbbaa66f..cd73172bff47 100644
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -1793,7 +1793,7 @@ static int qeth_l3_process_inbound_buffer(struct qeth=
-_card *card,
- 		default:
- 			dev_kfree_skb_any(skb);
- 			QETH_CARD_TEXT(card, 3, "inbunkno");
--			QETH_DBF_HEX(CTRL, 3, hdr, QETH_DBF_CTRL_LEN);
-+			QETH_DBF_HEX(CTRL, 3, hdr, sizeof(*hdr));
- 			continue;
- 		}
- 		work_done++;
+diff --git a/arch/arm64/include/asm/jump_label.h b/arch/arm64/include/asm/j=
+ump_label.h
+index 1b5e0e843c3a..7e2b3e360086 100644
+--- a/arch/arm64/include/asm/jump_label.h
++++ b/arch/arm64/include/asm/jump_label.h
+@@ -28,7 +28,7 @@
+=20
+ static __always_inline bool arch_static_branch(struct static_key *key, boo=
+l branch)
+ {
+-	asm goto("1: nop\n\t"
++	asm_volatile_goto("1: nop\n\t"
+ 		 ".pushsection __jump_table,  \"aw\"\n\t"
+ 		 ".align 3\n\t"
+ 		 ".quad 1b, %l[l_yes], %c0\n\t"
+@@ -42,7 +42,7 @@ static __always_inline bool arch_static_branch(struct sta=
+tic_key *key, bool bran
+=20
+ static __always_inline bool arch_static_branch_jump(struct static_key *key=
+, bool branch)
+ {
+-	asm goto("1: b %l[l_yes]\n\t"
++	asm_volatile_goto("1: b %l[l_yes]\n\t"
+ 		 ".pushsection __jump_table,  \"aw\"\n\t"
+ 		 ".align 3\n\t"
+ 		 ".quad 1b, %l[l_yes], %c0\n\t"
 --=20
 2.17.1
