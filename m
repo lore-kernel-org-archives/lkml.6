@@ -2,149 +2,83 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 884E5C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ECB6C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 598542084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:25:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 598542084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 059182083C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:26:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="AOagu1ze"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 059182083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729155AbeJAQCr (ORCPT
+        id S1729179AbeJAQDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 12:02:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54996 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729038AbeJAQCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:02:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5EAFDB044;
-        Mon,  1 Oct 2018 09:25:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 58C7C1E093C; Mon,  1 Oct 2018 11:25:49 +0200 (CEST)
-Date:   Mon, 1 Oct 2018 11:25:49 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     rong.a.chen@intel.com, Jan Kara <jack@suse.cz>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, LKP <lkp@01.org>
-Subject: Re: [LKP] [fsnotify] 60f7ed8c7c: will-it-scale.per_thread_ops -5.9%
- regression
-Message-ID: <20181001092549.GC3913@quack2.suse.cz>
-References: <20180930065100.GL15893@shao2-debian>
- <CAOQ4uxiHkufAtt87bMs9n-0sFxJSHsBxDX6jn8v28vkvy=a_qQ@mail.gmail.com>
- <CAOQ4uxgqBgYiGpf_6zrZk=L2bAQsujzcFE0ZzUXFHu8AnHSk7g@mail.gmail.com>
+        Mon, 1 Oct 2018 12:03:02 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38915 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729038AbeJAQDB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 12:03:01 -0400
+Received: by mail-it1-f196.google.com with SMTP id w200-v6so10430631itc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 02:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=H70Cz97l6J103ITgOrVgob8ZYlE0MLopxBm0tSP3nns=;
+        b=AOagu1ze3WjkvUovo3PchzHGYKqMijolhiLf6ndqTlkAhOYJ/DBKsS+Y01kJOUe2So
+         3iY8m1jxAQKy9U7saN4EnQqfFlT97YvsHjzK38D+QqKRB2S8YyAPgtlYvc81acsbsiJ/
+         j+cXI3ziS9xOiMf/ie22O3nqSuOTW7f/J1ZOM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=H70Cz97l6J103ITgOrVgob8ZYlE0MLopxBm0tSP3nns=;
+        b=OrbWvXTMMSM+WSYaoeCO1ybxpHZzMSlx1lIn1GcJ1RKAT3Ryw6cbOhVV7NygTo48vJ
+         sPpOCOUJfQLO7kbVcPqvhIR/6haD12LGs/GylKdO4naWyS4t8euywNvKwLWBdyJr6qHq
+         iFF0C/2XNTvYU/jhKdmCTQG0RlPAECfqHzDQkvLsOrCAbmLACXdiNp9jSvOQVeNqMe3G
+         bOObI3Ab5TlUn7LcfQj9yPXqfVcvGiMHxSk7nnTLn6GB303f54l3dNdpd+SSXQEcPNlO
+         q+nkVwQiqifmNHWZhOaT3M3derD2IeMVntpoKNj0BY+rvg/Wd/UwTZ95ObFaXcE8FcNl
+         Saew==
+X-Gm-Message-State: ABuFfoi/n25xcCVTU7o/2zWHhPQyZOsTzZAGOD2Qy9aEJy2YLbRS/s21
+        4HcxIfNPmeiMT5nOzf3NpdGyV2mVr/J2lArTYIlFNA==
+X-Google-Smtp-Source: ACcGV60iO7w4hpRpt5bYACxMjr7c5U9V9s1zt8b5LLD47aaSFE8giOQzoFJNqaHSMTFHrVUV2xKQKahunktr0XA3Woo=
+X-Received: by 2002:a24:2744:: with SMTP id g65-v6mr5359221ita.47.1538385971058;
+ Mon, 01 Oct 2018 02:26:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgqBgYiGpf_6zrZk=L2bAQsujzcFE0ZzUXFHu8AnHSk7g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 02:26:10 -0700 (PDT)
+X-Originating-IP: [212.96.48.140]
+In-Reply-To: <153786915356.22029.14929917223689579717.stgit@localhost.localdomain>
+References: <153786915356.22029.14929917223689579717.stgit@localhost.localdomain>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 1 Oct 2018 11:26:10 +0200
+Message-ID: <CAJfpegsPkKb2Gfd65Yq4qo6dgyCB2Wzy10FYXhzoMbXQW67U=Q@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Fix use-after-free in fuse_dev_do_write()
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+4e975615ca01f2277bdd@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 30-09-18 12:16:45, Amir Goldstein wrote:
-> On Sun, Sep 30, 2018 at 12:00 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Sun, Sep 30, 2018 at 9:50 AM kernel test robot <rong.a.chen@intel.com> wrote:
-> > >
-> > > Greeting,
-> > >
-> > > FYI, we noticed a -5.9% regression of will-it-scale.per_thread_ops due to commit:
-> > >
-> > >
-> > > commit: 60f7ed8c7c4d06aeda448c6da74621552ee739aa ("fsnotify: send path type events to group with super block marks")
-> > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> > >
-> > > in testcase: will-it-scale
-> > > on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 64G memory
-> > > with following parameters:
-> > >
-> > >         nr_task: 16
-> > >         mode: thread
-> > >         test: unlink2
-> > >         cpufreq_governor: performance
-> > >
-> > > test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
-> > > test-url: https://github.com/antonblanchard/will-it-scale
-> > >
-> > >
-> > >
-> > > Details are as below:
-> > > -------------------------------------------------------------------------------------------------->
-> > >
-> > >
-> > > To reproduce:
-> > >
-> > >         git clone https://github.com/intel/lkp-tests.git
-> > >         cd lkp-tests
-> > >         bin/lkp install job.yaml  # job file is attached in this email
-> > >         bin/lkp run     job.yaml
-> > >
-> > > =========================================================================================
-> > > compiler/cpufreq_governor/kconfig/mode/nr_task/rootfs/tbox_group/test/testcase:
-> > >   gcc-7/performance/x86_64-rhel-7.2/thread/16/debian-x86_64-2018-04-03.cgz/lkp-bdw-ep3d/unlink2/will-it-scale
-> > >
-> > > commit:
-> > >   1e6cb72399 ("fsnotify: add super block object type")
-> > >   60f7ed8c7c ("fsnotify: send path type events to group with super block marks")
-> > >
-> >
-> > I have to admit this looks strange.
-> > All this commit does is dereference mnt->mnt.mnt_sb and then
-> > sb->s_fsnotify_mask/sb->s_fsnotify_marks to find that they are zero.
-> > AFAICT there should be no extra contention added by this commit and it's
-> > hard to believe that parallel unlink workload would suffer from this change.
-> >
-> > I will try to install lkp-tests to verify this on my own system, but
-> > until proven
-> > otherwise I will regard this as false positive.
-> >
-> 
-> Actually, is it possible to ask for a private test with the following patch
-> to optimize out an unneeded srcu_derefence().
-> This optimization (assuming it is correct) could in fact improve scaling
-> compared to upstream, because there are already 2 calls to
-> fsnotify_first_mark in the code. The blamed commit just adds a 3rd one.
+On Tue, Sep 25, 2018 at 11:52 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+> After we found req in request_find() and released the lock,
+> everything may happen with the req in parallel.
+>
+> Keep it alive till we finish touch its memory.
+>
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-I'd be surprised if your patch actually changed anything. On x86,
-srcu_dereference(foo) is just READ_ONCE(foo) and that is just a syntactic
-suggar around foo to make sure compiler really fetches the value from
-memory to a register only once... But it's probably worth a try.
+Applied.
 
-> I am assuming that() in the test there is an fsnotify mount mark (maybe setup
-> by systemd) otherwise, the optimization in line 351 would have not reached
-> the extra fsnotify_first_mark() call.
-> Can you confirm or disprove the assumption that an fanotify mount mark
-> is present during the test?
-
-This would be good to know.
-
-								Honza
-
-> ----
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 422fbc6dffde..8d45d82e09ff 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -246,6 +246,9 @@ static struct fsnotify_mark
-> *fsnotify_first_mark(struct fsnotify_mark_connector
->         struct fsnotify_mark_connector *conn;
->         struct hlist_node *node = NULL;
-> 
-> +       if (!*connp)
-> +               return NULL;
-> +
->         conn = srcu_dereference(*connp, &fsnotify_mark_srcu);
->         if (conn)
->                 node = srcu_dereference(conn->list.first, &fsnotify_mark_srcu);
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Miklos
