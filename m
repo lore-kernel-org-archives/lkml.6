@@ -2,105 +2,96 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46340C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE47C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F7C12082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:33:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61E362082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:36:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="by7WXh6e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F7C12082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zYE4+uDa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E362082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbeJBAMS (ORCPT
+        id S1726386AbeJBAPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:12:18 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54822 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbeJBAMR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:12:17 -0400
-Received: by mail-wm1-f65.google.com with SMTP id r63-v6so5624797wma.4;
-        Mon, 01 Oct 2018 10:33:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SYGS1sO45oTnl/Q5rUo6wcZ37D2M/AQANkRaLyz2Pkk=;
-        b=by7WXh6eApumJVFOhahxmywLot6MkUu8CcVZErZisOIb24X6ADNZKgN4IR9Wd+gtjX
-         T+GMJzP+jIMMBtKllmeVnaIAUVt4Uv9DqtNPhQNC2igGAULfrQt/y5gfa8lR+ImbUi4S
-         miwbKKkFo6lzJNj1hZlrBabxPwadEFjph8h9hFIw8CeFltMHyZ40di76dsGNXa1Aihe3
-         hs7atpjISJT3HIZBdznoflz4fEtXs6Wla6dB50xbG3di9+RqW5bfKE6dzcUUj3X9I/Ch
-         zFB90i4EkyMdBw5/gr/NUiT0GEWTw8pRxcN0WCht3UvlEdSpc3u3CTcsoS7dg03qg9X+
-         yFhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=SYGS1sO45oTnl/Q5rUo6wcZ37D2M/AQANkRaLyz2Pkk=;
-        b=mZFFp3WwEMdFUL98x0xOfsAcmxsByLKubHqkojNtDX7JKXt+k8fLUmXokkawuLGwal
-         1D5SDXSy0wnnMufM1PA9nb/SRRV8vlNcO/417hfWdekxE9kqX5Mnh4SLBWzh62nj5RiK
-         PxWDaEtbFFlMpUFyY7KMtmF3pyXNTmTfL6Nxn+bg3Oq0a1eonRdOtgucw/5MyA/T+Q4U
-         cOzQf2buoExTdIxdRWDtfOqoyCjRWkrsNA77CDmW9GNU4X98laWv/bU9lR6KvHBTvVUv
-         Fi1MdmqtPzTa0HtS8MRbkTE7m+MsRbxA+yYNqW0Kg5O5vjjTgbgemMXf4DpV0Fc59GEW
-         uorQ==
-X-Gm-Message-State: ABuFfoiUlQ0pihGfun9q4XKsYKREZWyRHQnyjqC8/Apb7zQPWLyF8PhA
-        a9c53Pe0kwfOmiUAIFQgIktXsFv4
-X-Google-Smtp-Source: ACcGV604leOI4ku6jgh/lqSyUP3OSFVjtKqSMjitdBSiOjsN52Asm043q3MKytjraRDmXOySX+NSyw==
-X-Received: by 2002:a1c:ac82:: with SMTP id v124-v6mr9842742wme.10.1538415204942;
-        Mon, 01 Oct 2018 10:33:24 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id v16-v6sm7840651wru.31.2018.10.01.10.33.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 10:33:24 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
-        Parallel ATA drivers)),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Subject: [PATCH v2 4/4] ata: ahci_brcm: Allow using driver or DSL SoCs
-Date:   Mon,  1 Oct 2018 10:33:02 -0700
-Message-Id: <20181001173302.25398-5-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181001173302.25398-1-f.fainelli@gmail.com>
-References: <20181001173302.25398-1-f.fainelli@gmail.com>
+        Mon, 1 Oct 2018 20:15:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725740AbeJBAPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 20:15:15 -0400
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A125321476;
+        Mon,  1 Oct 2018 17:36:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538415383;
+        bh=MvrhLc7wACbzdQ0HyvEfh+Q4uODZP/Sa/Hz9E2Jyp+Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zYE4+uDa3+GWqFrivcPoDkwAiq3mSNVNY4oLrkt1l/HczKkhNUDDPuc4FXaxwEaV8
+         HJo1k4/gELgvwjnyDWC6u8R2pnthYcrNA6iPvXGLUDmC7WJgBATShbUREuAcb8IkKR
+         PAzTa8fSYyBKsE39adSATNvMZ3x5xcdTfl9mNN6w=
+Received: by mail-qk1-f179.google.com with SMTP id q12-v6so8599402qkl.13;
+        Mon, 01 Oct 2018 10:36:23 -0700 (PDT)
+X-Gm-Message-State: ABuFfohocoRNpxPB/BZ2ofmSaTwujBStPRi1bZqZDWPmbs7olOK+n/HS
+        WiTRNPChdiYh56BSW2egNAi5tLLXNqEb1SjUTQ==
+X-Google-Smtp-Source: ACcGV62ixXGyF8N9W3rgDQU+4hFHArJNZ8U0VCEBW/0Y8jYdXHwRnO5XV+92STiD22Snjjpk6E/xEnvktYE8whTwQj0=
+X-Received: by 2002:a37:ddcf:: with SMTP id u76-v6mr8830136qku.184.1538415382819;
+ Mon, 01 Oct 2018 10:36:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
+ <20180830144541.17740-5-vivek.gautam@codeaurora.org> <20181001121857.GA31488@arm.com>
+In-Reply-To: <20181001121857.GA31488@arm.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 1 Oct 2018 12:36:09 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+dSGXCiWsjLt00wu=s-ZW8M1pkQqKFWboc54M8gHFTYg@mail.gmail.com>
+Message-ID: <CAL_Jsq+dSGXCiWsjLt00wu=s-ZW8M1pkQqKFWboc54M8gHFTYg@mail.gmail.com>
+Subject: Re: [PATCH v16 4/5] dt-bindings: arm-smmu: Add bindings for qcom,smmu-v2
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Clark <robdclark@gmail.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Sricharan <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Broadcom STB AHCI controller is the same as the one found on DSL
-SoCs, so we will utilize the same driver on these systems as well.
+On Mon, Oct 1, 2018 at 7:18 AM Will Deacon <will.deacon@arm.com> wrote:
+>
+> On Thu, Aug 30, 2018 at 08:15:40PM +0530, Vivek Gautam wrote:
+> > Add bindings doc for Qcom's smmu-v2 implementation.
+> >
+> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> > Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> > Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > ---
+> >  .../devicetree/bindings/iommu/arm,smmu.txt         | 39 ++++++++++++++++++++++
+> >  1 file changed, 39 insertions(+)
+>
+> It would be nice to have an Ack from a DT maintainer on this, since it's
+> adding new compatible strings...
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/ata/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I did...
 
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index 39b181d6bd0d..99698d7fe585 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -121,7 +121,8 @@ config SATA_AHCI_PLATFORM
- 
- config AHCI_BRCM
- 	tristate "Broadcom AHCI SATA support"
--	depends on ARCH_BRCMSTB || BMIPS_GENERIC || ARCH_BCM_NSP
-+	depends on ARCH_BRCMSTB || BMIPS_GENERIC || ARCH_BCM_NSP || \
-+		   ARCH_BCM_63XX
- 	help
- 	  This option enables support for the AHCI SATA3 controller found on
- 	  Broadcom SoC's.
--- 
-2.17.1
-
+Rob
