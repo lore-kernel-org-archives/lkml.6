@@ -2,187 +2,171 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7FEC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CD3C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B230F2084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:03:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41D702084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:03:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MMztVRRo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B230F2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="YNoT2R+T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41D702084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbeJBCm1 (ORCPT
+        id S1726448AbeJBCm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 22:42:27 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:45190 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeJBCm1 (ORCPT
+        Mon, 1 Oct 2018 22:42:57 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:51844 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbeJBCm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 22:42:27 -0400
-Received: by mail-yb1-f195.google.com with SMTP id d9-v6so6142463ybr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 13:03:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=GNlIUAwuN1sQQ+qJNf7a6orBI5uhXKmIz9IhShdF95M=;
-        b=MMztVRRofm+KI9WR1xYJ7sb0nzYrDOnrVnigSK+U3j/A/d1/OyfHH9PATv5QF9AFQM
-         VbIl6eEhRRnJPJsk+JS9oQcBxFh4F1f9FxUsR7ZiNQAP3xWAKl2x+QKC/VL7hzp3fABJ
-         vtSGGKMIVf2fLclvlaQAGXXFh4zm5VLRg/5mI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=GNlIUAwuN1sQQ+qJNf7a6orBI5uhXKmIz9IhShdF95M=;
-        b=S//2JJ5ITKRBHX8aBqliO5Fz1EeJco+rK5UlzqZZ5gyp5zGRptqDF9pAEfd8HL60cT
-         y0/R4gH3/SrDf5NchZIPnszqPS5b/ZslBWvBSpMJ3KQyHqngpWLun7kNuetTHpKQsyTc
-         +1qvdEcRlbT4eO5tDtiJHxUL6YQfieUmkXuzqQ9j8GAovxzQvLk3a9UdJs/Z80BqVD07
-         Kq9s5lRZr/Jefy8rExDc3IxM48WM3ttWFHdiCJKZMnnVGjQfvIypGN39q1a2hEjXJtNY
-         fo+CNy/CAXiy719vyMmDK0gvu3fFfyWCj2I+UpsRUIPEWw7P8MyEDOx6sDoFW6pCT1JT
-         KHVg==
-X-Gm-Message-State: ABuFfoiurKjGGd96UHvqhx974DKgkJUaWA7eHkBpJRZMF3S2tsUdN+zy
-        boEpctUDlNw9cuwQP34Gm01fvyx/qck=
-X-Google-Smtp-Source: ACcGV628q5p3sVW1J9de+WG8UZ/bDkCFytXtDlUdt9874EVYGY1Xn0T3uLEQOoKVnbnlNxocBQE5Xg==
-X-Received: by 2002:a25:5507:: with SMTP id j7-v6mr6966261ybb.133.1538424179522;
-        Mon, 01 Oct 2018 13:02:59 -0700 (PDT)
-Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
-        by smtp.gmail.com with ESMTPSA id t81-v6sm7428290ywb.90.2018.10.01.13.02.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 13:02:57 -0700 (PDT)
-Received: by mail-yw1-f44.google.com with SMTP id y14-v6so6053771ywa.4
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 13:02:57 -0700 (PDT)
-X-Received: by 2002:a81:9b83:: with SMTP id s125-v6mr6689309ywg.47.1538424176795;
- Mon, 01 Oct 2018 13:02:56 -0700 (PDT)
+        Mon, 1 Oct 2018 22:42:57 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 52C2D5C0172;
+        Mon,  1 Oct 2018 22:03:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1538424208;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kSGCg2NQwBUgoZQEZeuf3kgRarYbEWK6dyFbj4d5MNs=;
+        b=YNoT2R+TeE3QK56DhKVke28Nbu1GECXDQgXed1CJ61JbKaWWlZdQ0BzVHZ+0hn/xzCbTwY
+        qHBWlN1WsCzVY1VT3NDNw6zfPEWxgDxdn/gpcBKUQmM5MnrUYc8m3I+0G0ki8jWW6HDXVH
+        ooSj33FLpVL6v+JAJBwVsnaiU/z7NVM=
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 13:02:56 -0700 (PDT)
-In-Reply-To: <20181001185616.11427.35521.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
-References: <20181001185616.11427.35521.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 1 Oct 2018 13:02:56 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jL2xgiXZ_9bdY9fWJB7dKvzKO7L9Xb83M0mmmhQrZSZcQ@mail.gmail.com>
-Message-ID: <CAGXu5jL2xgiXZ_9bdY9fWJB7dKvzKO7L9Xb83M0mmmhQrZSZcQ@mail.gmail.com>
-Subject: Re: [PATCH] migration/mm: Add WARN_ON to try_offline_node
-To:     Michael Bringmann <mwb@linux.vnet.ibm.com>
-Cc:     PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Russell Currey <ruscur@russell.cc>,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Juliet Kim <minkim@us.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 01 Oct 2018 22:03:28 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     alison.wang@nxp.com, airlied@linux.ie,
+        Madhur Verma <madhur.verma@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Hemanshu Srivastava <hemanshu.s@samsung.com>,
+        Satendra Singh Thakur <satendra.t@samsung.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: [PATCH 2/2] drm/fsl-dcu: use drm_display_mode_to_videomode to
+ calculate timing parameters
+In-Reply-To: <20181001075702.GS11082@phenom.ffwll.local>
+References: <20180926204150.29829-1-stefan@agner.ch>
+ <20180926204150.29829-2-stefan@agner.ch>
+ <20181001075702.GS11082@phenom.ffwll.local>
+Message-ID: <56170905672e17e6bd9bf0ef45c10ef6@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 11:56 AM, Michael Bringmann
-<mwb@linux.vnet.ibm.com> wrote:
-> In some LPAR migration scenarios, device-tree modifications are
-> made to the affinity of the memory in the system.  For instance,
-> it may occur that memory is installed to nodes 0,3 on a source
-> system, and to nodes 0,2 on a target system.  Node 2 may not
-> have been initialized/allocated on the target system.
->
-> After migration, if a RTAS PRRN memory remove is made to a
-> memory block that was in node 3 on the source system, then
-> try_offline_node tries to remove it from node 2 on the target.
-> The NODE_DATA(2) block would not be initialized on the target,
-> and there is no validation check in the current code to prevent
-> the use of a NULL pointer.  Call traces such as the following
-> may be observed:
->
-> A similar problem of moving memory to an unitialized node has
-> also been observed on systems where multiple PRRN events occur
-> prior to a complete update of the device-tree.
->
-> pseries-hotplug-mem: Attempting to update LMB, drc index 80000002
-> Offlined Pages 4096
-> ...
-> Oops: Kernel access of bad area, sig: 11 [#1]
-> ...
-> Workqueue: pseries hotplug workque pseries_hp_work_fn
-> ...
-> NIP [c0000000002bc088] try_offline_node+0x48/0x1e0
-> LR [c0000000002e0b84] remove_memory+0xb4/0xf0
-> Call Trace:
-> [c0000002bbee7a30] [c0000002bbee7a70] 0xc0000002bbee7a70 (unreliable)
-> [c0000002bbee7a70] [c0000000002e0b84] remove_memory+0xb4/0xf0
-> [c0000002bbee7ab0] [c000000000097784] dlpar_remove_lmb+0xb4/0x160
-> [c0000002bbee7af0] [c000000000097f38] dlpar_memory+0x328/0xcb0
-> [c0000002bbee7ba0] [c0000000000906d0] handle_dlpar_errorlog+0xc0/0x130
-> [c0000002bbee7c10] [c0000000000907d4] pseries_hp_work_fn+0x94/0xa0
-> [c0000002bbee7c40] [c0000000000e1cd0] process_one_work+0x1a0/0x4e0
-> [c0000002bbee7cd0] [c0000000000e21b0] worker_thread+0x1a0/0x610
-> [c0000002bbee7d80] [c0000000000ea458] kthread+0x128/0x150
-> [c0000002bbee7e30] [c00000000000982c] ret_from_kernel_thread+0x5c/0xb0
->
-> This patch adds a check for an incorrectly initialized to the
-> beginning of try_offline_node, and exits the routine.
->
-> Another patch is being developed for powerpc to track the
-> node Id to which an LMB belongs, so that we can remove the
-> LMB from there instead of the nid as currently interpreted
-> from the device tree.
->
-> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+On 01.10.2018 09:57, Daniel Vetter wrote:
+> On Wed, Sep 26, 2018 at 10:41:50PM +0200, Stefan Agner wrote:
+>> From: Satendra Singh Thakur <satendra.t@samsung.com>
+>>
+>> Use the drm_display_mode_to_videomode function to calculate front/
+>> back porches and sync length.
+>>
+>> Cc: Madhur Verma <madhur.verma@samsung.com>
+>> Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
+>> Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> 
+> I think if lots of people want this (iirc yours not the only driver that
+> wants front/back-porch) we should extend the computed crtc_* fields with
+> this. Kinda silly we force people to go through v4l videomode in drm
+> drivers. But then, this gets the job done, so maybe an idea for todo.rst?
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Hm, I see, yeah seems rather straight forward to calculate this
+information in drm_mode_set_crtcinfo().
 
--Kees
+> 
+> On both patches:
+> 
+> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-> ---
->  mm/memory_hotplug.c |   10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 38d94b7..e48a4d0 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1831,10 +1831,16 @@ static int check_and_unmap_cpu_on_node(pg_data_t *pgdat)
->  void try_offline_node(int nid)
->  {
->         pg_data_t *pgdat = NODE_DATA(nid);
-> -       unsigned long start_pfn = pgdat->node_start_pfn;
-> -       unsigned long end_pfn = start_pfn + pgdat->node_spanned_pages;
-> +       unsigned long start_pfn;
-> +       unsigned long end_pfn;
->         unsigned long pfn;
->
-> +       if (WARN_ON(pgdat == NULL))
-> +               return;
-> +
-> +       start_pfn = pgdat->node_start_pfn;
-> +       end_pfn = start_pfn + pgdat->node_spanned_pages;
-> +
->         for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
->                 unsigned long section_nr = pfn_to_section_nr(pfn);
->
->
+Thanks, applied both.
 
+--
+Stefan
 
-
--- 
-Kees Cook
-Pixel Security
+>> ---
+>>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c | 32 ++++++++++------------
+>>  1 file changed, 14 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c
+>> index 05d1c9977395..18afc94e4dff 100644
+>> --- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c
+>> +++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c
+>> @@ -17,6 +17,7 @@
+>>  #include <drm/drm_atomic_helper.h>
+>>  #include <drm/drm_crtc.h>
+>>  #include <drm/drm_crtc_helper.h>
+>> +#include <video/videomode.h>
+>>
+>>  #include "fsl_dcu_drm_crtc.h"
+>>  #include "fsl_dcu_drm_drv.h"
+>> @@ -85,39 +86,34 @@ static void fsl_dcu_drm_crtc_mode_set_nofb(struct drm_crtc *crtc)
+>>  	struct fsl_dcu_drm_device *fsl_dev = dev->dev_private;
+>>  	struct drm_connector *con = &fsl_dev->connector.base;
+>>  	struct drm_display_mode *mode = &crtc->state->mode;
+>> -	unsigned int hbp, hfp, hsw, vbp, vfp, vsw, pol = 0;
+>> +	unsigned int pol = 0;
+>> +	struct videomode vm;
+>>
+>>  	clk_set_rate(fsl_dev->pix_clk, mode->clock * 1000);
+>>
+>> -	/* Configure timings: */
+>> -	hbp = mode->htotal - mode->hsync_end;
+>> -	hfp = mode->hsync_start - mode->hdisplay;
+>> -	hsw = mode->hsync_end - mode->hsync_start;
+>> -	vbp = mode->vtotal - mode->vsync_end;
+>> -	vfp = mode->vsync_start - mode->vdisplay;
+>> -	vsw = mode->vsync_end - mode->vsync_start;
+>> +	drm_display_mode_to_videomode(mode, &vm);
+>>
+>>  	/* INV_PXCK as default (most display sample data on rising edge) */
+>>  	if (!(con->display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_POSEDGE))
+>>  		pol |= DCU_SYN_POL_INV_PXCK;
+>>
+>> -	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+>> +	if (vm.flags & DISPLAY_FLAGS_HSYNC_LOW)
+>>  		pol |= DCU_SYN_POL_INV_HS_LOW;
+>>
+>> -	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
+>> +	if (vm.flags & DISPLAY_FLAGS_VSYNC_LOW)
+>>  		pol |= DCU_SYN_POL_INV_VS_LOW;
+>>
+>>  	regmap_write(fsl_dev->regmap, DCU_HSYN_PARA,
+>> -		     DCU_HSYN_PARA_BP(hbp) |
+>> -		     DCU_HSYN_PARA_PW(hsw) |
+>> -		     DCU_HSYN_PARA_FP(hfp));
+>> +		     DCU_HSYN_PARA_BP(vm.hback_porch) |
+>> +		     DCU_HSYN_PARA_PW(vm.hsync_len) |
+>> +		     DCU_HSYN_PARA_FP(vm.hfront_porch));
+>>  	regmap_write(fsl_dev->regmap, DCU_VSYN_PARA,
+>> -		     DCU_VSYN_PARA_BP(vbp) |
+>> -		     DCU_VSYN_PARA_PW(vsw) |
+>> -		     DCU_VSYN_PARA_FP(vfp));
+>> +		     DCU_VSYN_PARA_BP(vm.vback_porch) |
+>> +		     DCU_VSYN_PARA_PW(vm.vsync_len) |
+>> +		     DCU_VSYN_PARA_FP(vm.vfront_porch));
+>>  	regmap_write(fsl_dev->regmap, DCU_DISP_SIZE,
+>> -		     DCU_DISP_SIZE_DELTA_Y(mode->vdisplay) |
+>> -		     DCU_DISP_SIZE_DELTA_X(mode->hdisplay));
+>> +		     DCU_DISP_SIZE_DELTA_Y(vm.vactive) |
+>> +		     DCU_DISP_SIZE_DELTA_X(vm.hactive));
+>>  	regmap_write(fsl_dev->regmap, DCU_SYN_POL, pol);
+>>  	regmap_write(fsl_dev->regmap, DCU_BGND, DCU_BGND_R(0) |
+>>  		     DCU_BGND_G(0) | DCU_BGND_B(0));
+>> --
+>> 2.19.0
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
