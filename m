@@ -2,123 +2,208 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37EB8C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA42C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1CB12145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:12:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AlR8khmg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1CB12145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id DF83B2089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:16:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF83B2089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbeJAXva (ORCPT
+        id S1726251AbeJAXzY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 19:51:30 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40043 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbeJAXva (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 19:51:30 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n31-v6so9911072pgm.7
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 10:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h65zhG+E9ertU7JJGm1OhCYToFzanEl/h/lareKwRF8=;
-        b=AlR8khmgdXTJssV88O4F16g6iZU01EQhwu9pLDpi/J7DnV0SN9w1udv40OVooCJuNo
-         nwnMKopbgFd3TnDJ+m6JzsGKQQoBFLVTAqLyyrhL+clEaB11lr3xtCR+EYSX3HReIkg4
-         7AmXtBcQrvIvQscb7goUwfvTphz3vbA2NVShxXGpK3xckuIqEhR70aIcVYiDga31YOVo
-         hEksYae3T//nz5ayQqf40PBzTESwlo70loGm7/cfbezXpwaGQ7TmftSeReXlkDjdmIux
-         RsJDIg33rhlWktzymUrgbYK1egWCgliIgm6d6gyPE7Q2fojSZMaK7aaa0htgiaxA2dEJ
-         tPRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h65zhG+E9ertU7JJGm1OhCYToFzanEl/h/lareKwRF8=;
-        b=r7B6jy1Pf1uUHUOEOszjXEA91wos61wvCTuu1prd9Gnq2x8q01aWRvXQ3bQhh7D51+
-         5Xj0Z3HFow1ZqjU1YIDHJW9l2FpI6WNUlVqSs92FkXDXCULLACqnbSG5OOeny38v/sYf
-         vh0ejEWxfeN/31fsruDIAA8RB5MK3PnMCTrzAQrFUs12hq+/PH3Ib5qtBVATNg+n8yeQ
-         bZOnzHt1g/TabsUFV0jCBDh0pNeqrdcIrR0TnZzWJqCLP+pAGwgV9yyLvocL/vBggWEH
-         JBh0l52IJIm3EIDnZUV3Pjo8mN1E4Mso0HAWwRXUIUhQXVqXn8JESAYdnXQKk48dPVSP
-         wAog==
-X-Gm-Message-State: ABuFfogtNVRTC1prqr3jSBhzQfqjpvmgTh04qOS38Wu5Ljgfg+eWaFoy
-        K+Gfh6jWgTageUM3hPOo8kG4iGYIZhLiEv0vSoQ8kw==
-X-Google-Smtp-Source: ACcGV631uE+J8my6WXqcpQn5qLCTHe4z5yByFP1J0SJHHcRzAMOHJ8fVcdbCZ8tnWpSgnxZ5kQtBfwcC7lRUzNLjL2Y=
-X-Received: by 2002:a17:902:bf42:: with SMTP id u2-v6mr10276309pls.13.1538413963544;
- Mon, 01 Oct 2018 10:12:43 -0700 (PDT)
+        Mon, 1 Oct 2018 19:55:24 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53044 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725975AbeJAXzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 19:55:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3058A18A;
+        Mon,  1 Oct 2018 10:16:37 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 00D433F5B7;
+        Mon,  1 Oct 2018 10:16:37 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id AC8281AE3C57; Mon,  1 Oct 2018 18:17:00 +0100 (BST)
+Date:   Mon, 1 Oct 2018 18:17:00 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, longman@redhat.com,
+        andrea.parri@amarulasolutions.com, tglx@linutronix.de
+Subject: Re: [RFC][PATCH 3/3] locking/qspinlock: Optimize for x86
+Message-ID: <20181001171700.GC13918@arm.com>
+References: <20180926110117.405325143@infradead.org>
+ <20180926111307.513429499@infradead.org>
 MIME-Version: 1.0
-References: <20181001161506.100284-1-evgreen@chromium.org>
-In-Reply-To: <20181001161506.100284-1-evgreen@chromium.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 1 Oct 2018 10:12:32 -0700
-Message-ID: <CAKwvOdmtF-s4amu-zXbyUNe+jvCuC3hXUez6fVVq0sjuoYc3eg@mail.gmail.com>
-Subject: Re: [PATCH RESEND] scsi: sg: Prevent potential double frees in sg driver
-To:     hch@infradead.org
-Cc:     Doug Gilbert <dgilbert@interlog.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Robb Glasser <rglasser@google.com>, evgreen@chromium.org,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926111307.513429499@infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 9:16 AM Evan Green <evgreen@chromium.org> wrote:
->
-> From: Robb Glasser <rglasser@google.com>
->
-> sg_ioctl could be spammed by requests, leading to a double free in
-> __free_pages. This protects the entry points of sg_ioctl where the
-> memory could be corrupted by a double call to __free_pages if multiple
-> requests are happening concurrently.
->
-> Signed-off-by: Robb Glasser <rglasser@google.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> Cc: stable@vger.kernel.org
->
+Hi Peter,
+
+Thanks for chewing up my afternoon ;)
+
+On Wed, Sep 26, 2018 at 01:01:20PM +0200, Peter Zijlstra wrote:
+> On x86 we cannot do fetch_or with a single instruction and end up
+> using a cmpxchg loop, this reduces determinism. Replace the fetch_or
+> with a very tricky composite xchg8 + load.
+> 
+> The basic idea is that we use xchg8 to test-and-set the pending bit
+> (when it is a byte) and then a load to fetch the whole word. Using
+> two instructions of course opens a window we previously did not have.
+> In particular the ordering between pending and tail is of interrest,
+> because that is where the split happens.
+> 
+> The claim is that if we order them, it all works out just fine. There
+> are two specific cases where the pending,tail state changes:
+> 
+>  - when the 3rd lock(er) comes in and finds pending set, it'll queue
+>    and set tail; since we set tail while pending is set, the ordering
+>    is split is not important (and not fundamentally different form
+>    fetch_or). [*]
+> 
+>  - when the last queued lock holder acquires the lock (uncontended),
+>    we clear the tail and set the lock byte. By first setting the
+>    pending bit this cmpxchg will fail and the later load must then
+>    see the remaining tail.
+> 
+> Another interesting scenario is where there are only 2 threads:
+> 
+> 	lock := (0,0,0)
+> 
+> 	CPU 0			CPU 1
+> 
+> 	lock()			lock()
+> 	  trylock(-> 0,0,1)       trylock() /* fail */
+> 	    return;               xchg_relaxed(pending, 1) (-> 0,1,1)
+> 				  mb()
+> 				  val = smp_load_acquire(*lock);
+> 
+> Where, without the mb() the load would've been allowed to return 0 for
+> the locked byte.
+> 
+> [*] there is a fun scenario where the 3rd locker observes the pending
+> bit, but before it sets the tail, the 1st lock (owner) unlocks and the
+> 2nd locker acquires the lock, leaving us with a temporary 0,0,1 state.
+> But this is not different between fetch_or or this new method.
+> 
+> Suggested-by: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
-> Reposting this patch from last summer, as it looks like it fell in between
-> the cracks.
+>  arch/x86/include/asm/qspinlock.h |    2 +
+>  kernel/locking/qspinlock.c       |   56 ++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 57 insertions(+), 1 deletion(-)
+> 
+> --- a/arch/x86/include/asm/qspinlock.h
+> +++ b/arch/x86/include/asm/qspinlock.h
+> @@ -9,6 +9,8 @@
+>  
+>  #define _Q_PENDING_LOOPS	(1 << 9)
+>  
+> +#define _Q_NO_FETCH_OR
+> +
+>  #ifdef CONFIG_PARAVIRT_SPINLOCKS
+>  extern void native_queued_spin_lock_slowpath(struct qspinlock *lock, u32 val);
+>  extern void __pv_init_lock_hash(void);
+> --- a/kernel/locking/qspinlock.c
+> +++ b/kernel/locking/qspinlock.c
+> @@ -232,6 +232,60 @@ static __always_inline u32 xchg_tail(str
+>  #endif /* _Q_PENDING_BITS == 8 */
+>  
+>  /**
+> + * set_pending_fetch_acquire - fetch the whole lock value and set pending and locked
+> + * @lock : Pointer to queued spinlock structure
+> + * Return: The previous lock value
+> + *
+> + * *,*,* -> *,1,*
+> + */
+> +static __always_inline u32 set_pending_fetch_acquire(struct qspinlock *lock)
+> +{
+> +#if defined(_Q_NO_FETCH_OR) && _Q_PENDING_BITS == 8
+> +	u32 val;
+> +
+> +	/*
+> +	 * For the !LL/SC archs that do not have a native atomic_fetch_or
+> +	 * but do have a native xchg (x86) we can do trickery and avoid the
+> +	 * cmpxchg-loop based fetch-or to improve determinism.
+> +	 *
+> +	 * We first xchg the pending byte to set PENDING, and then issue a load
+> +	 * for the rest of the word and mask out the pending byte to compute a
+> +	 * 'full' value.
+> +	 */
+> +	val = xchg_relaxed(&lock->pending, 1) << _Q_PENDING_OFFSET;
 
-Christoph, do you still feel strongly about: https://lkml.org/lkml/2017/8/5/75 ?
+If we make this an xchg_acquire(), can we drop the smp_mb__after_atomic()
+and use a plain atomic_read() to get the rest of the word? But actually,
+consider this scenario with your patch:
 
->
->  drivers/scsi/sg.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-> index 8a254bb46a9b..25579d8a16b5 100644
-> --- a/drivers/scsi/sg.c
-> +++ b/drivers/scsi/sg.c
-> @@ -924,8 +924,10 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
->                         return -ENXIO;
->                 if (!access_ok(VERIFY_WRITE, p, SZ_SG_IO_HDR))
->                         return -EFAULT;
-> +               mutex_lock(&sfp->parentdp->open_rel_lock);
->                 result = sg_new_write(sfp, filp, p, SZ_SG_IO_HDR,
->                                  1, read_only, 1, &srp);
-> +               mutex_unlock(&sfp->parentdp->open_rel_lock);
->                 if (result < 0)
->                         return result;
->                 result = wait_event_interruptible(sfp->read_wait,
-> --
-> 2.19.0.605.g01d371f741-goog
->
+1. CPU0 sees a locked val, and is about to do your xchg_relaxed() to set
+   pending.
 
+2. CPU1 comes in and sets pending, spins on locked
 
--- 
-Thanks,
-~Nick Desaulniers
+3. CPU2 sees a pending and locked val, and is about to enter the head of
+   the waitqueue (i.e. it's right before xchg_tail()).
+
+4. The locked holder unlock()s, CPU1 takes the lock() and then unlock()s
+   it, so pending and locked are now 0.
+
+5. CPU0 sets pending and reads back zeroes for the other fields
+
+6. CPU0 clears pending and sets locked -- it now has the lock
+
+7. CPU2 updates tail, sees it's at the head of the waitqueue and spins
+   for locked and pending to go clear. However, it reads a stale value
+   from step (4) and attempts the atomic_try_cmpxchg() to take the lock.
+
+8. CPU2 will fail the cmpxchg(), but then go ahead and set locked. At this
+   point we're hosed, because both CPU2 and CPU0 have the lock.
+
+Is there something I'm missing that means this can't happen? I suppose
+cacheline granularity ends up giving serialisation between (4) and (7),
+but I'd *much* prefer not to rely on that because it feels horribly
+fragile.
+
+Another idea I was playing with was adding test_and_set_bit_acquire()
+for this, because x86 has an instruction for that, right?
+
+> +	/*
+> +	 * Ensures the tail load happens after the xchg().
+> +	 *
+> +	 *	   lock  unlock    (a)
+> +	 *   xchg ---------------.
+> +	 *    (b)  lock  unlock  +----- fetch_or
+> +	 *   load ---------------'
+> +	 *	   lock  unlock    (c)
+> +	 *
+> +	 * For both lock and unlock, (a) and (c) are the same as fetch_or(),
+> +	 * since either are fully before or after. The only new case is (b),
+> +	 * where a concurrent lock or unlock can interleave with the composite
+> +	 * operation.
+> +	 *
+> +	 * In either case, it is the queueing case that is of interrest, otherwise
+> +	 * the whole operation is covered by the xchg() and the tail will be 0.
+> +	 *
+> +	 * For lock-(b); we only care if we set the PENDING bit or not. If we lost
+> +	 * the PENDING race, we queue. Otherwise we'd observe the tail anyway.
+> +	 *
+> +	 * For unlock-(b); since we'll have set PENDING, the uncontended claim
+> +	 * will fail and we'll observe a !0 tail.
+> +	 */
+
+I failed miserably at parsing this comment :(
+
+I think the main issue is that I don't understand how to read the little
+diagram you've got.
+
+Will
