@@ -2,110 +2,105 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4E5C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CECC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DA232082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:18:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DA232082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9FC382082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:23:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUJhS4PK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC382082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbeJBA5l (ORCPT
+        id S1726394AbeJBBDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:57:41 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44033 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbeJBA5l (ORCPT
+        Mon, 1 Oct 2018 21:03:01 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54999 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbeJBBDA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:57:41 -0400
-Received: by mail-pg1-f195.google.com with SMTP id g2-v6so10020409pgu.11;
-        Mon, 01 Oct 2018 11:18:39 -0700 (PDT)
+        Mon, 1 Oct 2018 21:03:00 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r63-v6so5763034wma.4;
+        Mon, 01 Oct 2018 11:23:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c3d8uoZ9jCqDqemUU8IioBY+cRe4IOM/hpQz0bGB7OI=;
+        b=IUJhS4PKHOHkdV9C94AdJ+4Wr4ywPf+0VXSUOrQuduFYpVg22g00D3c6G1nPR9efBo
+         Vfy9lwsBKTtsRG2Yq+YNrPG0zQ9AQhT9gaIyxVCfITx2zd28I6fawOiI3yTwhmUKaNnZ
+         KDtvMS7ZsIjDReRn6O+Zgy8vUuaZS1LdX6S1LqTqPMuHpKExLVV+nEQ8vAtZUJb0Qzv3
+         YgIIQd5nujSFLw230VQ9HanuowP51xWqIaCgNWH3OrdSVnXejS2BanYLZ2oH4ft1HJ3u
+         iWSn818QphRr7oFAZm3gZJ2EZjuUD6QMXgBFa3/USVe2KhH+lRJKZ/BXO3704t5w+T/P
+         yF3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VetK6gfSEbLmIt2s8/EsyZD32iONqi7+KRCNkgcKH0E=;
-        b=pnpPxXQQkPd4cDZp/am6qIEcvDVT5IyZbklZsWbGxCvfUGbNASDbtahj5zY6tf2ASb
-         psAqFTM/XmIyvpkhtuE/uHXxb4iSyK6pdvoxnh+uZN5HNkdwsnmDI4uZjVrnYwMdEzln
-         azXm3ZMa6vbS4Y9j24TYAIsAE+hSJX94ZhHc08ORHtBsdbitG5kkeBkUH47PtJcnSVNX
-         18w1OYvKdTNhFH7uv5LKsqwExAxukN/VM4maVLBZ+1b88W0KQEDJIAK6olsEzs1Zaw46
-         7SRAcNyrcp+qDEWJ8e19tJzSM3Fge4q27LltXIi+lWMgSPc9iB6vDiqmGbWuk8S6yF3D
-         HsQg==
-X-Gm-Message-State: ABuFfohaF/QlbNqS986cJ8I1XE+WCxp+29lDEldQy9zPVSjO4vnJ9Roo
-        lM2v0lC9jXfeczCeu/mAwgM=
-X-Google-Smtp-Source: ACcGV639x9VxKz3qylyTRAAxLAFDrvnhbocX8XKf5R8ivpKdUgJyUTJ0dyblhBVPW0QTErp0MKbzjg==
-X-Received: by 2002:a17:902:3c5:: with SMTP id d63-v6mr12899006pld.145.1538417918602;
-        Mon, 01 Oct 2018 11:18:38 -0700 (PDT)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id r73-v6sm8987228pfk.157.2018.10.01.11.18.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 11:18:37 -0700 (PDT)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Mon, 01 Oct 2018 11:18:35 -0700
-Date:   Mon, 1 Oct 2018 11:18:35 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        stable@vger.kernel.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: Re: [PATCH] firmware: Always initialize the fw_priv list object
-Message-ID: <20181001181835.GG5238@garbanzo.do-not-panic.com>
-References: <20180920010938.10315-1-bjorn.andersson@linaro.org>
- <20180920052204.GA15695@kroah.com>
- <20180920073415.GC1367@tuxbook-pro>
- <20181001132703.GA12193@centauri.lan>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c3d8uoZ9jCqDqemUU8IioBY+cRe4IOM/hpQz0bGB7OI=;
+        b=gPIddOki9/aw4ScZBJNfFJ4UpYtRp/eiR1hf/3cQmYNuOnXZh4tqD2h3pkMEzzhriQ
+         wV7nks5CIp/vuf64mzjezQ1r3+XRcLDhKkTtkHfW2Zs93qOlsGMKT2Ct7zyAp5crczZC
+         teggVA4ZSlXfd2gsxx+rU1GK0qjin+ndX2naHE8SiwknVpR1JFHKQgNYXcp3Aoy59bY1
+         ook4GPuhnns47J/NoYZgdj9ZwPeK6zRS2qTUBeDx8YX+GxjKAtlRlgJslnwTwAH9X4Lw
+         BKxR8trvUtmeS4gxsU+zbGvCFe+ldjQgcPkrByt8QOkbWquYmd2/nI0EaxaYT5tCaih8
+         xARw==
+X-Gm-Message-State: ABuFfogTXEV1V5mwPkEm7m5KASDViCP5aYgHbUX/z1+EYIbHdVivzMsV
+        NwoVuq2FN9zogCJH2nUZgBA9yjOW0zWbOmb2Dr0=
+X-Google-Smtp-Source: ACcGV60d7+ABKTfaBIjZOmoct8T5zdze/FK0t6hF4wixGI6eQT+WJX1MpmJ//htUiqfBYzWvLoU+cXeqioWKC8wofV0=
+X-Received: by 2002:a1c:a696:: with SMTP id p144-v6mr6265141wme.14.1538418235854;
+ Mon, 01 Oct 2018 11:23:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181001132703.GA12193@centauri.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <000000000000357da505772ec5ad@google.com>
+In-Reply-To: <000000000000357da505772ec5ad@google.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Mon, 1 Oct 2018 18:23:43 +0000
+Message-ID: <CAADnVQ+DyZ5ze4gjfgQz+OATRE_Jd1b5D1osq8+8O3BL9vHzhg@mail.gmail.com>
+Subject: Re: WARNING in pcpu_alloc
+To:     syzbot+18628320d3b14a5c459c@syzkaller.appspotmail.com,
+        Roman Gushchin <guro@fb.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 03:27:03PM +0200, Niklas Cassel wrote:
-> On Thu, Sep 20, 2018 at 12:34:15AM -0700, Bjorn Andersson wrote:
-> > On Wed 19 Sep 22:22 PDT 2018, Greg Kroah-Hartman wrote:
-> > 
-> > > On Wed, Sep 19, 2018 at 06:09:38PM -0700, Bjorn Andersson wrote:
-> > > > When freeing the fw_priv the item is taken off the list. This causes an
-> > > > oops in the FW_OPT_NOCACHE case as the list object is not initialized.
-> > > > 
-> > > > Make sure to initialize the list object regardless of this flag.
-> > > > 
-> > > > Fixes: 422b3db2a503 ("firmware: Fix security issue with request_firmware_into_buf()")
-> > > > Cc: stable@vger.kernel.org
-> > > > Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> > > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > > ---
-> > > >  drivers/base/firmware_loader/main.c | 7 +++++--
-> > > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > > 
-> > > Is this being triggered by some hardware somewhere today?  Or is this
-> > > just a fix found by code inspection?
-> > > 
-> > 
-> > Hi Greg,
-> > 
-> > Yes, I found this issue while attempting to load the firmware and boot
-> > one of the DSPs on one of my Qualcomm dev boards after v4.19-rc4 and it
-> > can be reproduced on the upstream Dragonboard 820c.
-> 
-> I still see this issue on v4.19-rc6.
-> 
-> It would be nice if this fix gets merged before v4.19 gets released.
+On Mon, Oct 1, 2018 at 6:14 PM syzbot
+<syzbot+18628320d3b14a5c459c@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    c5a9f9817ba5 Merge branch 'bpf-per-cpu-cgroup-local-storage'
+> git tree:       bpf-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=175f98e6400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=443816db871edd66
+> dashboard link: https://syzkaller.appspot.com/bug?extid=18628320d3b14a5c459c
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=129cbd1a400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16685ac9400000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+18628320d3b14a5c459c@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> illegal size (0) or align (8) for percpu allocation
 
-This is the first I hear of this and this patch, so you should re-send
-it and I can review it. Also please Cc Rishabh.
+Roman,
 
-Rishabh, had you heard of this and can you confirm as well as
-422b3db2a503 was your commit?
-
-  Luis
+looks like
+        if (attr->value_size > PAGE_SIZE)
+                return ERR_PTR(-E2BIG);
+is not enough, since value_size==0 needs to be rejected as well.
+Could you prepare a patch?
