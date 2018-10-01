@@ -2,195 +2,100 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 744C5C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F238C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CB262083C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:27:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB262083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id F241720652
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:30:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jVzheXKQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F241720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729194AbeJAQEC (ORCPT
+        id S1729072AbeJAQHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 12:04:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50696 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729035AbeJAQEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:04:02 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 451ED20828; Mon,  1 Oct 2018 11:27:09 +0200 (CEST)
-Received: from qschulz (AAubervilliers-681-1-24-95.w90-88.abo.wanadoo.fr [90.88.144.95])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B13D8206FF;
-        Mon,  1 Oct 2018 11:27:08 +0200 (CEST)
-Date:   Mon, 1 Oct 2018 11:27:08 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Manasi Navare <manasi.d.navare@intel.com>
-Cc:     Damian Kos <dkos@cadence.com>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, jartur@cadence.com,
-        jbergsagel@ti.com, ltyrala@cadence.com, stelford@cadence.com,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        pgaj@cadence.com, piotrs@cadence.com
-Subject: Re: [PATCH v4 2/5] drm/dp: fix link probing for devices supporting
- DP 1.4+
-Message-ID: <20181001092708.ow4rxgzp4haax76k@qschulz>
-References: <1537455288-20223-1-git-send-email-dkos@cadence.com>
- <1537455288-20223-3-git-send-email-dkos@cadence.com>
- <20180921075929.GA28323@intel.com>
+        Mon, 1 Oct 2018 12:07:37 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46727 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728961AbeJAQHh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 12:07:37 -0400
+Received: by mail-io1-f65.google.com with SMTP id t7-v6so1342875ioj.13
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 02:30:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=bCJwugkz5Qojv9M6xWVDp+lXOXLqHABjNmdyM5scqd8=;
+        b=jVzheXKQ/MpFL4n+HklbMW/IHccZpe8RP3dPi937jqag2YITZOIKyExG8EKhOS4jlT
+         Iq07Ayx0JkFQgYeA4wsYPfySb9Agy4AtXvcmBTltLAuF68RBTkddeyTgq890OJ+QZxuJ
+         QS5jgZAY3ikMHaezGmzxSJbUwnmBKWSU1vWWo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=bCJwugkz5Qojv9M6xWVDp+lXOXLqHABjNmdyM5scqd8=;
+        b=cba9ZJnjhHpiUCE1/KVjsFXOXRmm/MD2wEA4vsEWQRuTpVFNgFjHGMK7MUDCTGFQl6
+         XB0q6uYoF4eBwSJ2CtE5sa08Pi2gX1/NM3UYKVCv3AkRDkuZsFi+U6k/OKWOozsBMTmF
+         0i4QkAyYE3GBiL4IVDs46BP9rRfS0BCb1e6YRBb6MPxrhaWL3U5zGgIOXoGc7EcOyBy8
+         oSh6Ns6fnvoeDRcG+Vzd/IBhuDQDi5MX3jwnkhZd8zV5nVClp7FFtpSnMIQt4NLEQMva
+         Jw43pjqXc11ICV8h2l2qhIWpLn+oKMQ08dXtl3EjDXx9DDaa6MbvQIu8JjddGaklOsDB
+         YNtw==
+X-Gm-Message-State: ABuFfojzEvQ7iU8MgJTRXwXBL9tZWCaIKh50a65oL935tUEvcSXTHO7o
+        qCtp/Fb2aOXEOxY9fudnH/jb/H3egu4L28azuIXVHev2
+X-Google-Smtp-Source: ACcGV61PVbxpOLqMupImVv6Yw3kyUd4A+J639FW3UZ2PTLHpP+dsxX4YWvZUUaA9P8aib6pJq5i6GJIHf9Qi/UVWww4=
+X-Received: by 2002:a6b:144b:: with SMTP id 72-v6mr6260311iou.218.1538386245206;
+ Mon, 01 Oct 2018 02:30:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ybx4xhgzfithc2la"
-Content-Disposition: inline
-In-Reply-To: <20180921075929.GA28323@intel.com>
-User-Agent: NeoMutt/20171215
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 02:30:04 -0700 (PDT)
+In-Reply-To: <1537523181-14578-10-git-send-email-ludovic.Barre@st.com>
+References: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com> <1537523181-14578-10-git-send-email-ludovic.Barre@st.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 1 Oct 2018 11:30:04 +0200
+Message-ID: <CAPDyKFq-KUNuftT1F7TXMU-Jceqi9GYTWC4Jb7qn3UdpXHR+9Q@mail.gmail.com>
+Subject: Re: [PATCH V2 09/27] mmc: mmci: modify dma_setup callback
+To:     Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 21 September 2018 at 11:46, Ludovic Barre <ludovic.Barre@st.com> wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
+>
+> This patch creates a generic mmci_dma_setup which calls
+> dma_setup callback and manages common next_cookie.
+> This patch is needed for sdmmc variant which has a different
+> dma settings.
+>
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+>
+> # Conflicts:
+> #       drivers/mmc/host/mmci.h
+>
 
---ybx4xhgzfithc2la
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please remove this. Looks like some of the other patches in the series
+have this in their changelogs as well, please have a look and fix them
+all.
 
-Hi Manasi,
+[...]
 
-On Fri, Sep 21, 2018 at 12:59:30AM -0700, Manasi Navare wrote:
-> Thanks for the patch. Verified with the DP 1.4 spec and looks good to me.
-> Also look at the related patch that makes use of the correct extended cap=
-abilities:
->=20
-> https://patchwork.freedesktop.org/patch/249400/
->=20
-
-If I'm not mistaken, you could get rid of the patch in the Intel driver
-when we have this one merged. Is there any reason not to, have I missed
-something?
-
-Thanks,
-Quentin
-
-> Reviewed-by: Manasi Navare <manasi.d.navare@intel.com>
->=20
-> Manasi
->=20
->=20
-> On Thu, Sep 20, 2018 at 03:54:37PM +0100, Damian Kos wrote:
-> > From: Quentin Schulz <quentin.schulz@free-electrons.com>
-> >=20
-> > DP 1.4 introduced a DP_EXTENDED_RECEIVER_CAP_FIELD_PRESENT bit in
-> > DP_TRAINING_AUX_RD_INTERVAL register. If set, DPCD registers from
-> > DP_DPCD_REV to DP_ADAPTER_CAP should be retrieved starting from
-> > DP_DPCD_REV_EXTENDED. All registers are copied except DP_DPCD_REV,
-> > DP_MAX_LINK_RATE and DP_DOWNSTREAMPORT_PRESENT which represent the
-> > "true capabilities" of DPRX device.
-> >=20
-> > Original DP_DPCD_REV, DP_MAX_LINK_RATE and DP_DOWNSTREAMPORT_PRESENT
-> > might falsely return lower capabilities to "avoid interoperability
-> > issues with some of the existing DP Source devices that malfunction
-> > when they discover the higher capabilities within those three
-> > registers.".
-> >=20
-> > Before DP 1.4, DP_EXTENDED_RECEIVER_CAP_FIELD_PRESENT bit was reserved
-> > and read 0 so it's safe to check against it even if DP revision is
-> > <1.4
-> >=20
-> > Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> > Signed-off-by: Damian Kos <dkos@cadence.com>
-> > ---
-> >  drivers/gpu/drm/drm_dp_helper.c | 30 +++++++++++++++++++++++++++++-
-> >  1 file changed, 29 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_h=
-elper.c
-> > index 8c6b9fd89f8a..735ebde5c2f0 100644
-> > --- a/drivers/gpu/drm/drm_dp_helper.c
-> > +++ b/drivers/gpu/drm/drm_dp_helper.c
-> > @@ -370,10 +370,38 @@ int drm_dp_link_probe(struct drm_dp_aux *aux, str=
-uct drm_dp_link *link)
-> >  {
-> >  	u8 values[3];
-> >  	int err;
-> > +	unsigned int addr;
-> > =20
-> >  	memset(link, 0, sizeof(*link));
-> > =20
-> > -	err =3D drm_dp_dpcd_read(aux, DP_DPCD_REV, values, sizeof(values));
-> > +	/*
-> > +	 * DP 1.4 introduced a DP_EXTENDED_RECEIVER_CAP_FIELD_PRESENT bit in
-> > +	 * DP_TRAINING_AUX_RD_INTERVAL register. If set, DPCD registers from
-> > +	 * DP_DPCD_REV to DP_ADAPTER_CAP should be retrieved starting from
-> > +	 * DP_DPCD_REV_EXTENDED. All registers are copied except DP_DPCD_REV,
-> > +	 * DP_MAX_LINK_RATE and DP_DOWNSTREAMPORT_PRESENT which represent the
-> > +	 * "true capabilities" of DPRX device.
-> > +	 *
-> > +	 * Original DP_DPCD_REV, DP_MAX_LINK_RATE and DP_DOWNSTREAMPORT_PRESE=
-NT
-> > +	 * might falsely return lower capabilities to "avoid interoperability
-> > +	 * issues with some of the existing DP Source devices that malfunction
-> > +	 * when they discover the higher capabilities within those three
-> > +	 * registers.".
-> > +	 *
-> > +	 * Before DP 1.4, DP_EXTENDED_RECEIVER_CAP_FIELD_PRESENT bit was rese=
-rved
-> > +	 * and read 0 so it's safe to check against it even if DP revision is
-> > +	 * <1.4
-> > +	 */
-> > +	err =3D drm_dp_dpcd_readb(aux, DP_TRAINING_AUX_RD_INTERVAL, values);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	if (values[0] & DP_EXTENDED_RECEIVER_CAP_FIELD_PRESENT)
-> > +		addr =3D DP_DP13_DPCD_REV;
-> > +	else
-> > +		addr =3D DP_DPCD_REV;
-> > +
-> > +	err =3D drm_dp_dpcd_read(aux, addr, values, sizeof(values));
-> >  	if (err < 0)
-> >  		return err;
-> > =20
-> > --=20
-> > 2.17.1
-> >=20
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---ybx4xhgzfithc2la
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlux6GwACgkQhLiadT7g
-8aN2QxAAqgX9IhkXulMuqmg4XqlU+BLiYsRW3taPd50bz/sjTTPLHTLVllTt4y9Q
-IkV9QpcSpBdsmRA8iqYXwUQCPs+xXY4TNi2KrKhVWvBwfTnwneYt3v5hijbDil2t
-73uk7XJbEKaOLxuHAdvFstg5irXtCqKQzwjmq4sL9hQe4GVq2eFwf7pLJSg/aydy
-Mmu/FNnPJL/HL/2Hwg9x6lpe/TkF0Ub3o61lOzSl4Pk7zklrWw53D0d7lr2DcomN
-kjR/HFa6pKRVqCR0tKBmwaezXkDFdsnG8mZPbG+nS7Rrr9I1XvyUsYAJiDtLw9K1
-3/dRC+Kf6qb1HEOztGBoDDch0YOGeN92vTRFQfoaq2loO+Em0mYNjHNsxQupExVx
-rEIQ/GhCtkFO9ZgIIwh1tlnaB9IJ8uRKbJ090/xiZ+ROKu1VhIM83M8VfuAUGpcW
-K771bMpa5Je6UfBJDo7rQ352RY8hlL7pAGg+zPQPvf9keZERuMov8epGVhs/CsP+
-yq3oqfilNDXmzrvq6+0FJ61EWqoMJCJKIWLtXavaCEyiN0alO6YbsgSuf+U0R6lJ
-woTTJp3bCFLpuwQasEnYHAmvJVP1VJlLPh/Gb7Ubw7nyiqHpZCzBML7COG6yAdTO
-fscS2eyAyBYNGguSy18Nsxv+26uamEvic3Em6VPxLytbHdGAzck=
-=tY+G
------END PGP SIGNATURE-----
-
---ybx4xhgzfithc2la--
+Kind regards
+Uffe
