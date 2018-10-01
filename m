@@ -2,307 +2,168 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11588C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D35B9C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B93192089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="hnDPHpV7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B93192089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
+	by mail.kernel.org (Postfix) with ESMTP id 805B12089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805B12089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbeJBAnK (ORCPT
+        id S1726912AbeJBAnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:43:10 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35749 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbeJBAnK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:43:10 -0400
-Received: by mail-pf1-f194.google.com with SMTP id p12-v6so9815035pfh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:04:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sOPjKLOAakk2ATxxw5XzVSyruYdNVeZzHr/Hs8pvlVw=;
-        b=hnDPHpV7TRVLm1iFIa+huzuRU52EietdeZtd38RC4mD3lpJ1E56o+dY5ponRV1+tDH
-         CjhttDPBZsCyq+6GWF2H90ZKfgbgPWC+ZMjwyEEzH3O+TCPxB7Lcydfv5iUrElcaletM
-         smKvnJKirX6OAHOoFdP1mdtEnYigBtHyRVCRZ9TRTGSr3oNk5OxVocVvt80FxDzV7LGv
-         QRCmAKg6r5sTNr+gnIQ1R0kAUHaIbqXzm2LO2SOxsPcZ/1swGJc0h/dlapt3mK+gUC7h
-         a2MSWCS/jJSLAf4m+Xr0M75IXW4xtztUiAE4Z2ZLxF7VTaEYZHqN0hAqxSqmVHFNUm0Q
-         lRcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=sOPjKLOAakk2ATxxw5XzVSyruYdNVeZzHr/Hs8pvlVw=;
-        b=oX8/ofCccJhUkrbcsP0Gr6BZ1dar4UMMdht5KpYx6XVyGM08anEDFor4ieXRmJ3268
-         jw+roCfZcistqtM849+I27IqsY6nl6/mTlPE0+Tb2MyoecTyllAAmMZmEpZOcwehRjpN
-         AIU4o8MG5xhzrzPzO75r3AF1c6NIZm5jIh+UXQo6WwatWT5jeLUHIDdGleiqLWV1sSHw
-         KaA41KPkdq3f/n+6zO0RE0iJwXxPidqfGpe/1QEpt1THdz4MAruYEKYpPITGND8Bxz3l
-         Wfucb7GOc28H3szN2b+A4srjluV9bs/WKGFSTOvwoLzEn0Lve15r6j9qGtOv/1kGgR9o
-         +UOQ==
-X-Gm-Message-State: ABuFfojA3RwSrwVhmngdcQpfxgZFkUCT4Lzck3s0hPhmaDgWK7Aubjqe
-        c4o/slcXi2rzTtsTF1P5qNSysL2VGgQ=
-X-Google-Smtp-Source: ACcGV609gFtSB8A7iVi5SNuJhxzQZ+JwUX0XV2went9IB2rxXdILtfk8FBA6kCYRUlUeYkAeXK8A6A==
-X-Received: by 2002:a63:1245:: with SMTP id 5-v6mr11167820pgs.299.1538417051064;
-        Mon, 01 Oct 2018 11:04:11 -0700 (PDT)
-Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
-        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.04.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 11:04:10 -0700 (PDT)
-From:   Mark Salyzyn <salyzyn@android.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        James Morse <james.morse@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Andrew Pinski <apinski@cavium.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Jeremy Linton <Jeremy.Linton@arm.com>,
-        android-kernel@android.com
-Subject: RESEND [PATCH 3/6] arm64: Refactor vDSO init/setup
-Date:   Mon,  1 Oct 2018 10:58:40 -0700
-Message-Id: <20181001175845.168430-21-salyzyn@android.com>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-In-Reply-To: <20181001175845.168430-1-salyzyn@android.com>
-References: <20181001175845.168430-1-salyzyn@android.com>
+        Mon, 1 Oct 2018 20:43:12 -0400
+Received: from muru.com ([72.249.23.125]:58006 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726149AbeJBAnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 20:43:11 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 0E59A80F0;
+        Mon,  1 Oct 2018 18:08:37 +0000 (UTC)
+Date:   Mon, 1 Oct 2018 11:04:08 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [BUG] sleep in atomic in 8250 runtime PM code path
+Message-ID: <20181001180408.GY5662@atomide.com>
+References: <20180929132036.0323e24b@xhacker.debian>
+ <20180929103045.GQ30658@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180929103045.GQ30658@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kevin Brodsky <kevin.brodsky@arm.com>
+* Russell King - ARM Linux <linux@armlinux.org.uk> [180929 10:35]:
+> On Sat, Sep 29, 2018 at 01:20:36PM +0800, Jisheng Zhang wrote:
+> > Hi,
+> > 
+> > Recently I found I could trigger sleep in atomic bug on berlin after commit
+> > d76c74387e1c ("serial: 8250_dw: Fix runtime PM handling"). The path looks like:
+> > 
+> > dw8250_probe => serial850_register_8250_port => uart_add_one_port=>
+> > register_console => console_unlock => univ8250_console_write =>
+> > serial8250_console_write => serial8250_rpm_get => pm_runtime_get_sync
+> > 
+> > The irq is disabled by printk_safe_enter_irqsave() in console_unlock, but
+> > pm_runtime_get_sync can't be called in atomic context...
+> > 
+> > I guess the reason why we didn't notice it is due to the fact that
+> > only OMAP and DW sets UART_CAP_RPM currently, and DW set the flag in
+> > May 2018.
+> > 
+> > Per my understanding, the bug sits in the 8250 core driver rather than
+> > 8250_dw.c.
+> 
+> (Adding Tony and Sebastian, presumably CAP_RPM comes from OMAP since
+> that is the only other user, and this same bug is present there too.)
 
-Move the logic for setting up mappings and pages for the vDSO into
-static functions. This makes the vDSO setup code more consistent with
-the compat side and will allow to reuse it for the future compat vDSO.
+That only works because of pm_runtime_irq_safe() :( And we should not
+use pm_runtime_irq_safe() at all IMO, it takes a permanent RPM usecount
+on the parent device.
 
-Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Tested-by: Mark Salyzyn <salyzyn@android.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>
-Cc: Andrew Pinski <apinski@cavium.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Jeremy Linton <Jeremy.Linton@arm.com>
-Cc: android-kernel@android.com
----
- arch/arm64/kernel/vdso.c | 118 +++++++++++++++++++++++----------------
- 1 file changed, 70 insertions(+), 48 deletions(-)
+Adding also Andy to Cc as he's been working on related fixes.
 
-diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index 76a94bed4bd5..8529e85a521f 100644
---- a/arch/arm64/kernel/vdso.c
-+++ b/arch/arm64/kernel/vdso.c
-@@ -39,8 +39,11 @@
- #include <asm/vdso.h>
- #include <asm/vdso_datapage.h>
- 
--extern char vdso_start[], vdso_end[];
--static unsigned long vdso_pages __ro_after_init;
-+struct vdso_mappings {
-+	unsigned long num_code_pages;
-+	struct vm_special_mapping data_mapping;
-+	struct vm_special_mapping code_mapping;
-+};
- 
- /*
-  * The vDSO data page.
-@@ -164,95 +167,114 @@ static int vdso_mremap(const struct vm_special_mapping *sm,
- 	return 0;
- }
- 
--static struct vm_special_mapping vdso_spec[2] __ro_after_init = {
--	{
--		.name	= "[vvar]",
--	},
--	{
--		.name	= "[vdso]",
--		.mremap = vdso_mremap,
--	},
--};
--
--static int __init vdso_init(void)
-+static int __init vdso_mappings_init(const char *name,
-+				     const char *code_start,
-+				     const char *code_end,
-+				     struct vdso_mappings *mappings)
- {
--	int i;
-+	unsigned long i, vdso_page;
- 	struct page **vdso_pagelist;
- 	unsigned long pfn;
- 
--	if (memcmp(vdso_start, "\177ELF", 4)) {
--		pr_err("vDSO is not a valid ELF object!\n");
-+	if (memcmp(code_start, "\177ELF", 4)) {
-+		pr_err("%s is not a valid ELF object!\n", name);
- 		return -EINVAL;
- 	}
- 
--	vdso_pages = (vdso_end - vdso_start) >> PAGE_SHIFT;
--	pr_info("vdso: %ld pages (%ld code @ %p, %ld data @ %p)\n",
--		vdso_pages + 1, vdso_pages, vdso_start, 1L, vdso_data);
--
--	/* Allocate the vDSO pagelist, plus a page for the data. */
--	vdso_pagelist = kcalloc(vdso_pages + 1, sizeof(struct page *),
--				GFP_KERNEL);
-+	vdso_pages = (code_end - code_start) >> PAGE_SHIFT;
-+	pr_info("%s: %ld pages (%ld code @ %p, %ld data @ %p)\n",
-+		name, vdso_pages + 1, vdso_pages, code_start, 1L,
-+		vdso_data);
-+
-+	/*
-+	 * Allocate space for storing pointers to the vDSO code pages + the
-+	 * data page. The pointers must have the same lifetime as the mappings,
-+	 * which are static, so there is no need to keep track of the pointer
-+	 * array to free it.
-+	 */
-+	vdso_pagelist = kmalloc_array(vdso_pages + 1, sizeof(struct page *),
-+				      GFP_KERNEL);
- 	if (vdso_pagelist == NULL)
- 		return -ENOMEM;
- 
- 	/* Grab the vDSO data page. */
- 	vdso_pagelist[0] = phys_to_page(__pa_symbol(vdso_data));
- 
--
- 	/* Grab the vDSO code pages. */
--	pfn = sym_to_pfn(vdso_start);
-+	pfn = sym_to_pfn(code_start);
- 
- 	for (i = 0; i < vdso_pages; i++)
- 		vdso_pagelist[i + 1] = pfn_to_page(pfn + i);
- 
--	vdso_spec[0].pages = &vdso_pagelist[0];
--	vdso_spec[1].pages = &vdso_pagelist[1];
-+	/* Populate the special mapping structures */
-+	mappings->data_mapping = (struct vm_special_mapping) {
-+		.name	= "[vvar]",
-+		.pages	= &vdso_pagelist[0],
-+	};
-+
-+	mappings->code_mapping = (struct vm_special_mapping) {
-+		.name	= "[vdso]",
-+		.pages	= &vdso_pagelist[1],
-+	};
- 
-+	mappings->num_code_pages = vdso_pages;
- 	return 0;
- }
-+
-+static struct vdso_mappings vdso_mappings __ro_after_init;
-+
-+static int __init vdso_init(void)
-+{
-+	extern char vdso_start[], vdso_end[];
-+
-+	return vdso_mappings_init("vdso", vdso_start, vdso_end,
-+				  &vdso_mappings);
-+}
- arch_initcall(vdso_init);
- 
--int arch_setup_additional_pages(struct linux_binprm *bprm,
--				int uses_interp)
-+static int vdso_setup(struct mm_struct *mm,
-+		      const struct vdso_mappings *mappings)
- {
--	struct mm_struct *mm = current->mm;
- 	unsigned long vdso_base, vdso_text_len, vdso_mapping_len;
- 	void *ret;
- 
--	vdso_text_len = vdso_pages << PAGE_SHIFT;
-+	vdso_text_len = mappings->num_code_pages << PAGE_SHIFT;
- 	/* Be sure to map the data page */
- 	vdso_mapping_len = vdso_text_len + PAGE_SIZE;
- 
--	if (down_write_killable(&mm->mmap_sem))
--		return -EINTR;
- 	vdso_base = get_unmapped_area(NULL, 0, vdso_mapping_len, 0, 0);
--	if (IS_ERR_VALUE(vdso_base)) {
--		ret = ERR_PTR(vdso_base);
--		goto up_fail;
--	}
-+	if (IS_ERR_VALUE(vdso_base))
-+		ret = PTR_ERR_OR_ZERO(ERR_PTR(vdso_base));
-+
- 	ret = _install_special_mapping(mm, vdso_base, PAGE_SIZE,
- 				       VM_READ|VM_MAYREAD,
--				       &vdso_spec[0]);
-+				       &mappings->data_mapping);
- 	if (IS_ERR(ret))
--		goto up_fail;
-+		return PTR_ERR_OR_ZERO(ret);
- 
- 	vdso_base += PAGE_SIZE;
--	mm->context.vdso = (void *)vdso_base;
- 	ret = _install_special_mapping(mm, vdso_base, vdso_text_len,
- 				       VM_READ|VM_EXEC|
- 				       VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
--				       &vdso_spec[1]);
--	if (IS_ERR(ret))
--		goto up_fail;
-+				       &mappings->code_mapping);
-+	if (!IS_ERR(ret))
-+		mm->context.vdso = (void *)vdso_base;
-+
-+	return PTR_ERR_OR_ZERO(ret);
-+}
- 
-+int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+{
-+	struct mm_struct *mm = current->mm;
-+	int ret;
- 
--	up_write(&mm->mmap_sem);
--	return 0;
-+	if (down_write_killable(&mm->mmap_sem))
-+		return -EINTR;
-+
-+	ret = vdso_setup(mm, &vdso_mappings);
- 
--up_fail:
--	mm->context.vdso = NULL;
- 	up_write(&mm->mmap_sem);
--	return PTR_ERR(ret);
-+	return ret;
- }
- 
- /*
--- 
-2.19.0.605.g01d371f741-goog
+> Correct.  printk() can be called from atomic contexts (consider what
+> happens when an oops or similar occurs - we can be in any context,
+> holding any locks etc.)  Plain printk() can also be used from within
+> spinlocked irqs-off regions.
+> 
+> This means the console's write function may be called in these contexts.
+> Since pm_runtime_get_sync() is may sleep, it means that its use in the
+> console path is _fundamentally_ wrong, and will lead to exactly this
+> problem.
+> 
+> I don't see a way around that other than to avoid RPM on consoles.
+> (which makes the presence of the RPM code in serial8250_console_write()
+> completely unnecessary.)
 
+Yup the way to go is to have some way to attach/detach kernel serial
+console via /sys, and have the serial layer take a usecount on the
+serial driver RPM when kernel serial console is attached. Then the
+user can detach serial console via /sys as needed and have RPM
+working.
+
+> When I rewrote the serial drivers and created serial_core & 8250, this
+> is something that I realised, and I arranged the PM support at the time
+> to always maintain the console in active state (this is prior to RPM).
+> 
+> While I'm looking at commit d74d5d1b7288 ("tty: serial: 8250_core: add
+> run time pm"):
+> 
+> +static void serial8250_rpm_get_tx(struct uart_8250_port *p)
+> +{
+> +       unsigned char rpm_active;
+> +
+> +       if (!(p->capabilities & UART_CAP_RPM))
+> +               return;
+> +
+> +       rpm_active = xchg(&p->rpm_tx_active, 1);
+> +       if (rpm_active)
+> +               return;
+> +       pm_runtime_get_sync(p->port.dev);
+> +}
+> 
+> is particularly "interesting" - if this is called from sections of
+> code that allow it to be called concurrently from different contexts,
+> then we could have:
+> 
+> rpm_tx_active	thread 0			thread 1
+> 0
+> 		xchg(, 1)
+> 1
+> 						xchg(, 1)
+> 						... goes on to use port ...
+> 		pm_runtime_get_sync()
+> 
+> In other words, the port can be used _before_ pm_runtime_get_sync() is
+> called.
+> 
+> If, on the other hand, this can't race, then considering the
+> serial8250_rpm_put_tx() path as well, what stops this race from
+> happening:
+> 
+> rpm_tx_active	thread 0			thread 1
+> 1
+> 		serial8250_rpm_get_tx()
+> 						serial8250_rpm_put_tx()
+> 		xchg(, 1)
+> 1
+> 						xchg(, 0)
+> 0
+> 						pm_runtime_put_autosuspend()
+> 
+> Now to the real point about the above - if _neither_ race is possible,
+> then what is the point of the more expensive xchg() here rather than
+> simple test-and-assignment of rpm_tx_active?  Either these paths can't
+> race with each other and xchg() is unnecessary, or they can and they
+> _could_ fail as shown above.  My suspicion is that xchg() is an attempt
+> to reduce the likelyhood of one of these races being hit.
+
+Yeah the driver would need to maintain a is_suspended flag to prevent
+that. See also the is_suspended related parts for runtime PM docs at
+Documentation/power/runtime_pm.txt.
+
+But let's just make the serial layer take RPM usecount on the
+serial driver when console is in use and have some way for users
+to attach and detach the kernel serial console via /sys to prevent
+PM regressions.
+
+Regards,
+
+Tony
