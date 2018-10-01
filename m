@@ -6,42 +6,44 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F0EC00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F8F6C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B310A20666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:05:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B310A20666
+	by mail.kernel.org (Postfix) with ESMTP id 38ABA20666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:06:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38ABA20666
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbeJBDph (ORCPT
+        id S1726554AbeJBDqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 23:45:37 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50961 "EHLO
+        Mon, 1 Oct 2018 23:46:06 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50983 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbeJBDph (ORCPT
+        with ESMTP id S1726117AbeJBDqF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 23:45:37 -0400
+        Mon, 1 Oct 2018 23:46:05 -0400
 Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
         by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
         (Exim 4.76)
         (envelope-from <john.johansen@canonical.com>)
-        id 1g75O7-0007J3-DV; Mon, 01 Oct 2018 21:05:55 +0000
-Subject: Re: [PATCH security-next v3 02/29] vmlinux.lds.h: Avoid copy/paste of
- security_init section
+        id 1g75OY-0007KE-Iy; Mon, 01 Oct 2018 21:06:22 +0000
+Subject: Re: [PATCH security-next v3 03/29] LSM: Rename .security_initcall
+ section to .lsm_info
 To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-arch@vger.kernel.org, linux-security-module@vger.kernel.org,
         Casey Schaufler <casey@schaufler-ca.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20180925001832.18322-1-keescook@chromium.org>
- <20180925001832.18322-3-keescook@chromium.org>
+ <20180925001832.18322-4-keescook@chromium.org>
 From:   John Johansen <john.johansen@canonical.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
@@ -87,12 +89,12 @@ Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
  qJciYE8TGHkZw1hOku+4OoM2GB5nEDlj+2TF/jLQ+EipX9PkPJYvxfRlC6dK8PKKfX9KdfmA
  IcgHfnV1jSn+8yH2djBPtKiqW0J69aIsyx7iV/03paPCjJh7Xq9vAzydN5U/UA==
 Organization: Canonical
-Message-ID: <6adced07-f3a9-a098-3f56-ba5fd2e03bcb@canonical.com>
-Date:   Mon, 1 Oct 2018 14:05:51 -0700
+Message-ID: <778ba591-0d76-f21d-165a-76db531a768d@canonical.com>
+Date:   Mon, 1 Oct 2018 14:06:18 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180925001832.18322-3-keescook@chromium.org>
+In-Reply-To: <20180925001832.18322-4-keescook@chromium.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -102,49 +104,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 09/24/2018 05:18 PM, Kees Cook wrote:
-> Avoid copy/paste by defining SECURITY_INIT in terms of SECURITY_INITCALL.
+> In preparation for switching from initcall to just a regular set of
+> pointers in a section, rename the internal section name.
 > 
 > Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 > Cc: linux-arch@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 
 
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 
 > ---
->  include/asm-generic/vmlinux.lds.h | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
+>  include/asm-generic/vmlinux.lds.h | 10 +++++-----
+>  include/linux/init.h              |  4 ++--
+>  security/security.c               |  4 ++--
+>  3 files changed, 9 insertions(+), 9 deletions(-)
 > 
 > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> index 7b75ff6e2fce..934a45395547 100644
+> index 934a45395547..5079a969e612 100644
 > --- a/include/asm-generic/vmlinux.lds.h
 > +++ b/include/asm-generic/vmlinux.lds.h
-> @@ -473,13 +473,6 @@
->  #define RODATA          RO_DATA_SECTION(4096)
->  #define RO_DATA(align)  RO_DATA_SECTION(align)
+> @@ -787,14 +787,14 @@
+>  		__con_initcall_end = .;
 >  
-> -#define SECURITY_INIT							\
-> -	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
+>  #define SECURITY_INITCALL						\
 > -		__security_initcall_start = .;				\
 > -		KEEP(*(.security_initcall.init))			\
-> -		__security_initcall_end = .;				\
-> -	}
-> -
->  /*
->   * .text section. Map to function alignment to avoid address changes
->   * during second ld run in second ld pass when generating System.map
-> @@ -798,6 +791,12 @@
->  		KEEP(*(.security_initcall.init))			\
->  		__security_initcall_end = .;
+> -		__security_initcall_end = .;
+> +		__start_lsm_info = .;					\
+> +		KEEP(*(.lsm_info.init))					\
+> +		__end_lsm_info = .;
 >  
-> +/* Older linker script style for security init. */
-> +#define SECURITY_INIT							\
-> +	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
-> +		SECURITY_INITCALL					\
-> +	}
-> +
+>  /* Older linker script style for security init. */
+>  #define SECURITY_INIT							\
+> -	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
+> -		SECURITY_INITCALL					\
+> +	.lsm_info.init : AT(ADDR(.lsm_info.init) - LOAD_OFFSET) {	\
+> +		LSM_INFO						\
+>  	}
+>  
 >  #ifdef CONFIG_BLK_DEV_INITRD
->  #define INIT_RAM_FS							\
->  	. = ALIGN(4);							\
+> diff --git a/include/linux/init.h b/include/linux/init.h
+> index 2538d176dd1f..77636539e77c 100644
+> --- a/include/linux/init.h
+> +++ b/include/linux/init.h
+> @@ -133,7 +133,7 @@ static inline initcall_t initcall_from_entry(initcall_entry_t *entry)
+>  #endif
+>  
+>  extern initcall_entry_t __con_initcall_start[], __con_initcall_end[];
+> -extern initcall_entry_t __security_initcall_start[], __security_initcall_end[];
+> +extern initcall_entry_t __start_lsm_info[], __end_lsm_info[];
+>  
+>  /* Used for contructor calls. */
+>  typedef void (*ctor_fn_t)(void);
+> @@ -236,7 +236,7 @@ extern bool initcall_debug;
+>  	static exitcall_t __exitcall_##fn __exit_call = fn
+>  
+>  #define console_initcall(fn)	___define_initcall(fn,, .con_initcall)
+> -#define security_initcall(fn)	___define_initcall(fn,, .security_initcall)
+> +#define security_initcall(fn)	___define_initcall(fn,, .lsm_info)
+>  
+>  struct obs_kernel_param {
+>  	const char *str;
+> diff --git a/security/security.c b/security/security.c
+> index 4cbcf244a965..892fe6b691cf 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -51,9 +51,9 @@ static void __init do_security_initcalls(void)
+>  	initcall_t call;
+>  	initcall_entry_t *ce;
+>  
+> -	ce = __security_initcall_start;
+> +	ce = __start_lsm_info;
+>  	trace_initcall_level("security");
+> -	while (ce < __security_initcall_end) {
+> +	while (ce < __end_lsm_info) {
+>  		call = initcall_from_entry(ce);
+>  		trace_initcall_start(call);
+>  		ret = call();
 > 
 
