@@ -2,170 +2,99 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5B6C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6732C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06AFA2084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:11:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06AFA2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E49F2084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:12:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="bB3d3XYj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E49F2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbeJAMrj (ORCPT
+        id S1728784AbeJAMsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 08:47:39 -0400
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:42913 "EHLO
-        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727693AbeJAMrj (ORCPT
+        Mon, 1 Oct 2018 08:48:54 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:55319 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727693AbeJAMsy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 08:47:39 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail06.adl2.internode.on.net with ESMTP; 01 Oct 2018 15:41:28 +0930
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1g6rQV-0005c7-EH; Mon, 01 Oct 2018 16:11:27 +1000
-Date:   Mon, 1 Oct 2018 16:11:27 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Benvenuti <benve@cisco.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>
-Subject: Re: [PATCH 0/4] get_user_pages*() and RDMA: first steps
-Message-ID: <20181001061127.GQ31060@dastard>
-References: <20180928053949.5381-1-jhubbard@nvidia.com>
- <20180928152958.GA3321@redhat.com>
- <4c884529-e2ff-3808-9763-eb0e71f5a616@nvidia.com>
- <20180928214934.GA3265@redhat.com>
- <dfa6aaef-b97e-ebd4-6cc8-c907a7b3f9bb@nvidia.com>
- <20180929084608.GA3188@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180929084608.GA3188@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Mon, 1 Oct 2018 08:48:54 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id w916BMB8020398;
+        Mon, 1 Oct 2018 15:11:23 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w916BMB8020398
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1538374283;
+        bh=vxJNdGOViqpKuCBNPTBCV/Q20ql4OXtHOHBA7JAiwk0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bB3d3XYjIWxM3JZPO7P09ThnPzTHs+MvOWF2LaRA8WeBeGP6laj/y/AMDWOBEVeyR
+         y4eDn2c+NDEKCU0Ra0r1Zmhzk8QCMyssQxVjWjRCOQAper3rFX6IaU8u4CgCRH/59i
+         4ZPCLrWI5JuvZmX8cIQmi9kgT5wa4hYCM0X8J8kRb5TcDSR9pRVwPbzVentBxaEIyn
+         bHAt0n9kUe/SbW7VXgqrxSWmtR/dEYHSpbP69Z3Dar3HRoszzVVYCu8t4c+C5K1N3m
+         soxzP4udedRVqMIeMl0jwu4HbZIoXH1ijL45pqwWIL0iqOQu0rQjXHEoV7nRsgYgoZ
+         TzqKU3ZnaHXbA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc: remove leftover code of old GCC version checks
+Date:   Mon,  1 Oct 2018 15:10:24 +0900
+Message-Id: <1538374224-3742-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 04:46:09AM -0400, Jerome Glisse wrote:
-> On Fri, Sep 28, 2018 at 07:28:16PM -0700, John Hubbard wrote:
-> > On 9/28/18 2:49 PM, Jerome Glisse wrote:
-> > > On Fri, Sep 28, 2018 at 12:06:12PM -0700, John Hubbard wrote:
-> > >> use a non-CPU device to read and write to "pinned" memory, especially when
-> > >> that memory is backed by a file system.
+Clean up the leftover of commit f2910f0e6835 ("powerpc: remove old
+GCC version checks").
 
-"backed by a filesystem" is the biggest problem here.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> > >> I recall there were objections to just narrowly fixing the set_page_dirty()
-> > >> bug, because the underlying problem is large and serious. So here we are.
-> > > 
-> > > Except that you can not solve that issue without proper hardware. GPU are
-> > > fine. RDMA are broken except the mellanox5 hardware which can invalidate
-> > > at anytime its page table thus allowing to write protect the page at any
-> > > time.
-> > 
-> > Today, people are out there using RDMA without page-fault-capable hardware.
-> > And they are hitting problems, as we've seen. From the discussions so far,
-> > I don't think it's impossible to solve the problems, even for "lesser", 
-> > non-fault-capable hardware.
+My patch had been sent earlier, with more clean-ups:
+https://lore.kernel.org/patchwork/patch/977805/
 
-This reminds me so much of Linux mmap() in the mid-2000s - mmap()
-worked for ext3 without being aware of page faults, so most mm/
-developers at the time were of the opinion that all the other
-filesystems should work just fine without being aware of page
-faults.
+Anyway, this cleans up the left-over of the Nicholas' one.
 
-But some loud-mouthed idiot at SGI kept complaining that mmap()
-could never be fixed for XFS without write fault notification
-because of delayed allocation, unwritten extents and ENOSPC had to
-be handled before mapped writes could be posted.  Eventually
-Christoph Lameter got ->page_mkwrite into the page fault path and
-the loud mouthed idiot finally got mmap() to work correctly on XFS:
 
-commit 4f57dbc6b5bae5a3978d429f45ac597ca7a3b8c6
-Author: David Chinner <dgc@sgi.com>
-Date:   Thu Jul 19 16:28:17 2007 +1000
+ arch/powerpc/Makefile | 8 --------
+ 1 file changed, 8 deletions(-)
 
-    [XFS] Implement ->page_mkwrite in XFS.
-    
-    Hook XFS up to ->page_mkwrite to ensure that we know about mmap pages
-    being written to. This allows use to do correct delayed allocation and
-    ENOSPC checking as well as remap unwritten extents so that they get
-    converted correctly during writeback. This is done via the generic
-    block_page_mkwrite code.
-    
-    SGI-PV: 940392
-    SGI-Modid: xfs-linux-melb:xfs-kern:29149a
-    
-    Signed-off-by: David Chinner <dgc@sgi.com>
-    Signed-off-by: Christoph Hellwig <hch@infradead.org>
-    Signed-off-by: Tim Shimmin <tes@sgi.com>
-
-Nowdays, ->page_mkwrite is fundamental filesystem functionality -
-copy-on-write filesystems like btrfs simply don't work if they can't
-trigger COW on mapped write accesses. These days all the main linux
-filesystems depend on write fault notifications in some way or
-another for correct operation.
-
-The way RDMA uses GUP to take references to file backed pages to
-'stop them going away' is reminiscent of mmap() back before
-->page_mkwrite(). i.e. it assumes that an initial read of the page
-will populate the page state correctly for all future operations,
-including set_page_dirty() after write accesses.
-
-This is not a valid assumption - filesystems can have different
-private clean vs dirty page state, and may need to perform
-operations to take a page from clean to dirty.  Hence calling
-set_page_dirty() on a file backed mapped page without first having
-called ->page_mkwrite() is a bug.
-
-RDMA does not call ->page_mkwrite on clean file backed pages before it
-writes to them and calls set_page_dirty(), and hence RDMA to file
-backed pages is completely unreliable. I'm not sure this can be
-solved without having page fault capable RDMA hardware....
-
-> > > With the solution put forward here you can potentialy wait _forever_ for
-> > > the driver that holds a pin to drop it. This was the point i was trying to
-> > > get accross during LSF/MM. 
-
-Right, but pinning via GUP is not an option for file backed pages
-because the filesystem is completely unaware of these references.
-i.e. waiting forever isn't an issue here because the filesystem
-never waits on them. Instead, they are a filesystem corruption
-vector because the filesystem can invalidate those mappings and free
-the backing store while they are still in use by RDMA.
-
-Hence for DAX filesystems, this leaves the RDMA app with direct
-access to the physical storage even though the filesystem has freed
-the space it is accessing. This is a use after free of the physical
-storage that the filesystem cannot control, and why DAX+RDMA is
-disabled right now.
-
-We could address these use-after-free situations via forcing RDMA to
-use file layout leases and revoke the lease when we need to modify
-the backing store on leased files. However, this doesn't solve the
-need for filesystems to receive write fault notifications via
-->page_mkwrite.
-
-Cheers,
-
-Dave.
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index 2ecd0976..b094375 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -400,10 +400,6 @@ archclean:
+ 
+ archprepare: checkbin
+ 
+-# Use the file '.tmp_gas_check' for binutils tests, as gas won't output
+-# to stdout and these checks are run even on install targets.
+-TOUT	:= .tmp_gas_check
+-
+ # Check toolchain versions:
+ # - gcc-4.6 is the minimum kernel-wide version so nothing required.
+ checkbin:
+@@ -414,7 +410,3 @@ checkbin:
+ 		echo -n '*** Please use a different binutils version.' ; \
+ 		false ; \
+ 	fi
+-
+-
+-CLEAN_FILES += $(TOUT)
+-
 -- 
-Dave Chinner
-david@fromorbit.com
+2.7.4
+
