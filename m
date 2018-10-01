@@ -2,106 +2,137 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF90C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B056C0044B
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 911912145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:35:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911912145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 03EAD208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:36:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03EAD208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729517AbeJAVN1 (ORCPT
+        id S1729551AbeJAVOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 17:13:27 -0400
-Received: from mga01.intel.com ([192.55.52.88]:19224 "EHLO mga01.intel.com"
+        Mon, 1 Oct 2018 17:14:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:50636 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729378AbeJAVN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 17:13:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 07:35:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,328,1534834800"; 
-   d="scan'208";a="261908429"
-Received: from ddalessa-mobl2.amr.corp.intel.com (HELO [10.254.201.54]) ([10.254.201.54])
-  by orsmga005.jf.intel.com with ESMTP; 01 Oct 2018 07:35:04 -0700
-Subject: Re: [PATCH 3/4] infiniband/mm: convert to the new put_user_page()
- call
-To:     John Hubbard <jhubbard@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        john.hubbard@gmail.com
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Christian Benvenuti <benve@cisco.com>
-References: <20180928053949.5381-1-jhubbard@nvidia.com>
- <20180928053949.5381-3-jhubbard@nvidia.com> <20180928153922.GA17076@ziepe.ca>
- <36bc65a3-8c2a-87df-44fc-89a1891b86db@nvidia.com>
-From:   Dennis Dalessandro <dennis.dalessandro@intel.com>
-Message-ID: <ed9cbf0a-acc9-1b26-a7fc-e8f89f577ce9@intel.com>
-Date:   Mon, 1 Oct 2018 10:35:02 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1729378AbeJAVOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 17:14:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BBE6C18A;
+        Mon,  1 Oct 2018 07:35:58 -0700 (PDT)
+Received: from red-moon (red-moon.emea.arm.com [10.4.13.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0138E3F5B3;
+        Mon,  1 Oct 2018 07:35:55 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 15:36:41 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     honghui.zhang@mediatek.com
+Cc:     bhelgaas@google.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ryder.lee@mediatek.com,
+        ulf.hansson@linaro.org, marc.zyngier@arm.com,
+        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        youlin.pei@mediatek.com, yt.shen@mediatek.com,
+        sean.wang@mediatek.com
+Subject: Re: [PATCH v5 1/9] PCI: mediatek: Using slot's devfn for compare to
+ fix mtk_pcie_find_port logic
+Message-ID: <20181001143641.GB13049@red-moon>
+References: <1538129080-8206-1-git-send-email-honghui.zhang@mediatek.com>
+ <1538129080-8206-2-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <36bc65a3-8c2a-87df-44fc-89a1891b86db@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538129080-8206-2-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/28/2018 11:12 PM, John Hubbard wrote:
-> On 9/28/18 8:39 AM, Jason Gunthorpe wrote:
->> On Thu, Sep 27, 2018 at 10:39:47PM -0700, john.hubbard@gmail.com wrote:
->>> From: John Hubbard <jhubbard@nvidia.com>
-> [...]
->>>
->>> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
->>> index a41792dbae1f..9430d697cb9f 100644
->>> +++ b/drivers/infiniband/core/umem.c
->>> @@ -60,7 +60,7 @@ static void __ib_umem_release(struct ib_device *dev, struct ib_umem *umem, int d
->>>   		page = sg_page(sg);
->>>   		if (!PageDirty(page) && umem->writable && dirty)
->>>   			set_page_dirty_lock(page);
->>> -		put_page(page);
->>> +		put_user_page(page);
->>
->> Would it make sense to have a release/put_user_pages_dirtied to absorb
->> the set_page_dity pattern too? I notice in this patch there is some
->> variety here, I wonder what is the right way?
->>
->> Also, I'm told this code here is a big performance bottleneck when the
->> number of pages becomes very long (think >> GB of memory), so having a
->> future path to use some kind of batching/threading sound great.
->>
+On Fri, Sep 28, 2018 at 06:04:32PM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
 > 
-> Yes. And you asked for this the first time, too. Consistent! :) Sorry for
-> being slow to pick it up. It looks like there are several patterns, and
-> we have to support both set_page_dirty() and set_page_dirty_lock(). So
-> the best combination looks to be adding a few variations of
-> release_user_pages*(), but leaving put_user_page() alone, because it's
-> the "do it yourself" basic one. Scatter-gather will be stuck with that.
+> The Mediatek's host controller has two slots, each with it's own control
+> registers. The host driver need to identify which slot was connected
+> in order to access the device's configuration space. There's problem
+> for current host driver to find out which slot was connected to for
+> a given EP device.
 > 
-> Here's a differential patch with that, that shows a nice little cleanup in
-> a couple of IB places, and as you point out, it also provides the hooks for
-> performance upgrades (via batching) in the future.
+> Assuming each slot have connect with one EP device as below:
 > 
-> Does this API look about right?
+>                 host bridge
+>   bus 0 --> __________|_______
+>            |                  |
+>            |                  |
+>          slot 0             slot 1
+>   bus 1 -->|        bus 2 --> |
+>            |                  |
+>          EP 0               EP 1
+> 
+> During PCI enumeration, system software will scan all the PCI device
+> starting from devfn 0. So it will get the proper port for slot0 and
+> slot1 device when using PCI_SLOT(devfn) for match. But it will get
+> the wrong slot for EP1: The devfn will be start from 0 when scanning
+> EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
+> for port0's slot value. So the host driver should not using EP's devfn
+> but the slot's devfn(the slot which EP was connected to) for match.
+> 
+> This patch fix the mtk_pcie_find_port's logic by using the slot's
+> devfn for match if finding device connected to the subordinate bus.
+> 
+> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> ---
+>  drivers/pci/controller/pcie-mediatek.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 9999dae..264e03f 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -337,10 +337,25 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+>  {
+>  	struct mtk_pcie *pcie = bus->sysdata;
+>  	struct mtk_pcie_port *port;
+> +	struct pci_dev *dev = NULL;
+> +
+> +	/*
+> +	 * Walk the bus hierarchy to get the devfn value
+> +	 * of the port in the root bus.
+> +	 */
+> +	while (bus && bus->number) {
+> +		dev = bus->self;
+> +		bus = dev->bus;
 
-I'm on board with that and the changes to hfi1 and qib.
+If you add:
 
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+devfn = dev->devfn;
 
+here
+
+> +	}
+> +
+> +	list_for_each_entry(port, &pcie->ports, list) {
+> +		/* Using slot's devfn to compare for subordinary bus. */
+> +		if (dev)
+> +			devfn = dev->devfn;
+
+You can remove this ugly hunk altogether (and dev initialization
+to NULL).
+
+Lorenzo
+
+> -	list_for_each_entry(port, &pcie->ports, list)
+>  		if (port->slot == PCI_SLOT(devfn))
+>  			return port;
+> +	}
+>  
+>  	return NULL;
+>  }
+> -- 
+> 2.6.4
+> 
