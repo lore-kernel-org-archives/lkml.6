@@ -6,60 +6,60 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F0FC004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C71C004D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:23:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51E62206B2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:10:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51E62206B2
+	by mail.kernel.org (Postfix) with ESMTP id D2C6A2083C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:23:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2C6A2083C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbeJAIqG (ORCPT
+        id S1728099AbeJAI63 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 04:46:06 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42291 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726950AbeJAIqF (ORCPT
+        Mon, 1 Oct 2018 04:58:29 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34179 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727277AbeJAI63 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 04:46:05 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i4-v6so7690643pgq.9
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 19:10:39 -0700 (PDT)
+        Mon, 1 Oct 2018 04:58:29 -0400
+Received: by mail-pf1-f194.google.com with SMTP id k19-v6so8065267pfi.1
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 19:23:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=uh8huBIzsKo2lF1E7FKT7cx5ODlWVJWF/J4/6Uwa8qA=;
-        b=IYlmFpoMYCzBntzEpyOTfIMd5+n+zyz/yIc24ekYefeBGRjlu3d7Ypv4W5w2HCpzmE
-         EQn83jtxl8g7kd4TWHaUMttf7f/EdtvV5IyQKcr+rs2TK0+6razoZyndBz3o0tRgDy9N
-         k9THILr8Ff19GSs2j0jiYq4BO6mdk3ufVWKCSHgcGFYdavlOFey+3utHqq7xQ1AfJ6F/
-         URFHVSeGM0aM/+dFO5SQid9+Z/AeI78vvcjAqzrKt29myeOibaO694ZmiJ9JVu/vi4fQ
-         1CVkAyDhVjgzOnuWbzjsuVQlyePg2bFRv2dI+yXanGEK/CKruffWxVfmNiamD0F2lg7E
-         BqRQ==
-X-Gm-Message-State: ABuFfoitWutGty98IpdYdaLACiueLKJF5jyux5q11t6TnOFdzuef7B3x
-        tW3ejVCYLYwchWiPBjVEdIuV4Y0q
-X-Google-Smtp-Source: ACcGV62rGvfm7KSzobNpwN/aiKsVUv6V/Dbh5NY0QC0p42755WS5XGbPc9dazxoyX4M5FSAAEWL3sQ==
-X-Received: by 2002:a62:c6d7:: with SMTP id x84-v6mr9273727pfk.174.1538359838871;
-        Sun, 30 Sep 2018 19:10:38 -0700 (PDT)
+        bh=DQ9Cpd8D+2FKhAnL508GVFP60TvHvJ0B01q7d8g9lH0=;
+        b=Rc/WXtRmbSBBQ67hAR4FSj20kjZ81SCJ2VzpxenRI13KT16Cx3zE3Y5bH6tBRm9aHx
+         nhsGxRte07HcowfH5rJOea9K6qCw2AhP5EJ4Xtj1iiKzpSyGgCTxwyj0z579KIdv2JAD
+         NfkfN4840W1L7Y5D8KNcVyWG9jlvbtSv/PWyTHBQJFrhtnPtQ72hINrDPYH3V5s4x3A0
+         i9J/UQWuz2TU9K+zMJWA8Xb2L0nTcZ5vGnBA619f+jElB37tBe8eZ2M626arv0t+Mdt6
+         9xRgMrsBKQP/DwAzyfAhPXctzBn6HFUqng8sGrVHDgtQtGoPx2Md4iWNRreBVEpN7nNL
+         iizQ==
+X-Gm-Message-State: ABuFfojAq64cPArETfDkxAtg66XaYIhW0x+YcCy7CiAmyOBCy7RcQwpY
+        t2aPeb0ErSgKi7O02ijEi/gFkSqj
+X-Google-Smtp-Source: ACcGV63hc53Rn7pTE+q4pAs130imErgMWSGyHs0e/tMZ3bEWuLQ8QqJebFel/d+LoevDiJYHMCUKHQ==
+X-Received: by 2002:a62:d582:: with SMTP id d124-v6mr7243995pfg.31.1538360581121;
+        Sun, 30 Sep 2018 19:23:01 -0700 (PDT)
 Received: from ?IPv6:2405:6580:9660:3200:6caf:e2c:fa0a:6628? ([2405:6580:9660:3200:6caf:e2c:fa0a:6628])
-        by smtp.gmail.com with ESMTPSA id j22-v6sm14943057pfh.45.2018.09.30.19.10.36
+        by smtp.gmail.com with ESMTPSA id g17-v6sm4220299pfe.37.2018.09.30.19.22.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 19:10:38 -0700 (PDT)
-Subject: Re: [PATCH 05/11] ALSA: hda/ca0132 - Add DBpro hda_codec_ops
+        Sun, 30 Sep 2018 19:23:00 -0700 (PDT)
+Subject: Re: [PATCH 10/11] ALSA: hda/ca0132 - Add ZxR 600 ohm gain control
 To:     Connor McAdams <conmanx360@gmail.com>
 Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         Alastair Bridgewater <alastair.bridgewater@gmail.com>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 References: <1538276607-30234-1-git-send-email-conmanx360@gmail.com>
- <1538276607-30234-6-git-send-email-conmanx360@gmail.com>
+ <1538276607-30234-11-git-send-email-conmanx360@gmail.com>
 From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Message-ID: <77622218-5fb8-384b-8e1a-bf55f74ea9ba@sakamocchi.jp>
-Date:   Mon, 1 Oct 2018 11:10:35 +0900
+Message-ID: <e313237f-1f99-bf87-ebb9-8dffb7a96e46@sakamocchi.jp>
+Date:   Mon, 1 Oct 2018 11:22:57 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1538276607-30234-6-git-send-email-conmanx360@gmail.com>
+In-Reply-To: <1538276607-30234-11-git-send-email-conmanx360@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,56 +71,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi,
 
 On Sep 30 2018 12:03, Connor McAdams wrote:
-> This patch adds separate hda_codec_ops for the DBPro daughter board, as
-> it behaves more like a generic HDA codec than the other ca0132 cards,
-> despite having a ca0132 on board.
+> This patch adds a control for 600 ohm gain on the Sound Blaster ZxR.
 > 
 > Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 > ---
->   sound/pci/hda/patch_ca0132.c | 100 +++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 100 insertions(+)
+>   sound/pci/hda/patch_ca0132.c | 44 ++++++++++++++++++++++++++++++++++++++++++--
+>   1 file changed, 42 insertions(+), 2 deletions(-)
 > 
 > diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-> index 4d23eb9..a543b23 100644
+> index f0781e4..90e6a96 100644
 > --- a/sound/pci/hda/patch_ca0132.c
 > +++ b/sound/pci/hda/patch_ca0132.c
-> ...
-> @@ -8192,6 +8282,13 @@ static const struct hda_codec_ops ca0132_patch_ops = {
-> ...
+> ..
+> @@ -6415,6 +6452,9 @@ static int ca0132_build_controls(struct hda_codec *codec)
+>   		ae5_add_headphone_gain_enum(codec);
+>   		ae5_add_sound_filter_enum(codec);
+>   	}
 > +
->   static void ca0132_config(struct hda_codec *codec)
->   {
->   	struct ca0132_spec *spec = codec->spec;
-> @@ -8488,6 +8585,9 @@ static int patch_ca0132(struct hda_codec *codec)
->   		spec->mixers[0] = desktop_mixer;
->   		snd_hda_codec_set_name(codec, "Sound Blaster Z");
->   		break;
-> +	case QUIRK_ZXR_DBPRO:
-> +		codec->patch_ops = dbpro_patch_ops;
-> +		break;
+> +	if (spec->quirk == QUIRK_ZXR)
+> +		zxr_add_headphone_gain_switch(codec);
+>   #ifdef ENABLE_TUNING_CONTROLS
+>   	add_tuning_ctls(codec);
+>   #endif
 
-This patch looks good to me, but in a view of prevention from
-errors in future work (you will do), it's not better to assign to
-'struct hda_codec.patch_ops' in different lines which have larger
-distance.
+Though error code can be returned in a call of snd_hda_ctl_add(), it's 
+not handled correctly in 'ca0132_build_controls()'. At least, return
+code in calls of below functions is better to be checked.
 
-8551 static int patch_ca0132(struct hda_codec *codec)
-8552 {
-...
-8565         codec->patch_ops = ca0132_patch_ops;
-...
-8588         case QUIRK_ZXR_DBPRO:
-8589                 codec->patch_ops = dbpro_patch_ops;
-...
+  - add_voicefx()
+  - add_ca0132_alt_eq_presets()
+  - ca0132_alt_add_svm_enum()
+  - ca0132_alt_add_output_enum
+  - ca0132_alt_add_input_enum
+  - ca0132_alt_add_mic_boost_enum
+  - ae5_add_headphone_gain_enum
+  - ae5_add_sound_filter_enum
+  - zxr_add_headphone_gain_switch
 
-This is not a strong request but I recommend you to reorder procedures 
-done in 'patch_ca0132()' so that:
-
-patch_ca0132()
-->kzalloc(sizeof(struct ca0132_spec))
-->snd_pci_quirk_lookup() and sbz_detect_quirk()
-->'codec' preparation (assignment to members in hda_codec, etc.)
-->'spec' preparation (assignment to members in ca0132_spec, etc.)
+This is not a strong request and you can work for it after merging this
+patchset. We have two weeks more till next merge window.
 
 
 Regards
