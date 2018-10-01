@@ -2,116 +2,118 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C71C004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C2BC004D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2C6A2083C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:23:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2C6A2083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sakamocchi.jp
+	by mail.kernel.org (Postfix) with ESMTP id 4E7DB20840
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 02:38:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUf+3VmH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E7DB20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbeJAI63 (ORCPT
+        id S1728112AbeJAJM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 04:58:29 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34179 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727277AbeJAI63 (ORCPT
+        Mon, 1 Oct 2018 05:12:58 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44848 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbeJAJM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 04:58:29 -0400
-Received: by mail-pf1-f194.google.com with SMTP id k19-v6so8065267pfi.1
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 19:23:01 -0700 (PDT)
+        Mon, 1 Oct 2018 05:12:58 -0400
+Received: by mail-pg1-f195.google.com with SMTP id g2-v6so8323187pgu.11
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 19:37:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rPdcmrltulzJkEuEmVXOPPDqv5gYoeLZfgs9OSIgqwA=;
+        b=FUf+3VmHmUofAbU/3vTAYBnUIUfpu7RxrsvWIOwIS/aYoN8Z1gyoNPzlI3QYL8+XBt
+         BnMfwgE4IUeokD00oucNQfFZF8Q0g2oDG5/abza33JTcPtNXzR04es+4lvI/KQTsjHCF
+         4g6QHXTic+1d6Dm3+lh+4IsBDCVgYh7HUvjPe/o1rz45jObmBmKXzoECi6dXIP0n8Asb
+         Y4QjxxX/wm9biUmtXCAe8Ke8E4grJ+U2NOc9H6J50uGj+ilpl542GTjhOcraFp6ie4hL
+         gd7ji4zQB17hlDruKFgBGU/cxQ81gx+/VG3I3QoumN8MU6Q44JJ++UNMEjIP5DnMAyF7
+         oq/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DQ9Cpd8D+2FKhAnL508GVFP60TvHvJ0B01q7d8g9lH0=;
-        b=Rc/WXtRmbSBBQ67hAR4FSj20kjZ81SCJ2VzpxenRI13KT16Cx3zE3Y5bH6tBRm9aHx
-         nhsGxRte07HcowfH5rJOea9K6qCw2AhP5EJ4Xtj1iiKzpSyGgCTxwyj0z579KIdv2JAD
-         NfkfN4840W1L7Y5D8KNcVyWG9jlvbtSv/PWyTHBQJFrhtnPtQ72hINrDPYH3V5s4x3A0
-         i9J/UQWuz2TU9K+zMJWA8Xb2L0nTcZ5vGnBA619f+jElB37tBe8eZ2M626arv0t+Mdt6
-         9xRgMrsBKQP/DwAzyfAhPXctzBn6HFUqng8sGrVHDgtQtGoPx2Md4iWNRreBVEpN7nNL
-         iizQ==
-X-Gm-Message-State: ABuFfojAq64cPArETfDkxAtg66XaYIhW0x+YcCy7CiAmyOBCy7RcQwpY
-        t2aPeb0ErSgKi7O02ijEi/gFkSqj
-X-Google-Smtp-Source: ACcGV63hc53Rn7pTE+q4pAs130imErgMWSGyHs0e/tMZ3bEWuLQ8QqJebFel/d+LoevDiJYHMCUKHQ==
-X-Received: by 2002:a62:d582:: with SMTP id d124-v6mr7243995pfg.31.1538360581121;
-        Sun, 30 Sep 2018 19:23:01 -0700 (PDT)
-Received: from ?IPv6:2405:6580:9660:3200:6caf:e2c:fa0a:6628? ([2405:6580:9660:3200:6caf:e2c:fa0a:6628])
-        by smtp.gmail.com with ESMTPSA id g17-v6sm4220299pfe.37.2018.09.30.19.22.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 19:23:00 -0700 (PDT)
-Subject: Re: [PATCH 10/11] ALSA: hda/ca0132 - Add ZxR 600 ohm gain control
-To:     Connor McAdams <conmanx360@gmail.com>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Alastair Bridgewater <alastair.bridgewater@gmail.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <1538276607-30234-1-git-send-email-conmanx360@gmail.com>
- <1538276607-30234-11-git-send-email-conmanx360@gmail.com>
-From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Message-ID: <e313237f-1f99-bf87-ebb9-8dffb7a96e46@sakamocchi.jp>
-Date:   Mon, 1 Oct 2018 11:22:57 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rPdcmrltulzJkEuEmVXOPPDqv5gYoeLZfgs9OSIgqwA=;
+        b=BaBNYpduhmDiHGXo1OUYBPumXsDjW+rnYjzgjfbvI2+U0tl9OQ9+VX6iPnVQMtecwA
+         vhg5utJ464izyA9NnqQMc9tTuZ9C1VB8uOFLpMysqROBQc64xJ/ZZMHZa6dLYXQ7xDRU
+         e+4ZucTtG3H2WyttyzhZWcaSwhu3yJg9cAIg8zzTIwXtEsHqksb+3HoaAtKU40OGhQuy
+         jItz2oVzw1kT+O7gYyDYDq0rgM0AGfxCbyPmnCQxuOoHQZ67DXa6dkHaOl65xlpONkFq
+         1yYBhZJnPr5jRgvrq2EFVuFKiVOuzPh57klGqchZ4P10Nem0vWjH4jy8vk7RAahUPgOU
+         H1+Q==
+X-Gm-Message-State: ABuFfoiY6ZQ7/Gk6yRdVSsTzjCxYUowEqtLIgJkfrN4w0Gfv/nQsBWds
+        WleZwjzINcn1H7RxqfgIdR4=
+X-Google-Smtp-Source: ACcGV61rFNQzBxfVja5CgIjGw6VUBxSzrDX0z0W/JBEnP0hneKeW/qf8xWhyNqiBb/7CKvfZGKnRAg==
+X-Received: by 2002:a63:c20:: with SMTP id b32-v6mr8355759pgl.400.1538361447102;
+        Sun, 30 Sep 2018 19:37:27 -0700 (PDT)
+Received: from localhost ([39.7.15.30])
+        by smtp.gmail.com with ESMTPSA id d81-v6sm19235958pfj.122.2018.09.30.19.37.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 30 Sep 2018 19:37:25 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 11:37:21 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+Message-ID: <20181001023721.GA6409@jagdpanzerIV>
+References: <49d22738-17ad-410a-be0a-d27d76ba9f37@i-love.sakura.ne.jp>
+ <20180914115028.GB20572@tigerII.localdomain>
+ <e855cbef-03ff-b4ac-3e06-d2f2f48cfb1f@i-love.sakura.ne.jp>
+ <20180914122217.GA518@tigerII.localdomain>
+ <a661ed7f-889a-1811-0ada-111cc5185d05@i-love.sakura.ne.jp>
+ <7dadfa8c-1f69-ae0f-d747-dbbc9f97c2b6@i-love.sakura.ne.jp>
+ <20180928090939.GE1160@jagdpanzerIV>
+ <3b378c7d-c613-4a8d-67f8-946fac8ad0b0@i-love.sakura.ne.jp>
+ <20180929105151.GA1392@tigerII.localdomain>
+ <91efcff8-dc6d-b7b4-9ac8-2f3882289f95@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <1538276607-30234-11-git-send-email-conmanx360@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <91efcff8-dc6d-b7b4-9ac8-2f3882289f95@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Sep 30 2018 12:03, Connor McAdams wrote:
-> This patch adds a control for 600 ohm gain on the Sound Blaster ZxR.
+On (09/29/18 20:15), Tetsuo Handa wrote:
 > 
-> Signed-off-by: Connor McAdams <conmanx360@gmail.com>
-> ---
->   sound/pci/hda/patch_ca0132.c | 44 ++++++++++++++++++++++++++++++++++++++++++--
->   1 file changed, 42 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-> index f0781e4..90e6a96 100644
-> --- a/sound/pci/hda/patch_ca0132.c
-> +++ b/sound/pci/hda/patch_ca0132.c
-> ..
-> @@ -6415,6 +6452,9 @@ static int ca0132_build_controls(struct hda_codec *codec)
->   		ae5_add_headphone_gain_enum(codec);
->   		ae5_add_sound_filter_enum(codec);
->   	}
-> +
-> +	if (spec->quirk == QUIRK_ZXR)
-> +		zxr_add_headphone_gain_switch(codec);
->   #ifdef ENABLE_TUNING_CONTROLS
->   	add_tuning_ctls(codec);
->   #endif
+> Because there is no guarantee that memory information is dumped under the
+> oom_lock mutex. The oom_lock is held when calling out_of_memory(), and it
+> cannot be held when reporting GFP_ATOMIC memory allocation failures.
 
-Though error code can be returned in a call of snd_hda_ctl_add(), it's 
-not handled correctly in 'ca0132_build_controls()'. At least, return
-code in calls of below functions is better to be checked.
+IOW, static pr_line buffer needs additional synchronization for OOM. Correct?
 
-  - add_voicefx()
-  - add_ca0132_alt_eq_presets()
-  - ca0132_alt_add_svm_enum()
-  - ca0132_alt_add_output_enum
-  - ca0132_alt_add_input_enum
-  - ca0132_alt_add_mic_boost_enum
-  - ae5_add_headphone_gain_enum
-  - ae5_add_sound_filter_enum
-  - zxr_add_headphone_gain_switch
+If we are about to have a list of printk buffers then we probably can
+define a list of NR_CPUS cont buffers. And we probably can reuse the
+existing struct cont for buffered printk, having 2 different struct-s
+for the same thing - struct cont and struct printk_buffer - is not very
+cool.
 
-This is not a strong request and you can work for it after merging this
-patchset. We have two weeks more till next merge window.
+> But I don't want line buffered printk() API to truncate upon out of
+> space for line buffered printk() API.
 
+All printk()-s are limited by LOG_LINE_MAX. Buffered printk() is not
+special.
 
-Regards
-
-Takashi Sakamoto
+	-ss
