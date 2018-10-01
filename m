@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1872C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1EF8C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504922089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:48:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504922089D
+	by mail.kernel.org (Postfix) with ESMTP id 563652089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:48:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 563652089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbeJASZq (ORCPT
+        id S1729389AbeJASZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 14:25:46 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13181 "EHLO huawei.com"
+        Mon, 1 Oct 2018 14:25:58 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51411 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729250AbeJASZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 14:25:46 -0400
+        id S1729250AbeJASZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 14:25:57 -0400
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 86B25406B4C4A;
-        Mon,  1 Oct 2018 19:48:16 +0800 (CST)
+        by Forcepoint Email with ESMTP id 0424BBE2C9E5B;
+        Mon,  1 Oct 2018 19:48:27 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Mon, 1 Oct 2018 19:48:12 +0800
+ 14.3.399.0; Mon, 1 Oct 2018 19:48:17 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
-Subject: [PATCH net-next 1/7] net: hns3: Add flow director initialization
-Date:   Mon, 1 Oct 2018 12:46:41 +0100
-Message-ID: <20181001114647.15504-2-salil.mehta@huawei.com>
+Subject: [PATCH net-next 3/7] net: hns3: Add support for rule add/delete for flow director
+Date:   Mon, 1 Oct 2018 12:46:43 +0100
+Message-ID: <20181001114647.15504-4-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181001114647.15504-1-salil.mehta@huawei.com>
 References: <20181001114647.15504-1-salil.mehta@huawei.com>
@@ -51,465 +51,594 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jian Shen <shenjian15@huawei.com>
 
-Flow director is a new feature supported by hardware with revision 0x21.
-This patch adds flow direcor initialization for each PF. It queries flow
-director mode and tcam resource from firmware, selects tuples used for
-input key.
+This patch adds support for add and delete rule by ethtool commands.
+HNS3 driver supports several flow types, include ETHER_FLOW,
+IP_USER_FLOW, TCP_V4_FLOW, UDP_V4_FLOW, SCTP_V4_FLOW, IPV6_USER_FLOW,
+TCP_V6_FLOW, UDP_V6_FLOW and SCTP_V6_FLOW.
 
 Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
  drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   4 +
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |   8 ++
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  32 +++++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 157 +++++++++++++++++++++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    | 148 +++++++++++++++++++
- 5 files changed, 349 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  14 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 501 +++++++++++++++++++++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   2 +
+ 4 files changed, 519 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-index dea422c..d3e5190 100644
+index d3e5190..262bb736 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
 +++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-@@ -51,6 +51,7 @@
- #define HNAE3_KNIC_CLIENT_INITED_B		0x3
- #define HNAE3_UNIC_CLIENT_INITED_B		0x4
- #define HNAE3_ROCE_CLIENT_INITED_B		0x5
-+#define HNAE3_DEV_SUPPORT_FD_B			0x6
- 
- #define HNAE3_DEV_SUPPORT_ROCE_DCB_BITS (BIT(HNAE3_DEV_SUPPORT_DCB_B) |\
- 		BIT(HNAE3_DEV_SUPPORT_ROCE_B))
-@@ -61,6 +62,9 @@
- #define hnae3_dev_dcb_supported(hdev) \
- 	hnae3_get_bit(hdev->ae_dev->flag, HNAE3_DEV_SUPPORT_DCB_B)
- 
-+#define hnae3_dev_fd_supported(hdev) \
-+	hnae3_get_bit((hdev)->ae_dev->flag, HNAE3_DEV_SUPPORT_FD_B)
-+
- #define ring_ptr_move_fw(ring, p) \
- 	((ring)->p = ((ring)->p + 1) % (ring)->desc_num)
- #define ring_ptr_move_bw(ring, p) \
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 10506522..605f029 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1622,6 +1622,13 @@ static void hns3_disable_sriov(struct pci_dev *pdev)
- 	pci_disable_sriov(pdev);
- }
- 
-+static void hns3_get_dev_capability(struct pci_dev *pdev,
-+				    struct hnae3_ae_dev *ae_dev)
-+{
-+	if (pdev->revision >= 0x21)
-+		hnae3_set_bit(ae_dev->flag, HNAE3_DEV_SUPPORT_FD_B, 1);
-+}
-+
- /* hns3_probe - Device initialization routine
-  * @pdev: PCI device information struct
-  * @ent: entry in hns3_pci_tbl
-@@ -1647,6 +1654,7 @@ static int hns3_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	ae_dev->pdev = pdev;
- 	ae_dev->flag = ent->driver_data;
- 	ae_dev->dev_type = HNAE3_DEV_KNIC;
-+	hns3_get_dev_capability(pdev, ae_dev);
- 	pci_set_drvdata(pdev, ae_dev);
- 
- 	hnae3_register_ae_dev(ae_dev);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index 842dc3f..827bc51 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -190,6 +190,11 @@ enum hclge_opcode_type {
- 	HCLGE_OPC_VLAN_FILTER_PF_CFG	= 0x1101,
- 	HCLGE_OPC_VLAN_FILTER_VF_CFG	= 0x1102,
- 
-+	/* Flow Director commands */
-+	HCLGE_OPC_FD_MODE_CTRL		= 0x1200,
-+	HCLGE_OPC_FD_GET_ALLOCATION	= 0x1201,
-+	HCLGE_OPC_FD_KEY_CONFIG		= 0x1202,
-+
- 	/* MDIO command */
- 	HCLGE_OPC_MDIO_CONFIG		= 0x1900,
- 
-@@ -819,6 +824,33 @@ struct hclge_set_led_state_cmd {
- 	u8 rsv2[20];
+@@ -416,6 +416,10 @@ struct hnae3_ae_ops {
+ 	void (*get_link_mode)(struct hnae3_handle *handle,
+ 			      unsigned long *supported,
+ 			      unsigned long *advertising);
++	int (*add_fd_entry)(struct hnae3_handle *handle,
++			    struct ethtool_rxnfc *cmd);
++	int (*del_fd_entry)(struct hnae3_handle *handle,
++			    struct ethtool_rxnfc *cmd);
  };
  
-+struct hclge_get_fd_mode_cmd {
-+	u8 mode;
-+	u8 enable;
-+	u8 rsv[22];
-+};
-+
-+struct hclge_get_fd_allocation_cmd {
-+	__le32 stage1_entry_num;
-+	__le32 stage2_entry_num;
-+	__le16 stage1_counter_num;
-+	__le16 stage2_counter_num;
-+	u8 rsv[12];
-+};
-+
-+struct hclge_set_fd_key_config_cmd {
-+	u8 stage;
-+	u8 key_select;
-+	u8 inner_sipv6_word_en;
-+	u8 inner_dipv6_word_en;
-+	u8 outer_sipv6_word_en;
-+	u8 outer_dipv6_word_en;
-+	u8 rsv1[2];
-+	__le32 tuple_mask;
-+	__le32 meta_data_mask;
-+	u8 rsv2[8];
-+};
-+
- int hclge_cmd_init(struct hclge_dev *hdev);
- static inline void hclge_write_reg(void __iomem *base, u32 reg, u32 value)
+ struct hnae3_dcb_ops {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+index 8ad2c3e..59cbf78 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+@@ -795,12 +795,22 @@ static int hns3_set_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *cmd)
  {
+ 	struct hnae3_handle *h = hns3_get_handle(netdev);
+ 
+-	if (!h->ae_algo || !h->ae_algo->ops || !h->ae_algo->ops->set_rss_tuple)
++	if (!h->ae_algo || !h->ae_algo->ops)
+ 		return -EOPNOTSUPP;
+ 
+ 	switch (cmd->cmd) {
+ 	case ETHTOOL_SRXFH:
+-		return h->ae_algo->ops->set_rss_tuple(h, cmd);
++		if (h->ae_algo->ops->set_rss_tuple)
++			return h->ae_algo->ops->set_rss_tuple(h, cmd);
++		return -EOPNOTSUPP;
++	case ETHTOOL_SRXCLSRLINS:
++		if (h->ae_algo->ops->add_fd_entry)
++			return h->ae_algo->ops->add_fd_entry(h, cmd);
++		return -EOPNOTSUPP;
++	case ETHTOOL_SRXCLSRLDEL:
++		if (h->ae_algo->ops->del_fd_entry)
++			return h->ae_algo->ops->del_fd_entry(h, cmd);
++		return -EOPNOTSUPP;
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 7c8b686..b02190f 100644
+index 030898d..43f5caa 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3328,6 +3328,149 @@ static void hclge_set_promisc_mode(struct hnae3_handle *handle, bool en_uc_pmc,
- 	hclge_cmd_set_promisc_mode(hdev, &param);
+@@ -3800,6 +3800,505 @@ static int hclge_config_action(struct hclge_dev *hdev, u8 stage,
+ 	return hclge_fd_ad_config(hdev, stage, ad_data.ad_id, &ad_data);
  }
  
-+static int hclge_get_fd_mode(struct hclge_dev *hdev, u8 *fd_mode)
++static int hclge_fd_check_spec(struct hclge_dev *hdev,
++			       struct ethtool_rx_flow_spec *fs, u32 *unused)
 +{
-+	struct hclge_get_fd_mode_cmd *req;
-+	struct hclge_desc desc;
-+	int ret;
++	struct ethtool_tcpip4_spec *tcp_ip4_spec;
++	struct ethtool_usrip4_spec *usr_ip4_spec;
++	struct ethtool_tcpip6_spec *tcp_ip6_spec;
++	struct ethtool_usrip6_spec *usr_ip6_spec;
++	struct ethhdr *ether_spec;
 +
-+	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_FD_MODE_CTRL, true);
++	if (fs->location >= hdev->fd_cfg.rule_num[HCLGE_FD_STAGE_1])
++		return -EINVAL;
 +
-+	req = (struct hclge_get_fd_mode_cmd *)desc.data;
++	if (!(fs->flow_type & hdev->fd_cfg.proto_support))
++		return -EOPNOTSUPP;
 +
-+	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+	if (ret) {
-+		dev_err(&hdev->pdev->dev, "get fd mode fail, ret=%d\n", ret);
-+		return ret;
-+	}
-+
-+	*fd_mode = req->mode;
-+
-+	return ret;
-+}
-+
-+static int hclge_get_fd_allocation(struct hclge_dev *hdev,
-+				   u32 *stage1_entry_num,
-+				   u32 *stage2_entry_num,
-+				   u16 *stage1_counter_num,
-+				   u16 *stage2_counter_num)
-+{
-+	struct hclge_get_fd_allocation_cmd *req;
-+	struct hclge_desc desc;
-+	int ret;
-+
-+	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_FD_GET_ALLOCATION, true);
-+
-+	req = (struct hclge_get_fd_allocation_cmd *)desc.data;
-+
-+	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+	if (ret) {
-+		dev_err(&hdev->pdev->dev, "query fd allocation fail, ret=%d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	*stage1_entry_num = le32_to_cpu(req->stage1_entry_num);
-+	*stage2_entry_num = le32_to_cpu(req->stage2_entry_num);
-+	*stage1_counter_num = le16_to_cpu(req->stage1_counter_num);
-+	*stage2_counter_num = le16_to_cpu(req->stage2_counter_num);
-+
-+	return ret;
-+}
-+
-+static int hclge_set_fd_key_config(struct hclge_dev *hdev, int stage_num)
-+{
-+	struct hclge_set_fd_key_config_cmd *req;
-+	struct hclge_fd_key_cfg *stage;
-+	struct hclge_desc desc;
-+	int ret;
-+
-+	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_FD_KEY_CONFIG, false);
-+
-+	req = (struct hclge_set_fd_key_config_cmd *)desc.data;
-+	stage = &hdev->fd_cfg.key_cfg[stage_num];
-+	req->stage = stage_num;
-+	req->key_select = stage->key_sel;
-+	req->inner_sipv6_word_en = stage->inner_sipv6_word_en;
-+	req->inner_dipv6_word_en = stage->inner_dipv6_word_en;
-+	req->outer_sipv6_word_en = stage->outer_sipv6_word_en;
-+	req->outer_dipv6_word_en = stage->outer_dipv6_word_en;
-+	req->tuple_mask = cpu_to_le32(~stage->tuple_active);
-+	req->meta_data_mask = cpu_to_le32(~stage->meta_data_active);
-+
-+	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+	if (ret)
-+		dev_err(&hdev->pdev->dev, "set fd key fail, ret=%d\n", ret);
-+
-+	return ret;
-+}
-+
-+static int hclge_init_fd_config(struct hclge_dev *hdev)
-+{
-+#define LOW_2_WORDS		0x03
-+	struct hclge_fd_key_cfg *key_cfg;
-+	int ret;
-+
-+	if (!hnae3_dev_fd_supported(hdev))
-+		return 0;
-+
-+	ret = hclge_get_fd_mode(hdev, &hdev->fd_cfg.fd_mode);
-+	if (ret)
-+		return ret;
-+
-+	switch (hdev->fd_cfg.fd_mode) {
-+	case HCLGE_FD_MODE_DEPTH_2K_WIDTH_400B_STAGE_1:
-+		hdev->fd_cfg.max_key_length = MAX_KEY_LENGTH;
-+		break;
-+	case HCLGE_FD_MODE_DEPTH_4K_WIDTH_200B_STAGE_1:
-+		hdev->fd_cfg.max_key_length = MAX_KEY_LENGTH / 2;
-+		break;
-+	default:
-+		dev_err(&hdev->pdev->dev,
-+			"Unsupported flow director mode %d\n",
-+			hdev->fd_cfg.fd_mode);
++	if ((fs->flow_type & FLOW_EXT) &&
++	    (fs->h_ext.data[0] != 0 || fs->h_ext.data[1] != 0)) {
++		dev_err(&hdev->pdev->dev, "user-def bytes are not supported\n");
 +		return -EOPNOTSUPP;
 +	}
 +
-+	hdev->fd_cfg.fd_en = true;
-+	hdev->fd_cfg.proto_support =
-+		TCP_V4_FLOW | UDP_V4_FLOW | SCTP_V4_FLOW | TCP_V6_FLOW |
-+		UDP_V6_FLOW | SCTP_V6_FLOW | IPV4_USER_FLOW | IPV6_USER_FLOW;
-+	key_cfg = &hdev->fd_cfg.key_cfg[HCLGE_FD_STAGE_1];
-+	key_cfg->key_sel = HCLGE_FD_KEY_BASE_ON_TUPLE,
-+	key_cfg->inner_sipv6_word_en = LOW_2_WORDS;
-+	key_cfg->inner_dipv6_word_en = LOW_2_WORDS;
-+	key_cfg->outer_sipv6_word_en = 0;
-+	key_cfg->outer_dipv6_word_en = 0;
++	switch (fs->flow_type & ~(FLOW_EXT | FLOW_MAC_EXT)) {
++	case SCTP_V4_FLOW:
++	case TCP_V4_FLOW:
++	case UDP_V4_FLOW:
++		tcp_ip4_spec = &fs->h_u.tcp_ip4_spec;
++		*unused |= BIT(INNER_SRC_MAC) | BIT(INNER_DST_MAC);
 +
-+	key_cfg->tuple_active = BIT(INNER_VLAN_TAG_FST) | BIT(INNER_ETH_TYPE) |
-+				BIT(INNER_IP_PROTO) | BIT(INNER_IP_TOS) |
-+				BIT(INNER_SRC_IP) | BIT(INNER_DST_IP) |
-+				BIT(INNER_SRC_PORT) | BIT(INNER_DST_PORT);
++		if (!tcp_ip4_spec->ip4src)
++			*unused |= BIT(INNER_SRC_IP);
 +
-+	/* If use max 400bit key, we can support tuples for ether type */
-+	if (hdev->fd_cfg.max_key_length == MAX_KEY_LENGTH) {
-+		hdev->fd_cfg.proto_support |= ETHER_FLOW;
-+		key_cfg->tuple_active |=
-+				BIT(INNER_DST_MAC) | BIT(INNER_SRC_MAC);
++		if (!tcp_ip4_spec->ip4dst)
++			*unused |= BIT(INNER_DST_IP);
++
++		if (!tcp_ip4_spec->psrc)
++			*unused |= BIT(INNER_SRC_PORT);
++
++		if (!tcp_ip4_spec->pdst)
++			*unused |= BIT(INNER_DST_PORT);
++
++		if (!tcp_ip4_spec->tos)
++			*unused |= BIT(INNER_IP_TOS);
++
++		break;
++	case IP_USER_FLOW:
++		usr_ip4_spec = &fs->h_u.usr_ip4_spec;
++		*unused |= BIT(INNER_SRC_MAC) | BIT(INNER_DST_MAC) |
++			BIT(INNER_SRC_PORT) | BIT(INNER_DST_PORT);
++
++		if (!usr_ip4_spec->ip4src)
++			*unused |= BIT(INNER_SRC_IP);
++
++		if (!usr_ip4_spec->ip4dst)
++			*unused |= BIT(INNER_DST_IP);
++
++		if (!usr_ip4_spec->tos)
++			*unused |= BIT(INNER_IP_TOS);
++
++		if (!usr_ip4_spec->proto)
++			*unused |= BIT(INNER_IP_PROTO);
++
++		if (usr_ip4_spec->l4_4_bytes)
++			return -EOPNOTSUPP;
++
++		if (usr_ip4_spec->ip_ver != ETH_RX_NFC_IP4)
++			return -EOPNOTSUPP;
++
++		break;
++	case SCTP_V6_FLOW:
++	case TCP_V6_FLOW:
++	case UDP_V6_FLOW:
++		tcp_ip6_spec = &fs->h_u.tcp_ip6_spec;
++		*unused |= BIT(INNER_SRC_MAC) | BIT(INNER_DST_MAC) |
++			BIT(INNER_IP_TOS);
++
++		if (!tcp_ip6_spec->ip6src[0] && !tcp_ip6_spec->ip6src[1] &&
++		    !tcp_ip6_spec->ip6src[2] && !tcp_ip6_spec->ip6src[3])
++			*unused |= BIT(INNER_SRC_IP);
++
++		if (!tcp_ip6_spec->ip6dst[0] && !tcp_ip6_spec->ip6dst[1] &&
++		    !tcp_ip6_spec->ip6dst[2] && !tcp_ip6_spec->ip6dst[3])
++			*unused |= BIT(INNER_DST_IP);
++
++		if (!tcp_ip6_spec->psrc)
++			*unused |= BIT(INNER_SRC_PORT);
++
++		if (!tcp_ip6_spec->pdst)
++			*unused |= BIT(INNER_DST_PORT);
++
++		if (tcp_ip6_spec->tclass)
++			return -EOPNOTSUPP;
++
++		break;
++	case IPV6_USER_FLOW:
++		usr_ip6_spec = &fs->h_u.usr_ip6_spec;
++		*unused |= BIT(INNER_SRC_MAC) | BIT(INNER_DST_MAC) |
++			BIT(INNER_IP_TOS) | BIT(INNER_SRC_PORT) |
++			BIT(INNER_DST_PORT);
++
++		if (!usr_ip6_spec->ip6src[0] && !usr_ip6_spec->ip6src[1] &&
++		    !usr_ip6_spec->ip6src[2] && !usr_ip6_spec->ip6src[3])
++			*unused |= BIT(INNER_SRC_IP);
++
++		if (!usr_ip6_spec->ip6dst[0] && !usr_ip6_spec->ip6dst[1] &&
++		    !usr_ip6_spec->ip6dst[2] && !usr_ip6_spec->ip6dst[3])
++			*unused |= BIT(INNER_DST_IP);
++
++		if (!usr_ip6_spec->l4_proto)
++			*unused |= BIT(INNER_IP_PROTO);
++
++		if (usr_ip6_spec->tclass)
++			return -EOPNOTSUPP;
++
++		if (usr_ip6_spec->l4_4_bytes)
++			return -EOPNOTSUPP;
++
++		break;
++	case ETHER_FLOW:
++		ether_spec = &fs->h_u.ether_spec;
++		*unused |= BIT(INNER_SRC_IP) | BIT(INNER_DST_IP) |
++			BIT(INNER_SRC_PORT) | BIT(INNER_DST_PORT) |
++			BIT(INNER_IP_TOS) | BIT(INNER_IP_PROTO);
++
++		if (is_zero_ether_addr(ether_spec->h_source))
++			*unused |= BIT(INNER_SRC_MAC);
++
++		if (is_zero_ether_addr(ether_spec->h_dest))
++			*unused |= BIT(INNER_DST_MAC);
++
++		if (!ether_spec->h_proto)
++			*unused |= BIT(INNER_ETH_TYPE);
++
++		break;
++	default:
++		return -EOPNOTSUPP;
 +	}
 +
-+	/* roce_type is used to filter roce frames
-+	 * dst_vport is used to specify the rule
-+	 */
-+	key_cfg->meta_data_active = BIT(ROCE_TYPE) | BIT(DST_VPORT);
++	if ((fs->flow_type & FLOW_EXT)) {
++		if (fs->h_ext.vlan_etype)
++			return -EOPNOTSUPP;
++		if (!fs->h_ext.vlan_tci)
++			*unused |= BIT(INNER_VLAN_TAG_FST);
 +
-+	ret = hclge_get_fd_allocation(hdev,
-+				      &hdev->fd_cfg.rule_num[HCLGE_FD_STAGE_1],
-+				      &hdev->fd_cfg.rule_num[HCLGE_FD_STAGE_2],
-+				      &hdev->fd_cfg.cnt_num[HCLGE_FD_STAGE_1],
-+				      &hdev->fd_cfg.cnt_num[HCLGE_FD_STAGE_2]);
++		if (fs->m_ext.vlan_tci) {
++			if (be16_to_cpu(fs->h_ext.vlan_tci) >= VLAN_N_VID)
++				return -EINVAL;
++		}
++	} else {
++		*unused |= BIT(INNER_VLAN_TAG_FST);
++	}
++
++	if (fs->flow_type & FLOW_MAC_EXT) {
++		if (!(hdev->fd_cfg.proto_support & ETHER_FLOW))
++			return -EOPNOTSUPP;
++
++		if (is_zero_ether_addr(fs->h_ext.h_dest))
++			*unused |= BIT(INNER_DST_MAC);
++		else
++			*unused &= ~(BIT(INNER_DST_MAC));
++	}
++
++	return 0;
++}
++
++static bool hclge_fd_rule_exist(struct hclge_dev *hdev, u16 location)
++{
++	struct hclge_fd_rule *rule = NULL;
++	struct hlist_node *node2;
++
++	hlist_for_each_entry_safe(rule, node2, &hdev->fd_rule_list, rule_node) {
++		if (rule->location >= location)
++			break;
++	}
++
++	return  rule && rule->location == location;
++}
++
++static int hclge_fd_update_rule_list(struct hclge_dev *hdev,
++				     struct hclge_fd_rule *new_rule,
++				     u16 location,
++				     bool is_add)
++{
++	struct hclge_fd_rule *rule = NULL, *parent = NULL;
++	struct hlist_node *node2;
++
++	if (is_add && !new_rule)
++		return -EINVAL;
++
++	hlist_for_each_entry_safe(rule, node2,
++				  &hdev->fd_rule_list, rule_node) {
++		if (rule->location >= location)
++			break;
++		parent = rule;
++	}
++
++	if (rule && rule->location == location) {
++		hlist_del(&rule->rule_node);
++		kfree(rule);
++		hdev->hclge_fd_rule_num--;
++
++		if (!is_add)
++			return 0;
++
++	} else if (!is_add) {
++		dev_err(&hdev->pdev->dev,
++			"delete fail, rule %d is inexistent\n",
++			location);
++		return -EINVAL;
++	}
++
++	INIT_HLIST_NODE(&new_rule->rule_node);
++
++	if (parent)
++		hlist_add_behind(&new_rule->rule_node, &parent->rule_node);
++	else
++		hlist_add_head(&new_rule->rule_node, &hdev->fd_rule_list);
++
++	hdev->hclge_fd_rule_num++;
++
++	return 0;
++}
++
++static int hclge_fd_get_tuple(struct hclge_dev *hdev,
++			      struct ethtool_rx_flow_spec *fs,
++			      struct hclge_fd_rule *rule)
++{
++	u32 flow_type = fs->flow_type & ~(FLOW_EXT | FLOW_MAC_EXT);
++
++	switch (flow_type) {
++	case SCTP_V4_FLOW:
++	case TCP_V4_FLOW:
++	case UDP_V4_FLOW:
++		rule->tuples.src_ip[3] =
++				be32_to_cpu(fs->h_u.tcp_ip4_spec.ip4src);
++		rule->tuples_mask.src_ip[3] =
++				be32_to_cpu(fs->m_u.tcp_ip4_spec.ip4src);
++
++		rule->tuples.dst_ip[3] =
++				be32_to_cpu(fs->h_u.tcp_ip4_spec.ip4dst);
++		rule->tuples_mask.dst_ip[3] =
++				be32_to_cpu(fs->m_u.tcp_ip4_spec.ip4dst);
++
++		rule->tuples.src_port = be16_to_cpu(fs->h_u.tcp_ip4_spec.psrc);
++		rule->tuples_mask.src_port =
++				be16_to_cpu(fs->m_u.tcp_ip4_spec.psrc);
++
++		rule->tuples.dst_port = be16_to_cpu(fs->h_u.tcp_ip4_spec.pdst);
++		rule->tuples_mask.dst_port =
++				be16_to_cpu(fs->m_u.tcp_ip4_spec.pdst);
++
++		rule->tuples.ip_tos = fs->h_u.tcp_ip4_spec.tos;
++		rule->tuples_mask.ip_tos = fs->m_u.tcp_ip4_spec.tos;
++
++		rule->tuples.ether_proto = ETH_P_IP;
++		rule->tuples_mask.ether_proto = 0xFFFF;
++
++		break;
++	case IP_USER_FLOW:
++		rule->tuples.src_ip[3] =
++				be32_to_cpu(fs->h_u.usr_ip4_spec.ip4src);
++		rule->tuples_mask.src_ip[3] =
++				be32_to_cpu(fs->m_u.usr_ip4_spec.ip4src);
++
++		rule->tuples.dst_ip[3] =
++				be32_to_cpu(fs->h_u.usr_ip4_spec.ip4dst);
++		rule->tuples_mask.dst_ip[3] =
++				be32_to_cpu(fs->m_u.usr_ip4_spec.ip4dst);
++
++		rule->tuples.ip_tos = fs->h_u.usr_ip4_spec.tos;
++		rule->tuples_mask.ip_tos = fs->m_u.usr_ip4_spec.tos;
++
++		rule->tuples.ip_proto = fs->h_u.usr_ip4_spec.proto;
++		rule->tuples_mask.ip_proto = fs->m_u.usr_ip4_spec.proto;
++
++		rule->tuples.ether_proto = ETH_P_IP;
++		rule->tuples_mask.ether_proto = 0xFFFF;
++
++		break;
++	case SCTP_V6_FLOW:
++	case TCP_V6_FLOW:
++	case UDP_V6_FLOW:
++		be32_to_cpu_array(rule->tuples.src_ip,
++				  fs->h_u.tcp_ip6_spec.ip6src, 4);
++		be32_to_cpu_array(rule->tuples_mask.src_ip,
++				  fs->m_u.tcp_ip6_spec.ip6src, 4);
++
++		be32_to_cpu_array(rule->tuples.dst_ip,
++				  fs->h_u.tcp_ip6_spec.ip6dst, 4);
++		be32_to_cpu_array(rule->tuples_mask.dst_ip,
++				  fs->m_u.tcp_ip6_spec.ip6dst, 4);
++
++		rule->tuples.src_port = be16_to_cpu(fs->h_u.tcp_ip6_spec.psrc);
++		rule->tuples_mask.src_port =
++				be16_to_cpu(fs->m_u.tcp_ip6_spec.psrc);
++
++		rule->tuples.dst_port = be16_to_cpu(fs->h_u.tcp_ip6_spec.pdst);
++		rule->tuples_mask.dst_port =
++				be16_to_cpu(fs->m_u.tcp_ip6_spec.pdst);
++
++		rule->tuples.ether_proto = ETH_P_IPV6;
++		rule->tuples_mask.ether_proto = 0xFFFF;
++
++		break;
++	case IPV6_USER_FLOW:
++		be32_to_cpu_array(rule->tuples.src_ip,
++				  fs->h_u.usr_ip6_spec.ip6src, 4);
++		be32_to_cpu_array(rule->tuples_mask.src_ip,
++				  fs->m_u.usr_ip6_spec.ip6src, 4);
++
++		be32_to_cpu_array(rule->tuples.dst_ip,
++				  fs->h_u.usr_ip6_spec.ip6dst, 4);
++		be32_to_cpu_array(rule->tuples_mask.dst_ip,
++				  fs->m_u.usr_ip6_spec.ip6dst, 4);
++
++		rule->tuples.ip_proto = fs->h_u.usr_ip6_spec.l4_proto;
++		rule->tuples_mask.ip_proto = fs->m_u.usr_ip6_spec.l4_proto;
++
++		rule->tuples.ether_proto = ETH_P_IPV6;
++		rule->tuples_mask.ether_proto = 0xFFFF;
++
++		break;
++	case ETHER_FLOW:
++		ether_addr_copy(rule->tuples.src_mac,
++				fs->h_u.ether_spec.h_source);
++		ether_addr_copy(rule->tuples_mask.src_mac,
++				fs->m_u.ether_spec.h_source);
++
++		ether_addr_copy(rule->tuples.dst_mac,
++				fs->h_u.ether_spec.h_dest);
++		ether_addr_copy(rule->tuples_mask.dst_mac,
++				fs->m_u.ether_spec.h_dest);
++
++		rule->tuples.ether_proto =
++				be16_to_cpu(fs->h_u.ether_spec.h_proto);
++		rule->tuples_mask.ether_proto =
++				be16_to_cpu(fs->m_u.ether_spec.h_proto);
++
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++
++	switch (flow_type) {
++	case SCTP_V4_FLOW:
++	case SCTP_V6_FLOW:
++		rule->tuples.ip_proto = IPPROTO_SCTP;
++		rule->tuples_mask.ip_proto = 0xFF;
++		break;
++	case TCP_V4_FLOW:
++	case TCP_V6_FLOW:
++		rule->tuples.ip_proto = IPPROTO_TCP;
++		rule->tuples_mask.ip_proto = 0xFF;
++		break;
++	case UDP_V4_FLOW:
++	case UDP_V6_FLOW:
++		rule->tuples.ip_proto = IPPROTO_UDP;
++		rule->tuples_mask.ip_proto = 0xFF;
++		break;
++	default:
++		break;
++	}
++
++	if ((fs->flow_type & FLOW_EXT)) {
++		rule->tuples.vlan_tag1 = be16_to_cpu(fs->h_ext.vlan_tci);
++		rule->tuples_mask.vlan_tag1 = be16_to_cpu(fs->m_ext.vlan_tci);
++	}
++
++	if (fs->flow_type & FLOW_MAC_EXT) {
++		ether_addr_copy(rule->tuples.dst_mac, fs->h_ext.h_dest);
++		ether_addr_copy(rule->tuples_mask.dst_mac, fs->m_ext.h_dest);
++	}
++
++	return 0;
++}
++
++static int hclge_add_fd_entry(struct hnae3_handle *handle,
++			      struct ethtool_rxnfc *cmd)
++{
++	struct hclge_vport *vport = hclge_get_vport(handle);
++	struct hclge_dev *hdev = vport->back;
++	u16 dst_vport_id = 0, q_index = 0;
++	struct ethtool_rx_flow_spec *fs;
++	struct hclge_fd_rule *rule;
++	u32 unused = 0;
++	u8 action;
++	int ret;
++
++	if (!hnae3_dev_fd_supported(hdev))
++		return -EOPNOTSUPP;
++
++	if (!hdev->fd_cfg.fd_en) {
++		dev_warn(&hdev->pdev->dev,
++			 "Please enable flow director first\n");
++		return -EOPNOTSUPP;
++	}
++
++	fs = (struct ethtool_rx_flow_spec *)&cmd->fs;
++
++	ret = hclge_fd_check_spec(hdev, fs, &unused);
++	if (ret) {
++		dev_err(&hdev->pdev->dev, "Check fd spec failed\n");
++		return ret;
++	}
++
++	if (fs->ring_cookie == RX_CLS_FLOW_DISC) {
++		action = HCLGE_FD_ACTION_DROP_PACKET;
++	} else {
++		u32 ring = ethtool_get_flow_spec_ring(fs->ring_cookie);
++		u8 vf = ethtool_get_flow_spec_ring_vf(fs->ring_cookie);
++		u16 tqps;
++
++		dst_vport_id = vf ? hdev->vport[vf].vport_id : vport->vport_id;
++		tqps = vf ? hdev->vport[vf].alloc_tqps : vport->alloc_tqps;
++
++		if (ring >= tqps) {
++			dev_err(&hdev->pdev->dev,
++				"Error: queue id (%d) > max tqp num (%d)\n",
++				ring, tqps - 1);
++			return -EINVAL;
++		}
++
++		if (vf > hdev->num_req_vfs) {
++			dev_err(&hdev->pdev->dev,
++				"Error: vf id (%d) > max vf num (%d)\n",
++				vf, hdev->num_req_vfs);
++			return -EINVAL;
++		}
++
++		action = HCLGE_FD_ACTION_ACCEPT_PACKET;
++		q_index = ring;
++	}
++
++	rule = kzalloc(sizeof(*rule), GFP_KERNEL);
++	if (!rule)
++		return -ENOMEM;
++
++	ret = hclge_fd_get_tuple(hdev, fs, rule);
++	if (ret)
++		goto free_rule;
++
++	rule->flow_type = fs->flow_type;
++
++	rule->location = fs->location;
++	rule->unused_tuple = unused;
++	rule->vf_id = dst_vport_id;
++	rule->queue_id = q_index;
++	rule->action = action;
++
++	ret = hclge_config_action(hdev, HCLGE_FD_STAGE_1, rule);
++	if (ret)
++		goto free_rule;
++
++	ret = hclge_config_key(hdev, HCLGE_FD_STAGE_1, rule);
++	if (ret)
++		goto free_rule;
++
++	ret = hclge_fd_update_rule_list(hdev, rule, fs->location, true);
++	if (ret)
++		goto free_rule;
++
++	return ret;
++
++free_rule:
++	kfree(rule);
++	return ret;
++}
++
++static int hclge_del_fd_entry(struct hnae3_handle *handle,
++			      struct ethtool_rxnfc *cmd)
++{
++	struct hclge_vport *vport = hclge_get_vport(handle);
++	struct hclge_dev *hdev = vport->back;
++	struct ethtool_rx_flow_spec *fs;
++	int ret;
++
++	if (!hnae3_dev_fd_supported(hdev))
++		return -EOPNOTSUPP;
++
++	fs = (struct ethtool_rx_flow_spec *)&cmd->fs;
++
++	if (fs->location >= hdev->fd_cfg.rule_num[HCLGE_FD_STAGE_1])
++		return -EINVAL;
++
++	if (!hclge_fd_rule_exist(hdev, fs->location)) {
++		dev_err(&hdev->pdev->dev,
++			"Delete fail, rule %d is inexistent\n",
++			fs->location);
++		return -ENOENT;
++	}
++
++	ret = hclge_fd_tcam_config(hdev, HCLGE_FD_STAGE_1, true,
++				   fs->location, NULL, false);
 +	if (ret)
 +		return ret;
 +
-+	return hclge_set_fd_key_config(hdev, HCLGE_FD_STAGE_1);
++	return hclge_fd_update_rule_list(hdev, NULL, fs->location,
++					 false);
 +}
 +
  static void hclge_cfg_mac_mode(struct hclge_dev *hdev, bool enable)
  {
  	struct hclge_desc desc;
-@@ -5506,6 +5649,13 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
- 		goto err_mdiobus_unreg;
- 	}
- 
-+	ret = hclge_init_fd_config(hdev);
-+	if (ret) {
-+		dev_err(&pdev->dev,
-+			"fd table init fail, ret=%d\n", ret);
-+		goto err_mdiobus_unreg;
-+	}
-+
- 	hclge_dcb_ops_set(hdev);
- 
- 	timer_setup(&hdev->service_timer, hclge_service_timer, 0);
-@@ -5612,6 +5762,13 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
- 		return ret;
- 	}
- 
-+	ret = hclge_init_fd_config(hdev);
-+	if (ret) {
-+		dev_err(&pdev->dev,
-+			"fd table init fail, ret=%d\n", ret);
-+		return ret;
-+	}
-+
- 	dev_info(&pdev->dev, "Reset done, %s driver initialization finished.\n",
- 		 HCLGE_DRIVER_NAME);
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 7841b83..1e7ad5a 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -359,6 +359,152 @@ struct hclge_vlan_type_cfg {
- 	u16 tx_in_vlan_type;
+@@ -6537,6 +7036,8 @@ static const struct hnae3_ae_ops hclge_ops = {
+ 	.get_regs = hclge_get_regs,
+ 	.set_led_id = hclge_set_led_id,
+ 	.get_link_mode = hclge_get_link_mode,
++	.add_fd_entry = hclge_add_fd_entry,
++	.del_fd_entry = hclge_del_fd_entry,
  };
  
-+enum HCLGE_FD_MODE {
-+	HCLGE_FD_MODE_DEPTH_2K_WIDTH_400B_STAGE_1,
-+	HCLGE_FD_MODE_DEPTH_1K_WIDTH_400B_STAGE_2,
-+	HCLGE_FD_MODE_DEPTH_4K_WIDTH_200B_STAGE_1,
-+	HCLGE_FD_MODE_DEPTH_2K_WIDTH_200B_STAGE_2,
-+};
-+
-+enum HCLGE_FD_KEY_TYPE {
-+	HCLGE_FD_KEY_BASE_ON_PTYPE,
-+	HCLGE_FD_KEY_BASE_ON_TUPLE,
-+};
-+
-+enum HCLGE_FD_STAGE {
-+	HCLGE_FD_STAGE_1,
-+	HCLGE_FD_STAGE_2,
-+};
-+
-+/* OUTER_XXX indicates tuples in tunnel header of tunnel packet
-+ * INNER_XXX indicate tuples in tunneled header of tunnel packet or
-+ *           tuples of non-tunnel packet
-+ */
-+enum HCLGE_FD_TUPLE {
-+	OUTER_DST_MAC,
-+	OUTER_SRC_MAC,
-+	OUTER_VLAN_TAG_FST,
-+	OUTER_VLAN_TAG_SEC,
-+	OUTER_ETH_TYPE,
-+	OUTER_L2_RSV,
-+	OUTER_IP_TOS,
-+	OUTER_IP_PROTO,
-+	OUTER_SRC_IP,
-+	OUTER_DST_IP,
-+	OUTER_L3_RSV,
-+	OUTER_SRC_PORT,
-+	OUTER_DST_PORT,
-+	OUTER_L4_RSV,
-+	OUTER_TUN_VNI,
-+	OUTER_TUN_FLOW_ID,
-+	INNER_DST_MAC,
-+	INNER_SRC_MAC,
-+	INNER_VLAN_TAG_FST,
-+	INNER_VLAN_TAG_SEC,
-+	INNER_ETH_TYPE,
-+	INNER_L2_RSV,
-+	INNER_IP_TOS,
-+	INNER_IP_PROTO,
-+	INNER_SRC_IP,
-+	INNER_DST_IP,
-+	INNER_L3_RSV,
-+	INNER_SRC_PORT,
-+	INNER_DST_PORT,
-+	INNER_L4_RSV,
-+	MAX_TUPLE,
-+};
-+
-+enum HCLGE_FD_META_DATA {
-+	PACKET_TYPE_ID,
-+	IP_FRAGEMENT,
-+	ROCE_TYPE,
-+	NEXT_KEY,
-+	VLAN_NUMBER,
-+	SRC_VPORT,
-+	DST_VPORT,
-+	TUNNEL_PACKET,
-+	MAX_META_DATA,
-+};
-+
-+struct key_info {
-+	u8 key_type;
-+	u8 key_length;
-+};
-+
-+static const struct key_info meta_data_key_info[] = {
-+	{ PACKET_TYPE_ID, 6},
-+	{ IP_FRAGEMENT, 1},
-+	{ ROCE_TYPE, 1},
-+	{ NEXT_KEY, 5},
-+	{ VLAN_NUMBER, 2},
-+	{ SRC_VPORT, 12},
-+	{ DST_VPORT, 12},
-+	{ TUNNEL_PACKET, 1},
-+};
-+
-+static const struct key_info tuple_key_info[] = {
-+	{ OUTER_DST_MAC, 48},
-+	{ OUTER_SRC_MAC, 48},
-+	{ OUTER_VLAN_TAG_FST, 16},
-+	{ OUTER_VLAN_TAG_SEC, 16},
-+	{ OUTER_ETH_TYPE, 16},
-+	{ OUTER_L2_RSV, 16},
-+	{ OUTER_IP_TOS, 8},
-+	{ OUTER_IP_PROTO, 8},
-+	{ OUTER_SRC_IP, 32},
-+	{ OUTER_DST_IP, 32},
-+	{ OUTER_L3_RSV, 16},
-+	{ OUTER_SRC_PORT, 16},
-+	{ OUTER_DST_PORT, 16},
-+	{ OUTER_L4_RSV, 32},
-+	{ OUTER_TUN_VNI, 24},
-+	{ OUTER_TUN_FLOW_ID, 8},
-+	{ INNER_DST_MAC, 48},
-+	{ INNER_SRC_MAC, 48},
-+	{ INNER_VLAN_TAG_FST, 16},
-+	{ INNER_VLAN_TAG_SEC, 16},
-+	{ INNER_ETH_TYPE, 16},
-+	{ INNER_L2_RSV, 16},
-+	{ INNER_IP_TOS, 8},
-+	{ INNER_IP_PROTO, 8},
-+	{ INNER_SRC_IP, 32},
-+	{ INNER_DST_IP, 32},
-+	{ INNER_L3_RSV, 16},
-+	{ INNER_SRC_PORT, 16},
-+	{ INNER_DST_PORT, 16},
-+	{ INNER_L4_RSV, 32},
-+};
-+
-+#define MAX_KEY_LENGTH	400
-+#define MAX_KEY_DWORDS	DIV_ROUND_UP(MAX_KEY_LENGTH / 8, 4)
-+#define MAX_KEY_BYTES	(MAX_KEY_DWORDS * 4)
-+#define MAX_META_DATA_LENGTH	32
-+
-+enum HCLGE_FD_PACKET_TYPE {
-+	NIC_PACKET,
-+	ROCE_PACKET,
-+};
-+
-+struct hclge_fd_key_cfg {
-+	u8 key_sel;
-+	u8 inner_sipv6_word_en;
-+	u8 inner_dipv6_word_en;
-+	u8 outer_sipv6_word_en;
-+	u8 outer_dipv6_word_en;
-+	u32 tuple_active;
-+	u32 meta_data_active;
-+};
-+
-+struct hclge_fd_cfg {
-+	u8 fd_mode;
-+	u8 fd_en;
-+	u16 max_key_length;
-+	u32 proto_support;
-+	u32 rule_num[2]; /* rule entry number */
-+	u16 cnt_num[2]; /* rule hit counter number */
-+	struct hclge_fd_key_cfg key_cfg[2];
-+};
-+
- #define HCLGE_VPORT_NUM 256
- struct hclge_dev {
- 	struct pci_dev *pdev;
-@@ -448,6 +594,8 @@ struct hclge_dev {
- 	struct hclge_vlan_type_cfg vlan_type_cfg;
- 
+ static struct hnae3_ae_algo ae_algo = {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 7f5a242..06adbdd 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -678,6 +678,8 @@ struct hclge_dev {
  	unsigned long vlan_table[VLAN_N_VID][BITS_TO_LONGS(HCLGE_VPORT_NUM)];
-+
-+	struct hclge_fd_cfg fd_cfg;
+ 
+ 	struct hclge_fd_cfg fd_cfg;
++	struct hlist_head fd_rule_list;
++	u16 hclge_fd_rule_num;
  };
  
  /* VPort level vlan tag configuration for TX direction */
