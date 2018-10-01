@@ -2,251 +2,159 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A87C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 539B7C0044B
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6CD621477
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:42:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="jR1Qe7kp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6CD621477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id 19510208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:44:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19510208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbeJAXVX (ORCPT
+        id S1726217AbeJAXW7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 19:21:23 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35116 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726184AbeJAXVW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 19:21:22 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p12-v6so9653317pfh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 09:42:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=joTFncqOhr/5ceRUNjE9Oyw+p4mkklFna4saanIGUr0=;
-        b=jR1Qe7kpM2bPlFjcayPpef2qaSv493wDBvaItSgQsC1IN60cavGYjmWWYnj2nZRBon
-         TPE52pnPtBrpVvgZK7umoAFE9ducwk0S7e3/AxAGVAJ6PgnfCvvZrJMguwVIUXENKiVS
-         Ewy5M+ehtgNcGYLjBnwGJa/pxWzkhSn7agfvmcBvX2q72SQndlC7YWOOyn4YOrS+4hmJ
-         l5jELd0EJRmqI1ECYExl5AsCUtcdhOIrYUnqcB6w7q4s7wOUQ+fQacgw+9yvwi9OU8Gf
-         YCDu67pknZINgwS2N3PlSgVi7Q3yVq1IyScKv8sEtqIMi/c4ChBqXXs/eycrOs+7oppz
-         v6fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=joTFncqOhr/5ceRUNjE9Oyw+p4mkklFna4saanIGUr0=;
-        b=P0Pk1HzjRqHvwmxk9OyJRYUbzVzLKdnNw06NVzUBydpkEdjfOpPYzYW1qF6PrxwSJ4
-         6BQByqJsYuSR5Y/RbQ7/4xrf3M1ygxMInlSKJ4SaYWPKD4cQTuGDWj+4x7RCjpss2wUX
-         JwLnpvnFcWE5yLugojovC2QkJpKbDkEaxmQXy3dWt+xjBQ7gO82vMrnC8e23GfoIH74V
-         yZssQUGquXxsoPIey5+HDMGQet8LhFskFwCu5yB891UnIjXpAEvg4DY77jtYH7mhpEYX
-         tvCd2siDotaqrQo8Nqa4HKpCmzQOCQHID1QhlFIZxGITKr6jyRtOEhhM/y47b+P2ArYL
-         gJUg==
-X-Gm-Message-State: ABuFfohlOTJrgnXhJuGPLacBsIpP23RelAof34V7Tj3iCmlCM1L/ff/B
-        KHj34IAJoeSQzGn22pup5cgYGA==
-X-Google-Smtp-Source: ACcGV63gGBuNO9SdnT1fdrnVTvXsBkzWsZvRkTQo7QBoKhAooAUBdAoyyfDTIYQzF2Qz4m+MrqXb4A==
-X-Received: by 2002:a63:4e11:: with SMTP id c17-v6mr10925725pgb.6.1538412162731;
-        Mon, 01 Oct 2018 09:42:42 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id e9-v6sm4601457pgs.92.2018.10.01.09.42.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 09:42:41 -0700 (PDT)
-Date:   Mon, 01 Oct 2018 09:42:41 -0700 (PDT)
-X-Google-Original-Date: Mon, 01 Oct 2018 09:41:40 PDT (-0700)
-Subject:     Re: [PATCH v3] RISC-V: Show IPI stats
-In-Reply-To: <20180929062605.12888-1-anup@brainfault.org>
-CC:     aou@eecs.berkeley.edu, atish.patra@wdc.com,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        anup@brainfault.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     anup@brainfault.org, Atish Patra <Atish.Patra@wdc.com>
-Message-ID: <mhng-db76292c-f906-4cc7-abe6-de6dac888c78@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Mon, 1 Oct 2018 19:22:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52720 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725740AbeJAXW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 19:22:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7669218A;
+        Mon,  1 Oct 2018 09:44:19 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE5173F5D3;
+        Mon,  1 Oct 2018 09:44:17 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 17:44:10 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        songxiaowei@hisilicon.com, wangbinghui@hisilicon.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        paul.gortmaker@windriver.com
+Subject: Re: [PATCH v2] PCI: kirin: Fix section mismatch warning
+Message-ID: <20181001164410.GA14767@e107981-ln.cambridge.arm.com>
+References: <20180919185341.31298-1-natechancellor@gmail.com>
+ <CAKwvOdkeM3sj8M-LzTQd9M9-sM_K6n6FTz=TrNHd-3xPwg_VNw@mail.gmail.com>
+ <20180920105828.GB838@e107981-ln.cambridge.arm.com>
+ <20181001145341.GC13049@red-moon>
+ <20181001151205.GA17607@flashbox>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001151205.GA17607@flashbox>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Sep 2018 23:26:05 PDT (-0700), anup@brainfault.org wrote:
-> This patch provides arch_show_interrupts() implementation to
-> show IPI stats via /proc/interrupts.
->
-> Now the contents of /proc/interrupts" will look like below:
->            CPU0       CPU1       CPU2       CPU3
->   8:         17          7          6         14  SiFive PLIC   8  virtio0
->  10:         10         10          9         11  SiFive PLIC  10  ttyS0
-> IPI0:       170        673        251         79  Rescheduling interrupts
-> IPI1:         1         12         27          1  Function call interrupts
->
-> Signed-off-by: Anup Patel <anup@brainfault.org>
->
-> Changes since v2:
->  - Remove use of IPI_CALL_WAKEUP because it's being removed
->
-> Changes since v1:
->  - Add stub inline show_ipi_stats() function for !CONFIG_SMP
->  - Make ipi_names[] dynamically sized at compile time
->  - Minor beautification of ipi_names[] using tabs
+On Mon, Oct 01, 2018 at 08:12:05AM -0700, Nathan Chancellor wrote:
+> On Mon, Oct 01, 2018 at 03:53:41PM +0100, Lorenzo Pieralisi wrote:
+> > On Thu, Sep 20, 2018 at 11:58:28AM +0100, Lorenzo Pieralisi wrote:
+> > > [+Paul]
+> > > 
+> > > On Wed, Sep 19, 2018 at 02:08:08PM -0700, Nick Desaulniers wrote:
+> > > > On Wed, Sep 19, 2018 at 11:55 AM Nathan Chancellor
+> > > > <natechancellor@gmail.com> wrote:
+> > > > >
+> > > > > WARNING: vmlinux.o(.text+0x4758cc): Section mismatch in reference from
+> > > > > the function kirin_pcie_probe() to the function
+> > > > > .init.text:kirin_add_pcie_port()
+> > > > > The function kirin_pcie_probe() references
+> > > > > the function __init kirin_add_pcie_port().
+> > > > > This is often because kirin_pcie_probe lacks a __init
+> > > > > annotation or the annotation of kirin_add_pcie_port is wrong.
+> > > > >
+> > > > > Add the __init annotation to both kirin_pcie_probe and
+> > > > > kirin_pcie_add_msi then use builtin_platform_driver_probe
+> > > > > instead of builtin_platform_driver + .probe to avoid a section
+> > > > > mismatch warning with kirin_pcie_driver.
+> > > > >
+> > > > > Fixes: fc5165db245a ("PCI: kirin: Add HiSilicon Kirin SoC PCIe controller driver")
+> > > > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > > > Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > > > ---
+> > > > >
+> > > > > v1 -> v2:
+> > > > >
+> > > > > Instead of removing the annotation on kirin_add_pcie_port, add it to
+> > > > > kirin_pcie_add_msi and kirin_pcie_probe. To avoid a warning with this
+> > > > > configuration, use builtin_platform_driver_probe.
+> > > > >
+> > > > >  drivers/pci/controller/dwc/pcie-kirin.c | 9 ++++-----
+> > > > >  1 file changed, 4 insertions(+), 5 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+> > > > > index 5352e0c3be82..f64fed12de51 100644
+> > > > > --- a/drivers/pci/controller/dwc/pcie-kirin.c
+> > > > > +++ b/drivers/pci/controller/dwc/pcie-kirin.c
+> > > > > @@ -448,8 +448,8 @@ static const struct dw_pcie_host_ops kirin_pcie_host_ops = {
+> > > > >         .host_init = kirin_pcie_host_init,
+> > > > >  };
+> > > > >
+> > > > > -static int kirin_pcie_add_msi(struct dw_pcie *pci,
+> > > > > -                               struct platform_device *pdev)
+> > > > > +static int __init kirin_pcie_add_msi(struct dw_pcie *pci,
+> > > > > +                                    struct platform_device *pdev)
+> > > > >  {
+> > > > >         int irq;
+> > > > >
+> > > > > @@ -481,7 +481,7 @@ static int __init kirin_add_pcie_port(struct dw_pcie *pci,
+> > > > >         return dw_pcie_host_init(&pci->pp);
+> > > > >  }
+> > > > >
+> > > > > -static int kirin_pcie_probe(struct platform_device *pdev)
+> > > > > +static int __init kirin_pcie_probe(struct platform_device *pdev)
+> > > > >  {
+> > > > >         struct device *dev = &pdev->dev;
+> > > > >         struct kirin_pcie *kirin_pcie;
+> > > > > @@ -533,11 +533,10 @@ static const struct of_device_id kirin_pcie_match[] = {
+> > > > >  };
+> > > > >
+> > > > >  static struct platform_driver kirin_pcie_driver = {
+> > > > > -       .probe                  = kirin_pcie_probe,
+> > > > >         .driver                 = {
+> > > > >                 .name                   = "kirin-pcie",
+> > > > >                 .of_match_table = kirin_pcie_match,
+> > > > >                 .suppress_bind_attrs = true,
+> > > > >         },
+> > > > >  };
+> > > > > -builtin_platform_driver(kirin_pcie_driver);
+> > > > > +builtin_platform_driver_probe(kirin_pcie_driver, kirin_pcie_probe);
+> > > > 
+> > > > It would be good to get additional review from someone who knows more
+> > > > about driver callback lifecycles, but I think this is the correct fix.
+> > > > Thanks Nathan.
+> > > > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > 
+> > > AFAICS we can't use builtin_platform_driver_probe() if the probe()
+> > > itself may need deferral (and I *reckon* it may need that, see eg
+> > > clk_get()) so I suspect we have to go back to v1 for the patch,
+> > > apologies if so.
+> > 
+> > I think that the best course of action consists in merging v1 since
+> > we have not reached a definitive conclusion on v2, please let me
+> > know.
+> > 
+> > Thanks,
+> > Lorenzo
+> 
+> Hi Lorenzo,
+> 
+> I am perfectly fine with v1 being merged as either patch solves the
+> warning. I agree with Nick that if this version works it would be more
+> proper but it also carries more risk with regards to deferral like you
+> stated. Please let me know if I need to resend it.
 
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+I have applied v1 to my pci/dwc for v4.20 and dropped this patch, thanks
+for bearing with me and if there is any objection please let me know.
 
-This is going in through Atish's patch set.
-
->
-> ---
->  arch/riscv/include/asm/smp.h |  9 +++++++++
->  arch/riscv/kernel/irq.c      |  8 ++++++++
->  arch/riscv/kernel/smp.c      | 39 +++++++++++++++++++++++++++++-------
->  3 files changed, 49 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
-> index fce312ce3516..5278ae8f1346 100644
-> --- a/arch/riscv/include/asm/smp.h
-> +++ b/arch/riscv/include/asm/smp.h
-> @@ -25,8 +25,13 @@
->  extern unsigned long __cpuid_to_hardid_map[NR_CPUS];
->  #define cpuid_to_hardid_map(cpu)    __cpuid_to_hardid_map[cpu]
->
-> +struct seq_file;
-> +
->  #ifdef CONFIG_SMP
->
-> +/* print IPI stats */
-> +void show_ipi_stats(struct seq_file *p, int prec);
-> +
->  /* SMP initialization hook for setup_arch */
->  void __init setup_smp(void);
->
-> @@ -47,6 +52,10 @@ void riscv_cpuid_to_hartid_mask(const struct cpumask *in, struct cpumask *out);
->
->  #else
->
-> +static inline void show_ipi_stats(struct seq_file *p, int prec)
-> +{
-> +}
-> +
->  static inline int riscv_hartid_to_cpuid(int hartid)
->  {
->  	return 0;
-> diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
-> index ca4593317e45..48e6b7db83a1 100644
-> --- a/arch/riscv/kernel/irq.c
-> +++ b/arch/riscv/kernel/irq.c
-> @@ -8,6 +8,8 @@
->  #include <linux/interrupt.h>
->  #include <linux/irqchip.h>
->  #include <linux/irqdomain.h>
-> +#include <linux/seq_file.h>
-> +#include <asm/smp.h>
->
->  /*
->   * Possible interrupt causes:
-> @@ -24,6 +26,12 @@
->   */
->  #define INTERRUPT_CAUSE_FLAG	(1UL << (__riscv_xlen - 1))
->
-> +int arch_show_interrupts(struct seq_file *p, int prec)
-> +{
-> +	show_ipi_stats(p, prec);
-> +	return 0;
-> +}
-> +
->  asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs)
->  {
->  	struct pt_regs *old_regs = set_irq_regs(regs);
-> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-> index 89d95866f562..686fa7a427ff 100644
-> --- a/arch/riscv/kernel/smp.c
-> +++ b/arch/riscv/kernel/smp.c
-> @@ -22,22 +22,24 @@
->  #include <linux/interrupt.h>
->  #include <linux/smp.h>
->  #include <linux/sched.h>
-> +#include <linux/seq_file.h>
->
->  #include <asm/sbi.h>
->  #include <asm/tlbflush.h>
->  #include <asm/cacheflush.h>
->
-> -/* A collection of single bit ipi messages.  */
-> -static struct {
-> -	unsigned long bits ____cacheline_aligned;
-> -} ipi_data[NR_CPUS] __cacheline_aligned;
-> -
->  enum ipi_message_type {
->  	IPI_RESCHEDULE,
->  	IPI_CALL_FUNC,
->  	IPI_MAX
->  };
->
-> +/* A collection of single bit ipi messages.  */
-> +static struct {
-> +	unsigned long stats[IPI_MAX] ____cacheline_aligned;
-> +	unsigned long bits ____cacheline_aligned;
-> +} ipi_data[NR_CPUS] __cacheline_aligned;
-> +
->  int riscv_hartid_to_cpuid(int hartid)
->  {
->  	int i = -1;
-> @@ -67,6 +69,7 @@ int setup_profiling_timer(unsigned int multiplier)
->  void riscv_software_interrupt(void)
->  {
->  	unsigned long *pending_ipis = &ipi_data[smp_processor_id()].bits;
-> +	unsigned long *stats = ipi_data[smp_processor_id()].stats;
->
->  	/* Clear pending IPI */
->  	csr_clear(sip, SIE_SSIE);
-> @@ -81,11 +84,15 @@ void riscv_software_interrupt(void)
->  		if (ops == 0)
->  			return;
->
-> -		if (ops & (1 << IPI_RESCHEDULE))
-> +		if (ops & (1 << IPI_RESCHEDULE)) {
-> +			stats[IPI_RESCHEDULE]++;
->  			scheduler_ipi();
-> +		}
->
-> -		if (ops & (1 << IPI_CALL_FUNC))
-> +		if (ops & (1 << IPI_CALL_FUNC)) {
-> +			stats[IPI_CALL_FUNC]++;
->  			generic_smp_call_function_interrupt();
-> +		}
->
->  		BUG_ON((ops >> IPI_MAX) != 0);
->
-> @@ -111,6 +118,24 @@ send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
->  	sbi_send_ipi(cpumask_bits(&hartid_mask));
->  }
->
-> +static const char *ipi_names[] = {
-> +	[IPI_RESCHEDULE]	= "Rescheduling interrupts",
-> +	[IPI_CALL_FUNC]		= "Function call interrupts",
-> +};
-> +
-> +void show_ipi_stats(struct seq_file *p, int prec)
-> +{
-> +	unsigned int cpu, i;
-> +
-> +	for (i = 0; i < IPI_MAX; i++) {
-> +		seq_printf(p, "%*s%u:%s", prec - 1, "IPI", i,
-> +			   prec >= 4 ? " " : "");
-> +		for_each_online_cpu(cpu)
-> +			seq_printf(p, "%10lu ", ipi_data[cpu].stats[i]);
-> +		seq_printf(p, " %s\n", ipi_names[i]);
-> +	}
-> +}
-> +
->  void arch_send_call_function_ipi_mask(struct cpumask *mask)
->  {
->  	send_ipi_message(mask, IPI_CALL_FUNC);
+Thanks,
+Lorenzo
