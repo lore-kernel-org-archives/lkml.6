@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BAB9C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1402DC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFC5520C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:16:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC5520C0A
+	by mail.kernel.org (Postfix) with ESMTP id CCCD8213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:17:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCCD8213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729542AbeJAUy4 (ORCPT
+        id S1729561AbeJAUzB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:54:56 -0400
-Received: from verein.lst.de ([213.95.11.211]:37911 "EHLO newverein.lst.de"
+        Mon, 1 Oct 2018 16:55:01 -0400
+Received: from verein.lst.de ([213.95.11.211]:37917 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729295AbeJAUyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:54:54 -0400
+        id S1729428AbeJAUzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 16:55:00 -0400
 Received: by newverein.lst.de (Postfix, from userid 2005)
-        id 5478C68BE1; Mon,  1 Oct 2018 16:16:52 +0200 (CEST)
+        id A856D68BC7; Mon,  1 Oct 2018 16:16:58 +0200 (CEST)
 To:     Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Julien Thierry <julien.thierry@arm.com>,
@@ -35,153 +35,150 @@ To:     Will Deacon <will.deacon@arm.com>,
         AKASHI Takahiro <takahiro.akashi@linaro.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         live-patching@vger.kernel.org
-Subject: [PATCH v3 3/4] arm64: implement live patching
+Subject: [PATCH v3 4/4] arm64: reliable stacktraces
 In-Reply-To: <20181001140910.086E768BC7@newverein.lst.de>
 References: <20181001140910.086E768BC7@newverein.lst.de>
-Message-Id: <20181001141652.5478C68BE1@newverein.lst.de>
-Date:   Mon,  1 Oct 2018 16:16:52 +0200 (CEST)
+Message-Id: <20181001141658.A856D68BC7@newverein.lst.de>
+Date:   Mon,  1 Oct 2018 16:16:58 +0200 (CEST)
 From:   duwe@lst.de (Torsten Duwe)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Based on ftrace with regs, do the usual thing. Also allocate a
-task flag for whatever consistency handling will be used.
-Watch out for interactions with the graph tracer.
+Make unwind_frame() report whether it had to stop normally or due to
+an error condition; walk_stackframe() will pass that info.
+__save_stack_trace() is used to check the validity of a frame;
+save_stack_trace_tsk_reliable() can now trivially be implemented.
+Modify arch/arm64/kernel/time.c for the new semantics.
 
 Signed-off-by: Torsten Duwe <duwe@suse.de>
 
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -119,6 +119,7 @@ config ARM64
- 	select HAVE_GENERIC_DMA_COHERENT
- 	select HAVE_HW_BREAKPOINT if PERF_EVENTS
- 	select HAVE_IRQ_TIME_ACCOUNTING
-+	select HAVE_LIVEPATCH
- 	select HAVE_MEMBLOCK
- 	select HAVE_MEMBLOCK_NODE_MAP if NUMA
- 	select HAVE_NMI
-@@ -1349,4 +1350,6 @@ if CRYPTO
- source "arch/arm64/crypto/Kconfig"
- endif
+@@ -127,8 +127,9 @@ config ARM64
+ 	select HAVE_PERF_EVENTS
+ 	select HAVE_PERF_REGS
+ 	select HAVE_PERF_USER_STACK_DUMP
+-	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_RCU_TABLE_FREE
++	select HAVE_REGS_AND_STACK_ACCESS_API
++	select HAVE_RELIABLE_STACKTRACE
+ 	select HAVE_STACKPROTECTOR
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_KPROBES
+--- a/arch/arm64/include/asm/stacktrace.h
++++ b/arch/arm64/include/asm/stacktrace.h
+@@ -33,7 +33,7 @@ struct stackframe {
+ };
  
-+source "kernel/livepatch/Kconfig"
+ extern int unwind_frame(struct task_struct *tsk, struct stackframe *frame);
+-extern void walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
++extern int walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
+ 			    int (*fn)(struct stackframe *, void *), void *data);
+ extern void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk);
+ 
+--- a/arch/arm64/kernel/stacktrace.c
++++ b/arch/arm64/kernel/stacktrace.c
+@@ -40,6 +40,13 @@
+  *	ldp	x29, x30, [sp]
+  *	add	sp, sp, #0x10
+  */
 +
- source "lib/Kconfig"
---- a/arch/arm64/include/asm/thread_info.h
-+++ b/arch/arm64/include/asm/thread_info.h
-@@ -76,6 +76,7 @@ void arch_release_task_struct(struct tas
- #define TIF_FOREIGN_FPSTATE	3	/* CPU's FP state is not current's */
- #define TIF_UPROBE		4	/* uprobe breakpoint or singlestep */
- #define TIF_FSCHECK		5	/* Check FS is USER_DS on return */
-+#define TIF_PATCH_PENDING	6
- #define TIF_NOHZ		7
- #define TIF_SYSCALL_TRACE	8
- #define TIF_SYSCALL_AUDIT	9
-@@ -94,6 +95,7 @@ void arch_release_task_struct(struct tas
- #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
- #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
- #define _TIF_FOREIGN_FPSTATE	(1 << TIF_FOREIGN_FPSTATE)
-+#define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
- #define _TIF_NOHZ		(1 << TIF_NOHZ)
- #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
- #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
-@@ -106,7 +108,8 @@ void arch_release_task_struct(struct tas
- 
- #define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_SIGPENDING | \
- 				 _TIF_NOTIFY_RESUME | _TIF_FOREIGN_FPSTATE | \
--				 _TIF_UPROBE | _TIF_FSCHECK)
-+				 _TIF_UPROBE | _TIF_FSCHECK | \
-+				 _TIF_PATCH_PENDING)
- 
- #define _TIF_SYSCALL_WORK	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT | \
- 				 _TIF_SYSCALL_TRACEPOINT | _TIF_SECCOMP | \
---- /dev/null
-+++ b/arch/arm64/include/asm/livepatch.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * livepatch.h - arm64-specific Kernel Live Patching Core
-+ *
-+ * Copyright (C) 2016,2018 SUSE
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; either version 2
-+ * of the License, or (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
++/*
++ * unwind_frame -- unwind a single stack frame.
++ * Returns 0 when there are more frames to go.
++ * 1 means reached end of stack; negative (error)
++ * means stopped because information is not reliable.
 + */
-+#ifndef _ASM_ARM64_LIVEPATCH_H
-+#define _ASM_ARM64_LIVEPATCH_H
-+
-+#include <linux/module.h>
-+#include <linux/ftrace.h>
-+
-+static inline int klp_check_compiler_support(void)
-+{
+ int notrace unwind_frame(struct task_struct *tsk, struct stackframe *frame)
+ {
+ 	unsigned long fp = frame->fp;
+@@ -81,23 +88,27 @@ int notrace unwind_frame(struct task_str
+ 	 * both are NULL.
+ 	 */
+ 	if (!frame->fp && !frame->pc)
+-		return -EINVAL;
++		return 1;
+ 
+ 	return 0;
+ }
+ 
+-void notrace walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
++int notrace walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
+ 		     int (*fn)(struct stackframe *, void *), void *data)
+ {
+ 	while (1) {
+ 		int ret;
+ 
+-		if (fn(frame, data))
+-			break;
++		ret = fn(frame, data);
++		if (ret)
++			return ret;
+ 		ret = unwind_frame(tsk, frame);
+ 		if (ret < 0)
++			return ret;
++		if (ret > 0)
+ 			break;
+ 	}
 +	return 0;
-+}
+ }
+ 
+ #ifdef CONFIG_STACKTRACE
+@@ -145,14 +156,15 @@ void save_stack_trace_regs(struct pt_reg
+ 		trace->entries[trace->nr_entries++] = ULONG_MAX;
+ }
+ 
+-static noinline void __save_stack_trace(struct task_struct *tsk,
++static noinline int __save_stack_trace(struct task_struct *tsk,
+ 	struct stack_trace *trace, unsigned int nosched)
+ {
+ 	struct stack_trace_data data;
+ 	struct stackframe frame;
++	int ret;
+ 
+ 	if (!try_get_task_stack(tsk))
+-		return;
++		return -EBUSY;
+ 
+ 	data.trace = trace;
+ 	data.skip = trace->skip;
+@@ -171,11 +183,12 @@ static noinline void __save_stack_trace(
+ 	frame.graph = tsk->curr_ret_stack;
+ #endif
+ 
+-	walk_stackframe(tsk, &frame, save_trace, &data);
++	ret = walk_stackframe(tsk, &frame, save_trace, &data);
+ 	if (trace->nr_entries < trace->max_entries)
+ 		trace->entries[trace->nr_entries++] = ULONG_MAX;
+ 
+ 	put_task_stack(tsk);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(save_stack_trace_tsk);
+ 
+@@ -190,4 +203,12 @@ void save_stack_trace(struct stack_trace
+ }
+ 
+ EXPORT_SYMBOL_GPL(save_stack_trace);
 +
-+static inline void klp_arch_set_pc(struct pt_regs *regs, unsigned long ip)
++int save_stack_trace_tsk_reliable(struct task_struct *tsk,
++				  struct stack_trace *trace)
 +{
-+	regs->pc = ip;
++	return __save_stack_trace(tsk, trace, 1);
 +}
++EXPORT_SYMBOL_GPL(save_stack_trace_tsk_reliable);
 +
-+#endif /* _ASM_ARM64_LIVEPATCH_H */
---- a/arch/arm64/kernel/entry-ftrace.S
-+++ b/arch/arm64/kernel/entry-ftrace.S
-@@ -209,6 +209,9 @@ ftrace_common:
- 	str	x9, [sp, #S_LR]		/* to pt_regs.r[30] */
- 	/* The program counter just after the ftrace call site */
- 	str	lr, [sp, #S_PC]
-+#if defined(CONFIG_LIVEPATCH) && defined(CONFIG_FUNCTION_GRAPH_TRACER)
-+	mov	x28,lr		/* remember old return address */
-+#endif
- 	/* The stack pointer as it was on ftrace_caller entry... */
- 	add	x29, sp, #S_FRAME_SIZE
- 	str	x29, [sp, #S_SP]
-@@ -224,6 +227,16 @@ ftrace_call:
- 
- 	bl	ftrace_stub
- 
-+#if defined(CONFIG_LIVEPATCH) && defined(CONFIG_FUNCTION_GRAPH_TRACER)
-+	/* Is the trace function a live patcher an has messed with
-+	 * the return address?
-+	*/
-+	ldr	x9, [sp, #S_PC+16]
-+	cmp	x9, x28		/* compare with the value we remembered */
-+	/* to not call graph tracer's "call" mechanism twice! */
-+	b.ne	ftrace_common_return
-+#endif
-+
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 	.global ftrace_graph_call
- ftrace_graph_call:			// ftrace_graph_caller();
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -29,6 +29,7 @@
- #include <linux/sizes.h>
- #include <linux/string.h>
- #include <linux/tracehook.h>
-+#include <linux/livepatch.h>
- #include <linux/ratelimit.h>
- #include <linux/syscalls.h>
- 
-@@ -934,6 +935,9 @@ asmlinkage void do_notify_resume(struct
- 			if (thread_flags & _TIF_UPROBE)
- 				uprobe_notify_resume(regs);
- 
-+			if (thread_flags & _TIF_PATCH_PENDING)
-+				klp_update_patch_state(current);
-+
- 			if (thread_flags & _TIF_SIGPENDING)
- 				do_signal(regs);
+ #endif
+--- a/arch/arm64/kernel/time.c
++++ b/arch/arm64/kernel/time.c
+@@ -56,7 +56,7 @@ unsigned long profile_pc(struct pt_regs
+ #endif
+ 	do {
+ 		int ret = unwind_frame(NULL, &frame);
+-		if (ret < 0)
++		if (ret)
+ 			return 0;
+ 	} while (in_lock_functions(frame.pc));
  
