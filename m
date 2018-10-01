@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E939C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1228EC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CD93208D9
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:48:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD93208D9
+	by mail.kernel.org (Postfix) with ESMTP id B7DB12064D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:49:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7DB12064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729479AbeJAS0T (ORCPT
+        id S1729362AbeJASZ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 14:26:19 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51373 "EHLO huawei.com"
+        Mon, 1 Oct 2018 14:25:56 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51407 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729335AbeJAS0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 14:26:18 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id DA088FB1A57D8;
-        Mon,  1 Oct 2018 19:48:21 +0800 (CST)
+        id S1729212AbeJASZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 14:25:54 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id F1F5E84C1059B;
+        Mon,  1 Oct 2018 19:48:26 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Mon, 1 Oct 2018 19:48:15 +0800
+ 14.3.399.0; Mon, 1 Oct 2018 19:48:20 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
-Subject: [PATCH net-next 2/7] net: hns3: Add input key and action config support for flow director
-Date:   Mon, 1 Oct 2018 12:46:42 +0100
-Message-ID: <20181001114647.15504-3-salil.mehta@huawei.com>
+Subject: [PATCH net-next 4/7] net: hns3: Add support for rule query of flow director
+Date:   Mon, 1 Oct 2018 12:46:44 +0100
+Message-ID: <20181001114647.15504-5-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181001114647.15504-1-salil.mehta@huawei.com>
 References: <20181001114647.15504-1-salil.mehta@huawei.com>
@@ -51,533 +51,336 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jian Shen <shenjian15@huawei.com>
 
-Each flow director rule consists of input key and action. The input key
-is the condition for matching, includes tuples of L2/L3/L4 header.
-Action is the behaviour when a packet matches with the input key, such
-as drop the packet, or forward to a specified queue.
-
-The input key is stored in the tcam blocks, Each bit of input key can
-be masked.
+This patch adds support for querying rule number and rule details
+by ethtool commands.
 
 Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  45 +++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 329 +++++++++++++++++++++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  82 +++++
- 3 files changed, 456 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   6 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  25 ++-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 239 +++++++++++++++++++++
+ 3 files changed, 264 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index 827bc51..e5e66b2 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -194,6 +194,8 @@ enum hclge_opcode_type {
- 	HCLGE_OPC_FD_MODE_CTRL		= 0x1200,
- 	HCLGE_OPC_FD_GET_ALLOCATION	= 0x1201,
- 	HCLGE_OPC_FD_KEY_CONFIG		= 0x1202,
-+	HCLGE_OPC_FD_TCAM_OP		= 0x1203,
-+	HCLGE_OPC_FD_AD_OP		= 0x1204,
- 
- 	/* MDIO command */
- 	HCLGE_OPC_MDIO_CONFIG		= 0x1900,
-@@ -851,6 +853,49 @@ struct hclge_set_fd_key_config_cmd {
- 	u8 rsv2[8];
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+index 262bb736..fac84d8 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -420,6 +420,12 @@ struct hnae3_ae_ops {
+ 			    struct ethtool_rxnfc *cmd);
+ 	int (*del_fd_entry)(struct hnae3_handle *handle,
+ 			    struct ethtool_rxnfc *cmd);
++	int (*get_fd_rule_cnt)(struct hnae3_handle *handle,
++			       struct ethtool_rxnfc *cmd);
++	int (*get_fd_rule_info)(struct hnae3_handle *handle,
++				struct ethtool_rxnfc *cmd);
++	int (*get_fd_all_rules)(struct hnae3_handle *handle,
++				struct ethtool_rxnfc *cmd, u32 *rule_locs);
  };
  
-+#define HCLGE_FD_EPORT_SW_EN_B		0
-+struct hclge_fd_tcam_config_1_cmd {
-+	u8 stage;
-+	u8 xy_sel;
-+	u8 port_info;
-+	u8 rsv1[1];
-+	__le32 index;
-+	u8 entry_vld;
-+	u8 rsv2[7];
-+	u8 tcam_data[8];
-+};
-+
-+struct hclge_fd_tcam_config_2_cmd {
-+	u8 tcam_data[24];
-+};
-+
-+struct hclge_fd_tcam_config_3_cmd {
-+	u8 tcam_data[20];
-+	u8 rsv[4];
-+};
-+
-+#define HCLGE_FD_AD_DROP_B		0
-+#define HCLGE_FD_AD_DIRECT_QID_B	1
-+#define HCLGE_FD_AD_QID_S		2
-+#define HCLGE_FD_AD_QID_M		GENMASK(12, 2)
-+#define HCLGE_FD_AD_USE_COUNTER_B	12
-+#define HCLGE_FD_AD_COUNTER_NUM_S	13
-+#define HCLGE_FD_AD_COUNTER_NUM_M	GENMASK(20, 13)
-+#define HCLGE_FD_AD_NXT_STEP_B		20
-+#define HCLGE_FD_AD_NXT_KEY_S		21
-+#define HCLGE_FD_AD_NXT_KEY_M		GENMASK(26, 21)
-+#define HCLGE_FD_AD_WR_RULE_ID_B	0
-+#define HCLGE_FD_AD_RULE_ID_S		1
-+#define HCLGE_FD_AD_RULE_ID_M		GENMASK(13, 1)
-+
-+struct hclge_fd_ad_config_cmd {
-+	u8 stage;
-+	u8 rsv1[3];
-+	__le32 index;
-+	__le64 ad_data;
-+	u8 rsv2[8];
-+};
-+
- int hclge_cmd_init(struct hclge_dev *hdev);
- static inline void hclge_write_reg(void __iomem *base, u32 reg, u32 value)
+ struct hnae3_dcb_ops {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+index 59cbf78..7d79a07 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+@@ -699,20 +699,33 @@ static int hns3_get_rxnfc(struct net_device *netdev,
  {
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index b02190f..030898d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3471,6 +3471,335 @@ static int hclge_init_fd_config(struct hclge_dev *hdev)
- 	return hclge_set_fd_key_config(hdev, HCLGE_FD_STAGE_1);
+ 	struct hnae3_handle *h = hns3_get_handle(netdev);
+ 
+-	if (!h->ae_algo || !h->ae_algo->ops || !h->ae_algo->ops->get_rss_tuple)
++	if (!h->ae_algo || !h->ae_algo->ops)
+ 		return -EOPNOTSUPP;
+ 
+ 	switch (cmd->cmd) {
+ 	case ETHTOOL_GRXRINGS:
+-		cmd->data = h->kinfo.rss_size;
+-		break;
++		cmd->data = h->kinfo.num_tqps;
++		return 0;
+ 	case ETHTOOL_GRXFH:
+-		return h->ae_algo->ops->get_rss_tuple(h, cmd);
++		if (h->ae_algo->ops->get_rss_tuple)
++			return h->ae_algo->ops->get_rss_tuple(h, cmd);
++		return -EOPNOTSUPP;
++	case ETHTOOL_GRXCLSRLCNT:
++		if (h->ae_algo->ops->get_fd_rule_cnt)
++			return h->ae_algo->ops->get_fd_rule_cnt(h, cmd);
++		return -EOPNOTSUPP;
++	case ETHTOOL_GRXCLSRULE:
++		if (h->ae_algo->ops->get_fd_rule_info)
++			return h->ae_algo->ops->get_fd_rule_info(h, cmd);
++		return -EOPNOTSUPP;
++	case ETHTOOL_GRXCLSRLALL:
++		if (h->ae_algo->ops->get_fd_all_rules)
++			return h->ae_algo->ops->get_fd_all_rules(h, cmd,
++								 rule_locs);
++		return -EOPNOTSUPP;
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
+-
+-	return 0;
  }
  
-+static int hclge_fd_tcam_config(struct hclge_dev *hdev, u8 stage, bool sel_x,
-+				int loc, u8 *key, bool is_add)
+ static int hns3_change_all_ring_bd_num(struct hns3_nic_priv *priv,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 43f5caa..876c7ca 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -4299,6 +4299,242 @@ static int hclge_del_fd_entry(struct hnae3_handle *handle,
+ 					 false);
+ }
+ 
++static int hclge_get_fd_rule_cnt(struct hnae3_handle *handle,
++				 struct ethtool_rxnfc *cmd)
 +{
-+	struct hclge_fd_tcam_config_1_cmd *req1;
-+	struct hclge_fd_tcam_config_2_cmd *req2;
-+	struct hclge_fd_tcam_config_3_cmd *req3;
-+	struct hclge_desc desc[3];
-+	int ret;
++	struct hclge_vport *vport = hclge_get_vport(handle);
++	struct hclge_dev *hdev = vport->back;
 +
-+	hclge_cmd_setup_basic_desc(&desc[0], HCLGE_OPC_FD_TCAM_OP, false);
-+	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
-+	hclge_cmd_setup_basic_desc(&desc[1], HCLGE_OPC_FD_TCAM_OP, false);
-+	desc[1].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
-+	hclge_cmd_setup_basic_desc(&desc[2], HCLGE_OPC_FD_TCAM_OP, false);
++	if (!hnae3_dev_fd_supported(hdev))
++		return -EOPNOTSUPP;
 +
-+	req1 = (struct hclge_fd_tcam_config_1_cmd *)desc[0].data;
-+	req2 = (struct hclge_fd_tcam_config_2_cmd *)desc[1].data;
-+	req3 = (struct hclge_fd_tcam_config_3_cmd *)desc[2].data;
++	cmd->rule_cnt = hdev->hclge_fd_rule_num;
++	cmd->data = hdev->fd_cfg.rule_num[HCLGE_FD_STAGE_1];
 +
-+	req1->stage = stage;
-+	req1->xy_sel = sel_x ? 1 : 0;
-+	hnae3_set_bit(req1->port_info, HCLGE_FD_EPORT_SW_EN_B, 0);
-+	req1->index = cpu_to_le32(loc);
-+	req1->entry_vld = sel_x ? is_add : 0;
++	return 0;
++}
 +
-+	if (key) {
-+		memcpy(req1->tcam_data, &key[0], sizeof(req1->tcam_data));
-+		memcpy(req2->tcam_data, &key[sizeof(req1->tcam_data)],
-+		       sizeof(req2->tcam_data));
-+		memcpy(req3->tcam_data, &key[sizeof(req1->tcam_data) +
-+		       sizeof(req2->tcam_data)], sizeof(req3->tcam_data));
++static int hclge_get_fd_rule_info(struct hnae3_handle *handle,
++				  struct ethtool_rxnfc *cmd)
++{
++	struct hclge_vport *vport = hclge_get_vport(handle);
++	struct hclge_fd_rule *rule = NULL;
++	struct hclge_dev *hdev = vport->back;
++	struct ethtool_rx_flow_spec *fs;
++	struct hlist_node *node2;
++
++	if (!hnae3_dev_fd_supported(hdev))
++		return -EOPNOTSUPP;
++
++	fs = (struct ethtool_rx_flow_spec *)&cmd->fs;
++
++	hlist_for_each_entry_safe(rule, node2, &hdev->fd_rule_list, rule_node) {
++		if (rule->location >= fs->location)
++			break;
 +	}
 +
-+	ret = hclge_cmd_send(&hdev->hw, desc, 3);
-+	if (ret)
-+		dev_err(&hdev->pdev->dev,
-+			"config tcam key fail, ret=%d\n",
-+			ret);
++	if (!rule || fs->location != rule->location)
++		return -ENOENT;
 +
-+	return ret;
-+}
++	fs->flow_type = rule->flow_type;
++	switch (fs->flow_type & ~(FLOW_EXT | FLOW_MAC_EXT)) {
++	case SCTP_V4_FLOW:
++	case TCP_V4_FLOW:
++	case UDP_V4_FLOW:
++		fs->h_u.tcp_ip4_spec.ip4src =
++				cpu_to_be32(rule->tuples.src_ip[3]);
++		fs->m_u.tcp_ip4_spec.ip4src =
++				rule->unused_tuple & BIT(INNER_SRC_IP) ?
++				0 : cpu_to_be32(rule->tuples_mask.src_ip[3]);
 +
-+static int hclge_fd_ad_config(struct hclge_dev *hdev, u8 stage, int loc,
-+			      struct hclge_fd_ad_data *action)
-+{
-+	struct hclge_fd_ad_config_cmd *req;
-+	struct hclge_desc desc;
-+	u64 ad_data = 0;
-+	int ret;
++		fs->h_u.tcp_ip4_spec.ip4dst =
++				cpu_to_be32(rule->tuples.dst_ip[3]);
++		fs->m_u.tcp_ip4_spec.ip4dst =
++				rule->unused_tuple & BIT(INNER_DST_IP) ?
++				0 : cpu_to_be32(rule->tuples_mask.dst_ip[3]);
 +
-+	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_FD_AD_OP, false);
++		fs->h_u.tcp_ip4_spec.psrc = cpu_to_be16(rule->tuples.src_port);
++		fs->m_u.tcp_ip4_spec.psrc =
++				rule->unused_tuple & BIT(INNER_SRC_PORT) ?
++				0 : cpu_to_be16(rule->tuples_mask.src_port);
 +
-+	req = (struct hclge_fd_ad_config_cmd *)desc.data;
-+	req->index = cpu_to_le32(loc);
-+	req->stage = stage;
++		fs->h_u.tcp_ip4_spec.pdst = cpu_to_be16(rule->tuples.dst_port);
++		fs->m_u.tcp_ip4_spec.pdst =
++				rule->unused_tuple & BIT(INNER_DST_PORT) ?
++				0 : cpu_to_be16(rule->tuples_mask.dst_port);
 +
-+	hnae3_set_bit(ad_data, HCLGE_FD_AD_WR_RULE_ID_B,
-+		      action->write_rule_id_to_bd);
-+	hnae3_set_field(ad_data, HCLGE_FD_AD_RULE_ID_M, HCLGE_FD_AD_RULE_ID_S,
-+			action->rule_id);
-+	ad_data <<= 32;
-+	hnae3_set_bit(ad_data, HCLGE_FD_AD_DROP_B, action->drop_packet);
-+	hnae3_set_bit(ad_data, HCLGE_FD_AD_DIRECT_QID_B,
-+		      action->forward_to_direct_queue);
-+	hnae3_set_field(ad_data, HCLGE_FD_AD_QID_M, HCLGE_FD_AD_QID_S,
-+			action->queue_id);
-+	hnae3_set_bit(ad_data, HCLGE_FD_AD_USE_COUNTER_B, action->use_counter);
-+	hnae3_set_field(ad_data, HCLGE_FD_AD_COUNTER_NUM_M,
-+			HCLGE_FD_AD_COUNTER_NUM_S, action->counter_id);
-+	hnae3_set_bit(ad_data, HCLGE_FD_AD_NXT_STEP_B, action->use_next_stage);
-+	hnae3_set_field(ad_data, HCLGE_FD_AD_NXT_KEY_M, HCLGE_FD_AD_NXT_KEY_S,
-+			action->counter_id);
++		fs->h_u.tcp_ip4_spec.tos = rule->tuples.ip_tos;
++		fs->m_u.tcp_ip4_spec.tos =
++				rule->unused_tuple & BIT(INNER_IP_TOS) ?
++				0 : rule->tuples_mask.ip_tos;
 +
-+	req->ad_data = cpu_to_le64(ad_data);
-+	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+	if (ret)
-+		dev_err(&hdev->pdev->dev, "fd ad config fail, ret=%d\n", ret);
++		break;
++	case IP_USER_FLOW:
++		fs->h_u.usr_ip4_spec.ip4src =
++				cpu_to_be32(rule->tuples.src_ip[3]);
++		fs->m_u.tcp_ip4_spec.ip4src =
++				rule->unused_tuple & BIT(INNER_SRC_IP) ?
++				0 : cpu_to_be32(rule->tuples_mask.src_ip[3]);
 +
-+	return ret;
-+}
++		fs->h_u.usr_ip4_spec.ip4dst =
++				cpu_to_be32(rule->tuples.dst_ip[3]);
++		fs->m_u.usr_ip4_spec.ip4dst =
++				rule->unused_tuple & BIT(INNER_DST_IP) ?
++				0 : cpu_to_be32(rule->tuples_mask.dst_ip[3]);
 +
-+static bool hclge_fd_convert_tuple(u32 tuple_bit, u8 *key_x, u8 *key_y,
-+				   struct hclge_fd_rule *rule)
-+{
-+	u16 tmp_x_s, tmp_y_s;
-+	u32 tmp_x_l, tmp_y_l;
-+	int i;
++		fs->h_u.usr_ip4_spec.tos = rule->tuples.ip_tos;
++		fs->m_u.usr_ip4_spec.tos =
++				rule->unused_tuple & BIT(INNER_IP_TOS) ?
++				0 : rule->tuples_mask.ip_tos;
 +
-+	if (rule->unused_tuple & tuple_bit)
-+		return true;
++		fs->h_u.usr_ip4_spec.proto = rule->tuples.ip_proto;
++		fs->m_u.usr_ip4_spec.proto =
++				rule->unused_tuple & BIT(INNER_IP_PROTO) ?
++				0 : rule->tuples_mask.ip_proto;
 +
-+	switch (tuple_bit) {
-+	case 0:
-+		return false;
-+	case BIT(INNER_DST_MAC):
-+		for (i = 0; i < 6; i++) {
-+			calc_x(key_x[5 - i], rule->tuples.dst_mac[i],
-+			       rule->tuples_mask.dst_mac[i]);
-+			calc_y(key_y[5 - i], rule->tuples.dst_mac[i],
-+			       rule->tuples_mask.dst_mac[i]);
-+		}
++		fs->h_u.usr_ip4_spec.ip_ver = ETH_RX_NFC_IP4;
 +
-+		return true;
-+	case BIT(INNER_SRC_MAC):
-+		for (i = 0; i < 6; i++) {
-+			calc_x(key_x[5 - i], rule->tuples.src_mac[i],
-+			       rule->tuples.src_mac[i]);
-+			calc_y(key_y[5 - i], rule->tuples.src_mac[i],
-+			       rule->tuples.src_mac[i]);
-+		}
++		break;
++	case SCTP_V6_FLOW:
++	case TCP_V6_FLOW:
++	case UDP_V6_FLOW:
++		cpu_to_be32_array(fs->h_u.tcp_ip6_spec.ip6src,
++				  rule->tuples.src_ip, 4);
++		if (rule->unused_tuple & BIT(INNER_SRC_IP))
++			memset(fs->m_u.tcp_ip6_spec.ip6src, 0, sizeof(int) * 4);
++		else
++			cpu_to_be32_array(fs->m_u.tcp_ip6_spec.ip6src,
++					  rule->tuples_mask.src_ip, 4);
 +
-+		return true;
-+	case BIT(INNER_VLAN_TAG_FST):
-+		calc_x(tmp_x_s, rule->tuples.vlan_tag1,
-+		       rule->tuples_mask.vlan_tag1);
-+		calc_y(tmp_y_s, rule->tuples.vlan_tag1,
-+		       rule->tuples_mask.vlan_tag1);
-+		*(__le16 *)key_x = cpu_to_le16(tmp_x_s);
-+		*(__le16 *)key_y = cpu_to_le16(tmp_y_s);
++		cpu_to_be32_array(fs->h_u.tcp_ip6_spec.ip6dst,
++				  rule->tuples.dst_ip, 4);
++		if (rule->unused_tuple & BIT(INNER_DST_IP))
++			memset(fs->m_u.tcp_ip6_spec.ip6dst, 0, sizeof(int) * 4);
++		else
++			cpu_to_be32_array(fs->m_u.tcp_ip6_spec.ip6dst,
++					  rule->tuples_mask.dst_ip, 4);
 +
-+		return true;
-+	case BIT(INNER_ETH_TYPE):
-+		calc_x(tmp_x_s, rule->tuples.ether_proto,
-+		       rule->tuples_mask.ether_proto);
-+		calc_y(tmp_y_s, rule->tuples.ether_proto,
-+		       rule->tuples_mask.ether_proto);
-+		*(__le16 *)key_x = cpu_to_le16(tmp_x_s);
-+		*(__le16 *)key_y = cpu_to_le16(tmp_y_s);
++		fs->h_u.tcp_ip6_spec.psrc = cpu_to_be16(rule->tuples.src_port);
++		fs->m_u.tcp_ip6_spec.psrc =
++				rule->unused_tuple & BIT(INNER_SRC_PORT) ?
++				0 : cpu_to_be16(rule->tuples_mask.src_port);
 +
-+		return true;
-+	case BIT(INNER_IP_TOS):
-+		calc_x(*key_x, rule->tuples.ip_tos, rule->tuples_mask.ip_tos);
-+		calc_y(*key_y, rule->tuples.ip_tos, rule->tuples_mask.ip_tos);
++		fs->h_u.tcp_ip6_spec.pdst = cpu_to_be16(rule->tuples.dst_port);
++		fs->m_u.tcp_ip6_spec.pdst =
++				rule->unused_tuple & BIT(INNER_DST_PORT) ?
++				0 : cpu_to_be16(rule->tuples_mask.dst_port);
 +
-+		return true;
-+	case BIT(INNER_IP_PROTO):
-+		calc_x(*key_x, rule->tuples.ip_proto,
-+		       rule->tuples_mask.ip_proto);
-+		calc_y(*key_y, rule->tuples.ip_proto,
-+		       rule->tuples_mask.ip_proto);
++		break;
++	case IPV6_USER_FLOW:
++		cpu_to_be32_array(fs->h_u.usr_ip6_spec.ip6src,
++				  rule->tuples.src_ip, 4);
++		if (rule->unused_tuple & BIT(INNER_SRC_IP))
++			memset(fs->m_u.usr_ip6_spec.ip6src, 0, sizeof(int) * 4);
++		else
++			cpu_to_be32_array(fs->m_u.usr_ip6_spec.ip6src,
++					  rule->tuples_mask.src_ip, 4);
 +
-+		return true;
-+	case BIT(INNER_SRC_IP):
-+		calc_x(tmp_x_l, rule->tuples.src_ip[3],
-+		       rule->tuples_mask.src_ip[3]);
-+		calc_y(tmp_y_l, rule->tuples.src_ip[3],
-+		       rule->tuples_mask.src_ip[3]);
-+		*(__le32 *)key_x = cpu_to_le32(tmp_x_l);
-+		*(__le32 *)key_y = cpu_to_le32(tmp_y_l);
++		cpu_to_be32_array(fs->h_u.usr_ip6_spec.ip6dst,
++				  rule->tuples.dst_ip, 4);
++		if (rule->unused_tuple & BIT(INNER_DST_IP))
++			memset(fs->m_u.usr_ip6_spec.ip6dst, 0, sizeof(int) * 4);
++		else
++			cpu_to_be32_array(fs->m_u.usr_ip6_spec.ip6dst,
++					  rule->tuples_mask.dst_ip, 4);
 +
-+		return true;
-+	case BIT(INNER_DST_IP):
-+		calc_x(tmp_x_l, rule->tuples.dst_ip[3],
-+		       rule->tuples_mask.dst_ip[3]);
-+		calc_y(tmp_y_l, rule->tuples.dst_ip[3],
-+		       rule->tuples_mask.dst_ip[3]);
-+		*(__le32 *)key_x = cpu_to_le32(tmp_x_l);
-+		*(__le32 *)key_y = cpu_to_le32(tmp_y_l);
++		fs->h_u.usr_ip6_spec.l4_proto = rule->tuples.ip_proto;
++		fs->m_u.usr_ip6_spec.l4_proto =
++				rule->unused_tuple & BIT(INNER_IP_PROTO) ?
++				0 : rule->tuples_mask.ip_proto;
 +
-+		return true;
-+	case BIT(INNER_SRC_PORT):
-+		calc_x(tmp_x_s, rule->tuples.src_port,
-+		       rule->tuples_mask.src_port);
-+		calc_y(tmp_y_s, rule->tuples.src_port,
-+		       rule->tuples_mask.src_port);
-+		*(__le16 *)key_x = cpu_to_le16(tmp_x_s);
-+		*(__le16 *)key_y = cpu_to_le16(tmp_y_s);
++		break;
++	case ETHER_FLOW:
++		ether_addr_copy(fs->h_u.ether_spec.h_source,
++				rule->tuples.src_mac);
++		if (rule->unused_tuple & BIT(INNER_SRC_MAC))
++			eth_zero_addr(fs->m_u.ether_spec.h_source);
++		else
++			ether_addr_copy(fs->m_u.ether_spec.h_source,
++					rule->tuples_mask.src_mac);
 +
-+		return true;
-+	case BIT(INNER_DST_PORT):
-+		calc_x(tmp_x_s, rule->tuples.dst_port,
-+		       rule->tuples_mask.dst_port);
-+		calc_y(tmp_y_s, rule->tuples.dst_port,
-+		       rule->tuples_mask.dst_port);
-+		*(__le16 *)key_x = cpu_to_le16(tmp_x_s);
-+		*(__le16 *)key_y = cpu_to_le16(tmp_y_s);
++		ether_addr_copy(fs->h_u.ether_spec.h_dest,
++				rule->tuples.dst_mac);
++		if (rule->unused_tuple & BIT(INNER_DST_MAC))
++			eth_zero_addr(fs->m_u.ether_spec.h_dest);
++		else
++			ether_addr_copy(fs->m_u.ether_spec.h_dest,
++					rule->tuples_mask.dst_mac);
 +
-+		return true;
++		fs->h_u.ether_spec.h_proto =
++				cpu_to_be16(rule->tuples.ether_proto);
++		fs->m_u.ether_spec.h_proto =
++				rule->unused_tuple & BIT(INNER_ETH_TYPE) ?
++				0 : cpu_to_be16(rule->tuples_mask.ether_proto);
++
++		break;
 +	default:
-+		return false;
-+	}
-+}
-+
-+static u32 hclge_get_port_number(enum HLCGE_PORT_TYPE port_type, u8 pf_id,
-+				 u8 vf_id, u8 network_port_id)
-+{
-+	u32 port_number = 0;
-+
-+	if (port_type == HOST_PORT) {
-+		hnae3_set_field(port_number, HCLGE_PF_ID_M, HCLGE_PF_ID_S,
-+				pf_id);
-+		hnae3_set_field(port_number, HCLGE_VF_ID_M, HCLGE_VF_ID_S,
-+				vf_id);
-+		hnae3_set_bit(port_number, HCLGE_PORT_TYPE_B, HOST_PORT);
-+	} else {
-+		hnae3_set_field(port_number, HCLGE_NETWORK_PORT_ID_M,
-+				HCLGE_NETWORK_PORT_ID_S, network_port_id);
-+		hnae3_set_bit(port_number, HCLGE_PORT_TYPE_B, NETWORK_PORT);
++		return -EOPNOTSUPP;
 +	}
 +
-+	return port_number;
-+}
-+
-+static void hclge_fd_convert_meta_data(struct hclge_fd_key_cfg *key_cfg,
-+				       __le32 *key_x, __le32 *key_y,
-+				       struct hclge_fd_rule *rule)
-+{
-+	u32 tuple_bit, meta_data = 0, tmp_x, tmp_y, port_number;
-+	u8 cur_pos = 0, tuple_size, shift_bits;
-+	int i;
-+
-+	for (i = 0; i < MAX_META_DATA; i++) {
-+		tuple_size = meta_data_key_info[i].key_length;
-+		tuple_bit = key_cfg->meta_data_active & BIT(i);
-+
-+		switch (tuple_bit) {
-+		case BIT(ROCE_TYPE):
-+			hnae3_set_bit(meta_data, cur_pos, NIC_PACKET);
-+			cur_pos += tuple_size;
-+			break;
-+		case BIT(DST_VPORT):
-+			port_number = hclge_get_port_number(HOST_PORT, 0,
-+							    rule->vf_id, 0);
-+			hnae3_set_field(meta_data,
-+					GENMASK(cur_pos + tuple_size, cur_pos),
-+					cur_pos, port_number);
-+			cur_pos += tuple_size;
-+			break;
-+		default:
-+			break;
-+		}
++	if (fs->flow_type & FLOW_EXT) {
++		fs->h_ext.vlan_tci = cpu_to_be16(rule->tuples.vlan_tag1);
++		fs->m_ext.vlan_tci =
++				rule->unused_tuple & BIT(INNER_VLAN_TAG_FST) ?
++				cpu_to_be16(VLAN_VID_MASK) :
++				cpu_to_be16(rule->tuples_mask.vlan_tag1);
 +	}
 +
-+	calc_x(tmp_x, meta_data, 0xFFFFFFFF);
-+	calc_y(tmp_y, meta_data, 0xFFFFFFFF);
-+	shift_bits = sizeof(meta_data) * 8 - cur_pos;
-+
-+	*key_x = cpu_to_le32(tmp_x << shift_bits);
-+	*key_y = cpu_to_le32(tmp_y << shift_bits);
-+}
-+
-+/* A complete key is combined with meta data key and tuple key.
-+ * Meta data key is stored at the MSB region, and tuple key is stored at
-+ * the LSB region, unused bits will be filled 0.
-+ */
-+static int hclge_config_key(struct hclge_dev *hdev, u8 stage,
-+			    struct hclge_fd_rule *rule)
-+{
-+	struct hclge_fd_key_cfg *key_cfg = &hdev->fd_cfg.key_cfg[stage];
-+	u8 key_x[MAX_KEY_BYTES], key_y[MAX_KEY_BYTES];
-+	u8 *cur_key_x, *cur_key_y;
-+	int i, ret, tuple_size;
-+	u8 meta_data_region;
-+
-+	memset(key_x, 0, sizeof(key_x));
-+	memset(key_y, 0, sizeof(key_y));
-+	cur_key_x = key_x;
-+	cur_key_y = key_y;
-+
-+	for (i = 0 ; i < MAX_TUPLE; i++) {
-+		bool tuple_valid;
-+		u32 check_tuple;
-+
-+		tuple_size = tuple_key_info[i].key_length / 8;
-+		check_tuple = key_cfg->tuple_active & BIT(i);
-+
-+		tuple_valid = hclge_fd_convert_tuple(check_tuple, cur_key_x,
-+						     cur_key_y, rule);
-+		if (tuple_valid) {
-+			cur_key_x += tuple_size;
-+			cur_key_y += tuple_size;
-+		}
++	if (fs->flow_type & FLOW_MAC_EXT) {
++		ether_addr_copy(fs->h_ext.h_dest, rule->tuples.dst_mac);
++		if (rule->unused_tuple & BIT(INNER_DST_MAC))
++			eth_zero_addr(fs->m_u.ether_spec.h_dest);
++		else
++			ether_addr_copy(fs->m_u.ether_spec.h_dest,
++					rule->tuples_mask.dst_mac);
 +	}
-+
-+	meta_data_region = hdev->fd_cfg.max_key_length / 8 -
-+			MAX_META_DATA_LENGTH / 8;
-+
-+	hclge_fd_convert_meta_data(key_cfg,
-+				   (__le32 *)(key_x + meta_data_region),
-+				   (__le32 *)(key_y + meta_data_region),
-+				   rule);
-+
-+	ret = hclge_fd_tcam_config(hdev, stage, false, rule->location, key_y,
-+				   true);
-+	if (ret) {
-+		dev_err(&hdev->pdev->dev,
-+			"fd key_y config fail, loc=%d, ret=%d\n",
-+			rule->queue_id, ret);
-+		return ret;
-+	}
-+
-+	ret = hclge_fd_tcam_config(hdev, stage, true, rule->location, key_x,
-+				   true);
-+	if (ret)
-+		dev_err(&hdev->pdev->dev,
-+			"fd key_x config fail, loc=%d, ret=%d\n",
-+			rule->queue_id, ret);
-+	return ret;
-+}
-+
-+static int hclge_config_action(struct hclge_dev *hdev, u8 stage,
-+			       struct hclge_fd_rule *rule)
-+{
-+	struct hclge_fd_ad_data ad_data;
-+
-+	ad_data.ad_id = rule->location;
 +
 +	if (rule->action == HCLGE_FD_ACTION_DROP_PACKET) {
-+		ad_data.drop_packet = true;
-+		ad_data.forward_to_direct_queue = false;
-+		ad_data.queue_id = 0;
++		fs->ring_cookie = RX_CLS_FLOW_DISC;
 +	} else {
-+		ad_data.drop_packet = false;
-+		ad_data.forward_to_direct_queue = true;
-+		ad_data.queue_id = rule->queue_id;
++		u64 vf_id;
++
++		fs->ring_cookie = rule->queue_id;
++		vf_id = rule->vf_id;
++		vf_id <<= ETHTOOL_RX_FLOW_SPEC_RING_VF_OFF;
++		fs->ring_cookie |= vf_id;
 +	}
 +
-+	ad_data.use_counter = false;
-+	ad_data.counter_id = 0;
++	return 0;
++}
 +
-+	ad_data.use_next_stage = false;
-+	ad_data.next_input_key = 0;
++static int hclge_get_all_rules(struct hnae3_handle *handle,
++			       struct ethtool_rxnfc *cmd, u32 *rule_locs)
++{
++	struct hclge_vport *vport = hclge_get_vport(handle);
++	struct hclge_dev *hdev = vport->back;
++	struct hclge_fd_rule *rule;
++	struct hlist_node *node2;
++	int cnt = 0;
 +
-+	ad_data.write_rule_id_to_bd = true;
-+	ad_data.rule_id = rule->location;
++	if (!hnae3_dev_fd_supported(hdev))
++		return -EOPNOTSUPP;
 +
-+	return hclge_fd_ad_config(hdev, stage, ad_data.ad_id, &ad_data);
++	cmd->data = hdev->fd_cfg.rule_num[HCLGE_FD_STAGE_1];
++
++	hlist_for_each_entry_safe(rule, node2,
++				  &hdev->fd_rule_list, rule_node) {
++		if (cnt == cmd->rule_cnt)
++			return -EMSGSIZE;
++
++		rule_locs[cnt] = rule->location;
++		cnt++;
++	}
++
++	cmd->rule_cnt = cnt;
++
++	return 0;
 +}
 +
  static void hclge_cfg_mac_mode(struct hclge_dev *hdev, bool enable)
  {
  	struct hclge_desc desc;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 1e7ad5a..7f5a242 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -79,6 +79,19 @@
- #define HCLGE_VF_NUM_PER_CMD           64
- #define HCLGE_VF_NUM_PER_BYTE          8
- 
-+enum HLCGE_PORT_TYPE {
-+	HOST_PORT,
-+	NETWORK_PORT
-+};
-+
-+#define HCLGE_PF_ID_S			0
-+#define HCLGE_PF_ID_M			GENMASK(2, 0)
-+#define HCLGE_VF_ID_S			3
-+#define HCLGE_VF_ID_M			GENMASK(10, 3)
-+#define HCLGE_PORT_TYPE_B		11
-+#define HCLGE_NETWORK_PORT_ID_S		0
-+#define HCLGE_NETWORK_PORT_ID_M		GENMASK(3, 0)
-+
- /* Reset related Registers */
- #define HCLGE_MISC_RESET_STS_REG	0x20700
- #define HCLGE_MISC_VECTOR_INT_STS	0x20800
-@@ -485,6 +498,11 @@ enum HCLGE_FD_PACKET_TYPE {
- 	ROCE_PACKET,
+@@ -7038,6 +7274,9 @@ static const struct hnae3_ae_ops hclge_ops = {
+ 	.get_link_mode = hclge_get_link_mode,
+ 	.add_fd_entry = hclge_add_fd_entry,
+ 	.del_fd_entry = hclge_del_fd_entry,
++	.get_fd_rule_cnt = hclge_get_fd_rule_cnt,
++	.get_fd_rule_info = hclge_get_fd_rule_info,
++	.get_fd_all_rules = hclge_get_all_rules,
  };
  
-+enum HCLGE_FD_ACTION {
-+	HCLGE_FD_ACTION_ACCEPT_PACKET,
-+	HCLGE_FD_ACTION_DROP_PACKET,
-+};
-+
- struct hclge_fd_key_cfg {
- 	u8 key_sel;
- 	u8 inner_sipv6_word_en;
-@@ -505,6 +523,70 @@ struct hclge_fd_cfg {
- 	struct hclge_fd_key_cfg key_cfg[2];
- };
- 
-+struct hclge_fd_rule_tuples {
-+	u8 src_mac[6];
-+	u8 dst_mac[6];
-+	u32 src_ip[4];
-+	u32 dst_ip[4];
-+	u16 src_port;
-+	u16 dst_port;
-+	u16 vlan_tag1;
-+	u16 ether_proto;
-+	u8 ip_tos;
-+	u8 ip_proto;
-+};
-+
-+struct hclge_fd_rule {
-+	struct hlist_node rule_node;
-+	struct hclge_fd_rule_tuples tuples;
-+	struct hclge_fd_rule_tuples tuples_mask;
-+	u32 unused_tuple;
-+	u32 flow_type;
-+	u8 action;
-+	u16 vf_id;
-+	u16 queue_id;
-+	u16 location;
-+};
-+
-+struct hclge_fd_ad_data {
-+	u16 ad_id;
-+	u8 drop_packet;
-+	u8 forward_to_direct_queue;
-+	u16 queue_id;
-+	u8 use_counter;
-+	u8 counter_id;
-+	u8 use_next_stage;
-+	u8 write_rule_id_to_bd;
-+	u8 next_input_key;
-+	u16 rule_id;
-+};
-+
-+/* For each bit of TCAM entry, it uses a pair of 'x' and
-+ * 'y' to indicate which value to match, like below:
-+ * ----------------------------------
-+ * | bit x | bit y |  search value  |
-+ * ----------------------------------
-+ * |   0   |   0   |   always hit   |
-+ * ----------------------------------
-+ * |   1   |   0   |   match '0'    |
-+ * ----------------------------------
-+ * |   0   |   1   |   match '1'    |
-+ * ----------------------------------
-+ * |   1   |   1   |   invalid      |
-+ * ----------------------------------
-+ * Then for input key(k) and mask(v), we can calculate the value by
-+ * the formulae:
-+ *	x = (~k) & v
-+ *	y = (k ^ ~v) & k
-+ */
-+#define calc_x(x, k, v) ((x) = (~(k) & (v)))
-+#define calc_y(y, k, v) \
-+	do { \
-+		const typeof(k) _k_ = (k); \
-+		const typeof(v) _v_ = (v); \
-+		(y) = (_k_ ^ ~_v_) & (_k_); \
-+	} while (0)
-+
- #define HCLGE_VPORT_NUM 256
- struct hclge_dev {
- 	struct pci_dev *pdev;
+ static struct hnae3_ae_algo ae_algo = {
 -- 
 2.7.4
 
