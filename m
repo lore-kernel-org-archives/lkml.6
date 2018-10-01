@@ -2,113 +2,123 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC31C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C67DC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E0292084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:32:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E0292084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 233E4208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:37:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XPkUhAbs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 233E4208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbeJAQJt (ORCPT
+        id S1729105AbeJAQOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 12:09:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57428 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728804AbeJAQJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:09:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 246E3B05A;
-        Mon,  1 Oct 2018 09:32:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id A6C7E1E356C; Mon,  1 Oct 2018 11:32:49 +0200 (CEST)
-Date:   Mon, 1 Oct 2018 11:32:49 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     rong.a.chen@intel.com, Jan Kara <jack@suse.cz>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, LKP <lkp@01.org>
-Subject: Re: [LKP] [fsnotify] 60f7ed8c7c: will-it-scale.per_thread_ops -5.9%
- regression
-Message-ID: <20181001093249.GD3913@quack2.suse.cz>
-References: <20180930065100.GL15893@shao2-debian>
- <CAOQ4uxiHkufAtt87bMs9n-0sFxJSHsBxDX6jn8v28vkvy=a_qQ@mail.gmail.com>
+        Mon, 1 Oct 2018 12:14:17 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37333 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728976AbeJAQOO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 12:14:14 -0400
+Received: by mail-io1-f67.google.com with SMTP id v14-v6so8839448iob.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 02:37:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GFGkcHfSSnFsq77VIiNh0Sw17nrKeRJtSpTksHNrfYA=;
+        b=XPkUhAbsWjLPi4cldzhftETrgVm2nOxcmVBzU1MlVsEiqdUCHmOrfhzoPT/K33Hw5r
+         E3EVfs8zHMxayfCUcdci9li0HXx2SvCMq6A25rDpoyfjm0H0d0qixHp/zNHnU8/IcHlr
+         nz3gP27lyIkGlcADshu4N/DBs48yuCccnLaw4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GFGkcHfSSnFsq77VIiNh0Sw17nrKeRJtSpTksHNrfYA=;
+        b=OiVLWnFfHtTY4fkXFhIrjKsaZEqXQ1n8UDG14DSyGgH+FwXhURkhlnMDbFfH7fgDIb
+         U21damr3FoJy/uxGDVPegIgM8QDrdWYedVnRKomhobhd4Bk3ML4oZJWuYeQEqV4Na/5m
+         ZDIZb9SqbFPecrK6Nd34bXSwY6Pxn1mlEqSJSogmCvTROf0RQ91iIro0hSd+voRN2lHB
+         uyEQCpe9fLcdwv+LZXDw5ACTLAGVDHdGoL8n9BAJR+dt7EPNRIMDglpF9Qq0w6MgT78H
+         Uh9eHWoqA6rtJqokvqXVxKgQovodq74ilpzLy8GyXlgTiWUXT9VsXwn7vLvgFcA3WUCi
+         Wz2g==
+X-Gm-Message-State: ABuFfogy1LljakQGXMzHobLZyb6pkq8G8AndLFl+PV5qyrKNmyg9779b
+        FZdB8XoDdETvuo6rt/4p5AjzcWtbdU0MX/QANE6QPA==
+X-Google-Smtp-Source: ACcGV62zAJbXfkeyfP0/UamYUjIUHNRNQ0OomM0ggvrgxxpc4j7D4JnNW0MiWUz/3S+Utv2D+niFlf5yDaETQKtV8eo=
+X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr6232305iof.304.1538386639694;
+ Mon, 01 Oct 2018 02:37:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiHkufAtt87bMs9n-0sFxJSHsBxDX6jn8v28vkvy=a_qQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180923235336.22148-2-jmkrzyszt@gmail.com> <20180929122022.6825-1-jmkrzyszt@gmail.com>
+In-Reply-To: <20180929122022.6825-1-jmkrzyszt@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 1 Oct 2018 11:37:07 +0200
+Message-ID: <CACRpkdbxh3uoVbc1udouxKaN+sc+q_vB7oj_B8PEa4wi=wLedg@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: Fix incorrect use of find_next_zero_bit()
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
+        Peter Korsgaard <peter.korsgaard@barco.com>,
+        Peter Rosin <peda@axentia.se>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Greg KH <gregkh@linuxfoundation.org>, kishon@ti.com,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Rojhalat Ibrahim <imr@rtschenk.de>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Yegor Yefremov <yegorslists@googlemail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-i2c@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-serial@vger.kernel.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 30-09-18 12:00:46, Amir Goldstein wrote:
-> On Sun, Sep 30, 2018 at 9:50 AM kernel test robot <rong.a.chen@intel.com> wrote:
-> >
-> > Greeting,
-> >
-> > FYI, we noticed a -5.9% regression of will-it-scale.per_thread_ops due to commit:
-> >
-> >
-> > commit: 60f7ed8c7c4d06aeda448c6da74621552ee739aa ("fsnotify: send path type events to group with super block marks")
-> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> >
-> > in testcase: will-it-scale
-> > on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 64G memory
-> > with following parameters:
-> >
-> >         nr_task: 16
-> >         mode: thread
-> >         test: unlink2
-> >         cpufreq_governor: performance
-> >
-> > test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
-> > test-url: https://github.com/antonblanchard/will-it-scale
-> >
-> >
-> >
-> > Details are as below:
-> > -------------------------------------------------------------------------------------------------->
-> >
-> >
-> > To reproduce:
-> >
-> >         git clone https://github.com/intel/lkp-tests.git
-> >         cd lkp-tests
-> >         bin/lkp install job.yaml  # job file is attached in this email
-> >         bin/lkp run     job.yaml
-> >
-> > =========================================================================================
-> > compiler/cpufreq_governor/kconfig/mode/nr_task/rootfs/tbox_group/test/testcase:
-> >   gcc-7/performance/x86_64-rhel-7.2/thread/16/debian-x86_64-2018-04-03.cgz/lkp-bdw-ep3d/unlink2/will-it-scale
-> >
-> > commit:
-> >   1e6cb72399 ("fsnotify: add super block object type")
-> >   60f7ed8c7c ("fsnotify: send path type events to group with super block marks")
-> >
-> 
-> I have to admit this looks strange.
-> All this commit does is dereference mnt->mnt.mnt_sb and then
-> sb->s_fsnotify_mask/sb->s_fsnotify_marks to find that they are zero.
-> AFAICT there should be no extra contention added by this commit and it's
-> hard to believe that parallel unlink workload would suffer from this change.
+On Sat, Sep 29, 2018 at 2:19 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-Well, it could be those additional fetches of
-sb->s_fsnotify_mask/sb->s_fsnotify_marks if they happen to be cache cold.
-Or it could be just code layout differences (i.e., compiler is not able to
-optimize resulting code as good or the code layout just happens to align
-with cache lines in a wrong way or something like that). Anyway, without
-being able to reproduce this and do detailed comparison of perf profiles I
-don't think we'll be able to tell.
+> Commit b17566a6b08b ("gpiolib: Implement fast processing path in
+> get/set array"), already fixed to some extent with commit 5d581d7e8cdc
+> ("gpiolib: Fix missing updates of bitmap index"), introduced a new mode
+> of processing bitmaps where bits applicable for fast bitmap processing
+> path are supposed to be skipped while iterating bits which don't apply.
+> Unfortunately, find_next_zero_bit() function supposed to skip over
+> those fast bits is always called with a 'start' argument equal to an
+> index of last zero bit found and returns that index value again an
+> again, causing an infinite loop.
+>
+> Fix it by incrementing the index uncoditionally before
+> find_next_zero_bit() is optionally called.
+>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Patch applied with Marek's Tested-by.
+
+Thanks to both of you for digging in and fixing this up!
+Now we are in good shape for the v4.20 cycle :)
+
+Yours,
+Linus Walleij
