@@ -2,102 +2,172 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A28C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A619C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FAEC20666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:22:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CnGgCaMe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FAEC20666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4CB1220666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:22:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CB1220666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbeJBDBw (ORCPT
+        id S1726451AbeJBDCQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 23:01:52 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42740 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbeJBDBv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 23:01:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=UVKeRRvdGHOd1nSOef61Zwf5bwv1Av0voJjkRCRFudI=; b=CnGgCaMeG9dJ1+NLNLQ3yehu0a
-        TS2vpxtj9O8UIREHiEKwGhU0qpJHssFNohwCMWN8qgYgdU5Ie6cY398ToYqw1HNVW7cw0kK1+LGM7
-        DqilsjqPZlhDBkexxlK+XwdPk44zgpFsV9NKGNwJ16HTRhF19qhcVdLi9dVZSrqgifHowWcZOA3ld
-        GDDYt+texYiOaxtC+2TBkdot/6KFLFvbT1BhblXUKPj/HZIej62Y7LNxX6aQE2Qs29AOwxPuNn3Pd
-        fmBVmHYNGpOkkyey0St+sD6xaN8YWBRhamPCRB7QWODhmKzh0FQQUg3N6eXVON/v6sjpGATeCCx9V
-        D1qMz6GQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g74hq-0000qy-42; Mon, 01 Oct 2018 20:22:14 +0000
-Subject: Re: [PATCH] dma-direct: document the zone selection logic
-To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel@vger.kernel.org
-References: <20181001201016.32639-1-hch@lst.de>
- <20181001201016.32639-2-hch@lst.de>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4e9fd184-2ee4-1971-dcd9-34bfb8c05f65@infradead.org>
-Date:   Mon, 1 Oct 2018 13:22:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 1 Oct 2018 23:02:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59744 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725948AbeJBDCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 23:02:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E7A9DAEE9;
+        Mon,  1 Oct 2018 20:22:43 +0000 (UTC)
+Date:   Mon, 1 Oct 2018 22:22:44 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     lijiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, thomas.lendacky@amd.com,
+        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
+        brijesh.singh@amd.com, dyoung@redhat.com, bhe@redhat.com,
+        jroedel@suse.de
+Subject: Re: [PATCH v9 4/4] kdump/vmcore: support encrypted old memory with
+ SME enabled
+Message-ID: <20181001202244.GB8350@zn.tnic>
+References: <20180930031033.22110-1-lijiang@redhat.com>
+ <20180930031033.22110-5-lijiang@redhat.com>
+ <be7b47f9-6be6-e0d1-2c2a-9125bc74b818@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20181001201016.32639-2-hch@lst.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <be7b47f9-6be6-e0d1-2c2a-9125bc74b818@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/1/18 1:10 PM, Christoph Hellwig wrote:
-> What we are doing here isn't quite obvious, so add a comment explaining
-> it.
+On Sun, Sep 30, 2018 at 04:37:41PM +0800, lijiang wrote:
+> In kdump kernel, the old memory needs to be dumped into vmcore file.
+> If SME is enabled in the first kernel, the old memory has to be
+> remapped with the memory encryption mask, which will be automatically
+> decrypted when read from DRAM.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> For SME kdump, there are two cases that doesn't support:
+
+Get rid of those two cases in the commit message.
+
+> 
+>  ----------------------------------------------
+> | first-kernel | second-kernel | kdump support |
+> |      (mem_encrypt=on|off)    |   (yes|no)    |
+> |--------------+---------------+---------------|
+> |     on       |     on        |     yes       |
+> |     off      |     off       |     yes       |
+> |     on       |     off       |     no        |
+> |     off      |     on        |     no        |
+> |______________|_______________|_______________|
+> 
+> 1. SME is enabled in the first kernel, but SME is disabled in kdump kernel
+> In this case, because the old memory is encrypted, it can't be decrypted.
+> The root cause is that the encryption key is not visible to any software
+> runnint on the CPU cores(AMD cpu with SME), and is randomly generated on
+> eache system reset. That is to say, kdump kernel won't have a chance to
+> get the encryption key. So the encrypted memory can not be decrypted
+> unless SME is active.
+> 
+> 2. SME is disabled in the first kernel, but SME is enabled in kdump kernel
+> On the one hand, the old memory is decrypted, the old memory can be dumped
+> as usual, so SME doesn't need to be enabled in kdump kernel; On the other
+> hand, it will increase the complexity of the code, because that will have
+> to consider how to pass the SME flag from the first kernel to the kdump
+> kernel, it is really too expensive to do this.
+> 
+> This patches are only for SME kdump, the patches don't support SEV kdump.
+> 
+> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+
+You cannot keep Reviewed-by: tags on patches which you change in a
+non-trivial manner.
+
 > ---
->  kernel/dma/direct.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
+> Changes since v7:
+> 1. Delete a file arch/x86/kernel/crash_dump_encrypt.c, and move the
+> copy_oldmem_page_encrypted() to arch/x86/kernel/crash_dump_64.c, also
+> rewrite some functions.(Suggested by Borislav)
+> 2. Modify all code style issue.(Suggested by Borislav)
+> 3. Remove a reduntant header file.(Suggested by Borislav)
+> 4. Improve patch log.(Suggested by Borislav)
+> 5. Modify compile error "fs/proc/vmcore.c:115: undefined reference
+>    to `copy_oldmem_page_encrypted'"
+> 6. Modify compile error "arch/x86//kernel/crash_dump_64.c:93:9:
+>    error: redefinition of 'copy_oldmem_page_encrypted'"
 > 
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index ba6f5956a291..14b966e2349a 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -84,7 +84,14 @@ static gfp_t __dma_direct_optimal_gfp_mask(struct device *dev, u64 dma_mask,
->  	else
->  		*phys_mask = dma_to_phys(dev, dma_mask);
+>  arch/x86/kernel/crash_dump_64.c | 65 ++++++++++++++++++++++++++++-----
+>  fs/proc/vmcore.c                | 24 +++++++++---
+>  include/linux/crash_dump.h      | 13 +++++++
+>  3 files changed, 87 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
+> index 4f2e0778feac..6adbde592c44 100644
+> --- a/arch/x86/kernel/crash_dump_64.c
+> +++ b/arch/x86/kernel/crash_dump_64.c
+> @@ -12,7 +12,7 @@
+>  #include <linux/io.h>
 >  
-> -	/* GFP_DMA32 and GFP_DMA are no ops without the corresponding zones: */
-> +	/*
-> +	 * Optimistically try the zone that the physicall address mask falls
+>  /**
+> - * copy_oldmem_page - copy one page from "oldmem"
+> + * __copy_oldmem_page - copy one page from "old memory encrypted or decrypted"
 
-	                                        physical
+Dammit, what's it with those "old memory encrypted or decrypted" in quotation
+marks?! What is wrong with simply saying:
 
-> +	 * into first.  If that returns memory that isn't actually addressable
-> +	 * we will fallback to the next lower zone and try again.
-> +	 *
-> +	 * Note that GFP_DMA32 and GFP_DMA are no ops without the corresponding
-> +	 * zones.
-> +	 */
->  	if (*phys_mask <= DMA_BIT_MASK(ARCH_ZONE_DMA_BITS))
->  		return GFP_DMA;
->  	if (*phys_mask <= DMA_BIT_MASK(32))
-> 
+Copy one page of the old kernel's memory. If @encrypted is set, the old
+memory will be remapped with the encryption mask.
 
-thanks for the documentation.
+How hard is that?!
+
+>   * @pfn: page frame number to be copied
+>   * @buf: target memory address for the copy; this can be in kernel address
+>   *	space or user address space (see @userbuf)
+> @@ -20,31 +20,78 @@
+>   * @offset: offset in bytes into the page (based on pfn) to begin the copy
+>   * @userbuf: if set, @buf is in user address space, use copy_to_user(),
+>   *	otherwise @buf is in kernel address space, use memcpy().
+> + * @encrypted: if true, the old memory is encrypted.
+> + *             if false, the old memory is decrypted.
+>   *
+> - * Copy a page from "oldmem". For this page, there is no pte mapped
+> - * in the current kernel. We stitch up a pte, similar to kmap_atomic.
+> + * Copy a page from "old memory encrypted or decrypted". For this page, there
+> + * is no pte mapped in the current kernel. We stitch up a pte, similar to
+> + * kmap_atomic.
+>   */
+
+This function is static now - why does it need to keep the comments
+above it? And you've duplicated almost the same comment *three* times
+now. Why?
+
+Have the whole comment *once* and only one line sentences over the other
+functions explaining the difference only.
+
+> -ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
+> -		size_t csize, unsigned long offset, int userbuf)
+> +static ssize_t __copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
+> +				  unsigned long offset, int userbuf,
+> +				  bool encrypted)
+>  {
+>  	void  *vaddr;
 
 -- 
-~Randy
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
