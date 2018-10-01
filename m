@@ -2,250 +2,184 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6EFC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5B7C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 490AE2084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:52:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ZfOLmpxO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 490AE2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id E86972084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 06:55:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E86972084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbeJAN2k (ORCPT
+        id S1728795AbeJANbS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 09:28:40 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33491 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727339AbeJAN2j (ORCPT
+        Mon, 1 Oct 2018 09:31:18 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:51470 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeJANbS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 09:28:39 -0400
-Received: by mail-ed1-f65.google.com with SMTP id g26-v6so13163109edp.0
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 23:52:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=ack1UwITI9TmKRYEW6T2SKcPzPtktow2A4KKoKeAVAI=;
-        b=ZfOLmpxO3D4jBjBcOpADU06nAeXF3AvIy4Moe4pjSQZscBD/OE3y4nwiu8ZjYwJvcO
-         WVw/JHi0YZTcCrnI1/S8q1ShuHeed7LzKznxSQnvOdfnjvWketBy9cNzmreoAtKDCzNu
-         3MSmB52zDJSf6sfvy9GoKvHH3foUGn38RAGtk=
+        Mon, 1 Oct 2018 09:31:18 -0400
+Received: by mail-io1-f69.google.com with SMTP id w23-v6so12300181iob.18
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 23:55:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=ack1UwITI9TmKRYEW6T2SKcPzPtktow2A4KKoKeAVAI=;
-        b=hJX7cSKN4TK9CRPfac6SAAJtXt4c54tsk0HPSzJmanGnK1VxoL3620uwO2OAkNCtym
-         ZG1gXZHjauhbsu+gpYascGTSdVjgJRj8tmqKZamP0elYXxglpeLZZhY7cIdVE8mf006R
-         7jKZckw0pV3s/ZBgz/H5qHnos0tWXUB11GPWZaRKzVau3Ht6RtrqK2cLwjbJCI2QHkMm
-         VnuTtO4PhOVPWtmnEWqFqcxY6OXPbHV5TJZ1N8G2FeveOjfNKy32ZxRM8anCJwoQjkiu
-         5/gLl2CArcWJjDx4UbnKxHO7rX+d391SlCY4SKu2E1h4xlgXS6KByyBVakz2f6fR8kXw
-         O44Q==
-X-Gm-Message-State: ABuFfojAdNgd1zVeewRcy/EgeDw5PdAECBYGyrAspBi8bDAtu5uCzMsD
-        29cP4Ide7eO5yQpizbTyeBIqqg==
-X-Google-Smtp-Source: ACcGV633NOrjxcMzsjvw8xI8kpxwl/6PS8CSwskMnhTSSOQGdBQ3eLijiJglxuPMdlK+lj1Jih2n8g==
-X-Received: by 2002:a17:906:6315:: with SMTP id p21-v6mr13035368ejk.135.1538376743715;
-        Sun, 30 Sep 2018 23:52:23 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id c16-v6sm4455383eds.97.2018.09.30.23.52.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 30 Sep 2018 23:52:22 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 08:52:20 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        sean@poorly.run, airlied@linux.ie, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] drm/rcar-du: Convert drm_atomic_helper_suspend/resume()
-Message-ID: <20181001065220.GE11082@phenom.ffwll.local>
-Mail-Followup-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20180918163903.GA11172@jordon-HP-15-Notebook-PC>
- <CAFqt6zZno+Q6NY6iOXr8utE3W56+Pd5KboqdOKZjj7Z_jBZDuw@mail.gmail.com>
- <1672691.6TUgGLsHUb@avalon>
- <20809880.gF2CxujBy3@avalon>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=0naIcRTKx2ozMuvf9/wbWt15Zp2sM7XW3tX/BzH5cVI=;
+        b=rzrD0r8NjgMasF8kAEazT1kCMp7zFpWpnkOR0KM1PSjFNliq6aEmnMgJ5D9omTY/zw
+         2S7t+9YR8ikNow2G6BMkpYMSPuLiDWejtwoazd7vGgLTTUWQDAL6vkA5E1PvUyzoihUc
+         17cOx/MHG5QYJ5W7CKZvmb+pHfvCeb7WLuDXDB/KX9FaI4xDoU7hJeY6cRsJyYDk/5Pn
+         bUllso3FJNmlKNP5/GMNtJKTqlE4skOsB3EAbnCMXGvEv8vcnJyDCKDSbEt+B768JwuN
+         feckcDUCPND0pSICdUCj/nhPUEGyX9iYyp5xve/OYWIIFxUvJn1MceHaka2BHHdFgRZ2
+         Z+yg==
+X-Gm-Message-State: ABuFfoj+73FHGunGsuh6X2LMxAqAefPInRVv1rqSDFY7Un+iJ2Mg7/Vq
+        OCsi2kYMT3xr8RUnXyUNVyiG4Uc1BMWiUVPDiC/qGOV7eZOa
+X-Google-Smtp-Source: ACcGV60TCkw4tj//KBR5vUe1je3qGAA1BdBJgPISDrjPMnEiI48MczmHOKHZHVxhQ52G7eGX1F3GxZffjcquzh5gIpmSMiM3zlkV
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20809880.gF2CxujBy3@avalon>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a6b:3709:: with SMTP id e9-v6mr6807626ioa.8.1538376903417;
+ Sun, 30 Sep 2018 23:55:03 -0700 (PDT)
+Date:   Sun, 30 Sep 2018 23:55:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dbeaea0577254824@google.com>
+Subject: KASAN: use-after-free Read in xfrm_sk_policy_lookup
+From:   syzbot <syzbot+fa158127e8a7f651dbbf@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 06:30:35PM +0300, Laurent Pinchart wrote:
-> Hi Souptick,
-> 
-> On Friday, 28 September 2018 18:05:18 EEST Laurent Pinchart wrote:
-> > On Thursday, 27 September 2018 09:34:18 EEST Souptick Joarder wrote:
-> > > On Tue, Sep 18, 2018 at 10:05 PM Souptick Joarder wrote:
-> > >> convert drm_atomic_helper_suspend/resume() to use
-> > >> drm_mode_config_helper_suspend/resume().
-> > >> 
-> > >> remove suspend_state field from the rcar_du_device
-> > >> structure as it is no more required.
-> > >> 
-> > >> With this conversion, also drm_fbdev_cma_set_suspend_unlocked()
-> > >> will left with no consumer. So this function can be removed.
-> > >> 
-> > >> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > > 
-> > > Laurent, any comment on this patch ??
-> > 
-> > Sorry for the delay, and thanks for pinging me.
-> > 
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > 
-> > Should I apply this to my tree or do you plan to merge it through drm-misc
-> > as it touches drm_fb_cma_helper.c ?
-> 
-> I just realized that the same patch got supplied by Noralf Trønnes nearly a 
-> year ago, and was later superseded by https://patchwork.freedesktop.org/patch/
-> 247861/. I think we should thus apply Noralf's patches instead (once he sends 
-> v4 out).
+Hello,
 
-I don't think Noralf is still actively working on this, he's busy with the
-fbdev emulation stuff. Probably better if you pick up one of the existing
-ones, than waiting another year or so :-)
+syzbot found the following crash on:
 
-Cheers, Daniel
+HEAD commit:    291d0e5d81e1 Merge tag 'for-linus-20180929' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=173b614e400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a8212f992609a887
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa158127e8a7f651dbbf
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-> 
-> > >> ---
-> > >> 
-> > >>  drivers/gpu/drm/drm_fb_cma_helper.c   | 18 ------------------
-> > >>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++-------------------
-> > >>  drivers/gpu/drm/rcar-du/rcar_du_drv.h |  1 -
-> > >>  include/drm/drm_fb_cma_helper.h       |  2 --
-> > >>  4 files changed, 2 insertions(+), 40 deletions(-)
-> > >> 
-> > >> diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c
-> > >> b/drivers/gpu/drm/drm_fb_cma_helper.c index 47e0e2f..96efc88 100644
-> > >> --- a/drivers/gpu/drm/drm_fb_cma_helper.c
-> > >> +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
-> > >> @@ -224,21 +224,3 @@ void drm_fbdev_cma_hotplug_event(struct
-> > >> drm_fbdev_cma *fbdev_cma)
-> > >>                 drm_fb_helper_hotplug_event(&fbdev_cma->fb_helper);
-> > >>  }
-> > >>  EXPORT_SYMBOL_GPL(drm_fbdev_cma_hotplug_event);
-> > >> 
-> > >> -
-> > >> -/**
-> > >> - * drm_fbdev_cma_set_suspend_unlocked - wrapper around
-> > >> - *
-> > >> drm_fb_helper_set_suspend_unlocked
-> > >> - * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
-> > >> - * @state: desired state, zero to resume, non-zero to suspend
-> > >> - *
-> > >> - * Calls drm_fb_helper_set_suspend, which is a wrapper around
-> > >> - * fb_set_suspend implemented by fbdev core.
-> > >> - */
-> > >> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma
-> > >> *fbdev_cma,
-> > >> -                                       bool state)
-> > >> -{
-> > >> -       if (fbdev_cma)
-> > >> -              
-> > >> drm_fb_helper_set_suspend_unlocked(&fbdev_cma->fb_helper,
-> > >> -                                                  state);
-> > >> -}
-> > >> -EXPORT_SYMBOL(drm_fbdev_cma_set_suspend_unlocked);
-> > >> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > >> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 02aee6c..288220f 100644
-> > >> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > >> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > >> @@ -357,32 +357,15 @@ static void rcar_du_lastclose(struct drm_device
-> > >> *dev)
-> > >> 
-> > >>  static int rcar_du_pm_suspend(struct device *dev)
-> > >>  {
-> > >>         struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-> > >> -       struct drm_atomic_state *state;
-> > >> 
-> > >> -       drm_kms_helper_poll_disable(rcdu->ddev);
-> > >> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
-> > >> -
-> > >> -       state = drm_atomic_helper_suspend(rcdu->ddev);
-> > >> -       if (IS_ERR(state)) {
-> > >> -               drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
-> > >> -               drm_kms_helper_poll_enable(rcdu->ddev);
-> > >> -               return PTR_ERR(state);
-> > >> -       }
-> > >> -
-> > >> -       rcdu->suspend_state = state;
-> > >> -
-> > >> -       return 0;
-> > >> +       return drm_mode_config_helper_suspend(rcdu->ddev);
-> > >>  }
-> > >>  
-> > >>  static int rcar_du_pm_resume(struct device *dev)
-> > >>  {
-> > >>         struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-> > >> 
-> > >> -       drm_atomic_helper_resume(rcdu->ddev, rcdu->suspend_state);
-> > >> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
-> > >> -       drm_kms_helper_poll_enable(rcdu->ddev);
-> > >> -
-> > >> -       return 0;
-> > >> +       return drm_mode_config_helper_resume(rcdu->ddev);
-> > >>  }
-> > >>  #endif
-> > >> 
-> > >> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> > >> b/drivers/gpu/drm/rcar-du/rcar_du_drv.h index b3a25e8..ff25c8d 100644
-> > >> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> > >> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> > >> @@ -78,7 +78,6 @@ struct rcar_du_device {
-> > >>         struct drm_device *ddev;
-> > >>         struct drm_fbdev_cma *fbdev;
-> > >> 
-> > >> -       struct drm_atomic_state *suspend_state;
-> > >> 
-> > >>         struct rcar_du_crtc crtcs[RCAR_DU_MAX_CRTCS];
-> > >>         unsigned int num_crtcs;
-> > >> diff --git a/include/drm/drm_fb_cma_helper.h
-> > >> b/include/drm/drm_fb_cma_helper.h index 4a65f0d..8dbbe1e 100644
-> > >> --- a/include/drm/drm_fb_cma_helper.h
-> > >> +++ b/include/drm/drm_fb_cma_helper.h
-> > >> @@ -26,8 +26,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct
-> > >> drm_device *dev,
-> > >> 
-> > >>  void drm_fbdev_cma_restore_mode(struct drm_fbdev_cma *fbdev_cma);
-> > >>  void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma);
-> > >> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma
-> > >> *fbdev_cma,
-> > >> -                                       bool state);
-> > >> 
-> > >>  struct drm_gem_cma_object *drm_fb_cma_get_gem_obj(struct
-> > >>  drm_framebuffer *fb,
-> > >>         unsigned int plane);
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
-> 
-> 
+Unfortunately, I don't have any reproducer for this crash yet.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fa158127e8a7f651dbbf@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in xfrm_sk_policy_lookup+0x61c/0x640  
+net/xfrm/xfrm_policy.c:1191
+Read of size 2 at addr ffff8801995e5d1c by task syz-executor1/9885
+
+CPU: 0 PID: 9885 Comm: syz-executor1 Not tainted 4.19.0-rc5+ #38
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:431
+  xfrm_sk_policy_lookup+0x61c/0x640 net/xfrm/xfrm_policy.c:1191
+  xfrm_lookup_with_ifid+0x2a1/0x2b80 net/xfrm/xfrm_policy.c:2063
+  xfrm_lookup net/xfrm/xfrm_policy.c:2200 [inline]
+  xfrm_lookup_route+0x3c/0x1f0 net/xfrm/xfrm_policy.c:2211
+  ip6_dst_lookup_flow+0x1c6/0x270 net/ipv6/ip6_output.c:1083
+  inet6_csk_route_socket+0x8bd/0x1020 net/ipv6/inet6_connection_sock.c:110
+  inet6_csk_xmit+0x118/0x630 net/ipv6/inet6_connection_sock.c:125
+  l2tp_xmit_core net/l2tp/l2tp_core.c:1030 [inline]
+  l2tp_xmit_skb+0x134c/0x1670 net/l2tp/l2tp_core.c:1132
+  pppol2tp_sendmsg+0x4b1/0x6c0 net/l2tp/l2tp_ppp.c:329
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  ___sys_sendmsg+0x51d/0x930 net/socket.c:2116
+  __sys_sendmmsg+0x246/0x6d0 net/socket.c:2211
+  __do_sys_sendmmsg net/socket.c:2240 [inline]
+  __se_sys_sendmmsg net/socket.c:2237 [inline]
+  __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2237
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457579
+Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f36fada1c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000457579
+RDX: 0800000000000059 RSI: 0000000020005fc0 RDI: 0000000000000007
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000003 R11: 0000000000000246 R12: 00007f36fada26d4
+R13: 00000000004c34ed R14: 00000000004d52b0 R15: 00000000ffffffff
+
+Allocated by task 9885:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:513 [inline]
+  kzalloc include/linux/slab.h:707 [inline]
+  xfrm_policy_alloc+0xd9/0x480 net/xfrm/xfrm_policy.c:267
+  xfrm_compile_policy+0x257/0x430 net/xfrm/xfrm_user.c:2994
+  xfrm_user_policy+0x3ef/0xb10 net/xfrm/xfrm_state.c:2102
+  do_ipv6_setsockopt.isra.9+0xfd6/0x45d0 net/ipv6/ipv6_sockglue.c:821
+  ipv6_setsockopt+0xbd/0x170 net/ipv6/ipv6_sockglue.c:933
+  udpv6_setsockopt+0x62/0xa0 net/ipv6/udp.c:1482
+  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
+  __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1902
+  __do_sys_setsockopt net/socket.c:1913 [inline]
+  __se_sys_setsockopt net/socket.c:1910 [inline]
+  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 32034:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3813
+  xfrm_policy_destroy_rcu+0x4a/0x60 net/xfrm/xfrm_policy.c:290
+  __rcu_reclaim kernel/rcu/rcu.h:236 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2576 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2880 [inline]
+  __rcu_process_callbacks kernel/rcu/tree.c:2847 [inline]
+  rcu_process_callbacks+0xf23/0x2670 kernel/rcu/tree.c:2864
+  __do_softirq+0x30b/0xad8 kernel/softirq.c:292
+
+The buggy address belongs to the object at ffff8801995e5b00
+  which belongs to the cache kmalloc-1024 of size 1024
+The buggy address is located 540 bytes inside of
+  1024-byte region [ffff8801995e5b00, ffff8801995e5f00)
+The buggy address belongs to the page:
+page:ffffea0006657900 count:1 mapcount:0 mapping:ffff8801da800ac0 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffffea000730b108 ffffea00075ef008 ffff8801da800ac0
+raw: 0000000000000000 ffff8801995e4000 0000000100000007 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801995e5c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801995e5c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801995e5d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                             ^
+  ffff8801995e5d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801995e5e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
