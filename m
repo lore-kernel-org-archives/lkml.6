@@ -2,106 +2,101 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D06CC64EAD
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18049C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E960C2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:52:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF88A2064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:52:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cvRHQ1H4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E960C2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aRvP6y2d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF88A2064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbeJAQ3Y (ORCPT
+        id S1729188AbeJAQ3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 12:29:24 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48800 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729045AbeJAQ3Y (ORCPT
+        Mon, 1 Oct 2018 12:29:46 -0400
+Received: from mail-yw1-f41.google.com ([209.85.161.41]:39433 "EHLO
+        mail-yw1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729045AbeJAQ3q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:29:24 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w919nAJ4124932;
-        Mon, 1 Oct 2018 09:52:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=ZltC4BgGNykYL6ehmAXhpCYXTxjo/xz5TWGDHnZrxCw=;
- b=cvRHQ1H4Dy4TCpNR8OLyErWWWeLdPtmQp1QcnAOMU+6WEuPV0O/Kfy3eNBu0EHheNVCe
- NFj2ErjnmvS5PtD06BlQ2nKhKASNbUuxCDQDE4S5CBRSsQXsmoot5ZOpAPPOEV1ox1oE
- tEs8o0RrjccGW2vLt9ZAybE1apmW+6hWYziU51fp+eQ0BwnEKtn2Z7YMQQwdRJMluyXO
- cxLNzMtmRQOzhO9IdvbSnSQXbNEN4Q+ZnWbM0mssrOobem0MN64RSJsFsmbff7FiY4K7
- 1c+nLkusBTkyJ2B+iQCIJlXtNQfdJlpf1ojig/qM/iSrXFgqKndLWy4P6K+JvZOwnrDs FQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2mt21qnupv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Oct 2018 09:52:23 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w919qMiH001497
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 1 Oct 2018 09:52:22 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w919qLRh012303;
-        Mon, 1 Oct 2018 09:52:21 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Oct 2018 02:52:21 -0700
-Date:   Mon, 1 Oct 2018 12:52:14 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Andrey Abramov <st5pub@yandex.ru>
-Cc:     mchehab@kernel.org, gregkh@linuxfoundation.org,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Staging: media: replaced deprecated probe method
-Message-ID: <20181001095214.pjp7cshbi3nxq6w5@mwanda>
-References: <20181001094229.9148-1-st5pub@yandex.ru>
+        Mon, 1 Oct 2018 12:29:46 -0400
+Received: by mail-yw1-f41.google.com with SMTP id v1-v6so5207962ywv.6
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 02:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kcqd3Pcfb9xxD6yrIN5Zh0buM8KoteGB3Gfwl/+108g=;
+        b=aRvP6y2dgw3/BG+E6XzF2ggDmSPXnM/Z+cAg8PGUuZfD7tsd3z/eHQ6XkAArIGUAAD
+         6d26o1XwuU39y324ABp3pRYR6++t6Qi5gSk6PVQfStPiMvNny41RtmomQp1m+BQte/hK
+         /f5ollY5RBjwWhcU3MgwouWWzC6LzqxVfxfrqZRx5oySGAaTWtFJaw39iN+d0hIr0sBc
+         BmXTUTJrUZDszDLoKAOFwrR+GAqdNASPR0kNJ9wa3Yj/8NgpIQFWqQI6W8AckrExvt5n
+         9BsIQ6pxa4eHVdP0sYZa3sSHJ0rnR8MCmSL75aWexjwcFHPv0aRvFJmYp1Vq0bQDoxKi
+         0SKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kcqd3Pcfb9xxD6yrIN5Zh0buM8KoteGB3Gfwl/+108g=;
+        b=mi3vRdAALPD2lSncFSvxSzngmup3M5edNohcH8onZt75NWmEa1OaE3JiczWMDK1KZL
+         upue/CBcu092U4uhsUSVA64lA3xb+eJgUx12q4FkKdzbVVHWyL4LonE4VUMVIa2BjBg8
+         aGDMTZBfV2tpYBvkwH57tcDCRJDFXoiAr26SLERXXcpx17Jjti6+KFANPuMJhSKuA0fF
+         PeHceSxkA0gB9Gu/St++nvaTGXg5XNE/NlII+aCPxqYZuXW7RGLr0+QTHxsm7xOKUPdp
+         7694ZP4g4XLkCjzc7qZ5VvBrKBhTEu17YZILUEc35g0EfbTr9VZTDoSFmdNvQOooiP/q
+         AyQg==
+X-Gm-Message-State: ABuFfoiPmQ1oUZhQfv5mXVZKLpnHvAu40QBiQhhLAc/TJfFNkIiiDRGD
+        32eLtN8fKue0vruY4nI8L0wsY8hGgSkir3gKAzkNYbom
+X-Google-Smtp-Source: ACcGV60MmPKQ2gRlcMLwwKsiGkymY991QLpZIyI0RmFe0pjA6dUZSiqDLIyBqW7f9r/eGSid3dVo7kuJoVQBkgGKa+w=
+X-Received: by 2002:a81:2989:: with SMTP id p131-v6mr5200875ywp.176.1538387568168;
+ Mon, 01 Oct 2018 02:52:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181001094229.9148-1-st5pub@yandex.ru>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9032 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=18 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=701
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810010101
+References: <20180930065100.GL15893@shao2-debian> <CAOQ4uxiHkufAtt87bMs9n-0sFxJSHsBxDX6jn8v28vkvy=a_qQ@mail.gmail.com>
+ <20181001093249.GD3913@quack2.suse.cz>
+In-Reply-To: <20181001093249.GD3913@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 1 Oct 2018 12:52:35 +0300
+Message-ID: <CAOQ4uxiY=-=F6v4enQkcw4VjhP6gp4E31fdRxM=_ShutbT2QXw@mail.gmail.com>
+Subject: Re: [LKP] [fsnotify] 60f7ed8c7c: will-it-scale.per_thread_ops -5.9% regression
+To:     Jan Kara <jack@suse.cz>
+Cc:     rong.a.chen@intel.com, linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, LKP <lkp@01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 12:42:29PM +0300, Andrey Abramov wrote:
-> Replaced i2c_driver::probe with i2c_driver::probe_new,
-> 	because documentation says that probe method is "soon to be deprecated".
-> And fixed problems of the previous attempt.
+On Mon, Oct 1, 2018 at 12:32 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Sun 30-09-18 12:00:46, Amir Goldstein wrote:
+[...]
+> > > commit:
+> > >   1e6cb72399 ("fsnotify: add super block object type")
+> > >   60f7ed8c7c ("fsnotify: send path type events to group with super block marks")
+> > >
+> >
+> > I have to admit this looks strange.
+> > All this commit does is dereference mnt->mnt.mnt_sb and then
+> > sb->s_fsnotify_mask/sb->s_fsnotify_marks to find that they are zero.
+> > AFAICT there should be no extra contention added by this commit and it's
+> > hard to believe that parallel unlink workload would suffer from this change.
+>
+> Well, it could be those additional fetches of
+> sb->s_fsnotify_mask/sb->s_fsnotify_marks if they happen to be cache cold.
+> Or it could be just code layout differences (i.e., compiler is not able to
+> optimize resulting code as good or the code layout just happens to align
+> with cache lines in a wrong way or something like that). Anyway, without
+> being able to reproduce this and do detailed comparison of perf profiles I
+> don't think we'll be able to tell.
+>
 
-I'm sorry to complain again...  Please, don't reference the "previous
-attempt" in the commit message.  The previous attempt is gone so no one
-will remember what you are talking about after tomorrow.  This is how
-you resend a patch.
+Indeed, I am still trying to figure out how to run lkp in my test env.
 
-Change the subject to:
-
-Subject: [PATCH v3] Staging: media: replace deprecated probe method
-
-> 
-> Signed-off-by: Andrey Abramov <st5pub@yandex.ru>
-> ---
->  drivers/staging/media/bcm2048/radio-bcm2048.c | 5 ++---
-
-Then right after the --- line put:
-
-v3:  fix commit message
-
-That part of the commit message will be removed when we apply the patch.
-
-regards,
-dan carpenter
-
-
+Thanks,
+Amir.
