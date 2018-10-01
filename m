@@ -2,112 +2,518 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 877E6C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1872C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36E632064D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:47:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LzDSs2U0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E632064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 504922089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 11:48:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504922089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729227AbeJASYY (ORCPT
+        id S1729333AbeJASZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 14:24:24 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43929 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeJASYY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 14:24:24 -0400
-Received: by mail-io1-f67.google.com with SMTP id y10-v6so9084851ioa.10
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 04:47:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SmKDpSKzy6pm1UpRQBxN8nBMekx7lYvGqZ8aGwNSwPs=;
-        b=LzDSs2U0lwoBKan1dIrLylmNIpdWrMyM2p3Zos7LFbkFFSaxWe0bZp+n0JQCbhwdpa
-         OlqOVYxBfe9vxhT7iGylT2Ch0sIjDGKE0FGhFFj+ZNWXgisrVOPfrv6QBPUGVMAECu9N
-         SCTsPUgAr17A7LKJzh1eje/kv202/X4E9BMFs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SmKDpSKzy6pm1UpRQBxN8nBMekx7lYvGqZ8aGwNSwPs=;
-        b=KFD/rIBcEOphcyijeAFKrV+/MUa8dDgbbDR1qPaXryTVgDnnO9qvclhknWzK/TSdtr
-         /tCarepgmFAH3p8d2qYe8M9M9KtfkregfvVgVBk52NuZJ2/orSEJCC5cRu5rrWfyPcDC
-         3nfjQ/vkGtyp21/qlO9bgCC/piSKkMB9SM7NKC3YoJN2cMbd2E+NjbXNMCRe4RIug5Gi
-         p1egxuyb23NCMG4STN2aaB2lVIU2ZdWkv+BDkc58x93/gBFZZMEkdo2hKvGmy3pAJRE0
-         T3W/VsYlMYndePAoQhpVaW9aANuC8r9+8e1Y7uIAG/Tt1kOaZHJa6Rgj5T3JNUf+2UTg
-         R5GA==
-X-Gm-Message-State: ABuFfojXuio7nreAsDOxu+FT+KVYK7gfwptKqaesX3JTXFq+ohljea+O
-        b/QxJaOv8vl0uX+H1lqjJB1e4HZ1d6ubWFzXcRTo2Q==
-X-Google-Smtp-Source: ACcGV60z+monhNWxmX7SiJXkpdhJDt+opl51QF3YYaAhhdnvjOnT0ZDeQZhytIBOAzaRZCb/8oOcUKB4IcEqeEWf2Po=
-X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr6662955iog.175.1538394420080;
- Mon, 01 Oct 2018 04:47:00 -0700 (PDT)
+        Mon, 1 Oct 2018 14:25:46 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13181 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729250AbeJASZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 14:25:46 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 86B25406B4C4A;
+        Mon,  1 Oct 2018 19:48:16 +0800 (CST)
+Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.399.0; Mon, 1 Oct 2018 19:48:12 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
+Subject: [PATCH net-next 1/7] net: hns3: Add flow director initialization
+Date:   Mon, 1 Oct 2018 12:46:41 +0100
+Message-ID: <20181001114647.15504-2-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20181001114647.15504-1-salil.mehta@huawei.com>
+References: <20181001114647.15504-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
-References: <1538212015-10374-1-git-send-email-yanjiang.jin@hxt-semitech.com> <1538212015-10374-2-git-send-email-yanjiang.jin@hxt-semitech.com>
-In-Reply-To: <1538212015-10374-2-git-send-email-yanjiang.jin@hxt-semitech.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 1 Oct 2018 13:46:48 +0200
-Message-ID: <CACRpkdYG6FK4h8_ZLCWkHSreZPRewEjysiMNtDV2pa4AykuHsw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: core: make sure strcmp() doesn't get a null parameter
-To:     yanjiang.jin@hxt-semitech.com
-Cc:     jinyanjiang@gmail.com, yu.zheng@hxt-semitech.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.54]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 11:07 AM Yanjiang Jin
-<yanjiang.jin@hxt-semitech.com> wrote:
+From: Jian Shen <shenjian15@huawei.com>
 
-> Some drivers, for example, QCOM's qdf2xxx, set groups[gpio].name only
-> when gpio is valid, and leave invalid gpio names as null.
-> If we want to access the sys node "pinconf-groups",
-> pinctrl_get_group_selector() -> get_group_name() may return a null
-> pointer if group_selector is invalid, then the below Kernel panic
-> would happen since strcmp() uses this null pointer to do comparison.
->
->  Unable to handle kernel NULL pointer dereference at ss 00000000
-> el:Internal error: Oops: 9600000[ 143.080279]
-> SMP
->  CPU: 19 PID: 2493 Comm: read_all Tainted: G O
-> .aarch64 #1
->  Hardware name: HXT Semiconductor HXT REP-2 System
->  PC is at strcmp+0x18/0x154
->  LR is at pinctrl_get_group_selector+0x6c/0xe8
->  Process read_all (pid: 2493, stack limit =
->  Call trace:
->  Exception stack
->   strcmp+0x18/0x154
->   pin_config_group_get+0x64/0xd8
->   pinconf_generic_dump_one+0xd8/0x1c0
->   pinconf_generic_dump_pins+0x94/0xc8
->   pinconf_groups_show+0xb4/0x104
->   seq_read+0x178/0x464
->   full_proxy_read+0x6c/0xac
->   __vfs_read+0x58/0x178
->   vfs_read+0x94/0x164
->   SyS_read+0x60/0xc0
->   __sys_trace_return+0x0/0x4
->  --[ end trace]--
->  Kernel panic - not syncing: Fatal exception
->
-> Signed-off-by: Yanjiang Jin <yanjiang.jin@hxt-semitech.com>
+Flow director is a new feature supported by hardware with revision 0x21.
+This patch adds flow direcor initialization for each PF. It queries flow
+director mode and tcam resource from firmware, selects tuples used for
+input key.
 
-Good catch!
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   4 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |   8 ++
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  32 +++++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 157 +++++++++++++++++++++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    | 148 +++++++++++++++++++
+ 5 files changed, 349 insertions(+)
 
-Patch applied.
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+index dea422c..d3e5190 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -51,6 +51,7 @@
+ #define HNAE3_KNIC_CLIENT_INITED_B		0x3
+ #define HNAE3_UNIC_CLIENT_INITED_B		0x4
+ #define HNAE3_ROCE_CLIENT_INITED_B		0x5
++#define HNAE3_DEV_SUPPORT_FD_B			0x6
+ 
+ #define HNAE3_DEV_SUPPORT_ROCE_DCB_BITS (BIT(HNAE3_DEV_SUPPORT_DCB_B) |\
+ 		BIT(HNAE3_DEV_SUPPORT_ROCE_B))
+@@ -61,6 +62,9 @@
+ #define hnae3_dev_dcb_supported(hdev) \
+ 	hnae3_get_bit(hdev->ae_dev->flag, HNAE3_DEV_SUPPORT_DCB_B)
+ 
++#define hnae3_dev_fd_supported(hdev) \
++	hnae3_get_bit((hdev)->ae_dev->flag, HNAE3_DEV_SUPPORT_FD_B)
++
+ #define ring_ptr_move_fw(ring, p) \
+ 	((ring)->p = ((ring)->p + 1) % (ring)->desc_num)
+ #define ring_ptr_move_bw(ring, p) \
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 10506522..605f029 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -1622,6 +1622,13 @@ static void hns3_disable_sriov(struct pci_dev *pdev)
+ 	pci_disable_sriov(pdev);
+ }
+ 
++static void hns3_get_dev_capability(struct pci_dev *pdev,
++				    struct hnae3_ae_dev *ae_dev)
++{
++	if (pdev->revision >= 0x21)
++		hnae3_set_bit(ae_dev->flag, HNAE3_DEV_SUPPORT_FD_B, 1);
++}
++
+ /* hns3_probe - Device initialization routine
+  * @pdev: PCI device information struct
+  * @ent: entry in hns3_pci_tbl
+@@ -1647,6 +1654,7 @@ static int hns3_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	ae_dev->pdev = pdev;
+ 	ae_dev->flag = ent->driver_data;
+ 	ae_dev->dev_type = HNAE3_DEV_KNIC;
++	hns3_get_dev_capability(pdev, ae_dev);
+ 	pci_set_drvdata(pdev, ae_dev);
+ 
+ 	hnae3_register_ae_dev(ae_dev);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+index 842dc3f..827bc51 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+@@ -190,6 +190,11 @@ enum hclge_opcode_type {
+ 	HCLGE_OPC_VLAN_FILTER_PF_CFG	= 0x1101,
+ 	HCLGE_OPC_VLAN_FILTER_VF_CFG	= 0x1102,
+ 
++	/* Flow Director commands */
++	HCLGE_OPC_FD_MODE_CTRL		= 0x1200,
++	HCLGE_OPC_FD_GET_ALLOCATION	= 0x1201,
++	HCLGE_OPC_FD_KEY_CONFIG		= 0x1202,
++
+ 	/* MDIO command */
+ 	HCLGE_OPC_MDIO_CONFIG		= 0x1900,
+ 
+@@ -819,6 +824,33 @@ struct hclge_set_led_state_cmd {
+ 	u8 rsv2[20];
+ };
+ 
++struct hclge_get_fd_mode_cmd {
++	u8 mode;
++	u8 enable;
++	u8 rsv[22];
++};
++
++struct hclge_get_fd_allocation_cmd {
++	__le32 stage1_entry_num;
++	__le32 stage2_entry_num;
++	__le16 stage1_counter_num;
++	__le16 stage2_counter_num;
++	u8 rsv[12];
++};
++
++struct hclge_set_fd_key_config_cmd {
++	u8 stage;
++	u8 key_select;
++	u8 inner_sipv6_word_en;
++	u8 inner_dipv6_word_en;
++	u8 outer_sipv6_word_en;
++	u8 outer_dipv6_word_en;
++	u8 rsv1[2];
++	__le32 tuple_mask;
++	__le32 meta_data_mask;
++	u8 rsv2[8];
++};
++
+ int hclge_cmd_init(struct hclge_dev *hdev);
+ static inline void hclge_write_reg(void __iomem *base, u32 reg, u32 value)
+ {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 7c8b686..b02190f 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -3328,6 +3328,149 @@ static void hclge_set_promisc_mode(struct hnae3_handle *handle, bool en_uc_pmc,
+ 	hclge_cmd_set_promisc_mode(hdev, &param);
+ }
+ 
++static int hclge_get_fd_mode(struct hclge_dev *hdev, u8 *fd_mode)
++{
++	struct hclge_get_fd_mode_cmd *req;
++	struct hclge_desc desc;
++	int ret;
++
++	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_FD_MODE_CTRL, true);
++
++	req = (struct hclge_get_fd_mode_cmd *)desc.data;
++
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret) {
++		dev_err(&hdev->pdev->dev, "get fd mode fail, ret=%d\n", ret);
++		return ret;
++	}
++
++	*fd_mode = req->mode;
++
++	return ret;
++}
++
++static int hclge_get_fd_allocation(struct hclge_dev *hdev,
++				   u32 *stage1_entry_num,
++				   u32 *stage2_entry_num,
++				   u16 *stage1_counter_num,
++				   u16 *stage2_counter_num)
++{
++	struct hclge_get_fd_allocation_cmd *req;
++	struct hclge_desc desc;
++	int ret;
++
++	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_FD_GET_ALLOCATION, true);
++
++	req = (struct hclge_get_fd_allocation_cmd *)desc.data;
++
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret) {
++		dev_err(&hdev->pdev->dev, "query fd allocation fail, ret=%d\n",
++			ret);
++		return ret;
++	}
++
++	*stage1_entry_num = le32_to_cpu(req->stage1_entry_num);
++	*stage2_entry_num = le32_to_cpu(req->stage2_entry_num);
++	*stage1_counter_num = le16_to_cpu(req->stage1_counter_num);
++	*stage2_counter_num = le16_to_cpu(req->stage2_counter_num);
++
++	return ret;
++}
++
++static int hclge_set_fd_key_config(struct hclge_dev *hdev, int stage_num)
++{
++	struct hclge_set_fd_key_config_cmd *req;
++	struct hclge_fd_key_cfg *stage;
++	struct hclge_desc desc;
++	int ret;
++
++	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_FD_KEY_CONFIG, false);
++
++	req = (struct hclge_set_fd_key_config_cmd *)desc.data;
++	stage = &hdev->fd_cfg.key_cfg[stage_num];
++	req->stage = stage_num;
++	req->key_select = stage->key_sel;
++	req->inner_sipv6_word_en = stage->inner_sipv6_word_en;
++	req->inner_dipv6_word_en = stage->inner_dipv6_word_en;
++	req->outer_sipv6_word_en = stage->outer_sipv6_word_en;
++	req->outer_dipv6_word_en = stage->outer_dipv6_word_en;
++	req->tuple_mask = cpu_to_le32(~stage->tuple_active);
++	req->meta_data_mask = cpu_to_le32(~stage->meta_data_active);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		dev_err(&hdev->pdev->dev, "set fd key fail, ret=%d\n", ret);
++
++	return ret;
++}
++
++static int hclge_init_fd_config(struct hclge_dev *hdev)
++{
++#define LOW_2_WORDS		0x03
++	struct hclge_fd_key_cfg *key_cfg;
++	int ret;
++
++	if (!hnae3_dev_fd_supported(hdev))
++		return 0;
++
++	ret = hclge_get_fd_mode(hdev, &hdev->fd_cfg.fd_mode);
++	if (ret)
++		return ret;
++
++	switch (hdev->fd_cfg.fd_mode) {
++	case HCLGE_FD_MODE_DEPTH_2K_WIDTH_400B_STAGE_1:
++		hdev->fd_cfg.max_key_length = MAX_KEY_LENGTH;
++		break;
++	case HCLGE_FD_MODE_DEPTH_4K_WIDTH_200B_STAGE_1:
++		hdev->fd_cfg.max_key_length = MAX_KEY_LENGTH / 2;
++		break;
++	default:
++		dev_err(&hdev->pdev->dev,
++			"Unsupported flow director mode %d\n",
++			hdev->fd_cfg.fd_mode);
++		return -EOPNOTSUPP;
++	}
++
++	hdev->fd_cfg.fd_en = true;
++	hdev->fd_cfg.proto_support =
++		TCP_V4_FLOW | UDP_V4_FLOW | SCTP_V4_FLOW | TCP_V6_FLOW |
++		UDP_V6_FLOW | SCTP_V6_FLOW | IPV4_USER_FLOW | IPV6_USER_FLOW;
++	key_cfg = &hdev->fd_cfg.key_cfg[HCLGE_FD_STAGE_1];
++	key_cfg->key_sel = HCLGE_FD_KEY_BASE_ON_TUPLE,
++	key_cfg->inner_sipv6_word_en = LOW_2_WORDS;
++	key_cfg->inner_dipv6_word_en = LOW_2_WORDS;
++	key_cfg->outer_sipv6_word_en = 0;
++	key_cfg->outer_dipv6_word_en = 0;
++
++	key_cfg->tuple_active = BIT(INNER_VLAN_TAG_FST) | BIT(INNER_ETH_TYPE) |
++				BIT(INNER_IP_PROTO) | BIT(INNER_IP_TOS) |
++				BIT(INNER_SRC_IP) | BIT(INNER_DST_IP) |
++				BIT(INNER_SRC_PORT) | BIT(INNER_DST_PORT);
++
++	/* If use max 400bit key, we can support tuples for ether type */
++	if (hdev->fd_cfg.max_key_length == MAX_KEY_LENGTH) {
++		hdev->fd_cfg.proto_support |= ETHER_FLOW;
++		key_cfg->tuple_active |=
++				BIT(INNER_DST_MAC) | BIT(INNER_SRC_MAC);
++	}
++
++	/* roce_type is used to filter roce frames
++	 * dst_vport is used to specify the rule
++	 */
++	key_cfg->meta_data_active = BIT(ROCE_TYPE) | BIT(DST_VPORT);
++
++	ret = hclge_get_fd_allocation(hdev,
++				      &hdev->fd_cfg.rule_num[HCLGE_FD_STAGE_1],
++				      &hdev->fd_cfg.rule_num[HCLGE_FD_STAGE_2],
++				      &hdev->fd_cfg.cnt_num[HCLGE_FD_STAGE_1],
++				      &hdev->fd_cfg.cnt_num[HCLGE_FD_STAGE_2]);
++	if (ret)
++		return ret;
++
++	return hclge_set_fd_key_config(hdev, HCLGE_FD_STAGE_1);
++}
++
+ static void hclge_cfg_mac_mode(struct hclge_dev *hdev, bool enable)
+ {
+ 	struct hclge_desc desc;
+@@ -5506,6 +5649,13 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 		goto err_mdiobus_unreg;
+ 	}
+ 
++	ret = hclge_init_fd_config(hdev);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"fd table init fail, ret=%d\n", ret);
++		goto err_mdiobus_unreg;
++	}
++
+ 	hclge_dcb_ops_set(hdev);
+ 
+ 	timer_setup(&hdev->service_timer, hclge_service_timer, 0);
+@@ -5612,6 +5762,13 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 		return ret;
+ 	}
+ 
++	ret = hclge_init_fd_config(hdev);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"fd table init fail, ret=%d\n", ret);
++		return ret;
++	}
++
+ 	dev_info(&pdev->dev, "Reset done, %s driver initialization finished.\n",
+ 		 HCLGE_DRIVER_NAME);
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 7841b83..1e7ad5a 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -359,6 +359,152 @@ struct hclge_vlan_type_cfg {
+ 	u16 tx_in_vlan_type;
+ };
+ 
++enum HCLGE_FD_MODE {
++	HCLGE_FD_MODE_DEPTH_2K_WIDTH_400B_STAGE_1,
++	HCLGE_FD_MODE_DEPTH_1K_WIDTH_400B_STAGE_2,
++	HCLGE_FD_MODE_DEPTH_4K_WIDTH_200B_STAGE_1,
++	HCLGE_FD_MODE_DEPTH_2K_WIDTH_200B_STAGE_2,
++};
++
++enum HCLGE_FD_KEY_TYPE {
++	HCLGE_FD_KEY_BASE_ON_PTYPE,
++	HCLGE_FD_KEY_BASE_ON_TUPLE,
++};
++
++enum HCLGE_FD_STAGE {
++	HCLGE_FD_STAGE_1,
++	HCLGE_FD_STAGE_2,
++};
++
++/* OUTER_XXX indicates tuples in tunnel header of tunnel packet
++ * INNER_XXX indicate tuples in tunneled header of tunnel packet or
++ *           tuples of non-tunnel packet
++ */
++enum HCLGE_FD_TUPLE {
++	OUTER_DST_MAC,
++	OUTER_SRC_MAC,
++	OUTER_VLAN_TAG_FST,
++	OUTER_VLAN_TAG_SEC,
++	OUTER_ETH_TYPE,
++	OUTER_L2_RSV,
++	OUTER_IP_TOS,
++	OUTER_IP_PROTO,
++	OUTER_SRC_IP,
++	OUTER_DST_IP,
++	OUTER_L3_RSV,
++	OUTER_SRC_PORT,
++	OUTER_DST_PORT,
++	OUTER_L4_RSV,
++	OUTER_TUN_VNI,
++	OUTER_TUN_FLOW_ID,
++	INNER_DST_MAC,
++	INNER_SRC_MAC,
++	INNER_VLAN_TAG_FST,
++	INNER_VLAN_TAG_SEC,
++	INNER_ETH_TYPE,
++	INNER_L2_RSV,
++	INNER_IP_TOS,
++	INNER_IP_PROTO,
++	INNER_SRC_IP,
++	INNER_DST_IP,
++	INNER_L3_RSV,
++	INNER_SRC_PORT,
++	INNER_DST_PORT,
++	INNER_L4_RSV,
++	MAX_TUPLE,
++};
++
++enum HCLGE_FD_META_DATA {
++	PACKET_TYPE_ID,
++	IP_FRAGEMENT,
++	ROCE_TYPE,
++	NEXT_KEY,
++	VLAN_NUMBER,
++	SRC_VPORT,
++	DST_VPORT,
++	TUNNEL_PACKET,
++	MAX_META_DATA,
++};
++
++struct key_info {
++	u8 key_type;
++	u8 key_length;
++};
++
++static const struct key_info meta_data_key_info[] = {
++	{ PACKET_TYPE_ID, 6},
++	{ IP_FRAGEMENT, 1},
++	{ ROCE_TYPE, 1},
++	{ NEXT_KEY, 5},
++	{ VLAN_NUMBER, 2},
++	{ SRC_VPORT, 12},
++	{ DST_VPORT, 12},
++	{ TUNNEL_PACKET, 1},
++};
++
++static const struct key_info tuple_key_info[] = {
++	{ OUTER_DST_MAC, 48},
++	{ OUTER_SRC_MAC, 48},
++	{ OUTER_VLAN_TAG_FST, 16},
++	{ OUTER_VLAN_TAG_SEC, 16},
++	{ OUTER_ETH_TYPE, 16},
++	{ OUTER_L2_RSV, 16},
++	{ OUTER_IP_TOS, 8},
++	{ OUTER_IP_PROTO, 8},
++	{ OUTER_SRC_IP, 32},
++	{ OUTER_DST_IP, 32},
++	{ OUTER_L3_RSV, 16},
++	{ OUTER_SRC_PORT, 16},
++	{ OUTER_DST_PORT, 16},
++	{ OUTER_L4_RSV, 32},
++	{ OUTER_TUN_VNI, 24},
++	{ OUTER_TUN_FLOW_ID, 8},
++	{ INNER_DST_MAC, 48},
++	{ INNER_SRC_MAC, 48},
++	{ INNER_VLAN_TAG_FST, 16},
++	{ INNER_VLAN_TAG_SEC, 16},
++	{ INNER_ETH_TYPE, 16},
++	{ INNER_L2_RSV, 16},
++	{ INNER_IP_TOS, 8},
++	{ INNER_IP_PROTO, 8},
++	{ INNER_SRC_IP, 32},
++	{ INNER_DST_IP, 32},
++	{ INNER_L3_RSV, 16},
++	{ INNER_SRC_PORT, 16},
++	{ INNER_DST_PORT, 16},
++	{ INNER_L4_RSV, 32},
++};
++
++#define MAX_KEY_LENGTH	400
++#define MAX_KEY_DWORDS	DIV_ROUND_UP(MAX_KEY_LENGTH / 8, 4)
++#define MAX_KEY_BYTES	(MAX_KEY_DWORDS * 4)
++#define MAX_META_DATA_LENGTH	32
++
++enum HCLGE_FD_PACKET_TYPE {
++	NIC_PACKET,
++	ROCE_PACKET,
++};
++
++struct hclge_fd_key_cfg {
++	u8 key_sel;
++	u8 inner_sipv6_word_en;
++	u8 inner_dipv6_word_en;
++	u8 outer_sipv6_word_en;
++	u8 outer_dipv6_word_en;
++	u32 tuple_active;
++	u32 meta_data_active;
++};
++
++struct hclge_fd_cfg {
++	u8 fd_mode;
++	u8 fd_en;
++	u16 max_key_length;
++	u32 proto_support;
++	u32 rule_num[2]; /* rule entry number */
++	u16 cnt_num[2]; /* rule hit counter number */
++	struct hclge_fd_key_cfg key_cfg[2];
++};
++
+ #define HCLGE_VPORT_NUM 256
+ struct hclge_dev {
+ 	struct pci_dev *pdev;
+@@ -448,6 +594,8 @@ struct hclge_dev {
+ 	struct hclge_vlan_type_cfg vlan_type_cfg;
+ 
+ 	unsigned long vlan_table[VLAN_N_VID][BITS_TO_LONGS(HCLGE_VPORT_NUM)];
++
++	struct hclge_fd_cfg fd_cfg;
+ };
+ 
+ /* VPort level vlan tag configuration for TX direction */
+-- 
+2.7.4
 
-Yours,
-Linus Walleij
+
