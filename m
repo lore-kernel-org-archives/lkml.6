@@ -2,146 +2,164 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3CFC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF55CC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADD92208E7
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:24:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADD92208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 827A7208D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:25:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ahwd3Iv7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 827A7208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729371AbeJAUC1 (ORCPT
+        id S1729466AbeJAUDG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:02:27 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47524 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729182AbeJAUC0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:02:26 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w91DJIvw019119;
-        Mon, 1 Oct 2018 15:24:13 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mu1bjmav9-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 01 Oct 2018 15:24:13 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 71E6431;
-        Mon,  1 Oct 2018 13:24:12 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 457F4465E;
-        Mon,  1 Oct 2018 13:24:12 +0000 (GMT)
-Received: from localhost (10.75.127.46) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 1 Oct 2018 15:24:11
- +0200
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     <thierry.reding@gmail.com>, <gottfried.haider@gmail.com>
-CC:     <stefan.wahren@i2se.com>, <hsweeten@visionengravers.com>,
-        <loic.pallardy@st.com>, <broonie@kernel.org>,
-        <fabrice.gasnier@st.com>, <gohai@sukzessiv.net>,
-        <michal.vokac@ysoft.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-Subject: [PATCH v2 2/2] pwm: send a uevent on the pwmchip device upon channel sysfs (un)export
-Date:   Mon, 1 Oct 2018 15:23:57 +0200
-Message-ID: <1538400237-28766-3-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1538400237-28766-1-git-send-email-fabrice.gasnier@st.com>
-References: <1538400237-28766-1-git-send-email-fabrice.gasnier@st.com>
+        Mon, 1 Oct 2018 16:03:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728979AbeJAUDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 16:03:05 -0400
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 920A221473;
+        Mon,  1 Oct 2018 13:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538400316;
+        bh=77lmcVg22ixrSNiGFEFecQMU5osb7alLu04g/J4GUf0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Ahwd3Iv7VlQAV0BKEH4RBhDkHbrjmNeQrN+z4pQTTmkDz5WODcP1F5tgdjVMKmKqf
+         dYrgyyTGERrMCnYOzknxTWzKoSlh4M2E5+aeBNS3yeDzZMxFRhF2MONcB2g2UAVw2p
+         d+prz8nLb6X1M+uZqHl3Wqb0gsAugD7SDAw9Aa2Y=
+Received: by mail-qt1-f177.google.com with SMTP id x23-v6so13931051qtr.1;
+        Mon, 01 Oct 2018 06:25:16 -0700 (PDT)
+X-Gm-Message-State: ABuFfohpcbxojsRjUhSA2b1TiWLwhrJyxnxavPDk462oRGUMt1vqOkB+
+        eOJO8c1tPw9eFtx4kCc0cMWK3ZtfPegEshMHAg==
+X-Google-Smtp-Source: ACcGV602dgl5yG/ReLnFOboqT3pCuRkd2dRGiHEIqM1s4SPS4YcPl1B2TnuuR7IE472SD6uk1rt92LRt9t4lfFWyInE=
+X-Received: by 2002:ac8:190e:: with SMTP id t14-v6mr8511789qtj.327.1538400315685;
+ Mon, 01 Oct 2018 06:25:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-01_08:,,
- signatures=0
+References: <20180910150403.19476-1-robh@kernel.org> <20180910150403.19476-7-robh@kernel.org>
+ <CAL_Jsq+=VbdcVLiwXbOA5d+R2YY6=2Pw2bQpci-jj-JvereD1A@mail.gmail.com>
+ <CAK7LNAQFqhWw+LwDoypGG=OP6tH4qf2tT=LvtchK2GoiNyzDXg@mail.gmail.com>
+ <CAMuHMdWEnoh97_jiDWMq=ke4PrhSFbToYnx91CPLBuq3mOGzoQ@mail.gmail.com>
+ <CAK7LNATkkOiYPj2RLubcgZ_z59Bhz4GkgWqPMbnaHBk7EisXLg@mail.gmail.com>
+ <20180928154150.GA25013@bogus> <CAK7LNATiSbwVfCRNsDOyksfq5wcv0pnNQYnMXdo2yRyE7fcn-Q@mail.gmail.com>
+In-Reply-To: <CAK7LNATiSbwVfCRNsDOyksfq5wcv0pnNQYnMXdo2yRyE7fcn-Q@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 1 Oct 2018 08:25:03 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLPaX3GB1Esw3DhkQ+2fQLVG8=_UbyJC5RJ-6_s=v288g@mail.gmail.com>
+Message-ID: <CAL_JsqLPaX3GB1Esw3DhkQ+2fQLVG8=_UbyJC5RJ-6_s=v288g@mail.gmail.com>
+Subject: Re: [PATCH v3 6/9] kbuild: consolidate Devicetree dtb build rules
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Michal Simek <monstr@monstr.eu>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:H8/300 ARCHITECTURE" 
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        nios2-dev@lists.rocketboards.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-xtensa@linux-xtensa.org, Will Deacon <will.deacon@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ley Foon Tan <ley.foon.tan@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch sends a uevent (KOBJ_CHANGE) on the pwmchipN device, everytime
-a pwmX channel has been exported/unexported via sysfs.
-This allows udev to implement rules on such events, like:
+On Mon, Oct 1, 2018 at 12:49 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Hi Rob,
+>
+>
+> 2018=E5=B9=B49=E6=9C=8829=E6=97=A5(=E5=9C=9F) 0:43 Rob Herring <robh@kern=
+el.org>:
+>
+> > +#
+> > -----------------------------------------------------------------------=
+----
+> > +# Devicetree files
+> > +
+> > +ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/boot/dts/),)
+> > +dtstree :=3D arch/$(SRCARCH)/boot/dts
+> > +endif
+> > +
+> > +ifneq ($(dtstree),)
+> > +
+> > +%.dtb : scripts_dtc
+>
+> %.dtb: prepare3 prepare
 
-SUBSYSTEM=="pwm*", PROGRAM="/bin/sh -c '\
-        chown -R root:gpio /sys/class/pwm && chmod -R 770 /sys/class/pwm;\
-        chown -R root:gpio
-/sys/devices/platform/soc/*.pwm/pwm/pwmchip* && chmod -R 770
-/sys/devices/platform/soc/*.pwm/pwm/pwmchip*\
-'"
+I assume you didn't mean to drop scripts_dtc as that doesn't work.
 
-This is a replacement patch for commit 7e5d1fd75c3d ("pwm: Set class for
-exported channels in sysfs"), see [1].
+Why "prepare" here and not on dtbs?
 
-basic testing:
-$ udevadm monitor --environment &
-$ echo 0 > /sys/class/pwm/pwmchip0/export
-KERNEL[197.321736] change   /devices/.../pwm/pwmchip0 (pwm)
-ACTION=change
-DEVPATH=/devices/.../pwm/pwmchip0
-EXPORT=pwm0
-SEQNUM=2045
-SUBSYSTEM=pwm
+> because we need to make sure KERNELRELEASE
+> is correctly defined before dtbs_install happens.
 
-[1] https://lkml.org/lkml/2018/9/25/713
+Yes, indeed. With prepare3 added I get:
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Tested-by: Gottfried Haider <gottfried.haider@gmail.com>
----
- drivers/pwm/sysfs.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+cp: cannot create regular file
+'/boot/dtbs/4.19.0-rc3-00009-g0afba9b7b2ea-dirty': No such file or
+directory
 
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index 4726d43..ceb233d 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -249,6 +249,7 @@ static void pwm_export_release(struct device *child)
- static int pwm_export_child(struct device *parent, struct pwm_device *pwm)
- {
- 	struct pwm_export *export;
-+	char *pwm_prop[2];
- 	int ret;
- 
- 	if (test_and_set_bit(PWMF_EXPORTED, &pwm->flags))
-@@ -276,6 +277,10 @@ static int pwm_export_child(struct device *parent, struct pwm_device *pwm)
- 		export = NULL;
- 		return ret;
- 	}
-+	pwm_prop[0] = kasprintf(GFP_KERNEL, "EXPORT=pwm%u", pwm->hwpwm);
-+	pwm_prop[1] = NULL;
-+	kobject_uevent_env(&parent->kobj, KOBJ_CHANGE, pwm_prop);
-+	kfree(pwm_prop[0]);
- 
- 	return 0;
- }
-@@ -288,6 +293,7 @@ static int pwm_unexport_match(struct device *child, void *data)
- static int pwm_unexport_child(struct device *parent, struct pwm_device *pwm)
- {
- 	struct device *child;
-+	char *pwm_prop[2];
- 
- 	if (!test_and_clear_bit(PWMF_EXPORTED, &pwm->flags))
- 		return -ENODEV;
-@@ -296,6 +302,11 @@ static int pwm_unexport_child(struct device *parent, struct pwm_device *pwm)
- 	if (!child)
- 		return -ENODEV;
- 
-+	pwm_prop[0] = kasprintf(GFP_KERNEL, "UNEXPORT=pwm%u", pwm->hwpwm);
-+	pwm_prop[1] = NULL;
-+	kobject_uevent_env(&parent->kobj, KOBJ_CHANGE, pwm_prop);
-+	kfree(pwm_prop[0]);
-+
- 	/* for device_find_child() */
- 	put_device(child);
- 	device_unregister(child);
--- 
-1.9.1
+vs. with it:
 
+cp: cannot create regular file '/boot/dtbs/': Not a directory
+
+>
+>
+> > +       $(Q)$(MAKE) $(build)=3D$(dtstree) $(dtstree)/$@
+> > +
+> > +PHONY +=3D dtbs dtbs_install
+> > +dtbs: scripts_dtc
+>
+>
+> dtbs: prepare3 scripts_dtc
+>
+>
+>
+> > +       $(Q)$(MAKE) $(build)=3D$(dtstree)
+> > +
+> > +dtbs_install: dtbs
+>
+>
+> Please do not have dtbs_install to depend on dtbs.
+>
+> No install targets should ever trigger building anything
+> in the source tree.
+>
+>
+> For the background, see the commit log of
+> 19514fc665ffbce624785f76ee7ad0ea6378a527
+
+Okay, thanks.
+
+Rob
