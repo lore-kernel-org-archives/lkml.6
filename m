@@ -2,154 +2,105 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DATE_IN_PAST_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DA9C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2D4C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C666213A2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:13:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z06/SIKK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C666213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B7F4213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:13:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B7F4213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbeJBHxs (ORCPT
+        id S1727044AbeJBHyC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:53:48 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35479 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeJBHxs (ORCPT
+        Tue, 2 Oct 2018 03:54:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37452 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726459AbeJBHyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 03:53:48 -0400
-Received: by mail-io1-f68.google.com with SMTP id w11-v6so324822iob.2;
-        Mon, 01 Oct 2018 18:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kxoVlUB0gxo40vXl38z0GrK1GeDonW7N5dpqkna0AGU=;
-        b=Z06/SIKK9Yudnda3tee2EpNyqRfT+9aIfNdbj+IBRYcY2A64ukWRQwpq2zSITifwU+
-         QGdEQVVn1T9Q6wSr5EMc19vWxWdNlgccz8/xhg7nyeyznZ75CWpbTChdfUpXLhKiTVRw
-         TqJGQlT1eV5x4g9I/qyoXwlj3fixzPA678qTl1SXzZI7dWhrcuICbqbmkYTJB2YbXm87
-         6oNJWiVrQaWBSZyu0Gm64bQo0D6oYotyCmMQWUZN1jexDqfPIAm/s82UnudY7tXteyH0
-         12DQsF7jOye37JIC679AZHw+V0gb4P/TMh8r4cEM2wwH05siSIisXfknKdSw4AWu07gk
-         fqjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kxoVlUB0gxo40vXl38z0GrK1GeDonW7N5dpqkna0AGU=;
-        b=FCUMb7rFSVF+3YX0DecX+/KT94rj6FuUOfTPO/6b18zzuQrfU2a8t+lI2VtsGU4lTg
-         ucqVCIxFoLiVXUJU8QHwDTfVym8AHj92pG8ZVLpI6Elt3ypxY0egc2v9t/7WY2Mxf9Ot
-         brYADWCaigQQfkOp9PWn9gRvxn9xTG0ZIqvfJCgM+2RVfn0nuavacVmilGRGh9liDoSP
-         ks/iQGdXbEVTjJ8teYTN1sYWt5OqQ8K7h/tRnIByVf8JyVgrhDsUuJvNJPNhNr1tc+3s
-         NfzoxHQ7yRbj/G3BBaqwJqL2eS3QpFTitytMJvXKQuf0g/c/PPE6MopXLwFEgcYLGvH/
-         2SJQ==
-X-Gm-Message-State: ABuFfogcLvTpFWX8A6pIeS/Uwo0OCjmTKH5cNXScsV6xHAVBDRfpZIkc
-        B9sMllifEZpodjkbOY97Iv4=
-X-Google-Smtp-Source: ACcGV60UTyHkRAMKa0Jk2GKaWguWnKRFfzq2FGJKMHcibRCGlIPg8+U+Kc1Qih95T6JkNMR1q+pQdg==
-X-Received: by 2002:a17:902:64c1:: with SMTP id y1-v6mr13801912pli.301.1538442793915;
-        Mon, 01 Oct 2018 18:13:13 -0700 (PDT)
-Received: from localhost.localdomain (122-223-50-245.fukuoka.fdn.vectant.ne.jp. [122.223.50.245])
-        by smtp.gmail.com with ESMTPSA id e190-v6sm23709696pfc.81.2018.10.01.18.13.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 18:13:13 -0700 (PDT)
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     linus.walleij@linaro.org, akpm@linux-foundation.org
-Cc:     linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [RESEND PATCH v4 0/8] Introduce the for_each_set_clump macro
-Date:   Tue,  2 Oct 2018 10:12:39 +0900
-Message-Id: <cover.1538441919.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Tue, 2 Oct 2018 03:54:02 -0400
+Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 32F9482;
+        Tue,  2 Oct 2018 01:13:27 +0000 (UTC)
+Date:   Mon, 1 Oct 2018 13:58:52 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        stable@vger.kernel.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: Re: [PATCH] firmware: Always initialize the fw_priv list object
+Message-ID: <20181001205852.GA24030@kroah.com>
+References: <20180920010938.10315-1-bjorn.andersson@linaro.org>
+ <20180920052204.GA15695@kroah.com>
+ <20180920073415.GC1367@tuxbook-pro>
+ <20181001132703.GA12193@centauri.lan>
+ <20181001181835.GG5238@garbanzo.do-not-panic.com>
+ <20181001183216.GM2523@minitux>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001183216.GM2523@minitux>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a resend of v4 in hopes of getting some more ACKS and a few more
-eyes on this patchset.
+On Mon, Oct 01, 2018 at 11:32:16AM -0700, Bjorn Andersson wrote:
+> On Mon 01 Oct 11:18 PDT 2018, Luis Chamberlain wrote:
+> 
+> > On Mon, Oct 01, 2018 at 03:27:03PM +0200, Niklas Cassel wrote:
+> > > On Thu, Sep 20, 2018 at 12:34:15AM -0700, Bjorn Andersson wrote:
+> > > > On Wed 19 Sep 22:22 PDT 2018, Greg Kroah-Hartman wrote:
+> > > > 
+> > > > > On Wed, Sep 19, 2018 at 06:09:38PM -0700, Bjorn Andersson wrote:
+> > > > > > When freeing the fw_priv the item is taken off the list. This causes an
+> > > > > > oops in the FW_OPT_NOCACHE case as the list object is not initialized.
+> > > > > > 
+> > > > > > Make sure to initialize the list object regardless of this flag.
+> > > > > > 
+> > > > > > Fixes: 422b3db2a503 ("firmware: Fix security issue with request_firmware_into_buf()")
+> > > > > > Cc: stable@vger.kernel.org
+> > > > > > Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> > > > > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > > > > ---
+> > > > > >  drivers/base/firmware_loader/main.c | 7 +++++--
+> > > > > >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > > > > 
+> > > > > Is this being triggered by some hardware somewhere today?  Or is this
+> > > > > just a fix found by code inspection?
+> > > > > 
+> > > > 
+> > > > Hi Greg,
+> > > > 
+> > > > Yes, I found this issue while attempting to load the firmware and boot
+> > > > one of the DSPs on one of my Qualcomm dev boards after v4.19-rc4 and it
+> > > > can be reproduced on the upstream Dragonboard 820c.
+> > > 
+> > > I still see this issue on v4.19-rc6.
+> > > 
+> > > It would be nice if this fix gets merged before v4.19 gets released.
+> > 
+> > This is the first I hear of this and this patch, so you should re-send
+> > it and I can review it. Also please Cc Rishabh.
+> > 
+> > Rishabh, had you heard of this and can you confirm as well as
+> > 422b3db2a503 was your commit?
+> > 
+> 
+> Thanks Luis,
+> 
+> It seems like Greg did pick the patch yesterday [1], so hopefully he
+> sends himself a pull request this week for inclusion in v4.19-rc7.
 
-Changes in v4:
-  - Fix bitmap_set arguments (last parameter is nbits not endbit)
+That was going to be my plan :)
 
-While adding GPIO get_multiple/set_multiple callback support for various
-drivers, I noticed a pattern of looping manifesting that would be useful
-standardized as a macro.
+thanks,
 
-This patchset introduces the for_each_set_clump macro and utilizes it in
-several GPIO drivers. The for_each_set_clump macro facilitates a
-for-loop syntax that iterates over entire groups of set bits at a time.
-
-For example, suppose you would like to iterate over a 16-bit integer 4
-bits at a time, skipping over 4-bit groups with no set bit, where XXXX
-represents the current 4-bit group:
-
-    Example:        1011 1110 0000 1111
-    First loop:     1011 1110 0000 XXXX
-    Second loop:    1011 XXXX 0000 1111
-    Third loop:     XXXX 1110 0000 1111
-
-Each iteration of the loop returns the next 4-bit group that has at
-least one set bit.
-
-The for_each_set_clump macro has six parameters:
-
-    * clump: set to current clump index for the iteration
-    * index: set to current bitmap word index for the iteration
-    * offset: bits offset of the found clump in the bitmap word
-    * bits: bitmap to search within
-    * size: bitmap size in number of clumps
-    * clump_size: clump size in number of bits
-
-The clump_size argument can be an arbitrary number of bits and is not
-required to be a multiple of 2.
-
-This patchset was rebased on top of the following three commits:
-
-    * commit aaf96e51de11 ("gpio: pci-idio-16: Fix port memory offset for get_multiple callback")
-    * commit 304440aa96c6 ("gpio: pcie-idio-24: Fix port memory offset for get_multiple/set_multiple callbacks")
-    * commit e026646c178d ("gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop")
-
-When I implemented the test_for_each_set_clump function, I used
-bitmap_set to set the expected bitmap for the test. This method of
-setting bits only segments at a time was rather tedious and error-prone;
-is there a better way to accomplish what I did (set a bitmap after a
-DECLARE_BITMAP)?
-
-William Breathitt Gray
-
-William Breathitt Gray (8):
-  bitops: Introduce the for_each_set_clump macro
-  lib/test_bitmap.c: Add for_each_set_clump test cases
-  gpio: 104-dio-48e: Utilize for_each_set_clump macro
-  gpio: 104-idi-48: Utilize for_each_set_clump macro
-  gpio: gpio-mm: Utilize for_each_set_clump macro
-  gpio: ws16c48: Utilize for_each_set_clump macro
-  gpio: pci-idio-16: Utilize for_each_set_clump macro
-  gpio: pcie-idio-24: Utilize for_each_set_clump macro
-
- drivers/gpio/gpio-104-dio-48e.c   |  67 +++++---------------
- drivers/gpio/gpio-104-idi-48.c    |  32 ++--------
- drivers/gpio/gpio-gpio-mm.c       |  67 +++++---------------
- drivers/gpio/gpio-pci-idio-16.c   |  67 ++++++--------------
- drivers/gpio/gpio-pcie-idio-24.c  | 102 +++++++++++-------------------
- drivers/gpio/gpio-ws16c48.c       |  66 +++++--------------
- include/asm-generic/bitops/find.h |   9 +++
- include/linux/bitops.h            |   7 ++
- lib/find_bit.c                    |  40 ++++++++++++
- lib/test_bitmap.c                 |  71 +++++++++++++++++++++
- 10 files changed, 236 insertions(+), 292 deletions(-)
-
--- 
-2.19.0
-
+greg k-h
