@@ -2,142 +2,161 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09804C0044B
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 290F3C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF67A20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:52:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF67A20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CE0C520C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:54:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MX9S+bVJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE0C520C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729531AbeJAVbJ (ORCPT
+        id S1729546AbeJAVcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 17:31:09 -0400
-Received: from foss.arm.com ([217.140.101.70]:50792 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729504AbeJAVbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 17:31:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F10B18A;
-        Mon,  1 Oct 2018 07:52:57 -0700 (PDT)
-Received: from red-moon (red-moon.emea.arm.com [10.4.13.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6C7F3F5B3;
-        Mon,  1 Oct 2018 07:52:55 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 15:53:41 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        songxiaowei@hisilicon.com, wangbinghui@hisilicon.com,
-        bhelgaas@google.com, linux-pci@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        paul.gortmaker@windriver.com
-Subject: Re: [PATCH v2] PCI: kirin: Fix section mismatch warning
-Message-ID: <20181001145341.GC13049@red-moon>
-References: <20180919185341.31298-1-natechancellor@gmail.com>
- <CAKwvOdkeM3sj8M-LzTQd9M9-sM_K6n6FTz=TrNHd-3xPwg_VNw@mail.gmail.com>
- <20180920105828.GB838@e107981-ln.cambridge.arm.com>
+        Mon, 1 Oct 2018 17:32:42 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39739 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729467AbeJAVcm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 17:32:42 -0400
+Received: by mail-wr1-f65.google.com with SMTP id s14-v6so14314447wrw.6
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 07:54:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1qcOH2X3RPQ7wNpXQ9IjhlHCvlNcfdOe+AxPA/yfeZY=;
+        b=MX9S+bVJwekHGPnntM30HtIt6yH/4DtEhjHZn1SvAevnykghi/p55h0OhJB4sO1qDO
+         uFFgTi+dDA5V4Zr3ZKOA/jHRrDl0XAct6q0DgoY/KfLm4h4mg0Hjqy5f8zS55gPw/4Ph
+         LENHZOwicCQXe5Yi8pAVHYorMTo28WVa0vZuI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1qcOH2X3RPQ7wNpXQ9IjhlHCvlNcfdOe+AxPA/yfeZY=;
+        b=JII1sUz8Hi/c4zt6wci+ZUiwXEn1+P2AAqhVN87arw8YPwvf15/rRPHogW2jgyA9cx
+         Jz/zApww38sY+HgB3Bl7X+48NTOhCAgUYrINII8Kfq8Sisa8Y/K+HKw8KhW/r3HxOg/A
+         MWUPfJvrjykva+kv4/5sWj2peRDoTTLgVmJtQEnhafbfs9w6nsE4JMHD3qHoBTxzLT5d
+         8TGNN4R83oDzdHKhdJvSMPzXTe+gkFTQ5Oravrh/T0R8y5kLj47itNsIN8pdiDQqzmHz
+         MmHJRWQBr/fjSOHWFambDei2OU+B4M/fdor5IdH6yov3u55mvcz3KDlfZMLznuzRgpIl
+         WOgQ==
+X-Gm-Message-State: ABuFfohFez91+dXDEPxAzHPO8b6JWTMSOjP2u9h980mztyKOq0VO/o5x
+        yZtFxaIUHHIekaiApWoJwJOhvg==
+X-Google-Smtp-Source: ACcGV63ldD0B41e3LY2JkM0cjnjfiBzIjCgz2kbNZWh5RlMInh8rOTv5uQFHXAcRyOqRJgU+vXYWnw==
+X-Received: by 2002:adf:8523:: with SMTP id 32-v6mr7791716wrh.72.1538405668461;
+        Mon, 01 Oct 2018 07:54:28 -0700 (PDT)
+Received: from [192.168.0.41] (3.230.136.77.rev.sfr.net. [77.136.230.3])
+        by smtp.googlemail.com with ESMTPSA id x186-v6sm21104978wmx.24.2018.10.01.07.54.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 07:54:27 -0700 (PDT)
+Subject: Re: [PATCH v1 0/2] driver: thermal: Move some drivers into subdirs
+To:     Amit Kucheria <amit.kucheria@linaro.org>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
+        mka@chromium.org, rui.zhang@intel.com, linux-pm@vger.kernel.org
+References: <cover.1538141538.git.amit.kucheria@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <71d28a39-dcd2-2217-57b3-b2c3e6b77ec2@linaro.org>
+Date:   Mon, 1 Oct 2018 16:54:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920105828.GB838@e107981-ln.cambridge.arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <cover.1538141538.git.amit.kucheria@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 11:58:28AM +0100, Lorenzo Pieralisi wrote:
-> [+Paul]
+On 28/09/2018 18:36, Amit Kucheria wrote:
+> Move the various drivers for Intel platforms into their own subdir. Also
+> consolidate Qualcomm drivers into the qcom subdir.
 > 
-> On Wed, Sep 19, 2018 at 02:08:08PM -0700, Nick Desaulniers wrote:
-> > On Wed, Sep 19, 2018 at 11:55 AM Nathan Chancellor
-> > <natechancellor@gmail.com> wrote:
-> > >
-> > > WARNING: vmlinux.o(.text+0x4758cc): Section mismatch in reference from
-> > > the function kirin_pcie_probe() to the function
-> > > .init.text:kirin_add_pcie_port()
-> > > The function kirin_pcie_probe() references
-> > > the function __init kirin_add_pcie_port().
-> > > This is often because kirin_pcie_probe lacks a __init
-> > > annotation or the annotation of kirin_add_pcie_port is wrong.
-> > >
-> > > Add the __init annotation to both kirin_pcie_probe and
-> > > kirin_pcie_add_msi then use builtin_platform_driver_probe
-> > > instead of builtin_platform_driver + .probe to avoid a section
-> > > mismatch warning with kirin_pcie_driver.
-> > >
-> > > Fixes: fc5165db245a ("PCI: kirin: Add HiSilicon Kirin SoC PCIe controller driver")
-> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > ---
-> > >
-> > > v1 -> v2:
-> > >
-> > > Instead of removing the annotation on kirin_add_pcie_port, add it to
-> > > kirin_pcie_add_msi and kirin_pcie_probe. To avoid a warning with this
-> > > configuration, use builtin_platform_driver_probe.
-> > >
-> > >  drivers/pci/controller/dwc/pcie-kirin.c | 9 ++++-----
-> > >  1 file changed, 4 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
-> > > index 5352e0c3be82..f64fed12de51 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-kirin.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-kirin.c
-> > > @@ -448,8 +448,8 @@ static const struct dw_pcie_host_ops kirin_pcie_host_ops = {
-> > >         .host_init = kirin_pcie_host_init,
-> > >  };
-> > >
-> > > -static int kirin_pcie_add_msi(struct dw_pcie *pci,
-> > > -                               struct platform_device *pdev)
-> > > +static int __init kirin_pcie_add_msi(struct dw_pcie *pci,
-> > > +                                    struct platform_device *pdev)
-> > >  {
-> > >         int irq;
-> > >
-> > > @@ -481,7 +481,7 @@ static int __init kirin_add_pcie_port(struct dw_pcie *pci,
-> > >         return dw_pcie_host_init(&pci->pp);
-> > >  }
-> > >
-> > > -static int kirin_pcie_probe(struct platform_device *pdev)
-> > > +static int __init kirin_pcie_probe(struct platform_device *pdev)
-> > >  {
-> > >         struct device *dev = &pdev->dev;
-> > >         struct kirin_pcie *kirin_pcie;
-> > > @@ -533,11 +533,10 @@ static const struct of_device_id kirin_pcie_match[] = {
-> > >  };
-> > >
-> > >  static struct platform_driver kirin_pcie_driver = {
-> > > -       .probe                  = kirin_pcie_probe,
-> > >         .driver                 = {
-> > >                 .name                   = "kirin-pcie",
-> > >                 .of_match_table = kirin_pcie_match,
-> > >                 .suppress_bind_attrs = true,
-> > >         },
-> > >  };
-> > > -builtin_platform_driver(kirin_pcie_driver);
-> > > +builtin_platform_driver_probe(kirin_pcie_driver, kirin_pcie_probe);
-> > 
-> > It would be good to get additional review from someone who knows more
-> > about driver callback lifecycles, but I think this is the correct fix.
-> > Thanks Nathan.
-> > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> This cleans up the directory making it easier to find things.
 > 
-> AFAICS we can't use builtin_platform_driver_probe() if the probe()
-> itself may need deferral (and I *reckon* it may need that, see eg
-> clk_get()) so I suspect we have to go back to v1 for the patch,
-> apologies if so.
+> There is no great time to send patches that move files around, but I'm told
+> that towards the end is nicer. So here's an attempt to sneak it into 4.20
+> after everything else and hoping that these files won't change after
+> 4.19-rc4. :-) 
+> 
+> This was compile-tested and generated against 4.19-rc4. If you would like
+> me to try another time, I'm happy to do so.
 
-I think that the best course of action consists in merging v1 since
-we have not reached a definitive conclusion on v2, please let me
-know.
+I think it is a good idea organize the drivers per vendor directories.
 
-Thanks,
-Lorenzo
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+
+> Amit Kucheria (2):
+>   drivers: thermal: Move various drivers for intel platforms into a
+>     subdir
+>   drivers: thermal: Move QCOM_SPMI_TEMP_ALARM into the qcom subdir
+> 
+>  drivers/thermal/Kconfig                       | 94 +------------------
+>  drivers/thermal/Makefile                      | 10 +-
+>  drivers/thermal/intel/Kconfig                 | 77 +++++++++++++++
+>  drivers/thermal/intel/Makefile                | 12 +++
+>  .../{ => intel}/int340x_thermal/Kconfig       |  0
+>  .../{ => intel}/int340x_thermal/Makefile      |  0
+>  .../int340x_thermal/acpi_thermal_rel.c        |  0
+>  .../int340x_thermal/acpi_thermal_rel.h        |  0
+>  .../int340x_thermal/int3400_thermal.c         |  0
+>  .../int340x_thermal/int3402_thermal.c         |  0
+>  .../int340x_thermal/int3403_thermal.c         |  0
+>  .../int340x_thermal/int3406_thermal.c         |  0
+>  .../int340x_thermal/int340x_thermal_zone.c    |  0
+>  .../int340x_thermal/int340x_thermal_zone.h    |  0
+>  .../processor_thermal_device.c                |  0
+>  .../{ => intel}/intel_bxt_pmic_thermal.c      |  0
+>  .../thermal/{ => intel}/intel_pch_thermal.c   |  0
+>  .../thermal/{ => intel}/intel_powerclamp.c    |  0
+>  .../{ => intel}/intel_quark_dts_thermal.c     |  0
+>  .../thermal/{ => intel}/intel_soc_dts_iosf.c  |  0
+>  .../thermal/{ => intel}/intel_soc_dts_iosf.h  |  0
+>  .../{ => intel}/intel_soc_dts_thermal.c       |  0
+>  .../{ => intel}/x86_pkg_temp_thermal.c        |  0
+>  drivers/thermal/qcom/Kconfig                  | 11 +++
+>  drivers/thermal/qcom/Makefile                 |  1 +
+>  .../thermal/{ => qcom}/qcom-spmi-temp-alarm.c |  0
+>  26 files changed, 107 insertions(+), 98 deletions(-)
+>  create mode 100644 drivers/thermal/intel/Kconfig
+>  create mode 100644 drivers/thermal/intel/Makefile
+>  rename drivers/thermal/{ => intel}/int340x_thermal/Kconfig (100%)
+>  rename drivers/thermal/{ => intel}/int340x_thermal/Makefile (100%)
+>  rename drivers/thermal/{ => intel}/int340x_thermal/acpi_thermal_rel.c (100%)
+>  rename drivers/thermal/{ => intel}/int340x_thermal/acpi_thermal_rel.h (100%)
+>  rename drivers/thermal/{ => intel}/int340x_thermal/int3400_thermal.c (100%)
+>  rename drivers/thermal/{ => intel}/int340x_thermal/int3402_thermal.c (100%)
+>  rename drivers/thermal/{ => intel}/int340x_thermal/int3403_thermal.c (100%)
+>  rename drivers/thermal/{ => intel}/int340x_thermal/int3406_thermal.c (100%)
+>  rename drivers/thermal/{ => intel}/int340x_thermal/int340x_thermal_zone.c (100%)
+>  rename drivers/thermal/{ => intel}/int340x_thermal/int340x_thermal_zone.h (100%)
+>  rename drivers/thermal/{ => intel}/int340x_thermal/processor_thermal_device.c (100%)
+>  rename drivers/thermal/{ => intel}/intel_bxt_pmic_thermal.c (100%)
+>  rename drivers/thermal/{ => intel}/intel_pch_thermal.c (100%)
+>  rename drivers/thermal/{ => intel}/intel_powerclamp.c (100%)
+>  rename drivers/thermal/{ => intel}/intel_quark_dts_thermal.c (100%)
+>  rename drivers/thermal/{ => intel}/intel_soc_dts_iosf.c (100%)
+>  rename drivers/thermal/{ => intel}/intel_soc_dts_iosf.h (100%)
+>  rename drivers/thermal/{ => intel}/intel_soc_dts_thermal.c (100%)
+>  rename drivers/thermal/{ => intel}/x86_pkg_temp_thermal.c (100%)
+>  rename drivers/thermal/{ => qcom}/qcom-spmi-temp-alarm.c (100%)
+> 
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
