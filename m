@@ -2,115 +2,94 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4D8C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8993C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0954F208D9
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:37:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Be3vn83i";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QOyzkC6g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0954F208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 7399720666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:39:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7399720666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbeJAWPc (ORCPT
+        id S1726178AbeJAWSI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:15:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38382 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725266AbeJAWPc (ORCPT
+        Mon, 1 Oct 2018 18:18:08 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:47344 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbeJAWSI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:15:32 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6C74A601A0; Mon,  1 Oct 2018 15:37:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538408229;
-        bh=D4SlnN/62a+Lcq2zZCZ51I9SJI834sWKqoEkezb1NNk=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=Be3vn83itsRAGLqWjt5YmerymyLIhtqiFpHJEqNSm/d06TWxXRDN8iTVQv9gAUajT
-         vjpjpmz72c8cw72nXP02ZQzO/sv8RPhN+WsGbXg9Jj8757L9mM5HgyzzEoOrdkdjqj
-         D6bKVnlo9TZ9KBsq/+TaETh2sJ8X6XK1jWHatpto=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0A6A860116;
-        Mon,  1 Oct 2018 15:37:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538408228;
-        bh=D4SlnN/62a+Lcq2zZCZ51I9SJI834sWKqoEkezb1NNk=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=QOyzkC6gs4MQslf0A1G7bPGoTvYUVgU0NEZKySTHH2jA2b9SBEOrqBWVXjZYOQ7OB
-         3j+bj1pQsj2fWgg8LRLIG1IO7vcpBvPYkZQlLCoLmmyaRpgAe6YkFbvbAew2FJghPT
-         X8nMmxjq+v1WdBs1k0UMkWrxSd6MfieLz11pjDGs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0A6A860116
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2] rtlwifi: btcoex: Use proper enumerated types for Wi-Fi
- only interface
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180923063114.11446-1-natechancellor@gmail.com>
-References: <20180923063114.11446-1-natechancellor@gmail.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Ping-Ke Shih <pkshih@realtek.com>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181001153709.6C74A601A0@smtp.codeaurora.org>
-Date:   Mon,  1 Oct 2018 15:37:09 +0000 (UTC)
+        Mon, 1 Oct 2018 18:18:08 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1g70IN-0007IN-7y; Mon, 01 Oct 2018 11:39:39 -0400
+Message-ID: <a43fc0dcf83c077b1df08ba0e9aaa9c9bf65d5a3.camel@surriel.com>
+Subject: Re: [PATCH 1/2] mm, numa: Remove rate-limiting of automatic numa
+ balancing migration
+From:   Rik van Riel <riel@surriel.com>
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Jirka Hladky <jhladky@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Date:   Mon, 01 Oct 2018 11:39:38 -0400
+In-Reply-To: <20181001100525.29789-2-mgorman@techsingularity.net>
+References: <20181001100525.29789-1-mgorman@techsingularity.net>
+         <20181001100525.29789-2-mgorman@techsingularity.net>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-b8SOSbGpPkVSzD2HHy3s"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nathan Chancellor <natechancellor@gmail.com> wrote:
 
-> Clang warns when one enumerated type is implicitly converted to another.
-> 
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:1327:34:
-> warning: implicit conversion from enumeration type 'enum
-> btc_chip_interface' to different enumeration type 'enum
-> wifionly_chip_interface' [-Wenum-conversion]
->                 wifionly_cfg->chip_interface = BTC_INTF_PCI;
->                                              ~ ^~~~~~~~~~~~
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:1330:34:
-> warning: implicit conversion from enumeration type 'enum
-> btc_chip_interface' to different enumeration type 'enum
-> wifionly_chip_interface' [-Wenum-conversion]
->                 wifionly_cfg->chip_interface = BTC_INTF_USB;
->                                              ~ ^~~~~~~~~~~~
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:1333:34:
-> warning: implicit conversion from enumeration type 'enum
-> btc_chip_interface' to different enumeration type 'enum
-> wifionly_chip_interface' [-Wenum-conversion]
->                 wifionly_cfg->chip_interface = BTC_INTF_UNKNOWN;
->                                              ~ ^~~~~~~~~~~~~~~~
-> 3 warnings generated.
-> 
-> Use the values from the correct enumerated type, wifionly_chip_interface.
-> 
-> BTC_INTF_UNKNOWN = WIFIONLY_INTF_UNKNOWN = 0
-> BTC_INTF_PCI = WIFIONLY_INTF_PCI = 1
-> BTC_INTF_USB = WIFIONLY_INTF_USB = 2
-> 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/135
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+--=-b8SOSbGpPkVSzD2HHy3s
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Patch applied to wireless-drivers-next.git, thanks.
+On Mon, 2018-10-01 at 11:05 +0100, Mel Gorman wrote:
+>=20
+> STREAM on 2-socket machine
+>                          4.19.0-rc5             4.19.0-rc5
+>                          numab-v1r1       noratelimit-v1r1
+> MB/sec copy     43298.52 (   0.00%)    44673.38 (   3.18%)
+> MB/sec scale    30115.06 (   0.00%)    31293.06 (   3.91%)
+> MB/sec add      32825.12 (   0.00%)    34883.62 (   6.27%)
+> MB/sec triad    32549.52 (   0.00%)    34906.60 (   7.24%
+>=20
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 
-31138a827d1b rtlwifi: btcoex: Use proper enumerated types for Wi-Fi only interface
+Reviewed-by: Rik van Riel <riel@surriel.com>
 
--- 
-https://patchwork.kernel.org/patch/10611603/
+--=20
+All Rights Reversed.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+--=-b8SOSbGpPkVSzD2HHy3s
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAluyP7oACgkQznnekoTE
+3oOQvwgAl8N5coXoRiC8EPbZWHxKYiA95wq1lkYJ0lE18HgqQ70Oq3j84qPjN503
+v5tb8xHk0+BJxwTQzWRWo/9MLhHlBwIgoJHKS+k9kCm7KJxps/ntExCC0FDbmRs+
+4rrfj/ReNyyJjZEfNeapZKgWf33MXIoO/DXr6a7+GWeAOHkanyzlGxAqDMalelk+
+8OdgviZ2Ib7aNOS/gyrJ2WBmiVrcPJhikMzC+X4iaKSt6ZAYdrlSvKyHPHUyqUSM
+DhomgmtpUKDqjbRhXYqPlztYERITI1EwtHdrzZpFQaTA9/r+3khxE+I6un4mPsZp
+/5xh5t3mt28fBawHL7fgeHuxUsM1vQ==
+=OgZv
+-----END PGP SIGNATURE-----
+
+--=-b8SOSbGpPkVSzD2HHy3s--
 
