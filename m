@@ -2,125 +2,166 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B83A2C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8C0C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78D55205C9
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:05:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D55205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E4D86208D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 14:06:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o/nL5UDU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4D86208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729434AbeJAUnL (ORCPT
+        id S1729467AbeJAUoS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:43:11 -0400
-Received: from mga11.intel.com ([192.55.52.93]:32442 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729134AbeJAUnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:43:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 07:05:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,327,1534834800"; 
-   d="scan'208";a="77791389"
-Received: from nguthro-mobl.amr.corp.intel.com (HELO [10.251.2.249]) ([10.251.2.249])
-  by orsmga008.jf.intel.com with ESMTP; 01 Oct 2018 07:05:11 -0700
-Subject: Re: [PATCH v9 0/3] powerpc: Detection and scheduler optimization for
- POWER9 bigcore
-To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Anton Blanchard <anton@samba.org>
-References: <1538399802-23582-1-git-send-email-ego@linux.vnet.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <994106db-7f79-7d22-0d4e-f458bd85bb64@intel.com>
-Date:   Mon, 1 Oct 2018 07:05:11 -0700
+        Mon, 1 Oct 2018 16:44:18 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:32953 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728979AbeJAUoR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 16:44:17 -0400
+Received: by mail-qt1-f196.google.com with SMTP id q40-v6so1127709qte.0;
+        Mon, 01 Oct 2018 07:06:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5T7pE4qzMkLVakrC9ZdwQdfR3ePliJEv70qnWJM9I1E=;
+        b=o/nL5UDU/6j6EJ3ugGsGQEtzXJhWN+6ei5Fit/8mDi0gi8hnAUMBEomCbXkzQdvDGt
+         WB3xQh0FjmerkcvmwtfsJO3H8xyFmv7HElOEwncS4iytzn3hXcxqjzxV7oGxeb146n2+
+         yPDweCXZWSFTrd4juxrobSPTDT/2u94I8TMPi1ZtP1JwJoHR3nt5x2nljrUamtLtkY6j
+         acowRDgs21NoFPmsuyEDa54gtiYlugbUSRB9CCxh9pqHFV+O4QGIxK+1FVUvF87Eua0G
+         +0WIzhT4hHaCvT/J7O4GspZUpXKjm/ay7T9w9FQRHNzqzrynBE3oOcwJiVAnAnTX+PNl
+         TCqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5T7pE4qzMkLVakrC9ZdwQdfR3ePliJEv70qnWJM9I1E=;
+        b=kjbDLBcXLKrB2caS/FS99I5uR/NrPHfnBr+KrpfK87cCFGtO/wUcCX6tCD462cQGKL
+         HSfwva0tFEVONodWNSsJe0A3f3o++6kNADfBY1tYVSpQ1SrVxVuWZkaO6oMLLFRLOaKY
+         dKIbBRKDEJaUycXSqT6SQj4qLggGPD1NVHtkJ95wfwCr7Wtd2dj7IVK0quxkC4bHtRlO
+         n1eTcXm8P+BHWa2//e3uAcKPQi/xnYbfGLOGLjmSGQC8/mmqVkH7qReakZQfHqiXOAT9
+         smvPZA1GqiOqmzeYisPQIFOnO0n1YWgrf/f+TkxB1NfxcS6PET7xnG35NiuDq4ULgGHM
+         0AAA==
+X-Gm-Message-State: ABuFfogDYsvg7V4X/N28RR93SnGQxDZdcf3RJOetj9i+QU0Dv6FV1OLw
+        FPpPb+HPTeUC1jP3tVDQ2wxwGLWU
+X-Google-Smtp-Source: ACcGV635cl9SFpNIaHXhT43mK69GsNlaOwVDQXvpTC9pvUWIwyDR71JVvOzLVRQWe+u1denvivJ26g==
+X-Received: by 2002:ac8:fa2:: with SMTP id b31-v6mr8739275qtk.2.1538402777715;
+        Mon, 01 Oct 2018 07:06:17 -0700 (PDT)
+Received: from [192.168.1.10] (pool-96-255-154-210.washdc.fios.verizon.net. [96.255.154.210])
+        by smtp.gmail.com with ESMTPSA id f48-v6sm6149086qte.17.2018.10.01.07.06.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 07:06:16 -0700 (PDT)
+Subject: Re: [PATCH] team: set IFF_SLAVE on team ports
+To:     Jiri Pirko <jiri@resnulli.us>,
+        Stephen Hemminger <stephen@networkplumber.org>
+Cc:     Jan Blunck <jblunck@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
+References: <1436435914-8903-1-git-send-email-jblunck@infradead.org>
+ <20150709100727.GE2270@nanopsycho.orion>
+ <CALe+Z03R_MPcgUSa8xoMeT5Sv3z8KwFhrtoYYzON=prfR-7hxQ@mail.gmail.com>
+ <20150710064147.GA2204@nanopsycho.orion>
+ <c674e681-9f7f-85c2-a578-a246d1ec9f45@gmail.com>
+ <20180930071414.GF2209@nanopsycho.orion>
+ <20180930113805.3b8e62a1@shemminger-XPS-13-9360>
+ <20180930093452.GG2209@nanopsycho.orion>
+From:   Chas Williams <3chas3@gmail.com>
+Message-ID: <b3cf1799-7ee2-47b3-e9ed-98e41ae56853@gmail.com>
+Date:   Mon, 1 Oct 2018 10:06:16 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1538399802-23582-1-git-send-email-ego@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180930093452.GG2209@nanopsycho.orion>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/01/2018 06:16 AM, Gautham R. Shenoy wrote:
+
+
+On 09/30/18 05:34, Jiri Pirko wrote:
+> Sun, Sep 30, 2018 at 11:38:05AM CEST, stephen@networkplumber.org wrote:
+>> On Sun, 30 Sep 2018 09:14:14 +0200
+>> Jiri Pirko <jiri@resnulli.us> wrote:
+>>
+>>> Thu, Sep 27, 2018 at 04:04:26PM CEST, 3chas3@gmail.com wrote:
+>>>>
+>>>>
+>>>> On 07/10/15 02:41, Jiri Pirko wrote:
+>>>>> Thu, Jul 09, 2015 at 05:36:55PM CEST, jblunck@infradead.org wrote:
+>>>>>> On Thu, Jul 9, 2015 at 12:07 PM, Jiri Pirko <jiri@resnulli.us> wrote:
+>>>>>>> Thu, Jul 09, 2015 at 11:58:34AM CEST, jblunck@infradead.org wrote:
+>>>>>>>> The code in net/ipv6/addrconf.c:addrconf_notify() tests for IFF_SLAVE to
+>>>>>>>> decide if it should start the address configuration. Since team ports
+>>>>>>>> shouldn't get link-local addresses assigned lets set IFF_SLAVE when linking
+>>>>>>>> a port to the team master.
+>>>>>>>
+>>>>>>> I don't want to use IFF_SLAVE in team. Other master-slave devices are
+>>>>>>> not using that as well, for example bridge, ovs, etc.
+>>>>>>>    
+>>>>>>
+>>>>>> Maybe they need to get fixed too. I've used that flag because it is
+>>>>>> documented as
+>>>>>> a "slave of a load balancer" which describes what a team port is.
+>>>>>>
+>>>>>>    
+>>>>>>> I think that this should be fixed in addrconf_notify. It should lookup
+>>>>>>> if there is a master on top and bail out in that case.
+>>>>>>
+>>>>>> There are other virtual interfaces that have a master assigned and want to
+>>>>>> participate in IPv6 address configuration.
+>>>>>
+>>>>> Can you give me an example?
+>>>>
+>>>> I would like to revisit this patch (yes, I know it has been a while).  I
+>>>> believe the VRF implementation uses master to group the interfaces under
+>>>> a single interface.
+>>>>
+>>>> I don't see a reason not to use IFF_SLAVE since team and bonding are fairly
+>>>> similar.
+>>>
+>>> Again, why do you need team port to have IFF_SLAVE flag? What do you
+>>> want to achieve
+>>
+>> Without setting this flag IPv6 will try and make a link specific address.
 > 
-> Patch 3: Creates a pair of sysfs attributes named
-> 	  /sys/devices/system/cpu/cpuN/topology/smallcore_thread_siblings
-> 	  and
-> 	  /sys/devices/system/cpu/cpuN/topology/smallcore_thread_siblings_list
-> 	  exposing the small-core siblings that share the L1 cache
-> 	  to the userspace.
+> Why is it not an issue with bridge, ovs, and other master-slave devices?
+> 
 
-I really don't think you've justified the existence of a new user/kernel
-interface here.  We already have information about threads share L1
-caches in here:
+It very well might be an issue for bridge and ovs.  Other master-slave 
+devices include the existing VRF implementation in the kernel and those 
+slave interfaces will certainly want to use IPv6.
 
-	/sys/devices/system/cpu/cpu0/cache/index0/shared_cpu_list
+However, IFF_SLAVE has a specific meaning:
 
-The only question would be if anything would break because it assumes
-that all SMT siblings share all caches.  But, it breaks if your new
-interface is there or not; it's old software that we care about.
+./include/uapi/linux/if.h: * @IFF_SLAVE: slave of a load balancer. Volatile.
+
+The bonding driver is not the only user:
+
+./drivers/net/eql.c:#define eql_is_slave(dev)	((dev->flags & IFF_SLAVE) 
+== IFF_SLAVE)
+./drivers/net/eql.c:	slave->dev->flags &= ~IFF_SLAVE;
+./drivers/net/eql.c:		slave->dev->flags |= IFF_SLAVE;
+
+The team driver would like to use this same flag since it is a load 
+balancer as well.  The side effect of not assigning IPv6 is a bonus. 
+The fact that bridges and ovs are also likely broken is a different 
+issue.  Should there be a another flag that says "layer 2 only"?  Very 
+possibly, but that is something all these interfaces should be using to 
+include bonding, team, eql, obs, bridge etc.  That's not a reasonable 
+objection to labeling the team slave as slaves since they are literally 
+slaves of a load balancer.
+
+
+
