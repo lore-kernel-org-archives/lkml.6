@@ -2,95 +2,115 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA299C64EAD
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 04:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CC0C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A12662084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 04:57:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AB33206B2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:12:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="zKrK+SqC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A12662084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ltVQibBp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AB33206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbeJALdQ (ORCPT
+        id S1728662AbeJALsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 07:33:16 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:41547 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728593AbeJALdQ (ORCPT
+        Mon, 1 Oct 2018 07:48:22 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54870 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728593AbeJALsW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 07:33:16 -0400
-Received: by mail-qk1-f194.google.com with SMTP id n3-v6so7316569qkn.8
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 21:57:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jnrjBvxLkgEYqcoy4gP3bz3vkNJm9uQLA53NunoyuBk=;
-        b=zKrK+SqCw0pXqtxApE8AZ6kpFcMmAAF0VugdUfcdSrp8elS80jJnue3yDLnBjgXn8A
-         MH3l626cilo7fTZO/DvyDpPh6LrY7KT4kSMdhQWxn9k5R5RvSbR+yHfqlOsMXYHgqw+q
-         USpViqU4f8ugY/v6e5cXx6o/gSXGb/IiITZHuoddfVUYCFKwGL1RsX2J9ggD8erjlgRQ
-         37ck3pAhAtVFtJjWuSNHAydMuLz/rGrCLSm6p/RS44Jj4U71QO6xAsnzNZt7dF1tCUBo
-         w5P81zR1Ikb3JJ3cYj60oU7cLAmGGh2Zt+Fk+6q3U8KZ7HDT84Xkq6WNfkn0p69HjVRo
-         aNlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jnrjBvxLkgEYqcoy4gP3bz3vkNJm9uQLA53NunoyuBk=;
-        b=sfSI5hzgTupc+hn9i9yPFf9H/xp8aVpEvQI+32j3cVAXoMiwvMoIylj1UeeDigrtjX
-         o6IRmbjJ6wYC1FdjT0MopYVz3d8gN7jX0HNwGLu2VzBUNIQp3BDBEno9n3TupE4BY4CC
-         1EgV2B6MFakq0j3TNQI0OTu+d+IWHr19aTCpRbJV5g+6crFag37dSL7qSQ38Vhc4GRWQ
-         xVEkygXc1HUssPFSDfmJVt16wux5zAf90VIm/ZaBWwd6aSiX1LRaZzz07T34p+L1+uTW
-         0s+Tokp8n74Zs/zF5Vu+B9OoO1OzCD/oaBEJNlk55ZjxnbtFLyQvCh5SNYj19oqVO22O
-         a3tQ==
-X-Gm-Message-State: ABuFfoi05NLJoFNCqPPe9vHBpvakmM0oYMDUQP2JDPSDAHN2Yi3JRBX4
-        VqvEPJ34E/B0TgQ1lymFgw+QIZAo7TCtat7bEG+6MA==
-X-Google-Smtp-Source: ACcGV62AH/lpTJqfs7LctyFks9p2g1nLlHZ/w5vWgh3mI0EGsxzcvvOiwWgzTwkWcJViUyEW+7rFMBKXETX29hwPYL0=
-X-Received: by 2002:a37:1f88:: with SMTP id n8-v6mr7012136qkh.64.1538369842479;
- Sun, 30 Sep 2018 21:57:22 -0700 (PDT)
+        Mon, 1 Oct 2018 07:48:22 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9159NYo139656;
+        Mon, 1 Oct 2018 05:12:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=r+9Hd56pwrxJM2XDwFAUl/yvzk8a/WzJjbqheREvFpg=;
+ b=ltVQibBp4QGFAvTVY4rT3LVeQOVx+MKWWin6Upy16+QZ0AABNuQZlIxtFRyoPrDRY5jY
+ 4m4awsClUDE+bbc1xoUULYyW6a3aavrPs5z/4j2rXI7dEFI3If43z8haPn1WEhIRZPHk
+ GdZeBJ7UfqqpwbSpzz6wAyob4tocYpZVlXS/AYceyHRQmg0Bc58cifmQLD9zNQmrmk1p
+ Ud6BiC/zDqYuMYewLzoYKwsfy5lRQt8tQZLlnJeLaukCioH9wRY4P7FnmxlWjIN5KBcb
+ MhRJ4MsIjeyFhzydsiWvBUzMDRkU/J9vgL5oLP1rtyirkCzmW3eYFHBMnUTCl96SDLJR hQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2mt1bpmpqg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 01 Oct 2018 05:12:20 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w915CIrA022587
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 1 Oct 2018 05:12:19 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w915CItp031330;
+        Mon, 1 Oct 2018 05:12:18 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 30 Sep 2018 22:12:17 -0700
+Date:   Mon, 1 Oct 2018 08:12:11 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Michael Straube <straube.linux@gmail.com>,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/19] staging: rtl8188eu: cleanup inconsistent indenting
+Message-ID: <20181001051211.zdpy7otztjrg7gr6@mwanda>
+References: <20180930195310.1531-1-straube.linux@gmail.com>
+ <c9e0b48d829e9b598b7bb68d1152e56ef0c846f9.camel@perches.com>
 MIME-Version: 1.0
-References: <20180913033745.11178-1-drake@endlessm.com> <20180918213244.GE13616@bhelgaas-glaptop.roam.corp.google.com>
- <20180927205247.GA18434@bhelgaas-glaptop.roam.corp.google.com> <3f8efcd6-7cd2-b41a-d984-28c9e1740d6c@rockbox.org>
-In-Reply-To: <3f8efcd6-7cd2-b41a-d984-28c9e1740d6c@rockbox.org>
-From:   Daniel Drake <drake@endlessm.com>
-Date:   Mon, 1 Oct 2018 12:57:11 +0800
-Message-ID: <CAD8Lp47uL3DQTBiVTduO1+Cg8px4CDpv26qVJsgT+RJ4WZx9oA@mail.gmail.com>
-Subject: Re: [PATCH v3] PCI: Reprogram bridge prefetch registers on resume
-To:     Thomas Martitz <kugel@rockbox.org>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        nouveau@lists.freedesktop.org, Linux PM <linux-pm@vger.kernel.org>,
-        Peter Wu <peter@lekensteyn.nl>, kherbst@redhat.com,
-        andy.shevchenko@linux.intel.com,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jon Derrick <jonathan.derrick@intel.com>,
-        David Miller <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        netdev <netdev@vger.kernel.org>, nic_swsd@realtek.com,
-        rchang@marvell.com, Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c9e0b48d829e9b598b7bb68d1152e56ef0c846f9.camel@perches.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9032 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=641
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810010054
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 5:07 AM Thomas Martitz <kugel@rockbox.org> wrote:
-> The latest iteration does not work on my HP system. The GPU fails to
-> power up just like the unpatched kernel.
+On Sun, Sep 30, 2018 at 01:30:11PM -0700, Joe Perches wrote:
+> On Sun, 2018-09-30 at 21:52 +0200, Michael Straube wrote:
+> > Cleanup all inconsistent indenting reported by smatch.
+> 
+> There are also some others like:
+> 
+> drivers/staging/rtl8188eu/core/rtw_mlme.c:1752: WARNING:SUSPECT_CODE_INDENT: suspect code indent for conditional statements (8, 24)
+> 1750:	if ((ndisauthmode == Ndis802_11AuthModeWPA) ||
+> 1751:	    (ndisauthmode == Ndis802_11AuthModeWPAPSK))
+> 1752:			authmode = _WPA_IE_ID_;
+> 
+> Perhaps smatch can be enhanced to find those too.
+> 
 
-That's weird, I would not expect a behaviour change in the latest
-patch. pci_restore_config_dword() has some debug messages, could you
-please make them visible and show logs again?
-Also remind us of the PCI device address of the parent bridge (lspci -vt)
+Style issues are not something I want to get into...  I had hoped that
+this test would find bugs, because stuff like this looks so suspicious:
 
-Thanks
-Daniel
+diff --git a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
+index 20f34d25c369..5c4ff81987bd 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
++++ b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
+@@ -246,7 +246,7 @@ int rtw_generate_ie(struct registry_priv *pregistrypriv)
+                wireless_mode = pregistrypriv->wireless_mode;
+        }
+
+-               rtw_set_supported_rate(pdev_network->SupportedRates, wireless_mode);
++       rtw_set_supported_rate(pdev_network->SupportedRates, wireless_mode);
+
+        rateLen = rtw_get_rateset_len(pdev_network->SupportedRates);
+
+But I've never found even one bug with the inconsistent indenting
+check.  The other related test about missing curly braces is pretty
+useful though.
+
+regards,
+dan carpenter
+
