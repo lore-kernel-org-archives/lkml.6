@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B613EC004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9478C64EAD
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 711AA20666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:42:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1E1C20666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:42:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="BZdGWwZn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 711AA20666
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="e2QVZ33u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E1C20666
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730007AbeJAHRv (ORCPT
+        id S1730306AbeJAHSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 03:17:51 -0400
-Received: from mail-cys01nam02on0102.outbound.protection.outlook.com ([104.47.37.102]:43666
+        Mon, 1 Oct 2018 03:18:00 -0400
+Received: from mail-cys01nam02on0136.outbound.protection.outlook.com ([104.47.37.136]:43745
         "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729667AbeJAHRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 03:17:05 -0400
+        id S1730209AbeJAHRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 03:17:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AILi8WyYelxzXY7L73j2vYPHm3ifJ77xnIFqwr6C1sw=;
- b=BZdGWwZnc6BErTUHq/CT0/sjR1vzuTfWkkH8wbvetHI1K2AUUZ/WSHpWkhI3qFiqzPd14Cl1MGjIcsa4315Am0MUsApI15UoghpCBTpuJFSIwuikKupJ3SV660clVeVCO4vojei/PfE7K22gHJidxprPew0+OoKy7uHLhLNRvO4=
+ bh=h5ioZBYHU7OkF5oR5IDWuENfZxT80o3vDcwzu1VFrCg=;
+ b=e2QVZ33uI97TXclfYzBKow+6gADZzyZt5HdQ4Ap2lk5ECiD4xUac7yyEjyMFZNmUgfUsYCwfyFB0DwhMViL+q5f3L6lnMRcoMw0cf46jM03VSoyq18bVyk+fh5vGbMeBj+jd98XL1XL/5D9wERzXwUq6oLt/3qWUz/eC8+JPGpI=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0791.namprd21.prod.outlook.com (10.175.121.145) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -42,16 +42,16 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Steven French <Steven.French@microsoft.com>,
+CC:     Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 3.18 05/13] fs/cifs: suppress a string overflow
- warning
-Thread-Topic: [PATCH AUTOSEL 3.18 05/13] fs/cifs: suppress a string overflow
- warning
-Thread-Index: AQHUWR+IDzVAFU2jUESgK7707Czzpg==
+Subject: [PATCH AUTOSEL 3.18 04/13] USB: yurex: Check for truncation in
+ yurex_read()
+Thread-Topic: [PATCH AUTOSEL 3.18 04/13] USB: yurex: Check for truncation in
+ yurex_read()
+Thread-Index: AQHUWR+IDPtP1KdBZUGAwFj+cjCdlg==
 Date:   Mon, 1 Oct 2018 00:41:46 +0000
-Message-ID: <20181001004139.147341-5-alexander.levin@microsoft.com>
+Message-ID: <20181001004139.147341-4-alexander.levin@microsoft.com>
 References: <20181001004139.147341-1-alexander.levin@microsoft.com>
 In-Reply-To: <20181001004139.147341-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,14 +60,14 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0791;6:feq7z110xs6XTpP0cyM70HAGfBsUr+hiNI2koUzlvRJVVFmYJMwzwJytextnRfvx4p0xyv7fl9L2/W8CiC2meSypJjSOeJndcop5+VLU22wBO5peh7zwdfSe5mvp8OjnD77G9MHe0HMD1sJs9SVTFKLvZ6BdKf2fM6SF6264/fuUM1weKrUI5H9B20M8dj5coJBRfyhN9ObPeE5A981B52AjQGabttuh619s+SnYRPdrgoTxlV0NQXVg8LeILpD4l1zT5k2KLC5OBYRWVFum5lfX+E2OfBcSkNPX8N8Z06UiwSutYVG90gYAPisdsUECPl7ALdqGsFJdPmnjTZNfIO/gKNl16O8BLjDBP1PEzBE4wUr5ZpIbKhpbZBd1uwdABREvJWaiyMVl2QIwc0E9IziBfpgbO/KjsuMZ0DgXJZS67AWZMHBjXOWUDOrFvs4Cs6iB/MEnC9TUiQIpI9LKEg==;5:gV+UaCySq3zqHQ+oYRM4hMD8r1I2mMTXICUafB8OYbeCxjdgK8++yeBGeMZ7lOYJke2R99vpdnk/o9R7aCvMLp7HM341/9o35LWcfmIScocjXYj23EqkdzrjlppuR0F1qiAqOLTjwf93ywYgiJaRVJHAAs0eXmgV93UuIQRF5C8=;7:Eour4sz67tgB6n6aMqv/l2Tq2c4Rr8ygarXRTWvU8cslyVofcvwgzxFEV34LQI+a6lbiuXwLLPnf7ff2+H0aQsg4QU8XZRQ8eKWZcIM9NfVcWeaa15tT3y0zwn7DotUV5IwWKo5UQiGCwez6xUiSzxdgwu5wGk9KGMmqjRMr0LW92b5AZtBMS5He+LzyXpq6xr87ZaTxFEMYljlllVU+Lhf3Y1m4xkxiq7SUYq8SM3n5HkTRdKEBAxylQeyLaZ1M
-x-ms-office365-filtering-correlation-id: a734dd7e-4bb1-4c58-be5f-08d62736aaea
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0791;6:sAxg0ASEWg6u18dmniz0/CrezRu9if09p+yEjx9IiZR7tYdKUmzlnKKHFPcAKvQFngx2MAuktjzo3OtBQ1OL0TIqfQJlozyxZ7nwih6GyJ4nZD9bg9ZWSojlZ1p0umHvWM02vJFJuV9oIlKQgRurFnf08p7nnO2nWPlj7zjJAookglSCYb5EpPFc/nKHg/8iXgzCZYm8iVqgBgfpZVXsYz8wXVgV9oiikG5a0aUrnPq+/zt+YD3enx1Bo/h7l1NoMfcPytRD+ZYjm4URgqd3eW0b0lM8dBeMaz+6jFIkojERpcGpQ6q6ayE5dwfNeYGsfpMkh2qe3hafmyjmGu1tmC481tbuZQv61xG0rvGlIAG1EvPFxJpZnCBw56AeBqPnRIZNvLOO7MtQHsep2i5QOwPB+0WJRptaARtMNMnjKAL7kY5XL6PQiJyMx0ToADrFNT1yEHavRpsrfLDL86D2Ig==;5:0jX67xJKtTrw1Ht5vGdQPxE2r+ySVakHWqUaBjIA812rMVOxpL9t0O2Kdoe3FvsaT41LQQR+AMM4lJpaQoMPfrBu0u1xemPpkTXFGy7OB1qrs4zDJaw9gV5OskkENe3PNETyWMgbFtFeBXmWVTTMpPeOUneIbTjmSAtVnKMK5KE=;7:2bkQUMkFeKmeAFfIFoebrQQcJZGGdZ0Mw5OervneSX+s7+xBTy3t9koElha71kBw5IHHOS05Qab0M7F99gcQM788/pVaRgByHfaLNNT/Wr5Z1xQhL/qFhD0gQ8zhVamXacbo958AdMKz5oVgikiQRV42+q0Ayw+/49wDcOqQ1ojcIIv1tKraVDYAqWhLizKt3iyQRLwdbqj6moyzQTBkArPK503oC0YNc9u2+KiMTNyXcuG3rLIPH342tHYYmjMm
+x-ms-office365-filtering-correlation-id: 8836a536-fd85-46e7-3652-08d62736aa8c
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0791;
 x-ms-traffictypediagnostic: CY4PR21MB0791:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB079170A209936E0DD3DBB557FBEF0@CY4PR21MB0791.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB079199306D962809BEAE35FAFBEF0@CY4PR21MB0791.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0791;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0791;
@@ -75,16 +75,15 @@ x-forefront-prvs: 0812095267
 x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(396003)(366004)(376002)(39860400002)(189003)(199004)(72206003)(71190400001)(478600001)(316002)(110136005)(14454004)(2616005)(54906003)(105586002)(107886003)(106356001)(186003)(305945005)(26005)(34290500001)(71200400001)(22452003)(7736002)(256004)(14444005)(25786009)(10290500003)(99286004)(68736007)(53936002)(486006)(6512007)(446003)(66066001)(36756003)(6506007)(81166006)(81156014)(6486002)(5250100002)(86362001)(2501003)(5660300001)(4326008)(11346002)(6116002)(476003)(3846002)(10090500001)(97736004)(1076002)(8676002)(8936002)(102836004)(217873002)(6436002)(76176011)(86612001)(2900100001)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0791;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: AYavLKx4aImb34Ym0FlkZXwIBasA7YVS7cprdLdrsNjLRxqHR9x3XCuHxyA2/YFKr+oJq53H7Ml0w+U6EaHDt7NexhIOle16BXWFL8j8QFcHFWtB2rsMJku4DkYr5bCT3vndyspfJIJ+io0/ncHxk9BNDPPAyW0ME4MfeAgr7NqXGUiiYo44IwZwXxWwc+CNTsgE4ZuFztkE9jp2NQUd/JD3F/qZdm6eChUUT1AjdaDrlqGZL/jKGy44OoC6tKQQrWa6lAVGG4Pl4Rt1DFArG35syZ8/qv8XE5ybMtPWcNkWB+KWG6p5vZ/rYPOrWOg1ytm+Uber3jU5qlmp1crfZiNnMytJ6FOmTN6W4xBnkjQ=
+x-microsoft-antispam-message-info: WUeX6NHdgagfDQ2GWKDt7ZcSIPFBke2BNKWoQ3EOgNgXKP9INqyiPGbjo2a3G5tJCvOqNuxnpIGijE/9D6Slh9gMpq8W5cfNknYnijQnJZ/dP7KpX1tzc6Pwz+n8/rAvhr+PRWbHvjokiRtxnSEoFpjTaUnXIIWe8fUhL2DY61QCv4zkRe71d/ZaHyAtggWraVJUo8dIHquYytfMY7hH9AzDAIhsHdtqFy72H30fc0bwB+rzmLJ66i80FqJdOedy2eRPcK+lelFQyXji9by7050G9D91AivWz4WhuvbONrLLtOF9wpKGHssgkpUhn/v6gJYQuUd4wSsnt3ymgr/CBDtAdx7BzZyx6/shrFJoY40=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3873E6B1A239B148991A40BE3B1CC590@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a734dd7e-4bb1-4c58-be5f-08d62736aaea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:41:46.7971
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8836a536-fd85-46e7-3652-08d62736aa8c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:41:46.1636
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -94,33 +93,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQoNClsgVXBzdHJl
-YW0gY29tbWl0IGJjZmI4NGE5OTZmNmZhOTBiNWU2ZTI5NTRiMmFjY2I3YTQ3MTEwOTcgXQ0KDQpB
-IHBvd2VycGMgYnVpbGQgb2YgY2lmcyB3aXRoIGdjYyB2OC4yLjAgcHJvZHVjZXMgdGhpcyB3YXJu
-aW5nOg0KDQpmcy9jaWZzL2NpZnNzbWIuYzogSW4gZnVuY3Rpb24g4oCYQ0lGU1NNQk5lZ290aWF0
-ZeKAmToNCmZzL2NpZnMvY2lmc3NtYi5jOjYwNTozOiB3YXJuaW5nOiDigJhzdHJuY3B54oCZIHdy
-aXRpbmcgMTYgYnl0ZXMgaW50byBhIHJlZ2lvbiBvZiBzaXplIDEgb3ZlcmZsb3dzIHRoZSBkZXN0
-aW5hdGlvbiBbLVdzdHJpbmdvcC1vdmVyZmxvdz1dDQogICBzdHJuY3B5KHBTTUItPkRpYWxlY3Rz
-QXJyYXkrY291bnQsIHByb3RvY29sc1tpXS5uYW1lLCAxNik7DQogICBefn5+fn5+fn5+fn5+fn5+
-fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn4NCg0KU2luY2Ugd2UgYXJl
-IGFscmVhZHkgZG9pbmcgYSBzdHJsZW4oKSBvbiB0aGUgc291cmNlLCBjaGFuZ2UgdGhlIHN0cm5j
-cHkNCnRvIGEgbWVtY3B5KCkuDQoNClNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gUm90aHdlbGwgPHNm
-ckBjYW5iLmF1dWcub3JnLmF1Pg0KU2lnbmVkLW9mZi1ieTogU3RldmUgRnJlbmNoIDxzdGZyZW5j
-aEBtaWNyb3NvZnQuY29tPg0KU2lnbmVkLW9mZi1ieTogU2FzaGEgTGV2aW4gPGFsZXhhbmRlci5s
-ZXZpbkBtaWNyb3NvZnQuY29tPg0KLS0tDQogZnMvY2lmcy9jaWZzc21iLmMgfCAxMSArKysrKysr
-Ky0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQoN
-CmRpZmYgLS1naXQgYS9mcy9jaWZzL2NpZnNzbWIuYyBiL2ZzL2NpZnMvY2lmc3NtYi5jDQppbmRl
-eCA5NDlkZWI5MzhkYzkuLmRiNzJjNTI4NGQxMyAxMDA2NDQNCi0tLSBhL2ZzL2NpZnMvY2lmc3Nt
-Yi5jDQorKysgYi9mcy9jaWZzL2NpZnNzbWIuYw0KQEAgLTU3NywxMCArNTc3LDE1IEBAIENJRlNT
-TUJOZWdvdGlhdGUoY29uc3QgdW5zaWduZWQgaW50IHhpZCwgc3RydWN0IGNpZnNfc2VzICpzZXMp
-DQogCX0NCiANCiAJY291bnQgPSAwOw0KKwkvKg0KKwkgKiBXZSBrbm93IHRoYXQgYWxsIHRoZSBu
-YW1lIGVudHJpZXMgaW4gdGhlIHByb3RvY29scyBhcnJheQ0KKwkgKiBhcmUgc2hvcnQgKDwgMTYg
-Ynl0ZXMgYW55d2F5KSBhbmQgYXJlIE5VTCB0ZXJtaW5hdGVkLg0KKwkgKi8NCiAJZm9yIChpID0g
-MDsgaSA8IENJRlNfTlVNX1BST1Q7IGkrKykgew0KLQkJc3RybmNweShwU01CLT5EaWFsZWN0c0Fy
-cmF5K2NvdW50LCBwcm90b2NvbHNbaV0ubmFtZSwgMTYpOw0KLQkJY291bnQgKz0gc3RybGVuKHBy
-b3RvY29sc1tpXS5uYW1lKSArIDE7DQotCQkvKiBudWxsIGF0IGVuZCBvZiBzb3VyY2UgYW5kIHRh
-cmdldCBidWZmZXJzIGFueXdheSAqLw0KKwkJc2l6ZV90IGxlbiA9IHN0cmxlbihwcm90b2NvbHNb
-aV0ubmFtZSkgKyAxOw0KKw0KKwkJbWVtY3B5KHBTTUItPkRpYWxlY3RzQXJyYXkrY291bnQsIHBy
-b3RvY29sc1tpXS5uYW1lLCBsZW4pOw0KKwkJY291bnQgKz0gbGVuOw0KIAl9DQogCWluY19yZmMx
-MDAxX2xlbihwU01CLCBjb3VudCk7DQogCXBTTUItPkJ5dGVDb3VudCA9IGNwdV90b19sZTE2KGNv
-dW50KTsNCi0tIA0KMi4xNy4xDQo=
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+
+[ Upstream commit 14427b86837a4baf1c121934c6599bdb67dfa9fc ]
+
+snprintf() always returns the full length of the string it could have
+printed, even if it was truncated because the buffer was too small.
+So in case the counter value is truncated, we will over-read from
+in_buffer and over-write to the caller's buffer.
+
+I don't think it's actually possible for this to happen, but in case
+truncation occurs, WARN and return -EIO.
+
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/usb/misc/yurex.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/usb/misc/yurex.c b/drivers/usb/misc/yurex.c
+index 83eaccfa9ee5..fbcb1cd4c118 100644
+--- a/drivers/usb/misc/yurex.c
++++ b/drivers/usb/misc/yurex.c
+@@ -430,6 +430,9 @@ static ssize_t yurex_read(struct file *file, char *buff=
+er, size_t count, loff_t
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+ 	mutex_unlock(&dev->io_mutex);
+=20
++	if (WARN_ON_ONCE(len >=3D sizeof(in_buffer)))
++		return -EIO;
++
+ 	return simple_read_from_buffer(buffer, count, ppos, in_buffer, len);
+ }
+=20
+--=20
+2.17.1
