@@ -2,141 +2,150 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E9CC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E43C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B48206B2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:57:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B48206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 9D3AA206B2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:57:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iws60QKv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D3AA206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728782AbeJAMda (ORCPT
+        id S1728806AbeJAMdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 08:33:30 -0400
-Received: from mout.gmx.net ([212.227.15.19]:41603 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727693AbeJAMda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 08:33:30 -0400
-Received: from [192.168.20.60] ([92.116.143.109]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MGS9o-1ftbfv21Lc-00DHkH; Mon, 01
- Oct 2018 07:57:23 +0200
-Received: from [192.168.20.60] ([92.116.143.109]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MGS9o-1ftbfv21Lc-00DHkH; Mon, 01
- Oct 2018 07:57:23 +0200
-Subject: Re: linux-next: Signed-off-by missing for commit in the parisc-hd
- tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Parisc List <linux-parisc@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181001110401.046aa075@canb.auug.org.au>
-From:   Helge Deller <deller@gmx.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=deller@gmx.de; prefer-encrypt=mutual; keydata=
- xsBNBFDPIPYBCAC6PdtagIE06GASPWQJtfXiIzvpBaaNbAGgmd3Iv7x+3g039EV7/zJ1do/a
- y9jNEDn29j0/jyd0A9zMzWEmNO4JRwkMd5Z0h6APvlm2D8XhI94r/8stwroXOQ8yBpBcP0yX
- +sqRm2UXgoYWL0KEGbL4XwzpDCCapt+kmarND12oFj30M1xhTjuFe0hkhyNHkLe8g6MC0xNg
- KW3x7B74Rk829TTAtj03KP7oA+dqsp5hPlt/hZO0Lr0kSAxf3kxtaNA7+Z0LLiBqZ1nUerBh
- OdiCasCF82vQ4/y8rUaKotXqdhGwD76YZry9AQ9p6ccqKaYEzWis078Wsj7p0UtHoYDbABEB
- AAHNHEhlbGdlIERlbGxlciA8ZGVsbGVyQGdteC5kZT7CwJIEEwECADwCGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheAFiEE9M/0wAvkPPtRU6Boh8nBUbUeOGQFAlrHzIICGQEACgkQh8nB
- UbUeOGT1GAgAt+EeoHB4DbAx+pZoGbBYp6ZY8L6211n8fSi7wiwgM5VppucJ+C+wILoPkqiU
- +ZHKlcWRbttER2oBUvKOt0+yDfAGcoZwHS0P+iO3HtxR81h3bosOCwek+TofDXl+TH/WSQJa
- iaitof6iiPZLygzUmmW+aLSSeIAHBunpBetRpFiep1e5zujCglKagsW78Pq0DnzbWugGe26A
- 288JcK2W939bT1lZc22D9NhXXRHfX2QdDdrCQY7UsI6g/dAm1d2ldeFlGleqPMdaaQMcv5+E
- vDOur20qjTlenjnR/TFm9tA1zV+K7ePh+JfwKc6BSbELK4EHv8J8WQJjfTphakYLVM7ATQRQ
- zyD2AQgA2SJJapaLvCKdz83MHiTMbyk8yj2AHsuuXdmB30LzEQXjT3JEqj1mpvcEjXrX1B3h
- +0nLUHPI2Q4XWRazrzsseNMGYqfVIhLsK6zT3URPkEAp7R1JxoSiLoh4qOBdJH6AJHex4CWu
- UaSXX5HLqxKl1sq1tO8rq2+hFxY63zbWINvgT0FUEME27Uik9A5t8l9/dmF0CdxKdmrOvGMw
- T770cTt76xUryzM3fAyjtOEVEglkFtVQNM/BN/dnq4jDE5fikLLs8eaJwsWG9k9wQUMtmLpL
- gRXeFPRRK+IT48xuG8rK0g2NOD8aW5ThTkF4apznZe74M7OWr/VbuZbYW443QQARAQABwsBf
- BBgBAgAJBQJQzyD2AhsMAAoJEIfJwVG1HjhkNTgH/idWz2WjLE8DvTi7LvfybzvnXyx6rWUs
- 91tXUdCzLuOtjqWVsqBtSaZynfhAjlbqRlrFZQ8i8jRyJY1IwqgvHP6PO9s+rIxKlfFQtqhl
- kR1KUdhNGtiI90sTpi4aeXVsOyG3572KV3dKeFe47ALU6xE5ZL5U2LGhgQkbjr44I3EhPWc/
- lJ/MgLOPkfIUgjRXt0ZcZEN6pAMPU95+u1N52hmqAOQZvyoyUOJFH1siBMAFRbhgWyv+YE2Y
- ZkAyVDL2WxAedQgD/YCCJ+16yXlGYGNAKlvp07SimS6vBEIXk/3h5Vq4Hwgg0Z8+FRGtYZyD
- KrhlU0uMP9QTB5WAUvxvGy8=
-Message-ID: <7d3bdf93-73e6-1f4a-8242-84532ebfd01a@gmx.de>
-Date:   Mon, 1 Oct 2018 07:57:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Mon, 1 Oct 2018 08:33:50 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34501 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728682AbeJAMdu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 08:33:50 -0400
+Received: by mail-pf1-f193.google.com with SMTP id k19-v6so8392599pfi.1
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 22:57:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BTe0ut8M/73bIDitbXKLPX4PdhLOX2Y10+kntExtAJI=;
+        b=iws60QKvAWO92svfA3VQZbsctJql3MvAkoHgTHqrdq6jOgnHi92YfGwgfA38zW2UIz
+         y7Sl5/kB/MXviXJ6WP84/ZTlFIbDyDA8wbZ1zzgEhajZkVPteBdSubdMKxUFY+1qD8+i
+         ZFyUy/NUjWx6n2KlI4PLeThKFWSvO+MthhUcI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BTe0ut8M/73bIDitbXKLPX4PdhLOX2Y10+kntExtAJI=;
+        b=m1fd9LVgjkz0TRNsAxbNLnfEx3BE/9D8jKCV8afMGqKJ8GLNgw9NTejghLhVKsl+JN
+         ObfHHdu/sMz+NS1M8hHq5bZRpR1lSig51rCY+vX9zS6dHnZHV4g6mtF5I+Mvpj/Fiiqs
+         lvo2kyvqagZlXY9RZlu2ZGbRrYDAqjdX9waKgSCQtz81p9vPwrpk6sdvZTsR2mwHBQgz
+         UA3MezY+VYpah+eSUMfehFQZIjl/4XDrHCTFWTpHODlzsaaZADZxG2zJ/jRJy/SggfDy
+         smYNE8dA7C/+VByj/M+5ZlBOVKKyrREwtXJ8OnshmwadWRGPdpnF1vIEOJPfuk7N2uV4
+         WlOw==
+X-Gm-Message-State: ABuFfoh1mg+pwzPcZHeLZtL/YBtkmm0KmgjFaev2m171oUJmx0qhVJbn
+        bB+Tp/RTfDZapLzT9PEKh5wjoQ==
+X-Google-Smtp-Source: ACcGV633RnuJb1h/D2bMsDJI/gHtacK9+69sRU0f0dVwd97/8ys+vu2OgX5GqxXhFp2f9U4+kCHDBw==
+X-Received: by 2002:a63:2541:: with SMTP id l62-v6mr8681247pgl.343.1538373467061;
+        Sun, 30 Sep 2018 22:57:47 -0700 (PDT)
+Received: from localhost ([122.172.136.196])
+        by smtp.gmail.com with ESMTPSA id j5-v6sm16101352pff.139.2018.09.30.22.57.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 30 Sep 2018 22:57:46 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 11:27:44 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        rjw@rjwysocki.net, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH V2 2/2] cpufreq: imx6q: read OCOTP through nvmem for
+ imx6ul/imx6ull
+Message-ID: <20181001055744.a3caymeppg3ttayw@vireshk-i7>
+References: <1537154264-23252-1-git-send-email-Anson.Huang@nxp.com>
+ <1537154264-23252-2-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20181001110401.046aa075@canb.auug.org.au>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="NyQzhZz4bLBdFLijrimIMnMY2Qdp4MyEu"
-X-Provags-ID: V03:K1:qgNAyyVlOUcSSlMji0RWtAHboYGmU8WfzwXDFVE0E6zOnN3+7t+
- Kzcc0B2v5mzwrnygwQNJy6hrFu5340VtUZSFE8asZFq9dAOPkx2NUkHji5krU7SyZVP/8Dx
- Xfl4m7d3XMQu709DDuBZLKRfvwFjtt1NjfJHtB6PLZR5fhk8IC4thPoGnzAOAcpcuelT3p6
- ViWU+UR25ZMz0+5E8VRxA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:CvyPgAKA9BU=:TJ9JYyLqlziE/8h2qpKWXs
- dEp4J5j19GyCEDrEWvnCLehiMogEz0qGm/8Ls0Xgs3wu/UZPP3YsQjDiIsUZR8J/FnQ5MdUDx
- 7uw6hxRI3FD8+qHkM1xnY38cHmMlM6BO39xD/3rC+czJ9atTz2lkpciWKigXH0eU8L22Eyo0Y
- 9+v6OOLQSqIV2HUhb4R64/ML7L/plGm05Nl4TfEp25VgVhGM5AL7PGAX+5XS7Wuxk/MAyXEuM
- 1oZNwOAbYcaz6+PFDtoxmAhpMlSqemx+I/eCJxlluFtHtMHddJq+PMwBrjJoTs9XGES2ca1YL
- nJqZ3bRVw5CnLuI1eHICSVwpDYWK462mezE5Traz8Sbid0Bs2K0EflT8wvx+bltL4sWHIAxEG
- OYGm1MUGUc48RVvCOvv66Jo9CmOXAMk+cWWruEFtG7F1+pSYp28m7IIQXczli38/OgttcmLxE
- wZZ9NmqmBAXmJrqlbXGEcfFFqclYWry9Uwvkwt3z0Jlz4NE43Cg4DYQmp7/n4V6OMrTLSvgoc
- h60gMqPWMOI6TS8Z3srC2htnDHuR9kxsRoR1MsNEDhGoyFHDSTroxyFH2EPcJNohy+bES0Bbn
- E6qJ8nC0At3x28ZrCyTmZTE7uYLm6jTzkVuJUC5/VgFmo1/tfc4lptigULYz6h1/nZK/LJobD
- b0xEJKaaE6bLM+wclaIgLHTLWYZhsz5TYPylW4cBqa7XD4mDUkRVzO9a5QXATy8lM4aqVANR7
- LGvnrJb1fpsZmsLOlAwy894Rv1DSaWQHPgVRhwCj3OeNQ5gZdRrQM5XUT6bHdIXWF7khv4oL1
- ZbQdsNuZB+qoI4vLsY/wZD9Q0tcmg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537154264-23252-2-git-send-email-Anson.Huang@nxp.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---NyQzhZz4bLBdFLijrimIMnMY2Qdp4MyEu
-Content-Type: multipart/mixed; boundary="R1H1Iwl10G1yGJIfoUvsLtcrjgfq1Fgft";
- protected-headers="v1"
-From: Helge Deller <deller@gmx.de>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Parisc List <linux-parisc@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <7d3bdf93-73e6-1f4a-8242-84532ebfd01a@gmx.de>
-Subject: Re: linux-next: Signed-off-by missing for commit in the parisc-hd
- tree
-References: <20181001110401.046aa075@canb.auug.org.au>
-In-Reply-To: <20181001110401.046aa075@canb.auug.org.au>
+On 17-09-18, 11:17, Anson Huang wrote:
+> On i.MX6UL/i.MX6ULL, accessing OCOTP directly is wrong because
+> the ocotp clock needs to be enabled first. Add support for reading
+> OCOTP through the nvmem API, and keep the old method there to
+> support old dtb.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+> changes since V1:
+> 	add old dtb support.
+>  drivers/cpufreq/imx6q-cpufreq.c | 52 +++++++++++++++++++++++++++--------------
+>  1 file changed, 35 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+> index b2ff423..518386c4 100644
+> --- a/drivers/cpufreq/imx6q-cpufreq.c
+> +++ b/drivers/cpufreq/imx6q-cpufreq.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/cpu_cooling.h>
+>  #include <linux/err.h>
+>  #include <linux/module.h>
+> +#include <linux/nvmem-consumer.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/pm_opp.h>
+> @@ -290,20 +291,32 @@ static void imx6q_opp_check_speed_grading(struct device *dev)
+>  #define OCOTP_CFG3_6ULL_SPEED_792MHZ	0x2
+>  #define OCOTP_CFG3_6ULL_SPEED_900MHZ	0x3
+>  
+> -static void imx6ul_opp_check_speed_grading(struct device *dev)
+> +static int imx6ul_opp_check_speed_grading(struct device *dev)
+>  {
+> -	struct device_node *np;
+> -	void __iomem *base;
+>  	u32 val;
+> +	int ret = 0;
+>  
+> -	np = of_find_compatible_node(NULL, NULL, "fsl,imx6ul-ocotp");
+> -	if (!np)
+> -		return;
+> +	if (of_find_property(dev->of_node, "nvmem-cells", NULL)) {
+> +		ret = nvmem_cell_read_u32(dev, "speed_grade", &val);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		struct device_node *np;
+> +		void __iomem *base;
+> +
+> +		np = of_find_compatible_node(NULL, NULL, "fsl,imx6ul-ocotp");
+> +		if (!np)
+> +			return -ENOENT;
+> +
+> +		base = of_iomap(np, 0);
+> +		if (!base) {
+> +			dev_err(dev, "failed to map ocotp\n");
+> +			of_node_put(np);
+> +			return -EFAULT;
+> +		}
+>  
+> -	base = of_iomap(np, 0);
+> -	if (!base) {
+> -		dev_err(dev, "failed to map ocotp\n");
+> -		goto put_node;
+> +		val = readl_relaxed(base + OCOTP_CFG3);
+> +		iounmap(base);
 
---R1H1Iwl10G1yGJIfoUvsLtcrjgfq1Fgft
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Don't you need to put the node np here ?
 
-On 01.10.2018 03:04, Stephen Rothwell wrote:
-> Commit
->   f17bbdb5eea2 ("parisc: Remove PTE load and fault check from L2_ptep m=
-acro")
-> is missing a Signed-off-by from its committer.
-
-Fixed now.
-
-Thanks!
-Helge
-
-
---R1H1Iwl10G1yGJIfoUvsLtcrjgfq1Fgft--
-
---NyQzhZz4bLBdFLijrimIMnMY2Qdp4MyEu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYIAB0WIQTPnDOmy1/TQodsisYgKkl43U+sXQUCW7G3QAAKCRAgKkl43U+s
-XdYjAQCLOr7DYV4TkmDFUyJGnMM7k/cB0FQjTfXpiHGzRW4AgwEA39xQtbkEEVzk
-u6090ybPL9CgPY+owhGj7lxGmILqoAI=
-=iZKw
------END PGP SIGNATURE-----
-
---NyQzhZz4bLBdFLijrimIMnMY2Qdp4MyEu--
+-- 
+viresh
