@@ -2,135 +2,337 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DFBC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B59C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA50A208D9
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F75D20666
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:35:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="lWGO7EpJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA50A208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YD9mey0l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F75D20666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729558AbeJAWNa (ORCPT
+        id S1726460AbeJAWNq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:13:30 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57680 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729480AbeJAWNa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:13:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=VgzU1MDDX0ITpmlBsARB7c2IRse31LXcqUNo/1Eq9N4=; b=lWGO7EpJED8aC33I/kTx7urMe
-        oia9DXOZrj4UAa/9uXjqJjMxy0Z8Wq33kLoCJwgoRIh1YYtIP5MiYNF4dAgSqqQ31M037pnesuQeR
-        /3q5PheaKXF/c99ds6yXAxlnzZ1K4MZuaPe7htOGB+d2alc/KZ6dPtSWkeNmLvnsFMyuA=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g70Dt-0007xM-LD; Mon, 01 Oct 2018 15:35:01 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 341B91121CA5; Mon,  1 Oct 2018 16:35:01 +0100 (BST)
-Date:   Mon, 1 Oct 2018 16:35:01 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     masonccyang@mxic.com.tw
-Cc:     tpiepho@impinj.com, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
-        juliensu@mxic.com.tw, zhengxunli@mxic.com.tw
-Subject: Re: [PATCH v3 1/2] spi: Add MXIC controller driver
-Message-ID: <20181001153501.GD19099@sirena.org.uk>
-References: <1538120112-15530-1-git-send-email-masonccyang@mxic.com.tw>
- <1538120112-15530-2-git-send-email-masonccyang@mxic.com.tw>
+        Mon, 1 Oct 2018 18:13:46 -0400
+Received: from mail-eopbgr70057.outbound.protection.outlook.com ([40.107.7.57]:59296
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726152AbeJAWNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 18:13:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RPYlgqgE0D3x82exSYZbB52QfKnQpd377k+FbV/r6Z0=;
+ b=YD9mey0lM5mBNi6fDS2KlnwQvAogSYVJkvd7PXAu0it9esG9ofZOwLoFZ4qy1QYxArKlCg3Vdr4DPrurwKt8wjrq/R6fA/1jWIA2Viq6A3gUZYxHoZ91v7C0wmyyJPZYh7ogj7Ca5O226YMi4VFcsJilnM32phv6ywSnAvzaHzU=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ioana.ciornei@nxp.com; 
+Received: from fsr-ub1464-137.ea.freescale.net (86.34.165.90) by
+ DB6PR0401MB2357.eurprd04.prod.outlook.com (2603:10a6:4:4a::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.22; Mon, 1 Oct 2018 15:35:17 +0000
+From:   Ioana Ciornei <ioana.ciornei@nxp.com>
+To:     gregkh@linuxfoundation.org, idryomov@gmail.com, sage@redhat.com,
+        elder@kernel.org, jth@kernel.org, benh@kernel.crashing.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Ioana Ciornei <ioana.ciornei@nxp.com>
+Subject: [PATCH] driver core: device: add BUS_ATTR_WO macro
+Date:   Mon,  1 Oct 2018 18:32:52 +0300
+Message-Id: <1538407972-9340-1-git-send-email-ioana.ciornei@nxp.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0IvGJv3f9h+YhkrH"
-Content-Disposition: inline
-In-Reply-To: <1538120112-15530-2-git-send-email-masonccyang@mxic.com.tw>
-X-Cookie: No lifeguard on duty.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [86.34.165.90]
+X-ClientProxiedBy: VI1P18901CA0021.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:801::31) To DB6PR0401MB2357.eurprd04.prod.outlook.com
+ (2603:10a6:4:4a::8)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 27e086f1-e8dc-4c24-c747-08d627b37d92
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0401MB2357;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0401MB2357;3:iGO3BdKKWnYaozEtkXLbrihEOvoeohyBmmsqzgqvIXCj+nW1Kxaf0jg9kly0eIYw8YIBuc2ObjED1XkyMZxd+E74oCD9RsTyt7EnH9s0/al7JIKmWxzI3SvDwIlFxy5HDMSQVGd9a611JHihfBAz02ysgidw9hqTRdZRQzGKZJe+TgK6I4MohjgSQrm+Q5SGa5ySR9qxW018B4gowcE1CmVu+kPyAL9r1DF2RctP4QShh/S42HP6W+VNyXaub/DG;25:iuqeGSvgdZG6kzUPlbDibJCPBSOiwrrsZe+YuVe7KxO/HHkbXw4xnje0uv2SWLCNLxN9tlP/1uKC5QXXyQ+vUKe+oh27GhJO2WLSRy7wvTdHYMnwGRHETEVsZveRtF5akJiyQEPMAlt4ay0NbpO/ZLQQ9Ux1A/DVfELJ7PGWybwJT/wzecAUMpjRt4xupcwuL+PNPqW10p+lTFTJHWTjbpZXYV/NhNl2oMHFnLt8fRXoKaerSIcIbUvQSWTkVL/PZ2TAAA0GcF/WNmgyJxZ7ItGbESAsUKn7EeRFrlvimLYx7GhYltAU+j/olWQRYMdyCLkAOhpR1+gaVpBxg4XFYA==;31:acnC9xCfXfogs7MVPQya6iY7rxWdHoTrqocGQplotD5Xk6hDExShprR322NYQtEFoDgHfAVyIMA/bjt1MB3dSx+ioP+6QCCpVM672+VYdSs5YRJeLWY1DUe2BNcW+WvOHU1zj+PH5LqNtISkcJsYqRCJTiPByhRLl61jBseWmSs07GKhlVVbJDrCBMEtw4wLP2rrA9e0cYQzE19XJnqndhfTyCERGyl5KbpGsxYLfLA=
+X-MS-TrafficTypeDiagnostic: DB6PR0401MB2357:
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0401MB2357;20:wEJqfZoGCsXmXjzqV4ibt/EobMRqZHBZ+hmbpiujYhC2pRjQ/RIPlcm2pJaHIQJ9gIOdnZuSyU+7W9q5BY8JZI9V+BB8/XSjetVYyk+xdN9O/RyBhHPXfXZbNyKE5Q99FD2ms2SYWk3xTXb4V0YWTq7DSHrEYyjQNxw6Dmns2CMXO7scSW5iRd1jVagnEG4IzhSWA+19a4XqU1q04IPIEKKqLQnYeHVPSfIAWgfprP13I0Qk7vnoaToeyAYGtK3BGzjxm+Kpb8iLmqJysruE0bjbSAIBrbuyhR16xSUnzh+HoaK8kyTMMYDb6yQnYfGW3MsM1Ms7syQw6WzQBE29UIzHfh7q5zFnuHpt0jKbgbEb9yhl/ZyjXjpZ6ZoODaebl6vcirs4rLywqSNjKw3XSaS88CQCt/JTekUdinoH/Rnlyw9nYVDd/G2TfopyL4QEdR+HyoDqCFyPD0jKn0zYOQuBvOIOjKP3G/AYN9hAuJD9kqgEdKiX8ANqtPwNBzS3;4:fEPSkFhMgGLlLWoQ/QBiHG0wz1MGvsmIW3oPylmqoK3sUxiOFABMzkwJlFG9hQJ0at4zl2UWqxwO2bjGUeWpkNX1IE+LjIbwWlmPH0xTnS3V9UiLip/3Myw4RD79wUbRZU6vyt1R6qCzRtejal78Z3wEyvTYps6dS23jLBkWecU9doqfPL5GwGYeI3SGD/wafTzvIWpzyRZG0kRY+yQttUrDYqPeSzC7UvIZkvD11zcHBYx3crl43Z9144BoPlEvS8giVskYqMQhkAuSmozp6SAFc+iZPFRXlcyZd6XpPcRkBz1jQhy6/IQ/2lbmqHxP
+X-Microsoft-Antispam-PRVS: <DB6PR0401MB2357FC17C2D585BBD9ACDAD0E0EF0@DB6PR0401MB2357.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:DB6PR0401MB2357;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0401MB2357;
+X-Forefront-PRVS: 0812095267
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(396003)(376002)(39860400002)(346002)(136003)(189003)(199004)(7416002)(6666003)(386003)(47776003)(36756003)(106356001)(97736004)(105586002)(50226002)(316002)(26005)(2616005)(14444005)(86362001)(16586007)(2906002)(478600001)(6506007)(1857600001)(66066001)(186003)(16526019)(486006)(51416003)(8936002)(25786009)(6116002)(3846002)(39060400002)(4326008)(52116002)(476003)(956004)(44832011)(8676002)(81166006)(81156014)(50466002)(68736007)(48376002)(305945005)(7736002)(5660300001)(34290500001)(6512007)(6486002)(53936002)(33830200001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0401MB2357;H:fsr-ub1464-137.ea.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0401MB2357;23:RveyP2dXzzLTErr56RZrKSrBDxR+ZEFmcaQJO0T?=
+ =?us-ascii?Q?QKm78DbylkiF23Q4kqh2vuqrMuObQw7pW/YEaJMjhonRzWi+4Ctar54o16Ex?=
+ =?us-ascii?Q?9bl2U17TLREZ/4C9FEwL/rC0AhYuu1vrFoByGOLvgYzZiPRMtGhQZVfHK3jy?=
+ =?us-ascii?Q?I9zQUohENsxBr9hdmE224xArUWNLk1+C/VAIhd0o9GU8Y5H4PK/nD5DiixWC?=
+ =?us-ascii?Q?07+D7Kfjv2ZFFfkk8X6vdaG/jLllqHGRKZ+vA6+paWp5AgzJUmIY7NnM6VLX?=
+ =?us-ascii?Q?XGlr5P+KuJ5zzzcANPoYTcB5wjg2aLFTp1ejJfcuGkInewoZhY6VnkLQvkbJ?=
+ =?us-ascii?Q?/YjsJImWEzIO1YrqvEzFx1NM2xNmu4Y1V53VyNfK2fI9ZBaD97ezS9/5PKW3?=
+ =?us-ascii?Q?s4KWs6hxOrWR/P3SRAQsFBqNLwL/4bDgs863WEl/irkzB3I5BnMbgpRnHUzh?=
+ =?us-ascii?Q?mfsA+WpoxJ27qDlSS8TiEkPZtqTv8tR5bWjdlqOAbWg5Cj29+dMmBn1rnmfY?=
+ =?us-ascii?Q?3WMkwlUXL/lSLQKJM91XGFlrJXXPn8u4CfHcmAwJcIb9PHh5Hk0CncJUVoqC?=
+ =?us-ascii?Q?iueQfEiZ6MmRyKPPMkeeMUrxtc1CPpDdiLTHnlbSvTFTxF9XpoQZTmlhYl+I?=
+ =?us-ascii?Q?zs9fV0teLltGCDjMhx4rN8T4iNBH6ozoCXMGzbDbLQ6VZUiEa9EQaEM1gHBd?=
+ =?us-ascii?Q?Jt9BQi62+7Ji3w2uUMGuZf9MJiJJ5hJPITu2V1rzzLdHoWDOsl1MD8iE4Wbv?=
+ =?us-ascii?Q?fEQndWZ2QEAXSvKIvdKL4ZpishsBN3+hgx73fwEYgIfj9BYnXVVwniG2sjr5?=
+ =?us-ascii?Q?ElGt287H1Lb9UqSMnVkeYSd9+jCh1OwhezPRb6kft6eoFd3ytQO8YRBUXS2l?=
+ =?us-ascii?Q?CFPGDfxFPMljtOdGk7xtnjm8LKlKVq+4hp+kX/NtNijmBdzDObH1vsdH4qCb?=
+ =?us-ascii?Q?R0YPDteAduaszgARst859j4G0nFEiXehtmse/ohLZgXw1MmdEBXrYHMBT5Y6?=
+ =?us-ascii?Q?S4td0wMP4SJDYV+EQ8mgNXPhOPhFZUhg4uFUP7S/ktvX7K7TRxJg15penJjY?=
+ =?us-ascii?Q?a3L4CeN73iGDV9qpWDWveiDvQENQwZX+Q1i/9xi3vgdamyMJJJD+LmMNpAeQ?=
+ =?us-ascii?Q?pJ8TAuyjnWlNeIbNt8N4eLTWnxE0P2/CQJyV8zjZX3tIjW3bc3MJd4a7zn6s?=
+ =?us-ascii?Q?LPpjPQ/LrtxTIrh2rAV8lWE1CbcKxxCT1+aVenpeYJEIbdepMH7wxzf5Bcrp?=
+ =?us-ascii?Q?YqN8NsV4Hv477clnBwSM=3D?=
+X-Microsoft-Antispam-Message-Info: 8fiuOYtLbPJTMG+AeNUdVm3wGxVDH0DIGALP/gRLF4UWi4xLnmhSekae3e4DaVL5tODbY/BuzHqsPmrFoj3rjJZIOX0d64CVcnsjhkre8PyeLIwU3xX3yj9qB3cGzT9PDkUUGvXO8qko117f5Ks6GRtt/rRd7FMBohqCXYwZScipR9PFol4JdnAmZwKngnrQZdSL+WQVG4qyenUWK925ewLpgq6UAfCUXSyLjwDFT2IF5aG9NcdaBg3B/sY12VfnO885Dvjb+3kwF9rCP8RKppxzsOuSeW0pFPYBGHd9vPga7vftt+MiCpp7xJk5PMU/4wGyMj+i14YAQfd1K2ftzodp4CEkSn7v7wJGdd7GyYA=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0401MB2357;6:Hm0gjikMdNi+R/QJRXmohN/9m4RqYd4ebz83Z0bxV1S/JPqzX2oppQGJDJsN0Mhl0BY06QKhbhvp6Z8zvFBJSa5LKaYUJfIlQeh6I6TAP5rHJpZFMXPuQ7WxbOCWdiH/yONt6dPXcn9LMskTkXOMEcbW6He5a6EEW0zm9SB3mk4luMm7qeIJOtaxm/7i8vwosSSiuXxd2qcdeE8YUyVlE4hWPJMXmK+Ht0hiX0KOv52fbd3tb25yFE58cf/bpj2KJ4r+XlTfJ/+JtbG7M4HUXO33S//dmX0t1weKkoyCmFKhEEPj8CI3Owc7KVxoptRxjF1onJSWuH381S26PanWJ5PrpAsphlNqML0HX1o9PqMVxxH0XWaEyy8t4ua28JNCYOnw6rlb3GT8Qy/x+ykzxb3Q+u+cEWUM/iaoAbGeb1Ci1vVDUN9hQVtZ75D4x7tLXfZHKIuvp1arKcT7MXRAbw==;5:d2GVp5J+rtaWljgDvJ+XN6xYfEvMCFetbJObzBtytbwbXrG3yixKke0hVubSwCoeRarcYK61IBvhcIjKDVM5zct+yFpNF+uqXXhoClhtFQ5iSGqRIDCQp2RQOqBl3aGIiaH0qIvSXJXfrLBswufvDz1chNRQGZ/kdPlgdUhJQ70=;7:O+21IhUok5F3Q56wV6ibZnJKedMMFfNVnc1yCtT+Iqx9MFhjgEfGrmoYxIXaKzJlIaJUlZJRIeD0PQRmiWTZFO/faDarh4u3JSI/tc6rdSvT+TCa/phUG67ZxgwygDTT9sYzMJdVBtLNyyj1Nfvppy3tJkECeAIKPEXA+w2EpTyKCZgwed3oAh3uH9ebeLPy2n92HUtU+UpQ1+/uIK7HTIWcC+qXaoYOGrQJvYdFttFkyQqrMyoBm/bqves3FRvl
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2018 15:35:17.1716
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27e086f1-e8dc-4c24-c747-08d627b37d92
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0401MB2357
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add BUS_ATTR_WO macro to make it easier to add attributes without
+auditing the mode settings. Also, use the newly added macro where
+appropriate.
 
---0IvGJv3f9h+YhkrH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+---
+ arch/powerpc/platforms/pseries/ibmebus.c | 12 ++++----
+ drivers/block/rbd.c                      | 48 ++++++++++++++++----------------
+ drivers/scsi/fcoe/fcoe_sysfs.c           |  4 +--
+ drivers/scsi/fcoe/fcoe_transport.c       | 10 +++----
+ include/linux/device.h                   |  2 ++
+ include/scsi/libfcoe.h                   |  8 +++---
+ 6 files changed, 43 insertions(+), 41 deletions(-)
 
-On Fri, Sep 28, 2018 at 03:35:11PM +0800, masonccyang@mxic.com.tw wrote:
+diff --git a/arch/powerpc/platforms/pseries/ibmebus.c b/arch/powerpc/platforms/pseries/ibmebus.c
+index c7c1140..c75006c 100644
+--- a/arch/powerpc/platforms/pseries/ibmebus.c
++++ b/arch/powerpc/platforms/pseries/ibmebus.c
+@@ -261,8 +261,8 @@ static char *ibmebus_chomp(const char *in, size_t count)
+ 	return out;
+ }
+ 
+-static ssize_t ibmebus_store_probe(struct bus_type *bus,
+-				   const char *buf, size_t count)
++static ssize_t probe_store(struct bus_type *bus,
++			   const char *buf, size_t count)
+ {
+ 	struct device_node *dn = NULL;
+ 	struct device *dev;
+@@ -298,10 +298,10 @@ static ssize_t ibmebus_store_probe(struct bus_type *bus,
+ 		return rc;
+ 	return count;
+ }
+-static BUS_ATTR(probe, 0200, NULL, ibmebus_store_probe);
++static BUS_ATTR_WO(probe);
+ 
+-static ssize_t ibmebus_store_remove(struct bus_type *bus,
+-				    const char *buf, size_t count)
++static ssize_t remove_store(struct bus_type *bus,
++			    const char *buf, size_t count)
+ {
+ 	struct device *dev;
+ 	char *path;
+@@ -325,7 +325,7 @@ static ssize_t ibmebus_store_remove(struct bus_type *bus,
+ 		return -ENODEV;
+ 	}
+ }
+-static BUS_ATTR(remove, 0200, NULL, ibmebus_store_remove);
++static BUS_ATTR_WO(remove);
+ 
+ static struct attribute *ibmbus_bus_attrs[] = {
+ 	&bus_attr_probe.attr,
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 73ed5f3..703d875 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -428,14 +428,14 @@ enum rbd_dev_flags {
+ module_param(single_major, bool, 0444);
+ MODULE_PARM_DESC(single_major, "Use a single major number for all rbd devices (default: true)");
+ 
+-static ssize_t rbd_add(struct bus_type *bus, const char *buf,
+-		       size_t count);
+-static ssize_t rbd_remove(struct bus_type *bus, const char *buf,
+-			  size_t count);
+-static ssize_t rbd_add_single_major(struct bus_type *bus, const char *buf,
+-				    size_t count);
+-static ssize_t rbd_remove_single_major(struct bus_type *bus, const char *buf,
+-				       size_t count);
++static ssize_t add_store(struct bus_type *bus, const char *buf,
++			 size_t count);
++static ssize_t remove_store(struct bus_type *bus, const char *buf,
++			    size_t count);
++static ssize_t add_single_major_store(struct bus_type *bus, const char *buf,
++				      size_t count);
++static ssize_t remove_single_major_store(struct bus_type *bus, const char *buf,
++					 size_t count);
+ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth);
+ 
+ static int rbd_dev_id_to_minor(int dev_id)
+@@ -469,10 +469,10 @@ static ssize_t rbd_supported_features_show(struct bus_type *bus, char *buf)
+ 	return sprintf(buf, "0x%llx\n", RBD_FEATURES_SUPPORTED);
+ }
+ 
+-static BUS_ATTR(add, 0200, NULL, rbd_add);
+-static BUS_ATTR(remove, 0200, NULL, rbd_remove);
+-static BUS_ATTR(add_single_major, 0200, NULL, rbd_add_single_major);
+-static BUS_ATTR(remove_single_major, 0200, NULL, rbd_remove_single_major);
++static BUS_ATTR_WO(add);
++static BUS_ATTR_WO(remove);
++static BUS_ATTR_WO(add_single_major);
++static BUS_ATTR_WO(remove_single_major);
+ static BUS_ATTR(supported_features, 0444, rbd_supported_features_show, NULL);
+ 
+ static struct attribute *rbd_bus_attrs[] = {
+@@ -5930,9 +5930,9 @@ static ssize_t do_rbd_add(struct bus_type *bus,
+ 	goto out;
+ }
+ 
+-static ssize_t rbd_add(struct bus_type *bus,
+-		       const char *buf,
+-		       size_t count)
++static ssize_t add_store(struct bus_type *bus,
++			 const char *buf,
++			 size_t count)
+ {
+ 	if (single_major)
+ 		return -EINVAL;
+@@ -5940,9 +5940,9 @@ static ssize_t rbd_add(struct bus_type *bus,
+ 	return do_rbd_add(bus, buf, count);
+ }
+ 
+-static ssize_t rbd_add_single_major(struct bus_type *bus,
+-				    const char *buf,
+-				    size_t count)
++static ssize_t add_single_major_store(struct bus_type *bus,
++				      const char *buf,
++				      size_t count)
+ {
+ 	return do_rbd_add(bus, buf, count);
+ }
+@@ -6046,9 +6046,9 @@ static ssize_t do_rbd_remove(struct bus_type *bus,
+ 	return count;
+ }
+ 
+-static ssize_t rbd_remove(struct bus_type *bus,
+-			  const char *buf,
+-			  size_t count)
++static ssize_t remove_store(struct bus_type *bus,
++			    const char *buf,
++			    size_t count)
+ {
+ 	if (single_major)
+ 		return -EINVAL;
+@@ -6056,9 +6056,9 @@ static ssize_t rbd_remove(struct bus_type *bus,
+ 	return do_rbd_remove(bus, buf, count);
+ }
+ 
+-static ssize_t rbd_remove_single_major(struct bus_type *bus,
+-				       const char *buf,
+-				       size_t count)
++static ssize_t remove_single_major_store(struct bus_type *bus,
++					 const char *buf,
++					 size_t count)
+ {
+ 	return do_rbd_remove(bus, buf, count);
+ }
+diff --git a/drivers/scsi/fcoe/fcoe_sysfs.c b/drivers/scsi/fcoe/fcoe_sysfs.c
+index 5c8310b..3c23b26 100644
+--- a/drivers/scsi/fcoe/fcoe_sysfs.c
++++ b/drivers/scsi/fcoe/fcoe_sysfs.c
+@@ -671,8 +671,8 @@ static void fcoe_fcf_device_release(struct device *dev)
+ 	.release = fcoe_fcf_device_release,
+ };
+ 
+-static BUS_ATTR(ctlr_create, S_IWUSR, NULL, fcoe_ctlr_create_store);
+-static BUS_ATTR(ctlr_destroy, S_IWUSR, NULL, fcoe_ctlr_destroy_store);
++static BUS_ATTR_WO(ctlr_create);
++static BUS_ATTR_WO(ctlr_destroy);
+ 
+ static struct attribute *fcoe_bus_attrs[] = {
+ 	&bus_attr_ctlr_create.attr,
+diff --git a/drivers/scsi/fcoe/fcoe_transport.c b/drivers/scsi/fcoe/fcoe_transport.c
+index f4909cd..7789141 100644
+--- a/drivers/scsi/fcoe/fcoe_transport.c
++++ b/drivers/scsi/fcoe/fcoe_transport.c
+@@ -754,8 +754,8 @@ static int libfcoe_device_notification(struct notifier_block *notifier,
+ 	return NOTIFY_OK;
+ }
+ 
+-ssize_t fcoe_ctlr_create_store(struct bus_type *bus,
+-			       const char *buf, size_t count)
++ssize_t ctlr_create_store(struct bus_type *bus,
++			  const char *buf, size_t count)
+ {
+ 	struct net_device *netdev = NULL;
+ 	struct fcoe_transport *ft = NULL;
+@@ -817,8 +817,8 @@ ssize_t fcoe_ctlr_create_store(struct bus_type *bus,
+ 	return count;
+ }
+ 
+-ssize_t fcoe_ctlr_destroy_store(struct bus_type *bus,
+-				const char *buf, size_t count)
++ssize_t ctlr_destroy_store(struct bus_type *bus,
++			   const char *buf, size_t count)
+ {
+ 	int rc = -ENODEV;
+ 	struct net_device *netdev = NULL;
+@@ -855,7 +855,7 @@ ssize_t fcoe_ctlr_destroy_store(struct bus_type *bus,
+ 	mutex_unlock(&ft_mutex);
+ 	return rc;
+ }
+-EXPORT_SYMBOL(fcoe_ctlr_destroy_store);
++EXPORT_SYMBOL(ctlr_destroy_store);
+ 
+ /**
+  * fcoe_transport_create() - Create a fcoe interface
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 8f88254..767cf19 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -55,6 +55,8 @@ struct bus_attribute {
+ 	struct bus_attribute bus_attr_##_name = __ATTR_RW(_name)
+ #define BUS_ATTR_RO(_name) \
+ 	struct bus_attribute bus_attr_##_name = __ATTR_RO(_name)
++#define BUS_ATTR_WO(_name) \
++	struct bus_attribute bus_attr_##_name = __ATTR_WO(_name)
+ 
+ extern int __must_check bus_create_file(struct bus_type *,
+ 					struct bus_attribute *);
+diff --git a/include/scsi/libfcoe.h b/include/scsi/libfcoe.h
+index cb8a273..f58388c 100644
+--- a/include/scsi/libfcoe.h
++++ b/include/scsi/libfcoe.h
+@@ -405,10 +405,10 @@ struct fcoe_netdev_mapping {
+ int fcoe_transport_detach(struct fcoe_transport *ft);
+ 
+ /* sysfs store handler for ctrl_control interface */
+-ssize_t fcoe_ctlr_create_store(struct bus_type *bus,
+-			       const char *buf, size_t count);
+-ssize_t fcoe_ctlr_destroy_store(struct bus_type *bus,
+-				const char *buf, size_t count);
++ssize_t ctlr_create_store(struct bus_type *bus,
++			  const char *buf, size_t count);
++ssize_t ctlr_destroy_store(struct bus_type *bus,
++			   const char *buf, size_t count);
+ 
+ #endif /* _LIBFCOE_H */
+ 
+-- 
+1.9.1
 
-This looks mostly good, a couple of fairly small things:
-
-> +static int mxic_spi_clk_enable(struct mxic_spi *mxic)
-> +{
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(mxic->send_clk);
-> +	if (ret)
-> +		goto err_send_clk;
-> +
-> +	ret = clk_prepare_enable(mxic->send_dly_clk);
-> +	if (ret)
-> +		goto err_send_dly_clk;
-> +
-> +	return ret;
-> +
-> +err_send_dly_clk:
-> +	clk_disable_unprepare(mxic->send_dly_clk);
-> +err_send_clk:
-> +	clk_disable_unprepare(mxic->send_clk);
-
-You should only undo operations that succeeded in the error path, if
-something failed you don't need to revert it.
-
-> +static int mxic_spi_setup(struct spi_device *spi)
-> +{
-> +	struct mxic_spi *mxic = spi_master_get_devdata(spi->master);
-> +	unsigned long freq = spi->max_speed_hz;
-> +	int ret;
-> +
-> +	ret = clk_set_rate(mxic->send_clk, freq);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = clk_set_rate(mxic->send_dly_clk, freq);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * A constant delay range from 0x0 ~ 0x1F for input delay,
-> +	 * the unit is 78 ps, the max input delay is 2.418 ns.
-> +	 */
-> +	mxic_spi_set_input_delay_dqs(mxic, 0xf);
-
-This is changing the hardware state for all slaves, not just the device
-being configured - setup() isn't supposed to do that (yes, it's a
-confusing API but unfortunately a legacy one that'll be a pain to clean
-up).  prepare_transfer_hardware() is usually a better place to do this.
-
---0IvGJv3f9h+YhkrH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluyPqQACgkQJNaLcl1U
-h9D+OAf+OsIceza4zPHL128gdHi4SlAfaeWnDUGRfFSOdl18iGjgRQC+7WpCexxK
-qMYJ5/rdWJYZp5PunuGP2c9shVpCwLjfvfWRnAGPkvIhTrF1YlLH3weDDemaHg9p
-YsyCdRzj9lrQes2LixuTk1YmET3BncPCEMQ+1dV9cNP9TlY6UrTfiBloMOfgWtrJ
-eYL8i3dXnpuyXhT47xdeuX5s0gbhumZK8R4cQvFnVg34ctQiekn9RRLs0RtmDwIZ
-PyJ7FFjn+llo2X72XrmUl3sGUadsF5UEDrW0F1aCmH4n4VaaAnk5XhoaT3EiLHVr
-gHjBC7zA5IIrmJVnYcPNwa99s2N7Iw==
-=AGZk
------END PGP SIGNATURE-----
-
---0IvGJv3f9h+YhkrH--
