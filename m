@@ -2,156 +2,171 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E083FC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F93C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 956282084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:17:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42E5C2084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:19:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ayQ96Ese"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 956282084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EcStzklx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42E5C2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbeJAOxf (ORCPT
+        id S1728928AbeJAOzv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 10:53:35 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39625 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728749AbeJAOxf (ORCPT
+        Mon, 1 Oct 2018 10:55:51 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36749 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeJAOzv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 10:53:35 -0400
-Received: by mail-ed1-f67.google.com with SMTP id h4-v6so13324231edi.6
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 01:17:02 -0700 (PDT)
+        Mon, 1 Oct 2018 10:55:51 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p89-v6so11279851ljb.3;
+        Mon, 01 Oct 2018 01:19:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bsK7dn08fRjImDu/Im+MSlC9O2G4ZzMTA+s2UIlvXFw=;
-        b=ayQ96EseacH262NYg2oTpG4wgKbu7zCODd3zif/sKTCqbf4OcTtdyQCE42m6oaGssQ
-         YvAOh0ceLZNq4Vm5nIhxRWiwKe8hnnfr6SwdjZClzRuXdLkCFaqmO4AmQUtUVPy0bgx7
-         GzAN6sgIgV183a5nKFHfQmKBENMhTJlztEsU4=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R7pkHtSIPpwNIdKEIcKEuM+r+OnOX2cF/1cMeMMbUwg=;
+        b=EcStzklxa75YO+t9w8zj1RWDV6szkVsQXHMelaOjRS4QQnv4da9xgkfQkSIqfuXkck
+         ELbXHqK3aZs45j78/a2mgP/9LkXlOz548Dougt+2dlwF/gULlfkdi36OMXEo3FNns7XH
+         zWO1vZv0+iEu7G/W+HSBuT6tSwP0My0p1OyXJE4BaBkMCeWe0KeO9YZb2Nq3lhshWuSL
+         zmF2tPmiJzV/rDnccumlrkLLX+5IEwQl4wRjwKwohLFooIDjtqVJ6CNt2BAG/AGYUxrl
+         1N7n+OtK/GkrKXVQczqLEAysfpw6E09Td9vRoMSUiGGV2BNQAVD9MR8OPYCP3xlTMqq4
+         SK7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=bsK7dn08fRjImDu/Im+MSlC9O2G4ZzMTA+s2UIlvXFw=;
-        b=oNnkaST51PXmV+l+fKQFUnAZ3h7pwkrBKwcmIzBLj3MFofDkDbJ2l4iwUek0pUvYlo
-         SvGboUGFeyk9ktArEXLptyp5i2teorP5Lu5NfUSPzWUX+p4WNXtgeGY0iAIXhPHUR8Zw
-         bdIamT0t9KAKnvzs0i1GVAIC1MdQoFk++kGDZQNSw5L6DsRzCjuIDp/5VKWNP7s1y156
-         5ZdBxHJV+mpJb0LpNqLoCP9NyKVrbNohxB0gA88yDZm3FHIaz497qnT2ErCCTOR7IMkV
-         RDKHsy/TAleUXBuEOmjM7fa+qRzwao6gYRA55UPpXtHcUiim0Xx5rD27bUz4q9TXPZy7
-         +RXQ==
-X-Gm-Message-State: ABuFfoihvpHWEkYhHWOSOI03+twtu00sfgCgtg0y1o46f/EH1Lohh/To
-        SZ2nEUSsGkSylUFGNIlV3u5Nyw==
-X-Google-Smtp-Source: ACcGV63DUQOZrwvvB/t4fNDz8VN11Yz9Cq7QMgfDX5DVHFKvX4We+ammRHDEdaHX6s2fE9jhnhLGrA==
-X-Received: by 2002:aa7:d951:: with SMTP id l17-v6mr15497899eds.37.1538381821877;
-        Mon, 01 Oct 2018 01:17:01 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id m18-v6sm1976129ejk.59.2018.10.01.01.17.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 01:17:01 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 10:16:59 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH v2] drm: Convert to using %pOFn instead of
- device_node.name
-Message-ID: <20181001081659.GW11082@phenom.ffwll.local>
-Mail-Followup-To: Rob Herring <robh@kernel.org>,
-        linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, Sean Paul <sean@poorly.run>
-References: <20180928225044.20132-1-robh@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R7pkHtSIPpwNIdKEIcKEuM+r+OnOX2cF/1cMeMMbUwg=;
+        b=rpiwg9MU88mtsHtbV0by2N3FaY1Vb8+D3Fx44DwqFa/SioYfXS7USTYne/3prBeaRB
+         l459VqILx9XiK/a2vJbZvLgfkODHxHh6O+jpP6BdGISN757izEQZb2dpU/8l5cGFgGPP
+         e7R6K995TVoMq7eK/n0BDTNZeZyiPlp51FxLC/f/Q16Oy3hDryiAbV5M+CX77XQAUyuZ
+         YDWdjdmJrldEaNvnhtXZI8J1XJKMiXs2CNaz7vvnPvBAD5/xr75f4qzSD1/cnX4tf3f5
+         vtYMKBpeLFk0jPasgT4bJ9tb2ehhT42vf7nhyjt9GSp4WZfWrta/anhsUpivNvOG75zY
+         jfBQ==
+X-Gm-Message-State: ABuFfoiQ7CvvBclirSd2bo3BEmE8PuWGzTSa2EMLy6qBK9jUd9ih6JBS
+        Mi8JFf0N3TjYJw2hX18c9+sFblVvownZLl4gTnk=
+X-Google-Smtp-Source: ACcGV60hJEzzL6foynvY5oNJZKv9Kky4Fi1iqqrJIen1nX3MMIMFALIquWO83iixLcI7GgD7bOMH8jaIYRHvZjifVOU=
+X-Received: by 2002:a2e:921a:: with SMTP id k26-v6mr5466049ljg.163.1538381956985;
+ Mon, 01 Oct 2018 01:19:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928225044.20132-1-robh@kernel.org>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180920204751.29117-1-ricardo.ribalda@gmail.com>
+ <20180920204751.29117-6-ricardo.ribalda@gmail.com> <20180927193508.r25owgcwfeui2x7k@valkosipuli.retiisi.org.uk>
+In-Reply-To: <20180927193508.r25owgcwfeui2x7k@valkosipuli.retiisi.org.uk>
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date:   Mon, 1 Oct 2018 10:19:00 +0200
+Message-ID: <CAPybu_3sh8KVZZruPrvvjEN=5=b56ciUjJXL5PK6GdV3mRG_Vg@mail.gmail.com>
+Subject: Re: [PATCH v4 6/7] [media] ad5820: Add support for ad5821 and ad5823
+To:     Sakari Ailus <sakari.ailus@iki.fi>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 05:50:44PM -0500, Rob Herring wrote:
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
-> 
-> For drm_modes.c, the full node path is already printed out, so printing
-> just the node name a 2nd time is redundant and can be removed.
-> 
-> Cc: Gustavo Padovan <gustavo@padovan.org>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Sean Paul <sean@poorly.run>
-> Cc: David Airlie <airlied@linux.ie>
-> Acked-by: Rob Clark <robdclark@gmail.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: freedreno@lists.freedesktop.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> v2:
-> - Add to commit msg that we're dropping redundant printing of node name.
+Hi Sakari
+On Thu, Sep 27, 2018 at 9:35 PM Sakari Ailus <sakari.ailus@iki.fi> wrote:
+>
+> Hi Ricardo,
+>
+> On Thu, Sep 20, 2018 at 10:47:50PM +0200, Ricardo Ribalda Delgado wrote:
+> > According to the datasheet, both AD5821 and AD5820 share a compatible
+> > register-set:
+> > http://www.analog.com/media/en/technical-documentation/data-sheets/AD5821.pdf
+> >
+> > Some camera modules also refer that AD5823 is a replacement of AD5820:
+> > https://download.kamami.com/p564094-OV8865_DS.pdf
+>
+> A silly question --- the maximum current of these devices differs from each
+> other. Is the control value range still the same?
 
-Applied, thanks for the patch.
+AFAIK yes, and fortuntately/unfortunatelly the control interface is in
+a value, not in Amp, so there is nothing to convert on the driver.
 
-Aside, still don't want drm-misc commit rights so you can offload these
-yourself?
+Regards!
 
-Cheers, Daniel
+>
+> >
+> > Suggested-by: Pavel Machek <pavel@ucw.cz>
+> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> > ---
+> >  drivers/media/i2c/ad5820.c | 12 ++++++++----
+> >  1 file changed, 8 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/media/i2c/ad5820.c b/drivers/media/i2c/ad5820.c
+> > index 5d1185e7f78d..c52af302d516 100644
+> > --- a/drivers/media/i2c/ad5820.c
+> > +++ b/drivers/media/i2c/ad5820.c
+> > @@ -34,8 +34,6 @@
+> >  #include <media/v4l2-device.h>
+> >  #include <media/v4l2-subdev.h>
+> >
+> > -#define AD5820_NAME          "ad5820"
+> > -
+> >  /* Register definitions */
+> >  #define AD5820_POWER_DOWN            (1 << 15)
+> >  #define AD5820_DAC_SHIFT             4
+> > @@ -368,7 +366,9 @@ static int ad5820_remove(struct i2c_client *client)
+> >  }
+> >
+> >  static const struct i2c_device_id ad5820_id_table[] = {
+> > -     { AD5820_NAME, 0 },
+> > +     { "ad5820", 0 },
+> > +     { "ad5821", 0 },
+> > +     { "ad5823", 0 },
+> >       { }
+> >  };
+> >  MODULE_DEVICE_TABLE(i2c, ad5820_id_table);
+> > @@ -376,6 +376,8 @@ MODULE_DEVICE_TABLE(i2c, ad5820_id_table);
+> >  #ifdef CONFIG_OF
+> >  static const struct of_device_id ad5820_of_table[] = {
+> >       { .compatible = "adi,ad5820" },
+> > +     { .compatible = "adi,ad5821" },
+> > +     { .compatible = "adi,ad5823" },
+>
+> You could set the subdev name accordingly as well.
+>
+> >       { }
+> >  };
+> >  MODULE_DEVICE_TABLE(of, ad5820_of_table);
+> > @@ -384,6 +386,8 @@ MODULE_DEVICE_TABLE(of, ad5820_of_table);
+> >  #ifdef CONFIG_ACPI
+> >  static const struct acpi_device_id ad5820_acpi_ids[] = {
+> >       { "AD5820" },
+> > +     { "AD5821" },
+> > +     { "AD5823" },
+> >       { }
+> >  };
+> >
+> > @@ -394,7 +398,7 @@ static SIMPLE_DEV_PM_OPS(ad5820_pm, ad5820_suspend, ad5820_resume);
+> >
+> >  static struct i2c_driver ad5820_i2c_driver = {
+> >       .driver         = {
+> > -             .name   = AD5820_NAME,
+> > +             .name   = "ad5820",
+> >               .pm     = &ad5820_pm,
+> >               .of_match_table = of_match_ptr(ad5820_of_table),
+> >               .acpi_match_table = ACPI_PTR(ad5820_acpi_ids),
+>
+> --
+> Regards,
+>
+> Sakari Ailus
+> e-mail: sakari.ailus@iki.fi
 
-> 
->  drivers/gpu/drm/drm_modes.c     | 4 ++--
->  drivers/gpu/drm/msm/hdmi/hdmi.c | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-> index 02db9ac82d7a..24a750436559 100644
-> --- a/drivers/gpu/drm/drm_modes.c
-> +++ b/drivers/gpu/drm/drm_modes.c
-> @@ -716,8 +716,8 @@ int of_get_drm_display_mode(struct device_node *np,
->  	if (bus_flags)
->  		drm_bus_flags_from_videomode(&vm, bus_flags);
->  
-> -	pr_debug("%pOF: got %dx%d display mode from %s\n",
-> -		np, vm.hactive, vm.vactive, np->name);
-> +	pr_debug("%pOF: got %dx%d display mode\n",
-> +		np, vm.hactive, vm.vactive);
->  	drm_mode_debug_printmodeline(dmode);
->  
->  	return 0;
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
-> index c79659ca5706..23670907a29d 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi.c
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
-> @@ -579,7 +579,7 @@ static int msm_hdmi_bind(struct device *dev, struct device *master, void *data)
->  	hdmi_cfg = (struct hdmi_platform_config *)
->  			of_device_get_match_data(dev);
->  	if (!hdmi_cfg) {
-> -		dev_err(dev, "unknown hdmi_cfg: %s\n", of_node->name);
-> +		dev_err(dev, "unknown hdmi_cfg: %pOFn\n", of_node);
->  		return -ENXIO;
->  	}
->  
-> -- 
-> 2.17.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Ricardo Ribalda
