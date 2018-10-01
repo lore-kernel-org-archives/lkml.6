@@ -2,120 +2,117 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36501C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C174DC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFCFE2089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B7822089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:27:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eUMRl62J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFCFE2089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="uhCqOhzm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B7822089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbeJBADn (ORCPT
+        id S1726207AbeJBAGD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:03:43 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34979 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725740AbeJBADn (ORCPT
+        Mon, 1 Oct 2018 20:06:03 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41903 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeJBAGD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:03:43 -0400
-Received: by mail-pg1-f196.google.com with SMTP id v133-v6so9957415pgb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 10:24:54 -0700 (PDT)
+        Mon, 1 Oct 2018 20:06:03 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q39-v6so9090950lfi.8
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 10:27:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fSZ1sLmS98NRKhrX9r7fDvdHuw3gY0AXrZq1nHGqIKI=;
-        b=eUMRl62J3E3fdkLdvkAY68NJYftRc4mOgT21sbkH7VKI5lrvhUHiWXcT0BPEih+Crv
-         lnzOh5WTXE4JaZCtXb0/UOoD10XYOx3gYHhNWvNMsQOK5naqF2Rf8rxNkuz6WetFM+aB
-         /Ydke1MXYf0rjFIbTYmrwKT3GRxPHZD8KoHUUxf7gbmBGcG8+CKdLTuCg1D9StMBK4dV
-         FKhySu6IoimZCOAYK/2YLUc7m4d3c4s76z7h4uSWm/c6vCSqX6Q4yjUNTV73JSHahRhG
-         wIXIu4j7fLpH2+rgEYojxHT3JlsyUU4+4jPqY0bYAqtchOUhQinqn+KWRL0ge68X3ycV
-         3JxQ==
+        bh=NGfp6kTD9Rw80/EU6U7v/UozKVn65gT9RZLlrTNE+Dw=;
+        b=uhCqOhzmMMcIB5zw8kkXjkyeenUlyBXc2+Bapqkv/xYWE4KJApkRKsytBC2KnWsDh0
+         Vlrj+UKq0wZZxutUOcYGGISebuFoxfTIzqYA8SiAJGOzvwG5dMBa+Apanp2wdBX8R454
+         PTuJnMcAnq2zdDW0z/A2dCspzGDNNYUGYt8FGlGgj8Rvz8zjuz2dujP0b1QmWdf+LLCA
+         SqiS2x6k6mY2XKcS/L5TeIt7Xmih/nsCmWJFTQcQpdsM4F+xHr7CVPwS/a+kZ4vwlWqY
+         8G67kQ6yhI5qzcAWlJP9TAF+7QxzslqWC4T1WRuJTMfXQVkSfmH9n++kSpumtX4T5BRa
+         Mwag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fSZ1sLmS98NRKhrX9r7fDvdHuw3gY0AXrZq1nHGqIKI=;
-        b=F6bmOyyqrxVudZjcmdF70h1ZXuh2YSsAnEHQlFUl5qCA9T7PnF79ilv75iDZxQgnEa
-         CbVMyizBgHtmDDAPr/QVlQn+NDk8AEGOgCGjs2RUmvqObRsUEpZfcLhzR2mbheudTOvL
-         rAbO4kKnXxOu5tfJuLqM0GXc27RqA56i0c/3rxoVBNpi+4DRkyERkdC9oLx8zmeQZ08D
-         E8H+ilPdi1PI90o+pK3F2geeWpkDJO/OLi66CwLTbTajNt+re1828JM5QDxjdeHIixG1
-         PEbOfC9O+AubwGxoWwdgqrtQpD9LA+4NYMTUd5S+iDmpTRC8xwkOynTy7XZx+ZCvz61c
-         7K7g==
-X-Gm-Message-State: ABuFfogoM4qa7IshnL+McymwuFUi4fGxNKyRkmIx/ET+bz6wMVSGKh/D
-        90C+UOTZxQZG58Uy/7Zkf1v7eno4pBWuKy4q0EEOyg==
-X-Google-Smtp-Source: ACcGV60h5LMefZTGWIxJfuHr7VKD7u0Q+fS9ywuLnNA6VWFIqMcRRmKkkRH6M9/U1lVueYYNGyO1q662aw3lyLmCR7g=
-X-Received: by 2002:a17:902:82c9:: with SMTP id u9-v6mr6654298plz.320.1538414694164;
- Mon, 01 Oct 2018 10:24:54 -0700 (PDT)
+        bh=NGfp6kTD9Rw80/EU6U7v/UozKVn65gT9RZLlrTNE+Dw=;
+        b=nH1EJaZTwAbZ+4iO3pGpO2spOVPXpi8q3C5oW75y2WAPOJtKQr6wQdcwE3Qd7UdN4Z
+         I1dIcxfnQ4n+9MonX4d7qXC9KbHl0grs9M5MpaYHMHWPwA64dw5FnJnUe+PjTHUI2SPV
+         FJH1ufOty/wEWEXD6FyYMT9nIpcbeEDEQvZTBRuhikizef8uO0T50/OD4vTQZXHeoCzr
+         IXG7REee8p+tV2jpj4Dh6eSP1JmsZLVb05yOpog2t2bthu1tW3ThaceiP1XDxbxi325m
+         01nkiL1/HXxwq/aU2heLn2mSejZg9otSejTr12pcuvE9+Spg/FpWTC9z/pD61qB6JuTi
+         zBlA==
+X-Gm-Message-State: ABuFfogxTfFkrV+tbVHfRDiBom/qIlXtn8MRIvB8WnaLc0GIEOdo4XF4
+        JIywgcOSBvM0Qv4+qx4kdYS3XWFY2y5hm4R7/VOeVg==
+X-Google-Smtp-Source: ACcGV606KPAJvNFTqvxkJEdwC3VtccaJZ8dQDEeGjpVxgD7f7PJuHHUTh/ts6DRlAe4z/fiHpEr5gvjbihbdP9Xj5QI=
+X-Received: by 2002:a19:d0c2:: with SMTP id h185-v6mr6519542lfg.87.1538414831591;
+ Mon, 01 Oct 2018 10:27:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <1538387078-21892-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1538387078-21892-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 1 Oct 2018 10:24:42 -0700
-Message-ID: <CAKwvOdkefCpuvKuAo5k82rviWnHd3FJBtNPEzSiFsZ98yqmNdw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] kbuild: add -Wno-pointer-sign flag unconditionally
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
+ <1537985581-32164-3-git-send-email-jollys@xilinx.com> <CAOesGMhEcMB4caAPtCSq-m5zQBDc-8Z4f_xAkomnEwVaHyX2Mw@mail.gmail.com>
+ <BL2PR02MB21308D0B6AF76A8094E70863B8EC0@BL2PR02MB2130.namprd02.prod.outlook.com>
+ <CAOesGMiUnVrnW1VDh1CKRKGpkwAC9G8tiHjpb+7bss6LpPWU-A@mail.gmail.com> <2350f5c3-b59e-b37b-c679-5b0a36f9a79c@xilinx.com>
+In-Reply-To: <2350f5c3-b59e-b37b-c679-5b0a36f9a79c@xilinx.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Mon, 1 Oct 2018 10:26:59 -0700
+Message-ID: <CAOesGMixcQS605kmpW+n-yWBGWu4Dz5SXH396mrWCUfQjfcWcQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] firmware: xilinx: Add zynqmp IOCTL API for device control
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Jolly Shah <JOLLYS@xilinx.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        ARM-SoC Maintainers <arm@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Rajan Vaja <RAJANV@xilinx.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 2:45 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Mon, Oct 1, 2018 at 6:17 AM Michal Simek <michal.simek@xilinx.com> wrote:
 >
-> We have raised the compiler requirement from time to time.
-> With commit cafa0010cd51 ("Raise the minimum required gcc version
-> to 4.6"), the minimum for GCC is 4.6 now.
+> Hi,
 >
-> The -Wno-pointer-sign has been here since the pre-git era.  It is
-> documented in the GCC 4.6 manual, and it is recognized by Clang
-> and ICC as well.
+> On 28.9.2018 23:12, Olof Johansson wrote:
+> > On Fri, Sep 28, 2018 at 10:15 AM Jolly Shah <JOLLYS@xilinx.com> wrote:
+> >>
+> >> Hi Olof,
+> >>
+> >> Thanks for the review. Pushed v4 with suggested fixes. Let us know if series looks good and we can create pull request for same.
+> >>
+> >> Thanks,
+> >> Jolly Shah
+> >
+> > I'm happy with this one, thanks for revising the patchset with the fixes.
+> >
+> > Feel free to add:
+> >
+> > Acked-by: Olof Johansson <olof@lixom.net>
+> >
+> > to the patches.
 >
-> Let's rip off the cc-disable-warning switch, and see if somebody
-> complains about it.
+> Just for clarification. I have checked driver/clk and patches should
+> still go via Michael or Stephen.
+> Firmware code is already in arm-soc tree that's why I would expect
+> Michael/Stephen should review it and then it shouldn't be a problem to
+> take this via arm-soc tree.
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
->  Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Makefile b/Makefile
-> index c6d1f2f..505a324 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -800,7 +800,7 @@ NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
->  KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
->
->  # disable pointer signed / unsigned warnings in gcc 4.0
-> -KBUILD_CFLAGS += $(call cc-disable-warning, pointer-sign)
-> +KBUILD_CFLAGS += -Wno-pointer-sign
+> Olof: Please correct me if I am wrong and you are happy to take it via
+> arm-soc directly.
 
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-https://godbolt.org/z/7vpHIf
-
->
->  # disable stringop warnings in gcc 8+
->  KBUILD_CFLAGS += $(call cc-disable-warning, stringop-truncation)
-> --
-> 2.7.4
->
+Honestly it might be easiest for you to prepare one branch and send to
+all parties in case you have contents you expect to go on top, but
+besides that I'd be fine with merging through either tree.
 
 
--- 
-Thanks,
-~Nick Desaulniers
+-Olof
