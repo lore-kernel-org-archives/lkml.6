@@ -2,124 +2,121 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 763E5C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D225C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 140B82089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:53:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D9BE2082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 16:56:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="XM3RivOF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 140B82089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="C2xuymXn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D9BE2082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbeJAXch (ORCPT
+        id S1726246AbeJAXeo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 19:32:37 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:47196 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbeJAXch (ORCPT
+        Mon, 1 Oct 2018 19:34:44 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37348 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbeJAXen (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 19:32:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zU9RtA6dvNz508u6EhRvjciaC//O0BCa+iW5FGW84kw=; b=XM3RivOF6V/TiPa85+AQg9PUR
-        txnJR6ZhTTA2vn9oamuDi/utO6UxJWm+9xcpwzRc+8V7WhL3yrD9QgGi/K4d1zz0LgY0oGk+8W/6o
-        VlVY0ejLkcOccOr9BiFroeginHF0DYo2hFW7ScMvBZ37ijs4k0ORL8VXOBLSAbGeVb/jc=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:60133)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1g71S8-0006nX-5O; Mon, 01 Oct 2018 17:53:48 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1g71S4-0007Y2-4T; Mon, 01 Oct 2018 17:53:44 +0100
-Date:   Mon, 1 Oct 2018 17:53:42 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Joe Perches <joe@perches.com>
-Cc:     Stefan Agner <stefan@agner.ch>, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: disable ARMv6 for Clang older than 8.0
-Message-ID: <20181001165342.GR30658@n2100.armlinux.org.uk>
-References: <20180930222230.24167-1-stefan@agner.ch>
- <aa1fbf64fc1190674abb9ecae3ffe1a39e1e60c0.camel@perches.com>
+        Mon, 1 Oct 2018 19:34:43 -0400
+Received: by mail-oi1-f195.google.com with SMTP id e17-v6so10924395oib.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 09:56:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bGcKHCh6bs6/NCaS/KuIoAbeGjx6JVZJyOP2XH97EKs=;
+        b=C2xuymXnJHmN8aCbXDo2CGOHUJF508/CUJWj5ASpxFz0cNZjxix3vZGcF7M3vQnoII
+         6TWL2ChN9JdM6ol6M7ER430zbuKT63CFff3BqKd6B7iG2kQ4mjivUYlc8wxuc9QJT17a
+         1r+hlVhi0uATT2Wv6bfAW54TSr8Vi9FDStPuLXVEnKfFOFFNCWLXcaJehHICACzRYRV9
+         GUKO77xFrkme5wXXq35DUCvxJgRhrgxphxqObswr463UjkD0KQW9nDtZPpDzi1nAayls
+         AZ0laLKk0hF8WY5YqkbfV5YZ9WJiwPNlUiKCn92E00yvKKI++5p1CNfZaJZoEW6tXxhE
+         XAXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bGcKHCh6bs6/NCaS/KuIoAbeGjx6JVZJyOP2XH97EKs=;
+        b=Z4+5+oEoEs+tLtTQMSDhun5hVoMYalHNKnX3wmiltjf4UxAPD9IBsHdAfltcR45Iw5
+         EidAdAKLCCGOVG6xaMvwlW8YAWMUjAlFTZB9Fn3Pe/N/2SW0pXTYTVF0CcchNXDRKVn3
+         nd48iWrwEXheTlHxa2TJs2Vo3SgQSF8ED8GJHjju6qgiwB0+CZaDgQriUPyhZreWhcg/
+         4fmLKCk2ektptvo5P2xJImvoMrYGDIlkaQ15PosHqs+ci0N/ecvNifx8iuAlC8qSS44a
+         pmutv8ERpTuSD9gDH33ba9v4Wu/FsVEeCHVdta4Bw2su0dIuXqMCQm678L0J8khggX56
+         nutw==
+X-Gm-Message-State: ABuFfogkqebvzToxkO5BBzSK3MuByCw8l63qEXgDnsdN6FE1qKez4Jrf
+        yoIX/tqaS2kpSTwU4k4i4G/DoSZ5biUpmL+fRO9RKoJm
+X-Google-Smtp-Source: ACcGV61t95RNoGw9GhXwsMQSbvsOjDxWX0IvisrED9PemI3TunJhKZpieCe1eQgl2qZqWdFuqXeYMqLqaMyqNbJY/RQ=
+X-Received: by 2002:aca:60c1:: with SMTP id u184-v6mr5081042oib.99.1538412961486;
+ Mon, 01 Oct 2018 09:56:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aa1fbf64fc1190674abb9ecae3ffe1a39e1e60c0.camel@perches.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <153816098159.2233877.8382846671636531035.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <3cf89dd3-a024-dbab-36ed-923f9466669c@linux.intel.com> <CAPcyv4hi7XLAswcoWEKOcQq_0FCTybxTUd_4H+mJj0S7BkTCjg@mail.gmail.com>
+ <9f24ed83-5fea-da70-5470-36992b90c521@linux.intel.com>
+In-Reply-To: <9f24ed83-5fea-da70-5470-36992b90c521@linux.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 1 Oct 2018 09:55:50 -0700
+Message-ID: <CAPcyv4jh+qERkoAfiJ47HPG7TCHi+ktm3+CrK6rqrfXGVRi47A@mail.gmail.com>
+Subject: Re: [PATCH] libnvdimm, dimm: Maximize label transfer size
+To:     alexander.h.duyck@linux.intel.com
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 04:48:20PM -0700, Joe Perches wrote:
-> On Mon, 2018-10-01 at 00:22 +0200, Stefan Agner wrote:
-> > The kernel passes the ArmV6K architecture to the compiler when
-> > using the multi platform selection and enabling ARMv6. Clang
-> > older than version 8.0 emit assembly with an non-existing CPU,
-> > which then makes the assembler fail. Prevent the user from
-> > selecting ARMv6 when using Clang before 8.0.
-> > 
-> > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/55
-> > ---
-> >  arch/arm/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> > index e8cd55a5b04c..8da160757381 100644
-> > --- a/arch/arm/Kconfig
-> > +++ b/arch/arm/Kconfig
-> > @@ -671,6 +671,7 @@ config ARCH_MULTI_V4_V5
-> >  
-> >  config ARCH_MULTI_V6
-> >  	bool "ARMv6 based platforms (ARM11)"
-> > +	depends on !CC_IS_CLANG || CLANG_VERSION>=80000
-> >  	select ARCH_MULTI_V6_V7
-> >  	select CPU_V6K
-> >  
-> 
-> Perhaps it'd be better to avoid this in selection
-> criteria in Kconfig and instead add this to
-> include/linux/compiler_clang.h
-> ---
->  include/linux/compiler-clang.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-> index b1ce500fe8b3..90fd16c85359 100644
-> --- a/include/linux/compiler-clang.h
-> +++ b/include/linux/compiler-clang.h
-> @@ -3,6 +3,10 @@
->  #error "Please don't include <linux/compiler-clang.h> directly, include <linux/compiler.h> instead."
->  #endif
->  
-> +#if defined(CONFIG_ARCH_MULTI_V6) && CLANG_VERSION < 80000
-> +# error Sorry, your compiler is too old - please upgrade it.
-> +#endif
+On Mon, Oct 1, 2018 at 8:41 AM Alexander Duyck
+<alexander.h.duyck@linux.intel.com> wrote:
+>
+> On 9/28/2018 4:03 PM, Dan Williams wrote:
+> > On Fri, Sep 28, 2018 at 3:44 PM Alexander Duyck
+> > <alexander.h.duyck@linux.intel.com> wrote:
+> >>
+> >> On 9/28/2018 11:56 AM, Dan Williams wrote:
+> >>> Use kvzalloc() to bypass the arbitrary PAGE_SIZE limit of label transfer
+> >>> operations. Given the expense of calling into firmware, maximize the
+> >>> amount of label data we transfer per call to be up to the total label
+> >>> space if allowed by the firmware.
+> >>>
+> >>> Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> >>> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> >>
+> >> This looks mostly fine to me.
+> >>
+> >> The only thing I am not certain about is if we want to use the raw
+> >> max_cmd_size value or not since there is no guarantee it is aligned to
+> >> any sort of boundary. It might be beneficial to either cache line align
+> >> it or align it to 256B if it is larger than that since that way we at
+> >> least would be getting full labels instead of partial ones.
+> >
+> > If we leave any portion of the max transfer size unused it just means
+> > we're that much more likely to need an additional call into the ASL
+> > interpreter. That said It might be worthwhile capping the max transfer
+> > size in case the BIOS specifies something extreme (> 1MB) in the
+> > future.
+>
+> Actually it all depends on the size of the max transfer versus the size
+> of the label area. So for example if the label area is 128K and the max
+> transfer size is 64K minus 32 then it doesn't really make much
+> difference until we get below 44K for our max read size.
+>
+> My main concern is that I don't want to waste resources on allocating
+> memory that isn't needed. For smaller allocations I agree we need to use
+> everything we have to minimize calls to the ASL interpreter, but when
+> max transfer sizes start getting large we are just allocating multiple
+> pages of memory that do not need to be used.
+>
+> If nothing else I can look at doing the logic to reduce our memory
+> allocations as a set of follow-up patches.
 
-(a) does it makes sense to have arch CONFIG_* in linux/*.h?  It could
-    instead go in arch/arm/kernel/asm-offsets.c, where we have the other
-    tests similar to this for GCC.
-
-(b) do we get far enough that the #error will be generated before the
-    reported assembler error happens?  IOW, would the assembler error
-    mask this #error?
-
-I think it needs confirmation that a #error for this problem results
-in the desired behaviour.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 14.8Mbps down 650kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+Sounds good, I would like to get smarter about only needing to cache
+the portion of the label area that is in active use. However there is
+at least one bug around simultaneous label updates that I want to
+squash before we make the label handling more clever.
