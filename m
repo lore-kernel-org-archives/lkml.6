@@ -2,150 +2,153 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62223C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0D8C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 301F12089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:53:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 301F12089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BF8E82146D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:56:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SQlItD/m";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="K4Ojxky8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF8E82146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbeJBDcm (ORCPT
+        id S1726349AbeJBDgO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 23:32:42 -0400
-Received: from mga09.intel.com ([134.134.136.24]:35716 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbeJBDcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 23:32:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 13:53:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,328,1534834800"; 
-   d="scan'208";a="95121450"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 01 Oct 2018 13:51:45 -0700
-Received: from [10.252.4.61] (abudanko-mobl.ccr.corp.intel.com [10.252.4.61])
-        by linux.intel.com (Postfix) with ESMTP id 87A8F580268;
-        Mon,  1 Oct 2018 13:51:41 -0700 (PDT)
-Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
-To:     Thomas Gleixner <tglx@linutronix.de>, Jann Horn <jannh@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Andi Kleen <ak@linux.intel.com>, tursulin@ursulin.net,
-        kernel list <linux-kernel@vger.kernel.org>,
-        tvrtko.ursulin@linux.intel.com,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, maddy@linux.vnet.ibm.com
-References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
- <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
- <20180928164111.i6nba2j6mnegwslw@lakrids.cambridge.arm.com>
- <20180928172340.GA32651@tassilo.jf.intel.com>
- <20180928174016.i7d24puv7y3jwzf6@lakrids.cambridge.arm.com>
- <20180928204930.GC32651@tassilo.jf.intel.com>
- <CAG48ez16ECnLMNggTZQQJOuPK5ZJ8dLSkGDzvxwK1zVh1BFExw@mail.gmail.com>
- <20180928205907.GD32651@tassilo.jf.intel.com>
- <CAG48ez1xJ+Y=snnHJ5k6J6O3qqD=bHdjRioLFuzPZpxU9v7xxA@mail.gmail.com>
- <20180928212757.GE32651@tassilo.jf.intel.com>
- <22155f49-2f57-73b8-6e89-ddd8a127967b@linux.intel.com>
- <alpine.DEB.2.21.1810011741070.32062@nanos.tec.linutronix.de>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <905796f8-4704-66a8-ee0a-ac8aba90b179@linux.intel.com>
-Date:   Mon, 1 Oct 2018 23:51:40 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Mon, 1 Oct 2018 23:36:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37048 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeJBDgO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 23:36:14 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C902660376; Mon,  1 Oct 2018 20:56:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538427394;
+        bh=i85tSHz4QTB0+V6O9i7t5cELsEgIN/2Mho/1oGKkV7g=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=SQlItD/mD3+pPQxm9he4STJHlQYlL2WbJANebD6Sxq6UuVQF8xHXM+WWpYuPbq8t9
+         BxqEsPFwiqdhaYPi2o3/m5f8D2a1V5wTVAXNr7wiNPIjWCGBYSM9w3OlvPZsGB6W2e
+         ZEUsWrSzijZfMGPigQKljJJtqp4IXwExKbIJtA44=
+Received: from [10.134.64.210] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: skannan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9AEBD60376;
+        Mon,  1 Oct 2018 20:56:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538427393;
+        bh=i85tSHz4QTB0+V6O9i7t5cELsEgIN/2Mho/1oGKkV7g=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=K4Ojxky8zwZdhdSiAhzfB2kcZFag1SGDEL5+cffYmtR6xHxxKYN0NUZEAOCOeVrKs
+         JprM6oIjPX/YwTOiTZsoFoFPDU8vPVMT8wXZcArRtlpPKcN55g0SDzHLumSNLtw1hR
+         Qq3x6jdbyyd5wAERx7a8t9NlH7sUoXjFwy4nXmTg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9AEBD60376
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+Subject: Re: [PATCH v9 2/8] dt-bindings: Introduce interconnect binding
+To:     Rob Herring <robh@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        rjw@rjwysocki.net, mturquette@baylibre.com, khilman@baylibre.com,
+        vincent.guittot@linaro.org, bjorn.andersson@linaro.org,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, evgreen@chromium.org,
+        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        abailon@baylibre.com, maxime.ripard@bootlin.com, arnd@arndb.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, robdclark@gmail.com
+References: <20180831140151.13972-1-georgi.djakov@linaro.org>
+ <20180831140151.13972-3-georgi.djakov@linaro.org>
+ <20180925180215.GA12435@bogus>
+ <20180926143432.GH10761@jcrouse-lnx.qualcomm.com>
+From:   Saravana Kannan <skannan@codeaurora.org>
+Message-ID: <1ae0a36a-1178-4db5-1ae9-8f19e561a18b@codeaurora.org>
+Date:   Mon, 1 Oct 2018 13:56:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1810011741070.32062@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180926143432.GH10761@jcrouse-lnx.qualcomm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Hello,
 
-On 01.10.2018 19:11, Thomas Gleixner wrote:
+On 09/26/2018 07:34 AM, Jordan Crouse wrote:
+> On Tue, Sep 25, 2018 at 01:02:15PM -0500, Rob Herring wrote:
+>> On Fri, Aug 31, 2018 at 05:01:45PM +0300, Georgi Djakov wrote:
+>>> This binding is intended to represent the relations between the interconnect
+>>> controllers (providers) and consumer device nodes. It will allow creating links
+>>> between consumers and interconnect paths (exposed by interconnect providers).
+>> As I mentioned in person, I want to see other SoC families using this
+>> before accepting. They don't have to be ready for upstream, but WIP
+>> patches or even just a "yes, this works for us and we're going to use
+>> this binding on X".
+>>
+>> Also, I think the QCom GPU use of this should be fully sorted out. Or
+>> more generically how this fits into OPP binding which seems to be never
+>> ending extended...
+> This is a discussion I wouldn't mind having now.  To jog memories, this is what
+> I posted a few weeks ago:
+>
+> https://patchwork.freedesktop.org/patch/246117/
+>
+> This seems like the easiest way to me to tie the frequency and the bandwidth
+> quota together for GPU devfreq scaling but I'm not married to the format and
+> I'll happily go a few rounds on the bikeshed if we can get something we can
+> be happy with.
+>
+> Jordan
 
-<SNIP>
+Been meaning to send this out for a while, but caught up with other stuff.
 
-> Peter and I discussed that and we came up with the idea that the file
-> descriptor is not even required, i.e. you could make it backward
-> compatible.
-> 
-> perf_event_open() knows which PMU is associated with the event the caller
-> tries to open. So perf_event_open() can try to access/open the special per
-> PMU file on behalf of the caller. That should get the same security
-> treatment like a regular open() from user space. If that succeeds, access
-> is granted.
-> 
-> The magic file could still be writeable for root to give general
-> restrictions aside of the file based ones similar to what you are
-> proposing.
+That GPU BW patch is very specific to device to device mapping and 
+doesn't work well for different use cases (Eg: those that  can calculate 
+based on use case, etc).
 
-Let me wrap up all the requirements and ideas that have been captured so far.
+Interconnect paths have different BW (bandwidth) operating points that 
+they can support. For example: 1 GB/s, 1.7 GB/s, 5GB/s, etc. Having a 
+mapping from GPU or CPU to those are fine/necessary, but we still need a 
+separate BW OPP table for interconnect paths to list what they can 
+actually support.
 
-1. A file [1] is added so that it can belong to a group of users allowed to use ${PMU}, 
-   something like this:
+Two different ways we could represent BW OPP tables for interconnect paths:
+1.  Represent interconnect paths (CPU to DDR, GPU to DDR, etc) as 
+devices and have OPPs for those devices.
 
-ls -alh /sys/bus/event_source/devices/${PMU}/caps/
-total 0
-drwxr-xr-x 2 root root            0 Oct  1 20:36 .
-drwxr-xr-x 6 root root            0 Oct  1 20:36 ..
--r--r--r-- 1 root root         4.0K Oct  1 20:36 branches
--r--r--r-- 1 root root         4.0K Oct  1 20:36 max_precise
--r--r--r-- 1 root root         4.0K Oct  1 20:36 pmu_name
--rw-r--r--   root ${PMU}_users                   paranoid        <===
+2. We can have a "interconnect-opp-tables" DT binding similar to 
+"interconnects" and "interconnect-names". So if a device GPU or Video 
+decoder or I2C device needs to vote on an interconnect path, they can 
+also list the OPP tables that those paths can support.
 
-   Modifications of file content are allowed to those who can 
-   modify /proc/sys/kernel/perf_event_paranoid setting.
+I know Rob doesn't like (1). But I'm hoping at least (2) is acceptable. 
+I'm open to other suggestions too.
 
-2. Semantics and content of the introduced paranoid file is 
-   similar to /proc/sys/kernel/perf_even_paranoid [2]:
+Both (1) and (2) need BW OPP tables similar to frequency OPP tables. 
+That should be easy to add and Viresh is open to that. I'm open to other 
+options too, but the fundamental missing part is how to tie a list of BW 
+OPPs to interconnect paths in DT.
 
-   The perf_event_paranoid file can be set to restrict access
-   to the performance counters.
-
-   2   allow only user-space measurements (default since Linux 4.6).
-   1   allow both kernel and user measurements (default before Linux 4.6).
-   0   allow access to CPU-specific data but not raw trace‐point samples.
-  -1  no restrictions.
-
-   The existence of the perf_event_paranoid file is the official method 
-   for determining if a kernel supports perf_event_open().
-
-3. Every time an event for ${PMU} is created over perf_event_open():
-   a) the calling thread's euid is checked to belong to ${PMU}_users group 
-      and if it does then the event's fd is allocated;
-   b) then traditional checks against perf_event_pranoid content are applied;
-   c) if the file doesn't exist the access is governed by global setting 
-      at /proc/sys/kernel/perf_even_paranoid;
-
-4. Documentation/admin-guide/perf-security.rst file is introduced that:
-   a) contains general explanation for fine grained access control;
-   b) contains a section with guidance about scope and risk for each PMU
-      which is enabled for fine grained access control;
-   c) file is extended when more PMUs are enabled for fine grain control;
-
-> 
-> The analysis and documentation requirements still remain of course.
-
-Security analysis for uncore IMC, QPI/UPI, PCIe PMUs is still required 
-to be enabled for fine grain control.
+Once we have one of the above two options, we can use the required-opps 
+field (already present in kernel) for the mapping between GPU to a 
+particular BW need (suggested by Viresh during an in person conversation).
 
 Thanks,
-Alexey
+Saravana
 
-[1] https://patchwork.kernel.org/patch/9249919/#19714087
-[2] http://man7.org/linux/man-pages/man2/perf_event_open.2.html
+-- 
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
