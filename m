@@ -2,88 +2,68 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 991E9C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5262CC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A61A208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:46:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F40C4208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 22:47:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oPwhyJMe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A61A208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SZ+2rsF4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F40C4208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbeJBF0M (ORCPT
+        id S1726664AbeJBF10 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 01:26:12 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:46164 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbeJBF0M (ORCPT
+        Tue, 2 Oct 2018 01:27:26 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42527 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbeJBF10 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 01:26:12 -0400
-Received: by mail-yw1-f66.google.com with SMTP id j202-v6so1748784ywa.13
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:46:08 -0700 (PDT)
+        Tue, 2 Oct 2018 01:27:26 -0400
+Received: by mail-pf1-f193.google.com with SMTP id l9-v6so10287603pff.9
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:47:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UMzJokdN836gOh5JAgIVLjCkTlz0ooJGNhxCcGJyP+w=;
-        b=oPwhyJMemd0B4pNTa9TnSGo0z51tzG9fA7HhMGTMc7mr3rAZvdxdFtBpA9nbLou/rH
-         bUC6MGt26lYWo1p+/IcqVeyOT7lTa4b0Fiuu7i0xElg4vblKUwuW24B1dlnSqBEWTBTC
-         ShTLjvl2Ki9YeDtkNox/KUgQ1L7M1WBgPNSfo=
+        bh=Tzb51grmVOizLtgxGRhOCmsddQDqj0VKC3k1enTd7Q4=;
+        b=SZ+2rsF4Wb4F3vQX8urTsZOV9XN5S7hid+URzdEx/sPlAwrEE+hTi2N+0SoejvPt3Q
+         YtZ8+qZ0gUcqPdFxCRFCSPcaPYGVkWJA7vQ0NeOFXelPzbvzS40JCB3ivsEADL29V5Jn
+         l+iEazeGBaFcfscz2PCY3bt2gS8ThcIHadePc3loVDw9hz5YyffVd5LrBvH/CmYe/vf6
+         S1EnsAnQ7YiuIPwZ0wl7O82JEaPIGFrzH4iNdN8s5dZXHdul18Xuqf9QPI4lOqMnYczk
+         pvtkiSoYSmZg8nZYvnffnRUY1gGDx8gsawUwfTBIi3L6akithec6MCbolsM5nGFyPWo5
+         VQNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UMzJokdN836gOh5JAgIVLjCkTlz0ooJGNhxCcGJyP+w=;
-        b=DAvsPsNvCtT3qFQmsL43DiPfdVFDebIQ/IHYRq8FM4Yr6NYd4WKJyZDhkowY88xdXt
-         yCONEChHBXvMehBf/YkzecdZkofASmdU/Vu6L4Uul77vw6d9BPoaoH1hRwnjekYs9Cbj
-         uQQGcHHXmr2wa+pqWdT9P480/5wluMj34b6I2ftufigNongPHnfcHUiSI7jJS1Y3ZnO/
-         Ss7l7wE86PnA9+rkB9Pi3wIFZSZaViQkQvJR/1csXI6hjZX3bBdzA7Vto1en/tV/UVR2
-         ylS9DTDSQww4gwxGPZdklLt3Vn36tiR493pK6OgGQVRZn5c/vQdHNrx29+rBMnMNr2Ql
-         oFNA==
-X-Gm-Message-State: ABuFfohIdWg19+1qKC7NyGqllxe9NRv7xvsRW5Mu86EAEE6KdK5oGVMh
-        9NR8ESAq873UlXIQRILtZ0s/igsVX1o=
-X-Google-Smtp-Source: ACcGV62JfE/5QREP0RsPHMprnZMfJfan3uj/8fNYOzCF9PQhPT3SeE58jBA8IWGZvkI8J8zZWt6lAw==
-X-Received: by 2002:a0d:e984:: with SMTP id s126-v6mr7219979ywe.253.1538433967954;
-        Mon, 01 Oct 2018 15:46:07 -0700 (PDT)
-Received: from mail-yw1-f47.google.com (mail-yw1-f47.google.com. [209.85.161.47])
-        by smtp.gmail.com with ESMTPSA id p128-v6sm7164063ywp.65.2018.10.01.15.46.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 15:46:07 -0700 (PDT)
-Received: by mail-yw1-f47.google.com with SMTP id a197-v6so2248671ywh.9
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 15:46:07 -0700 (PDT)
-X-Received: by 2002:a81:2908:: with SMTP id p8-v6mr7166457ywp.407.1538433536573;
- Mon, 01 Oct 2018 15:38:56 -0700 (PDT)
+        bh=Tzb51grmVOizLtgxGRhOCmsddQDqj0VKC3k1enTd7Q4=;
+        b=IkSYi1l5G+/9tK7t5BjrX9cpmkdw2AMCdjLiqDp8l+LoSy4ou5+orn2OXJTbBkHiIF
+         ZZ+pAnnoa2kQMBKeld/nAIb+Pnz9Z+Hv53fYOg2uFZ8KYg6lWcCV+7uz2iFqCP5T7BPa
+         AmqedAM35R+1nG7+Fqa5k9rlL6cmAO3+XdSJ2iGuXPh3P+omvoe14CLW0g6QJ5JWjZrf
+         5YkFfauLWvCS1jRFGj5R7usaLwxis7U8DfUHPkmsh3SO6MV+GJEggMfm+FUMeJhHBLov
+         T7h5hKfWsFq331KqaIlz7xDIk5uScx8HS7tba0HBPHgj90RRGan4MYhGqLQu3Q67HLlf
+         o30w==
+X-Gm-Message-State: ABuFfojQBtLF1c8v5qd1wzx5hpHFNHeVzlk1PvtwQJsVUe54YUavpm2j
+        1Qjoq1YV6NAZReMieBox3DnYzxYVr5wvFK2pkEl4bg==
+X-Google-Smtp-Source: ACcGV63RZX3tbiRRJ+jU4e/iaq3ZGAF/5JnkBx5mgEiSqzlceix7yTtQQo4bhe310M3e0XQK6gqW+f12wVD7SY5eEho=
+X-Received: by 2002:a63:1921:: with SMTP id z33-v6mr12234603pgl.302.1538434041996;
+ Mon, 01 Oct 2018 15:47:21 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 15:38:55 -0700 (PDT)
-In-Reply-To: <20181001172315.225d18dc@gandalf.local.home>
-References: <20180925001832.18322-1-keescook@chromium.org> <20180925001832.18322-5-keescook@chromium.org>
- <b169724f-c6c2-f4c0-806b-c8e23819ea6a@canonical.com> <20181001172315.225d18dc@gandalf.local.home>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 1 Oct 2018 15:38:55 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJbO7c0Hiw8_9hhkbo74c-56g5ppW8g1ynyPt-WsLaxRw@mail.gmail.com>
-Message-ID: <CAGXu5jJbO7c0Hiw8_9hhkbo74c-56g5ppW8g1ynyPt-WsLaxRw@mail.gmail.com>
-Subject: Re: [PATCH security-next v3 04/29] LSM: Remove initcall tracing
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
+References: <20180930205126.25840-1-natechancellor@gmail.com>
+In-Reply-To: <20180930205126.25840-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 1 Oct 2018 15:47:10 -0700
+Message-ID: <CAKwvOdmx0rnPyFKoM-dFOHp1ySMOk7yL3sQ1z1bpbwqJ6u8EWQ@mail.gmail.com>
+Subject: Re: [PATCH] fs/exofs: Remove ignored __weak attribute
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     ooo@electrozaur.com, Andrew Morton <akpm@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -91,36 +71,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 2:23 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Mon, 1 Oct 2018 14:07:55 -0700
-> John Johansen <john.johansen@canonical.com> wrote:
+On Sun, Sep 30, 2018 at 1:51 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
 >
->> On 09/24/2018 05:18 PM, Kees Cook wrote:
->> > This partially reverts commit 58eacfffc417 ("init, tracing: instrument
->> > security and console initcall trace events") since security init calls
->> > are about to no longer resemble regular init calls.
->> >
->> > Cc: James Morris <jmorris@namei.org>
->> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
->> > Cc: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
->> > Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
->> > Cc: linux-security-module@vger.kernel.org
->> > Signed-off-by: Kees Cook <keescook@chromium.org>
->>
->>
->> Reviewed-by: John Johansen <john.johansen@canonical.com>
->>
->> though I do think it would be a good idea to add a new set
->> of trace points, but that can come as a separate patch
->>
->>
+> Clang warns that the __weak attribute is going to be ignored on
+> g_attr_inode_data because it's not in the correct location (needs to be
+> after the type).
 >
-> Agreed.
+> In file included from fs/exofs/dir.c:35:
+> In file included from fs/exofs/exofs.h:41:
+> fs/exofs/common.h:186:21: warning: 'weak' attribute only applies to
+> variables, functions, and classes [-Wignored-attributes]
+> static const struct __weak osd_attr g_attr_inode_data = ATTR_DEF(
+>                     ^
+>
+> Turns out that GCC ignores the attribute too albeit silently because
+> moving the attribute after either osd_attr or g_attr_inode_data like
+> all other uses of __weak on variables in the kernel causes a build
+> error on both GCC and Clang because static variables cannot be weak
+> since weak definitions rely on not having internal linkage:
+>
+> In file included from fs/exofs/namei.c:34:
+> In file included from fs/exofs/exofs.h:41:
+> fs/exofs/common.h:186:30: error: weak declaration cannot have internal
+> linkage
+> static const struct osd_attr __weak g_attr_inode_data = ATTR_DEF(
+>                              ^
+>
+> Just remove the attribute because it hasn't been correct since the
+> initial addition of this file in commit b14f8ab28449 ("exofs: Kbuild,
+> Headers and osd utils").
+>
+> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  fs/exofs/common.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/exofs/common.h b/fs/exofs/common.h
+> index 7d88ef566213..45da96a1528d 100644
+> --- a/fs/exofs/common.h
+> +++ b/fs/exofs/common.h
+> @@ -183,7 +183,7 @@ struct exofs_fcb {
+>  #define EXOFS_INO_ATTR_SIZE    sizeof(struct exofs_fcb)
+>
+>  /* This is the Attribute the fcb is stored in */
+> -static const struct __weak osd_attr g_attr_inode_data = ATTR_DEF(
+> +static const struct osd_attr g_attr_inode_data = ATTR_DEF(
+>         EXOFS_APAGE_FS_DATA,
+>         EXOFS_ATTR_INODE_DATA,
+>         EXOFS_INO_ATTR_SIZE);
+> --
+> 2.19.0
+>
 
-BTW, how would this look? I'm not familiar with adding new tracepoints...
-
--Kees
+LGTM, thank you for sending, Nathan.
 
 -- 
-Kees Cook
-Pixel Security
+Thanks,
+~Nick Desaulniers
