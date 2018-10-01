@@ -2,181 +2,186 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476E5C64EAD
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7B4C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F070B2083C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:56:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B232D2083C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:57:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=openedev.com header.i=@openedev.com header.b="a9Utp/Il"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F070B2083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=openedev.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="g/KQ1cHx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B232D2083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728884AbeJAOcz (ORCPT
+        id S1728916AbeJAOdf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 10:32:55 -0400
-Received: from se15t.web-hosting.com ([162.255.118.154]:42189 "EHLO
-        se15t.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728593AbeJAOcy (ORCPT
+        Mon, 1 Oct 2018 10:33:35 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36668 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728593AbeJAOde (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 10:32:54 -0400
-Received: from [68.65.123.203] (helo=server153.web-hosting.com)
-        by se15.registrar-servers.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <jagan@openedev.com>)
-        id 1g6t3z-0008xL-CD; Mon, 01 Oct 2018 00:56:22 -0700
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=openedev.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=XjKNJAEuJji7FPXIPBoIFfAWIk9R9jHw4nsWP191dm4=; b=a9Utp/IlfjIVsOXvX2ERTJoZS0
-        A06tuysEantiOc3OaT/xaP20kHjuxln//ixo5VmFeifSSsTBypappIBgVOWjdU0GOeiqbnrKPZfrU
-        u2c03be7iAh7KqnBx9sP4L+AVMJp6iPtJdKtgnwPs3q+ZC9EubjXGfOY3iRJobg5S7d9z8VwO/8lm
-        xiDhUXqEuyexzKDXI+wWgmShr+kGoXirt+GQPBLN4G9Tp5U8Aywbqk+zCBGc+G4YFxwObQ1S1FTUm
-        fJ5R3umPlGiMNW2hX0kpfqwHJVrXnOOfpNugQ6ucKdhVqGh8iuAEWRJtAttCoA0cWD6c2uQTFB6uK
-        8d9Sw54g==;
-Received: from [223.237.19.35] (port=11597 helo=[192.168.43.180])
-        by server153.web-hosting.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <jagan@openedev.com>)
-        id 1g6t3r-000c9t-UX; Mon, 01 Oct 2018 03:56:13 -0400
-Subject: Re: [linux-sunxi] Re: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi:
- Refactor vertical video start delay
-To:     maxime.ripard@bootlin.com, Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-9-jagan@amarulasolutions.com>
- <20180927171451.7iqt2nt2log5qojf@flea>
- <CAMty3ZDxpLwVDsgVMjX+6+uz89sQ1aZaXHHZ+-5aogrA4MHmqw@mail.gmail.com>
- <20180929152758.g3goxwjud2ym5rft@flea>
-From:   Jagan Teki <jagan@openedev.com>
-Message-ID: <c6933daf-c445-ade4-a31b-f311ddae7256@openedev.com>
-Date:   Mon, 1 Oct 2018 13:25:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 1 Oct 2018 10:33:34 -0400
+Received: by mail-ed1-f68.google.com with SMTP id f4-v6so13302322edq.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 00:57:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0EOCEfWM1hghz/pIrzuHE/X1qiT0VXb8KGWngxiycJc=;
+        b=g/KQ1cHxNivR5ZWPM7I6JUa1qxxJUIGSrnv4hPlK1pBaBnzFnYlURpecX5dBble4Lx
+         aqcxA660OdNOB+x1drsT/vdmObsARxbY1Lx+QnVgLax4yoRH6E1K5dAQN76uRto21OnY
+         aPbiosddnklUgeOF6jCcW3myuL12YXKmEPEmY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=0EOCEfWM1hghz/pIrzuHE/X1qiT0VXb8KGWngxiycJc=;
+        b=BdBnQcaGN0nKP2DXcmgDWwbcsb2FN8EhhC3noKM0QlL7ux6+hDUazShavMwFRphgRB
+         98tOC3o//8fVx7N5Olhzq2oynlte5aX+CHHlJH44Np7w4zLjrzdo/rEhP0ReMzsovFTd
+         wHMUhh9f7vmYdy0I8r1PJ5I0TDm7wpAmvnI44ajVk8kCeOQ9JcyHmu+Z7MDszkxNiB0m
+         QkqnQL/lu+RHjxHdNPtiOBJ/OkQoNITyIyl5C+IaSTGskEFXQ79/tjsHF/PPrXZzkBCK
+         yDaMiLx0xIfnmKZVqUS6WboC/qHsAf6SvMQOPNsiqLR3tStx88olnyw+sCx4sbrIbdkc
+         ctwQ==
+X-Gm-Message-State: ABuFfoicfkGizZCOT7IBeI2ETNReOUXicZWn8HMYKvW5jB/l05UUd6cM
+        qPnOtfacTbUS1skOnck+x+8MJ+FnIxe/AQ==
+X-Google-Smtp-Source: ACcGV60IurSusARTjO9Lez908WbukkBCLTndh1sPVC14SQUZArpQRAuFLz6WzwLk0+bXkchfsiaoEw==
+X-Received: by 2002:aa7:d707:: with SMTP id t7-v6mr16791955edq.250.1538380625231;
+        Mon, 01 Oct 2018 00:57:05 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id d13-v6sm1753208eda.51.2018.10.01.00.57.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 01 Oct 2018 00:57:04 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 09:57:02 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     alison.wang@nxp.com, airlied@linux.ie,
+        Madhur Verma <madhur.verma@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Hemanshu Srivastava <hemanshu.s@samsung.com>,
+        Satendra Singh Thakur <satendra.t@samsung.com>
+Subject: Re: [PATCH 2/2] drm/fsl-dcu: use drm_display_mode_to_videomode to
+ calculate timing parameters
+Message-ID: <20181001075702.GS11082@phenom.ffwll.local>
+Mail-Followup-To: Stefan Agner <stefan@agner.ch>, alison.wang@nxp.com,
+        airlied@linux.ie, Madhur Verma <madhur.verma@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Hemanshu Srivastava <hemanshu.s@samsung.com>,
+        Satendra Singh Thakur <satendra.t@samsung.com>
+References: <20180926204150.29829-1-stefan@agner.ch>
+ <20180926204150.29829-2-stefan@agner.ch>
 MIME-Version: 1.0
-In-Reply-To: <20180929152758.g3goxwjud2ym5rft@flea>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-OutGoing-Spam-Status: No, score=-1.0
-X-Originating-IP: 68.65.123.203
-X-SpamExperts-Domain: nctest.net
-X-SpamExperts-Username: whmcalls3
-Authentication-Results: registrar-servers.com; auth=pass (login) smtp.auth=whmcalls3@nctest.net
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.02)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5gc54RqAsCCzbBBTf7uoKD9602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO0Ma0zdKrj2HeYAO9pcN4rBgaa/6KAnDjbDW9Kfk8S67rc0diZKnmpMa4igsMUptb3ws
- 3TRjaC42FtNJuTWwh7zDil9nzpwm+X/neb6NqWhvt8C9mOBdONdnsxgsk1D2p81t61bzOH+dRuda
- OCHhfvkbONHJki/bT3w/adEN9DqaPbFM3vei53Yyp3v779HcSLG62plOzR5DsoLGZCSqoE3JNAYC
- 28t8cR5ITCXTcZqmvaqpXrmasHx4eiR7j6vX9B9laqTmco/p+9en7IdA6p9E/g67cwxyIR8VmA5e
- WtNvnSJzSMipXLKj208wF0l+/LRpsq1uynJlGc1wGBNxKAasUDAM310p3PNWWaIaSygi7PgEVsGe
- cFro/0JGrOyRSaDNUgpG8fAJ7Lg21L451C+Y73wey0WZIByhkSafuhnLcy3brt7kvrJyGkSOIbze
- Phts3vFtUDOwEYF9reFkRh1Z2XmZE6Ulo3Sg6/fHCWNx01dKq9doQCQL/RyDC8HpXAynucv4rnju
- YPOfZh8jslwg7QT+iN5/VyfWKR5edUF17qyCLW5GY4F23J7eq8SL0BtM8UT3jCT30WOGa77ANY69
- cBNhkoiRE9GgA7DbpeRaXeO0Hg/cLwycMnvIieVWIs4dJKDqjPjhvPjqAjKg6VeiSiHqKnOM6HUc
- 1C6txUOgA50Rgoi231VkAC4d/u07DCMMQ72GN0COt/Z36GxUDe1/x2bFJS+Hj6rj4u8HaEmUMY84
- DYH6Unxm8wYeyz752/Quc8Wou4TIK4Bcb6TQCr94GXpVQ2KwGtu81JXrQcgqRYMJqVDlz3D3q3rG
- z4wpqXduuWzX2YNPcyspnKOz/GpVtBEI/lNmY9JL/ej0hsKuKmLtSOgDyocRXs5/Dj5QrbiOquAw
- kPRjlgIoLaXIRRdYY1xob1S/a4Rw9BKeg+GlaQRG0qurVqDgRPCOBb4ws+nK6Hdu5ythdss+87CL
- YnNBoGfS0DhK3BfvFNI4fRpBbmGFHU0Fd1FYwiLqVhSu3v+nCpyCSdscG09FH1xvLyyjtb2gYbxM
- T6+Iy9pOFZK275ou5bBvQX3uElphnHsYcHZLfQ+dkTJQ3t6fkiyQeQV6EipRzMVZ5LqwTx7Vvn9S
- VCuiP+10HNhHuWYhdKNkJvfZdFJiZZPY9MnZD1O5yq0pWWScINzg4dgw5iDGlYGqO34MHW3kQw7M
- VMW91WDF0AVkTNBL3fc2BdqUkv1aMlvUsuiVMUz2osEFaYRxsB6RP1WtefrqFnxOMi6sKMFKy5Lq
- LFUIM7si3XKl+gouHE7VOEtHO7BXRk+kb0Ie3l6uI43eRHGnZHBV/yCqCu6qSDJ/f45lS5rBa1fG
- Ecf8+4nW/e7KbhESZjhzfQs2xAJQnSUfEaFbXfx3YmWV3Eu1dd5T48p+m8Gi9mpWQ6cJTOhMhoTy
- AjQts04eAyoaGqs2BxWyJ5iZ/mYkQw5Sva7E5XuqpjkxjsxX7/OU+X56MDbCOXzqrgeRjh9HHXX0
- 2BXFZ0oSYx0xwIlnSxHDnJq+tjf1ariSumYaswHs71h51UM9FqN9xH7aeMYHGsZ/4QaVkaMLBQ2N
- o2eCxS3UTYtuZQ==
-X-Report-Abuse-To: spam@se16.registrar-servers.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926204150.29829-2-stefan@agner.ch>
+X-Operating-System: Linux phenom 4.14.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday 29 September 2018 08:57 PM, Maxime Ripard wrote:
-> On Thu, Sep 27, 2018 at 11:03:19PM +0530, Jagan Teki wrote:
->> On Thu, Sep 27, 2018 at 10:44 PM Maxime Ripard
->> <maxime.ripard@bootlin.com> wrote:
->>>
->>> On Thu, Sep 27, 2018 at 05:18:46PM +0530, Jagan Teki wrote:
->>>> Accordingly to BPI-M64-bsp DE DSI code Video start delay
->>>> can be computed by subtracting total vertical timing with
->>>> front porch timing and with adding 1 delay line for TCON.
->>>
->>> This is what the current code is doing as well.
->>
->> The current code
->> return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
->>
->> (mode->vsync_end - mode->vdisplay) = front porch + sync
->>
->> but I'm updating here only front porch.
->>
->>>
->>>> This patch simply add the start_delay logic from BPI-M64-bsp,
->>>> w/o this new computation, the DSI on A64 encounter vblank time out.
->>>>
->>>> [CRTC:36:crtc-0] vblank wait timed out
->>>>
->>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->>>> ---
->>>>   drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
->>>>   1 file changed, 11 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
->>>> index 9918fdb990ff..217db74c6dc3 100644
->>>> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
->>>> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
->>>> @@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
->>>>   static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
->>>>                                           struct drm_display_mode *mode)
->>>>   {
->>>> -     return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
->>>> +     u32 vfp = mode->vsync_start - mode->vdisplay;
->>
->> let me explain this.
->>
->> Actual code from Allwinner
->> u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
->>
->> So,
->>
->> => (panel->lcd_vt - panel->lcd_y) - (panel->lcd_vbp)
->> => (front porch + sync + back porch) - (back porch + sync)
+On Wed, Sep 26, 2018 at 10:41:50PM +0200, Stefan Agner wrote:
+> From: Satendra Singh Thakur <satendra.t@samsung.com>
 > 
-> Unless Allwinner is doing something fishy, in which case that should
-> be mentionned, the back porch doesn't contain the sync pulse.
+> Use the drm_display_mode_to_videomode function to calculate front/
+> back porches and sync length.
+> 
+> Cc: Madhur Verma <madhur.verma@samsung.com>
+> Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
+> Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-As per as I understand panel->lcd_vbp is not back porch timings value 
-which i used by drm. It is BSP DTS property value and actual back porch 
-is calculated as "panel->lcd_vbp - panel->sync"
+I think if lots of people want this (iirc yours not the only driver that
+wants front/back-porch) we should extend the computed crtc_* fields with
+this. Kinda silly we force people to go through v4l videomode in drm
+drivers. But then, this gets the job done, so maybe an idea for todo.rst?
 
-timmings->ver_sync_time= panel_info->lcd_vspw;
-timmings->ver_back_porch= panel_info->lcd_vbp-panel_info->lcd_vspw;
+On both patches:
 
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> ---
+>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c | 32 ++++++++++------------
+>  1 file changed, 14 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c
+> index 05d1c9977395..18afc94e4dff 100644
+> --- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c
+> +++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c
+> @@ -17,6 +17,7 @@
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_crtc_helper.h>
+> +#include <video/videomode.h>
+>  
+>  #include "fsl_dcu_drm_crtc.h"
+>  #include "fsl_dcu_drm_drv.h"
+> @@ -85,39 +86,34 @@ static void fsl_dcu_drm_crtc_mode_set_nofb(struct drm_crtc *crtc)
+>  	struct fsl_dcu_drm_device *fsl_dev = dev->dev_private;
+>  	struct drm_connector *con = &fsl_dev->connector.base;
+>  	struct drm_display_mode *mode = &crtc->state->mode;
+> -	unsigned int hbp, hfp, hsw, vbp, vfp, vsw, pol = 0;
+> +	unsigned int pol = 0;
+> +	struct videomode vm;
+>  
+>  	clk_set_rate(fsl_dev->pix_clk, mode->clock * 1000);
+>  
+> -	/* Configure timings: */
+> -	hbp = mode->htotal - mode->hsync_end;
+> -	hfp = mode->hsync_start - mode->hdisplay;
+> -	hsw = mode->hsync_end - mode->hsync_start;
+> -	vbp = mode->vtotal - mode->vsync_end;
+> -	vfp = mode->vsync_start - mode->vdisplay;
+> -	vsw = mode->vsync_end - mode->vsync_start;
+> +	drm_display_mode_to_videomode(mode, &vm);
+>  
+>  	/* INV_PXCK as default (most display sample data on rising edge) */
+>  	if (!(con->display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_POSEDGE))
+>  		pol |= DCU_SYN_POL_INV_PXCK;
+>  
+> -	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+> +	if (vm.flags & DISPLAY_FLAGS_HSYNC_LOW)
+>  		pol |= DCU_SYN_POL_INV_HS_LOW;
+>  
+> -	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
+> +	if (vm.flags & DISPLAY_FLAGS_VSYNC_LOW)
+>  		pol |= DCU_SYN_POL_INV_VS_LOW;
+>  
+>  	regmap_write(fsl_dev->regmap, DCU_HSYN_PARA,
+> -		     DCU_HSYN_PARA_BP(hbp) |
+> -		     DCU_HSYN_PARA_PW(hsw) |
+> -		     DCU_HSYN_PARA_FP(hfp));
+> +		     DCU_HSYN_PARA_BP(vm.hback_porch) |
+> +		     DCU_HSYN_PARA_PW(vm.hsync_len) |
+> +		     DCU_HSYN_PARA_FP(vm.hfront_porch));
+>  	regmap_write(fsl_dev->regmap, DCU_VSYN_PARA,
+> -		     DCU_VSYN_PARA_BP(vbp) |
+> -		     DCU_VSYN_PARA_PW(vsw) |
+> -		     DCU_VSYN_PARA_FP(vfp));
+> +		     DCU_VSYN_PARA_BP(vm.vback_porch) |
+> +		     DCU_VSYN_PARA_PW(vm.vsync_len) |
+> +		     DCU_VSYN_PARA_FP(vm.vfront_porch));
+>  	regmap_write(fsl_dev->regmap, DCU_DISP_SIZE,
+> -		     DCU_DISP_SIZE_DELTA_Y(mode->vdisplay) |
+> -		     DCU_DISP_SIZE_DELTA_X(mode->hdisplay));
+> +		     DCU_DISP_SIZE_DELTA_Y(vm.vactive) |
+> +		     DCU_DISP_SIZE_DELTA_X(vm.hactive));
+>  	regmap_write(fsl_dev->regmap, DCU_SYN_POL, pol);
+>  	regmap_write(fsl_dev->regmap, DCU_BGND, DCU_BGND_R(0) |
+>  		     DCU_BGND_G(0) | DCU_BGND_B(0));
+> -- 
+> 2.19.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
