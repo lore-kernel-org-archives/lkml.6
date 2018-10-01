@@ -2,152 +2,185 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B54DC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACEAAC00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C10B1208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:44:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 702BC208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:45:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="URa74D9s";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G3jgmTIm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C10B1208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QZzhtv+b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 702BC208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbeJAWXO (ORCPT
+        id S1726321AbeJAWXh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:23:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44900 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbeJAWXN (ORCPT
+        Mon, 1 Oct 2018 18:23:37 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:53182 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725266AbeJAWXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:23:13 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7254D60C1D; Mon,  1 Oct 2018 15:44:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538408688;
-        bh=q15h+YKcFMqb3r1sNrIuc0XDQxrAwGjcUX9M7z0GYT0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=URa74D9sRuP4f7zQIWRxtYE/pUBgAA3cazDXxvNIHKDb98pnVW/gCoOxb4PGSQmHQ
-         bgzn5qL6b/CYlNamv9zLmuK909+AQoXad6P/ECcVeSiFH+x6PmCDCsg33OdT9KJf7f
-         Mqe/wzeXXPRnherj1Nmdc6kl51/2r2rMCQYlmSOg=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id D998860C5F;
-        Mon,  1 Oct 2018 15:44:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538408687;
-        bh=q15h+YKcFMqb3r1sNrIuc0XDQxrAwGjcUX9M7z0GYT0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=G3jgmTImJwdS5Oxram/LVwHzv6BF/ASNnfjmO4fXrWG1hIfTrm7oyN6mGKZtA4hIb
-         lJaDZzjMuwcPIuFnvZKcrUP8S4EeKrN+xrYYk7M1wAo56ez+kf5O1iUJPziGSjnkU8
-         QHCWTMs9SvCPsVuwhTuz8YtW4Zhhbsasl3cyDuaQ=
+        Mon, 1 Oct 2018 18:23:37 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w91Fi2QW079501;
+        Mon, 1 Oct 2018 15:45:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=aq+D6ORcfHk6oLIDzrTRVxOZ2WHwD/PzPMrrS53WfkQ=;
+ b=QZzhtv+bAmYzOv4t8JgvOWl027jHoUcevEx/2fq9KB89/Ql5dvyxRH4zN7ysE99OfreU
+ KMftI/px76UA3Ov5OgJS5ipqY8yNQL/9ia4upXP2HCjdPx2sehMACtlc1RnaA3qCsKnV
+ Lx126zCGZ3EqdmSiDWId9W6SyuErK8qcPl3oRswgg4BR842wVMP3tVI22xbhqYdl8L1b
+ 7n29v1ZghQeWAotyBePihQaD/oVjUAEAWzOZyFqbwRfyP1ieQVfDJZAjqbpZoWPMT3Jh
+ 5tTsMWK1dNXxbuJeXfMSys4McnaL4yUFFK3CpQIgnznsPSZUI0rpRfN+U1h/wkykKz5U xw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2mt21qr49k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 01 Oct 2018 15:45:07 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w91Fj1s4001159
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 1 Oct 2018 15:45:01 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w91Fj0dZ000585;
+        Mon, 1 Oct 2018 15:45:01 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 01 Oct 2018 08:45:00 -0700
+Date:   Mon, 1 Oct 2018 08:44:59 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Dave Chinner <david@fromorbit.com>, TongZhang <ztong@vt.edu>,
+        linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Wenbo Shen <shenwenbosmile@gmail.com>
+Subject: Re: Leaking Path in XFS's ioctl interface(missing LSM check)
+Message-ID: <20181001154459.GB5872@magnolia>
+References: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu>
+ <20180926013329.GD31060@dastard>
+ <20180926192426.472360ea@alans-desktop>
+ <20180927013812.GF31060@dastard>
+ <20180930151652.6975610c@alans-desktop>
+ <20181001002521.GM31060@dastard>
+ <20181001160442.47c798bc@alans-desktop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 01 Oct 2018 21:14:46 +0530
-From:   Vikash Garodia <vgarodia@codeaurora.org>
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Alexandre Courbot <acourbot@chromium.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
-        mark.rutland@arm.com, Andy Gross <andy.gross@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, bjorn.andersson@linaro.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-media-owner@vger.kernel.org
-Subject: Re: [PATCH v9 1/5] venus: firmware: add routine to reset ARM9
-In-Reply-To: <cdc7769d-8bea-ac78-355e-07347ac8aaf1@linaro.org>
-References: <1537314192-26892-1-git-send-email-vgarodia@codeaurora.org>
- <1537314192-26892-2-git-send-email-vgarodia@codeaurora.org>
- <CAPBb6MXMv_TD2dbxyM+D2p3pWfCJpQ-_FHK6WdkAEgBhwTdL6g@mail.gmail.com>
- <97b94b9b-f028-cb8b-a3db-67626dc517ab@linaro.org>
- <175fcecf3be715d2a20b71746c648f1e@codeaurora.org>
- <CAPBb6MUo6X+L7UYgmw8qUe_2CiZEBKGxaREFhZGRU1jGq0fO=g@mail.gmail.com>
- <cdc7769d-8bea-ac78-355e-07347ac8aaf1@linaro.org>
-Message-ID: <a2aacb3257cb4542086043d17128d098@codeaurora.org>
-X-Sender: vgarodia@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001160442.47c798bc@alans-desktop>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9033 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810010153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stanimir,
-
-On 2018-10-01 20:00, Stanimir Varbanov wrote:
-> Hi,
+On Mon, Oct 01, 2018 at 04:04:42PM +0100, Alan Cox wrote:
+> >         /* only root can play with this */
+> >         if (!capable(CAP_SYS_ADMIN))
+> >                 return -EACCES;
+> > 
+> > Think about it - if DM control ioctls only require CAP_SYS_ADMIN,
+> > then if have that cap you can use DM to remap any block in a block
+> > device to any other block. You don't need to the filesystem to move
+> > stuff around, it can be moved around without the filesystem knowing
+> > anything about it.
 > 
-> On 09/20/2018 06:31 AM, Alexandre Courbot wrote:
->> On Thu, Sep 20, 2018 at 2:55 AM Vikash Garodia 
->> <vgarodia@codeaurora.org> wrote:
->>> 
->>> On 2018-09-19 20:30, Stanimir Varbanov wrote:
->>>> Hi Alex,
->>>> 
->>>> On 09/19/2018 10:32 AM, Alexandre Courbot wrote:
->>>>> On Wed, Sep 19, 2018 at 8:43 AM Vikash Garodia
->>>>> <vgarodia@codeaurora.org> wrote:
->>>>>> 
->>>>>> Add routine to reset the ARM9 and brings it out of reset. Also
->>>>>> abstract the Venus CPU state handling with a new function. This
->>>>>> is in preparation to add PIL functionality in venus driver.
->>>>>> 
->>>>>> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
->>>>>> ---
->>>>>>  drivers/media/platform/qcom/venus/core.h         |  2 ++
->>>>>>  drivers/media/platform/qcom/venus/firmware.c     | 33
->>>>>> ++++++++++++++++++++++++
->>>>>>  drivers/media/platform/qcom/venus/firmware.h     | 11 ++++++++
->>>>>>  drivers/media/platform/qcom/venus/hfi_venus.c    | 13 +++-------
->>>>>>  drivers/media/platform/qcom/venus/hfi_venus_io.h |  7 +++++
->>>>>>  5 files changed, 57 insertions(+), 9 deletions(-)
->>>>>> 
->>>>>> diff --git a/drivers/media/platform/qcom/venus/core.h
->>>>>> b/drivers/media/platform/qcom/venus/core.h
->>>>>> index 2f02365..dfd5c10 100644
->>>>>> --- a/drivers/media/platform/qcom/venus/core.h
->>>>>> +++ b/drivers/media/platform/qcom/venus/core.h
->>>>>> @@ -98,6 +98,7 @@ struct venus_caps {
->>>>>>   * @dev:               convenience struct device pointer
->>>>>>   * @dev_dec:   convenience struct device pointer for decoder 
->>>>>> device
->>>>>>   * @dev_enc:   convenience struct device pointer for encoder 
->>>>>> device
->>>>>> + * @no_tz:     a flag that suggests presence of trustzone
->>>>> 
->>>>> Looks like it suggests the absence of trustzone?
->>>>> 
->>>>> Actually I would rename it as use_tz and set it if TrustZone is 
->>>>> used.
->>>>> This would avoid double-negative statements like what we see below.
->>>> 
->>>> I find this suggestion reasonable.
->>> 
->>> Initially i planned to keep it as a positive flag. The reason behind
->>> keeping it
->>> as no_tz was to keep the default value of this flag to 0 indicating 
->>> tz
->>> is present
->>> by default.
->>> I can switch it to use_tz though and set it in firmware_init after 
->>> the
->>> presence of
->>> firmware node is checked.
->> 
->> Making sure the flag is explicitly initialized instead of relying on
->> default initialization is another good reason to have that change
->> IMHO. :)
+> Yes - I am not surprised the XFS is not the only problem area. The fact
+> XFS also isn't going via the security hooks so security hooks can fix it
+> just makes it worse.
 > 
-> Vikash, care to send a new version, or will fix that with follow up 
-> patches?
+> > > That's what people said about setuid shell scripts.  
+> > 
+> > Completely different. setuid shell scripts got abused as a hack for
+> > the lazy to avoid setting up permissions properly and hence were
+> > easily exploited.
+> 
+> Sounds to me like an accurate description of the current capabilities
+> mess in the kernel (and not just XFS and not just file systems)
+> 
+> > Systems restricted by LSMs to the point where CAP_SYS_ADMIN is not
+> > trusted have exactly the same issues. i.e. there's nobody trusted by
+> > the kernel to administer the storage stack, and nobody has defined a
+> > workable security model that can prevent untrusted users from
+> > violating the existing storage trust model....
+> 
+> With a proper set of LSM checks you can lock the filesystem management
+> and enforcement to a particular set of objects.
 
-I will provide a new series with the suggested change.
+What would a proper set look like?  I /thought/ CAP_SYS_ADMIN was an
+(admittedly overly general) way to do that, but evidently that view is
+not considered correct.
 
-Thanks,
-Vikash
+Looking at include/linux/security.h, I don't see any hooks that seem
+like an obvious fit for a lot of the XFS ioctls.  Do we need to add
+some?  How do we do that?
+
+Just looking at XFS, we let CAP_SYS_ADMIN processes do things like...
+
+- Change the size of the filesystem
+- Discard all post-EOF speculative preallocations
+- Manage reserved block pools (which help us avoid ENOSPC)
+- Query the filesystem for detailed space usage information
+- Issue DISCARDs on unused space
+
+- Set a new volume label
+- Check and repair metadata
+
+- Inject errors for testing
+- Emergency shutdowns of the FS
+
+- Bulk stat() of inodes
+- Deal with files (open, read xattrs, read link targets) via file handles
+- Read system xattrs
+
+Can we create the necessary LSM hooks to check all of those things?  I
+could see the following new hooks:
+
+* Query filesystem space information
+* Manage filesystem space information
+* Set new filesystem label/uuid
+* Run metadata integrity operations
+* Access testing / debugging hooks
+* Reading filesystem internal metadata
+* Picking files by handle instead of path
+
+I imagine block devices probably need a few explicit hooks too:
+
+* Raw reads
+* Raw writes
+* Reconfigure block device
+
+If we /did/ replace CAP_SYS_ADMIN checking with a pile of LSM hooks, how
+do we make sure that we (XFS) avoid breaking existing XFS tools?  I
+guess the default compatibility handler for all of those new hooks would
+be "return capable(CAP_SYS_ADMIN) ? 0 : -EPERM;" and then other LSMs
+could restrict that further if so configured.
+
+Seriously, I don't know that much about how LSMs actually perform
+security checks -- it looks like a number of them can be active
+simultaneously, and we just call each of them in a chain until one of
+them denies permission or we run out of LSMs and allow it?
+
+FWIW I didn't have a particular security or threat model in mind when I
+made the above list; all I did was break up the existing CAP_SYS_ADMIN
+into rough functional areas.  Maybe it makes sense, but maybe I'm
+rambling. :)
+
+--D
+
+> You can build that model where for example only an administrative
+> login from a trusted console may launch processes to do that
+> management.
+> 
+> Or you could - if things were not going around the LSM hooks.
+> 
+> Alan
