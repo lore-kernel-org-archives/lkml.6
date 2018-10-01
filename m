@@ -2,76 +2,94 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F29C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F90DC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A6E520652
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:52:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A6E520652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 40F2920652
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:54:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F2920652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbeJAP3H (ORCPT
+        id S1728990AbeJAPa7 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 11:29:07 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56765 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbeJAP3H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 11:29:07 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1g6twA-0001Vq-VC; Mon, 01 Oct 2018 10:52:18 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1g6tw4-0004lo-FT; Mon, 01 Oct 2018 10:52:12 +0200
-Date:   Mon, 1 Oct 2018 10:52:12 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     jun qian <hangdianqj@163.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Barry song <21cnbao@gmail.com>, Jiri Slaby <jslaby@suse.com>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH] tty:serial:imx: use spin_lock instead of
- spin_lock_irqsave in isr
-Message-ID: <20181001085212.wu7eba4eh7koy5jx@pengutronix.de>
-References: <20180827144904.17226-1-hangdianqj@163.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+        Mon, 1 Oct 2018 11:30:59 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:40988 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728826AbeJAPa7 (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:9:1>);
+        Mon, 1 Oct 2018 11:30:59 -0400
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Mon, 01 Oct 2018 02:54:17 -0600
+Message-Id: <5BB1E0B502000078001ED124@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.2 
+Date:   Mon, 01 Oct 2018 02:54:13 -0600
+From:   "Jan Beulich" <JBeulich@suse.com>
+To:     "Juergen Gross" <jgross@suse.com>
+Cc:     "Borislav Petkov" <bp@alien8.de>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>, <tglx@linutronix.de>,
+        "xen-devel" <xen-devel@lists.xenproject.org>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        <longman@redhat.com>, <mingo@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <hpa@zytor.com>
+Subject: Re: [Xen-devel] [PATCH 1/2] xen: fix race in xen_qlock_wait()
+References: <20181001071641.19282-1-jgross@suse.com>
+ <20181001071641.19282-2-jgross@suse.com>
+In-Reply-To: <20181001071641.19282-2-jgross@suse.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180827144904.17226-1-hangdianqj@163.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+>>> On 01.10.18 at 09:16, <jgross@suse.com> wrote:
+> In the following situation a vcpu waiting for a lock might not be
+> woken up from xen_poll_irq():
+> 
+> CPU 1:                CPU 2:                      CPU 3:
+> takes a spinlock
+>                       tries to get lock
+>                       -> xen_qlock_wait()
+>                         -> xen_clear_irq_pending()
 
-On Mon, Aug 27, 2018 at 07:49:04AM -0700, jun qian wrote:
-> Before the program enters the uart ISR, the local interrupt has been
-> disabled by the system, so it's not appropriate to use spin_lock_irqsave
-> interface in the ISR.
+Doesn't the last line above ...
 
-"not appropriate" is a bit strong. It's not as optimal as it could be
-though, yes.
+> frees the lock
+> -> xen_qlock_kick(cpu2)
 
-The change is fine,
+... need to be below here?
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> takes lock again
+>                                                   tries to get lock
+>                                                   -> *lock = _Q_SLOW_VAL
+>                         -> *lock == _Q_SLOW_VAL ?
+>                         -> xen_poll_irq()
+> frees the lock
+> -> xen_qlock_kick(cpu3)
+> 
+> And cpu 2 will sleep forever.
+> 
+> This can be avoided easily by modifying xen_qlock_wait() to call
+> xen_poll_irq() only if the related irq was not pending and to call
+> xen_clear_irq_pending() only if it was pending.
+> 
+> Cc: stable@vger.kernel.org 
+> Cc: Waiman.Long@hp.com 
+> Cc: peterz@infradead.org 
+> Signed-off-by: Juergen Gross <jgross@suse.com>
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Patch itself
+Reviewed-by: Jan Beulich <jbeulich@suse.com>
+
+Jan
+
+
