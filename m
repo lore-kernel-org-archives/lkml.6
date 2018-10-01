@@ -2,224 +2,203 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD20C64EAD
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5377DC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE0D5206B2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:49:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05BBC206B2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:52:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DeP6iY4i";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EOt6jVHu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE0D5206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wdp0Si/Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05BBC206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbeJAMZ5 (ORCPT
+        id S1728694AbeJAM2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 08:25:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47294 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728593AbeJAMZ5 (ORCPT
+        Mon, 1 Oct 2018 08:28:44 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46047 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728593AbeJAM2n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 08:25:57 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2FA7A60C54; Mon,  1 Oct 2018 05:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538372995;
-        bh=FKpTmMWFkmy1kySjdRIY5H/nhVqN2KFTZme0rUjvswA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DeP6iY4i1RH+E0zeoY5sLWHlscU9WQHrMB7BC9QOqL6AOTqRwWOpUM4EwseGEMUpI
-         x4mfFRokOXoNvDtwsBr4fvSTbUnB1GXLOigAD7M2dSaN/Iyc5BEeDHLj9WtXlCYuuI
-         /5qtHVRQkf+jzMtdE+xaXayhPug0IO2T9TZWGrpk=
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6365360128;
-        Mon,  1 Oct 2018 05:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538372988;
-        bh=FKpTmMWFkmy1kySjdRIY5H/nhVqN2KFTZme0rUjvswA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=EOt6jVHu6keZVbBVrkWb89kz+T6P6L4W3zLN8+A4FC83e39W8z1LCl8XaWbZD8lhq
-         kTr3kEDoWhv8LJWtwJfs6sk1lFy7zZvly6FocgKocy8R5yiJDV7s7mOpuCnzr/wQMC
-         ufdTVJg7KH5evfZM7U8UUn6spOilQb8cS9KO0xAw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6365360128
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt1-f171.google.com with SMTP id z14-v6so12776663qtn.2;
-        Sun, 30 Sep 2018 22:49:48 -0700 (PDT)
-X-Gm-Message-State: ABuFfohmlbdg81zp9rQs/lTsvbqyAZ/Vr7xxwirmH+/jMrzk8JqmbyIW
-        EOglkOMnSJt7PPOvz+Lw7OieakdQO3rbFInokcc=
-X-Google-Smtp-Source: ACcGV61OeC0bjZb2CgPvrVSuLI7sDUEw64RA2nsmtExlG6/dMNHkNILCD7Yfm4sf+m9Z7QEXtBFd3JncqkM/o2en534=
-X-Received: by 2002:a0c:d0cc:: with SMTP id b12-v6mr7333463qvh.107.1538372987638;
- Sun, 30 Sep 2018 22:49:47 -0700 (PDT)
+        Mon, 1 Oct 2018 08:28:43 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t70-v6so8609024pgd.12
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 22:52:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=et0YsD1Q0AeXA2V8n6+N+9yKNPSQ8X4v8TvkJYAGNaA=;
+        b=Wdp0Si/QhuoNMHwiegeQBYoHDsOLKCqAkWlhJopUs8y1Jw0qy0yxgnMYmT9PKFN5VL
+         muLB4z/VJ49zNsFA+I3a/ROm/or1HTqAJtxK+X9myQ+08eVal2ETz3iT5ZUpJv+t8Q56
+         xGJLJ7Q2D/Sm2Z1zYiygm8lOxdGclsxqLGh+2X5F6AP01CM1G/8W5Aqva9YORKEV0E7x
+         ZJ0bvp1d/1Xso6Afib/MwFngJty6j4e17EakA7sJZ38V70uiRtpo4Ngb4xyJrBh0tfYF
+         10SIkIcEkXQxtaXwVqYHn1+227Rv+9v8YR2q6W956tNPP4hoDzRTem8HakVWLN3PKoTw
+         b94w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=et0YsD1Q0AeXA2V8n6+N+9yKNPSQ8X4v8TvkJYAGNaA=;
+        b=FQqfNU7fXw5ZcSY4jA6ynUFNa1Qf1vz1acQAO0cNl8XXAlwGjdwtk4i2URsdm4FYw7
+         S99QSwHoNW67g8QIjVfFNjqK+486bFEO1rPpAgAb0Du0bc1ipEvkq9r6r+SB3lfgxGqb
+         D8qnbL8IGAWe4zPwGHL7rOyDi2dZVlFLTiNffyoaPVxKykQzb6xCw0qVowOutYDM35OW
+         ifGxoVH9QijKYw5JjStMISlsSoVL3WRt9P1Og9kKLkyNlyM/M7CGqnl9RtqkDRR0D3Vy
+         agkNF3JcjSucOdimtPuVsluZDSWqHHz/uK1KiO3KI07+NQnYstiMOhmXOPR8P9XM9usu
+         iELA==
+X-Gm-Message-State: ABuFfohdKo/X9O6cHjqWMjzwO89F06JTAB3U3mK1kVR5DP5zqoUcZPyj
+        aZ1rYSaidQBAYSuFezz6+i8=
+X-Google-Smtp-Source: ACcGV62DMDMJzF4/bTBpuoA4bH9WeQG+EkYVp8N5HCvjyEVXwfQWmn7WQSsJxKYL+nqO8WUxvWrnMg==
+X-Received: by 2002:a63:cc04:: with SMTP id x4-v6mr8682535pgf.33.1538373161052;
+        Sun, 30 Sep 2018 22:52:41 -0700 (PDT)
+Received: from localhost ([39.7.15.30])
+        by smtp.gmail.com with ESMTPSA id l83-v6sm5176458pfi.172.2018.09.30.22.52.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 30 Sep 2018 22:52:39 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 14:52:36 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+Message-ID: <20181001055236.GA386@jagdpanzerIV>
+References: <20180913142802.GB517@tigerII.localdomain>
+ <20180914065728.GA515@jagdpanzerIV>
+ <49d22738-17ad-410a-be0a-d27d76ba9f37@i-love.sakura.ne.jp>
+ <20180914115028.GB20572@tigerII.localdomain>
+ <e855cbef-03ff-b4ac-3e06-d2f2f48cfb1f@i-love.sakura.ne.jp>
+ <20180914122217.GA518@tigerII.localdomain>
+ <a661ed7f-889a-1811-0ada-111cc5185d05@i-love.sakura.ne.jp>
+ <20180928085648.GC1160@jagdpanzerIV>
+ <802130a3-b8c1-3973-933b-d6dc5ff2930d@i-love.sakura.ne.jp>
+ <20180929111317.GB1392@tigerII.localdomain>
 MIME-Version: 1.0
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
- <20180830144541.17740-2-vivek.gautam@codeaurora.org> <CAPDyKFohpvEMfDoDooYEyxPMeQ+9dU71qz7ZAZxQ1rzyW-w8iA@mail.gmail.com>
-In-Reply-To: <CAPDyKFohpvEMfDoDooYEyxPMeQ+9dU71qz7ZAZxQ1rzyW-w8iA@mail.gmail.com>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Mon, 1 Oct 2018 11:19:34 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iHZysBmMZj+pZghPocEwDzU7KfR1gLQAQRBui+-gdiSTQ@mail.gmail.com>
-Message-ID: <CAFp+6iHZysBmMZj+pZghPocEwDzU7KfR1gLQAQRBui+-gdiSTQ@mail.gmail.com>
-Subject: Re: [PATCH v16 1/5] iommu/arm-smmu: Add pm_runtime/sleep ops
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, alex.williamson@redhat.com,
-        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "robh+dt" <robh+dt@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180929111317.GB1392@tigerII.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Ulf,
+On (09/29/18 20:13), Sergey Senozhatsky wrote:
+> We used to flush "incomplete" cont lines (fragments) from console_unlock().
+> 
+> void console_unlock(void)
+> {
+> ...
+>         /* flush buffered message fragment immediately to console */
+>         console_cont_flush(text, sizeof(text));
+> again:
+>         for (;;) {
+> 	...
+> 	}
+> ...
+> }
+> 
+> Unless I'm missing something, we don't anymore.
+> Since 5c2992ee7fd8a29d04125dc0aa3522784c5fa5eb.
+> Now we print only log_buf entries. So we either wait for a \n to flush
+> a complete cont buffer, or for a race to preliminary flush cont buffer.
 
-On Fri, Sep 28, 2018 at 5:30 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> On 30 August 2018 at 16:45, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
-> > From: Sricharan R <sricharan@codeaurora.org>
-> >
-> > The smmu needs to be functional only when the respective
-> > master's using it are active. The device_link feature
-> > helps to track such functional dependencies, so that the
-> > iommu gets powered when the master device enables itself
-> > using pm_runtime. So by adapting the smmu driver for
-> > runtime pm, above said dependency can be addressed.
-> >
-> > This patch adds the pm runtime/sleep callbacks to the
-> > driver and also the functions to parse the smmu clocks
-> > from DT and enable them in resume/suspend.
-> >
-> > Also, while we enable the runtime pm add a pm sleep suspend
-> > callback that pushes devices to low power state by turning
-> > the clocks off in a system sleep.
-> > Also add corresponding clock enable path in resume callback.
-> >
-> > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> > Signed-off-by: Archit Taneja <architt@codeaurora.org>
-> > [vivek: rework for clock and pm ops]
-> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> > Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > ---
-> >  drivers/iommu/arm-smmu.c | 77 ++++++++++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 74 insertions(+), 3 deletions(-)
-> > diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->
-> [...]
->
-> > -static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
-> > +static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
-> >  {
-> >         struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-> > +       int ret;
-> > +
-> > +       ret = clk_bulk_enable(smmu->num_clks, smmu->clks);
-> > +       if (ret)
-> > +               return ret;
-> >
-> >         arm_smmu_device_reset(smmu);
-> > +
-> >         return 0;
-> >  }
-> >
-> > -static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
-> > +static int __maybe_unused arm_smmu_runtime_suspend(struct device *dev)
-> > +{
-> > +       struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-> > +
-> > +       clk_bulk_disable(smmu->num_clks, smmu->clks);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
-> > +{
-> > +       if (pm_runtime_suspended(dev))
-> > +               return 0;
->
-> Looks like you should be able use pm_runtime_force_resume(), instead
-> of using this local trick. Unless I am missing something, of course.
->
-> In other words, just assign the system sleep callbacks for resume, to
-> pm_runtime_force_resume(). And vice verse for the system suspend
-> callbacks, pm_runtime_force_suspend(), of course.
+BTW, it just crossed my mind:
 
-Thanks for the review. I will change this as suggested.
+Previously, we would do console_cont_flush() for each pr_cont(),
+so console_unlock() would print data:
 
->
-> > +
-> > +       return arm_smmu_runtime_resume(dev);
-> > +}
-> > +
-> > +static int __maybe_unused arm_smmu_pm_suspend(struct device *dev)
-> > +{
-> > +       if (pm_runtime_suspended(dev))
-> > +               return 0;
-> > +
-> > +       return arm_smmu_runtime_suspend(dev);
-> > +}
-> > +
-> > +static const struct dev_pm_ops arm_smmu_pm_ops = {
-> > +       SET_SYSTEM_SLEEP_PM_OPS(arm_smmu_pm_suspend, arm_smmu_pm_resume)
->
-> I am wondering if using the ->suspend|resume() callback is really
-> "late/early" enough in the device suspend phase?
->
-> Others is using the noirq phase and some is even using the syscore
-> ops. Of course it depends on the behavior of the consumers of iommu
-> device, and I guess not everyone is using device links, which for sure
-> improves things in this regards as well.
+	pr_cont();
+	 console_lock();
+	 console_unlock()
+	  console_cont_flush(); // print cont fragment
+	...
+	pr_cont();
+	 console_lock();
+	 console_unlock()
+	  console_cont_flush(); // print cont fragment
 
-Well yes, as you said the device links should be able to take care of
-maintaining the correct suspend/resume order of smmu and its clients,
-or am I missing your point here?
-Let me know and I will be happy to incorporate any suggestions.
-Thanks
+We don't console_cont_flush() anymore, so when we do pr_cont()
+console_unlock() does nothing (unless we flushed the cont buffer):
 
-Regards
-Vivek
+	pr_cont();
+	 console_lock();
+	 console_unlock();      // noop
+	...
+	pr_cont();
+	 console_lock();
+	 console_unlock();      // noop
+	...
+	pr_cont();
+	  cont_flush();
+	    console_lock();
+	    console_unlock();   // print data
 
->
-> > +       SET_RUNTIME_PM_OPS(arm_smmu_runtime_suspend,
-> > +                          arm_smmu_runtime_resume, NULL)
-> > +};
-> >
-> >  static struct platform_driver arm_smmu_driver = {
-> >         .driver = {
-> > --
-> > QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> > of Code Aurora Forum, hosted by The Linux Foundation
-> >
->
-> BTW, apologize for very late review comments.
->
-> Besides the above comments, the series looks good to me.
->
-> Kind regards
-> Uffe
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+console_lock()/console_unlock() makes sense only when we flush cont
+buffer.
 
+We also wakeup klogd purposelessly for pr_cont() output - un-flushed
+is not stored in log_buf; there is nothing to pull.
 
+So we can console_lock()/console_unlock()/wake_up_klogd() only when we
+know that we log_stor()-ed a message.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+A quick-n-dirty patch (I can send a formal one) which compares log_next_seq
+before and after vprintk_store(). log_next_seq is getting incremented each
+time we log_store() a new log_buf message:
+
+---
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 308497194bd4..53d9134f02a6 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1931,6 +1931,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 	int printed_len;
+ 	bool in_sched = false;
+ 	unsigned long flags;
++	u64 curr_log_seq;
+ 
+ 	if (level == LOGLEVEL_SCHED) {
+ 		level = LOGLEVEL_DEFAULT;
+@@ -1942,11 +1943,12 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 
+ 	/* This stops the holder of console_sem just where we want him */
+ 	logbuf_lock_irqsave(flags);
++	curr_log_seq = log_next_seq;
+ 	printed_len = vprintk_store(facility, level, dict, dictlen, fmt, args);
+ 	logbuf_unlock_irqrestore(flags);
+ 
+ 	/* If called from the scheduler, we can not call up(). */
+-	if (!in_sched) {
++	if (!in_sched && (curr_log_seq != log_next_seq)) {
+ 		/*
+ 		 * Disable preemption to avoid being preempted while holding
+ 		 * console_sem which would prevent anyone from printing to
+@@ -1963,7 +1965,8 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 		preempt_enable();
+ 	}
+ 
+-	wake_up_klogd();
++	if (curr_log_seq != log_next_seq)
++		wake_up_klogd();
+ 	return printed_len;
+ }
+ EXPORT_SYMBOL(vprintk_emit);
+
+---
+
+	-ss
