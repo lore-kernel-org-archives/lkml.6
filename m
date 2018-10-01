@@ -2,107 +2,142 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CD1C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1F8C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A3A92089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:55:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="MH8Clibc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A3A92089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C89520652
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:56:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C89520652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbeJAPcV (ORCPT
+        id S1729050AbeJAPdH convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 11:32:21 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52553 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728804AbeJAPcV (ORCPT
+        Mon, 1 Oct 2018 11:33:07 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:46973 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728804AbeJAPdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 11:32:21 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 189-v6so7583132wmw.2;
-        Mon, 01 Oct 2018 01:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=B8Wox00i0Sk5edRkDeLf769LH2deC03DBzqZKVh5780=;
-        b=MH8ClibcEIv2XbB45JMwFiLN/i6YsdXUqrjTdVee9uwlXISRhwrXw1PChB4jYCpXE+
-         vgUW4nVBn996bGJWW8CKrTygTnhhqutYzp98bCfA7jC92B9KPsoMQmi2EnmjgraBmk6G
-         OgpBUOr60Be0JCEgFeSbYwLhofX3wsxZmzJ2B2GO/XSkxNC9R6qIl6ecIBwtiXbUQQ+n
-         s/PBIF+VSqkRcMdGVBAlL6N3KqqQqU1xKUqB0HbDw6td0waewOABP6iSi2VlP32VEno0
-         i0Lj7m934GeB+2fd/o7tKoWEpA2XNjrc8xo3VpSOleeYZbB+Bjz1yqS3xHIY7fBKRy99
-         xfCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=B8Wox00i0Sk5edRkDeLf769LH2deC03DBzqZKVh5780=;
-        b=FP3deyNMut0XwVlZRxCyjpLI/kid22YiPhpFdY7dlxFZF3JLPpOPHvUz0svlJSKatN
-         4WhmGe6Pe0xRjuSi99/GociDfXt4BcSIbT45S+Z6arBBHvVkoJz1v8uOyBd9ic8BEznJ
-         aGl2sP6p7VnvISCnJVr3lI9tTFIVukFw7n6xQ8BPB3pdBhQ1VR4Usrwgb8pYhHtuhnuR
-         fzwAblUgvZwZQbm8fucYCRvPJXUMccKvI7hppe7lww1XTlo6vRoprIjoOcJ10awPLHXl
-         FNEdEFriP62RzylVhnn+0uMXj3p6k/+IrMJnwIq9v5lWt5hrsuRM/xWVKL8FZ7meRPdH
-         2mmw==
-X-Gm-Message-State: ABuFfohi/WLE6zCy7EiOB1YhTIL8gZOJry3m1BSiSsE+bMt000p60W2b
-        a5AAGRT7SBSxURiXGuOwxlMVBzCP
-X-Google-Smtp-Source: ACcGV60QbtcbfEo6BR0Wl1wFqhjPtxzoG9PcE2hFzEQDxsVIBo46R7XGkF8tva+r8rUjc9QCWy7Mgg==
-X-Received: by 2002:a1c:8bcc:: with SMTP id n195-v6mr8873080wmd.118.1538384137935;
-        Mon, 01 Oct 2018 01:55:37 -0700 (PDT)
-Received: from [192.168.201.5] (p57B63A04.dip0.t-ipconnect.de. [87.182.58.4])
-        by smtp.googlemail.com with ESMTPSA id 198-v6sm12097859wmm.0.2018.10.01.01.55.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 01:55:37 -0700 (PDT)
-Subject: Re: [PATCH] cfg80211: fix wext-compat memory leak
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Cc:     Stefan Seyfried <seife+kernel@b1-systems.com>
-References: <20180930105300.30797-1-stefan.seyfried@googlemail.com>
- <1538377946.3126.0.camel@sipsolutions.net>
-From:   Stefan Seyfried <stefan.seyfried@googlemail.com>
-Openpgp: preference=signencrypt
-Message-ID: <e7bb48f5-3933-6d0b-160f-8d0801e3c1a7@message-id.googlemail.com>
-Date:   Mon, 1 Oct 2018 10:55:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 1 Oct 2018 11:33:06 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g6tzx-0001pl-U8; Mon, 01 Oct 2018 02:56:13 -0600
+Received: from [105.184.227.67] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g6tzv-0003dB-VG; Mon, 01 Oct 2018 02:56:13 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Laurent Vivier <laurent@vivier.eu>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        Dmitry Safonov <dima@arista.com>,
+        Andrey Vagin <avagin@openvz.org>,
+        Linux Containers <containers@lists.linux-foundation.org>
+References: <20180930234628.25528-1-laurent@vivier.eu>
+        <CALCETrWcQtLTVJU14ytWxu_gqoLuAYZJpyAvRsKwwgYZz7FEFg@mail.gmail.com>
+        <874le63zei.fsf@xmission.com>
+        <5b4f0798-eb22-2684-775c-c038c104e190@vivier.eu>
+Date:   Mon, 01 Oct 2018 10:56:03 +0200
+In-Reply-To: <5b4f0798-eb22-2684-775c-c038c104e190@vivier.eu> (Laurent
+        Vivier's message of "Mon, 1 Oct 2018 10:45:36 +0200")
+Message-ID: <87k1n2yrj0.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1538377946.3126.0.camel@sipsolutions.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1g6tzv-0003dB-VG;;;mid=<87k1n2yrj0.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19CRb4b8SUTag7XhkNMivKXZSY9M3WzYEU=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [RFC 0/2] ns: introduce binfmt_misc namespace
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johannes,
+Laurent Vivier <laurent@vivier.eu> writes:
 
-Am 01.10.18 um 09:12 schrieb Johannes Berg:
-> Hi Stefan,
-> 
-> Thanks for the investigation & fix. I've changed the fix to use
-> cfg80211_sinfo_release_content(),
+> Le 01/10/2018 à 09:21, Eric W. Biederman a écrit :
+>> Andy Lutomirski <luto@kernel.org> writes:
+>> 
+>>> On Sun, Sep 30, 2018 at 4:47 PM Laurent Vivier <laurent@vivier.eu> wrote:
+>>>>
+>>>> This series introduces a new namespace for binfmt_misc.
+>>>>
+>>>
+>>> This seems conceptually quite reasonable, but I'm wondering if the
+>>> number of namespace types is getting out of hand given the current
+>>> API.  Should we be considering whether we need a new set of namespace
+>>> creation APIs that scale better to larger numbers of namespace types?
+>> 
+>> I would rather encourage a way to make this part of an existing
+>> namespace or find a way to make a mount of binfmt_misc control this.
+>> 
+>> Hmm.  This looks like something that can be very straight forwardly be
+>> made part of the user namespace.  If you ever mount binfmt_misc in the
+>> user namespace you get the new behavior.  Otherwise you get the existing
+>> behavior.
+>
+> Thank you. I'll do that.
+>
+>> A user namespace will definitely be required, as otherwise you run the
+>> risk of confusing root (and suid root exectuables0 by being able to
+>> change the behavior of executables.
+>> 
+>> What is the motivation for this?  My impression is that very few people
+>> tweak binfmt_misc.
+>
+> I think more and more people are using an interpreter like qemu
+> linux-usermode to have a cross-compilation environment: they bootstrap a
+> distro filesystems (with something like debootstrap), and then use
+> binfmt_misc to run the compiler inside this environment (see for
+> instance [1] [2] [3] or [4] [5]). This is interesting because you have
+> more than a cross-compiler with that: you have also all the libraries of
+> the target system, you can select exactly which target release you want
+> to build to, with the exact same compiler and libraries versions (and
+> you can re-use it you want to do maintenance on your project 10 years
+> later...)
+>
+> The problem with this is you need to be root:
+> 1- to chroot
+> 2- to configure binfmt_misc
+>
+> We already can use "unshare --map-root-user chroot" to address the point
+> 1, and this series tries to address the point 2.
+>
+> I think it's also interesting to have a per container configuration for
+> binfmt_misc when the server administrator configures it and don't want
+> to share each user configuration with all the other user ones (in
+> something like docker or a cloud application).
 
-Being totally unfamiliar with the code, I was not sure about that :-)
+OK.  So it sounds like you are already needing a user namespace for
+this.   If this is your use case then my proposed method above seems to
+fit rather well.  James Bottomley was doing something similar that
+connected to personality(2).  That might be worth a look to see if there
+is some synergy there.
 
-> take care of the error path in
-> cfg80211_wext_giwrate() and added a Fixes tag :-)
-
-That's certainly much better.
-
-Thanks!
-
-(kudos to Vlastimil Babka who pointed out trace-cmd to me on the
- opensuse-kernel malinglist, which made the investigation quite easy)
--- 
-Stefan Seyfried
-
-"For a successful technology, reality must take precedence over
- public relations, for nature cannot be fooled." -- Richard Feynman
+>> I also don't think this raises to the level where it makes sense to
+>> create a new namespace for this.
+>
+> OK.
+>
+> Thanks,
+> Laurent
+>
+> [1] https://wiki.debian.org/Arm64Qemu
+> [2] https://wiki.debian.org/M68k/sbuildQEMU
+> [3] https://wiki.debian.org/RISC-V#Manual_qemu-user_installation
+> [4] https://kbeckmann.github.io/2017/05/26/QEMU-instead-of-cross-compiling/
+> [5] https://wiki.gentoo.org/wiki/Crossdev_qemu-static-user-chroot
