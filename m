@@ -2,103 +2,146 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A619EC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7BBC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A200208D9
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:06:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09880208D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:08:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bQ5BrFzu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A200208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXWBThX4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09880208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729571AbeJAVoV (ORCPT
+        id S1729582AbeJAVq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 17:44:21 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:52554 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729448AbeJAVoV (ORCPT
+        Mon, 1 Oct 2018 17:46:26 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35312 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729472AbeJAVq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 17:44:21 -0400
-Received: by mail-it1-f195.google.com with SMTP id 134-v6so11725931itz.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 08:06:07 -0700 (PDT)
+        Mon, 1 Oct 2018 17:46:26 -0400
+Received: by mail-wr1-f67.google.com with SMTP id w5-v6so5150500wrt.2;
+        Mon, 01 Oct 2018 08:08:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=TPolmJ1kdOss+EaiRTsFGAWXsQSv/arorMt7WVyfd3M=;
-        b=bQ5BrFzuf2SuVFYEaUiBpmiGi2wf0C9NsXhoFPK88qjdPuZ7zOlvzwxKFFkAsk01Gi
-         W6WPZoXC9n9VU3htWkgs+bXqobz7NeUUVOoTJ8plChSS5I5JWSEbthNNbwv2ZMAhC7dh
-         vyG/Z5Wmy3Wmjloeq8jYA3B3QZJEDO/YqBBpk=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2Rz4PkWKUB9ZNxO4sVlgtz7ltgbQxyF/PqUXw9YfA8U=;
+        b=YXWBThX4M+WNryFZNBTRWq2cdVjl/zkVCLXuYzCFOpN8LRNqKXhmpK5Lb9+Qx5s+a/
+         AqjIgn3ceHSd9Na2uaKox4SspKpxNqSFbcX/gSL2/GflASUvlXSogfxooRmSMu1ySPnx
+         vDAtF0rVUo0CjXqTqnmiHT5Cf0GbHZXRsTiKndg6ZkfU+sSWMdgkn6FKhA8gNF2Nj7ic
+         pJsP/0uVjjpnF5pTj/sqbep9OLmmZXI76O0e+Y6L6YVAfl9daWRLpok+QLf3x4oknc0S
+         mIl+/GJHhoYZjAPBJY5r4vJaF2xRDW7GAXH0EzUyDT+9+ATfBEfCRT1fc1Xr01O5KJb1
+         pvBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=TPolmJ1kdOss+EaiRTsFGAWXsQSv/arorMt7WVyfd3M=;
-        b=ShxwDz9hfcyAAyFBOg6EreIqTmLsyfgF6gJ/rpERU0qy2E0GuYrdJ9pIV2BYM9/yzZ
-         qgs0i7U3GohWaUNPni8Xi8nI6/nVb3UUhYqeDNmzxCaHcYcbrOaSpb8xWzx/H/kMXaP4
-         4Re40yMZwPPxyaDmM9drNyQq90foNvkYpEgKQIsIuNX8ujpP4p09TnbcJhxNbsPUN0z1
-         rsbhfo6TBORsoJJn5FtgzhMqWK4ZxYfevFi1u2SGtjDvJPu/yY1OKtDj0UP4NbGggZjv
-         tSmZnrgJNO3yugSlJmGuDhubdzsnFqR2KRm+1u7oFYAPtsYiaxu5FSFUSdgiZVUac+J7
-         rScQ==
-X-Gm-Message-State: ABuFfogoJz21pukXyau/tBkist607Y7HXJRwjbCHPoxPSHxOjrl9juNv
-        dSkhtKhi/uvXFRsFA7+lETZuSVoJGvrf8FSIN7pfAA==
-X-Google-Smtp-Source: ACcGV61SoVP1Tc0XTwQLgQC8FDF9//xPVLMMBbX5r7etoXIiEHUe1U1ANv8Tl1WzINBzPzqOly6NT7jGrJENFBlkBT4=
-X-Received: by 2002:a24:7804:: with SMTP id p4-v6mr6528471itc.123.1538406366837;
- Mon, 01 Oct 2018 08:06:06 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2Rz4PkWKUB9ZNxO4sVlgtz7ltgbQxyF/PqUXw9YfA8U=;
+        b=C7txi1kmbCbqlzvori9OX/P3k0/ybRqRmquTh7qrSpkQyOdvErQXo7dchxQevIX/7x
+         2yu4ZokSM00TbjDfcNElcpOgawBRUx2yj2/Ao5qqWucYObeKpzDANvv7qRQxZRmEuYzv
+         46ckL49pwktHIUrsADnLzdE6DiBDmWnMGK752XU8GUC6aOnKhN2XRSVGGFasvokO3rbp
+         LeOyBVWW3V8TXkAAyWGnuXvsVjRl6H6AN+CgbSLV+xsAcuVAQX0Ap6piw/Ye5VJg3LDb
+         eYvQPMjCed1RhA7uZz3wnkGcbISYURffdFNb6HYAXWxqVpiioMCFf58cQoXJsnCkNpmH
+         iyXg==
+X-Gm-Message-State: ABuFfohwYmDqsMDhcdGe5RckA4IBoLZ6OdkgLNIlyWc2Myh38K5FZDh7
+        hNBedv1CHW1lCFc8fA7knwI=
+X-Google-Smtp-Source: ACcGV62dR4WAbVNLR76BzF8JwhNosdF07AiZyqDL4bx2hXvbftKGs7WpuDXmB0ie/GZfdxk7sQXxsg==
+X-Received: by 2002:a5d:4ec8:: with SMTP id s8-v6mr7062773wrv.32.1538406490104;
+        Mon, 01 Oct 2018 08:08:10 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id h17-v6sm12606044wrq.73.2018.10.01.08.08.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 01 Oct 2018 08:08:09 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 08:08:07 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Andy Walls <awalls@md.metrocast.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH] media: cx18: Don't check for address of video_dev
+Message-ID: <20181001150807.GA16790@flashbox>
+References: <20180921195736.7977-1-natechancellor@gmail.com>
+ <440b7ec3-b0b6-c96b-93de-4b6a3be44eac@xs4all.nl>
 MIME-Version: 1.0
-Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 08:06:06 -0700 (PDT)
-In-Reply-To: <20181001150353.GA2634@lst.de>
-References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141643.331EE68BC7@newverein.lst.de>
- <CAKv+Gu-ZtJ-BpfPWU=soDCb2+dAd81p8OtaarWhmTe+Fk6A8ig@mail.gmail.com> <20181001150353.GA2634@lst.de>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 1 Oct 2018 17:06:06 +0200
-Message-ID: <CAKv+Gu9tvbM=tb-LJVJtGaq5wD0woX2gtdST+22xJnjZmc_SxQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] DYNAMIC_FTRACE configurable with and without REGS
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <440b7ec3-b0b6-c96b-93de-4b6a3be44eac@xs4all.nl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1 October 2018 at 17:03, Torsten Duwe <duwe@lst.de> wrote:
-> On Mon, Oct 01, 2018 at 04:52:27PM +0200, Ard Biesheuvel wrote:
->>
->> I guess we now have Kbuild/Kconfig support for this, no? I mean, we
->> can now show/hide options depending on the capabilities of the
->> toolchain.
->
-> Config options depending on flags availability?
->
+On Mon, Oct 01, 2018 at 10:30:54AM +0200, Hans Verkuil wrote:
+> On 09/21/2018 09:57 PM, Nathan Chancellor wrote:
+> > Clang warns that the address of a pointer will always evaluated as true
+> > in a boolean context.
+> > 
+> > drivers/media/pci/cx18/cx18-driver.c:1255:23: warning: address of
+> > 'cx->streams[i].video_dev' will always evaluate to 'true'
+> > [-Wpointer-bool-conversion]
+> >                 if (&cx->streams[i].video_dev)
+> >                 ~~   ~~~~~~~~~~~~~~~^~~~~~~~~
+> > 1 warning generated.
+> > 
+> > Presumably, the contents of video_dev should have been checked, not the
+> > address. This check has been present since 2009, introduced by commit
+> > 21a278b85d3c ("V4L/DVB (11619): cx18: Simplify the work handler for
+> > outgoing mailbox commands")
+> > 
+> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> > 
+> > Alternatively, this if statement could just be removed since it has
+> > evaluated to true since 2009 and I assume some issue with this would
+> > have been discovered by now.
+> > 
+> >  drivers/media/pci/cx18/cx18-driver.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
+> > index 56763c4ea1a7..753a37c7100a 100644
+> > --- a/drivers/media/pci/cx18/cx18-driver.c
+> > +++ b/drivers/media/pci/cx18/cx18-driver.c
+> > @@ -1252,7 +1252,7 @@ static void cx18_cancel_out_work_orders(struct cx18 *cx)
+> >  {
+> >  	int i;
+> >  	for (i = 0; i < CX18_MAX_STREAMS; i++)
+> > -		if (&cx->streams[i].video_dev)
+> > +		if (cx->streams[i].video_dev)
+> 
+> This should read:
+> 
+> 		if (cx->streams[i].video_dev.v4l2_dev)
+> 
+> If cx->streams[i].video_dev.v4l2_dev == NULL, then the stream is not in use
+> and there is no need to cancel any work.
+> 
+> Can you post a v2?
+> 
 
-Yes. Note that 'make menuconfig' now prints the compiler version at
-the top, and kconfig options can now 'depend' on compiler features,
-although I must admit I don't know how it works.
+Hi Hans,
 
->> I am not saying it would be a better approach, though - I'd rather
->> have a warning than have things silently disabled, but other people
->> may think differently.
->
-> Even then this switch has to be enabled, no matter who or what sets it.
-> Note that this patch leaves everything as-is. Only arm64 users with
-> "old" compilers would need to take action.
->
->         Torsten
->
+Yes, sorry, I completely forgot to look into this further. I will sent a
+v2 right now.
+
+Thank you for the review,
+Nathan
+
+> >  			cancel_work_sync(&cx->streams[i].out_work_order);
+> >  }
+> >  
+> > 
+> 
+> Regards,
+> 
+> 	Hans
