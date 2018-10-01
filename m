@@ -2,110 +2,134 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2BAC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC93C64EAD
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 276A5208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:58:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 276A5208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 89CBD2084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:01:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89CBD2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbeJAPf0 (ORCPT
+        id S1729000AbeJAPic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 11:35:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49494 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726386AbeJAPf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 11:35:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5A470AEFA;
-        Mon,  1 Oct 2018 08:58:41 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH 1/2] xen: fix race in xen_qlock_wait()
-To:     Jan Beulich <JBeulich@suse.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        longman@redhat.com, mingo@redhat.com,
-        lkml <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-References: =?UTF-8?B?PDIwMTgxMDAxMDcxNjQxLjE5Mjgy77+9Me+/vWpncm9zc0BzdXNl?=
- =?UTF-8?Q?=2ecom=3e_=3c20181001071641=2e19282-2-jgross=40suse=2ecom=3e_=3c5?=
- =?UTF-8?Q?BB1E0B502000078001ED124=40suse=2ecom=3e?=
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <d75416af-2cc4-595a-48dc-381d14785191@suse.com>
-Date:   Mon, 1 Oct 2018 10:58:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 1 Oct 2018 11:38:32 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49867 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728849AbeJAPic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 11:38:32 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3EC41207EB; Mon,  1 Oct 2018 11:01:45 +0200 (CEST)
+Received: from qschulz (AAubervilliers-681-1-24-95.w90-88.abo.wanadoo.fr [90.88.144.95])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D0575206A2;
+        Mon,  1 Oct 2018 11:01:34 +0200 (CEST)
+Date:   Mon, 1 Oct 2018 11:01:34 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, davem@davemloft.net,
+        f.fainelli@gmail.com, allan.nielsen@microchip.com,
+        linux-mips@linux-mips.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, antoine.tenart@bootlin.com
+Subject: Re: [PATCH 5/7] MIPS: mscc: ocelot: add GPIO4 pinmuxing DT node
+Message-ID: <20181001090134.jj47azs5nlbugmbi@qschulz>
+References: <cover.b921b010b6d6bde1c11e69551ae38f3b2818645b.1536916714.git-series.quentin.schulz@bootlin.com>
+ <92e37a04e77003f01a67ac5e49e66ae83f87c591.1536916714.git-series.quentin.schulz@bootlin.com>
+ <20180914145446.GQ14988@piout.net>
+ <20180914162638.fgzzjin2bzgx74de@qschulz>
+ <20180914170221.GB3811@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="y3mid7ypocxn35om"
+Content-Disposition: inline
+In-Reply-To: <20180914170221.GB3811@lunn.ch>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/10/2018 10:54, Jan Beulich wrote:
->>>> On 01.10.18 at 09:16, <jgross@suse.com> wrote:
->> In the following situation a vcpu waiting for a lock might not be
->> woken up from xen_poll_irq():
->>
->> CPU 1:                CPU 2:                      CPU 3:
->> takes a spinlock
->>                       tries to get lock
->>                       -> xen_qlock_wait()
->>                         -> xen_clear_irq_pending()
-> 
-> Doesn't the last line above ...
-> 
->> frees the lock
->> -> xen_qlock_kick(cpu2)
-> 
-> ... need to be below here?
 
-You are right, of course!
+--y3mid7ypocxn35om
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for noticing.
+Hi Andrew,
 
+On Fri, Sep 14, 2018 at 07:02:21PM +0200, Andrew Lunn wrote:
+> On Fri, Sep 14, 2018 at 06:26:38PM +0200, Quentin Schulz wrote:
+> > Hi Alexandre,
+> >=20
+> > On Fri, Sep 14, 2018 at 04:54:46PM +0200, Alexandre Belloni wrote:
+> > > Hi,
+> > >=20
+> > > On 14/09/2018 11:44:26+0200, Quentin Schulz wrote:
+> > > > In order to use GPIO4 as a GPIO, we need to mux it in this mode so =
+let's
+> > > > declare a new pinctrl DT node for it.
+> > > >=20
+> > > > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> > > > ---
+> > > >  arch/mips/boot/dts/mscc/ocelot.dtsi | 5 +++++
+> > > >  1 file changed, 5 insertions(+)
+> > > >=20
+> > > > diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/d=
+ts/mscc/ocelot.dtsi
+> > > > index 8ce317c..b5c4c74 100644
+> > > > --- a/arch/mips/boot/dts/mscc/ocelot.dtsi
+> > > > +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
+> > > > @@ -182,6 +182,11 @@
+> > > >  			interrupts =3D <13>;
+> > > >  			#interrupt-cells =3D <2>;
+> > > > =20
+> > > > +			gpio4: gpio4 {
+> > > > +				pins =3D "GPIO_4";
+> > > > +				function =3D "gpio";
+> > > > +			};
+> > > > +
+> > >=20
+> > > For a GPIO, I would do that in the board dts because it is not used
+> > > directly in the dtsi.
+> > >=20
+> >=20
+> > And the day we've two boards using this pinctrl we move it to a dtsi. Is
+> > that the plan?
+>=20
+> Hi Quentin
+>=20
+> gpio4 appears to be pretty arbitrary. Could a different design use a
+> different gpio? It me, this seems like a board property.
+>=20
 
-Juergen
+Right now, I don't see why it couldn't be.
+
+Quentin
+
+--y3mid7ypocxn35om
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlux4m4ACgkQhLiadT7g
+8aOwrw//fggU/lf20tjDRRE/OUzOw7mWBOfcLJW8Vgt/5R21//tJiSE2ZROZwhD1
+Lhlwfq2yvRuOHD9y+7qbgD76h5CjT5++AtRYEG7OCnzcRgTSb+P/KYHm+WX9D4y7
+lBzFrTm0pDvCi7lKldMQy4KDgaSV0XnStL8WdW1VXK7PjUOenpHlT22pcckO5MH0
+0BLAflw6Gzi2bqc4EtZqlmVA5jDMLA6BlI/fq885RxCLjAPl+bvAA8PvqO0+ZVm0
+8gdiVGkM4O+HFPRQLh20uR83kr0+Y6f5/NjymJFSxIS362QzC1FRImQWreBwv8jr
+FaDapv3lPv9zQOCqHDz+/4Da4/8kRYLC9jdStnb+ecoFQhl1QyMB8x1GYCLFv0ok
+/SQu9pJyCb8aoPkO9yw2oIE/6ilGVczC651z+CUbKOO34C1yLHRrzjT2/kW2FfEt
+y+Y6hvXyQgboUwXYPXV5vW3m/y5TLnKlLu/Yox52YFIdHw8tEn6zEIMidp3DQ/GM
+jNZROfROVoBOlsFKvCCfU9oszdIxQAkB25mGKOyO1FaIvZ8ZtXwdTC9ezakbhmxc
+zeStyj35qOz7np84EXBBZVSOvxrvXN/q0fGzGojxh+v2voOCmqnA/jn0TpROfkyL
+cVuXU9aQgcCs6depD2NTmpyO5RCOqGojVYG1lFjdXWOqUqvFWuU=
+=rpvF
+-----END PGP SIGNATURE-----
+
+--y3mid7ypocxn35om--
