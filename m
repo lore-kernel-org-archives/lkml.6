@@ -2,105 +2,91 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AA4C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB11EC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B9FC2089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:41:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B9FC2089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 70D042089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:43:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S5fRZk0H";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lKvJj6Bq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70D042089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbeJAWTt (ORCPT
+        id S1726246AbeJAWVi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:19:49 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:47432 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725740AbeJAWTs (ORCPT
+        Mon, 1 Oct 2018 18:21:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42896 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725738AbeJAWVi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:19:48 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1g70K4-0007KU-Hv; Mon, 01 Oct 2018 11:41:24 -0400
-Message-ID: <211a65a21d69ed8d358f3638d02c3f6ee63d3426.camel@surriel.com>
-Subject: Re: [PATCH 2/2] mm, numa: Migrate pages to local nodes quicker
- early in the lifetime of a task
-From:   Rik van Riel <riel@surriel.com>
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Jirka Hladky <jhladky@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Date:   Mon, 01 Oct 2018 11:41:24 -0400
-In-Reply-To: <20181001100525.29789-3-mgorman@techsingularity.net>
-References: <20181001100525.29789-1-mgorman@techsingularity.net>
-         <20181001100525.29789-3-mgorman@techsingularity.net>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-bPx8Hj1pWOxURgOTygS/"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Mon, 1 Oct 2018 18:21:38 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A8F5360C1D; Mon,  1 Oct 2018 15:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538408593;
+        bh=2ROj9yBxlwpUHUlk9aND9/0ZGHLV+77WiAJgD4yijG0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=S5fRZk0HN0d0Vp2lnKnFfEFZ7ao1CvSekPZ67GzkrYQ+VsNUMCDN1vuj4ggXLiTxR
+         PJ0YscVaOcMVlIkJpsMzqt/0L131kUaaUl3/daMTIiAWMoVfTg7bJiEJUCtikQrwIf
+         HUwQ7dhblJyKm1/P+dT4zNABCpg0L+OnDGfxvv4Q=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id ED3A06076A;
+        Mon,  1 Oct 2018 15:43:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538408592;
+        bh=2ROj9yBxlwpUHUlk9aND9/0ZGHLV+77WiAJgD4yijG0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=lKvJj6BqNLo18CRJxP05DXH1QiNPs8m07Re9xx6W3eeMxqP7nLCppYc8tJZmBi0vP
+         s5gndP47e7GF87K0jKHo9mfkB3zPoaBimxPG8Z5+LDHn5h1NWBF+aBtk1zbA7HapM9
+         VJf+QCzLc1VSue4sywjmR+mKj/DWJr9axPyM4Sh8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ED3A06076A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] b43: fix spelling mistake "hw_registred" ->
+ "hw_registered"
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180927161119.6698-1-colin.king@canonical.com>
+References: <20180927161119.6698-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20181001154313.A8F5360C1D@smtp.codeaurora.org>
+Date:   Mon,  1 Oct 2018 15:43:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Colin King <colin.king@canonical.com> wrote:
 
---=-bPx8Hj1pWOxURgOTygS/
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake struct field name, rename it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-On Mon, 2018-10-01 at 11:05 +0100, Mel Gorman wrote:
-> With this patch applied, STREAM performance is the same as 4.17 even
-> though
-> processes are not spread cross-node prematurely. Other workloads
-> showed
-> a mix of minor gains and losses. This is somewhat expected most
-> workloads
-> are not very sensitive to the starting conditions of a process.
->=20
->                          4.19.0-rc5             4.19.0-
-> rc5                 4.17.0
->                          numab-v1r1       fastmigrate-
-> v1r1                vanilla
-> MB/sec copy     43298.52 (   0.00%)    47335.46
-> (   9.32%)    47219.24 (   9.06%)
-> MB/sec scale    30115.06 (   0.00%)    32568.12
-> (   8.15%)    32527.56 (   8.01%)
-> MB/sec add      32825.12 (   0.00%)    36078.94
-> (   9.91%)    35928.02 (   9.45%)
-> MB/sec triad    32549.52 (   0.00%)    35935.94
-> (  10.40%)    35969.88 (  10.51%)
->=20
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Patch applied to wireless-drivers-next.git, thanks.
 
-Reviewed-by: Rik van Riel <riel@surriel.com>
---=20
-All Rights Reversed.
+297fab130cdf b43: fix spelling mistake "hw_registred" -> "hw_registered"
 
---=-bPx8Hj1pWOxURgOTygS/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+-- 
+https://patchwork.kernel.org/patch/10618179/
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAluyQCQACgkQznnekoTE
-3oOjhggAhKHjjlZ5+V2k2HFgnNIwP0BIaJIGI1w/SNNWSoK5lA33XfRVtj1u64Un
-f4Vv8MS7uc/zThlSck2OOnXN29+oDv9xsYdjqk+8EpWELMcaMnmkgBKke82ftMaO
-Y+kozORrA7iBMmghlnULz4cmg5VGNEWcGyewakvY9arezLd1GjIWPpbTnR4dZogw
-QFyOjzRkLdsIdXo/gA5WFv6G98M3vTO6Bv14wbvEsQ1HVq3COJGCJgoXcAepIvxa
-BUrwOG4OnjWwJFO+RjgyZW4imK59IZAdEBXiCCJLpyBzCHdn3nvAgHH8ph9hq82g
-GtxME+JN5Z37IapgSQY7DOv5QumKCg==
-=4kM/
------END PGP SIGNATURE-----
-
---=-bPx8Hj1pWOxURgOTygS/--
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
