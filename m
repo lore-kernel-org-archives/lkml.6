@@ -2,63 +2,63 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7223C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A108C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E332089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA69A208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="KSUBKvLx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E332089A
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="i/RbAs4i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA69A208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbeJBAnA (ORCPT
+        id S1726854AbeJBAnF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:43:00 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35734 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbeJBAnA (ORCPT
+        Mon, 1 Oct 2018 20:43:05 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37168 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbeJBAnE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:43:00 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p12-v6so9814732pfh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:04:02 -0700 (PDT)
+        Mon, 1 Oct 2018 20:43:04 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j23-v6so455355pfi.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:04:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kiIGQCmGtALrXwsBG8zSqpjHC9E+lsH1ZMYz/Tcb/9o=;
-        b=KSUBKvLxsj68k0Si0J4ZR79pL0sEeAxw19tZFkj8bmO8cwrgukdO7fSTH0Trjfamzu
-         nzdqvr78u9mIb+cE4sexVRirTM1ono+O/YnveR57mLO6kDMF1pKH8kDl+M8z8R7kMc9N
-         3+YEBCTxd19rMX0rMJygiJcoFysYtHoWDx+YYQR7k+agXXNxPhb2/IvLIoA6oWnxx7LN
-         hbXAoKA0T9DbY9sCKOfU7gqDaM097KeBKMspLn7pjde8AA6ZIb6svxzG/YPSJCAAcYxy
-         BYSi/7sZSoniP5oJr2VSSnCNBGE+UNrQt51mv9s4fa4xHStZ/TmvEC2xVWSP7z9p2tay
-         DXgQ==
+        bh=a082AL/4Oj65cVJFcdJAwbuKyRvNhbo+1Hg117kQxIY=;
+        b=i/RbAs4izAdc8l6xtU2dFlH7VxCmErKV/xX/K1VzpZVyWk9JWxuGM0W40qGHVufztV
+         SrKvBz49Ps+yH4ERe38Tzoy+6czv+p16TEUGlR8nEHBiECbcyvWsofsPHOnxOb97DrON
+         1t06AWfcy08CuFXSioU1S0pmUNjdYMZeS2xYvcmTvqKJ/6c2NHVpeyls2klSVX7+CZOl
+         tU/TquASqsX2EyTjJKi8RrgtgPT253ad79p0O9HiQkoDuylMZf1OH2bZFttVbyUTvsk3
+         KKXTPZ4TYv9VtYdPf9WKd5STOTJCOpTvsNhbCOAYRORYvUqdu7hdNf01VuZoYRL2YqtI
+         SzNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kiIGQCmGtALrXwsBG8zSqpjHC9E+lsH1ZMYz/Tcb/9o=;
-        b=XjeYDGbAgahH0JqNVVFaXtjKYBrqavJ946wI+wOvZ92PeP1nGoKUXgxx/aHY8go44Q
-         cDfNauIItmPOpBA9Guvn6gEpFCsNZQBN+wPVAjQen8CabQqPbeG97ehKeftOYrmG5Qfo
-         NkwblT38rTub0D3ZncNZ3CWn8Ij4VzMwu3y0TX9siwGFYltZROXkTSZivCSTZDM+CSCf
-         V4r8WdzP4ae5z3MrowNqSvXmVV92Y8Vj9tHtoizAKtQ9q/E5jJvUhi/KD4ZUx9cNf5fl
-         bLOiWOGdlFYMDoMYYzuTiauTmGgmVkrLjYuh0w0FMsOsQ0bFwWdHJMHDKeSuL0Yu/sEu
-         xRpQ==
-X-Gm-Message-State: ABuFfohfa2GcBCdDM5+WtxrbY2MgPeRZyvZaJEUFR/klDwiB1u40UAmM
-        h8M6UR1jwHsHUxFbtTYSmcbR1pqE8Sg=
-X-Google-Smtp-Source: ACcGV61FylkwMpjFO9AFBbrygEHvfEKfXQfB/69kZ7FS9w7P3QWvHl9+wmuaFO+I6LLkZLsepvY5vw==
-X-Received: by 2002:a17:902:ac1:: with SMTP id 59-v6mr12949742plp.18.1538417041389;
-        Mon, 01 Oct 2018 11:04:01 -0700 (PDT)
+        bh=a082AL/4Oj65cVJFcdJAwbuKyRvNhbo+1Hg117kQxIY=;
+        b=WqKL9tjFL48p0aA1vSqxeBvIU62mZ52zuehhOA3Al/p+re7KbNfZLA9jfXLTj9Mnzj
+         p8bct/Lni41SNjWqFPDM35fsdA8ZWrhifkvHBGKFUOAEWq35e+GWx0Y81SW2dZoGysSM
+         fBXwKCt2UpcY6Cgv3JO2TAhEy7/qYp8va+eOEtyQ4eCpSSWC/kk9SgzBjeVcPqML1Hdj
+         xhW79h2cRiSqwJLXF8smt2UZs4MlGj9KEEvknJWa6zm5pR9tiRc3epgmVcGfWY7l9mb1
+         p1E0+kXMIBEetBOTJsmjupVlGFWk9fMSbNNAgY6Ej37VC0n7+oiFX1Yj7fFAJFrCOUjU
+         Aj3Q==
+X-Gm-Message-State: ABuFfoiPbNzbZfnxfgAjtIx6b9+L2Ptd3huLTi4l8NuS3YRw76X/CnzL
+        pJFu9Z6khajdMvD1Wq8158T0FwVeH64=
+X-Google-Smtp-Source: ACcGV61cLdG7DWQiudJJIj+s/q2sNeMqzZ9N0MvqOmIuRztv9JsFZ08pWU7HSiH3MsKmL19dWYicKQ==
+X-Received: by 2002:a63:3747:: with SMTP id g7-v6mr11311032pgn.59.1538417046158;
+        Mon, 01 Oct 2018 11:04:06 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
-        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.04.00
+        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.04.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 11:04:00 -0700 (PDT)
+        Mon, 01 Oct 2018 11:04:05 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
@@ -79,11 +79,11 @@ Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org,
         Jeremy Linton <Jeremy.Linton@arm.com>,
-        android-kernel@android.com, Dave Martin <Dave.Martin@arm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: RESEND [PATCH 1/6] arm64: compat: Use vDSO sigreturn trampolines if available
-Date:   Mon,  1 Oct 2018 10:58:38 -0700
-Message-Id: <20181001175845.168430-19-salyzyn@android.com>
+        android-kernel@android.com, Ben Hutchings <ben@decadent.org.uk>,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: RESEND [PATCH 2/6] arm64: elf: Set AT_SYSINFO_EHDR in compat processes
+Date:   Mon,  1 Oct 2018 10:58:39 -0700
+Message-Id: <20181001175845.168430-20-salyzyn@android.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 In-Reply-To: <20181001175845.168430-1-salyzyn@android.com>
 References: <20181001175845.168430-1-salyzyn@android.com>
@@ -96,8 +96,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kevin Brodsky <kevin.brodsky@arm.com>
 
-If the compat vDSO is enabled, it replaces the sigreturn page.
-Therefore, we use the sigreturn trampolines the vDSO provides instead.
+If the compat vDSO is enabled, we need to set AT_SYSINFO_EHDR in the
+auxiliary vector of compat processes to the address of the vDSO code
+page, so that the dynamic linker can find it (just like the regular vDSO).
+
+Note that we cast context.vdso to Elf64_Off, instead of elf_addr_t,
+because elf_addr_t is Elf32_Off in compat_binfmt_elf.c, and casting
+context.vdso to u32 would trigger a pointer narrowing warning.
 
 Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
@@ -121,64 +126,46 @@ Cc: linux-arm-kernel@lists.infradead.org
 Cc: Jeremy Linton <Jeremy.Linton@arm.com>
 Cc: android-kernel@android.com
 ---
- arch/arm64/include/asm/vdso.h |  3 +++
- arch/arm64/kernel/signal32.c  | 15 +++++++++++++++
- 2 files changed, 18 insertions(+)
+ arch/arm64/include/asm/elf.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/vdso.h b/arch/arm64/include/asm/vdso.h
-index 839ce0031bd5..f2a952338f1e 100644
---- a/arch/arm64/include/asm/vdso.h
-+++ b/arch/arm64/include/asm/vdso.h
-@@ -28,6 +28,9 @@
- #ifndef __ASSEMBLY__
+diff --git a/arch/arm64/include/asm/elf.h b/arch/arm64/include/asm/elf.h
+index 433b9554c6a1..bf4672a0491b 100644
+--- a/arch/arm64/include/asm/elf.h
++++ b/arch/arm64/include/asm/elf.h
+@@ -147,10 +147,10 @@ typedef struct user_fpsimd_state elf_fpregset_t;
+ })
  
- #include <generated/vdso-offsets.h>
+ /* update AT_VECTOR_SIZE_ARCH if the number of NEW_AUX_ENT entries changes */
+-#define ARCH_DLINFO							\
++#define _SET_AUX_ENT_VDSO						\
+ do {									\
+ 	NEW_AUX_ENT(AT_SYSINFO_EHDR,					\
+-		    (elf_addr_t)current->mm->context.vdso);		\
++		    (Elf64_Off)current->mm->context.vdso);		\
+ 									\
+ 	/*								\
+ 	 * Should always be nonzero unless there's a kernel bug.	\
+@@ -162,6 +162,7 @@ do {									\
+ 	else								\
+ 		NEW_AUX_ENT(AT_IGNORE, 0);				\
+ } while (0)
++#define ARCH_DLINFO _SET_AUX_ENT_VDSO
+ 
+ #define ARCH_HAS_SETUP_ADDITIONAL_PAGES
+ struct linux_binprm;
+@@ -209,7 +210,11 @@ typedef compat_elf_greg_t		compat_elf_gregset_t[COMPAT_ELF_NGREG];
+ ({									\
+ 	set_thread_flag(TIF_32BIT);					\
+  })
 +#ifdef CONFIG_VDSO32
-+#include <generated/vdso32-offsets.h>
-+#endif
- 
- #define VDSO_SYMBOL(base, name)						   \
- ({									   \
-diff --git a/arch/arm64/kernel/signal32.c b/arch/arm64/kernel/signal32.c
-index 6b421666b5b8..c3d9a74e3945 100644
---- a/arch/arm64/kernel/signal32.c
-+++ b/arch/arm64/kernel/signal32.c
-@@ -29,6 +29,7 @@
- #include <asm/traps.h>
- #include <linux/uaccess.h>
- #include <asm/unistd.h>
-+#include <asm/vdso.h>
- 
- struct compat_vfp_sigframe {
- 	compat_ulong_t	magic;
-@@ -352,6 +353,19 @@ static void compat_setup_return(struct pt_regs *regs, struct k_sigaction *ka,
- 		retcode = ptr_to_compat(ka->sa.sa_restorer);
- 	} else {
- 		/* Set up sigreturn pointer */
-+#ifdef CONFIG_VDSO32
-+		void *vdso_base = current->mm->context.vdso;
-+		void *trampoline =
-+			(ka->sa.sa_flags & SA_SIGINFO
-+			 ? (thumb
-+			    ? VDSO_SYMBOL(vdso_base, compat_rt_sigreturn_thumb)
-+			    : VDSO_SYMBOL(vdso_base, compat_rt_sigreturn_arm))
-+			 : (thumb
-+			    ? VDSO_SYMBOL(vdso_base, compat_sigreturn_thumb)
-+			    : VDSO_SYMBOL(vdso_base, compat_sigreturn_arm)));
-+
-+		retcode = ptr_to_compat(trampoline) + thumb;
++#define COMPAT_ARCH_DLINFO	_SET_AUX_ENT_VDSO
 +#else
- 		void *sigreturn_base = current->mm->context.vdso;
- 		unsigned int idx = thumb << 1;
- 
-@@ -359,6 +373,7 @@ static void compat_setup_return(struct pt_regs *regs, struct k_sigaction *ka,
- 			idx += 3;
- 
- 		retcode = ptr_to_compat(sigreturn_base) + (idx << 2) + thumb;
+ #define COMPAT_ARCH_DLINFO
 +#endif
- 	}
- 
- 	regs->regs[0]	= usig;
+ extern int aarch32_setup_vectors_page(struct linux_binprm *bprm,
+ 				      int uses_interp);
+ #define compat_arch_setup_additional_pages \
 -- 
 2.19.0.605.g01d371f741-goog
 
