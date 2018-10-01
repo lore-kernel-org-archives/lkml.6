@@ -2,255 +2,215 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B93FAC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84653C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68AED2089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:19:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2974B20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 10:22:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LhAnxkaw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68AED2089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LkMA1i4o";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="o9+2fyFJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2974B20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbeJAQ4c (ORCPT
+        id S1729035AbeJAQ7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 12:56:32 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:58886 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728860AbeJAQ4b (ORCPT
+        Mon, 1 Oct 2018 12:59:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59920 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728855AbeJAQ7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:56:31 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w91AJPDK061488;
-        Mon, 1 Oct 2018 05:19:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538389165;
-        bh=7UL5lNwGIzSZyzI1LhJMzD1DuHjNr2eje4yvt1C/ulk=;
-        h=From:To:CC:Subject:Date;
-        b=LhAnxkaw0h6dbYM/tb/k4gWVLXnkYyYPzumGPgCBJKR8lHwt4Du1TE9Mi+I2boa60
-         qXXME2oOukG4oWY4E+ouTkSPAvyiAyWkq0SqCQmCDGZghsYh74uWR/rNQM38S1pEKX
-         MYqSbqGZCvKGM8zCpgAs0Y1fVxRMgfuFa1l8QGhk=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w91AJPib014868;
-        Mon, 1 Oct 2018 05:19:25 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 1 Oct
- 2018 05:19:25 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 1 Oct 2018 05:19:25 -0500
-Received: from a0393678ub.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w91AJOVC010050;
-        Mon, 1 Oct 2018 05:19:24 -0500
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] PHY: for 4.20
-Date:   Mon, 1 Oct 2018 15:49:12 +0530
-Message-ID: <20181001101912.1081-1-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 1 Oct 2018 12:59:17 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 063436081B; Mon,  1 Oct 2018 10:22:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538389331;
+        bh=04pVCcxSjK+2aanFPI34QFhVBNgdTvLc2B02fq6XA/4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LkMA1i4ozk+Uh5H9e7HyxD2O89KLHYrhATGl+4SPXmV5kPQXiOcBzAMsM9ILSX3Qq
+         e6uZsUagD50adnCuhAJOgcWDrt+QOApADKq85C1/kJs3eYIc6aXKlUIsC1K253B3L4
+         ghO6jeVnWr8KiknFLrH8tYZjzvgJRSjo+g8HWQxs=
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7574C6053C;
+        Mon,  1 Oct 2018 10:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538389329;
+        bh=04pVCcxSjK+2aanFPI34QFhVBNgdTvLc2B02fq6XA/4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=o9+2fyFJ8CrtkvGckwGEmuY0nlrxT0/oXCs2oyHg7Nn/3u/BcF4wNTs8n0fYCxknR
+         7PkJo91NMrBwUymoFN3WYE1QuszdIFYt3mLiuHTb1BVoNDY/YHzr3EtCyg+23lC3SY
+         YwwqlFXOcJr3l9AjmGylxrrC1jhDVKVvvA4Zq4tM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7574C6053C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qk1-f180.google.com with SMTP id v18-v6so7680087qka.10;
+        Mon, 01 Oct 2018 03:22:09 -0700 (PDT)
+X-Gm-Message-State: ABuFfogsMQfjB9H89Pf839HgTIloP404sw5dciADkf07UtopX1cFPweA
+        mkRZ0D2wjZx6HAqoF1F4dCLLhTdZiqb4QeKRFeU=
+X-Google-Smtp-Source: ACcGV61NwWzmy3DbLPWuMZu/HrM7xhXn7eUbcmtUBr+j7+4fNhb4INBbsFVhELHgBZRVQ64UsZSXeqnhAPXhALkGRX8=
+X-Received: by 2002:a37:9904:: with SMTP id b4-v6mr7680341qke.102.1538389328640;
+ Mon, 01 Oct 2018 03:22:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
+ <20180830144541.17740-2-vivek.gautam@codeaurora.org> <CAPDyKFohpvEMfDoDooYEyxPMeQ+9dU71qz7ZAZxQ1rzyW-w8iA@mail.gmail.com>
+ <CAFp+6iHZysBmMZj+pZghPocEwDzU7KfR1gLQAQRBui+-gdiSTQ@mail.gmail.com> <CAPDyKFrCWaeDLbmbrRb23V_mRk8doBjM3u2X9tm0XNXm=-n5vA@mail.gmail.com>
+In-Reply-To: <CAPDyKFrCWaeDLbmbrRb23V_mRk8doBjM3u2X9tm0XNXm=-n5vA@mail.gmail.com>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Mon, 1 Oct 2018 15:51:56 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iH3Hby5EnfKDtF6s1wn2FT-s9o=00NF6_bDnP_+qJ3k9w@mail.gmail.com>
+Message-ID: <CAFp+6iH3Hby5EnfKDtF6s1wn2FT-s9o=00NF6_bDnP_+qJ3k9w@mail.gmail.com>
+Subject: Re: [PATCH v16 1/5] iommu/arm-smmu: Add pm_runtime/sleep ops
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, alex.williamson@redhat.com,
+        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Will Deacon <will.deacon@arm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        "robh+dt" <robh+dt@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Mon, Oct 1, 2018 at 3:09 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On 1 October 2018 at 07:49, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+> > HI Ulf,
+> >
+> > On Fri, Sep 28, 2018 at 5:30 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >>
+> >> On 30 August 2018 at 16:45, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+> >> > From: Sricharan R <sricharan@codeaurora.org>
+> >> >
+> >> > The smmu needs to be functional only when the respective
+> >> > master's using it are active. The device_link feature
+> >> > helps to track such functional dependencies, so that the
+> >> > iommu gets powered when the master device enables itself
+> >> > using pm_runtime. So by adapting the smmu driver for
+> >> > runtime pm, above said dependency can be addressed.
+> >> >
+> >> > This patch adds the pm runtime/sleep callbacks to the
+> >> > driver and also the functions to parse the smmu clocks
+> >> > from DT and enable them in resume/suspend.
+> >> >
+> >> > Also, while we enable the runtime pm add a pm sleep suspend
+> >> > callback that pushes devices to low power state by turning
+> >> > the clocks off in a system sleep.
+> >> > Also add corresponding clock enable path in resume callback.
+> >> >
+> >> > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> >> > Signed-off-by: Archit Taneja <architt@codeaurora.org>
+> >> > [vivek: rework for clock and pm ops]
+> >> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> >> > Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> >> > Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> >> > ---
+> >> >  drivers/iommu/arm-smmu.c | 77 ++++++++++++++++++++++++++++++++++++++++++++++--
+> >> >  1 file changed, 74 insertions(+), 3 deletions(-)
+> >> > diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> >>
+> >> [...]
+> >>
+> >> > -static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
+> >> > +static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
+> >> >  {
+> >> >         struct arm_smmu_device *smmu = dev_get_drvdata(dev);
+> >> > +       int ret;
+> >> > +
+> >> > +       ret = clk_bulk_enable(smmu->num_clks, smmu->clks);
+> >> > +       if (ret)
+> >> > +               return ret;
+> >> >
+> >> >         arm_smmu_device_reset(smmu);
+> >> > +
+> >> >         return 0;
+> >> >  }
+> >> >
+> >> > -static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
+> >> > +static int __maybe_unused arm_smmu_runtime_suspend(struct device *dev)
+> >> > +{
+> >> > +       struct arm_smmu_device *smmu = dev_get_drvdata(dev);
+> >> > +
+> >> > +       clk_bulk_disable(smmu->num_clks, smmu->clks);
+> >> > +
+> >> > +       return 0;
+> >> > +}
+> >> > +
+> >> > +static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
+> >> > +{
+> >> > +       if (pm_runtime_suspended(dev))
+> >> > +               return 0;
+> >>
+> >> Looks like you should be able use pm_runtime_force_resume(), instead
+> >> of using this local trick. Unless I am missing something, of course.
+> >>
+> >> In other words, just assign the system sleep callbacks for resume, to
+> >> pm_runtime_force_resume(). And vice verse for the system suspend
+> >> callbacks, pm_runtime_force_suspend(), of course.
+> >
+> > Thanks for the review. I will change this as suggested.
+> >
+> >>
+> >> > +
+> >> > +       return arm_smmu_runtime_resume(dev);
+> >> > +}
+> >> > +
+> >> > +static int __maybe_unused arm_smmu_pm_suspend(struct device *dev)
+> >> > +{
+> >> > +       if (pm_runtime_suspended(dev))
+> >> > +               return 0;
+> >> > +
+> >> > +       return arm_smmu_runtime_suspend(dev);
+> >> > +}
+> >> > +
+> >> > +static const struct dev_pm_ops arm_smmu_pm_ops = {
+> >> > +       SET_SYSTEM_SLEEP_PM_OPS(arm_smmu_pm_suspend, arm_smmu_pm_resume)
+> >>
+> >> I am wondering if using the ->suspend|resume() callback is really
+> >> "late/early" enough in the device suspend phase?
+> >>
+> >> Others is using the noirq phase and some is even using the syscore
+> >> ops. Of course it depends on the behavior of the consumers of iommu
+> >> device, and I guess not everyone is using device links, which for sure
+> >> improves things in this regards as well.
+> >
+> > Well yes, as you said the device links should be able to take care of
+> > maintaining the correct suspend/resume order of smmu and its clients,
+> > or am I missing your point here?
+> > Let me know and I will be happy to incorporate any suggestions.
+> > Thanks
+>
+> If it works fine, then you may keep it as is.
+>
+> Just wanted to point out that if any consumers relies on the iommu to
+> operational to say until the suspend-late phase, then this doesn't
+> play. Then you need to move your callbacks to the corresponding same
+> phase.
 
-Please find the pull request for 4.20 merge window below. It adds PHY
-drivers for Socionext's PCIe PHY, USB2 PHY and USB3 PHY, Rockchip HDMI PHY
-and Cadence display port PHY. Patches to add Qualcomm UFS PHY support and
-Broadcom's BCM63138 PHY support is also included in this pull request. For
-the complete list of changes, please see the tag message below.
+Although I have no means to test the suspend-late phase, tests with graphics
+and display on db820 haven't shown any anomaly.
 
-For one of the Qualcomm PHY driver cleanup, a patch in SCSI layer is
-modified. I've included that here after getting Ack from SCSI SUBSYSTEM
-MAINTAINER Martin K. Petersen.
+[snip]
 
-Consider merging it for the next merge window and let me know if I have
-to make any changes.
+Best regards
+Vivek
 
-Thanks
-Kishon
-
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git tags/phy-for-4.20
-
-for you to fetch changes up to 566b388440bb61447df7cdf5f4508a0fce493e00:
-
-  phy: renesas: convert to SPDX identifiers (2018-09-26 13:09:41 +0530)
-
-----------------------------------------------------------------
-phy: for 4.20
-
- *) Add new PHY driver for Socionext PCIe, USB2 and USB3 PHY
- *) Add new PHY driver for Rockchip HDMI PHY
- *) Add new PHY driver for Cadence display port PHY
- *) Add support for UFS PHY in Qualcomm's SDM845 SoC
- *) Add correct PHY init sequence for BCM63138 SATA PHY
- *) Add support for bringing the uart2 out through the usb dm+dp pin in
-    Rockchips's rk3188
- *) Re-design R-Car Gen3 USB PHY w.r.t support for OTG
- *) Cleanup Qualcomm's UFS PHY, QMP PHY (for PCIe and USB3) and QUSB2 PHY
- *) A preparation patch to remove the node name pointer from struct device_node
- *) Minor cleanups in some of the other PHY drivers.
-
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-
-----------------------------------------------------------------
-Andreas Kemnade (1):
-      phy: phy-twl4030-usb: fix denied runtime access
-
-Can Guo (4):
-      phy: Update PHY power control sequence
-      phy: General struct and field cleanup
-      phy: Add QMP phy based UFS phy support for sdm845
-      dt-bindings: phy-qcom-qmp: Add UFS phy compatible string for sdm845
-
-Douglas Anderson (3):
-      dt-bindings: phy: qcom-qmp: Cleanup the 'reg' documentation as per review
-      phy: qcom-qmp: Quiet -EPROBE_DEFER from qcom_qmp_phy_probe()
-      phy: qcom-qusb2: Quiet -EPROBE_DEFER from qusb2_phy_probe()
-
-Fabrizio Castro (2):
-      dt-bindings: rcar-gen3-phy-usb2: Add r8a774a1 support
-      dt-bindings: rcar-gen3-phy-usb3: Add r8a774a1 support
-
-Florian Fainelli (3):
-      dt-bindings: phy: Document BCM63138 compatible string
-      phy: brcm-sata: allow PHY_BRCM_SATA driver to be built for DSL SoCs
-      phy: brcm-sata: Add BCM63138 (DSL) PHY init sequence
-
-Hauke Mehrtens (1):
-      phy: lantiq: Fix compile warning
-
-Heiko Stuebner (1):
-      phy: rockchip-usb: add usb-uart setup for rk3188
-
-Kunihiko Hayashi (6):
-      dt-bindings: phy: add DT bindings for UniPhier USB3 PHY driver
-      phy: socionext: add USB3 PHY driver for UniPhier SoC
-      dt-bindings: phy: add DT bindings for UniPhier USB2 PHY driver
-      phy: socionext: add USB2 PHY driver for UniPhier SoC
-      dt-bindings: phy: add UniPhier PCIe PHY description
-      phy: socionext: add PCIe PHY driver support
-
-Kuninori Morimoto (1):
-      phy: renesas: convert to SPDX identifiers
-
-Rob Herring (1):
-      phy: Convert to using %pOFn instead of device_node.name
-
-Scott Telford (2):
-      dt-bindings: phy: Document Cadence MHDP DisplayPort PHY bindings
-      phy: Add driver for Cadence MHDP DisplayPort SD0801 PHY
-
-Vivek Gautam (3):
-      phy: qcom-ufs: Remove stale methods that handle ref clk
-      scsi/ufs: qcom: Remove ufs_qcom_phy_*() calls from host
-      phy: qcom-ufs: Declare 20nm qcom ufs qmp phy as Broken
-
-Wolfram Sang (1):
-      phy: renesas: use SPDX identifier for Renesas drivers
-
-Yoshihiro Shimoda (8):
-      dt-bindings: rcar-gen3-phy-usb2: add no-otg-pins property
-      phy: renesas: rcar-gen3-usb2: fix vbus_ctrl for role sysfs
-      phy: renesas: rcar-gen3-usb2: Rename has_otg_pins to uses_otg_pins
-      phy: renesas: rcar-gen3-usb2: Check a property to use otg pins
-      phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
-      phy: renesas: rcar-gen3-usb2: change a condition "dr_mode"
-      phy: renesas: rcar-gen3-usb2: add conditions for uses_otg_pins == false
-      phy: renesas: rcar-gen3-usb2: add is_otg_channel to use "role" sysfs
-
-Zheng Yang (2):
-      dt-bindings: add binding for Rockchip hdmi phy using an Innosilicon IP
-      phy: add Rockchip Innosilicon hdmi phy
-
-zhong jiang (2):
-      phy:phy-brcm-usb: Use PTR_ERR_OR_ZERO to replace the open coded version
-      phy:phy-lantiq-rcu-usb2: Use PTR_ERR_OR_ZERO to replace the open coded version
-
- Documentation/devicetree/bindings/phy/brcm-sata-phy.txt          |    1 +
- Documentation/devicetree/bindings/phy/phy-cadence-dp.txt         |   30 ++++
- Documentation/devicetree/bindings/phy/phy-rockchip-inno-hdmi.txt |   43 +++++
- Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt           |   23 ++-
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt     |   11 +-
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt     |   10 +-
- Documentation/devicetree/bindings/phy/uniphier-pcie-phy.txt      |   31 ++++
- Documentation/devicetree/bindings/phy/uniphier-usb2-phy.txt      |   45 +++++
- Documentation/devicetree/bindings/phy/uniphier-usb3-hsphy.txt    |   69 +++++++
- Documentation/devicetree/bindings/phy/uniphier-usb3-ssphy.txt    |   57 ++++++
- drivers/phy/Kconfig                                              |    2 +
- drivers/phy/Makefile                                             |    2 +
- drivers/phy/broadcom/Kconfig                                     |    3 +-
- drivers/phy/broadcom/phy-bcm-cygnus-pcie.c                       |    4 +-
- drivers/phy/broadcom/phy-brcm-sata.c                             |   74 +++++++-
- drivers/phy/broadcom/phy-brcm-usb.c                              |    4 +-
- drivers/phy/cadence/Kconfig                                      |   10 ++
- drivers/phy/cadence/Makefile                                     |    1 +
- drivers/phy/cadence/phy-cadence-dp.c                             |  541 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/lantiq/phy-lantiq-rcu-usb2.c                         |    5 +-
- drivers/phy/marvell/phy-berlin-sata.c                            |    6 +-
- drivers/phy/qualcomm/Kconfig                                     |   17 ++
- drivers/phy/qualcomm/Makefile                                    |    4 +-
- drivers/phy/qualcomm/phy-qcom-qmp.c                              |  222 ++++++++++++++++++++---
- drivers/phy/qualcomm/phy-qcom-qmp.h                              |   15 ++
- drivers/phy/qualcomm/phy-qcom-qusb2.c                            |    4 +-
- drivers/phy/qualcomm/phy-qcom-ufs-i.h                            |    2 +-
- drivers/phy/qualcomm/phy-qcom-ufs.c                              |   50 ------
- drivers/phy/renesas/Kconfig                                      |    1 +
- drivers/phy/renesas/Makefile                                     |    1 +
- drivers/phy/renesas/phy-rcar-gen2.c                              |    5 +-
- drivers/phy/renesas/phy-rcar-gen3-usb2.c                         |   86 +++++----
- drivers/phy/renesas/phy-rcar-gen3-usb3.c                         |    5 +-
- drivers/phy/rockchip/Kconfig                                     |    8 +
- drivers/phy/rockchip/Makefile                                    |    1 +
- drivers/phy/rockchip/phy-rockchip-emmc.c                         |    4 +-
- drivers/phy/rockchip/phy-rockchip-inno-hdmi.c                    | 1277 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/rockchip/phy-rockchip-inno-usb2.c                    |    8 +-
- drivers/phy/rockchip/phy-rockchip-typec.c                        |    8 +-
- drivers/phy/rockchip/phy-rockchip-usb.c                          |  145 ++++++++++-----
- drivers/phy/socionext/Kconfig                                    |   34 ++++
- drivers/phy/socionext/Makefile                                   |    8 +
- drivers/phy/socionext/phy-uniphier-pcie.c                        |  240 +++++++++++++++++++++++++
- drivers/phy/socionext/phy-uniphier-usb2.c                        |  244 +++++++++++++++++++++++++
- drivers/phy/socionext/phy-uniphier-usb3hs.c                      |  422 +++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/socionext/phy-uniphier-usb3ss.c                      |  349 ++++++++++++++++++++++++++++++++++++
- drivers/phy/tegra/xusb.c                                         |    4 +-
- drivers/phy/ti/phy-twl4030-usb.c                                 |   29 +++
- drivers/scsi/ufs/ufs-qcom.c                                      |   28 +--
- drivers/scsi/ufs/ufs-qcom.h                                      |    5 -
- include/linux/phy/phy-qcom-ufs.h                                 |   38 ----
- 51 files changed, 3954 insertions(+), 282 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
- create mode 100644 Documentation/devicetree/bindings/phy/phy-rockchip-inno-hdmi.txt
- create mode 100644 Documentation/devicetree/bindings/phy/uniphier-pcie-phy.txt
- create mode 100644 Documentation/devicetree/bindings/phy/uniphier-usb2-phy.txt
- create mode 100644 Documentation/devicetree/bindings/phy/uniphier-usb3-hsphy.txt
- create mode 100644 Documentation/devicetree/bindings/phy/uniphier-usb3-ssphy.txt
- create mode 100644 drivers/phy/cadence/Kconfig
- create mode 100644 drivers/phy/cadence/Makefile
- create mode 100644 drivers/phy/cadence/phy-cadence-dp.c
- create mode 100644 drivers/phy/rockchip/phy-rockchip-inno-hdmi.c
- create mode 100644 drivers/phy/socionext/Kconfig
- create mode 100644 drivers/phy/socionext/Makefile
- create mode 100644 drivers/phy/socionext/phy-uniphier-pcie.c
- create mode 100644 drivers/phy/socionext/phy-uniphier-usb2.c
- create mode 100644 drivers/phy/socionext/phy-uniphier-usb3hs.c
- create mode 100644 drivers/phy/socionext/phy-uniphier-usb3ss.c
- delete mode 100644 include/linux/phy/phy-qcom-ufs.h
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
