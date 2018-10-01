@@ -2,129 +2,431 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE6EC64EB2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 858D1C64EB2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 543F720652
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:31:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EI9UCWUl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 543F720652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A3B920652
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:31:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A3B920652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729233AbeJAQIb (ORCPT
+        id S1729241AbeJAQIk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 12:08:31 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37857 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729148AbeJAQIa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 12:08:30 -0400
-Received: by mail-it1-f195.google.com with SMTP id m9-v6so10472433ita.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 02:31:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=B2uwAe7owLlekMWJ20nqwBIP27KWq8M/DXVcusnvDq0=;
-        b=EI9UCWUlNg1anm0yx3ePxhk1KSBLOZSDoPXjNCUVZqWnScRr68KpEBh7qK8hZQjuSJ
-         WTj6YspCMbOfzWrtUA5mAzT3OAVJbZEZpgitj/TKAqvD0XYIFYeqIfxIpF+0chQvWslk
-         95PRtCuYVgtSkITk04nAStL25sZx4DixuXwao=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=B2uwAe7owLlekMWJ20nqwBIP27KWq8M/DXVcusnvDq0=;
-        b=UwLXNNEzBQeA2h68ms1weQ1cpmVM8VXPNJx4eIvg2O3ahS4tUmml/bKkv/+uXmjnvh
-         eAcwv5PDirTAdRVmNVSWg4ZQTTKm7Zc48Zs5Y0SWd9gfxlHTt/lSfTEgP5xg6RAoFnpY
-         8AWmdDetMZziVSVwFBLP4yPSTqmiSg94A+CY1O8bUQ0ogbEagAkrSqnN7tnJFezEi1W9
-         rUwQHfMwIwMHE6MhwOb17xCPr9IByisC3S4Vi4EcBXMNHO2vVsbLHqGh4vWR2IyqJWRo
-         4Ue2E53pSfsBaPp2Ss+7BRsP/Igg280JztHGKtDlMop+tn9Cc+1vfe/73KgwbDW8JpoF
-         4GMA==
-X-Gm-Message-State: ABuFfojVvfP6WMSBcYq3golJd6dMyileJYJl6ImL1GUbRZAsUUpDaV8Z
-        IIS5R3NiNhcLY/BKjGXEw2ztUSQdsLIsm5HNRt95aQ==
-X-Google-Smtp-Source: ACcGV63izPKotTm5XkQLe9Nr/De7uhyUF1SEVZagezQuRqewN24ohjPJbPKUA5peM6RSbu3329VOBOcm5Itah4xN050=
-X-Received: by 2002:a24:3fc6:: with SMTP id d189-v6mr9005129ita.64.1538386298554;
- Mon, 01 Oct 2018 02:31:38 -0700 (PDT)
+        Mon, 1 Oct 2018 12:08:40 -0400
+Received: from mga17.intel.com ([192.55.52.151]:16253 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729076AbeJAQIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 12:08:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 02:31:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,327,1534834800"; 
+   d="scan'208";a="77496694"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga007.jf.intel.com with ESMTP; 01 Oct 2018 02:31:24 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 487241F5; Mon,  1 Oct 2018 12:31:23 +0300 (EEST)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/5] thunderbolt: Make the driver less verbose
+Date:   Mon,  1 Oct 2018 12:31:19 +0300
+Message-Id: <20181001093122.65833-3-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181001093122.65833-1-mika.westerberg@linux.intel.com>
+References: <20181001093122.65833-1-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 02:30:58 -0700 (PDT)
-In-Reply-To: <1537523181-14578-27-git-send-email-ludovic.Barre@st.com>
-References: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com> <1537523181-14578-27-git-send-email-ludovic.Barre@st.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 1 Oct 2018 11:30:58 +0200
-Message-ID: <CAPDyKFoiZMnYqtp_FofYEV=xKD+Azb2qKf=R=LdRsE+doxqW+A@mail.gmail.com>
-Subject: Re: [PATCH V2 26/27] mmc: mmci: add DT bindings for STM32 sdmmc
-To:     Ludovic Barre <ludovic.Barre@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 September 2018 at 11:46, Ludovic Barre <ludovic.Barre@st.com> wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
->
-> STM32 sdmmc variant has support to:
-> -Indicate signal directions (only one property
-> for d0dir, d123dir, cmd_dir)
-> -Select command and data phase relation.
-> -Select "clock in" from an external driver.
->
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> ---
-> change v3:
-> -remove space at end of "st,use-ckin "
->
->  Documentation/devicetree/bindings/mmc/mmci.txt | 9 +++++++++
+Currently the driver logs quite a lot to the system message buffer even
+when doing normal operations. This information is not useful for
+ordinary users and might even annoy some.
 
-Please split this. DT doc changes should be separate patches.
+For this reason convert most of the logs at info level to happen at
+debug level instead. The nice output formatting is untouched.
 
->  drivers/mmc/host/mmci.c                        | 6 ++++++
->  drivers/mmc/host/mmci.h                        | 1 +
->  3 files changed, 16 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/mmci.txt b/Documentation/devicetree/bindings/mmc/mmci.txt
-> index e952707..d678933 100644
-> --- a/Documentation/devicetree/bindings/mmc/mmci.txt
-> +++ b/Documentation/devicetree/bindings/mmc/mmci.txt
-> @@ -19,6 +19,7 @@ Optional properties:
->                             the ID provided by the HW
->  - vqmmc-supply           : phandle to the regulator device tree node, mentioned
->                             as the VCCQ/VDD_IO supply in the eMMC/SD specs.
-> +specific for ux500 variant:
->  - st,sig-dir-dat0        : bus signal direction pin used for DAT[0].
->  - st,sig-dir-dat2        : bus signal direction pin used for DAT[2].
->  - st,sig-dir-dat31       : bus signal direction pin used for DAT[3] and DAT[1].
-> @@ -26,6 +27,14 @@ Optional properties:
->  - st,sig-dir-cmd         : cmd signal direction pin used for CMD.
->  - st,sig-pin-fbclk       : feedback clock signal pin used.
->
-> +specific for sdmmc variant:
-> +- st,sig-dir             : signal direction polarity used for cmd, dat0 dat123.
-> +- st,neg-edge            : data & command phase relation, generated on
-> +                           sd clock falling edge.
-> +- st,use-ckin            : use ckin pin from an external driver to sample
-> +                           the receive data (example: with voltage
-> +                          switch transceiver).
+Logging can be easily re-enabled by passing "thunderbolt.dyndbg" in the
+kernel command line (or using the corresponding control file runtime).
 
-[...]
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Yehezkel Bernat <yehezkelshb@gmail.com>
+---
+ drivers/thunderbolt/ctl.c    |  6 ++--
+ drivers/thunderbolt/eeprom.c |  2 +-
+ drivers/thunderbolt/nhi.c    | 30 +++++++++----------
+ drivers/thunderbolt/path.c   | 26 ++++++++--------
+ drivers/thunderbolt/switch.c | 57 +++++++++++++++++-------------------
+ drivers/thunderbolt/tb.c     | 10 +++----
+ drivers/thunderbolt/tb.h     |  6 ++--
+ 7 files changed, 68 insertions(+), 69 deletions(-)
 
-Kind regards
-Uffe
+diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
+index e54e84e43ede..7456c094e232 100644
+--- a/drivers/thunderbolt/ctl.c
++++ b/drivers/thunderbolt/ctl.c
+@@ -631,7 +631,7 @@ struct tb_ctl *tb_ctl_alloc(struct tb_nhi *nhi, event_cb cb, void *cb_data)
+ 		ctl->rx_packets[i]->frame.callback = tb_ctl_rx_callback;
+ 	}
+ 
+-	tb_ctl_info(ctl, "control channel created\n");
++	tb_ctl_dbg(ctl, "control channel created\n");
+ 	return ctl;
+ err:
+ 	tb_ctl_free(ctl);
+@@ -672,7 +672,7 @@ void tb_ctl_free(struct tb_ctl *ctl)
+ void tb_ctl_start(struct tb_ctl *ctl)
+ {
+ 	int i;
+-	tb_ctl_info(ctl, "control channel starting...\n");
++	tb_ctl_dbg(ctl, "control channel starting...\n");
+ 	tb_ring_start(ctl->tx); /* is used to ack hotplug packets, start first */
+ 	tb_ring_start(ctl->rx);
+ 	for (i = 0; i < TB_CTL_RX_PKG_COUNT; i++)
+@@ -701,7 +701,7 @@ void tb_ctl_stop(struct tb_ctl *ctl)
+ 	if (!list_empty(&ctl->request_queue))
+ 		tb_ctl_WARN(ctl, "dangling request in request_queue\n");
+ 	INIT_LIST_HEAD(&ctl->request_queue);
+-	tb_ctl_info(ctl, "control channel stopped\n");
++	tb_ctl_dbg(ctl, "control channel stopped\n");
+ }
+ 
+ /* public interface, commands */
+diff --git a/drivers/thunderbolt/eeprom.c b/drivers/thunderbolt/eeprom.c
+index 3e8caf22c294..d2dd40390783 100644
+--- a/drivers/thunderbolt/eeprom.c
++++ b/drivers/thunderbolt/eeprom.c
+@@ -540,7 +540,7 @@ int tb_drom_read(struct tb_switch *sw)
+ 		return res;
+ 	size &= 0x3ff;
+ 	size += TB_DROM_DATA_START;
+-	tb_sw_info(sw, "reading drom (length: %#x)\n", size);
++	tb_sw_dbg(sw, "reading drom (length: %#x)\n", size);
+ 	if (size < sizeof(*header)) {
+ 		tb_sw_warn(sw, "drom too small, aborting\n");
+ 		return -EIO;
+diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
+index 88cff05a1808..02379aa27120 100644
+--- a/drivers/thunderbolt/nhi.c
++++ b/drivers/thunderbolt/nhi.c
+@@ -95,9 +95,9 @@ static void ring_interrupt_active(struct tb_ring *ring, bool active)
+ 	else
+ 		new = old & ~mask;
+ 
+-	dev_info(&ring->nhi->pdev->dev,
+-		 "%s interrupt at register %#x bit %d (%#x -> %#x)\n",
+-		 active ? "enabling" : "disabling", reg, bit, old, new);
++	dev_dbg(&ring->nhi->pdev->dev,
++		"%s interrupt at register %#x bit %d (%#x -> %#x)\n",
++		active ? "enabling" : "disabling", reg, bit, old, new);
+ 
+ 	if (new == old)
+ 		dev_WARN(&ring->nhi->pdev->dev,
+@@ -476,8 +476,9 @@ static struct tb_ring *tb_ring_alloc(struct tb_nhi *nhi, u32 hop, int size,
+ 				     void *poll_data)
+ {
+ 	struct tb_ring *ring = NULL;
+-	dev_info(&nhi->pdev->dev, "allocating %s ring %d of size %d\n",
+-		 transmit ? "TX" : "RX", hop, size);
++
++	dev_dbg(&nhi->pdev->dev, "allocating %s ring %d of size %d\n",
++		transmit ? "TX" : "RX", hop, size);
+ 
+ 	/* Tx Ring 2 is reserved for E2E workaround */
+ 	if (transmit && hop == RING_E2E_UNUSED_HOPID)
+@@ -585,8 +586,8 @@ void tb_ring_start(struct tb_ring *ring)
+ 		dev_WARN(&ring->nhi->pdev->dev, "ring already started\n");
+ 		goto err;
+ 	}
+-	dev_info(&ring->nhi->pdev->dev, "starting %s %d\n",
+-		 RING_TYPE(ring), ring->hop);
++	dev_dbg(&ring->nhi->pdev->dev, "starting %s %d\n",
++		RING_TYPE(ring), ring->hop);
+ 
+ 	if (ring->flags & RING_FLAG_FRAME) {
+ 		/* Means 4096 */
+@@ -647,8 +648,8 @@ void tb_ring_stop(struct tb_ring *ring)
+ {
+ 	spin_lock_irq(&ring->nhi->lock);
+ 	spin_lock(&ring->lock);
+-	dev_info(&ring->nhi->pdev->dev, "stopping %s %d\n",
+-		 RING_TYPE(ring), ring->hop);
++	dev_dbg(&ring->nhi->pdev->dev, "stopping %s %d\n",
++		RING_TYPE(ring), ring->hop);
+ 	if (ring->nhi->going_away)
+ 		goto err;
+ 	if (!ring->running) {
+@@ -716,10 +717,8 @@ void tb_ring_free(struct tb_ring *ring)
+ 	ring->descriptors_dma = 0;
+ 
+ 
+-	dev_info(&ring->nhi->pdev->dev,
+-		 "freeing %s %d\n",
+-		 RING_TYPE(ring),
+-		 ring->hop);
++	dev_dbg(&ring->nhi->pdev->dev, "freeing %s %d\n", RING_TYPE(ring),
++		ring->hop);
+ 
+ 	/**
+ 	 * ring->work can no longer be scheduled (it is scheduled only
+@@ -931,7 +930,8 @@ static int nhi_runtime_resume(struct device *dev)
+ static void nhi_shutdown(struct tb_nhi *nhi)
+ {
+ 	int i;
+-	dev_info(&nhi->pdev->dev, "shutdown\n");
++
++	dev_dbg(&nhi->pdev->dev, "shutdown\n");
+ 
+ 	for (i = 0; i < nhi->hop_count; i++) {
+ 		if (nhi->tx_rings[i])
+@@ -1059,7 +1059,7 @@ static int nhi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		return -ENODEV;
+ 	}
+ 
+-	dev_info(&nhi->pdev->dev, "NHI initialized, starting thunderbolt\n");
++	dev_dbg(&nhi->pdev->dev, "NHI initialized, starting thunderbolt\n");
+ 
+ 	res = tb_domain_add(tb);
+ 	if (res) {
+diff --git a/drivers/thunderbolt/path.c b/drivers/thunderbolt/path.c
+index ff49ad880bfd..a11956522bac 100644
+--- a/drivers/thunderbolt/path.c
++++ b/drivers/thunderbolt/path.c
+@@ -13,19 +13,19 @@
+ 
+ static void tb_dump_hop(struct tb_port *port, struct tb_regs_hop *hop)
+ {
+-	tb_port_info(port, " Hop through port %d to hop %d (%s)\n",
+-		     hop->out_port, hop->next_hop,
+-		     hop->enable ? "enabled" : "disabled");
+-	tb_port_info(port, "  Weight: %d Priority: %d Credits: %d Drop: %d\n",
+-		     hop->weight, hop->priority,
+-		     hop->initial_credits, hop->drop_packages);
+-	tb_port_info(port, "   Counter enabled: %d Counter index: %d\n",
+-		     hop->counter_enable, hop->counter);
+-	tb_port_info(port, "  Flow Control (In/Eg): %d/%d Shared Buffer (In/Eg): %d/%d\n",
+-		     hop->ingress_fc, hop->egress_fc,
+-		     hop->ingress_shared_buffer, hop->egress_shared_buffer);
+-	tb_port_info(port, "  Unknown1: %#x Unknown2: %#x Unknown3: %#x\n",
+-		     hop->unknown1, hop->unknown2, hop->unknown3);
++	tb_port_dbg(port, " Hop through port %d to hop %d (%s)\n",
++		    hop->out_port, hop->next_hop,
++		    hop->enable ? "enabled" : "disabled");
++	tb_port_dbg(port, "  Weight: %d Priority: %d Credits: %d Drop: %d\n",
++		    hop->weight, hop->priority,
++		    hop->initial_credits, hop->drop_packages);
++	tb_port_dbg(port, "   Counter enabled: %d Counter index: %d\n",
++		    hop->counter_enable, hop->counter);
++	tb_port_dbg(port, "  Flow Control (In/Eg): %d/%d Shared Buffer (In/Eg): %d/%d\n",
++		    hop->ingress_fc, hop->egress_fc,
++		    hop->ingress_shared_buffer, hop->egress_shared_buffer);
++	tb_port_dbg(port, "  Unknown1: %#x Unknown2: %#x Unknown3: %#x\n",
++		    hop->unknown1, hop->unknown2, hop->unknown3);
+ }
+ 
+ /**
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index 7442bc4c6433..81134ee29578 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -436,15 +436,15 @@ static const char *tb_port_type(struct tb_regs_port_header *port)
+ 
+ static void tb_dump_port(struct tb *tb, struct tb_regs_port_header *port)
+ {
+-	tb_info(tb,
+-		" Port %d: %x:%x (Revision: %d, TB Version: %d, Type: %s (%#x))\n",
+-		port->port_number, port->vendor_id, port->device_id,
+-		port->revision, port->thunderbolt_version, tb_port_type(port),
+-		port->type);
+-	tb_info(tb, "  Max hop id (in/out): %d/%d\n",
+-		port->max_in_hop_id, port->max_out_hop_id);
+-	tb_info(tb, "  Max counters: %d\n", port->max_counters);
+-	tb_info(tb, "  NFC Credits: %#x\n", port->nfc_credits);
++	tb_dbg(tb,
++	       " Port %d: %x:%x (Revision: %d, TB Version: %d, Type: %s (%#x))\n",
++	       port->port_number, port->vendor_id, port->device_id,
++	       port->revision, port->thunderbolt_version, tb_port_type(port),
++	       port->type);
++	tb_dbg(tb, "  Max hop id (in/out): %d/%d\n",
++	       port->max_in_hop_id, port->max_out_hop_id);
++	tb_dbg(tb, "  Max counters: %d\n", port->max_counters);
++	tb_dbg(tb, "  NFC Credits: %#x\n", port->nfc_credits);
+ }
+ 
+ /**
+@@ -605,20 +605,18 @@ static int tb_init_port(struct tb_port *port)
+ 
+ static void tb_dump_switch(struct tb *tb, struct tb_regs_switch_header *sw)
+ {
+-	tb_info(tb,
+-		" Switch: %x:%x (Revision: %d, TB Version: %d)\n",
+-		sw->vendor_id, sw->device_id, sw->revision,
+-		sw->thunderbolt_version);
+-	tb_info(tb, "  Max Port Number: %d\n", sw->max_port_number);
+-	tb_info(tb, "  Config:\n");
+-	tb_info(tb,
++	tb_dbg(tb, " Switch: %x:%x (Revision: %d, TB Version: %d)\n",
++	       sw->vendor_id, sw->device_id, sw->revision,
++	       sw->thunderbolt_version);
++	tb_dbg(tb, "  Max Port Number: %d\n", sw->max_port_number);
++	tb_dbg(tb, "  Config:\n");
++	tb_dbg(tb,
+ 		"   Upstream Port Number: %d Depth: %d Route String: %#llx Enabled: %d, PlugEventsDelay: %dms\n",
+-		sw->upstream_port_number, sw->depth,
+-		(((u64) sw->route_hi) << 32) | sw->route_lo,
+-		sw->enabled, sw->plug_events_delay);
+-	tb_info(tb,
+-		"   unknown1: %#x unknown4: %#x\n",
+-		sw->__unknown1, sw->__unknown4);
++	       sw->upstream_port_number, sw->depth,
++	       (((u64) sw->route_hi) << 32) | sw->route_lo,
++	       sw->enabled, sw->plug_events_delay);
++	tb_dbg(tb, "   unknown1: %#x unknown4: %#x\n",
++	       sw->__unknown1, sw->__unknown4);
+ }
+ 
+ /**
+@@ -634,7 +632,7 @@ int tb_switch_reset(struct tb *tb, u64 route)
+ 		header.route_lo = route,
+ 		header.enabled = true,
+ 	};
+-	tb_info(tb, "resetting switch at %llx\n", route);
++	tb_dbg(tb, "resetting switch at %llx\n", route);
+ 	res.err = tb_cfg_write(tb->ctl, ((u32 *) &header) + 2, route,
+ 			0, 2, 2, 2);
+ 	if (res.err)
+@@ -1139,7 +1137,7 @@ struct tb_switch *tb_switch_alloc(struct tb *tb, struct device *parent,
+ 	if (tb_cfg_read(tb->ctl, &sw->config, route, 0, TB_CFG_SWITCH, 0, 5))
+ 		goto err_free_sw_ports;
+ 
+-	tb_info(tb, "current switch config:\n");
++	tb_dbg(tb, "current switch config:\n");
+ 	tb_dump_switch(tb, &sw->config);
+ 
+ 	/* configure switch */
+@@ -1246,9 +1244,8 @@ int tb_switch_configure(struct tb_switch *sw)
+ 	int ret;
+ 
+ 	route = tb_route(sw);
+-	tb_info(tb,
+-		"initializing Switch at %#llx (depth: %d, up port: %d)\n",
+-		route, tb_route_length(route), sw->config.upstream_port_number);
++	tb_dbg(tb, "initializing Switch at %#llx (depth: %d, up port: %d)\n",
++	       route, tb_route_length(route), sw->config.upstream_port_number);
+ 
+ 	if (sw->config.vendor_id != PCI_VENDOR_ID_INTEL)
+ 		tb_sw_warn(sw, "unknown switch vendor id %#x\n",
+@@ -1386,13 +1383,13 @@ int tb_switch_add(struct tb_switch *sw)
+ 			tb_sw_warn(sw, "tb_eeprom_read_rom failed\n");
+ 			return ret;
+ 		}
+-		tb_sw_info(sw, "uid: %#llx\n", sw->uid);
++		tb_sw_dbg(sw, "uid: %#llx\n", sw->uid);
+ 
+ 		tb_switch_set_uuid(sw);
+ 
+ 		for (i = 0; i <= sw->config.max_port_number; i++) {
+ 			if (sw->ports[i].disabled) {
+-				tb_port_info(&sw->ports[i], "disabled by eeprom\n");
++				tb_port_dbg(&sw->ports[i], "disabled by eeprom\n");
+ 				continue;
+ 			}
+ 			ret = tb_init_port(&sw->ports[i]);
+@@ -1483,7 +1480,7 @@ void tb_sw_set_unplugged(struct tb_switch *sw)
+ int tb_switch_resume(struct tb_switch *sw)
+ {
+ 	int i, err;
+-	tb_sw_info(sw, "resuming switch\n");
++	tb_sw_dbg(sw, "resuming switch\n");
+ 
+ 	/*
+ 	 * Check for UID of the connected switches except for root
+diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
+index 1424581fd9af..30e02c716f6c 100644
+--- a/drivers/thunderbolt/tb.c
++++ b/drivers/thunderbolt/tb.c
+@@ -404,10 +404,10 @@ static int tb_suspend_noirq(struct tb *tb)
+ {
+ 	struct tb_cm *tcm = tb_priv(tb);
+ 
+-	tb_info(tb, "suspending...\n");
++	tb_dbg(tb, "suspending...\n");
+ 	tb_switch_suspend(tb->root_switch);
+ 	tcm->hotplug_active = false; /* signal tb_handle_hotplug to quit */
+-	tb_info(tb, "suspend finished\n");
++	tb_dbg(tb, "suspend finished\n");
+ 
+ 	return 0;
+ }
+@@ -417,7 +417,7 @@ static int tb_resume_noirq(struct tb *tb)
+ 	struct tb_cm *tcm = tb_priv(tb);
+ 	struct tb_pci_tunnel *tunnel, *n;
+ 
+-	tb_info(tb, "resuming...\n");
++	tb_dbg(tb, "resuming...\n");
+ 
+ 	/* remove any pci devices the firmware might have setup */
+ 	tb_switch_reset(tb, 0);
+@@ -432,12 +432,12 @@ static int tb_resume_noirq(struct tb *tb)
+ 		 * the pcie links need some time to get going.
+ 		 * 100ms works for me...
+ 		 */
+-		tb_info(tb, "tunnels restarted, sleeping for 100ms\n");
++		tb_dbg(tb, "tunnels restarted, sleeping for 100ms\n");
+ 		msleep(100);
+ 	}
+ 	 /* Allow tb_handle_hotplug to progress events */
+ 	tcm->hotplug_active = true;
+-	tb_info(tb, "resume finished\n");
++	tb_dbg(tb, "resume finished\n");
+ 
+ 	return 0;
+ }
+diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
+index 5067d69d0501..5a99245573c0 100644
+--- a/drivers/thunderbolt/tb.h
++++ b/drivers/thunderbolt/tb.h
+@@ -327,7 +327,7 @@ static inline int tb_port_write(struct tb_port *port, const void *buffer,
+ #define tb_WARN(tb, fmt, arg...) dev_WARN(&(tb)->nhi->pdev->dev, fmt, ## arg)
+ #define tb_warn(tb, fmt, arg...) dev_warn(&(tb)->nhi->pdev->dev, fmt, ## arg)
+ #define tb_info(tb, fmt, arg...) dev_info(&(tb)->nhi->pdev->dev, fmt, ## arg)
+-
++#define tb_dbg(tb, fmt, arg...) dev_dbg(&(tb)->nhi->pdev->dev, fmt, ## arg)
+ 
+ #define __TB_SW_PRINT(level, sw, fmt, arg...)           \
+ 	do {                                            \
+@@ -338,7 +338,7 @@ static inline int tb_port_write(struct tb_port *port, const void *buffer,
+ #define tb_sw_WARN(sw, fmt, arg...) __TB_SW_PRINT(tb_WARN, sw, fmt, ##arg)
+ #define tb_sw_warn(sw, fmt, arg...) __TB_SW_PRINT(tb_warn, sw, fmt, ##arg)
+ #define tb_sw_info(sw, fmt, arg...) __TB_SW_PRINT(tb_info, sw, fmt, ##arg)
+-
++#define tb_sw_dbg(sw, fmt, arg...) __TB_SW_PRINT(tb_dbg, sw, fmt, ##arg)
+ 
+ #define __TB_PORT_PRINT(level, _port, fmt, arg...)                      \
+ 	do {                                                            \
+@@ -352,6 +352,8 @@ static inline int tb_port_write(struct tb_port *port, const void *buffer,
+ 	__TB_PORT_PRINT(tb_warn, port, fmt, ##arg)
+ #define tb_port_info(port, fmt, arg...) \
+ 	__TB_PORT_PRINT(tb_info, port, fmt, ##arg)
++#define tb_port_dbg(port, fmt, arg...) \
++	__TB_PORT_PRINT(tb_dbg, port, fmt, ##arg)
+ 
+ struct tb *icm_probe(struct tb_nhi *nhi);
+ struct tb *tb_probe(struct tb_nhi *nhi);
+-- 
+2.19.0
+
