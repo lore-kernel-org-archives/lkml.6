@@ -2,94 +2,89 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F652C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFD8C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4880B2084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:51:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4880B2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 248B22084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:52:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 248B22084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729278AbeJAT3c convert rfc822-to-8bit (ORCPT
+        id S1729392AbeJATaA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 15:29:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56638 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729181AbeJAT3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:29:32 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 66D4B207EB; Mon,  1 Oct 2018 14:51:48 +0200 (CEST)
-Received: from windsurf (AAubervilliers-681-1-24-95.w90-88.abo.wanadoo.fr [90.88.144.95])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 103CE20719;
-        Mon,  1 Oct 2018 14:51:48 +0200 (CEST)
-Date:   Mon, 1 Oct 2018 14:51:48 +0200
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Jan =?UTF-8?B?S3VuZHLDoXQ=?= <jan.kundrat@cesnet.cz>,
-        <linux-pci@vger.kernel.org>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Jason Cooper <jason@lakedaemon.net>,
-        <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since
- "PCI: mvebu: Only remap I/O space if configured"
-Message-ID: <20181001145148.158c6207@windsurf>
-In-Reply-To: <0f80dc88-dffe-4ca6-bb85-c4e5c967e0e1@cesnet.cz>
-References: <20180912231050.GX30658@n2100.armlinux.org.uk>
-        <20180913094515.351967bb@windsurf>
-        <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
-        <20180913104241.65db8243@windsurf>
-        <20180924101213.GO30658@n2100.armlinux.org.uk>
-        <20180924122614.70738b5c@windsurf>
-        <20180924111341.GP30658@n2100.armlinux.org.uk>
-        <20180924141203.3df9707a@windsurf>
-        <20180924124620.GA10322@e107981-ln.cambridge.arm.com>
-        <20180924151040.5e57462b@windsurf>
-        <20180924141512.GA11875@e107981-ln.cambridge.arm.com>
-        <20180924165218.26c7c418@windsurf>
-        <0f80dc88-dffe-4ca6-bb85-c4e5c967e0e1@cesnet.cz>
-Organization: Bootlin (formerly Free Electrons)
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 1 Oct 2018 15:30:00 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34228 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729189AbeJAT37 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 15:29:59 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y10-v6so9770597lfj.1;
+        Mon, 01 Oct 2018 05:52:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4huskFt1PgMtkdAvQiYOBlD5ExXcCAX9i/lj8xIq9fk=;
+        b=d8I+GTSA8GUlMWLLbl2xsk4vLT8c5spXnt98HahStIQ7szViBDqmYdevM/Oz64vznR
+         6AKQ/CxgfBJa7vEXzfW+tyKrJWVO7NIbWN/4J8YkN8p0vMbKfKsG02Wt8+AJsW5c9uEY
+         dU/1WIj9tqi3KBRefawef6BlxQXbThLOnXqnLYOD0AwGSmtqs+zp+uO1iGXEvWdRPe3c
+         rqnr3wR2FOfSa/i75QwCAZJHmjxvNBSFeca8SvbpxMRYjn3oFN92XMMrq46c1yqdy/4j
+         9HjiWt+Pid0fGBt6mRtw9LiBQlnEUxatFPIwXXWRXfZEwFSQs9cU81ElegqXsWCdGJFM
+         SeIg==
+X-Gm-Message-State: ABuFfojtg2MSILX4bi9XSFdspaQrCZiSFg6ixUlNNn5Tl4oVGyGcFmM/
+        jdHgr5cM//oTXr/woUyyNy8l26XNcpRSdtHWGdM=
+X-Google-Smtp-Source: ACcGV63rkw/HjuYxk9aQAAVssvh6EotkLK1w+35eGDgybJs9vFyKbg4le4z9tSCwxZGHw3r1pvn1VYNht8E11+l87gA=
+X-Received: by 2002:a19:9d8d:: with SMTP id g135-v6mr5836977lfe.3.1538398336682;
+ Mon, 01 Oct 2018 05:52:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <1538397477-4003-1-git-send-email-firoz.khan@linaro.org> <1538397477-4003-6-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1538397477-4003-6-git-send-email-firoz.khan@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 1 Oct 2018 14:51:59 +0200
+Message-ID: <CAK8P3a3_NjWWPnoNjg0cgoAMyYCuG4ABqy-z9CyjROjLGxeG3g@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] m68k: add __IGNORE* entries in asm/unistd.h
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Oct 1, 2018 at 2:39 PM Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+> Add __IGNORE* entries for seccomp, pkey_mprotect, pkey_
+> alloc, pkey_free, io_pgetevents and rseq in the file
+> asm/unistd.h as it is correct to keep __IGNORE* entry in
+> non uapi header asm/unistd.h while uapi/asm/unistd.h must
+> hold information only useful for user space applications.
+>
+> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+> ---
+>  arch/m68k/include/asm/unistd.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
 
-On Mon, 01 Oct 2018 12:56:37 +0200, Jan Kundrát wrote:
+I think this one needs to be dropped, as I commented on a similar patch for
+another architecture (I forget which one). We really should implemente all
+the syscalls below, with the possible exception of the pkey calls.
 
-> Thomas, Russell, Lorenzo,
-> did you have time to convert this into a patch which can hit 4.19? I don't 
-> see anything related in 4.19-rc6, but perhaps I missed something. Is there 
-> something that I should test or otherwise help?
+Note that we even list pkey_* in architectures that don't support the feature.
+See also the commit text for a60f7b69d92c ("generic syscalls: Wire up
+memory protection keys syscalls")
 
-Sorry, I suddenly got busy (my second son arrived a few days earlier
-than expected).
-
-I just sent a proper patch with the proposal I made last week, after
-testing on ClearFog and Armada XP GP. Note that on ClearFog, I only
-tested that it fixes the panic at boot, since I didn't had any
-mini-PCIe devices at hand. On Armada XP GP, I verified that an E1000E
-NIC was still working as expected. Therefore, it would be useful if
-you could test on your ClearFog platform with PCI devices connected.
-
-Thanks a lot and sorry for the delay.
-
-Best regards,
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+     Arnd
