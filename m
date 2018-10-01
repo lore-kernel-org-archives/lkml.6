@@ -2,143 +2,150 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBD6C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62223C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A538221470
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:52:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="MUlhMBma"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A538221470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
+	by mail.kernel.org (Postfix) with ESMTP id 301F12089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:53:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 301F12089A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726405AbeJBDc0 (ORCPT
+        id S1726458AbeJBDcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 23:32:26 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40043 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbeJBDc0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 23:32:26 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n31-v6so10292828pgm.7
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 13:52:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=1/uGZS4YF78Ac48mO2JvM1evD2kYx7ReQr0abHmspHI=;
-        b=MUlhMBmaGDtVYyV19TVP2R7o6e281hJIrgSdX28oqC4bXYm6FzFmgUqzMeRbD6fJp2
-         A38v8Hb7NUSBQQNPoDmCAMVtKiQ7LoSXcaiV9TxyUyKm6taHhRv7IDfPsFUj0COePVVy
-         /60srjmcOTq9poZR6PnjnZLnL2w9ackTy/TlTc96s8fhmyYsatfkW9nF4DB8SB7QEmEi
-         fCHkWFEAR1+n9RaicS2ggLTpU6AmpMfzwYy+eIn5DxhHiBtWis4lRIGWaWJEgMoHAKRu
-         eWg4QaVYi9pB5rqFjs9txGXz6TVq0FW4IlZ2/HToN0sPT7HQN+8VKiZBt9qq1t3xI6Wl
-         Y9zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=1/uGZS4YF78Ac48mO2JvM1evD2kYx7ReQr0abHmspHI=;
-        b=OQ0e5Df/DSTmxJjlU1MXssXSnLFpqPR6W8oO8y4iAdgJh3fuspo6Pr67jSca4RKbM8
-         J+BV2OB0flgDaftqqCF60tjnOBrpGby0ZedF9stTPvrwJnNAyQwfTSMlt1sHHhFcoMfC
-         uqj9gM2QCzHPyoH6Gzrd8o6r0iFJ3Ag+k1L/Qj7HO8gPBb7sr9B7KovU58wpHYMHqWYH
-         4GAwvooGoHGfH6uHmzdO760Nb5NlJmLfTSIiT7ZaztT8ycuYqHAr7T2Icrtxss4A1pkN
-         XEi4nxGT6fs4OxD530vEzJcFi/WSP/uwgC6xH+BpxR/5lKFRjsUKA/pM0NgF6Af0ywdZ
-         on4g==
-X-Gm-Message-State: ABuFfoi/MZnpNIM+EDg78E8OwdWVbfNJ2rTiX6lHwI2WNXsc1aAROEHz
-        N+gMkXeQQkJlC0GYbezFjoA843PWM6Y=
-X-Google-Smtp-Source: ACcGV60zWTtf6j7GfJmAR85Gds6GJ4FtVj5BwokpvyV/VzbMchCqKC1hpbBxGT/SZ7J07GBpM03oPw==
-X-Received: by 2002:a63:db44:: with SMTP id x4-v6mr11778928pgi.285.1538427168107;
-        Mon, 01 Oct 2018 13:52:48 -0700 (PDT)
-Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
-        by smtp.googlemail.com with ESMTPSA id z3-v6sm18184120pfm.150.2018.10.01.13.52.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 13:52:47 -0700 (PDT)
-Subject: Re: RESEND [PATCH v6 11/12] lib: vdso: Add support for CLOCK_BOOTTIME
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        John Stultz <john.stultz@linaro.org>,
+        Mon, 1 Oct 2018 23:32:42 -0400
+Received: from mga09.intel.com ([134.134.136.24]:35716 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726149AbeJBDcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 23:32:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 13:53:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,328,1534834800"; 
+   d="scan'208";a="95121450"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 01 Oct 2018 13:51:45 -0700
+Received: from [10.252.4.61] (abudanko-mobl.ccr.corp.intel.com [10.252.4.61])
+        by linux.intel.com (Postfix) with ESMTP id 87A8F580268;
+        Mon,  1 Oct 2018 13:51:41 -0700 (PDT)
+Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
+To:     Thomas Gleixner <tglx@linutronix.de>, Jann Horn <jannh@google.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Andrew Pinski <apinski@cavium.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jeremy Linton <Jeremy.Linton@arm.com>,
-        android-kernel@android.com, Jinbum Park <jinb.park7@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-References: <20181001175845.168430-1-salyzyn@android.com>
- <20181001175845.168430-12-salyzyn@android.com>
- <alpine.DEB.2.21.1810012009010.32062@nanos.tec.linutronix.de>
-From:   Mark Salyzyn <salyzyn@android.com>
-Message-ID: <a602b661-dde5-399d-6245-cf48a0e43f54@android.com>
-Date:   Mon, 1 Oct 2018 13:52:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Peter Zijlstra <peterz@infradead.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Andi Kleen <ak@linux.intel.com>, tursulin@ursulin.net,
+        kernel list <linux-kernel@vger.kernel.org>,
+        tvrtko.ursulin@linux.intel.com,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, maddy@linux.vnet.ibm.com
+References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
+ <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
+ <20180928164111.i6nba2j6mnegwslw@lakrids.cambridge.arm.com>
+ <20180928172340.GA32651@tassilo.jf.intel.com>
+ <20180928174016.i7d24puv7y3jwzf6@lakrids.cambridge.arm.com>
+ <20180928204930.GC32651@tassilo.jf.intel.com>
+ <CAG48ez16ECnLMNggTZQQJOuPK5ZJ8dLSkGDzvxwK1zVh1BFExw@mail.gmail.com>
+ <20180928205907.GD32651@tassilo.jf.intel.com>
+ <CAG48ez1xJ+Y=snnHJ5k6J6O3qqD=bHdjRioLFuzPZpxU9v7xxA@mail.gmail.com>
+ <20180928212757.GE32651@tassilo.jf.intel.com>
+ <22155f49-2f57-73b8-6e89-ddd8a127967b@linux.intel.com>
+ <alpine.DEB.2.21.1810011741070.32062@nanos.tec.linutronix.de>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <905796f8-4704-66a8-ee0a-ac8aba90b179@linux.intel.com>
+Date:   Mon, 1 Oct 2018 23:51:40 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1810012009010.32062@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+In-Reply-To: <alpine.DEB.2.21.1810011741070.32062@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/01/2018 11:15 AM, Thomas Gleixner wrote:
-> On Mon, 1 Oct 2018, Mark Salyzyn wrote:
->>   
->> +static notrace int do_boottime(const struct vdso_data *vd, struct timespec *ts)
->> +{
->> +	u32 seq, mult, shift;
->> +	u64 nsec, cycle_last;
->> +	vdso_wtm_clock_nsec_t wtm_nsec;
->> +
->> +	/* open coding timespec_add_ns to save a ts->tv_nsec = 0 */
->> +	ts->tv_sec = sec + __iter_div_u64_rem(nsec, NSEC_PER_SEC, &nsec);
->> +	ts->tv_nsec = nsec;
->> +
->> +	return 0;
->> +}
->> +
-> Instead of adding yet another copy of the same code you might want to look
-> at the rework I did for the x86 vdso in order to support CLOCK_TAI w/o
-> running into the issue of the clock switch case being compiled into a jump
-> table and then the compile asking for retpoline.
->
->    http://lkml.kernel.org/r/20180917124533.329334911@linutronix.de
->
-> Thanks,
->
-> 	tglx
 
-Great idea. Thanks!
+Hello,
 
-The point of the first 12 patches is to _align_ the arm code to match 
-the assembler for arm64 exactly 1:1. Then switch arm64 assembler to use 
-the _same_ code in 'C' as a library. No performance degradation.
+On 01.10.2018 19:11, Thomas Gleixner wrote:
 
-Next extend the vdso framework on arm64 to _also_ use that library for 
-vDSO32 (arm32 compat on 64-bit). At this point we achieve a 0.4% power 
-reduction on Android.
+<SNIP>
 
-At that point, we would be ready for a rework that fixes all three (ARM 
-vDSO, ARM64 vDSO and ARM64 vDSO32) to get the compiler to handle the 
-switch statement better. One step at a time.
+> Peter and I discussed that and we came up with the idea that the file
+> descriptor is not even required, i.e. you could make it backward
+> compatible.
+> 
+> perf_event_open() knows which PMU is associated with the event the caller
+> tries to open. So perf_event_open() can try to access/open the special per
+> PMU file on behalf of the caller. That should get the same security
+> treatment like a regular open() from user space. If that succeeds, access
+> is granted.
+> 
+> The magic file could still be writeable for root to give general
+> restrictions aside of the file based ones similar to what you are
+> proposing.
 
--- Mark
+Let me wrap up all the requirements and ideas that have been captured so far.
 
+1. A file [1] is added so that it can belong to a group of users allowed to use ${PMU}, 
+   something like this:
 
+ls -alh /sys/bus/event_source/devices/${PMU}/caps/
+total 0
+drwxr-xr-x 2 root root            0 Oct  1 20:36 .
+drwxr-xr-x 6 root root            0 Oct  1 20:36 ..
+-r--r--r-- 1 root root         4.0K Oct  1 20:36 branches
+-r--r--r-- 1 root root         4.0K Oct  1 20:36 max_precise
+-r--r--r-- 1 root root         4.0K Oct  1 20:36 pmu_name
+-rw-r--r--   root ${PMU}_users                   paranoid        <===
+
+   Modifications of file content are allowed to those who can 
+   modify /proc/sys/kernel/perf_event_paranoid setting.
+
+2. Semantics and content of the introduced paranoid file is 
+   similar to /proc/sys/kernel/perf_even_paranoid [2]:
+
+   The perf_event_paranoid file can be set to restrict access
+   to the performance counters.
+
+   2   allow only user-space measurements (default since Linux 4.6).
+   1   allow both kernel and user measurements (default before Linux 4.6).
+   0   allow access to CPU-specific data but not raw trace‐point samples.
+  -1  no restrictions.
+
+   The existence of the perf_event_paranoid file is the official method 
+   for determining if a kernel supports perf_event_open().
+
+3. Every time an event for ${PMU} is created over perf_event_open():
+   a) the calling thread's euid is checked to belong to ${PMU}_users group 
+      and if it does then the event's fd is allocated;
+   b) then traditional checks against perf_event_pranoid content are applied;
+   c) if the file doesn't exist the access is governed by global setting 
+      at /proc/sys/kernel/perf_even_paranoid;
+
+4. Documentation/admin-guide/perf-security.rst file is introduced that:
+   a) contains general explanation for fine grained access control;
+   b) contains a section with guidance about scope and risk for each PMU
+      which is enabled for fine grained access control;
+   c) file is extended when more PMUs are enabled for fine grain control;
+
+> 
+> The analysis and documentation requirements still remain of course.
+
+Security analysis for uncore IMC, QPI/UPI, PCIe PMUs is still required 
+to be enabled for fine grain control.
+
+Thanks,
+Alexey
+
+[1] https://patchwork.kernel.org/patch/9249919/#19714087
+[2] http://man7.org/linux/man-pages/man2/perf_event_open.2.html
