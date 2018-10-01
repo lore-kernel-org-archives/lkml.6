@@ -2,149 +2,131 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E25EDC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A71FEC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91F36206B2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:12:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWCd4fSV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F36206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A52F2084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:19:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A52F2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neuling.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726459AbeJBFxF (ORCPT
+        id S1726471AbeJBGAC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 01:53:05 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36045 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbeJBFxF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 01:53:05 -0400
-Received: by mail-wr1-f68.google.com with SMTP id y16so57019wrw.3;
-        Mon, 01 Oct 2018 16:12:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xP3YSfpbBAej3DJj6KaDuaNukmmCg3YjkxoiG7ZhhyU=;
-        b=RWCd4fSV0EnX5yF5uf8kRcSSyNuFhSIna0Wol2AN1Db61L2Uwj/8ivMcI+t71Ij7is
-         11cmuJFfsaxAwCUYNzSV5sAEbcxR9U25zpdUI3YQ80IHIew1PHbsFla+rAtqCfP8bAT6
-         SInjOwWV/FViBegqUlZZGhMgQAdwfhNpbNtY4An28njvwom3uJpswQNoAX45YyKltq8j
-         lTeXACLZY8VhUskNAbxXZ1TLGZxjXs017/Qwk/zpJJMFV7kA2z81nPOizJXH+NbPbc93
-         19DBo+50s6JjTEgZ0dnXkJOwipTw9WXSaQ3Bi5vsF1XYSWQq2sgVPPUfWmQiBVARPNEO
-         Qbig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xP3YSfpbBAej3DJj6KaDuaNukmmCg3YjkxoiG7ZhhyU=;
-        b=Tdn2im115wGmNo5NgpvNK2fPN1+4oSHzDZWkjUexw5khdoUr4noAYcXdgb+F2R3Cec
-         ti/7ng8mt3UqYr4xqTG3Vwi93BPCmlx8r+deFjy1vLgP/kFIwnz4bl/Vbj3S2HnbYlqL
-         I9yBEe1PAwjOYKryzq8oRTmgcca613H6Px7qvShTbjsZtCtRh0E9i5oPKlveldCvuXgH
-         h3nOe7jc2xnl1ybTCUgbwBJp1Y7ImRKT+Ugm9MzmIhNDrmsYI88zXTVBr18R+CAxluqm
-         GvTq2QbREGfqxRIaYwPlXvaP6tFxpygx0WdGXUaQ9xT+O5B6o11ZUC1vxJ9tLPxpWhkH
-         TKHw==
-X-Gm-Message-State: ABuFfog9+9ZhD6YEjf9A8jSxswZDUSU9s/4z1DaY32MvU/Dxkgzw2a5A
-        FD6phbyZlJ+5oqT/ikQjljg=
-X-Google-Smtp-Source: ACcGV60jwLqB/j91lz7IC8lqQzXFXcL2OhVbQrW5XhoawJGZ0zi/GJH8MXRtMbvC5e7mmBAmPFdwxQ==
-X-Received: by 2002:adf:e792:: with SMTP id n18-v6mr8235079wrm.136.1538435574409;
-        Mon, 01 Oct 2018 16:12:54 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id a18sm14083672wrx.55.2018.10.01.16.12.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 16:12:53 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 16:12:51 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     awalls@md.metrocast.net,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        hverkuil@xs4all.nl, linux-media@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] media: cx18: Don't check for address of video_dev
-Message-ID: <20181001231251.GA1593@flashbox>
-References: <20180921195736.7977-1-natechancellor@gmail.com>
- <20181001152110.20780-1-natechancellor@gmail.com>
- <CAKwvOdk6Z2und-7U6SVHqKxiEk6Ahpuc8_=O7Os5axx43itp5Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdk6Z2und-7U6SVHqKxiEk6Ahpuc8_=O7Os5axx43itp5Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 2 Oct 2018 02:00:02 -0400
+Received: from ozlabs.org ([203.11.71.1]:58571 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725936AbeJBGAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 02:00:02 -0400
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by ozlabs.org (Postfix) with ESMTP id 42PJCV4K3Sz9s3l;
+        Tue,  2 Oct 2018 09:19:50 +1000 (AEST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 872E9EE78BF; Tue,  2 Oct 2018 09:19:50 +1000 (AEST)
+Message-ID: <095ba37e883c0d2d13b442185289552ab6cd7107.camel@neuling.org>
+Subject: Re: [PATCH] powerpc/lib: fix book3s/32 boot failure due to code
+ patching
+From:   Michael Neuling <mikey@neuling.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 02 Oct 2018 09:19:50 +1000
+In-Reply-To: <6acad0a13b7f6c2845b2022737c6a11a445ed3c2.1538394860.git.christophe.leroy@c-s.fr>
+References: <6acad0a13b7f6c2845b2022737c6a11a445ed3c2.1538394860.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 04:05:57PM -0700, Nick Desaulniers wrote:
-> On Mon, Oct 1, 2018 at 8:22 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > Clang warns that the address of a pointer will always evaluated as true
-> > in a boolean context.
-> >
-> > drivers/media/pci/cx18/cx18-driver.c:1255:23: warning: address of
-> > 'cx->streams[i].video_dev' will always evaluate to 'true'
-> > [-Wpointer-bool-conversion]
-> >                 if (&cx->streams[i].video_dev)
-> >                 ~~   ~~~~~~~~~~~~~~~^~~~~~~~~
-> > 1 warning generated.
-> >
-> > Check whether v4l2_dev is null, not the address, so that the statement
-> > doesn't fire all the time. This check has been present since 2009,
-> > introduced by commit 21a278b85d3c ("V4L/DVB (11619): cx18: Simplify the
-> > work handler for outgoing mailbox commands")
-> >
-> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >
-> > v1 -> v2:
-> >
-> > * Fix build error and logic per review from Hans
-> >
-> >  drivers/media/pci/cx18/cx18-driver.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
-> > index 56763c4ea1a7..a6ba4ca5aa91 100644
-> > --- a/drivers/media/pci/cx18/cx18-driver.c
-> > +++ b/drivers/media/pci/cx18/cx18-driver.c
-> > @@ -1252,7 +1252,7 @@ static void cx18_cancel_out_work_orders(struct cx18 *cx)
-> >  {
-> >         int i;
-> >         for (i = 0; i < CX18_MAX_STREAMS; i++)
-> > -               if (&cx->streams[i].video_dev)
-> > +               if (cx->streams[i].video_dev.v4l2_dev)
+On Mon, 2018-10-01 at 12:21 +0000, Christophe Leroy wrote:
+> Commit 51c3c62b58b3 ("powerpc: Avoid code patching freed init
+> sections") accesses 'init_mem_is_free' flag too early, before the
+> kernel is relocated. This provokes early boot failure (before the
+> console is active).
 > 
-> There we go, that looks better!  Thanks for respinning this patch.  I
-> would've given Hans credit in a Suggested-by tag, but there's not
-> necessarily strict rules on that (and doesn't necessitate a v3).
-> Maybe the maintainer could apply that to the commit message when
-> applying?  Either way:
+> As it is not necessary to do this verification that early, this
+> patch moves the test into patch_instruction() instead of
+> __patch_instruction().
 > 
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> This modification also has the advantage of avoiding unnecessary
+> remappings.
 > 
+> Fixes: 51c3c62b58b3 ("powerpc: Avoid code patching freed init sections")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Very fair point, I should have done that. Will be better about that in
-the future.
+Thanks
 
-Thank you for the review,
-Nathan
+Acked-by: Michael Neuling <mikey@neuling.org>
 
-> >                         cancel_work_sync(&cx->streams[i].out_work_order);
-> >  }
-> >
-> > --
-> > 2.19.0
-> >
+The original patch was also marked for stable so we should do the same here.
+
+Cc: stable@vger.kernel.org # 4.13+
+
+> ---
+>  arch/powerpc/lib/code-patching.c | 20 ++++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
 > 
-> 
-> -- 
-> Thanks,
-> ~Nick Desaulniers
+> diff --git a/arch/powerpc/lib/code-patching.c b/arch/powerpc/lib/code-
+> patching.c
+> index 6ae2777c220d..5ffee298745f 100644
+> --- a/arch/powerpc/lib/code-patching.c
+> +++ b/arch/powerpc/lib/code-patching.c
+> @@ -28,12 +28,6 @@ static int __patch_instruction(unsigned int *exec_addr,
+> unsigned int instr,
+>  {
+>  	int err;
+>  
+> -	/* Make sure we aren't patching a freed init section */
+> -	if (init_mem_is_free && init_section_contains(exec_addr, 4)) {
+> -		pr_debug("Skipping init section patching addr: 0x%px\n",
+> exec_addr);
+> -		return 0;
+> -	}
+> -
+>  	__put_user_size(instr, patch_addr, 4, err);
+>  	if (err)
+>  		return err;
+> @@ -148,7 +142,7 @@ static inline int unmap_patch_area(unsigned long addr)
+>  	return 0;
+>  }
+>  
+> -int patch_instruction(unsigned int *addr, unsigned int instr)
+> +static int do_patch_instruction(unsigned int *addr, unsigned int instr)
+>  {
+>  	int err;
+>  	unsigned int *patch_addr = NULL;
+> @@ -188,12 +182,22 @@ int patch_instruction(unsigned int *addr, unsigned int
+> instr)
+>  }
+>  #else /* !CONFIG_STRICT_KERNEL_RWX */
+>  
+> -int patch_instruction(unsigned int *addr, unsigned int instr)
+> +static int do_patch_instruction(unsigned int *addr, unsigned int instr)
+>  {
+>  	return raw_patch_instruction(addr, instr);
+>  }
+>  
+>  #endif /* CONFIG_STRICT_KERNEL_RWX */
+> +
+> +int patch_instruction(unsigned int *addr, unsigned int instr)
+> +{
+> +	/* Make sure we aren't patching a freed init section */
+> +	if (init_mem_is_free && init_section_contains(addr, 4)) {
+> +		pr_debug("Skipping init section patching addr: 0x%px\n", addr);
+> +		return 0;
+> +	}
+> +	return do_patch_instruction(addr, instr);
+> +}
+>  NOKPROBE_SYMBOL(patch_instruction);
+>  
+>  int patch_branch(unsigned int *addr, unsigned long target, int flags)
