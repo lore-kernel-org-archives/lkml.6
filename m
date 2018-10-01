@@ -2,132 +2,109 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE2BEC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E50F8C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E1F9213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:49:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9F9A213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:50:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WLwM23nR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KMhcs3g9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E1F9213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b5pSpTqR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9F9A213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbeJBG3w (ORCPT
+        id S1726731AbeJBGaT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 02:29:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52564 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbeJBG3w (ORCPT
+        Tue, 2 Oct 2018 02:30:19 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:36932 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbeJBGaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 02:29:52 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 16FE260C63; Mon,  1 Oct 2018 23:49:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538437775;
-        bh=E8VPZ7hnduZEFNHuLvnFgE7VPFlJOQa1+CemyOhJAYk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=WLwM23nRtdrzpQa67AQNOue+sT6SV4CVVlgQ02yvoTG5gK5L2M4tk4ArLpRwGnARM
-         1CB2QMQgDdH0Jlj/l4u45kJpeb5cdv80ErA4Z8tkrzvG0wt2P027ZyW7FC5OJkmjUm
-         XoWHI/4i9rZyZFRAJl/t67l9lWy23YCrx6PiDH24=
-Received: from [10.134.64.210] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: skannan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DD5C960265;
-        Mon,  1 Oct 2018 23:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538437773;
-        bh=E8VPZ7hnduZEFNHuLvnFgE7VPFlJOQa1+CemyOhJAYk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=KMhcs3g9vXX0c5pAfsIQNXR7bX/sHsjIh8K8Xuu3SRtAX3NyaNTi09PTJ7PsOIyBk
-         6vgyvSkjvdif1Liny5JemCNXMwvUMjhq7hpNm8m2p79PuAbwBspj/lxPlys+jA+X1G
-         KzXkS5aUjIZb6vARv4AI9WYgW5IROMeBtYwCrBpc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DD5C960265
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
-Subject: Re: [PATCH v9 2/8] dt-bindings: Introduce interconnect binding
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, rjw@rjwysocki.net,
-        mturquette@baylibre.com, khilman@baylibre.com,
-        vincent.guittot@linaro.org, bjorn.andersson@linaro.org,
-        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, evgreen@chromium.org,
-        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
-        abailon@baylibre.com, maxime.ripard@bootlin.com, arnd@arndb.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-References: <20180831140151.13972-1-georgi.djakov@linaro.org>
- <20180831140151.13972-3-georgi.djakov@linaro.org>
- <20180925180215.GA12435@bogus>
- <b67253fb-d86d-2ddd-6c30-0833d6ed62ad@linaro.org>
- <20180926144830.GB25838@e107155-lin>
-From:   Saravana Kannan <skannan@codeaurora.org>
-Message-ID: <fa74c24f-1f22-f11f-60fe-5a4489d9c7c2@codeaurora.org>
-Date:   Mon, 1 Oct 2018 16:49:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 2 Oct 2018 02:30:18 -0400
+Received: by mail-yb1-f194.google.com with SMTP id h1-v6so60985ybm.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 16:50:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=2ohEmpld1IFXjpF8PrBFP4qTkcM2P6AcoHxxKbyBNVM=;
+        b=b5pSpTqR8TmSGggikp7xyF+snqMrJPH1p7e2lE+1eU7X9y0Z6OFHDpZcPaucVlYuNP
+         nRK3vFBfzv60PdkYhhoUyz8uzMQt5WyH7tj/80NkYdGBqXOXpC8u5OPbEtnG1N2ct9is
+         OkDfeKDCsH4kAPyJHnMm/NGh3kiYzLLRdQN9c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=2ohEmpld1IFXjpF8PrBFP4qTkcM2P6AcoHxxKbyBNVM=;
+        b=gdWm39fGXqLDE62Ij1Dh9hP91yPHs/T6F3QagveQZeShP0WFA4RTHstIEJY1C7LB74
+         dFcYhxsnPdWxIqIo8UfdW5BzNykEF6eO95v7MldN0xN3uG6mMxABLn7M3le1Vg5roSyW
+         2xZ8YI4ch3O/rFM9JgMDtfdll4JP7Upg0Bvfrr/qZtKlOT8GxiCrPUSsjFHFiZtC0pPz
+         kD+okwoUqrL9FvKeIlZ5mIsf1Ljbpn5CaWYqjE5j3gSE62W/PzZ/L4R+D4LgkIhQlifh
+         RYqLtcez/cF38Q9DnQlzr0xwG7qx9tobrtvKWpeINbPAk5JY0jh2agcX/Kbo1wrB2Skn
+         KAKA==
+X-Gm-Message-State: ABuFfoiRk+rLR3aFATTTZxX4XYP0weOnTCpiJ38D051vXwbc/+gQvFMU
+        Y9PgIXVti/O0gfCwU3kpfevslQnlRvM=
+X-Google-Smtp-Source: ACcGV63iC7lBNHC7VrV9PLXQTvfHmuycjXsUFHhOmLTiPKIvgNXlez6y2x/nd1eJH8u/zFwEmJSx2w==
+X-Received: by 2002:a25:74ce:: with SMTP id p197-v6mr7159841ybc.343.1538437802026;
+        Mon, 01 Oct 2018 16:50:02 -0700 (PDT)
+Received: from mail-yw1-f41.google.com (mail-yw1-f41.google.com. [209.85.161.41])
+        by smtp.gmail.com with ESMTPSA id y198-v6sm5919695ywy.64.2018.10.01.16.49.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 16:49:59 -0700 (PDT)
+Received: by mail-yw1-f41.google.com with SMTP id y14-v6so59262ywa.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 16:49:58 -0700 (PDT)
+X-Received: by 2002:a81:1194:: with SMTP id 142-v6mr7356787ywr.168.1538437798500;
+ Mon, 01 Oct 2018 16:49:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180926144830.GB25838@e107155-lin>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 16:49:57 -0700 (PDT)
+In-Reply-To: <b2952ffe-545f-931f-e6a2-589be5ac8ac0@canonical.com>
+References: <20180925001832.18322-1-keescook@chromium.org> <20180925001832.18322-19-keescook@chromium.org>
+ <68e4e323-3216-7e77-2807-c3207126ae68@canonical.com> <CAGXu5j+jzmFh-iuXDVHQTq7e=mftpfaqS-45TP_UR3B+qtGcLQ@mail.gmail.com>
+ <9b3e1733-7cfa-5047-1422-0f9d92d88d39@canonical.com> <CAGXu5jJheexJgnJ+OWaDoRFraqm9yxj1Vr290tfZ7kELBPUpAw@mail.gmail.com>
+ <b2952ffe-545f-931f-e6a2-589be5ac8ac0@canonical.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 1 Oct 2018 16:49:57 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJr8P_rS+DcQJxMM9xnB0vFFc75Xrk7Qv9yx8_DLB1Vjg@mail.gmail.com>
+Message-ID: <CAGXu5jJr8P_rS+DcQJxMM9xnB0vFFc75Xrk7Qv9yx8_DLB1Vjg@mail.gmail.com>
+Subject: Re: [PATCH security-next v3 18/29] LSM: Introduce lsm.enable= and lsm.disable=
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/26/2018 07:48 AM, Sudeep Holla wrote:
-> On Wed, Sep 26, 2018 at 05:42:15PM +0300, Georgi Djakov wrote:
->> Hi Rob,
+On Mon, Oct 1, 2018 at 4:44 PM, John Johansen
+<john.johansen@canonical.com> wrote:
+> On 10/01/2018 04:30 PM, Kees Cook wrote:
+>> If we keep it, "apparmor=0 lsm_enable=apparmor" would mean it's
+>> enabled. Is that okay?
 >>
->> Thanks for the comments!
->>
->> On 09/25/2018 09:02 PM, Rob Herring wrote:
->>> On Fri, Aug 31, 2018 at 05:01:45PM +0300, Georgi Djakov wrote:
->>>> This binding is intended to represent the relations between the interconnect
->>>> controllers (providers) and consumer device nodes. It will allow creating links
->>>> between consumers and interconnect paths (exposed by interconnect providers).
->>> As I mentioned in person, I want to see other SoC families using this
->>> before accepting. They don't have to be ready for upstream, but WIP
->>> patches or even just a "yes, this works for us and we're going to use
->>> this binding on X".
->> Other than the 3 Qualcomm SoCs (msm8916, msm8996, sdm845) that are
->> currently using this binding, there is ongoing work from at least two
->> other vendors that would be using this same binding. I will check on
->> what is their progress so far.
->>
->>> Also, I think the QCom GPU use of this should be fully sorted out. Or
->>> more generically how this fits into OPP binding which seems to be never
->>> ending extended...
->> I see this as a further step. It could be OPP binding which include
->> bandwidth values or some separate DT property. Jordan has already
->> proposed something, do you have any initial comments on that?
-> I am curious as how this fits into new systems which have firmware driven
-> CPUFreq and other DVFS. I would like to avoid using this in such systems
-> and leave it upto the firmware to scale the bus/interconnect based on the
-> other components that are connected to it and active.
->
+> ugh I would rather get rid of apparmor=0 or to emit a warning with apparmor
+> disabled, but if we have to live with it then yes I can live with last
+> option wins
 
-You've made the same point multiple times across different patch sets. 
-Not all FW can do arbitrary functions. A lot of them are very limited in 
-their capabilities. So, as much as you and I would like to let the FW do 
-the work, it's not always possible. So, in those cases, we do need to 
-have support for the kernel scaling the interconnects correctly. 
-Hopefully this clears up your questions about FW capabilities.
+Removing it would be much preferred! :)
 
-Thanks,
-Saravana
+Assuming Paul is okay with the same results in SELinux, I'll prepare patches...
+
+-Kees
 
 -- 
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Kees Cook
+Pixel Security
