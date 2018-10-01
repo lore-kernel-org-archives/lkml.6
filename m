@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C53BDC004D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3E5C64EAD
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E0C42083C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:47:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A35E520840
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 00:47:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Lxit7gCa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E0C42083C
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="MRQqe2TA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A35E520840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbeJAHPA (ORCPT
+        id S1729690AbeJAHW7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 03:15:00 -0400
+        Mon, 1 Oct 2018 03:22:59 -0400
 Received: from mail-by2nam01on0116.outbound.protection.outlook.com ([104.47.34.116]:2013
         "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729563AbeJAHO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 03:14:59 -0400
+        id S1729591AbeJAHPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 03:15:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a2aD/nNGn8Jvx3/iLYWL2cQqCvnOTN77kLhMEB8mBvY=;
- b=Lxit7gCazrg8a88NCPymNlA9OwEU+1qXG5kxQRSu4Vzz3N87yaLNX6YsD5uTDS0E5mHq9PkDtOb0mQQkeCSsvijDp0e3bxKMBvPQP3qzdOiCVVl0bLXoWiPw3nkQOZOfJyf2gF4YtF9+e1VI/imZaAjzmou51Rgi1FN3llYeKf4=
+ bh=NpAe1l8z+PWe/d9U5hzWDhTFDUQb3brhQc1Xa5ba0Yo=;
+ b=MRQqe2TAsbibUhFMiP0OGunKVd5SsT8u+I9GVHEtDsxCTBzXrFqnJGs//WFDA4RTwESm5CHwwVSUdNJ/ahtMK0frUpf0+QSZMvs6CX91es9VhUvWRAUFvFKXmpfEDrXx0TugFPxM6s9pR+H/gaRlnCSHRN6c8mH9FAX7J1xFMjg=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0854.namprd21.prod.outlook.com (10.173.192.143) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -42,15 +42,16 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Ben Skeggs <bskeggs@redhat.com>,
+CC:     Heinz Mauelshagen <heinzm@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 18/37] drm/nouveau/TBDdevinit: don't fail when
- PMU/PRE_OS is missing from VBIOS
-Thread-Topic: [PATCH AUTOSEL 4.14 18/37] drm/nouveau/TBDdevinit: don't fail
- when PMU/PRE_OS is missing from VBIOS
-Thread-Index: AQHUWR8nL5rPLydo5k+sxrqs6VUzsQ==
-Date:   Mon, 1 Oct 2018 00:39:04 +0000
-Message-ID: <20181001003850.147107-18-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 20/37] dm raid: fix rebuild of specific devices
+ by updating superblock
+Thread-Topic: [PATCH AUTOSEL 4.14 20/37] dm raid: fix rebuild of specific
+ devices by updating superblock
+Thread-Index: AQHUWR8oGduZsNNIVEmKrBcfUqTfog==
+Date:   Mon, 1 Oct 2018 00:39:05 +0000
+Message-ID: <20181001003850.147107-20-alexander.levin@microsoft.com>
 References: <20181001003850.147107-1-alexander.levin@microsoft.com>
 In-Reply-To: <20181001003850.147107-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,30 +60,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0854;6:kWNOKMlQ6OA+e8J67JyKxHp98seSJ/nH8qx8tfpZUe4WOGZW44vtwgNgzWd663A0DnSQSgeIlWCmCkT0rzflVuN1/7McDGZHlxHaEuEfHzkQyOzLMuTnC9Tx9H+qZCtTMTSeKF2E4ftLLOAmMerQHRmx28DwYV9Uf+euq1rXoTupTe3Cbs9TLu62blXNCYHYta9mMMd7emQ5aaPGJHDThXTenEL7N3I9kZBQtqvM4eoI6r5Sb34aD6L1Lrs7NBdKhr/F0Ke2amkGu7hNwFG6HAS1JjmtxMlLchau0ry15gv1ol+EgcuZzUcOlb7WpB9VP5SF+or79+ChjCfQR8pAAV9fzz78jhTQUAabY+1Iwf1337Bri2poV2HlxF6kcLfA/zlB0axLkuLWBwT1Ymeq6ozmBf+PqCH3u1mzAkWwYbUUdotbn4xRl6aiWRK002hkE/sPDxCUhQ4SZa9YzXGJ/Q==;5:mAZsqSRqyRTNxQwQ1r2mcnoHnkg4Aa05qQ+uvMKBVWHb3svhHOGP3SClvuL/VDCiOyFO+5LK5yEq2883M/bdVNmwUMnYuIBrwVl6PkJHheJ30ZW8Nn5DzGw4N7+/TCc8fbujyWhXFNckUOLYdMZD4hF9hy0g2dWreNA5qRDfh0c=;7:v6/xqfuHEhAd1Q2pH2K+Hl7Gcr/EDb0pt1CIwfgZIetIrsPvREoyDdCBMwraOAbhlzfd6at1yFFZWpJW7cvd56FzBMgUHP0itUnIfTyMMh4Gn+ehhXsgKN7ehxN/7ZZ6h4OxstcAtt0o2U40ckVGufFOSVMK0/q8YBfg4k29bXy8g9SlQrd3QL3Z8v74WiqkWC3G33NcNaa/UhEoHxYww1bVynIYkgeGrtTgVw9U03l3muRWvpafB7vAtor3BZAs
-x-ms-office365-filtering-correlation-id: 995f537b-168a-4f21-4d59-08d6273661c2
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0854;6:1FCvBwzKIvcy1lfgAVMGzkSQd1BS4SUSBS7MfytlFbZyCCRh2SyunjNQmG9qYG3zgeMjCETx0xXZgNQkNHyiuibjhkYTnABNBdkEuf7LgXMAhSRtOZowvaYREfQKdiEBSnE1lr+u3bZ/EevKozK5P3r/W+GBP8yN5eLaixsB1Hx18ELQleW7H13EbRoo8Ekb4JUf7IH//9RlLNxw/qyUlSB0KayCtooObobWTUuSM8eM2fqXRugav1JZ/QdEycihRsNcRnwjjGU/NDFAecJFg0MFyueXOs9fLC+ro7vlW6RV1tIHksAM/FJtXJ1HXwz5vavkpUw4DphhPiDzLNeJGF+V9UWjUj6xB9XGOhk62vey+oA2LFvD61wAC8QwLgNXl+coOsqLEytx7nNw62Q1goON5Ic+C1NHmhe4h/9Fzc8z1tS93UAQFOQjq59hVzXWKBg3FPF95K0LASiRASuV8A==;5:nwPEmj1qZlpW4t70nzGMYM9w8eJhv8GfriIhJjUXXCqSX/rwnBYEAKzWzf4Vsew4wTvpXeFNwRBTy8O8S+FVEVgBLX8t2vOqdUMbD7zdktQnUEir/2uyGF7xshsg1g/s3aPs4wD9ivpEzlMgEGo7W1rHiFhJTVVvDfQYmqz0NV0=;7:XZUrWrj8rMCXyOCr3VLj2RTY1lB8SgfZlwC0bmYk+/G4gd4Wlg1TxvqgZmKIhxYlIJWu19ol7bh2UiVxnRGnokPa2L1vrhGXX7prPqA0woP/QS0iEccCFFo9ASn5oV7UmIrvscQKGkfhpM92DFap/FV4AQsXeX8Zd3W6zWMnGlV0xYXXP88aSCNd8l9uD89828nynLyT11HSYpw9Lq61fyCrT8plbYEKMe6+fUpUm+fRHJgq9sMpcYujiNNiucDv
+x-ms-office365-filtering-correlation-id: 78257a89-4790-4da2-8597-08d62736622b
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0854;
 x-ms-traffictypediagnostic: CY4PR21MB0854:
-x-microsoft-antispam-prvs: <CY4PR21MB08540CE98F8641E7B551AB23FBEF0@CY4PR21MB0854.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB0854061478E3EAC79F1E7FDAFBEF0@CY4PR21MB0854.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0854;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0854;
 x-forefront-prvs: 0812095267
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(39860400002)(136003)(366004)(199004)(189003)(6116002)(3846002)(217873002)(5250100002)(1076002)(71200400001)(97736004)(71190400001)(76176011)(6506007)(99286004)(36756003)(6346003)(26005)(2906002)(575784001)(446003)(86362001)(11346002)(476003)(102836004)(2616005)(14454004)(2501003)(10090500001)(14444005)(107886003)(4326008)(22452003)(486006)(316002)(34290500001)(186003)(256004)(66066001)(86612001)(305945005)(25786009)(2900100001)(6486002)(106356001)(7736002)(6512007)(53936002)(81166006)(81156014)(6666003)(8936002)(8676002)(5660300001)(68736007)(54906003)(110136005)(10290500003)(6436002)(478600001)(72206003)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0854;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(39860400002)(136003)(366004)(199004)(189003)(6116002)(3846002)(217873002)(5250100002)(1076002)(71200400001)(97736004)(71190400001)(76176011)(6506007)(99286004)(36756003)(6346003)(26005)(2906002)(446003)(86362001)(11346002)(476003)(102836004)(2616005)(14454004)(2501003)(10090500001)(14444005)(107886003)(4326008)(22452003)(486006)(316002)(34290500001)(186003)(256004)(66066001)(86612001)(305945005)(25786009)(2900100001)(6486002)(106356001)(7736002)(6512007)(53936002)(81166006)(81156014)(6666003)(8936002)(8676002)(5660300001)(68736007)(54906003)(110136005)(10290500003)(6436002)(478600001)(72206003)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0854;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: Tx2mOiVslIYvs4ErwoSWnVb8xxPwPA7E5VrgZ7Y09XkzXCbo+RMxrkGIc7tXb3zHjTakRyQ+p1g9PjzGQpHc4lQkbFnZL4hQ7OY8o/p4NtNqvzQaJNutuTYF8KPVq87fzjPP9KE2XajXxbqqG8d1dzEaWcysi0oO4pQKDf9zhAU9CE+kHzxFY8zxFlgwKNB0h2y8aoDmeEtX1vqyqpOW8PAfLYHEizxwZCQ/zF6WwJfpLSX1i+cuOOOTZND+WVsGgH6yRRYedTzNODmdFurxmpPpwZdrertl7t0ZOUZNrz4j/0CL5GckWfUsCztKXxQibAFsq73R5U2apSYtLcqhBzKUnBAGt+ZFPwxyjzLRglE=
+x-microsoft-antispam-message-info: q55ATOOHCgmNQrkVXRG58UvvSa5afIWzybDuFzr5Coid+r9Htm1kS0ickG/28bNxu3D5R11zl5DALkejQ6y40CPrOmuKFkMrxn3+7ywLPnwIRs/b4E6ptbrSGNufqG9Bx9OdAkXFvtHWGrrQGFUzu3Pwp8KbZ+c1qpCRUotWnb28Cg9GoVSDyB2P3K2IUNjFu6cnlI4TTDcUvHAJ4UECrSRSeXokDOkKvG2IjMxGmya+SRo+LMcJsOJ9edpzUo2+f+ayOYVUe2O6wfqOlq4jXArCOiDbL2eYAksQfmOqQfavfZw7YVAwt+s0kx/s47V7swavywUgQr6WXwcftSb0EmC1LuEQ/fCilXIuMCl25fU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 995f537b-168a-4f21-4d59-08d6273661c2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:39:04.5206
+X-MS-Exchange-CrossTenant-Network-Message-Id: 78257a89-4790-4da2-8597-08d62736622b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 00:39:05.6336
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -92,36 +93,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: Heinz Mauelshagen <heinzm@redhat.com>
 
-[ Upstream commit 0a6986c6595e9afd20ff7280dab36431c1e467f8 ]
+[ Upstream commit c44a5ee803d2b7ed8c2e6ce24a5c4dd60778886e ]
 
-This Falcon application doesn't appear to be present on some newer
-systems, so let's not fail init if we can't find it.
+Update superblock when particular devices are requested via rebuild
+(e.g. lvconvert --replace ...) to avoid spurious failure with the "New
+device injected into existing raid set without 'delta_disks' or
+'rebuild' parameter specified" error message.
 
-TBD: is there a way to determine whether it *should* be there?
-
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/md/dm-raid.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c b/drivers/=
-gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c
-index 1730371933df..be0dd6074b57 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c
-@@ -158,7 +158,8 @@ gm200_devinit_post(struct nvkm_devinit *base, bool post=
-)
- 	}
-=20
- 	/* load and execute some other ucode image (bios therm?) */
--	return pmu_load(init, 0x01, post, NULL, NULL);
-+	pmu_load(init, 0x01, post, NULL, NULL);
-+	return 0;
- }
-=20
- static const struct nvkm_devinit_func
+diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
+index 38a2ac24428e..151211b4cb1b 100644
+--- a/drivers/md/dm-raid.c
++++ b/drivers/md/dm-raid.c
+@@ -3061,6 +3061,11 @@ static int raid_ctr(struct dm_target *ti, unsigned i=
+nt argc, char **argv)
+ 		set_bit(RT_FLAG_UPDATE_SBS, &rs->runtime_flags);
+ 		rs_set_new(rs);
+ 	} else if (rs_is_recovering(rs)) {
++		/* Rebuild particular devices */
++		if (test_bit(__CTR_FLAG_REBUILD, &rs->ctr_flags)) {
++			set_bit(RT_FLAG_UPDATE_SBS, &rs->runtime_flags);
++			rs_setup_recovery(rs, MaxSector);
++		}
+ 		/* A recovering raid set may be resized */
+ 		; /* skip setup rs */
+ 	} else if (rs_is_reshaping(rs)) {
 --=20
 2.17.1
