@@ -2,137 +2,129 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEBDC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0579EC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EBED2089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:04:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EBED2089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A74BD2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:08:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="YXjlDB9j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A74BD2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729334AbeJATmj (ORCPT
+        id S1729295AbeJATqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 15:42:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59290 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729149AbeJATmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:42:39 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 682B530BB8F9;
-        Mon,  1 Oct 2018 13:04:55 +0000 (UTC)
-Received: from [10.36.117.216] (ovpn-117-216.ams2.redhat.com [10.36.117.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6DAB269218;
-        Mon,  1 Oct 2018 13:04:50 +0000 (UTC)
-Subject: Re: [REVIEW][PATCH 04/20] signal/x86: Use send_sig_mceerr as
- apropriate
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        kvm@vger.kernel.org
-References: <87y3bzk6yv.fsf@xmission.com>
- <20180918000546.12552-4-ebiederm@xmission.com>
- <alpine.DEB.2.21.1809182220310.1468@nanos.tec.linutronix.de>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <938579fd-e366-8aaf-add9-5a44e3e7892a@redhat.com>
-Date:   Mon, 1 Oct 2018 15:04:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 1 Oct 2018 15:46:37 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39180 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728979AbeJATqh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 15:46:37 -0400
+Received: by mail-qt1-f194.google.com with SMTP id c25-v6so13815008qtp.6;
+        Mon, 01 Oct 2018 06:08:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/sN6qgHQbBHrUmuDtCtmsZllNbHpjUOLdVMSTJazRv0=;
+        b=YXjlDB9j00p+XC53RfC0wtBOpHR6BBQPqMVL22m7SF/E+FhVWLUrmZK2AXwZ9F0gc5
+         1wjFRSFyuwlLjCzVwlcXEL7LKxmQeWHFuCdo6UC9gI7j+K3QBHX1S+sjo9GjNOxjNfUq
+         3lfCDI3aTiGv1CC3PQ8LklzvGc4kZ3WgUH8bs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/sN6qgHQbBHrUmuDtCtmsZllNbHpjUOLdVMSTJazRv0=;
+        b=draUTZGWW6MxEnhBhA6LZj1+vB7PlcrA8UIJxb+peMPnALG4xIVTqOfgtSuw/yHGIP
+         FHS1OPzU8A9iIJmmBGx3OeJL2xKu7gihn26Plk+fQFPpn1YL6JvGUvpWC8SluPfnVRhz
+         KJ1G73Htajx74GyjrdclD91d+jdeOkPL9+6gMeSQHr1/J9hFysBCD4GNjzqGEq05nYMp
+         w61BLqI1PalpxFwWaGWzozIi44MPGnKpEbaCZPP4i9aa5UjldfMoLudaUy/jlflVdDD0
+         YTtEhWs5jUWuh9rbYw2cbAmofbzUL7HZSSRq3Lc+J6RYADbYxBtWnTS5zk0NCAnF1/PM
+         3YHQ==
+X-Gm-Message-State: ABuFfoiaKNd3AsoxTofVXaqv71I8Z5doZeqEimTpLNqwU9t8VQL2lb5L
+        kMy/tCecFX3aeXiKHfUOkljCOqhIL3txHn9HwzY=
+X-Google-Smtp-Source: ACcGV609VmPJ/ZxzT0dE3d/BV/hydIk9oIPLdmV+HyxH54b8H5QYm1dys+mzh45S6Zh5BRDsb0pWsIYjVFYfM/unIbE=
+X-Received: by 2002:aed:38c7:: with SMTP id k65-v6mr8728774qte.84.1538399331284;
+ Mon, 01 Oct 2018 06:08:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1809182220310.1468@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 01 Oct 2018 13:04:55 +0000 (UTC)
+References: <1537903629-14003-1-git-send-email-eajames@linux.ibm.com> <1537903629-14003-2-git-send-email-eajames@linux.ibm.com>
+In-Reply-To: <1537903629-14003-2-git-send-email-eajames@linux.ibm.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Mon, 1 Oct 2018 15:08:38 +0200
+Message-ID: <CACPK8Xd0MhrFQqiM=u-Rv5u7RJRo5R-pAejH4dmeTrYSWE0AZA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: media: Add Aspeed Video Engine
+ binding documentation
+To:     eajames@linux.ibm.com
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-media@vger.kernel.org,
+        mchehab@kernel.org, hverkuil@xs4all.nl
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/09/2018 22:21, Thomas Gleixner wrote:
-> On Tue, 18 Sep 2018, Eric W. Biederman wrote:
-> 
-> CC+ kvm folks
-> 
->> This simplifies the code making it clearer what is going on.
->>
->> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> 
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-> 
->> ---
->>  arch/x86/kvm/mmu.c | 11 +----------
->>  1 file changed, 1 insertion(+), 10 deletions(-)
->>
->> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
->> index a282321329b5..95349bfe3b59 100644
->> --- a/arch/x86/kvm/mmu.c
->> +++ b/arch/x86/kvm/mmu.c
->> @@ -3114,16 +3114,7 @@ static int __direct_map(struct kvm_vcpu *vcpu, int write, int map_writable,
->>  
->>  static void kvm_send_hwpoison_signal(unsigned long address, struct task_struct *tsk)
->>  {
->> -	siginfo_t info;
->> -
->> -	clear_siginfo(&info);
->> -	info.si_signo	= SIGBUS;
->> -	info.si_errno	= 0;
->> -	info.si_code	= BUS_MCEERR_AR;
->> -	info.si_addr	= (void __user *)address;
->> -	info.si_addr_lsb = PAGE_SHIFT;
->> -
->> -	send_sig_info(SIGBUS, &info, tsk);
->> +	send_sig_mceerr(BUS_MCEERR_AR, (void __user *)address, PAGE_SHIFT, tsk);
->>  }
->>  
->>  static int kvm_handle_bad_page(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
->> -- 
->> 2.17.1
->>
->>
+On Tue, 25 Sep 2018 at 21:27, Eddie James <eajames@linux.ibm.com> wrote:
+>
+> Document the bindings.
+>
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
+>  .../devicetree/bindings/media/aspeed-video.txt     | 26 ++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+>
+> diff --git a/Documentation/devicetree/bindings/media/aspeed-video.txt b/Documentation/devicetree/bindings/media/aspeed-video.txt
+> new file mode 100644
+> index 0000000..f1af528
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/aspeed-video.txt
+> @@ -0,0 +1,26 @@
+> +* Device tree bindings for Aspeed Video Engine
+> +
+> +The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs can
+> +capture and compress video data from digital or analog sources.
+> +
+> +Required properties:
+> + - compatible:         "aspeed,ast2400-video-engine" or
+> +                       "aspeed,ast2500-video-engine"
+> + - reg:                        contains the offset and length of the VE memory region
+> + - clocks:             clock specifiers for the syscon clocks associated with
+> +                       the VE (ordering must match the clock-names property)
+> + - clock-names:                "vclk" and "eclk"
+> + - resets:             reset specifier for the syscon reset associaated with
 
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+associated
+
+> +                       the VE
+> + - interrupts:         the interrupt associated with the VE on this platform
+> +
+> +Example:
+> +
+> +video-engine@1e700000 {
+> +    compatible = "aspeed,ast2500-video-engine";
+> +    reg = <0x1e700000 0x20000>;
+> +    clocks = <&syscon ASPEED_CLK_GATE_VCLK>, <&syscon ASPEED_CLK_GATE_ECLK>;
+> +    clock-names = "vclk", "eclk";
+
+Did you end up sending the clock patches out?
+
+Cheers,
+
+Joel
+
+> +    resets = <&syscon ASPEED_RESET_VIDEO>;
+> +    interrupts = <7>;
+> +};
+> --
+> 1.8.3.1
+>
