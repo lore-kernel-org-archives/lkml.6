@@ -2,113 +2,115 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8484C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 308F2C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B2CF208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:37:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C36D5208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:39:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KWrTgwcd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B2CF208AE
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="omoLPIBw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C36D5208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbeJBDRS (ORCPT
+        id S1726403AbeJBDSh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 23:17:18 -0400
-Received: from mail-it1-f174.google.com ([209.85.166.174]:51859 "EHLO
-        mail-it1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbeJBDRS (ORCPT
+        Mon, 1 Oct 2018 23:18:37 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38189 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbeJBDSh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 23:17:18 -0400
-Received: by mail-it1-f174.google.com with SMTP id 74-v6so205186itw.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 13:37:43 -0700 (PDT)
+        Mon, 1 Oct 2018 23:18:37 -0400
+Received: by mail-it1-f193.google.com with SMTP id i76-v6so223740ita.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 13:39:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=enkC4V+RIlBzOSlDGA/RikW1FUpgG3Y5CNYd7+Ob46Y=;
-        b=KWrTgwcdc6slpDH2xxLg7drAqelQ7NR5IOFlJpD4oDeQ99pyBqhA0qoVj3YOXyjxVs
-         7IdsGoOX3QDtoEBE1Pdh/gJXaMQoHVCva2kshw+vVkVL0zVk1XLGc///257KPalJNPp3
-         qW3EDvAZnSRYGef8mHWozelYw6SH0TCMGgb18FF50qqnyiV5eZw/GIJjD3VcxcbAgXMB
-         86P5PFH55MY82gUTenz1OmerOJxLzKixkXumJ5uc8M9lgVyp/l5OJmYsgpTrOhfRymb+
-         KSrPBBdU9sn4GLZLEz12ta3Z6Jdb5Hwf1ZXGEKiQhgt7U0OgbtS7j7G7DPjsoCTrGlGv
-         p8zQ==
+        bh=sZCgvAJpZt8Wi9kyj09fcYafwnMrLbrLT2Vt8Pd2o4g=;
+        b=omoLPIBwgGoor0Ko7sGdVVCpFsTmUF3PeyPZEw83a4BZC+dcwEiC2wpdAOyDTlNf46
+         dTd5pb5Uh3uMeGHwIm4mlDsQBgHPPYFm7f0XVORLZBcimMcTC/LrmR5uzO+9laEvyOTH
+         TeSnWaCdwj4pnA2Jf1r8CebgoxhuyMZNGXDWVMlL+TArK/XWT6GM2kMHjfCkBA5RbGz/
+         V0VgugTT7B7DyKyD7aXCGhNQzW8Rgh7D5n7rHpFpaY96+kVkIfSPHXKpVwAUJdhrdoNi
+         ovpOVmHBf0Bdr3/UVstYwHQv5tGGPdZKg7XO6+CXZ/21ybGMiFCw486l6v7T/e3oL2vj
+         saQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=enkC4V+RIlBzOSlDGA/RikW1FUpgG3Y5CNYd7+Ob46Y=;
-        b=svZ2rMpmGQuGwikeJoKphzltF2J0D5Aez5lC8nrNhR/dR9frpI2ZpYKAaevPt/Md4c
-         uF/dA3OmAMxJP36Pb8A5nvhTiPyZg7KyZ1ksl9UCAe0N6Z16tDV2E+VUyde6ajQBBb6C
-         5v4FDDmLaYUL7BXPCiUwoy1+dMc6QuwcqDz+uIfemdsH5ju77kZobzsX6pAA9QGZIbQQ
-         RIK+wjgHfaMuUSZOZReSup0IClMazIJQ0f9u4FVP80SNjSGADIac5iOqoXEaOiEytPYn
-         mDJCSf2EUlMDZy1m7rr2HRqUYQfE4ZvtaSQfBzfCG68zoRCE8X9a6CjB6pbRf6MJWFid
-         RAIw==
-X-Gm-Message-State: ABuFfogbDwoTUHlktUkA94no8uEFpj/ZU5VtGQrBnYO07ufUjPS9X1QX
-        9QJPBqkb2xcv67pUaXkeil3XdlyIaRFE83XPm7CinA==
-X-Google-Smtp-Source: ACcGV60tbJ5Z92drd2MDyUGOJ1C+uxYfDhUMn1KnRGcuOlfi3dnNMzmCVeGxO4sVLw8xJhVheU8F2UrTsYa8vF02XIA=
-X-Received: by 2002:a24:2744:: with SMTP id g65-v6mr7574088ita.47.1538426262597;
- Mon, 01 Oct 2018 13:37:42 -0700 (PDT)
+        bh=sZCgvAJpZt8Wi9kyj09fcYafwnMrLbrLT2Vt8Pd2o4g=;
+        b=DmUgzANrc3nfYKd2zbDl3jcGXRS7CZgwB4O9utbz350TVLfUknQ1DvaCJOFffLgFp4
+         DseG4UJ8UC4TRXx3PDUpykakj3EzOJrkOwVXvyarT3pXHuMoxJcOnBfupSJjsH0x5iAh
+         JiYgOkVFDBrZWpmFk7/Jz/WJJsgH44Ndka8NxT4KQFjG1elYPCeiC0Ly7YkCKvHLiu4n
+         OtDiE5LbXtgu4CNH7yUFrf5IEO0m45F/QFuG1J5xi5nUJrqWhMLuIWL5u47Avy8Tg3jy
+         oC80y96cARGkmXqOUq0BBaaSsCqrr2/hQvAV9ajAOw6NfwLu+vkwl6lqgnxQxmHjA78T
+         tJqA==
+X-Gm-Message-State: ABuFfoi94SbvHfenwKBgfEGM9zPVqfOVdumVMlwyGs2HRAB1zvzpmxG0
+        tYART1hQM6sdLCq7PSCYQiMhzC+WUAdWxREFSM3Iww==
+X-Google-Smtp-Source: ACcGV61ExnoJcPpHUghDQ+Cja4ErZBh/ELzipa/hClh488QvR+e3mQbbiPatRQ/Oftjgi823oAsfTax9QwazZ8t+qSA=
+X-Received: by 2002:a24:f30f:: with SMTP id t15-v6mr10999314ith.95.1538426341281;
+ Mon, 01 Oct 2018 13:39:01 -0700 (PDT)
 MIME-Version: 1.0
 References: <20180927194601.207765-1-wonderfly@google.com> <20181001152324.72a20bea@gandalf.local.home>
-In-Reply-To: <20181001152324.72a20bea@gandalf.local.home>
+ <20181001201309.GA9835@amd> <85b9ab27-ec57-647b-4c92-1afb9b595a2a@suse.cz>
+In-Reply-To: <85b9ab27-ec57-647b-4c92-1afb9b595a2a@suse.cz>
 From:   Daniel Wang <wonderfly@google.com>
-Date:   Mon, 1 Oct 2018 13:37:30 -0700
-Message-ID: <CAJmjG29Jwn_1E5zexcm8eXTG=cTWyEr1gjSfSAS2fueB_V0tfg@mail.gmail.com>
+Date:   Mon, 1 Oct 2018 13:38:49 -0700
+Message-ID: <CAJmjG29JTboAWTzyEiix-aA-2NvkwAOEygKAwq3pB18RO+Etfg@mail.gmail.com>
 Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
  owner and waiter logic to load balance console writes"
-To:     rostedt@goodmis.org
-Cc:     stable@vger.kernel.org, pmladek@suse.com,
-        Alexander.Levin@microsoft.com, akpm@linux-foundation.org,
-        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
-        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+To:     vbabka@suse.cz
+Cc:     pavel@ucw.cz, rostedt@goodmis.org, stable@vger.kernel.org,
+        pmladek@suse.com, Alexander.Levin@microsoft.com,
+        akpm@linux-foundation.org, byungchul.park@lge.com,
+        dave.hansen@intel.com, hannes@cmpxchg.org, jack@suse.cz,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         mathieu.desnoyers@efficios.com, mgorman@suse.de, mhocko@kernel.org,
-        pavel@ucw.cz, penguin-kernel@i-love.sakura.ne.jp,
-        peterz@infradead.org, tj@kernel.org, torvalds@linux-foundation.org,
-        vbabka@suse.cz, xiyou.wangcong@gmail.com,
-        Peter Feiner <pfeiner@google.com>
+        penguin-kernel@i-love.sakura.ne.jp, peterz@infradead.org,
+        tj@kernel.org, torvalds@linux-foundation.org,
+        xiyou.wangcong@gmail.com, Peter Feiner <pfeiner@google.com>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="000000000000ea5825057730c6b2"
+        boundary="0000000000009a9497057730cbe3"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000ea5825057730c6b2
+--0000000000009a9497057730cbe3
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 1, 2018 at 12:23 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+On Mon, Oct 1, 2018 at 1:23 PM Vlastimil Babka <vbabka@suse.cz> wrote:
 >
-> > Serial console logs leading up to the deadlock. As can be seen the stack trace
-> > was incomplete because the printing path hit a timeout.
+> On 10/1/18 10:13 PM, Pavel Machek wrote:
+> >
+> > Dunno. Is the patch perhaps a bit too complex? This is not exactly
+> > trivial bugfix.
+> >
+> > pavel@duo:/data/l/clean-cg$ git show dbdda842fe96f | diffstat
+> >  printk.c |  108
+> >  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+> >
+> > I see that it is pretty critical to Daniel, but maybe kernel with
+> > console locking redone should no longer be called 4.4?
 >
-> I'm fine with having this backported.
+> In that case it probably should no longer be called 4.4 since at least
+> Meltdown/Spectre fixes :)
 
-Thanks. I can send the cherrypicks your way. Do you recommend that I
-include the three follow-up fixes though?
-
-c14376de3a1b printk: Wake klogd when passing console_lock owner
-fd5f7cde1b85 printk: Never set console_may_schedule in console_trylock()
-c162d5b4338d printk: Hide console waiter logic into helpers
-dbdda842fe96 printk: Add console owner and waiter logic to load
-balance console writes
+To clarify, I am requesting a backport to 4.14. This bug doesn't repro on 4.4.
 
 >
-> -- Steve
-
 
 
 -- 
 Best,
 Daniel
 
---000000000000ea5825057730c6b2
+--0000000000009a9497057730cbe3
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -190,14 +192,14 @@ GIWfW2K2CeBWRj0OI1P6XUm+unjVNzVz6fE9J91Xf13NxK9Pc647cBIP4eiHNVa7ErprHQoDevx+
 OHFHle2OOiJZoAqFNvKbQSuWBg+Obv3CjPLZ7lwdB9VBg3F5qEaD+BsyHwj+kMinP7wCI+mIc1nU
 PcdI0z7gBtGEit9qr9qcJrdKjDlTMYICXjCCAloCAQEwXDBMMQswCQYDVQQGEwJCRTEZMBcGA1UE
 ChMQR2xvYmFsU2lnbiBudi1zYTEiMCAGA1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMQIM
-TmnftMpllv264rvDMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCASaJD8wBwmm/kH
-SCnZ8kxliQ+dqgcx9/K4lriZCzPrcDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3
-DQEJBTEPFw0xODEwMDEyMDM3NDJaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCG
+TmnftMpllv264rvDMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCfqu8o1ICb3sEr
+i4FU9IruXUl72sluxD9A7BIwgwLaiTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3
+DQEJBTEPFw0xODEwMDEyMDM5MDFaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCG
 SAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEB
-BzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAERCbBER3ftiovAxmuwJfWapqwS27oDqy
-KRWtUERmf53z2wkvp17xgaYH6s3Ai0ht/1YK63Qqop+Q8bmtM4PtLVQ4UMYOHrneUlZGFNPD/cvU
-JaOQdsdP0qzg5QDQKnScIIR1dloqdLgcNmkXyqJsxa796YwMu8RBwDhvGgWuUss39krH6AMprf8Z
-O1MHj/6uRW30bdas9iYxevTrblHLt1/nOvrAPYIwSoOEEktglAFxU7TIiAhg2Tg0gAB7s6NrADfB
-V1Lj4975s7+Z0k1v7yRTpgMRvXoKdhqQRf/rSJsKhC00+iR0+o1TUy60E6eN+BMaaPl3F2AkmbcC
-9ZASpQ==
---000000000000ea5825057730c6b2--
+BzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEADhW7o2Y24WtGP/4MXpvljXpr6vRnerNy
+RMv3INLuFmqYgyuQSYoxp5uwwlsBhUncuSnw7DP9NSrW0hJJ84zOU0KLhF8C/bU79ftqUDh81lEN
+wSR/0ODGKtKwkpYlrOseMlgT3N3LJiTdXAY8bWsHjEX/PNzR/zrkoIp03NM+ZU2Lo+8MeEHqGjV3
+I26bNJG9FW8wpXZ2l6yODuc+X3saps9R9I1XRFz0xQ3ow04FNlUnYcvUCdi5yHBhFS1oQOPooQC4
+aVfbnW2K07CilzSFS/cWgicsK0EDYJpvPDDZwi6m6Qj80pnQTDOMXELzCUhaDGU1zVa9RB+kWEWY
+bi1VbA==
+--0000000000009a9497057730cbe3--
