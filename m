@@ -2,59 +2,249 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A465C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF20FC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC2892089C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:35:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2892089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 600A4208D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:35:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="WixOvtX2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 600A4208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729273AbeJATMq (ORCPT
+        id S1729368AbeJATNV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 15:12:46 -0400
-Received: from verein.lst.de ([213.95.11.211]:37488 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729017AbeJATMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:12:46 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 68C6368B02; Mon,  1 Oct 2018 14:35:08 +0200 (CEST)
-Date:   Mon, 1 Oct 2018 14:35:08 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Paul Menzel <pmenzel+linux-scsi@molgen.mpg.de>
-Cc:     Ming Lei <ming.lei@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        it+linux-scsi@molgen.mpg.de,
-        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        linux-scsi@vger.kernel.org,
-        Raghava Aditya Renukunta 
-        <RaghavaAditya.Renukunta@microsemi.com>,
-        Dave Carroll <david.carroll@microsemi.com>
-Subject: Re: [PATCH] Revert "genirq/affinity: assign vectors to all
- possible CPUs"
-Message-ID: <20181001123508.GA3415@lst.de>
-References: <06ee23fe-ec9e-d67b-b533-d5151be74a11@molgen.mpg.de> <20180810133628.GA4131@kroah.com> <29b5f3ce-2c23-bf5e-fe50-29bedd4833e1@molgen.mpg.de> <20180810155511.GA17092@kroah.com> <f5c57bf7-b8c1-a560-d13a-d74e0f27adbb@molgen.mpg.de> <20180811135021.GA2186@kroah.com> <20180813033157.GA18254@ming.t460p> <89f2b622-3d2a-04ce-a6d1-ffb5d9612763@molgen.mpg.de> <cbd7cb64-dbfe-e085-e80b-67dad4084d69@molgen.mpg.de> <7c51fe1d-d591-90f2-8fb5-81990f8db0fe@molgen.mpg.de>
+        Mon, 1 Oct 2018 15:13:21 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36895 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729299AbeJATNV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 15:13:21 -0400
+Received: by mail-wr1-f66.google.com with SMTP id u12-v6so13730514wrr.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 05:35:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+NSG8YTtZqykqc5/kCVrXUL+o1KWnCnYUitMReJ0W7w=;
+        b=WixOvtX2w+fdHihhHxZ27k4IBUQdBbMvIQaO+K4ZYwimqihwLIiONt5sgYMRoXQGc1
+         9ze6h/2757H3x/4hemob14VVg6CRs0nmrxpt/JcdOIK8J/sOgzTCqUShGzG4wWZBG4PZ
+         S8mb7x/sBgb8fSGMn79/U7NQLnc010J+jsYAQsK7ZF476OXMgbmE7O+NPwTkJRLvaIfw
+         lA3GiXbMYuGfwRjBj1chfcbZPMNgCtUufUQSZyjyNRuhaNgwqwxcNSeDvM03T++d8YJ6
+         hCf64KItBuRAbdj2Qw4Dqf9oiO+jHMNYx9DGro/MaviHl1gKfKVuBLhSOGJ06c3jvslc
+         lXWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+NSG8YTtZqykqc5/kCVrXUL+o1KWnCnYUitMReJ0W7w=;
+        b=tFaarjcXKnZHyACkPI6htAGWAgrRR/vZDurFLws7fEPOVnKiQCfrTx/nRF1qmwbquf
+         KvIZdyUDl1p51G56O17sBS/1oN3xKnEYHmIKJZ0Vyz+tG8MCc6o0MgTHq9X1Q2SUKFlk
+         Dex/N0OcJPwuaWLPOMDF+waI6tP8ZU2MHgeYbIbY1ujbIvKODW6KN3YYHyzGsArju+1Z
+         0ZeTmyiX5hcxlTRdRhmxrvZetkr+1aB7sqb7NHYhIQDl1SYpiDWH3s2AIOwyV8kipcZi
+         IRPBPFtzpGSSG6gJY6CfaPMyeaHwhIbvkE+N7aeMQuMaInKjFXXK3dAdA/Y++y2zDr6g
+         LbNQ==
+X-Gm-Message-State: ABuFfojCqq+Qe5VgG4GIopSv4MkExVoP5KeYSQBrdGIrFT3QdIr2034q
+        SWseHxw5oGAyQyhEAMaSM5vGTg==
+X-Google-Smtp-Source: ACcGV63o87GCVgJSzt1BufGYiaIivx1Tj3nohh7YXONZIscmKi0697gOiF9RA4SdcfczPNoUA3QqmQ==
+X-Received: by 2002:adf:fd4a:: with SMTP id h10-v6mr7184553wrs.280.1538397343353;
+        Mon, 01 Oct 2018 05:35:43 -0700 (PDT)
+Received: from brauner.io (u-087-c227.eap.uni-tuebingen.de. [134.2.87.227])
+        by smtp.gmail.com with ESMTPSA id 74-v6sm7481364wmi.23.2018.10.01.05.35.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 01 Oct 2018 05:35:42 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 14:35:36 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Jann Horn <jannh@google.com>
+Cc:     cyphar@cyphar.com, "Eric W. Biederman" <ebiederm@xmission.com>,
+        jlayton@kernel.org, Bruce Fields <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path
+ resolution
+Message-ID: <20181001123535.yjo3fqkahc3q77in@brauner.io>
+References: <20180929103453.12025-1-cyphar@cyphar.com>
+ <20180929131534.24472-1-cyphar@cyphar.com>
+ <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
+ <20181001054246.gfinmx3api7kjhmc@ryuk>
+ <20181001104202.f6tz54s3fbvld56g@brauner.io>
+ <CAG48ez32xKKdtNWreLUMqB+tOfMy-bUK2Bo=vujOTb3qK9NwBg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7c51fe1d-d591-90f2-8fb5-81990f8db0fe@molgen.mpg.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <CAG48ez32xKKdtNWreLUMqB+tOfMy-bUK2Bo=vujOTb3qK9NwBg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 02:33:07PM +0200, Paul Menzel wrote:
-> Date: Wed, 29 Aug 2018 17:28:45 +0200
+On Mon, Oct 01, 2018 at 01:29:16PM +0200, Jann Horn wrote:
+> On Mon, Oct 1, 2018 at 12:42 PM Christian Brauner <christian@brauner.io> wrote:
+> > On Mon, Oct 01, 2018 at 03:44:28PM +1000, Aleksa Sarai wrote:
+> > > On 2018-09-29, Jann Horn <jannh@google.com> wrote:
+> > > > The problem is what happens if a folder you are walking through is
+> > > > concurrently moved out of the chroot. Consider the following scenario:
+> > > >
+> > > > You attempt to open "C/../../etc/passwd" under the root "/A/B".
+> > > > Something else concurrently moves /A/B/C to /A/C. This can result in
+> > > > the following:
+> > > >
+> > > > 1. You start the path walk and reach /A/B/C.
+> > > > 2. The other process moves /A/B/C to /A/C. Your path walk is now at /A/C.
+> > > > 3. Your path walk follows the first ".." up into /A. This is outside
+> > > > the process root, but you never actually encountered the process root,
+> > > > so you don't notice.
+> > > > 4. Your path walk follows the second ".." up to /. Again, this is
+> > > > outside the process root, but you don't notice.
+> > > > 5. Your path walk walks down to /etc/passwd, and the open completes
+> > > > successfully. You now have an fd pointing outside your chroot.
+> > > >
+> > > > If the root of your walk is below an attacker-controlled directory,
+> > > > this of course means that you lose instantly. If you point the root of
+> > > > the walk at a directory out of which a process in the container
+> > > > wouldn't be able to move the file, you're probably kinda mostly fine -
+> > > > as long as you know, for certain, that nothing else on the system
+> > > > would ever do that. But I still wouldn't feel good about that.
+> > >
+> > > Please correct me if I'm wrong here (this is the first patch I've
+> > > written for VFS). Isn't the retry/LOOKUP_REVAL code meant to handle this
+> > > -- or does that only handle if a particular path component changes
+> > > *while* it's being walked through? Is it possible for a path walk to
+> > > succeed after a path component was unmounted (obviously you can't delete
+> > > a directory path component since you'd get -ENOTEMPTY)?
+> > >
+> > > If this is an issue for AT_THIS_ROOT, I believe this might also be an
+> > > issue for AT_BENEATH since they are effectively both using the same
+> > > nd->root trick (so you could similarly trick AT_BENEATH to not error
+> > > out). So we'd need to figure out how to solve this problem in order for
+> > > AT_BENEATH to be safe.
+> > >
+> > > Speaking naively, doesn't it make sense to invalidate the walk if a path
+> > > component was modified? Or is this something that would be far too
+> > > costly with little benefit? What if we do more aggressive nd->root
+> > > checks when resolving with AT_BENEATH or AT_THIS_ROOT (or if nd->root !=
+> > > current->mnt_ns->root)?
+> > >
+> > > Regarding chroot attacks, I was aware of the trivial
+> > > chroot-open-chroot-fchdir attack but I was not aware that there was a
+> > > rename attack for chroot. Thanks for bringing this up!
+> > >
+> > > > I believe that the only way to robustly use this would be to point the
+> > > > dirfd at a mount point, such that you know that being moved out of the
+> > > > chroot is impossible because the mount point limits movement of
+> > > > directories under it. (Well, technically, it doesn't, but it ensures
+> > > > that if a directory does dangerously move away, the syscall fails.) It
+> > > > might make sense to hardcode this constraint in the implementation of
+> > > > AT_THIS_ROOT, to keep people from shooting themselves in the foot.
+> > >
+> > > Unless I'm missing something, would this not also affect using a
+> > > mountpoint as a dirfd-root (with MS_MOVE of an already-walked-through
+> > > path component) -- or does MS_MOVE cause a rewalk in a way that rename
+> > > does not?
+> > >
+> > > I wouldn't mind tying AT_THIS_ROOT to only work on mountpoints (I
+> > > thought that bind-mounts would be an issue but you also get -EXDEV when
+> > > trying to rename across bind-mounts even if they are on the same
+> > > underlying filesystem). But AT_BENEATH might be a more bitter pill to
+> > > swallow. I'm not sure.
+> > >
+> > > In the usecase of container runtimes, we wouldn't generally be doing
+> > > resolution of attacker-controlled paths but it still definitely doesn't
+> > > hurt to consider this part of the threat model -- to avoid foot-gunning
+> > > as you've said. (There also might be some nested-container cases where
+> > > you might want to do that.)
+> > >
+> > > > > Currently most container runtimes try to do this resolution in
+> > > > > userspace[1], causing many potential race conditions. In addition, the
+> > > > > "obvious" alternative (actually performing a {ch,pivot_}root(2))
+> > > > > requires a fork+exec which is *very* costly if necessary for every
+> > > > > filesystem operation involving a container.
+> > > >
+> > > > Wait. fork() I understand, but why exec? And actually, you don't need
+> > > > a full fork() either, clone() lets you do this with some process parts
+> > > > shared. And then you also shouldn't need to use SCM_RIGHTS, just keep
+> > > > the file descriptor table shared. And why chroot()/pivot_root(),
+> > > > wouldn't you want to use setns()?
+> > >
+> > > You're right about this -- for C runtimes. In Go we cannot do a raw
+> > > clone() or fork() (if you do it manually with RawSyscall you'll end with
+> > > broken runtime state). So you're forced to do fork+exec (which then
+> > > means that you can't use CLONE_FILES and must use SCM_RIGHTS). Same goes
+> > > for CLONE_VFORK.
+> > >
+> > > (It should be noted that multi-threaded C runtimes have somewhat similar
+> > > issues -- AFAIK you can technically only use AS-Safe glibc functions
+> > > after a fork() but that's more of a theoretical concern here. If you
+> > > just use raw syscalls there isn't an issue.)
+> > >
+> > > As for why use setns() rather than pivot_root(), there are cases where
+> > > you're operating on a container's image without a running container
+> > > (think image extraction or snapshotting tools). In those cases, you
+> > > would need to set up a dummy container process in order to setns() into
+> > > its namespaces. You are right that setns() would be a better option if
+> > > you want the truthful state of what mounts the container sees.
+> > >
+> > > [I also don't like the idea of joining the user namespace of a malicious
+> > > container unless it's necessary but that's probably just needless
+> > > paranoia more than anything -- since you're not joining the pidns you
+> > > aren't trivially addressable by a malicious container.]
+> > >
+> > > > // Ensure that we are non-dumpable. Together with
+> > > > // commit bfedb589252c, this ensures that container root
+> > > > // can't trace our child once it enters the container.
+> > > > // My patch
+> > > > // https://lore.kernel.org/lkml/1451098351-8917-1-git-send-email-jann@thejh.net/
+> > > > // would make this unnecessary, but that patch didn't
+> > > > // land because Eric nacked it (for political reasons,
+> > > > // because people incorrectly claimed that this was a
+> > > > // security fix):
+> > >
+> > > Unless I'm very much mistaken this was fixed by bfedb589252c ("mm: Add a
+> > > user_ns owner to mm_struct and fix ptrace permission checks"). If you
+> > > join a user namespace then processes within that user namespace won't
+> > > have ptrace_may_access() permissions because your mm is owned by an
+> > > ancestor user namespace -- only after exec() will you be traceable.
+> >
+> > That is not _completely_ true.
+> > Iirc (Please someone do yell at me if I'm wrong!), this is as follows.
+> > You will in fact be dumpable as long as you don't set{g,u}id() to an
+> > effective uid that is different from the effective uid of the process
+> > that created the task. For example, if you clone(CLONE_NEWUSER) as an
+> > unprivileged user with uid and euid 1000 you are in fact dumpable and
+> > thus traceable *but* if you do a setuid(0) in the new task then you will
+> > end up with old->euid = 1000 and new->euid = 0 at which point the kernel
+> > will remove the dumpable flag and the creating process cannot trace you
+> > anymore (which has funny consequences for lsm isolation and sending fds
+> > around). Iiuc, The same logic applies when you do a setns() to another
+> > user namespace.
 > 
-> This reverts commit ef86f3a72adb8a7931f67335560740a7ad696d1d.
+> (Note that this is only true if your un-namespaced UID actually
+> changes. If you create a user namespace and then write to its uid_map
+> such that your namespaced UID is zero, that won't trigger this logic.)
 
-This seems rather odd.  If add all you'd revert the patch adding the
-PCI_IRQ_AFFINITY to aacraid, not core infrastructure.
+The way I figured this works is that it actually only applies to the
+case where you're creating a user namespace as an unprivileged user. And
+even in that case you will retain dumpability in two cases:
+1. mapping userns id 0 to <my-unpriv-host-uid>
+and any identity mapping, i.e.
+2. mapping <my-unpriv-host-uid> to <my-unpriv-host-uid>
+
+If you're creating a user namespace as root and set up mappings you
+should always retain the dumpable flag (I might not be remembering all
+corner-cases atm.) if you don't muck with capability sets and so on.
