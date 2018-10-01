@@ -2,95 +2,118 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62599C64EB1
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F79BC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 279482145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:49:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="F5j/AibX";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SsLLrPl7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 279482145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 242A120C0A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 15:50:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 242A120C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726344AbeJAW13 (ORCPT
+        id S1726391AbeJAW2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 18:27:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47856 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726156AbeJAW12 (ORCPT
+        Mon, 1 Oct 2018 18:28:31 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:42503 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbeJAW2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 18:27:28 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 466F660866; Mon,  1 Oct 2018 15:49:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538408943;
-        bh=wXcUswX85Hdx4tRDXqHiDrBMNX+jzDX1LRayJRfeES8=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=F5j/AibXUGl38oG5/DZiLeaOQilAJd8BcpPGMj5ptT3rOTJiN0SOz5ooyiW8NQpWq
-         RJBp3N7JXtxwxl+eUwQdvDt+1uCjWtabHbbghxvEjp2xee0YPht/kOI3yGgwIDuVnd
-         IZdnmnJpXG2z4Ce5vU/ScSP/xRbFyYtJSrWxJ61E=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 69F4A6076A;
-        Mon,  1 Oct 2018 15:49:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538408943;
-        bh=wXcUswX85Hdx4tRDXqHiDrBMNX+jzDX1LRayJRfeES8=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=SsLLrPl7dfdsbj0aLS1nYUYfddMP3Lu98RL+gvg1jh4Sv6wbXEE7Xut1ysW9VcmCq
-         xDVCmQgRqzlmoPHjNVhFbTRXJVaRyIOKA7Dby4Vf3pZID4GEp12Pwkkt7Q1q3dxUc8
-         zsmkcIEf+q3HrTEC8g4hMq26AtkW9AYAdCg+oykg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 69F4A6076A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Mon, 1 Oct 2018 18:28:31 -0400
+Received: by mail-qk1-f196.google.com with SMTP id g20-v6so7266970qke.9
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 08:50:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=13B8LdcDMTiZH0Uhv6Bik92/dfF/e9L2F+9xk5/GUZQ=;
+        b=RM2oTsUg7c0amcjRn+22jhRhxTqG+cw7rt0fvPOSdMrD6rHCUNxVT9gr/8E2sWXde4
+         yIQZhuKsAtTpnCXIKn/GDMVJcjpP6SmRCuKkXaQHLeFHqh5yahk27qfVqxpDchNZEBNX
+         ZObcFGm6UVha+eFdKIkCF8XsC8ngJN+mDJve76F1qDVq+A5i+vo+p+jZEGNgcm0QaRSE
+         DOqsNz55lC6baceXc2A0Wv8ye0tUGSiPhOcRjxhFYe/NRxSVOiUm5aklaTGGdNwOC6Cx
+         E/QfTclTq3K6ufR1TW+D9pIDJ+EgmVy2KNssUSVqJCcUSedov0u3NxKTKlqXF+iob0XN
+         fEvw==
+X-Gm-Message-State: ABuFfohb69oxAWL79NRHL3TFUx/eXEwHrMdlCNsL97YqqmsXB1X/nABX
+        E4UJVBfHlcssz3MVbjb14FgY9gjrKSgwt6nLhwI=
+X-Google-Smtp-Source: ACcGV60q8wIkmDcVLzmGXth+KfWYHarwQ6pakVDcpMmlRB3lb3KuDJSuf3Uoyfb0Z+zgSqWP15QLxKPGvriblmTa9ig=
+X-Received: by 2002:a37:6b03:: with SMTP id g3-v6mr8727332qkc.107.1538409005148;
+ Mon, 01 Oct 2018 08:50:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ipw2x00: clean up clang warning on extraneous parentheses
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180930223809.18136-1-colin.king@canonical.com>
-References: <20180930223809.18136-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Stanislav Yakovlev <stas.yakovlev@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181001154903.466F660866@smtp.codeaurora.org>
-Date:   Mon,  1 Oct 2018 15:49:03 +0000 (UTC)
+References: <1517836201-19362-1-git-send-email-maurosr@linux.vnet.ibm.com>
+ <a90ca2a5-5d64-bb3a-babc-dc654725a062@canonical.com> <a51e8b29-9aec-a5cf-8e33-46ae5eac1fd9@canonical.com>
+In-Reply-To: <a51e8b29-9aec-a5cf-8e33-46ae5eac1fd9@canonical.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 1 Oct 2018 17:49:48 +0200
+Message-ID: <CAK8P3a17Yb+DS8vPC3kgzL6j5SvhqOsJa3w=XOf_NDL7H40d_Q@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Change maintainer of genwqe
+To:     gpiccoli@canonical.com
+Cc:     maurosr@linux.vnet.ibm.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>, haver@linux.vnet.ibm.com,
+        brking@linux.vnet.ibm.com, brking@linux.ibm.com,
+        haver@linux.ibm.com, maurosr@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+On Mon, Oct 1, 2018 at 5:11 PM Guilherme G. Piccoli
+<gpiccoli@canonical.com> wrote:
+>
+> On 05/02/2018 11:13, Guilherme G. Piccoli wrote:
+> > On 05/02/2018 11:10, Mauro S. M. Rodrigues wrote:
+> >> Guilherme is no longer available to maintain the driver. I'll assume his
+> >> position for now on.
+> >>
+> >> Signed-off-by: Mauro S. M. Rodrigues <maurosr@linux.vnet.ibm.com>
+> >
+> > Thanks a lot Mauro!
+> >
+> > Acked-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
+> >
+> >
+> >> ---
+> >>  MAINTAINERS | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/MAINTAINERS b/MAINTAINERS
+> >> index b59a8cd..21ab6b9 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> @@ -5968,7 +5968,7 @@ F:     drivers/uio/uio_pci_generic.c
+> >>
+> >>  GENWQE (IBM Generic Workqueue Card)
+> >>  M:  Frank Haverkamp <haver@linux.vnet.ibm.com>
+> >> -M:  Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
+> >> +M:  Mauro S. M. Rodrigues <maurosr@linux.vnet.ibm.com>
+> >>  S:  Supported
+> >>  F:  drivers/misc/genwqe/
+> >>
+>
+>
+> Hi, I'd like to understand what is the status of this patch. Never got
+> merged it seems...why?
+>
+> My old email wasn't valid anymore, so it's important to change it/remove
+> it from the MAINTAINERS file.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are extraneous parantheses that are causing clang to produce a
-> warning so remove these.
-> 
-> Clean up clang warning:
-> equality comparison with extraneous parentheses [-Wparentheses-equality]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi Guilherme,
 
-I applied an identical patch few minutes ago:
+I think what happened is that nobody felt responsible for picking
+it up. The patch was sent 'to: linux-kernel@vger.kernel.org'
+with a number of people in Cc but nobody listed as a recipient
+personally.
 
-c15ace868dd1 ipw2x00: Remove unnecessary parentheses
+I'd suggest that one of you sends it again 'To: gregkh@linuxfoundation.org'
+with the subject changed to 'char: genwqe: change maintainer', so
+that Greg can add it to his char-misc tree.
 
-Patch set to Rejected.
+Please also add
 
--- 
-https://patchwork.kernel.org/patch/10621549/
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+      Arnd
