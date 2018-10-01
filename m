@@ -2,88 +2,77 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0255C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1E2C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A86B208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:57:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MYu24kas";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="M5M4wKoc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A86B208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 6E22B213A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:59:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E22B213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729452AbeJAUfq (ORCPT
+        id S1729415AbeJAUhd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:35:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53470 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729272AbeJAUfq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:35:46 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 31BF660866; Mon,  1 Oct 2018 13:57:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538402270;
-        bh=eiHYJBUdohJ5/OHfDKqtRADf0Ubsn21ufKwhS/urvjI=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=MYu24kasyQzunMoFsw9crTQZpjIBjyz4bS/KPKXUU6XWTwrbqf46mkfIKHR0MYd7x
-         RtU1yrnXlvFfsm0Gz9fSWOKOLpOU1nmhMiDiGDVihDE+Y5A13g3R0+LXkpYjeMNQPy
-         3MNbs1ASfV6Poqd7aoQGYyaeYcrw420LN9tUDsGo=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A501960376;
-        Mon,  1 Oct 2018 13:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538402269;
-        bh=eiHYJBUdohJ5/OHfDKqtRADf0Ubsn21ufKwhS/urvjI=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=M5M4wKocqlznRwq7IvFqlgrT/ZMx9LvvBLxcxOyv2ZsgDPkI8zvB3pMQR1x9B899k
-         tOgOeLw1aI/KOp2gPdYxM/0/MnX1qu8QFO/bD3T1sHng8yCtziBVyuHdBcc0mxgqcE
-         5Ph9ZGeCQu5iWOhSbdou/qDVbPuCpjlmI3uJor7I=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A501960376
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Mon, 1 Oct 2018 16:37:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:49570 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729182AbeJAUhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 16:37:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 413727A9;
+        Mon,  1 Oct 2018 06:59:37 -0700 (PDT)
+Received: from [10.4.13.85] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D1AE3F5B7;
+        Mon,  1 Oct 2018 06:59:36 -0700 (PDT)
+Subject: Re: [PATCH 0/2] arm64: remove some extra semicolon
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     zhong jiang <zhongjiang@huawei.com>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1533824441-35661-1-git-send-email-zhongjiang@huawei.com>
+ <20180903165934.GK6954@arm.com> <20181001134017.GF25071@arrakis.emea.arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <12e7b3a6-6861-e2ab-7d89-1d71d8f62b04@arm.com>
+Date:   Mon, 1 Oct 2018 14:59:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20181001134017.GF25071@arrakis.emea.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath10k: Remove duplicated includes
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180913140121.23152-1-yuehaibing@huawei.com>
-References: <20180913140121.23152-1-yuehaibing@huawei.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <ath10k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <davem@davemloft.net>,
-        <linux-wireless@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181001135750.31BF660866@smtp.codeaurora.org>
-Date:   Mon,  1 Oct 2018 13:57:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
-
-> remove duplicated include from ath10k driver.
+On 01/10/18 14:40, Catalin Marinas wrote:
+> On Mon, Sep 03, 2018 at 05:59:35PM +0100, Will Deacon wrote:
+>> On Thu, Aug 09, 2018 at 10:20:39PM +0800, zhong jiang wrote:
+>>> There are some extra semicolon in arm64 architecture. Just remove them.
+>>
+>> These are trivial but certainly not urgent, so I guess Catalin can pick
+>> them up for 4.20.
+>>
+>> Will
+>>
+>>> zhong jiang (2):
+>>>    arm64/kprobes: remove an extra semicolon in arch_prepare_kprobe
+>>>    arm64:guest: remove some extra semicolon in kvm_target_cpu
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> I picked up the first patch. I'll leave the second to Marc in case there
+> are any conflicts with the kvm tree.
+> 
+> In case it got lost in inbox, here's the second patch.
+> 
+> https://lore.kernel.org/lkml/1533824441-35661-3-git-send-email-zhongjiang@huawei.com/raw
 
-Patch applied to ath-next branch of ath.git, thanks.
+Ah, thanks for pointing this out. I've queued it now.
 
-4be3b05e7a83 ath10k: remove duplicated includes
-
+	M.
 -- 
-https://patchwork.kernel.org/patch/10599605/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Jazz is not dead. It just smells funny...
