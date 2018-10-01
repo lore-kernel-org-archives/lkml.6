@@ -2,132 +2,141 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F96EC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC7EC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8517213A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:51:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c5zdiDki"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8517213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 16E1D21471
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:58:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16E1D21471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbeJBGbs (ORCPT
+        id S1726596AbeJBGiQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 02:31:48 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36827 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbeJBGbs (ORCPT
+        Tue, 2 Oct 2018 02:38:16 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52920 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbeJBGiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 02:31:48 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b7-v6so114821pfo.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 16:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gplaKC6UEz0A+Uvp0v0Qlnbl2RdlNAz4fdwm9o7AFfc=;
-        b=c5zdiDkimz9IRvquk4YGddgRM0jjskHkNMk4Z+mkFxCwErP73SjSvxEU8l5qKcfA1W
-         30bfSIoz4Rs14hJJ/M2SAodvL/60T5DLKyNqvPtAz6BKn5x9yhH/Q39ctIgcjA/ZaKFt
-         2qQ/c5PS2ClshOQwnIujgXbRjdTICclPdyjEqQ5Vfwm2KQ3gm+Hpf7CDtmMIvKbPdKbM
-         pP4zRWvvn+YPu9EL9m0qpLMN1yivR110z3RaZS+6q9GQuxdZF9otP+SPLS29ZHEglN3O
-         0wKl5pepvcVxid01rPGYGDHH7WfcM1J/gggkFjfSqEeZTMo/sggxVNJyDxV4LDwc94Jx
-         FmPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gplaKC6UEz0A+Uvp0v0Qlnbl2RdlNAz4fdwm9o7AFfc=;
-        b=ExDqscxSuksa3Dkjwre7J04uYGdrT1AtvI8i7ainP0ynDdvi/OEZV/QxQ//vgbJuWZ
-         UcfQkGZ30LUhCn9BhQVuGqTPSHmBTqJGKTlQRWhaZreEBopC3vFOq2CiHg1WpFUNsz4J
-         K7cZPlxE1FY4KT4+oIA+nP4lmAMW8mCnPhouFhAlBHJkL0pnL1EWlWPrI60YcT1xtU9Y
-         JHk8y8nNPhoc+bc68DbHb8mwfpul0ucUiEUqYv6aUyHxdOpbP768IvaEGNqq2hzd4HOT
-         Q45WDsqa6bV2redGTZp9GMgfKWQ7aPvb1rypeX4Z8EFIXzvU6SVxAyBU9CYq7pkrmCLX
-         DUrw==
-X-Gm-Message-State: ABuFfohPOv70RhSTF5VLzUQMJnYVLNZxcKm8Mhvzk5hEoZcDC7YtUFBa
-        iEP1UBfE6c/LXL040ZAesPw=
-X-Google-Smtp-Source: ACcGV60RY0EEwZ8PnLMWS7bZ6KBLp9mbnKRO8v1ARfAyC3+Q3G55MVZhvQuVn9gDXL2N5UvpEQi4pA==
-X-Received: by 2002:a62:c08b:: with SMTP id g11-v6mr13722746pfk.72.1538437891115;
-        Mon, 01 Oct 2018 16:51:31 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com (59-102-83-213.tpgi.com.au. [59.102.83.213])
-        by smtp.gmail.com with ESMTPSA id b81-v6sm34559027pfm.96.2018.10.01.16.51.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 16:51:30 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 09:51:21 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc: remove leftover code of old GCC version checks
-Message-ID: <20181002095121.3f0326f7@roar.ozlabs.ibm.com>
-In-Reply-To: <1538374224-3742-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1538374224-3742-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 2 Oct 2018 02:38:15 -0400
+Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1g784Y-0006cR-UX; Mon, 01 Oct 2018 23:57:55 +0000
+Subject: Re: [PATCH security-next v3 18/29] LSM: Introduce lsm.enable= and
+ lsm.disable=
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180925001832.18322-1-keescook@chromium.org>
+ <20180925001832.18322-19-keescook@chromium.org>
+ <68e4e323-3216-7e77-2807-c3207126ae68@canonical.com>
+ <CAGXu5j+jzmFh-iuXDVHQTq7e=mftpfaqS-45TP_UR3B+qtGcLQ@mail.gmail.com>
+ <9b3e1733-7cfa-5047-1422-0f9d92d88d39@canonical.com>
+ <CAGXu5jJheexJgnJ+OWaDoRFraqm9yxj1Vr290tfZ7kELBPUpAw@mail.gmail.com>
+ <CAGXu5jJ6ZDs1hZTX9jS9w2MmecbcbMcn6iAmGuyCBbThyjv_iA@mail.gmail.com>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <0b6c66ab-7cfe-da99-40e7-d36a81ac79ef@canonical.com>
+Date:   Mon, 1 Oct 2018 16:57:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAGXu5jJ6ZDs1hZTX9jS9w2MmecbcbMcn6iAmGuyCBbThyjv_iA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  1 Oct 2018 15:10:24 +0900
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+On 10/01/2018 04:38 PM, Kees Cook wrote:
+> On Mon, Oct 1, 2018 at 4:30 PM, Kees Cook <keescook@chromium.org> wrote:
+>> If we keep it, "apparmor=0 lsm_enable=apparmor" would mean it's
+>> enabled. Is that okay?
+> 
+> Actually, what the v3 series does right now is leaves AppArmor and
+> SELinux alone -- whatever they configured for enable/disable is left
+> alone.
+> 
+> The problem I have is when processing CONFIG_LSM_ENABLE ... what do I
+> do with the existing "enable" flag? It's set by both
+> CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE and apparmor=0/1.
+> 
+> Right now I can't tell the difference between someone booting with
+> apparmor=0 or CONFIG_LSM_ENABLE not including apparmor.
+> 
+> i.e. how do I mix CONFIG_LSM_ENABLE with apparmor=0/1? (assuming
+> CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE has been removed)
+> 
+right, Its a mess and confusing not just us but for the user. I think
+it is worth considering removing the apparmor= and apparmor.enabled
+options so that we can clean this up.
 
-> Clean up the leftover of commit f2910f0e6835 ("powerpc: remove old
-> GCC version checks").
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> My patch had been sent earlier, with more clean-ups:
-> https://lore.kernel.org/patchwork/patch/977805/
+If we do keep it, there are three options
+1. last option wins (above)
+2. add more states so we can track the different combination (more
+  complex and probably not worth it)
+3. we ignore any apparmor=1 (he default state) and only look at
+  whether apparmor.enabled has been toggled to 0 during setup. 
+  At which point it stays that way.
 
-Sorry, I missed or forgot about your patch :(
-
-Thanks for tidying up my mess!
-
-Acked-by: Nicholas Piggin <npiggin@gmail.com>
-
-> 
-> Anyway, this cleans up the left-over of the Nicholas' one.
-> 
-> 
->  arch/powerpc/Makefile | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-> index 2ecd0976..b094375 100644
-> --- a/arch/powerpc/Makefile
-> +++ b/arch/powerpc/Makefile
-> @@ -400,10 +400,6 @@ archclean:
->  
->  archprepare: checkbin
->  
-> -# Use the file '.tmp_gas_check' for binutils tests, as gas won't output
-> -# to stdout and these checks are run even on install targets.
-> -TOUT	:= .tmp_gas_check
-> -
->  # Check toolchain versions:
->  # - gcc-4.6 is the minimum kernel-wide version so nothing required.
->  checkbin:
-> @@ -414,7 +410,3 @@ checkbin:
->  		echo -n '*** Please use a different binutils version.' ; \
->  		false ; \
->  	fi
-> -
-> -
-> -CLEAN_FILES += $(TOUT)
-> -
-> -- 
-> 2.7.4
-> 
-
+if we keep it, I think an explicit disable should win, so
+option 3, but I can live with 1.
