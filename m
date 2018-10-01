@@ -2,101 +2,110 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F01C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94DDC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4DD22145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:14:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70D0E2084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:14:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pheBw9VH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4DD22145D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b2TTkWT0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70D0E2084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726625AbeJBCxm (ORCPT
+        id S1726642AbeJBCx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 22:53:42 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36691 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbeJBCxm (ORCPT
+        Mon, 1 Oct 2018 22:53:59 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34261 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeJBCx6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 22:53:42 -0400
-Received: by mail-ed1-f67.google.com with SMTP id f4-v6so59308edq.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 13:14:11 -0700 (PDT)
+        Mon, 1 Oct 2018 22:53:58 -0400
+Received: by mail-wm1-f68.google.com with SMTP id z25-v6so3867892wmf.1;
+        Mon, 01 Oct 2018 13:14:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7U9eDoBe/VI8seVqccayQju44ffoyBPXhZTfbsnUaCU=;
-        b=pheBw9VHT87xxgAF45/klsR3jiIzRnNt/8FlRzAxCq+JssvIV3ShFDpZZYpfkcsqBZ
-         cbfKpXj8YLbA1JG3MLDLYC82kQ58M2bKemj7HH6Qb0Nja4iDofC0n/RlLtQkaOvH/Yrv
-         Soxi0RqCTXZAwfx+z5uEgJhyePssMuMuiIgpDbnRjW7N41Mx+9rAoFOhO2cdSbtGMR+k
-         vryDogpana4UZsQomBjYsg2BpeGNWCnQVXl9BqMie9gPSLMTNdt37cwhRWiEtZn90lQW
-         rPNe+tvv32PcBR4mFqk9gKaiysWL+T+5cez3vTt/EzeC5BOu32PxY6J6F0mQ5BKPy+RP
-         9gOA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BGpel+k1GsaKytAeQORtTYGyBhLiyraJYtHqM1YTvaA=;
+        b=b2TTkWT0dVSw+kw9CzRl2RDs5sKhUUVMS539piqTIZcemXCCsEMH+IySYK39sRF4rr
+         kiZ+dsgeMSqdLgS+X7KiRk3F14vN+87NqgnYT2lJckXUG1QzpIEPynMdslh4g6uKv/JE
+         YWefzk2KUUhUGsBBlFex4azPnPwTEdV9twlwKwhEbTLHDdEZyev+ROQw8ylO+aZ2Aioz
+         RtKu+w5LXe0wD2hjzgB9z6vrKJxR2qfEePmzB18LPgyPhlUUzTunFVvTj2GG/iYH5WR/
+         i35Tocgm6tDsiuVUXWjAeanYA7L/yxqa3ASdWowRhMhccTFd+wiV2tyvkOluVZG9URlm
+         ev2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7U9eDoBe/VI8seVqccayQju44ffoyBPXhZTfbsnUaCU=;
-        b=O1GEWNVBxJQN45lpu3+843BD7u6aIeVxTkxLGvpqXqFfr4vbFVlfJigmDbgAoeodYq
-         6OkaNjKQ397AbsdihDty5V7egBPrWiFgsSiNDROiTv0oTvPB9JJeYb15Db+a1kbIlKWR
-         B+Fwg9Vi+q71dDwjMdwHi7Ei+VaETkwNspjc0bTwg+TQLTTy39SJXiX9mWIjBDIC+spm
-         s5M69c2r9Q9zNnnqNbARt32h/q+uBN8jbCzd1jLSR1roOu31cXqaTEOqueDc2ZkaCILL
-         MhaJ6tMQZ3rjAX1IZW5AYVLpVxzDVHG0x6W0VJF10HrH+ipj6Y9eyKSQaQjZ061PkzFp
-         VXjA==
-X-Gm-Message-State: ABuFfogKmXBPH0RohekoYzY4hn5dpuBpRutBNYBDCmY3NXd8Li9TVOvL
-        qjfZiEy3APakGABl/IIcDIcobJyVz4BuDZi4xu0=
-X-Google-Smtp-Source: ACcGV62KbUrEsKVHyoK7A0yR+XfHqIM4C8c92DTMxPYDQAMys7xH+hg8BLwJoqX5AG2CfTMgLSSDuPxLzuBIEO9x3VU=
-X-Received: by 2002:a17:906:2412:: with SMTP id z18-v6mr4045254eja.164.1538424850923;
- Mon, 01 Oct 2018 13:14:10 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BGpel+k1GsaKytAeQORtTYGyBhLiyraJYtHqM1YTvaA=;
+        b=CUiy2n+o/7770N6DuPtsXWU7VbnCcEc21CKhkmZsn8MvZ/zTACXYICy7wdSoAxCl8I
+         lGyEA2BCnxh8RTFRL7iumKJkNbwAwx5fB2ApJaum1OCyB7C+OgTodEGyo2X10dPYHdG/
+         ByBw4iXHNltcD3hu+P0qvuL+a3FMhdnlT3L3k9u/cTVDe7r4NdrnqPho5QbpkGVh5XPj
+         v4tQddnLKCZZveDNRH6S593FOtsU7NXN6IEjJsRCRqBXNva9sA8RzGk32Aqk8SeN01us
+         Y2z8Q+3zFs9ewLTgIjcPuFKBm7TW3q+apPdovx+OduS1sPdPveFNWvl+DrHCAX252u51
+         i//A==
+X-Gm-Message-State: ABuFfojiUSsZEgoOhvk8IzsfEK21r5PKdvYvUFQVofF88FV9L2O5TMPF
+        Zu0xlUMI2WRcWc3XNPnt5yQ=
+X-Google-Smtp-Source: ACcGV60rRk1gEEvLWOw3McbUj5agOYOWnTgSo30QnjPB5QBcVfldXStHqiHTQ7I5j5nAb1pdakp9nQ==
+X-Received: by 2002:a1c:b157:: with SMTP id a84-v6mr9488836wmf.18.1538424868686;
+        Mon, 01 Oct 2018 13:14:28 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id w72-v6sm19936175wrc.52.2018.10.01.13.14.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 01 Oct 2018 13:14:27 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 22:14:26 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        util-linux@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Karel Zak <kzak@redhat.com>, Andreas Bombe <aeb@debian.org>,
+        Andreas Bombe <andreas.bombe@gmail.com>
+Subject: Re: Future of dosfstools project (FAT)
+Message-ID: <20181001201426.onlfasqcre6lgb5l@pali>
+References: <20180929084038.an6pfhnsd6tblejl@pali>
+ <404F3F76-402D-4E29-9957-429CB7D7ECFC@dilger.ca>
 MIME-Version: 1.0
-References: <20180904202747.14968-1-peter@lekensteyn.nl>
-In-Reply-To: <20180904202747.14968-1-peter@lekensteyn.nl>
-From:   Fubo Chen <fubo.chen@gmail.com>
-Date:   Mon, 1 Oct 2018 13:13:59 -0700
-Message-ID: <CAJAFBLBhAjEtoCegy7QzG65PoxM-DZA2xki9SwfrZ6af=0fvUQ@mail.gmail.com>
-Subject: Re: [PATCH] qxl: fix null-pointer crash during suspend
-To:     peter@lekensteyn.nl
-Cc:     airlied@redhat.com, kraxel@redhat.com,
-        alan.christopher.jenkins@gmail.com,
-        virtualization@lists.linux-foundation.org,
-        dri-devel@lists.freedesktop.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="5ogtvwa62vz75m5u"
+Content-Disposition: inline
+In-Reply-To: <404F3F76-402D-4E29-9957-429CB7D7ECFC@dilger.ca>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 at 2:10 PM Peter Wu <peter@lekensteyn.nl> wrote:
->
-> "crtc->helper_private" is not initialized by the QXL driver and thus the
-> "crtc_funcs->disable" call would crash (resulting in suspend failure).
-> Fix this by converting the suspend/resume functions to use the
-> drm_mode_config_helper_* helpers.
->
-> Tested system sleep with QEMU 3.0 using "echo mem > /sys/power/state".
-> During suspend the following message is visible from QEMU:
->
->     spice/server/display-channel.c:2425:display_channel_validate_surface: canvas address is 0x7fd05da68308 for 0 (and is NULL)
->     spice/server/display-channel.c:2426:display_channel_validate_surface: failed on 0
->
-> This seems to be triggered by QXL_IO_NOTIFY_CMD after
-> QXL_IO_DESTROY_PRIMARY_ASYNC, but aside from the warning things still
-> seem to work (tested with both the GTK and -spice options).
->
-> Signed-off-by: Peter Wu <peter@lekensteyn.nl>
 
-Is this a new issue or something that was introduced a long time ago?
-In the latter case, please consider adding a "Cc:
-<stable@vger.kernel.org>" tag to this patch.
+--5ogtvwa62vz75m5u
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Monday 01 October 2018 14:00:28 Andreas Dilger wrote:
+> If not, then you are the new maintainer.
 
-Fubo.
+Hi! I really do not want to have another project.
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--5ogtvwa62vz75m5u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCW7KAIAAKCRCL8Mk9A+RD
+UqMlAKCEtpDKfMcVgHBVI4SOy6OKTh1eIwCdExvUHcjU1K9ghwyzrI4EgqWbGPE=
+=Yfx4
+-----END PGP SIGNATURE-----
+
+--5ogtvwa62vz75m5u--
