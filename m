@@ -2,110 +2,125 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35969C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EA0C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 042AC2083C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:01:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 042AC2083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AE1082083C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:06:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Ey6bt5ub"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE1082083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbeJANhV (ORCPT
+        id S1728747AbeJANmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 09:37:21 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33093 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728677AbeJANhV (ORCPT
+        Mon, 1 Oct 2018 09:42:20 -0400
+Received: from smtprelay.synopsys.com ([198.182.60.111]:54594 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727333AbeJANmU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 09:37:21 -0400
-Received: by mail-lj1-f196.google.com with SMTP id z21-v6so1995089ljz.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 00:01:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s+dU8ZCnGv46rrkFmsknFoLKJ88xN7pyss/unD2nJz0=;
-        b=TZny9qUNy/+qjW/DThbu1Uhp/szcU/MmeZEb8QXp6ZzpS+47ZYlkfDOuowCLa0+zsT
-         eCrjUtsqo8sKvGL95wQNPr9xrzXHYNP21vshBSsIugA/V7VPAskYdmysB7+BmVpgbg6e
-         OxWGPLA9WYdgk87bfxLL/TCHFHMrfE28WzSYWREB9O4Ylwv81dkeWV6alzfCNz/Etikv
-         hz9vXyD1nm7CuIvPwuYdBQSgPV84oMjWDbnDLMDWsqj4rEJQ2+KPrSW4Pbjp86p0kUsu
-         EZMRuuznx956PyfIQ4d1ydRjkV1Th1UEHsAo0Je4evOBLXYlRUYn8AaA7i8uSEcmgGVU
-         RBEQ==
-X-Gm-Message-State: ABuFfohx5YeuoiB2/qWR+GoS2D/a1fHoA06kaBiTtfNM9cYuyDi+IN6u
-        lj+gskHTlCrWhXjW12QTA95arnMdc9muSg7nfSJeGg==
-X-Google-Smtp-Source: ACcGV634g0rqavsEKkRvxWKvwYkEqFCfH1KUUM5gQLZCZyA5BE6bvmiMucAL+JY8oQnTWBO8/y+V3gpR3U8HszB718k=
-X-Received: by 2002:a2e:9d50:: with SMTP id y16-v6mr622062ljj.136.1538377264241;
- Mon, 01 Oct 2018 00:01:04 -0700 (PDT)
+        Mon, 1 Oct 2018 09:42:20 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id B2BA210C0EA9;
+        Mon,  1 Oct 2018 00:06:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1538377563; bh=YWlJvQRRDUG/J4nNY4WjgAT9on/tposm3SqmHvDkmuw=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=Ey6bt5ub/+HiMOcujHYOFNr7P1iQqzgXX2Ss+aIMT+WxwE8hpbHCu++zBk5I64oSU
+         1zOQsuu65CR8lPW7iPNnhNz/6eRKTD5TBX5NGKlLpEn9eTPr15ZLNJ3mqa4ZiPM8R2
+         oDQ1t9J8EBNDARFfUPKUVImcZr12K+qwhTSsu56GLoVgHtYENeThYTJr/tDpZPEbTp
+         RKyUMSPWYTPjoMoVSByEVqYTJeG8FxREvBRaBJ6T6ojZgp8sK251HBas1V4kJ3m1BU
+         4OAc6AmSnn/NTh/y1X0hUhTXcyY5hg3IfaOhqWWgtLBW7KTqeEyPJPT6vSac7RN7Ih
+         42JfrB5SZJzuA==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 7FCCA5B5D;
+        Mon,  1 Oct 2018 00:06:03 -0700 (PDT)
+Received: from AM04WEHTCA.internal.synopsys.com (10.116.16.190) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 1 Oct 2018 00:06:03 -0700
+Received: from AM04WEMBXB.internal.synopsys.com ([fe80::1006:bcdd:1b7:579b])
+ by am04wehtca.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Mon,
+ 1 Oct 2018 11:06:00 +0400
+From:   Artur Petrosyan <arthur.petrosyan@synopsys.com>
+To:     John Stultz <john.stultz@linaro.org>,
+        Artur Petrosyan <arthur.petrosyan@synopsys.com>
+CC:     Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        John Youn <John.Youn@synopsys.com>,
+        "Felipe Balbi" <felipe.balbi@linux.intel.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
+ feature
+Thread-Topic: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
+ feature
+Thread-Index: AQHT7ws4O+8B/axYs0CeMD+6l4m0jQ==
+Date:   Mon, 1 Oct 2018 07:06:00 +0000
+Message-ID: <3AD91E696667BF4BA728303C178E8A63532BA9C1@am04wembxb.internal.synopsys.com>
+References: <1526690943-8211-1-git-send-email-john.stultz@linaro.org>
+ <410670D7E743164D87FA6160E7907A5601313531E1@am04wembxa.internal.synopsys.com>
+ <CALAqxLVZXs97sryfPaGY5Gq50-FZROgaBADNXXadcyiNhP3EPQ@mail.gmail.com>
+ <410670D7E743164D87FA6160E7907A560131356C4E@am04wembxa.internal.synopsys.com>
+ <CALAqxLU3sWrgPjFqZ2vK0m8wVThtE1hDsbNq9zRC7ritzyNHmQ@mail.gmail.com>
+ <3AD91E696667BF4BA728303C178E8A63532AAF6D@am04wembxb.internal.synopsys.com>
+ <CALAqxLXKOG8fxtrDaRLDGhJUfD1-4qc5QU60+ZmB3+9LsW69Lg@mail.gmail.com>
+ <3AD91E696667BF4BA728303C178E8A63532AB36A@am04wembxb.internal.synopsys.com>
+ <CALAqxLXy0YXNLwFQEUZxSsjFKC9boVcGkt+50XwmVfwKCcqsEw@mail.gmail.com>
+ <3AD91E696667BF4BA728303C178E8A63532AB5E5@am04wembxb.internal.synopsys.com>
+ <CALAqxLW=jT+oUASGKxcFghfHZEU7LtFJBiBBkmMM1oarKjSBKw@mail.gmail.com>
+ <3AD91E696667BF4BA728303C178E8A63532ACAE6@am04wembxb.internal.synopsys.com>
+ <CALAqxLU01RGdmGfdNHUfXu1TCbwGDV6R0PtY_Ef5DvLyLCxb5A@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.210]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20181001035313.21453-1-kai.heng.feng@canonical.com>
-In-Reply-To: <20181001035313.21453-1-kai.heng.feng@canonical.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Mon, 1 Oct 2018 09:00:52 +0200
-Message-ID: <CAO-hwJKhyVjfNsiEK-a16KGPdtfgrtnQ0XgxLyBqUhHVaS8AOA@mail.gmail.com>
-Subject: Re: [PATCH] HID: i2c-hid: Add a small delay after powering on/off the device
-To:     Kai Heng Feng <kai.heng.feng@canonical.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 5:53 AM Kai-Heng Feng
-<kai.heng.feng@canonical.com> wrote:
->
-> Raydium touchpanel (2386:4B33) sometimes does not workin desktop session
-> although it works in display manager.
->
-> During user logging, the display manager exits, close the HID device,
-> then the device gets runtime suspended and powered off. The desktop
-> session begins shortly after, opens the HID device, then the device gets
-> runtime resumed and powered on.
->
-> If the trasition from display manager to desktop sesesion is fast, the
-> touchpanel cannot switch from powered off to powered on in short
-> timeframe. So add a small delay to workaround the issue.
-
-I think you want something similar to
-https://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git/commit/?h=for-next&id=807588ac92018bde88a1958f546438e840eb0158
-
->
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->  drivers/hid/i2c-hid/i2c-hid.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-> index f3076659361a..ff5682cc1bce 100644
-> --- a/drivers/hid/i2c-hid/i2c-hid.c
-> +++ b/drivers/hid/i2c-hid/i2c-hid.c
-> @@ -409,6 +409,8 @@ static int i2c_hid_set_power(struct i2c_client *client, int power_state)
->
->         if (ret)
->                 dev_err(&client->dev, "failed to change power setting.\n");
-> +       else
-> +               msleep(20);
-
-We shouldn't have this error in the first place, so adding a timeout
-will just add a band-aid on top of an other issue.
-
-I really think the solution from Anisse would work in your case and
-will be nicer.
-
-Cheers,
-Benjamin
-
->
->  set_pwr_exit:
->         return ret;
-> --
-> 2.17.1
->
+Hi John,=0A=
+=0A=
+On 9/28/2018 22:33, John Stultz wrote:=0A=
+> On Thu, Sep 27, 2018 at 5:33 AM, Artur Petrosyan=0A=
+> <arthur.petrosyan@synopsys.com> wrote:=0A=
+>> We would like to buy the HiKey board to perform testes.=0A=
+>> We found this HiKey LeMaker to have USB 2.0 ports=0A=
+>> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__www.ebay.com_itm_=
+HiKey-2DLeMaker-2Dversion-2D2GB-2DKirin-2D620-2DSoC-2D8-2Dcore-2DARM-2DCort=
+ex-2DA53-2DCPU-2DARM-2DMali-2D450_263958047308-3Fhash-3Ditem3d75202a4c-3Ag-=
+3AaGsAAOSwOkxbqqot&d=3DDwIBaQ&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3D9hPBFKCJ_nBjJh=
+GVrrlYOeOQjP_HlVzYqrC_D7niMJI&m=3DHfWIbiU-a2SLoi9FO8n-LdbihLldWvXHklN-XMe1_=
+R4&s=3Dpir0Pt3SPLgSuceSufYhNMmgjgUwQqB3-oXWz4oLbA0&e=3D=0A=
+>> on ebay.=0A=
+>>=0A=
+>> Could you please confirm that it is the right board to test the issues=
+=0A=
+>> you mention.=0A=
+> =0A=
+> Yep. That's the one.=0A=
+> =0A=
+> thanks=0A=
+> -john=0A=
+> =0A=
+=0A=
+Thank you John.=0A=
+So we will buy and receive the HiKey LeMaker as soon as possible to =0A=
+perform tests and fix the issues you got on the platform.=0A=
+=0A=
+We are sorry for this issues you face. We will do our best to have those =
+=0A=
+issues fixed and provide you the best performance.=0A=
+=0A=
+Regards,=0A=
+Artur=0A=
+=0A=
