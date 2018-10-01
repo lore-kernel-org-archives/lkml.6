@@ -2,115 +2,76 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C68C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 03:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C54C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 03:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD68D2083C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 03:47:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8zwWoPN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD68D2083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E82E2083C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 03:53:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E82E2083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728624AbeJAKXa (ORCPT
+        id S1728593AbeJAK3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 06:23:30 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40886 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727764AbeJAKX3 (ORCPT
+        Mon, 1 Oct 2018 06:29:05 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59391 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727287AbeJAK3F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 06:23:29 -0400
-Received: by mail-wm1-f66.google.com with SMTP id o2-v6so7139967wmh.5;
-        Sun, 30 Sep 2018 20:47:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QNgubNEXCLIH3oaFkSkX7mnY9VLK7cUomorLs16Er3Y=;
-        b=Z8zwWoPNWLeVWent7XtKcU1am2mGqNRyR64VEUdmJfPo7jm7NR/6MUFr24wjgBfLea
-         yKjK+AL2OBDrAH5bb+1n8sYbuyWm5ACvFhrnGAxLnJ8ylofFgrQuL1C8kkaV+EV98JTV
-         NqwIeLm/ix2ihK9LfPeJeyBb31GhB6exldubHBMS2HUg3zqwgyJFEbWQTvu78ufJTuc9
-         K5tvC+gYsqO6Yi75aE1xXDiUBQ++Z4fE+FU+ayFvSWe/eYlrQLczxtnywcJuo9Bar47Z
-         gn1fvCYdp0BYPN9RRu68aS2bAY2I17wlef2KP6frF5w33d6FTvLcb+7k+lr68vL/tLCz
-         ipHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QNgubNEXCLIH3oaFkSkX7mnY9VLK7cUomorLs16Er3Y=;
-        b=q0/IPgo/ssLn57vy5Hn+73orV39322AVT45EL91OAHRJQUMkTE7kfjCavMegwJDzSP
-         7f8QJ/psGkHTtbWlAFh8nT30Ggnm5zAZ1zT1PqDU5mqdN1DtIpbe2ggYtn5xsLukLaJe
-         bcvz+wyXcesm2/LrLwtT6JOi53XamkqKcPc4vFMVx2hU3FGg9ZINnk3xaHXqUWN8W5bx
-         0Q/igpZ323LsXQF8HtXlC7h3j0ru2aaCr+hDi3cv8UWZC3CeZVPNig2TDJ9H782Yguzp
-         cxA9NyLM5oQGheDVDbKeolWPdTN/ozLZM2LFkSGSDxjn3qs2VXXq/oN2R6lAiIh89Qgn
-         wiow==
-X-Gm-Message-State: ABuFfojCe51J2TZqcCiy005WDUfzz7TDV9HtvdwwMWYi2MfI1p8R+JER
-        YWhO3egaQANepJF37kL0Smo3rrntmDt6BQ==
-X-Google-Smtp-Source: ACcGV633cc2MWDmIQDp6aXVJ6vCE6XxEXnehWukhwXFr2Jsbkv6Cyt20dlrma9YPoQSWtnO1kGDX2Q==
-X-Received: by 2002:a1c:87c9:: with SMTP id j192-v6mr7589554wmd.71.1538365666424;
-        Sun, 30 Sep 2018 20:47:46 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id 63-v6sm1833157wmj.39.2018.09.30.20.47.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Sep 2018 20:47:45 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Ganesh Goudar <ganeshgr@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] cxgb4: Use proper enum in IEEE_FAUX_SYNC
-Date:   Sun, 30 Sep 2018 20:47:38 -0700
-Message-Id: <20181001034738.29475-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 1 Oct 2018 06:29:05 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1g6pGo-0001Gt-DF; Mon, 01 Oct 2018 03:53:18 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     jikos@kernel.org
+Cc:     benjamin.tissoires@redhat.com, hdegoede@redhat.com,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] HID: i2c-hid: Add a small delay after powering on/off the device
+Date:   Mon,  1 Oct 2018 11:53:13 +0800
+Message-Id: <20181001035313.21453-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when one enumerated type is implicitly converted to another.
+Raydium touchpanel (2386:4B33) sometimes does not workin desktop session
+although it works in display manager.
 
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:390:4: warning: implicit
-conversion from enumeration type 'enum cxgb4_dcb_state' to different
-enumeration type 'enum cxgb4_dcb_state_input' [-Wenum-conversion]
-                        IEEE_FAUX_SYNC(dev, dcb);
-                        ^~~~~~~~~~~~~~~~~~~~~~~~
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h:70:10: note: expanded
-from macro 'IEEE_FAUX_SYNC'
-                                            CXGB4_DCB_STATE_FW_ALLSYNCED);
-                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+During user logging, the display manager exits, close the HID device,
+then the device gets runtime suspended and powered off. The desktop
+session begins shortly after, opens the HID device, then the device gets
+runtime resumed and powered on.
 
-Use the equivalent value of the expected type to silence Clang while
-resulting in no functional change.
+If the trasition from display manager to desktop sesesion is fast, the
+touchpanel cannot switch from powered off to powered on in short
+timeframe. So add a small delay to workaround the issue.
 
-CXGB4_DCB_STATE_FW_ALLSYNCED = CXGB4_DCB_INPUT_FW_ALLSYNCED = 3
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/i2c-hid/i2c-hid.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h
-index 02040b99c78a..484ee8290090 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.h
-@@ -67,7 +67,7 @@
- 	do { \
- 		if ((__dcb)->dcb_version == FW_PORT_DCB_VER_IEEE) \
- 			cxgb4_dcb_state_fsm((__dev), \
--					    CXGB4_DCB_STATE_FW_ALLSYNCED); \
-+					    CXGB4_DCB_INPUT_FW_ALLSYNCED); \
- 	} while (0)
+diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
+index f3076659361a..ff5682cc1bce 100644
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -409,6 +409,8 @@ static int i2c_hid_set_power(struct i2c_client *client, int power_state)
  
- /* States we can be in for a port's Data Center Bridging.
+ 	if (ret)
+ 		dev_err(&client->dev, "failed to change power setting.\n");
++	else
++		msleep(20);
+ 
+ set_pwr_exit:
+ 	return ret;
 -- 
-2.19.0
+2.17.1
 
