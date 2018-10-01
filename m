@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574CEC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53853C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11EBA2089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 153E02089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:01:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="SdCFEUYC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11EBA2089A
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="ZdMmVsOj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 153E02089A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbeJBAjy (ORCPT
+        id S1726679AbeJBAkM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:39:54 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35684 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbeJBAjy (ORCPT
+        Mon, 1 Oct 2018 20:40:12 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38783 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbeJBAkL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:39:54 -0400
-Received: by mail-pg1-f196.google.com with SMTP id v133-v6so10021634pgb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:00:57 -0700 (PDT)
+        Mon, 1 Oct 2018 20:40:11 -0400
+Received: by mail-pf1-f195.google.com with SMTP id x17-v6so9793262pfh.5
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:01:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZW+J2uHfbW8E5yTGNvzEAl3iCk9YwcdDxuB33ic4RTc=;
-        b=SdCFEUYC8wRoAM79NCTbeVEpCs40i9LiCX1h9R535SDDF/JElvTZT7iCdFXf2it6kB
-         MYEPbnDvEA2McO71e4BAe6baoSXhoANCP3PZ8/Brsf29+qIGLrYUuYx2voHKaABSNOSY
-         i+U/z8eLxUVmdfXTFhBwn2e277tX9YmnLatSAkI/gnXk5rCtyzJu9O0QrovZd0hKVudZ
-         V3Ce7aFI8Ija52AsBOPPQIFa7s9+6zpdrsXDXGecZvwgxBxd9qL5ccnJmT/kbQzYmK3f
-         TajjjXKeTIIuPeoOQzOGlAu+LD3wQB9o8HoA4BgIw/kywZ7ppe8zYLdjNBBy+ef9dx6h
-         5EUA==
+        bh=jl8w66ZtkNhdtips3F7dVSeZ+uWCx+HUDA6gL1nWgkw=;
+        b=ZdMmVsOjMl0Mci3QDghHncrw69hbwShEz1oz7N5JX6u3/qtbzHg1vzAwugBp239Btu
+         bhWQnaQUUQvD9pG02/zICNMGB49Us5yYc1qZYn7Q1GTL879z8NznUuO38EGrhkPsS20H
+         4e5nPfgln5RWwxqD7EF9I9P9B4SnSsHxDIwSqW4maujJn7wFG2SWqnP/y3Eymsw7Zy29
+         4VdrD6TRFnjfR3q9Y4NRhabszohjWfhja8zBb95ys9P/GPdlKKdpw3VHKZhv3aamiabN
+         9y2RFlXvrzwSpERxEGhSiXenNVMU/OugEwyWB/W2sVUsopKrv9vMOhAoIhhgm5EBmriM
+         vOTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZW+J2uHfbW8E5yTGNvzEAl3iCk9YwcdDxuB33ic4RTc=;
-        b=bQO4RiN69TK++BlGf7J3tb1r/wjKeVHr1kJWVCmnQl5nYSeH1K8LOzCCOallI8exYn
-         MzRQjNHpULp3GezFUOxRZNZPU8TWxUa8LS5gIo/CsIJX1VZi4DN2S7YsHu4G5bm3pkVU
-         umbNEyEThbWHNpJLQy42KxvoQpR0gVGgOfYYyCimXusj3NzuCIIOq1GOYsFzM6S4xrow
-         98uxw8Kh68u5+VxVQAa+jAMOmK30mPobtVGvhqAKM9Lg/9rmkSR5dP78YWjS23fXWwfp
-         /iGcx7xedJCtMO2jVUehn7qDTsPmyaqvXcy2LyMzsl29ss4RzDttmOX7IfBnvZHcu4qV
-         DOfQ==
-X-Gm-Message-State: ABuFfoiD7i4PeUZ4HtoxoZf4NQ4rqM2KIK4jvP6VVfIbyz1FhvtFqVEd
-        CDEI2YMN7eJIpbzU6rdgmqtrE7VGAnk=
-X-Google-Smtp-Source: ACcGV63d0TRbtG7P9JepMO8nsyO35brgz1kk+2AkK579gNH7YYo73vednHof02g/EdFJ/Oz5ykkcAA==
-X-Received: by 2002:a62:db46:: with SMTP id f67-v6mr12493954pfg.1.1538416856617;
-        Mon, 01 Oct 2018 11:00:56 -0700 (PDT)
+        bh=jl8w66ZtkNhdtips3F7dVSeZ+uWCx+HUDA6gL1nWgkw=;
+        b=aTP/lyJaNmNwIs4ah265Oy8pywei5AAM3y0+hggsJZDEo2mPXD7lFPq6vyxljbc/9O
+         fQ0xujqD1kEjTXMsCgcGN4gDrHQAAY2qnEx3z+NH0TJS1G307IhK+aSozKzgSe8fNVAJ
+         OFEuL0E+In/t0o1jvi6e8vFsUYuSvlg9IepM3ybK1lR3LVNeabsEQmwc6hBSstVsxK+2
+         Jgr6+le6lqPhDgymKHVuDjIGcpFtuxJ8eO9Xb0SMxc+TnvkNXEOYtiYNA69CJyaUuonR
+         yPZLqTo2kv38wbkLOVNjNnBfQkrTCYN27DPdcXUQlGQAMa5QGdTyQ7h3/wcjDi9ZMV9H
+         +0Bw==
+X-Gm-Message-State: ABuFfojOgKjlpjhwPTT/UY8c2bQuPyR1YSZLL9sR9K2c8fZxHveQXE+S
+        cHaVsNTXshSBRoh/2b1IaGdSq/QGxHE=
+X-Google-Smtp-Source: ACcGV61iwPwDR6ZP0gShH7leGkat+WLLsOD2olYo0JlUPLtUpSHofa3vvN0fGEvOt1pZFEa0FxlPQQ==
+X-Received: by 2002:a17:902:7c85:: with SMTP id y5-v6mr9826718pll.200.1538416873771;
+        Mon, 01 Oct 2018 11:01:13 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
-        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.00.55
+        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.01.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 11:00:56 -0700 (PDT)
+        Mon, 01 Oct 2018 11:01:13 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Mark Salyzyn <salyzyn@android.com>,
@@ -79,12 +79,13 @@ Cc:     Mark Salyzyn <salyzyn@android.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org,
         Jeremy Linton <Jeremy.Linton@arm.com>,
-        android-kernel@android.com, Jinbum Park <jinb.park7@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: RESEND [PATCH v6 05/12] arm: vdso: Add support for CLOCK_MONOTONIC_RAW
-Date:   Mon,  1 Oct 2018 10:58:25 -0700
-Message-Id: <20181001175845.168430-6-salyzyn@android.com>
+        android-kernel@android.com, Mark Salyzyn <salyzyn@google.com>,
+        Jinbum Park <jinb.park7@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: RESEND [PATCH v5 06/12] arm: vdso: add support for clock_getres
+Date:   Mon,  1 Oct 2018 10:58:26 -0700
+Message-Id: <20181001175845.168430-7-salyzyn@android.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 In-Reply-To: <20181001175845.168430-1-salyzyn@android.com>
 References: <20181001175845.168430-1-salyzyn@android.com>
@@ -102,8 +103,8 @@ for each architecture. But instead of landing it in arm64, land the
 result into lib/vdso and unify both implementations to simplify
 future maintenance.
 
-Add a case for CLOCK_MONOTONIC_RAW to match up with support that
-is available in arm64's vdso.
+Add clock_getres vdso support to match up with existing support in
+the arm64's vdso.
 
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
 Tested-by: Mark Salyzyn <salyzyn@android.com>
@@ -128,139 +129,97 @@ Cc: Jeremy Linton <Jeremy.Linton@arm.com>
 Cc: android-kernel@android.com
 
 v2:
-- split first CL into 6 of 7 pieces
+- split first CL into 7 of 7 pieces
 
 v4:
-- Move out ARCH_CLOCK_FIXED_MASK to later adjustment.
 - update commit message to reflect overall reasoning.
-- replace typeof() with type vdso_raw_time_sec_t.
+- replace typeof() with long for nsec
+- replace clock_id with clock to match usage elsewhere.
 
 v5:
-- replace erroneous tk->raw_time.shift with tk->tkr_raw.shift
-
-v6:
-- fixup raw_time_sec and raw_time_nsec in vdso.c
+- add linux/hrtimer.h to compiler.h to supply for LOW_RES_NSEC and
+  MONOTONIC_RES_NSEC.
 ---
- arch/arm/include/asm/vdso_datapage.h | 11 +++++++
- arch/arm/kernel/vdso.c               |  3 ++
- arch/arm/vdso/vgettimeofday.c        | 44 ++++++++++++++++++++++++++++
- 3 files changed, 58 insertions(+)
+ arch/arm/kernel/vdso.c        |  1 +
+ arch/arm/vdso/compiler.h      |  1 +
+ arch/arm/vdso/vdso.lds.S      |  1 +
+ arch/arm/vdso/vgettimeofday.c | 23 +++++++++++++++++++++++
+ 4 files changed, 26 insertions(+)
 
-diff --git a/arch/arm/include/asm/vdso_datapage.h b/arch/arm/include/asm/vdso_datapage.h
-index 8dd7303db4ec..1c6e6a5d5d9d 100644
---- a/arch/arm/include/asm/vdso_datapage.h
-+++ b/arch/arm/include/asm/vdso_datapage.h
-@@ -34,6 +34,11 @@ typedef u32 vdso_wtm_clock_nsec_t;
- typedef u32 vdso_xtime_clock_sec_t;
- #endif
- 
-+#ifndef _VDSO_RAW_TIME_SEC_T
-+#define _VDSO_RAW_TIME_SEC_T
-+typedef u32 vdso_raw_time_sec_t;
-+#endif
-+
- /* Try to be cache-friendly on systems that don't implement the
-  * generic timer: fit the unconditionally updated fields in the first
-  * 32 bytes.
-@@ -58,6 +63,12 @@ struct vdso_data {
- 	u64 xtime_clock_snsec;	/* CLOCK_REALTIME sub-ns base */
- 	u32 tz_minuteswest;	/* timezone info for gettimeofday(2) */
- 	u32 tz_dsttime;
-+
-+	/* Raw clocksource multipler */
-+	u32 cs_raw_mult;
-+	/* Raw time */
-+	vdso_raw_time_sec_t raw_time_sec;
-+	u32 raw_time_nsec;
- };
- 
- union vdso_data_store {
 diff --git a/arch/arm/kernel/vdso.c b/arch/arm/kernel/vdso.c
-index c2c57f6b8c60..9c13a32fa5f0 100644
+index 9c13a32fa5f0..c299967df63c 100644
 --- a/arch/arm/kernel/vdso.c
 +++ b/arch/arm/kernel/vdso.c
-@@ -337,9 +337,12 @@ void update_vsyscall(struct timekeeper *tk)
- 
- 	if (!vdso_data->use_syscall) {
- 		vdso_data->cs_cycle_last	= tk->tkr_mono.cycle_last;
-+		vdso_data->raw_time_sec		= tk->raw_sec;
-+		vdso_data->raw_time_nsec	= tk->tkr_raw.xtime_nsec;
- 		vdso_data->xtime_clock_sec	= tk->xtime_sec;
- 		vdso_data->xtime_clock_snsec	= tk->tkr_mono.xtime_nsec;
- 		vdso_data->cs_mono_mult		= tk->tkr_mono.mult;
-+		vdso_data->cs_raw_mult		= tk->tkr_raw.mult;
- 		/* tkr_mono.shift == tkr_raw.shift */
- 		vdso_data->cs_shift		= tk->tkr_mono.shift;
- 		vdso_data->cs_mask		= tk->tkr_mono.mask;
-diff --git a/arch/arm/vdso/vgettimeofday.c b/arch/arm/vdso/vgettimeofday.c
-index 59893fca03b3..a2c4db83edc4 100644
---- a/arch/arm/vdso/vgettimeofday.c
-+++ b/arch/arm/vdso/vgettimeofday.c
-@@ -194,6 +194,40 @@ static notrace int do_monotonic(const struct vdso_data *vd, struct timespec *ts)
- 	return 0;
+@@ -191,6 +191,7 @@ static void __init patch_vdso(void *ehdr)
+ 	if (!cntvct_ok) {
+ 		vdso_nullpatch_one(&einfo, "__vdso_gettimeofday");
+ 		vdso_nullpatch_one(&einfo, "__vdso_clock_gettime");
++		vdso_nullpatch_one(&einfo, "__vdso_clock_getres");
+ 	}
  }
  
-+static notrace int do_monotonic_raw(const struct vdso_data *vd,
-+				    struct timespec *ts)
+diff --git a/arch/arm/vdso/compiler.h b/arch/arm/vdso/compiler.h
+index 3edddb705a1b..c7751019246a 100644
+--- a/arch/arm/vdso/compiler.h
++++ b/arch/arm/vdso/compiler.h
+@@ -27,6 +27,7 @@
+ #include <asm/processor.h>	/* for cpu_relax()			*/
+ #include <asm/unistd.h>
+ #include <linux/compiler.h>
++#include <linux/hrtimer.h>	/* for LOW_RES_NSEC and MONOTONIC_RES_NSEC */
+ #include <linux/time.h>		/* for NSEC_PER_SEC			*/
+ 
+ #ifndef CONFIG_AEABI
+diff --git a/arch/arm/vdso/vdso.lds.S b/arch/arm/vdso/vdso.lds.S
+index 89ca89f12d23..1d81e8c3acf6 100644
+--- a/arch/arm/vdso/vdso.lds.S
++++ b/arch/arm/vdso/vdso.lds.S
+@@ -82,6 +82,7 @@ VERSION
+ 	global:
+ 		__vdso_clock_gettime;
+ 		__vdso_gettimeofday;
++		__vdso_clock_getres;
+ 	local: *;
+ 	};
+ }
+diff --git a/arch/arm/vdso/vgettimeofday.c b/arch/arm/vdso/vgettimeofday.c
+index a2c4db83edc4..a354586f8a65 100644
+--- a/arch/arm/vdso/vgettimeofday.c
++++ b/arch/arm/vdso/vgettimeofday.c
+@@ -32,6 +32,7 @@
+ 
+ DEFINE_FALLBACK(gettimeofday, struct timeval *, tv, struct timezone *, tz)
+ DEFINE_FALLBACK(clock_gettime, clockid_t, clock, struct timespec *, ts)
++DEFINE_FALLBACK(clock_getres, clockid_t, clock, struct timespec *, ts)
+ 
+ static notrace u32 vdso_read_begin(const struct vdso_data *vd)
+ {
+@@ -301,3 +302,25 @@ notrace int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
+ 
+ 	return 0;
+ }
++
++int __vdso_clock_getres(clockid_t clock, struct timespec *res)
 +{
-+	u32 seq, mult, shift;
-+	u64 nsec, cycle_last;
-+	u64 mask;
-+	vdso_raw_time_sec_t sec;
++	long nsec;
 +
-+	do {
-+		seq = vdso_read_begin(vd);
++	if (clock == CLOCK_REALTIME ||
++	    clock == CLOCK_MONOTONIC ||
++	    clock == CLOCK_MONOTONIC_RAW)
++		nsec = MONOTONIC_RES_NSEC;
++	else if (clock == CLOCK_REALTIME_COARSE ||
++		 clock == CLOCK_MONOTONIC_COARSE)
++		nsec = LOW_RES_NSEC;
++	else
++		return clock_getres_fallback(clock, res);
 +
-+		if (vd->use_syscall)
-+			return -1;
-+
-+		cycle_last = vd->cs_cycle_last;
-+
-+		mult = vd->cs_raw_mult;
-+		shift = vd->cs_shift;
-+		mask = vd->cs_mask;
-+
-+		sec = vd->raw_time_sec;
-+		nsec = vd->raw_time_nsec;
-+
-+	} while (unlikely(vdso_read_retry(vd, seq)));
-+
-+	nsec += get_clock_shifted_nsec(cycle_last, mult, mask);
-+	nsec >>= shift;
-+	/* open coding timespec_add_ns to save a ts->tv_nsec = 0 */
-+	ts->tv_sec = sec + __iter_div_u64_rem(nsec, NSEC_PER_SEC, &nsec);
-+	ts->tv_nsec = nsec;
++	if (likely(res != NULL)) {
++		res->tv_sec = 0;
++		res->tv_nsec = nsec;
++	}
 +
 +	return 0;
 +}
-+
- #else /* CONFIG_ARM_ARCH_TIMER */
- 
- static notrace int do_realtime(const struct vdso_data *vd, struct timespec *ts)
-@@ -206,6 +240,12 @@ static notrace int do_monotonic(const struct vdso_data *vd, struct timespec *ts)
- 	return -1;
- }
- 
-+static notrace int do_monotonic_raw(const struct vdso_data *vd,
-+				    struct timespec *ts)
-+{
-+	return -1;
-+}
-+
- #endif /* CONFIG_ARM_ARCH_TIMER */
- 
- notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
-@@ -227,6 +267,10 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
- 		if (do_monotonic(vd, ts))
- 			goto fallback;
- 		break;
-+	case CLOCK_MONOTONIC_RAW:
-+		if (do_monotonic_raw(vd, ts))
-+			goto fallback;
-+		break;
- 	default:
- 		goto fallback;
- 	}
 -- 
 2.19.0.605.g01d371f741-goog
 
