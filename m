@@ -2,141 +2,169 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86002C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F31CC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E8B9208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:18:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8B9208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id F10B62089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:19:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F10B62089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729265AbeJAS4G (ORCPT
+        id S1729341AbeJAS4q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 14:56:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47660 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728921AbeJAS4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 14:56:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3E3D18A;
-        Mon,  1 Oct 2018 05:18:34 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7285D3F5A0;
-        Mon,  1 Oct 2018 05:18:34 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 129871AE3C57; Mon,  1 Oct 2018 13:18:57 +0100 (BST)
-Date:   Mon, 1 Oct 2018 13:18:57 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     joro@8bytes.org, robh+dt@kernel.org, robin.murphy@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alex.williamson@redhat.com,
-        mark.rutland@arm.com, rjw@rjwysocki.net, robdclark@gmail.com,
-        linux-pm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        sboyd@kernel.org, tfiga@chromium.org, jcrouse@codeaurora.org,
-        sricharan@codeaurora.org, m.szyprowski@samsung.com,
-        architt@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v16 4/5] dt-bindings: arm-smmu: Add bindings for
- qcom,smmu-v2
-Message-ID: <20181001121857.GA31488@arm.com>
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
- <20180830144541.17740-5-vivek.gautam@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180830144541.17740-5-vivek.gautam@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 1 Oct 2018 14:56:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54392 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728921AbeJAS4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 14:56:46 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 04359308A964;
+        Mon,  1 Oct 2018 12:19:15 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-29.ams2.redhat.com [10.36.116.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AD1376266E;
+        Mon,  1 Oct 2018 12:19:12 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id C49E19AD2; Mon,  1 Oct 2018 14:19:11 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 2/2] drm/bochs: add edid support.
+Date:   Mon,  1 Oct 2018 14:19:11 +0200
+Message-Id: <20181001121911.27140-3-kraxel@redhat.com>
+In-Reply-To: <20181001121911.27140-1-kraxel@redhat.com>
+References: <20181001121911.27140-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 01 Oct 2018 12:19:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 08:15:40PM +0530, Vivek Gautam wrote:
-> Add bindings doc for Qcom's smmu-v2 implementation.
-> 
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  .../devicetree/bindings/iommu/arm,smmu.txt         | 39 ++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
+Recent qemu (latest master branch, upcoming 3.1 release) got support
+for EDID data.  This patch adds guest driver support.
 
-It would be nice to have an Ack from a DT maintainer on this, since it's
-adding new compatible strings...
+EDID support in qemu is not (yet) enabled by default, so please use
+'qemu -device VGA,edid=on' for testing.
 
-Will
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/bochs/bochs.h     |  1 +
+ drivers/gpu/drm/bochs/bochs_hw.c  | 38 ++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/bochs/bochs_kms.c | 16 +++++++++++++---
+ 3 files changed, 52 insertions(+), 3 deletions(-)
 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> index 8a6ffce12af5..a6504b37cc21 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> @@ -17,10 +17,16 @@ conditions.
->                          "arm,mmu-401"
->                          "arm,mmu-500"
->                          "cavium,smmu-v2"
-> +                        "qcom,smmu-v2"
->  
->                    depending on the particular implementation and/or the
->                    version of the architecture implemented.
->  
-> +                  Qcom SoCs must contain, as below, SoC-specific compatibles
-> +                  along with "qcom,smmu-v2":
-> +                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2",
-> +                  "qcom,sdm845-smmu-v2", "qcom,smmu-v2".
-> +
->  - reg           : Base address and size of the SMMU.
->  
->  - #global-interrupts : The number of global interrupts exposed by the
-> @@ -71,6 +77,22 @@ conditions.
->                    or using stream matching with #iommu-cells = <2>, and
->                    may be ignored if present in such cases.
->  
-> +- clock-names:    List of the names of clocks input to the device. The
-> +                  required list depends on particular implementation and
-> +                  is as follows:
-> +                  - for "qcom,smmu-v2":
-> +                    - "bus": clock required for downstream bus access and
-> +                             for the smmu ptw,
-> +                    - "iface": clock required to access smmu's registers
-> +                               through the TCU's programming interface.
-> +                  - unspecified for other implementations.
-> +
-> +- clocks:         Specifiers for all clocks listed in the clock-names property,
-> +                  as per generic clock bindings.
-> +
-> +- power-domains:  Specifiers for power domains required to be powered on for
-> +                  the SMMU to operate, as per generic power domain bindings.
-> +
->  ** Deprecated properties:
->  
->  - mmu-masters (deprecated in favour of the generic "iommus" binding) :
-> @@ -137,3 +159,20 @@ conditions.
->                  iommu-map = <0 &smmu3 0 0x400>;
->                  ...
->          };
-> +
-> +	/* Qcom's arm,smmu-v2 implementation */
-> +	smmu4: iommu@d00000 {
-> +		compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
-> +		reg = <0xd00000 0x10000>;
-> +
-> +		#global-interrupts = <1>;
-> +		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
-> +		#iommu-cells = <1>;
-> +		power-domains = <&mmcc MDSS_GDSC>;
-> +
-> +		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
-> +			 <&mmcc SMMU_MDP_AHB_CLK>;
-> +		clock-names = "bus", "iface";
-> +	};
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
-> 
+diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+index 375bf92cd0..055d7b437a 100644
+--- a/drivers/gpu/drm/bochs/bochs.h
++++ b/drivers/gpu/drm/bochs/bochs.h
+@@ -70,6 +70,7 @@ struct bochs_device {
+ 	u16 yres_virtual;
+ 	u32 stride;
+ 	u32 bpp;
++	struct edid *edid;
+ 
+ 	/* drm */
+ 	struct drm_device  *dev;
+diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
+index a39b0343c1..21a769e48c 100644
+--- a/drivers/gpu/drm/bochs/bochs_hw.c
++++ b/drivers/gpu/drm/bochs/bochs_hw.c
+@@ -47,6 +47,41 @@ static void bochs_dispi_write(struct bochs_device *bochs, u16 reg, u16 val)
+ 	}
+ }
+ 
++static int bochs_load_edid(struct bochs_device *bochs)
++{
++	uint8_t *blob;
++	size_t i, len;
++	uint8_t num_exts;
++
++	if (!bochs->mmio)
++		return -1;
++
++	if ((readb(bochs->mmio+0) != 0x00 ||
++	     readb(bochs->mmio+1) != 0xff))
++		return -1;
++
++	num_exts = readb(bochs->mmio + 126);
++	len = EDID_LENGTH * (1 + num_exts);
++	if (len > 0x400 /* vga register offset */)
++		return -1;
++
++	kfree(bochs->edid);
++	bochs->edid = kmalloc(len, GFP_KERNEL);
++	blob = (void *)bochs->edid;
++	for (i = 0; i < len; i++) {
++		blob[i] = readb(bochs->mmio+i);
++	}
++
++	if (!drm_edid_is_valid(bochs->edid)) {
++		DRM_ERROR("EDID is not valid, ignoring.\n");
++		kfree(bochs->edid);
++		bochs->edid = NULL;
++		return -1;
++	}
++
++	return 0;
++}
++
+ int bochs_hw_init(struct drm_device *dev, uint32_t flags)
+ {
+ 	struct bochs_device *bochs = dev->dev_private;
+@@ -133,6 +168,9 @@ int bochs_hw_init(struct drm_device *dev, uint32_t flags)
+ 	}
+ 
+ noext:
++	if (bochs_load_edid(bochs) == 0)
++		DRM_INFO("Found EDID data blob.\n");
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index ca5a9afdd5..008c5f0aaf 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -181,10 +181,17 @@ static void bochs_encoder_init(struct drm_device *dev)
+ 
+ static int bochs_connector_get_modes(struct drm_connector *connector)
+ {
+-	int count;
++	struct bochs_device *bochs =
++		container_of(connector, struct bochs_device, connector);
++	int count = 0;
+ 
+-	count = drm_add_modes_noedid(connector, 8192, 8192);
+-	drm_set_preferred_mode(connector, defx, defy);
++	if (bochs->edid)
++		count = drm_add_edid_modes(connector, bochs->edid);
++
++	if (!count) {
++		count = drm_add_modes_noedid(connector, 8192, 8192);
++		drm_set_preferred_mode(connector, defx, defy);
++	}
+ 	return count;
+ }
+ 
+@@ -239,6 +246,9 @@ static void bochs_connector_init(struct drm_device *dev)
+ 	drm_connector_helper_add(connector,
+ 				 &bochs_connector_connector_helper_funcs);
+ 	drm_connector_register(connector);
++
++	if (bochs->edid)
++		drm_connector_update_edid_property(connector, bochs->edid);
+ }
+ 
+ 
+-- 
+2.9.3
+
