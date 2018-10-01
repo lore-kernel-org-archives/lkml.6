@@ -2,145 +2,146 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BCEC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F291C00449
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 825A821471
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:20:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 825A821471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id ED87D2084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 23:20:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="dxjwGiCX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED87D2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbeJBGAx (ORCPT
+        id S1726636AbeJBGBD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 02:00:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60752 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725936AbeJBGAw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 02:00:52 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w91NIVET076587
-        for <linux-kernel@vger.kernel.org>; Mon, 1 Oct 2018 19:20:39 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2murs8ha2m-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 19:20:39 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tyreld@linux.vnet.ibm.com>;
-        Mon, 1 Oct 2018 17:20:38 -0600
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 1 Oct 2018 17:20:35 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w91NKYgK33226928
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 1 Oct 2018 16:20:34 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CD19778066;
-        Mon,  1 Oct 2018 17:20:34 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9126D78068;
-        Mon,  1 Oct 2018 17:20:31 -0600 (MDT)
-Received: from oc6857751186.ibm.com (unknown [9.85.143.166])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon,  1 Oct 2018 17:20:31 -0600 (MDT)
-Subject: Re: [PATCH] migration/mm: Add WARN_ON to try_offline_node
-To:     Michal Hocko <mhocko@kernel.org>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>
-Cc:     Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-        Juliet Kim <minkim@us.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Oscar Salvador <osalvador@suse.de>
-References: <20181001185616.11427.35521.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
- <20181001202724.GL18290@dhcp22.suse.cz>
-From:   Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Date:   Mon, 1 Oct 2018 16:20:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181001202724.GL18290@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
+        Tue, 2 Oct 2018 02:01:03 -0400
+Received: from mail-eopbgr40102.outbound.protection.outlook.com ([40.107.4.102]:17040
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725936AbeJBGBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 02:01:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j2KNZAm+OA0ZQXcWLA8BzV/hcebFUqEjBK3sBd4cZOo=;
+ b=dxjwGiCXejJ8I3AyVCrj5YWxnS03ztPtSQmMapdGVSCA6tu0A6mqtNcFUQJuiDzbQPmRwcxR4V7QXtbgxVjNa4kGx0DZmJOhLyOtMftcCnugN9+NwR3WYzVMgzKH6gEuni+rUlXKiRWddmnYQgTgPWhoNbZGSwaZHxiSLwzX4Mw=
+Received: from AM6PR08MB3253.eurprd08.prod.outlook.com (52.135.164.146) by
+ AM6PR08MB3525.eurprd08.prod.outlook.com (20.177.114.206) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.25; Mon, 1 Oct 2018 23:20:47 +0000
+Received: from AM6PR08MB3253.eurprd08.prod.outlook.com
+ ([fe80::a458:ca6c:fe4e:fc39]) by AM6PR08MB3253.eurprd08.prod.outlook.com
+ ([fe80::a458:ca6c:fe4e:fc39%4]) with mapi id 15.20.1185.024; Mon, 1 Oct 2018
+ 23:20:47 +0000
+From:   Andrey Vagin <avagin@virtuozzo.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Dmitry Safonov <dima@arista.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelianov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "criu@openvz.org" <criu@openvz.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: Re: [RFC 00/20] ns: Introduce Time Namespace
+Thread-Topic: [RFC 00/20] ns: Introduce Time Namespace
+Thread-Index: AQHUUFpuovisR+B/R0ChKHU4yyCZyaT6rFafgATOTICAAIlk1v//x8cAgAMSiTyAAdN9gIAAA0KAgAZk6gA=
+Date:   Mon, 1 Oct 2018 23:20:47 +0000
+Message-ID: <20181001232033.GA31324@outlook.office365.com>
+References: <20180919205037.9574-1-dima@arista.com>
+ <874lej6nny.fsf@xmission.com> <20180924205119.GA14833@outlook.office365.com>
+ <874leezh8n.fsf@xmission.com> <20180925014150.GA6302@outlook.office365.com>
+ <87zhw4rwiq.fsf@xmission.com>
+ <alpine.DEB.2.21.1809272247270.8118@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1809272335430.8118@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1809272335430.8118@nanos.tec.linutronix.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18100123-0012-0000-0000-000016BF5EDC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009805; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01096516; UDB=6.00566995; IPR=6.00876559;
- MB=3.00023581; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-01 23:20:38
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100123-0013-0000-0000-00005499D067
-Message-Id: <bdbca329-7d35-0535-1737-94a06a19ae28@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-01_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810010222
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.10.0 (2018-05-17)
+x-originating-ip: [2620:0:1000:fd1f:f3f3:aec8:82f8:da4d]
+x-clientproxiedby: BYAPR07CA0013.namprd07.prod.outlook.com
+ (2603:10b6:a02:bc::26) To AM6PR08MB3253.eurprd08.prod.outlook.com
+ (2603:10a6:209:47::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=avagin@virtuozzo.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR08MB3525;20:IDGB2QNUGWnQOaoqD0JL4b7nun++UNsYiqnUqcIMNpAlppiQp1bnPcUlwQkK+mz001DMwg5MLpwL/AkXVF8rswcpx3HLRtOb3PW7lZecCHkxX6pkDznBrPbGdTP+chAGauJe+0E3/iI+cBsnrAyY1XVFS/ZP8C9WlnN8wS2QYy4=
+x-ms-office365-filtering-correlation-id: 5a94aac5-68e0-4c12-cac4-08d627f48498
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM6PR08MB3525;
+x-ms-traffictypediagnostic: AM6PR08MB3525:
+x-microsoft-antispam-prvs: <AM6PR08MB352521669438FEF51709761FCFEF0@AM6PR08MB3525.eurprd08.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(149066)(150057)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051);SRVR:AM6PR08MB3525;BCL:0;PCL:0;RULEID:;SRVR:AM6PR08MB3525;
+x-forefront-prvs: 0812095267
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(396003)(366004)(346002)(39850400004)(199004)(189003)(6506007)(76176011)(8936002)(99286004)(9686003)(316002)(52116002)(6512007)(229853002)(186003)(2906002)(7736002)(305945005)(5250100002)(106356001)(6436002)(105586002)(33896004)(81166006)(93886005)(386003)(33656002)(8676002)(81156014)(68736007)(6486002)(86362001)(446003)(476003)(102836004)(486006)(46003)(97736004)(53936002)(11346002)(54906003)(58126008)(6916009)(256004)(6246003)(71190400001)(39060400002)(71200400001)(5660300001)(14444005)(14454004)(1076002)(478600001)(6116002)(7416002)(25786009)(4326008)(2900100001)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR08MB3525;H:AM6PR08MB3253.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 52yttdDprk08GiFXgBfp+Ya5PzNvp8ay3nJIYPazgiMooEyXlRQx5XS6aYVwCz0Q5MOzPIOPD1N8AiU5NwZZ4Zafw7Cu69veutQzcYy0RQcbJq3hjG/MPJjzQc+eT95V/1PJsesd6s1JEwCDm93lAG57G6XN8F3/fG4/PJbGkJ/0WiKOq5zDzkImFQvKn0fJkpzP+gO0/ABtSxS+QFZd/R4J2c2eDIzKxi65gQbrB1w56sdi5bVoqseI/QbuOM8ydNyWIegrJ6rGuSb82NJuIItD2XiKY4UVaQHM3mj+CbpGxhzbqHt18BDP1Dw6hURxpEfhnkGZgASRaHcVfp+c1v/iamVJyX6ZHgCWVP4Aiho=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="koi8-r"
+Content-ID: <8C46EDA933FB6941ACA5110F5EB9E607@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a94aac5-68e0-4c12-cac4-08d627f48498
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2018 23:20:47.4846
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3525
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/01/2018 01:27 PM, Michal Hocko wrote:
-> On Mon 01-10-18 13:56:25, Michael Bringmann wrote:
->> In some LPAR migration scenarios, device-tree modifications are
->> made to the affinity of the memory in the system.  For instance,
->> it may occur that memory is installed to nodes 0,3 on a source
->> system, and to nodes 0,2 on a target system.  Node 2 may not
->> have been initialized/allocated on the target system.
->>
->> After migration, if a RTAS PRRN memory remove is made to a
->> memory block that was in node 3 on the source system, then
->> try_offline_node tries to remove it from node 2 on the target.
->> The NODE_DATA(2) block would not be initialized on the target,
->> and there is no validation check in the current code to prevent
->> the use of a NULL pointer.
-> 
-> I am not familiar with ppc and the above doesn't really help me
-> much. Sorry about that. But from the above it is not clear to me whether
-> it is the caller which does something unexpected or the hotplug code
-> being not robust enough. From your changelog I would suggest the later
-> but why don't we see the same problem for other archs? Is this a problem
-> of unrolling a partial failure?
-> 
-> dlpar_remove_lmb does the following
-> 
-> 	nid = memory_add_physaddr_to_nid(lmb->base_addr);
-> 
-> 	remove_memory(nid, lmb->base_addr, block_sz);
-> 
-> 	/* Update memory regions for memory remove */
-> 	memblock_remove(lmb->base_addr, block_sz);
-> 
-> 	dlpar_remove_device_tree_lmb(lmb);
-> 
-> Is the whole operation correct when remove_memory simply backs off
-> silently. Why don't we have to care about memblock resp
-> dlpar_remove_device_tree_lmb parts? In other words how come the physical
-> memory range is valid while the node association is not?
-> 
+On Thu, Sep 27, 2018 at 11:41:49PM +0200, Thomas Gleixner wrote:
+> On Thu, 27 Sep 2018, Thomas Gleixner wrote:
+> > Add time skew via NTP/PTP into the picture and you might have to adjust
+> > timers as well, because you need to guarantee that they are not expirin=
+g
+> > early.
+> >=20
+> > I haven't looked through Dimitry's patches yet, but I don't see how thi=
+s
+> > can work at all without introducing subtle issues all over the place.
+>=20
+> And just a quick scan tells me that this is broken. Timers will expire
+> early or late. The latter is acceptible to some extent, but larger delays
+> might come with surprise. Expiring early is an absolute nono.
 
-I think the issue here is a race between the LPM code updating affinity and PRRN events being processed. Does your other patch[1] not fix the issue? Or is it that the LPM affinity updates don't do any of the initialization/allocation you mentioned?
+Do you mean that we have to adjust all timers after changing offset for
+CLOCK_MONOTONIC or CLOCK_BOOTTIME? Our idea is that offsets for
+monotonic and boot times will be set immediately after creating a time
+namespace before using any timers.
 
--Tyrel
+It is interesting to think what a use-case for changing these offsets
+after creating timers. It may be useful for testing needs. A user sets a
+timer in an hour and then change a clock offset forward and check that a
+test application handles the timer properly.
 
-[1] https://lore.kernel.org/linuxppc-dev/20181001185603.11373.61650.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com/T/#u
-
+>=20
+> Thanks,
+>=20
+> 	tglx
+>=20
