@@ -2,142 +2,135 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EB6C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6C3C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:14:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81E212083C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:13:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81E212083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id AD46B2083C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 07:14:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD46B2083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbeJANuC (ORCPT
+        id S1728978AbeJANuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 09:50:02 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35555 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728677AbeJANuC (ORCPT
+        Mon, 1 Oct 2018 09:50:37 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:35969 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728677AbeJANuh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 09:50:02 -0400
-Received: from mail-pg1-f199.google.com ([209.85.215.199])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1g6sOj-0004Fr-OD
-        for linux-kernel@vger.kernel.org; Mon, 01 Oct 2018 07:13:41 +0000
-Received: by mail-pg1-f199.google.com with SMTP id i189-v6so14418796pge.6
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 00:13:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=7O0M1ezcrlZqv+QIxjCov5BTT+qjV7K93kfAfVlYG/Q=;
-        b=FI3Ubo5urC1uX500notCOZCRVVCf2+q0vGK2pp/BWfdF124H2tgp3i1Z6IwDZm/vXG
-         dqHtFenpMOnB3Y9tDK1IX8kS7hPQzZHNJivAz6laFPjl57ItxOiBVAyRQ7LCZ8JdT6Bw
-         ad/UWZXgmKGHQb06U/Ca13x/jgpFv0HSsvIsyeoseCUediuj16XSQfSCBt98ShWv/dNP
-         drAkVT1L8jVnM4BZ7cNEj8610oceovko3KScTTzUxm/nCjKgKQtpx0cwRH6YmZvY12Py
-         kFouMIynhOT0fwU8lEfr2mhl+U8+2uVZK0hMHFDZAImSPHGZH9Cwte55gg0+wHJ4Kj19
-         M+lw==
-X-Gm-Message-State: ABuFfoiOYgLfL9206c5dPdauYEoD13vNfU3rWujaFmwrSKZ5du0RbD/6
-        Nykeh3ixfJbob7g02nS5cXtzSSApF7QHHhZzCQfPUkf5GWtZw3okYLfudMZW+eOX8yk0Ey1/8uT
-        1eAsSKVlmeiLO0Ut9pBlw5brnVO7tAEH7sJVo+jMh/A==
-X-Received: by 2002:a62:4ec9:: with SMTP id c192-v6mr10008391pfb.221.1538378020233;
-        Mon, 01 Oct 2018 00:13:40 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV61YMtD2KLi5GqoNbkZJYWbRxhUlmMNTJKsznkDvcuPyxyq9jYXxhWrkds6VbFXcVU8VSJPY0A==
-X-Received: by 2002:a62:4ec9:: with SMTP id c192-v6mr10008369pfb.221.1538378019966;
-        Mon, 01 Oct 2018 00:13:39 -0700 (PDT)
-Received: from [10.101.46.95] (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
-        by smtp.gmail.com with ESMTPSA id q25-v6sm15646109pfh.113.2018.10.01.00.13.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 00:13:39 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH] HID: i2c-hid: Add a small delay after powering on/off the
- device
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CAO-hwJKhyVjfNsiEK-a16KGPdtfgrtnQ0XgxLyBqUhHVaS8AOA@mail.gmail.com>
-Date:   Mon, 1 Oct 2018 15:13:35 +0800
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <D7895636-743E-4F43-B916-DB4326693A3B@canonical.com>
-References: <20181001035313.21453-1-kai.heng.feng@canonical.com>
- <CAO-hwJKhyVjfNsiEK-a16KGPdtfgrtnQ0XgxLyBqUhHVaS8AOA@mail.gmail.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Mon, 1 Oct 2018 09:50:37 -0400
+Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1Mzz2e-1fmLVv1wKU-00x0Yx; Mon, 01 Oct 2018 09:13:45 +0200
+Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1Mzz2e-1fmLVv1wKU-00x0Yx; Mon, 01 Oct 2018 09:13:45 +0200
+Subject: Re: [RFC 0/2] ns: introduce binfmt_misc namespace
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Andrey Vagin <avagin@openvz.org>,
+        Linux Containers <containers@lists.linux-foundation.org>
+References: <20180930234628.25528-1-laurent@vivier.eu>
+ <CALCETrWcQtLTVJU14ytWxu_gqoLuAYZJpyAvRsKwwgYZz7FEFg@mail.gmail.com>
+From:   Laurent Vivier <laurent@vivier.eu>
+Openpgp: preference=signencrypt
+Autocrypt: addr=laurent@vivier.eu; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <d1b6b52b-dd7f-fa27-eafa-7a6a43a03b92@vivier.eu>
+Date:   Mon, 1 Oct 2018 09:13:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <CALCETrWcQtLTVJU14ytWxu_gqoLuAYZJpyAvRsKwwgYZz7FEFg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:qjMQjAjhOTe5GdOv/RFFNLDaKLvt1cVlfM3gRW+q1/3A6hARonC
+ mWa3uFr6e5PGdpBh0a+6XBp3otrwpF4ANB1OuamlpVkalYMkd0ffom747TJfilWNPDu9Upi
+ UyDQbK4MeSZaI0E5uA4K03bAd8nkLjjKvw/oB7W9wep2/U7VmvM1xcprfCfyKbCJ2+87I6D
+ 134MEqEon+0Yj1hqyfYjQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:kxlVfl9umdo=:kFptfgDEOoVMmlLonTnuwb
+ WbzbmokW2ZaWyiFnPCB/DhE732KRp+3fjnQPXf/UyzcTE5lSjgMO7x43a8hfzlZkEo5G1MchD
+ zCQ0VmjbDVIn1NRtPiZk5Ank2RVYp8vfDY67qQuYbm9IgCrg3vSqxH9m3tsDGoqoG+M0ThnZ8
+ 0O/sxLnbAr2DZTHB8SlETNfZMolFXncvbI8dBAVIRXyT1D85ZAeWZDMmPjgdLU7s7Je6sfhUF
+ AaLKBQrjQZAuzTxkqyebMDRqUKoB/NEavT+sFdsG1wULqkYT9cvsWAB0wrpvO562NXs7ZZe8E
+ RIwkb+cxTApxx30ZcBbU/+XDgWp45+DZE0xx4aNP4Ir/ys+EnPcWcmYLSqitjcnSGofwmMoOQ
+ 0RtBAetInRKMgHOXDYX5DRGVtC/IRb6aAKW6PU0AvOmNjxgsk/xEhe1g9lGefOIizGR0dC5sf
+ mEkuDNoVHbfkK0CYGpwAMyKlGspqarF7zUgiYH9RpLBeyHbZAL2H2OqqxiKS4CUz0YfY0kC3W
+ 9UQsZBcNe+JMBfgUPFV46NYIGyoCetIcJhFmP+ztQMRpHXkIYPKeOd3Ujau2sNz5taMnP7OiK
+ sTpcCRscx/5A3gyUdbgq/QjsT10SzqJF1gpAjkB+j3bm615WX6PUGw+nmPKgTWtC2tbtJTMXc
+ N9Zc88QIuxIUi9LtCCcLVTIlTKbgXwcms0ELS2d6hNazqk9GpOkByBc+0J3oKTUzfXhrH057Q
+ zM5sX4lUM9rnPYUt
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> On Oct 1, 2018, at 3:00 PM, Benjamin Tissoires  
-> <benjamin.tissoires@redhat.com> wrote:
->
-> On Mon, Oct 1, 2018 at 5:53 AM Kai-Heng Feng
-> <kai.heng.feng@canonical.com> wrote:
->> Raydium touchpanel (2386:4B33) sometimes does not workin desktop session
->> although it works in display manager.
+Le 01/10/2018 à 06:45, Andy Lutomirski a écrit :
+> On Sun, Sep 30, 2018 at 4:47 PM Laurent Vivier <laurent@vivier.eu> wrote:
 >>
->> During user logging, the display manager exits, close the HID device,
->> then the device gets runtime suspended and powered off. The desktop
->> session begins shortly after, opens the HID device, then the device gets
->> runtime resumed and powered on.
+>> This series introduces a new namespace for binfmt_misc.
 >>
->> If the trasition from display manager to desktop sesesion is fast, the
->> touchpanel cannot switch from powered off to powered on in short
->> timeframe. So add a small delay to workaround the issue.
->
-> I think you want something similar to
-> https://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git/commit/?h=for-next&id=807588ac92018bde88a1958f546438e840eb0158
->
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->>  drivers/hid/i2c-hid/i2c-hid.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
->> index f3076659361a..ff5682cc1bce 100644
->> --- a/drivers/hid/i2c-hid/i2c-hid.c
->> +++ b/drivers/hid/i2c-hid/i2c-hid.c
->> @@ -409,6 +409,8 @@ static int i2c_hid_set_power(struct i2c_client  
->> *client, int power_state)
->>
->>         if (ret)
->>                 dev_err(&client->dev, "failed to change power setting.\n");
->> +       else
->> +               msleep(20);
->
-> We shouldn't have this error in the first place, so adding a timeout
-> will just add a band-aid on top of an other issue.
->
-> I really think the solution from Anisse would work in your case and
-> will be nicer.
+> 
+> This seems conceptually quite reasonable, but I'm wondering if the
+> number of namespace types is getting out of hand given the current
+> API.  Should we be considering whether we need a new set of namespace
+> creation APIs that scale better to larger numbers of namespace types?
+> 
 
-The Hantick one requires 2.5 seconds delay, the Raydium one requires much  
-less.
-Also it doesn't have the input shift issue.
+Yes, we need something to increase the maximum number of namespace types
+because this is the last bit in the clone() flags and the time namespace
+has already preempted it.
 
-So disabling runtime PM entirely is a little overkill in this case.
-
-Maybe there's a better approach?
-
-Kai-Heng
-
->
-> Cheers,
-> Benjamin
->
->>  set_pwr_exit:
->>         return ret;
->> --
->> 2.17.1
+Thanks,
+Laurent
