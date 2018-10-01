@@ -2,57 +2,59 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BC3C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADAAC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED3D520684
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEA6D20684
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:43:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WQhNOq80"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED3D520684
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6RFV98Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA6D20684
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbeJATVY (ORCPT
+        id S1729359AbeJATV3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 15:21:24 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38605 "EHLO
+        Mon, 1 Oct 2018 15:21:29 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41427 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729017AbeJATVY (ORCPT
+        with ESMTP id S1729321AbeJATV3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 15:21:24 -0400
-Received: by mail-pg1-f194.google.com with SMTP id r77-v6so9409735pgr.5
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 05:43:45 -0700 (PDT)
+        Mon, 1 Oct 2018 15:21:29 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 23-v6so495115pgc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 05:43:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=YNyhvQyzZl0nz/gSYbWbb9j+GBvRbJE/NeE4hac8Ats=;
-        b=WQhNOq80ijMikUQnkqm0E1rbbiQJxnJS/RGuWFiYv75ypSLYVYC4zU1SV3kodxt76S
-         XTvqStp1PUEOWnVGwYRj+UXL/wAA07db2jsV6LxG3rdI/i75FsPNrWbuD4Q+wBqbNiQu
-         osrva7bvSDPBUhXSZhXBz2uMH/Hcqp2Dc86uo=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=s8hI874nr1svKsPuQ+4jj2+9yIBbAE+XlrRpXowMo1U=;
+        b=N6RFV98Y65kCWeczCKHFm2nY7Fqjuh7lQa887pmiWJX4z72dez5LyEmFk/kpP9aZlW
+         VwRBn1B+ahG1MAT+jWJ7DIrmw3zhEby+hyWjT9FeQy+tbVfcbwtFDOARBXo0e3KubJRZ
+         +xVXR2PS5ZIsh0zqsVYVP2Icny/hgOg/xxJJw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=YNyhvQyzZl0nz/gSYbWbb9j+GBvRbJE/NeE4hac8Ats=;
-        b=GPvE7dkgR3MeYWyfmXzRiWpfn/KeZ77b4FBSWJsxG/JJi1xSjPHCmC9J7Vj/5qybIj
-         g1BZjFsgImfJXuc37KRj7j3e+ChoAWlxrbpV7g7z123RYTrpW3TWmopZQMJqg8uAxCQO
-         BzpaRlG7a35st3VZoYumfI1zfK+rJD23uXXk8q6vP1K3RL0pUym2dNBWF8LEnNZjFA4I
-         HCRL2Kbm3jVFsWBKdXsjN93PqGGBQZS9Nz5gIGz5U9uzlvXga2g0KbMYp0z6GXoL6mBv
-         hYhn3gCgR+AWSH1lxxQ1UEGXIhj8PIBLx49TjYDKyV5s9Za6EBTmI0n82+gKLkuHsijA
-         bHDw==
-X-Gm-Message-State: ABuFfohW46RljLPNRkHWulMlsojsr3NbJs7T0L79wQkKngUis3ZtPDi1
-        rjG1ENWPI2LTOcG3EHD+1Piv/Q==
-X-Google-Smtp-Source: ACcGV62ZpgXMKp8qLblsFtI+KKxa2rkY/Fnx0CzVFa0il+olCjOp7p94E4ID95MOBsJD5VYac0DgZQ==
-X-Received: by 2002:a62:5c03:: with SMTP id q3-v6mr11430323pfb.182.1538397825311;
-        Mon, 01 Oct 2018 05:43:45 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=s8hI874nr1svKsPuQ+4jj2+9yIBbAE+XlrRpXowMo1U=;
+        b=rmzJjzwh3JY5I1sMoewjgfWYx9P7ydsPZIc8BSlkqhogtLERazZTsfV0cJJ82jYwj+
+         Nco0Lcoh4N2X2Pn7Uv0n0uqVA7hXawmL3xpxfYGodbCYq8DS0+FrGlV01cIsT+oIKSc8
+         mq6noyH1/zc1TKQU+nwNVp/PLzcQ5ulCaG8pIEJqyP3hlkfx1twI8cZFEjZtefmtSxGQ
+         /8iAWqGTGEpx4FlfojhHdr0DaPVVSA3ahCmA/hJPUfLePkRt6maGRIbRxgZyC24UaTmW
+         5HP941zYNWwNuiIoXHKe7hWVixxIf7ktyGGondXBV1LXRveNrarQQckUzRKrWbb3gKdu
+         58mw==
+X-Gm-Message-State: ABuFfogEDXxL5HZrwVa1mApdnNcATbqY7T18rCacvo9U+n4aqGt4LSop
+        vYPYSTLG53q4zW35FLs9KnsCSw==
+X-Google-Smtp-Source: ACcGV61nHIcQOTqKLoWbKw/ZLh8m9tJ55DdzTcUwn+TO5DoIC0zVlIgWJUeha1ItjH3NTC/012tlDQ==
+X-Received: by 2002:a62:56c1:: with SMTP id h62-v6mr9301694pfj.107.1538397830469;
+        Mon, 01 Oct 2018 05:43:50 -0700 (PDT)
 Received: from qualcomm-HP-ZBook-14-G2.domain.name ([49.207.59.231])
-        by smtp.gmail.com with ESMTPSA id x17-v6sm5522450pfn.59.2018.10.01.05.43.40
+        by smtp.gmail.com with ESMTPSA id x17-v6sm5522450pfn.59.2018.10.01.05.43.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 01 Oct 2018 05:43:44 -0700 (PDT)
+        Mon, 01 Oct 2018 05:43:50 -0700 (PDT)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     Michal Simek <monstr@monstr.eu>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -62,75 +64,74 @@ To:     Michal Simek <monstr@monstr.eu>,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v2 0/3] System call table generation support
-Date:   Mon,  1 Oct 2018 18:13:01 +0530
-Message-Id: <1538397784-4214-1-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH v2 1/3] microblaze: replace __NR_syscalls macro from asm/unistd.h
+Date:   Mon,  1 Oct 2018 18:13:02 +0530
+Message-Id: <1538397784-4214-2-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1538397784-4214-1-git-send-email-firoz.khan@linaro.org>
+References: <1538397784-4214-1-git-send-email-firoz.khan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of this patch series is:
-1. We can easily add/modify/delete system call by changing entry 
-in syscall.tbl file. No need to manually edit many files.
+__NR_syscalls macro holds the number of system call exist in this
+architecture. This macro is currently the part of asm/unistd.h file.
+We have change the value of __NR_syscalls, if we add or delete a
+system call.
 
-2. It is easy to unify the system call implementation across all 
-the architectures. 
+One of the patch in this patch series has a script which will
+generate a uapi header based on syscall.tbl file. The syscall.tbl
+file contains the number of system call information. So we have
+two option to update __NR_syscalls value.
 
-The system call tables are in different format in all architecture 
-and it will be difficult to manually add or modify the system calls
-in the respective files manually. To make it easy by keeping a script 
-and which'll generate the header file and syscall table file so this 
-change will unify them across all architectures.
+1. Update __NR_syscalls in asm/unistd.h manually by counting the
+   no.of system calls. No need to update __NR_syscalls until
+   we either add a new system call or delete an existing system
+   call.
 
-syscall.tbl contains the list of available system calls along with 
-system call number and corresponding entry point. Add a new system 
-call in this architecture will be possible by adding new entry in 
-the syscall.tbl file.
+2. We can keep this feature it above mentioned script, that'll
+   count the number of syscalls and keep it in a generated file.
+   In this case we don't need to explicitly update __NR_syscalls
+   in asm/unistd.h file.
 
-Adding a new table entry consisting of:
-        - System call number.
-        - ABI.
-        - System call name.
-        - Entry point name.
-        - Compat entry name, if required.
+The 2nd option will be the recommended one. For that, I moved the
+__NR_syscalls macro from asm/unistd.h to uapi/asm/unistd.h. While
+__NR_syscalls isn't strictly part of the uapi, having it as part
+of the generated header to simplifies the implementation. We also
+need to enclose this macro with #ifdef __KERNEL__ to avoid side
+effects.
 
-ARM, s390 and x86 architecuture does exist the similar support. I 
-leverage their implementation to come up with a generic solution.
+Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+---
+ arch/microblaze/include/asm/unistd.h      | 2 --
+ arch/microblaze/include/uapi/asm/unistd.h | 4 ++++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-I have done the same support for work for alpha, ia64, sparc, mips, 
-parisc, powerpc, sh, sparc, and xtensa. But I started sending 
-the patch for one architecuture for review. Below mentioned git
-repository contains more details.
-Git repo:- https://github.com/frzkhn/system_call_table_generator/
-
-Finally, this is the ground work for solving the Y2038 issue. We 
-need to add/change two dozen of system calls to solve Y2038 issue. 
-So this patch series will help to easily modify from existing 
-system call to Y2038 compatible system calls.
-
-Firoz Khan (3):
-  microblaze: replace __NR_syscalls macro from asm/unistd.h
-  microblaze: add system call table generation support
-  microblaze: uapi header and system call table file generation
-
- arch/microblaze/Makefile                      |   3 +
- arch/microblaze/include/asm/Kbuild            |   1 +
- arch/microblaze/include/asm/unistd.h          |   2 -
- arch/microblaze/include/uapi/asm/Kbuild       |   1 +
- arch/microblaze/include/uapi/asm/unistd.h     | 407 +-------------------------
- arch/microblaze/kernel/syscall_table.S        | 406 +------------------------
- arch/microblaze/kernel/syscalls/Makefile      |  38 +++
- arch/microblaze/kernel/syscalls/syscall.tbl   | 405 +++++++++++++++++++++++++
- arch/microblaze/kernel/syscalls/syscallhdr.sh |  35 +++
- arch/microblaze/kernel/syscalls/syscalltbl.sh |  34 +++
- 10 files changed, 522 insertions(+), 810 deletions(-)
- create mode 100644 arch/microblaze/kernel/syscalls/Makefile
- create mode 100644 arch/microblaze/kernel/syscalls/syscall.tbl
- create mode 100644 arch/microblaze/kernel/syscalls/syscallhdr.sh
- create mode 100644 arch/microblaze/kernel/syscalls/syscalltbl.sh
-
+diff --git a/arch/microblaze/include/asm/unistd.h b/arch/microblaze/include/asm/unistd.h
+index a62d094..e19550f 100644
+--- a/arch/microblaze/include/asm/unistd.h
++++ b/arch/microblaze/include/asm/unistd.h
+@@ -38,6 +38,4 @@
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+-#define __NR_syscalls         401
+-
+ #endif /* _ASM_MICROBLAZE_UNISTD_H */
+diff --git a/arch/microblaze/include/uapi/asm/unistd.h b/arch/microblaze/include/uapi/asm/unistd.h
+index 7a9f16a..ed9c6f5 100644
+--- a/arch/microblaze/include/uapi/asm/unistd.h
++++ b/arch/microblaze/include/uapi/asm/unistd.h
+@@ -418,4 +418,8 @@
+ #define __NR_io_pgetevents	399
+ #define __NR_rseq		400
+ 
++#ifdef __KERNEL__
++#define __NR_syscalls         401
++#endif
++
+ #endif /* _UAPI_ASM_MICROBLAZE_UNISTD_H */
 -- 
 1.9.1
 
