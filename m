@@ -2,179 +2,119 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D63A2C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9FFC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 19:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8377A2089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:56:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8377A2089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E44F02084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 19:01:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E44F02084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbeJBBfn (ORCPT
+        id S1726448AbeJBBkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 21:35:43 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42776 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726274AbeJBBfn (ORCPT
+        Mon, 1 Oct 2018 21:40:42 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49215 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbeJBBkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 21:35:43 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w91IsXH1123512
-        for <linux-kernel@vger.kernel.org>; Mon, 1 Oct 2018 14:56:32 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2murm79m0n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 14:56:31 -0400
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
-        Mon, 1 Oct 2018 12:56:31 -0600
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 1 Oct 2018 12:56:26 -0600
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w91IuPbI41812070
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 1 Oct 2018 11:56:25 -0700
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A8ACABE058;
-        Mon,  1 Oct 2018 12:56:25 -0600 (MDT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8790DBE051;
-        Mon,  1 Oct 2018 12:56:25 -0600 (MDT)
-Received: from ltcalpine2-lp9.aus.stglabs.ibm.com (unknown [9.40.195.192])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon,  1 Oct 2018 12:56:25 -0600 (MDT)
-Received: from ltcalpine2-lp9.aus.stglabs.ibm.com (localhost [IPv6:::1])
-        by ltcalpine2-lp9.aus.stglabs.ibm.com (Postfix) with ESMTP id 350952087F40;
-        Mon,  1 Oct 2018 13:56:25 -0500 (CDT)
-Subject: [PATCH] migration/mm: Add WARN_ON to try_offline_node
-From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
-To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mwb@linux.vnet.ibm.com
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Russell Currey <ruscur@russell.cc>,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Juliet Kim <minkim@us.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
-Date:   Mon, 01 Oct 2018 13:56:25 -0500
-User-Agent: StGit/0.18-105-g416a
+        Mon, 1 Oct 2018 21:40:42 -0400
+Received: from mail-qk1-f197.google.com ([209.85.222.197])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <gpiccoli@canonical.com>)
+        id 1g73Rh-0000xy-1C
+        for linux-kernel@vger.kernel.org; Mon, 01 Oct 2018 19:01:29 +0000
+Received: by mail-qk1-f197.google.com with SMTP id a130-v6so15180750qkb.7
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 12:01:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:references:cc:to:in-reply-to:from
+         :openpgp:autocrypt:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=4vZl04JKGcA/xs1axAel9lKfFo8PbeprXVLZSpqzkLc=;
+        b=mCe156qqclO5XrtdsclzIU3/SkGL/uLzp9L2pvgPbQqnQgo6n+f1/KPWQkEbfk4hwo
+         PjN0PziIUoi+XediCrZnM1iyXDRpB3hnNVx997UBWIKlK2/IWXU6P1D6ljJB1YpTyxdD
+         vnllNpz8uba+6x6zWE5dpTRWylH9Sshochg9oNO2QwE5WMzeXCYYHeYdoP/tPY211xaR
+         ryVxm4rtY5YzMVd5RrxwT1dvh1mZi62mYxa19gPxrSZYlmhM7obL+C3I5kqbg7euLRFN
+         aosEdVzfJ2JPG0t7e4k0nop48wYdobvsKzfbuG9Gl4WsTskLXmbxZExiJg/WpIerv5u1
+         qp3A==
+X-Gm-Message-State: ABuFfoj2nus6Kkqvu3YLvKX2cveSR6F98Cdwd6ywJbAvHeqE26/GA0zg
+        BTkHmOxnqFWCnuXPuwrps7yKYFBUR/Carcj6pFqezFMcruJzTz2y0d+GqR5lAGVuLQVKPLB+nTY
+        ZC4THtd3wuTVFaxB5Hs927Ad4ChkVCdovrJtffjd3Xg==
+X-Received: by 2002:a37:4dc5:: with SMTP id a188-v6mr9171784qkb.326.1538420488265;
+        Mon, 01 Oct 2018 12:01:28 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV610CRXv2KXGDxXhTAGd20fti/gQwPKKrmqz2lSYjNIj115WjIgl9HB1t4Ff9W0jR2zGvvUWEw==
+X-Received: by 2002:a37:4dc5:: with SMTP id a188-v6mr9171773qkb.326.1538420488114;
+        Mon, 01 Oct 2018 12:01:28 -0700 (PDT)
+Received: from [192.168.1.109] (189-47-87-29.dsl.telesp.net.br. [189.47.87.29])
+        by smtp.gmail.com with ESMTPSA id r79-v6sm2662585qke.31.2018.10.01.12.01.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 12:01:26 -0700 (PDT)
+Subject: Re: [PATCHv5 3/7] tty: Hold tty_ldisc_lock() during tty_reopen()
+References: <8c61fd04-969a-cb09-6595-7ee23d214ab1@canonical.com>
+Cc:     gpiccoli@canonical.com
+To:     linux-kernel@vger.kernel.org, dima@arista.com
+In-Reply-To: <8c61fd04-969a-cb09-6595-7ee23d214ab1@canonical.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
+ Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
+ 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
+ irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
+ 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
+ AAHNLUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPsLAdwQT
+ AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
+ 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
+ 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
+ q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
+ iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
+ LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltvezsBNBFpVBxcBCADbxD6J
+ aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
+ pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
+ kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
+ nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
+ bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAHCwF8EGAEIAAkFAlpV
+ BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
+ 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
+ egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
+ Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
+ kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
+ X18zwLgdiQ==
+Message-ID: <99f1353a-e1a0-5ade-4aad-3eb62ea42a66@canonical.com>
+Date:   Mon, 1 Oct 2018 16:01:23 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18100118-8235-0000-0000-00000E0ABA13
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009804; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01096428; UDB=6.00566942; IPR=6.00876470;
- MB=3.00023577; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-01 18:56:30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100118-8236-0000-0000-000042D6EF7D
-Message-Id: <20181001185616.11427.35521.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-01_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=937 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810010180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some LPAR migration scenarios, device-tree modifications are
-made to the affinity of the memory in the system.  For instance,
-it may occur that memory is installed to nodes 0,3 on a source
-system, and to nodes 0,2 on a target system.  Node 2 may not
-have been initialized/allocated on the target system.
+On 01/10/2018 15:32, Guilherme G. Piccoli wrote:
+> Hi Dmitry, thanks for the patch. It's very promising, we have some
+> reports of this issue and I'm building a kernel with this patch in
+> order the reporter can test it. But based in the previous feedback,
+> this seems to be very mature now and ready to get merged, right?
+> 
+> I'd like to ask you if you did respin the patch with Greg's suggestion
+> for the tag - I couldn't find it in LKML heheh
+> 
+> Oh, if you can CC me in future spins of this patch (in case there any),
+> I'd really be glad.
+> 
+> Thank in advance,
+> 
+> 
+> Guilherme
+> 
 
-After migration, if a RTAS PRRN memory remove is made to a
-memory block that was in node 3 on the source system, then
-try_offline_node tries to remove it from node 2 on the target.
-The NODE_DATA(2) block would not be initialized on the target,
-and there is no validation check in the current code to prevent
-the use of a NULL pointer.  Call traces such as the following
-may be observed:
 
-A similar problem of moving memory to an unitialized node has
-also been observed on systems where multiple PRRN events occur
-prior to a complete update of the device-tree.
-
-pseries-hotplug-mem: Attempting to update LMB, drc index 80000002
-Offlined Pages 4096
-...
-Oops: Kernel access of bad area, sig: 11 [#1]
-...
-Workqueue: pseries hotplug workque pseries_hp_work_fn
-...
-NIP [c0000000002bc088] try_offline_node+0x48/0x1e0
-LR [c0000000002e0b84] remove_memory+0xb4/0xf0
-Call Trace:
-[c0000002bbee7a30] [c0000002bbee7a70] 0xc0000002bbee7a70 (unreliable)
-[c0000002bbee7a70] [c0000000002e0b84] remove_memory+0xb4/0xf0
-[c0000002bbee7ab0] [c000000000097784] dlpar_remove_lmb+0xb4/0x160
-[c0000002bbee7af0] [c000000000097f38] dlpar_memory+0x328/0xcb0
-[c0000002bbee7ba0] [c0000000000906d0] handle_dlpar_errorlog+0xc0/0x130
-[c0000002bbee7c10] [c0000000000907d4] pseries_hp_work_fn+0x94/0xa0
-[c0000002bbee7c40] [c0000000000e1cd0] process_one_work+0x1a0/0x4e0
-[c0000002bbee7cd0] [c0000000000e21b0] worker_thread+0x1a0/0x610
-[c0000002bbee7d80] [c0000000000ea458] kthread+0x128/0x150
-[c0000002bbee7e30] [c00000000000982c] ret_from_kernel_thread+0x5c/0xb0
-
-This patch adds a check for an incorrectly initialized to the
-beginning of try_offline_node, and exits the routine.
-
-Another patch is being developed for powerpc to track the
-node Id to which an LMB belongs, so that we can remove the
-LMB from there instead of the nid as currently interpreted
-from the device tree.
-
-Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
----
- mm/memory_hotplug.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 38d94b7..e48a4d0 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1831,10 +1831,16 @@ static int check_and_unmap_cpu_on_node(pg_data_t *pgdat)
- void try_offline_node(int nid)
- {
- 	pg_data_t *pgdat = NODE_DATA(nid);
--	unsigned long start_pfn = pgdat->node_start_pfn;
--	unsigned long end_pfn = start_pfn + pgdat->node_spanned_pages;
-+	unsigned long start_pfn;
-+	unsigned long end_pfn;
- 	unsigned long pfn;
- 
-+	if (WARN_ON(pgdat == NULL))
-+		return;
-+
-+	start_pfn = pgdat->node_start_pfn;
-+	end_pfn = start_pfn + pgdat->node_spanned_pages;
-+
- 	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
- 		unsigned long section_nr = pfn_to_section_nr(pfn);
- 
-
+Sorry, forgot to CC linux-kernel...
