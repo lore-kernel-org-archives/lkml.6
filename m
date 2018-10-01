@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A108C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11588C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA69A208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B93192089A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="i/RbAs4i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA69A208AE
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="hnDPHpV7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B93192089A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbeJBAnF (ORCPT
+        id S1726871AbeJBAnK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:43:05 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37168 "EHLO
+        Mon, 1 Oct 2018 20:43:10 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35749 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbeJBAnE (ORCPT
+        with ESMTP id S1726149AbeJBAnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:43:04 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j23-v6so455355pfi.4
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:04:06 -0700 (PDT)
+        Mon, 1 Oct 2018 20:43:10 -0400
+Received: by mail-pf1-f194.google.com with SMTP id p12-v6so9815035pfh.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:04:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=a082AL/4Oj65cVJFcdJAwbuKyRvNhbo+1Hg117kQxIY=;
-        b=i/RbAs4izAdc8l6xtU2dFlH7VxCmErKV/xX/K1VzpZVyWk9JWxuGM0W40qGHVufztV
-         SrKvBz49Ps+yH4ERe38Tzoy+6czv+p16TEUGlR8nEHBiECbcyvWsofsPHOnxOb97DrON
-         1t06AWfcy08CuFXSioU1S0pmUNjdYMZeS2xYvcmTvqKJ/6c2NHVpeyls2klSVX7+CZOl
-         tU/TquASqsX2EyTjJKi8RrgtgPT253ad79p0O9HiQkoDuylMZf1OH2bZFttVbyUTvsk3
-         KKXTPZ4TYv9VtYdPf9WKd5STOTJCOpTvsNhbCOAYRORYvUqdu7hdNf01VuZoYRL2YqtI
-         SzNg==
+        bh=sOPjKLOAakk2ATxxw5XzVSyruYdNVeZzHr/Hs8pvlVw=;
+        b=hnDPHpV7TRVLm1iFIa+huzuRU52EietdeZtd38RC4mD3lpJ1E56o+dY5ponRV1+tDH
+         CjhttDPBZsCyq+6GWF2H90ZKfgbgPWC+ZMjwyEEzH3O+TCPxB7Lcydfv5iUrElcaletM
+         smKvnJKirX6OAHOoFdP1mdtEnYigBtHyRVCRZ9TRTGSr3oNk5OxVocVvt80FxDzV7LGv
+         QRCmAKg6r5sTNr+gnIQ1R0kAUHaIbqXzm2LO2SOxsPcZ/1swGJc0h/dlapt3mK+gUC7h
+         a2MSWCS/jJSLAf4m+Xr0M75IXW4xtztUiAE4Z2ZLxF7VTaEYZHqN0hAqxSqmVHFNUm0Q
+         lRcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=a082AL/4Oj65cVJFcdJAwbuKyRvNhbo+1Hg117kQxIY=;
-        b=WqKL9tjFL48p0aA1vSqxeBvIU62mZ52zuehhOA3Al/p+re7KbNfZLA9jfXLTj9Mnzj
-         p8bct/Lni41SNjWqFPDM35fsdA8ZWrhifkvHBGKFUOAEWq35e+GWx0Y81SW2dZoGysSM
-         fBXwKCt2UpcY6Cgv3JO2TAhEy7/qYp8va+eOEtyQ4eCpSSWC/kk9SgzBjeVcPqML1Hdj
-         xhW79h2cRiSqwJLXF8smt2UZs4MlGj9KEEvknJWa6zm5pR9tiRc3epgmVcGfWY7l9mb1
-         p1E0+kXMIBEetBOTJsmjupVlGFWk9fMSbNNAgY6Ej37VC0n7+oiFX1Yj7fFAJFrCOUjU
-         Aj3Q==
-X-Gm-Message-State: ABuFfoiPbNzbZfnxfgAjtIx6b9+L2Ptd3huLTi4l8NuS3YRw76X/CnzL
-        pJFu9Z6khajdMvD1Wq8158T0FwVeH64=
-X-Google-Smtp-Source: ACcGV61cLdG7DWQiudJJIj+s/q2sNeMqzZ9N0MvqOmIuRztv9JsFZ08pWU7HSiH3MsKmL19dWYicKQ==
-X-Received: by 2002:a63:3747:: with SMTP id g7-v6mr11311032pgn.59.1538417046158;
-        Mon, 01 Oct 2018 11:04:06 -0700 (PDT)
+        bh=sOPjKLOAakk2ATxxw5XzVSyruYdNVeZzHr/Hs8pvlVw=;
+        b=oX8/ofCccJhUkrbcsP0Gr6BZ1dar4UMMdht5KpYx6XVyGM08anEDFor4ieXRmJ3268
+         jw+roCfZcistqtM849+I27IqsY6nl6/mTlPE0+Tb2MyoecTyllAAmMZmEpZOcwehRjpN
+         AIU4o8MG5xhzrzPzO75r3AF1c6NIZm5jIh+UXQo6WwatWT5jeLUHIDdGleiqLWV1sSHw
+         KaA41KPkdq3f/n+6zO0RE0iJwXxPidqfGpe/1QEpt1THdz4MAruYEKYpPITGND8Bxz3l
+         Wfucb7GOc28H3szN2b+A4srjluV9bs/WKGFSTOvwoLzEn0Lve15r6j9qGtOv/1kGgR9o
+         +UOQ==
+X-Gm-Message-State: ABuFfojA3RwSrwVhmngdcQpfxgZFkUCT4Lzck3s0hPhmaDgWK7Aubjqe
+        c4o/slcXi2rzTtsTF1P5qNSysL2VGgQ=
+X-Google-Smtp-Source: ACcGV609gFtSB8A7iVi5SNuJhxzQZ+JwUX0XV2went9IB2rxXdILtfk8FBA6kCYRUlUeYkAeXK8A6A==
+X-Received: by 2002:a63:1245:: with SMTP id 5-v6mr11167820pgs.299.1538417051064;
+        Mon, 01 Oct 2018 11:04:11 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
-        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.04.05
+        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.04.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 11:04:05 -0700 (PDT)
+        Mon, 01 Oct 2018 11:04:10 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
@@ -79,11 +79,10 @@ Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org,
         Jeremy Linton <Jeremy.Linton@arm.com>,
-        android-kernel@android.com, Ben Hutchings <ben@decadent.org.uk>,
-        Dave Martin <Dave.Martin@arm.com>
-Subject: RESEND [PATCH 2/6] arm64: elf: Set AT_SYSINFO_EHDR in compat processes
-Date:   Mon,  1 Oct 2018 10:58:39 -0700
-Message-Id: <20181001175845.168430-20-salyzyn@android.com>
+        android-kernel@android.com
+Subject: RESEND [PATCH 3/6] arm64: Refactor vDSO init/setup
+Date:   Mon,  1 Oct 2018 10:58:40 -0700
+Message-Id: <20181001175845.168430-21-salyzyn@android.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 In-Reply-To: <20181001175845.168430-1-salyzyn@android.com>
 References: <20181001175845.168430-1-salyzyn@android.com>
@@ -96,13 +95,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kevin Brodsky <kevin.brodsky@arm.com>
 
-If the compat vDSO is enabled, we need to set AT_SYSINFO_EHDR in the
-auxiliary vector of compat processes to the address of the vDSO code
-page, so that the dynamic linker can find it (just like the regular vDSO).
-
-Note that we cast context.vdso to Elf64_Off, instead of elf_addr_t,
-because elf_addr_t is Elf32_Off in compat_binfmt_elf.c, and casting
-context.vdso to u32 would trigger a pointer narrowing warning.
+Move the logic for setting up mappings and pages for the vDSO into
+static functions. This makes the vDSO setup code more consistent with
+the compat side and will allow to reuse it for the future compat vDSO.
 
 Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
@@ -126,46 +121,188 @@ Cc: linux-arm-kernel@lists.infradead.org
 Cc: Jeremy Linton <Jeremy.Linton@arm.com>
 Cc: android-kernel@android.com
 ---
- arch/arm64/include/asm/elf.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/vdso.c | 118 +++++++++++++++++++++++----------------
+ 1 file changed, 70 insertions(+), 48 deletions(-)
 
-diff --git a/arch/arm64/include/asm/elf.h b/arch/arm64/include/asm/elf.h
-index 433b9554c6a1..bf4672a0491b 100644
---- a/arch/arm64/include/asm/elf.h
-+++ b/arch/arm64/include/asm/elf.h
-@@ -147,10 +147,10 @@ typedef struct user_fpsimd_state elf_fpregset_t;
- })
+diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
+index 76a94bed4bd5..8529e85a521f 100644
+--- a/arch/arm64/kernel/vdso.c
++++ b/arch/arm64/kernel/vdso.c
+@@ -39,8 +39,11 @@
+ #include <asm/vdso.h>
+ #include <asm/vdso_datapage.h>
  
- /* update AT_VECTOR_SIZE_ARCH if the number of NEW_AUX_ENT entries changes */
--#define ARCH_DLINFO							\
-+#define _SET_AUX_ENT_VDSO						\
- do {									\
- 	NEW_AUX_ENT(AT_SYSINFO_EHDR,					\
--		    (elf_addr_t)current->mm->context.vdso);		\
-+		    (Elf64_Off)current->mm->context.vdso);		\
- 									\
- 	/*								\
- 	 * Should always be nonzero unless there's a kernel bug.	\
-@@ -162,6 +162,7 @@ do {									\
- 	else								\
- 		NEW_AUX_ENT(AT_IGNORE, 0);				\
- } while (0)
-+#define ARCH_DLINFO _SET_AUX_ENT_VDSO
+-extern char vdso_start[], vdso_end[];
+-static unsigned long vdso_pages __ro_after_init;
++struct vdso_mappings {
++	unsigned long num_code_pages;
++	struct vm_special_mapping data_mapping;
++	struct vm_special_mapping code_mapping;
++};
  
- #define ARCH_HAS_SETUP_ADDITIONAL_PAGES
- struct linux_binprm;
-@@ -209,7 +210,11 @@ typedef compat_elf_greg_t		compat_elf_gregset_t[COMPAT_ELF_NGREG];
- ({									\
- 	set_thread_flag(TIF_32BIT);					\
-  })
-+#ifdef CONFIG_VDSO32
-+#define COMPAT_ARCH_DLINFO	_SET_AUX_ENT_VDSO
-+#else
- #define COMPAT_ARCH_DLINFO
-+#endif
- extern int aarch32_setup_vectors_page(struct linux_binprm *bprm,
- 				      int uses_interp);
- #define compat_arch_setup_additional_pages \
+ /*
+  * The vDSO data page.
+@@ -164,95 +167,114 @@ static int vdso_mremap(const struct vm_special_mapping *sm,
+ 	return 0;
+ }
+ 
+-static struct vm_special_mapping vdso_spec[2] __ro_after_init = {
+-	{
+-		.name	= "[vvar]",
+-	},
+-	{
+-		.name	= "[vdso]",
+-		.mremap = vdso_mremap,
+-	},
+-};
+-
+-static int __init vdso_init(void)
++static int __init vdso_mappings_init(const char *name,
++				     const char *code_start,
++				     const char *code_end,
++				     struct vdso_mappings *mappings)
+ {
+-	int i;
++	unsigned long i, vdso_page;
+ 	struct page **vdso_pagelist;
+ 	unsigned long pfn;
+ 
+-	if (memcmp(vdso_start, "\177ELF", 4)) {
+-		pr_err("vDSO is not a valid ELF object!\n");
++	if (memcmp(code_start, "\177ELF", 4)) {
++		pr_err("%s is not a valid ELF object!\n", name);
+ 		return -EINVAL;
+ 	}
+ 
+-	vdso_pages = (vdso_end - vdso_start) >> PAGE_SHIFT;
+-	pr_info("vdso: %ld pages (%ld code @ %p, %ld data @ %p)\n",
+-		vdso_pages + 1, vdso_pages, vdso_start, 1L, vdso_data);
+-
+-	/* Allocate the vDSO pagelist, plus a page for the data. */
+-	vdso_pagelist = kcalloc(vdso_pages + 1, sizeof(struct page *),
+-				GFP_KERNEL);
++	vdso_pages = (code_end - code_start) >> PAGE_SHIFT;
++	pr_info("%s: %ld pages (%ld code @ %p, %ld data @ %p)\n",
++		name, vdso_pages + 1, vdso_pages, code_start, 1L,
++		vdso_data);
++
++	/*
++	 * Allocate space for storing pointers to the vDSO code pages + the
++	 * data page. The pointers must have the same lifetime as the mappings,
++	 * which are static, so there is no need to keep track of the pointer
++	 * array to free it.
++	 */
++	vdso_pagelist = kmalloc_array(vdso_pages + 1, sizeof(struct page *),
++				      GFP_KERNEL);
+ 	if (vdso_pagelist == NULL)
+ 		return -ENOMEM;
+ 
+ 	/* Grab the vDSO data page. */
+ 	vdso_pagelist[0] = phys_to_page(__pa_symbol(vdso_data));
+ 
+-
+ 	/* Grab the vDSO code pages. */
+-	pfn = sym_to_pfn(vdso_start);
++	pfn = sym_to_pfn(code_start);
+ 
+ 	for (i = 0; i < vdso_pages; i++)
+ 		vdso_pagelist[i + 1] = pfn_to_page(pfn + i);
+ 
+-	vdso_spec[0].pages = &vdso_pagelist[0];
+-	vdso_spec[1].pages = &vdso_pagelist[1];
++	/* Populate the special mapping structures */
++	mappings->data_mapping = (struct vm_special_mapping) {
++		.name	= "[vvar]",
++		.pages	= &vdso_pagelist[0],
++	};
++
++	mappings->code_mapping = (struct vm_special_mapping) {
++		.name	= "[vdso]",
++		.pages	= &vdso_pagelist[1],
++	};
+ 
++	mappings->num_code_pages = vdso_pages;
+ 	return 0;
+ }
++
++static struct vdso_mappings vdso_mappings __ro_after_init;
++
++static int __init vdso_init(void)
++{
++	extern char vdso_start[], vdso_end[];
++
++	return vdso_mappings_init("vdso", vdso_start, vdso_end,
++				  &vdso_mappings);
++}
+ arch_initcall(vdso_init);
+ 
+-int arch_setup_additional_pages(struct linux_binprm *bprm,
+-				int uses_interp)
++static int vdso_setup(struct mm_struct *mm,
++		      const struct vdso_mappings *mappings)
+ {
+-	struct mm_struct *mm = current->mm;
+ 	unsigned long vdso_base, vdso_text_len, vdso_mapping_len;
+ 	void *ret;
+ 
+-	vdso_text_len = vdso_pages << PAGE_SHIFT;
++	vdso_text_len = mappings->num_code_pages << PAGE_SHIFT;
+ 	/* Be sure to map the data page */
+ 	vdso_mapping_len = vdso_text_len + PAGE_SIZE;
+ 
+-	if (down_write_killable(&mm->mmap_sem))
+-		return -EINTR;
+ 	vdso_base = get_unmapped_area(NULL, 0, vdso_mapping_len, 0, 0);
+-	if (IS_ERR_VALUE(vdso_base)) {
+-		ret = ERR_PTR(vdso_base);
+-		goto up_fail;
+-	}
++	if (IS_ERR_VALUE(vdso_base))
++		ret = PTR_ERR_OR_ZERO(ERR_PTR(vdso_base));
++
+ 	ret = _install_special_mapping(mm, vdso_base, PAGE_SIZE,
+ 				       VM_READ|VM_MAYREAD,
+-				       &vdso_spec[0]);
++				       &mappings->data_mapping);
+ 	if (IS_ERR(ret))
+-		goto up_fail;
++		return PTR_ERR_OR_ZERO(ret);
+ 
+ 	vdso_base += PAGE_SIZE;
+-	mm->context.vdso = (void *)vdso_base;
+ 	ret = _install_special_mapping(mm, vdso_base, vdso_text_len,
+ 				       VM_READ|VM_EXEC|
+ 				       VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
+-				       &vdso_spec[1]);
+-	if (IS_ERR(ret))
+-		goto up_fail;
++				       &mappings->code_mapping);
++	if (!IS_ERR(ret))
++		mm->context.vdso = (void *)vdso_base;
++
++	return PTR_ERR_OR_ZERO(ret);
++}
+ 
++int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++{
++	struct mm_struct *mm = current->mm;
++	int ret;
+ 
+-	up_write(&mm->mmap_sem);
+-	return 0;
++	if (down_write_killable(&mm->mmap_sem))
++		return -EINTR;
++
++	ret = vdso_setup(mm, &vdso_mappings);
+ 
+-up_fail:
+-	mm->context.vdso = NULL;
+ 	up_write(&mm->mmap_sem);
+-	return PTR_ERR(ret);
++	return ret;
+ }
+ 
+ /*
 -- 
 2.19.0.605.g01d371f741-goog
 
