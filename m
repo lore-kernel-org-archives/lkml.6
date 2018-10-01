@@ -2,129 +2,197 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77AB5C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFEFC64EB1
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48DD02084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:09:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48DD02084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id A12042084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 12:10:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Redco6jM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A12042084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729253AbeJASrF (ORCPT
+        id S1729233AbeJASrw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 14:47:05 -0400
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:47097 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728999AbeJASrE (ORCPT
+        Mon, 1 Oct 2018 14:47:52 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46462 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729120AbeJASrw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 14:47:04 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id 6x0ygwoON2xRe6x11gSfqR; Mon, 01 Oct 2018 14:09:33 +0200
-Subject: Re: [PATCH v3 2/3] media: meson: add v4l2 m2m video decoder driver
-To:     Maxime Jourdan <mjourdan@baylibre.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-References: <20180928142816.4311-1-mjourdan@baylibre.com>
- <20180928142816.4311-3-mjourdan@baylibre.com>
- <6fb97945-e63a-b98b-bf07-0a5088ac7232@xs4all.nl>
- <CAMO6naxoXMsb=SEH8mu=7YBhFW_-6YzvR0K3mMaHD1rZ-_UJxg@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <10d8641a-f605-5693-676c-02ca023259da@xs4all.nl>
-Date:   Mon, 1 Oct 2018 14:09:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 1 Oct 2018 14:47:52 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 203-v6so11823111ljj.13
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 05:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=or0k/KDBFS7XoFVtpYSukgXjEIjxOUQ3+mQqlqeObsY=;
+        b=Redco6jM0wIVGI4VEhTd4RbBdoic8s/AYvHI2MIReKPb9GxzkXC3527BOXIHEgW37b
+         dKPejMy0zjSsrtFh8R4mI4X720g7iYkDAORihu8OEVyKeht+WXLGm91WkUZeG4MU+rNC
+         8lBe7I0MTjTiDv5SiuonS8UIISanIKIegHmQo7YXx95KxOfioGi+Yp6mIZv5D7sLZqiF
+         tQlaAmThhjgAk10G3h0Vw7nsri8pX7N8JBqe0XlcGk45/krmo1+jgfEis0S6DnYixk0A
+         NQWNQ5ISF3XB7QgBehpw+8q4rSdN4R1xuEEnIHgocCvPZmNALTEn5vPGNK/YbqW/aeqg
+         8rMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=or0k/KDBFS7XoFVtpYSukgXjEIjxOUQ3+mQqlqeObsY=;
+        b=LDCpWrVRtyWTFrYzfozZi/AnBjZGawJ6JwvARHMwg4nlzXRCQZpt4RMP9NatylahSB
+         uqvhM3sD8mBCBf7ciy+GFXVS5cQC+FmiaNahc/v1Ff5CwXk33ojphcMddZWNqbfDMTl4
+         d4M92vIc+F6+ls9Uck6onVMCsgUDQrVrzdBwI89dd5I6NOJpcE1mj3fBX8oLWIDZU0n7
+         H9XUX0XkTKheLX0BxbAlbKan4AsrghqyMPctY6TvpCwdX76OZRTiTpfalajyH2AbHkaC
+         J/86FwDXAOVczs9eR3fOyldnl2mXVe5jrOzgDA59H5JC1rkdMaXPX2P2+MtU9xfMznm4
+         SFBw==
+X-Gm-Message-State: ABuFfoiK3TaGxj7mbJc0H3favy8k/OygpgH9bzBahmaUp6ZRDd/+nIJV
+        gUu7KFIeUA3f2ddiXv6ohtLalm2Jf/9OnZfGkvg=
+X-Google-Smtp-Source: ACcGV63cL+9AmtpASj/rgAUSXAVbzhuFJu7j7Qjfl3BdjquLBuVpqFzzrwfqjhvuAxSFxHqU5lz1qV4kQMi8/kstI6c=
+X-Received: by 2002:a2e:86ca:: with SMTP id n10-v6mr6949055ljj.90.1538395819783;
+ Mon, 01 Oct 2018 05:10:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAMO6naxoXMsb=SEH8mu=7YBhFW_-6YzvR0K3mMaHD1rZ-_UJxg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfLQ2gPHHL1XYgPRStsz2hs2VF6jhtq+xIibME2MIcIBl5Pgc0vyUu27jYf/byD4OEDDmCJTpBzMwH8ADW8D4UsqQbdSqDsEZFD2R3Om8wuH1hUkRJS3X
- dDXxFuF4/11J6LSeZz9AWV2k7wx/pA2TKmjkJ5QDGHk14JdKXpKzDHBk442cs0Ml8bXMfHxZF3d6HWUOrQ1vVI5vbEInblh85O5DW5CMrIqu370rM8ecI+4O
- hgdhvPdprTlBJyrI2glA7Nx3zaq45tNCPVoFPwQIVwevpIRpYCDc8eNU3NM2pMkiXUDg/SiGkKMznUNah6JZMYZ6aaSAz07q+xHT9waqYlagQgE6+aPaeylS
- iqH3Z7h+IHtX0L2ja2BrRb3a0hWbshhzjDe+2C8pYMoEzPMBdnqg7+DySRJAHbSPLHkO64LKxHSZk/8WHkb9u6+INrzXQ58WiIj5ZneKErTqrwKisQi+3eim
- 5MERIzI0rcfnbnxrtPSCXealRXiGrH1v6KzfE33OeP0m4HRL4/UPcwODKexL+A6t/2ynpcDJhhfAh29J
+References: <20180905143643.9871-1-ricardo.ribalda@gmail.com>
+ <20180905143643.9871-6-ricardo.ribalda@gmail.com> <20180927134216.1952f668@bbrezillon>
+In-Reply-To: <20180927134216.1952f668@bbrezillon>
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date:   Mon, 1 Oct 2018 14:10:03 +0200
+Message-ID: <CAPybu_18jdEWEbAbYd4k-GPD+77sCA_5na0RJznixPEXkcs+kQ@mail.gmail.com>
+Subject: Re: [PATCH v2 5/8] mtd: maps: gpio-addr-flash: Replace array with an integer
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
+        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/01/2018 01:57 PM, Maxime Jourdan wrote:
-> Le lun. 1 oct. 2018 à 12:26, Hans Verkuil <hverkuil@xs4all.nl> a écrit :
->>
->> On 09/28/2018 04:28 PM, Maxime Jourdan wrote:
->>> +             }
->>> +
->>> +             return 0;
->>> +     }
->>> +
->>> +     switch (q->type) {
->>> +     case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
->>> +             sizes[0] = amvdec_get_output_size(sess);
->>> +             *num_planes = 1;
->>> +             break;
->>> +     case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
->>> +             switch (sess->pixfmt_cap) {
->>> +             case V4L2_PIX_FMT_NV12M:
->>> +                     sizes[0] = output_size;
->>> +                     sizes[1] = output_size / 2;
->>> +                     *num_planes = 2;
->>> +                     break;
->>> +             case V4L2_PIX_FMT_YUV420M:
->>> +                     sizes[0] = output_size;
->>> +                     sizes[1] = output_size / 4;
->>> +                     sizes[2] = output_size / 4;
->>> +                     *num_planes = 3;
->>> +                     break;
->>> +             default:
->>> +                     return -EINVAL;
->>> +             }
->>> +             *num_buffers = min(max(*num_buffers, fmt_out->min_buffers),
->>> +                                fmt_out->max_buffers);
->>
->> You can use clamp here. That's easier to read.
->>
-> 
-> Ack
-> 
->>> +             /* The HW needs all buffers to be configured during startup */
->>
->> Why? I kind of expected to see 'q->min_buffers_needed = fmt_out->min_buffers'
->> here. I think some more information is needed here in the comment.
->>
-> 
-> I'll extend the comments to reflect the following:
-> 
-> All codecs in the Amlogic vdec need the full available buffer list to
-> be configured at startup, i.e all buffer phy addrs must be written to
-> registers prior to decoding.
-> The firmwares then decide how they use those buffers and the
-> interrupts only tell me "the decoder has written a frame to buffer N°
-> X".
-> 
-> fmt_out->min_buffers and fmt_out->max_buffers refer to the min/max
-> amount of buffers that can be setup during initialization. In the case
-> of MPEG2, the firmware expects 8 buffers, no more no less, so both
-> min_buffers and max_buffers have the value "8".
-> 
-> But even if those values differ (as for H.264 that will come later),
-> the firmware still expects all allocated buffers to be setup in
-> registers. As such, q->min_buffers_needed must reflect the total
-> amount of CAPTURE buffers.
+Hi Boris
 
-That's much better, thank you! Now I understand why you do this :-)
+On Thu, Sep 27, 2018 at 1:42 PM Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+>
+> On Wed,  5 Sep 2018 16:36:40 +0200
+> Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
+>
+> > By replacing the array with an integer we can avoid completely
+> > the bit comparison loop if the value has not changed (by far
+> > the most common case).
+> >
+> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> > ---
+> >  drivers/mtd/maps/gpio-addr-flash.c | 31 +++++++++++++++---------------
+> >  1 file changed, 16 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/drivers/mtd/maps/gpio-addr-flash.c b/drivers/mtd/maps/gpio=
+-addr-flash.c
+> > index 22e100f07112..8f5e3dce9be3 100644
+> > --- a/drivers/mtd/maps/gpio-addr-flash.c
+> > +++ b/drivers/mtd/maps/gpio-addr-flash.c
+> > @@ -43,7 +43,7 @@ struct async_state {
+> >       struct map_info map;
+> >       size_t gpio_count;
+> >       unsigned *gpio_addrs;
+> > -     int *gpio_values;
+> > +     unsigned int gpio_values;
+> >       unsigned int win_order;
+> >  };
+> >  #define gf_map_info_to_state(mi) ((struct async_state *)(mi)->map_priv=
+_1)
+> > @@ -55,22 +55,25 @@ struct async_state {
+> >   *
+> >   * Rather than call the GPIO framework every time, cache the last-prog=
+rammed
+> >   * value.  This speeds up sequential accesses (which are by far the mo=
+st common
+> > - * type).  We rely on the GPIO framework to treat non-zero value as hi=
+gh so
+> > - * that we don't have to normalize the bits.
+> > + * type).
+> >   */
+> >  static void gf_set_gpios(struct async_state *state, unsigned long ofs)
+> >  {
+> > -     size_t i =3D 0;
+> > -     int value;
+> > +     int i;
+> >
+> >       ofs >>=3D state->win_order;
+> > -     do {
+> > -             value =3D ofs & (1 << i);
+> > -             if (state->gpio_values[i] !=3D value) {
+> > -                     gpio_set_value(state->gpio_addrs[i], value);
+> > -                     state->gpio_values[i] =3D value;
+> > -             }
+> > -     } while (++i < state->gpio_count);
+> > +
+> > +     if (ofs =3D=3D state->gpio_values)
+> > +             return;
+> > +
+> > +     for (i =3D 0; i < state->gpio_count; i++) {
+> > +             if ((ofs & BIT(i)) =3D=3D (state->gpio_values & BIT(i)))
+>
+> Parens around the xx & BIT(i) operations are unneeded.
 
-Regards,
+If I remove it:
 
-	Hans
+
+ricardo@neopili:~/curro/kernel-upstream$ make drivers/mtd/maps/gpio-addr-fl=
+ash.o
+  CALL    scripts/checksyscalls.sh
+  DESCEND  objtool
+  CC      drivers/mtd/maps/gpio-addr-flash.o
+drivers/mtd/maps/gpio-addr-flash.c: In function =E2=80=98gf_set_gpios=E2=80=
+=99:
+drivers/mtd/maps/gpio-addr-flash.c:70:20: warning: suggest parentheses
+around comparison in operand of =E2=80=98&=E2=80=99 [-Wparentheses]
+   if (ofs & BIT(i) =3D=3D (state->gpio_values & BIT(i)))
+
+
+>
+> > +                     continue;
+> > +
+> > +             gpio_set_value(state->gpio_addrs[i], !!(ofs & BIT(i)));
+> > +     }
+> > +
+> > +     state->gpio_values =3D ofs;
+> >  }
+> >
+> >  /**
+> > @@ -215,7 +218,7 @@ static int gpio_flash_probe(struct platform_device =
+*pdev)
+> >       if (!memory || !gpios || !gpios->end)
+> >               return -EINVAL;
+> >
+> > -     arr_size =3D sizeof(int) * gpios->end;
+> > +     arr_size =3D sizeof(state->gpio_addrs[0]) * gpios->end;
+> >       state =3D devm_kzalloc(&pdev->dev, sizeof(*state) + arr_size, GFP=
+_KERNEL);
+> >       if (!state)
+> >               return -ENOMEM;
+> > @@ -226,9 +229,7 @@ static int gpio_flash_probe(struct platform_device =
+*pdev)
+> >        */
+> >       state->gpio_count     =3D gpios->end;
+> >       state->gpio_addrs     =3D (void *)(unsigned long)gpios->start;
+> > -     state->gpio_values    =3D (void *)(state + 1);
+> >       state->win_order      =3D get_bitmask_order(resource_size(memory)=
+) - 1;
+> > -     memset(state->gpio_values, 0xff, arr_size);
+> >
+> >       state->map.name       =3D DRIVER_NAME;
+> >       state->map.read       =3D gf_read;
+>
+
+
+--=20
+Ricardo Ribalda
