@@ -2,100 +2,97 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58762C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33390C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28CF7208AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:56:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28CF7208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id E4780208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 13:57:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MzYd94zc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4780208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbeJAUdy (ORCPT
+        id S1729409AbeJAUfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 16:33:54 -0400
-Received: from fieldses.org ([173.255.197.46]:54602 "EHLO fieldses.org"
+        Mon, 1 Oct 2018 16:35:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729182AbeJAUdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 16:33:54 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id DBE312015; Mon,  1 Oct 2018 09:55:58 -0400 (EDT)
-Date:   Mon, 1 Oct 2018 09:55:58 -0400
-From:   Bruce Fields <bfields@fieldses.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Jann Horn <jannh@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, jlayton@kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
-        Tycho Andersen <tycho@tycho.ws>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
-        containers@lists.linux-foundation.org,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path
- resolution
-Message-ID: <20181001135558.GB25003@fieldses.org>
-References: <20180929103453.12025-1-cyphar@cyphar.com>
- <20180929131534.24472-1-cyphar@cyphar.com>
- <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
- <20181001054246.gfinmx3api7kjhmc@ryuk>
+        id S1729272AbeJAUfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 16:35:20 -0400
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA159208AE;
+        Mon,  1 Oct 2018 13:57:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538402244;
+        bh=ymRxw/t+u2tT5u5gy/HGslM0ZO4mDu7qsc7OeBvuaoY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=MzYd94zcjTd0sd2il+wr6WtmbK2QfoNUD91fbntf0p/tP0G25dFx0TgNkw1Tj2/X5
+         +s7n6OM4CjVcOdontNl9qg89EGuUssAY+J/qonJVxHQkWJSIUBoEH2dx9FgYwqnHqT
+         r3XZo445HuvPzBJErwBK9yA6N/wpw5OAOFT9/ehE=
+Received: by mail-qt1-f169.google.com with SMTP id n6-v6so14027120qtl.4;
+        Mon, 01 Oct 2018 06:57:24 -0700 (PDT)
+X-Gm-Message-State: ABuFfogjYP7J9zV/oz573GjkPuUv089Gq7J9J96SvKoLUbgGBwMvjV00
+        4tWFt4C7vK5lGfreN2NZlhbCoqc/F6MWmMVGFUw=
+X-Google-Smtp-Source: ACcGV63CoSEItXunQG/yaTRDtavboVoUSc5JaYb1w1boqjrmW0UlmoQodl6/UnaXperfmROItx5PenrPoONAaAPjJwk=
+X-Received: by 2002:ac8:4a11:: with SMTP id x17-v6mr8568211qtq.232.1538402243903;
+ Mon, 01 Oct 2018 06:57:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181001054246.gfinmx3api7kjhmc@ryuk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <c56b472fa06e3a5e8127c2043c77305b@codeaurora.org>
+In-Reply-To: <c56b472fa06e3a5e8127c2043c77305b@codeaurora.org>
+From:   Josh Boyer <jwboyer@kernel.org>
+Date:   Mon, 1 Oct 2018 09:57:12 -0400
+X-Gmail-Original-Message-ID: <CA+5PVA4JQEwATu6ZR8H0vL04nyZzD5Cmnub-SSeJ1DNRpg7dww@mail.gmail.com>
+Message-ID: <CA+5PVA4JQEwATu6ZR8H0vL04nyZzD5Cmnub-SSeJ1DNRpg7dww@mail.gmail.com>
+Subject: Re: qca: update BT firmware files for QCA ROME chip.
+To:     bgodavar@codeaurora.org
+Cc:     Linux Firmware <linux-firmware@kernel.org>,
+        BlueZ development <linux-bluetooth@vger.kernel.org>,
+        hemantg@codeaurora.org,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 03:44:28PM +1000, Aleksa Sarai wrote:
-> On 2018-09-29, Jann Horn <jannh@google.com> wrote:
-> > The problem is what happens if a folder you are walking through is
-> > concurrently moved out of the chroot. Consider the following scenario:
-> > 
-> > You attempt to open "C/../../etc/passwd" under the root "/A/B".
-> > Something else concurrently moves /A/B/C to /A/C. This can result in
-> > the following:
-> > 
-> > 1. You start the path walk and reach /A/B/C.
-> > 2. The other process moves /A/B/C to /A/C. Your path walk is now at /A/C.
-> > 3. Your path walk follows the first ".." up into /A. This is outside
-> > the process root, but you never actually encountered the process root,
-> > so you don't notice.
-> > 4. Your path walk follows the second ".." up to /. Again, this is
-> > outside the process root, but you don't notice.
-> > 5. Your path walk walks down to /etc/passwd, and the open completes
-> > successfully. You now have an fd pointing outside your chroot.
-> > 
-> > If the root of your walk is below an attacker-controlled directory,
-> > this of course means that you lose instantly. If you point the root of
-> > the walk at a directory out of which a process in the container
-> > wouldn't be able to move the file, you're probably kinda mostly fine -
-> > as long as you know, for certain, that nothing else on the system
-> > would ever do that. But I still wouldn't feel good about that.
-> 
-> Please correct me if I'm wrong here (this is the first patch I've
-> written for VFS). Isn't the retry/LOOKUP_REVAL code meant to handle this
+On Mon, Oct 1, 2018 at 6:49 AM Balakrishna Godavarthi
+<bgodavar@codeaurora.org> wrote:
+>
+> Hi,
+>
+> The following changes since commit
+> 44d4fca9922a252a0bd81f6307bcc072a78da54a:
+>
+>    Merge https://github.com/pmachata/linux-firmware (2018-09-13 11:45:40
+> -0400)
+>
+> are available in the Git repository at:
+>
+>    https://github.com/bgodavar/qca_rome_firmware master
+>
+> for you to fetch changes up to 534daf431c88b24236d23572039cdd79223b246a:
+>
+>    qca: update BT firmware files for QCA ROME chip. (2018-09-18 13:11:47
+> +0530)
+>
+> ----------------------------------------------------------------
+> Balakrishna Godavarthi (1):
+>        qca: update BT firmware files for QCA ROME chip.
+>
+>   qca/nvm_usb_00000302.bin      | Bin 1953 -> 1996 bytes
+>   qca/rampatch_usb_00000302.bin | Bin 32940 -> 64168 bytes
+>   2 files changed, 0 insertions(+), 0 deletions(-)
 
-No.
+Pulled and pushed out.
 
-...
-> Speaking naively, doesn't it make sense to invalidate the walk if a path
-> component was modified? Or is this something that would be far too
-> costly with little benefit?
+Thanks.
 
-Lookups and renames can definitely proceed in parallel, and yes I
-suspect it would be difficult to get good performance and guaranteed
-forward progress if you required lookup of the full path to be atomic
-with respect to renames.
-
---b.
+josh
