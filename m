@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EB6C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46340C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D87A2082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:33:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F7C12082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 17:33:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGJdXDig"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D87A2082A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="by7WXh6e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F7C12082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbeJBAMP (ORCPT
+        id S1726647AbeJBAMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:12:15 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37105 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbeJBAMO (ORCPT
+        Mon, 1 Oct 2018 20:12:18 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54822 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeJBAMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:12:14 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 185-v6so4135213wmt.2;
-        Mon, 01 Oct 2018 10:33:23 -0700 (PDT)
+        Mon, 1 Oct 2018 20:12:17 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r63-v6so5624797wma.4;
+        Mon, 01 Oct 2018 10:33:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EcNfXB9HM/JmAp+yBkpNmpznB04YKl8oq+1iYiX497E=;
-        b=RGJdXDigiIFC8sES9plEoDUXp8Efm8MfnMufdL1VOUxMeJnTTS7vsYgawj1Eopmfij
-         6nvXtFX7qXCYTzpbzGIjdummw0LcZ6pZnrVs0wJQPNNvbJ2bI+JEa3La1v7L19p1Ov9T
-         ko5Bz5rVrOoA/9GUAlSSvHR13Qo6RnFtRlWYa245ndDk/J8y6MRYFPrsKyupGZaLO83X
-         es3+oJiWrljk6UonOQlQNAkvLFbJqaQxC7pQ6OMt/EYFOfZn6337W8fqoKthI2nQNY3c
-         6XRF2HJvUf/tq/EpaqGeyQsDjzYChRsKqgRw32ppYPmz5Tiwvl4blKa8K94oQrjTBYK1
-         GsOw==
+        bh=SYGS1sO45oTnl/Q5rUo6wcZ37D2M/AQANkRaLyz2Pkk=;
+        b=by7WXh6eApumJVFOhahxmywLot6MkUu8CcVZErZisOIb24X6ADNZKgN4IR9Wd+gtjX
+         T+GMJzP+jIMMBtKllmeVnaIAUVt4Uv9DqtNPhQNC2igGAULfrQt/y5gfa8lR+ImbUi4S
+         miwbKKkFo6lzJNj1hZlrBabxPwadEFjph8h9hFIw8CeFltMHyZ40di76dsGNXa1Aihe3
+         hs7atpjISJT3HIZBdznoflz4fEtXs6Wla6dB50xbG3di9+RqW5bfKE6dzcUUj3X9I/Ch
+         zFB90i4EkyMdBw5/gr/NUiT0GEWTw8pRxcN0WCht3UvlEdSpc3u3CTcsoS7dg03qg9X+
+         yFhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=EcNfXB9HM/JmAp+yBkpNmpznB04YKl8oq+1iYiX497E=;
-        b=OcezZbB/pVYZg9dzvH/nzToX/VRhPX4uy4JbfLerwvbJ27toXMBE5l60+2FhFCCRkf
-         OBMpZ+2wkorU/etqVdtRVKPkL+1lMtdOe6yQL7FJWZp3JJLlnxAlScJplwBAHd8ZFe4r
-         IC6cRgOOjz7cmx0Qd8x6/ny3wKoQFpyqJtzhHmIg6zidVHJO41sPQyF0Vb3cf0dnrOth
-         f7Z9iNTF2nYkfc7LCHC/h/t62nyKk6bC+4SsnQLzaKbSK3WGXC0wnryMRkYWny7MDVxm
-         yL9ZGf6LP0VH+dRt8ebPUXbyW7qFuD82eR2LnaODuJ7ij08u6jCezcU8tozcg89qjwmi
-         zDzw==
-X-Gm-Message-State: ABuFfohaflpIynn7zdZz5ELGZ83L/T2Vp8H7CjZ+Zth4bO/K+AR75b72
-        gNdknrctS8DR89qTutlSDqIhBUqC
-X-Google-Smtp-Source: ACcGV63cZWAqz0gnDdSAg2uuAkwCc4T6/7UlPfM23MiAqAuqscfd2dIN4ukN1YfWh/nzzJKN3qD/zA==
-X-Received: by 2002:a1c:c44a:: with SMTP id u71-v6mr10377664wmf.43.1538415202150;
-        Mon, 01 Oct 2018 10:33:22 -0700 (PDT)
+        bh=SYGS1sO45oTnl/Q5rUo6wcZ37D2M/AQANkRaLyz2Pkk=;
+        b=mZFFp3WwEMdFUL98x0xOfsAcmxsByLKubHqkojNtDX7JKXt+k8fLUmXokkawuLGwal
+         1D5SDXSy0wnnMufM1PA9nb/SRRV8vlNcO/417hfWdekxE9kqX5Mnh4SLBWzh62nj5RiK
+         PxWDaEtbFFlMpUFyY7KMtmF3pyXNTmTfL6Nxn+bg3Oq0a1eonRdOtgucw/5MyA/T+Q4U
+         cOzQf2buoExTdIxdRWDtfOqoyCjRWkrsNA77CDmW9GNU4X98laWv/bU9lR6KvHBTvVUv
+         Fi1MdmqtPzTa0HtS8MRbkTE7m+MsRbxA+yYNqW0Kg5O5vjjTgbgemMXf4DpV0Fc59GEW
+         uorQ==
+X-Gm-Message-State: ABuFfoiUlQ0pihGfun9q4XKsYKREZWyRHQnyjqC8/Apb7zQPWLyF8PhA
+        a9c53Pe0kwfOmiUAIFQgIktXsFv4
+X-Google-Smtp-Source: ACcGV604leOI4ku6jgh/lqSyUP3OSFVjtKqSMjitdBSiOjsN52Asm043q3MKytjraRDmXOySX+NSyw==
+X-Received: by 2002:a1c:ac82:: with SMTP id v124-v6mr9842742wme.10.1538415204942;
+        Mon, 01 Oct 2018 10:33:24 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id v16-v6sm7840651wru.31.2018.10.01.10.33.19
+        by smtp.gmail.com with ESMTPSA id v16-v6sm7840651wru.31.2018.10.01.10.33.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 10:33:21 -0700 (PDT)
+        Mon, 01 Oct 2018 10:33:24 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     bcm-kernel-feedback-list@broadcom.com,
@@ -68,9 +68,9 @@ Cc:     bcm-kernel-feedback-list@broadcom.com,
         Parallel ATA drivers)),
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS)
-Subject: [PATCH v2 3/4] ata: ahci_brcm: Match BCM63138 compatible strings
-Date:   Mon,  1 Oct 2018 10:33:01 -0700
-Message-Id: <20181001173302.25398-4-f.fainelli@gmail.com>
+Subject: [PATCH v2 4/4] ata: ahci_brcm: Allow using driver or DSL SoCs
+Date:   Mon,  1 Oct 2018 10:33:02 -0700
+Message-Id: <20181001173302.25398-5-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181001173302.25398-1-f.fainelli@gmail.com>
 References: <20181001173302.25398-1-f.fainelli@gmail.com>
@@ -79,26 +79,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Match the "brcm,bcm63138-ahci" compatible string in order to allow this
-driver to probe on such platforms.
+The Broadcom STB AHCI controller is the same as the one found on DSL
+SoCs, so we will utilize the same driver on these systems as well.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/ata/ahci_brcm.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/ata/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ata/ahci_brcm.c b/drivers/ata/ahci_brcm.c
-index 0e401b7c0856..fba5a3044c8a 100644
---- a/drivers/ata/ahci_brcm.c
-+++ b/drivers/ata/ahci_brcm.c
-@@ -383,6 +383,7 @@ static struct scsi_host_template ahci_platform_sht = {
- static const struct of_device_id ahci_of_match[] = {
- 	{.compatible = "brcm,bcm7425-ahci", .data = (void *)BRCM_SATA_BCM7425},
- 	{.compatible = "brcm,bcm7445-ahci", .data = (void *)BRCM_SATA_BCM7445},
-+	{.compatible = "brcm,bcm63138-ahci", .data = (void *)BRCM_SATA_BCM7445},
- 	{.compatible = "brcm,bcm-nsp-ahci", .data = (void *)BRCM_SATA_NSP},
- 	{},
- };
+diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+index 39b181d6bd0d..99698d7fe585 100644
+--- a/drivers/ata/Kconfig
++++ b/drivers/ata/Kconfig
+@@ -121,7 +121,8 @@ config SATA_AHCI_PLATFORM
+ 
+ config AHCI_BRCM
+ 	tristate "Broadcom AHCI SATA support"
+-	depends on ARCH_BRCMSTB || BMIPS_GENERIC || ARCH_BCM_NSP
++	depends on ARCH_BRCMSTB || BMIPS_GENERIC || ARCH_BCM_NSP || \
++		   ARCH_BCM_63XX
+ 	help
+ 	  This option enables support for the AHCI SATA3 controller found on
+ 	  Broadcom SoC's.
 -- 
 2.17.1
 
