@@ -2,109 +2,119 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DATE_IN_PAST_24_48,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE47C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE1FC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 04:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 050AC20878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:57:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1BD42098A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 04:00:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AsBpUpDT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 050AC20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="HGptZyOA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BD42098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeJBKiv (ORCPT
+        id S1726971AbeJBKlo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 06:38:51 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43811 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726726AbeJBKiu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 06:38:50 -0400
-Received: by mail-io1-f65.google.com with SMTP id y10-v6so835001ioa.10
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 20:57:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=S5Qn4eY3fygW7wkPHVbgk8n3XSg5k+LU9kWlJNHV6nY=;
-        b=AsBpUpDT9Jx5WBfX5qPzCuinOHU1KL76EqGShECdWB6Bkm37wqYw/umzeBrlpHlNrY
-         wpkJTUTTaU4OCfaiAB46fpqw/9z/AbO+E74wsPoLEMf5Jj2+SVg8Wu2NmI1h01GRI2xh
-         JKspA0ThEt+k303RB2oUXgDkFCr0k/SuSpwzE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S5Qn4eY3fygW7wkPHVbgk8n3XSg5k+LU9kWlJNHV6nY=;
-        b=d9Cwz+ezFH/6yI7ptpwhUk5qFXtiWLHgA1MWiIaTwZrEz3LGKjtyN9iLxy47v9RFTi
-         qbJK0zMfRLuuleXOijJqFbl7sVJHzfsw9eDIjt2Qw4l89k+t8lWdKUgAAZm3xQrnM5Fa
-         yFQasCj4mPlOrOFYCWZqEEHUEV/30LDq1k06zLFgZBzBC3aoRgh1miQPsnT8izdnPe7d
-         eerOEjxVNnRQRDUEN/O+N+ZtQaeRIIhc7sZpbr7yuRHsfHAV7sAyq3SHCjN/BoNCjfRj
-         4KE4dUe8jAsdT4Xs/m2ldOwDQ1llLVGlywpby11nctr8jhIwFvfcpehw9omaQ/ePeBrN
-         87QQ==
-X-Gm-Message-State: ABuFfogYfVgJzYpmYg6KabMJgN9RHlRqnSYTmexR0Uw6kpJtSv0SLxF0
-        +Ave+pGkEfHrdTYwXJpiVPLpMg==
-X-Google-Smtp-Source: ACcGV63Dd09OA5DJd77oRzgLsMTiPQcTs7gUkn55nZcu9XAIpQkrKouvEGWHQi6EzN6Mh5ExD6bYgQ==
-X-Received: by 2002:a17:902:7887:: with SMTP id q7-v6mr14737397pll.111.1538452663043;
-        Mon, 01 Oct 2018 20:57:43 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id g3-v6sm18827417pfi.9.2018.10.01.20.57.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 20:57:42 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 20:57:40 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        elder@linaro.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slimbus: ngd: QCOM_QMI_HELPERS has to be selected
-Message-ID: <20181002035740.GD5008@tuxbook-pro>
-References: <20181001101116.27281-1-niklas.cassel@linaro.org>
+        Tue, 2 Oct 2018 06:41:44 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:37685 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726758AbeJBKln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 06:41:43 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 0febcb99;
+        Tue, 2 Oct 2018 04:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type:content-transfer-encoding; s=mail; bh=6+otpgUArBWY
+        RR44p0ZEL5TsnsQ=; b=HGptZyOANAXtkyV7TjIplI/5PR0I1Z9mD9VEwr/nozqu
+        KatYCXJsc3E6ijcp7soruhKZz3MsCHzbW5Nd5BaHSHaWmCkaBXxd0g/HPdJO7WXd
+        IZvseECPHVFD4qTGxVnGvM0kJENvmqiK9ak0Il2/cDCWVrFhx0sGltI9xVsYge3V
+        3gKNoJyuiHoxLuyyrankIIQzDju0pGp2tEhF6GeHIB8bxVaKlC/I1Zlkf67Db15c
+        Ro6CPgwENuGBzdrNllO0POQbPztqJ1lYF3zx/ZPrqBc8m8n8AS0zJVWSMNV7EfVc
+        mTKfazUtTYVq3cdDYgl9L7nVwPcH3J5Wt3tNKXpj5g==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3d9cd7ce (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Tue, 2 Oct 2018 04:00:34 +0000 (UTC)
+Received: by mail-ot1-f54.google.com with SMTP id c20-v6so563989otl.6;
+        Mon, 01 Oct 2018 21:00:35 -0700 (PDT)
+X-Gm-Message-State: ABuFfohj8hdCZo7kSbkzzjFH1c6t/0fbVOTROqThrZctSl60CDc64lBA
+        jzOZux+TXTXWeVOmJezjEbmc7g4bYiSablXoZxw=
+X-Google-Smtp-Source: ACcGV62uuwkslL2JDTFhpDLGtu6bArahFy9wbWZN8VYmvbZNqC050egT3Wj/EWMCpDN0YWYLMrhKTD3TBdLguzJFCJw=
+X-Received: by 2002:a9d:17d0:: with SMTP id j74-v6mr4813928otj.268.1538358216583;
+ Sun, 30 Sep 2018 18:43:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181001101116.27281-1-niklas.cassel@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-2-Jason@zx2c4.com>
+ <CAKv+Gu9e35+AyktmSq9qeNE0LR83_yrEEB3DiQv0bmyArivqRQ@mail.gmail.com>
+ <CAKv+Gu9kbLPZH4W0zKAfuv-b11mcDaZ05HUauvh9gMZVGVR0AQ@mail.gmail.com>
+ <CAHmME9pfs0_MsD9QAGfSm31_w-=6BCF_gZO04XkfhD=mEoZmtQ@mail.gmail.com>
+ <CAKv+Gu__7mZFFq6qC=8yh0OuaV+TCCLFt6nm8yJfaANHUPrJ=A@mail.gmail.com>
+ <CAHmME9owF+3aQaZUkK4KkfnJna+DK=GoWV8yf-Wb+gH4w3y9eg@mail.gmail.com>
+ <CAKv+Gu9FAVVOiYyGovYZ19-107_6sK9Ya6LnK=AQkTgctMmu5A@mail.gmail.com>
+ <CAHmME9rqsOid6UOx+VTsFzJLEiaXpTP_z_wvHC6MbeAQUeEtHg@mail.gmail.com>
+ <8afdd3b1c51587708db6ae878eb0a7e9f8b5673a.camel@perches.com> <3E9E1888-026E-45C1-8AA7-DADA211EDBDF@amacapital.net>
+In-Reply-To: <3E9E1888-026E-45C1-8AA7-DADA211EDBDF@amacapital.net>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Mon, 1 Oct 2018 03:43:25 +0200
+X-Gmail-Original-Message-ID: <CAHmME9o7_Xh=dZfnEHbPCJdqzXW1L5R7qjg=_sqPZiP2KmTc1Q@mail.gmail.com>
+Message-ID: <CAHmME9o7_Xh=dZfnEHbPCJdqzXW1L5R7qjg=_sqPZiP2KmTc1Q@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 01/23] asm: simd context helper API
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Joe Perches <joe@perches.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 01 Oct 03:11 PDT 2018, Niklas Cassel wrote:
+On Sun, Sep 30, 2018 at 7:35 AM Andy Lutomirski <luto@amacapital.net> wrote=
+:
+> >>>>>>> Oh, and another thing (and I'm surprised checkpatch.pl didn't com=
+plain
+> >>>>>>> about it): the use of typedef in new code is strongly discouraged=
+.
+> >>>>>>> This policy predates my involvement, so perhaps Joe can elaborate=
+ on
+> >>>>>>> the rationale?
+> >>>>>>
+> >>>>>> In case it matters, the motivation for making this a typedef is I
+> >>>>>> could imagine this at some point turning into a more complicated
+> >>>>>> struct on certain platforms and that would make refactoring easier=
+. I
+> >>>>>> could just make it `struct simd_context` now with 1 member though.=
+..
+> >>>>>
+> >>>>> Yes that makes sense
+> >>>>
+> >>>> The rationale for it being a typedef or moving to a struct now?
+> >>>
+> >>> Yes just switch to a struct.
+> >>
+> >> Okay. No problem with that, but will wait to hear from Joe first.
+> >
+> > Why do you need to hear from me again?
+> >
+> > As far as I know, the only info about typedef avoidance are in
+> > Documentation/process/coding-style.rst section 5.
+> >
+> >
+>
+> I personally prefer it with the typedef. If this were my code, I=E2=80=99=
+d say the coding style is silly for opaque tiny structs like this.
 
-> QCOM_QMI_HELPERS is a hidden kconfig, so the proper usage is
-> to select it, not depend upon it.
-> 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/slimbus/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/slimbus/Kconfig b/drivers/slimbus/Kconfig
-> index 9d73ad806698..9cca2c3559f2 100644
-> --- a/drivers/slimbus/Kconfig
-> +++ b/drivers/slimbus/Kconfig
-> @@ -22,8 +22,8 @@ config SLIM_QCOM_CTRL
->  
->  config SLIM_QCOM_NGD_CTRL
->  	tristate "Qualcomm SLIMbus Satellite Non-Generic Device Component"
-> -	depends on QCOM_QMI_HELPERS
->  	depends on HAS_IOMEM && DMA_ENGINE
-> +	select QCOM_QMI_HELPERS
->  	help
->  	  Select driver if Qualcomm's SLIMbus Satellite Non-Generic Device
->  	  Component is programmed using Linux kernel.
-> -- 
-> 2.17.1
-> 
+I'll stick with a typedef. Reading the style guide, this clearly falls
+into 5.a, 5.b, and maybe 5.c. For 5.a, at some point this will
+possibly contain architecture specific blobs. For 5.b, it is just an
+enum (integer) right now.
