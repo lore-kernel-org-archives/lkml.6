@@ -2,90 +2,86 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8ADC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA2EC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F938206B2
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:44:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B456206B2
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 05:47:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar-com.20150623.gappssmtp.com header.i=@cyphar-com.20150623.gappssmtp.com header.b="Hf7dbbUt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F938206B2
+	dkim=pass (2048-bit key) header.d=cyphar-com.20150623.gappssmtp.com header.i=@cyphar-com.20150623.gappssmtp.com header.b="XwnmqFNW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B456206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbeJAMUo (ORCPT
+        id S1728728AbeJAMXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 08:20:44 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44950 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728621AbeJAMUo (ORCPT
+        Mon, 1 Oct 2018 08:23:36 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38115 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728632AbeJAMXg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 08:20:44 -0400
-Received: by mail-pg1-f194.google.com with SMTP id g2-v6so8602903pgu.11
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 22:44:42 -0700 (PDT)
+        Mon, 1 Oct 2018 08:23:36 -0400
+Received: by mail-pf1-f193.google.com with SMTP id x17-v6so8358698pfh.5
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Sep 2018 22:47:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cyphar-com.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=FHXE84Pom3s/UPIkjHArpTjSoC4EiIbl72Ua+QMnuWA=;
-        b=Hf7dbbUt79pETFhhNHVCB6nQqC0S0BuLRj9lS/TBqwxwKutIwRoCpN39Ut3rhKpzGq
-         w4oS9oStlerhHtCVJxevO5HO47jT8VWhcdr5+5Uj6FVlZccjL4zS0ektkZPG4x7Mr9J+
-         O/QFgcyTXBzo/WK473GCVIuQ7z75+pwnOuH08H+j1PFQ0mWJ39oB+vtuHhG/pmbKq0eS
-         NcnDL8/12Yud3z/dR0ff+MfOdEP27grCM20teIR3DBy9VmA57jlCJhpuntcasnNstf9v
-         jMNvTN4lWHFsXDLqwiLO/U3sqrpS/UTVVRG12CmOdNqyrfgKBaXNlBvQ6jt8nW4x0111
-         OHBQ==
+        bh=Oub3t6UK/hXUbaNzlHXW0mdpmVCxoVTuxVMCOjtYxPM=;
+        b=XwnmqFNW58WVDFh6U5VucsJIt+LoAWXqQOZc0ljct3QpE+aYcn81TvV3UlSNYDpwSE
+         sgl4BFOs+Ojkvt2L9ScoiLDjPZZ/RcwKlJXqc1raZU3bEhdKC22Ou/bZemA6AwbEFsI+
+         MACz28aqZR49eXB0UZi4JVTw64a5hdgQySTy3+XJGLlaUUXEwTnHSyXZy+Lp0epoP8ak
+         x9TL1/aCtrPc74R/FNj1LqgYpoLrGBvM0k/c2FB0fzaqWmBrT1cIaJjpZ2bYpQKE1e86
+         67naodYWuPjcdVe6q+KqMM3qtFgi5BG1q+6br5OK8rTLa8oCFTaIDTIufPKdzUX+Ii0+
+         VkeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FHXE84Pom3s/UPIkjHArpTjSoC4EiIbl72Ua+QMnuWA=;
-        b=EdEB7VC6Cxz5kG/XvomL/5XNfwDvBwNIe4OB0WI0q+R09cNyXPGEiXMiJSoGZZ/WdZ
-         zzi2l2+VQKSli8IhiCBRtWOFUjKR06wIt1dqRTtuO9jdLsnHjDR4mKSWFUoANidFg7Ui
-         3YTKwrDOHVcsvEApnu4K2wu/w3Pc3K5nSpiBY8Z7AqeZMqYcI//JWK+xDqr2QfBA/imu
-         fx2MAT59i+GyPNuwMrfmKPgGZDUPObElfUxOERUXizERlynLSilP5FldkdGCMep4RSI4
-         dkBmBPWHNVGjG2SDeqFfhbCXXWuRYRwwHLQwbJ1X1bOFd7gMdca7O2VZVwsTruf6Ryna
-         a52A==
-X-Gm-Message-State: ABuFfoiWJdc2I7DJNZ2vfo1Vvh4ZhNYTlQ3dR5hq9/hqXYiM4Zldt8zI
-        MBsidIrxa5sKR7pGf8JaEOFy0LlOsSJyp0wV
-X-Google-Smtp-Source: ACcGV61Y+6U1KRehWgPFVtTHK1J4dCDDHcDE1n32nCUIJxQCB7rmE3oerBp6BSvjsHiwnhHFoyk76w==
-X-Received: by 2002:a63:cd12:: with SMTP id i18-v6mr7363922pgg.319.1538372681968;
-        Sun, 30 Sep 2018 22:44:41 -0700 (PDT)
+        bh=Oub3t6UK/hXUbaNzlHXW0mdpmVCxoVTuxVMCOjtYxPM=;
+        b=B+wqN5QXsLlusyJ+eIKjE1szE7zSzzdScq68SZeZzWQIIGEsrnyV2kl9ets2lqzpiI
+         9tMSxOED+gLWojPx49ihjBs6KfXay2xfkn20yMt4I3YH6fQ2OMUzvN2mAghnIWy6/B/+
+         NYdeP14ryjiOlRMuViSslRAStW7Tsr91LoTu3kKjYMrrRog8RT9ABvysXB/m1OntEPRs
+         ckGdC+GyszAhpTPZpvuE/j/39lKyTHSp+T5TMmyoXM82dRiTJOdSKFwg7WvnlqiZ4Eix
+         Rs885kLCv4lbHW6A/GMO0PZOxCmOVpyzpnYsFD95iS3B9BaxKahR/QVWwGpJcxTQjTJC
+         b2KA==
+X-Gm-Message-State: ABuFfogwR6CL2APrx4n/UEZdc+jRyyDwg2CN40+S2+vpwsk1KBxyWu+X
+        M1/r2fTOGg6pnAhgk+BaQWVS8w==
+X-Google-Smtp-Source: ACcGV63i+AP83syi4h87bMc7i/rt4+e+yDxUPyWJkfhdLiU1U6JaLp5MqDK3isH0DXpUdebP27R48A==
+X-Received: by 2002:a62:6948:: with SMTP id e69-v6mr9733696pfc.166.1538372853942;
+        Sun, 30 Sep 2018 22:47:33 -0700 (PDT)
 Received: from ryuk (pa49-199-140-183.pa.vic.optusnet.com.au. [49.199.140.183])
-        by smtp.gmail.com with ESMTPSA id d10-v6sm13403969pgo.2.2018.09.30.22.44.33
+        by smtp.gmail.com with ESMTPSA id y19-v6sm22622694pff.14.2018.09.30.22.47.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 30 Sep 2018 22:44:40 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 15:44:28 +1000
+        Sun, 30 Sep 2018 22:47:33 -0700 (PDT)
+Date:   Mon, 1 Oct 2018 15:47:23 +1000
 From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>, jlayton@kernel.org,
-        Bruce Fields <bfields@fieldses.org>,
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
         David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
-        Tycho Andersen <tycho@tycho.ws>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Tycho Andersen <tycho@tycho.ws>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-kselftest@vger.kernel.org, dev@opencontainers.org,
-        containers@lists.linux-foundation.org,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 2/3] namei: implement AT_THIS_ROOT chroot-like path
- resolution
-Message-ID: <20181001054246.gfinmx3api7kjhmc@ryuk>
+        containers@lists.linux-foundation.org
+Subject: Re: [PATCH 0/3] namei: implement various scoping AT_* flags
+Message-ID: <20181001054723.lekp3nqgctdyly7m@ryuk>
 References: <20180929103453.12025-1-cyphar@cyphar.com>
- <20180929131534.24472-1-cyphar@cyphar.com>
- <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
+ <20181001040821.GP31060@dastard>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="t73bxnc3vrj4rh47"
+        protocol="application/pgp-signature"; boundary="tnspunvdzgqmlf36"
 Content-Disposition: inline
-In-Reply-To: <CAG48ez30WJhbsro2HOc_DR7V91M+hNFzBP5ogRMZaxbAORvqzg@mail.gmail.com>
+In-Reply-To: <20181001040821.GP31060@dastard>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -93,139 +89,25 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---t73bxnc3vrj4rh47
+--tnspunvdzgqmlf36
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 2018-09-29, Jann Horn <jannh@google.com> wrote:
-> The problem is what happens if a folder you are walking through is
-> concurrently moved out of the chroot. Consider the following scenario:
+On 2018-10-01, Dave Chinner <david@fromorbit.com> wrote:
+> > I've added some selftests for this, but it's not clear to me whether
+> > they should live here or in xfstests (as far as I can tell there are no
+> > other VFS tests in selftests, while there are some tests that look like
+> > generic VFS tests in xfstests). If you'd prefer them to be included in
+> > xfstests, let me know.
 >=20
-> You attempt to open "C/../../etc/passwd" under the root "/A/B".
-> Something else concurrently moves /A/B/C to /A/C. This can result in
-> the following:
->=20
-> 1. You start the path walk and reach /A/B/C.
-> 2. The other process moves /A/B/C to /A/C. Your path walk is now at /A/C.
-> 3. Your path walk follows the first ".." up into /A. This is outside
-> the process root, but you never actually encountered the process root,
-> so you don't notice.
-> 4. Your path walk follows the second ".." up to /. Again, this is
-> outside the process root, but you don't notice.
-> 5. Your path walk walks down to /etc/passwd, and the open completes
-> successfully. You now have an fd pointing outside your chroot.
->=20
-> If the root of your walk is below an attacker-controlled directory,
-> this of course means that you lose instantly. If you point the root of
-> the walk at a directory out of which a process in the container
-> wouldn't be able to move the file, you're probably kinda mostly fine -
-> as long as you know, for certain, that nothing else on the system
-> would ever do that. But I still wouldn't feel good about that.
+> xfstests, please. That way the new functionality will get immediate
+> coverage by all the main filesystem development and distro QA
+> teams....
 
-Please correct me if I'm wrong here (this is the first patch I've
-written for VFS). Isn't the retry/LOOKUP_REVAL code meant to handle this
--- or does that only handle if a particular path component changes
-*while* it's being walked through? Is it possible for a path walk to
-succeed after a path component was unmounted (obviously you can't delete
-a directory path component since you'd get -ENOTEMPTY)?
-
-If this is an issue for AT_THIS_ROOT, I believe this might also be an
-issue for AT_BENEATH since they are effectively both using the same
-nd->root trick (so you could similarly trick AT_BENEATH to not error
-out). So we'd need to figure out how to solve this problem in order for
-AT_BENEATH to be safe.
-
-Speaking naively, doesn't it make sense to invalidate the walk if a path
-component was modified? Or is this something that would be far too
-costly with little benefit? What if we do more aggressive nd->root
-checks when resolving with AT_BENEATH or AT_THIS_ROOT (or if nd->root !=3D
-current->mnt_ns->root)?
-
-Regarding chroot attacks, I was aware of the trivial
-chroot-open-chroot-fchdir attack but I was not aware that there was a
-rename attack for chroot. Thanks for bringing this up!
-
-> I believe that the only way to robustly use this would be to point the
-> dirfd at a mount point, such that you know that being moved out of the
-> chroot is impossible because the mount point limits movement of
-> directories under it. (Well, technically, it doesn't, but it ensures
-> that if a directory does dangerously move away, the syscall fails.) It
-> might make sense to hardcode this constraint in the implementation of
-> AT_THIS_ROOT, to keep people from shooting themselves in the foot.
-
-Unless I'm missing something, would this not also affect using a
-mountpoint as a dirfd-root (with MS_MOVE of an already-walked-through
-path component) -- or does MS_MOVE cause a rewalk in a way that rename
-does not?
-
-I wouldn't mind tying AT_THIS_ROOT to only work on mountpoints (I
-thought that bind-mounts would be an issue but you also get -EXDEV when
-trying to rename across bind-mounts even if they are on the same
-underlying filesystem). But AT_BENEATH might be a more bitter pill to
-swallow. I'm not sure.
-
-In the usecase of container runtimes, we wouldn't generally be doing
-resolution of attacker-controlled paths but it still definitely doesn't
-hurt to consider this part of the threat model -- to avoid foot-gunning
-as you've said. (There also might be some nested-container cases where
-you might want to do that.)
-
-> > Currently most container runtimes try to do this resolution in
-> > userspace[1], causing many potential race conditions. In addition, the
-> > "obvious" alternative (actually performing a {ch,pivot_}root(2))
-> > requires a fork+exec which is *very* costly if necessary for every
-> > filesystem operation involving a container.
->=20
-> Wait. fork() I understand, but why exec? And actually, you don't need
-> a full fork() either, clone() lets you do this with some process parts
-> shared. And then you also shouldn't need to use SCM_RIGHTS, just keep
-> the file descriptor table shared. And why chroot()/pivot_root(),
-> wouldn't you want to use setns()?
-
-You're right about this -- for C runtimes. In Go we cannot do a raw
-clone() or fork() (if you do it manually with RawSyscall you'll end with
-broken runtime state). So you're forced to do fork+exec (which then
-means that you can't use CLONE_FILES and must use SCM_RIGHTS). Same goes
-for CLONE_VFORK.
-
-(It should be noted that multi-threaded C runtimes have somewhat similar
-issues -- AFAIK you can technically only use AS-Safe glibc functions
-after a fork() but that's more of a theoretical concern here. If you
-just use raw syscalls there isn't an issue.)
-
-As for why use setns() rather than pivot_root(), there are cases where
-you're operating on a container's image without a running container
-(think image extraction or snapshotting tools). In those cases, you
-would need to set up a dummy container process in order to setns() into
-its namespaces. You are right that setns() would be a better option if
-you want the truthful state of what mounts the container sees.
-
-[I also don't like the idea of joining the user namespace of a malicious
-container unless it's necessary but that's probably just needless
-paranoia more than anything -- since you're not joining the pidns you
-aren't trivially addressable by a malicious container.]
-
-> // Ensure that we are non-dumpable. Together with
-> // commit bfedb589252c, this ensures that container root
-> // can't trace our child once it enters the container.
-> // My patch
-> // https://lore.kernel.org/lkml/1451098351-8917-1-git-send-email-jann@the=
-jh.net/
-> // would make this unnecessary, but that patch didn't
-> // land because Eric nacked it (for political reasons,
-> // because people incorrectly claimed that this was a
-> // security fix):
-
-Unless I'm very much mistaken this was fixed by bfedb589252c ("mm: Add a
-user_ns owner to mm_struct and fix ptrace permission checks"). If you
-join a user namespace then processes within that user namespace won't
-have ptrace_may_access() permissions because your mm is owned by an
-ancestor user namespace -- only after exec() will you be traceable.
-
-We still use PR_SET_DUMPABLE in runc but that's because we support older
-kernels (and people don't use user namespaces under Docker) but with
-user namespaces this should not be required anymore.
+Sure, will do. Do you want me to submit them in parallel -- and what is
+the correct ML to submit changes to xfstests? Sorry for the silly
+questions. :P
 
 --=20
 Aleksa Sarai
@@ -233,24 +115,24 @@ Senior Software Engineer (Containers)
 SUSE Linux GmbH
 <https://www.cyphar.com/>
 
---t73bxnc3vrj4rh47
+--tnspunvdzgqmlf36
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAluxtDwACgkQnhiqJn3b
-jbTZIxAArmxLc+mBBcfWYPIpM74Ucomwg3OuI7QevIPkqP91a/NNcaaOp8yfs+yx
-dDKMde7i8F2tfmteGGx0FRKqzeSzfQuDcP2gDi32lfQAzltGjtdFcpdIEWBUn5CN
-24ZrLhaNDNV4SGK8xySiGFXTmDRTdhoNPwyE4keC2Ty6wQhoNnko4XAs1kKr9fwT
-MyhNbX176+mVPGipanmhpGlWixTnkubypkHZOAmIEBSMSsQGOHQ/8qLXmQl9Hao7
-JVNb6HdbrwgwKUbVJWwjNDOVmxZZL/Do4FU6bg75AmhyJu7dYs/WRkT8ykgabkQn
-dkp7jcaXrDIVX2YXaLwO+0azthUjidbBZ5pdjQRns3ZQ4Sq+1Y9kPjcBQbecb+KH
-g/v44GDFXYh+pRhF+ATnJaYvdj2Z85VkcWMBjqAy4YljXZ3INDOi5z69+e+4MTl7
-+Wn3tYO1cTTqPp3yfTaRFsj+SvM2HvBgLQOXoUhkB0f75sdA3QnWIdRUNqRwPdXU
-wOrEncCybyga2uyJylmNnNCXYvD2F9kuSheCCkj7QFt4wwnwj+VK6WFW48c7EXMf
-/oR9zYZB/1VWlSHltpFnqgc+FQLHWZSGG0RsPY7awPEtzwo7cefEPue+Vjz9JjNu
-M/DND5OZgujKRMsz5/nkz2WWSp9MxVeV1QWrd2EXpV4K94EdnHY=
-=0lfj
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAluxtOsACgkQnhiqJn3b
+jbQqAg//WFcKNlV1tSPzHG9JTv//wyGl9FY6gqg86/RbsjUwLuAPhlMi+hSqSvgB
+7WMN1zMF5fnW1wxMqsj8vkL6WkYpcWxDxrVp4OBIi7iN3g734edhe5UZEpGgHm5S
+QJqOQEfPwaVTOSJZojNnxoU7mzJGT20BptjhgRSlPR0MpnvA5rYfnZClYgfY0+zr
+kdo1DQ2KbRt9kes+PxbTMre+COcVfXQvtV37Ydsyx7+PR8x1sCBBIQgGrELIF87t
+EOrWy84gOja/4YSMqdXfqcwBiTI+UxmP8ulpC3nNKSwuDvwPRXNUUnJy1RHYlfCt
+Zb3c2WTRZU0RhHjttajJGyAzF/ZERRBOWpBxePFgtP5z2Q5djuQohDP6ugqV9XFu
+SgSG1wOKM9ptJlm1/NdC4Y47JrUuBxuQ0BU8uIjVpJssuyPXj7NGW1DHbL4i0PNm
+uD9KdpKzYGVEvNHcywFHKabG6AqNOriki8h/BUc5GR79xadeEjpr2SUXD+0NSw4O
+YKl677M45mQcasqzNlJrz+ASGJO18xnXrGIeCO1NtvjOCDsYoCOdaygQ27J4rXxo
+2UrvoUyiaAzC1FhQceqq+LaPl+kY1DBtfTvKxIc6pS/WHVS+ntUOJgRVrPpdqZ0B
+//8nJAGOjETFHFRKkWz5jaOsXJL4gl2JhJId88X1FIW97C2fbf4=
+=hNmN
 -----END PGP SIGNATURE-----
 
---t73bxnc3vrj4rh47--
+--tnspunvdzgqmlf36--
