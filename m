@@ -2,171 +2,196 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374EEC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A46E8C64EB0
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D110820652
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:07:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61ECE20652
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 08:09:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Z3pCGthu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D110820652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=openedev.com header.i=@openedev.com header.b="EYHmH0pi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61ECE20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=openedev.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728806AbeJAOo0 (ORCPT
+        id S1728869AbeJAOqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 10:44:26 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:10427 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbeJAOo0 (ORCPT
+        Mon, 1 Oct 2018 10:46:18 -0400
+Received: from se15t.web-hosting.com ([162.255.118.154]:48799 "EHLO
+        se15t.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728782AbeJAOqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 10:44:26 -0400
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20181001080751epoutp039efd313f1a744ca8e42004a46f99ccbf~ZbZ2gerjk2909029090epoutp03N;
-        Mon,  1 Oct 2018 08:07:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20181001080751epoutp039efd313f1a744ca8e42004a46f99ccbf~ZbZ2gerjk2909029090epoutp03N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1538381271;
-        bh=W9ypesF+wMff7sBGwyDVM3awPAzY6WnHkN9cz2syasg=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=Z3pCGthuD/rXGrP6IAfFglT0mmqhpO9yP/tCKLDbJgJl0AgEyj9MzIN3IZfC8FX1U
-         h6vMzMvFE7F0V/w6tGOfWb2mIIrYy6HL6LryeFr1Sr3zg2n1Y+Xx+RSoDOvMlir6Ui
-         0H5oV75ekjYvDTZUjy7lrZBimqa7M8DzoLc6xgEI=
-Received: from epsmges2p4.samsung.com (unknown [182.195.42.72]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20181001080751epcas2p1440af208e1b14f81d3a7e1dbf17eb4a9~ZbZ2KpHJR0841008410epcas2p1O;
-        Mon,  1 Oct 2018 08:07:51 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0F.F1.04069.7D5D1BB5; Mon,  1 Oct 2018 17:07:51 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20181001080750epcas2p21b4c3e14be32859f31bede0656ffa09d~ZbZ11UqNW1409214092epcas2p2X;
-        Mon,  1 Oct 2018 08:07:50 +0000 (GMT)
-X-AuditID: b6c32a48-e71ff70000000fe5-a6-5bb1d5d7d38c
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6B.E3.03633.6D5D1BB5; Mon,  1 Oct 2018 17:07:50 +0900 (KST)
-Received: from localhost ([106.116.147.110]) by mmp1.samsung.com (Oracle
-        Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with
-        ESMTPA id <0PFW003JPUL10E60@mmp1.samsung.com>; Mon, 01 Oct 2018 17:07:50
-        +0900 (KST)
-From:   =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: Bad MAINTAINERS pattern in section 'SAMSUNG EXYNOS TRUE RANDOM
- NUMBER GENERATOR (TRNG) DRIVER'
-Date:   Mon, 01 Oct 2018 10:07:37 +0200
-In-reply-to: <20180928220330.31325-1-joe@perches.com>
-Message-id: <875zym5bue.fsf%l.stelmach@samsung.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-version: 1.0
-Content-type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRmVeSWpSXmKPExsWy7bCmme71qxujDQ69ZLGYff8xi8XlXXPY
-        LGac38dk0br3CLsDi8emVZ1sHl9WXWP2+LxJLoA5issmJTUnsyy1SN8ugStj37KMguXCFX/O
-        7GRsYFwr0MXIySEhYCLR+KyNuYuRi0NIYAejxLu3/WwQzndGifdTj7B0MXKAVc3e6QoR380o
-        8fboWnYI5x2jRPftHawgo9gE7CX6j+xjAbFFBFQkNjy/xQxiMwukSNz8sIcVZJCwQK7E3SkK
-        IGEWAVWJResXs4PYnAKmEieuPWQEsXkFjCW+TdwHNlJUwFLiXt9dNoi4oMSPyfdYIEbmSnxq
-        +g92g4TAHjaJKzffsEK84yLxZ/JLNghbWOLV8S3sELa0xLNVGxkh7HKJHzf6WCGaWxglFk/o
-        hCqylvizaiIbxAY+iY7Df9khvueV6GgTgijxkOi68oEF4vkORoll286wT2CUnoXkwFlIDpwF
-        1M4soCmxfpc+RFhbYtnC18wQtq3EunXvWRYwsq5iFEstKM5NTy02KjDRK07MLS7NS9dLzs/d
-        xAiOdy2PHYwHzvkcYhTgYFTi4Q04tD5aiDWxrLgy9xCjCtCgRxtWX2CUYsnLz0tVEuENurIh
-        Wog3JbGyKrUoP76oNCe1+BCjNAeLkjjvQ+m50UIC6YklqdmpqQWpRTBZJg5OqQbG9hdtQUkp
-        /G+rH3I13d9h38nz+NTjRwe2R7wqiQ0PdhJRl/NJ3sl87aeL8eOlf67vXBwZtfDWa3n9HRue
-        yfp3LdTkvf1zTnio2oYj+957iO03bFcwc05lcWNzXfh2k8F8VU69F6HeP4orM4Tcpj6Uv8pm
-        8cq0Rkqab++EgOAl/C2JMolcDx8rsRRnJBpqMRcVJwIAMWdhuf8CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHLMWRmVeSWpSXmKPExsVy+t9jAd1rVzdGG9w/p2kx+/5jFovLu+aw
-        Wcw4v4/JonXvEXYHFo9NqzrZPL6susbs8XmTXABzFJdNSmpOZllqkb5dAlfGvmUZBcuFK/6c
-        2cnYwLhWoIuRg0NCwERi9k7XLkYuDiGBnYwST382MHYxcgI57xglmicEg9hsAvYS/Uf2sYDY
-        IgIqEhue32IGsZkFUiQ2v5rKDDJHWCBX4u4UBYhWE4mvr56zg9gsAqoSi9YvBrM5BUwlTlx7
-        CDaeV8BY4tvEfawgtqiApcS9vrtsEHFBiR+T77FAjM+WuHDxDcsERr5ZSFKzkKRmAW1mFtCU
-        WL9LHyKsLbFs4WtmCNtWYt269ywLGFlXMUqmFhTnpucWGxUY5aWW6xUn5haX5qXrJefnbmIE
-        huy2w1r9OxgfL4k/xCjAwajEwxtwaH20EGtiWXFl7iFGFaBZjzasvsAoxZKXn5eqJMIbdGVD
-        tBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe/vxjkUIC6YklqdmpqQWpRTBZJg5OqQbGgCmT4tSU
-        FTum9NXZrfqzc4/HscmrD2s25satadde+ocl6LGL3uup81l87j+4Gxb9/YSa/xK5vjjHMqWO
-        X/bcD3piFmSq5H7Zt8Pl6+RJJf4pmlfX/ThyQFlA1feQucM3lefWvsa79jvY9Sw9bqf4ckLZ
-        4Sdf9WP0w1nzxT9+3VJaE8B/7oSEEktxRqKhFnNRcSIAZnRKNWECAAA=
-X-CMS-MailID: 20181001080750epcas2p21b4c3e14be32859f31bede0656ffa09d
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20181001080750epcas2p21b4c3e14be32859f31bede0656ffa09d
-References: <20180928220330.31325-1-joe@perches.com>
-        <CGME20181001080750epcas2p21b4c3e14be32859f31bede0656ffa09d@epcas2p2.samsung.com>
+        Mon, 1 Oct 2018 10:46:18 -0400
+X-Greylist: delayed 804 seconds by postgrey-1.27 at vger.kernel.org; Mon, 01 Oct 2018 10:46:18 EDT
+Received: from [68.65.123.203] (helo=server153.web-hosting.com)
+        by se15.registrar-servers.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <jagan@openedev.com>)
+        id 1g6tGs-0003Ea-Rs; Mon, 01 Oct 2018 01:09:47 -0700
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=openedev.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=0mFflzC3+b76Aonv5G5icDFMk453decShCsyckxwXvg=; b=EYHmH0pipXsvWUtVovrdXaq3kZ
+        7X5Q1NpPzUJOm2/b086HGMZMDtXtfvnfTso7mB9qKeweU0SvAR/aR0DHCZI250k+7Z7K8tPOXIF7b
+        AhefPXyq9mEOz2JDn2YDr19SIIJU60dOz7c1RkOAqI4cy3JtYQzyDKg/UrRZN3Nxo4PDSi4QbvwD+
+        mbv+uJfZqd4Z22eM38s+SmDS0VP6KhSHxsVMjYLL5kcyrVDtLiy2faY/5HXdYtfD+WMTEtBjStxiL
+        AHJZy4J9Nz0XPqcxL1S7wqx5s/VSAnAwtj/kL0sV3s8rEL7gddy98j1HVK7FUTKgGI1tmZRcS6bhY
+        U5aayquA==;
+Received: from [223.237.19.35] (port=14204 helo=[192.168.43.180])
+        by server153.web-hosting.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <jagan@openedev.com>)
+        id 1g6tGi-000iUe-P5; Mon, 01 Oct 2018 04:09:36 -0400
+Subject: Re: [linux-sunxi] Re: [PATCH 06/12] drm/sun4i: sun6i_mipi_dsi: Fix
+ VBP size calculation
+To:     maxime.ripard@bootlin.com, Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-7-jagan@amarulasolutions.com>
+ <20180927152126.vovnvwmqdfpuxgdm@flea>
+ <CAMty3ZABx9Fod5W_T7JciZEsn7jGvuM-LsBFATdA=hQ2CVwELw@mail.gmail.com>
+ <20180929135302.ymdzapz5npvapti2@flea>
+From:   Jagan Teki <jagan@openedev.com>
+Message-ID: <63b40c20-670b-1c53-bf5e-62f64e6e02f0@openedev.com>
+Date:   Mon, 1 Oct 2018 13:39:17 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180929135302.ymdzapz5npvapti2@flea>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-OutGoing-Spam-Status: No, score=-1.0
+X-Originating-IP: 68.65.123.203
+X-SpamExperts-Domain: nctest.net
+X-SpamExperts-Username: whmcalls3
+Authentication-Results: registrar-servers.com; auth=pass (login) smtp.auth=whmcalls3@nctest.net
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.04)
+X-Recommended-Action: accept
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5hQobFtKNA//mjbleNTKjz1602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO0Ma0zdKrj2HeYAO9pcN4rBgaa/6KAnDjbDW9Kfk8S67rc0diZKnmpMa4igsMUptb3ws
+ 3TRjaC42FtNJuTWwh7zDil9nzpwm+X/neb6NqWhvt8C9mOBdONdnsxgsk1D2p81t61bzOH+dRuda
+ OCHhfvkbONHJki/bT3w/adEN9DqaPbFM3vei53Yyp3v779HcSLG62plOzR5DsoLGZCSqoE3JNAYC
+ 28t8cR5ITCXTcZqmvaqpXrmasHx4eiR7j6vX9B9laqTmco/p+9en7IdA6p9E/g67cwxyIR8VmA5e
+ WtNvnSJzSMipXLKj208wF0l+/LRpsq1uynJlGc1wGBNxKAasUDAM310p3PNWWaIaSygi7PgEVsGe
+ cFro/0JGrOyRSaDNUgpG8fAJ7Lg21L451C+Y73wey0WZIByhkSafuhnLcy3brt7kvrJyGkSOIbze
+ Phts3vFtUDOwEYF9reFkRh1Z2XmZE6Ulo3Sg6/fHCWNx01dKq9doQCQL/RyDC8HpXAynucv4rnju
+ YPOfZh8jslwg7QT+iN5/VyfWKR5edUF17qyCLW5GY4F23J7eq8SL0BtM8UT3jCT30WOGa77ANY69
+ cBNhkoiRE9GgA7DbpeRaXeO0Hg/cLwycMnvIieVWIs4dJKDqjPjhvPjqAjKg6VeiSiHqKnOM6HUc
+ 1C6txUOgA50Rgoi231VkAC4d/u07DCMMQ72GN0COt/Z36GxUDe1/x2bFJS+Hj6rj4u8HaEmUvqOm
+ FuO+t4VfdYX5HF0Jd/Quc8Wou4TIK4Bcb6TQCr94GXpVQ2KwGtu81JXrQcgqRYMJqVDlz3D3q3rG
+ z4wpqXduuWzX2YNPcyspnKOz/GpVtBEI/lNmY9JL/ej0hsKuKmLtSOgDyocRXs5/Dj5QrbiOquAw
+ kPRjlgIoLaXIRRdYY1xob1S/a4Rw9BKeg+GlaQRG0qurVqDgRPCOBb4ws+nK6Hdu5ythdss+87CL
+ YnNBoGfS0DhK3BfvFNI4fRpBbmGFHU0Fd1FYwiLqVhSu3v+nCpyCSdscG09FH1xvLyyjtb2gYbxM
+ T6+Iy9pOFZK275ou5bBvQX3uElphnHsYcHZLfQ+dkTJQ3t6fkiyQeQV6EipRzMVZ5LqwTx7Vvn9S
+ VCuiP+10HNhHuWYhdKNkJvfZdFJiZZPY9MnZD1O5yq0pWWScINzg4dgw5iDGlYGqF8vXDOId4ZvF
+ xjFOs0DvEGYfBtA7NQTMLOZX0MM27/fUsuiVMUz2osEFaYRxsB6RP1WtefrqFnxOMi6sKMFKy5Lq
+ LFUIM7si3XKl+gouHE7VOEtHO7BXRk+kb0Ie3l6uI43eRHGnZHBV/yCqCu6qSGtTjyILXkKxOPov
+ txRJN5kteXJGNpNt4GbSsOU/9v/KnSUfEaFbXfx3YmWV3Eu1dd5T48p+m8Gi9mpWQ6cJTOhMhoTy
+ AjQts04eAyoaGqs2BxWyJ5iZ/mYkQw5Sva7E5XuqpjkxjsxX7/OU+X56MDbCOXzqrgeRjh9HHXX0
+ 2BXFZ0oSYx0xwIlnSxHDnJq+tjf1ariSumYaswHs71h51UM9FqN9xH7aeMYHGsZ/4QaVkaMLBQ2N
+ o2eCxS3UTYtuZQ==
+X-Report-Abuse-To: spam@se16.registrar-servers.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+On Saturday 29 September 2018 07:23 PM, Maxime Ripard wrote:
+> On Thu, Sep 27, 2018 at 09:50:34PM +0530, Jagan Teki wrote:
+>> On Thu, Sep 27, 2018 at 8:51 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>>>
+>>> On Thu, Sep 27, 2018 at 05:18:44PM +0530, Jagan Teki wrote:
+>>>> According to horizontal and vertical timings are defined
+>>>> per the diagram from include/drm/drm_modes.h
+>>>>
+>>>> Back porch = [hv]total - [hv]sync_end
+>>>>
+>>>> So, update SUN6I_DSI_BASIC_SIZE0_VBP calculation as
+>>>> mode->vtotal - mode->vsync_end
+>>>>
+>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>>> ---
+>>>>   drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
+>>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+>>>> index 1c7e42015645..599284971ab6 100644
+>>>> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+>>>> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+>>>> @@ -526,8 +526,8 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+>>>>        regmap_write(dsi->regs, SUN6I_DSI_BASIC_SIZE0_REG,
+>>>>                     SUN6I_DSI_BASIC_SIZE0_VSA(mode->vsync_end -
+>>>>                                               mode->vsync_start) |
+>>>> -                  SUN6I_DSI_BASIC_SIZE0_VBP(mode->vsync_start -
+>>>> -                                            mode->vdisplay));
+>>>> +                  SUN6I_DSI_BASIC_SIZE0_VBP(mode->vtotal -
+>>>> +                                            mode->vsync_end));
+>>>
+>>> Is it purely theoretical, or did you find some source that back that?
+>>
+>> VSA is done as per that, sync_end - sync start would give sync time.
+> 
+> That's a different register though.
+> 
+>> VBP also done in BPI-M64-bsp[1] which results back porch existing code
+>> results fron porch.
+>>
+>> [1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L955
+> 
+> That code does back porch - sync length. Such a calculation doesn't
+> make much sense as is, but you're saying that it results in the front
+> porch. Again, what makes you say that?
 
-It was <2018-09-29 sob 00:03>, when Joe Perches wrote:
-> Please fix this defect appropriately.
->
-> linux-next MAINTAINERS section:
->
-> 	12851	SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
-> 	12852	M:	=C5=81ukasz Stelmach <l.stelmach@samsung.com>
-> 	12853	L:	linux-samsung-soc@vger.kernel.org
-> 	12854	S:	Maintained
-> 	12855	F:	drivers/char/hw_random/exynos-trng.c
-> -->	12856	F:	Documentation/devicetree/bindings/rng/samsung,exynos5250-trn=
-g.txt
->
-> Commit that introduced this:
->
-> commit 6cd225cc5d8a6526b2bea41955882be55d4f109e
->  Author: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
->  Date:   Fri Dec 22 17:48:35 2017 +0100
->=20=20
->      hwrng: exynos - add Samsung Exynos True RNG driver
->=20=20=20=20=20=20
->      Add support for True Random Number Generator found in Samsung Exynos
->      5250+ SoCs.
->=20=20=20=20=20=20
->      Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
->      Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
->      Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
->      Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
->=20=20
->   MAINTAINERS                          |   7 ++
->   drivers/char/hw_random/Kconfig       |  12 ++
->   drivers/char/hw_random/Makefile      |   1 +
->   drivers/char/hw_random/exynos-trng.c | 237 ++++++++++++++++++++++++++++=
-+++++++
->   4 files changed, 257 insertions(+)
->
-> No commit with Documentation/devicetree/bindings/rng/samsung,exynos5250-t=
-rng.txt found
+No what code shows is not a real back porch value used for drm it's 
+panel back porch value which is a DTS property in BSP.
+(I made wrong comment on previous mail as front porch, sorry)
 
-Please merge the version 3[1] of the patch you've acked[2].
+here is the real code
 
-[1] https://www.spinics.net/lists/linux-samsung-soc/msg61372.html
-[2] https://www.spinics.net/lists/linux-samsung-soc/msg61272.html
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+from drivers/video/sunxi/disp2/disp/de/disp_lcd.c
+timmings->ver_sync_time= panel_info->lcd_vspw;
+timmings->ver_back_porch= panel_info->lcd_vbp-panel_info->lcd_vspw;
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+u32 vbp = panel->lcd_vbp;
+u32 vspw = panel->lcd_vspw;
+dsi_dev[sel]->dsi_basic_size0.bits.vbp = vbp-vspw;
 
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAlux1coACgkQsK4enJil
-gBCoYAf/TRdfsYupR+hSviOt6F/mHduwMboNJ4TMl/4iZcg8PMueZSDj74tNMpI3
-kTNg7n5bCvNeFliYOu4RfxFUzPuwpxU2YUDgJ2AWmdB5545Ekj8Yq2va6P/sBq9L
-TyYogfT5FEBeDG0E2AlsdpB3oWw3I8u/mlvgsTjeRu17ptKGP3euh9bsXDlm/rTo
-sTemzSNB0QElUya1r2BO6gvZgO4F5Hvz9AyvWT6W4lM3TDwprqKR98p2IwnXUfvt
-KZxOvy9S9IfTtFOOj06APjuJqE4wZ7a8U8UOdMDIKvnN3woeJsCaviWAbS19Gbpw
-IObvC9+lYMY0SREXqsKfRdbG0bnOLg==
-=+ZAp
------END PGP SIGNATURE-----
---=-=-=--
+So,
+
+dsi_dev[sel]->dsi_basic_size0.bits.vbp = panel->lcd_vbp - panel->lcd_vspw;
+
+=>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_vspw
+=>  timmings->ver_back_porch
+=>  mode->vtotal - mode->end
+
+VSA, which a proper value.
+
+dsi_dev[sel]->dsi_basic_size0.bits.vsa = vspw;
+=> panel_info->lcd_vspw;
+=> timmings->ver_sync_time
+=> mode->vsync_end - mode->vsync_start
