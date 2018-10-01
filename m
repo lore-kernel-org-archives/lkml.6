@@ -2,132 +2,109 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D33C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3749EC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9814020666
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:48:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E31D52145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 21:49:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vb0xabXj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9814020666
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HxgL1m8V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E31D52145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbeJBE2H (ORCPT
+        id S1726645AbeJBE27 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 00:28:07 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:37249 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbeJBE2G (ORCPT
+        Tue, 2 Oct 2018 00:28:59 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36131 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbeJBE27 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 00:28:06 -0400
-Received: by mail-yw1-f67.google.com with SMTP id y14-v6so6186998ywa.4
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 14:48:15 -0700 (PDT)
+        Tue, 2 Oct 2018 00:28:59 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f18-v6so6882962pgv.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 14:49:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=vuVbGBvdO2o1Skd/DkZnyO58kitCvUZdXNxmr8f8Yxg=;
-        b=Vb0xabXjhFv6avYkENO2GloQmgPMmOwjzDr7+6MCMTnrwL+nkM65bPmcsmdmasyv5N
-         HMyZ6mxwtjn+zx2GVuKaAyxxjP4Iit7/phIsPhYDQhxOvweh4PeG7PDb11BTppxUGSLt
-         sDm8VYEiHVHm97ZbPfX5+sJV3GVb1eu6dHTqc=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ei10IMDTH9p7ZNfD8xEmYEMq7A1+pvhdDRd1zGw788U=;
+        b=HxgL1m8V0/yiK2g6wuzWbeSx9bV7dCYP0GOyp3bzaCftTGsCV3YAboTnIk2C9vC4I8
+         DPH3aiFUAq42F7ltfWOs8NCw/tSoxGQDOI0DpznF7K6yR42CYK1Gv6D+BzjA/0Bv6jrU
+         D8vncwGl0f6fdpw8eDjHIJnSNEJZjsU+ydnRk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=vuVbGBvdO2o1Skd/DkZnyO58kitCvUZdXNxmr8f8Yxg=;
-        b=pPrtvGPDMVVAy/NngFVhhA8Y3BqpamgZX7wHIQlovpPjWc71YmD0vLZtzhtL5j6bSn
-         qy9qeweL1QQ/AWNe1aEK2rd6ySOLwvPxy2nnvxyd2Z2j33M9l6MiKHNA5W67xeuhnkQa
-         0pnixnbkD3jFRkO6S4MQmUsLqJX9CyQIEueCLB9FUSIFv6B/BWy0eFnJtxZT79gzdGij
-         tOKEgeVoXCy4ufFAA22ubxkv3EJTwJoDw/XnTWHbfOENKyh4y/GCs+zGvL405qNCoWeU
-         Ot0MdAFBNFZ5JcPS0wbyRfjwRoVR77UaSlx/CBcteWZeQ8SJ7DgQ4Ndfk3cNTGH2CKdL
-         8kgA==
-X-Gm-Message-State: ABuFfoibRhzQMEWw3mCZA8QZcoRnjWIJSP+Kpud9ZsyuHWJFZGtiQFzV
-        2xr34HdEmDs9L1A3mjYuP6NYxwbfljM=
-X-Google-Smtp-Source: ACcGV61ZH54MRCV2PNMYvP1F3JSqiBVSJfgjQvXE8RXFQR9SeGI2JwUu2zUco8Di2XMLxutpF623qA==
-X-Received: by 2002:a81:1a14:: with SMTP id a20-v6mr287935ywa.505.1538430494398;
-        Mon, 01 Oct 2018 14:48:14 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id 15-v6sm5881877ywi.76.2018.10.01.14.48.12
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ei10IMDTH9p7ZNfD8xEmYEMq7A1+pvhdDRd1zGw788U=;
+        b=nGa3V7UAbjUSsso5jwXgmkqv5Qf65m8PWScL9eHCaIkhjJf67/ydxD3dE1TnELdGmj
+         dKqwcYqNVmaYRLKgIUSEL2VS8L5HRts/mI5giZMsRgjMCKYFwLrfW4RoIyZ6E5bYjr1d
+         Grk0Ietqn1zFkdviFp0xHBEHTvu/qW8I9KpFoW/KBTrQcBkk7W2FOeJCCPHIk8GBKZ6e
+         xiX9idVA2ncnr36HJNdusIctRimyDu0gh4CGRvt2o8wZ5Rz1GpKuLXSIDD+atfi+PCUn
+         E4gzYzlttQrRBnjauKUj3uyyDqjPKzAjOWWrntIx7FfODNGdtk+RzUJN8eMfgw+BAoSO
+         wgEA==
+X-Gm-Message-State: ABuFfoi2U+SSj8LGGviJho8m4PJN52X+kLK+rsq1XzfnlMIlnR03PERg
+        8zGdPtvINV0fFE09R5SqEzp+uw==
+X-Google-Smtp-Source: ACcGV60jjmbUzmpk5/aScoNEuZJyQBvAeMw/nbwNmMfvzeHomOHXUr5ixO2O6xGG0VccbDqEu7pxSg==
+X-Received: by 2002:a17:902:a9c9:: with SMTP id b9-v6mr13020814plr.225.1538430547028;
+        Mon, 01 Oct 2018 14:49:07 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id g88-v6sm27159070pfd.181.2018.10.01.14.49.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 14:48:12 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id c4-v6so6296986ybl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 14:48:12 -0700 (PDT)
-X-Received: by 2002:a25:396:: with SMTP id 144-v6mr7279029ybd.403.1538430491782;
- Mon, 01 Oct 2018 14:48:11 -0700 (PDT)
+        Mon, 01 Oct 2018 14:49:06 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>
+Subject: [PATCH] pinctrl: msm: Actually use function 0 for gpio selection
+Date:   Mon,  1 Oct 2018 14:49:05 -0700
+Message-Id: <20181001214905.12149-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 14:48:10 -0700 (PDT)
-In-Reply-To: <8010a7d0-c6a0-b327-d5dd-6857d6d42561@schaufler-ca.com>
-References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com> <8010a7d0-c6a0-b327-d5dd-6857d6d42561@schaufler-ca.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 1 Oct 2018 14:48:10 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+XTMcqdPQK=E6KV3-oMCFA+UkiGsfHN2T6CCfAA7X9Qw@mail.gmail.com>
-Message-ID: <CAGXu5j+XTMcqdPQK=E6KV3-oMCFA+UkiGsfHN2T6CCfAA7X9Qw@mail.gmail.com>
-Subject: Re: [PATCH 21/19] LSM: Cleanup and fixes from Tetsuo Handa
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     LSM <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 2:57 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> lsm_early_cred()/lsm_early_task() are called from only __init functions.
->
-> lsm_cred_alloc()/lsm_file_alloc() are called from only security/security.c .
->
-> lsm_early_inode() should be avoided because it is not appropriate to
-> call panic() when lsm_early_inode() is called after __init phase.
->
-> Since all free hooks are called when one of init hooks failed, each
-> free hook needs to check whether init hook was called.
->
-> The original changes are from Tetsuo Handa. I have made minor
-> changes in some places, but this is mostly his code.
->
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  include/linux/lsm_hooks.h         |  6 ++----
->  security/security.c               | 27 ++++-----------------------
->  security/selinux/hooks.c          |  5 ++++-
->  security/selinux/include/objsec.h |  2 ++
->  security/smack/smack_lsm.c        |  8 +++++++-
->  5 files changed, 19 insertions(+), 29 deletions(-)
+This code needs to select function #0, which is the first int in the
+array of functions, not the number 0 which may or may not be the
+function for "GPIO mode" per the enum mapping. We were getting lucky on
+SDM845, where this was tested, because the function 0 matched the enum
+value for "GPIO mode". On other platforms, e.g. MSM8996, the gpio enum
+value is the last one in the list so this code doesn't work and we see a
+warning at boot. Fix it by grabbing the first element out of the array
+of functions.
 
-I've split this across the various commits they touch:
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Niklas Cassel <niklas.cassel@linaro.org>
+Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+Fixes: 1de7ddb3a15c ("pinctrl: msm: Mux out gpio function with gpio_request()")
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Infrastructure management of the cred security blob
-LSM: Infrastructure management of the file security
-LSM: Infrastructure management of the inode security
-LSM: Infrastructure management of the task security
-LSM: Blob sharing support for S.A.R.A and LandLock
-
-Based on these changes, I've uploaded the "v4.1", or "Casey is on
-vacation", tree here:
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=lsm/blob-sharing-v4.1
-
-I'm going to work on a merged series for the "arbitrary ordering" and
-"blob-sharing" trees next...
-
--Kees
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 1684b2da09d5..b925b8feac95 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -188,7 +188,7 @@ static int msm_pinmux_request_gpio(struct pinctrl_dev *pctldev,
+ 		return 0;
+ 
+ 	/* For now assume function 0 is GPIO because it always is */
+-	return msm_pinmux_set_mux(pctldev, 0, offset);
++	return msm_pinmux_set_mux(pctldev, g->funcs[0], offset);
+ }
+ 
+ static const struct pinmux_ops msm_pinmux_ops = {
 -- 
-Kees Cook
-Pixel Security
+Sent by a computer through tubes
+
