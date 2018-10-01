@@ -2,168 +2,730 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D35B9C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0587C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 805B12089A
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805B12089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C5F6208AE
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 18:04:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="UhtaaUqu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C5F6208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbeJBAnM (ORCPT
+        id S1726565AbeJBAnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 20:43:12 -0400
-Received: from muru.com ([72.249.23.125]:58006 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbeJBAnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 20:43:11 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 0E59A80F0;
-        Mon,  1 Oct 2018 18:08:37 +0000 (UTC)
-Date:   Mon, 1 Oct 2018 11:04:08 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [BUG] sleep in atomic in 8250 runtime PM code path
-Message-ID: <20181001180408.GY5662@atomide.com>
-References: <20180929132036.0323e24b@xhacker.debian>
- <20180929103045.GQ30658@n2100.armlinux.org.uk>
+        Mon, 1 Oct 2018 20:43:47 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35096 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbeJBAnr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 20:43:47 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v133-v6so10028690pgb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 11:04:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jsXE0SjOQI5vTUuHbb8y43JV3kXfe5ZdusnOyY5R6Dg=;
+        b=UhtaaUqu5om4bhOL54w4ARV0xOs/TsrHDtgzciyYcU07YSR5CHVg+b+sj/ilhkg6aA
+         Lsxgazs7QROfGmco/jeYNzI8dO2IjJvq+ROqQfzTlNfU6WSBKB9ylRiIaVxz76l/ROk4
+         ceAg6eM8GJA9mZzoFPn/88c++jUyk2bUPcu5n17q8PZAH2fhMHnBUQPXb7JjeY14lQCL
+         0095QMOhDHe3nt1+nLyEAMBqFWqEQxlxQ4KLaWn8dFJMEIbEftT4y2D/C+Rfst47sd+Q
+         g51dGAKInfRfy8azUllvt7RYTM6LVR4k7NTFjv6TNBmL6RKLzPNtHgbAtAoQeJrlqkQs
+         HeJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jsXE0SjOQI5vTUuHbb8y43JV3kXfe5ZdusnOyY5R6Dg=;
+        b=nsLU15MwzSFLp0oVjCMx/UArw9TjFfbHUZmQncjLO8LlXKRzm2EY7kaqctn1e1Drqx
+         +rLlShNpTlu5DNHAPmtBS4mEdBJA5eERn9uwjKNQYx/6aBpfQDGlFaZQuGuCpWKO8SRM
+         kzuZ24hQP9tO/wzjxGbwGm8AXCFjx5W4q7oouREDA8Q0rUUFzdQJA/0HMSvbwVwz2Q9f
+         lp14O0bgzK5Q1Sd+wAMKoBg7sCl7NZOrMaiIuwWFmWeUoWAlkK2XEBMS6MmMYiH3BAXt
+         pCsyyotLukhyZLPvr1fs2vfpvwu2BkZXFbG1J9PZRReLGL+NVz2bidfOfV3BVdnGJyGC
+         g3dg==
+X-Gm-Message-State: ABuFfog4kcP8KlUE3QmyxbbdRctXqWmVo6jfNnKtCcDbjjoyrRT4ibNz
+        Rzao9ZfIMJV5nXI1jL6XhFfmHd9plOc=
+X-Google-Smtp-Source: ACcGV63ulllqSbV69pZTRamSWfX0ywCUqYiROLawlmbwR2uJ+MeWjGDjyzq7QFWYptBvza2AcuA4qQ==
+X-Received: by 2002:a17:902:76c2:: with SMTP id j2-v6mr11966309plt.258.1538417087776;
+        Mon, 01 Oct 2018 11:04:47 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
+        by smtp.gmail.com with ESMTPSA id d186-v6sm24469261pfg.173.2018.10.01.11.04.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 11:04:47 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        James Morse <james.morse@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dmitry Safonov <dsafonov@virtuozzo.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Andrew Pinski <apinski@cavium.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Jeremy Linton <Jeremy.Linton@arm.com>,
+        android-kernel@android.com
+Subject: RESEND [PATCH v2 4/6] arm64: compat: Add a 32-bit vDSO
+Date:   Mon,  1 Oct 2018 10:58:41 -0700
+Message-Id: <20181001175845.168430-22-salyzyn@android.com>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+In-Reply-To: <20181001175845.168430-1-salyzyn@android.com>
+References: <20181001175845.168430-1-salyzyn@android.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180929103045.GQ30658@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Russell King - ARM Linux <linux@armlinux.org.uk> [180929 10:35]:
-> On Sat, Sep 29, 2018 at 01:20:36PM +0800, Jisheng Zhang wrote:
-> > Hi,
-> > 
-> > Recently I found I could trigger sleep in atomic bug on berlin after commit
-> > d76c74387e1c ("serial: 8250_dw: Fix runtime PM handling"). The path looks like:
-> > 
-> > dw8250_probe => serial850_register_8250_port => uart_add_one_port=>
-> > register_console => console_unlock => univ8250_console_write =>
-> > serial8250_console_write => serial8250_rpm_get => pm_runtime_get_sync
-> > 
-> > The irq is disabled by printk_safe_enter_irqsave() in console_unlock, but
-> > pm_runtime_get_sync can't be called in atomic context...
-> > 
-> > I guess the reason why we didn't notice it is due to the fact that
-> > only OMAP and DW sets UART_CAP_RPM currently, and DW set the flag in
-> > May 2018.
-> > 
-> > Per my understanding, the bug sits in the 8250 core driver rather than
-> > 8250_dw.c.
-> 
-> (Adding Tony and Sebastian, presumably CAP_RPM comes from OMAP since
-> that is the only other user, and this same bug is present there too.)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
 
-That only works because of pm_runtime_irq_safe() :( And we should not
-use pm_runtime_irq_safe() at all IMO, it takes a permanent RPM usecount
-on the parent device.
+Provide the files necessary for building a compat (AArch32) vDSO in
+kernel/vdso32.
 
-Adding also Andy to Cc as he's been working on related fixes.
+This is mostly an adaptation of the arm vDSO. The most significant
+change in vgettimeofday.c is the use of the arm64 vdso_data struct,
+allowing the vDSO data page to be shared between the 32 and 64-bit
+vDSOs. Additionally, a different set of barrier macros is used (see
+aarch32-barrier.h), as we want to support old 32-bit compilers that
+may not support ARMv8 and its new barrier arguments (*ld).
 
-> Correct.  printk() can be called from atomic contexts (consider what
-> happens when an oops or similar occurs - we can be in any context,
-> holding any locks etc.)  Plain printk() can also be used from within
-> spinlocked irqs-off regions.
-> 
-> This means the console's write function may be called in these contexts.
-> Since pm_runtime_get_sync() is may sleep, it means that its use in the
-> console path is _fundamentally_ wrong, and will lead to exactly this
-> problem.
-> 
-> I don't see a way around that other than to avoid RPM on consoles.
-> (which makes the presence of the RPM code in serial8250_console_write()
-> completely unnecessary.)
+In addition to the time functions, sigreturn trampolines are also
+provided, aiming at replacing those in the sigreturn page as the
+latter don't provide any unwinding information (and it's easier to
+have just one "user code" page). arm-specific unwinding directives are
+used, based on glibc's implementation. Symbol offsets are made
+available to the kernel using the same method as the 64-bit vDSO.
 
-Yup the way to go is to have some way to attach/detach kernel serial
-console via /sys, and have the serial layer take a usecount on the
-serial driver RPM when kernel serial console is attached. Then the
-user can detach serial console via /sys as needed and have RPM
-working.
+There is unfortunately an important caveat: we cannot get away with
+hand-coding 32-bit instructions like in kernel/kuser32.S, this time we
+really need a 32-bit compiler. The compat vDSO Makefile relies on
+CROSS_COMPILE_ARM32 to provide a 32-bit compiler, appropriate logic
+will be added to the arm64 Makefile later on to ensure that an attempt
+to build the compat vDSO is made only if this variable has been set
+properly.
 
-> When I rewrote the serial drivers and created serial_core & 8250, this
-> is something that I realised, and I arranged the PM support at the time
-> to always maintain the console in active state (this is prior to RPM).
-> 
-> While I'm looking at commit d74d5d1b7288 ("tty: serial: 8250_core: add
-> run time pm"):
-> 
-> +static void serial8250_rpm_get_tx(struct uart_8250_port *p)
-> +{
-> +       unsigned char rpm_active;
-> +
-> +       if (!(p->capabilities & UART_CAP_RPM))
-> +               return;
-> +
-> +       rpm_active = xchg(&p->rpm_tx_active, 1);
-> +       if (rpm_active)
-> +               return;
-> +       pm_runtime_get_sync(p->port.dev);
-> +}
-> 
-> is particularly "interesting" - if this is called from sections of
-> code that allow it to be called concurrently from different contexts,
-> then we could have:
-> 
-> rpm_tx_active	thread 0			thread 1
-> 0
-> 		xchg(, 1)
-> 1
-> 						xchg(, 1)
-> 						... goes on to use port ...
-> 		pm_runtime_get_sync()
-> 
-> In other words, the port can be used _before_ pm_runtime_get_sync() is
-> called.
-> 
-> If, on the other hand, this can't race, then considering the
-> serial8250_rpm_put_tx() path as well, what stops this race from
-> happening:
-> 
-> rpm_tx_active	thread 0			thread 1
-> 1
-> 		serial8250_rpm_get_tx()
-> 						serial8250_rpm_put_tx()
-> 		xchg(, 1)
-> 1
-> 						xchg(, 0)
-> 0
-> 						pm_runtime_put_autosuspend()
-> 
-> Now to the real point about the above - if _neither_ race is possible,
-> then what is the point of the more expensive xchg() here rather than
-> simple test-and-assignment of rpm_tx_active?  Either these paths can't
-> race with each other and xchg() is unnecessary, or they can and they
-> _could_ fail as shown above.  My suspicion is that xchg() is an attempt
-> to reduce the likelyhood of one of these races being hit.
+Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 
-Yeah the driver would need to maintain a is_suspended flag to prevent
-that. See also the is_suspended related parts for runtime PM docs at
-Documentation/power/runtime_pm.txt.
+Take an effort to recode the arm64 vdso code from assembler to C
+previously submitted by Andrew Pinski <apinski@cavium.com>, rework
+it for use in both arm and arm64, overlapping any optimizations
+for each architecture.
 
-But let's just make the serial layer take RPM usecount on the
-serial driver when console is in use and have some way for users
-to attach and detach the kernel serial console via /sys to prevent
-PM regressions.
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Tested-by: Mark Salyzyn <salyzyn@android.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Dave Martin <Dave.Martin@arm.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: Andrew Pinski <apinski@cavium.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Jeremy Linton <Jeremy.Linton@arm.com>
+Cc: android-kernel@android.com
 
-Regards,
+v2:
+- Ensured CONFIG_64BIT is not defined, side effect is
+  BITS_PER_LONG is correct adding confidence.
+---
+ arch/arm64/kernel/vdso32/.gitignore      |   2 +
+ arch/arm64/kernel/vdso32/Makefile        | 172 +++++++++++++++++++++++
+ arch/arm64/kernel/vdso32/compiler.h      | 122 ++++++++++++++++
+ arch/arm64/kernel/vdso32/datapage.h      |   1 +
+ arch/arm64/kernel/vdso32/sigreturn.S     |  76 ++++++++++
+ arch/arm64/kernel/vdso32/vdso.S          |  32 +++++
+ arch/arm64/kernel/vdso32/vdso.lds.S      |  95 +++++++++++++
+ arch/arm64/kernel/vdso32/vgettimeofday.c |   3 +
+ 8 files changed, 503 insertions(+)
+ create mode 100644 arch/arm64/kernel/vdso32/.gitignore
+ create mode 100644 arch/arm64/kernel/vdso32/Makefile
+ create mode 100644 arch/arm64/kernel/vdso32/compiler.h
+ create mode 100644 arch/arm64/kernel/vdso32/datapage.h
+ create mode 100644 arch/arm64/kernel/vdso32/sigreturn.S
+ create mode 100644 arch/arm64/kernel/vdso32/vdso.S
+ create mode 100644 arch/arm64/kernel/vdso32/vdso.lds.S
+ create mode 100644 arch/arm64/kernel/vdso32/vgettimeofday.c
 
-Tony
+diff --git a/arch/arm64/kernel/vdso32/.gitignore b/arch/arm64/kernel/vdso32/.gitignore
+new file mode 100644
+index 000000000000..4fea950fa5ed
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/.gitignore
+@@ -0,0 +1,2 @@
++vdso.lds
++vdso.so.raw
+diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
+new file mode 100644
+index 000000000000..6d44d972e89d
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/Makefile
+@@ -0,0 +1,172 @@
++#
++# Building a vDSO image for AArch32.
++#
++# Author: Kevin Brodsky <kevin.brodsky@arm.com>
++# A mix between the arm64 and arm vDSO Makefiles.
++
++ifeq ($(cc-name),clang)
++  CC_ARM32 := $(cc-name) $(CLANG_TARGET_ARM32) -no-integrated-as
++else
++  CC_ARM32 := $(CROSS_COMPILE_ARM32)$(cc-name)
++endif
++
++# Same as cc-*option, but using CC_ARM32 instead of CC
++cc32-option = $(call try-run,\
++        $(CC_ARM32) $(1) -c -x c /dev/null -o "$$TMP",$(1),$(2))
++cc32-disable-warning = $(call try-run,\
++	$(CC_ARM32) -W$(strip $(1)) -c -x c /dev/null -o "$$TMP",-Wno-$(strip $(1)))
++cc32-ldoption = $(call try-run,\
++        $(CC_ARM32) $(1) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
++
++# We cannot use the global flags to compile the vDSO files, the main reason
++# being that the 32-bit compiler may be older than the main (64-bit) compiler
++# and therefore may not understand flags set using $(cc-option ...). Besides,
++# arch-specific options should be taken from the arm Makefile instead of the
++# arm64 one.
++# As a result we set our own flags here.
++
++# From top-level Makefile
++# NOSTDINC_FLAGS
++VDSO_CPPFLAGS := -nostdinc -isystem $(shell $(CC_ARM32) -print-file-name=include)
++VDSO_CPPFLAGS += $(LINUXINCLUDE)
++VDSO_CPPFLAGS += $(KBUILD_CPPFLAGS)
++
++# Common C and assembly flags
++# From top-level Makefile
++VDSO_CAFLAGS := $(VDSO_CPPFLAGS)
++VDSO_CAFLAGS += $(call cc32-option,-fno-PIE)
++ifdef CONFIG_DEBUG_INFO
++VDSO_CAFLAGS += -g
++endif
++ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC_ARM32)), y)
++VDSO_CAFLAGS += -DCC_HAVE_ASM_GOTO
++endif
++
++# From arm Makefile
++VDSO_CAFLAGS += $(call cc32-option,-fno-dwarf2-cfi-asm)
++VDSO_CAFLAGS += -mabi=aapcs-linux -mfloat-abi=soft
++ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
++VDSO_CAFLAGS += -mbig-endian
++else
++VDSO_CAFLAGS += -mlittle-endian
++endif
++
++# From arm vDSO Makefile
++VDSO_CAFLAGS += -fPIC -fno-builtin -fno-stack-protector
++VDSO_CAFLAGS += -DDISABLE_BRANCH_PROFILING
++
++# Try to compile for ARMv8. If the compiler is too old and doesn't support it,
++# fall back to v7. There is no easy way to check for what architecture the code
++# is being compiled, so define a macro specifying that (see arch/arm/Makefile).
++VDSO_CAFLAGS += $(call cc32-option,-march=armv8-a -D__LINUX_ARM_ARCH__=8,\
++                                   -march=armv7-a -D__LINUX_ARM_ARCH__=7)
++
++VDSO_CFLAGS := $(VDSO_CAFLAGS)
++# KBUILD_CFLAGS from top-level Makefile
++VDSO_CFLAGS += -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
++               -fno-strict-aliasing -fno-common \
++               -Werror-implicit-function-declaration \
++               -Wno-format-security \
++               -std=gnu89
++VDSO_CFLAGS  += -O2
++# Some useful compiler-dependent flags from top-level Makefile
++VDSO_CFLAGS += $(call cc32-option,-Wdeclaration-after-statement,)
++VDSO_CFLAGS += $(call cc32-option,-Wno-pointer-sign)
++VDSO_CFLAGS += $(call cc32-option,-fno-strict-overflow)
++VDSO_CFLAGS += $(call cc32-option,-Werror=strict-prototypes)
++VDSO_CFLAGS += $(call cc32-option,-Werror=date-time)
++VDSO_CFLAGS += $(call cc32-option,-Werror=incompatible-pointer-types)
++
++# The 32-bit compiler does not provide 128-bit integers, which are used in
++# some headers that are indirectly included from the vDSO code.
++# This hack makes the compiler happy and should trigger a warning/error if
++# variables of such type are referenced.
++VDSO_CFLAGS += -D__uint128_t='void*'
++# Silence some warnings coming from headers that operate on long's
++# (on GCC 4.8 or older, there is unfortunately no way to silence this warning)
++VDSO_CFLAGS += $(call cc32-disable-warning,shift-count-overflow)
++VDSO_CFLAGS += -Wno-int-to-pointer-cast
++
++VDSO_AFLAGS := $(VDSO_CAFLAGS)
++VDSO_AFLAGS += -D__ASSEMBLY__
++
++VDSO_LDFLAGS := $(VDSO_CPPFLAGS)
++# From arm vDSO Makefile
++VDSO_LDFLAGS += -Wl,-Bsymbolic -Wl,--no-undefined -Wl,-soname=linux-vdso.so.1
++VDSO_LDFLAGS += -Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096
++VDSO_LDFLAGS += -nostdlib -shared -mfloat-abi=soft
++VDSO_LDFLAGS += $(call cc32-ldoption,-Wl$(comma)--hash-style=sysv)
++VDSO_LDFLAGS += $(call cc32-ldoption,-Wl$(comma)--build-id)
++VDSO_LDFLAGS += $(call cc32-ldoption,-fuse-ld=bfd)
++
++
++# Borrow vdsomunge.c from the arm vDSO
++# We have to use a relative path because scripts/Makefile.host prefixes
++# $(hostprogs-y) with $(obj)
++munge := ../../../arm/vdso/vdsomunge
++hostprogs-y := $(munge)
++
++c-obj-vdso := vgettimeofday.o
++asm-obj-vdso := sigreturn.o
++
++# Build rules
++targets := $(c-obj-vdso) $(asm-obj-vdso) vdso.so vdso.so.dbg vdso.so.raw
++c-obj-vdso := $(addprefix $(obj)/, $(c-obj-vdso))
++asm-obj-vdso := $(addprefix $(obj)/, $(asm-obj-vdso))
++obj-vdso := $(c-obj-vdso) $(asm-obj-vdso)
++
++obj-y += vdso.o
++extra-y += vdso.lds
++CPPFLAGS_vdso.lds += -P -C -U$(ARCH)
++
++# Force dependency (vdso.s includes vdso.so through incbin)
++$(obj)/vdso.o: $(obj)/vdso.so
++
++include/generated/vdso32-offsets.h: $(obj)/vdso.so.dbg FORCE
++	$(call if_changed,vdsosym)
++
++# Strip rule for vdso.so
++$(obj)/vdso.so: OBJCOPYFLAGS := -S
++$(obj)/vdso.so: $(obj)/vdso.so.dbg FORCE
++	$(call if_changed,objcopy)
++
++$(obj)/vdso.so.dbg: $(obj)/vdso.so.raw $(obj)/$(munge) FORCE
++	$(call if_changed,vdsomunge)
++
++# Link rule for the .so file, .lds has to be first
++$(obj)/vdso.so.raw: $(src)/vdso.lds $(obj-vdso) FORCE
++	$(call if_changed,vdsold)
++
++# Compilation rules for the vDSO sources
++$(filter-out vgettimeofday.o, $(c-obj-vdso)): %.o: %.c FORCE
++	$(call if_changed_dep,vdsocc)
++$(asm-obj-vdso): %.o: %.S FORCE
++	$(call if_changed_dep,vdsoas)
++
++# Actual build commands
++quiet_cmd_vdsold = VDSOL32   $@
++      cmd_vdsold = $(CC_ARM32) -Wp,-MD,$(depfile) $(VDSO_LDFLAGS) \
++                   -Wl,-T $(filter %.lds,$^) $(filter %.o,$^) -o $@
++quiet_cmd_vdsocc = VDSOC32   $@
++      cmd_vdsocc = $(CC_ARM32) -Wp,-MD,$(depfile) $(VDSO_CFLAGS) -c -o $@ $<
++quiet_cmd_vdsoas = VDSOA32   $@
++      cmd_vdsoas = $(CC_ARM32) -Wp,-MD,$(depfile) $(VDSO_AFLAGS) -c -o $@ $<
++
++quiet_cmd_vdsomunge = MUNGE   $@
++      cmd_vdsomunge = $(obj)/$(munge) $< $@
++
++# Generate vDSO offsets using helper script (borrowed from the 64-bit vDSO)
++gen-vdsosym := $(srctree)/$(src)/../vdso/gen_vdso_offsets.sh
++quiet_cmd_vdsosym = VDSOSYM $@
++# The AArch64 nm should be able to read an AArch32 binary
++      cmd_vdsosym = $(NM) $< | $(gen-vdsosym) | LC_ALL=C sort > $@
++
++# Install commands for the unstripped file
++quiet_cmd_vdso_install = INSTALL $@
++      cmd_vdso_install = cp $(obj)/$@.dbg $(MODLIB)/vdso/vdso32.so
++
++vdso.so: $(obj)/vdso.so.dbg
++	@mkdir -p $(MODLIB)/vdso
++	$(call cmd,vdso_install)
++
++vdso_install: vdso.so
+diff --git a/arch/arm64/kernel/vdso32/compiler.h b/arch/arm64/kernel/vdso32/compiler.h
+new file mode 100644
+index 000000000000..19a43fc37bb9
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/compiler.h
+@@ -0,0 +1,122 @@
++/*
++ * Userspace implementations of fallback calls
++ *
++ * Copyright (C) 2017 Cavium, Inc.
++ * Copyright (C) 2012 ARM Limited
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ * Author: Will Deacon <will.deacon@arm.com>
++ * Rewriten into C by: Andrew Pinski <apinski@cavium.com>
++ */
++
++#ifndef __VDSO_COMPILER_H
++#define __VDSO_COMPILER_H
++
++#include <generated/autoconf.h>
++#undef CONFIG_64BIT
++#include <asm/barrier.h>	/* for isb() & dmb()	*/
++#include <asm/param.h>		/* for HZ		*/
++#include <asm/unistd32.h>
++#include <linux/compiler.h>
++
++#ifdef CONFIG_ARM_ARCH_TIMER
++#define ARCH_PROVIDES_TIMER
++#endif
++
++/* can not include linux/time.h because of too much architectural cruft */
++#ifndef NSEC_PER_SEC
++#define NSEC_PER_SEC    1000000000L
++#endif
++
++/* can not include linux/jiffies.h because of too much architectural cruft */
++#ifndef TICK_NSEC
++#define TICK_NSEC ((NSEC_PER_SEC+HZ/2)/HZ)
++#endif
++
++/* can not include linux/hrtimer.h because of too much architectural cruft */
++#ifndef LOW_RES_NSEC
++#define LOW_RES_NSEC        TICK_NSEC
++#ifdef ARCH_PROVIDES_TIMER
++#ifdef CONFIG_HIGH_RES_TIMERS
++# define HIGH_RES_NSEC        1
++# define MONOTONIC_RES_NSEC    HIGH_RES_NSEC
++#else
++# define MONOTONIC_RES_NSEC    LOW_RES_NSEC
++#endif
++#endif
++#endif
++
++#define DEFINE_FALLBACK(name, type_arg1, name_arg1, type_arg2, name_arg2) \
++static notrace long name##_fallback(type_arg1 _##name_arg1,		  \
++				    type_arg2 _##name_arg2)		  \
++{									  \
++	register type_arg1 name_arg1 asm("r0") = _##name_arg1;		  \
++	register type_arg2 name_arg2 asm("r1") = _##name_arg2;		  \
++	register long ret asm ("r0");					  \
++	register long nr asm("r7") = __NR_##name;			  \
++									  \
++	asm volatile(							  \
++	"	swi #0\n"						  \
++	: "=r" (ret)							  \
++	: "r" (name_arg1), "r" (name_arg2), "r" (nr)			  \
++	: "memory");							  \
++									  \
++	return ret;							  \
++}
++
++/*
++ * AArch32 implementation of arch_counter_get_cntvct() suitable for vdso
++ */
++static __always_inline notrace u64 arch_vdso_read_counter(void)
++{
++	u64 res;
++
++	/* Read the virtual counter. */
++	isb();
++	asm volatile("mrrc p15, 1, %Q0, %R0, c14" : "=r" (res));
++
++	return res;
++}
++
++/*
++ * Can not include asm/processor.h to pick this up because of all the
++ * architectural components also included, so we open code a copy.
++ */
++static inline void cpu_relax(void)
++{
++	asm volatile("yield" ::: "memory");
++}
++
++#undef smp_rmb
++#if __LINUX_ARM_ARCH__ >= 8
++#define	smp_rmb()	dmb(ishld) /* ok on ARMv8 */
++#else
++#define	smp_rmb()	dmb(ish) /* ishld does not exist on ARMv7 */
++#endif
++
++/* Avoid unresolved references emitted by GCC */
++
++void __aeabi_unwind_cpp_pr0(void)
++{
++}
++
++void __aeabi_unwind_cpp_pr1(void)
++{
++}
++
++void __aeabi_unwind_cpp_pr2(void)
++{
++}
++
++#endif /* __VDSO_COMPILER_H */
+diff --git a/arch/arm64/kernel/vdso32/datapage.h b/arch/arm64/kernel/vdso32/datapage.h
+new file mode 100644
+index 000000000000..fe3e216d94d1
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/datapage.h
+@@ -0,0 +1 @@
++#include "../vdso/datapage.h"
+diff --git a/arch/arm64/kernel/vdso32/sigreturn.S b/arch/arm64/kernel/vdso32/sigreturn.S
+new file mode 100644
+index 000000000000..14e5f9ca34f9
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/sigreturn.S
+@@ -0,0 +1,76 @@
++/*
++ * Sigreturn trampolines for returning from a signal when the SA_RESTORER
++ * flag is not set.
++ *
++ * Copyright (C) 2016 ARM Limited
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ * Based on glibc's arm sa_restorer. While this is not strictly necessary, we
++ * provide both A32 and T32 versions, in accordance with the arm sigreturn
++ * code.
++ */
++
++#include <linux/linkage.h>
++#include <asm/asm-offsets.h>
++#include <asm/unistd32.h>
++
++.macro sigreturn_trampoline name, syscall, regs_offset
++	/*
++	 * We provide directives for enabling stack unwinding through the
++	 * trampoline. On arm, CFI directives are only used for debugging (and
++	 * the vDSO is stripped of debug information), so only the arm-specific
++	 * unwinding directives are useful here.
++	 */
++	.fnstart
++	.save {r0-r15}
++	.pad #\regs_offset
++	/*
++	 * It is necessary to start the unwind tables at least one instruction
++	 * before the trampoline, as the unwinder will assume that the signal
++	 * handler has been called from the trampoline, that is just before
++	 * where the signal handler returns (mov r7, ...).
++	 */
++	nop
++ENTRY(\name)
++	mov	r7, #\syscall
++	svc	#0
++	.fnend
++	/*
++	 * We would like to use ENDPROC, but the macro uses @ which is a
++	 * comment symbol for arm assemblers, so directly use .type with %
++	 * instead.
++	 */
++	.type \name, %function
++END(\name)
++.endm
++
++	.text
++
++	.arm
++	sigreturn_trampoline __kernel_sigreturn_arm, \
++			     __NR_sigreturn, \
++			     COMPAT_SIGFRAME_REGS_OFFSET
++
++	sigreturn_trampoline __kernel_rt_sigreturn_arm, \
++			     __NR_rt_sigreturn, \
++			     COMPAT_RT_SIGFRAME_REGS_OFFSET
++
++	.thumb
++	sigreturn_trampoline __kernel_sigreturn_thumb, \
++			     __NR_sigreturn, \
++			     COMPAT_SIGFRAME_REGS_OFFSET
++
++	sigreturn_trampoline __kernel_rt_sigreturn_thumb, \
++			     __NR_rt_sigreturn, \
++			     COMPAT_RT_SIGFRAME_REGS_OFFSET
+diff --git a/arch/arm64/kernel/vdso32/vdso.S b/arch/arm64/kernel/vdso32/vdso.S
+new file mode 100644
+index 000000000000..fe19ff70eb76
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/vdso.S
+@@ -0,0 +1,32 @@
++/*
++ * Copyright (C) 2012 ARM Limited
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ * Author: Will Deacon <will.deacon@arm.com>
++ */
++
++#include <linux/init.h>
++#include <linux/linkage.h>
++#include <linux/const.h>
++#include <asm/page.h>
++
++	.globl vdso32_start, vdso32_end
++	.section .rodata
++	.balign PAGE_SIZE
++vdso32_start:
++	.incbin "arch/arm64/kernel/vdso32/vdso.so"
++	.balign PAGE_SIZE
++vdso32_end:
++
++	.previous
+diff --git a/arch/arm64/kernel/vdso32/vdso.lds.S b/arch/arm64/kernel/vdso32/vdso.lds.S
+new file mode 100644
+index 000000000000..f95cb1c431fb
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/vdso.lds.S
+@@ -0,0 +1,95 @@
++/*
++ * Adapted from arm64 version.
++ *
++ * GNU linker script for the VDSO library.
++ *
++ * Copyright (C) 2012 ARM Limited
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ * Author: Will Deacon <will.deacon@arm.com>
++ * Heavily based on the vDSO linker scripts for other archs.
++ */
++
++#include <linux/const.h>
++#include <asm/page.h>
++#include <asm/vdso.h>
++
++OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
++OUTPUT_ARCH(arm)
++
++SECTIONS
++{
++	PROVIDE_HIDDEN(_vdso_data = . - PAGE_SIZE);
++	. = VDSO_LBASE + SIZEOF_HEADERS;
++
++	.hash		: { *(.hash) }			:text
++	.gnu.hash	: { *(.gnu.hash) }
++	.dynsym		: { *(.dynsym) }
++	.dynstr		: { *(.dynstr) }
++	.gnu.version	: { *(.gnu.version) }
++	.gnu.version_d	: { *(.gnu.version_d) }
++	.gnu.version_r	: { *(.gnu.version_r) }
++
++	.note		: { *(.note.*) }		:text	:note
++
++	.dynamic	: { *(.dynamic) }		:text	:dynamic
++
++	.rodata		: { *(.rodata*) }		:text
++
++	.text		: { *(.text*) }			:text	=0xe7f001f2
++
++	.got		: { *(.got) }
++	.rel.plt	: { *(.rel.plt) }
++
++	/DISCARD/	: {
++		*(.note.GNU-stack)
++		*(.data .data.* .gnu.linkonce.d.* .sdata*)
++		*(.bss .sbss .dynbss .dynsbss)
++	}
++}
++
++/*
++ * We must supply the ELF program headers explicitly to get just one
++ * PT_LOAD segment, and set the flags explicitly to make segments read-only.
++ */
++PHDRS
++{
++	text		PT_LOAD		FLAGS(5) FILEHDR PHDRS; /* PF_R|PF_X */
++	dynamic		PT_DYNAMIC	FLAGS(4);		/* PF_R */
++	note		PT_NOTE		FLAGS(4);		/* PF_R */
++}
++
++VERSION
++{
++	LINUX_2.6 {
++	global:
++		__vdso_clock_gettime;
++		__vdso_gettimeofday;
++		__vdso_clock_getres;
++		__vdso_time;
++		__kernel_sigreturn_arm;
++		__kernel_sigreturn_thumb;
++		__kernel_rt_sigreturn_arm;
++		__kernel_rt_sigreturn_thumb;
++	local: *;
++	};
++}
++
++/*
++ * Make the sigreturn code visible to the kernel.
++ */
++VDSO_compat_sigreturn_arm	= __kernel_sigreturn_arm;
++VDSO_compat_sigreturn_thumb	= __kernel_sigreturn_thumb;
++VDSO_compat_rt_sigreturn_arm	= __kernel_rt_sigreturn_arm;
++VDSO_compat_rt_sigreturn_thumb	= __kernel_rt_sigreturn_thumb;
+diff --git a/arch/arm64/kernel/vdso32/vgettimeofday.c b/arch/arm64/kernel/vdso32/vgettimeofday.c
+new file mode 100644
+index 000000000000..b73d4011993d
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/vgettimeofday.c
+@@ -0,0 +1,3 @@
++#include "compiler.h"
++#include "datapage.h"
++#include "../../../../lib/vdso/vgettimeofday.c"
+-- 
+2.19.0.605.g01d371f741-goog
+
