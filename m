@@ -2,119 +2,135 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9FFC43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 19:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B06F3C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 19:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E44F02084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 19:01:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E44F02084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 181022084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 19:02:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="CSWCXs5E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 181022084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbeJBBkm (ORCPT
+        id S1726458AbeJBBlV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 21:40:42 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49215 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbeJBBkm (ORCPT
+        Mon, 1 Oct 2018 21:41:21 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:49115 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeJBBlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 21:40:42 -0400
-Received: from mail-qk1-f197.google.com ([209.85.222.197])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <gpiccoli@canonical.com>)
-        id 1g73Rh-0000xy-1C
-        for linux-kernel@vger.kernel.org; Mon, 01 Oct 2018 19:01:29 +0000
-Received: by mail-qk1-f197.google.com with SMTP id a130-v6so15180750qkb.7
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 12:01:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:references:cc:to:in-reply-to:from
-         :openpgp:autocrypt:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=4vZl04JKGcA/xs1axAel9lKfFo8PbeprXVLZSpqzkLc=;
-        b=mCe156qqclO5XrtdsclzIU3/SkGL/uLzp9L2pvgPbQqnQgo6n+f1/KPWQkEbfk4hwo
-         PjN0PziIUoi+XediCrZnM1iyXDRpB3hnNVx997UBWIKlK2/IWXU6P1D6ljJB1YpTyxdD
-         vnllNpz8uba+6x6zWE5dpTRWylH9Sshochg9oNO2QwE5WMzeXCYYHeYdoP/tPY211xaR
-         ryVxm4rtY5YzMVd5RrxwT1dvh1mZi62mYxa19gPxrSZYlmhM7obL+C3I5kqbg7euLRFN
-         aosEdVzfJ2JPG0t7e4k0nop48wYdobvsKzfbuG9Gl4WsTskLXmbxZExiJg/WpIerv5u1
-         qp3A==
-X-Gm-Message-State: ABuFfoj2nus6Kkqvu3YLvKX2cveSR6F98Cdwd6ywJbAvHeqE26/GA0zg
-        BTkHmOxnqFWCnuXPuwrps7yKYFBUR/Carcj6pFqezFMcruJzTz2y0d+GqR5lAGVuLQVKPLB+nTY
-        ZC4THtd3wuTVFaxB5Hs927Ad4ChkVCdovrJtffjd3Xg==
-X-Received: by 2002:a37:4dc5:: with SMTP id a188-v6mr9171784qkb.326.1538420488265;
-        Mon, 01 Oct 2018 12:01:28 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV610CRXv2KXGDxXhTAGd20fti/gQwPKKrmqz2lSYjNIj115WjIgl9HB1t4Ff9W0jR2zGvvUWEw==
-X-Received: by 2002:a37:4dc5:: with SMTP id a188-v6mr9171773qkb.326.1538420488114;
-        Mon, 01 Oct 2018 12:01:28 -0700 (PDT)
-Received: from [192.168.1.109] (189-47-87-29.dsl.telesp.net.br. [189.47.87.29])
-        by smtp.gmail.com with ESMTPSA id r79-v6sm2662585qke.31.2018.10.01.12.01.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 12:01:26 -0700 (PDT)
-Subject: Re: [PATCHv5 3/7] tty: Hold tty_ldisc_lock() during tty_reopen()
-References: <8c61fd04-969a-cb09-6595-7ee23d214ab1@canonical.com>
-Cc:     gpiccoli@canonical.com
-To:     linux-kernel@vger.kernel.org, dima@arista.com
-In-Reply-To: <8c61fd04-969a-cb09-6595-7ee23d214ab1@canonical.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
- xsBNBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
- Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
- 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
- irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
- 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
- AAHNLUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPsLAdwQT
- AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
- 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
- 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
- q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
- iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
- LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltvezsBNBFpVBxcBCADbxD6J
- aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
- pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
- kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
- nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
- bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAHCwF8EGAEIAAkFAlpV
- BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
- 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
- egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
- Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
- kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
- X18zwLgdiQ==
-Message-ID: <99f1353a-e1a0-5ade-4aad-3eb62ea42a66@canonical.com>
-Date:   Mon, 1 Oct 2018 16:01:23 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 1 Oct 2018 21:41:20 -0400
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w91J1kuI028433;
+        Tue, 2 Oct 2018 04:01:47 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w91J1kuI028433
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1538420507;
+        bh=JdTeeUraUh6RfDZSlfVbmXUng5Nv7bacmyQB6o/ezFc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CSWCXs5E8I3Ig8DZyuR+LGYIoi3g2KJTVnRKLQIE61GkN41U3+gbuJlkxHNNZ9S/H
+         V4MSxBnOHp+DEYsGLwB1U1AtcX9DdR2PCBrQs0haKC5eK2u9sm4pkQYOIiR4i5yjvl
+         uyz5usea9wPVjuF4HO2orC58ptseDA/LgaGcGR7JbaIaBAscvujMou8I3wjXWdAYO3
+         iYlq6/UFHN6QIN1NYO+d/X2VrfIakPa80Fi969dQUYUpTfDzpIv042bDv6jCE+kfeX
+         n6kJfc96aIfleHXYPGb0In6n+38Oggi/YuWSAfw7jVdx7vQcy0FC4R3xpkDDvB8WGe
+         PtYwb3Nm4aO4w==
+X-Nifty-SrcIP: [209.85.217.52]
+Received: by mail-vs1-f52.google.com with SMTP id v12-v6so8223947vsc.1;
+        Mon, 01 Oct 2018 12:01:47 -0700 (PDT)
+X-Gm-Message-State: ABuFfoh7Bfy3oOK1apUfvl1tor6UBOo3JfYWRiDULxcYv+3IYimHdpsS
+        L+35Lm+wDpDk6Bg1CbsbaB9J7js9i9q/+zoqbSA=
+X-Google-Smtp-Source: ACcGV62g83MXX+sZQIf4NcXtzj9IjTUJeMaO9PLw25M5xNGC5l885yz5uCNB3nzuog6lOK9kpC4xQmS1U9oeT2c2jqc=
+X-Received: by 2002:a67:6146:: with SMTP id v67-v6mr4514099vsb.179.1538420505999;
+ Mon, 01 Oct 2018 12:01:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1538387078-21892-1-git-send-email-yamada.masahiro@socionext.com>
+ <1538387078-21892-3-git-send-email-yamada.masahiro@socionext.com> <CAKwvOd=R1FN_nmR4Wkpb=nTt+v2f2+uWOcQCFoB+B1hWzCXCXA@mail.gmail.com>
+In-Reply-To: <CAKwvOd=R1FN_nmR4Wkpb=nTt+v2f2+uWOcQCFoB+B1hWzCXCXA@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 2 Oct 2018 04:01:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT=2k=v6C9q4oGNWY3WjfswtD60NVEzgkF4ACkxNYjRug@mail.gmail.com>
+Message-ID: <CAK7LNAT=2k=v6C9q4oGNWY3WjfswtD60NVEzgkF4ACkxNYjRug@mail.gmail.com>
+Subject: Re: [PATCH 3/3] kbuild: add -Wno-unused-but-set-variable compiler
+ flag unconditionally
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/10/2018 15:32, Guilherme G. Piccoli wrote:
-> Hi Dmitry, thanks for the patch. It's very promising, we have some
-> reports of this issue and I'm building a kernel with this patch in
-> order the reporter can test it. But based in the previous feedback,
-> this seems to be very mature now and ready to get merged, right?
-> 
-> I'd like to ask you if you did respin the patch with Greg's suggestion
-> for the tag - I couldn't find it in LKML heheh
-> 
-> Oh, if you can CC me in future spins of this patch (in case there any),
-> I'd really be glad.
-> 
-> Thank in advance,
-> 
-> 
-> Guilherme
-> 
+Hi Nick,
+
+2018=E5=B9=B410=E6=9C=882=E6=97=A5(=E7=81=AB) 2:18 Nick Desaulniers <ndesau=
+lniers@google.com>:
+>
+> On Mon, Oct 1, 2018 at 2:45 AM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> >
+> > We have raised the compiler requirement from time to time.
+> > With commit cafa0010cd51 ("Raise the minimum required gcc version
+> > to 4.6"), the minimum for GCC is 4.6 now.
+> >
+> > This flag was added by GCC 4.6, and it is recognized by Clang and
+> > ICC as well.
+>
+> This doesn't seem to be the case for Clang:
+> https://godbolt.org/z/qesF5o
+>
+> Nacked-by: Nick Desaulniers <ndesaulniers@google.com>
+
+Hmm, I tested this patch with pre-built Clang 6.0.1 / 7.0.0
+downloaded from http://releases.llvm.org/download.html
+
+Was this option dropped by clang 8 ?
 
 
-Sorry, forgot to CC linux-kernel...
+>
+> >
+> > Let's rip off the cc-disable-warning switch, and see if somebody
+> > complains about it.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  Makefile | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index 8a23fee..2627266 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -716,7 +716,7 @@ else
+> >
+> >  # These warnings generated too much noise in a regular build.
+> >  # Use make W=3D1 to enable them (see scripts/Makefile.extrawarn)
+> > -KBUILD_CFLAGS +=3D $(call cc-disable-warning, unused-but-set-variable)
+> > +KBUILD_CFLAGS +=3D -Wno-unused-but-set-variable
+> >  endif
+> >
+> >  KBUILD_CFLAGS +=3D $(call cc-disable-warning, unused-const-variable)
+> > --
+> > 2.7.4
+> >
+>
+>
+> --
+> Thanks,
+> ~Nick Desaulniers
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
