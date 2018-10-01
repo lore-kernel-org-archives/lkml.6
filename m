@@ -2,136 +2,131 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F04C64EB0
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB4B1C43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80F232084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:02:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80F232084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A00A2084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 09:03:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A00A2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbeJAPjZ (ORCPT
+        id S1729108AbeJAPjz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 11:39:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49901 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728826AbeJAPjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 11:39:24 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EAA1620A2E; Mon,  1 Oct 2018 11:02:37 +0200 (CEST)
-Received: from qschulz (AAubervilliers-681-1-24-95.w90-88.abo.wanadoo.fr [90.88.144.95])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8A9F9206A2;
-        Mon,  1 Oct 2018 11:02:27 +0200 (CEST)
-Date:   Mon, 1 Oct 2018 11:02:27 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, davem@davemloft.net,
-        andrew@lunn.ch, f.fainelli@gmail.com, allan.nielsen@microchip.com,
-        linux-mips@linux-mips.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, antoine.tenart@bootlin.com
-Subject: Re: [PATCH 5/7] MIPS: mscc: ocelot: add GPIO4 pinmuxing DT node
-Message-ID: <20181001090227.mmcnstxcdfocx3zd@qschulz>
-References: <cover.b921b010b6d6bde1c11e69551ae38f3b2818645b.1536916714.git-series.quentin.schulz@bootlin.com>
- <92e37a04e77003f01a67ac5e49e66ae83f87c591.1536916714.git-series.quentin.schulz@bootlin.com>
- <20180914145446.GQ14988@piout.net>
- <20180914162638.fgzzjin2bzgx74de@qschulz>
- <20180914180222.GT14988@piout.net>
+        Mon, 1 Oct 2018 11:39:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50568 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728808AbeJAPjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Oct 2018 11:39:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5CB22B00E;
+        Mon,  1 Oct 2018 09:03:09 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH 2/2] xen: make xen_qlock_wait() nestable
+To:     Jan Beulich <JBeulich@suse.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        longman@redhat.com, mingo@redhat.com,
+        lkml <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+References: =?UTF-8?B?PDIwMTgxMDAxMDcxNjQxLjE5Mjgy77+9Me+/vWpncm9zc0BzdXNl?=
+ =?UTF-8?Q?=2ecom=3e_=3c20181001071641=2e19282-3-jgross=40suse=2ecom=3e_=3c5?=
+ =?UTF-8?Q?BB1E18802000078001ED127=40suse=2ecom=3e?=
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b09903d2-b6f5-299e-5880-f048fd4e1a8b@suse.com>
+Date:   Mon, 1 Oct 2018 11:03:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ysacw7np3q4ncps4"
-Content-Disposition: inline
-In-Reply-To: <20180914180222.GT14988@piout.net>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/10/2018 10:57, Jan Beulich wrote:
+>>>> On 01.10.18 at 09:16, <jgross@suse.com> wrote:
+>> xen_qlock_wait() isn't safe for nested calls due to interrupts. A call
+>> of xen_qlock_kick() might be ignored in case a deeper nesting level
+>> was active right before the call of xen_poll_irq():
+>>
+>> CPU 1:                                   CPU 2:
+>> spin_lock(lock1)
+>>                                          spin_lock(lock1)
+>>                                          -> xen_qlock_wait()
+>>                                             -> xen_clear_irq_pending()
+>>                                             Interrupt happens
+>> spin_unlock(lock1)
+>> -> xen_qlock_kick(CPU 2)
+>> spin_lock_irqsave(lock2)
+>>                                          spin_lock_irqsave(lock2)
+>>                                          -> xen_qlock_wait()
+>>                                             -> xen_clear_irq_pending()
+>>                                                clears kick for lock1
+>>                                             -> xen_poll_irq()
+>> spin_unlock_irq_restore(lock2)
+>> -> xen_qlock_kick(CPU 2)
+>>                                             wakes up
+>>                                          spin_unlock_irq_restore(lock2)
+>>                                          IRET
+>>                                            resumes in xen_qlock_wait()
+>>                                            -> xen_poll_irq()
+>>                                            never wakes up
+>>
+>> The solution is to disable interrupts in xen_qlock_wait() and not to
+>> poll for the irq in case xen_qlock_wait() is called in nmi context.
+> 
+> Are precautions against NMI really worthwhile? Locks acquired both
+> in NMI context as well as outside of it are liable to deadlock anyway,
+> aren't they?
 
---ysacw7np3q4ncps4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The locks don't need to be the same. A NMI-only lock tried to be
+acquired with xen_qlock_wait() for another lock having been interrupted
+by the NMI will be enough to risk the issue.
 
-Hi Alexandre,
+So yes, I believe the test for NMI is good to have.
 
-On Fri, Sep 14, 2018 at 08:02:22PM +0200, Alexandre Belloni wrote:
-> On 14/09/2018 18:26:38+0200, Quentin Schulz wrote:
-> > Hi Alexandre,
-> >=20
-> > On Fri, Sep 14, 2018 at 04:54:46PM +0200, Alexandre Belloni wrote:
-> > > Hi,
-> > >=20
-> > > On 14/09/2018 11:44:26+0200, Quentin Schulz wrote:
-> > > > In order to use GPIO4 as a GPIO, we need to mux it in this mode so =
-let's
-> > > > declare a new pinctrl DT node for it.
-> > > >=20
-> > > > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> > > > ---
-> > > >  arch/mips/boot/dts/mscc/ocelot.dtsi | 5 +++++
-> > > >  1 file changed, 5 insertions(+)
-> > > >=20
-> > > > diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/d=
-ts/mscc/ocelot.dtsi
-> > > > index 8ce317c..b5c4c74 100644
-> > > > --- a/arch/mips/boot/dts/mscc/ocelot.dtsi
-> > > > +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
-> > > > @@ -182,6 +182,11 @@
-> > > >  			interrupts =3D <13>;
-> > > >  			#interrupt-cells =3D <2>;
-> > > > =20
-> > > > +			gpio4: gpio4 {
-> > > > +				pins =3D "GPIO_4";
-> > > > +				function =3D "gpio";
-> > > > +			};
-> > > > +
-> > >=20
-> > > For a GPIO, I would do that in the board dts because it is not used
-> > > directly in the dtsi.
-> > >=20
-> >=20
-> > And the day we've two boards using this pinctrl we move it to a dtsi. Is
-> > that the plan?
-> >=20
->=20
-> Not really, at least not for gpios. I've included the pinctrl for the
-> uart, i2c and spi because they are the only option if you are to use
-> those peripherals. Else, I've would have left the pinctrl to the board
-> file. From my point of view, the gpios are too board specific to be in a
-> soc dtsi.
->=20
 
-Understood, will move it to the board file.
+Juergen
 
-Thanks,
-Quentin
-
---ysacw7np3q4ncps4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlux4qMACgkQhLiadT7g
-8aPhvg/+KCAqXI08qVQU87ghlaA+BByGeMMOIg1WhPtdA6gSQDR6iF/UgzTsGzk9
-4R6noEjVGm0nF4FPESZg5wjzD7vyVK57Yhht8xc4iztNGul61+n66F6mQywOl+He
-6ehEUyMP9HXTznVt2NPMHeYr0q5DhV3HC1c+giRT+zG5+BlIplpFWFDhB+IXsL/t
-E987QydR/4lX7YNNmUc/VNYnJwTuEJH7xhVnYiGmqhBK+j9K2iMAsbKUEYwR2EOX
-FCAH85ktMIwVi64oJYIZZjBT2ntIlKl9ayIR0i2Titjf8dnOUBys0gChxquShWYn
-AzrotXStMrq7CBSR7GpFu2+XT4DkH3m6qnnbjI/wrKUFJ2V1bUOyeZZSmjueUMdx
-zypW4P8L8MHXCJ6dR8p6bgWedBLqXyOIKVnziajs67N4layeE4pU954BYKKoM9vM
-PAsjZdIVbk83S5iYLDkX6ItHKC9VoyLiCYZpsL8mp2crG2he2nlsFg60NshDs5xn
-iQ13jy9iwyI5aFduvPAWoBYCig0NLhRl+45nqYuNhov0IJ/wUSsm1ucgyzukLFDg
-cxgnPBdEShCchrtSy5kPRgje9mh64warP7iZuzH/JFo5f8T7hKPAuBTQ56Egi3nb
-mW7lvUDugTcjnwZ8ALaN+/XlU1LVPsQAd2kkIzYdNPS5Z+KaHWI=
-=FfTb
------END PGP SIGNATURE-----
-
---ysacw7np3q4ncps4--
