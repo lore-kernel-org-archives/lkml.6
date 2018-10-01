@@ -2,135 +2,89 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD820C00449
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 467BFC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E3292084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:13:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E3292084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 0EF202084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:13:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="auFBtxTo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EF202084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbeJBCwm (ORCPT
+        id S1726572AbeJBCxY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 22:52:42 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51130 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbeJBCwl (ORCPT
+        Mon, 1 Oct 2018 22:53:24 -0400
+Received: from mail-wr1-f54.google.com ([209.85.221.54]:41632 "EHLO
+        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbeJBCxY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 22:52:41 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9EE8180790; Mon,  1 Oct 2018 22:13:10 +0200 (CEST)
-Date:   Mon, 1 Oct 2018 22:13:10 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Daniel Wang <wonderfly@google.com>, stable@vger.kernel.org,
-        pmladek@suse.com, Alexander.Levin@microsoft.com,
-        akpm@linux-foundation.org, byungchul.park@lge.com,
-        dave.hansen@intel.com, hannes@cmpxchg.org, jack@suse.cz,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mathieu.desnoyers@efficios.com, mgorman@suse.de, mhocko@kernel.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, peterz@infradead.org,
-        tj@kernel.org, torvalds@linux-foundation.org, vbabka@suse.cz,
-        xiyou.wangcong@gmail.com, pfeiner@google.com
-Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
- owner and waiter logic to load balance console writes"
-Message-ID: <20181001201309.GA9835@amd>
-References: <20180927194601.207765-1-wonderfly@google.com>
- <20181001152324.72a20bea@gandalf.local.home>
+        Mon, 1 Oct 2018 22:53:24 -0400
+Received: by mail-wr1-f54.google.com with SMTP id x12-v6so703012wru.8;
+        Mon, 01 Oct 2018 13:13:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=szYMQy/EjPvJVu2QeCwtz+nmFuxusOigUfaQvtOos6w=;
+        b=auFBtxToPbGFvDmzkblNsknsoO/PeHcFWZaqjp33TI5kvtUg7SD1TadZuzxk71Tm5d
+         C8Fghgk7OBYEY5bAlgCmcZ0hPezN9NGaxqsrabBK5iBAtNDI2L8oDxz/j3fKFd7OImDv
+         FaoKoJ1tCzc/oKxGixiSKZflBDKoWueuQFdWNniAUAE8UApWf2i5QEcYhr0fJCx7ufsH
+         OIOV9PITNikxaMzkY4F225eBTb48AFpLtuH7WiMwN0hfGblOXUR33Dsgwa2QJJ/C6lrb
+         +MG1jiLfcgXqT9VvfmFO6IKmeg4hH1lhshvCslgsfpLliBEALwIHctgnSJTlPBZS28iX
+         g1iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=szYMQy/EjPvJVu2QeCwtz+nmFuxusOigUfaQvtOos6w=;
+        b=WRvFcazcj5nJxahqoElJE4iQDyRUvc/4M2CKeupoDDmZj751BQENFnwX8O/mgDOdbt
+         wpwYA3ofriTmTtPKk6wJcb23qO9VZiVjEDS5Sf/609H9CKgbGP+b6xLSWpCVVDwu0JIf
+         x7RqYCWTM2RmdTTGHAeDmLLcWX6Hk22o3fR3ZYUl4Wvxen1fxXbJDs5zhZXDp8Zx4jQ0
+         b7PD92gHWh+YpMp1I6qCamfFYhTFHYyNOCLVGZ0mPKe8ca9T4pStkZvkMzaicvsnvJdy
+         T1R2LH5yuVRpkPbBN2B+TgkV+0LezyZZxWC0k0hthXccEDTbXMCwdfjed3W7B5dEGxyv
+         9IAA==
+X-Gm-Message-State: ABuFfojGnyfMLFN0hpv+o/extL1QsvD0mI2CcyggrsB4f4NMyhLKm7um
+        kBJTanGGlredkw8eS4t0crbVu1qjy6DQaCS+RhE=
+X-Google-Smtp-Source: ACcGV614c+X0kczFxT52/73xydaxsd8uNx79uPJCIDMQ1nyOtlE1icx1oD6nbKGX01IWKHM5X86CWwquJYB7JOOScgM=
+X-Received: by 2002:adf:dd83:: with SMTP id x3-v6mr8063706wrl.212.1538424833461;
+ Mon, 01 Oct 2018 13:13:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
-Content-Disposition: inline
-In-Reply-To: <20181001152324.72a20bea@gandalf.local.home>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180929084038.an6pfhnsd6tblejl@pali> <404F3F76-402D-4E29-9957-429CB7D7ECFC@dilger.ca>
+In-Reply-To: <404F3F76-402D-4E29-9957-429CB7D7ECFC@dilger.ca>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Mon, 1 Oct 2018 22:13:41 +0200
+Message-ID: <CAFLxGvxfegQFh0kvk81VLhLh0AkgvpT=hWMDCJz5FmgoTUNRqA@mail.gmail.com>
+Subject: Re: Future of dosfstools project (FAT)
+To:     adilger@dilger.ca
+Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        util-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        andy.shevchenko@gmail.com, Karel Zak <kzak@redhat.com>,
+        aeb@debian.org, andreas.bombe@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 1, 2018 at 10:01 PM Andreas Dilger <adilger@dilger.ca> wrote:
+> If the current dosfstools maintainer is non-responsive, you could always
+> fork the project in GitHub, land the critical patches into your branch,
+>  and make a release on your own.  If the maintainer surfaces again, then
+> they can pull in your patches.  If not, then you are the new maintainer.
 
---zYM0uCDKw75PZbzx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I also recommend talking to package maintainers of major distros.
+Maybe one of them forked the project already and did what you plan to do.
 
-On Mon 2018-10-01 15:23:24, Steven Rostedt wrote:
-> On Thu, 27 Sep 2018 12:46:01 -0700
-> Daniel Wang <wonderfly@google.com> wrote:
->=20
-> > Prior to this change, the combination of `softlockup_panic=3D1` and
-> > `softlockup_all_cpu_stacktrace=3D1` may result in a deadlock when the r=
-eboot path
-> > is trying to grab the console lock that is held by the stack trace prin=
-ting
-> > path. What seems to be happening is that while there are multiple CPUs,=
- only one
-> > of them is tasked to print the back trace of all CPUs. On a machine wit=
-h many
-> > CPUs and a slow serial console (on Google Compute Engine for example), =
-the stack
-> > trace printing routine hits a timeout and the reboot path kicks in. The=
- latter
-> > then tries to print something else, but can't get the lock because it's=
- still
-> > held by earlier printing path. This is easily reproducible on a VM with=
- 16+
-> > vCPUs on Google Compute Engine - which is a very common scenario.
-> >=20
-> > A quick repro is available at
-> > https://github.com/wonderfly/printk-deadlock-repro. The system hangs 3 =
-seconds
-> > into executing repro.sh. Both deadlock analysis and repro are credits t=
-o Peter
-> > Feiner.
-> >=20
-> > Note that I have read previous discussions on backporting this to stabl=
-e [1].
-> > The argument for objecting the backport was that this is a non-trivial =
-fix and
-> > is supported to prevent hypothetical soft lockups. What we are hitting =
-is a real
-> > deadlock, in production, however. Hence this request.
-> >=20
-> > [1] https://lore.kernel.org/lkml/20180409081535.dq7p5bfnpvd3xk3t@pathwa=
-y.suse.cz/T/#u
-> >=20
-> > Serial console logs leading up to the deadlock. As can be seen the stac=
-k trace
-> > was incomplete because the printing path hit a timeout.
->=20
-> I'm fine with having this backported.
+In any case, let's try to avoid a drama like util-linux-ng was.
 
-Dunno. Is the patch perhaps a bit too complex? This is not exactly
-trivial bugfix.
-
-pavel@duo:/data/l/clean-cg$ git show dbdda842fe96f | diffstat
- printk.c |  108
- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
-
-I see that it is pretty critical to Daniel, but maybe kernel with
-console locking redone should no longer be called 4.4?
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---zYM0uCDKw75PZbzx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluyf9UACgkQMOfwapXb+vIctACePrQsLeBiFBo/2uPqXXACActz
-jsQAoJ24Q+l/v+gk5q+VGhyCWhwLu+if
-=TaX0
------END PGP SIGNATURE-----
-
---zYM0uCDKw75PZbzx--
+-- 
+Thanks,
+//richard
