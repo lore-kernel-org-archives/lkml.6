@@ -2,206 +2,187 @@ Return-Path: <SRS0=RFFj=MN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E62C8C43143
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7FEC43143
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC2472084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:00:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B230F2084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  1 Oct 2018 20:03:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bdeH1y5B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2472084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MMztVRRo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B230F2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbeJBCkF (ORCPT
+        id S1726386AbeJBCm1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 1 Oct 2018 22:40:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48316 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbeJBCkE (ORCPT
+        Mon, 1 Oct 2018 22:42:27 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:45190 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeJBCm1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Oct 2018 22:40:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jRPZa+e7Sxe/JeEEH/qq2QQ3EdI9erdQekVh4WtYgHI=; b=bdeH1y5B/02O0KcpFIJIDbo8O
-        S1RqxeQTjaSXr9dtm2RuKeBqxeoyc/TSU1kXo94WrGsqWZW3y1YcZchBy1Af8G+p6pczLgyxKHqQe
-        Q+4M4IW8K40Mg6/tnm3EY2NdLrXavI9vwgsEWJpyWYy+MNtcd7ma3EL1zCC8zSX4OOuQz5c6fRovw
-        wVhnvVENZ7zXW0VIk4hkWN8EOvsMhw/+lzuSWqDon48GP+LFXyuVxmYQqG+WosOda2C84T0Rw0Wqm
-        lqN4ae5ItYPLcdwSvFgn0iajwjBwONlFfyO9v7pq9DPtxuJOGboy0dDQ3OmpIl2jz0xCkA20s3oDm
-        PUkMRp5Ww==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g74Mo-0003RH-Ox; Mon, 01 Oct 2018 20:00:30 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 67DAE2075FAA9; Mon,  1 Oct 2018 22:00:28 +0200 (CEST)
-Date:   Mon, 1 Oct 2018 22:00:28 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, longman@redhat.com,
-        andrea.parri@amarulasolutions.com, tglx@linutronix.de
-Subject: Re: [RFC][PATCH 3/3] locking/qspinlock: Optimize for x86
-Message-ID: <20181001200028.GO3439@hirez.programming.kicks-ass.net>
-References: <20180926110117.405325143@infradead.org>
- <20180926111307.513429499@infradead.org>
- <20181001171700.GC13918@arm.com>
+        Mon, 1 Oct 2018 22:42:27 -0400
+Received: by mail-yb1-f195.google.com with SMTP id d9-v6so6142463ybr.12
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 13:03:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=GNlIUAwuN1sQQ+qJNf7a6orBI5uhXKmIz9IhShdF95M=;
+        b=MMztVRRofm+KI9WR1xYJ7sb0nzYrDOnrVnigSK+U3j/A/d1/OyfHH9PATv5QF9AFQM
+         VbIl6eEhRRnJPJsk+JS9oQcBxFh4F1f9FxUsR7ZiNQAP3xWAKl2x+QKC/VL7hzp3fABJ
+         vtSGGKMIVf2fLclvlaQAGXXFh4zm5VLRg/5mI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=GNlIUAwuN1sQQ+qJNf7a6orBI5uhXKmIz9IhShdF95M=;
+        b=S//2JJ5ITKRBHX8aBqliO5Fz1EeJco+rK5UlzqZZ5gyp5zGRptqDF9pAEfd8HL60cT
+         y0/R4gH3/SrDf5NchZIPnszqPS5b/ZslBWvBSpMJ3KQyHqngpWLun7kNuetTHpKQsyTc
+         +1qvdEcRlbT4eO5tDtiJHxUL6YQfieUmkXuzqQ9j8GAovxzQvLk3a9UdJs/Z80BqVD07
+         Kq9s5lRZr/Jefy8rExDc3IxM48WM3ttWFHdiCJKZMnnVGjQfvIypGN39q1a2hEjXJtNY
+         fo+CNy/CAXiy719vyMmDK0gvu3fFfyWCj2I+UpsRUIPEWw7P8MyEDOx6sDoFW6pCT1JT
+         KHVg==
+X-Gm-Message-State: ABuFfoiurKjGGd96UHvqhx974DKgkJUaWA7eHkBpJRZMF3S2tsUdN+zy
+        boEpctUDlNw9cuwQP34Gm01fvyx/qck=
+X-Google-Smtp-Source: ACcGV628q5p3sVW1J9de+WG8UZ/bDkCFytXtDlUdt9874EVYGY1Xn0T3uLEQOoKVnbnlNxocBQE5Xg==
+X-Received: by 2002:a25:5507:: with SMTP id j7-v6mr6966261ybb.133.1538424179522;
+        Mon, 01 Oct 2018 13:02:59 -0700 (PDT)
+Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
+        by smtp.gmail.com with ESMTPSA id t81-v6sm7428290ywb.90.2018.10.01.13.02.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 13:02:57 -0700 (PDT)
+Received: by mail-yw1-f44.google.com with SMTP id y14-v6so6053771ywa.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 13:02:57 -0700 (PDT)
+X-Received: by 2002:a81:9b83:: with SMTP id s125-v6mr6689309ywg.47.1538424176795;
+ Mon, 01 Oct 2018 13:02:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181001171700.GC13918@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 13:02:56 -0700 (PDT)
+In-Reply-To: <20181001185616.11427.35521.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
+References: <20181001185616.11427.35521.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 1 Oct 2018 13:02:56 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jL2xgiXZ_9bdY9fWJB7dKvzKO7L9Xb83M0mmmhQrZSZcQ@mail.gmail.com>
+Message-ID: <CAGXu5jL2xgiXZ_9bdY9fWJB7dKvzKO7L9Xb83M0mmmhQrZSZcQ@mail.gmail.com>
+Subject: Re: [PATCH] migration/mm: Add WARN_ON to try_offline_node
+To:     Michael Bringmann <mwb@linux.vnet.ibm.com>
+Cc:     PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Russell Currey <ruscur@russell.cc>,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Juliet Kim <minkim@us.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 06:17:00PM +0100, Will Deacon wrote:
-> Hi Peter,
-> 
-> Thanks for chewing up my afternoon ;)
+On Mon, Oct 1, 2018 at 11:56 AM, Michael Bringmann
+<mwb@linux.vnet.ibm.com> wrote:
+> In some LPAR migration scenarios, device-tree modifications are
+> made to the affinity of the memory in the system.  For instance,
+> it may occur that memory is installed to nodes 0,3 on a source
+> system, and to nodes 0,2 on a target system.  Node 2 may not
+> have been initialized/allocated on the target system.
+>
+> After migration, if a RTAS PRRN memory remove is made to a
+> memory block that was in node 3 on the source system, then
+> try_offline_node tries to remove it from node 2 on the target.
+> The NODE_DATA(2) block would not be initialized on the target,
+> and there is no validation check in the current code to prevent
+> the use of a NULL pointer.  Call traces such as the following
+> may be observed:
+>
+> A similar problem of moving memory to an unitialized node has
+> also been observed on systems where multiple PRRN events occur
+> prior to a complete update of the device-tree.
+>
+> pseries-hotplug-mem: Attempting to update LMB, drc index 80000002
+> Offlined Pages 4096
+> ...
+> Oops: Kernel access of bad area, sig: 11 [#1]
+> ...
+> Workqueue: pseries hotplug workque pseries_hp_work_fn
+> ...
+> NIP [c0000000002bc088] try_offline_node+0x48/0x1e0
+> LR [c0000000002e0b84] remove_memory+0xb4/0xf0
+> Call Trace:
+> [c0000002bbee7a30] [c0000002bbee7a70] 0xc0000002bbee7a70 (unreliable)
+> [c0000002bbee7a70] [c0000000002e0b84] remove_memory+0xb4/0xf0
+> [c0000002bbee7ab0] [c000000000097784] dlpar_remove_lmb+0xb4/0x160
+> [c0000002bbee7af0] [c000000000097f38] dlpar_memory+0x328/0xcb0
+> [c0000002bbee7ba0] [c0000000000906d0] handle_dlpar_errorlog+0xc0/0x130
+> [c0000002bbee7c10] [c0000000000907d4] pseries_hp_work_fn+0x94/0xa0
+> [c0000002bbee7c40] [c0000000000e1cd0] process_one_work+0x1a0/0x4e0
+> [c0000002bbee7cd0] [c0000000000e21b0] worker_thread+0x1a0/0x610
+> [c0000002bbee7d80] [c0000000000ea458] kthread+0x128/0x150
+> [c0000002bbee7e30] [c00000000000982c] ret_from_kernel_thread+0x5c/0xb0
+>
+> This patch adds a check for an incorrectly initialized to the
+> beginning of try_offline_node, and exits the routine.
+>
+> Another patch is being developed for powerpc to track the
+> node Id to which an LMB belongs, so that we can remove the
+> LMB from there instead of the nid as currently interpreted
+> from the device tree.
+>
+> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
 
-I'll get you a beer in EDI ;-)
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-> On Wed, Sep 26, 2018 at 01:01:20PM +0200, Peter Zijlstra wrote:
+-Kees
 
-> >  /**
-> > + * set_pending_fetch_acquire - fetch the whole lock value and set pending and locked
-> > + * @lock : Pointer to queued spinlock structure
-> > + * Return: The previous lock value
-> > + *
-> > + * *,*,* -> *,1,*
-> > + */
-> > +static __always_inline u32 set_pending_fetch_acquire(struct qspinlock *lock)
-> > +{
-> > +#if defined(_Q_NO_FETCH_OR) && _Q_PENDING_BITS == 8
-> > +	u32 val;
-> > +
-> > +	/*
-> > +	 * For the !LL/SC archs that do not have a native atomic_fetch_or
-> > +	 * but do have a native xchg (x86) we can do trickery and avoid the
-> > +	 * cmpxchg-loop based fetch-or to improve determinism.
-> > +	 *
-> > +	 * We first xchg the pending byte to set PENDING, and then issue a load
-> > +	 * for the rest of the word and mask out the pending byte to compute a
-> > +	 * 'full' value.
-> > +	 */
-> > +	val = xchg_relaxed(&lock->pending, 1) << _Q_PENDING_OFFSET;
-> 
-> If we make this an xchg_acquire(), can we drop the smp_mb__after_atomic()
-> and use a plain atomic_read() to get the rest of the word? 
-
-I did consider that; but I confused myself so many times I stuck with
-this one. Primarily because on x86 it doesn't matter one way or the
-other and smp_mb() are 'easier' to reason about.
-
-> But actually,
-> consider this scenario with your patch:
-> 
-> 1. CPU0 sees a locked val, and is about to do your xchg_relaxed() to set
->    pending.
-> 
-> 2. CPU1 comes in and sets pending, spins on locked
-> 
-> 3. CPU2 sees a pending and locked val, and is about to enter the head of
->    the waitqueue (i.e. it's right before xchg_tail()).
-> 
-> 4. The locked holder unlock()s, CPU1 takes the lock() and then unlock()s
->    it, so pending and locked are now 0.
-> 
-> 5. CPU0 sets pending and reads back zeroes for the other fields
-> 
-> 6. CPU0 clears pending and sets locked -- it now has the lock
-> 
-> 7. CPU2 updates tail, sees it's at the head of the waitqueue and spins
->    for locked and pending to go clear. However, it reads a stale value
->    from step (4) and attempts the atomic_try_cmpxchg() to take the lock.
-> 
-> 8. CPU2 will fail the cmpxchg(), but then go ahead and set locked. At this
->    point we're hosed, because both CPU2 and CPU0 have the lock.
-
-Let me draw a picture of that..
+> ---
+>  mm/memory_hotplug.c |   10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 38d94b7..e48a4d0 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1831,10 +1831,16 @@ static int check_and_unmap_cpu_on_node(pg_data_t *pgdat)
+>  void try_offline_node(int nid)
+>  {
+>         pg_data_t *pgdat = NODE_DATA(nid);
+> -       unsigned long start_pfn = pgdat->node_start_pfn;
+> -       unsigned long end_pfn = start_pfn + pgdat->node_spanned_pages;
+> +       unsigned long start_pfn;
+> +       unsigned long end_pfn;
+>         unsigned long pfn;
+>
+> +       if (WARN_ON(pgdat == NULL))
+> +               return;
+> +
+> +       start_pfn = pgdat->node_start_pfn;
+> +       end_pfn = start_pfn + pgdat->node_spanned_pages;
+> +
+>         for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+>                 unsigned long section_nr = pfn_to_section_nr(pfn);
+>
+>
 
 
-  CPU0		CPU1		CPU2		CPU3
 
-0)						lock
-						  trylock -> (0,0,1)
-1)lock
-    trylock /* fail */
-
-2)		lock
-		  trylock /* fail */
-		  tas-pending -> (0,1,1)
-		  wait-locked
-
-3)				lock
-				  trylock /* fail */
-				  tas-pending /* fail */
-
-4)						unlock -> (0,1,0)
-		  clr_pnd_set_lck -> (0,0,1)
-		  unlock -> (0,0,0)
-
-5)  tas-pending -> (0,1,0)
-    read-val -> (0,1,0)
-6)  clr_pnd_set_lck -> (0,0,1)
-7)				  xchg_tail -> (n,0,1)
-				  load_acquire <- (n,0,0) (from-4)
-8)				  cmpxchg /* fail */
-				  set_locked()
-
-> Is there something I'm missing that means this can't happen? I suppose
-> cacheline granularity ends up giving serialisation between (4) and (7),
-> but I'd *much* prefer not to rely on that because it feels horribly
-> fragile.
-
-Well, on x86 atomics are fully ordered, so the xchg_tail() does in
-fact have smp_mb() in and that should order it sufficient for that not
-to happen I think.
-
-But in general, yes ick. Alternatively, making xchg_tail an ACQUIRE
-doesn't seem too far out..
-
-> Another idea I was playing with was adding test_and_set_bit_acquire()
-> for this, because x86 has an instruction for that, right?
-
-LOCK BTS, yes. So it can do a full 32bit RmW, but it cannot return the
-old value of the word, just the old bit (in CF).
-
-I suppose you get rid of the whole mixed size thing, but you still have
-the whole two instruction thing.
-
-> > +	/*
-> > +	 * Ensures the tail load happens after the xchg().
-> > +	 *
-> > +	 *	   lock  unlock    (a)
-> > +	 *   xchg ---------------.
-> > +	 *    (b)  lock  unlock  +----- fetch_or
-> > +	 *   load ---------------'
-> > +	 *	   lock  unlock    (c)
-> > +	 *
-> 
-> I failed miserably at parsing this comment :(
-> 
-> I think the main issue is that I don't understand how to read the little
-> diagram you've got.
-
-Where fetch_or() is indivisible and has happens-before (a) and
-happens-after (c), the new thing is in fact divisible and has
-happens-in-between (b).
-
-Of the happens-in-between (b), we can either get a new concurrent
-locker, or make progress of an extant concurrent locker because an
-unlock happened.
-
-But the rest of the text might indeed be very confused. I think I wrote
-the bulk of that when I was in fact doing a xchg16 on locked_pending,
-but that's fundamentally broken. I did edit it afterwards, but that
-might have just made it worse.
+-- 
+Kees Cook
+Pixel Security
