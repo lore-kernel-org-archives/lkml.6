@@ -2,88 +2,99 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA0DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4809C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21A1E206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:06:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21A1E206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 88A5F2089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:07:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kq/LgO9+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88A5F2089A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbeJBRsq (ORCPT
+        id S1727528AbeJBRtr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 13:48:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:34720 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727573AbeJBRsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 13:48:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA5EB1682;
-        Tue,  2 Oct 2018 04:05:40 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7B40A3F5B7;
-        Tue,  2 Oct 2018 04:05:40 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 6DDCF1AE3E59; Tue,  2 Oct 2018 12:06:04 +0100 (BST)
-From:   Will Deacon <will.deacon@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     cpandya@codeaurora.org, toshi.kani@hpe.com, tglx@linutronix.de,
-        mhocko@suse.com, akpm@linux-foundation.org,
-        sean.j.christopherson@intel.com, Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 3/5] x86: pgtable: Drop pXd_none() checks from pXd_free_pYd_table()
-Date:   Tue,  2 Oct 2018 12:06:01 +0100
-Message-Id: <1538478363-16255-4-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1538478363-16255-1-git-send-email-will.deacon@arm.com>
-References: <1538478363-16255-1-git-send-email-will.deacon@arm.com>
+        Tue, 2 Oct 2018 13:49:47 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43531 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727321AbeJBRtr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 13:49:47 -0400
+Received: by mail-pl1-f196.google.com with SMTP id 30-v6so1050838plb.10;
+        Tue, 02 Oct 2018 04:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=xKOWY3ZtkI/ivBPYkF7de7JpAw2y8izYnMGez5xJs+8=;
+        b=Kq/LgO9+GZgtGNbTAlTSnV3cAW6ceQ5KgmQ8aSnTgyhusHLf3WtYrBgjPpMpg0rK+s
+         gJFHyOfXP/F0iT0NqLHp6JHuXigd27qTx32pSMjkKX6y8X64pUyDpT4Bek+bPNHFuUd1
+         X1STTO6FvrtO4BH5DpnwoBUv5l2JBZzGE73pWTUwfXJTqzmKCq4sTV7mtTDxMQ9dIROs
+         uuFQA/gbdCrxjCZgj/ejeZY0z0LbqfEp+g1KAduXHHPCly+fw+IQqY7Aj/HKolLFF1wh
+         8DxdVERWU5SaRHYvOkNWRD0P9GC0SgqPWlPnsf+bWfhO8Bv7Ag/U1WXicKFv400QVIhx
+         ZX2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xKOWY3ZtkI/ivBPYkF7de7JpAw2y8izYnMGez5xJs+8=;
+        b=JR4+l4DqI80xp+1i+D68QqKt6KiVr/BJjaG4GPkAJWsGQp1JFt/Gc0+t/nLBTVklmm
+         ExXsXN7/ns3Jp32kzY8tuUzC20cZgA97qdBvp+hDgNweQZgbGAzsmGld3BxPA5ctc8is
+         +68lUAT8XYte0A+V0SOGH5WSYrV9rAdnGsmGI95mE++kRbIfoEe1eMJJfoEWBFSc+Aev
+         ASxh03ucSOtemhNA2Vn2vATARCXTkwyIHoyfFY43TZJs4g8andKDYwseczrLORYLt18k
+         9dB1haPikGILmNHKHwgs/b6LW0edsEtRKlkOzQ7r1dZq9va/OGwdtW9vJcULn1u2mC/v
+         jQ/Q==
+X-Gm-Message-State: ABuFfojW49I8lYx5LeXV+afZvmq/UICYEJn9b9GI5bIDt7eBI/HAUjKZ
+        rpgqbEbputaJsCamyzDVY6GWb/EOYDo=
+X-Google-Smtp-Source: ACcGV63x6la2ew6DEodlzLnHfUt18/5CuiRJOIcwsHx38aibRvqla5tfwod0Hsc/j8a+NK/obSHX1w==
+X-Received: by 2002:a63:145f:: with SMTP id 31-v6mr13786962pgu.35.1538478422865;
+        Tue, 02 Oct 2018 04:07:02 -0700 (PDT)
+Received: from hieu-Inspiron-7577.net.fpt ([1.54.224.16])
+        by smtp.gmail.com with ESMTPSA id f1-v6sm22917929pgc.4.2018.10.02.04.07.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 04:07:01 -0700 (PDT)
+From:   Hieu Tran Dang <dangtranhieu2012@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Hieu Tran Dang <dangtranhieu2012@gmail.com>,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: fsl-lpspi: Prevent FIFO under/overrun by default
+Date:   Tue,  2 Oct 2018 18:06:36 +0700
+Message-Id: <20181002110636.5052-1-dangtranhieu2012@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the core code checks this for us, we don't need to do it in the
-backend.
+Certain devices don't work well when a transmit FIFO underrun or
+receive FIFO overrun occurs. Example is the SAF400x radio chip when
+running at high speed which leads to garbage being sent to/received from
+the chip. In which case, it should stall waiting for further data to be
+available before proceeding. This patch unset the NOSTALL bit in CFGR1
+by default to prevent this issue.
 
-Cc: Chintan Pandya <cpandya@codeaurora.org>
-Cc: Toshi Kani <toshi.kani@hpe.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Reviewed-by: Toshi Kani <toshi.kani@hpe.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Hieu Tran Dang <dangtranhieu2012@gmail.com>
 ---
- arch/x86/mm/pgtable.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/spi/spi-fsl-lpspi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index ae394552fb94..b4919c44a194 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -796,9 +796,6 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- 	pte_t *pte;
- 	int i;
+diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
+index e6d5cc6ab108..51670976faa3 100644
+--- a/drivers/spi/spi-fsl-lpspi.c
++++ b/drivers/spi/spi-fsl-lpspi.c
+@@ -276,7 +276,7 @@ static int fsl_lpspi_config(struct fsl_lpspi_data *fsl_lpspi)
  
--	if (pud_none(*pud))
--		return 1;
--
- 	pmd = (pmd_t *)pud_page_vaddr(*pud);
- 	pmd_sv = (pmd_t *)__get_free_page(GFP_KERNEL);
- 	if (!pmd_sv)
-@@ -840,9 +837,6 @@ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- {
- 	pte_t *pte;
+ 	fsl_lpspi_set_watermark(fsl_lpspi);
  
--	if (pmd_none(*pmd))
--		return 1;
--
- 	pte = (pte_t *)pmd_page_vaddr(*pmd);
- 	pmd_clear(pmd);
- 
+-	temp = CFGR1_PCSCFG | CFGR1_MASTER | CFGR1_NOSTALL;
++	temp = CFGR1_PCSCFG | CFGR1_MASTER;
+ 	if (fsl_lpspi->config.mode & SPI_CS_HIGH)
+ 		temp |= CFGR1_PCSPOL;
+ 	writel(temp, fsl_lpspi->base + IMX7ULP_CFGR1);
 -- 
-2.1.4
+2.17.1
 
