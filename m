@@ -3,37 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A699BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F320C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6940F206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6940F206B2
+	by mail.kernel.org (Postfix) with ESMTP id 217E32083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 217E32083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729712AbeJBUMW (ORCPT
+        id S1729754AbeJBUM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:12:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32980 "EHLO
+        Tue, 2 Oct 2018 16:12:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33008 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728877AbeJBUMV (ORCPT
+        with ESMTP id S1729009AbeJBUMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:21 -0400
+        Tue, 2 Oct 2018 16:12:25 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A88A9266;
-        Tue,  2 Oct 2018 13:28:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 70E5CBF0;
+        Tue,  2 Oct 2018 13:29:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 133/228] block: fix deadline elevator drain for zoned block devices
-Date:   Tue,  2 Oct 2018 06:23:50 -0700
-Message-Id: <20181002132508.393243241@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Subject: [PATCH 4.18 136/228] serial: imx: restore handshaking irq for imx1
+Date:   Tue,  2 Oct 2018 06:23:53 -0700
+Message-Id: <20181002132508.550770735@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,46 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-commit 854f31ccdd7964c9c2e68da234a3a8aedb51cf6b upstream.
+commit 7e620984b62532783912312e334f3c48cdacbd5d upstream.
 
-When the deadline scheduler is used with a zoned block device, writes
-to a zone will be dispatched one at a time. This causes the warning
-message:
+Back in 2015 when irda was dropped from the driver imx1 was broken. This
+change reintroduces the support for the third interrupt of the UART.
 
-deadline: forced dispatching is broken (nr_sorted=X), please report this
-
-to be displayed when switching to another elevator with the legacy I/O
-path while write requests to a zone are being retained in the scheduler
-queue.
-
-Prevent this message from being displayed when executing
-elv_drain_elevator() for a zoned block device. __blk_drain_queue() will
-loop until all writes are dispatched and completed, resulting in the
-desired elevator queue drain without extensive modifications to the
-deadline code itself to handle forced-dispatch calls.
-
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Fixes: 8dc8146f9c92 ("deadline-iosched: Introduce zone locking support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: afe9cbb1a6ad ("serial: imx: drop support for IRDA")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/elevator.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/imx.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/block/elevator.c
-+++ b/block/elevator.c
-@@ -609,7 +609,7 @@ void elv_drain_elevator(struct request_q
- 
- 	while (e->type->ops.sq.elevator_dispatch_fn(q, 1))
- 		;
--	if (q->nr_sorted && printed++ < 10) {
-+	if (q->nr_sorted && !blk_queue_is_zoned(q) && printed++ < 10 ) {
- 		printk(KERN_ERR "%s: forced dispatching is broken "
- 		       "(nr_sorted=%u), please report this\n",
- 		       q->elevator->type->elevator_name, q->nr_sorted);
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -2350,6 +2350,14 @@ static int imx_uart_probe(struct platfor
+ 				ret);
+ 			return ret;
+ 		}
++
++		ret = devm_request_irq(&pdev->dev, rtsirq, imx_uart_rtsint, 0,
++				       dev_name(&pdev->dev), sport);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to request rts irq: %d\n",
++				ret);
++			return ret;
++		}
+ 	} else {
+ 		ret = devm_request_irq(&pdev->dev, rxirq, imx_uart_int, 0,
+ 				       dev_name(&pdev->dev), sport);
 
 
