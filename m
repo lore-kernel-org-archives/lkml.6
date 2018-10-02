@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A5BC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F5DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 174B72089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174B72089A
+	by mail.kernel.org (Postfix) with ESMTP id CE7B82083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7B82083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731115AbeJBUPA (ORCPT
+        id S1731128AbeJBUPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:15:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34212 "EHLO
+        Tue, 2 Oct 2018 16:15:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34242 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731096AbeJBUO7 (ORCPT
+        with ESMTP id S1729500AbeJBUPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:59 -0400
+        Tue, 2 Oct 2018 16:15:06 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 617C7C2B;
-        Tue,  2 Oct 2018 13:31:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CA8405AA;
+        Tue,  2 Oct 2018 13:31:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 004/137] vmci: type promotion bug in qp_host_get_user_memory()
-Date:   Tue,  2 Oct 2018 06:23:25 -0700
-Message-Id: <20181002132458.704293369@linuxfoundation.org>
+Subject: [PATCH 4.14 006/137] staging: rts5208: fix missing error check on call to rtsx_write_register
+Date:   Tue,  2 Oct 2018 06:23:27 -0700
+Message-Id: <20181002132458.860156329@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -51,42 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 7fb2fd4e25fc1fb10dcb30b5519de257cfeae84c ]
+[ Upstream commit c5fae4f4fd28189b1062fb8ef7b21fec37cb8b17 ]
 
-The problem is that if get_user_pages_fast() fails and returns a
-negative error code, it gets type promoted to a high positive value and
-treated as a success.
+Currently the check on error return from the call to rtsx_write_register
+is checking the error status from the previous call. Fix this by adding
+in the missing assignment of retval.
 
-Fixes: 06164d2b72aa ("VMCI: queue pairs implementation.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Detected by CoverityScan, CID#709877
+
+Fixes: fa590c222fba ("staging: rts5208: add support for rts5208 and rts5288")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/vmw_vmci/vmci_queue_pair.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rts5208/sd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
-+++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-@@ -755,7 +755,7 @@ static int qp_host_get_user_memory(u64 p
- 	retval = get_user_pages_fast((uintptr_t) produce_uva,
- 				     produce_q->kernel_if->num_pages, 1,
- 				     produce_q->kernel_if->u.h.header_page);
--	if (retval < produce_q->kernel_if->num_pages) {
-+	if (retval < (int)produce_q->kernel_if->num_pages) {
- 		pr_debug("get_user_pages_fast(produce) failed (retval=%d)",
- 			retval);
- 		qp_release_pages(produce_q->kernel_if->u.h.header_page,
-@@ -767,7 +767,7 @@ static int qp_host_get_user_memory(u64 p
- 	retval = get_user_pages_fast((uintptr_t) consume_uva,
- 				     consume_q->kernel_if->num_pages, 1,
- 				     consume_q->kernel_if->u.h.header_page);
--	if (retval < consume_q->kernel_if->num_pages) {
-+	if (retval < (int)consume_q->kernel_if->num_pages) {
- 		pr_debug("get_user_pages_fast(consume) failed (retval=%d)",
- 			retval);
- 		qp_release_pages(consume_q->kernel_if->u.h.header_page,
+--- a/drivers/staging/rts5208/sd.c
++++ b/drivers/staging/rts5208/sd.c
+@@ -5002,7 +5002,7 @@ int sd_execute_write_data(struct scsi_cm
+ 			goto sd_execute_write_cmd_failed;
+ 		}
+ 
+-		rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
++		retval = rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
+ 		if (retval != STATUS_SUCCESS) {
+ 			rtsx_trace(chip);
+ 			goto sd_execute_write_cmd_failed;
 
 
