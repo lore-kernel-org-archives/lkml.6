@@ -2,42 +2,74 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D6FC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7EFC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 122812064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:17:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 122812064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 44F352082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:20:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZCqx2/F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44F352082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbeJCABr (ORCPT
+        id S1728413AbeJCAEw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 20:01:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60110 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbeJCABp (ORCPT
+        Tue, 2 Oct 2018 20:04:52 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53055 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726679AbeJCAEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 20:01:45 -0400
-Received: from localhost (unknown [64.124.202.226])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45A90EBC;
-        Tue,  2 Oct 2018 17:17:20 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-serial@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, jslaby@suse.com, aszlig@nix.build,
-        gmazyland@gmail.com, torvalds@linux-foundation.org, w@1wt.eu,
-        Greg KH <greg@kroah.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 2/2] tty: wipe buffer if not echoing data
-Date:   Tue,  2 Oct 2018 10:17:08 -0700
-Message-Id: <20181002171708.1311-3-gregkh@linuxfoundation.org>
+        Tue, 2 Oct 2018 20:04:51 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 189-v6so3070684wmw.2;
+        Tue, 02 Oct 2018 10:20:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UEX6dGxZs5jBMbrm6UyBsjP37qpkhDhyVt/DYXLWISk=;
+        b=fZCqx2/FAm6EYQkl7cU8cOGfog+Gukc7dX3d/5QeeumkFwNo1Ze2Z9bc9E6QJDdi/W
+         FmZgJF8J08Eaf6Rnyq6Yk3etCBR4k21kvolzqWWe8OKkdfE0sJDqOE3AGw8hKTmjtDHg
+         eP2TQTqvCJ2UMvNABig0MtC99jnK7SMFHzCvTUwewtabJjP+pj9xb0y6Jh413qYQQDLv
+         KJc9gBvAbuzNvH1mLbP59PMOkLNBTXQDS3FOPR0WLlNZJr+PiZ1mZNVYGNdHtMVTzj7U
+         OuRvQJIX/Po4glVyR5SUqwwlOZvBOPMe7sC2Qo/H5G49KBcp72XtUtEVpu8KcagvEvxg
+         nDzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UEX6dGxZs5jBMbrm6UyBsjP37qpkhDhyVt/DYXLWISk=;
+        b=XbQ+JqnlMdw4t5ZOcF4SyDLEnionizHXa5E08nDCoENP4OqcxzUfoK7UfzaCKdaQEo
+         Yz/qnmwJFOYQApu1abB9i/EyxcAO7cR4pNmaCu5lyC25b/KQEmPdE2wBAsWsmPa9fTpK
+         pVrNiYvnmgC2W22684vQ7PDk8wdSUd/gbmdRngWf/zntDE8lF6PR/ig7q+1Oq7ITw8AP
+         txbr7cuDed2B8/mYCAk0iPQlLtyKKv0XqBH6kDkQuTSzXh5+u6KHpreizKJE+ViUavxb
+         +XS39fDGOnYT0wJ1/XSbwciyWPxJLIiVtdyBzwzzHXQZv80Fsu7szT1EADulY1DCUo5E
+         PhUg==
+X-Gm-Message-State: ABuFfogFJbJWo+pwtdvg29WF9i+p7oZHyk1fdzipohv2ma7S6N3w6JeY
+        RnChrYnsbwHWY2MRMrfghzGNlLtyaRSagQ==
+X-Google-Smtp-Source: ACcGV63Ydk7gDvWHBH4YM+u/Kxh/MahVvwsva2p8Ws1PBJ8r/bbxdZmwPAieaS923YGqcL/ZNPl4gA==
+X-Received: by 2002:a1c:a187:: with SMTP id k129-v6mr2650091wme.111.1538500822422;
+        Tue, 02 Oct 2018 10:20:22 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id x186-v6sm28115019wmx.24.2018.10.02.10.20.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 10:20:21 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH RESEND] drbd: avoid clang warning about pointless switch statement
+Date:   Tue,  2 Oct 2018 10:14:48 -0700
+Message-Id: <20181002171447.10765-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181002171708.1311-1-gregkh@linuxfoundation.org>
-References: <20181002171708.1311-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -45,81 +77,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg KH <greg@kroah.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-If we are not echoing the data to userspace, then perhaps it is a
-"secret" so we should wipe it once we are done with it.
+The drbd code causes warnings that we cannot easily disable when building with clang:
 
-This mirrors the logic that the audit code has.
+In file included from drivers/block/drbd/drbd_debugfs.c:10:
+In file included from drivers/block/drbd/drbd_int.h:48:
+In file included from include/linux/drbd_genl_api.h:53:
+In file included from include/linux/genl_magic_struct.h:237:
+include/linux/drbd_genl.h:300:1: warning: no case matching constant switch condition '0'
 
-Reported-by: aszlig <aszlig@nix.build>
-Tested-by: Milan Broz <gmazyland@gmail.com>
-Tested-by: aszlig <aszlig@nix.build>
-Cc: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+There is nothing wrong with the code, and adding 'default:' labels
+in the right place is enough to let clang shut up about the warning.
+
+Fixes: ec2c35ac1ea2 ("drbd: prepare the transition from connector to genetlink")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/tty/n_tty.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-index 431742201709..d259a6585dbe 100644
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -152,17 +152,28 @@ static inline unsigned char *echo_buf_addr(struct n_tty_data *ldata, size_t i)
- 	return &ldata->echo_buf[i & (N_TTY_BUF_SIZE - 1)];
- }
- 
-+/* If we are not echoing the data, perhaps this is a secret so erase it */
-+static void zero_buffer(struct tty_struct *tty, u8 *buffer, int size)
-+{
-+	bool icanon = !!L_ICANON(tty);
-+	bool no_echo = !L_ECHO(tty);
-+
-+	if (icanon && no_echo)
-+		memset(buffer, 0x00, size);
-+}
-+
- static int tty_copy_to_user(struct tty_struct *tty, void __user *to,
- 			    size_t tail, size_t n)
+This was recently resent by Philipp Klocke but the attribution on it
+was incorrect (had Arnd's signoff but no From: line) and linux-block
+wasn't cc'd, who presumably should take this patch since this file was
+introduced by commit ec2c35ac1ea2 ("drbd: prepare the transition from
+connector to genetlink"). If that is the case, perhaps these files
+should be added to the drbd MAINTAINERS entry since they were introduced
+by drbd and have been the only consumers since; I'd be happy to send a
+patch if others agree.
+
+It was acked by Lars on https://lore.kernel.org/patchwork/patch/756723/
+so I don't know if this patch should carry
+
+Acked-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+
+or not. I'll leave that up to the maintainer to decide.
+
+Thanks!
+Nathan
+
+ include/linux/genl_magic_struct.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/linux/genl_magic_struct.h b/include/linux/genl_magic_struct.h
+index 5972e4969197..c11f42179c63 100644
+--- a/include/linux/genl_magic_struct.h
++++ b/include/linux/genl_magic_struct.h
+@@ -191,6 +191,7 @@ static inline void ct_assert_unique_operations(void)
  {
- 	struct n_tty_data *ldata = tty->disc_data;
- 	size_t size = N_TTY_BUF_SIZE - tail;
--	const void *from = read_buf_addr(ldata, tail);
-+	void *from = read_buf_addr(ldata, tail);
- 	int uncopied;
- 
- 	if (n > size) {
- 		tty_audit_add_data(tty, from, size);
- 		uncopied = copy_to_user(to, from, size);
-+		zero_buffer(tty, from, size);
- 		if (uncopied)
- 			return uncopied;
- 		to += size;
-@@ -171,7 +182,9 @@ static int tty_copy_to_user(struct tty_struct *tty, void __user *to,
+ 	switch (0) {
+ #include GENL_MAGIC_INCLUDE_FILE
++	default:
+ 		;
  	}
- 
- 	tty_audit_add_data(tty, from, n);
--	return copy_to_user(to, from, n);
-+	uncopied = copy_to_user(to, from, n);
-+	zero_buffer(tty, from, n);
-+	return uncopied;
  }
- 
- /**
-@@ -1960,11 +1973,12 @@ static int copy_from_read_buf(struct tty_struct *tty,
- 	n = min(head - ldata->read_tail, N_TTY_BUF_SIZE - tail);
- 	n = min(*nr, n);
- 	if (n) {
--		const unsigned char *from = read_buf_addr(ldata, tail);
-+		unsigned char *from = read_buf_addr(ldata, tail);
- 		retval = copy_to_user(*b, from, n);
- 		n -= retval;
- 		is_eof = n == 1 && *from == EOF_CHAR(tty);
- 		tty_audit_add_data(tty, from, n);
-+		zero_buffer(tty, from, n);
- 		smp_store_release(&ldata->read_tail, ldata->read_tail + n);
- 		/* Turn single EOF into zero-length read */
- 		if (L_EXTPROC(tty) && ldata->icanon && is_eof &&
+@@ -209,6 +210,7 @@ static inline void ct_assert_unique_top_level_attributes(void)
+ {
+ 	switch (0) {
+ #include GENL_MAGIC_INCLUDE_FILE
++	default:
+ 		;
+ 	}
+ }
+@@ -219,6 +221,7 @@ static inline void ct_assert_unique_ ## s_name ## _attributes(void)	\
+ {									\
+ 	switch (0) {							\
+ 		s_fields						\
++		default:						\
+ 			;						\
+ 	}								\
+ }
 -- 
 2.19.0
 
