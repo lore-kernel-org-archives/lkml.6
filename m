@@ -2,146 +2,175 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8531C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EE1C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D53E206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:19:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D53E206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id EE983206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:19:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE983206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbeJBUC2 convert rfc822-to-8bit (ORCPT
+        id S1726849AbeJBUCs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:02:28 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:47586 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726293AbeJBUC2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:02:28 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-113-64szs7q2PG2j0IWq2mX6bQ-1; Tue, 02 Oct 2018 14:19:07 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 2 Oct 2018 14:19:07 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 2 Oct 2018 14:19:07 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Ben Dooks' <ben.dooks@codethink.co.uk>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     "oneukum@suse.com" <oneukum@suse.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-kernel@lists.codethink.co.uk" 
-        <linux-kernel@lists.codethink.co.uk>
-Subject: RE: [PATCH 2/4] usbnet: smsc95xx: align tx-buffer to word
-Thread-Topic: [PATCH 2/4] usbnet: smsc95xx: align tx-buffer to word
-Thread-Index: AQHUWjIR+wUuyITS3UylBDg14qAu6qUL7Sug
-Date:   Tue, 2 Oct 2018 13:19:07 +0000
-Message-ID: <59988ed22559410881addfecf58335eb@AcuMS.aculab.com>
-References: <20181002092645.1115-1-ben.dooks@codethink.co.uk>
- <20181002092645.1115-3-ben.dooks@codethink.co.uk>
-In-Reply-To: <20181002092645.1115-3-ben.dooks@codethink.co.uk>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 2 Oct 2018 16:02:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37228 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbeJBUCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:02:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7BACB7A9;
+        Tue,  2 Oct 2018 06:19:29 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4BB8D3F5B3;
+        Tue,  2 Oct 2018 06:19:29 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 4D27C1AE2DE4; Tue,  2 Oct 2018 14:19:53 +0100 (BST)
+Date:   Tue, 2 Oct 2018 14:19:53 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, longman@redhat.com,
+        andrea.parri@amarulasolutions.com, tglx@linutronix.de
+Subject: Re: [RFC][PATCH 3/3] locking/qspinlock: Optimize for x86
+Message-ID: <20181002131952.GD16422@arm.com>
+References: <20180926110117.405325143@infradead.org>
+ <20180926111307.513429499@infradead.org>
+ <20181001171700.GC13918@arm.com>
+ <20181001200028.GO3439@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-MC-Unique: 64szs7q2PG2j0IWq2mX6bQ-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181001200028.GO3439@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Dooks
-> Sent: 02 October 2018 10:27
+On Mon, Oct 01, 2018 at 10:00:28PM +0200, Peter Zijlstra wrote:
+> On Mon, Oct 01, 2018 at 06:17:00PM +0100, Will Deacon wrote:
+> > Thanks for chewing up my afternoon ;)
 > 
-> The tegra driver requires alignment of the buffer, so try and
-> make this better by pushing the buffer start back to an word
-> aligned address. At the worst this makes memcpy() easier as
-> it is word aligned, at best it makes sure the usb can directly
-> map the buffer.
+> I'll get you a beer in EDI ;-)
+
+Just one?!
+
+> > But actually,
+> > consider this scenario with your patch:
+> > 
+> > 1. CPU0 sees a locked val, and is about to do your xchg_relaxed() to set
+> >    pending.
+> > 
+> > 2. CPU1 comes in and sets pending, spins on locked
+> > 
+> > 3. CPU2 sees a pending and locked val, and is about to enter the head of
+> >    the waitqueue (i.e. it's right before xchg_tail()).
+> > 
+> > 4. The locked holder unlock()s, CPU1 takes the lock() and then unlock()s
+> >    it, so pending and locked are now 0.
+> > 
+> > 5. CPU0 sets pending and reads back zeroes for the other fields
+> > 
+> > 6. CPU0 clears pending and sets locked -- it now has the lock
+> > 
+> > 7. CPU2 updates tail, sees it's at the head of the waitqueue and spins
+> >    for locked and pending to go clear. However, it reads a stale value
+> >    from step (4) and attempts the atomic_try_cmpxchg() to take the lock.
+> > 
+> > 8. CPU2 will fail the cmpxchg(), but then go ahead and set locked. At this
+> >    point we're hosed, because both CPU2 and CPU0 have the lock.
 > 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> [todo - make this configurable]
-> ---
->  drivers/net/usb/Kconfig    | 12 ++++++++++++
->  drivers/net/usb/smsc95xx.c | 22 ++++++++++++++++++++--
->  2 files changed, 32 insertions(+), 2 deletions(-)
+> Let me draw a picture of that..
 > 
-> diff --git a/drivers/net/usb/Kconfig b/drivers/net/usb/Kconfig
-...
-> +static bool align_tx = IS_ENABLED(CONFIG_USB_NET_SMSC95XX_TXALIGN);
-> +module_param(align_tx, bool, 0644);
-> +MODULE_PARM_DESC(align_tx, "Align TX buffers to word boundaries");
-
-DM doesn't like module parameters.
-
->  static bool turbo_mode = IS_ENABLED(CONFIG_USB_NET_SMSC95XX_TURBO);
->  module_param(turbo_mode, bool, 0644);
->  MODULE_PARM_DESC(turbo_mode, "Enable multiple frames per Rx transaction");
-> @@ -2005,10 +2009,18 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
->  	bool csum = skb->ip_summed == CHECKSUM_PARTIAL;
->  	int overhead = csum ? SMSC95XX_TX_OVERHEAD_CSUM : SMSC95XX_TX_OVERHEAD;
->  	u32 tx_cmd_a, tx_cmd_b;
-> +	u32 data_len;
-> +	uintptr_t align = 0;
 > 
->  	/* We do not advertise SG, so skbs should be already linearized */
->  	BUG_ON(skb_shinfo(skb)->nr_frags);
+>   CPU0		CPU1		CPU2		CPU3
 > 
-> +	if (IS_ENABLED(CONFIG_USB_NET_SMSC95XX_TXALIGN) && align_tx) {
-> +		align = (uintptr_t)skb->data & 3;
-> +		if (align)
-> +			overhead += 4 - align;
-
-Better to calculate the pad size once:
-		align = (-(long)skb->data) & 3;
-should do it - and you can unconditionally add it in.
-
-> +	}
-> +
->  	/* Make writable and expand header space by overhead if required */
->  	if (skb_cow_head(skb, overhead)) {
->  		/* Must deallocate here as returning NULL to indicate error
-> @@ -2037,16 +2049,22 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
->  		}
->  	}
+> 0)						lock
+> 						  trylock -> (0,0,1)
+> 1)lock
+>     trylock /* fail */
 > 
-> +	data_len = skb->len;
-> +	if (align)
-> +		skb_push(skb, 4 - align);
-> +
->  	skb_push(skb, 4);
+> 2)		lock
+> 		  trylock /* fail */
+> 		  tas-pending -> (0,1,1)
+> 		  wait-locked
+> 
+> 3)				lock
+> 				  trylock /* fail */
+> 				  tas-pending /* fail */
+> 
+> 4)						unlock -> (0,1,0)
+> 		  clr_pnd_set_lck -> (0,0,1)
+> 		  unlock -> (0,0,0)
+> 
+> 5)  tas-pending -> (0,1,0)
+>     read-val -> (0,1,0)
+> 6)  clr_pnd_set_lck -> (0,0,1)
+> 7)				  xchg_tail -> (n,0,1)
+> 				  load_acquire <- (n,0,0) (from-4)
+> 8)				  cmpxchg /* fail */
+> 				  set_locked()
+> 
+> > Is there something I'm missing that means this can't happen? I suppose
+> > cacheline granularity ends up giving serialisation between (4) and (7),
+> > but I'd *much* prefer not to rely on that because it feels horribly
+> > fragile.
+> 
+> Well, on x86 atomics are fully ordered, so the xchg_tail() does in
+> fact have smp_mb() in and that should order it sufficient for that not
+> to happen I think.
 
-You don't want to call skb_push() twice.
-IIRC really horrid things happen if the data has to be copied.
-(Actually what happens to the alignment in that case??)
-And there is another skb_push() below....
+Hmm, does that actually help, though? I still think you're relying on the
+cache-coherence protocol to serialise the xchg() on pending before the
+xchg_tail(), which I think is fragile because they don't actually overlap.
 
-> -	tx_cmd_b = (u32)(skb->len - 4);
-> +	tx_cmd_b = (u32)(data_len);
+> But in general, yes ick. Alternatively, making xchg_tail an ACQUIRE
+> doesn't seem too far out..
+> 
+> > Another idea I was playing with was adding test_and_set_bit_acquire()
+> > for this, because x86 has an instruction for that, right?
+> 
+> LOCK BTS, yes. So it can do a full 32bit RmW, but it cannot return the
+> old value of the word, just the old bit (in CF).
+> 
+> I suppose you get rid of the whole mixed size thing, but you still have
+> the whole two instruction thing.
 
-You don't need the cast here at all (if it was ever needed).
-Actually you don't need the new 'data_len' variable.
-Just set tx_cmd_b earlier.
+I really think we need that set of pending to operate on the whole lock
+word.
 
-...
+> > > +	/*
+> > > +	 * Ensures the tail load happens after the xchg().
+> > > +	 *
+> > > +	 *	   lock  unlock    (a)
+> > > +	 *   xchg ---------------.
+> > > +	 *    (b)  lock  unlock  +----- fetch_or
+> > > +	 *   load ---------------'
+> > > +	 *	   lock  unlock    (c)
+> > > +	 *
+> > 
+> > I failed miserably at parsing this comment :(
+> > 
+> > I think the main issue is that I don't understand how to read the little
+> > diagram you've got.
+> 
+> Where fetch_or() is indivisible and has happens-before (a) and
+> happens-after (c), the new thing is in fact divisible and has
+> happens-in-between (b).
+> 
+> Of the happens-in-between (b), we can either get a new concurrent
+> locker, or make progress of an extant concurrent locker because an
+> unlock happened.
+> 
+> But the rest of the text might indeed be very confused. I think I wrote
+> the bulk of that when I was in fact doing a xchg16 on locked_pending,
+> but that's fundamentally broken. I did edit it afterwards, but that
+> might have just made it worse.
 
-	David
+Ok, maybe just remove it :)
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Will
