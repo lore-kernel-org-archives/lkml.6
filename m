@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C47BAC64EBD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E28AC64EBD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93C1220878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:41:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C1220878
+	by mail.kernel.org (Postfix) with ESMTP id F0B2B2082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:41:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B2B2082A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727970AbeJCF0z (ORCPT
+        id S1727832AbeJCF0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 3 Oct 2018 01:26:55 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:38130 "EHLO ale.deltatee.com"
+Received: from ale.deltatee.com ([207.54.116.67]:38126 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727433AbeJCF0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727167AbeJCF0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 3 Oct 2018 01:26:54 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1g7TLs-0003R9-Cl; Tue, 02 Oct 2018 16:41:14 -0600
+        id 1g7TLs-0003R8-4L; Tue, 02 Oct 2018 16:41:13 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1g7TLp-0000se-RK; Tue, 02 Oct 2018 16:41:09 -0600
+        id 1g7TLp-0000sb-O3; Tue, 02 Oct 2018 16:41:09 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
@@ -38,19 +38,18 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jon Mason <jdmason@kudzu.us>
-Date:   Tue,  2 Oct 2018 16:41:08 -0600
-Message-Id: <20181002224108.3321-7-logang@deltatee.com>
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Tue,  2 Oct 2018 16:41:07 -0600
+Message-Id: <20181002224108.3321-6-logang@deltatee.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002224108.3321-1-logang@deltatee.com>
 References: <20181002224108.3321-1-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, akpm@linux-foundation.org, arnd@arndb.de, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, jdmason@kudzu.us
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, akpm@linux-foundation.org, arnd@arndb.de, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v22 6/6] ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common header
+Subject: [PATCH v22 5/6] ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,44 +57,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clean up the ifdefs which conditionally defined the io{read|write}64
-functions in favour of the new common io-64-nonatomic-lo-hi header.
-
-Per a nit from Andy Shevchenko, the include list is also made
-alphabetical.
+Now that ioread64 and iowrite64 are available in io-64-nonatomic,
+we can remove the hack at the top of ntb_hw_intel.c and replace it
+with an include.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jon Mason <jdmason@kudzu.us>
+Acked-by: Dave Jiang <dave.jiang@intel.com>
+Acked-by: Allen Hubbe <Allen.Hubbe@dell.com>
+Acked-by: Jon Mason <jdmason@kudzu.us>
 ---
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 36 +++-----------------------
- 1 file changed, 4 insertions(+), 32 deletions(-)
+ drivers/ntb/hw/intel/ntb_hw_intel.h | 30 +----------------------------
+ 1 file changed, 1 insertion(+), 29 deletions(-)
 
-diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-index 5ee5f40b4dfc..c0b97699169d 100644
---- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-+++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-@@ -13,13 +13,14 @@
-  *
-  */
+diff --git a/drivers/ntb/hw/intel/ntb_hw_intel.h b/drivers/ntb/hw/intel/ntb_hw_intel.h
+index c49ff8970ce3..e071e28bca3f 100644
+--- a/drivers/ntb/hw/intel/ntb_hw_intel.h
++++ b/drivers/ntb/hw/intel/ntb_hw_intel.h
+@@ -53,6 +53,7 @@
  
--#include <linux/switchtec.h>
--#include <linux/module.h>
-+#include <linux/interrupt.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/delay.h>
- #include <linux/kthread.h>
--#include <linux/interrupt.h>
-+#include <linux/module.h>
  #include <linux/ntb.h>
  #include <linux/pci.h>
-+#include <linux/switchtec.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
  
- MODULE_DESCRIPTION("Microsemi Switchtec(tm) NTB Driver");
- MODULE_VERSION("0.1");
-@@ -36,35 +37,6 @@ module_param(use_lut_mws, bool, 0644);
- MODULE_PARM_DESC(use_lut_mws,
- 		 "Enable the use of the LUT based memory windows");
+ /* PCI device IDs */
+ #define PCI_DEVICE_ID_INTEL_NTB_B2B_JSF	0x3725
+@@ -218,33 +219,4 @@ static inline int pdev_is_gen3(struct pci_dev *pdev)
+ 	return 0;
+ }
  
 -#ifndef ioread64
 -#ifdef readq
@@ -126,9 +115,7 @@ index 5ee5f40b4dfc..c0b97699169d 100644
 -#endif
 -#endif
 -
- #define SWITCHTEC_NTB_MAGIC 0x45CC0001
- #define MAX_MWS     128
- 
+ #endif
 -- 
 2.19.0
 
