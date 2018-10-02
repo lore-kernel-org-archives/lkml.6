@@ -3,65 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF6FC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E44DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F11B20684
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:19:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F11B20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 42707208AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:21:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42707208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726941AbeJBNAu (ORCPT
+        id S1726727AbeJBNCt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 09:00:50 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:38196 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbeJBNAt (ORCPT
+        Tue, 2 Oct 2018 09:02:49 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58887 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbeJBNCt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 09:00:49 -0400
-Received: from localhost (c-67-183-145-105.hsd1.wa.comcast.net [67.183.145.105])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7DD0C1414D372;
-        Mon,  1 Oct 2018 23:19:15 -0700 (PDT)
-Date:   Mon, 01 Oct 2018 23:19:14 -0700 (PDT)
-Message-Id: <20181001.231914.2200760830649337187.davem@davemloft.net>
-To:     vakul.garg@nxp.com
-Cc:     netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shuah@kernel.org, davejwatson@fb.com,
-        doronrk@fb.com
-Subject: Re: [PATCH net-next] selftests/tls: Fix recv(MSG_PEEK) & splice()
- test cases
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180928161808.10363-1-vakul.garg@nxp.com>
-References: <20180928161808.10363-1-vakul.garg@nxp.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 01 Oct 2018 23:19:15 -0700 (PDT)
+        Tue, 2 Oct 2018 09:02:49 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g7E2x-0002oz-9u; Tue, 02 Oct 2018 08:20:39 +0200
+Date:   Tue, 2 Oct 2018 08:20:38 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Mike Travis <mike.travis@hpe.com>
+cc:     Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Hedi Berriche <hedi@sgi.com>,
+        Russ Anderson <russ.anderson@hpe.com>,
+        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ram Pai <linuxram@us.ibm.com>, Juergen Gross <jgross@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Petr Tesarik <ptesarik@suse.cz>,
+        Sinan Kaya <okaya@codeaurora.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Hedi Berriche <hedi.berriche@hpe.com>
+Subject: Re: [PATCH 1/2] x86/platform/uv: Add is_early_uv_system check
+In-Reply-To: <20181002012204.453928259@stormcage.americas.sgi.com>
+Message-ID: <alpine.DEB.2.21.1810020818530.32062@nanos.tec.linutronix.de>
+References: <20181002012204.297193336@stormcage.americas.sgi.com> <20181002012204.453928259@stormcage.americas.sgi.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vakul Garg <vakul.garg@nxp.com>
-Date: Fri, 28 Sep 2018 21:48:08 +0530
+On Mon, 1 Oct 2018, Mike Travis wrote:
 
-> TLS test cases splice_from_pipe, send_and_splice &
-> recv_peek_multiple_records expect to receive a given nummber of bytes
-> and then compare them against the number of bytes which were sent.
-> Therefore, system call recv() must not return before receiving the
-> requested number of bytes, otherwise the subsequent memcmp() fails.
-> This patch passes MSG_WAITALL flag to recv() so that it does not return
-> prematurely before requested number of bytes are copied to receive
-> buffer.
+> Introduce is_early_uv_system() which uses efi.uv_systab to decide early
+> in the boot process whether we're on a UV system.
 > 
-> Signed-off-by: Vakul Garg <vakul.garg@nxp.com>
+> This is needed to skip other early setup/init code that might break UV
+> platform if done too early such as before necessary ACPI tables parsing
+> takes place.
+> 
+> Signed-off-by: Mike Travis <mike.travis@hpe.com>
+> Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
 
-Applied.
+This SOB chain is wrong. I don't see how Hedi is involved in this. If this
+wants to express that the patch was developed together please see
+Documentation for the Co-developed-by tag.
+
+> Reviewed-by: Russ Anderson <rja@hpe.com>
+> Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
+> ---
+>  arch/x86/include/asm/uv/uv.h |    6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> --- linux.orig/arch/x86/include/asm/uv/uv.h
+> +++ linux/arch/x86/include/asm/uv/uv.h
+> @@ -10,8 +10,13 @@ struct cpumask;
+>  struct mm_struct;
+>  
+>  #ifdef CONFIG_X86_UV
+> +#include <linux/efi.h>
+>  
+>  extern enum uv_system_type get_uv_system_type(void);
+> +static inline int is_early_uv_system(void)
+
+Can you please make this bool?
+
+> +{
+> +	return !((efi.uv_systab == EFI_INVALID_TABLE_ADDR) || !efi.uv_systab);
+> +}
+
+Thanks,
+
+	tglx
