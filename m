@@ -3,41 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFEDC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 993D4C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59A8B208AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59A8B208AE
+	by mail.kernel.org (Postfix) with ESMTP id 68A62206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68A62206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730693AbeJBUOP (ORCPT
+        id S1730704AbeJBUOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33812 "EHLO
+        Tue, 2 Oct 2018 16:14:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33844 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730643AbeJBUOO (ORCPT
+        with ESMTP id S1729591AbeJBUOQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:14 -0400
+        Tue, 2 Oct 2018 16:14:16 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D91C1C2B;
-        Tue,  2 Oct 2018 13:30:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2DAB2C3F;
+        Tue,  2 Oct 2018 13:30:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.18 168/228] arm64: KVM: Tighten guest core register access from userspace
-Date:   Tue,  2 Oct 2018 06:24:25 -0700
-Message-Id: <20181002132510.080763631@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 170/228] ARM: OMAP2+: Fix module address for modules using mpu_rt_idx
+Date:   Tue,  2 Oct 2018 06:24:27 -0700
+Message-Id: <20181002132510.188083487@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -55,99 +51,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Martin <Dave.Martin@arm.com>
+From: Tony Lindgren <tony@atomide.com>
 
-commit d26c25a9d19b5976b319af528886f89cf455692d upstream.
+[ Upstream commit 1dbcb97c656eed1a244c960b8b3a469c3d20ce7b ]
 
-We currently allow userspace to access the core register file
-in about any possible way, including straddling multiple
-registers and doing unaligned accesses.
+If we use device tree data for a module interconnect target we want
+to map the control registers from the module start. Legacy hwmod platform
+data however is using child IP offsets for cpsw module with mpu_rt_idx.
 
-This is not the expected use of the ABI, and nobody is actually
-using it that way. Let's tighten it by explicitly checking
-the size and alignment for each field of the register file.
+In cases where we have the interconnect target module already using device
+tree data with legacy hwmod platform data still around, the sysc register
+area is not adjusted for mpu_rt_idx causing wrong registers being accessed.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 2f4a07c5f9fe ("arm64: KVM: guest one-reg interface")
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-[maz: rewrote Dave's initial patch to be more easily backported]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Let's fix the issue for mixed dts and platform data mode by ioremapping
+the module registers using child IP offset if mpu_rt_idx is set. For
+device tree only data there's no reason to use mpu_rt_idx.
+
+Fixes: 6c72b3550672 ("ARM: OMAP2+: Parse module IO range from dts for legacy
+"ti,hwmods" support")
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm64/kvm/guest.c |   45 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ arch/arm/mach-omap2/omap_hwmod.c |   37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
---- a/arch/arm64/kvm/guest.c
-+++ b/arch/arm64/kvm/guest.c
-@@ -57,6 +57,45 @@ static u64 core_reg_offset_from_id(u64 i
- 	return id & ~(KVM_REG_ARCH_MASK | KVM_REG_SIZE_MASK | KVM_REG_ARM_CORE);
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -2161,6 +2161,37 @@ static int of_dev_hwmod_lookup(struct de
  }
  
-+static int validate_core_offset(const struct kvm_one_reg *reg)
+ /**
++ * omap_hwmod_fix_mpu_rt_idx - fix up mpu_rt_idx register offsets
++ *
++ * @oh: struct omap_hwmod *
++ * @np: struct device_node *
++ *
++ * Fix up module register offsets for modules with mpu_rt_idx.
++ * Only needed for cpsw with interconnect target module defined
++ * in device tree while still using legacy hwmod platform data
++ * for rev, sysc and syss registers.
++ *
++ * Can be removed when all cpsw hwmod platform data has been
++ * dropped.
++ */
++static void omap_hwmod_fix_mpu_rt_idx(struct omap_hwmod *oh,
++				      struct device_node *np,
++				      struct resource *res)
 +{
-+	u64 off = core_reg_offset_from_id(reg->id);
-+	int size;
++	struct device_node *child = NULL;
++	int error;
 +
-+	switch (off) {
-+	case KVM_REG_ARM_CORE_REG(regs.regs[0]) ...
-+	     KVM_REG_ARM_CORE_REG(regs.regs[30]):
-+	case KVM_REG_ARM_CORE_REG(regs.sp):
-+	case KVM_REG_ARM_CORE_REG(regs.pc):
-+	case KVM_REG_ARM_CORE_REG(regs.pstate):
-+	case KVM_REG_ARM_CORE_REG(sp_el1):
-+	case KVM_REG_ARM_CORE_REG(elr_el1):
-+	case KVM_REG_ARM_CORE_REG(spsr[0]) ...
-+	     KVM_REG_ARM_CORE_REG(spsr[KVM_NR_SPSR - 1]):
-+		size = sizeof(__u64);
-+		break;
++	child = of_get_next_child(np, child);
++	if (!child)
++		return;
 +
-+	case KVM_REG_ARM_CORE_REG(fp_regs.vregs[0]) ...
-+	     KVM_REG_ARM_CORE_REG(fp_regs.vregs[31]):
-+		size = sizeof(__uint128_t);
-+		break;
-+
-+	case KVM_REG_ARM_CORE_REG(fp_regs.fpsr):
-+	case KVM_REG_ARM_CORE_REG(fp_regs.fpcr):
-+		size = sizeof(__u32);
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (KVM_REG_SIZE(reg->id) == size &&
-+	    IS_ALIGNED(off, size / sizeof(__u32)))
-+		return 0;
-+
-+	return -EINVAL;
++	error = of_address_to_resource(child, oh->mpu_rt_idx, res);
++	if (error)
++		pr_err("%s: error mapping mpu_rt_idx: %i\n",
++		       __func__, error);
 +}
 +
- static int get_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
- {
- 	/*
-@@ -76,6 +115,9 @@ static int get_core_reg(struct kvm_vcpu
- 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
- 		return -ENOENT;
++/**
+  * omap_hwmod_parse_module_range - map module IO range from device tree
+  * @oh: struct omap_hwmod *
+  * @np: struct device_node *
+@@ -2222,6 +2253,12 @@ int omap_hwmod_parse_module_range(struct
+ 	pr_debug("omap_hwmod: %s %s at 0x%llx size 0x%llx\n",
+ 		 oh ? oh->name : "", np->name, base, size);
  
-+	if (validate_core_offset(reg))
-+		return -EINVAL;
++	if (oh && oh->mpu_rt_idx) {
++		omap_hwmod_fix_mpu_rt_idx(oh, np, res);
 +
- 	if (copy_to_user(uaddr, ((u32 *)regs) + off, KVM_REG_SIZE(reg->id)))
- 		return -EFAULT;
- 
-@@ -98,6 +140,9 @@ static int set_core_reg(struct kvm_vcpu
- 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
- 		return -ENOENT;
- 
-+	if (validate_core_offset(reg))
-+		return -EINVAL;
++		return 0;
++	}
 +
- 	if (KVM_REG_SIZE(reg->id) > sizeof(tmp))
- 		return -EINVAL;
- 
+ 	res->start = base;
+ 	res->end = base + size - 1;
+ 	res->flags = IORESOURCE_MEM;
 
 
