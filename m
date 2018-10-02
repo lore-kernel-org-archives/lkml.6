@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A79C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C30C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 610D82083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610D82083F
+	by mail.kernel.org (Postfix) with ESMTP id A38142083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38142083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729257AbeJBULn (ORCPT
+        id S1729309AbeJBULq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60872 "EHLO
+        Tue, 2 Oct 2018 16:11:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60936 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729191AbeJBULk (ORCPT
+        with ESMTP id S1729262AbeJBULp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:40 -0400
+        Tue, 2 Oct 2018 16:11:45 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB024A67;
-        Tue,  2 Oct 2018 13:28:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49033A67;
+        Tue,  2 Oct 2018 13:28:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        stable@vger.kernel.org, Xiaofei Tan <tanxiaofei@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 102/228] arm64: dts: renesas: Fix VSPD registers range
-Date:   Tue,  2 Oct 2018 06:23:19 -0700
-Message-Id: <20181002132506.294099564@linuxfoundation.org>
+Subject: [PATCH 4.18 107/228] scsi: hisi_sas: Fix the conflict between dev gone and host reset
+Date:   Tue,  2 Oct 2018 06:23:24 -0700
+Message-Id: <20181002132506.646709915@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,156 +53,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Xiaofei Tan <tanxiaofei@huawei.com>
 
-[ Upstream commit e21adc781bb45e810f1c396c4bc2c1624a4c25b9 ]
+[ Upstream commit d2fc401e47529d9ffd2673a5395d56002e31ad98 ]
 
-The VSPD and FCPVD nodes have overlapping register ranges, as the FCPVD
-devices are mapped in the memory range usually used by the VSP LUT and
-CLU, which are not present in the VSPD. Fix this by shortening the VSPD
-registers range to 0x5000.
+There is a possible conflict when a device is removed and host reset occurs
+concurrently.
 
-Fixes: 9f8573e38a0b ("arm64: dts: renesas: r8a7795: Add VSP instances")
-Fixes: 291e0c4994d0 ("arm64: dts: r8a7795: Add support for R-Car H3 ES2.0")
-Fixes: f06ffdfbdd90 ("arm64: dts: r8a7796: Add VSP instances")
-Fixes: b4f92030d5d3 ("arm64: dts: renesas: r8a77970: add VSPD support")
-Fixes: 295952a183d3 ("arm64: dts: renesas: r8a77995: add VSP instances")
-Fixes: 85cb3229218a ("arm64: dts: renesas: r8a77965: Add VSP instances")
-Reported-by: Simon Horman <horms+renesas@verge.net.au>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+The reason is that then the device is notified as gone, we try to clear the
+ITCT, which is notified via an interrupt. The dev gone function pends on
+this event with a completion, which is completed when the ITCT interrupt
+occurs.
+
+But host reset will disable all interrupts, the wait_for_completion() may
+wait indefinitely.
+
+This patch adds an semaphore to synchronise this two processes. The
+semaphore is taken by the host reset as the basis of synchronising.
+
+Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |    2 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     |    6 +++---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi     |    6 +++---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi    |    4 ++--
- arch/arm64/boot/dts/renesas/r8a77970.dtsi    |    2 +-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi    |    4 ++--
- 6 files changed, 12 insertions(+), 12 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas.h      |    1 +
+ drivers/scsi/hisi_sas/hisi_sas_main.c |    6 ++++++
+ 2 files changed, 7 insertions(+)
 
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -80,7 +80,7 @@
+--- a/drivers/scsi/hisi_sas/hisi_sas.h
++++ b/drivers/scsi/hisi_sas/hisi_sas.h
+@@ -277,6 +277,7 @@ struct hisi_hba {
  
- 	vspd3: vsp@fea38000 {
- 		compatible = "renesas,vsp2";
--		reg = <0 0xfea38000 0 0x8000>;
-+		reg = <0 0xfea38000 0 0x5000>;
- 		interrupts = <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 620>;
- 		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2530,7 +2530,7 @@
+ 	int n_phy;
+ 	spinlock_t lock;
++	struct semaphore sem;
  
- 		vspd0: vsp@fea20000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea20000 0 0x8000>;
-+			reg = <0 0xfea20000 0 0x5000>;
- 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 623>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-@@ -2541,7 +2541,7 @@
+ 	struct timer_list timer;
+ 	struct workqueue_struct *wq;
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -914,7 +914,9 @@ static void hisi_sas_dev_gone(struct dom
  
- 		vspd1: vsp@fea28000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea28000 0 0x8000>;
-+			reg = <0 0xfea28000 0 0x5000>;
- 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 622>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-@@ -2552,7 +2552,7 @@
+ 		hisi_sas_dereg_device(hisi_hba, device);
  
- 		vspd2: vsp@fea30000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea30000 0 0x8000>;
-+			reg = <0 0xfea30000 0 0x5000>;
- 			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 621>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -2212,7 +2212,7 @@
++		down(&hisi_hba->sem);
+ 		hisi_hba->hw->clear_itct(hisi_hba, sas_dev);
++		up(&hisi_hba->sem);
+ 		device->lldd_dev = NULL;
+ 	}
  
- 		vspd0: vsp@fea20000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea20000 0 0x8000>;
-+			reg = <0 0xfea20000 0 0x5000>;
- 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 623>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-@@ -2223,7 +2223,7 @@
+@@ -1364,6 +1366,7 @@ static int hisi_sas_controller_reset(str
+ 	if (test_and_set_bit(HISI_SAS_RESET_BIT, &hisi_hba->flags))
+ 		return -1;
  
- 		vspd1: vsp@fea28000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea28000 0 0x8000>;
-+			reg = <0 0xfea28000 0 0x5000>;
- 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 622>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-@@ -2234,7 +2234,7 @@
++	down(&hisi_hba->sem);
+ 	dev_info(dev, "controller resetting...\n");
+ 	old_state = hisi_hba->hw->get_phys_state(hisi_hba);
  
- 		vspd2: vsp@fea30000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea30000 0 0x8000>;
-+			reg = <0 0xfea30000 0 0x5000>;
- 			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 621>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -1397,7 +1397,7 @@
+@@ -1378,6 +1381,7 @@ static int hisi_sas_controller_reset(str
+ 	if (rc) {
+ 		dev_warn(dev, "controller reset failed (%d)\n", rc);
+ 		clear_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags);
++		up(&hisi_hba->sem);
+ 		scsi_unblock_requests(shost);
+ 		goto out;
+ 	}
+@@ -1388,6 +1392,7 @@ static int hisi_sas_controller_reset(str
+ 	hisi_hba->hw->phys_init(hisi_hba);
+ 	msleep(1000);
+ 	hisi_sas_refresh_port_id(hisi_hba);
++	up(&hisi_hba->sem);
  
- 		vspd0: vsp@fea20000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea20000 0 0x8000>;
-+			reg = <0 0xfea20000 0 0x5000>;
- 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 623>;
- 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-@@ -1416,7 +1416,7 @@
+ 	if (hisi_hba->reject_stp_links_msk)
+ 		hisi_sas_terminate_stp_reject(hisi_hba);
+@@ -2016,6 +2021,7 @@ int hisi_sas_alloc(struct hisi_hba *hisi
+ 	struct device *dev = hisi_hba->dev;
+ 	int i, s, max_command_entries = hisi_hba->hw->max_command_entries;
  
- 		vspd1: vsp@fea28000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea28000 0 0x8000>;
-+			reg = <0 0xfea28000 0 0x5000>;
- 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 622>;
- 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -776,7 +776,7 @@
- 
- 		vspd0: vsp@fea20000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea20000 0 0x8000>;
-+			reg = <0 0xfea20000 0 0x5000>;
- 			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 623>;
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -699,7 +699,7 @@
- 
- 		vspd0: vsp@fea20000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea20000 0 0x8000>;
-+			reg = <0 0xfea20000 0 0x5000>;
- 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 623>;
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-@@ -709,7 +709,7 @@
- 
- 		vspd1: vsp@fea28000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea28000 0 0x8000>;
-+			reg = <0 0xfea28000 0 0x5000>;
- 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 622>;
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++	sema_init(&hisi_hba->sem, 1);
+ 	spin_lock_init(&hisi_hba->lock);
+ 	for (i = 0; i < hisi_hba->n_phy; i++) {
+ 		hisi_sas_phy_init(hisi_hba, i);
 
 
