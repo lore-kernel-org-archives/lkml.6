@@ -6,100 +6,61 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A31C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D87CC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 063C42064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:37:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 063C42064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 4D0182064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:39:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D0182064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbeJBXVu (ORCPT
+        id S1727267AbeJBXXN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 19:21:50 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:34574 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726233AbeJBXVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 19:21:50 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id szLh2r-gqgaR; Tue,  2 Oct 2018 18:37:33 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC64F00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:4f00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BAEF61EC02D1;
-        Tue,  2 Oct 2018 18:37:33 +0200 (CEST)
-Date:   Tue, 2 Oct 2018 18:37:36 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v4 02/27] x86/fpu/xstate: Change some names to
- separate XSAVES system and user states
-Message-ID: <20181002163736.GD29601@zn.tnic>
-References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
- <20180921150351.20898-3-yu-cheng.yu@intel.com>
- <20181002152903.GB29601@zn.tnic>
- <ba13d643c21de8e1e01a8d528457fb5dd82c42aa.camel@intel.com>
- <498c8824-9255-96be-71c2-3ebfa684a9d3@linux.intel.com>
+        Tue, 2 Oct 2018 19:23:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57572 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726243AbeJBXXM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 19:23:12 -0400
+Received: from localhost (unknown [64.124.202.226])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC0B8194B;
+        Tue,  2 Oct 2018 16:38:57 +0000 (UTC)
+Date:   Tue, 2 Oct 2018 09:38:50 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Vinod <vkoul@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [GIT PULL] SoundWire updates for 4.20-rc1
+Message-ID: <20181002163850.GA11549@kroah.com>
+References: <20181002142327.GA19792@vkoul-mobl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <498c8824-9255-96be-71c2-3ebfa684a9d3@linux.intel.com>
+In-Reply-To: <20181002142327.GA19792@vkoul-mobl>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 09:30:52AM -0700, Dave Hansen wrote:
-> > Good point.  However, "system" is more indicative; CET states are per-task and
-> > not "Supervisor".  Do we want to go back to "Supervisor" or add comments?
+On Tue, Oct 02, 2018 at 07:53:27PM +0530, Vinod wrote:
+> Hey Greg,
 > 
-> This is one of those things where the SDM language does not match what
-> we use in the kernel.  I think it's fine to call them "system" or
-> "kernel" states to make it consistent with our existing in-kernel
-> nomenclature.
+> Here are the SoundWire updates (again) for 4.20-rc1/5.0-rc1
+> This brings in the multi-link streaming support and rst format
+> corrections. The changes are in linux-next for quite some time.
 > 
-> I say add comments to clarify what the SDM calls it vs. what we do.
+> Please consider pull to receive:
+> 
+> The following changes since commit 8d6ccf5cebbc7ed1dee9986e36853a78dfb64084:
+> 
+>   soundwire: Fix acquiring bus lock twice during master release (2018-08-27 09:49:48 +0530)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/soundwire-4.20-rc1
 
-So AFAIU, the difference is that XSAVES is a CPL0 insn. Thus the
-supervisor thing, I'd guess.
+Now pulled, thanks.
 
-Now it looks like CET uses XSAVES (from skimming the patchset forward)
-but then what our nomenclature is and how it all gets tied together,
-needs to be explained somewhere prominent so that we're all on the same
-page.
-
-This patch's commit message is not even close. So I'd very much
-appreciate a more verbose explanation, even if it repeats itself at
-places.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+greg k-h
