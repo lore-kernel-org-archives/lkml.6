@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C8FC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE717C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 132F92064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 132F92064D
+	by mail.kernel.org (Postfix) with ESMTP id A25C4206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A25C4206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732683AbeJBUSs (ORCPT
+        id S1732689AbeJBUS4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:18:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35646 "EHLO
+        Tue, 2 Oct 2018 16:18:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35656 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732670AbeJBUSq (ORCPT
+        with ESMTP id S1730901AbeJBUSz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:46 -0400
+        Tue, 2 Oct 2018 16:18:55 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDCCA5AA;
-        Tue,  2 Oct 2018 13:35:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DAEBF5AA;
+        Tue,  2 Oct 2018 13:35:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        syzbot+19c3aaef85a89d451eac@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 095/137] USB: handle NULL config in usb_find_alt_setting()
-Date:   Tue,  2 Oct 2018 06:24:56 -0700
-Message-Id: <20181002132505.152243932@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 137/137] x86/pti: Fix section mismatch warning/error
+Date:   Tue,  2 Oct 2018 06:25:38 -0700
+Message-Id: <20181002132508.095916361@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -51,38 +54,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit c9a4cb204e9eb7fa7dfbe3f7d3a674fa530aa193 upstream.
+[ Upstream commit ff924c5a1ec7548825cc2d07980b03be4224ffac ]
 
-usb_find_alt_setting() takes a pointer to a struct usb_host_config as
-an argument; it searches for an interface with specified interface and
-alternate setting numbers in that config.  However, it crashes if the
-usb_host_config pointer argument is NULL.
+Fix the section mismatch warning in arch/x86/mm/pti.c:
 
-Since this is a general-purpose routine, available for use in many
-places, we want to to be more robust.  This patch makes it return NULL
-whenever the config argument is NULL.
+WARNING: vmlinux.o(.text+0x6972a): Section mismatch in reference from the function pti_clone_pgtable() to the function .init.text:pti_user_pagetable_walk_pte()
+The function pti_clone_pgtable() references
+the function __init pti_user_pagetable_walk_pte().
+This is often because pti_clone_pgtable lacks a __init
+annotation or the annotation of pti_user_pagetable_walk_pte is wrong.
+FATAL: modpost: Section mismatches detected.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-by: syzbot+19c3aaef85a89d451eac@syzkaller.appspotmail.com
-CC: <stable@vger.kernel.org>
+Fixes: 85900ea51577 ("x86/pti: Map the vsyscall page if needed")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Link: https://lkml.kernel.org/r/43a6d6a3-d69d-5eda-da09-0b1c88215a2a@infradead.org
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/core/usb.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/mm/pti.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/usb.c
-+++ b/drivers/usb/core/usb.c
-@@ -228,6 +228,8 @@ struct usb_host_interface *usb_find_alt_
- 	struct usb_interface_cache *intf_cache = NULL;
- 	int i;
- 
-+	if (!config)
-+		return NULL;
- 	for (i = 0; i < config->desc.bNumInterfaces; i++) {
- 		if (config->intf_cache[i]->altsetting[0].desc.bInterfaceNumber
- 				== iface_num) {
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -224,7 +224,7 @@ static __init pmd_t *pti_user_pagetable_
+  *
+  * Returns a pointer to a PTE on success, or NULL on failure.
+  */
+-static __init pte_t *pti_user_pagetable_walk_pte(unsigned long address)
++static pte_t *pti_user_pagetable_walk_pte(unsigned long address)
+ {
+ 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
+ 	pmd_t *pmd;
 
 
