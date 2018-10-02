@@ -2,152 +2,118 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B79EAC64EBC
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F00E1C64EBC
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A03620652
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:30:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A03620652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 98FBE206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:33:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="VRy6LDS9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98FBE206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbeJCEQM (ORCPT
+        id S1728625AbeJCES3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 00:16:12 -0400
-Received: from mga07.intel.com ([134.134.136.100]:9943 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726862AbeJCEQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 00:16:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 14:30:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,333,1534834800"; 
-   d="scan'208";a="262326682"
-Received: from otc-kbl-h-01.jf.intel.com ([10.54.55.131])
-  by orsmga005.jf.intel.com with ESMTP; 02 Oct 2018 14:30:50 -0700
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        acme@kernel.org, linux-kernel@vger.kernel.org
-Cc:     eranian@google.com, ak@linux.intel.com,
-        alexander.shishkin@linux.intel.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf/x86/intel: Add counter freezing quirk for Goldmont
-Date:   Tue,  2 Oct 2018 14:30:12 -0700
-Message-Id: <1538515812-8808-1-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 3 Oct 2018 00:18:29 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46048 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbeJCES3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 00:18:29 -0400
+Received: by mail-ed1-f67.google.com with SMTP id v18-v6so2379148edq.12
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 14:33:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=message-id:subject:from:to:date:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=RU7OfRHO3WVHYl+yBsKCY867QZa/g8kuTuocIF+bI00=;
+        b=VRy6LDS9dqI2chSCT2OxonEX8KyC+IRhNRBCR5pM5wpjW0WEJAUhAQ5SYGsfEPWGLB
+         N4kvn2OxUXHHKF+tuiZlIdMnr9WxhjCr1bH2JW8ZiyiFjlf+EVfVLevfX5aqnjCQo+Bz
+         6YH2rI7T0fgtDA4kHcLNCPLBA0ys3sxCNLrJwk9S3a48TJNHjA8L5Cm69E2fZcrcu5gd
+         PyQeGgYMrOkVRvaFXDEBiuLz7Q7RS1i+Sl8JIqbZuReRob966Nbq2xIwmE+M9M7dFn24
+         zZahdJyAzO7d2OKtKtja4QUeA9WNc5G+fI1R3vfA11lemki+NhfIcnDcuxmFmLk3KV0O
+         1QTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=RU7OfRHO3WVHYl+yBsKCY867QZa/g8kuTuocIF+bI00=;
+        b=TU7tUiM0JAuuQpSFv9mWBenABS3GHIRt2CkQn3As0/+TYS3giZITpKid4KshJK0qPs
+         wZJyhFr5sbeHMFobPmikkvSAiwmgwW3ks7uIgDx+1bnPbVs7AZM9MqgqSOJreTrLmP7+
+         ixG3u/c5flCZzQHp4rrhKfPK5nENeMQoMgHJX00f88n4ZaBV/uHsBo9NFJIYROFjFT5k
+         R0uXm43hFH2dnHF6IyR4GOexkjHtgGEjD47vJuhSyo32sWtHHoKTXyMgLuGeBUPyo/qZ
+         ROirlwOFtH3jyDpqPWoEZt6OYCM8ECVDeJIDRvlLZoQAIxJg4ilvOK078mt1YDRZRm3C
+         hM6Q==
+X-Gm-Message-State: ABuFfoiXgh/eoSjFxjmvMk6vZ8cZjOZBDHrOBb2hyBMhP96Zu7sxa9Td
+        cj5phBDipgoZen3s//DCAGP8UA==
+X-Google-Smtp-Source: ACcGV61Msb6+aSfWnaHJphAhAAABiLUO2rDBTLMVqwgpKylWxKNG7HAheeso0eLa1mjYV471D0SmCw==
+X-Received: by 2002:aa7:de17:: with SMTP id h23-v6mr14834235edv.100.1538515985109;
+        Tue, 02 Oct 2018 14:33:05 -0700 (PDT)
+Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id c27-v6sm709283edc.4.2018.10.02.14.33.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Oct 2018 14:33:04 -0700 (PDT)
+Message-ID: <1538515983.4348.93.camel@arista.com>
+Subject: Re: [PATCHv5 3/7] tty: Hold tty_ldisc_lock() during tty_reopen()
+From:   Dmitry Safonov <dima@arista.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 02 Oct 2018 22:33:03 +0100
+In-Reply-To: <99f1353a-e1a0-5ade-4aad-3eb62ea42a66@canonical.com>
+References: <8c61fd04-969a-cb09-6595-7ee23d214ab1@canonical.com>
+         <99f1353a-e1a0-5ade-4aad-3eb62ea42a66@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Hi Guilherme,
 
-A ucode patch is also needed for Goldmont while counter freezing feature
-is enabled. Otherwise, there will be some issues, e.g. PMI lost.
+On Mon, 2018-10-01 at 16:01 -0300, Guilherme G. Piccoli wrote:
+> On 01/10/2018 15:32, Guilherme G. Piccoli wrote:
+> > Hi Dmitry, thanks for the patch. It's very promising, we have some
+> > reports of this issue and I'm building a kernel with this patch in
+> > order the reporter can test it. But based in the previous feedback,
+> > this seems to be very mature now and ready to get merged, right?
 
-Add a quirk to check microcode version. If the system starts with the
-wrong ucode, leave the counter-freezing feature permanently disabled.
+Well, v5 passes 0day, so all previous reports are fixed.
+But there is a new one about reboot on parisc platform which takes ~3
+mins after the patch with ldisc locked on tty_reopen().
 
-The quirk function for Goldmont is similar as Goldmont Plus. Reuse the
-quirk function and rename it to atom_v4.
+I believe it's related to holding read side for too long..
+So, the patches still need another fix, heh.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/core.c | 44 +++++++++++++++++++++++++++++++++++---------
- 1 file changed, 35 insertions(+), 9 deletions(-)
+Unfortunately, I was a bit busy with other bugs hitting more in Arista.
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index ab01ef9..56401bc 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3839,23 +3839,48 @@ static __init void intel_nehalem_quirk(void)
- 	}
- }
- 
--static bool intel_glp_counter_freezing_broken(int cpu)
-+static bool intel_atom_v4_counter_freezing_broken(int cpu)
- {
- 	u32 rev = UINT_MAX; /* default to broken for unknown stepping */
- 
--	switch (cpu_data(cpu).x86_stepping) {
--	case 1:
--		rev = 0x28;
-+	switch (cpu_data(cpu).x86_model) {
-+	case INTEL_FAM6_ATOM_GOLDMONT:
-+		switch (cpu_data(cpu).x86_stepping) {
-+		case 2:
-+			rev = 0xe;
-+			break;
-+		case 9:
-+			rev = 0x2e;
-+			break;
-+		case 10:
-+			rev = 0x8;
-+			break;
-+		}
- 		break;
--	case 8:
--		rev = 0x6;
-+
-+	case INTEL_FAM6_ATOM_GOLDMONT_X:
-+		switch (cpu_data(cpu).x86_stepping) {
-+		case 1:
-+			rev = 0x1a;
-+			break;
-+		}
- 		break;
-+
-+	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
-+		switch (cpu_data(cpu).x86_stepping) {
-+		case 1:
-+			rev = 0x28;
-+			break;
-+		case 8:
-+			rev = 0x6;
-+			break;
-+		}
- 	}
- 
- 	return (cpu_data(cpu).microcode < rev);
- }
- 
--static __init void intel_glp_counter_freezing_quirk(void)
-+static __init void intel_atom_v4_counter_freezing_quirk(void)
- {
- 	/* Check if it's already disabled */
- 	if (disable_counter_freezing)
-@@ -3865,7 +3890,7 @@ static __init void intel_glp_counter_freezing_quirk(void)
- 	 * If the system starts with the wrong ucode, leave the
- 	 * counter-freezing feature permanently disabled.
- 	 */
--	if (intel_glp_counter_freezing_broken(raw_smp_processor_id())) {
-+	if (intel_atom_v4_counter_freezing_broken(raw_smp_processor_id())) {
- 		pr_info("PMU counter freezing disabled due to CPU errata,"
- 			"please upgrade microcode\n");
- 		x86_pmu.counter_freezing = false;
-@@ -4196,6 +4221,7 @@ __init int intel_pmu_init(void)
- 
- 	case INTEL_FAM6_ATOM_GOLDMONT:
- 	case INTEL_FAM6_ATOM_GOLDMONT_X:
-+		x86_add_quirk(intel_atom_v4_counter_freezing_quirk);
- 		memcpy(hw_cache_event_ids, glm_hw_cache_event_ids,
- 		       sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, glm_hw_cache_extra_regs,
-@@ -4222,7 +4248,7 @@ __init int intel_pmu_init(void)
- 		break;
- 
- 	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
--		x86_add_quirk(intel_glp_counter_freezing_quirk);
-+		x86_add_quirk(intel_atom_v4_counter_freezing_quirk);
- 		memcpy(hw_cache_event_ids, glp_hw_cache_event_ids,
- 		       sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, glp_hw_cache_extra_regs,
+> > I'd like to ask you if you did respin the patch with Greg's
+> > suggestion
+> > for the tag - I couldn't find it in LKML heheh
+> > 
+> > Oh, if you can CC me in future spins of this patch (in case there
+> > any),
+> > I'd really be glad.
+
+Sure, will enlarge Cc list ;)
+
+> > 
+> > Thank in advance,
+> > 
+> > 
+> > Guilherme
+> > 
+> 
+> 
+> Sorry, forgot to CC linux-kernel...
+
 -- 
-2.7.4
-
+Thanks,
+             Dmitry
