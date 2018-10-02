@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C7AC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B55C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44F552083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44F552083F
+	by mail.kernel.org (Postfix) with ESMTP id 94A32206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A32206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387554AbeJBUUV (ORCPT
+        id S2387567AbeJBUUX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36492 "EHLO
+        Tue, 2 Oct 2018 16:20:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36512 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731241AbeJBUUU (ORCPT
+        with ESMTP id S2387545AbeJBUUW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:20 -0400
+        Tue, 2 Oct 2018 16:20:22 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 689DBB2F;
-        Tue,  2 Oct 2018 13:36:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD27EB2F;
+        Tue,  2 Oct 2018 13:36:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomer Tayar <Tomer.Tayar@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 81/94] qed: Wait for ready indication before rereading the shmem
-Date:   Tue,  2 Oct 2018 06:25:35 -0700
-Message-Id: <20181002132506.130583850@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 4.9 56/94] tty: serial: lpuart: avoid leaking struct tty_struct
+Date:   Tue,  2 Oct 2018 06:25:10 -0700
+Message-Id: <20181002132504.374038914@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -53,99 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomer Tayar <Tomer.Tayar@cavium.com>
+From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit f00d25f3154b676fcea4502a25b94bd7f142ca74 ]
+commit 3216c622a24b0ebb9c159a8d1daf7f17a106b3f5 upstream.
 
-The MFW might be reset and re-update its shared memory.
-Upon the detection of such a reset the driver rereads this memory, but it
-has to wait till the data is valid.
-This patch adds the missing wait for a data ready indication.
+The function tty_port_tty_get() gets a reference to the tty. Since
+the code is not using tty_port_tty_set(), the reference is kept
+even after closing the tty.
 
-Signed-off-by: Tomer Tayar <Tomer.Tayar@cavium.com>
-Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Avoid using tty_port_tty_get() by directly access the tty instance.
+Since lpuart_start_rx_dma() is called from the .startup() and
+.set_termios() callback, it is safe to assume the tty instance is
+valid.
+
+Cc: stable@vger.kernel.org # v4.9+
+Fixes: 5887ad43ee02 ("tty: serial: fsl_lpuart: Use cyclic DMA for Rx")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/qlogic/qed/qed_mcp.c |   50 ++++++++++++++++++++++++------
- 1 file changed, 41 insertions(+), 9 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-@@ -97,18 +97,57 @@ int qed_mcp_free(struct qed_hwfn *p_hwfn
- 	return 0;
- }
+---
+ drivers/tty/serial/fsl_lpuart.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -833,7 +833,8 @@ static inline int lpuart_start_rx_dma(st
+ 	struct circ_buf *ring = &sport->rx_ring;
+ 	int ret, nent;
+ 	int bits, baud;
+-	struct tty_struct *tty = tty_port_tty_get(&sport->port.state->port);
++	struct tty_port *port = &sport->port.state->port;
++	struct tty_struct *tty = port->tty;
+ 	struct ktermios *termios = &tty->termios;
  
-+/* Maximum of 1 sec to wait for the SHMEM ready indication */
-+#define QED_MCP_SHMEM_RDY_MAX_RETRIES	20
-+#define QED_MCP_SHMEM_RDY_ITER_MS	50
-+
- static int qed_load_mcp_offsets(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
- {
- 	struct qed_mcp_info *p_info = p_hwfn->mcp_info;
-+	u8 cnt = QED_MCP_SHMEM_RDY_MAX_RETRIES;
-+	u8 msec = QED_MCP_SHMEM_RDY_ITER_MS;
- 	u32 drv_mb_offsize, mfw_mb_offsize;
- 	u32 mcp_pf_id = MCP_PF_ID(p_hwfn);
- 
- 	p_info->public_base = qed_rd(p_hwfn, p_ptt, MISC_REG_SHARED_MEM_ADDR);
--	if (!p_info->public_base)
--		return 0;
-+	if (!p_info->public_base) {
-+		DP_NOTICE(p_hwfn,
-+			  "The address of the MCP scratch-pad is not configured\n");
-+		return -EINVAL;
-+	}
- 
- 	p_info->public_base |= GRCBASE_MCP;
- 
-+	/* Get the MFW MB address and number of supported messages */
-+	mfw_mb_offsize = qed_rd(p_hwfn, p_ptt,
-+				SECTION_OFFSIZE_ADDR(p_info->public_base,
-+						     PUBLIC_MFW_MB));
-+	p_info->mfw_mb_addr = SECTION_ADDR(mfw_mb_offsize, mcp_pf_id);
-+	p_info->mfw_mb_length = (u16)qed_rd(p_hwfn, p_ptt,
-+					    p_info->mfw_mb_addr +
-+					    offsetof(struct public_mfw_mb,
-+						     sup_msgs));
-+
-+	/* The driver can notify that there was an MCP reset, and might read the
-+	 * SHMEM values before the MFW has completed initializing them.
-+	 * To avoid this, the "sup_msgs" field in the MFW mailbox is used as a
-+	 * data ready indication.
-+	 */
-+	while (!p_info->mfw_mb_length && --cnt) {
-+		msleep(msec);
-+		p_info->mfw_mb_length =
-+			(u16)qed_rd(p_hwfn, p_ptt,
-+				    p_info->mfw_mb_addr +
-+				    offsetof(struct public_mfw_mb, sup_msgs));
-+	}
-+
-+	if (!cnt) {
-+		DP_NOTICE(p_hwfn,
-+			  "Failed to get the SHMEM ready notification after %d msec\n",
-+			  QED_MCP_SHMEM_RDY_MAX_RETRIES * msec);
-+		return -EBUSY;
-+	}
-+
- 	/* Calculate the driver and MFW mailbox address */
- 	drv_mb_offsize = qed_rd(p_hwfn, p_ptt,
- 				SECTION_OFFSIZE_ADDR(p_info->public_base,
-@@ -118,13 +157,6 @@ static int qed_load_mcp_offsets(struct q
- 		   "drv_mb_offsiz = 0x%x, drv_mb_addr = 0x%x mcp_pf_id = 0x%x\n",
- 		   drv_mb_offsize, p_info->drv_mb_addr, mcp_pf_id);
- 
--	/* Set the MFW MB address */
--	mfw_mb_offsize = qed_rd(p_hwfn, p_ptt,
--				SECTION_OFFSIZE_ADDR(p_info->public_base,
--						     PUBLIC_MFW_MB));
--	p_info->mfw_mb_addr = SECTION_ADDR(mfw_mb_offsize, mcp_pf_id);
--	p_info->mfw_mb_length =	(u16)qed_rd(p_hwfn, p_ptt, p_info->mfw_mb_addr);
--
- 	/* Get the current driver mailbox sequence before sending
- 	 * the first command
- 	 */
+ 	baud = tty_get_baud_rate(tty);
 
 
