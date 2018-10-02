@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7C9C64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A655BC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFEE22082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFEE22082A
+	by mail.kernel.org (Postfix) with ESMTP id 74FB32064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74FB32064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731139AbeJBUlb (ORCPT
+        id S1731088AbeJBUlr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:41:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34032 "EHLO
+        Tue, 2 Oct 2018 16:41:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33966 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730867AbeJBUOg (ORCPT
+        with ESMTP id S1730815AbeJBUO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:36 -0400
+        Tue, 2 Oct 2018 16:14:28 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2FC715AA;
-        Tue,  2 Oct 2018 13:31:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FD32C2A;
+        Tue,  2 Oct 2018 13:31:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
+        stable@vger.kernel.org, Emily Deng <Emily.Deng@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 224/228] x86/pti: Fix section mismatch warning/error
-Date:   Tue,  2 Oct 2018 06:25:21 -0700
-Message-Id: <20181002132512.580004745@linuxfoundation.org>
+Subject: [PATCH 4.18 219/228] drm/amdgpu: Need to set moved to true when evict bo
+Date:   Tue,  2 Oct 2018 06:25:16 -0700
+Message-Id: <20181002132512.338916613@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -54,41 +53,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Emily Deng <Emily.Deng@amd.com>
 
-[ Upstream commit ff924c5a1ec7548825cc2d07980b03be4224ffac ]
+[ Upstream commit 6ddd9769db4fc11a98bd7e58be1764e47fdb8384 ]
 
-Fix the section mismatch warning in arch/x86/mm/pti.c:
+Fix the VMC page fault when the running sequence is as below:
+1.amdgpu_gem_create_ioctl
+2.ttm_bo_swapout->amdgpu_vm_bo_invalidate, as not called
+amdgpu_vm_bo_base_init, so won't called
+list_add_tail(&base->bo_list, &bo->va). Even the bo was evicted,
+it won't set the bo_base->moved.
+3.drm_gem_open_ioctl->amdgpu_vm_bo_base_init, here only called
+list_move_tail(&base->vm_status, &vm->evicted), but not set the
+bo_base->moved.
+4.amdgpu_vm_bo_map->amdgpu_vm_bo_insert_map, as the bo_base->moved is
+not set true, the function amdgpu_vm_bo_insert_map will call
+list_move(&bo_va->base.vm_status, &vm->moved)
+5.amdgpu_cs_ioctl won't validate the swapout bo, as it is only in the
+moved list, not in the evict list. So VMC page fault occurs.
 
-WARNING: vmlinux.o(.text+0x6972a): Section mismatch in reference from the function pti_clone_pgtable() to the function .init.text:pti_user_pagetable_walk_pte()
-The function pti_clone_pgtable() references
-the function __init pti_user_pagetable_walk_pte().
-This is often because pti_clone_pgtable lacks a __init
-annotation or the annotation of pti_user_pagetable_walk_pte is wrong.
-FATAL: modpost: Section mismatches detected.
-
-Fixes: 85900ea51577 ("x86/pti: Map the vsyscall page if needed")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Link: https://lkml.kernel.org/r/43a6d6a3-d69d-5eda-da09-0b1c88215a2a@infradead.org
+Signed-off-by: Emily Deng <Emily.Deng@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/pti.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -239,7 +239,7 @@ static pmd_t *pti_user_pagetable_walk_pm
-  *
-  * Returns a pointer to a PTE on success, or NULL on failure.
-  */
--static __init pte_t *pti_user_pagetable_walk_pte(unsigned long address)
-+static pte_t *pti_user_pagetable_walk_pte(unsigned long address)
- {
- 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
- 	pmd_t *pmd;
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+@@ -123,6 +123,7 @@ static void amdgpu_vm_bo_base_init(struc
+ 	 * is validated on next vm use to avoid fault.
+ 	 * */
+ 	list_move_tail(&base->vm_status, &vm->evicted);
++	base->moved = true;
+ }
+ 
+ /**
 
 
