@@ -2,125 +2,217 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA7FC64EBD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80092C65BA7
 	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85E7B2089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:01:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TBOz52an"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E7B2089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id DEACE2064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:01:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEACE2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbeJCBqk (ORCPT
+        id S1727562AbeJCBqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 21:46:40 -0400
-Received: from mail-eopbgr50061.outbound.protection.outlook.com ([40.107.5.61]:57649
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726881AbeJCBqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 21:46:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8fjM5DlSTcqG19/QDkPj7kuldjDjPmE5YSqnYVUF7QM=;
- b=TBOz52anwo6zHsIkv+TW+gGL1DJ1Ku1k9jmhkcuJq5Fbeqi9u0VONcEgZlJgqJrSnew0UMA714m1UTR9hLbbdpL5NmwJUaGv5NxuqUv3Kv82zbKu7F1JwPj580T0QgWKzKEdGW3xOIs5eOOykswpnbNsvB7Juc54NmlaA0bVVAw=
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
- AM0PR04MB4578.eurprd04.prod.outlook.com (52.135.149.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.23; Tue, 2 Oct 2018 19:01:46 +0000
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::3836:6416:4ebd:34ef]) by AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::3836:6416:4ebd:34ef%3]) with mapi id 15.20.1185.024; Tue, 2 Oct 2018
- 19:01:46 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Marek Vasut <marek.vasut@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-CC:     Horia Geanta <horia.geanta@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S . Miller " <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 0/3] crypto: mxs-dcp - Fix tcrypt on imx6
-Thread-Topic: [PATCH 0/3] crypto: mxs-dcp - Fix tcrypt on imx6
-Thread-Index: AQHUWoJdHSYoCZJ8aU2EkbIHywJZiA==
-Date:   Tue, 2 Oct 2018 19:01:46 +0000
-Message-ID: <cover.1538505573.git.leonard.crestez@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [95.76.156.53]
-x-mailer: git-send-email 2.17.1
-x-clientproxiedby: HE1P190CA0020.EURP190.PROD.OUTLOOK.COM (2603:10a6:3:bc::30)
- To AM0PR04MB4290.eurprd04.prod.outlook.com (2603:10a6:208:67::17)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4578;6:NnBLhWcS0VVEYiG3F/ORHdvbWW/q5MaufYIKA2QbQPtm3R82actAPaQ8zE86bC4cq2EhQ2f0NbQnD8exw2YXi217vCeDcJFwPu/YHC84M78ol0cUhfMn/WhXpWlIU77DEmKtW3A3M2++SsbWLlKRSycLep88mKiWckv85m+Dsq1TfgmhkLqCv6UwpEHo3VBRvmzC0X/jtSD2j2BAEJQRJhxvm06Krkt9lu/fnSU8AczxI/iRMBxkuNb3B89bslysfzjw1yzSMBUEJSHKoVKb78CNWJGIkIJysOXkj7EQ//PMf/dGAMXZFKEdXhqHLD5i4acJJzwVTRUg3hXOgSvG7WIFxXyUor1sw7pkffKBQjyGvu4yAmwcsTaTf/zlaeNtKZcaImCE6dS6ToTxUMfheGUT7kJRJggptYKmqD3ZCEQqZ86AnOLySdlPXveVBJziTTl+HIt2/qtAxpEDJzfkvg==;5:LXImM5LbkkckcM30rwtlv3EY/5LSmSvawKUV//0IQVxYHnaaAbVQMWAugn0NfK7RdMwGxd6tMO8JpH+qJR8uxKir8SUZPqcUKj4nybDrALLzN5mmsv6vuc7bjAhk4vj3z0KsBGSaXgM8x+/qZ+tIuAO9NmtqLkwRX7sa49D6ONU=;7:3cI1QAGZtZbL62Yv9OOtF4OFhvCwbNp1J20Z7+86dIbhERTGFcxErXgsl4OwjXtdsMCsV/7hyNlhB9sJyinzru9VuwEjMImpOTQRDunAyxWm1Qj7TD7xR4mjyCBxilqax8UE8dujJkB5JuPdNznw5n/FwZdFkUSbazs+LX74a5hLr/Az/VM3md/HzmvOkYTxseAaSeIc96ECLfYN5wkvff7yxgeAvJDPWN/4NvNKKMznIam95HLsO0IwQZgzvgHo
-x-ms-office365-filtering-correlation-id: 3a27ac07-b69e-4d31-cc38-08d628997ff5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4578;
-x-ms-traffictypediagnostic: AM0PR04MB4578:
-x-microsoft-antispam-prvs: <AM0PR04MB45787D80365ECAE2FDA81F1AEEE80@AM0PR04MB4578.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051);SRVR:AM0PR04MB4578;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4578;
-x-forefront-prvs: 0813C68E65
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(346002)(39860400002)(366004)(189003)(199004)(25786009)(6506007)(386003)(966005)(71200400001)(71190400001)(8676002)(86362001)(81156014)(26005)(81166006)(66066001)(68736007)(486006)(186003)(50226002)(102836004)(256004)(2616005)(44832011)(478600001)(305945005)(476003)(7736002)(8936002)(6306002)(53936002)(39060400002)(97736004)(5660300001)(36756003)(6512007)(2900100001)(52116002)(316002)(110136005)(3846002)(99286004)(4326008)(5250100002)(6116002)(54906003)(106356001)(14454004)(6486002)(2906002)(105586002)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4578;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: guX1DWRGvNKO3f8zHimjePPLH8dderm7haUd2w2lvfU3cu3k8VmU4ml+CF7PqVY8nO8U3O1mkdEZarpITfqdzGAbtToZff14cF730F9hwTgvOVc931V50X6goWP5b+PCLHmeTbN44pdij8AEHS3yBirESifXiEro+EVV1bZg84bzhxhXTcH0SwSxUHDuDfFltPMdNr58fsfHlJrEJYhbZiZxbr/SYbIdaY/CAzS/FUB1K8J0sk1eBFkBZIa348+Mzqg310nZJDpfR/lmaXXjQeybY2Dar43xJcInip1Z0XYxAN+F+vsIsVMNX4TFI+NeQIFI9ym1Rbu5gFOzNnJhkJU5FfZySxSMXIk6bZkXnUU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 2 Oct 2018 21:46:34 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47879 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726881AbeJCBqe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 21:46:34 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w92J0rld2067144
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 2 Oct 2018 12:00:53 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w92J0q8p2067141;
+        Tue, 2 Oct 2018 12:00:52 -0700
+Date:   Tue, 2 Oct 2018 12:00:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Feng Tang <tipbot@zytor.com>
+Message-ID: <tip-fa7948a6413c63128335aa871fade8df55ac61e2@git.kernel.org>
+Cc:     jkosina@suse.cz, feng.tang@intel.com, thymovanbeers@gmail.com,
+        bp@alien8.de, stuart.r.anderson@intel.com, hpa@linux.intel.com,
+        hpa@zytor.com, corbet@lwn.net, linux-kernel@vger.kernel.org,
+        kai.heng.feng@canonical.com, pombredanne@nexb.com,
+        konrad.wilk@oracle.com, frederic@kernel.org, peterz@infradead.org,
+        bhelgaas@google.com, rientjes@google.com, mingo@kernel.org,
+        gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
+        tglx@linutronix.de
+Reply-To: rientjes@google.com, mingo@kernel.org,
+          kstewart@linuxfoundation.org, tglx@linutronix.de,
+          gregkh@linuxfoundation.org, bhelgaas@google.com,
+          peterz@infradead.org, konrad.wilk@oracle.com,
+          frederic@kernel.org, pombredanne@nexb.com,
+          kai.heng.feng@canonical.com, linux-kernel@vger.kernel.org,
+          thymovanbeers@gmail.com, bp@alien8.de, feng.tang@intel.com,
+          jkosina@suse.cz, corbet@lwn.net, stuart.r.anderson@intel.com,
+          hpa@zytor.com, hpa@linux.intel.com
+In-Reply-To: <20181002164921.25833-1-feng.tang@intel.com>
+References: <20181002164921.25833-1-feng.tang@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/early-printk] x86/earlyprintk: Add a force option for
+ pciserial device
+Git-Commit-ID: fa7948a6413c63128335aa871fade8df55ac61e2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a27ac07-b69e-4d31-cc38-08d628997ff5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2018 19:01:46.6379
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4578
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mxs-dcp driver currently fails to probe on imx6. Fix the whole thing
-by porting a cleaned/squashed version of fixes carried in the NXP vendor
-tree.
+Commit-ID:  fa7948a6413c63128335aa871fade8df55ac61e2
+Gitweb:     https://git.kernel.org/tip/fa7948a6413c63128335aa871fade8df55ac61e2
+Author:     Feng Tang <feng.tang@intel.com>
+AuthorDate: Wed, 3 Oct 2018 00:49:21 +0800
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Tue, 2 Oct 2018 20:40:27 +0200
 
-Tested with "modprobe tcrypt" and CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=3Dn
-on imx6sl imx6sll imx6ull: no failures.
+x86/earlyprintk: Add a force option for pciserial device
 
-I'm not very familiar with crypto and did not write write these fixes so
-a skeptical review would be appreciated.
+The "pciserial" earlyprintk variant helps much on many modern x86
+platforms, but unfortunately there are still some platforms with PCI
+UART devices which have the wrong PCI class code. In that case, the
+current class code check does not allow for them to be used for logging.
 
-Previously:
-  https://lore.kernel.org/patchwork/patch/989652/
+Add a sub-option "force" which overrides the class code check and thus
+the use of such device can be enforced.
 
-Dan Douglass (1):
-  crypto: mxs-dcp - Implement sha import/export
+ [ bp: massage formulations. ]
 
-Radu Solea (2):
-  crypto: mxs-dcp - Fix SHA null hashes and output length
-  crypto: mxs-dcp - Fix AES issues
+Suggested-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Stuart R . Anderson" <stuart.r.anderson@intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Feng Tang <feng.tang@intel.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: H Peter Anvin <hpa@linux.intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thymo van Beers <thymovanbeers@gmail.com>
+Cc: alan@linux.intel.com
+Cc: linux-doc@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181002164921.25833-1-feng.tang@intel.com
+---
+ Documentation/admin-guide/kernel-parameters.txt |  6 ++++-
+ arch/x86/kernel/early_printk.c                  | 29 ++++++++++++++++---------
+ 2 files changed, 24 insertions(+), 11 deletions(-)
 
- drivers/crypto/mxs-dcp.c | 121 ++++++++++++++++++++++++++++++++-------
- 1 file changed, 101 insertions(+), 20 deletions(-)
-
---=20
-2.17.1
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 92eb1f42240d..34e6800dea0e 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1063,7 +1063,7 @@
+ 			earlyprintk=serial[,0x...[,baudrate]]
+ 			earlyprintk=ttySn[,baudrate]
+ 			earlyprintk=dbgp[debugController#]
+-			earlyprintk=pciserial,bus:device.function[,baudrate]
++			earlyprintk=pciserial[,force],bus:device.function[,baudrate]
+ 			earlyprintk=xdbc[xhciController#]
+ 
+ 			earlyprintk is useful when the kernel crashes before
+@@ -1095,6 +1095,10 @@
+ 
+ 			The sclp output can only be used on s390.
+ 
++			The optional "force" to "pciserial" enables use of a
++			PCI device even when its classcode is not of the
++			UART class.
++
+ 	edac_report=	[HW,EDAC] Control how to report EDAC event
+ 			Format: {"on" | "off" | "force"}
+ 			on: enable EDAC to report H/W event. May be overridden
+diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
+index 5e801c8c8ce7..374a52fa5296 100644
+--- a/arch/x86/kernel/early_printk.c
++++ b/arch/x86/kernel/early_printk.c
+@@ -213,8 +213,9 @@ static unsigned int mem32_serial_in(unsigned long addr, int offset)
+  * early_pci_serial_init()
+  *
+  * This function is invoked when the early_printk param starts with "pciserial"
+- * The rest of the param should be ",B:D.F,baud" where B, D & F describe the
+- * location of a PCI device that must be a UART device.
++ * The rest of the param should be "[force],B:D.F,baud", where B, D & F describe
++ * the location of a PCI device that must be a UART device. "force" is optional
++ * and overrides the use of an UART device with a wrong PCI class code.
+  */
+ static __init void early_pci_serial_init(char *s)
+ {
+@@ -224,17 +225,23 @@ static __init void early_pci_serial_init(char *s)
+ 	u32 classcode, bar0;
+ 	u16 cmdreg;
+ 	char *e;
++	int force = 0;
+ 
+-
+-	/*
+-	 * First, part the param to get the BDF values
+-	 */
+ 	if (*s == ',')
+ 		++s;
+ 
+ 	if (*s == 0)
+ 		return;
+ 
++	/* Force the use of an UART device with wrong class code */
++	if (!strncmp(s, "force,", 6)) {
++		force = 1;
++		s += 6;
++	}
++
++	/*
++	 * Part the param to get the BDF values
++	 */
+ 	bus = (u8)simple_strtoul(s, &e, 16);
+ 	s = e;
+ 	if (*s != ':')
+@@ -253,7 +260,7 @@ static __init void early_pci_serial_init(char *s)
+ 		s++;
+ 
+ 	/*
+-	 * Second, find the device from the BDF
++	 * Find the device from the BDF
+ 	 */
+ 	cmdreg = read_pci_config(bus, slot, func, PCI_COMMAND);
+ 	classcode = read_pci_config(bus, slot, func, PCI_CLASS_REVISION);
+@@ -264,8 +271,10 @@ static __init void early_pci_serial_init(char *s)
+ 	 */
+ 	if (((classcode >> 16 != PCI_CLASS_COMMUNICATION_MODEM) &&
+ 	     (classcode >> 16 != PCI_CLASS_COMMUNICATION_SERIAL)) ||
+-	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */
+-		return;
++	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */ {
++		if (!force)
++			return;
++	}
+ 
+ 	/*
+ 	 * Determine if it is IO or memory mapped
+@@ -289,7 +298,7 @@ static __init void early_pci_serial_init(char *s)
+ 	}
+ 
+ 	/*
+-	 * Lastly, initialize the hardware
++	 * Initialize the hardware
+ 	 */
+ 	if (*s) {
+ 		if (strcmp(s, "nocfg") == 0)
