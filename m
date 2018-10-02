@@ -3,37 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD3FC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B8BC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC5222089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:05:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC5222089A
+	by mail.kernel.org (Postfix) with ESMTP id 4708A2089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:05:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4708A2089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbeJBUMU (ORCPT
+        id S1730074AbeJBUtZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:12:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32972 "EHLO
+        Tue, 2 Oct 2018 16:49:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32960 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbeJBUMT (ORCPT
+        with ESMTP id S1729652AbeJBUMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:19 -0400
+        Tue, 2 Oct 2018 16:12:18 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 95B02A67;
-        Tue,  2 Oct 2018 13:28:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 546A1266;
+        Tue,  2 Oct 2018 13:28:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 132/228] floppy: Do not copy a kernel pointer to user memory in FDGETPRM ioctl
-Date:   Tue,  2 Oct 2018 06:23:49 -0700
-Message-Id: <20181002132508.353163783@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 131/228] gpio: tegra: Fix tegra_gpio_irq_set_type()
+Date:   Tue,  2 Oct 2018 06:23:48 -0700
+Message-Id: <20181002132508.286221852@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,46 +53,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Whitcroft <apw@canonical.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-commit 65eea8edc315589d6c993cf12dbb5d0e9ef1fe4e upstream.
+[ Upstream commit f78709a5d4114edc21a5d86586ed5e56e284f2bd ]
 
-The final field of a floppy_struct is the field "name", which is a pointer
-to a string in kernel memory.  The kernel pointer should not be copied to
-user memory.  The FDGETPRM ioctl copies a floppy_struct to user memory,
-including this "name" field.  This pointer cannot be used by the user
-and it will leak a kernel address to user-space, which will reveal the
-location of kernel code and data and undermine KASLR protection.
+Commit 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
+broke tegra_gpio_irq_set_type() because requesting of GPIO direction must
+be done after enabling GPIO function for a pin.
 
-Model this code after the compat ioctl which copies the returned data
-to a previously cleared temporary structure on the stack (excluding the
-name pointer) and copy out to userspace from there.  As we already have
-an inparam union with an appropriate member and that memory is already
-cleared even for read only calls make use of that as a temporary store.
+This patch fixes drivers probe failure like this:
 
-Based on an initial patch by Brian Belleville.
+ gpio gpiochip0: (tegra-gpio): gpiochip_lock_as_irq: cannot get GPIO direction
+ tegra-gpio 6000d000.gpio: unable to lock Tegra GPIO 144 as IRQ
 
-CVE-2018-7755
-Signed-off-by: Andy Whitcroft <apw@canonical.com>
-Broke up long line.
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/block/floppy.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpio/gpio-tegra.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3470,6 +3470,9 @@ static int fd_locked_ioctl(struct block_
- 					  (struct floppy_struct **)&outparam);
- 		if (ret)
- 			return ret;
-+		memcpy(&inparam.g, outparam,
-+				offsetof(struct floppy_struct, name));
-+		outparam = &inparam.g;
- 		break;
- 	case FDMSGON:
- 		UDP->flags |= FTD_MSG;
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -323,13 +323,6 @@ static int tegra_gpio_irq_set_type(struc
+ 		return -EINVAL;
+ 	}
+ 
+-	ret = gpiochip_lock_as_irq(&tgi->gc, gpio);
+-	if (ret) {
+-		dev_err(tgi->dev,
+-			"unable to lock Tegra GPIO %u as IRQ\n", gpio);
+-		return ret;
+-	}
+-
+ 	spin_lock_irqsave(&bank->lvl_lock[port], flags);
+ 
+ 	val = tegra_gpio_readl(tgi, GPIO_INT_LVL(tgi, gpio));
+@@ -342,6 +335,14 @@ static int tegra_gpio_irq_set_type(struc
+ 	tegra_gpio_mask_write(tgi, GPIO_MSK_OE(tgi, gpio), gpio, 0);
+ 	tegra_gpio_enable(tgi, gpio);
+ 
++	ret = gpiochip_lock_as_irq(&tgi->gc, gpio);
++	if (ret) {
++		dev_err(tgi->dev,
++			"unable to lock Tegra GPIO %u as IRQ\n", gpio);
++		tegra_gpio_disable(tgi, gpio);
++		return ret;
++	}
++
+ 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+ 		irq_set_handler_locked(d, handle_level_irq);
+ 	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
 
 
