@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E668C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8C2C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54D232089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D232089A
+	by mail.kernel.org (Postfix) with ESMTP id 63B7C2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63B7C2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbeJBULS (ORCPT
+        id S1728962AbeJBULV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60582 "EHLO
+        Tue, 2 Oct 2018 16:11:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60628 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeJBULQ (ORCPT
+        with ESMTP id S1727658AbeJBULT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:16 -0400
+        Tue, 2 Oct 2018 16:11:19 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73DD7C3F;
-        Tue,  2 Oct 2018 13:27:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C01ADC3F;
+        Tue,  2 Oct 2018 13:27:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>,
-        Keerthy <j-keerthy@ti.com>, Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Mike Christie <mchristi@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 042/228] ARM: hwmod: RTC: Dont assume lock/unlock will be called with irq enabled
-Date:   Tue,  2 Oct 2018 06:22:19 -0700
-Message-Id: <20181002132501.987647511@linuxfoundation.org>
+Subject: [PATCH 4.18 045/228] scsi: target/iscsi: Make iscsit_ta_authentication() respect the output buffer size
+Date:   Tue,  2 Oct 2018 06:22:22 -0700
+Message-Id: <20181002132502.213654526@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,62 +55,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Gerlach <d-gerlach@ti.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-[ Upstream commit 6d609b35c815ba20132b7b64bcca04516bb17c56 ]
+[ Upstream commit 35bea5c84fd13c643cce63f0b5cd4b148f8c901d ]
 
-When the RTC lock and unlock functions were introduced it was likely
-assumed that they would always be called from irq enabled context, hence
-the use of local_irq_disable/enable. This is no longer true as the
-RTC+DDR path makes a late call during the suspend path after irqs
-have been disabled to enable the RTC hwmod which calls both unlock and
-lock, leading to IRQs being reenabled through the local_irq_enable call
-in omap_hwmod_rtc_lock call.
-
-To avoid this change the local_irq_disable/enable to
-local_irq_save/restore to ensure that from whatever context this is
-called the proper IRQ configuration is maintained.
-
-Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: e48354ce078c ("iscsi-target: Add iSCSI fabric support for target v4.1")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Cc: Mike Christie <mchristi@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/omap_hwmod_reset.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/target/iscsi/iscsi_target_tpg.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/arm/mach-omap2/omap_hwmod_reset.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_reset.c
-@@ -92,11 +92,13 @@ static void omap_rtc_wait_not_busy(struc
-  */
- void omap_hwmod_rtc_unlock(struct omap_hwmod *oh)
- {
--	local_irq_disable();
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
- 	omap_rtc_wait_not_busy(oh);
- 	omap_hwmod_write(OMAP_RTC_KICK0_VALUE, oh, OMAP_RTC_KICK0_REG);
- 	omap_hwmod_write(OMAP_RTC_KICK1_VALUE, oh, OMAP_RTC_KICK1_REG);
--	local_irq_enable();
-+	local_irq_restore(flags);
- }
- 
- /**
-@@ -110,9 +112,11 @@ void omap_hwmod_rtc_unlock(struct omap_h
-  */
- void omap_hwmod_rtc_lock(struct omap_hwmod *oh)
- {
--	local_irq_disable();
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
- 	omap_rtc_wait_not_busy(oh);
- 	omap_hwmod_write(0x0, oh, OMAP_RTC_KICK0_REG);
- 	omap_hwmod_write(0x0, oh, OMAP_RTC_KICK1_REG);
--	local_irq_enable();
-+	local_irq_restore(flags);
- }
+--- a/drivers/target/iscsi/iscsi_target_tpg.c
++++ b/drivers/target/iscsi/iscsi_target_tpg.c
+@@ -636,8 +636,7 @@ int iscsit_ta_authentication(struct iscs
+ 		none = strstr(buf1, NONE);
+ 		if (none)
+ 			goto out;
+-		strncat(buf1, ",", strlen(","));
+-		strncat(buf1, NONE, strlen(NONE));
++		strlcat(buf1, "," NONE, sizeof(buf1));
+ 		if (iscsi_update_param_value(param, buf1) < 0)
+ 			return -EINVAL;
+ 	}
 
 
