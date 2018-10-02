@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8CCC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99327C64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 902FD206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 902FD206B2
+	by mail.kernel.org (Postfix) with ESMTP id 6B7D8206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7D8206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732534AbeJBUS3 (ORCPT
+        id S1732562AbeJBUSd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:18:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35518 "EHLO
+        Tue, 2 Oct 2018 16:18:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35534 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730350AbeJBUS2 (ORCPT
+        with ESMTP id S1730199AbeJBUSc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:28 -0400
+        Tue, 2 Oct 2018 16:18:32 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 609B9C4D;
-        Tue,  2 Oct 2018 13:35:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8D8A0B2F;
+        Tue,  2 Oct 2018 13:35:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        Hang Zhou <hang.zhou@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 129/137] drm/amdgpu: Enable/disable gfx PG feature in rlc safe mode
-Date:   Tue,  2 Oct 2018 06:25:30 -0700
-Message-Id: <20181002132507.553838088@linuxfoundation.org>
+Subject: [PATCH 4.14 131/137] ata: ftide010: Add a quirk for SQ201
+Date:   Tue,  2 Oct 2018 06:25:32 -0700
+Message-Id: <20181002132507.673315802@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,49 +52,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rex Zhu <Rex.Zhu@amd.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit 8ef23364b654d44244400d79988e677e504b21ba ]
+[ Upstream commit 46cb52ad414ac829680d0bb8cc7090ac2b577ca7 ]
 
-This is required by gfx hw and can fix the rlc hang when
-do s3 stree test on Cz/St.
+The DMA is broken on this specific device for some unknown
+reason (probably badly designed or plain broken interface
+electronics) and will only work with PIO. Other users of
+the same hardware does not have this problem.
 
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Hang Zhou <hang.zhou@amd.com>
-Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Add a specific quirk so that this Gemini device gets
+DMA turned off. Also fix up some code around passing the
+port information around in probe while we're at it.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/ata/pata_ftide010.c |   27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-@@ -5479,6 +5479,11 @@ static int gfx_v8_0_set_powergating_stat
- 	if (amdgpu_sriov_vf(adev))
- 		return 0;
+--- a/drivers/ata/pata_ftide010.c
++++ b/drivers/ata/pata_ftide010.c
+@@ -256,14 +256,12 @@ static struct ata_port_operations pata_f
+ 	.qc_issue	= ftide010_qc_issue,
+ };
  
-+	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
-+				AMD_PG_SUPPORT_RLC_SMU_HS |
-+				AMD_PG_SUPPORT_CP |
-+				AMD_PG_SUPPORT_GFX_DMG))
-+		adev->gfx.rlc.funcs->enter_safe_mode(adev);
- 	switch (adev->asic_type) {
- 	case CHIP_CARRIZO:
- 	case CHIP_STONEY:
-@@ -5527,7 +5532,11 @@ static int gfx_v8_0_set_powergating_stat
- 	default:
- 		break;
- 	}
--
-+	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
-+				AMD_PG_SUPPORT_RLC_SMU_HS |
-+				AMD_PG_SUPPORT_CP |
-+				AMD_PG_SUPPORT_GFX_DMG))
-+		adev->gfx.rlc.funcs->exit_safe_mode(adev);
- 	return 0;
+-static struct ata_port_info ftide010_port_info[] = {
+-	{
+-		.flags		= ATA_FLAG_SLAVE_POSS,
+-		.mwdma_mask	= ATA_MWDMA2,
+-		.udma_mask	= ATA_UDMA6,
+-		.pio_mask	= ATA_PIO4,
+-		.port_ops	= &pata_ftide010_port_ops,
+-	},
++static struct ata_port_info ftide010_port_info = {
++	.flags		= ATA_FLAG_SLAVE_POSS,
++	.mwdma_mask	= ATA_MWDMA2,
++	.udma_mask	= ATA_UDMA6,
++	.pio_mask	= ATA_PIO4,
++	.port_ops	= &pata_ftide010_port_ops,
+ };
+ 
+ #if IS_ENABLED(CONFIG_SATA_GEMINI)
+@@ -349,6 +347,7 @@ static int pata_ftide010_gemini_cable_de
  }
  
+ static int pata_ftide010_gemini_init(struct ftide010 *ftide,
++				     struct ata_port_info *pi,
+ 				     bool is_ata1)
+ {
+ 	struct device *dev = ftide->dev;
+@@ -373,7 +372,13 @@ static int pata_ftide010_gemini_init(str
+ 
+ 	/* Flag port as SATA-capable */
+ 	if (gemini_sata_bridge_enabled(sg, is_ata1))
+-		ftide010_port_info[0].flags |= ATA_FLAG_SATA;
++		pi->flags |= ATA_FLAG_SATA;
++
++	/* This device has broken DMA, only PIO works */
++	if (of_machine_is_compatible("itian,sq201")) {
++		pi->mwdma_mask = 0;
++		pi->udma_mask = 0;
++	}
+ 
+ 	/*
+ 	 * We assume that a simple 40-wire cable is used in the PATA mode.
+@@ -435,6 +440,7 @@ static int pata_ftide010_gemini_init(str
+ }
+ #else
+ static int pata_ftide010_gemini_init(struct ftide010 *ftide,
++				     struct ata_port_info *pi,
+ 				     bool is_ata1)
+ {
+ 	return -ENOTSUPP;
+@@ -446,7 +452,7 @@ static int pata_ftide010_probe(struct pl
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+-	const struct ata_port_info pi = ftide010_port_info[0];
++	struct ata_port_info pi = ftide010_port_info;
+ 	const struct ata_port_info *ppi[] = { &pi, NULL };
+ 	struct ftide010 *ftide;
+ 	struct resource *res;
+@@ -490,6 +496,7 @@ static int pata_ftide010_probe(struct pl
+ 		 * are ATA0. This will also set up the cable types.
+ 		 */
+ 		ret = pata_ftide010_gemini_init(ftide,
++				&pi,
+ 				(res->start == 0x63400000));
+ 		if (ret)
+ 			goto err_dis_clk;
 
 
