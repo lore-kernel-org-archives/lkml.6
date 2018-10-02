@@ -2,125 +2,87 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 286F1C64EBD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CF1C64EBD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA9D2208D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:10:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jjjq6F7y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA9D2208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id BBA1A208D9
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:10:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBA1A208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbeJCDzl (ORCPT
+        id S1728277AbeJCD4K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 23:55:41 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46854 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727754AbeJCDzl (ORCPT
+        Tue, 2 Oct 2018 23:56:10 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:54671 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727747AbeJCD4K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 23:55:41 -0400
-Received: by mail-pg1-f195.google.com with SMTP id a5-v6so499942pgv.13
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 14:10:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O1TXJmn4VcIkO3+plPMMzh9LGP6R7lFmEHBEzdI0PW8=;
-        b=Jjjq6F7yoFhDRuOPLwWClPLNmxbRcs+4uiir/gotHoKMmnmLK8esa8i7EpasSL4ctC
-         FxF0S80PP5Ltb9nx023/rvdj6RomDfJ912A8m6PwZDJ+16IYHCA7x8XGjtnmdXriq24f
-         bMoesH6pu+OvaBfA3P3dNoFuLyVISdhPm8VPfJMdFmKgzvsd7tQU1Qcai4TD1EKSVKBZ
-         5Vp+0EO4+I8285scei3vy+fnuI93Hs/ZaEDEU94DcBBa3vfveVg1hwbfJeLrPdfacvLw
-         ktjIQsNGjADWwo0Yhbo1gnk7z1/WWDQpDRX1vFRFSoxrTh5Q1QS4niuKG+cAg3UPGnM9
-         SI9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O1TXJmn4VcIkO3+plPMMzh9LGP6R7lFmEHBEzdI0PW8=;
-        b=RNANXf0Wmu+pE2j95+fNVB8xFKUjY/bl2DF7+18Nx+RdkQSu7h6klhOXJvHeyXCVlU
-         9wvcBMvZU9uvDRajZguCzCETJchFiKC1oXtuENy066vDcdvWaDHmxo0BV3GQ86yRDJBm
-         wo77/7gprycuLAAot96iLTtGCRyzieJn+YSli41pBMsbtNySquptML/jC3RUZOU6UuKx
-         ecMdU6UkJ2sJvVnBBNQVT+2QcjuRlLrbf89N/otL8PvKXaLjo/YL6ZkK6ctWqCbQF/kI
-         pY7hho8nySA89DxrFCiCuO7FOBYT27cpo1n53g2nZMoWD0ujvCMBeXtFNdyUn3IT6zDc
-         kkEA==
-X-Gm-Message-State: ABuFfoj8pehmQrnVOL5YLtRWSpRWpBg9+XTU+nHc3JFpK5zFJn6uBrI2
-        GaommM/higitcKRQNMxyALnUylbFRLFmu/FDNCEiZw==
-X-Google-Smtp-Source: ACcGV63+WRKc0uf/EKkP3hDXGBxaiN5Sv9EgYwtErWFftf/GugkyfkSy+moXYT+vgZMiUxTi956qAYc3bk76NpAx4DA=
-X-Received: by 2002:a63:a047:: with SMTP id u7-v6mr16207928pgn.145.1538514624493;
- Tue, 02 Oct 2018 14:10:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <1538443943-29805-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1538443943-29805-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 2 Oct 2018 14:10:13 -0700
-Message-ID: <CAKwvOdmUYu3Hqs1NQru8U3U8ATNc3_TT1o37tSJGzAsScRQnYg@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: add -Wno-unused-but-set-variable flag unconditionally
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 2 Oct 2018 23:56:10 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MX0TX-1gDiOh1nFR-00XKuQ; Tue, 02 Oct 2018 23:10:18 +0200
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MX0TX-1gDiOh1nFR-00XKuQ; Tue, 02 Oct 2018 23:10:18 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Joachim Eastwood <manabian@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] nvmem: lpc18xx_eeprom: remove an unused variable
+Date:   Tue,  2 Oct 2018 23:10:01 +0200
+Message-Id: <20181002211016.2638186-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:9eeNNS4sVxD8k/SB1tfeRWq70A30cVxotUII8pQXwEsnQR+O6t7
+ 2kanL8TEtE+uZTeuM20kvlIq9lDP7O3GH652RS9ppgfn+A0wiwP4VcgXzBgUMTv7AcqR2FG
+ +0wbXOKarZTI0V5LOejBW+axQaEcnU1HHspNSs6kjhvjwvQr5MYUu9Eh8AN/v9++N96jpzS
+ Orsf5AS+D5+qXkxIgmjOg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:rtI7WyntRVU=:dmMs/vhyRjWCBEhfPaDj46
+ 8z5+bX9H3dniJyyNC/IILZSOtHoRfR9fucq964y2uQUJmi/7dUoRUR3CFk7pdQ5WJru0wt8Ee
+ g8cWwjaS3c8Yd10LJ7aLX/cncNioYtU4ct1Y/1XzMR6D0LYX5lqfsMXWouQOi76One9N/N+2u
+ KB+M6iMC6rikrDWrvBN4R83FlbbkTSdkvpyBDiivzqLOPP652z/HB8HW2MEWCSDujvMqmWLwn
+ w6s5GQP30rhPm39u97DfvjfPJQfQQxhbM+rAqjRfyckDozwrx+hUCSMpUxfdaa7IzboM4gm+X
+ hBDJc6odIkTgL6t7MrQdxkkCt1wp66dxbotiLYX+NCFatcNHa1RgWwtrdfU5VgeYdFXfbIddV
+ 2TEsTCcuyS2ju8KjXYhFMxygmbu4qcHQ220j2lHVWMncuWuRJ+ARt0+ya6/oEOEjkdGyYpvO8
+ HkJS7eDxDgBJFr6QcqSsvyby5KK49Gj866oJzy90XnWI/S7xZpJ7LA+eCHhZVsXv4s/712lSs
+ qtt4WPp/Q+6LTgYrhF7CZd02b55tExm1wpCIP1vvaRu5D5I2clXLWUpclEbnj1//gbLs7IVRQ
+ OuVSy9u1hmwQ2gfNfaGMcTg+SaeKMGqIbIytBm9MqAZVlt0XZcKcnOCZ4dNZkEzDd7+qmBIF+
+ pwGaXk+aUXFMzKMfbyaiWJNF4tScau12O5cum0BshKNyUr3a4bVTDaRtjJvewVB0Sea0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 6:33 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> We have raised the compiler requirement from time to time.
-> With commit cafa0010cd51 ("Raise the minimum required gcc version
-> to 4.6"), the minimum for GCC is 4.6 now.
->
-> This flag was added by GCC 4.6, and it is recognized by ICC as well.
->
-> It is true that Clang does not support this flag but this commit is
-> just touching the else part of the "ifeq ($(cc-name),clang)" check.
-> Hence, Clang build is not affected.
->
-> Let's rip off the cc-disable-warning switch, and see if somebody
-> complains about it.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
-> Changes in v2:
->   - Fix commit log
+drivers/nvmem/lpc18xx_eeprom.c: In function 'lpc18xx_eeprom_remove':
+drivers/nvmem/lpc18xx_eeprom.c:258:6: error: unused variable 'ret' [-Werror=unused-variable]
 
-Mashiro, thank you for this fix.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Fixes: 226014d13fa5 ("nvmem: lpc18xx_eeprom: use devm_nvmem_register()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/nvmem/lpc18xx_eeprom.c | 1 -
+ 1 file changed, 1 deletion(-)
 
->
->  Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Makefile b/Makefile
-> index 8a23fee..2627266 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -716,7 +716,7 @@ else
->
->  # These warnings generated too much noise in a regular build.
->  # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
-> -KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
-> +KBUILD_CFLAGS += -Wno-unused-but-set-variable
->  endif
->
->  KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
-> --
-> 2.7.4
->
-
-
+diff --git a/drivers/nvmem/lpc18xx_eeprom.c b/drivers/nvmem/lpc18xx_eeprom.c
+index b42dbaddb419..66cff1e2147a 100644
+--- a/drivers/nvmem/lpc18xx_eeprom.c
++++ b/drivers/nvmem/lpc18xx_eeprom.c
+@@ -255,7 +255,6 @@ static int lpc18xx_eeprom_probe(struct platform_device *pdev)
+ static int lpc18xx_eeprom_remove(struct platform_device *pdev)
+ {
+ 	struct lpc18xx_eeprom_dev *eeprom = platform_get_drvdata(pdev);
+-	int ret;
+ 
+ 	clk_disable_unprepare(eeprom->clk);
+ 
 -- 
-Thanks,
-~Nick Desaulniers
+2.18.0
+
