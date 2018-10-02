@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D377C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D946C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BFEE2064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:12:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BFEE2064A
+	by mail.kernel.org (Postfix) with ESMTP id 6AD8F2064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:12:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AD8F2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbeJBUKv (ORCPT
+        id S1729125AbeJBUzx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60322 "EHLO
+        Tue, 2 Oct 2018 16:55:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60288 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728564AbeJBUKu (ORCPT
+        with ESMTP id S1728470AbeJBUKq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:50 -0400
+        Tue, 2 Oct 2018 16:10:46 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 652DAC2A;
-        Tue,  2 Oct 2018 13:27:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CBF7266;
+        Tue,  2 Oct 2018 13:27:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Team OWL337 <icytxw@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 060/228] s390/extmem: fix gcc 8 stringop-overflow warning
-Date:   Tue,  2 Oct 2018 06:22:37 -0700
-Message-Id: <20181002132503.333196633@linuxfoundation.org>
+Subject: [PATCH 4.18 057/228] alarmtimer: Prevent overflow for relative nanosleep
+Date:   Tue,  2 Oct 2018 06:22:34 -0700
+Message-Id: <20181002132503.120807103@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,52 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit 6b2ddf33baec23dace85bd647e3fc4ac070963e8 ]
+[ Upstream commit 5f936e19cc0ef97dbe3a56e9498922ad5ba1edef ]
 
-arch/s390/mm/extmem.c: In function '__segment_load':
-arch/s390/mm/extmem.c:436:2: warning: 'strncat' specified bound 7 equals
-source length [-Wstringop-overflow=]
-  strncat(seg->res_name, " (DCSS)", 7);
+Air Icy reported:
 
-What gcc complains about here is the misuse of strncat function, which
-in this case does not limit a number of bytes taken from "src", so it is
-in the end the same as strcat(seg->res_name, " (DCSS)");
+  UBSAN: Undefined behaviour in kernel/time/alarmtimer.c:811:7
+  signed integer overflow:
+  1529859276030040771 + 9223372036854775807 cannot be represented in type 'long long int'
+  Call Trace:
+   alarm_timer_nsleep+0x44c/0x510 kernel/time/alarmtimer.c:811
+   __do_sys_clock_nanosleep kernel/time/posix-timers.c:1235 [inline]
+   __se_sys_clock_nanosleep kernel/time/posix-timers.c:1213 [inline]
+   __x64_sys_clock_nanosleep+0x326/0x4e0 kernel/time/posix-timers.c:1213
+   do_syscall_64+0xb8/0x3a0 arch/x86/entry/common.c:290
 
-Keeping in mind that a res_name is 15 bytes, strncat in this case
-would overflow the buffer and write 0 into alignment byte between the
-fields in the struct. To avoid that increasing res_name size to 16,
-and reusing strlcat.
+alarm_timer_nsleep() uses ktime_add() to add the current time and the
+relative expiry value. ktime_add() has no sanity checks so the addition
+can overflow when the relative timeout is large enough.
 
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Use ktime_add_safe() which has the necessary sanity checks in place and
+limits the result to the valid range.
+
+Fixes: 9a7adcf5c6de ("timers: Posix interface for alarm-timers")
+Reported-by: Team OWL337 <icytxw@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1807020926360.1595@nanos.tec.linutronix.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/mm/extmem.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/time/alarmtimer.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/s390/mm/extmem.c
-+++ b/arch/s390/mm/extmem.c
-@@ -80,7 +80,7 @@ struct qin64 {
- struct dcss_segment {
- 	struct list_head list;
- 	char dcss_name[8];
--	char res_name[15];
-+	char res_name[16];
- 	unsigned long start_addr;
- 	unsigned long end;
- 	atomic_t ref_count;
-@@ -433,7 +433,7 @@ __segment_load (char *name, int do_nonsh
- 	memcpy(&seg->res_name, seg->dcss_name, 8);
- 	EBCASC(seg->res_name, 8);
- 	seg->res_name[8] = '\0';
--	strncat(seg->res_name, " (DCSS)", 7);
-+	strlcat(seg->res_name, " (DCSS)", sizeof(seg->res_name));
- 	seg->res->name = seg->res_name;
- 	rc = seg->vm_segtype;
- 	if (rc == SEG_TYPE_SC ||
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -808,7 +808,8 @@ static int alarm_timer_nsleep(const cloc
+ 	/* Convert (if necessary) to absolute time */
+ 	if (flags != TIMER_ABSTIME) {
+ 		ktime_t now = alarm_bases[type].gettime();
+-		exp = ktime_add(now, exp);
++
++		exp = ktime_add_safe(now, exp);
+ 	}
+ 
+ 	ret = alarmtimer_do_nsleep(&alarm, exp, type);
 
 
