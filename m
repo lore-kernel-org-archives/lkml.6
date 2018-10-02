@@ -2,117 +2,122 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1205C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B82AC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F2E92089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:28:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F16C52089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:29:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rlj8JBWT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2E92089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="F+jS6YVe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F16C52089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbeJBNK0 (ORCPT
+        id S1727044AbeJBNLE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 09:10:26 -0400
-Received: from mail-ve1eur01on0083.outbound.protection.outlook.com ([104.47.1.83]:45010
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726517AbeJBNKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 09:10:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E75jhxHKXv9cG7z1ulJOAPZn5qW2nAxmIWD4xPW3DyE=;
- b=rlj8JBWTW1b3hunf3WCCNces4xRTiwTe3IyKRNrXL4KGV1Kj52yF/PwFR+dTl4eztcAVrlXe3Dcv1LbkIhtSuQmwPJiYVhw9YW8ilHz7WXD758FCLdmahRhvAzcHuSkCXaLIww9d8noq8PmnLNZebzmKMmJYeAm45qWFBTFVn8g=
-Received: from AM6PR04MB4008.eurprd04.prod.outlook.com (52.135.160.153) by
- AM6PR04MB4488.eurprd04.prod.outlook.com (20.176.242.217) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.22; Tue, 2 Oct 2018 06:28:46 +0000
-Received: from AM6PR04MB4008.eurprd04.prod.outlook.com
- ([fe80::2806:3ebb:e234:4123]) by AM6PR04MB4008.eurprd04.prod.outlook.com
- ([fe80::2806:3ebb:e234:4123%2]) with mapi id 15.20.1185.024; Tue, 2 Oct 2018
- 06:28:46 +0000
-From:   Madalin-cristian Bucur <madalin.bucur@nxp.com>
-To:     Leo Li <leoyang.li@nxp.com>
-CC:     Roy Pledge <roy.pledge@nxp.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Scott Wood <oss@buserror.net>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 0/5] soc/fsl/qbman: DPAA QBMan fixes and additions
-Thread-Topic: [PATCH v2 0/5] soc/fsl/qbman: DPAA QBMan fixes and additions
-Thread-Index: AQHUVwdgDacU02VI+UOhvhbmgV0ZkKUK/oSAgACEtrA=
-Date:   Tue, 2 Oct 2018 06:28:46 +0000
-Message-ID: <AM6PR04MB40080234BA68140933F6B733ECE80@AM6PR04MB4008.eurprd04.prod.outlook.com>
-References: <1538124204-31406-1-git-send-email-madalin.bucur@nxp.com>
- <CADRPPNTn99q=6fungYr-xcwY6vFiw9KTUp8UCEQ2u0+sv7vd4Q@mail.gmail.com>
-In-Reply-To: <CADRPPNTn99q=6fungYr-xcwY6vFiw9KTUp8UCEQ2u0+sv7vd4Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=madalin.bucur@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB4488;6:7ppeGJieCsaSlV7uFWTK7LUkANjs9jJhPq57oeT+c1n2Nl1UtznzOtqyf9C7byOjo9wsNXoAqOSZoejF09gz7n+4wTfG1TDpKJFhHVDhQPQv24PR4Gyj3ilo2Tl6d92/dxY5VA6pIurb4H99iijRP1TnX8BHrPTD5NSxqdjxgIMktzk69C324DXacHfhHbykbnJ8Rqy2/fJ7pmK98c6IM6keSUHLeaeVTial9mXFZG7/w5/Mw0cYkyjbxBE3oBbfwx8q89bglKSwS+H0L0ZGieIL552UX8IextRf4IUeT+PHYSCQdiBUbNu/33Ch8cRVHMjMM0DjE3xbYnnDRya9yg0Na1K7t4ilQlWaiA/O8Tqkl8JMErDw5fTvSMR7sJjLzA/RRdDkbjhg40Kv11JIHqd4R1pVBqk76GP/t//BQyD335jD5zm4PxzvjfdcIi4J7k5Ex2locWheJ/3qSoS6pA==;5:O4gdzbzCEoMtwHBKhX+DRUuaMkWlfTf7+4ahJREV1vsEEgCxy7JydR8hgaaVX86YWzbBZyRGLN2CCa9GkzJtfkeuXeLQ6Y8/ZSY51rn47kdw+lc3a3QI6MhSjImpPjW53tEJr/vOKiIzewH900o+srgsV89vzvbFAfoqGLqi0Lg=;7:SmxriHax7/durLaJS2yzplaHM791CAAZomtYe59ztKdMHaMLHlxb08XJWU2PhPNfzg1l9j0++GLQisCmsHzejx4tmv0D6yNG/RJfEPXGSnSQ9WMGvF7dyYk+XydXyDt0XJuSEWFVm/g/FEWnI8OriKMldKfqoZBcpQ9U+rAC8+Ge2IMt2ZlZTVXNZOBjOPMo0eN3Wst6TzjFTar3ny6Eo5bPBr7BWu0WMqGywxQuVFf/+FrU8EafHolG9y5vRRvu
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: f8bfaa69-dc23-4b7e-d6b6-08d628304e9e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4488;
-x-ms-traffictypediagnostic: AM6PR04MB4488:
-x-microsoft-antispam-prvs: <AM6PR04MB4488B8A78F3C09DBBAF08974ECE80@AM6PR04MB4488.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197)(180628864354917)(258649278758335)(65623756079841)(9452136761055);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:AM6PR04MB4488;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4488;
-x-forefront-prvs: 0813C68E65
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(396003)(39860400002)(366004)(13464003)(199004)(189003)(7696005)(54906003)(74316002)(478600001)(99286004)(6506007)(53546011)(2900100001)(316002)(102836004)(229853002)(55016002)(8676002)(25786009)(76176011)(81156014)(5250100002)(33656002)(14454004)(68736007)(8936002)(81166006)(6862004)(86362001)(476003)(66066001)(9686003)(7736002)(5660300001)(6436002)(6246003)(106356001)(2906002)(446003)(6636002)(26005)(71200400001)(97736004)(4326008)(305945005)(3846002)(53936002)(11346002)(71190400001)(6116002)(105586002)(256004)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4488;H:AM6PR04MB4008.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: KJEWu9FcgIlx7603YspIFhdxjn0Eb3RlEg6hyTUZuyZHvhkG+E9uJBiUriPXlS8J318u/4aapS+Bl1xhsNQCWaCdS7XfncLtItQkMfrUAivh73kEOY7vln9leiX179aitRyHecwqw8VyzmvGjM+MKrLvZrEKeO4ikG18IO3YsbLWXxrikb3sxjmYODEQmNzvt2WMSqPs58PIazD4Pn+h4Ze7UQG9aBxB4nE/sZXwGHphmIaWTaUn/3Qjt+AX4rkFKHr+yy03H2JxzLyntSVpHC5iOirElifwojBOBy7Kgm8V8a7HzIJt/NYisc9CteYFUfC6IXdKxuvEve79DqL60BKSx0pwMxuvTE+WqhBPCug=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 2 Oct 2018 09:11:04 -0400
+Received: from ozlabs.org ([203.11.71.1]:54555 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726517AbeJBNLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 09:11:04 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42PTl82D1Vz9s7T;
+        Tue,  2 Oct 2018 16:29:24 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538461765;
+        bh=jsyACEGVzhjRjhVfFFGd0JsnLfkJiiUx6BzLSp6OgaE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=F+jS6YVebohvz7ExKNq1Sbv0Yt55apeHuFctHa9hY+DNhZ9seENvJzpcbt4O34BR9
+         IXkk5c7mwh/VxXOcI4/A7+XMSCxdbxm7VRgVmuyO21eiI6FtDRfdzILJlLNyb4+ti0
+         lA5FRbfB0dgOOH53zMy7JuRyi0oUdHFBTWC+Ab2h50rGakehGzPoTjtdW4WtQt1zvG
+         ybQXf/pEVj++pNOK0CsBSH2fXkJBhGTRYws47hW+lVkoQWiWaIP39N02n8K8pkBT3r
+         dzlptrFDSnItALnaDBBf2zl7BW7iQCT1F+QVKozsHZHHokHycI1Pe/Jczj9HoqUrpf
+         emPxPXpoQtUpw==
+Date:   Tue, 2 Oct 2018 16:29:23 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Walker <dwalker@fifo99.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: linux-next: manual merge of the cisco tree with the vfs tree
+Message-ID: <20181002162923.13f3f8b1@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8bfaa69-dc23-4b7e-d6b6-08d628304e9e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2018 06:28:46.0983
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4488
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/DGnAiWvvdTQppxHM424be+R"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMaSBZYW5nIFttYWlsdG86bGVv
-eWFuZy5saUBueHAuY29tXQ0KPiBTZW50OiBUdWVzZGF5LCBPY3RvYmVyIDIsIDIwMTggMTozMCBB
-TQ0KPiBUbzogTWFkYWxpbi1jcmlzdGlhbiBCdWN1ciA8bWFkYWxpbi5idWN1ckBueHAuY29tPg0K
-PiBDYzogUm95IFBsZWRnZSA8cm95LnBsZWRnZUBueHAuY29tPjsgQ2xhdWRpdSBNYW5vaWwNCj4g
-PGNsYXVkaXUubWFub2lsQG54cC5jb20+OyBDYXRhbGluIE1hcmluYXMgPGNhdGFsaW4ubWFyaW5h
-c0Bhcm0uY29tPjsgU2NvdHQNCj4gV29vZCA8b3NzQGJ1c2Vycm9yLm5ldD47IG1vZGVyYXRlZCBs
-aXN0OkFSTS9GUkVFU0NBTEUgSU1YIC8gTVhDIEFSTQ0KPiBBUkNISVRFQ1RVUkUgPGxpbnV4LWFy
-bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZz47IGxpbnV4cHBjLWRldg0KPiA8bGludXhwcGMt
-ZGV2QGxpc3RzLm96bGFicy5vcmc+OyBsa21sIDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
-Pg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDAvNV0gc29jL2ZzbC9xYm1hbjogRFBBQSBRQk1h
-biBmaXhlcyBhbmQgYWRkaXRpb25zDQo+IA0KPiBPbiBGcmksIFNlcCAyOCwgMjAxOCBhdCAzOjQ0
-IEFNIE1hZGFsaW4gQnVjdXIgPG1hZGFsaW4uYnVjdXJAbnhwLmNvbT4NCj4gd3JvdGU6DQo+ID4N
-Cj4gDQo+IEFwcGxpZWQgMS00IHRvIGZvci1uZXh0IHdoaWxlIHdhaXRpbmcgZm9yIGNsYXJpZmlj
-YXRpb24gb24gNS81LiAgIEFuZA0KPiB1cGRhdGVkIHRoZSBwcmVmaXggdG8gInNvYzogZnNsOiIg
-c3R5bGUgdG8gYmUgYWxpZ25lZCB3aXRoIGFybS1zb2MNCj4gY29udmVudGlvbi4gIFBsZWFzZSB0
-cnkgdG8gdXNlIHRoYXQgc3R5bGUgaW4gdGhlIGZ1dHVyZSBmb3Igc29jL2ZzbA0KPiBwYXRjaGVz
-Lg0KDQpUaGFuayB5b3UsIEkndmUgc2VudCBhbiBlbWFpbCBhYm91dCB0aGUgQVBJcy4NCkknbSBu
-b3Qgc3VyZSB3ZSBuZWVkIHRvIGFsaWduIHRoZSBwcmVmaXggdG8gYXJtLXNvYyBhcyB0aGUgc29j
-L2ZzbCBkb2VzIG5vdA0Kc2VydmljZSBvbmx5IEFSTSBidXQgYWxzbyBQUEMgYmFzZWQgU29DcyBh
-bmQgaGlzdG9yaWNhbGx5IHdlJ3ZlIGJlZW4gdXNpbmcNCnRoZSBzb2MvKiBmb3JtYXQuDQoNClJl
-Z2FyZHMsDQpNYWRhbGluDQo=
+--Sig_/DGnAiWvvdTQppxHM424be+R
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Daniel,
+
+Today's linux-next merge of the cisco tree got a conflict in:
+
+  arch/x86/kernel/setup.c
+
+between commit:
+
+  dcf8001d292b ("vfs: Suppress MS_* flag defs within the kernel unless expl=
+icitly enabled")
+
+from the vfs tree and commit:
+
+  2c070709ea75 ("This updates the x86 code to use the CONFIG_GENERIC_CMDLIN=
+E")
+
+from the cisco tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/kernel/setup.c
+index e493202bf265,ee109f490b22..000000000000
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@@ -51,7 -51,7 +51,8 @@@
+  #include <linux/kvm_para.h>
+  #include <linux/dma-contiguous.h>
+  #include <xen/xen.h>
+ +#include <uapi/linux/mount.h>
++ #include <linux/cmdline.h>
+ =20
+  #include <linux/errno.h>
+  #include <linux/kernel.h>
+
+--Sig_/DGnAiWvvdTQppxHM424be+R
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluzEEMACgkQAVBC80lX
+0GxkxQf9EE7kzod4YuuKGXoIWpIs4EMSYXo2/oGkQNSYWpA97vD5Dj3RuJ+nn710
+eULcFfq/pHyYntMmfOCW5Zf+DEDngxmL7TbMDbGKGuPE0CQfhKdyOhuFo/C4EUCp
+17HWd4Pw9nwbvB9qp84yfQ65XMduq+c8l4g20GkYcPHHZJgP2eS7e80xcRsINDpi
+duVYvewtqf6QDnjRinJMX9juQyrXJHBSAme4LQ484j2SDM5METom44+WAgTwd7mT
+tzB7NrGTXlmdvObtASo0bVezMZa+MwIZWulSXfXEzaDn7PPuBRNfbSRi8CQ4/42o
+pINYMcaGKOOGwz2XIwh+9TDIVkpgzA==
+=FNcI
+-----END PGP SIGNATURE-----
+
+--Sig_/DGnAiWvvdTQppxHM424be+R--
