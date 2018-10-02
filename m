@@ -2,148 +2,97 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAF1C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E4EC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EDF320684
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:54:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EDF320684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E52EC2089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:55:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bz4gkBEo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52EC2089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbeJBThg (ORCPT
+        id S1727810AbeJBTiw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 15:37:36 -0400
-Received: from foss.arm.com ([217.140.101.70]:36690 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727644AbeJBThf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 15:37:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EACD47A9;
-        Tue,  2 Oct 2018 05:54:22 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC9173F5B7;
-        Tue,  2 Oct 2018 05:54:18 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 13:54:17 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v7 03/14] PM: Introduce an Energy Model management
- framework
-Message-ID: <20181002125414.aufsalllqf25rwsq@queper01-lin>
-References: <20180912091309.7551-1-quentin.perret@arm.com>
- <20180912091309.7551-4-quentin.perret@arm.com>
- <20181002122535.GY3439@hirez.programming.kicks-ass.net>
+        Tue, 2 Oct 2018 15:38:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40212 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727710AbeJBTiw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 15:38:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yRkJmIazn0Pxa57rUuVTP+uzc8ILMtLVAUKpdHgRC8U=; b=bz4gkBEozBNi1WERuOx+VlKZV
+        e42QmG1bAkCUixRdKCwgHMaNe1S+Y1WOCl4gFsngSmlXEu+SOoDcbWNJD+Qt02NzrR9JsewPohhb7
+        45yBnR3Nl7x/cl3ufsSqiKiYu1VAQqsEKz2IlLamiWPwc35LTjJkUTjBariZdYMKUNJM/NT6eBLbg
+        Y4Cb4PTBM6OqnJ9R0IMAa49pUrQbGz5fX5O0wSIWSjUTRxhyryv0fGQP6asmZbQ/j6wdvFUH+kIXq
+        ab8aPToSLSVaMuz2ViaIEhhZHhAfuwvOsN8CB9pUFukztxis5Juhw0gpamJSIsZUYE7/8Gx5GpQug
+        yxbqQAJoQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g7KDC-0007H2-0y; Tue, 02 Oct 2018 12:55:38 +0000
+Date:   Tue, 2 Oct 2018 05:55:37 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] drm/virtio: Use IDAs more efficiently
+Message-ID: <20181002125537.GA15740@bombadil.infradead.org>
+References: <20180926160031.15721-1-willy@infradead.org>
+ <20180926160031.15721-5-willy@infradead.org>
+ <20180926160455.GA20337@bombadil.infradead.org>
+ <20181002114328.kltyrjlojzrhzwgl@sirius.home.kraxel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181002122535.GY3439@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20181002114328.kltyrjlojzrhzwgl@sirius.home.kraxel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 02 Oct 2018 at 14:25:35 (+0200), Peter Zijlstra wrote:
-> On Wed, Sep 12, 2018 at 10:12:58AM +0100, Quentin Perret wrote:
-> > +/**
-> > + * em_pd_energy() - Estimates the energy consumed by the CPUs of a perf. domain
-> > + * @pd		: performance domain for which energy has to be estimated
-> > + * @max_util	: highest utilization among CPUs of the domain
-> > + * @sum_util	: sum of the utilization of all CPUs in the domain
-> > + *
-> > + * Return: the sum of the energy consumed by the CPUs of the domain assuming
-> > + * a capacity state satisfying the max utilization of the domain.
-> > + */
-> > +static inline unsigned long em_pd_energy(struct em_perf_domain *pd,
-> > +				unsigned long max_util, unsigned long sum_util)
-> > +{
-> > +	unsigned long freq, scale_cpu;
-> > +	struct em_cap_state *cs;
-> > +	int i, cpu;
-> > +
-> > +	/*
-> > +	 * In order to predict the capacity state, map the utilization of the
-> > +	 * most utilized CPU of the performance domain to a requested frequency,
-> > +	 * like schedutil.
-> > +	 */
-> > +	cpu = cpumask_first(to_cpumask(pd->cpus));
-> > +	scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
-> > +	cs = &pd->table[pd->nr_cap_states - 1];
-> > +	freq = map_util_freq(max_util, cs->frequency, scale_cpu);
-> > +
-> > +	/*
-> > +	 * Find the lowest capacity state of the Energy Model above the
-> > +	 * requested frequency.
-> > +	 */
-> > +	for (i = 0; i < pd->nr_cap_states; i++) {
-> > +		cs = &pd->table[i];
-> > +		if (cs->frequency >= freq)
-> > +			break;
-> > +	}
-> > +
-> > +	/*
-> > +	 * The capacity of a CPU in the domain at that capacity state (cs)
-> > +	 * can be computed as:
-> > +	 *
-> > +	 *             cs->freq * scale_cpu
-> > +	 *   cs->cap = --------------------                          (1)
-> > +	 *                 cpu_max_freq
-> > +	 *
-> > +	 * So, the energy consumed by this CPU at that capacity state is:
-> > +	 *
-> > +	 *             cs->power * cpu_util
-> > +	 *   cpu_nrg = --------------------                          (2)
-> > +	 *                   cs->cap
-> > +	 *
-> > +	 * since 'cpu_util / cs->cap' represents its percentage of busy time.
-> > +	 *
-> > +	 *   NOTE: Although the result of this computation actually is in
-> > +	 *         units of power, it can be manipulated as an energy value
-> > +	 *         over a scheduling period, since it is assumed to be
-> > +	 *         constant during that interval.
-> > +	 *
-> > +	 * By injecting (1) in (2), 'cpu_nrg' can be re-expressed as a product
-> > +	 * of two terms:
-> > +	 *
-> > +	 *             cs->power * cpu_max_freq   cpu_util
-> > +	 *   cpu_nrg = ------------------------ * ---------          (3)
-> > +	 *                    cs->freq            scale_cpu
-> > +	 *
-> > +	 * The first term is static, and is stored in the em_cap_state struct
-> > +	 * as 'cs->cost'.
-> > +	 *
-> > +	 * Since all CPUs of the domain have the same micro-architecture, they
-> > +	 * share the same 'cs->cost', and the same CPU capacity. Hence, the
-> > +	 * total energy of the domain (which is the simple sum of the energy of
-> > +	 * all of its CPUs) can be factorized as:
-> > +	 *
-> > +	 *            cs->cost * \Sum cpu_util
-> > +	 *   pd_nrg = ------------------------                       (4)
-> > +	 *                  scale_cpu
-> > +	 */
-> > +	return cs->cost * sum_util / scale_cpu;
-> > +}
+On Tue, Oct 02, 2018 at 01:43:28PM +0200, Gerd Hoffmann wrote:
+> On Wed, Sep 26, 2018 at 09:04:55AM -0700, Matthew Wilcox wrote:
+> > On Wed, Sep 26, 2018 at 09:00:31AM -0700, Matthew Wilcox wrote:
+> > > @@ -59,6 +59,7 @@ static int virtio_gpu_context_create(struct virtio_gpu_device *vgdev,
+> > >  
+> > >  	if (handle < 0)
+> > >  		return handle;
+> > > +	handle++;
+> > >  	virtio_gpu_cmd_context_create(vgdev, handle, nlen, name);
+> > >  	return handle;
+> > >  }
+> > 
+> > Uh.  This line is missing.
+> > 
+> > -       int handle = ida_alloc_min(&vgdev->ctx_id_ida, 1, GFP_KERNEL);
+> > +       int handle = ida_alloc(&vgdev->ctx_id_ida, GFP_KERNEL);
+> > 
+> > It'll be there in v2 ;-)
 > 
-> Should we explicitly mention that this ignores idle costs?
+> I've touched the resource/object id handling too, see my "drm/virtio:
+> rework ttm resource handling" patch series
+> (https://patchwork.freedesktop.org/series/50382/).  Which still needs a
+> review btw.
 
-More doc shouldn't hurt so I can add a little something if you feel it's
-needed.
+Um, according to patchwork, you only posted it yesterday.  Does DRM
+normally expect a review within 24 hours?
 
-Thanks,
-Quentin
+> I think that series obsoletes patch 3/4 (object id fixes) of your
+> series.  The other patches should rebase without too much trouble, you
+> could do that as well when preparing v2 ...
+
+It seems a little odd to me to expect a drive-by contributor (ie me) to
+rebase their patches on top of a patch series which wasn't even posted
+at the time they contributed their original patch.  If it was already
+in -next, that'd be a reasonable request.
