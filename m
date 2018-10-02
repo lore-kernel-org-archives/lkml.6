@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED16EC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 597B9C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC616206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC616206B2
+	by mail.kernel.org (Postfix) with ESMTP id 28FCB2089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28FCB2089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731660AbeJBUQN (ORCPT
+        id S1731673AbeJBUQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:16:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34746 "EHLO
+        Tue, 2 Oct 2018 16:16:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34758 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731587AbeJBUQM (ORCPT
+        with ESMTP id S1730694AbeJBUQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:16:12 -0400
+        Tue, 2 Oct 2018 16:16:13 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F19B1C4E;
-        Tue,  2 Oct 2018 13:32:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 193B4C51;
+        Tue,  2 Oct 2018 13:32:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
-        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 019/137] md-cluster: clear another nodes suspend_area after the copy is finished
-Date:   Tue,  2 Oct 2018 06:23:40 -0700
-Message-Id: <20181002132459.818175898@linuxfoundation.org>
+Subject: [PATCH 4.14 020/137] RDMA/bnxt_re: Fix a couple off by one bugs
+Date:   Tue,  2 Oct 2018 06:23:41 -0700
+Message-Id: <20181002132459.896064215@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,72 +53,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guoqing Jiang <gqjiang@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 010228e4a932ca1e8365e3b58c8e1e44c16ff793 ]
+[ Upstream commit 474e5a86067e5f12c97d1db8b170c7f45b53097a ]
 
-When one node leaves cluster or stops the resyncing
-(resync or recovery) array, then other nodes need to
-call recover_bitmaps to continue the unfinished task.
+The sgid_tbl->tbl[] array is allocated in bnxt_qplib_alloc_sgid_tbl().
+It has sgid_tbl->max elements.  So the > should be >= to prevent
+accessing one element beyond the end of the array.
 
-But we need to clear suspend_area later after other
-nodes copy the resync information to their bitmap
-(by call bitmap_copy_from_slot). Otherwise, all nodes
-could write to the suspend_area even the suspend_area
-is not handled by any node, because area_resyncing
-returns 0 at the beginning of raid1_write_request.
-Which means one node could write suspend_area while
-another node is resyncing the same area, then data
-could be inconsistent.
-
-So let's clear suspend_area later to avoid above issue
-with the protection of bm lock. Also it is straightforward
-to clear suspend_area after nodes have copied the resync
-info to bitmap.
-
-Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
-Reviewed-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/md-cluster.c |   19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/infiniband/hw/bnxt_re/qplib_sp.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -304,15 +304,6 @@ static void recover_bitmaps(struct md_th
- 	while (cinfo->recovery_map) {
- 		slot = fls64((u64)cinfo->recovery_map) - 1;
- 
--		/* Clear suspend_area associated with the bitmap */
--		spin_lock_irq(&cinfo->suspend_lock);
--		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
--			if (slot == s->slot) {
--				list_del(&s->list);
--				kfree(s);
--			}
--		spin_unlock_irq(&cinfo->suspend_lock);
--
- 		snprintf(str, 64, "bitmap%04d", slot);
- 		bm_lockres = lockres_init(mddev, str, NULL, 1);
- 		if (!bm_lockres) {
-@@ -331,6 +322,16 @@ static void recover_bitmaps(struct md_th
- 			pr_err("md-cluster: Could not copy data from bitmap %d\n", slot);
- 			goto clear_bit;
- 		}
-+
-+		/* Clear suspend_area associated with the bitmap */
-+		spin_lock_irq(&cinfo->suspend_lock);
-+		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
-+			if (slot == s->slot) {
-+				list_del(&s->list);
-+				kfree(s);
-+			}
-+		spin_unlock_irq(&cinfo->suspend_lock);
-+
- 		if (hi > 0) {
- 			if (lo < mddev->recovery_cp)
- 				mddev->recovery_cp = lo;
+--- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+@@ -156,7 +156,7 @@ int bnxt_qplib_get_sgid(struct bnxt_qpli
+ 			struct bnxt_qplib_sgid_tbl *sgid_tbl, int index,
+ 			struct bnxt_qplib_gid *gid)
+ {
+-	if (index > sgid_tbl->max) {
++	if (index >= sgid_tbl->max) {
+ 		dev_err(&res->pdev->dev,
+ 			"QPLIB: Index %d exceeded SGID table max (%d)",
+ 			index, sgid_tbl->max);
+@@ -361,7 +361,7 @@ int bnxt_qplib_get_pkey(struct bnxt_qpli
+ 		*pkey = 0xFFFF;
+ 		return 0;
+ 	}
+-	if (index > pkey_tbl->max) {
++	if (index >= pkey_tbl->max) {
+ 		dev_err(&res->pdev->dev,
+ 			"QPLIB: Index %d exceeded PKEY table max (%d)",
+ 			index, pkey_tbl->max);
 
 
