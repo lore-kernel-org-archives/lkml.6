@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3001C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B1DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BFBA206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BFBA206B2
+	by mail.kernel.org (Postfix) with ESMTP id CCE29206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE29206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730203AbeJBUNQ (ORCPT
+        id S1730212AbeJBUNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:13:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33290 "EHLO
+        Tue, 2 Oct 2018 16:13:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33308 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728874AbeJBUNP (ORCPT
+        with ESMTP id S1728874AbeJBUNR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:13:15 -0400
+        Tue, 2 Oct 2018 16:13:17 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E0E3BF0;
-        Tue,  2 Oct 2018 13:29:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EBD91266;
+        Tue,  2 Oct 2018 13:29:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        Eric Anholt <eric@anholt.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 128/228] ARM: dts: dra7: fix DCAN node addresses
-Date:   Tue,  2 Oct 2018 06:23:45 -0700
-Message-Id: <20181002132508.103482004@linuxfoundation.org>
+Subject: [PATCH 4.18 129/228] drm/vc4: plane: Expand the lower bits by repeating the higher bits
+Date:   Tue,  2 Oct 2018 06:23:46 -0700
+Message-Id: <20181002132508.170541633@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,43 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kevin Hilman <khilman@baylibre.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-[ Upstream commit 949bdcc8a97c6078f21c8d4966436b117f2e4cd3 ]
+[ Upstream commit 3257ec797d3a8c5232389eb1952d4451e80f3931 ]
 
-Fix the DT node addresses to match the reg property addresses,
-which were verified to match the TRM:
-http://www.ti.com/lit/pdf/sprui30
+The vc4 HVS uses an internal RGB888 representation of the frames, and will
+by default expand formats using a lower depth using zeros.
 
-Cc: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-Acked-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+This causes an issue when we try to use other compositing software such as
+pixman that fill the missing bits by repeating the higher significant bits.
+As such, we can't check the display output in a reliable way by doing a
+software composition and an hardware one and compare both.
+
+To prevent this, force the same behaviour so that we can do such things.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180517133759.25626-1-maxime.ripard@bootlin.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/dra7.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/vc4/vc4_plane.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/boot/dts/dra7.dtsi
-+++ b/arch/arm/boot/dts/dra7.dtsi
-@@ -1893,7 +1893,7 @@
- 			};
- 		};
- 
--		dcan1: can@481cc000 {
-+		dcan1: can@4ae3c000 {
- 			compatible = "ti,dra7-d_can";
- 			ti,hwmods = "dcan1";
- 			reg = <0x4ae3c000 0x2000>;
-@@ -1903,7 +1903,7 @@
- 			status = "disabled";
- 		};
- 
--		dcan2: can@481d0000 {
-+		dcan2: can@48480000 {
- 			compatible = "ti,dra7-d_can";
- 			ti,hwmods = "dcan2";
- 			reg = <0x48480000 0x2000>;
+--- a/drivers/gpu/drm/vc4/vc4_plane.c
++++ b/drivers/gpu/drm/vc4/vc4_plane.c
+@@ -543,6 +543,7 @@ static int vc4_plane_mode_set(struct drm
+ 	/* Control word */
+ 	vc4_dlist_write(vc4_state,
+ 			SCALER_CTL0_VALID |
++			VC4_SET_FIELD(SCALER_CTL0_RGBA_EXPAND_ROUND, SCALER_CTL0_RGBA_EXPAND) |
+ 			(format->pixel_order << SCALER_CTL0_ORDER_SHIFT) |
+ 			(format->hvs << SCALER_CTL0_PIXEL_FORMAT_SHIFT) |
+ 			VC4_SET_FIELD(tiling, SCALER_CTL0_TILING) |
 
 
