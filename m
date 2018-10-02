@@ -2,139 +2,142 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E4BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 04:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 063CBC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 04:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF2D2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 04:14:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF2CE2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 04:15:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="JyEmGbad"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF2D2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xnk2GnVW";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h8GLxgxi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF2CE2083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbeJBKz4 (ORCPT
+        id S1726856AbeJBK4T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 06:55:56 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:47448 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726373AbeJBKz4 (ORCPT
+        Tue, 2 Oct 2018 06:56:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49208 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbeJBK4T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 06:55:56 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w924DmO6020889
-        for <linux-kernel@vger.kernel.org>; Mon, 1 Oct 2018 21:14:45 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=KhGFRYG2jaLmoijPykpnc7CLDvnfAyslQghCVfVZ/js=;
- b=JyEmGbadWkZQlcvIC+xwefP5OXoF8kBtSRswLvV5945H3mNqGz6v5Ye4Wfh8N9h+K1A8
- UYxkShodNxMEpLeM+tK5yRb5K0xFuugjkh/DrrJ1G1DPTUFavPVxYkq94POk0TW6keUw
- foY8R2/5F4yceU+bcU6q8tDBohElcMePAH0= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2muwd0gk3q-9
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 21:14:45 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.24) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 1 Oct
- 2018 21:14:44 -0700
-Received: by devvm24792.prn1.facebook.com (Postfix, from userid 150176) id
- 29B73648C915; Mon,  1 Oct 2018 21:14:40 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Tao Ren <taoren@fb.com>
-Smtp-Origin-Hostname: devvm24792.prn1.facebook.com
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lei YU <mine260309@gmail.com>, <openbmc@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>, <linux-aspeed@lists.ozlabs.org>
-CC:     Tao Ren <taoren@fb.com>
-Smtp-Origin-Cluster: prn1c35
-Subject: [PATCH] clocksource/drivers/fttmr010: fix invalid interrupt register access
-Date:   Mon, 1 Oct 2018 21:14:37 -0700
-Message-ID: <20181002041437.2493192-1-taoren@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Tue, 2 Oct 2018 06:56:19 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 745BA60C1B; Tue,  2 Oct 2018 04:15:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538453708;
+        bh=7y/x1RS4D0d0PWDLdliZbR09//VM70ZNHNOmcl13ARE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Xnk2GnVWQ62pkU3p/Pbd4ljw3OVNYv5sElzxwg6ROh4N37BKbfpU9m0R8JdsXG+jn
+         wKoIKt4nPXL3VJioJwChzDjKXRCejZ99UMV0QgdUvLpkJulTREWSUWyI6PYQSKTxhq
+         4p8U2rxWKdbPc3GoDw/cRCxMHXja7aGB2COvDDNk=
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4C3C760C1D;
+        Tue,  2 Oct 2018 04:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538453707;
+        bh=7y/x1RS4D0d0PWDLdliZbR09//VM70ZNHNOmcl13ARE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=h8GLxgxiLbI+VzPFZTbtolJz2PioW95U2MwVvKs4Ioq6plA8zaS1MvWdMvS/8K6VE
+         nQtbxJpDNA5cLqxCH7k9rFQ2ZXdheyUNqcQBGCskcYBRmSdUum16E6pYWLJfkWHo63
+         Oeb5xSD90nT08rVCtoaWAPWbg2KVs52656xaBNc0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C3C760C1D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qk1-f173.google.com with SMTP id q5-v6so351753qki.6;
+        Mon, 01 Oct 2018 21:15:07 -0700 (PDT)
+X-Gm-Message-State: ABuFfoj4sCkkIJhjCK42YCyD6JEuYIE6jScQ7Qd5xqayvKJL51J4huQV
+        qlpSYUpVBzGKnc28sDQaHI2YoMvlyfvRMVK1iGI=
+X-Google-Smtp-Source: ACcGV60Rrh1q8OV/iKGTFGbtE6SbVBZMr3JlPvxk2FyNZxIe1/Lli4afCiY60coMa0Bcz1zoqSjXlzeZwOkVneK8MOw=
+X-Received: by 2002:a37:6388:: with SMTP id x130-v6mr10673451qkb.118.1538453706523;
+ Mon, 01 Oct 2018 21:15:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-02_01:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
+ <20180830144541.17740-3-vivek.gautam@codeaurora.org> <20181001125854.GB31488@arm.com>
+In-Reply-To: <20181001125854.GB31488@arm.com>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Tue, 2 Oct 2018 09:44:54 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iGkudBtZFfk4ST+k9OMRSGgU=pzVGC4QaSmPb+Xkdp3Xw@mail.gmail.com>
+Message-ID: <CAFp+6iGkudBtZFfk4ST+k9OMRSGgU=pzVGC4QaSmPb+Xkdp3Xw@mail.gmail.com>
+Subject: Re: [PATCH v16 2/5] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, "robh+dt" <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Clark <robdclark@gmail.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>, sboyd@kernel.org,
+        Tomasz Figa <tfiga@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TIMER_INTR_MASK register (Base Address of Timer + 0x38) is not designed
-for masking interrupts on ast2500 chips, and it's not even listed in
-ast2400 datasheet, so it's not safe to access TIMER_INTR_MASK on aspeed
-chips.
-Similarly, TIMER_INTR_STATE register (Base Address of Timer + 0x34) is
-not interrupt status register on ast2400 and ast2500 chips. Although
-there is no side effect to reset the register in fttmr010_common_init(),
-it's just misleading to do so.
+Hi Will,
 
-Signed-off-by: Tao Ren <taoren@fb.com>
----
- drivers/clocksource/timer-fttmr010.c | 27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+On Mon, Oct 1, 2018 at 6:29 PM Will Deacon <will.deacon@arm.com> wrote:
+>
+> Hi Vivek,
+>
+> On Thu, Aug 30, 2018 at 08:15:38PM +0530, Vivek Gautam wrote:
+> > From: Sricharan R <sricharan@codeaurora.org>
+> >
+> > The smmu device probe/remove and add/remove master device callbacks
+> > gets called when the smmu is not linked to its master, that is without
+> > the context of the master device. So calling runtime apis in those places
+> > separately.
+> > Global locks are also initialized before enabling runtime pm as the
+> > runtime_resume() calls device_reset() which does tlb_sync_global()
+> > that ultimately requires locks to be initialized.
+> >
+> > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> > [vivek: Cleanup pm runtime calls]
+> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> > Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> > Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > ---
+> >  drivers/iommu/arm-smmu.c | 89 +++++++++++++++++++++++++++++++++++++++++++-----
+> >  1 file changed, 81 insertions(+), 8 deletions(-)
+>
+> This doesn't apply on my tree[1], possibly because I've got Robin's non-strict
+> invalidation queued there. However, that got me thinking -- how does this
+> work in conjunction with the timer-based TLB invalidation? Do we need to
+> rpm_{get,put} around flush_iotlb_all()? If so, do we still need the calls
+> in map/unmap when non-strict mode is in use?
 
-diff --git a/drivers/clocksource/timer-fttmr010.c b/drivers/clocksource/timer-fttmr010.c
-index c020038ebfab..daf063c9842e 100644
---- a/drivers/clocksource/timer-fttmr010.c
-+++ b/drivers/clocksource/timer-fttmr010.c
-@@ -171,16 +171,17 @@ static int fttmr010_timer_set_oneshot(struct clock_event_device *evt)
- 
- 	/* Setup counter start from 0 or ~0 */
- 	writel(0, fttmr010->base + TIMER1_COUNT);
--	if (fttmr010->count_down)
-+	if (fttmr010->count_down) {
- 		writel(~0, fttmr010->base + TIMER1_LOAD);
--	else
-+	} else {
- 		writel(0, fttmr010->base + TIMER1_LOAD);
- 
--	/* Enable interrupt */
--	cr = readl(fttmr010->base + TIMER_INTR_MASK);
--	cr &= ~(TIMER_1_INT_OVERFLOW | TIMER_1_INT_MATCH2);
--	cr |= TIMER_1_INT_MATCH1;
--	writel(cr, fttmr010->base + TIMER_INTR_MASK);
-+		/* Enable interrupt */
-+		cr = readl(fttmr010->base + TIMER_INTR_MASK);
-+		cr &= ~(TIMER_1_INT_OVERFLOW | TIMER_1_INT_MATCH2);
-+		cr |= TIMER_1_INT_MATCH1;
-+		writel(cr, fttmr010->base + TIMER_INTR_MASK);
-+	}
- 
- 	return 0;
- }
-@@ -287,13 +288,13 @@ static int __init fttmr010_common_init(struct device_node *np, bool is_aspeed)
- 		fttmr010->count_down = true;
- 	} else {
- 		fttmr010->t1_enable_val = TIMER_1_CR_ENABLE | TIMER_1_CR_INT;
--	}
- 
--	/*
--	 * Reset the interrupt mask and status
--	 */
--	writel(TIMER_INT_ALL_MASK, fttmr010->base + TIMER_INTR_MASK);
--	writel(0, fttmr010->base + TIMER_INTR_STATE);
-+		/*
-+		 * Reset the interrupt mask and status
-+		 */
-+		writel(TIMER_INT_ALL_MASK, fttmr010->base + TIMER_INTR_MASK);
-+		writel(0, fttmr010->base + TIMER_INTR_STATE);
-+	}
- 
- 	/*
- 	 * Enable timer 1 count up, timer 2 count up, except on Aspeed,
+I haven't tested things with flush queues, but from what it looks like
+both .flush_iotlb_all, and .iotlb_sync callbacks need rpm_get/put().
+I will respin the patches.
+
+Thanks
+Vivek
+>
+> Will
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-joerg/arm-smmu/updates
+
+
+
 -- 
-2.17.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
