@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B934AC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E10C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F502206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F502206B2
+	by mail.kernel.org (Postfix) with ESMTP id D27E62089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D27E62089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729936AbeJBUMt (ORCPT
+        id S1729953AbeJBUMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:12:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33116 "EHLO
+        Tue, 2 Oct 2018 16:12:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33126 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbeJBUMt (ORCPT
+        with ESMTP id S1726758AbeJBUMu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:49 -0400
+        Tue, 2 Oct 2018 16:12:50 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A89C1C11;
-        Tue,  2 Oct 2018 13:29:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40F42266;
+        Tue,  2 Oct 2018 13:29:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        syzbot+f84aa7209ccec829536f@syzkaller.appspotmail.com
-Subject: [PATCH 4.18 148/228] USB: fix error handling in usb_driver_claim_interface()
-Date:   Tue,  2 Oct 2018 06:24:05 -0700
-Message-Id: <20181002132509.147511832@linuxfoundation.org>
+        syzbot+19c3aaef85a89d451eac@syzkaller.appspotmail.com
+Subject: [PATCH 4.18 149/228] USB: handle NULL config in usb_find_alt_setting()
+Date:   Tue,  2 Oct 2018 06:24:06 -0700
+Message-Id: <20181002132509.193759612@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,56 +53,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alan Stern <stern@rowland.harvard.edu>
 
-commit bd729f9d67aa9a303d8925bb8c4f06af25f407d1 upstream.
+commit c9a4cb204e9eb7fa7dfbe3f7d3a674fa530aa193 upstream.
 
-The syzbot fuzzing project found a use-after-free bug in the USB
-core.  The bug was caused by usbfs not unbinding from an interface
-when the USB device file was closed, which led another process to
-attempt the unbind later on, after the private data structure had been
-deallocated.
+usb_find_alt_setting() takes a pointer to a struct usb_host_config as
+an argument; it searches for an interface with specified interface and
+alternate setting numbers in that config.  However, it crashes if the
+usb_host_config pointer argument is NULL.
 
-The reason usbfs did not unbind the interface at the appropriate time
-was because it thought the interface had never been claimed in the
-first place.  This was caused by the fact that
-usb_driver_claim_interface() does not clean up properly when
-device_bind_driver() returns an error.  Although the error code gets
-passed back to the caller, the iface->dev.driver pointer remains set
-and iface->condition remains equal to USB_INTERFACE_BOUND.
-
-This patch adds proper error handling to usb_driver_claim_interface().
+Since this is a general-purpose routine, available for use in many
+places, we want to to be more robust.  This patch makes it return NULL
+whenever the config argument is NULL.
 
 Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-by: syzbot+f84aa7209ccec829536f@syzkaller.appspotmail.com
+Reported-by: syzbot+19c3aaef85a89d451eac@syzkaller.appspotmail.com
 CC: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/driver.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/usb/core/usb.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -565,6 +565,21 @@ int usb_driver_claim_interface(struct us
- 	if (!lpm_disable_error)
- 		usb_unlocked_enable_lpm(udev);
+--- a/drivers/usb/core/usb.c
++++ b/drivers/usb/core/usb.c
+@@ -228,6 +228,8 @@ struct usb_host_interface *usb_find_alt_
+ 	struct usb_interface_cache *intf_cache = NULL;
+ 	int i;
  
-+	if (retval) {
-+		dev->driver = NULL;
-+		usb_set_intfdata(iface, NULL);
-+		iface->needs_remote_wakeup = 0;
-+		iface->condition = USB_INTERFACE_UNBOUND;
-+
-+		/*
-+		 * Unbound interfaces are always runtime-PM-disabled
-+		 * and runtime-PM-suspended
-+		 */
-+		if (driver->supports_autosuspend)
-+			pm_runtime_disable(dev);
-+		pm_runtime_set_suspended(dev);
-+	}
-+
- 	return retval;
- }
- EXPORT_SYMBOL_GPL(usb_driver_claim_interface);
++	if (!config)
++		return NULL;
+ 	for (i = 0; i < config->desc.bNumInterfaces; i++) {
+ 		if (config->intf_cache[i]->altsetting[0].desc.bInterfaceNumber
+ 				== iface_num) {
 
 
