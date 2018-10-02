@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF594C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D58C64EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824F520652
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:49:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ABAA2089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:49:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="IqN8RKyC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824F520652
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="OR0cTZsa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ABAA2089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbeJCDeS (ORCPT
+        id S1727694AbeJCDeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 23:34:18 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:36338 "EHLO
+        Tue, 2 Oct 2018 23:34:19 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:36366 "EHLO
         mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726781AbeJCDeS (ORCPT
+        with ESMTP id S1726882AbeJCDeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 23:34:18 -0400
 Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id 5CA2BB00C6C
-        for <linux-kernel@vger.kernel.org>; Tue,  2 Oct 2018 22:49:04 +0200 (CEST)
+        by mail.micronovasrl.com (Postfix) with ESMTP id 5DE3FB01096
+        for <linux-kernel@vger.kernel.org>; Tue,  2 Oct 2018 22:49:05 +0200 (CEST)
 Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
         reason="pass (just generated, assumed good)" header.d=micronovasrl.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
          h=references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:to:from:from; s=dkim; t=1538513343; x=1539377344; bh=0a
-        zMu6Ww48q352jv+MAfjeImAqkhQeep+ozCDFqNfv8=; b=IqN8RKyC2OmkbT0Y29
-        fV9HT2AAv2h0j8vm/Gygm7JE1YqZqc7uGCLcz+IxlEKpdz4HUd+79+9IBhK/7Rzg
-        50Z9FFxekDwx+tShp07XBKdzkpCXd2psc/zLH/KYTgWP//x6Kwu/AvSjfZ5/Bve7
-        zdeQ77RsWGiaUmgXwzAc+tUI8=
+        :subject:to:from:from; s=dkim; t=1538513344; x=1539377345; bh=4F
+        HVT5NrrG/QTe2Mj+ppLwr5ncrmz/fzttP4uUPdogc=; b=OR0cTZsaaqYPhNkaD6
+        t4dxK5VRaiw36+zWBIJ13myKdAeqm47677uMJv2wzeV+KUKNRjuTPZYXXFusOLz0
+        Ns4T/Ar88DvxooPvqtMaL+GEKrsvECXpVcDZt51GKG0MLDtluCrpFIRxH0iG1eWX
+        QUmA7tkC3rld8EVMOUol5trcw=
 X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
 Received: from mail.micronovasrl.com ([127.0.0.1])
         by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id n2NSBXYMnKqD for <linux-kernel@vger.kernel.org>;
-        Tue,  2 Oct 2018 22:49:03 +0200 (CEST)
+        with ESMTP id ciLECyTynNFE for <linux-kernel@vger.kernel.org>;
+        Tue,  2 Oct 2018 22:49:04 +0200 (CEST)
 Received: from ubuntu.localdomain (146-241-101-147.dyn.eolo.it [146.241.101.147])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id D3145B00765;
-        Tue,  2 Oct 2018 22:49:02 +0200 (CEST)
+        by mail.micronovasrl.com (Postfix) with ESMTPSA id 60BAAB00BA1;
+        Tue,  2 Oct 2018 22:49:03 +0200 (CEST)
 From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
@@ -53,42 +53,43 @@ Cc:     David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH 1/2] drm/sun4i: tcon: fix check of tcon->panel null pointer
-Date:   Tue,  2 Oct 2018 22:48:59 +0200
-Message-Id: <20181002204900.82118-1-giulio.benetti@micronovasrl.com>
+Subject: [PATCH 2/2] drm/sun4i: tcon: prevent tcon->panel dereference if null
+Date:   Tue,  2 Oct 2018 22:49:00 +0200
+Message-Id: <20181002204900.82118-2-giulio.benetti@micronovasrl.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181001093612.GA13672@mwanda>
+In-Reply-To: <20181002204900.82118-1-giulio.benetti@micronovasrl.com>
 References: <20181001093612.GA13672@mwanda>
+ <20181002204900.82118-1-giulio.benetti@micronovasrl.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the moment, the check of tcon->panel to be valid is wrong. IS_ERR()
-has been used, but that macro doesn't check if tcon->panel pointer is
-null or not, but check if tcon->panel is between -1 and -4095(MAX_ERRNO).
+If using tcon with VGA, tcon->panel will be null(0), this will cause
+segmentation fault when trying to dereference tcon->panel->connector.
 
-Remove IS_ERR() from tcon->panel checking and let "if (tcon->panel)" as
-condition to check if it's a pointer not null.
+Add tcon->panel null check before calling
+sun4i_tcon0_mode_set_dithering().
 
 Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index c78cd35a1294..e4b3bd0307ef 100644
+index e4b3bd0307ef..f949287d926c 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -555,7 +555,7 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
- 	 * Following code is a way to avoid quirks all around TCON
- 	 * and DOTCLOCK drivers.
- 	 */
--	if (!IS_ERR(tcon->panel)) {
-+	if (tcon->panel) {
- 		struct drm_panel *panel = tcon->panel;
- 		struct drm_connector *connector = panel->connector;
- 		struct drm_display_info display_info = connector->display_info;
+@@ -491,7 +491,8 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+ 	sun4i_tcon0_mode_set_common(tcon, mode);
+ 
+ 	/* Set dithering if needed */
+-	sun4i_tcon0_mode_set_dithering(tcon, tcon->panel->connector);
++	if (tcon->panel)
++		sun4i_tcon0_mode_set_dithering(tcon, tcon->panel->connector);
+ 
+ 	/* Adjust clock delay */
+ 	clk_delay = sun4i_tcon_get_clk_delay(mode, 0);
 -- 
 2.17.1
 
