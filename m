@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 993D4C43143
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C82EEC64EB5
 	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68A62206B2
+	by mail.kernel.org (Postfix) with ESMTP id 999E221476
 	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68A62206B2
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999E221476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730704AbeJBUOR (ORCPT
+        id S1730718AbeJBUOS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33844 "EHLO
+        Tue, 2 Oct 2018 16:14:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33860 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729591AbeJBUOQ (ORCPT
+        with ESMTP id S1730696AbeJBUOR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:16 -0400
+        Tue, 2 Oct 2018 16:14:17 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2DAB2C3F;
-        Tue,  2 Oct 2018 13:30:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BC1FC2B;
+        Tue,  2 Oct 2018 13:30:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 170/228] ARM: OMAP2+: Fix module address for modules using mpu_rt_idx
-Date:   Tue,  2 Oct 2018 06:24:27 -0700
-Message-Id: <20181002132510.188083487@linuxfoundation.org>
+Subject: [PATCH 4.18 171/228] bus: ti-sysc: Fix module register ioremap for larger offsets
+Date:   Tue,  2 Oct 2018 06:24:28 -0700
+Message-Id: <20181002132510.234471935@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,81 +53,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 1dbcb97c656eed1a244c960b8b3a469c3d20ce7b ]
+[ Upstream commit 0ef8e3bb974af56346b34393e643d491d9141c66 ]
 
-If we use device tree data for a module interconnect target we want
-to map the control registers from the module start. Legacy hwmod platform
-data however is using child IP offsets for cpsw module with mpu_rt_idx.
+We can have the interconnect target module control registers pretty
+much anywhere within the module range. The current code attempts an
+incomplete optimization of the ioremap size but does it wrong and
+it only works for registers at the beginning of the module.
 
-In cases where we have the interconnect target module already using device
-tree data with legacy hwmod platform data still around, the sysc register
-area is not adjusted for mpu_rt_idx causing wrong registers being accessed.
+Let's just use the largest control register to calculate the ioremap
+size. The ioremapped range is for most part cached anyways so there
+is no need for size optimization. Let's also update the comments
+accordingly.
 
-Let's fix the issue for mixed dts and platform data mode by ioremapping
-the module registers using child IP offset if mpu_rt_idx is set. For
-device tree only data there's no reason to use mpu_rt_idx.
-
-Fixes: 6c72b3550672 ("ARM: OMAP2+: Parse module IO range from dts for legacy
-"ti,hwmods" support")
+Fixes: 0eecc636e5a2 ("bus: ti-sysc: Add minimal TI sysc interconnect
+target driver")
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/omap_hwmod.c |   37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ drivers/bus/ti-sysc.c |   29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
 
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -2161,6 +2161,37 @@ static int of_dev_hwmod_lookup(struct de
- }
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -490,32 +490,29 @@ static int sysc_check_registers(struct s
  
  /**
-+ * omap_hwmod_fix_mpu_rt_idx - fix up mpu_rt_idx register offsets
-+ *
-+ * @oh: struct omap_hwmod *
-+ * @np: struct device_node *
-+ *
-+ * Fix up module register offsets for modules with mpu_rt_idx.
-+ * Only needed for cpsw with interconnect target module defined
-+ * in device tree while still using legacy hwmod platform data
-+ * for rev, sysc and syss registers.
-+ *
-+ * Can be removed when all cpsw hwmod platform data has been
-+ * dropped.
-+ */
-+static void omap_hwmod_fix_mpu_rt_idx(struct omap_hwmod *oh,
-+				      struct device_node *np,
-+				      struct resource *res)
-+{
-+	struct device_node *child = NULL;
-+	int error;
-+
-+	child = of_get_next_child(np, child);
-+	if (!child)
-+		return;
-+
-+	error = of_address_to_resource(child, oh->mpu_rt_idx, res);
-+	if (error)
-+		pr_err("%s: error mapping mpu_rt_idx: %i\n",
-+		       __func__, error);
-+}
-+
-+/**
-  * omap_hwmod_parse_module_range - map module IO range from device tree
-  * @oh: struct omap_hwmod *
-  * @np: struct device_node *
-@@ -2222,6 +2253,12 @@ int omap_hwmod_parse_module_range(struct
- 	pr_debug("omap_hwmod: %s %s at 0x%llx size 0x%llx\n",
- 		 oh ? oh->name : "", np->name, base, size);
+  * syc_ioremap - ioremap register space for the interconnect target module
+- * @ddata: deviec driver data
++ * @ddata: device driver data
+  *
+  * Note that the interconnect target module registers can be anywhere
+- * within the first child device address space. For example, SGX has
+- * them at offset 0x1fc00 in the 32MB module address space. We just
+- * what we need around the interconnect target module registers.
++ * within the interconnect target module range. For example, SGX has
++ * them at offset 0x1fc00 in the 32MB module address space. And cpsw
++ * has them at offset 0x1200 in the CPSW_WR child. Usually the
++ * the interconnect target module registers are at the beginning of
++ * the module range though.
+  */
+ static int sysc_ioremap(struct sysc *ddata)
+ {
+-	u32 size = 0;
++	int size;
  
-+	if (oh && oh->mpu_rt_idx) {
-+		omap_hwmod_fix_mpu_rt_idx(oh, np, res);
-+
-+		return 0;
-+	}
-+
- 	res->start = base;
- 	res->end = base + size - 1;
- 	res->flags = IORESOURCE_MEM;
+-	if (ddata->offsets[SYSC_SYSSTATUS] >= 0)
+-		size = ddata->offsets[SYSC_SYSSTATUS];
+-	else if (ddata->offsets[SYSC_SYSCONFIG] >= 0)
+-		size = ddata->offsets[SYSC_SYSCONFIG];
+-	else if (ddata->offsets[SYSC_REVISION] >= 0)
+-		size = ddata->offsets[SYSC_REVISION];
+-	else
+-		return -EINVAL;
++	size = max3(ddata->offsets[SYSC_REVISION],
++		    ddata->offsets[SYSC_SYSCONFIG],
++		    ddata->offsets[SYSC_SYSSTATUS]);
+ 
+-	size &= 0xfff00;
+-	size += SZ_256;
++	if (size < 0 || (size + sizeof(u32)) > ddata->module_size)
++		return -EINVAL;
+ 
+ 	ddata->module_va = devm_ioremap(ddata->dev,
+ 					ddata->module_pa,
+-					size);
++					size + sizeof(u32));
+ 	if (!ddata->module_va)
+ 		return -EIO;
+ 
 
 
