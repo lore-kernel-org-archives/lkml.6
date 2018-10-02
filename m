@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B768C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C80DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B8E22083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B8E22083F
+	by mail.kernel.org (Postfix) with ESMTP id CC6A32089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6A32089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732300AbeJBURv (ORCPT
+        id S1731335AbeJBUR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:17:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35304 "EHLO
+        Tue, 2 Oct 2018 16:17:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35312 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731048AbeJBURu (ORCPT
+        with ESMTP id S1730846AbeJBUR6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:50 -0400
+        Tue, 2 Oct 2018 16:17:58 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42FBAB2F;
-        Tue,  2 Oct 2018 13:34:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E1D85AA;
+        Tue,  2 Oct 2018 13:34:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.14 112/137] arm64: KVM: Tighten guest core register access from userspace
-Date:   Tue,  2 Oct 2018 06:25:13 -0700
-Message-Id: <20181002132506.357072340@linuxfoundation.org>
+        stable@vger.kernel.org, Tomer Tayar <Tomer.Tayar@cavium.com>,
+        Ariel Elior <Ariel.Elior@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 113/137] qed: Wait for ready indication before rereading the shmem
+Date:   Tue,  2 Oct 2018 06:25:14 -0700
+Message-Id: <20181002132506.430572784@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -55,99 +53,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Martin <Dave.Martin@arm.com>
+From: Tomer Tayar <Tomer.Tayar@cavium.com>
 
-commit d26c25a9d19b5976b319af528886f89cf455692d upstream.
+[ Upstream commit f00d25f3154b676fcea4502a25b94bd7f142ca74 ]
 
-We currently allow userspace to access the core register file
-in about any possible way, including straddling multiple
-registers and doing unaligned accesses.
+The MFW might be reset and re-update its shared memory.
+Upon the detection of such a reset the driver rereads this memory, but it
+has to wait till the data is valid.
+This patch adds the missing wait for a data ready indication.
 
-This is not the expected use of the ABI, and nobody is actually
-using it that way. Let's tighten it by explicitly checking
-the size and alignment for each field of the register file.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 2f4a07c5f9fe ("arm64: KVM: guest one-reg interface")
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-[maz: rewrote Dave's initial patch to be more easily backported]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Tomer Tayar <Tomer.Tayar@cavium.com>
+Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm64/kvm/guest.c |   45 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ drivers/net/ethernet/qlogic/qed/qed_mcp.c |   50 ++++++++++++++++++++++++------
+ 1 file changed, 41 insertions(+), 9 deletions(-)
 
---- a/arch/arm64/kvm/guest.c
-+++ b/arch/arm64/kvm/guest.c
-@@ -57,6 +57,45 @@ static u64 core_reg_offset_from_id(u64 i
- 	return id & ~(KVM_REG_ARCH_MASK | KVM_REG_SIZE_MASK | KVM_REG_ARM_CORE);
+--- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+@@ -182,18 +182,57 @@ int qed_mcp_free(struct qed_hwfn *p_hwfn
+ 	return 0;
  }
  
-+static int validate_core_offset(const struct kvm_one_reg *reg)
-+{
-+	u64 off = core_reg_offset_from_id(reg->id);
-+	int size;
++/* Maximum of 1 sec to wait for the SHMEM ready indication */
++#define QED_MCP_SHMEM_RDY_MAX_RETRIES	20
++#define QED_MCP_SHMEM_RDY_ITER_MS	50
 +
-+	switch (off) {
-+	case KVM_REG_ARM_CORE_REG(regs.regs[0]) ...
-+	     KVM_REG_ARM_CORE_REG(regs.regs[30]):
-+	case KVM_REG_ARM_CORE_REG(regs.sp):
-+	case KVM_REG_ARM_CORE_REG(regs.pc):
-+	case KVM_REG_ARM_CORE_REG(regs.pstate):
-+	case KVM_REG_ARM_CORE_REG(sp_el1):
-+	case KVM_REG_ARM_CORE_REG(elr_el1):
-+	case KVM_REG_ARM_CORE_REG(spsr[0]) ...
-+	     KVM_REG_ARM_CORE_REG(spsr[KVM_NR_SPSR - 1]):
-+		size = sizeof(__u64);
-+		break;
-+
-+	case KVM_REG_ARM_CORE_REG(fp_regs.vregs[0]) ...
-+	     KVM_REG_ARM_CORE_REG(fp_regs.vregs[31]):
-+		size = sizeof(__uint128_t);
-+		break;
-+
-+	case KVM_REG_ARM_CORE_REG(fp_regs.fpsr):
-+	case KVM_REG_ARM_CORE_REG(fp_regs.fpcr):
-+		size = sizeof(__u32);
-+		break;
-+
-+	default:
+ static int qed_load_mcp_offsets(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ {
+ 	struct qed_mcp_info *p_info = p_hwfn->mcp_info;
++	u8 cnt = QED_MCP_SHMEM_RDY_MAX_RETRIES;
++	u8 msec = QED_MCP_SHMEM_RDY_ITER_MS;
+ 	u32 drv_mb_offsize, mfw_mb_offsize;
+ 	u32 mcp_pf_id = MCP_PF_ID(p_hwfn);
+ 
+ 	p_info->public_base = qed_rd(p_hwfn, p_ptt, MISC_REG_SHARED_MEM_ADDR);
+-	if (!p_info->public_base)
+-		return 0;
++	if (!p_info->public_base) {
++		DP_NOTICE(p_hwfn,
++			  "The address of the MCP scratch-pad is not configured\n");
 +		return -EINVAL;
 +	}
-+
-+	if (KVM_REG_SIZE(reg->id) == size &&
-+	    IS_ALIGNED(off, size / sizeof(__u32)))
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
- static int get_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
- {
- 	/*
-@@ -76,6 +115,9 @@ static int get_core_reg(struct kvm_vcpu
- 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
- 		return -ENOENT;
  
-+	if (validate_core_offset(reg))
-+		return -EINVAL;
+ 	p_info->public_base |= GRCBASE_MCP;
+ 
++	/* Get the MFW MB address and number of supported messages */
++	mfw_mb_offsize = qed_rd(p_hwfn, p_ptt,
++				SECTION_OFFSIZE_ADDR(p_info->public_base,
++						     PUBLIC_MFW_MB));
++	p_info->mfw_mb_addr = SECTION_ADDR(mfw_mb_offsize, mcp_pf_id);
++	p_info->mfw_mb_length = (u16)qed_rd(p_hwfn, p_ptt,
++					    p_info->mfw_mb_addr +
++					    offsetof(struct public_mfw_mb,
++						     sup_msgs));
 +
- 	if (copy_to_user(uaddr, ((u32 *)regs) + off, KVM_REG_SIZE(reg->id)))
- 		return -EFAULT;
- 
-@@ -98,6 +140,9 @@ static int set_core_reg(struct kvm_vcpu
- 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
- 		return -ENOENT;
- 
-+	if (validate_core_offset(reg))
-+		return -EINVAL;
++	/* The driver can notify that there was an MCP reset, and might read the
++	 * SHMEM values before the MFW has completed initializing them.
++	 * To avoid this, the "sup_msgs" field in the MFW mailbox is used as a
++	 * data ready indication.
++	 */
++	while (!p_info->mfw_mb_length && --cnt) {
++		msleep(msec);
++		p_info->mfw_mb_length =
++			(u16)qed_rd(p_hwfn, p_ptt,
++				    p_info->mfw_mb_addr +
++				    offsetof(struct public_mfw_mb, sup_msgs));
++	}
 +
- 	if (KVM_REG_SIZE(reg->id) > sizeof(tmp))
- 		return -EINVAL;
++	if (!cnt) {
++		DP_NOTICE(p_hwfn,
++			  "Failed to get the SHMEM ready notification after %d msec\n",
++			  QED_MCP_SHMEM_RDY_MAX_RETRIES * msec);
++		return -EBUSY;
++	}
++
+ 	/* Calculate the driver and MFW mailbox address */
+ 	drv_mb_offsize = qed_rd(p_hwfn, p_ptt,
+ 				SECTION_OFFSIZE_ADDR(p_info->public_base,
+@@ -203,13 +242,6 @@ static int qed_load_mcp_offsets(struct q
+ 		   "drv_mb_offsiz = 0x%x, drv_mb_addr = 0x%x mcp_pf_id = 0x%x\n",
+ 		   drv_mb_offsize, p_info->drv_mb_addr, mcp_pf_id);
  
+-	/* Set the MFW MB address */
+-	mfw_mb_offsize = qed_rd(p_hwfn, p_ptt,
+-				SECTION_OFFSIZE_ADDR(p_info->public_base,
+-						     PUBLIC_MFW_MB));
+-	p_info->mfw_mb_addr = SECTION_ADDR(mfw_mb_offsize, mcp_pf_id);
+-	p_info->mfw_mb_length =	(u16)qed_rd(p_hwfn, p_ptt, p_info->mfw_mb_addr);
+-
+ 	/* Get the current driver mailbox sequence before sending
+ 	 * the first command
+ 	 */
 
 
