@@ -3,37 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0D9C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C7AC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79F992089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79F992089C
+	by mail.kernel.org (Postfix) with ESMTP id 44F552083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44F552083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387537AbeJBUUT (ORCPT
+        id S2387554AbeJBUUV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36484 "EHLO
+        Tue, 2 Oct 2018 16:20:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36492 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731241AbeJBUUS (ORCPT
+        with ESMTP id S1731241AbeJBUUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:18 -0400
+        Tue, 2 Oct 2018 16:20:20 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 492615AA;
-        Tue,  2 Oct 2018 13:36:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 689DBB2F;
+        Tue,  2 Oct 2018 13:36:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.9 80/94] ext4: never move the system.data xattr out of the inode body
-Date:   Tue,  2 Oct 2018 06:25:34 -0700
-Message-Id: <20181002132506.076671947@linuxfoundation.org>
+        stable@vger.kernel.org, Tomer Tayar <Tomer.Tayar@cavium.com>,
+        Ariel Elior <Ariel.Elior@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 81/94] qed: Wait for ready indication before rereading the shmem
+Date:   Tue,  2 Oct 2018 06:25:35 -0700
+Message-Id: <20181002132506.130583850@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -51,42 +53,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Tomer Tayar <Tomer.Tayar@cavium.com>
 
-commit 8cdb5240ec5928b20490a2bb34cb87e9a5f40226 upstream.
+[ Upstream commit f00d25f3154b676fcea4502a25b94bd7f142ca74 ]
 
-When expanding the extra isize space, we must never move the
-system.data xattr out of the inode body.  For performance reasons, it
-doesn't make any sense, and the inline data implementation assumes
-that system.data xattr is never in the external xattr block.
+The MFW might be reset and re-update its shared memory.
+Upon the detection of such a reset the driver rereads this memory, but it
+has to wait till the data is valid.
+This patch adds the missing wait for a data ready indication.
 
-This addresses CVE-2018-10880
-
-https://bugzilla.kernel.org/show_bug.cgi?id=200005
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
-[groeck: Context changes]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Tomer Tayar <Tomer.Tayar@cavium.com>
+Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ext4/xattr.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/qlogic/qed/qed_mcp.c |   50 ++++++++++++++++++++++++------
+ 1 file changed, 41 insertions(+), 9 deletions(-)
 
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -1426,6 +1426,11 @@ static int ext4_xattr_make_inode_space(h
- 		last = IFIRST(header);
- 		/* Find the entry best suited to be pushed into EA block */
- 		for (; !IS_LAST_ENTRY(last); last = EXT4_XATTR_NEXT(last)) {
-+			/* never move system.data out of the inode */
-+			if ((last->e_name_len == 4) &&
-+			    (last->e_name_index == EXT4_XATTR_INDEX_SYSTEM) &&
-+			    !memcmp(last->e_name, "data", 4))
-+				continue;
- 			total_size =
- 			EXT4_XATTR_SIZE(le32_to_cpu(last->e_value_size)) +
- 					EXT4_XATTR_LEN(last->e_name_len);
+--- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+@@ -97,18 +97,57 @@ int qed_mcp_free(struct qed_hwfn *p_hwfn
+ 	return 0;
+ }
+ 
++/* Maximum of 1 sec to wait for the SHMEM ready indication */
++#define QED_MCP_SHMEM_RDY_MAX_RETRIES	20
++#define QED_MCP_SHMEM_RDY_ITER_MS	50
++
+ static int qed_load_mcp_offsets(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ {
+ 	struct qed_mcp_info *p_info = p_hwfn->mcp_info;
++	u8 cnt = QED_MCP_SHMEM_RDY_MAX_RETRIES;
++	u8 msec = QED_MCP_SHMEM_RDY_ITER_MS;
+ 	u32 drv_mb_offsize, mfw_mb_offsize;
+ 	u32 mcp_pf_id = MCP_PF_ID(p_hwfn);
+ 
+ 	p_info->public_base = qed_rd(p_hwfn, p_ptt, MISC_REG_SHARED_MEM_ADDR);
+-	if (!p_info->public_base)
+-		return 0;
++	if (!p_info->public_base) {
++		DP_NOTICE(p_hwfn,
++			  "The address of the MCP scratch-pad is not configured\n");
++		return -EINVAL;
++	}
+ 
+ 	p_info->public_base |= GRCBASE_MCP;
+ 
++	/* Get the MFW MB address and number of supported messages */
++	mfw_mb_offsize = qed_rd(p_hwfn, p_ptt,
++				SECTION_OFFSIZE_ADDR(p_info->public_base,
++						     PUBLIC_MFW_MB));
++	p_info->mfw_mb_addr = SECTION_ADDR(mfw_mb_offsize, mcp_pf_id);
++	p_info->mfw_mb_length = (u16)qed_rd(p_hwfn, p_ptt,
++					    p_info->mfw_mb_addr +
++					    offsetof(struct public_mfw_mb,
++						     sup_msgs));
++
++	/* The driver can notify that there was an MCP reset, and might read the
++	 * SHMEM values before the MFW has completed initializing them.
++	 * To avoid this, the "sup_msgs" field in the MFW mailbox is used as a
++	 * data ready indication.
++	 */
++	while (!p_info->mfw_mb_length && --cnt) {
++		msleep(msec);
++		p_info->mfw_mb_length =
++			(u16)qed_rd(p_hwfn, p_ptt,
++				    p_info->mfw_mb_addr +
++				    offsetof(struct public_mfw_mb, sup_msgs));
++	}
++
++	if (!cnt) {
++		DP_NOTICE(p_hwfn,
++			  "Failed to get the SHMEM ready notification after %d msec\n",
++			  QED_MCP_SHMEM_RDY_MAX_RETRIES * msec);
++		return -EBUSY;
++	}
++
+ 	/* Calculate the driver and MFW mailbox address */
+ 	drv_mb_offsize = qed_rd(p_hwfn, p_ptt,
+ 				SECTION_OFFSIZE_ADDR(p_info->public_base,
+@@ -118,13 +157,6 @@ static int qed_load_mcp_offsets(struct q
+ 		   "drv_mb_offsiz = 0x%x, drv_mb_addr = 0x%x mcp_pf_id = 0x%x\n",
+ 		   drv_mb_offsize, p_info->drv_mb_addr, mcp_pf_id);
+ 
+-	/* Set the MFW MB address */
+-	mfw_mb_offsize = qed_rd(p_hwfn, p_ptt,
+-				SECTION_OFFSIZE_ADDR(p_info->public_base,
+-						     PUBLIC_MFW_MB));
+-	p_info->mfw_mb_addr = SECTION_ADDR(mfw_mb_offsize, mcp_pf_id);
+-	p_info->mfw_mb_length =	(u16)qed_rd(p_hwfn, p_ptt, p_info->mfw_mb_addr);
+-
+ 	/* Get the current driver mailbox sequence before sending
+ 	 * the first command
+ 	 */
 
 
