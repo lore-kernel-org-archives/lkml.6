@@ -2,106 +2,82 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8C6C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B595AC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78FE1206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:19:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ct5i1gEf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78FE1206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 81981206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:20:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81981206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbeJCCEi (ORCPT
+        id S1728016AbeJCCFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 22:04:38 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43143 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbeJCCEh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 22:04:37 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n1-v6so3474317wrt.10;
-        Tue, 02 Oct 2018 12:19:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AVtUFwTAcoKpexa5P9jL4ArwO9HhrsTrF5AUEekmhrw=;
-        b=ct5i1gEfXCWPutvf+tRqsuqhZN15ryzw1WJNFJIHDzECTuvx2bWZG6hvz/0ZBEKtof
-         BIZOF+mWSB0NqAk/oLx3XSm8bRtBs6pKp2Uc1+Wf2OTi2EPQMyTyVqJqwLe6BDkF6cYX
-         0LR7S8cUSObhGNvGOCJ3tkVN/iq+ORbFe10qrkd1I55LrcP2cpHsKvPWnIn9wZpnLx67
-         sb347ajoR0Q4q3sgB2vS/QWpCFE77hjgaeK/XV3hxjYUxPcpAvv2cwAHHumj5fea0cDi
-         mbYjLCK6sQ9+mpULI55RTTS3qWaTWStOuKib9mcKJT9QxSsdWeofjlqDG8WB5XQBjAxH
-         I9DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AVtUFwTAcoKpexa5P9jL4ArwO9HhrsTrF5AUEekmhrw=;
-        b=DaMW5yI1mEBDnSqhbEd8hL9bFLpTWIlFaGJ7GocE+J3WKbPKegBYBqUIzbvzb4fimj
-         SdLdfdGtlThvnsriWFbPDqhRDpoehpmIzsJFWLrhZdjvS/QnI9wdyKy0fhjFyidzBYNb
-         ZyU6xzjKNgRTz2opnlqasBzmAU33gkZbGlzuFN0qCS9cH1r69lgOG9kRkSKAKSWWQ92t
-         reH3GUU1GD61JJQ3R5QYeEMkxeLnpMXbHnqphWsm5Ta8ymRe0ovr0furqA78SDMQZJu8
-         WhXvVyui7X5tdcgQvUUpGCm9/BngIB0eU3WrT1lEXk6poaEZsfi7tMkL5HgWqePBCl7y
-         DOzA==
-X-Gm-Message-State: ABuFfoh86kt/8wPT3kqSXyuDslpHdQQnzNW0oUNaWxPM9Dpkw5RyDQ2D
-        WS0n3WpgCZIlybuHpDuti24=
-X-Google-Smtp-Source: ACcGV629xWUmvTF4CHRhCj9UeNDDj2DIIKmqfRd8w4jo7QRQKcBlfmrkhKVQI56I63QRuucOQKbiaw==
-X-Received: by 2002:a5d:694c:: with SMTP id r12-v6mr11112529wrw.170.1538507983079;
-        Tue, 02 Oct 2018 12:19:43 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id b5-v6sm17815457wrr.94.2018.10.02.12.19.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Oct 2018 12:19:42 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 12:19:40 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 000/137] 4.14.74-stable review
-Message-ID: <20181002191940.GB4996@flashbox>
-References: <20181002132458.446916963@linuxfoundation.org>
+        Tue, 2 Oct 2018 22:05:34 -0400
+Received: from namei.org ([65.99.196.166]:35070 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726946AbeJCCFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 22:05:33 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id w92JKVAN019036;
+        Tue, 2 Oct 2018 19:20:31 GMT
+Date:   Wed, 3 Oct 2018 05:20:31 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Dave Chinner <david@fromorbit.com>
+cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        TongZhang <ztong@vt.edu>, linux-xfs@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Wenbo Shen <shenwenbosmile@gmail.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: Leaking Path in XFS's ioctl interface(missing LSM check)
+In-Reply-To: <20181001224528.GI18567@dastard>
+Message-ID: <alpine.LRH.2.21.1810030518240.17817@namei.org>
+References: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu> <20180926013329.GD31060@dastard> <20180926192426.472360ea@alans-desktop> <20180927013812.GF31060@dastard> <20180930151652.6975610c@alans-desktop> <20181001002521.GM31060@dastard>
+ <20181001160442.47c798bc@alans-desktop> <20181001154459.GB5872@magnolia> <alpine.LRH.2.21.1810020608090.14406@namei.org> <20181001224528.GI18567@dastard>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 06:23:21AM -0700, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.74 release.
-> There are 137 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Oct  4 13:24:18 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.74-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Tue, 2 Oct 2018, Dave Chinner wrote:
 
-Merged, compiled, and installed onto my Raspberry Pi.
+> On Tue, Oct 02, 2018 at 06:08:16AM +1000, James Morris wrote:
+> > On Mon, 1 Oct 2018, Darrick J. Wong wrote:
+> > 
+> > > If we /did/ replace CAP_SYS_ADMIN checking with a pile of LSM hooks,
+> > 
+> > Not sure we'd need a pile of hooks, what about just "read" and "write" 
+> > storage admin?
+> > 
+> > Or even two new capabilities along these lines, which we convert existing 
+> > CAP_SYS_ADMIN etc. to?
+> 
+> So instead of having hundreds of management ioctls under
+> CAP_SYS_ADMIN, we'd now have hundreds of non-storage ioctls under
+> CAP_SYS_ADMIN and hundreds of storage ioctls under
+> CAP_SYS_STORAGE_ADMIN?
+> 
+> Maybe I'm missing something, but I don't see how that improves the
+> situation w.r.t. locked down LSM configurations?
 
-No initial issues noticed in dmesg or general usage.
+I'm not sure about capabilities, but having two specific LSM hooks for 
+storage admin would allow SELinux et al to explicitly control privileged 
+access to these interfaces.  Storage admin seems to be a special case of 
+its own which we want to be able to mediate as such.
 
-Thanks!
-Nathan
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
