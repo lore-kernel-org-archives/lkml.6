@@ -2,71 +2,75 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B338C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 383E1C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D66AB206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:29:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxCTDYGA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D66AB206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 021222089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:30:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 021222089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbeJBTMz (ORCPT
+        id S1727791AbeJBTNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 15:12:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54780 "EHLO mail.kernel.org"
+        Tue, 2 Oct 2018 15:13:41 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:43662 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726625AbeJBTMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 15:12:54 -0400
-Received: from [192.168.1.75] (cpe-24-28-70-126.austin.res.rr.com [24.28.70.126])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 556052064E;
-        Tue,  2 Oct 2018 12:29:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538483389;
-        bh=N9Xrqsw3X3prHIshh6QkFT/NteYWrhGGNo2C5IbjI6M=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=GxCTDYGAKGb+1FtvFECH8pXvN9FyLjTcxoB8BVNC35uIoz9NfK1HZtngC/25yppBT
-         3NB7l/Z7D+XlOLA6F9raJKJapiv2+Ow0P36Fyoqb2yZZKl4yV6Hk8BJ2FPENobTWry
-         MUKBbCuxEYxCRaoscS/gMMIXyM8nH6Dm9cb2wPxA=
-Subject: Re: [PATCH v3 3/3] gpiolib: Show correct direction from the beginning
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>, swboyd@chromium.org,
-        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-References: <20181002082731.20141-1-ricardo.ribalda@gmail.com>
- <20181002082731.20141-3-ricardo.ribalda@gmail.com>
-From:   Timur Tabi <timur@kernel.org>
-Message-ID: <b3b2e31d-f411-370d-21c9-3a141906ee58@kernel.org>
-Date:   Tue, 2 Oct 2018 07:29:48 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181002082731.20141-3-ricardo.ribalda@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726625AbeJBTNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 15:13:41 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 7273F4479A;
+        Tue,  2 Oct 2018 12:30:31 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH] clk: sunxi-ng: enable so-said LDOs for A64 SoC's pll-mipi clock
+Date:   Tue,  2 Oct 2018 20:29:11 +0800
+Message-Id: <20181002122911.22094-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/2/18 3:27 AM, Ricardo Ribalda Delgado wrote:
-> +		/* REVISIT: most hardware initializes GPIOs as inputs (often
-> +		 * with pullups enabled) so power usage is minimized. Linux
-> +		 * code should set the gpio direction first thing; but until
-> +		 * it does, and in case chip->get_direction is not set, we may
-> +		 * expose the wrong direction in sysfs.
-> +		 */
+In the user manual of A64 SoC, the bit 22 and 23 of pll-mipi control
+register is called "LDO{1,2}_EN", and according to the BSP source code
+from Allwinner , the LDOs are enabled during the clock's enabling
+process.
 
-I don't think this comment applies any more.
+The clock failed to generate output if the two LDOs are not enabled.
 
-Also, please don't use timur@codeaurora.org any more.  That address is 
-no longer valid.  Use timur@kernel.org instead.
+Add the two bits to the clock's gate bits, so that the LDOs are enabled
+when the PLL is enabled.
+
+Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+As PLL-MIPI is not used before 4.20~5.0, I decide not to target this patch
+on stable/mainline kernels.
+
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index 5f80eb018014..f7d297368eb2 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -162,7 +162,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
+ #define SUN50I_A64_PLL_MIPI_REG		0x040
+ 
+ static struct ccu_nkm pll_mipi_clk = {
+-	.enable		= BIT(31),
++	.enable		= BIT(31) | BIT(23) | BIT(22),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT(8, 4),
+ 	.k		= _SUNXI_CCU_MULT_MIN(4, 2, 2),
+-- 
+2.18.0
+
