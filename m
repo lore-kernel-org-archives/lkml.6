@@ -3,39 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1299DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15707C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7D13206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7D13206B2
+	by mail.kernel.org (Postfix) with ESMTP id D26EF2089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D26EF2089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731523AbeJBUQA (ORCPT
+        id S1731541AbeJBUQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:16:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34606 "EHLO
+        Tue, 2 Oct 2018 16:16:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34616 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731491AbeJBUP7 (ORCPT
+        with ESMTP id S1731491AbeJBUQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:15:59 -0400
+        Tue, 2 Oct 2018 16:16:01 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9655B2F;
-        Tue,  2 Oct 2018 13:32:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5BFBBF0;
+        Tue,  2 Oct 2018 13:32:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
+        stable@vger.kernel.org, Eva Rachel Retuya <eraretuya@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 045/137] mtd: rawnand: atmel: add module param to avoid using dma
-Date:   Tue,  2 Oct 2018 06:24:06 -0700
-Message-Id: <20181002132501.646612721@linuxfoundation.org>
+Subject: [PATCH 4.14 046/137] iio: accel: adxl345: convert address field usage in iio_chan_spec
+Date:   Tue,  2 Oct 2018 06:24:07 -0700
+Message-Id: <20181002132501.701485271@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,46 +55,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Rosin <peda@axentia.se>
+From: Akinobu Mita <akinobu.mita@gmail.com>
 
-[ Upstream commit efc6362c6f8c1e74b340e2611f1b35e7d557ce7b ]
+[ Upstream commit 9048f1f18a70a01eaa3c8e7166fdb2538929d780 ]
 
-On a sama5d31 with a Full-HD dual LVDS panel (132MHz pixel clock) NAND
-flash accesses have a tendency to cause display disturbances. Add a
-module param to disable DMA from the NAND controller, since that fixes
-the display problem for me.
+Currently the address field in iio_chan_spec is filled with an accel
+data register address for the corresponding axis.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+In preparation for adding calibration offset support, this sets the
+address field to the index of accel data registers instead of the actual
+register address.
+
+This change makes it easier to access both accel registers and
+calibration offset registers with fewer lines of code as these are
+located in X-axis, Y-axis, Z-axis order.
+
+Cc: Eva Rachel Retuya <eraretuya@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/nand/atmel/nand-controller.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/iio/accel/adxl345_core.c |   21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
---- a/drivers/mtd/nand/atmel/nand-controller.c
-+++ b/drivers/mtd/nand/atmel/nand-controller.c
-@@ -129,6 +129,11 @@
- #define DEFAULT_TIMEOUT_MS			1000
- #define MIN_DMA_LEN				128
+--- a/drivers/iio/accel/adxl345_core.c
++++ b/drivers/iio/accel/adxl345_core.c
+@@ -21,6 +21,8 @@
+ #define ADXL345_REG_DATAX0		0x32
+ #define ADXL345_REG_DATAY0		0x34
+ #define ADXL345_REG_DATAZ0		0x36
++#define ADXL345_REG_DATA_AXIS(index)	\
++	(ADXL345_REG_DATAX0 + (index) * sizeof(__le16))
  
-+static bool atmel_nand_avoid_dma __read_mostly;
-+
-+MODULE_PARM_DESC(avoiddma, "Avoid using DMA");
-+module_param_named(avoiddma, atmel_nand_avoid_dma, bool, 0400);
-+
- enum atmel_nand_rb_type {
- 	ATMEL_NAND_NO_RB,
- 	ATMEL_NAND_NATIVE_RB,
-@@ -1975,7 +1980,7 @@ static int atmel_nand_controller_init(st
- 		return ret;
- 	}
+ #define ADXL345_POWER_CTL_MEASURE	BIT(3)
+ #define ADXL345_POWER_CTL_STANDBY	0x00
+@@ -47,19 +49,19 @@ struct adxl345_data {
+ 	u8 data_range;
+ };
  
--	if (nc->caps->has_dma) {
-+	if (nc->caps->has_dma && !atmel_nand_avoid_dma) {
- 		dma_cap_mask_t mask;
+-#define ADXL345_CHANNEL(reg, axis) {					\
++#define ADXL345_CHANNEL(index, axis) {					\
+ 	.type = IIO_ACCEL,						\
+ 	.modified = 1,							\
+ 	.channel2 = IIO_MOD_##axis,					\
+-	.address = reg,							\
++	.address = index,						\
+ 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),			\
+ 	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),		\
+ }
  
- 		dma_cap_zero(mask);
+ static const struct iio_chan_spec adxl345_channels[] = {
+-	ADXL345_CHANNEL(ADXL345_REG_DATAX0, X),
+-	ADXL345_CHANNEL(ADXL345_REG_DATAY0, Y),
+-	ADXL345_CHANNEL(ADXL345_REG_DATAZ0, Z),
++	ADXL345_CHANNEL(0, X),
++	ADXL345_CHANNEL(1, Y),
++	ADXL345_CHANNEL(2, Z),
+ };
+ 
+ static int adxl345_read_raw(struct iio_dev *indio_dev,
+@@ -67,7 +69,7 @@ static int adxl345_read_raw(struct iio_d
+ 			    int *val, int *val2, long mask)
+ {
+ 	struct adxl345_data *data = iio_priv(indio_dev);
+-	__le16 regval;
++	__le16 accel;
+ 	int ret;
+ 
+ 	switch (mask) {
+@@ -77,12 +79,13 @@ static int adxl345_read_raw(struct iio_d
+ 		 * ADXL345_REG_DATA(X0/Y0/Z0) contain the least significant byte
+ 		 * and ADXL345_REG_DATA(X0/Y0/Z0) + 1 the most significant byte
+ 		 */
+-		ret = regmap_bulk_read(data->regmap, chan->address, &regval,
+-				       sizeof(regval));
++		ret = regmap_bulk_read(data->regmap,
++				       ADXL345_REG_DATA_AXIS(chan->address),
++				       &accel, sizeof(accel));
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		*val = sign_extend32(le16_to_cpu(regval), 12);
++		*val = sign_extend32(le16_to_cpu(accel), 12);
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val = 0;
 
 
