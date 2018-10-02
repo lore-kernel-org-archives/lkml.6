@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1559EC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5244FC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF57B206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF57B206B2
+	by mail.kernel.org (Postfix) with ESMTP id 19271206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19271206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729102AbeJBULd (ORCPT
+        id S1729129AbeJBULf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60758 "EHLO
+        Tue, 2 Oct 2018 16:11:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60806 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729045AbeJBULc (ORCPT
+        with ESMTP id S1729045AbeJBULe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:32 -0400
+        Tue, 2 Oct 2018 16:11:34 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 22725266;
-        Tue,  2 Oct 2018 13:28:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 518C0BF0;
+        Tue,  2 Oct 2018 13:28:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Tim Bird <tbird20d@gmail.com>,
+        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 096/228] Documentation/process: fix reST table border error
-Date:   Tue,  2 Oct 2018 06:23:13 -0700
-Message-Id: <20181002132505.868057678@linuxfoundation.org>
+Subject: [PATCH 4.18 098/228] arm: dts: mediatek: Add missing cooling device properties for CPUs
+Date:   Tue,  2 Oct 2018 06:23:15 -0700
+Message-Id: <20181002132506.002267713@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,37 +52,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-[ Upstream commit cccd289f12d0e827070c847b1ff96ba02eb20eaf ]
+[ Upstream commit 0c7f7a5150023f3c6f0b27c4d4940ce3dfaf62cc ]
 
-Fix reST error in Documentation/process/:
+The cooling device properties, like "#cooling-cells" and
+"dynamic-power-coefficient", should either be present for all the CPUs
+of a cluster or none. If these are present only for a subset of CPUs of
+a cluster then things will start falling apart as soon as the CPUs are
+brought online in a different order. For example, this will happen
+because the operating system looks for such properties in the CPU node
+it is trying to bring up, so that it can register a cooling device.
 
-Documentation/process/2.Process.rst:131: ERROR: Malformed table.
-Bottom/header table border does not match top border.
+Add such missing properties.
 
-Fixes: 8962e40c1993 ("docs: update kernel versions and dates in tables")
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Tim Bird <tbird20d@gmail.com>
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/process/2.Process.rst |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/mt7623.dtsi |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/Documentation/process/2.Process.rst
-+++ b/Documentation/process/2.Process.rst
-@@ -134,7 +134,7 @@ and their maintainers are:
- 	4.4	Greg Kroah-Hartman	(very long-term stable kernel)
- 	4.9	Greg Kroah-Hartman
- 	4.14	Greg Kroah-Hartman
--	======  ======================  ===========================
-+	======  ======================  ==============================
+--- a/arch/arm/boot/dts/mt7623.dtsi
++++ b/arch/arm/boot/dts/mt7623.dtsi
+@@ -92,6 +92,7 @@
+ 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 			clock-names = "cpu", "intermediate";
+ 			operating-points-v2 = <&cpu_opp_table>;
++			#cooling-cells = <2>;
+ 			clock-frequency = <1300000000>;
+ 		};
  
- The selection of a kernel for long-term support is purely a matter of a
- maintainer having the need and the time to maintain that release.  There
+@@ -103,6 +104,7 @@
+ 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 			clock-names = "cpu", "intermediate";
+ 			operating-points-v2 = <&cpu_opp_table>;
++			#cooling-cells = <2>;
+ 			clock-frequency = <1300000000>;
+ 		};
+ 
+@@ -114,6 +116,7 @@
+ 				 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 			clock-names = "cpu", "intermediate";
+ 			operating-points-v2 = <&cpu_opp_table>;
++			#cooling-cells = <2>;
+ 			clock-frequency = <1300000000>;
+ 		};
+ 	};
 
 
