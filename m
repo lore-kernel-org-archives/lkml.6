@@ -2,95 +2,128 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B6AC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A569AC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2DF420878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:56:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Btbir0HX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2DF420878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 65BC020878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:57:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65BC020878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbeJBQiu (ORCPT
+        id S1727510AbeJBQj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 12:38:50 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37682 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbeJBQiu (ORCPT
+        Tue, 2 Oct 2018 12:39:28 -0400
+Received: from gateway24.websitewelcome.com ([192.185.50.252]:19369 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726233AbeJBQj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 12:38:50 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u12-v6so1460153wrr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 02:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7TGMIP6D8qonLFU4s8mZ+OFcMF75sJhMqhDZ38/NaSE=;
-        b=Btbir0HXNzmwH2w6MWoiuvPIKNys8rVLQpz9FOZ096BwrgNEbkFOTsxzNjDtqyFPIb
-         s7S8jWSJqhlRrQKwI+hca+VBQfOwd7S3tezxUHIMs3jy8/P/CAwKo3fKAXfi53B88EWJ
-         a9/kxUaojG462ppxtt8Q8P6b83I9klbnn33Pc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7TGMIP6D8qonLFU4s8mZ+OFcMF75sJhMqhDZ38/NaSE=;
-        b=cd47kUxshbdNVzH+ZnDRtrgvSoG9x8APZhXPX5B/BKs1UMdEJ4ds8CJNcOqdGPrPp1
-         QQkzoGY/GC6lX6hYZObsDmbKDYFm/N4oVzReSRF7o4j3u6CLaEyjkmUFjDexyKYNjuvs
-         UEDa0xK44QgzF/731y8IYYV7yoCqUBaiBDGQblFQJaiKN1W3Ox0OxB/C/E0LjqAUt1M7
-         D0nZSZa6SH1tF9CGxE2rnTWIj7oq3OQcEgSrhamUKr5Gx51IJwBACP7yNFtFs5IyRFHs
-         QlueJgCLPDNR6gvRhF6GRUmodR1/0oh6/OFtOY9kSsNfxvf2cXLkQ8DUEyOLl8TzAErc
-         rplA==
-X-Gm-Message-State: ABuFfoiHvWn16Z+fuVUjOycfFAVjAK83bZCw89cg1wtB/WnkhvZAYCbO
-        6BTOIpjyJmbb9UGjmc8hID53UA==
-X-Google-Smtp-Source: ACcGV60EDkFrHmVrs9ZZfXdi/Bk5UiKxflMvQDCjafc5CuFTq/1ZDEzbYydOJcp/+2xTqJv8Au+dwg==
-X-Received: by 2002:adf:b30f:: with SMTP id j15-v6mr10432224wrd.207.1538474182836;
-        Tue, 02 Oct 2018 02:56:22 -0700 (PDT)
-Received: from [192.168.0.19] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id o3-v6sm2581477wrw.93.2018.10.02.02.56.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 02:56:22 -0700 (PDT)
-Subject: Re: linux-next: build warning after merge of the char-misc tree
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-next@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20181002191236.0aa50539@canb.auug.org.au>
- <CAMRc=Mf64AMBiMwBTCYeG18txVqbdvkQA35ZyZuRtwOCe70RpA@mail.gmail.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <dabf8577-418c-65bf-03b5-89f0236bc53e@linaro.org>
-Date:   Tue, 2 Oct 2018 10:56:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 2 Oct 2018 12:39:28 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 62B272D1F5
+        for <linux-kernel@vger.kernel.org>; Tue,  2 Oct 2018 04:57:01 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 7HPzgIKcXaSey7HQCgftgr; Tue, 02 Oct 2018 04:57:00 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:47740 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g7HPz-000WhA-2i; Tue, 02 Oct 2018 04:56:39 -0500
+Date:   Tue, 2 Oct 2018 11:56:36 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ALSA: sb8: Fix fall-through annotations
+Message-ID: <20181002095636.GA29253@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=Mf64AMBiMwBTCYeG18txVqbdvkQA35ZyZuRtwOCe70RpA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g7HPz-000WhA-2i
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:47740
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Replace "fallthru" with a proper "fall through" annotation.
 
+This fix is part of the ongoing efforts to enabling
+-Wimplicit-fallthrough
 
-On 02/10/18 10:49, Bartosz Golaszewski wrote:
-> this looks like a false positive - this routine is used in
-> ./drivers/nvmem/core.c at line 943 in this revision.
-> 
-Note that the caller is under
-  #if IS_ENABLED(CONFIG_OF)
-so this warning!
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ sound/isa/sb/sb8_main.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/sound/isa/sb/sb8_main.c b/sound/isa/sb/sb8_main.c
+index 4817977..8288fae 100644
+--- a/sound/isa/sb/sb8_main.c
++++ b/sound/isa/sb/sb8_main.c
+@@ -130,13 +130,13 @@ static int snd_sb8_playback_prepare(struct snd_pcm_substream *substream)
+ 			chip->playback_format = SB_DSP_HI_OUTPUT_AUTO;
+ 			break;
+ 		}
+-		/* fallthru */
++		/* fall through */
+ 	case SB_HW_201:
+ 		if (rate > 23000) {
+ 			chip->playback_format = SB_DSP_HI_OUTPUT_AUTO;
+ 			break;
+ 		}
+-		/* fallthru */
++		/* fall through */
+ 	case SB_HW_20:
+ 		chip->playback_format = SB_DSP_LO_OUTPUT_AUTO;
+ 		break;
+@@ -287,7 +287,7 @@ static int snd_sb8_capture_prepare(struct snd_pcm_substream *substream)
+ 			chip->capture_format = SB_DSP_HI_INPUT_AUTO;
+ 			break;
+ 		}
+-		/* fallthru */
++		/* fall through */
+ 	case SB_HW_20:
+ 		chip->capture_format = SB_DSP_LO_INPUT_AUTO;
+ 		break;
+@@ -387,7 +387,7 @@ irqreturn_t snd_sb8dsp_interrupt(struct snd_sb *chip)
+ 	case SB_MODE_PLAYBACK_16:	/* ok.. playback is active */
+ 		if (chip->hardware != SB_HW_JAZZ16)
+ 			break;
+-		/* fallthru */
++		/* fall through */
+ 	case SB_MODE_PLAYBACK_8:
+ 		substream = chip->playback_substream;
+ 		if (chip->playback_format == SB_DSP_OUTPUT)
+@@ -397,7 +397,7 @@ irqreturn_t snd_sb8dsp_interrupt(struct snd_sb *chip)
+ 	case SB_MODE_CAPTURE_16:
+ 		if (chip->hardware != SB_HW_JAZZ16)
+ 			break;
+-		/* fallthru */
++		/* fall through */
+ 	case SB_MODE_CAPTURE_8:
+ 		substream = chip->capture_substream;
+ 		if (chip->capture_format == SB_DSP_INPUT)
+-- 
+2.7.4
 
---srini
-
-> Best regards,
