@@ -6,37 +6,42 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C13EFC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E16C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91269206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91269206B2
+	by mail.kernel.org (Postfix) with ESMTP id 4F1A8206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F1A8206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731981AbeJBURK (ORCPT
+        id S1732023AbeJBURP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:17:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35046 "EHLO
+        Tue, 2 Oct 2018 16:17:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35068 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731957AbeJBURK (ORCPT
+        with ESMTP id S1730898AbeJBURM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:10 -0400
+        Tue, 2 Oct 2018 16:17:12 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5FD6B2F;
-        Tue,  2 Oct 2018 13:33:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E368BF0;
+        Tue,  2 Oct 2018 13:33:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 056/137] ALSA: hda: Add AZX_DCAPS_PM_RUNTIME for AMD Raven Ridge
-Date:   Tue,  2 Oct 2018 06:24:17 -0700
-Message-Id: <20181002132502.429931672@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Feng Tang <feng.tang@intel.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        H Peter Anvin <hpa@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andy Lutomirsky <luto@kernel.org>
+Subject: [PATCH 4.14 084/137] x86/mm: Expand static page table for fixmap space
+Date:   Tue,  2 Oct 2018 06:24:45 -0700
+Message-Id: <20181002132504.395084865@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -54,33 +59,181 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Feng Tang <feng.tang@intel.com>
 
-[ Upstream commit 1adca4b0cd65c14cb8b8c9c257720385869c3d5f ]
+commit 05ab1d8a4b36ee912b7087c6da127439ed0a903e upstream.
 
-This patch can make audio controller in AMD Raven Ridge gets runtime
-suspended to D3, to save ~1W power when it's not in use.
+We met a kernel panic when enabling earlycon, which is due to the fixmap
+address of earlycon is not statically setup.
 
-Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Currently the static fixmap setup in head_64.S only covers 2M virtual
+address space, while it actually could be in 4M space with different
+kernel configurations, e.g. when VSYSCALL emulation is disabled.
+
+So increase the static space to 4M for now by defining FIXMAP_PMD_NUM to 2,
+and add a build time check to ensure that the fixmap is covered by the
+initial static page tables.
+
+Fixes: 1ad83c858c7d ("x86_64,vsyscall: Make vsyscall emulation configurable")
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: kernel test robot <rong.a.chen@intel.com>
+Reviewed-by: Juergen Gross <jgross@suse.com> (Xen parts)
+Cc: H Peter Anvin <hpa@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Yinghai Lu <yinghai@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Andy Lutomirsky <luto@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180920025828.23699-1-feng.tang@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- sound/pci/hda/hda_intel.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -2510,7 +2510,8 @@ static const struct pci_device_id azx_id
- 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
- 	/* AMD Raven */
- 	{ PCI_DEVICE(0x1022, 0x15e3),
--	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
-+	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
-+			 AZX_DCAPS_PM_RUNTIME },
- 	/* ATI HDMI */
- 	{ PCI_DEVICE(0x1002, 0x0002),
- 	  .driver_data = AZX_DRIVER_ATIHDMI_NS | AZX_DCAPS_PRESET_ATI_HDMI_NS },
+---
+ arch/x86/include/asm/fixmap.h     |   10 ++++++++++
+ arch/x86/include/asm/pgtable_64.h |    3 ++-
+ arch/x86/kernel/head64.c          |    4 +++-
+ arch/x86/kernel/head_64.S         |   16 ++++++++++++----
+ arch/x86/mm/pgtable.c             |    9 +++++++++
+ arch/x86/xen/mmu_pv.c             |    8 ++++++--
+ 6 files changed, 42 insertions(+), 8 deletions(-)
+
+--- a/arch/x86/include/asm/fixmap.h
++++ b/arch/x86/include/asm/fixmap.h
+@@ -14,6 +14,16 @@
+ #ifndef _ASM_X86_FIXMAP_H
+ #define _ASM_X86_FIXMAP_H
+ 
++/*
++ * Exposed to assembly code for setting up initial page tables. Cannot be
++ * calculated in assembly code (fixmap entries are an enum), but is sanity
++ * checked in the actual fixmap C code to make sure that the fixmap is
++ * covered fully.
++ */
++#define FIXMAP_PMD_NUM	2
++/* fixmap starts downwards from the 507th entry in level2_fixmap_pgt */
++#define FIXMAP_PMD_TOP	507
++
+ #ifndef __ASSEMBLY__
+ #include <linux/kernel.h>
+ #include <asm/acpi.h>
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -14,6 +14,7 @@
+ #include <asm/processor.h>
+ #include <linux/bitops.h>
+ #include <linux/threads.h>
++#include <asm/fixmap.h>
+ 
+ extern p4d_t level4_kernel_pgt[512];
+ extern p4d_t level4_ident_pgt[512];
+@@ -22,7 +23,7 @@ extern pud_t level3_ident_pgt[512];
+ extern pmd_t level2_kernel_pgt[512];
+ extern pmd_t level2_fixmap_pgt[512];
+ extern pmd_t level2_ident_pgt[512];
+-extern pte_t level1_fixmap_pgt[512];
++extern pte_t level1_fixmap_pgt[512 * FIXMAP_PMD_NUM];
+ extern pgd_t init_top_pgt[];
+ 
+ #define swapper_pg_dir init_top_pgt
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -31,6 +31,7 @@
+ #include <asm/bootparam_utils.h>
+ #include <asm/microcode.h>
+ #include <asm/kasan.h>
++#include <asm/fixmap.h>
+ 
+ /*
+  * Manage page tables very early on.
+@@ -93,7 +94,8 @@ unsigned long __head __startup_64(unsign
+ 	pud[511] += load_delta;
+ 
+ 	pmd = fixup_pointer(level2_fixmap_pgt, physaddr);
+-	pmd[506] += load_delta;
++	for (i = FIXMAP_PMD_TOP; i > FIXMAP_PMD_TOP - FIXMAP_PMD_NUM; i--)
++		pmd[i] += load_delta;
+ 
+ 	/*
+ 	 * Set up the identity mapping for the switchover.  These
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -24,6 +24,7 @@
+ #include "../entry/calling.h"
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
++#include <asm/fixmap.h>
+ 
+ #ifdef CONFIG_PARAVIRT
+ #include <asm/asm-offsets.h>
+@@ -438,13 +439,20 @@ NEXT_PAGE(level2_kernel_pgt)
+ 		KERNEL_IMAGE_SIZE/PMD_SIZE)
+ 
+ NEXT_PAGE(level2_fixmap_pgt)
+-	.fill	506,8,0
+-	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+-	/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
+-	.fill	5,8,0
++	.fill	(512 - 4 - FIXMAP_PMD_NUM),8,0
++	pgtno = 0
++	.rept (FIXMAP_PMD_NUM)
++	.quad level1_fixmap_pgt + (pgtno << PAGE_SHIFT) - __START_KERNEL_map \
++		+ _PAGE_TABLE_NOENC;
++	pgtno = pgtno + 1
++	.endr
++	/* 6 MB reserved space + a 2MB hole */
++	.fill	4,8,0
+ 
+ NEXT_PAGE(level1_fixmap_pgt)
++	.rept (FIXMAP_PMD_NUM)
+ 	.fill	512,8,0
++	.endr
+ 
+ #undef PMDS
+ 
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -573,6 +573,15 @@ void __native_set_fixmap(enum fixed_addr
+ {
+ 	unsigned long address = __fix_to_virt(idx);
+ 
++#ifdef CONFIG_X86_64
++       /*
++	* Ensure that the static initial page tables are covering the
++	* fixmap completely.
++	*/
++	BUILD_BUG_ON(__end_of_permanent_fixed_addresses >
++		     (FIXMAP_PMD_NUM * PTRS_PER_PTE));
++#endif
++
+ 	if (idx >= __end_of_fixed_addresses) {
+ 		BUG();
+ 		return;
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -1879,7 +1879,7 @@ void __init xen_setup_kernel_pagetable(p
+ 	/* L3_k[511] -> level2_fixmap_pgt */
+ 	convert_pfn_mfn(level3_kernel_pgt);
+ 
+-	/* L3_k[511][506] -> level1_fixmap_pgt */
++	/* L3_k[511][508-FIXMAP_PMD_NUM ... 507] -> level1_fixmap_pgt */
+ 	convert_pfn_mfn(level2_fixmap_pgt);
+ 
+ 	/* We get [511][511] and have Xen's version of level2_kernel_pgt */
+@@ -1924,7 +1924,11 @@ void __init xen_setup_kernel_pagetable(p
+ 	set_page_prot(level2_ident_pgt, PAGE_KERNEL_RO);
+ 	set_page_prot(level2_kernel_pgt, PAGE_KERNEL_RO);
+ 	set_page_prot(level2_fixmap_pgt, PAGE_KERNEL_RO);
+-	set_page_prot(level1_fixmap_pgt, PAGE_KERNEL_RO);
++
++	for (i = 0; i < FIXMAP_PMD_NUM; i++) {
++		set_page_prot(level1_fixmap_pgt + i * PTRS_PER_PTE,
++			      PAGE_KERNEL_RO);
++	}
+ 
+ 	/* Pin down new L4 */
+ 	pin_pagetable_pfn(MMUEXT_PIN_L4_TABLE,
 
 
