@@ -2,135 +2,102 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4936BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E1CC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB202089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:12:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AF99208E7
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:13:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g/5+TE8q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FB202089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZIG2Dxaz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF99208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbeJBT4N (ORCPT
+        id S1728157AbeJBT4P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 15:56:13 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39417 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728025AbeJBT4K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 15:56:10 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 61-v6so1428748wrb.6
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 06:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=M+fzLalqRaXGFiw1By6nH8QQrYEhVoORFRhjy/6ZtCk=;
-        b=g/5+TE8qrM0S966GF0ehpYeatmN6rBIDeIbCUA440M2nraTgJHSOOqRefWma3H2QFk
-         db/TLUMgW+3DdtgV6yDyHfsewvdoZ7XQ0S1jqS57d41YAflXkP1pp9HlkbzYwNkS0JIY
-         pRVdhsSySSV0TihlxSpRvVQSVaJywiekWjskRHndBNzF7BevnT1qmGTO4DaIhzYUXxry
-         LRsUaYPgQ3TIeOamcd3WNyixCIR5UKwYktsOiGG1HrBcYgd/3s9nCOH/IZLWx8A6pH7v
-         c1a8+L2HtBSCHGIVd4jnex5QRuAgpohMaN8a5DeTpNqK4l46AuDUGWCyxe5giES9UqQY
-         RTdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=M+fzLalqRaXGFiw1By6nH8QQrYEhVoORFRhjy/6ZtCk=;
-        b=fGSZr+nMaygE4waBNHGRu4oR63bplQr5GMR2mo0nhY4flBgygBaaGACGCkKoR6uwGx
-         sz7VrRMsqu1fe0O0OLnN/qEfpYaLUDI/EPMAB/3hJ8LoqSxTRLfJAIVxcPNKO/vpaCcJ
-         /vDToF5mMNXhZRsH/grdUJ5JzZTKp0ecucd9kQQ6yx1M4p/LnNoXUGBS6N8giBGeGWXR
-         rhqqBQoVX+LV3mz6YaBHAfMBR4G99kuNV4WDVdAAwrxe2bpYVSNUMY3xLkRn6qWfLPwB
-         0AgxOnY508s6HRE8Hnt2yEVb3ekypMf8wnsQUFm3vVt4CtUizq7vTl+UE5HqwF3KRyB/
-         BVXA==
-X-Gm-Message-State: ABuFfoiboO3WTgjJypoRCK2NlB2t98G/ezS7mPyVYGHDDkOepz485iOU
-        YpqNtshwyohDw+1jmpMyVFRkxg==
-X-Google-Smtp-Source: ACcGV634rYLGlFVKrv5iDfl8Icy0xrHVGOhV9Puza2K4wNp0CAyWdiFG3gBDc0/36ZWC9rHQ4ru4hQ==
-X-Received: by 2002:adf:8022:: with SMTP id 31-v6mr8356555wrk.16.1538485971887;
-        Tue, 02 Oct 2018 06:12:51 -0700 (PDT)
-Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id v10-v6sm17458681wrp.0.2018.10.02.06.12.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 06:12:50 -0700 (PDT)
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v7 4/8] mm, arm64: untag user addresses in mm/gup.c
-Date:   Tue,  2 Oct 2018 15:12:39 +0200
-Message-Id: <405ee9e84a83178e762d8bac97dd1b36ea09074e.1538485901.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-In-Reply-To: <cover.1538485901.git.andreyknvl@google.com>
-References: <cover.1538485901.git.andreyknvl@google.com>
+        Tue, 2 Oct 2018 15:56:15 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:41231 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727942AbeJBT4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 15:56:14 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 25529fb5
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 2 Oct 2018 13:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=vT+JTrUh6OPyKGbRNk5Vn6qy0oc=; b=ZIG2Dx
+        azw+zSsM5nFc7qoOzzLDqWFsPrid+zy5TWYXbcNOP4E1frEU++3P86Bb79pRe35D
+        7fzI2h+IufKjsZDH14MlJm3XNMnCIJrTw7ngQtUyVk4YkMoKQ3FEt0iaTJUbDsq8
+        SvhBV3hB6ue0bs2+tmOCfuq4jgJdNDRM0BSvYXqboV0zMJvRZWXVkso9rNbWLNnn
+        3ilnXHR5ope/rh1TgmR82Wru3x6ig10h55plu9aU/+N3ZNxBne3opdBvK1QnNiGR
+        JpQ0yH5+OF+s9B8aD2MoJB1lePGsF+RdNaLLtASGw5Gcw8qU04+C3RyhI5hMtU4D
+        /GPP8/aW8QP4I30Q==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 8154a10e (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO)
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 2 Oct 2018 13:12:53 +0000 (UTC)
+Received: by mail-oi1-f174.google.com with SMTP id w81-v6so1421586oiw.9
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 06:12:56 -0700 (PDT)
+X-Gm-Message-State: ABuFfoh6pRGx7VhEu7EGLYxcYBD4iXsmBFeRYfM7Zs1B4GAWNFIgL6yR
+        rap2ycNPXj7DMDaIb4WzvHl2VQ9uYGLbnyZhNkQ=
+X-Google-Smtp-Source: ACcGV61CjYCJVFsFzdPPjvQocThWrJArH6yvr4S4/D9K62Q9bE6PImKouxCnDi77QxAr4eiw0ZVR86NDTCh2NZ2TLtQ=
+X-Received: by 2002:aca:df42:: with SMTP id w63-v6mr7088049oig.295.1538485975809;
+ Tue, 02 Oct 2018 06:12:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180930024904.14240-1-Jason@zx2c4.com> <CAK8P3a0grG5OBjwpTeH0fqzoFFBLDH6-oGM4ibzHypUKWedg3A@mail.gmail.com>
+ <CAHmME9rVbKCNJfVBEene0SvhBEm_g7N-XJ26ugoAab1Vj7G_ww@mail.gmail.com>
+ <CAK8P3a3TE8HW0wD9ETCDWMf7quDRx94-2iS6goYDQ18JQ6r=rw@mail.gmail.com>
+ <CAHmME9pFnuRx2F=xeyK8d3bwv3bJY+WvE1KZn__+2oFWS0RCnA@mail.gmail.com> <CAKv+Gu8NXyfNAzk4Fe=J0QHEEV-txbRAoEcQmjG-6PgCyW5SZg@mail.gmail.com>
+In-Reply-To: <CAKv+Gu8NXyfNAzk4Fe=J0QHEEV-txbRAoEcQmjG-6PgCyW5SZg@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Tue, 2 Oct 2018 15:12:44 +0200
+X-Gmail-Original-Message-ID: <CAHmME9oz2hFRjFeNSDLe59_pYn3HqB+5rWM5KsH7G_bUWaoy7Q@mail.gmail.com>
+Message-ID: <CAHmME9oz2hFRjFeNSDLe59_pYn3HqB+5rWM5KsH7G_bUWaoy7Q@mail.gmail.com>
+Subject: Re: [PATCH] ARM: makefile: pass -march=armv4 to assembler even on CPU32v3
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>, arm@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mm/gup.c provides a kernel interface that accepts user addresses and
-manipulates user pages directly (for example get_user_pages, that is used
-by the futex syscall). Since a user can provided tagged addresses, we need
-to handle such case.
+Hey Ard,
 
-Add untagging to gup.c functions that use user addresses for vma lookup.
+On Tue, Oct 2, 2018 at 3:10 PM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>
+> It builds but it doesn't run, at least not when built into the kernel
+> proper (which will be the case after random.c moves to this library)
+>
+> Your toolchain is implicitly passing --fix-v4bx to the assembler,
+> which causes it to permit bx instructions in ARMv4 object code, but
+> tag them with special R_ARM_V4BX ELF relocations. The ARM module
+> loader does take these into account, so built as a module, it works.
+> However, when built into the core kernel, we have to rely on the
+> linker to patch this instruction into the ARMv4 equivalent, and a
+> quick check reveals that that is currently not the case.
+>
+> Bottom line: let's not go there.
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- mm/gup.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Oh, thanks a bunch for explaining that. Since I wrote the last email
+I've been playing around with as, readelf, and qemu and was slightly
+mystified.
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 1abc8b4afff6..6f09132c654e 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -666,6 +666,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 	if (!nr_pages)
- 		return 0;
- 
-+	start = untagged_addr(start);
-+
- 	VM_BUG_ON(!!pages != !!(gup_flags & FOLL_GET));
- 
- 	/*
-@@ -820,6 +822,8 @@ int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
- 	struct vm_area_struct *vma;
- 	vm_fault_t ret, major = 0;
- 
-+	address = untagged_addr(address);
-+
- 	if (unlocked)
- 		fault_flags |= FAULT_FLAG_ALLOW_RETRY;
- 
--- 
-2.19.0.605.g01d371f741-goog
+>
+> > But anyway,
+> > I'll go with your primary suggestion and we therefore can move ahead
+> > with changing the global cflag to march=armv3m. Would you like me to
+> > submit the patch for this, or would yo like to handle it?
+> >
+>
+> Yes please go ahead.
 
+Alright, incoming in a few minutes.
+
+Jason
