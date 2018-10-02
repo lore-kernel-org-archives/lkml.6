@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1588C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EF2C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77BFD2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77BFD2089A
+	by mail.kernel.org (Postfix) with ESMTP id CE5D7206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE5D7206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730318AbeJBUNb (ORCPT
+        id S1730333AbeJBUNe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:13:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33378 "EHLO
+        Tue, 2 Oct 2018 16:13:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33390 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729073AbeJBUNb (ORCPT
+        with ESMTP id S1728142AbeJBUNd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:13:31 -0400
+        Tue, 2 Oct 2018 16:13:33 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E9F6BF0;
-        Tue,  2 Oct 2018 13:30:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91398C2A;
+        Tue,  2 Oct 2018 13:30:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, Bryan Gurney <bgurney@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>, Jan Kara <jack@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 176/228] thermal: of-thermal: disable passive polling when thermal zone is disabled
-Date:   Tue,  2 Oct 2018 06:24:33 -0700
-Message-Id: <20181002132510.482158791@linuxfoundation.org>
+Subject: [PATCH 4.18 177/228] isofs: reject hardware sector size > 2048 bytes
+Date:   Tue,  2 Oct 2018 06:24:34 -0700
+Message-Id: <20181002132510.520281976@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,43 +52,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Eric Sandeen <sandeen@redhat.com>
 
-[ Upstream commit 152395fd03d4ce1e535a75cdbf58105e50587611 ]
+[ Upstream commit 09a4e0be5826aa66c4ce9954841f110ffe63ef4f ]
 
-When thermal zone is in passive mode, disabling its mode from
-sysfs is NOT taking effect at all, it is still polling the
-temperature of the disabled thermal zone and handling all thermal
-trips, it makes user confused. The disabling operation should
-disable the thermal zone behavior completely, for both active and
-passive mode, this patch clears the passive_delay when thermal
-zone is disabled and restores it when it is enabled.
+The largest block size supported by isofs is ISOFS_BLOCK_SIZE (2048), but
+isofs_fill_super calls sb_min_blocksize and sets the blocksize to the
+device's logical block size if it's larger than what we ended up with after
+option parsing.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+If for some reason we try to mount a hard 4k device as an isofs filesystem,
+we'll set opt.blocksize to 4096, and when we try to read the superblock
+we found via:
+
+        block = iso_blknum << (ISOFS_BLOCK_BITS - s->s_blocksize_bits)
+
+with s_blocksize_bits greater than ISOFS_BLOCK_BITS, we'll have a negative
+shift and the bread will fail somewhat cryptically:
+
+  isofs_fill_super: bread failed, dev=sda, iso_blknum=17, block=-2147483648
+
+It seems best to just catch and clearly reject mounts of such a device.
+
+Reported-by: Bryan Gurney <bgurney@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/thermal/of-thermal.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/isofs/inode.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/thermal/of-thermal.c
-+++ b/drivers/thermal/of-thermal.c
-@@ -260,10 +260,13 @@ static int of_thermal_set_mode(struct th
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -24,6 +24,7 @@
+ #include <linux/mpage.h>
+ #include <linux/user_namespace.h>
+ #include <linux/seq_file.h>
++#include <linux/blkdev.h>
  
- 	mutex_lock(&tz->lock);
- 
--	if (mode == THERMAL_DEVICE_ENABLED)
-+	if (mode == THERMAL_DEVICE_ENABLED) {
- 		tz->polling_delay = data->polling_delay;
--	else
-+		tz->passive_delay = data->passive_delay;
-+	} else {
- 		tz->polling_delay = 0;
-+		tz->passive_delay = 0;
+ #include "isofs.h"
+ #include "zisofs.h"
+@@ -653,6 +654,12 @@ static int isofs_fill_super(struct super
+ 	/*
+ 	 * What if bugger tells us to go beyond page size?
+ 	 */
++	if (bdev_logical_block_size(s->s_bdev) > 2048) {
++		printk(KERN_WARNING
++		       "ISOFS: unsupported/invalid hardware sector size %d\n",
++			bdev_logical_block_size(s->s_bdev));
++		goto out_freesbi;
 +	}
+ 	opt.blocksize = sb_min_blocksize(s, opt.blocksize);
  
- 	mutex_unlock(&tz->lock);
- 
+ 	sbi->s_high_sierra = 0; /* default is iso9660 */
 
 
