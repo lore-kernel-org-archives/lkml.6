@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A05CDC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4199DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64B442089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:10:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64B442089A
+	by mail.kernel.org (Postfix) with ESMTP id 0B07A2064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:10:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B07A2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729677AbeJBUxu (ORCPT
+        id S1728855AbeJBULN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:53:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60566 "EHLO
+        Tue, 2 Oct 2018 16:11:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60544 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727584AbeJBULO (ORCPT
+        with ESMTP id S1728822AbeJBULL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:14 -0400
+        Tue, 2 Oct 2018 16:11:11 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37F12266;
-        Tue,  2 Oct 2018 13:27:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF1A6C2A;
+        Tue,  2 Oct 2018 13:27:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh@kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 077/228] serial: pxa: Fix an error handling path in serial_pxa_probe()
-Date:   Tue,  2 Oct 2018 06:22:54 -0700
-Message-Id: <20181002132504.550075042@linuxfoundation.org>
+Subject: [PATCH 4.18 076/228] arm64: dts: renesas: salvator-common: Fix adv7482 decimal unit addresses
+Date:   Tue,  2 Oct 2018 06:22:53 -0700
+Message-Id: <20181002132504.468579403@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,33 +55,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 95a0e656580fab3128c7bee5f660c50784f53651 ]
+[ Upstream commit c5a884838ce34681200b5a45b2330177036affd0 ]
 
-If port.line is out of range, we still need to release some resources, or
-we will leak them.
+With recent dtc and W=1:
 
-Fixes: afc7851fab83 ("serial: pxa: Fix out-of-bounds access through serial port index")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    ...salvator-x.dtb: Warning (graph_port): /soc/i2c@e66d8000/video-receiver@70/port@10: graph node unit address error, expected "a"
+    ...salvator-x.dtb: Warning (graph_port): /soc/i2c@e66d8000/video-receiver@70/port@11: graph node unit address error, expected "b"
+
+Unit addresses are always hexadecimal (without prefix), while the bases
+of reg property values depend on their prefixes.
+
+Fixes: 908001d778eba06e ("arm64: dts: renesas: salvator-common: Add ADV7482 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/pxa.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/serial/pxa.c
-+++ b/drivers/tty/serial/pxa.c
-@@ -887,7 +887,8 @@ static int serial_pxa_probe(struct platf
- 		goto err_clk;
- 	if (sport->port.line >= ARRAY_SIZE(serial_pxa_ports)) {
- 		dev_err(&dev->dev, "serial%d out of range\n", sport->port.line);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto err_clk;
- 	}
- 	snprintf(sport->name, PXA_NAME_LEN - 1, "UART%d", sport->port.line + 1);
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -440,7 +440,7 @@
+ 			};
+ 		};
  
+-		port@10 {
++		port@a {
+ 			reg = <10>;
+ 
+ 			adv7482_txa: endpoint {
+@@ -450,7 +450,7 @@
+ 			};
+ 		};
+ 
+-		port@11 {
++		port@b {
+ 			reg = <11>;
+ 
+ 			adv7482_txb: endpoint {
 
 
