@@ -6,34 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38004C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E8EC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDADC2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDADC2083F
+	by mail.kernel.org (Postfix) with ESMTP id 139D42083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139D42083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbeJBUKZ (ORCPT
+        id S1728151AbeJBUK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60084 "EHLO
+        Tue, 2 Oct 2018 16:10:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60094 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbeJBUKY (ORCPT
+        with ESMTP id S1728078AbeJBUKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:24 -0400
+        Tue, 2 Oct 2018 16:10:25 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA52B266;
-        Tue,  2 Oct 2018 13:27:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB94FB2F;
+        Tue,  2 Oct 2018 13:27:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Gavin Schenk <g.schenk@eckelmann.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 005/228] vmci: type promotion bug in qp_host_get_user_memory()
-Date:   Tue,  2 Oct 2018 06:21:42 -0700
-Message-Id: <20181002132459.403487762@linuxfoundation.org>
+Subject: [PATCH 4.18 006/228] siox: dont create a thread without starting it
+Date:   Tue,  2 Oct 2018 06:21:43 -0700
+Message-Id: <20181002132459.478244587@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,42 +55,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-[ Upstream commit 7fb2fd4e25fc1fb10dcb30b5519de257cfeae84c ]
+[ Upstream commit e890591413819eeb604207ad3261ba617b2ec0bb ]
 
-The problem is that if get_user_pages_fast() fails and returns a
-negative error code, it gets type promoted to a high positive value and
-treated as a success.
+When a siox master device is registered a kthread is created that is
+only started when triggered by userspace. So this thread might be in
+TASK_UNINTERRUPTIBLE state for long and trigger a warning
 
-Fixes: 06164d2b72aa ("VMCI: queue pairs implementation.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+	[  241.130465] INFO: task siox-0:626 blocked for more than 120 seconds.
+
+with the respective debug settings enabled. It might be right to put an
+unstarted thread to TASK_IDLE (in kernel/kthread.c:kthread()) instead,
+but independant of this discussion it is cleaner for
+siox_master_register() to start the thread immediately. The effect is
+that it enters its own waiting state and then stays in state TASK_IDLE
+which doesn't trigger the above warning.
+
+As siox_poll_thread() uses some variables of the device the
+initialisation of these is moved before thread creation.
+
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Acked-by: Gavin Schenk <g.schenk@eckelmann.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/vmw_vmci/vmci_queue_pair.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/siox/siox-core.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
-+++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-@@ -668,7 +668,7 @@ static int qp_host_get_user_memory(u64 p
- 	retval = get_user_pages_fast((uintptr_t) produce_uva,
- 				     produce_q->kernel_if->num_pages, 1,
- 				     produce_q->kernel_if->u.h.header_page);
--	if (retval < produce_q->kernel_if->num_pages) {
-+	if (retval < (int)produce_q->kernel_if->num_pages) {
- 		pr_debug("get_user_pages_fast(produce) failed (retval=%d)",
- 			retval);
- 		qp_release_pages(produce_q->kernel_if->u.h.header_page,
-@@ -680,7 +680,7 @@ static int qp_host_get_user_memory(u64 p
- 	retval = get_user_pages_fast((uintptr_t) consume_uva,
- 				     consume_q->kernel_if->num_pages, 1,
- 				     consume_q->kernel_if->u.h.header_page);
--	if (retval < consume_q->kernel_if->num_pages) {
-+	if (retval < (int)consume_q->kernel_if->num_pages) {
- 		pr_debug("get_user_pages_fast(consume) failed (retval=%d)",
- 			retval);
- 		qp_release_pages(consume_q->kernel_if->u.h.header_page,
+--- a/drivers/siox/siox-core.c
++++ b/drivers/siox/siox-core.c
+@@ -715,17 +715,17 @@ int siox_master_register(struct siox_mas
+ 
+ 	dev_set_name(&smaster->dev, "siox-%d", smaster->busno);
+ 
++	mutex_init(&smaster->lock);
++	INIT_LIST_HEAD(&smaster->devices);
++
+ 	smaster->last_poll = jiffies;
+-	smaster->poll_thread = kthread_create(siox_poll_thread, smaster,
+-					      "siox-%d", smaster->busno);
++	smaster->poll_thread = kthread_run(siox_poll_thread, smaster,
++					   "siox-%d", smaster->busno);
+ 	if (IS_ERR(smaster->poll_thread)) {
+ 		smaster->active = 0;
+ 		return PTR_ERR(smaster->poll_thread);
+ 	}
+ 
+-	mutex_init(&smaster->lock);
+-	INIT_LIST_HEAD(&smaster->devices);
+-
+ 	ret = device_add(&smaster->dev);
+ 	if (ret)
+ 		kthread_stop(smaster->poll_thread);
 
 
