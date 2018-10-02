@@ -2,133 +2,168 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 164BDC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B60C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D075C2064E
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:06:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D075C2064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2861D2082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:10:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2861D2082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbeJBStV (ORCPT
+        id S1727645AbeJBSxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 14:49:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58220 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727510AbeJBStV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 14:49:21 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5A273C025D20;
-        Tue,  2 Oct 2018 12:06:22 +0000 (UTC)
-Received: from darcari.bos.csb (dhcp-17-203.bos.redhat.com [10.18.17.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 59E0017167;
-        Tue,  2 Oct 2018 12:06:19 +0000 (UTC)
-Subject: Re: [LKP] [mailbox] afd0b1fb22:
- kmsg.Error_parsing_PCC_subspaces_from_PCCT
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Al Stone <ahs3@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
-References: <20180930031715.GH15893@shao2-debian>
-From:   David Arcari <darcari@redhat.com>
-Organization: Red Hat
-Message-ID: <639587bc-bbdc-8ff4-6e3d-7ef4c0a4a034@redhat.com>
-Date:   Tue, 2 Oct 2018 08:06:18 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 2 Oct 2018 14:53:04 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:41327 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727587AbeJBSxE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 14:53:04 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w92C8cke013527;
+        Tue, 2 Oct 2018 14:09:52 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2msxh6gskt-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 02 Oct 2018 14:09:52 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B2D5331;
+        Tue,  2 Oct 2018 12:09:51 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 96D272A3B;
+        Tue,  2 Oct 2018 12:09:51 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 2 Oct 2018
+ 14:09:51 +0200
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 2 Oct 2018
+ 14:09:51 +0200
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <benjamin.gaignard@linaro.org>, Gerald Baeza <gerald.baeza@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V4 09/25] mmc: mmci: add dma_finalize callback
+Date:   Tue, 2 Oct 2018 14:09:11 +0200
+Message-ID: <1538482167-13819-10-git-send-email-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1538482167-13819-1-git-send-email-ludovic.Barre@st.com>
+References: <1538482167-13819-1-git-send-email-ludovic.Barre@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20180930031715.GH15893@shao2-debian>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 02 Oct 2018 12:06:22 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-02_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Ludovic Barre <ludovic.barre@st.com>
 
-Hi,
+This patch adds dma_finalize callback at mmci_host_ops
+to allow to call specific variant.
 
-Can someone help me interpret this email?  I was expecting this to be about a
-dmesg change which is expected, but the content doesn't seem to indicate that.
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+---
+ drivers/mmc/host/mmci.c          | 19 ++++++++++++-------
+ drivers/mmc/host/mmci.h          |  3 ++-
+ drivers/mmc/host/mmci_qcom_dml.c |  1 +
+ 3 files changed, 15 insertions(+), 8 deletions(-)
 
-For the record, the commit shouldn't really introduce any functional changes.
-It merely avoids calling kcalloc with count==-EINVAL.  In both cases, an error
-should be returned from  acpi_pcc_probe to pcc_init, which should in turn always
-return -ENODEV.
-
-So with the commit in place, this would be logged:
-
-[    3.957345] ACPI: [PCCT:0x00] Invalid zero length
-[    3.962340] Error parsing PCC subspaces from PCCT
-
-instead of:
-
-[    3.957345] ACPI: [PCCT:0x00] Invalid zero length
-[    3.962340] Could not allocate space for PCC mbox channels
-
-
-On 09/29/2018 11:17 PM, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: afd0b1fb22269f48d68fdf269891c653818c8047 ("mailbox: PCC: handle parse error")
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> 
-> in testcase: ftq
-> with following parameters:
-> 
-> 	nr_task: 100%
-> 	samples: 6000ss
-> 	test: cache
-> 	freq: 20
-> 	ucode: 0x200004d
-> 	cpufreq_governor: performance
-> 
-> test-description: The FTQ benchmarks measure hardware and software interference or 'noise' on a node from the applications perspective.
-> test-url: https://github.com/rminnich/ftq
-> 
-> 
-> on test machine: 104 threads Intel(R) Xeon(R) Platinum 8170 CPU @ 2.10GHz with 192G memory
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
-> 
-> 
-> 
-> 2018-09-21 23:31:26 ./ftq_cache -f 20 -n 6000 -t 104 -a 360448
-> ticks per ns 2.09508
-
-This ^^^ appears to be the actual error, but I don't understand what the
-expected result should be or what this really means.
-
-Thanks,
-
--Dave
-
-
-> 
-> 
-> 
-> To reproduce:
-> 
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp install job.yaml  # job file is attached in this email
->         bin/lkp run     job.yaml
-> 
-> 
-> 
-> Thanks,
-> Rong Chen
-> 
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index 53d2012..d8e7b6a 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -452,6 +452,15 @@ int mmci_dma_start(struct mmci_host *host, unsigned int datactrl)
+ 	return 0;
+ }
+ 
++void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
++{
++	if (!host->use_dma)
++		return;
++
++	if (host->ops && host->ops->dma_finalize)
++		host->ops->dma_finalize(host, data);
++}
++
+ static void
+ mmci_request_end(struct mmci_host *host, struct mmc_request *mrq)
+ {
+@@ -633,13 +642,13 @@ static void mmci_dma_data_error(struct mmci_host *host)
+ 	mmci_dma_unmap(host, host->data);
+ }
+ 
+-static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
++void mmci_dmae_finalize(struct mmci_host *host, struct mmc_data *data)
+ {
+ 	struct mmci_dmae_priv *dmae = host->dma_priv;
+ 	u32 status;
+ 	int i;
+ 
+-	if (!host->use_dma || !dma_inprogress(host))
++	if (!dma_inprogress(host))
+ 		return;
+ 
+ 	/* Wait up to 1ms for the DMA to complete */
+@@ -837,14 +846,10 @@ static struct mmci_host_ops mmci_variant_ops = {
+ 	.dma_setup = mmci_dmae_setup,
+ 	.dma_release = mmci_dmae_release,
+ 	.dma_start = mmci_dmae_start,
++	.dma_finalize = mmci_dmae_finalize,
+ };
+ #else
+ /* Blank functions if the DMA engine is not available */
+-static inline void mmci_dma_finalize(struct mmci_host *host,
+-				     struct mmc_data *data)
+-{
+-}
+-
+ static inline void mmci_dma_data_error(struct mmci_host *host)
+ {
+ }
+diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+index 1bb4a14..fcdb69d 100644
+--- a/drivers/mmc/host/mmci.h
++++ b/drivers/mmc/host/mmci.h
+@@ -281,6 +281,7 @@ struct mmci_host_ops {
+ 	int (*dma_setup)(struct mmci_host *host);
+ 	void (*dma_release)(struct mmci_host *host);
+ 	int (*dma_start)(struct mmci_host *host, unsigned int *datactrl);
++	void (*dma_finalize)(struct mmci_host *host, struct mmc_data *data);
+ };
+ 
+ struct mmci_host {
+@@ -343,4 +344,4 @@ void mmci_dmae_get_next_data(struct mmci_host *host, struct mmc_data *data);
+ int mmci_dmae_setup(struct mmci_host *host);
+ void mmci_dmae_release(struct mmci_host *host);
+ int mmci_dmae_start(struct mmci_host *host, unsigned int *datactrl);
+-
++void mmci_dmae_finalize(struct mmci_host *host, struct mmc_data *data);
+diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
+index ae1c193..9725762 100644
+--- a/drivers/mmc/host/mmci_qcom_dml.c
++++ b/drivers/mmc/host/mmci_qcom_dml.c
+@@ -189,6 +189,7 @@ static struct mmci_host_ops qcom_variant_ops = {
+ 	.dma_setup = qcom_dma_setup,
+ 	.dma_release = mmci_dmae_release,
+ 	.dma_start = mmci_dmae_start,
++	.dma_finalize = mmci_dmae_finalize,
+ };
+ 
+ void qcom_variant_init(struct mmci_host *host)
+-- 
+2.7.4
 
