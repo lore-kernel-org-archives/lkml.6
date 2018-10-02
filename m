@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6759C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC3AEC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B797E2089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:42:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B797E2089C
+	by mail.kernel.org (Postfix) with ESMTP id 998CC2064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:42:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 998CC2064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733017AbeJBUTe (ORCPT
+        id S1733240AbeJBUZy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:19:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36078 "EHLO
+        Tue, 2 Oct 2018 16:25:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731663AbeJBUTd (ORCPT
+        with ESMTP id S1731744AbeJBUTe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:33 -0400
+        Tue, 2 Oct 2018 16:19:34 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0018B4A;
-        Tue,  2 Oct 2018 13:36:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B9C29D9;
+        Tue,  2 Oct 2018 13:36:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
+        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 40/94] drm/sun4i: Fix releasing node when enumerating enpoints
-Date:   Tue,  2 Oct 2018 06:24:54 -0700
-Message-Id: <20181002132503.291457985@linuxfoundation.org>
+Subject: [PATCH 4.9 14/94] md-cluster: clear another nodes suspend_area after the copy is finished
+Date:   Tue,  2 Oct 2018 06:24:28 -0700
+Message-Id: <20181002132501.463739455@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -52,48 +52,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+From: Guoqing Jiang <gqjiang@suse.com>
 
-[ Upstream commit 367c359aa8637b15ee8df6335c5a29b7623966ec ]
+[ Upstream commit 010228e4a932ca1e8365e3b58c8e1e44c16ff793 ]
 
-sun4i_drv_add_endpoints() has a memory leak since it uses of_node_put()
-when remote is equal to NULL and does nothing when remote has a valid
-pointer.
+When one node leaves cluster or stops the resyncing
+(resync or recovery) array, then other nodes need to
+call recover_bitmaps to continue the unfinished task.
 
-Invert the logic to fix memory leak.
+But we need to clear suspend_area later after other
+nodes copy the resync information to their bitmap
+(by call bitmap_copy_from_slot). Otherwise, all nodes
+could write to the suspend_area even the suspend_area
+is not handled by any node, because area_resyncing
+returns 0 at the beginning of raid1_write_request.
+Which means one node could write suspend_area while
+another node is resyncing the same area, then data
+could be inconsistent.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180625120304.7543-7-jernej.skrabec@siol.net
+So let's clear suspend_area later to avoid above issue
+with the protection of bm lock. Also it is straightforward
+to clear suspend_area after nodes have copied the resync
+info to bitmap.
+
+Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
+Reviewed-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/md/md-cluster.c |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -283,7 +283,6 @@ static int sun4i_drv_add_endpoints(struc
- 		remote = of_graph_get_remote_port_parent(ep);
- 		if (!remote) {
- 			DRM_DEBUG_DRIVER("Error retrieving the output node\n");
--			of_node_put(remote);
- 			continue;
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -302,15 +302,6 @@ static void recover_bitmaps(struct md_th
+ 	while (cinfo->recovery_map) {
+ 		slot = fls64((u64)cinfo->recovery_map) - 1;
+ 
+-		/* Clear suspend_area associated with the bitmap */
+-		spin_lock_irq(&cinfo->suspend_lock);
+-		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
+-			if (slot == s->slot) {
+-				list_del(&s->list);
+-				kfree(s);
+-			}
+-		spin_unlock_irq(&cinfo->suspend_lock);
+-
+ 		snprintf(str, 64, "bitmap%04d", slot);
+ 		bm_lockres = lockres_init(mddev, str, NULL, 1);
+ 		if (!bm_lockres) {
+@@ -329,6 +320,16 @@ static void recover_bitmaps(struct md_th
+ 			pr_err("md-cluster: Could not copy data from bitmap %d\n", slot);
+ 			goto clear_bit;
  		}
- 
-@@ -297,11 +296,13 @@ static int sun4i_drv_add_endpoints(struc
- 
- 			if (of_graph_parse_endpoint(ep, &endpoint)) {
- 				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
-+				of_node_put(remote);
- 				continue;
- 			}
- 
- 			if (!endpoint.id) {
- 				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
-+				of_node_put(remote);
- 				continue;
- 			}
- 		}
++
++		/* Clear suspend_area associated with the bitmap */
++		spin_lock_irq(&cinfo->suspend_lock);
++		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
++			if (slot == s->slot) {
++				list_del(&s->list);
++				kfree(s);
++			}
++		spin_unlock_irq(&cinfo->suspend_lock);
++
+ 		if (hi > 0) {
+ 			if (lo < mddev->recovery_cp)
+ 				mddev->recovery_cp = lo;
 
 
