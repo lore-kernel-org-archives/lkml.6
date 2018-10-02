@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6482C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0642BC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CE03206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CE03206B2
+	by mail.kernel.org (Postfix) with ESMTP id CBBE7206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBBE7206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730119AbeJBUNH (ORCPT
+        id S1730138AbeJBUNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:13:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33234 "EHLO
+        Tue, 2 Oct 2018 16:13:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33242 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728815AbeJBUNG (ORCPT
+        with ESMTP id S1728815AbeJBUNH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:13:06 -0400
+        Tue, 2 Oct 2018 16:13:07 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F69BBF0;
-        Tue,  2 Oct 2018 13:29:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 850C0266;
+        Tue,  2 Oct 2018 13:29:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 124/228] ath10k: fix memory leak of tpc_stats
-Date:   Tue,  2 Oct 2018 06:23:41 -0700
-Message-Id: <20181002132507.814212681@linuxfoundation.org>
+        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.18 160/228] Input: elantech - enable middle button of touchpad on ThinkPad P72
+Date:   Tue,  2 Oct 2018 06:24:17 -0700
+Message-Id: <20181002132509.691011031@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,49 +51,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-[ Upstream commit 260e629bbf441585860e21d5e10d2e88437f47c8 ]
+commit 91a97507323e1ad4bfc10f4a5922e67cdaf8b3cd upstream.
 
-Currently tpc_stats is allocated and is leaked on the return
-path if num_tx_chain is greater than WMI_TPC_TX_N_CHAIN. Avoid
-this leak by performing the check on num_tx_chain before the
-allocation of tpc_stats.
+Adding 2 new touchpad IDs to support middle button support.
 
-Detected by CoverityScan, CID#1469422 ("Resource Leak")
-Fixes: 4b190675ad06 ("ath10k: fix kernel panic while reading tpc_stats")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/ath/ath10k/wmi.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -4602,10 +4602,6 @@ void ath10k_wmi_event_pdev_tpc_config(st
- 
- 	ev = (struct wmi_pdev_tpc_config_event *)skb->data;
- 
--	tpc_stats = kzalloc(sizeof(*tpc_stats), GFP_ATOMIC);
--	if (!tpc_stats)
--		return;
--
- 	num_tx_chain = __le32_to_cpu(ev->num_tx_chain);
- 
- 	if (num_tx_chain > WMI_TPC_TX_N_CHAIN) {
-@@ -4614,6 +4610,10 @@ void ath10k_wmi_event_pdev_tpc_config(st
- 		return;
- 	}
- 
-+	tpc_stats = kzalloc(sizeof(*tpc_stats), GFP_ATOMIC);
-+	if (!tpc_stats)
-+		return;
-+
- 	ath10k_wmi_tpc_config_get_rate_code(rate_code, pream_table,
- 					    num_tx_chain);
+---
+ drivers/input/mouse/elantech.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1178,6 +1178,8 @@ static const struct dmi_system_id elante
+ static const char * const middle_button_pnp_ids[] = {
+ 	"LEN2131", /* ThinkPad P52 w/ NFC */
+ 	"LEN2132", /* ThinkPad P52 */
++	"LEN2133", /* ThinkPad P72 w/ NFC */
++	"LEN2134", /* ThinkPad P72 */
+ 	NULL
+ };
  
 
 
