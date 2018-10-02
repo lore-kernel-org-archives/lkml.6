@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D141C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22069C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF706206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF706206B2
+	by mail.kernel.org (Postfix) with ESMTP id E7F882064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F882064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732956AbeJBUTY (ORCPT
+        id S1732968AbeJBUT0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:19:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35954 "EHLO
+        Tue, 2 Oct 2018 16:19:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35978 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731920AbeJBUTX (ORCPT
+        with ESMTP id S1731920AbeJBUTZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:23 -0400
+        Tue, 2 Oct 2018 16:19:25 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 554AAC4E;
-        Tue,  2 Oct 2018 13:35:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 55C32C3F;
+        Tue,  2 Oct 2018 13:36:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Todd Kjos <tkjos@android.com>,
+        devel@driverdev.osuosl.org, kernel-team@android.com,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Alistair Strachan <astrachan@google.com>,
+        Martijn Coenen <maco@android.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 31/94] media: soc_camera: ov772x: correct setting of banding filter
-Date:   Tue,  2 Oct 2018 06:24:45 -0700
-Message-Id: <20181002132502.630077971@linuxfoundation.org>
+Subject: [PATCH 4.9 33/94] staging: android: ashmem: Fix mmap size validation
+Date:   Tue,  2 Oct 2018 06:24:47 -0700
+Message-Id: <20181002132502.765038726@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -56,48 +55,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Akinobu Mita <akinobu.mita@gmail.com>
+From: Alistair Strachan <astrachan@google.com>
 
-[ Upstream commit 22216ec41e919682c15345e95928f266e8ba6f9e ]
+[ Upstream commit 8632c614565d0c5fdde527889601c018e97b6384 ]
 
-The banding filter ON/OFF is controlled via bit 5 of COM8 register.  It
-is attempted to be enabled in ov772x_set_params() by the following line.
+The ashmem driver did not check that the size/offset of the vma passed
+to its .mmap() function was not larger than the ashmem object being
+mapped. This could cause mmap() to succeed, even though accessing parts
+of the mapping would later fail with a segmentation fault.
 
-	ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, 1);
+Ensure an error is returned by the ashmem_mmap() function if the vma
+size is larger than the ashmem object size. This enables safer handling
+of the problem in userspace.
 
-But this unexpectedly results disabling the banding filter, because the
-mask and set bits are exclusive.
-
-On the other hand, ov772x_s_ctrl() correctly sets the bit by:
-
-	ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, BNDF_ON_OFF);
-
-The same fix was already applied to non-soc_camera version of ov772x
-driver in the commit commit a024ee14cd36 ("media: ov772x: correct setting
-of banding filter")
-
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Todd Kjos <tkjos@android.com>
+Cc: devel@driverdev.osuosl.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Signed-off-by: Alistair Strachan <astrachan@google.com>
+Acked-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Reviewed-by: Martijn Coenen <maco@android.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/i2c/soc_camera/ov772x.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/android/ashmem.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/media/i2c/soc_camera/ov772x.c
-+++ b/drivers/media/i2c/soc_camera/ov772x.c
-@@ -834,7 +834,7 @@ static int ov772x_set_params(struct ov77
- 	 * set COM8
- 	 */
- 	if (priv->band_filter) {
--		ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, 1);
-+		ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, BNDF_ON_OFF);
- 		if (!ret)
- 			ret = ov772x_mask_set(client, BDBASE,
- 					      0xff, 256 - priv->band_filter);
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -383,6 +383,12 @@ static int ashmem_mmap(struct file *file
+ 		goto out;
+ 	}
+ 
++	/* requested mapping size larger than object size */
++	if (vma->vm_end - vma->vm_start > PAGE_ALIGN(asma->size)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	/* requested protection bits must match our allowed protection mask */
+ 	if (unlikely((vma->vm_flags & ~calc_vm_prot_bits(asma->prot_mask, 0)) &
+ 		     calc_vm_prot_bits(PROT_MASK, 0))) {
 
 
