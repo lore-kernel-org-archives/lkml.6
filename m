@@ -2,102 +2,184 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E1CC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DFBC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AF99208E7
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:13:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEE63206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:13:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZIG2Dxaz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF99208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dCBVcCGf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEE63206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbeJBT4P (ORCPT
+        id S1728185AbeJBT4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 15:56:15 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:41231 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727942AbeJBT4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 15:56:14 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 25529fb5
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 2 Oct 2018 13:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=vT+JTrUh6OPyKGbRNk5Vn6qy0oc=; b=ZIG2Dx
-        azw+zSsM5nFc7qoOzzLDqWFsPrid+zy5TWYXbcNOP4E1frEU++3P86Bb79pRe35D
-        7fzI2h+IufKjsZDH14MlJm3XNMnCIJrTw7ngQtUyVk4YkMoKQ3FEt0iaTJUbDsq8
-        SvhBV3hB6ue0bs2+tmOCfuq4jgJdNDRM0BSvYXqboV0zMJvRZWXVkso9rNbWLNnn
-        3ilnXHR5ope/rh1TgmR82Wru3x6ig10h55plu9aU/+N3ZNxBne3opdBvK1QnNiGR
-        JpQ0yH5+OF+s9B8aD2MoJB1lePGsF+RdNaLLtASGw5Gcw8qU04+C3RyhI5hMtU4D
-        /GPP8/aW8QP4I30Q==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 8154a10e (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 2 Oct 2018 13:12:53 +0000 (UTC)
-Received: by mail-oi1-f174.google.com with SMTP id w81-v6so1421586oiw.9
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 06:12:56 -0700 (PDT)
-X-Gm-Message-State: ABuFfoh6pRGx7VhEu7EGLYxcYBD4iXsmBFeRYfM7Zs1B4GAWNFIgL6yR
-        rap2ycNPXj7DMDaIb4WzvHl2VQ9uYGLbnyZhNkQ=
-X-Google-Smtp-Source: ACcGV61CjYCJVFsFzdPPjvQocThWrJArH6yvr4S4/D9K62Q9bE6PImKouxCnDi77QxAr4eiw0ZVR86NDTCh2NZ2TLtQ=
-X-Received: by 2002:aca:df42:: with SMTP id w63-v6mr7088049oig.295.1538485975809;
- Tue, 02 Oct 2018 06:12:55 -0700 (PDT)
+        Tue, 2 Oct 2018 15:56:18 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35786 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727829AbeJBT4R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 15:56:17 -0400
+Received: by mail-wm1-f66.google.com with SMTP id o18-v6so2164268wmc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 06:12:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jKYsVlgDfkccan6ieeKzVaMnn6OiwgAPoKEMH6GgvtQ=;
+        b=dCBVcCGfEkOp2yZaISW/VbCXrMw/roS3ig2VtB55vdMEYEdcc/N0JZvN/VK0XUG/vE
+         q8IQc15Veee7CyQPFcN4SsbYldChP/FYEqamRzfm+EMDwScW4NnC7+nL/WVcXY4YkxXH
+         IaLDvKPYeiZLSd6eTTyOwGRK7yY7FV+zz24fER4CRRtpt6fdP7FHKNa+sGQGNFp4xqiT
+         2ikGu6YSkQfB33XL8xLyxL9AM7V5tbcy1QM6XaN4QBbjg/hZJkmhb7/WqbYk+Q0i72PC
+         1E3XO0yS2UZtrhy8q6K5bwYxsqbd2crZpd+uOHwvRVP1OGBqcxh74WmYSqKcp9Zs8/Nq
+         KaDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jKYsVlgDfkccan6ieeKzVaMnn6OiwgAPoKEMH6GgvtQ=;
+        b=ZMqziKXe7DcTcsnHLRrWhp9GIdZd463fcSsreigtCvL4mzY2Tq/KZqd3+wIkBjKMA+
+         qH+CHtQhXXYJFCnGgleoln0eKA/9j/NWj8Nmuh8R5MAlldaokh5gvhHP6d8/J8z/qYBo
+         CTuM6M0MpaHHqlNQJwvpJGstVq5/5IxdbzIoLr9ehznL1rH7/kTiHvCfvR+IrA7UCRRP
+         jCcDKg5UQHDbzb/bE+Xhqjy/tbSKYgCLoyiPq0Awmb0riiJwP1+fJPhLf9Zybq2I3tvf
+         CTX6s9nmiMF8K0LF40weKp8VQOxWRXDILX0n1NjriPtPiV3hnYw0kQnTchLrSvmqyI1Q
+         ZDkw==
+X-Gm-Message-State: ABuFfohbEuAVDY8kdX4KBG57C83YE1v1ySQULKSYdBHGMv5n5hQEbL19
+        dvw51urmIbR85jl1JzRm5N3U/w==
+X-Google-Smtp-Source: ACcGV61lYLeUyN6R/Xs9pciDC3H43amhfekx+exm3H5Gj+xhTN4aSmtpre7zcIkfD40I7FhghfLIPg==
+X-Received: by 2002:a1c:8bcc:: with SMTP id n195-v6mr1947045wmd.118.1538485977684;
+        Tue, 02 Oct 2018 06:12:57 -0700 (PDT)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
+        by smtp.gmail.com with ESMTPSA id v10-v6sm17458681wrp.0.2018.10.02.06.12.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 06:12:56 -0700 (PDT)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH v7 8/8] selftests, arm64: add a selftest for passing tagged pointers to kernel
+Date:   Tue,  2 Oct 2018 15:12:43 +0200
+Message-Id: <3a2c0a6b2499a328cc9471d4095ae36f0f05252d.1538485901.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+In-Reply-To: <cover.1538485901.git.andreyknvl@google.com>
+References: <cover.1538485901.git.andreyknvl@google.com>
 MIME-Version: 1.0
-References: <20180930024904.14240-1-Jason@zx2c4.com> <CAK8P3a0grG5OBjwpTeH0fqzoFFBLDH6-oGM4ibzHypUKWedg3A@mail.gmail.com>
- <CAHmME9rVbKCNJfVBEene0SvhBEm_g7N-XJ26ugoAab1Vj7G_ww@mail.gmail.com>
- <CAK8P3a3TE8HW0wD9ETCDWMf7quDRx94-2iS6goYDQ18JQ6r=rw@mail.gmail.com>
- <CAHmME9pFnuRx2F=xeyK8d3bwv3bJY+WvE1KZn__+2oFWS0RCnA@mail.gmail.com> <CAKv+Gu8NXyfNAzk4Fe=J0QHEEV-txbRAoEcQmjG-6PgCyW5SZg@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8NXyfNAzk4Fe=J0QHEEV-txbRAoEcQmjG-6PgCyW5SZg@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 2 Oct 2018 15:12:44 +0200
-X-Gmail-Original-Message-ID: <CAHmME9oz2hFRjFeNSDLe59_pYn3HqB+5rWM5KsH7G_bUWaoy7Q@mail.gmail.com>
-Message-ID: <CAHmME9oz2hFRjFeNSDLe59_pYn3HqB+5rWM5KsH7G_bUWaoy7Q@mail.gmail.com>
-Subject: Re: [PATCH] ARM: makefile: pass -march=armv4 to assembler even on CPU32v3
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>, arm@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Ard,
+This patch adds a simple test, that calls the uname syscall with a
+tagged user pointer as an argument. Without the kernel accepting tagged
+user pointers the test fails with EFAULT.
 
-On Tue, Oct 2, 2018 at 3:10 PM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> It builds but it doesn't run, at least not when built into the kernel
-> proper (which will be the case after random.c moves to this library)
->
-> Your toolchain is implicitly passing --fix-v4bx to the assembler,
-> which causes it to permit bx instructions in ARMv4 object code, but
-> tag them with special R_ARM_V4BX ELF relocations. The ARM module
-> loader does take these into account, so built as a module, it works.
-> However, when built into the core kernel, we have to rely on the
-> linker to patch this instruction into the ARMv4 equivalent, and a
-> quick check reveals that that is currently not the case.
->
-> Bottom line: let's not go there.
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ tools/testing/selftests/arm64/.gitignore      |  1 +
+ tools/testing/selftests/arm64/Makefile        | 11 +++++++++++
+ .../testing/selftests/arm64/run_tags_test.sh  | 12 ++++++++++++
+ tools/testing/selftests/arm64/tags_test.c     | 19 +++++++++++++++++++
+ 4 files changed, 43 insertions(+)
+ create mode 100644 tools/testing/selftests/arm64/.gitignore
+ create mode 100644 tools/testing/selftests/arm64/Makefile
+ create mode 100755 tools/testing/selftests/arm64/run_tags_test.sh
+ create mode 100644 tools/testing/selftests/arm64/tags_test.c
 
-Oh, thanks a bunch for explaining that. Since I wrote the last email
-I've been playing around with as, readelf, and qemu and was slightly
-mystified.
+diff --git a/tools/testing/selftests/arm64/.gitignore b/tools/testing/selftests/arm64/.gitignore
+new file mode 100644
+index 000000000000..e8fae8d61ed6
+--- /dev/null
++++ b/tools/testing/selftests/arm64/.gitignore
+@@ -0,0 +1 @@
++tags_test
+diff --git a/tools/testing/selftests/arm64/Makefile b/tools/testing/selftests/arm64/Makefile
+new file mode 100644
+index 000000000000..a61b2e743e99
+--- /dev/null
++++ b/tools/testing/selftests/arm64/Makefile
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: GPL-2.0
++
++# ARCH can be overridden by the user for cross compiling
++ARCH ?= $(shell uname -m 2>/dev/null || echo not)
++
++ifneq (,$(filter $(ARCH),aarch64 arm64))
++TEST_GEN_PROGS := tags_test
++TEST_PROGS := run_tags_test.sh
++endif
++
++include ../lib.mk
+diff --git a/tools/testing/selftests/arm64/run_tags_test.sh b/tools/testing/selftests/arm64/run_tags_test.sh
+new file mode 100755
+index 000000000000..745f11379930
+--- /dev/null
++++ b/tools/testing/selftests/arm64/run_tags_test.sh
+@@ -0,0 +1,12 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++
++echo "--------------------"
++echo "running tags test"
++echo "--------------------"
++./tags_test
++if [ $? -ne 0 ]; then
++	echo "[FAIL]"
++else
++	echo "[PASS]"
++fi
+diff --git a/tools/testing/selftests/arm64/tags_test.c b/tools/testing/selftests/arm64/tags_test.c
+new file mode 100644
+index 000000000000..1452ed7d33f9
+--- /dev/null
++++ b/tools/testing/selftests/arm64/tags_test.c
+@@ -0,0 +1,19 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <stdio.h>
++#include <unistd.h>
++#include <stdint.h>
++#include <sys/utsname.h>
++
++#define SHIFT_TAG(tag)		((uint64_t)(tag) << 56)
++#define SET_TAG(ptr, tag)	(((uint64_t)(ptr) & ~SHIFT_TAG(0xff)) | \
++					SHIFT_TAG(tag))
++
++int main(void)
++{
++	struct utsname utsname;
++	void *ptr = &utsname;
++	void *tagged_ptr = (void *)SET_TAG(ptr, 0x42);
++	int err = uname(tagged_ptr);
++	return err;
++}
+-- 
+2.19.0.605.g01d371f741-goog
 
->
-> > But anyway,
-> > I'll go with your primary suggestion and we therefore can move ahead
-> > with changing the global cflag to march=armv3m. Would you like me to
-> > submit the patch for this, or would yo like to handle it?
-> >
->
-> Yes please go ahead.
-
-Alright, incoming in a few minutes.
-
-Jason
