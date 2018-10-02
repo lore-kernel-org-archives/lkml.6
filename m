@@ -2,208 +2,129 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F7AC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8CFC64EBA
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:28:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81A6B206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:21:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81A6B206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 47749206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:28:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47749206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbeJCCGH (ORCPT
+        id S1727740AbeJCCN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 22:06:07 -0400
-Received: from mga04.intel.com ([192.55.52.120]:64946 "EHLO mga04.intel.com"
+        Tue, 2 Oct 2018 22:13:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41896 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726946AbeJCCGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 22:06:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 12:21:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,332,1534834800"; 
-   d="scan'208";a="79315814"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.130]) ([10.24.14.130])
-  by orsmga006.jf.intel.com with ESMTP; 02 Oct 2018 12:21:12 -0700
-Subject: Re: [RFC PATCH 03/10] arch/x86: Re-arrange RDT init code
-To:     "Moger, Babu" <Babu.Moger@amd.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>
-Cc:     "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "jannh@google.com" <jannh@google.com>,
-        "dima@arista.com" <dima@arista.com>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180924191841.29111-1-babu.moger@amd.com>
- <20180924191841.29111-4-babu.moger@amd.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <09e1f4dc-7882-9bb4-f5a7-e9e7caafee84@intel.com>
-Date:   Tue, 2 Oct 2018 12:21:09 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726946AbeJCCN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 22:13:29 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 88D42307D858;
+        Tue,  2 Oct 2018 19:28:34 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 556A99D81B;
+        Tue,  2 Oct 2018 19:28:34 +0000 (UTC)
+Received: from zmail19.collab.prod.int.phx2.redhat.com (zmail19.collab.prod.int.phx2.redhat.com [10.5.83.22])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 12FB14BB74;
+        Tue,  2 Oct 2018 19:28:34 +0000 (UTC)
+Date:   Tue, 2 Oct 2018 15:28:33 -0400 (EDT)
+From:   Rodrigo Freire <rfreire@redhat.com>
+To:     Steve French <smfrench@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Pavel Shilovsky <piastryyy@gmail.com>
+Message-ID: <194690850.32402710.1538508513975.JavaMail.zimbra@redhat.com>
+In-Reply-To: <CAH2r5mtu9XbQfR=QevDqu36ZRYah1hrRGSQyynCfr82PRyunwQ@mail.gmail.com>
+References: <ad6b338c900a17c4ecb1655a42b954221f242be2.1538480816.git.rfreire@redhat.com> <CAH2r5mtu9XbQfR=QevDqu36ZRYah1hrRGSQyynCfr82PRyunwQ@mail.gmail.com>
+Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
 MIME-Version: 1.0
-In-Reply-To: <20180924191841.29111-4-babu.moger@amd.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.120.119, 10.4.195.1]
+Thread-Topic: CIFS: Print message when attempting a mount
+Thread-Index: DmkaVEoUAU7ZbdNPMtxMOPPw1/ezlQ==
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 02 Oct 2018 19:28:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Babu,
+Hi Steve,
 
-On 9/24/2018 12:19 PM, Moger, Babu wrote:
-> Re-organize the RDT init code. Separate the call sequence for each
-> feature. That way, it is easy to call quirks or features separately
-> for each vendor if there are differences.
-> 
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
-> ---
->  arch/x86/kernel/cpu/rdt.c | 44 ++++++++++++++++++++++++++++-----------
->  1 file changed, 32 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/rdt.c b/arch/x86/kernel/cpu/rdt.c
-> index b361c63170d7..736715b81fd8 100644
-> --- a/arch/x86/kernel/cpu/rdt.c
-> +++ b/arch/x86/kernel/cpu/rdt.c
-> @@ -813,10 +813,6 @@ static __init bool get_rdt_alloc_resources(void)
->  		ret = true;
->  	}
->  
-> -	if (rdt_cpu_has(X86_FEATURE_MBA)) {
-> -		if (rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]))
-> -			ret = true;
-> -	}
+----- Original Message ----- 
+> From: "Steve French" <smfrench@gmail.com>
+> To: rfreire@redhat.com
+> Cc: "LKML" <linux-kernel@vger.kernel.org>, "Steve French"
+> <sfrench@samba.org>, "CIFS" <linux-cifs@vger.kernel.org>, "Pavel Shilovsky"
+> <piastryyy@gmail.com>
+> Sent: Tuesday, October 2, 2018 4:17:02 PM
+> Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
+>
+> Are you sure that these aren't logged by the automounter (for ext4,
+> xfs etc.). When I looked in my dmesg logs I didn't find matching log
+> entries in the file systems themselves. Do you have an example?
 
-The commit message mentions that the call sequence for each feature is
-separated, but here only the MBA feature is separated.
+I'm positive about it. Check it out:
 
-The MBA feature detection is removed above .... (more later)
+[rfreire@rf ~]$ cd git/upstream/fs/ext4/
+[rfreire@rf ext4]$ 
+[rfreire@rf ext4]$ 
+[rfreire@rf ext4]$ grep -r "mounted filesystem with"
+super.c:		ext4_msg(sb, KERN_INFO, "mounted filesystem with%s. "
 
->  	return ret;
->  }
->  
-> @@ -831,11 +827,12 @@ static __init bool get_rdt_mon_resources(void)
->  
->  	if (!rdt_mon_features)
->  		return false;
-> +	else
-> +		return true;
->  
-> -	return !rdt_get_mon_l3_config(&rdt_resources_all[RDT_RESOURCE_L3]);
->  }
->  
-> -static __init void rdt_quirks(void)
-> +static __init void rdt_quirks_intel(void)
->  {
->  	switch (boot_cpu_data.x86_model) {
->  	case INTEL_FAM6_HASWELL_X:
-> @@ -850,13 +847,22 @@ static __init void rdt_quirks(void)
->  	}
->  }
->  
-> -static __init bool get_rdt_resources(void)
-> +static __init void rdt_quirks(void)
->  {
-> -	rdt_quirks();
-> -	rdt_alloc_capable = get_rdt_alloc_resources();
-> -	rdt_mon_capable = get_rdt_mon_resources();
-> +	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-> +		rdt_quirks_intel();
-> +}
-> +
-> +static __init void rdt_detect_l3_mon(void)
-> +{
-> +	if (rdt_mon_capable)
-> +		rdt_get_mon_l3_config(&rdt_resources_all[RDT_RESOURCE_L3]);
 
-The possible errors from this configuration is now lost.
+[rfreire@rf ext4]$ dmesg | grep mount
+[   21.550897] EXT4-fs (dm-1): mounted filesystem with ordered data mode. Opts: (null)
+[   22.216213] EXT4-fs (dm-1): re-mounted. Opts: discard
+[   22.598267] EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
+[   22.605225] EXT4-fs (sdc): mounted filesystem without journal. Opts: discard
+[   24.029161] EXT4-fs (dm-2): mounted filesystem with ordered data mode. Opts: (null)
+[   24.047777] EXT4-fs (dm-4): mounted filesystem without journal. Opts: (null)
 
-> +}
->  
-> -	return (rdt_mon_capable || rdt_alloc_capable);
-> +static __init void rdt_check_mba(void)
-> +{
-> +	if (rdt_cpu_has(X86_FEATURE_MBA))
-> +		rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]);
+XFS sample dmesg (from https://www.reddit.com/r/archlinux/comments/40b9r9/xfs_partition_is_mounted_during_boot_and_then/):
 
-Here too the possible failure of this configuration is now lost.
+[ 2.764491] XFS (sdb1): Mounting V5 Filesystem
+[ 3.200886] XFS (sdb1): Ending clean mount
+[ 5.384218] XFS (sdb1): Unmounting Filesystem
 
->  }
->  
->  static enum cpuhp_state rdt_online;
-> @@ -866,8 +872,22 @@ static int __init rdt_late_init(void)
->  	struct rdt_resource *r;
->  	int state, ret;
->  
-> -	if (!get_rdt_resources())
-> +	/* Run quirks first */
-> +	rdt_quirks();
-> +
-> +	rdt_alloc_capable = get_rdt_alloc_resources();
-> +	rdt_mon_capable = get_rdt_mon_resources();
-> +
-> +	if (!(rdt_alloc_capable || rdt_mon_capable)) {
-> +		pr_info("RDT allocation or monitoring not detected\n");
+Relevant code:
 
-This function ends with a log entry for every resource discovered. Is
-this new log entry needed to indicate that such resources have not been
-found? Could it not just be the absence of the other message?
+[rfreire@rf ~]$ cd ../xfs
 
->  		return -ENODEV;
-> +	}
+[rfreire@rf xfs]$ grep "Mounting V" *.c
+xfs_log.c:		xfs_notice(mp, "Mounting V%d Filesystem",
 
-... (continued from above) ... since the MBA feature detection was
-removed from get_rdt_alloc_resources() would the above not cause failure
-on systems that only support MBA?
 
-> +
-> +	/* Detect l3 monitoring resources */
+> On the idea of adding cifsFYI logging here - I slightly prefer using
+> ftrace (trace-cmd, ie dynamic tracing) so there is less overhead and
+> easier to turn on/off following the example of xfs, f2fs, nfs, nfsd
+> etc.
 
-I do not think this comment is accurate ... has the monitoring resources
-not been detected earlier in get_rdt_mon_resources() and now they will
-be configured?
+Remember that cifsFYI already exists; I just moved it inside a if clause
+to print it only when running under debug. (they way it is originally).
 
-> +	rdt_detect_l3_mon();
-> +
-> +	/* Check for Memory Bandwidth Allocation */
-> +	rdt_check_mba();
+> On Tue, Oct 2, 2018 at 6:57 AM Rodrigo Freire <rfreire@redhat.com> wrote:
+> >
+> > Currently, no messages are printed when mounting a CIFS filesystem and
+> > no debug configuration is enabled.
+> >
+> > However, a CIFS mount information is valuable when troubleshooting
+> > and/or forensic analyzing a system and finding out if was a CIFS
+> > endpoint mount attempted.
+> >
+> > Other filesystems such as XFS, EXT* does issue a printk() when mounting
+> > their filesystems.
 
-To follow up on above .. the potential failure of these configurations
-are now lost here. Initialization should not continue if these
-configurations failed.
 
->  
->  	rdt_init_padding();
->  
-> 
+> --
+> Thanks,
 
-Reinette
+Thank You! o/
