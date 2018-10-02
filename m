@@ -2,78 +2,195 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADDEC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3F0C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 019CE2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:51:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rex5M3Yx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 019CE2089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4716D20666
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:51:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4716D20666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbeJBVfE (ORCPT
+        id S1728811AbeJBVfi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 17:35:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53212 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbeJBVfE (ORCPT
+        Tue, 2 Oct 2018 17:35:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60880 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727125AbeJBVfi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 17:35:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UXJ1odgG56XIb0bDD4H56VNIGvwUIQc/306v/IvDLZs=; b=Rex5M3YxTuz8pxPwHNXdsSDWb
-        dj26DStFHLNQ/ibpUtAfMCH1PZh80k/x17ZsIY0d2BN3HGC0jwG1rFQFFnocOXcCTLRvrIs4UfyV4
-        eY6/lbQicJ8OTJVvJBBqlkDmQnKBlbJV9gq/HMWOjxdCQDoFYH5dWyHQLWGJIKiSEryhv+Y8pw7JP
-        8a+0HzrtUXvxTq+41za0GvQp9GUVia3aYk9OzwTMy1uew8bnGAGX8JUoWT/N/x+kGKSzyMHuy9Avp
-        u0uIFyodud0kPsOkr/FddsTGq/xsa9f9ev9jZYT837rZ9e3MdCt2a5vVmfZtOUFxazis1ewtVD/+W
-        mDLPfLsTQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g7M16-0002ok-EB; Tue, 02 Oct 2018 14:51:16 +0000
-Date:   Tue, 2 Oct 2018 07:51:16 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Zong Li <zongbox@gmail.com>
-Cc:     palmer@sifive.com, aou@eecs.berkeley.edu, hch@infradead.org,
-        zong@andestech.com, linux-riscv@lists.infradead.org,
-        Vincent Chen <vincentc@andestech.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] RISC-V: Avoid corrupting the upper 32-bit of
- phys_addr_t in ioremap
-Message-ID: <20181002145116.GE3889@infradead.org>
-References: <cover.1538470103.git.zongbox@gmail.com>
- <54849b9d9a709525640011814872155eafa7a9d7.1538470103.git.zongbox@gmail.com>
+        Tue, 2 Oct 2018 17:35:38 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w92EnQQC093620
+        for <linux-kernel@vger.kernel.org>; Tue, 2 Oct 2018 10:51:51 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mv9amv64q-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 10:51:50 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
+        Tue, 2 Oct 2018 10:51:48 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 2 Oct 2018 10:51:44 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w92EphE428639428
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 2 Oct 2018 14:51:43 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C3D2AC05E;
+        Tue,  2 Oct 2018 10:51:01 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DBA9CAC05B;
+        Tue,  2 Oct 2018 10:50:58 -0400 (EDT)
+Received: from oc5000245537.ibm.com (unknown [9.53.179.212])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  2 Oct 2018 10:50:58 -0400 (EDT)
+Subject: Re: [PATCH] migration/mm: Add WARN_ON to try_offline_node
+To:     Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Juliet Kim <minkim@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Oscar Salvador <osalvador@suse.de>
+References: <20181001185616.11427.35521.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
+ <20181001202724.GL18290@dhcp22.suse.cz>
+ <bdbca329-7d35-0535-1737-94a06a19ae28@linux.vnet.ibm.com>
+From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
+ xsBNBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
+ lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
+ DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
+ t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
+ AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
+ AAHNLU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPsLAeAQT
+ AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
+ CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
+ 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
+ QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
+ AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
+ oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/Us7ATQRXGOxnAQgAmJ5Y
+ ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
+ DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
+ 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
+ 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
+ qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABwsBfBBgBAgAJBQJX
+ GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
+ efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
+ ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
+ yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
+ IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
+ 53/hcWvxHVs=
+Organization: IBM Linux Technology Center
+Date:   Tue, 2 Oct 2018 09:51:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54849b9d9a709525640011814872155eafa7a9d7.1538470103.git.zongbox@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <bdbca329-7d35-0535-1737-94a06a19ae28@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18100214-2213-0000-0000-000002FB17B9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009809; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01096827; UDB=6.00567181; IPR=6.00876869;
+ MB=3.00023590; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-02 14:51:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100214-2214-0000-0000-00005BC16C93
+Message-Id: <df95f828-1963-d8b9-ab58-6d29d2d152d2@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-02_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810020144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 04:52:31PM +0800, Zong Li wrote:
-> From: Vincent Chen <vincentc@andestech.com>
+See below.
+
+On 10/01/2018 06:20 PM, Tyrel Datwyler wrote:
+> On 10/01/2018 01:27 PM, Michal Hocko wrote:
+>> On Mon 01-10-18 13:56:25, Michael Bringmann wrote:
+>>> In some LPAR migration scenarios, device-tree modifications are
+>>> made to the affinity of the memory in the system.  For instance,
+>>> it may occur that memory is installed to nodes 0,3 on a source
+>>> system, and to nodes 0,2 on a target system.  Node 2 may not
+>>> have been initialized/allocated on the target system.
+>>>
+>>> After migration, if a RTAS PRRN memory remove is made to a
+>>> memory block that was in node 3 on the source system, then
+>>> try_offline_node tries to remove it from node 2 on the target.
+>>> The NODE_DATA(2) block would not be initialized on the target,
+>>> and there is no validation check in the current code to prevent
+>>> the use of a NULL pointer.
+>>
+>> I am not familiar with ppc and the above doesn't really help me
+>> much. Sorry about that. But from the above it is not clear to me whether
+>> it is the caller which does something unexpected or the hotplug code
+>> being not robust enough. From your changelog I would suggest the later
+>> but why don't we see the same problem for other archs? Is this a problem
+>> of unrolling a partial failure?
+>>
+>> dlpar_remove_lmb does the following
+>>
+>> 	nid = memory_add_physaddr_to_nid(lmb->base_addr);
+>>
+>> 	remove_memory(nid, lmb->base_addr, block_sz);
+>>
+>> 	/* Update memory regions for memory remove */
+>> 	memblock_remove(lmb->base_addr, block_sz);
+>>
+>> 	dlpar_remove_device_tree_lmb(lmb);
+>>
+>> Is the whole operation correct when remove_memory simply backs off
+>> silently. Why don't we have to care about memblock resp
+>> dlpar_remove_device_tree_lmb parts? In other words how come the physical
+>> memory range is valid while the node association is not?
+>>
 > 
-> For 32bit, the upper 32-bit of phys_addr_t will be flushed to zero
-> after AND with PAGE_MASK because the data type of PAGE_MASK is
-> unsigned long. To fix this problem, the page alignment is done by
-> subtracting the page offset instead of AND with PAGE_MASK.
+> I think the issue here is a race between the LPM code updating affinity and PRRN events being processed. Does your other patch[1] not fix the issue? Or is it that the LPM affinity updates don't do any of the initialization/allocation you mentioned?
+
+This patch addresses the specific case where PRRN changes to CPU or memory are occurring on a system that also observes affinity changes during migration.  Yes,  there is a race condition -- if the PRRN events reliably occurred before the device-tree was updated, this error would not occur.  However, they overlap or occur after the changes during most LPMs observed.
+
+When the device-tree affinity attributes have changed for memory, the 'nid' affinity calculated points to a different node for the memory block than the one used to install it, previously on the source system.  The newly calculated 'nid' affinity may not yet be initialized on the target system.  The current memory tracking mechanisms do not record the node to which a memory block was associated when it was added.  Nathan is looking at adding this feature to the new implementation of LMBs, but it is not there yet, and won't be present in earlier kernels without backporting a significant number of changes.
+
+My other patch[1] is more intended to address locking and CPU update dependencies between PRRN changes and RTAS requests which did not necessarly involve memory updates.  The node to memory association problem after migration would be present even with this issue resolved.
+
 > 
-> Signed-off-by: Vincent Chen <vincentc@andestech.com>
+> -Tyrel
+> 
+> [1] https://lore.kernel.org/linuxppc-dev/20181001185603.11373.61650.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com/T/#u
+> 
 
-Looks good,
+Michael
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+-- 
+Michael W. Bringmann
+Linux Technology Center
+IBM Corporation
+Tie-Line  363-5196
+External: (512) 286-5196
+Cell:       (512) 466-0650
+mwb@linux.vnet.ibm.com
 
-(and I'm pretty sure I reviewed this before..)
