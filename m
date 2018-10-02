@@ -2,119 +2,110 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81AACC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975D4C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 408CB20684
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:20:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408CB20684
+	by mail.kernel.org (Postfix) with ESMTP id 60C9720684
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:20:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60C9720684
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbeJCDFq (ORCPT
+        id S1727625AbeJCDFs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 23:05:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40384 "EHLO mx1.redhat.com"
+        Tue, 2 Oct 2018 23:05:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:2678 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbeJCDFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 23:05:46 -0400
+        id S1726194AbeJCDFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 23:05:47 -0400
 Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 046C2A1E45;
-        Tue,  2 Oct 2018 20:20:41 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7386488304;
+        Tue,  2 Oct 2018 20:20:42 +0000 (UTC)
 Received: from llong.com (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1515A3001748;
-        Tue,  2 Oct 2018 20:20:36 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CCE7C308BDA0;
+        Tue,  2 Oct 2018 20:20:41 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         Will Deacon <will.deacon@arm.com>
 Cc:     linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: [PATCH v2 0/5] locking/lockdep: Improve lockdep performance
-Date:   Tue,  2 Oct 2018 16:19:15 -0400
-Message-Id: <1538511560-10090-1-git-send-email-longman@redhat.com>
+Subject: [PATCH v2 2/5] locking/lockdep: Eliminate redundant irqs check in __lock_acquire()
+Date:   Tue,  2 Oct 2018 16:19:17 -0400
+Message-Id: <1538511560-10090-3-git-send-email-longman@redhat.com>
+In-Reply-To: <1538511560-10090-1-git-send-email-longman@redhat.com>
+References: <1538511560-10090-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 02 Oct 2018 20:20:41 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 02 Oct 2018 20:20:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- v1->v2:
-  - Minor twists to incorporate Ingo's comments.
-  - Move class->ops from the lock_class structure to percpu array under
-    CONFIG_DEBUG_LOCKDEP. That moves the increased memory consumption
-    to CONFIG_DEBUG_LOCKDEP only.
+The static __lock_acquire() function has only two callers:
 
-Enabling CONFIG_LOCKDEP and other related debug options will greatly
-reduce system performance. This patchset aims to reduce the performance
-slowdown caused by the lockdep code.
+ 1) lock_acquire()
+ 2) reacquire_held_locks()
 
-Patch 1 just removes an inline function that wasn't used.
+In lock_acquire(), raw_local_irq_save() is called beforehand. So
+IRQs must have been disabled. So the check
 
-Patches 2 and 3 are minor twists to optimize the code.
+	DEBUG_LOCKS_WARN_ON(!irqs_disabled())
 
-Patch 4 makes class->ops a per-cpu counter and moves the stat counter
-under CONFIG_DEBUG_LOCKDEP again.
+is kind of redundant in this case. So move the above check
+to reacquire_held_locks() to eliminate redundant code in the
+lock_acquire() path.
 
-Patch 5 moves the lock_release() call outside of the lock critical 
-section.
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/locking/lockdep.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-Parallel kernel compilation tests (make -j <#cpu>, best of 3 runs)
-with gcc8 were performed on 2 different systems:
-
- 1) an 1-socket 22-core 44-thread Skylake system
- 2) a 4-socket 72-core 144-thread Broadwell system
-
-Four different kernel variants based on the 4.19-rc5 kernel were used:
-
- 1) non-debug kernel (with minimal debug options enabled)
- 2) pre-patch debug kernel  (CONFIG_LOCKDEP, !CONFIG_DEBUG_LOCKDEP)
- 3) post-patch debug kernel (CONFIG_LOCKDEP, !CONFIG_DEBUG_LOCKDEP)
- 4) post-patch debug kernel (CONFIG_LOCKDEP,  CONFIG_DEBUG_LOCKDEP)
-
-Note that the debug kernels had more debug options enabled than just
-LOCKDEP.
-
-The build times with pre-patch and post-patch debug kernels were:
-
-   System    Kernel 1    Kernel 2    Kernel 3    Kernel 4
-   ------    --------    --------    --------    --------
-  1-socket    6m06.0s     8m54.7s     8m34.9s     9m28.1s
-  4-socket    4m09.2s     7m36.0s     5m38.8s     6m17.8s
-
-Using the non-debug kernel execution times as the baseline, the % 
-runtime increase of the other 3 kernel variants were:
-
-   System    Kernel 2    Kernel 3    Kernel 4
-   ------    --------    --------    --------    
-  1-socket    +46.1%      +40.7%      +55.2%
-  4-socket    +83.0%      +36.0%      +51.6%
-
-Comparing just kernels 2 and 3, the patch reduced the execution times 
-by 3.7% and 25.7% for the 1-socket and 4-socket systems respectively.
-
-I think the last 2 patches yield most of the performance improvement.
-
-Waiman Long (5):
-  locking/lockdep: Remove add_chain_cache_classes()
-  locking/lockdep: Eliminate redundant irqs check in __lock_acquire()
-  locking/lockdep: Add a faster path in __lock_release()
-  locking/lockdep: Make class->ops a percpu counter
-  locking/lockdep: Call lock_release() after releasing the lock
-
- include/linux/lockdep.h            |   7 +-
- include/linux/rwlock_api_smp.h     |  16 ++--
- include/linux/spinlock_api_smp.h   |   8 +-
- kernel/locking/lockdep.c           | 113 ++++++++---------------------
- kernel/locking/lockdep_internals.h |  23 ++++++
- kernel/locking/lockdep_proc.c      |   2 +-
- 6 files changed, 66 insertions(+), 103 deletions(-)
-
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 8f9de7cd11ab..bd59163b0550 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -3192,6 +3192,10 @@ static int __lock_is_held(const struct lockdep_map *lock, int read);
+ /*
+  * This gets called for every mutex_lock*()/spin_lock*() operation.
+  * We maintain the dependency maps and validate the locking attempt:
++ *
++ * The callers must make sure that IRQs are disabled before calling it,
++ * otherwise we could get an interrupt which would want to take locks,
++ * which would end up in lockdep again.
+  */
+ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 			  int trylock, int read, int check, int hardirqs_off,
+@@ -3209,14 +3213,6 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 	if (unlikely(!debug_locks))
+ 		return 0;
+ 
+-	/*
+-	 * Lockdep should run with IRQs disabled, otherwise we could
+-	 * get an interrupt which would want to take locks, which would
+-	 * end up in lockdep and have you got a head-ache already?
+-	 */
+-	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
+-		return 0;
+-
+ 	if (!prove_locking || lock->key == &__lockdep_no_validate__)
+ 		check = 0;
+ 
+@@ -3473,6 +3469,9 @@ static int reacquire_held_locks(struct task_struct *curr, unsigned int depth,
+ {
+ 	struct held_lock *hlock;
+ 
++	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
++		return 0;
++
+ 	for (hlock = curr->held_locks + idx; idx < depth; idx++, hlock++) {
+ 		if (!__lock_acquire(hlock->instance,
+ 				    hlock_class(hlock)->subclass,
 -- 
 2.18.0
 
