@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B09C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DC9C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06EF821479
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06EF821479
+	by mail.kernel.org (Postfix) with ESMTP id 765F3206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 765F3206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732408AbeJBUSP (ORCPT
+        id S1732422AbeJBUST (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:18:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35420 "EHLO
+        Tue, 2 Oct 2018 16:18:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35440 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729867AbeJBUSP (ORCPT
+        with ESMTP id S1732415AbeJBUSS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:15 -0400
+        Tue, 2 Oct 2018 16:18:18 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A588AB2F;
-        Tue,  2 Oct 2018 13:34:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 010DEBF0;
+        Tue,  2 Oct 2018 13:34:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Bo Chen <chenbo@pdx.edu>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 121/137] net: hns: fix length and page_offset overflow when CONFIG_ARM64_64K_PAGES
-Date:   Tue,  2 Oct 2018 06:25:22 -0700
-Message-Id: <20181002132507.003590989@linuxfoundation.org>
+Subject: [PATCH 4.14 123/137] e1000: check on netif_running() before calling e1000_up()
+Date:   Tue,  2 Oct 2018 06:25:24 -0700
+Message-Id: <20181002132507.116230400@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,39 +54,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+From: Bo Chen <chenbo@pdx.edu>
 
-[ Upstream commit 3ed614dce3ca9912d22be215ff0f11104b69fe62 ]
+[ Upstream commit cf1acec008f8d7761aa3fd7c4bca7e17b2d2512d ]
 
-When enable the config item "CONFIG_ARM64_64K_PAGES", the size of PAGE_SIZE
-is 65536(64K). But the  type of length and page_offset are u16, they will
-overflow. So change them to u32.
+When the device is not up, the call to 'e1000_up()' from the error handling path
+of 'e1000_set_ringparam()' causes a kernel oops with a null-pointer
+dereference. The null-pointer dereference is triggered in function
+'e1000_alloc_rx_buffers()' at line 'buffer_info = &rx_ring->buffer_info[i]'.
 
-Fixes: 6fe6611ff275 ("net: add Hisilicon Network Subsystem hnae framework support")
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This bug was reported by COD, a tool for testing kernel module binaries I am
+building. This bug was also detected by KFI from Dr. Kai Cong.
+
+This patch fixes the bug by checking on 'netif_running()' before calling
+'e1000_up()' in 'e1000_set_ringparam()'.
+
+Signed-off-by: Bo Chen <chenbo@pdx.edu>
+Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hnae.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/hisilicon/hns/hnae.h
-+++ b/drivers/net/ethernet/hisilicon/hns/hnae.h
-@@ -220,10 +220,10 @@ struct hnae_desc_cb {
- 
- 	/* priv data for the desc, e.g. skb when use with ip stack*/
- 	void *priv;
--	u16 page_offset;
--	u16 reuse_flag;
-+	u32 page_offset;
-+	u32 length;     /* length of the buffer */
- 
--	u16 length;     /* length of the buffer */
-+	u16 reuse_flag;
- 
-        /* desc type, used by the ring user to mark the type of the priv data */
- 	u16 type;
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -664,7 +664,8 @@ err_setup_rx:
+ err_alloc_rx:
+ 	kfree(txdr);
+ err_alloc_tx:
+-	e1000_up(adapter);
++	if (netif_running(adapter->netdev))
++		e1000_up(adapter);
+ err_setup:
+ 	clear_bit(__E1000_RESETTING, &adapter->flags);
+ 	return err;
 
 
