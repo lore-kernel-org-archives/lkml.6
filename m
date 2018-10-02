@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274D5C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0002C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBAE02064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:46:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBAE02064D
+	by mail.kernel.org (Postfix) with ESMTP id 8F94D2064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:46:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F94D2064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732997AbeJBU3z (ORCPT
+        id S1732520AbeJBUS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:29:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35546 "EHLO
+        Tue, 2 Oct 2018 16:18:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35508 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731695AbeJBUSd (ORCPT
+        with ESMTP id S1732509AbeJBUS1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:33 -0400
+        Tue, 2 Oct 2018 16:18:27 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9E6D9C3F;
-        Tue,  2 Oct 2018 13:35:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 46EB5B2F;
+        Tue,  2 Oct 2018 13:35:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Smart <james.smart@broadcom.com>,
-        Christoph Hellwig <hch@lst.de>,
+        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 132/137] nvme-fcloop: Fix dropped LSs to removed target port
-Date:   Tue,  2 Oct 2018 06:25:33 -0700
-Message-Id: <20181002132507.750003426@linuxfoundation.org>
+Subject: [PATCH 4.14 128/137] Revert "ARM: dts: imx7d: Invert legacy PCI irq mapping"
+Date:   Tue,  2 Oct 2018 06:25:29 -0700
+Message-Id: <20181002132507.473254294@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,47 +53,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-[ Upstream commit afd299ca996929f4f98ac20da0044c0cdc124879 ]
+[ Upstream commit 538d6e9d597584e80514698e24321645debde78f ]
 
-When a targetport is removed from the config, fcloop will avoid calling
-the LS done() routine thinking the targetport is gone. This leaves the
-initiator reset/reconnect hanging as it waits for a status on the
-Create_Association LS for the reconnect.
+This reverts commit 1c86c9dd82f859b474474a7fee0d5195da2c9c1d.
 
-Change the filter in the LS callback path. If tport null (set when
-failed validation before "sending to remote port"), be sure to call
-done. This was the main bug. But, continue the logic that only calls
-done if tport was set but there is no remoteport (e.g. case where
-remoteport has been removed, thus host doesn't expect a completion).
+That commit followed the reference manual but unfortunately the imx7d
+manual is incorrect.
 
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Tested with ath9k pcie card and confirmed internally.
+
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Acked-by: Lucas Stach <l.stach@pengutronix.de>
+Fixes: 1c86c9dd82f8 ("ARM: dts: imx7d: Invert legacy PCI irq mapping")
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/target/fcloop.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/imx7d.dtsi |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/nvme/target/fcloop.c
-+++ b/drivers/nvme/target/fcloop.c
-@@ -300,7 +300,7 @@ fcloop_tgt_lsrqst_done_work(struct work_
- 	struct fcloop_tport *tport = tls_req->tport;
- 	struct nvmefc_ls_req *lsreq = tls_req->lsreq;
- 
--	if (tport->remoteport)
-+	if (!tport || tport->remoteport)
- 		lsreq->done(lsreq, tls_req->status);
- }
- 
-@@ -318,6 +318,7 @@ fcloop_ls_req(struct nvme_fc_local_port
- 
- 	if (!rport->targetport) {
- 		tls_req->status = -ECONNREFUSED;
-+		tls_req->tport = NULL;
- 		schedule_work(&tls_req->work);
- 		return ret;
- 	}
+--- a/arch/arm/boot/dts/imx7d.dtsi
++++ b/arch/arm/boot/dts/imx7d.dtsi
+@@ -144,10 +144,14 @@
+ 		interrupt-names = "msi";
+ 		#interrupt-cells = <1>;
+ 		interrupt-map-mask = <0 0 0 0x7>;
+-		interrupt-map = <0 0 0 1 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
+-				<0 0 0 2 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
+-				<0 0 0 3 &intc GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
+-				<0 0 0 4 &intc GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
++		/*
++		 * Reference manual lists pci irqs incorrectly
++		 * Real hardware ordering is same as imx6: D+MSI, C, B, A
++		 */
++		interrupt-map = <0 0 0 1 &intc GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++				<0 0 0 2 &intc GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
++				<0 0 0 3 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
++				<0 0 0 4 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&clks IMX7D_PCIE_CTRL_ROOT_CLK>,
+ 			 <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>,
+ 			 <&clks IMX7D_PCIE_PHY_ROOT_CLK>;
 
 
