@@ -2,95 +2,96 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE7E0C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9281FC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:03:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A525E2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9C4620878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:03:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="Ny4z/5wI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A525E2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	dkim=pass (2048-bit key) header.d=firemail.cc header.i=@firemail.cc header.b="0MCsaJbf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C4620878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firemail.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbeJBMjq (ORCPT
+        id S1726849AbeJBMog (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 08:39:46 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:53178 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbeJBMjp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 08:39:45 -0400
-Received: by mail-it1-f193.google.com with SMTP id 134-v6so1970679itz.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 22:58:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IXSzoiFc4EYwwmP67Mk0DvqyZS6v6kxo/n1ckYzbsNA=;
-        b=Ny4z/5wIE4WSFhXpcx1cNWE22AFFa37Ua+2VZm/1PiPlUggD5XxEjEgJBUDUnUj5PK
-         9mwfMEWnlbDlW6s+v2Al0YcrTlNNYsK5Z8jQE1z8xPihr1FUqLyTcwu9K7pYszI85UhA
-         JJSthmeNUgF28uvsycWxZPtSVtNhnuaFv9yezlPZOmh4W5lrTodrXoH4H4FicxEKjp9v
-         QO3eeOaSB10jJZWihiLZyChRACsmPIFA6IcLDPoiB5G/3n+iJ7aV9ivNmalLh4/1kmmd
-         tURxEjNmdirrKpOS+syWM44m8kAPXmBQD0S5JEIbqdGyu01t6c16xXFik5OuBaNqkaW5
-         lgzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IXSzoiFc4EYwwmP67Mk0DvqyZS6v6kxo/n1ckYzbsNA=;
-        b=qyGNYGjrwZsV2Jdo+xkrMX9wnG91ClusyzukDmx1vfA9ktFJZBU0y8sQQ9lzIHBWET
-         B2/taYFu7EBilDXnCOhzF2FZQ3gZxTOUdDJYqfpFAoz7xm1SBOwQ8knrxvsx+89kPfh2
-         cWl4w34vSYdCkfEl3rIulOA1CSmUw6hehI3TebaO9XTRP8zV6mQNubSCL6B9HvupcC+z
-         IWZJcA8H/gL3s7rYF+1MCnlOlJTFtfB+948RbbJkbrOa1JSJn9thToSu6BXntBJUThfV
-         HoReUziXMqMr5JApvfwrI0LH/l78OMOzf2L3CW1voMN1Dk6OJav5QdI5jrqyELdR7CHK
-         gWbw==
-X-Gm-Message-State: ABuFfog1K6LRqQhdhO1MV5LXwimnTFscGogBBe0xfgY2gcE5kJ3PUDz+
-        0D12zmUw+EebZC+W677WBmTw2XB7lj2ruvFvy9kTLQ==
-X-Google-Smtp-Source: ACcGV60A5RzYKGgYfSiZQxtvys5qR4bIIBXPkri5L0hVeYUvZA5ydfALG5oYpHuUJgym1JA2S1CK2CmwWgNwDa2vUH0=
-X-Received: by 2002:a02:b14a:: with SMTP id s10-v6mr10407881jah.38.1538459896762;
- Mon, 01 Oct 2018 22:58:16 -0700 (PDT)
+        Tue, 2 Oct 2018 08:44:36 -0400
+Received: from cock.li ([185.100.85.212]:45950 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726305AbeJBMof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 08:44:35 -0400
 MIME-Version: 1.0
-References: <20180927040948.11891-1-jian-hong@endlessm.com> <20181001.225140.1939583158282424865.davem@davemloft.net>
-In-Reply-To: <20181001.225140.1939583158282424865.davem@davemloft.net>
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-Date:   Tue, 2 Oct 2018 13:57:40 +0800
-Message-ID: <CAPpJ_eduPv5RDNgUOw3K+XprZBfUVn_sSOLbDWjNtaGRssUgLA@mail.gmail.com>
-Subject: Re: [PATCH net] r8169: Enable MSI-X on RTL8106e
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firemail.cc; s=mail;
+        t=1538460181; bh=+zKFz1IHmEi3kOni9XY+JImwYk7a0+4bn98wwcS0OjQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=0MCsaJbfx2+UaPG6gGtu4nSpKgh3OOZDiHydL6wUztaoHCni5xltnzLyPsWDuG7Ym
+         h2DEe1/QB5AYpNq6/0WHx4n1gbrr3nHoaVAxSu17wSaX1xE7qngjnthqq02PdZK6IB
+         VMA/EfCyHLgJrC3eudGENEQyjgmMuJY6rvFtf7LpUbQPJnVFzJU1lxCxoG+rTDm7BD
+         mgE6N/zcVbAyx+MeD4nPSYsgI0tCN9TNed7glUWne0V9GOjb4lH8W7m2zJ6nLQOq7D
+         wStuIFz+8HZ4tZ5Co7kCCfCiJO7C2hriOYVS5PXNyn4NKZD9zfb3/UtQmN5d00rD7z
+         rYQzrsdFte5dg==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 02 Oct 2018 06:03:01 +0000
+From:   clarityabovecompulsion@firemail.cc
+To:     linux-kernel@vger.kernel.org
+Cc:     martin.espinoza@gmail.com, scott.ferguson.debian.user@gmail.com,
+        debian-devel@lists.debian.org, debian-ctte@lists.debian.org,
+        debian-vote@lists.debian.org, debian-project@lists.debian.org,
+        pascal@plouf.fr.eu.org, yaro@marupa.net,
+        cbannister@slingshot.co.nz, andreimpopescu@gmail.com,
+        ghaverla@materialisations.com, debian-mirrors@lists.debian.org,
+        debian-security@lists.debian.org
+Subject: The GPLv2 is not a contract. It is supported by no consideration.
+Message-ID: <24036503356668916a0ea41961456711@firemail.cc>
+X-Sender: clarityabovecompulsion@firemail.cc
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Miller <davem@davemloft.net> =E6=96=BC 2018=E5=B9=B410=E6=9C=882=E6=
-=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=881:51=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> From: Jian-Hong Pan <jian-hong@endlessm.com>
-> Date: Thu, 27 Sep 2018 12:09:48 +0800
->
-> > However, there is a commit which resolves the drivers getting nothing i=
-n
-> > PCI BAR=3D4 after system resumes.  It is 04cb3ae895d7 "PCI: Reprogram
-> > bridge prefetch registers on resume" by Daniel Drake.
->
-> I don't see this upstream yet.
+> by drinkypoo ( 153816 ) <martin.espinoza@gmail.com> on Monday October 
+> 01, 2018 @10:21AM (#57403506) Homepage Journal
 
-It is in linux-next repository:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/=
-?id=3D04cb3ae895d7efdc60f0fe17182b200a3da20f09
+> >What consideration was given?
 
-Regrads,
-Jian-Hong Pan
+> The right to redistribute was given in exchange for use of the license 
+> for one's own code. Something for something. What was your question 
+> again?
+
+
+
+Incorrect.
+
+The permission to redistribute was simply given, gratis, by the grantor.
+
+He asked for nothing in return, and, infact received nothing, not even a 
+promise of compliance.
+
+At a later date any of countless licensees might decide they wish make 
+derivative works based upon the copyright-owner's property.
+
+By law this is barred.
+
+However the copyright holder here has magnanimously granted that the 
+licensee is, contrary to the default rule, permitted to create and 
+publish derivative works provided that they use the same license as the 
+original work.
+
+Here the copyright holder suffers a detriment. He is payed nothing for 
+this forbearance (no consideration).
+
+The licensee does not suffer a detriment: he had no right to make nor 
+publish a derivative work to begin with.
+
+The extending to him, of permission, is a pure gratuity.
+He payed nothing for the change from "You may not create nor distribute 
+derivative works" to "You may create and distribute derivative works 
+under the same license as the original work".
+
