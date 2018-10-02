@@ -6,37 +6,41 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B565C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56302C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31428206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31428206B2
+	by mail.kernel.org (Postfix) with ESMTP id 15161206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15161206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729166AbeJBULg (ORCPT
+        id S1729189AbeJBULi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60822 "EHLO
+        Tue, 2 Oct 2018 16:11:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60842 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729107AbeJBULf (ORCPT
+        with ESMTP id S1729107AbeJBULh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:35 -0400
+        Tue, 2 Oct 2018 16:11:37 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76992B2F;
-        Tue,  2 Oct 2018 13:28:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD123A67;
+        Tue,  2 Oct 2018 13:28:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 081/228] ALSA: hda: Add AZX_DCAPS_PM_RUNTIME for AMD Raven Ridge
-Date:   Tue,  2 Oct 2018 06:22:58 -0700
-Message-Id: <20181002132504.815424229@linuxfoundation.org>
+Subject: [PATCH 4.18 100/228] HID: i2c-hid: Use devm to allocate i2c_hid struct
+Date:   Tue,  2 Oct 2018 06:23:17 -0700
+Message-Id: <20181002132506.163862933@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -54,33 +58,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit 1adca4b0cd65c14cb8b8c9c257720385869c3d5f ]
+[ Upstream commit d6f83894110de247a81392ab7ef89e5498df7e80 ]
 
-This patch can make audio controller in AMD Raven Ridge gets runtime
-suspended to D3, to save ~1W power when it's not in use.
+Use devm here to save some lines and prepare for bulk regulator usage in
+this driver. Otherwise, when we devm bulk get regulators we'll free the
+containing i2c_hid structure and try to put regulator pointers from
+freed memory.
 
-Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Dmitry Torokhov <dtor@chromium.org>
+Cc: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/pci/hda/hda_intel.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/hid/i2c-hid/i2c-hid.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -2535,7 +2535,8 @@ static const struct pci_device_id azx_id
- 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
- 	/* AMD Raven */
- 	{ PCI_DEVICE(0x1022, 0x15e3),
--	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
-+	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
-+			 AZX_DCAPS_PM_RUNTIME },
- 	/* ATI HDMI */
- 	{ PCI_DEVICE(0x1002, 0x0002),
- 	  .driver_data = AZX_DRIVER_ATIHDMI_NS | AZX_DCAPS_PRESET_ATI_HDMI_NS },
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -1004,18 +1004,18 @@ static int i2c_hid_probe(struct i2c_clie
+ 		return client->irq;
+ 	}
+ 
+-	ihid = kzalloc(sizeof(struct i2c_hid), GFP_KERNEL);
++	ihid = devm_kzalloc(&client->dev, sizeof(*ihid), GFP_KERNEL);
+ 	if (!ihid)
+ 		return -ENOMEM;
+ 
+ 	if (client->dev.of_node) {
+ 		ret = i2c_hid_of_probe(client, &ihid->pdata);
+ 		if (ret)
+-			goto err;
++			return ret;
+ 	} else if (!platform_data) {
+ 		ret = i2c_hid_acpi_pdata(client, &ihid->pdata);
+ 		if (ret)
+-			goto err;
++			return ret;
+ 	} else {
+ 		ihid->pdata = *platform_data;
+ 	}
+@@ -1128,7 +1128,6 @@ err_regulator:
+ 
+ err:
+ 	i2c_hid_free_buffers(ihid);
+-	kfree(ihid);
+ 	return ret;
+ }
+ 
+@@ -1152,8 +1151,6 @@ static int i2c_hid_remove(struct i2c_cli
+ 
+ 	regulator_disable(ihid->pdata.supply);
+ 
+-	kfree(ihid);
+-
+ 	return 0;
+ }
+ 
 
 
