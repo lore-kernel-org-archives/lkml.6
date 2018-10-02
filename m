@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 665A0C64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D072BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3B32089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3B32089A
+	by mail.kernel.org (Postfix) with ESMTP id 9FEFB2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FEFB2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730581AbeJBUOF (ORCPT
+        id S1730611AbeJBUOI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33694 "EHLO
+        Tue, 2 Oct 2018 16:14:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33716 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730552AbeJBUOF (ORCPT
+        with ESMTP id S1730552AbeJBUOH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:05 -0400
+        Tue, 2 Oct 2018 16:14:07 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26AA9C52;
-        Tue,  2 Oct 2018 13:30:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51A9DC4D;
+        Tue,  2 Oct 2018 13:30:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
+        stable@vger.kernel.org,
         Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
         Tony Brelinski <tonyx.brelinski@intel.com>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 196/228] ice: Report stats for allocated queues via ethtool stats
-Date:   Tue,  2 Oct 2018 06:24:53 -0700
-Message-Id: <20181002132511.233625769@linuxfoundation.org>
+Subject: [PATCH 4.18 198/228] ice: Fix bugs in control queue processing
+Date:   Tue,  2 Oct 2018 06:24:55 -0700
+Message-Id: <20181002132511.332485495@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -54,192 +54,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
 
-[ Upstream commit f8ba7db850350319348b6d3c276f8ba19bc098ef ]
+[ Upstream commit 3d6b640efcc1b07709b42dd2e9609401c6f88633 ]
 
-It is not safe to have the string table for statistics change order or
-size over the lifetime of a given netdevice. This is because of the
-nature of the 3-step process for obtaining stats. First, user space
-performs a request for the size of the strings table. Second it performs
-a separate request for the strings themselves, after allocating space
-for the table. Third, it requests the stats themselves, also allocating
-space for the table.
+This patch is a consolidation of multiple bug fixes for control queue
+processing.
 
-If the size decreased, there is potential to see garbage data or stats
-values. In the worst case, we could potentially see stats values become
-mis-aligned with their strings, so that it looks like a statistic is
-being reported differently than it actually is.
+1)  In ice_clean_adminq_subtask() remove unnecessary reads/writes to
+    registers. The bits PFINT_FW_CTL, PFINT_MBX_CTL and PFINT_SB_CTL
+    are not set when an interrupt arrives, which means that clearing them
+    again can be omitted.
 
-Even worse, if the size increased, there is potential that the strings
-table or stats table was not allocated large enough and the stats code
-could access and write to memory it should not, potentially resulting in
-undefined behavior and system crashes.
+2)  Get an accurate value in "pending" by re-reading the control queue
+    head register from the hardware.
 
-It isn't even safe if the size always changes under the RTNL lock. This
-is because the calls take place over multiple user space commands, so it
-is not possible to hold the RTNL lock for the entire duration of
-obtaining strings and stats. Further, not all consumers of the ethtool
-API are the user space ethtool program, and it is possible that one
-assumes the strings will not change (valid under the current contract),
-and thus only requests the stats values when requesting stats in a loop.
+3)  Fix a corner case involving lost control queue messages by checking
+    for new control messages (using ice_ctrlq_pending) before exiting the
+    cleanup routine.
 
-Finally, it's not possible in the general case to detect when the size
-changes, because it is quite possible that one value which could impact
-the stat size increased, while another decreased. This would result in
-the same total number of stats, but reordering them so that stats no
-longer line up with the strings they belong to. Since only size changes
-aren't enough, we would need some sort of hash or token to determine
-when the strings no longer match. This would require extending the
-ethtool stats commands, but there is no more space in the relevant
-structures.
-
-The real solution to resolve this would be to add a completely new API
-for stats, probably over netlink.
-
-In the ice driver, the only thing impacting the stats that is not
-constant is the number of queues. Instead of reporting stats for each
-used queue, report stats for each allocated queue. We do not change the
-number of queues allocated for a given netdevice, as we pass this into
-the alloc_etherdev_mq() function to set the num_tx_queues and
-num_rx_queues.
-
-This resolves the potential bugs at the slight cost of displaying many
-queue statistics which will not be activated.
-
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
 Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
 Tested-by: Tony Brelinski <tonyx.brelinski@intel.com>
 Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/ice/ice.h         |    7 +++
- drivers/net/ethernet/intel/ice/ice_ethtool.c |   52 ++++++++++++++++++++-------
- 2 files changed, 46 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/intel/ice/ice_controlq.c |    5 ++++-
+ drivers/net/ethernet/intel/ice/ice_main.c     |   26 ++++++++++++++++++++++----
+ 2 files changed, 26 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/intel/ice/ice.h
-+++ b/drivers/net/ethernet/intel/ice/ice.h
-@@ -89,6 +89,13 @@ extern const char ice_drv_ver[];
- #define ice_for_each_rxq(vsi, i) \
- 	for ((i) = 0; (i) < (vsi)->num_rxq; (i)++)
+--- a/drivers/net/ethernet/intel/ice/ice_controlq.c
++++ b/drivers/net/ethernet/intel/ice/ice_controlq.c
+@@ -1065,8 +1065,11 @@ ice_clean_rq_elem(struct ice_hw *hw, str
  
-+/* Macros for each allocated tx/rx ring whether used or not in a VSI */
-+#define ice_for_each_alloc_txq(vsi, i) \
-+	for ((i) = 0; (i) < (vsi)->alloc_txq; (i)++)
-+
-+#define ice_for_each_alloc_rxq(vsi, i) \
-+	for ((i) = 0; (i) < (vsi)->alloc_rxq; (i)++)
-+
- struct ice_tc_info {
- 	u16 qoffset;
- 	u16 qcount;
---- a/drivers/net/ethernet/intel/ice/ice_ethtool.c
-+++ b/drivers/net/ethernet/intel/ice/ice_ethtool.c
-@@ -26,7 +26,7 @@ static int ice_q_stats_len(struct net_de
- {
- 	struct ice_netdev_priv *np = netdev_priv(netdev);
+ clean_rq_elem_out:
+ 	/* Set pending if needed, unlock and return */
+-	if (pending)
++	if (pending) {
++		/* re-read HW head to calculate actual pending messages */
++		ntu = (u16)(rd32(hw, cq->rq.head) & cq->rq.head_mask);
+ 		*pending = (u16)((ntc > ntu ? cq->rq.count : 0) + (ntu - ntc));
++	}
+ clean_rq_elem_err:
+ 	mutex_unlock(&cq->rq_lock);
  
--	return ((np->vsi->num_txq + np->vsi->num_rxq) *
-+	return ((np->vsi->alloc_txq + np->vsi->alloc_rxq) *
- 		(sizeof(struct ice_q_stats) / sizeof(u64)));
+--- a/drivers/net/ethernet/intel/ice/ice_main.c
++++ b/drivers/net/ethernet/intel/ice/ice_main.c
+@@ -917,13 +917,27 @@ static int __ice_clean_ctrlq(struct ice_
  }
  
-@@ -218,7 +218,7 @@ static void ice_get_strings(struct net_d
- 			p += ETH_GSTRING_LEN;
- 		}
- 
--		ice_for_each_txq(vsi, i) {
-+		ice_for_each_alloc_txq(vsi, i) {
- 			snprintf(p, ETH_GSTRING_LEN,
- 				 "tx-queue-%u.tx_packets", i);
- 			p += ETH_GSTRING_LEN;
-@@ -226,7 +226,7 @@ static void ice_get_strings(struct net_d
- 			p += ETH_GSTRING_LEN;
- 		}
- 
--		ice_for_each_rxq(vsi, i) {
-+		ice_for_each_alloc_rxq(vsi, i) {
- 			snprintf(p, ETH_GSTRING_LEN,
- 				 "rx-queue-%u.rx_packets", i);
- 			p += ETH_GSTRING_LEN;
-@@ -253,6 +253,24 @@ static int ice_get_sset_count(struct net
+ /**
++ * ice_ctrlq_pending - check if there is a difference between ntc and ntu
++ * @hw: pointer to hardware info
++ * @cq: control queue information
++ *
++ * returns true if there are pending messages in a queue, false if there aren't
++ */
++static bool ice_ctrlq_pending(struct ice_hw *hw, struct ice_ctl_q_info *cq)
++{
++	u16 ntu;
++
++	ntu = (u16)(rd32(hw, cq->rq.head) & cq->rq.head_mask);
++	return cq->rq.next_to_clean != ntu;
++}
++
++/**
+  * ice_clean_adminq_subtask - clean the AdminQ rings
+  * @pf: board private structure
+  */
+ static void ice_clean_adminq_subtask(struct ice_pf *pf)
  {
- 	switch (sset) {
- 	case ETH_SS_STATS:
-+		/* The number (and order) of strings reported *must* remain
-+		 * constant for a given netdevice. This function must not
-+		 * report a different number based on run time parameters
-+		 * (such as the number of queues in use, or the setting of
-+		 * a private ethtool flag). This is due to the nature of the
-+		 * ethtool stats API.
-+		 *
-+		 * User space programs such as ethtool must make 3 separate
-+		 * ioctl requests, one for size, one for the strings, and
-+		 * finally one for the stats. Since these cross into
-+		 * user space, changes to the number or size could result in
-+		 * undefined memory access or incorrect string<->value
-+		 * correlations for statistics.
-+		 *
-+		 * Even if it appears to be safe, changes to the size or
-+		 * order of strings will suffer from race conditions and are
-+		 * not safe.
-+		 */
- 		return ICE_ALL_STATS_LEN(netdev);
- 	default:
- 		return -EOPNOTSUPP;
-@@ -280,18 +298,26 @@ ice_get_ethtool_stats(struct net_device
- 	/* populate per queue stats */
- 	rcu_read_lock();
+ 	struct ice_hw *hw = &pf->hw;
+-	u32 val;
  
--	ice_for_each_txq(vsi, j) {
-+	ice_for_each_alloc_txq(vsi, j) {
- 		ring = READ_ONCE(vsi->tx_rings[j]);
--		if (!ring)
--			continue;
--		data[i++] = ring->stats.pkts;
--		data[i++] = ring->stats.bytes;
-+		if (ring) {
-+			data[i++] = ring->stats.pkts;
-+			data[i++] = ring->stats.bytes;
-+		} else {
-+			data[i++] = 0;
-+			data[i++] = 0;
-+		}
- 	}
+ 	if (!test_bit(__ICE_ADMINQ_EVENT_PENDING, pf->state))
+ 		return;
+@@ -933,9 +947,13 @@ static void ice_clean_adminq_subtask(str
  
--	ice_for_each_rxq(vsi, j) {
-+	ice_for_each_alloc_rxq(vsi, j) {
- 		ring = READ_ONCE(vsi->rx_rings[j]);
--		data[i++] = ring->stats.pkts;
--		data[i++] = ring->stats.bytes;
-+		if (ring) {
-+			data[i++] = ring->stats.pkts;
-+			data[i++] = ring->stats.bytes;
-+		} else {
-+			data[i++] = 0;
-+			data[i++] = 0;
-+		}
- 	}
+ 	clear_bit(__ICE_ADMINQ_EVENT_PENDING, pf->state);
  
- 	rcu_read_unlock();
-@@ -519,7 +545,7 @@ ice_set_ringparam(struct net_device *net
- 		goto done;
- 	}
+-	/* re-enable Admin queue interrupt causes */
+-	val = rd32(hw, PFINT_FW_CTL);
+-	wr32(hw, PFINT_FW_CTL, (val | PFINT_FW_CTL_CAUSE_ENA_M));
++	/* There might be a situation where new messages arrive to a control
++	 * queue between processing the last message and clearing the
++	 * EVENT_PENDING bit. So before exiting, check queue head again (using
++	 * ice_ctrlq_pending) and process new messages if any.
++	 */
++	if (ice_ctrlq_pending(hw, &hw->adminq))
++		__ice_clean_ctrlq(pf, ICE_CTL_Q_ADMIN);
  
--	for (i = 0; i < vsi->num_txq; i++) {
-+	for (i = 0; i < vsi->alloc_txq; i++) {
- 		/* clone ring and setup updated count */
- 		tx_rings[i] = *vsi->tx_rings[i];
- 		tx_rings[i].count = new_tx_cnt;
-@@ -551,7 +577,7 @@ process_rx:
- 		goto done;
- 	}
- 
--	for (i = 0; i < vsi->num_rxq; i++) {
-+	for (i = 0; i < vsi->alloc_rxq; i++) {
- 		/* clone ring and setup updated count */
- 		rx_rings[i] = *vsi->rx_rings[i];
- 		rx_rings[i].count = new_rx_cnt;
+ 	ice_flush(hw);
+ }
 
 
