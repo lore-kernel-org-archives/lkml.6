@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A655BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE6DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74FB32064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74FB32064A
+	by mail.kernel.org (Postfix) with ESMTP id 809FC2082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 809FC2082A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731088AbeJBUlr (ORCPT
+        id S1731193AbeJBUl7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:41:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33966 "EHLO
+        Tue, 2 Oct 2018 16:41:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33944 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730815AbeJBUO2 (ORCPT
+        with ESMTP id S1730783AbeJBUO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:28 -0400
+        Tue, 2 Oct 2018 16:14:27 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FD32C2A;
-        Tue,  2 Oct 2018 13:31:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7DA8C3F;
+        Tue,  2 Oct 2018 13:31:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Emily Deng <Emily.Deng@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Marcel Partap <mpartap@gmx.net>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Scott <hashcode0f@gmail.com>,
+        NeKit <nekit1000@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 219/228] drm/amdgpu: Need to set moved to true when evict bo
-Date:   Tue,  2 Oct 2018 06:25:16 -0700
-Message-Id: <20181002132512.338916613@linuxfoundation.org>
+Subject: [PATCH 4.18 218/228] ARM: dts: omap4-droid4: Fix emmc errors seen on some devices
+Date:   Tue,  2 Oct 2018 06:25:15 -0700
+Message-Id: <20181002132512.290321236@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,43 +56,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emily Deng <Emily.Deng@amd.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 6ddd9769db4fc11a98bd7e58be1764e47fdb8384 ]
+[ Upstream commit 2d59bb602314a4b2593fde267734266b5e872dd0 ]
 
-Fix the VMC page fault when the running sequence is as below:
-1.amdgpu_gem_create_ioctl
-2.ttm_bo_swapout->amdgpu_vm_bo_invalidate, as not called
-amdgpu_vm_bo_base_init, so won't called
-list_add_tail(&base->bo_list, &bo->va). Even the bo was evicted,
-it won't set the bo_base->moved.
-3.drm_gem_open_ioctl->amdgpu_vm_bo_base_init, here only called
-list_move_tail(&base->vm_status, &vm->evicted), but not set the
-bo_base->moved.
-4.amdgpu_vm_bo_map->amdgpu_vm_bo_insert_map, as the bo_base->moved is
-not set true, the function amdgpu_vm_bo_insert_map will call
-list_move(&bo_va->base.vm_status, &vm->moved)
-5.amdgpu_cs_ioctl won't validate the swapout bo, as it is only in the
-moved list, not in the evict list. So VMC page fault occurs.
+Otherwise we can get the following errors occasionally on some devices:
 
-Signed-off-by: Emily Deng <Emily.Deng@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+mmc1: tried to HW reset card, got error -110
+mmcblk1: error -110 requesting status
+mmcblk1: recovery failed!
+print_req_error: I/O error, dev mmcblk1, sector 14329
+...
+
+I have one device that hits this error almost on every boot, and another
+one that hits it only rarely with the other ones I've used behave without
+problems. I'm not sure if the issue is related to a particular eMMC card
+model, but in case it is, both of the machines with issues have:
+
+# cat /sys/class/mmc_host/mmc1/mmc1:0001/manfid \
+/sys/class/mmc_host/mmc1/mmc1:0001/oemid \
+/sys/class/mmc_host/mmc1/mmc1:0001/name
+0x000045
+0x0100
+SEM16G
+
+and the working ones have:
+
+0x000011
+0x0100
+016G92
+
+Note that "ti,non-removable" is different as omap_hsmmc_reg_get() does not
+call omap_hsmmc_disable_boot_regulators() if no_regulator_off_init is set.
+And currently we set no_regulator_off_init only for "ti,non-removable" and
+not for "non-removable". It seems that we should have "non-removable" with
+some other mmc generic property behave in the same way instead of having to
+use a non-generic property. But let's fix the issue first.
+
+Fixes: 7e2f8c0ae670 ("ARM: dts: Add minimal support for motorola droid 4
+xt894")
+Cc: Marcel Partap <mpartap@gmx.net>
+Cc: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Michael Scott <hashcode0f@gmail.com>
+Cc: NeKit <nekit1000@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sre@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/omap4-droid4-xt894.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-@@ -123,6 +123,7 @@ static void amdgpu_vm_bo_base_init(struc
- 	 * is validated on next vm use to avoid fault.
- 	 * */
- 	list_move_tail(&base->vm_status, &vm->evicted);
-+	base->moved = true;
- }
+--- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
++++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
+@@ -351,7 +351,7 @@
+ &mmc2 {
+ 	vmmc-supply = <&vsdio>;
+ 	bus-width = <8>;
+-	non-removable;
++	ti,non-removable;
+ };
  
- /**
+ &mmc3 {
 
 
