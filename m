@@ -3,38 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D3CC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9106DC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6344C2147C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6344C2147C
+	by mail.kernel.org (Postfix) with ESMTP id 62BD12064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62BD12064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733223AbeJBUT4 (ORCPT
+        id S1733234AbeJBUT5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:19:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36290 "EHLO
+        Tue, 2 Oct 2018 16:19:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36302 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733215AbeJBUTz (ORCPT
+        with ESMTP id S1731726AbeJBUT4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:55 -0400
+        Tue, 2 Oct 2018 16:19:56 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A0FBB4A;
-        Tue,  2 Oct 2018 13:36:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 831D4B4B;
+        Tue,  2 Oct 2018 13:36:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>,
-        Keerthy <j-keerthy@ti.com>, Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org,
+        Michael Scott <michael@opensourcefoundries.com>,
+        Alexander Aring <aring@mojatatu.com>,
+        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 20/94] ARM: hwmod: RTC: Dont assume lock/unlock will be called with irq enabled
-Date:   Tue,  2 Oct 2018 06:24:34 -0700
-Message-Id: <20181002132501.877163671@linuxfoundation.org>
+Subject: [PATCH 4.9 11/94] 6lowpan: iphc: reset mac_header after decompress to fix panic
+Date:   Tue,  2 Oct 2018 06:24:25 -0700
+Message-Id: <20181002132501.268431054@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -52,62 +55,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Gerlach <d-gerlach@ti.com>
+From: Michael Scott <michael@opensourcefoundries.com>
 
-[ Upstream commit 6d609b35c815ba20132b7b64bcca04516bb17c56 ]
+[ Upstream commit 03bc05e1a4972f73b4eb8907aa373369e825c252 ]
 
-When the RTC lock and unlock functions were introduced it was likely
-assumed that they would always be called from irq enabled context, hence
-the use of local_irq_disable/enable. This is no longer true as the
-RTC+DDR path makes a late call during the suspend path after irqs
-have been disabled to enable the RTC hwmod which calls both unlock and
-lock, leading to IRQs being reenabled through the local_irq_enable call
-in omap_hwmod_rtc_lock call.
+After decompression of 6lowpan socket data, an IPv6 header is inserted
+before the existing socket payload.  After this, we reset the
+network_header value of the skb to account for the difference in payload
+size from prior to decompression + the addition of the IPv6 header.
 
-To avoid this change the local_irq_disable/enable to
-local_irq_save/restore to ensure that from whatever context this is
-called the proper IRQ configuration is maintained.
+However, we fail to reset the mac_header value.
 
-Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Leaving the mac_header value untouched here, can cause a calculation
+error in net/packet/af_packet.c packet_rcv() function when an
+AF_PACKET socket is opened in SOCK_RAW mode for use on a 6lowpan
+interface.
+
+On line 2088, the data pointer is moved backward by the value returned
+from skb_mac_header().  If skb->data is adjusted so that it is before
+the skb->head pointer (which can happen when an old value of mac_header
+is left in place) the kernel generates a panic in net/core/skbuff.c
+line 1717.
+
+This panic can be generated by BLE 6lowpan interfaces (such as bt0) and
+802.15.4 interfaces (such as lowpan0) as they both use the same 6lowpan
+sources for compression and decompression.
+
+Signed-off-by: Michael Scott <michael@opensourcefoundries.com>
+Acked-by: Alexander Aring <aring@mojatatu.com>
+Acked-by: Jukka Rissanen <jukka.rissanen@linux.intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/omap_hwmod_reset.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ net/6lowpan/iphc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/mach-omap2/omap_hwmod_reset.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_reset.c
-@@ -92,11 +92,13 @@ static void omap_rtc_wait_not_busy(struc
-  */
- void omap_hwmod_rtc_unlock(struct omap_hwmod *oh)
- {
--	local_irq_disable();
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
- 	omap_rtc_wait_not_busy(oh);
- 	omap_hwmod_write(OMAP_RTC_KICK0_VALUE, oh, OMAP_RTC_KICK0_REG);
- 	omap_hwmod_write(OMAP_RTC_KICK1_VALUE, oh, OMAP_RTC_KICK1_REG);
--	local_irq_enable();
-+	local_irq_restore(flags);
- }
+--- a/net/6lowpan/iphc.c
++++ b/net/6lowpan/iphc.c
+@@ -745,6 +745,7 @@ int lowpan_header_decompress(struct sk_b
+ 		hdr.hop_limit, &hdr.daddr);
  
- /**
-@@ -110,9 +112,11 @@ void omap_hwmod_rtc_unlock(struct omap_h
-  */
- void omap_hwmod_rtc_lock(struct omap_hwmod *oh)
- {
--	local_irq_disable();
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
- 	omap_rtc_wait_not_busy(oh);
- 	omap_hwmod_write(0x0, oh, OMAP_RTC_KICK0_REG);
- 	omap_hwmod_write(0x0, oh, OMAP_RTC_KICK1_REG);
--	local_irq_enable();
-+	local_irq_restore(flags);
- }
+ 	skb_push(skb, sizeof(hdr));
++	skb_reset_mac_header(skb);
+ 	skb_reset_network_header(skb);
+ 	skb_copy_to_linear_data(skb, &hdr, sizeof(hdr));
+ 
 
 
