@@ -3,169 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E8F2C65BA7
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F169C64EBD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:11:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 561542082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:04:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 561542082A
+	by mail.kernel.org (Postfix) with ESMTP id 6C54720684
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:11:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C54720684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbeJCDuN (ORCPT
+        id S1728446AbeJCD4o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 23:50:13 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:46753 "EHLO
+        Tue, 2 Oct 2018 23:56:44 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:60903 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbeJCDuM (ORCPT
+        with ESMTP id S1728324AbeJCD4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 23:50:12 -0400
+        Tue, 2 Oct 2018 23:56:44 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mq33i-1fKNqf2Gpe-00n9xG; Tue, 02 Oct 2018 23:04:31 +0200
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1M738r-1g5Ufb2uUB-008ef4; Tue, 02 Oct 2018 23:11:24 +0200
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mq33i-1fKNqf2Gpe-00n9xG; Tue, 02 Oct 2018 23:04:31 +0200
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1M738r-1g5Ufb2uUB-008ef4; Tue, 02 Oct 2018 23:11:24 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Oza Pawandeep <poza@codeaurora.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Solarflare linux maintainers <linux-net-drivers@solarflare.com>,
-        Edward Cree <ecree@solarflare.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Amritha Nambiar <amritha.nambiar@intel.com>,
-        Alan Brady <alan.brady@intel.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        Shannon Nelson <shannon.nelson@oracle.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Subject: [PATCH] XXX PCI/AER: remove unused variables
-Date:   Tue,  2 Oct 2018 23:02:49 +0200
-Message-Id: <20181002210426.2447078-1-arnd@arndb.de>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] nvmem: hide unused nvmem_find_cell_by_index function
+Date:   Tue,  2 Oct 2018 23:11:12 +0200
+Message-Id: <20181002211123.2662419-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:TUaN67X+02X+EMKP+hSGNGkckQwTSrG1GZm1Rp8wzdVRgJ0/msV
- +Lqs2e2/fzCFdbuoTP96rWq7TfSecHVEmIVKvVBn8nDwdtOQWNY0HCoMUqMUlWjfYNrX80S
- 06R7zyF9gV4K+CbolRuboeiGMwT9fbHJmoSUgLiHSxn8aI0wrBnwqT7NwUYJYOLv3nA+pO5
- C6DiC/NXMmSuAgtBSA2ag==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:KKWO7N0/Hl0=:pqjrm2NPGvnf+wEoqC0x7b
- cul3KaqJ9/98//C6V8WF1anZXr+lin8S+3usOg4BmiAucy9LK9Ga9wR9sEcv7y9utl9k3Bbi1
- NQCi5qJjSiTyFET2pcT5srVBbJuY5d1eoUEGLmwdRL93xzLFf8bRZWFUTs2NT3CnFWWPrRAIT
- GTWd+73I7G2vVHGpn8YdYdlbNEUUehfj1qjOxdXtg/qdSgWTJ8yxJyscntBYX5qagBMEUnMgg
- VV68K3tZ/bW4u76ZH7HeRr5IBKWrdwm2KLCPECVetLjNw8Qne2okxDX1CfCf0R8Hfqhnr1kgW
- eZfeA994zaiqkG8lnnKNK0EXhlhyET+sBZkYQOjvhdHV1/6WEcKShyzLZWYNdbeoGsL2dY+if
- dSSwXgp5eL9zeeruGOr81dDpl+ybmrTdTkJXLOzpdRt6SJxXcuIRrVNyBdOSJjdLPFWrD+SnD
- vTzMaz08eXDPHFVEit99Ru2EYq/qB2p844U+5x0y1sxOx25vy8xEY7JKx/C3BgTOM0Ui2Asvx
- 0cx4Ca6sdPXsmnt3466oQmnAAJ6VYMMQZ7HO0uq9j360WqFMFGe6XOcdqUwon59wK1AoE7aoO
- 4/eVxcvtV1PVyB/rtRwVu4NGQ4XqMHp1CMw2isJNdBPj0DodfXOzemgwlmv/SyLOMPuP7Y1Tg
- 7X3rJR+PDGy4OH4NYUD3xzOYQT3HEfC11/0xsUxQ2oy2T0YVFS0v3NOmqOz6JxGtXUkU=
+X-Provags-ID: V03:K1:TvEE8/YQAixbvqvV6ZGvlneBXw9+k2lvchvHpIiTo9lxGoRSGE1
+ K0saL7SNLVS3HcW6k3qDjC+AcNoyd8JMiBTBk0b7clkoMKkJNBu2oJOkU9CcOqLk7q5n28k
+ noQTOQjFpAuDTwhLAYvXhAUbGUiXahN9IWyRjdcvW9oQh09zxcb2QDKlnQDRCkQu6RrkHu2
+ pHQE6I150MHrNDP8ZEbNA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:mwRHanT7PPo=:Mb5caRYx9CuyTh4p1sAFtQ
+ D0645J2m69ERVDh9FsvvDV8DoLs/q8lPMv5HugiubLLZIBGtV1eJ6FLEcpk0HM5EoZT0feSC7
+ jWgdVnfrrX6Q0N0TwSIsLfnojw/CTAgIu6PbxCX7K4HcVWI9cKrJHietLQpFQT0iYgiWASEPt
+ rcGZkHxGP1DUIhFST1lWOvY4DilHd7K5vOpK4jyV7yp4N8shDaC5zFNJ1SHqkQEuREmo++CgC
+ JgkNv/imzkf9BjT08F5dDECzNkC/UooKMU6SUpAKkQQfaiEGTkUFdaKNE/7+cS1kvrQeWQdCr
+ KunwCqLtl2Cq/r+2YZKKegNTKoAeM18c+TnXwhlbGjYLBg/YjMg5QGHxpqNQVyAlDnp2UPsDS
+ 2uE5cHzYXl8zIMipeU8AsDUcTnTPDgfWIrLvRK+zqokzv0fMRx6R+9LH7a8xEfuEANnOLTxLC
+ OuGUQiiJ+InfzjinHOdJy1Tns8SBBTq5q4sTY+wZu/vmWDVga+VsHw0Eo+hoeaGkdFquTwnqv
+ xS2K3fz/4aDzFpWbJh8CV3Rfw7OddF57oACY37St3dt7grB9unU3i1nuO4Uh6lrYrXFtihhHy
+ S3ibRFyqJ+TNJdGLGxSkmExIerbfGSIKk4sh7QvcYe6r7LgfPAhk+lTVHE654nPQCgtGFZlQt
+ ffvgPz5/A/NaeAg0+LavU5L9ti/oy3taSE8qhmSUAqTceQc3q6KKkuXDr61feVHNdl1M=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A couple of files now contain a function with a return
-code variable that is no longer used:
+nvmem_find_cell_by_index() is only called from inside an #ifdef,
+so we get a build warning without CONFIG_OF:
 
-drivers/net/ethernet/sfc/efx.c: In function 'efx_io_slot_reset':
-drivers/net/ethernet/sfc/efx.c:3824:6: error: unused variable 'rc' [-Werror=unused-variable]
-  int rc;
-      ^~
-drivers/net/ethernet/sfc/falcon/efx.c: In function 'ef4_io_slot_reset':
-Oza Pawandeep <poza@codeaurora.org>
-drivers/net/ethernet/sfc/falcon/efx.c:3163:6: error: unused variable 'rc' [-Werror=unused-variable]
-  int rc;
-      ^~
-drivers/net/ethernet/intel/ixgbe/ixgbe_main.c: In function 'ixgbe_io_slot_reset':
-drivers/net/ethernet/intel/ixgbe/ixgbe_main.c:11143:6: error: unused variable 'err' [-Werror=unused-variable]
-  int err;
-      ^~~
-drivers/net/ethernet/intel/i40e/i40e_main.c: In function 'i40e_pci_error_slot_reset':
-drivers/net/ethernet/intel/i40e/i40e_main.c:14555:6: error: unused variable 'err' [-Werror=unused-variable]
-  int err;
+drivers/nvmem/core.c:496:1: error: 'nvmem_find_cell_by_index' defined but not used [-Werror=unused-function]
 
-drivers/dma/ioat/init.c: In function 'ioat_pcie_error_slot_reset':
-drivers/dma/ioat/init.c:1255:6: error: unused variable 'err' [-Werror=unused-variable]
-  int err;
+Move it into the same #ifdef as the caller to avoid the warning.
 
-This removes all the ones I found during randconfig build testing.
-
-Fixes: 6dcde3e574b2 ("XXX PCI/AER: Remove pci_cleanup_aer_uncorrect_error_status() calls")
-Cc: Oza Pawandeep <poza@codeaurora.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
+Fixes: e888d445ac33 ("nvmem: resolve cells from DT at registration time")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/dma/ioat/init.c                       | 1 -
- drivers/net/ethernet/intel/i40e/i40e_main.c   | 1 -
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 1 -
- drivers/net/ethernet/sfc/efx.c                | 1 -
- drivers/net/ethernet/sfc/falcon/efx.c         | 1 -
- 5 files changed, 5 deletions(-)
+ drivers/nvmem/core.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index 80c475fb8ede..bd8db5c99597 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -1252,7 +1252,6 @@ static pci_ers_result_t ioat_pcie_error_detected(struct pci_dev *pdev,
- static pci_ers_result_t ioat_pcie_error_slot_reset(struct pci_dev *pdev)
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index cc815bb2eebd..f99fb74a646e 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -492,22 +492,6 @@ static int nvmem_add_cells_from_table(struct nvmem_device *nvmem)
+ 	return rval;
+ }
+ 
+-static struct nvmem_cell *
+-nvmem_find_cell_by_index(struct nvmem_device *nvmem, int index)
+-{
+-	struct nvmem_cell *cell = NULL;
+-	int i = 0;
+-
+-	mutex_lock(&nvmem_mutex);
+-	list_for_each_entry(cell, &nvmem->cells, node) {
+-		if (index == i++)
+-			break;
+-	}
+-	mutex_unlock(&nvmem_mutex);
+-
+-	return cell;
+-}
+-
+ static struct nvmem_cell *
+ nvmem_find_cell_by_name(struct nvmem_device *nvmem, const char *cell_id)
  {
- 	pci_ers_result_t result = PCI_ERS_RESULT_RECOVERED;
--	int err;
+@@ -972,6 +956,22 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
+ }
  
- 	dev_dbg(&pdev->dev, "%s post reset handling\n", DRV_NAME);
- 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index 4654ac69dfb6..bc71a21c1dc2 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -14552,7 +14552,6 @@ static pci_ers_result_t i40e_pci_error_slot_reset(struct pci_dev *pdev)
- {
- 	struct i40e_pf *pf = pci_get_drvdata(pdev);
- 	pci_ers_result_t result;
--	int err;
- 	u32 reg;
- 
- 	dev_dbg(&pdev->dev, "%s\n", __func__);
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 9bee51d900ac..0a2b9cad4b1c 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -11140,7 +11140,6 @@ static pci_ers_result_t ixgbe_io_slot_reset(struct pci_dev *pdev)
- {
- 	struct ixgbe_adapter *adapter = pci_get_drvdata(pdev);
- 	pci_ers_result_t result;
--	int err;
- 
- 	if (pci_enable_device_mem(pdev)) {
- 		e_err(probe, "Cannot re-enable PCI device after reset.\n");
-diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
-index ec941ca967b3..98fe7e762e17 100644
---- a/drivers/net/ethernet/sfc/efx.c
-+++ b/drivers/net/ethernet/sfc/efx.c
-@@ -3821,7 +3821,6 @@ static pci_ers_result_t efx_io_slot_reset(struct pci_dev *pdev)
- {
- 	struct efx_nic *efx = pci_get_drvdata(pdev);
- 	pci_ers_result_t status = PCI_ERS_RESULT_RECOVERED;
--	int rc;
- 
- 	if (pci_enable_device(pdev)) {
- 		netif_err(efx, hw, efx->net_dev,
-diff --git a/drivers/net/ethernet/sfc/falcon/efx.c b/drivers/net/ethernet/sfc/falcon/efx.c
-index 9b728efd71a4..8b1f94d7a6c5 100644
---- a/drivers/net/ethernet/sfc/falcon/efx.c
-+++ b/drivers/net/ethernet/sfc/falcon/efx.c
-@@ -3160,7 +3160,6 @@ static pci_ers_result_t ef4_io_slot_reset(struct pci_dev *pdev)
- {
- 	struct ef4_nic *efx = pci_get_drvdata(pdev);
- 	pci_ers_result_t status = PCI_ERS_RESULT_RECOVERED;
--	int rc;
- 
- 	if (pci_enable_device(pdev)) {
- 		netif_err(efx, hw, efx->net_dev,
+ #if IS_ENABLED(CONFIG_OF)
++static struct nvmem_cell *
++nvmem_find_cell_by_index(struct nvmem_device *nvmem, int index)
++{
++	struct nvmem_cell *cell = NULL;
++	int i = 0;
++
++	mutex_lock(&nvmem_mutex);
++	list_for_each_entry(cell, &nvmem->cells, node) {
++		if (index == i++)
++			break;
++	}
++	mutex_unlock(&nvmem_mutex);
++
++	return cell;
++}
++
+ /**
+  * of_nvmem_cell_get() - Get a nvmem cell from given device node and cell id
+  *
 -- 
 2.18.0
 
