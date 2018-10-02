@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3BCC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B72C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94D212089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D212089A
+	by mail.kernel.org (Postfix) with ESMTP id 7BDFF206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BDFF206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729467AbeJBULz (ORCPT
+        id S1729487AbeJBUL5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32798 "EHLO
+        Tue, 2 Oct 2018 16:11:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32806 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728632AbeJBULy (ORCPT
+        with ESMTP id S1728632AbeJBUL4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:54 -0400
+        Tue, 2 Oct 2018 16:11:56 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BC79266;
-        Tue,  2 Oct 2018 13:28:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ABD7FBF0;
+        Tue,  2 Oct 2018 13:28:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 114/228] ASoC: dapm: Fix potential DAI widget pointer deref when linking DAIs
-Date:   Tue,  2 Oct 2018 06:23:31 -0700
-Message-Id: <20181002132507.111900821@linuxfoundation.org>
+Subject: [PATCH 4.18 115/228] module: exclude SHN_UNDEF symbols from kallsyms api
+Date:   Tue,  2 Oct 2018 06:23:32 -0700
+Message-Id: <20181002132507.180272940@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,39 +52,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+From: Jessica Yu <jeyu@kernel.org>
 
-[ Upstream commit e01b4f624278d5efe5fb5da585ca371947b16680 ]
+[ Upstream commit 9f2d1e68cf4d641def734adaccfc3823d3575e6c ]
 
-Sometime a component or topology may configure a DAI widget with no
-private data leading to a dev_dbg() dereferencne of this data.
+Livepatch modules are special in that we preserve their entire symbol
+tables in order to be able to apply relocations after module load. The
+unwanted side effect of this is that undefined (SHN_UNDEF) symbols of
+livepatch modules are accessible via the kallsyms api and this can
+confuse symbol resolution in livepatch (klp_find_object_symbol()) and
+cause subtle bugs in livepatch.
 
-Fix this to check for non NULL private data and let users know if widget
-is missing DAI.
+Have the module kallsyms api skip over SHN_UNDEF symbols. These symbols
+are usually not available for normal modules anyway as we cut down their
+symbol tables to just the core (non-undefined) symbols, so this should
+really just affect livepatch modules. Note that this patch doesn't
+affect the display of undefined symbols in /proc/kallsyms.
 
-Signed-off-by: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Tested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/soc-dapm.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/module.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -4073,6 +4073,13 @@ int snd_soc_dapm_link_dai_widgets(struct
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -4067,7 +4067,7 @@ static unsigned long mod_find_symname(st
+ 
+ 	for (i = 0; i < kallsyms->num_symtab; i++)
+ 		if (strcmp(name, symname(kallsyms, i)) == 0 &&
+-		    kallsyms->symtab[i].st_info != 'U')
++		    kallsyms->symtab[i].st_shndx != SHN_UNDEF)
+ 			return kallsyms->symtab[i].st_value;
+ 	return 0;
+ }
+@@ -4113,6 +4113,10 @@ int module_kallsyms_on_each_symbol(int (
+ 		if (mod->state == MODULE_STATE_UNFORMED)
  			continue;
- 		}
- 
-+		/* let users know there is no DAI to link */
-+		if (!dai_w->priv) {
-+			dev_dbg(card->dev, "dai widget %s has no DAI\n",
-+				dai_w->name);
-+			continue;
-+		}
+ 		for (i = 0; i < kallsyms->num_symtab; i++) {
 +
- 		dai = dai_w->priv;
- 
- 		/* ...find all widgets with the same stream and link them */
++			if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
++				continue;
++
+ 			ret = fn(data, symname(kallsyms, i),
+ 				 mod, kallsyms->symtab[i].st_value);
+ 			if (ret != 0)
 
 
