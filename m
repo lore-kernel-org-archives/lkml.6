@@ -3,41 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB60C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED16EC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF4F9206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF4F9206B2
+	by mail.kernel.org (Postfix) with ESMTP id BC616206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC616206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731645AbeJBUQL (ORCPT
+        id S1731660AbeJBUQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:16:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34726 "EHLO
+        Tue, 2 Oct 2018 16:16:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34746 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731587AbeJBUQK (ORCPT
+        with ESMTP id S1731587AbeJBUQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:16:10 -0400
+        Tue, 2 Oct 2018 16:16:12 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFBD6C4E;
-        Tue,  2 Oct 2018 13:32:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F19B1C4E;
+        Tue,  2 Oct 2018 13:32:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
+        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 017/137] s390/mm: correct allocate_pgste proc_handler callback
-Date:   Tue,  2 Oct 2018 06:23:38 -0700
-Message-Id: <20181002132459.697781880@linuxfoundation.org>
+Subject: [PATCH 4.14 019/137] md-cluster: clear another nodes suspend_area after the copy is finished
+Date:   Tue,  2 Oct 2018 06:23:40 -0700
+Message-Id: <20181002132459.818175898@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -55,50 +52,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Guoqing Jiang <gqjiang@suse.com>
 
-[ Upstream commit 5bedf8aa03c28cb8dc98bdd32a41b66d8f7d3eaa ]
+[ Upstream commit 010228e4a932ca1e8365e3b58c8e1e44c16ff793 ]
 
-Since proc_dointvec does not perform value range control,
-proc_dointvec_minmax should be used to limit value range, which is
-clearly intended here, as the internal representation of the value:
+When one node leaves cluster or stops the resyncing
+(resync or recovery) array, then other nodes need to
+call recover_bitmaps to continue the unfinished task.
 
-unsigned int alloc_pgste:1;
+But we need to clear suspend_area later after other
+nodes copy the resync information to their bitmap
+(by call bitmap_copy_from_slot). Otherwise, all nodes
+could write to the suspend_area even the suspend_area
+is not handled by any node, because area_resyncing
+returns 0 at the beginning of raid1_write_request.
+Which means one node could write suspend_area while
+another node is resyncing the same area, then data
+could be inconsistent.
 
-In fact it currently works, since we have
+So let's clear suspend_area later to avoid above issue
+with the protection of bm lock. Also it is straightforward
+to clear suspend_area after nodes have copied the resync
+info to bitmap.
 
-      mm->context.alloc_pgste = page_table_allocate_pgste || ...
-
-... since commit 23fefe119ceb5 ("s390/kvm: avoid global config of vm.alloc_pgste=1")
-
-Before that it was
-
-       mm->context.alloc_pgste = page_table_allocate_pgste;
-
-which was broken. That was introduced with commit 0b46e0a3ec0d7 ("s390/kvm:
-remove delayed reallocation of page tables for KVM").
-
-Fixes: 0b46e0a3ec0d7 ("s390/kvm: remove delayed reallocation of page tables for KVM")
-Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
+Reviewed-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/mm/pgalloc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/md-cluster.c |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
---- a/arch/s390/mm/pgalloc.c
-+++ b/arch/s390/mm/pgalloc.c
-@@ -27,7 +27,7 @@ static struct ctl_table page_table_sysct
- 		.data		= &page_table_allocate_pgste,
- 		.maxlen		= sizeof(int),
- 		.mode		= S_IRUGO | S_IWUSR,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= &page_table_allocate_pgste_min,
- 		.extra2		= &page_table_allocate_pgste_max,
- 	},
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -304,15 +304,6 @@ static void recover_bitmaps(struct md_th
+ 	while (cinfo->recovery_map) {
+ 		slot = fls64((u64)cinfo->recovery_map) - 1;
+ 
+-		/* Clear suspend_area associated with the bitmap */
+-		spin_lock_irq(&cinfo->suspend_lock);
+-		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
+-			if (slot == s->slot) {
+-				list_del(&s->list);
+-				kfree(s);
+-			}
+-		spin_unlock_irq(&cinfo->suspend_lock);
+-
+ 		snprintf(str, 64, "bitmap%04d", slot);
+ 		bm_lockres = lockres_init(mddev, str, NULL, 1);
+ 		if (!bm_lockres) {
+@@ -331,6 +322,16 @@ static void recover_bitmaps(struct md_th
+ 			pr_err("md-cluster: Could not copy data from bitmap %d\n", slot);
+ 			goto clear_bit;
+ 		}
++
++		/* Clear suspend_area associated with the bitmap */
++		spin_lock_irq(&cinfo->suspend_lock);
++		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
++			if (slot == s->slot) {
++				list_del(&s->list);
++				kfree(s);
++			}
++		spin_unlock_irq(&cinfo->suspend_lock);
++
+ 		if (hi > 0) {
+ 			if (lo < mddev->recovery_cp)
+ 				mddev->recovery_cp = lo;
 
 
