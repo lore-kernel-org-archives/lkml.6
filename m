@@ -2,97 +2,126 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E748C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97705C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4120820878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B07A20878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:39:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JzASF7++"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4120820878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gguNK8L1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B07A20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbeJBQVd (ORCPT
+        id S1727068AbeJBQWH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 12:21:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59112 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbeJBQVd (ORCPT
+        Tue, 2 Oct 2018 12:22:07 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40282 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbeJBQWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 12:21:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yDpK4WmxnW6G3LFwBT4yxzkYBQ8JvQgJpgd6yQE3a/Q=; b=JzASF7++qiKZvbcFASs6IsFkA
-        Qhmf1h7T2pi9/G4mibpl5aqAu5kfwl5ItQjFghGFKs0KxWVyBGWwW8JlX0mm7j5mjgwoNfYSfYcR+
-        Z0tw5JuJyqYq8Gu3dt3ON8QJlkEFNv31NXWZsc1/OR8bRlVBk8py+OEfdDbyNxu5LmpOORXDitNWF
-        okm1MY0wcXYf9VTWm57SoO5Wcm7hHpur2FcbNv+JHRvxBJYDCUMB1m+GLTsdH/9dgPvdZ+lzCf/h6
-        eHf96yxwEDwOPhbzsj9iYTkeQUQ8Qrp2yBySiqGWTtg79LSMTyBtpnZAt4q9iMrO1ZpKhbRpRvRKA
-        YjGPXZ4UA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g7H92-0005zm-TV; Tue, 02 Oct 2018 09:39:09 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 68A06202B9CBA; Tue,  2 Oct 2018 11:39:07 +0200 (CEST)
-Date:   Tue, 2 Oct 2018 11:39:07 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] locking/lockdep: Make class->ops a percpu counter
-Message-ID: <20181002093907.GV3439@hirez.programming.kicks-ass.net>
-References: <1538157201-29173-1-git-send-email-longman@redhat.com>
- <1538157201-29173-5-git-send-email-longman@redhat.com>
+        Tue, 2 Oct 2018 12:22:07 -0400
+Received: by mail-wm1-f66.google.com with SMTP id z204-v6so651068wmc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 02:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Wz4zqbhuF7x0PHSfwD1x5xnncNEJYOJ+KJtr+RIT5zY=;
+        b=gguNK8L1b/kJ/GiyYaieqU7Cn8Q0cgdK0Lcv+10kUyv+YbBGyrt9kHhi13Q7QSMeDP
+         36VbYU7PZUEcmDbuAVUF7PCyS+1/CB6E6SCjAvUl/NvvzIaNsZCgzZQxO3G0TFHo25Iv
+         Ez6fCNIimEBYDR++AYhOO+lOJlnCBTTb/FCrlHXM3Nw95evYzaZcl04KPN2t/7A2q2ys
+         PDJ/eGly3fAtjfge8WbdFn+QLFztgoyzq8to1tz9Y5vOn0mdXDT0atVgNWxRByLx+p16
+         1ZjjyoY6shLGAtX9IN9/Stc348H/vmRZ+UlDIgHsbZEw8jL6sFhRirDxHGCqss5qwtMn
+         zjLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wz4zqbhuF7x0PHSfwD1x5xnncNEJYOJ+KJtr+RIT5zY=;
+        b=qo0P+miKJ3OGKwPXiEwtaajzSSLP4oeWCx5Vy6Qh3RM8oz9DWgb8OuWE86Qhbxl3J/
+         bnpHgDH62AoHqDzerxvJ1OHwQWmw/ZmKZrqYKL60AP3QCW8pA4B9Il13s8srozUnsu3e
+         V4UmCwiDttA/OjSvLDe/xT/Pl4QJqZahOrVM7BUbzVPpz9yd48oPDc3cJrONRbFG9G/A
+         1/FrE2wYs8EpfyTdKNcWcohtP7F9/IL47U/MAkaw+VUTcmWIXUwiadrfC6JSthN7S+kZ
+         bUiFjynNyQ/lLc1ssY4Ean6PMu0KPmb0x+sjjfJ/TlDnsSpB+6FYb7Hh/NV9jtQCdUua
+         JHdA==
+X-Gm-Message-State: ABuFfojgU/U6P96P6F+lnKOzgZBtS26TF7GDj5kouj4DE4T9NCZffbYo
+        VAUJZA1OV3N21UEKrqCxZV4=
+X-Google-Smtp-Source: ACcGV631+YMMuP4LTbXmhpNBs7U1M6zyrqWZbdR5gykNzawiTiAlinFHgIKWc1pHmoR+bjLqGDn6Zw==
+X-Received: by 2002:a1c:5d8c:: with SMTP id r134-v6mr918580wmb.147.1538473183663;
+        Tue, 02 Oct 2018 02:39:43 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 130-v6sm1602335wmn.7.2018.10.02.02.39.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Oct 2018 02:39:43 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 11:39:40 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc:     linux-mm@kvack.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v2 1/3] Revert "x86/e820: put !E820_TYPE_RAM regions into
+ memblock.reserved"
+Message-ID: <20181002093940.GA98058@gmail.com>
+References: <20180925153532.6206-1-msys.mizuma@gmail.com>
+ <20180925153532.6206-2-msys.mizuma@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1538157201-29173-5-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180925153532.6206-2-msys.mizuma@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 01:53:20PM -0400, Waiman Long wrote:
-> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> index ca002c0..7a0ed1d 100644
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -139,6 +139,7 @@ static inline int debug_locks_off_graph_unlock(void)
->   */
->  unsigned long nr_lock_classes;
->  static struct lock_class lock_classes[MAX_LOCKDEP_KEYS];
-> +static DEFINE_PER_CPU(unsigned long [MAX_LOCKDEP_KEYS], lock_class_ops);
 
-> @@ -1387,11 +1391,15 @@ static inline int usage_match(struct lock_list *entry, void *bit)
->  
->  static void print_lock_class_header(struct lock_class *class, int depth)
->  {
-> -	int bit;
-> +	int bit, cpu;
-> +	unsigned long ops = 0UL;
-> +
-> +	for_each_possible_cpu(cpu)
-> +		ops += *per_cpu(class->pops, cpu);
->  
->  	printk("%*s->", depth, "");
->  	print_lock_name(class);
-> -	printk(KERN_CONT " ops: %lu", class->ops);
-> +	printk(KERN_CONT " ops: %lu", ops);
->  	printk(KERN_CONT " {\n");
->  
->  	for (bit = 0; bit < LOCK_USAGE_STATES; bit++) {
+* Masayoshi Mizuma <msys.mizuma@gmail.com> wrote:
 
-That is an aweful lot of storage for a stupid number. Some archs
-(sparc64) are bzImage size constrained and this will hurt them.
+> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> 
+> commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
+> memblock.reserved") breaks movable_node kernel option because it
+> changed the memory gap range to reserved memblock. So, the node
+> is marked as Normal zone even if the SRAT has Hot plaggable affinity.
+> 
+>     =====================================================================
+>     kernel: BIOS-e820: [mem 0x0000180000000000-0x0000180fffffffff] usable
+>     kernel: BIOS-e820: [mem 0x00001c0000000000-0x00001c0fffffffff] usable
+>     ...
+>     kernel: reserved[0x12]#011[0x0000181000000000-0x00001bffffffffff], 0x000003f000000000 bytes flags: 0x0
+>     ...
+>     kernel: ACPI: SRAT: Node 2 PXM 6 [mem 0x180000000000-0x1bffffffffff] hotplug
+>     kernel: ACPI: SRAT: Node 3 PXM 7 [mem 0x1c0000000000-0x1fffffffffff] hotplug
+>     ...
+>     kernel: Movable zone start for each node
+>     kernel:  Node 3: 0x00001c0000000000
+>     kernel: Early memory node ranges
+>     ...
+>     =====================================================================
+> 
+> Naoya's v1 patch [*] fixes the original issue and this movable_node
+> issue doesn't occur.
+> Let's revert commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM
+> regions into memblock.reserved") and apply the v1 patch.
+> 
+> [*] https://lkml.org/lkml/2018/6/13/27
+> 
+> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> ---
+>  arch/x86/kernel/e820.c | 15 +++------------
+>  1 file changed, 3 insertions(+), 12 deletions(-)
 
-Ingo, do you happen to remember what that number was good for?
-Can't we simply ditch it?
+Bad ordering which introduces the bug and thus breaks bisection of related issues: the fixes 
+should come first, then the revert of the unnecessary or bad fix.
+
+Thanks,
+
+	Ingo
