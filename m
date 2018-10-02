@@ -2,109 +2,106 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3EFC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 993FEC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3402083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:12:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F3402083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 66ECA2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:13:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66ECA2083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbeJBUKi (ORCPT
+        id S1728791AbeJBU4g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60216 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728384AbeJBUKi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:38 -0400
-Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A2DEFC11;
-        Tue,  2 Oct 2018 13:27:16 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alagu Sankar <alagusankar@silex-india.com>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 051/228] ath10k: sdio: use same endpoint id for all packets in a bundle
-Date:   Tue,  2 Oct 2018 06:22:28 -0700
-Message-Id: <20181002132502.615270242@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
-References: <20181002132459.032960735@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 2 Oct 2018 16:56:36 -0400
+Received: from ozlabs.org ([203.11.71.1]:54611 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727532AbeJBU4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:56:35 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42Ph1y36Bmz9t15;
+        Wed,  3 Oct 2018 00:12:54 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Shuah Khan <shuah@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        bamv2005@gmail.com, brgl@bgdev.pl, pbonzini@redhat.com,
+        akpm@linux-foundation.org, rppt@linux.vnet.ibm.com,
+        aarcange@redhat.com
+Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH v6] selftests: add headers_install to lib.mk
+In-Reply-To: <4473d2b6-a760-1a48-68e7-9f90023b57b5@kernel.org>
+References: <20180809080402.24469-1-anders.roxell@linaro.org> <20180904104721.27535-1-anders.roxell@linaro.org> <87y3bmte9l.fsf@concordia.ellerman.id.au> <4473d2b6-a760-1a48-68e7-9f90023b57b5@kernel.org>
+Date:   Wed, 03 Oct 2018 00:12:51 +1000
+Message-ID: <8736tol9ng.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+Shuah Khan <shuah@kernel.org> writes:
+> On 09/27/2018 10:52 PM, Michael Ellerman wrote:
+>> [ + linuxppc-dev ]
+>> 
+>> Anders Roxell <anders.roxell@linaro.org> writes:
+>>> If the kernel headers aren't installed we can't build all the tests.
+>>> Add a new make target rule 'khdr' in the file lib.mk to generate the
+>>> kernel headers and that gets include for every test-dir Makefile that
+>>> includes lib.mk If the testdir in turn have its own sub-dirs the
+>>> top_srcdir needs to be set to the linux-rootdir to be able to generate
+>>> the kernel headers.
+>>>
+>>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+>>> Reviewed-by: Fathi Boudra <fathi.boudra@linaro.org>
+>>> ---
+>>>
+>>> I sent this (v5) a month ago and wondered if it got lost. Resending
+>>> unchanged.
+>>>
+>>> Cheers,
+>>> Anders
+>>>
+>>>  Makefile                                           | 14 +-------------
+>>>  scripts/subarch.include                            | 13 +++++++++++++
+>>>  tools/testing/selftests/android/Makefile           |  2 +-
+>>>  tools/testing/selftests/android/ion/Makefile       |  2 ++
+>>>  tools/testing/selftests/futex/functional/Makefile  |  1 +
+>>>  tools/testing/selftests/gpio/Makefile              |  7 ++-----
+>>>  tools/testing/selftests/kvm/Makefile               |  7 ++-----
+>>>  tools/testing/selftests/lib.mk                     | 12 ++++++++++++
+>>>  tools/testing/selftests/net/Makefile               |  1 +
+>>>  .../selftests/networking/timestamping/Makefile     |  1 +
+>>>  tools/testing/selftests/vm/Makefile                |  4 ----
+>>>  11 files changed, 36 insertions(+), 28 deletions(-)
+>>>  create mode 100644 scripts/subarch.include
+>> 
+>> This broke all the powerpc selftests :(
+>
+> Sorry for thr breakage.
+>
+>> Why did it go in at rc5?
+>
+> This patch has been in linux-next for a sometime before I decided to send this.
+> My original intent was to send this for rc2, and my schedule was messed up with
+> traveling. Since I didn't hear any issues from linux-next soaking, I made a call
+> on sending this in for rc5.
 
-------------------
+OK. And I didn't notice the breakage in linux-next because _I_ was
+travelling :)
 
-From: Alagu Sankar <alagusankar@silex-india.com>
+> On second thought I should have waited until 4.20. Sorry about that.
 
-[ Upstream commit 679e1f07c86221b7183dd69df7068fd42d0041f6 ]
+Yeah that would have been better, no worries.
 
-All packets in a bundle should use the same endpoint id as the
-first lookahead.
-
-This matches how things are done is ath6kl, however,
-this patch can theoretically handle several bundles
-in ath10k_sdio_mbox_rx_process_packets().
-
-Without this patch we get lots of errors about invalid endpoint id:
-
-ath10k_sdio mmc2:0001:1: invalid endpoint in look-ahead: 224
-ath10k_sdio mmc2:0001:1: failed to get pending recv messages: -12
-ath10k_sdio mmc2:0001:1: failed to process pending SDIO interrupts: -12
-
-Co-Developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Alagu Sankar <alagusankar@silex-india.com>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/ath/ath10k/sdio.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
---- a/drivers/net/wireless/ath/ath10k/sdio.c
-+++ b/drivers/net/wireless/ath/ath10k/sdio.c
-@@ -434,12 +434,14 @@ static int ath10k_sdio_mbox_rx_process_p
- 	enum ath10k_htc_ep_id id;
- 	int ret, i, *n_lookahead_local;
- 	u32 *lookaheads_local;
-+	int lookahead_idx = 0;
- 
- 	for (i = 0; i < ar_sdio->n_rx_pkts; i++) {
- 		lookaheads_local = lookaheads;
- 		n_lookahead_local = n_lookahead;
- 
--		id = ((struct ath10k_htc_hdr *)&lookaheads[i])->eid;
-+		id = ((struct ath10k_htc_hdr *)
-+		      &lookaheads[lookahead_idx++])->eid;
- 
- 		if (id >= ATH10K_HTC_EP_COUNT) {
- 			ath10k_warn(ar, "invalid endpoint in look-ahead: %d\n",
-@@ -462,6 +464,7 @@ static int ath10k_sdio_mbox_rx_process_p
- 			/* Only read lookahead's from RX trailers
- 			 * for the last packet in a bundle.
- 			 */
-+			lookahead_idx--;
- 			lookaheads_local = NULL;
- 			n_lookahead_local = NULL;
- 		}
-
-
+cheers
