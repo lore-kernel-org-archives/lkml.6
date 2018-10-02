@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F092AC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 641CAC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A771D21473
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28DA621473
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lwChBYuU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A771D21473
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Yyh9c4r8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28DA621473
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbeJBHfr (ORCPT
+        id S1727122AbeJBHfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:35:47 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35748 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbeJBHfp (ORCPT
+        Tue, 2 Oct 2018 03:35:51 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36256 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726909AbeJBHfr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 03:35:45 -0400
-Received: by mail-io1-f68.google.com with SMTP id w11-v6so265123iob.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 17:55:16 -0700 (PDT)
+        Tue, 2 Oct 2018 03:35:47 -0400
+Received: by mail-io1-f65.google.com with SMTP id p4-v6so264156iom.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 17:55:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gG7fP03F21tgUMWk9E9Lg0ELdTbgx+Rg7rsJOACjtKg=;
-        b=lwChBYuUUO53msx8HwqFyzkPyKKoxSUsfFKckmTk5AqTJSHfXm4tTflcZgekJUNtBn
-         c+GNJxJ+6WEzYgfx7cB9iLdfCt92FpVEdY2VigBTt6YKNEhxxeNuXpEXXKWz8jVJtkml
-         J/+tx9orXictuWvXxuIHrnSO8MPjwK57I+Vko=
+        bh=coT3X8tVSAJpPw1SxEOHYVe3MlpWDyaK1fjOEndGqVU=;
+        b=Yyh9c4r8HcXrwZjSirhotaTthk0NLxyrtfg2GQ7LiwXyRWVrGXiqMbqkV3uB+JQeHX
+         Ky4m5kQaHYTjykplveV9uXn+Jr4rkzA1xy9fT5MN/3FZAWAL25XsEqeC4Ivn5+OM24dA
+         Qjyc28qKorbF5wVPtDI+GqrsRr5cj1zQEAEFY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=gG7fP03F21tgUMWk9E9Lg0ELdTbgx+Rg7rsJOACjtKg=;
-        b=VSustMp8G7fFULyL9OYxeuBVqZs8znmDC6zZZXuOhXKWWplYoBnQW9auAt0mpOA5S8
-         eJxAhJLts3gpvN1u6aGUcjIWHQabixg+SH5EmyDB2ZuYGw2EHS6Rv/fgebPUzlE8pdN8
-         FgsfMr0ksEv1l6X56OPyvG0JAnEi2uVt3P3joDq1u+s2BLCWwS2t5gHZVYF9MXr3J0bX
-         TOsQPBldLvzxBZNm/c8LtM9ptZyAsGp8hvjR31W5+1/KCeyfJmbkERwKZwWjHezXrb7Q
-         x1ZdaLnm59fY7Ym24VGx3urp/PhPEp3qkBC4UAy4ojRkYvIljnn2u65XLOnkc1g+R/k+
-         wx5g==
-X-Gm-Message-State: ABuFfohlflfEDtZakykJbpu8Y0H767Ov9QYHc2j0sChrzMo5O5x5wiY1
-        KEWBBIL6JUQ6mqLMohI+E+hOsw==
-X-Google-Smtp-Source: ACcGV60p1VBpbHTUn7qlY+Hi8MBYbvV8514mUpCobdJC0dHVTBX5x3ZHCTCig4ODZb+xh59BpdpJNg==
-X-Received: by 2002:a17:902:d20a:: with SMTP id t10-v6mr14358227ply.256.1538441716381;
-        Mon, 01 Oct 2018 17:55:16 -0700 (PDT)
+        bh=coT3X8tVSAJpPw1SxEOHYVe3MlpWDyaK1fjOEndGqVU=;
+        b=SMhb6yz8M5CJpUP4Z3E9e0KfsfYIYcjaPtQYiP48LOlBwBohnjs+6tB1dBPyiV7D4L
+         I5Q36RHM6DP2XmkhRYxPA77eZxsF06g7MzZeNYAIHkrOSIrs8lk91HmESkTNfrABsRsF
+         b/SAMuagGln/48e9nDm5FWHRaaBQKACJtwxrdVkULs0+skcmmirUC8MwSi3euwQt10ix
+         aegJfQhZQVIA6L4WVfnSOKcDqwCVcPksLuVqY1EgcgGa3rnxjLLBB8tyOFpsBxyNJ6o2
+         1o1YXV96Fr0LLBUQa5j/SfghiaB1kmVqEY2FbohGQf89vWX6k6xTACjdju7XWgQWKCFM
+         eMzQ==
+X-Gm-Message-State: ABuFfohSJZSU/cDFHunNMODIizHhIDjJs8cW3pEuPX95l/VkPSF3gDGP
+        ye3Mkpb9k5zjb4tqxP8Oat4XjQ==
+X-Google-Smtp-Source: ACcGV63tp0dya/BwK7kLX+SamR9uh0bF+urMU28li1ahwLqBO+PzK9MSvE7XVoKBGj/2VRv+EfxjRg==
+X-Received: by 2002:a17:902:9f8c:: with SMTP id g12-v6mr14307634plq.309.1538441718186;
+        Mon, 01 Oct 2018 17:55:18 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id o62-v6sm19793232pfb.0.2018.10.01.17.55.10
+        by smtp.gmail.com with ESMTPSA id a2-v6sm17051135pgc.68.2018.10.01.17.55.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Mon, 01 Oct 2018 17:55:13 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -67,9 +67,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         LSM <linux-security-module@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v4 06/32] vmlinux.lds.h: Move LSM_TABLE into INIT_DATA
-Date:   Mon,  1 Oct 2018 17:54:39 -0700
-Message-Id: <20181002005505.6112-7-keescook@chromium.org>
+Subject: [PATCH security-next v4 09/32] LSM: Provide init debugging infrastructure
+Date:   Mon,  1 Oct 2018 17:54:42 -0700
+Message-Id: <20181002005505.6112-10-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181002005505.6112-1-keescook@chromium.org>
 References: <20181002005505.6112-1-keescook@chromium.org>
@@ -78,179 +78,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the struct lsm_info table is not an initcall, we can just move it
-into INIT_DATA like all the other tables.
+Booting with "lsm.debug" will report future details on how LSM ordering
+decisions are being made.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 ---
- arch/arc/kernel/vmlinux.lds.S        |  1 -
- arch/arm/kernel/vmlinux-xip.lds.S    |  1 -
- arch/arm64/kernel/vmlinux.lds.S      |  1 -
- arch/h8300/kernel/vmlinux.lds.S      |  1 -
- arch/microblaze/kernel/vmlinux.lds.S |  2 --
- arch/powerpc/kernel/vmlinux.lds.S    |  2 --
- arch/um/include/asm/common.lds.S     |  2 --
- arch/xtensa/kernel/vmlinux.lds.S     |  1 -
- include/asm-generic/vmlinux.lds.h    | 24 +++++++++++-------------
- 9 files changed, 11 insertions(+), 24 deletions(-)
+ .../admin-guide/kernel-parameters.txt          |  2 ++
+ security/security.c                            | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/arch/arc/kernel/vmlinux.lds.S b/arch/arc/kernel/vmlinux.lds.S
-index f35ed578e007..8fb16bdabdcf 100644
---- a/arch/arc/kernel/vmlinux.lds.S
-+++ b/arch/arc/kernel/vmlinux.lds.S
-@@ -71,7 +71,6 @@ SECTIONS
- 		INIT_SETUP(L1_CACHE_BYTES)
- 		INIT_CALLS
- 		CON_INITCALL
--		SECURITY_INITCALL
- 	}
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 9871e649ffef..32d323ee9218 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2274,6 +2274,8 @@
+ 	ltpc=		[NET]
+ 			Format: <io>,<irq>,<dma>
  
- 	.init.arch.info : {
-diff --git a/arch/arm/kernel/vmlinux-xip.lds.S b/arch/arm/kernel/vmlinux-xip.lds.S
-index 3593d5c1acd2..8c74037ade22 100644
---- a/arch/arm/kernel/vmlinux-xip.lds.S
-+++ b/arch/arm/kernel/vmlinux-xip.lds.S
-@@ -96,7 +96,6 @@ SECTIONS
- 		INIT_SETUP(16)
- 		INIT_CALLS
- 		CON_INITCALL
--		SECURITY_INITCALL
- 		INIT_RAM_FS
- 	}
- 
-diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-index 605d1b60469c..7d23d591b03c 100644
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -166,7 +166,6 @@ SECTIONS
- 		INIT_SETUP(16)
- 		INIT_CALLS
- 		CON_INITCALL
--		SECURITY_INITCALL
- 		INIT_RAM_FS
- 		*(.init.rodata.* .init.bss)	/* from the EFI stub */
- 	}
-diff --git a/arch/h8300/kernel/vmlinux.lds.S b/arch/h8300/kernel/vmlinux.lds.S
-index 35716a3048de..49f716c0a1df 100644
---- a/arch/h8300/kernel/vmlinux.lds.S
-+++ b/arch/h8300/kernel/vmlinux.lds.S
-@@ -56,7 +56,6 @@ SECTIONS
- 	__init_begin = .;
- 	INIT_TEXT_SECTION(4)
- 	INIT_DATA_SECTION(4)
--	SECURITY_INIT
- 	__init_end = .;
- 	_edata = . ;
- 	_begin_data = LOADADDR(.data);
-diff --git a/arch/microblaze/kernel/vmlinux.lds.S b/arch/microblaze/kernel/vmlinux.lds.S
-index 289d0e7f3e3a..e1f3e8741292 100644
---- a/arch/microblaze/kernel/vmlinux.lds.S
-+++ b/arch/microblaze/kernel/vmlinux.lds.S
-@@ -117,8 +117,6 @@ SECTIONS {
- 		CON_INITCALL
- 	}
- 
--	SECURITY_INIT
--
- 	__init_end_before_initramfs = .;
- 
- 	.init.ramfs : AT(ADDR(.init.ramfs) - LOAD_OFFSET) {
-diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
-index 07ae018e550e..105a976323aa 100644
---- a/arch/powerpc/kernel/vmlinux.lds.S
-+++ b/arch/powerpc/kernel/vmlinux.lds.S
-@@ -212,8 +212,6 @@ SECTIONS
- 		CON_INITCALL
- 	}
- 
--	SECURITY_INIT
--
- 	. = ALIGN(8);
- 	__ftr_fixup : AT(ADDR(__ftr_fixup) - LOAD_OFFSET) {
- 		__start___ftr_fixup = .;
-diff --git a/arch/um/include/asm/common.lds.S b/arch/um/include/asm/common.lds.S
-index 7adb4e6b658a..4049f2c46387 100644
---- a/arch/um/include/asm/common.lds.S
-+++ b/arch/um/include/asm/common.lds.S
-@@ -53,8 +53,6 @@
- 	CON_INITCALL
-   }
- 
--  SECURITY_INIT
--
-   .exitcall : {
- 	__exitcall_begin = .;
- 	*(.exitcall.exit)
-diff --git a/arch/xtensa/kernel/vmlinux.lds.S b/arch/xtensa/kernel/vmlinux.lds.S
-index a1c3edb8ad56..b727b18a68ac 100644
---- a/arch/xtensa/kernel/vmlinux.lds.S
-+++ b/arch/xtensa/kernel/vmlinux.lds.S
-@@ -197,7 +197,6 @@ SECTIONS
-     INIT_SETUP(XCHAL_ICACHE_LINESIZE)
-     INIT_CALLS
-     CON_INITCALL
--    SECURITY_INITCALL
-     INIT_RAM_FS
-   }
- 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 5079a969e612..b31ea8bdfef9 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -203,6 +203,15 @@
- #define EARLYCON_TABLE()
- #endif
- 
-+#ifdef CONFIG_SECURITY
-+#define LSM_TABLE()	. = ALIGN(8);					\
-+			__start_lsm_info = .;				\
-+			KEEP(*(.lsm_info.init))				\
-+			__end_lsm_info = .;
-+#else
-+#define LSM_TABLE()
-+#endif
++	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
 +
- #define ___OF_TABLE(cfg, name)	_OF_TABLE_##cfg(name)
- #define __OF_TABLE(cfg, name)	___OF_TABLE(cfg, name)
- #define OF_TABLE(cfg, name)	__OF_TABLE(IS_ENABLED(cfg), name)
-@@ -597,7 +606,8 @@
- 	IRQCHIP_OF_MATCH_TABLE()					\
- 	ACPI_PROBE_TABLE(irqchip)					\
- 	ACPI_PROBE_TABLE(timer)						\
--	EARLYCON_TABLE()
-+	EARLYCON_TABLE()						\
-+	LSM_TABLE()
+ 	machvec=	[IA-64] Force the use of a particular machine-vector
+ 			(machvec) in a generic kernel.
+ 			Example: machvec=hpzx1_swiotlb
+diff --git a/security/security.c b/security/security.c
+index e74f46fba591..395f804f6a91 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -12,6 +12,8 @@
+  *	(at your option) any later version.
+  */
  
- #define INIT_TEXT							\
- 	*(.init.text .init.text.*)					\
-@@ -786,17 +796,6 @@
- 		KEEP(*(.con_initcall.init))				\
- 		__con_initcall_end = .;
++#define pr_fmt(fmt) "LSM: " fmt
++
+ #include <linux/bpf.h>
+ #include <linux/capability.h>
+ #include <linux/dcache.h>
+@@ -43,11 +45,19 @@ char *lsm_names;
+ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+ 	CONFIG_DEFAULT_SECURITY;
  
--#define SECURITY_INITCALL						\
--		__start_lsm_info = .;					\
--		KEEP(*(.lsm_info.init))					\
--		__end_lsm_info = .;
--
--/* Older linker script style for security init. */
--#define SECURITY_INIT							\
--	.lsm_info.init : AT(ADDR(.lsm_info.init) - LOAD_OFFSET) {	\
--		LSM_INFO						\
--	}
--
- #ifdef CONFIG_BLK_DEV_INITRD
- #define INIT_RAM_FS							\
- 	. = ALIGN(4);							\
-@@ -963,7 +962,6 @@
- 		INIT_SETUP(initsetup_align)				\
- 		INIT_CALLS						\
- 		CON_INITCALL						\
--		SECURITY_INITCALL					\
- 		INIT_RAM_FS						\
++static __initdata bool debug;
++#define init_debug(...)						\
++	do {							\
++		if (debug)					\
++			pr_info(__VA_ARGS__);			\
++	} while (0)
++
+ static void __init major_lsm_init(void)
+ {
+ 	struct lsm_info *lsm;
+ 
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		init_debug("initializing %s\n", lsm->name);
+ 		lsm->init();
  	}
+ }
+@@ -91,6 +101,14 @@ static int __init choose_lsm(char *str)
+ }
+ __setup("security=", choose_lsm);
  
++/* Enable LSM order debugging. */
++static int __init enable_debug(char *str)
++{
++	debug = true;
++	return 1;
++}
++__setup("lsm.debug", enable_debug);
++
+ static bool match_last_lsm(const char *list, const char *lsm)
+ {
+ 	const char *last;
 -- 
 2.17.1
 
