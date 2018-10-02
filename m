@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0406C004D2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F10F8C43143
 	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D8C2089A
+	by mail.kernel.org (Postfix) with ESMTP id B5D422089A
 	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07D8C2089A
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5D422089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbeJBUKk (ORCPT
+        id S1728485AbeJBUKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60232 "EHLO
+        Tue, 2 Oct 2018 16:10:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60242 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728431AbeJBUKj (ORCPT
+        with ESMTP id S1728384AbeJBUKk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:39 -0400
+        Tue, 2 Oct 2018 16:10:40 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C1B6AA67;
-        Tue,  2 Oct 2018 13:27:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DD9DDB2F;
+        Tue,  2 Oct 2018 13:27:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alagu Sankar <alagusankar@silex-india.com>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 052/228] ath10k: sdio: set skb len for all rx packets
-Date:   Tue,  2 Oct 2018 06:22:29 -0700
-Message-Id: <20181002132502.692630148@linuxfoundation.org>
+Subject: [PATCH 4.18 053/228] powerpc/powernv/ioda2: Reduce upper limit for DMA window size
+Date:   Tue,  2 Oct 2018 06:22:30 -0700
+Message-Id: <20181002132502.776650588@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,33 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alagu Sankar <alagusankar@silex-india.com>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-[ Upstream commit 8530b4e7b22bc3bd8240579f3844c73947cd5f71 ]
+[ Upstream commit d3d4ffaae439981e1e441ebb125aa3588627c5d8 ]
 
-Without this, packets larger than 1500 will silently be dropped.
-Easily reproduced by sending a ping packet with a size larger
-than 1500.
+We use PHB in mode1 which uses bit 59 to select a correct DMA window.
+However there is mode2 which uses bits 59:55 and allows up to 32 DMA
+windows per a PE.
 
-Co-Developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Alagu Sankar <alagusankar@silex-india.com>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Even though documentation does not clearly specify that, it seems that
+the actual hardware does not support bits 59:55 even in mode1, in other
+words we can create a window as big as 1<<58 but DMA simply won't work.
+
+This reduces the upper limit from 59 to 55 bits to let the userspace know
+about the hardware limits.
+
+Fixes: 7aafac11e3 "powerpc/powernv/ioda2: Gracefully fail if too many TCE levels requested"
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/sdio.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/platforms/powernv/pci-ioda.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/ath10k/sdio.c
-+++ b/drivers/net/wireless/ath/ath10k/sdio.c
-@@ -396,6 +396,7 @@ static int ath10k_sdio_mbox_rx_process_p
- 	int ret;
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -2841,7 +2841,7 @@ static long pnv_pci_ioda2_table_alloc_pa
+ 	level_shift = entries_shift + 3;
+ 	level_shift = max_t(unsigned, level_shift, PAGE_SHIFT);
  
- 	payload_len = le16_to_cpu(htc_hdr->len);
-+	skb->len = payload_len + sizeof(struct ath10k_htc_hdr);
+-	if ((level_shift - 3) * levels + page_shift >= 60)
++	if ((level_shift - 3) * levels + page_shift >= 55)
+ 		return -EINVAL;
  
- 	if (trailer_present) {
- 		trailer = skb->data + sizeof(*htc_hdr) +
+ 	/* Allocate TCE table */
 
 
