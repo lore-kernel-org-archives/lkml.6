@@ -6,64 +6,54 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CEEC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5673DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6B32148D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:12:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6B32148D
+	by mail.kernel.org (Postfix) with ESMTP id 222B5213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:12:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 222B5213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbeJBHxY (ORCPT
+        id S1726861AbeJBHxZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:53:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36602 "EHLO
+        Tue, 2 Oct 2018 03:53:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36620 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeJBHxY (ORCPT
+        with ESMTP id S1726027AbeJBHxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 03:53:24 -0400
+        Tue, 2 Oct 2018 03:53:25 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6E8999D;
-        Tue,  2 Oct 2018 01:12:50 +0000 (UTC)
-Date:   Mon, 1 Oct 2018 17:53:12 -0700
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 189066C;
+        Tue,  2 Oct 2018 01:12:52 +0000 (UTC)
+Date:   Mon, 1 Oct 2018 17:53:22 -0700
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        nixiaoming <nixiaoming@huawei.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [GIT PULL] pstore fix for v4.19-rc7
-Message-ID: <20181002005312.GA29284@kroah.com>
-References: <20180930172907.GA3543@beast>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     torvalds@linux-foundation.org, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] ARM: SoC fixes
+Message-ID: <20181002005322.GB29284@kroah.com>
+References: <20180930192343.erige7yfbrnvil2m@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180930172907.GA3543@beast>
+In-Reply-To: <20180930192343.erige7yfbrnvil2m@localhost>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 10:29:07AM -0700, Kees Cook wrote:
-> Hi Greg,
+On Sun, Sep 30, 2018 at 12:23:43PM -0700, Olof Johansson wrote:
+> Hi Linus, Greg,
 > 
-> Please pull this pstore fix for v4.19-rc7.
+> The following changes since commit a132bb90414bfad4f8ee23cb45fe6946a89b167d:
 > 
-> Thanks!
+>   Merge tag 'sunxi-fixes-for-4.19' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into fixes (2018-09-08 10:04:37 -0700)
 > 
-> -Kees
+> are available in the git repository at:
 > 
-> The following changes since commit 831b624df1b420c8f9281ed1307a8db23afb72df:
-> 
->   pstore: Fix incorrect persistent ram buffer mapping (2018-09-13 09:14:57 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/pstore-v4.19-rc7
+>   git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-fixes
 
 Now pulled, thanks.
 
