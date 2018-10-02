@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA1CC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DCB8C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D4F72064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:15:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D7420666
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:15:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ID1pJ2/b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D4F72064D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="cvGc0GMK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22D7420666
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbeJCCAi (ORCPT
+        id S1727879AbeJCCAC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 22:00:38 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:61582 "EHLO
+        Tue, 2 Oct 2018 22:00:02 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:61573 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727755AbeJCCAF (ORCPT
+        with ESMTP id S1727585AbeJCCAA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 22:00:05 -0400
+        Tue, 2 Oct 2018 22:00:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1538507713; x=1570043713;
+  t=1538507709; x=1570043709;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=QoJF+zxi71e6lxam6xbMcJHOAzHqmAmlkJMulFCOr4w=;
-  b=ID1pJ2/b39CibvuouxVToaen7R+9ScjMyMWbs2r++KKzzYxvSJrqpsml
-   eTCU079JCjOGK5GiDVLflTml45zms2bmzST51baXO0QaydcPqWKSh+0md
-   zGHQjkzz/frUoUGamNPghfR90+bJqt3oxpY9kVsFCvXGM1FjHqj2RwSUH
-   /zRY6JVIms24ICwYoHNg+mfMnQZeHE+NhjcJ9N8fLeeNHoUyGW2EBrD5o
-   FONL0rO0LQp80bVVBqb94fyrdttBmfHIkK7kwO3zJkaRg5h0mKOWjmNgy
-   SH225pK370t6Ym8ww89rp3mU1qt/e9HhESczxq2I1KhTCGtOlk3izq68r
-   g==;
+  bh=gjnlUPagI1vf6/WNqKxc8KY88DkfwDRZzZi6iXSpG08=;
+  b=cvGc0GMKazi2KX2SPgWDLetUImyCtMPYNRP3MRMPJ28b/Zk2m5v47IiS
+   P7YIynGEi6sAcw2KwsKXmH8k7AfQWSdNlqgdKNaEZQdvCAYdwYb4OPtXt
+   Ic+0ASOXVrDIcj52mT5drjYPcxolBwhSt7PrqHidREp4Bvgn4qTLKAiAn
+   M2scZhmQjiSkPJc4QltKXi6jQ3YSeqckx7DdUjkqlWyWjMcczibT66Rmt
+   vPpAAY5WVh3Tt19MqvgL6IXHQGeY6IJ6SujS5Qbqajr/9MNR1KKybJazn
+   taz7tSZORN1MJCKiuE0lUKhREF/8RBKfQ5N6e11jo5RHFbH5s5OLz0QvD
+   A==;
 X-IronPort-AV: E=Sophos;i="5.54,332,1534780800"; 
-   d="scan'208";a="91076764"
+   d="scan'208";a="91076736"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Oct 2018 03:15:10 +0800
+  by ob1.hgst.iphmx.com with ESMTP; 03 Oct 2018 03:15:08 +0800
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 02 Oct 2018 12:00:51 -0700
+  by uls-op-cesaep01.wdc.com with ESMTP; 02 Oct 2018 12:00:49 -0700
 Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 02 Oct 2018 12:15:11 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 02 Oct 2018 12:15:09 -0700
 From:   Atish Patra <atish.patra@wdc.com>
 To:     linux-riscv@lists.infradead.org, palmer@sifive.com
 Cc:     anup@brainfault.org, hch@infradead.org,
         linux-kernel@vger.kernel.org, atish.patra@wdc.com
-Subject: [PATCH v6 13/14] RISC-V: Show CPU ID and Hart ID separately in /proc/cpuinfo
-Date:   Tue,  2 Oct 2018 12:15:06 -0700
-Message-Id: <1538507707-22299-14-git-send-email-atish.patra@wdc.com>
+Subject: [PATCH v6 01/14] RISC-V: No need to pass scause as arg to do_IRQ()
+Date:   Tue,  2 Oct 2018 12:14:54 -0700
+Message-Id: <1538507707-22299-2-git-send-email-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538507707-22299-1-git-send-email-atish.patra@wdc.com>
 References: <1538507707-22299-1-git-send-email-atish.patra@wdc.com>
@@ -63,85 +63,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Anup Patel <anup@brainfault.org>
 
-Currently, /proc/cpuinfo show logical CPU ID as Hart ID which
-is in-correct. This patch shows CPU ID and Hart ID separately
-in /proc/cpuinfo using cpuid_to_hardid_map().
+The scause is already part of pt_regs so no need to pass
+scause as separate arg to do_IRQ().
 
-With this patch, contents of /proc/cpuinfo looks as follows:
-processor	: 0
-hart		: 1
-isa		: rv64imafdc
-mmu		: sv48
-
-processor	: 1
-hart		: 0
-isa		: rv64imafdc
-mmu		: sv48
-
-processor	: 2
-hart		: 2
-isa		: rv64imafdc
-mmu		: sv48
-
-processor	: 3
-hart		: 3
-isa		: rv64imafdc
-mmu		: sv48
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Anup Patel <anup@brainfault.org>
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
 ---
- arch/riscv/kernel/cpu.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/riscv/kernel/entry.S | 1 -
+ arch/riscv/kernel/irq.c   | 4 ++--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-index cccc6f61..3a5a2ee3 100644
---- a/arch/riscv/kernel/cpu.c
-+++ b/arch/riscv/kernel/cpu.c
-@@ -81,7 +81,7 @@ static void print_isa(struct seq_file *f, const char *orig_isa)
- #endif
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index fa2c08e3..6eaacfa5 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -168,7 +168,6 @@ ENTRY(handle_exception)
  
- 	/* Print the base ISA, as we already know it's legal. */
--	seq_puts(f, "isa\t: ");
-+	seq_puts(f, "isa\t\t: ");
- 	seq_write(f, isa, 5);
- 	isa += 5;
+ 	/* Handle interrupts */
+ 	move a0, sp /* pt_regs */
+-	move a1, s4 /* scause */
+ 	tail do_IRQ
+ 1:
+ 	/* Exceptions run with interrupts enabled */
+diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
+index 0cfac48a..ca459331 100644
+--- a/arch/riscv/kernel/irq.c
++++ b/arch/riscv/kernel/irq.c
+@@ -24,12 +24,12 @@
+  */
+ #define INTERRUPT_CAUSE_FLAG	(1UL << (__riscv_xlen - 1))
  
-@@ -96,6 +96,7 @@ static void print_isa(struct seq_file *f, const char *orig_isa)
- 			isa++;
- 		}
- 	}
-+	seq_puts(f, "\n");
+-asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs, unsigned long cause)
++asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs)
+ {
+ 	struct pt_regs *old_regs = set_irq_regs(regs);
  
- 	/*
- 	 * If we were given an unsupported ISA in the device tree then print
-@@ -116,7 +117,7 @@ static void print_mmu(struct seq_file *f, const char *mmu_type)
- 		return;
- #endif
- 
--	seq_printf(f, "mmu\t: %s\n", mmu_type+6);
-+	seq_printf(f, "mmu\t\t: %s\n", mmu_type+6);
- }
- 
- static void *c_start(struct seq_file *m, loff_t *pos)
-@@ -144,14 +145,15 @@ static int c_show(struct seq_file *m, void *v)
- 						   NULL);
- 	const char *compat, *isa, *mmu;
- 
--	seq_printf(m, "hart\t: %lu\n", cpu_id);
-+	seq_printf(m, "processor\t: %lu\n", cpu_id);
-+	seq_printf(m, "hart\t\t: %lu\n", cpuid_to_hartid_map(cpu_id));
- 	if (!of_property_read_string(node, "riscv,isa", &isa))
- 		print_isa(m, isa);
- 	if (!of_property_read_string(node, "mmu-type", &mmu))
- 		print_mmu(m, mmu);
- 	if (!of_property_read_string(node, "compatible", &compat)
- 	    && strcmp(compat, "riscv"))
--		seq_printf(m, "uarch\t: %s\n", compat);
-+		seq_printf(m, "uarch\t\t: %s\n", compat);
- 	seq_puts(m, "\n");
- 
- 	return 0;
+ 	irq_enter();
+-	switch (cause & ~INTERRUPT_CAUSE_FLAG) {
++	switch (regs->scause & ~INTERRUPT_CAUSE_FLAG) {
+ 	case INTERRUPT_CAUSE_TIMER:
+ 		riscv_timer_interrupt();
+ 		break;
 -- 
 2.7.4
 
