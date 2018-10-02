@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F8EC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED761C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2769206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2769206B2
+	by mail.kernel.org (Postfix) with ESMTP id BDCCD2089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDCCD2089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731955AbeJBURH (ORCPT
+        id S1731968AbeJBURJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:17:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35024 "EHLO
+        Tue, 2 Oct 2018 16:17:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35034 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731936AbeJBURH (ORCPT
+        with ESMTP id S1731936AbeJBURI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:07 -0400
+        Tue, 2 Oct 2018 16:17:08 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FA44BF0;
-        Tue,  2 Oct 2018 13:33:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D2635AA;
+        Tue,  2 Oct 2018 13:33:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 081/137] iio: 104-quad-8: Fix off-by-one error in register selection
-Date:   Tue,  2 Oct 2018 06:24:42 -0700
-Message-Id: <20181002132504.202127183@linuxfoundation.org>
+Subject: [PATCH 4.14 082/137] ARM: dts: dra7: fix DCAN node addresses
+Date:   Tue,  2 Oct 2018 06:24:43 -0700
+Message-Id: <20181002132504.261604127@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,32 +53,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
+From: Kevin Hilman <khilman@baylibre.com>
 
-[ Upstream commit 2873c3f0e2bd12a7612e905c920c058855f4072a ]
+[ Upstream commit 949bdcc8a97c6078f21c8d4966436b117f2e4cd3 ]
 
-The reset flags operation is selected by bit 2 in the "Reset and Load
-Signals Decoders" register, not bit 1.
+Fix the DT node addresses to match the reg property addresses,
+which were verified to match the TRM:
+http://www.ti.com/lit/pdf/sprui30
 
-Fixes: 28e5d3bb0325 ("iio: 104-quad-8: Add IIO support for the ACCES 104-QUAD-8")
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Acked-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iio/counter/104-quad-8.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/dra7.dtsi |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/iio/counter/104-quad-8.c
-+++ b/drivers/iio/counter/104-quad-8.c
-@@ -138,7 +138,7 @@ static int quad8_write_raw(struct iio_de
- 			outb(val >> (8 * i), base_offset);
+--- a/arch/arm/boot/dts/dra7.dtsi
++++ b/arch/arm/boot/dts/dra7.dtsi
+@@ -1818,7 +1818,7 @@
+ 			};
+ 		};
  
- 		/* Reset Borrow, Carry, Compare, and Sign flags */
--		outb(0x02, base_offset + 1);
-+		outb(0x04, base_offset + 1);
- 		/* Reset Error flag */
- 		outb(0x06, base_offset + 1);
+-		dcan1: can@481cc000 {
++		dcan1: can@4ae3c000 {
+ 			compatible = "ti,dra7-d_can";
+ 			ti,hwmods = "dcan1";
+ 			reg = <0x4ae3c000 0x2000>;
+@@ -1828,7 +1828,7 @@
+ 			status = "disabled";
+ 		};
  
+-		dcan2: can@481d0000 {
++		dcan2: can@48480000 {
+ 			compatible = "ti,dra7-d_can";
+ 			ti,hwmods = "dcan2";
+ 			reg = <0x48480000 0x2000>;
 
 
