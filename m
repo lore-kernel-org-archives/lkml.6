@@ -2,105 +2,134 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C8BC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8DFC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7903420684
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:43:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Fi/eYR8p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7903420684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E90A20684
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:44:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E90A20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeJBP0B (ORCPT
+        id S1727411AbeJBP0U convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 11:26:01 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53135 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbeJBP0B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:26:01 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 189-v6so1351984wmw.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 01:43:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PKzH8oYKZ82Z9TWd7i02OlmOTFAJUgwk8t5GyaIR3Bc=;
-        b=Fi/eYR8pwykHWHOKpYSmKoc+0Wmlao7S1/rdIXXxB/GD9s7jVvZJ/5YovtSwd6Susj
-         6qPpJLPAat6p/M925sKVHsJ7RlM1rEdqOsIcEReJoHeXe8ee+vWhFA9ufBhrGzD12hgz
-         FNWa4ZQjWu9hoIaYqSJDrYcCbFD4pqTa6hkkSCqxys29pNh0wuJ7tnuSvaFA8X/CfL6K
-         mj+pyzR8NmAKsWveqZamci3eG932H1eUYbOu2f+QQYlYrYrU0ueUYphxwwS9r1/ds0nU
-         1V1zWZT3IPOf0jFgiSW0o3KxaWOq5E/MxzsRmAMqSjM8W6Fv7cXpzF9ThNqKOIJ9PYkV
-         +EKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=PKzH8oYKZ82Z9TWd7i02OlmOTFAJUgwk8t5GyaIR3Bc=;
-        b=E4EzdSn+uRCXtlwzYRrI60wo0VvGbo2Z+3/b/dCRESlEJ05c1OfQ0sLT3scFhz3BJk
-         sCASZKB3Lpl8FCryP3/L746zUo9gdvdiAG22MvBmVziFaD/Q+ybElH4XIA7pgepf2FdQ
-         JIwg+99ce2VlOHiKqL1nvb5Pg22km9ILttIMwRnFM24MVmDG8NEqKgkxknLmy52I7m9D
-         fhv0F6VdMX6ZwOeN9jc/nVTQz+dyKktCXmASi7LjiWIswgaUSBgEX8yjWPDkR5FTyflr
-         o7UZ06JrrToI503p8JCjdENxVnro1um5Vu+PIn6kUe6l9yG4bpmbFmIoyQnJms/Es9dD
-         3GIA==
-X-Gm-Message-State: ABuFfogk6LHbq96qMmUvRbRgVh2oTfhapYd9hgEe6vvFzRWBrC+M4Dql
-        w8K1mGDXSO4sdJ3kBbpXI9b4wg==
-X-Google-Smtp-Source: ACcGV623DtWlOgdp/InigkmS4w1yiXL61w0NCjABKQqR/Iw2XTwnXTqxSHuU7fvpyC8nKrNCv8wWPg==
-X-Received: by 2002:a1c:ee0c:: with SMTP id m12-v6mr1209010wmh.112.1538469831403;
-        Tue, 02 Oct 2018 01:43:51 -0700 (PDT)
-Received: from boomer.baylibre.local ([2a01:e34:eeb6:4690:3146:aafc:91d9:4b96])
-        by smtp.googlemail.com with ESMTPSA id 198-v6sm16162298wmm.0.2018.10.02.01.43.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Oct 2018 01:43:50 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] arm64: dts: meson-axg: s400: disable emmc
-Date:   Tue,  2 Oct 2018 10:43:41 +0200
-Message-Id: <20181002084341.5487-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181002084341.5487-1-jbrunet@baylibre.com>
-References: <20181002084341.5487-1-jbrunet@baylibre.com>
+        Tue, 2 Oct 2018 11:26:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51518 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726508AbeJBP0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 11:26:20 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CE942308212C;
+        Tue,  2 Oct 2018 08:44:10 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AB57C2010CEF;
+        Tue,  2 Oct 2018 08:44:10 +0000 (UTC)
+Received: from zmail22.collab.prod.int.phx2.redhat.com (zmail22.collab.prod.int.phx2.redhat.com [10.5.83.26])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 7CED81809546;
+        Tue,  2 Oct 2018 08:44:10 +0000 (UTC)
+Date:   Tue, 2 Oct 2018 04:44:10 -0400 (EDT)
+From:   Jaroslav Skarvada <jskarvad@redhat.com>
+To:     Pali =?utf-8?Q?Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, util-linux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mpluskal@suse.com,
+        base-system@gentoo.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Karel Zak <kzak@redhat.com>, Andreas Bombe <aeb@debian.org>,
+        Andreas Bombe <andreas.bombe@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Richard Weinberger <richard.weinberger@gmail.com>
+Message-ID: <510499199.34825028.1538469850257.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20181002081654.jxesr3kj62snzez5@pali>
+References: <20180929084038.an6pfhnsd6tblejl@pali> <20181002081654.jxesr3kj62snzez5@pali>
+Subject: Re: Future of dosfstools project (FAT)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.43.7.166, 10.4.195.20]
+Thread-Topic: Future of dosfstools project (FAT)
+Thread-Index: sjMSYP9oasQnW4UnwK55WDa9X3Hb4w==
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 02 Oct 2018 08:44:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While it is possible to rework the s400 board to solder an eMMC on it,
-it is not the default option and most boards are fitted with a NAND
-instead.
+----- Original Message -----
+> On Monday 01 October 2018 22:13:41 Richard Weinberger wrote:
+> > On Mon, Oct 1, 2018 at 10:01 PM Andreas Dilger <adilger@dilger.ca> wrote:
+> > > If the current dosfstools maintainer is non-responsive, you could always
+> > > fork the project in GitHub, land the critical patches into your branch,
+> > >  and make a release on your own.  If the maintainer surfaces again, then
+> > > they can pull in your patches.  If not, then you are the new maintainer.
+> >-
+> > I also recommend talking to package maintainers of major distros.
+> > Maybe one of them forked the project already and did what you plan to do.
+> >-
+> > In any case, let's try to avoid a drama like util-linux-ng was.
+> 
+> Based on Richard's comment, I'm forwarding my original email (below) to
+> the Fedora, Suse and Gentoo maintainers.
+> 
+> On Saturday 29 September 2018 10:40:38 Pali Rohár wrote:
+> > Hi!
+> > 
+> > Last year I did some research how Windows and Linux tools handle FAT
+> > labels (boot sector vs root directory) and proposed some unification.
+> > More in thread: https://www.spinics.net/lists/kernel/msg2640891.html
+> > 
+> > My proposed change for manipulating with FAT labels is now implemented
+> > in util-linux v2.33, prepared new mtools version, and also in dosfstools
+> > git (unreleased) https://www.spinics.net/lists/kernel/msg2645732.html
+> > 
+> > Project dosfstools contains de-facto standard Linux userspace tools for
+> > FAT filesystems (mkfs.fat, fsck.fat, fatlabel) and so it is quite
+> > important because of high usage of FAT.
+> > 
+> > But there was no new release of dosfstools since Jan 2017 and for more
+> > then month I'm unsuccessfully try to contact maintainer of dosfstools
+> > project (Andreas) about future of project itself.
+> > 
+> > I do not know what happened, if either Andreas do not have time or
+> > something else...
+> > 
+> > So does somebody know what is state of dosfstools project?
+> > 
+> > Also there are lot of proposed changes (with patches) for this project
+> > https://github.com/dosfstools/dosfstools/pulls and also more reported
+> > bugs https://github.com/dosfstools/dosfstools/issues
+> > 
+> > If Andreas does not have time, can somebody else at least look at pull
+> > requests and do some code review?
+> > 
+> > I have some other unpublished/unfinished changes for dosfstools, but I
+> > do not know now if it make sense to invest more time in this project
+> > when maintainer does not respond... if this project is active or going
+> > to be dead...
+> > 
+> > If dosfstools is going to be inactive/dead, there is still mtools
+> > project with provides FAT tools too and maintainer of it is now
+> > preparing new bugfix version. So at least some alternative exists.
+> 
+> --
+> Pali Rohár
+> pali.rohar@gmail.com
+> 
 
-Let's disable the emmc device by default to reflect this. The board
-equipped with an eMMC will just have to alter the DT in the
-bootloader, like we do for the reserved memory regions.
+Hi,
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-axg-s400.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I am downstream maintainer of dosfstools in Fedora/RHEL. My personal opinion
+with such kind of projects is that one or two years without activity doesn't
+mean the project is dead. I don't know what happened with Andreas, but
+in case of no response my +1 for the GitHub fork. I think it's non offensive
+solution which can be easily reverted if needed. Please let me know if you do it
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-index 166ab598395e..c74ff1efebb8 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-@@ -479,7 +479,7 @@
- 
- /* emmc storage */
- &sd_emmc_c {
--	status = "okay";
-+	status = "disabled";
- 	pinctrl-0 = <&emmc_pins>;
- 	pinctrl-1 = <&emmc_clk_gate_pins>;
- 	pinctrl-names = "default", "clk-gate";
--- 
-2.17.1
+thanks & regards
 
+Jaroslav
