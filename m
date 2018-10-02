@@ -2,150 +2,104 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C6DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D536C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97C3721471
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:28:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97C3721471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id F3BA32064E
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:28:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3BA32064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbeJCBMk convert rfc822-to-8bit (ORCPT
+        id S1727068AbeJCBNB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 21:12:40 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58136 "EHLO mx1.redhat.com"
+        Tue, 2 Oct 2018 21:13:01 -0400
+Received: from mga01.intel.com ([192.55.52.88]:24825 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbeJCBMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 21:12:39 -0400
-Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4A77030020A1;
-        Tue,  2 Oct 2018 18:27:58 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 56A3F9D814;
-        Tue,  2 Oct 2018 18:27:57 +0000 (UTC)
-Subject: Re: [RFC, PATCH] ipc/util.c: use idr_alloc_cyclic() for ipc
- allocations
-To:     Manfred Spraul <manfred@colorfullife.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>
-Cc:     1vier1@web.de, Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20181002161942.1037-1-manfred@colorfullife.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <1b8bcd5c-1264-08da-0b91-ebb4c02f6035@redhat.com>
-Date:   Tue, 2 Oct 2018 14:27:56 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1725951AbeJCBNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 21:13:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 11:28:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,332,1534834800"; 
+   d="scan'208";a="88588346"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.165]) ([10.7.198.165])
+  by orsmga003.jf.intel.com with ESMTP; 02 Oct 2018 11:23:27 -0700
+Subject: Re: [RFC workqueue/driver-core PATCH 1/5] workqueue: Provide
+ queue_work_near to queue work near a given NUMA node
+To:     Tejun Heo <tj@kernel.org>
+Cc:     linux-nvdimm@lists.01.org, gregkh@linuxfoundation.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, len.brown@intel.com,
+        dave.jiang@intel.com, rafael@kernel.org, vishal.l.verma@intel.com,
+        jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org,
+        dan.j.williams@intel.com
+References: <20180926214433.13512.30289.stgit@localhost.localdomain>
+ <20180926215138.13512.33146.stgit@localhost.localdomain>
+ <20180926215307.GA270328@devbig004.ftw2.facebook.com>
+ <9b002bbb-3e6d-9e99-d8f9-36df4306093e@linux.intel.com>
+ <20180926220957.GB270328@devbig004.ftw2.facebook.com>
+ <ba72f007-84e2-6fe0-b128-d876dadef5f5@linux.intel.com>
+ <20181001160142.GE270328@devbig004.ftw2.facebook.com>
+ <4eebc017-23a2-a26e-095c-66433061a141@linux.intel.com>
+ <20181002174116.GG270328@devbig004.ftw2.facebook.com>
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Message-ID: <be9081de-f186-b265-934d-78cec2a8792f@linux.intel.com>
+Date:   Tue, 2 Oct 2018 11:23:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181002161942.1037-1-manfred@colorfullife.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181002174116.GG270328@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 02 Oct 2018 18:27:58 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/02/2018 12:19 PM, Manfred Spraul wrote:
-> A bit related to the patch series that increases IPC_MNI:
->
-> (User space) id reuse create the risk of data corruption:
->
-> Process A: calls ipc function
-> Process A: sleeps just at the beginning of the syscall
-> Process B: Frees the ipc object (i.e.: calls ...ctl(IPC_RMID)
-> Process B: Creates a new ipc object (i.e.: calls ...get())
-> 	<If new object and old object have the same id>
-> Process A: is woken up, and accesses the new object
->
-> To reduce the probability that the new and the old object
-> have the same id, the current implementation adds a
-> sequence number to the index of the object in the idr tree.
->
-> To further reduce the probability for a reuse, switch from
-> idr_alloc to idr_alloc_cyclic.
->
-> The patch cycles over at least RADIX_TREE_MAP_SIZE, i.e.
-> if there is only a small number of objects, the accesses
-> continue to be direct.
->
-> As an option, this could be made dependent on the extended
-> mode: In extended mode, cycle over e.g. at least 16k ids.
->
-> Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
-> ---
->
-> Open questions:
-> - Is there a significant performance advantage, especially
->   there are many ipc ids?
-> - Over how many ids should the code cycle always?
-> - Further review remarks?
->
->  ipc/util.c | 22 +++++++++++++++++++++-
->  1 file changed, 21 insertions(+), 1 deletion(-)
->
-> diff --git a/ipc/util.c b/ipc/util.c
-> index 0af05752969f..6f83841f6761 100644
-> --- a/ipc/util.c
-> +++ b/ipc/util.c
-> @@ -216,10 +216,30 @@ static inline int ipc_idr_alloc(struct ipc_ids *ids, struct kern_ipc_perm *new)
->  	 */
->  
->  	if (next_id < 0) { /* !CHECKPOINT_RESTORE or next_id is unset */
-> +		int idr_max;
-> +
->  		new->seq = ids->seq++;
->  		if (ids->seq > IPCID_SEQ_MAX)
->  			ids->seq = 0;
-> -		idx = idr_alloc(&ids->ipcs_idr, new, 0, 0, GFP_NOWAIT);
-> +
-> +		/*
-> +		 * If a user space visible id is reused, then this creates a
-> +		 * risk for data corruption. To reduce the probability that
-> +		 * a number is reduced, two approaches are used:
-  reduced -> reused?
+On 10/2/2018 10:41 AM, Tejun Heo wrote:
+> Hello,
+> 
+> On Mon, Oct 01, 2018 at 02:54:39PM -0700, Alexander Duyck wrote:
+>>> It might be better to leave queue_work_on() to be used for per-cpu
+>>> workqueues and introduce queue_work_near() as you suggseted.  I just
+>>> don't want it to duplicate the node selection code in it.  Would that
+>>> work?
+>>
+>> So if I understand what you are saying correctly we default to
+>> round-robin on a given node has no CPUs attached to it. I could
+>> probably work with that if that is the default behavior instead of
+>> adding much of the complexity I already have.
+> 
+> Yeah, it's all in wq_select_unbound_cpu().  Right now, if the
+> requested cpu isn't in wq_unbound_cpumask, it falls back to dumb
+> round-robin.  We can probably do better there and find the nearest
+> node considering topology.
 
-> +		 * 1) the idr index is allocated cyclically.
-> +		 * 2) the use space id is build by concatenating the
-> +		 *    internal idr index with a sequence number
-> +		 * To avoid that both numbers have the same cycle time, try
-> +		 * to set the size for the cyclic alloc to an odd number.
-> +		 */
-> +		idr_max = ids->in_use*2+1;
-> +		if (idr_max < RADIX_TREE_MAP_SIZE-1)
-> +			idr_max = RADIX_TREE_MAP_SIZE-1;
-> +		if (idr_max > IPCMNI)
-> +			idr_max = IPCMNI;
-> +
-> +		idx = idr_alloc_cyclic(&ids->ipcs_idr, new, 0, idr_max,
-> +					GFP_NOWAIT);
->  	} else {
->  		new->seq = ipcid_to_seqx(next_id);
->  		idx = idr_alloc(&ids->ipcs_idr, new, ipcid_to_idx(next_id),
+Well if we could get wq_select_unbound_cpu doing the right thing based 
+on node topology that would be most of my work solved right there. 
+Basically I could just pass WQ_CPU_UNBOUND with the correct node and it 
+would take care of getting to the right CPU.
 
+>> The question I have then is what should I do about workqueues that
+>> aren't WQ_UNBOUND if they attempt to use queue_work_near? In that
+> 
+> Hmm... yeah, let's just use queue_work_on() for now.  We can sort it
+> out later and users could already do that anyway.
+> 
+> Thanks.
 
-Each of IPC components have their own sysctl parameters limiting the max
-number of objects that can be allocated. With cyclic allocation, you
-will have to make sure that idr_max is not larger than the corresponding
-IPC sysctl parameters. That may require moving the limits to the
-corresponding ipc_ids structure so that it can be used in ipc_idr_alloc().
+So are you saying I should just return an error for now if somebody 
+tries to use something other than an unbound workqueue with 
+queue_work_near, and expect everyone else to just use queue_work_on for 
+the other workqueue types?
 
-What is the point of comparing idr_max against RADIX_TREE_MAP_SIZE-1? Is
-it for performance reason.
+Thanks.
 
-Cheers,
-Longman
-
-
+- Alex
