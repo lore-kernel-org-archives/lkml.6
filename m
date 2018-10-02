@@ -3,39 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B8BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E49D9C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4708A2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:05:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4708A2089A
+	by mail.kernel.org (Postfix) with ESMTP id B416C2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:06:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B416C2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbeJBUtZ (ORCPT
+        id S1730160AbeJBUte (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:49:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32960 "EHLO
+        Tue, 2 Oct 2018 16:49:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32952 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729652AbeJBUMS (ORCPT
+        with ESMTP id S1726993AbeJBUMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 16:12:18 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 546A1266;
-        Tue,  2 Oct 2018 13:28:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C070B2F;
+        Tue,  2 Oct 2018 13:28:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Sandipan Das <sandipan@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 131/228] gpio: tegra: Fix tegra_gpio_irq_set_type()
-Date:   Tue,  2 Oct 2018 06:23:48 -0700
-Message-Id: <20181002132508.286221852@linuxfoundation.org>
+Subject: [PATCH 4.18 130/228] perf tests: Fix indexing when invoking subtests
+Date:   Tue,  2 Oct 2018 06:23:47 -0700
+Message-Id: <20181002132508.225050010@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,60 +59,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Sandipan Das <sandipan@linux.ibm.com>
 
-[ Upstream commit f78709a5d4114edc21a5d86586ed5e56e284f2bd ]
+[ Upstream commit aa90f9f9554616d5738f7bedb4a8f0e5e14d1bc6 ]
 
-Commit 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
-broke tegra_gpio_irq_set_type() because requesting of GPIO direction must
-be done after enabling GPIO function for a pin.
+Recently, the subtest numbering was changed to start from 1.  While it
+is fine for displaying results, this should not be the case when the
+subtests are actually invoked.
 
-This patch fixes drivers probe failure like this:
+Typically, the subtests are stored in zero-indexed arrays and invoked
+based on the index passed to the main test function.  Since the index
+now starts from 1, the second subtest in the array (index 1) gets
+invoked instead of the first (index 0).  This applies to all of the
+following subtests but for the last one, the subtest always fails
+because it does not meet the boundary condition of the subtest index
+being lesser than the number of subtests.
 
- gpio gpiochip0: (tegra-gpio): gpiochip_lock_as_irq: cannot get GPIO direction
- tegra-gpio 6000d000.gpio: unable to lock Tegra GPIO 144 as IRQ
+This can be observed on powerpc64 and x86_64 systems running Fedora 28
+as shown below.
 
-Fixes: 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Before:
+
+  # perf test "builtin clang support"
+  55: builtin clang support                                 :
+  55.1: builtin clang compile C source to IR                : Ok
+  55.2: builtin clang compile C source to ELF object        : FAILED!
+
+  # perf test "LLVM search and compile"
+  38: LLVM search and compile                               :
+  38.1: Basic BPF llvm compile                              : Ok
+  38.2: kbuild searching                                    : Ok
+  38.3: Compile source for BPF prologue generation          : Ok
+  38.4: Compile source for BPF relocation                   : FAILED!
+
+  # perf test "BPF filter"
+  40: BPF filter                                            :
+  40.1: Basic BPF filtering                                 : Ok
+  40.2: BPF pinning                                         : Ok
+  40.3: BPF prologue generation                             : Ok
+  40.4: BPF relocation checker                              : FAILED!
+
+After:
+
+  # perf test "builtin clang support"
+  55: builtin clang support                                 :
+  55.1: builtin clang compile C source to IR                : Ok
+  55.2: builtin clang compile C source to ELF object        : Ok
+
+  # perf test "LLVM search and compile"
+  38: LLVM search and compile                               :
+  38.1: Basic BPF llvm compile                              : Ok
+  38.2: kbuild searching                                    : Ok
+  38.3: Compile source for BPF prologue generation          : Ok
+  38.4: Compile source for BPF relocation                   : Ok
+
+  # perf test "BPF filter"
+  40: BPF filter                                            :
+  40.1: Basic BPF filtering                                 : Ok
+  40.2: BPF pinning                                         : Ok
+  40.3: BPF prologue generation                             : Ok
+  40.4: BPF relocation checker                              : Ok
+
+Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Fixes: 9ef0112442bd ("perf test: Fix subtest number when showing results")
+Link: http://lkml.kernel.org/r/20180726171733.33208-1-sandipan@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-tegra.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ tools/perf/tests/builtin-test.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -323,13 +323,6 @@ static int tegra_gpio_irq_set_type(struc
- 		return -EINVAL;
- 	}
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -385,7 +385,7 @@ static int test_and_print(struct test *t
+ 	if (!t->subtest.get_nr)
+ 		pr_debug("%s:", t->desc);
+ 	else
+-		pr_debug("%s subtest %d:", t->desc, subtest);
++		pr_debug("%s subtest %d:", t->desc, subtest + 1);
  
--	ret = gpiochip_lock_as_irq(&tgi->gc, gpio);
--	if (ret) {
--		dev_err(tgi->dev,
--			"unable to lock Tegra GPIO %u as IRQ\n", gpio);
--		return ret;
--	}
--
- 	spin_lock_irqsave(&bank->lvl_lock[port], flags);
- 
- 	val = tegra_gpio_readl(tgi, GPIO_INT_LVL(tgi, gpio));
-@@ -342,6 +335,14 @@ static int tegra_gpio_irq_set_type(struc
- 	tegra_gpio_mask_write(tgi, GPIO_MSK_OE(tgi, gpio), gpio, 0);
- 	tegra_gpio_enable(tgi, gpio);
- 
-+	ret = gpiochip_lock_as_irq(&tgi->gc, gpio);
-+	if (ret) {
-+		dev_err(tgi->dev,
-+			"unable to lock Tegra GPIO %u as IRQ\n", gpio);
-+		tegra_gpio_disable(tgi, gpio);
-+		return ret;
-+	}
-+
- 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
- 		irq_set_handler_locked(d, handle_level_irq);
- 	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+ 	switch (err) {
+ 	case TEST_OK:
 
 
