@@ -2,90 +2,94 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D802C64EBC
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B45C64EBC
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31D4C20684
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:12:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="LPQ7HNHP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31D4C20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	by mail.kernel.org (Postfix) with ESMTP id C9E6220684
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:13:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9E6220684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbeJCD6A (ORCPT
+        id S1728469AbeJCD6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 23:58:00 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:39334 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728139AbeJCD6A (ORCPT
+        Tue, 2 Oct 2018 23:58:55 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:37759 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728139AbeJCD6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 23:58:00 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A4FA68011F;
-        Wed,  3 Oct 2018 10:12:40 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail; t=1538514760;
-        bh=Pu+1ciGlEm6xZggihOkIbM7fZFzJGWqFxIymnxZ/nUc=;
-        h=From:To:Cc:Subject:Date;
-        b=LPQ7HNHPVSwsSNTtRs8BDHg6tLtV61CeILPyBJ6oQ06RCpn+tPmP6ahs3irtlEpi7
-         yI/r/0VJUNv2zdo15+JU8ZlkBSX3rww9xME4swohD7l+imbhOU+AOeQSM7NBKRy3K1
-         c20fOfKnNJT10+dgUWjVl4S+xqTo5DcSCshNF8iY=
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5bb3df480000>; Wed, 03 Oct 2018 10:12:40 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 87A3F13EEA8;
-        Wed,  3 Oct 2018 10:12:44 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 6A09E1E1D93; Wed,  3 Oct 2018 10:12:40 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     gregory.clement@bootlin.com, andrew@lunn.ch, jason@lakedaemon.net
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH] ARM: dts: auto-detect nand ECC properites for db-88f6820-amc
-Date:   Wed,  3 Oct 2018 10:12:33 +1300
-Message-Id: <20181002211233.20774-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.19.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+        Tue, 2 Oct 2018 23:58:54 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MmkfQ-1fPtUB3FMk-00jr8i; Tue, 02 Oct 2018 23:13:25 +0200
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MmkfQ-1fPtUB3FMk-00jr8i; Tue, 02 Oct 2018 23:13:25 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Hans Verkuil <hans.verkuil@cisco.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: i2c: TDA1997x: select CONFIG_HDMI
+Date:   Tue,  2 Oct 2018 23:12:43 +0200
+Message-Id: <20181002211324.2696685-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:SMhp1ipvEagD+VmGlTUAPuJCsOqAnq3MZ6kZ3z+Ql1/u0z8Ha5t
+ AWsn+7ptOaMBptXkC4oPASkmgdn9+ZW0qSt2T5H0lg1GHJe/T/AIfO9DXrZmG9EdAKHOA2M
+ C2AImqj0VDMAZDQAED/s4cKfN2p0dSsUv7/HN/IWJpm7kE6nj0XY5ncG1SMHDUE5lGQl3iU
+ HiZGf3aQcaU1h9jIGVmpQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:1JQsn2auYzs=:11Qc0CCXDOBcE8mg+aD0aW
+ WnXYMF4k7HSTIti9K5ElzFEuA2VTcBfOqW1wCV8AdAS/JV8ojsSasrrPdgCDgA+KU4AEEBcq+
+ 0SSUgWrIeOfcqidokb8QK+pZeIVwZwLi2n/PZ7AsoEQvADw294ILlxQoy8FVpClUOviNj9dVF
+ H+ouf8R6dv/OJeSjKjkf7sVJvVqRAqnuDiz+JS18jLdtcmN7OYXxvY2J6TPrT5gCubu+bTe6m
+ m91iV/IdBqEJ71dr/S9/1nU3oYa6+xy7M3Knab+hBUejAbOXvwHkVb1Z1/CooEh8saTao9Ofh
+ 6cAHrWpEGXL1rsf0EZ3AS/WjUSAc9lkugLh2DWCZAco7MQ0vbKIgQtPoKLuj9m9Zy4duqgueo
+ MNN6ecWpC1pkMbj4ap0AQrKsqRJMqRTs1+ZhjT9MpBLvEb2JLtQdj5zvhwe0dXp+quiW7JuGU
+ 8gNOPlNkTQ2NeJBH7z9mJ9OcsDBExcL1FVASndZzlvZvTNuMzKO2EHD9Ri24qb4YE7vgvTp1E
+ u7BPH5c7ECfsG3DjW4Fq9dkvwBhKcaQwqHSmGhPU1y3Apl0/MvSfIVu0JOeuuaVC52G1u1zKU
+ B5vVUoxjlsO0gM0WF7f/SEhsSW6kQ9pYOYqIo2WTygcBxeHiu7UrlpsPnf2mXKX4SqbEiJJLi
+ Ab5cgQ9/hj8isTuoFXdBWlIJnxIL1r8fDutpwEHoqhQqhIIKPnAGqjpInQO8qnReZgxc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This board has a Micron MT29F8G08ABACAWP chip which requires a ECC
-strength of 8/512. Rather than hard coding any particular strength the
-the nand controller auto-detect the ECC strength based on the ONFI data.
+Without CONFIG_HDMI, we get a link error for this driver:
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+drivers/media/i2c/tda1997x.o: In function `tda1997x_parse_infoframe':
+tda1997x.c:(.text+0x2195): undefined reference to `hdmi_infoframe_unpack'
+tda1997x.c:(.text+0x21b6): undefined reference to `hdmi_infoframe_log'
+drivers/media/i2c/tda1997x.o: In function `tda1997x_log_infoframe':
+tda1997x.c:(.text.unlikely+0x13d3): undefined reference to `hdmi_infoframe_unpack'
+tda1997x.c:(.text.unlikely+0x1426): undefined reference to `hdmi_infoframe_log'
+
+All other drivers in this directory that use HDMI select CONFIG_HDMI,
+so do the same here:
+
+Fixes: 9ac0038db9a7 ("media: i2c: Add TDA1997x HDMI receiver driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-=20arch/arm/boot/dts/armada-385-db-88f6820-amc.dts | 2 --
-=201 file changed, 2 deletions(-)
+ drivers/media/i2c/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/armada-385-db-88f6820-amc.dts b/arch/arm/b=
-oot/dts/armada-385-db-88f6820-amc.dts
-index dc9ccce1d4a1..7881df3b28a0 100644
---- a/arch/arm/boot/dts/armada-385-db-88f6820-amc.dts
-+++ b/arch/arm/boot/dts/armada-385-db-88f6820-amc.dts
-@@ -99,8 +99,6 @@
-=20		label =3D "pxa3xx_nand-0";
-=20		nand-rb =3D <0>;
-=20		nand-on-flash-bbt;
--		nand-ecc-strength =3D <4>;
--		nand-ecc-step-size =3D <512>;
-=20
-=20		partitions {
-=20			compatible =3D "fixed-partitions";
---=20
-2.19.0
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index bcf0686190e0..d958b7fd9e73 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -61,6 +61,7 @@ config VIDEO_TDA1997X
+ 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
+ 	depends on SND_SOC
+ 	select SND_PCM
++	select HDMI
+ 	---help---
+ 	  V4L2 subdevice driver for the NXP TDA1997x HDMI receivers.
+ 
+-- 
+2.18.0
+
