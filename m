@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF04C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D67E6C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FFCA2064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FFCA2064A
+	by mail.kernel.org (Postfix) with ESMTP id A7FC32082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FC32082A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730800AbeJBUO1 (ORCPT
+        id S1731199AbeJBUmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33932 "EHLO
+        Tue, 2 Oct 2018 16:42:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33912 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730751AbeJBUO0 (ORCPT
+        with ESMTP id S1729763AbeJBUOX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:26 -0400
+        Tue, 2 Oct 2018 16:14:23 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C73D0C2B;
-        Tue,  2 Oct 2018 13:31:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E6A0C2B;
+        Tue,  2 Oct 2018 13:31:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Smart <james.smart@broadcom.com>,
-        Christoph Hellwig <hch@lst.de>,
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+        Rex Zhu <Rex.Zhu@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 217/228] nvme-fcloop: Fix dropped LSs to removed target port
-Date:   Tue,  2 Oct 2018 06:25:14 -0700
-Message-Id: <20181002132512.235321368@linuxfoundation.org>
+Subject: [PATCH 4.18 215/228] drm/amdgpu: Update power state at the end of smu hw_init.
+Date:   Tue,  2 Oct 2018 06:25:12 -0700
+Message-Id: <20181002132512.148826567@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,47 +53,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Rex Zhu <Rex.Zhu@amd.com>
 
-[ Upstream commit afd299ca996929f4f98ac20da0044c0cdc124879 ]
+[ Upstream commit 2ab4d0e74256fc49b7b270f63c1d1e47c2455abc ]
 
-When a targetport is removed from the config, fcloop will avoid calling
-the LS done() routine thinking the targetport is gone. This leaves the
-initiator reset/reconnect hanging as it waits for a status on the
-Create_Association LS for the reconnect.
+For SI/Kv, the power state is managed by function
+amdgpu_pm_compute_clocks.
 
-Change the filter in the LS callback path. If tport null (set when
-failed validation before "sending to remote port"), be sure to call
-done. This was the main bug. But, continue the logic that only calls
-done if tport was set but there is no remoteport (e.g. case where
-remoteport has been removed, thus host doesn't expect a completion).
+when dpm enabled, we should call amdgpu_pm_compute_clocks
+to update current power state instand of set boot state.
 
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+this change can fix the oops when kfd driver was enabled on Kv.
+
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Tested-by: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/target/fcloop.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/kv_dpm.c |    4 +---
+ drivers/gpu/drm/amd/amdgpu/si_dpm.c |    3 +--
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
---- a/drivers/nvme/target/fcloop.c
-+++ b/drivers/nvme/target/fcloop.c
-@@ -311,7 +311,7 @@ fcloop_tgt_lsrqst_done_work(struct work_
- 	struct fcloop_tport *tport = tls_req->tport;
- 	struct nvmefc_ls_req *lsreq = tls_req->lsreq;
- 
--	if (tport->remoteport)
-+	if (!tport || tport->remoteport)
- 		lsreq->done(lsreq, tls_req->status);
- }
- 
-@@ -329,6 +329,7 @@ fcloop_ls_req(struct nvme_fc_local_port
- 
- 	if (!rport->targetport) {
- 		tls_req->status = -ECONNREFUSED;
-+		tls_req->tport = NULL;
- 		schedule_work(&tls_req->work);
+--- a/drivers/gpu/drm/amd/amdgpu/kv_dpm.c
++++ b/drivers/gpu/drm/amd/amdgpu/kv_dpm.c
+@@ -1354,8 +1354,6 @@ static int kv_dpm_enable(struct amdgpu_d
  		return ret;
  	}
+ 
+-	kv_update_current_ps(adev, adev->pm.dpm.boot_ps);
+-
+ 	if (adev->irq.installed &&
+ 	    amdgpu_is_internal_thermal_sensor(adev->pm.int_thermal_type)) {
+ 		ret = kv_set_thermal_temperature_range(adev, KV_TEMP_RANGE_MIN, KV_TEMP_RANGE_MAX);
+@@ -3061,7 +3059,7 @@ static int kv_dpm_hw_init(void *handle)
+ 	else
+ 		adev->pm.dpm_enabled = true;
+ 	mutex_unlock(&adev->pm.mutex);
+-
++	amdgpu_pm_compute_clocks(adev);
+ 	return ret;
+ }
+ 
+--- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c
++++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
+@@ -6887,7 +6887,6 @@ static int si_dpm_enable(struct amdgpu_d
+ 
+ 	si_enable_auto_throttle_source(adev, AMDGPU_DPM_AUTO_THROTTLE_SRC_THERMAL, true);
+ 	si_thermal_start_thermal_controller(adev);
+-	ni_update_current_ps(adev, boot_ps);
+ 
+ 	return 0;
+ }
+@@ -7764,7 +7763,7 @@ static int si_dpm_hw_init(void *handle)
+ 	else
+ 		adev->pm.dpm_enabled = true;
+ 	mutex_unlock(&adev->pm.mutex);
+-
++	amdgpu_pm_compute_clocks(adev);
+ 	return ret;
+ }
+ 
 
 
