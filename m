@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C82EEC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 972F7C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 999E221476
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999E221476
+	by mail.kernel.org (Postfix) with ESMTP id 68FAA2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FAA2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbeJBUOS (ORCPT
+        id S1730735AbeJBUOT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33860 "EHLO
+        Tue, 2 Oct 2018 16:14:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33872 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730696AbeJBUOR (ORCPT
+        with ESMTP id S1730696AbeJBUOS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:17 -0400
+        Tue, 2 Oct 2018 16:14:18 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BC1FC2B;
-        Tue,  2 Oct 2018 13:30:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67E0BC3F;
+        Tue,  2 Oct 2018 13:30:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 171/228] bus: ti-sysc: Fix module register ioremap for larger offsets
-Date:   Tue,  2 Oct 2018 06:24:28 -0700
-Message-Id: <20181002132510.234471935@linuxfoundation.org>
+        stable@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.18 162/228] IB/hfi1: Fix SL array bounds check
+Date:   Tue,  2 Oct 2018 06:24:19 -0700
+Message-Id: <20181002132509.780189704@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,76 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Ira Weiny <ira.weiny@intel.com>
 
-[ Upstream commit 0ef8e3bb974af56346b34393e643d491d9141c66 ]
+commit 0dbfaa9f2813787679e296eb5476e40938ab48c8 upstream.
 
-We can have the interconnect target module control registers pretty
-much anywhere within the module range. The current code attempts an
-incomplete optimization of the ioremap size but does it wrong and
-it only works for registers at the beginning of the module.
+The SL specified by a user needs to be a valid SL.
 
-Let's just use the largest control register to calculate the ioremap
-size. The ioremapped range is for most part cached anyways so there
-is no need for size optimization. Let's also update the comments
-accordingly.
+Add a range check to the user specified SL value which protects from
+running off the end of the SL to SC table.
 
-Fixes: 0eecc636e5a2 ("bus: ti-sysc: Add minimal TI sysc interconnect
-target driver")
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+CC: stable@vger.kernel.org
+Fixes: 7724105686e7 ("IB/hfi1: add driver files")
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/bus/ti-sysc.c |   29 +++++++++++++----------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
 
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -490,32 +490,29 @@ static int sysc_check_registers(struct s
+---
+ drivers/infiniband/hw/hfi1/verbs.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/drivers/infiniband/hw/hfi1/verbs.c
++++ b/drivers/infiniband/hw/hfi1/verbs.c
+@@ -1590,6 +1590,7 @@ static int hfi1_check_ah(struct ib_devic
+ 	struct hfi1_pportdata *ppd;
+ 	struct hfi1_devdata *dd;
+ 	u8 sc5;
++	u8 sl;
  
- /**
-  * syc_ioremap - ioremap register space for the interconnect target module
-- * @ddata: deviec driver data
-+ * @ddata: device driver data
-  *
-  * Note that the interconnect target module registers can be anywhere
-- * within the first child device address space. For example, SGX has
-- * them at offset 0x1fc00 in the 32MB module address space. We just
-- * what we need around the interconnect target module registers.
-+ * within the interconnect target module range. For example, SGX has
-+ * them at offset 0x1fc00 in the 32MB module address space. And cpsw
-+ * has them at offset 0x1200 in the CPSW_WR child. Usually the
-+ * the interconnect target module registers are at the beginning of
-+ * the module range though.
-  */
- static int sysc_ioremap(struct sysc *ddata)
- {
--	u32 size = 0;
-+	int size;
- 
--	if (ddata->offsets[SYSC_SYSSTATUS] >= 0)
--		size = ddata->offsets[SYSC_SYSSTATUS];
--	else if (ddata->offsets[SYSC_SYSCONFIG] >= 0)
--		size = ddata->offsets[SYSC_SYSCONFIG];
--	else if (ddata->offsets[SYSC_REVISION] >= 0)
--		size = ddata->offsets[SYSC_REVISION];
--	else
--		return -EINVAL;
-+	size = max3(ddata->offsets[SYSC_REVISION],
-+		    ddata->offsets[SYSC_SYSCONFIG],
-+		    ddata->offsets[SYSC_SYSSTATUS]);
- 
--	size &= 0xfff00;
--	size += SZ_256;
-+	if (size < 0 || (size + sizeof(u32)) > ddata->module_size)
+ 	if (hfi1_check_mcast(rdma_ah_get_dlid(ah_attr)) &&
+ 	    !(rdma_ah_get_ah_flags(ah_attr) & IB_AH_GRH))
+@@ -1598,8 +1599,13 @@ static int hfi1_check_ah(struct ib_devic
+ 	/* test the mapping for validity */
+ 	ibp = to_iport(ibdev, rdma_ah_get_port_num(ah_attr));
+ 	ppd = ppd_from_ibp(ibp);
+-	sc5 = ibp->sl_to_sc[rdma_ah_get_sl(ah_attr)];
+ 	dd = dd_from_ppd(ppd);
++
++	sl = rdma_ah_get_sl(ah_attr);
++	if (sl >= ARRAY_SIZE(ibp->sl_to_sc))
 +		return -EINVAL;
- 
- 	ddata->module_va = devm_ioremap(ddata->dev,
- 					ddata->module_pa,
--					size);
-+					size + sizeof(u32));
- 	if (!ddata->module_va)
- 		return -EIO;
- 
++
++	sc5 = ibp->sl_to_sc[sl];
+ 	if (sc_to_vlt(dd, sc5) > num_vls && sc_to_vlt(dd, sc5) != 0xf)
+ 		return -EINVAL;
+ 	return 0;
 
 
