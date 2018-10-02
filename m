@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FE2C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1B8C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A25732064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:38:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A25732064D
+	by mail.kernel.org (Postfix) with ESMTP id F0C11206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:39:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0C11206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732654AbeJBUWV (ORCPT
+        id S2387523AbeJBUUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:22:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36506 "EHLO
+        Tue, 2 Oct 2018 16:20:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36472 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387539AbeJBUUV (ORCPT
+        with ESMTP id S2387467AbeJBUUS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:21 -0400
+        Tue, 2 Oct 2018 16:20:18 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 750A09D9;
-        Tue,  2 Oct 2018 13:36:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3195E9D9;
+        Tue,  2 Oct 2018 13:36:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomer Tayar <Tomer.Tayar@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 82/94] qed: Wait for MCP halt and resume commands to take place
-Date:   Tue,  2 Oct 2018 06:25:36 -0700
-Message-Id: <20181002132506.207327269@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.9 79/94] arm64: KVM: Tighten guest core register access from userspace
+Date:   Tue,  2 Oct 2018 06:25:33 -0700
+Message-Id: <20181002132505.987265951@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -53,107 +55,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomer Tayar <Tomer.Tayar@cavium.com>
+From: Dave Martin <Dave.Martin@arm.com>
 
-[ Upstream commit 76271809f49056f079e202bf6513d17b0d6dd34d ]
+commit d26c25a9d19b5976b319af528886f89cf455692d upstream.
 
-Successive iterations of halting and resuming the management chip (MCP)
-might fail, since currently the driver doesn't wait for these operations to
-actually take place.
-This patch prevents the driver from moving forward before the operations
-are reflected in the state register.
+We currently allow userspace to access the core register file
+in about any possible way, including straddling multiple
+registers and doing unaligned accesses.
 
-Signed-off-by: Tomer Tayar <Tomer.Tayar@cavium.com>
-Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+This is not the expected use of the ABI, and nobody is actually
+using it that way. Let's tighten it by explicitly checking
+the size and alignment for each field of the register file.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 2f4a07c5f9fe ("arm64: KVM: guest one-reg interface")
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+[maz: rewrote Dave's initial patch to be more easily backported]
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/qlogic/qed/qed_mcp.c      |   46 ++++++++++++++++++++-----
- drivers/net/ethernet/qlogic/qed/qed_reg_addr.h |    1 
- 2 files changed, 39 insertions(+), 8 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-@@ -1230,31 +1230,61 @@ qed_mcp_send_drv_version(struct qed_hwfn
- 	return rc;
+---
+ arch/arm64/kvm/guest.c |   45 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+--- a/arch/arm64/kvm/guest.c
++++ b/arch/arm64/kvm/guest.c
+@@ -57,6 +57,45 @@ static u64 core_reg_offset_from_id(u64 i
+ 	return id & ~(KVM_REG_ARCH_MASK | KVM_REG_SIZE_MASK | KVM_REG_ARM_CORE);
  }
  
-+/* A maximal 100 msec waiting time for the MCP to halt */
-+#define QED_MCP_HALT_SLEEP_MS		10
-+#define QED_MCP_HALT_MAX_RETRIES	10
++static int validate_core_offset(const struct kvm_one_reg *reg)
++{
++	u64 off = core_reg_offset_from_id(reg->id);
++	int size;
 +
- int qed_mcp_halt(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
++	switch (off) {
++	case KVM_REG_ARM_CORE_REG(regs.regs[0]) ...
++	     KVM_REG_ARM_CORE_REG(regs.regs[30]):
++	case KVM_REG_ARM_CORE_REG(regs.sp):
++	case KVM_REG_ARM_CORE_REG(regs.pc):
++	case KVM_REG_ARM_CORE_REG(regs.pstate):
++	case KVM_REG_ARM_CORE_REG(sp_el1):
++	case KVM_REG_ARM_CORE_REG(elr_el1):
++	case KVM_REG_ARM_CORE_REG(spsr[0]) ...
++	     KVM_REG_ARM_CORE_REG(spsr[KVM_NR_SPSR - 1]):
++		size = sizeof(__u64);
++		break;
++
++	case KVM_REG_ARM_CORE_REG(fp_regs.vregs[0]) ...
++	     KVM_REG_ARM_CORE_REG(fp_regs.vregs[31]):
++		size = sizeof(__uint128_t);
++		break;
++
++	case KVM_REG_ARM_CORE_REG(fp_regs.fpsr):
++	case KVM_REG_ARM_CORE_REG(fp_regs.fpcr):
++		size = sizeof(__u32);
++		break;
++
++	default:
++		return -EINVAL;
++	}
++
++	if (KVM_REG_SIZE(reg->id) == size &&
++	    IS_ALIGNED(off, size / sizeof(__u32)))
++		return 0;
++
++	return -EINVAL;
++}
++
+ static int get_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
  {
--	u32 resp = 0, param = 0;
-+	u32 resp = 0, param = 0, cpu_state, cnt = 0;
- 	int rc;
+ 	/*
+@@ -76,6 +115,9 @@ static int get_core_reg(struct kvm_vcpu
+ 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
+ 		return -ENOENT;
  
- 	rc = qed_mcp_cmd(p_hwfn, p_ptt, DRV_MSG_CODE_MCP_HALT, 0, &resp,
- 			 &param);
--	if (rc)
-+	if (rc) {
- 		DP_ERR(p_hwfn, "MCP response failure, aborting\n");
-+		return rc;
-+	}
- 
--	return rc;
-+	do {
-+		msleep(QED_MCP_HALT_SLEEP_MS);
-+		cpu_state = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_STATE);
-+		if (cpu_state & MCP_REG_CPU_STATE_SOFT_HALTED)
-+			break;
-+	} while (++cnt < QED_MCP_HALT_MAX_RETRIES);
++	if (validate_core_offset(reg))
++		return -EINVAL;
 +
-+	if (cnt == QED_MCP_HALT_MAX_RETRIES) {
-+		DP_NOTICE(p_hwfn,
-+			  "Failed to halt the MCP [CPU_MODE = 0x%08x, CPU_STATE = 0x%08x]\n",
-+			  qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE), cpu_state);
-+		return -EBUSY;
-+	}
+ 	if (copy_to_user(uaddr, ((u32 *)regs) + off, KVM_REG_SIZE(reg->id)))
+ 		return -EFAULT;
+ 
+@@ -98,6 +140,9 @@ static int set_core_reg(struct kvm_vcpu
+ 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
+ 		return -ENOENT;
+ 
++	if (validate_core_offset(reg))
++		return -EINVAL;
 +
-+	return 0;
- }
+ 	if (KVM_REG_SIZE(reg->id) > sizeof(tmp))
+ 		return -EINVAL;
  
-+#define QED_MCP_RESUME_SLEEP_MS	10
-+
- int qed_mcp_resume(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
- {
--	u32 value, cpu_mode;
-+	u32 cpu_mode, cpu_state;
- 
- 	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_STATE, 0xffffffff);
- 
--	value = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE);
--	value &= ~MCP_REG_CPU_MODE_SOFT_HALT;
--	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_MODE, value);
- 	cpu_mode = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE);
-+	cpu_mode &= ~MCP_REG_CPU_MODE_SOFT_HALT;
-+	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_MODE, cpu_mode);
-+	msleep(QED_MCP_RESUME_SLEEP_MS);
-+	cpu_state = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_STATE);
-+
-+	if (cpu_state & MCP_REG_CPU_STATE_SOFT_HALTED) {
-+		DP_NOTICE(p_hwfn,
-+			  "Failed to resume the MCP [CPU_MODE = 0x%08x, CPU_STATE = 0x%08x]\n",
-+			  cpu_mode, cpu_state);
-+		return -EBUSY;
-+	}
- 
--	return (cpu_mode & MCP_REG_CPU_MODE_SOFT_HALT) ? -EAGAIN : 0;
-+	return 0;
- }
- 
- int qed_mcp_set_led(struct qed_hwfn *p_hwfn,
---- a/drivers/net/ethernet/qlogic/qed/qed_reg_addr.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_reg_addr.h
-@@ -510,6 +510,7 @@
- 	0
- #define MCP_REG_CPU_STATE \
- 	0xe05004UL
-+#define MCP_REG_CPU_STATE_SOFT_HALTED	(0x1UL << 10)
- #define MCP_REG_CPU_EVENT_MASK \
- 	0xe05008UL
- #define PGLUE_B_REG_PF_BAR0_SIZE \
 
 
