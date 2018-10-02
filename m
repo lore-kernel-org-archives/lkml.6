@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFA2C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7F9C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE87206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CE87206B2
+	by mail.kernel.org (Postfix) with ESMTP id 0E944206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E944206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731438AbeJBUPw (ORCPT
+        id S1731467AbeJBUPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:15:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34534 "EHLO
+        Tue, 2 Oct 2018 16:15:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34550 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730598AbeJBUPu (ORCPT
+        with ESMTP id S1730350AbeJBUPy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:15:50 -0400
+        Tue, 2 Oct 2018 16:15:54 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C4B15AA;
-        Tue,  2 Oct 2018 13:32:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5E7A5AA;
+        Tue,  2 Oct 2018 13:32:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Team OWL337 <icytxw@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 039/137] powerpc/powernv/ioda2: Reduce upper limit for DMA window size
-Date:   Tue,  2 Oct 2018 06:24:00 -0700
-Message-Id: <20181002132501.220005024@linuxfoundation.org>
+Subject: [PATCH 4.14 041/137] alarmtimer: Prevent overflow for relative nanosleep
+Date:   Tue,  2 Oct 2018 06:24:02 -0700
+Message-Id: <20181002132501.342762356@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,40 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit d3d4ffaae439981e1e441ebb125aa3588627c5d8 ]
+[ Upstream commit 5f936e19cc0ef97dbe3a56e9498922ad5ba1edef ]
 
-We use PHB in mode1 which uses bit 59 to select a correct DMA window.
-However there is mode2 which uses bits 59:55 and allows up to 32 DMA
-windows per a PE.
+Air Icy reported:
 
-Even though documentation does not clearly specify that, it seems that
-the actual hardware does not support bits 59:55 even in mode1, in other
-words we can create a window as big as 1<<58 but DMA simply won't work.
+  UBSAN: Undefined behaviour in kernel/time/alarmtimer.c:811:7
+  signed integer overflow:
+  1529859276030040771 + 9223372036854775807 cannot be represented in type 'long long int'
+  Call Trace:
+   alarm_timer_nsleep+0x44c/0x510 kernel/time/alarmtimer.c:811
+   __do_sys_clock_nanosleep kernel/time/posix-timers.c:1235 [inline]
+   __se_sys_clock_nanosleep kernel/time/posix-timers.c:1213 [inline]
+   __x64_sys_clock_nanosleep+0x326/0x4e0 kernel/time/posix-timers.c:1213
+   do_syscall_64+0xb8/0x3a0 arch/x86/entry/common.c:290
 
-This reduces the upper limit from 59 to 55 bits to let the userspace know
-about the hardware limits.
+alarm_timer_nsleep() uses ktime_add() to add the current time and the
+relative expiry value. ktime_add() has no sanity checks so the addition
+can overflow when the relative timeout is large enough.
 
-Fixes: 7aafac11e3 "powerpc/powernv/ioda2: Gracefully fail if too many TCE levels requested"
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Use ktime_add_safe() which has the necessary sanity checks in place and
+limits the result to the valid range.
+
+Fixes: 9a7adcf5c6de ("timers: Posix interface for alarm-timers")
+Reported-by: Team OWL337 <icytxw@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1807020926360.1595@nanos.tec.linutronix.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/powernv/pci-ioda.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/time/alarmtimer.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -2787,7 +2787,7 @@ static long pnv_pci_ioda2_table_alloc_pa
- 	level_shift = entries_shift + 3;
- 	level_shift = max_t(unsigned, level_shift, PAGE_SHIFT);
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -808,7 +808,8 @@ static int alarm_timer_nsleep(const cloc
+ 	/* Convert (if necessary) to absolute time */
+ 	if (flags != TIMER_ABSTIME) {
+ 		ktime_t now = alarm_bases[type].gettime();
+-		exp = ktime_add(now, exp);
++
++		exp = ktime_add_safe(now, exp);
+ 	}
  
--	if ((level_shift - 3) * levels + page_shift >= 60)
-+	if ((level_shift - 3) * levels + page_shift >= 55)
- 		return -EINVAL;
- 
- 	/* Allocate TCE table */
+ 	ret = alarmtimer_do_nsleep(&alarm, exp, type);
 
 
