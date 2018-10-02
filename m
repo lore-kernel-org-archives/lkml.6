@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DE7C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C195C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9112B2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9112B2083F
+	by mail.kernel.org (Postfix) with ESMTP id 5D7E22089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7E22089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbeJBUKD (ORCPT
+        id S1727748AbeJBUKG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59904 "EHLO
+        Tue, 2 Oct 2018 16:10:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59930 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbeJBUKC (ORCPT
+        with ESMTP id S1726178AbeJBUKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:02 -0400
+        Tue, 2 Oct 2018 16:10:06 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A0038BF0;
-        Tue,  2 Oct 2018 13:26:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 95E7CB2F;
+        Tue,  2 Oct 2018 13:26:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joerg Roedel <jroedel@suse.de>,
+        stable@vger.kernel.org, Aaron Skomra <Aaron.Skomra@wacom.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 022/228] iommu/msm: Dont call iommu_device_{,un}link from atomic context
-Date:   Tue,  2 Oct 2018 06:21:59 -0700
-Message-Id: <20181002132500.583331949@linuxfoundation.org>
+Subject: [PATCH 4.18 024/228] power: remove possible deadlock when unregistering power_supply
+Date:   Tue,  2 Oct 2018 06:22:01 -0700
+Message-Id: <20181002132500.697465865@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,109 +53,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Niklas Cassel <niklas.cassel@linaro.org>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-[ Upstream commit 379521462e4add27f3514da8e4ab1fd7a54fe1c7 ]
+[ Upstream commit 3ffa6583e24e1ad1abab836d24bfc9d2308074e5 ]
 
-Fixes the following splat during boot:
+If a device gets removed right after having registered a power_supply node,
+we might enter in a deadlock between the remove call (that has a lock on
+the parent device) and the deferred register work.
 
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:747
-in_atomic(): 1, irqs_disabled(): 128, pid: 77, name: kworker/2:1
-4 locks held by kworker/2:1/77:
- #0: (ptrval) ((wq_completion)"events"){+.+.}, at: process_one_work+0x1fc/0x8fc
- #1: (ptrval) (deferred_probe_work){+.+.}, at: process_one_work+0x1fc/0x8fc
- #2: (ptrval) (&dev->mutex){....}, at: __device_attach+0x40/0x178
- #3: (ptrval) (msm_iommu_lock){....}, at: msm_iommu_add_device+0x28/0xcc
-irq event stamp: 348
-hardirqs last  enabled at (347): [<c049dc18>] kfree+0xe0/0x3c0
-hardirqs last disabled at (348): [<c0c35cac>] _raw_spin_lock_irqsave+0x2c/0x68
-softirqs last  enabled at (0): [<c0322fd8>] copy_process.part.5+0x280/0x1a68
-softirqs last disabled at (0): [<00000000>]   (null)
-Preemption disabled at:
-[<00000000>]   (null)
-CPU: 2 PID: 77 Comm: kworker/2:1 Not tainted 4.17.0-rc5-wt-ath-01075-gaca0516bb4cf #239
-Hardware name: Generic DT based system
-Workqueue: events deferred_probe_work_func
-[<c0314e00>] (unwind_backtrace) from [<c030fc70>] (show_stack+0x20/0x24)
-[<c030fc70>] (show_stack) from [<c0c16ad8>] (dump_stack+0xa0/0xcc)
-[<c0c16ad8>] (dump_stack) from [<c035a978>] (___might_sleep+0x1f8/0x2d4)
-ath10k_sdio mmc2:0001:1: Direct firmware load for ath10k/QCA9377/hw1.0/board-2.bin failed with error -2
-[<c035a978>] (___might_sleep) from [<c035aac4>] (__might_sleep+0x70/0xa8)
-[<c035aac4>] (__might_sleep) from [<c0c3066c>] (__mutex_lock+0x50/0xb28)
-[<c0c3066c>] (__mutex_lock) from [<c0c31170>] (mutex_lock_nested+0x2c/0x34)
-ath10k_sdio mmc2:0001:1: board_file api 1 bmi_id N/A crc32 544289f7
-[<c0c31170>] (mutex_lock_nested) from [<c052d798>] (kernfs_find_and_get_ns+0x30/0x5c)
-[<c052d798>] (kernfs_find_and_get_ns) from [<c0531cc8>] (sysfs_add_link_to_group+0x28/0x58)
-[<c0531cc8>] (sysfs_add_link_to_group) from [<c07ef75c>] (iommu_device_link+0x50/0xb4)
-[<c07ef75c>] (iommu_device_link) from [<c07f2288>] (msm_iommu_add_device+0xa0/0xcc)
-[<c07f2288>] (msm_iommu_add_device) from [<c07ec6d0>] (add_iommu_group+0x3c/0x64)
-[<c07ec6d0>] (add_iommu_group) from [<c07f9d40>] (bus_for_each_dev+0x84/0xc4)
-[<c07f9d40>] (bus_for_each_dev) from [<c07ec7c8>] (bus_set_iommu+0xd0/0x10c)
-[<c07ec7c8>] (bus_set_iommu) from [<c07f1a68>] (msm_iommu_probe+0x5b8/0x66c)
-[<c07f1a68>] (msm_iommu_probe) from [<c07feaa8>] (platform_drv_probe+0x60/0xbc)
-[<c07feaa8>] (platform_drv_probe) from [<c07fc1fc>] (driver_probe_device+0x30c/0x4cc)
-[<c07fc1fc>] (driver_probe_device) from [<c07fc59c>] (__device_attach_driver+0xac/0x14c)
-[<c07fc59c>] (__device_attach_driver) from [<c07f9e14>] (bus_for_each_drv+0x68/0xc8)
-[<c07f9e14>] (bus_for_each_drv) from [<c07fbd3c>] (__device_attach+0xe4/0x178)
-[<c07fbd3c>] (__device_attach) from [<c07fc698>] (device_initial_probe+0x1c/0x20)
-[<c07fc698>] (device_initial_probe) from [<c07faee8>] (bus_probe_device+0x98/0xa0)
-[<c07faee8>] (bus_probe_device) from [<c07fb4f4>] (deferred_probe_work_func+0x74/0x198)
-[<c07fb4f4>] (deferred_probe_work_func) from [<c0348eb4>] (process_one_work+0x2c4/0x8fc)
-[<c0348eb4>] (process_one_work) from [<c03497b0>] (worker_thread+0x2c4/0x5cc)
-[<c03497b0>] (worker_thread) from [<c0350d10>] (kthread+0x180/0x188)
-[<c0350d10>] (kthread) from [<c03010b4>] (ret_from_fork+0x14/0x20)
+Allow the deferred register work to exit without taking the lock when
+we are in the remove state.
 
-Fixes: 42df43b36163 ("iommu/msm: Make use of iommu_device_register interface")
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Stack trace on a Ubuntu 16.04:
+
+[16072.109121] INFO: task kworker/u16:2:1180 blocked for more than 120 seconds.
+[16072.109127]       Not tainted 4.13.0-41-generic #46~16.04.1-Ubuntu
+[16072.109129] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[16072.109132] kworker/u16:2   D    0  1180      2 0x80000000
+[16072.109142] Workqueue: events_power_efficient power_supply_deferred_register_work
+[16072.109144] Call Trace:
+[16072.109152]  __schedule+0x3d6/0x8b0
+[16072.109155]  schedule+0x36/0x80
+[16072.109158]  schedule_preempt_disabled+0xe/0x10
+[16072.109161]  __mutex_lock.isra.2+0x2ab/0x4e0
+[16072.109166]  __mutex_lock_slowpath+0x13/0x20
+[16072.109168]  ? __mutex_lock_slowpath+0x13/0x20
+[16072.109171]  mutex_lock+0x2f/0x40
+[16072.109174]  power_supply_deferred_register_work+0x2b/0x50
+[16072.109179]  process_one_work+0x15b/0x410
+[16072.109182]  worker_thread+0x4b/0x460
+[16072.109186]  kthread+0x10c/0x140
+[16072.109189]  ? process_one_work+0x410/0x410
+[16072.109191]  ? kthread_create_on_node+0x70/0x70
+[16072.109194]  ret_from_fork+0x35/0x40
+[16072.109199] INFO: task test:2257 blocked for more than 120 seconds.
+[16072.109202]       Not tainted 4.13.0-41-generic #46~16.04.1-Ubuntu
+[16072.109204] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[16072.109206] test            D    0  2257   2256 0x00000004
+[16072.109208] Call Trace:
+[16072.109211]  __schedule+0x3d6/0x8b0
+[16072.109215]  schedule+0x36/0x80
+[16072.109218]  schedule_timeout+0x1f3/0x360
+[16072.109221]  ? check_preempt_curr+0x5a/0xa0
+[16072.109224]  ? ttwu_do_wakeup+0x1e/0x150
+[16072.109227]  wait_for_completion+0xb4/0x140
+[16072.109230]  ? wait_for_completion+0xb4/0x140
+[16072.109233]  ? wake_up_q+0x70/0x70
+[16072.109236]  flush_work+0x129/0x1e0
+[16072.109240]  ? worker_detach_from_pool+0xb0/0xb0
+[16072.109243]  __cancel_work_timer+0x10f/0x190
+[16072.109247]  ? device_del+0x264/0x310
+[16072.109250]  ? __wake_up+0x44/0x50
+[16072.109253]  cancel_delayed_work_sync+0x13/0x20
+[16072.109257]  power_supply_unregister+0x37/0xb0
+[16072.109260]  devm_power_supply_release+0x11/0x20
+[16072.109263]  release_nodes+0x110/0x200
+[16072.109266]  devres_release_group+0x7c/0xb0
+[16072.109274]  wacom_remove+0xc2/0x110 [wacom]
+[16072.109279]  hid_device_remove+0x6e/0xd0 [hid]
+[16072.109284]  device_release_driver_internal+0x158/0x210
+[16072.109288]  device_release_driver+0x12/0x20
+[16072.109291]  bus_remove_device+0xec/0x160
+[16072.109293]  device_del+0x1de/0x310
+[16072.109298]  hid_destroy_device+0x27/0x60 [hid]
+[16072.109303]  usbhid_disconnect+0x51/0x70 [usbhid]
+[16072.109308]  usb_unbind_interface+0x77/0x270
+[16072.109311]  device_release_driver_internal+0x158/0x210
+[16072.109315]  device_release_driver+0x12/0x20
+[16072.109318]  usb_driver_release_interface+0x77/0x80
+[16072.109321]  proc_ioctl+0x20f/0x250
+[16072.109325]  usbdev_do_ioctl+0x57f/0x1140
+[16072.109327]  ? __wake_up+0x44/0x50
+[16072.109331]  usbdev_ioctl+0xe/0x20
+[16072.109336]  do_vfs_ioctl+0xa4/0x600
+[16072.109339]  ? vfs_write+0x15a/0x1b0
+[16072.109343]  SyS_ioctl+0x79/0x90
+[16072.109347]  entry_SYSCALL_64_fastpath+0x24/0xab
+[16072.109349] RIP: 0033:0x7f20da807f47
+[16072.109351] RSP: 002b:00007ffc422ae398 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[16072.109353] RAX: ffffffffffffffda RBX: 00000000010b8560 RCX: 00007f20da807f47
+[16072.109355] RDX: 00007ffc422ae3a0 RSI: 00000000c0105512 RDI: 0000000000000009
+[16072.109356] RBP: 0000000000000000 R08: 00007ffc422ae3e0 R09: 0000000000000010
+[16072.109357] R10: 00000000000000a6 R11: 0000000000000246 R12: 0000000000000000
+[16072.109359] R13: 00000000010b8560 R14: 00007ffc422ae2e0 R15: 0000000000000000
+
+Reported-and-tested-by: Richard Hughes <rhughes@redhat.com>
+Tested-by: Aaron Skomra <Aaron.Skomra@wacom.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Fixes: 7f1a57fdd6cb ("power_supply: Fix possible NULL pointer dereference on early uevent")
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/msm_iommu.c |   16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ drivers/power/supply/power_supply_core.c |   11 +++++++++--
+ include/linux/power_supply.h             |    1 +
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/iommu/msm_iommu.c
-+++ b/drivers/iommu/msm_iommu.c
-@@ -395,20 +395,15 @@ static int msm_iommu_add_device(struct d
- 	struct msm_iommu_dev *iommu;
- 	struct iommu_group *group;
- 	unsigned long flags;
--	int ret = 0;
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -14,6 +14,7 @@
+ #include <linux/types.h>
+ #include <linux/init.h>
+ #include <linux/slab.h>
++#include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/notifier.h>
+ #include <linux/err.h>
+@@ -140,8 +141,13 @@ static void power_supply_deferred_regist
+ 	struct power_supply *psy = container_of(work, struct power_supply,
+ 						deferred_register_work.work);
  
- 	spin_lock_irqsave(&msm_iommu_lock, flags);
--
- 	iommu = find_iommu_for_dev(dev);
-+	spin_unlock_irqrestore(&msm_iommu_lock, flags);
-+
- 	if (iommu)
- 		iommu_device_link(&iommu->iommu, dev);
- 	else
--		ret = -ENODEV;
--
--	spin_unlock_irqrestore(&msm_iommu_lock, flags);
--
--	if (ret)
--		return ret;
-+		return -ENODEV;
+-	if (psy->dev.parent)
+-		mutex_lock(&psy->dev.parent->mutex);
++	if (psy->dev.parent) {
++		while (!mutex_trylock(&psy->dev.parent->mutex)) {
++			if (psy->removing)
++				return;
++			msleep(10);
++		}
++	}
  
- 	group = iommu_group_get_for_dev(dev);
- 	if (IS_ERR(group))
-@@ -425,13 +420,12 @@ static void msm_iommu_remove_device(stru
- 	unsigned long flags;
+ 	power_supply_changed(psy);
  
- 	spin_lock_irqsave(&msm_iommu_lock, flags);
--
- 	iommu = find_iommu_for_dev(dev);
-+	spin_unlock_irqrestore(&msm_iommu_lock, flags);
-+
- 	if (iommu)
- 		iommu_device_unlink(&iommu->iommu, dev);
- 
--	spin_unlock_irqrestore(&msm_iommu_lock, flags);
--
- 	iommu_group_remove_device(dev);
- }
- 
+@@ -1082,6 +1088,7 @@ EXPORT_SYMBOL_GPL(devm_power_supply_regi
+ void power_supply_unregister(struct power_supply *psy)
+ {
+ 	WARN_ON(atomic_dec_return(&psy->use_cnt));
++	psy->removing = true;
+ 	cancel_work_sync(&psy->changed_work);
+ 	cancel_delayed_work_sync(&psy->deferred_register_work);
+ 	sysfs_remove_link(&psy->dev.kobj, "powers");
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -269,6 +269,7 @@ struct power_supply {
+ 	spinlock_t changed_lock;
+ 	bool changed;
+ 	bool initialized;
++	bool removing;
+ 	atomic_t use_cnt;
+ #ifdef CONFIG_THERMAL
+ 	struct thermal_zone_device *tzd;
 
 
