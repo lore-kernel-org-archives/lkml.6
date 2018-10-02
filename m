@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E67C64EBD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B06C64EBD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7692F20684
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:15:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7692F20684
+	by mail.kernel.org (Postfix) with ESMTP id F0AEF20684
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:15:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AEF20684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbeJCEAx (ORCPT
+        id S1726997AbeJCEA7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 00:00:53 -0400
-Received: from namei.org ([65.99.196.166]:35150 "EHLO namei.org"
+        Wed, 3 Oct 2018 00:00:59 -0400
+Received: from namei.org ([65.99.196.166]:35160 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725198AbeJCEAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 00:00:53 -0400
+        id S1725198AbeJCEA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 00:00:59 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id w92LEIq9024272;
-        Tue, 2 Oct 2018 21:14:18 GMT
-Date:   Wed, 3 Oct 2018 07:14:18 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id w92LFUmT024309;
+        Tue, 2 Oct 2018 21:15:30 GMT
+Date:   Wed, 3 Oct 2018 07:15:30 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
 To:     Kees Cook <keescook@chromium.org>
 cc:     Casey Schaufler <casey@schaufler-ca.com>,
@@ -37,10 +37,11 @@ cc:     Casey Schaufler <casey@schaufler-ca.com>,
         LSM <linux-security-module@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH security-next v4 04/32] LSM: Remove initcall tracing
-In-Reply-To: <20181002005505.6112-5-keescook@chromium.org>
-Message-ID: <alpine.LRH.2.21.1810030714080.23596@namei.org>
-References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-5-keescook@chromium.org>
+Subject: Re: [PATCH security-next v4 06/32] vmlinux.lds.h: Move LSM_TABLE
+ into INIT_DATA
+In-Reply-To: <20181002005505.6112-7-keescook@chromium.org>
+Message-ID: <alpine.LRH.2.21.1810030715130.23596@namei.org>
+References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-7-keescook@chromium.org>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -51,12 +52,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, 1 Oct 2018, Kees Cook wrote:
 
-> This partially reverts commit 58eacfffc417 ("init, tracing: instrument
-> security and console initcall trace events") since security init calls
-> are about to no longer resemble regular init calls.
+> Since the struct lsm_info table is not an initcall, we can just move it
+> into INIT_DATA like all the other tables.
 > 
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: John Johansen <john.johansen@canonical.com>
 
 
 Reviewed-by: James Morris <james.morris@microsoft.com>
