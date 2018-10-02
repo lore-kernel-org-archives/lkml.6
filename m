@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 898FCC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1851C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A6E12083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A6E12083F
+	by mail.kernel.org (Postfix) with ESMTP id 84372206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84372206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731263AbeJBUPY (ORCPT
+        id S1731276AbeJBUP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:15:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34382 "EHLO
+        Tue, 2 Oct 2018 16:15:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34390 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731254AbeJBUPX (ORCPT
+        with ESMTP id S1729775AbeJBUP0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:15:23 -0400
+        Tue, 2 Oct 2018 16:15:26 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 08F68BF0;
-        Tue,  2 Oct 2018 13:31:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43AFBC3F;
+        Tue,  2 Oct 2018 13:32:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        stable@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>,
+        Keerthy <j-keerthy@ti.com>, Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 028/137] x86/tsc: Add missing header to tsc_msr.c
-Date:   Tue,  2 Oct 2018 06:23:49 -0700
-Message-Id: <20181002132500.431425743@linuxfoundation.org>
+Subject: [PATCH 4.14 029/137] ARM: hwmod: RTC: Dont assume lock/unlock will be called with irq enabled
+Date:   Tue,  2 Oct 2018 06:23:50 -0700
+Message-Id: <20181002132500.496336811@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -55,37 +52,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Dave Gerlach <d-gerlach@ti.com>
 
-[ Upstream commit dbd0fbc76c77daac08ddd245afdcbade0d506e19 ]
+[ Upstream commit 6d609b35c815ba20132b7b64bcca04516bb17c56 ]
 
-Add a missing header otherwise compiler warns about missed prototype:
+When the RTC lock and unlock functions were introduced it was likely
+assumed that they would always be called from irq enabled context, hence
+the use of local_irq_disable/enable. This is no longer true as the
+RTC+DDR path makes a late call during the suspend path after irqs
+have been disabled to enable the RTC hwmod which calls both unlock and
+lock, leading to IRQs being reenabled through the local_irq_enable call
+in omap_hwmod_rtc_lock call.
 
-CC      arch/x86/kernel/tsc_msr.o
-arch/x86/kernel/tsc_msr.c:73:15: warning: no previous prototype for ‘cpu_khz_from_msr’ [-Wmissing-prototypes]
-   unsigned long cpu_khz_from_msr(void)
-                 ^~~~~~~~~~~~~~~~
+To avoid this change the local_irq_disable/enable to
+local_irq_save/restore to ensure that from whatever context this is
+called the proper IRQ configuration is maintained.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Link: https://lkml.kernel.org/r/20180629193113.84425-4-andriy.shevchenko@linux.intel.com
+Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/tsc_msr.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-omap2/omap_hwmod_reset.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/tsc_msr.c
-+++ b/arch/x86/kernel/tsc_msr.c
-@@ -12,6 +12,7 @@
- #include <asm/setup.h>
- #include <asm/apic.h>
- #include <asm/param.h>
-+#include <asm/tsc.h>
+--- a/arch/arm/mach-omap2/omap_hwmod_reset.c
++++ b/arch/arm/mach-omap2/omap_hwmod_reset.c
+@@ -92,11 +92,13 @@ static void omap_rtc_wait_not_busy(struc
+  */
+ void omap_hwmod_rtc_unlock(struct omap_hwmod *oh)
+ {
+-	local_irq_disable();
++	unsigned long flags;
++
++	local_irq_save(flags);
+ 	omap_rtc_wait_not_busy(oh);
+ 	omap_hwmod_write(OMAP_RTC_KICK0_VALUE, oh, OMAP_RTC_KICK0_REG);
+ 	omap_hwmod_write(OMAP_RTC_KICK1_VALUE, oh, OMAP_RTC_KICK1_REG);
+-	local_irq_enable();
++	local_irq_restore(flags);
+ }
  
- #define MAX_NUM_FREQS	9
- 
+ /**
+@@ -110,9 +112,11 @@ void omap_hwmod_rtc_unlock(struct omap_h
+  */
+ void omap_hwmod_rtc_lock(struct omap_hwmod *oh)
+ {
+-	local_irq_disable();
++	unsigned long flags;
++
++	local_irq_save(flags);
+ 	omap_rtc_wait_not_busy(oh);
+ 	omap_hwmod_write(0x0, oh, OMAP_RTC_KICK0_REG);
+ 	omap_hwmod_write(0x0, oh, OMAP_RTC_KICK1_REG);
+-	local_irq_enable();
++	local_irq_restore(flags);
+ }
 
 
