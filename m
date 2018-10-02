@@ -2,93 +2,243 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E838EC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7266CC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E34920878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:20:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E34920878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id 384DD20645
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:20:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384DD20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbeJBPCG (ORCPT
+        id S1727512AbeJBPC3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 11:02:06 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:35567 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbeJBPCG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:02:06 -0400
-Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1g7FuS-0002yu-GO from Jiada_Wang@mentor.com ; Tue, 02 Oct 2018 01:20:00 -0700
-Received: from [172.30.112.170] (147.34.91.1) by
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Tue, 2 Oct 2018 01:19:56 -0700
-Subject: Re: [PATCH linux-next 10/10] ASoC: rsnd: Add kctrl to configure dai's
- busif
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <twischer@de.adit-jv.com>,
-        <dragos_tarcatu@mentor.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180927051229.18080-1-jiada_wang@mentor.com>
- <87h8iatqrn.wl-kuninori.morimoto.gx@renesas.com>
-From:   Jiada Wang <jiada_wang@mentor.com>
-Message-ID: <abc5762e-8128-3a58-46e4-ca0f0072e7c0@mentor.com>
-Date:   Tue, 2 Oct 2018 17:19:55 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 2 Oct 2018 11:02:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58208 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727006AbeJBPC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 11:02:29 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ADEB774D;
+        Tue,  2 Oct 2018 08:20:25 +0000 (UTC)
+Received: from [10.36.116.105] (ovpn-116-105.ams2.redhat.com [10.36.116.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C08C319742;
+        Tue,  2 Oct 2018 08:20:22 +0000 (UTC)
+Subject: Re: [PATCH v6 16/18] kvm: arm64: Set a limit on the IPA size
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        marc.zyngier@arm.com, cdall@kernel.org, will.deacon@arm.com,
+        dave.martin@arm.com, peter.maydell@linaro.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, julien.grall@arm.com,
+        linux-kernel@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>
+References: <20180926163258.20218-1-suzuki.poulose@arm.com>
+ <20180926163258.20218-17-suzuki.poulose@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <b8c4ee4e-b9f2-c1ac-cea3-f11106c2aafd@redhat.com>
+Date:   Tue, 2 Oct 2018 10:20:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <87h8iatqrn.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180926163258.20218-17-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-ClientProxiedBy: SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) To
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 02 Oct 2018 08:20:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Morimoto-san
+Hi,
 
+On 9/26/18 6:32 PM, Suzuki K Poulose wrote:
+> So far we have restricted the IPA size of the VM to the default
+> value (40bits). Now that we can manage the IPA size per VM and
+> support dynamic stage2 page tables, we can allow VMs to have
+> larger IPA. This patch introduces a the maximum IPA size
+> supported on the host.
+nit: a the -> computes the max IPA size that can be supported for any VM ?
 
-On 2018/09/28 9:29, Kuninori Morimoto wrote:
-> Hi Jiada
->
-> Thank you for your patch
->
->> ssi0, ssi1, ssi2, ssi3, ssi4 and ssi9 have busif0 to busif7,
->> currently only busif0 is used by all ssi.
->> But tdm split and tdm ex-split mode, which require busif1 to
->> busif7.
->>
->> This patch adds kctrl in ssi for dai-link, to make it possible
->> to configure the busif used by each dai-link.
->> Also adds rsnd_dma_addr_update() interface to make it possible
->> to update dma data address when there is change in condition
->> of dai connection.
->>
->> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
->> ---
-> Do we really need to select BUSIF number by kctrl ??
-> In other words, does *all* user need to know detail of SSI BUSIF connection ?
-> I think it should be selected automatically somehow.
-after some reconsideration, I think selection of BUSIF can be done 
-automatically.
+Besides
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-BUSIF other than 0 is only necessary when SSI works in TDM 
-Split/Ex-Split mode.
-but currently rcar audio doesn't support these modes,
-I am planning in v2 update, add a dummy BUSIF selection function,
-which only selects busif0 for now
+Thanks
 
-Thanks,
-Jiada
+Eric
 
-
+ This is decided by the following factors :
+> 
+>  1) Maximum PARange supported by the CPUs - This can be inferred
+>     from the system wide safe value.
+>  2) Maximum PA size supported by the host kernel (48 vs 52)
+>  3) Number of levels in the host page table (as we base our
+>     stage2 tables on the host table helpers).
+> 
+> Since the stage2 page table code is dependent on the stage1
+> page table, we always ensure that :
+> 
+>   Number of Levels at Stage1 >= Number of Levels at Stage2
+> 
+> So we limit the IPA to make sure that the above condition
+> is satisfied. This will affect the following combinations
+> of VA_BITS and IPA for different page sizes.
+> 
+>   Host configuration | Unsupported IPA ranges
+>   39bit VA, 4K       | [44, 48]
+>   36bit VA, 16K      | [41, 48]
+>   42bit VA, 64K      | [47, 52]
+> 
+> Supporting the above combinations need independent stage2
+> page table manipulation code, which would need substantial
+> changes. We could purse the solution independently and
+> switch the page table code once we have it ready.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since v5:
+>  - Don't raise the IPA limit to 40bits
+>  - Print the KVM IPA limit, WARN if the limit is less than the
+>    default size. Drop the per-CPU PARange check
+>  - If the limit was reduced due to kernel configuration,
+>    report the limiting factor. i.e, kernel virtual vs physical
+>    address limit.
+> Changes since V2:
+>  - Restrict the IPA size to limit the number of page table
+>    levels in stage2 to that of stage1 or less.
+> ---
+>  arch/arm/include/asm/kvm_mmu.h    |  2 ++
+>  arch/arm64/include/asm/kvm_host.h | 12 +++------
+>  arch/arm64/kvm/reset.c            | 43 +++++++++++++++++++++++++++++++
+>  virt/kvm/arm/arm.c                |  2 ++
+>  4 files changed, 50 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> index 12ae5fbbcf01..5ad1a54f98dc 100644
+> --- a/arch/arm/include/asm/kvm_mmu.h
+> +++ b/arch/arm/include/asm/kvm_mmu.h
+> @@ -358,6 +358,8 @@ static inline int hyp_map_aux_data(void)
+>  
+>  #define kvm_phys_to_vttbr(addr)		(addr)
+>  
+> +static inline void kvm_set_ipa_limit(void) {}
+> +
+>  #endif	/* !__ASSEMBLY__ */
+>  
+>  #endif /* __ARM_KVM_MMU_H__ */
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 5ecd457bce7d..f008f8866b2a 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -442,15 +442,7 @@ int kvm_arm_vcpu_arch_get_attr(struct kvm_vcpu *vcpu,
+>  int kvm_arm_vcpu_arch_has_attr(struct kvm_vcpu *vcpu,
+>  			       struct kvm_device_attr *attr);
+>  
+> -static inline void __cpu_init_stage2(void)
+> -{
+> -	u32 ps;
+> -
+> -	/* Sanity check for minimum IPA size support */
+> -	ps = id_aa64mmfr0_parange_to_phys_shift(read_sysreg(id_aa64mmfr0_el1) & 0x7);
+> -	WARN_ONCE(ps < 40,
+> -		  "PARange is %d bits, unsupported configuration!", ps);
+> -}
+> +static inline void __cpu_init_stage2(void) {}
+>  
+>  /* Guest/host FPSIMD coordination helpers */
+>  int kvm_arch_vcpu_run_map_fp(struct kvm_vcpu *vcpu);
+> @@ -513,6 +505,8 @@ static inline int kvm_arm_have_ssbd(void)
+>  void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu);
+>  void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu);
+>  
+> +void kvm_set_ipa_limit(void);
+> +
+>  #define __KVM_HAVE_ARCH_VM_ALLOC
+>  struct kvm *kvm_arch_alloc_vm(void);
+>  void kvm_arch_free_vm(struct kvm *kvm);
+> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+> index 2bf41e007390..96b3f50101bc 100644
+> --- a/arch/arm64/kvm/reset.c
+> +++ b/arch/arm64/kvm/reset.c
+> @@ -34,6 +34,9 @@
+>  #include <asm/kvm_coproc.h>
+>  #include <asm/kvm_mmu.h>
+>  
+> +/* Maximum phys_shift supported for any VM on this host */
+> +static u32 kvm_ipa_limit;
+> +
+>  /*
+>   * ARMv8 Reset Values
+>   */
+> @@ -135,6 +138,46 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu)
+>  	return kvm_timer_vcpu_reset(vcpu);
+>  }
+>  
+> +void kvm_set_ipa_limit(void)
+> +{
+> +	unsigned int ipa_max, pa_max, va_max, parange;
+> +
+> +	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 0x7;
+> +	pa_max = id_aa64mmfr0_parange_to_phys_shift(parange);
+> +
+> +	/* Clamp the IPA limit to the PA size supported by the kernel */
+> +	ipa_max = (pa_max > PHYS_MASK_SHIFT) ? PHYS_MASK_SHIFT : pa_max;
+> +	/*
+> +	 * Since our stage2 table is dependent on the stage1 page table code,
+> +	 * we must always honor the following condition:
+> +	 *
+> +	 *  Number of levels in Stage1 >= Number of levels in Stage2.
+> +	 *
+> +	 * So clamp the ipa limit further down to limit the number of levels.
+> +	 * Since we can concatenate upto 16 tables at entry level, we could
+> +	 * go upto 4bits above the maximum VA addressible with the current
+> +	 * number of levels.
+> +	 */
+> +	va_max = PGDIR_SHIFT + PAGE_SHIFT - 3;
+> +	va_max += 4;
+> +
+> +	if (va_max < ipa_max)
+> +		ipa_max = va_max;
+> +
+> +	/*
+> +	 * If the final limit is lower than the real physical address
+> +	 * limit of the CPUs, report the reason.
+> +	 */
+> +	if (ipa_max < pa_max)
+> +		pr_info("kvm: Limiting the IPA size due to kernel %s Address limit\n",
+> +			(va_max < pa_max) ? "Virtual" : "Physical");
+> +
+> +	WARN(ipa_max < KVM_PHYS_SHIFT,
+> +	     "KVM IPA limit (%d bit) is smaller than default size\n", ipa_max);
+> +	kvm_ipa_limit = ipa_max;
+> +	kvm_info("IPA Size Limit: %dbits\n", kvm_ipa_limit);
+> +}
+> +
+>  /*
+>   * Configure the VTCR_EL2 for this VM. The VTCR value is common
+>   * across all the physical CPUs on the system. We use system wide
+> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+> index 43e716bc3f08..631f9a3ad99a 100644
+> --- a/virt/kvm/arm/arm.c
+> +++ b/virt/kvm/arm/arm.c
+> @@ -1413,6 +1413,8 @@ static int init_common_resources(void)
+>  	kvm_vmid_bits = kvm_get_vmid_bits();
+>  	kvm_info("%d-bit VMID\n", kvm_vmid_bits);
+>  
+> +	kvm_set_ipa_limit();
+> +
+>  	return 0;
+>  }
+>  
+> 
