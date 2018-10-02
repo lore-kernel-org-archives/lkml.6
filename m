@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D8BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E74C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83FAC2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83FAC2089A
+	by mail.kernel.org (Postfix) with ESMTP id 2D153206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D153206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeJBUJi (ORCPT
+        id S1727693AbeJBUJm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:09:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59806 "EHLO
+        Tue, 2 Oct 2018 16:09:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59812 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727622AbeJBUJh (ORCPT
+        with ESMTP id S1726810AbeJBUJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:09:37 -0400
+        Tue, 2 Oct 2018 16:09:41 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D66F6266;
-        Tue,  2 Oct 2018 13:26:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D9452266;
+        Tue,  2 Oct 2018 13:26:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 014/228] misc: sram: enable clock before registering regions
-Date:   Tue,  2 Oct 2018 06:21:51 -0700
-Message-Id: <20181002132500.045682562@linuxfoundation.org>
+Subject: [PATCH 4.18 015/228] serial: sh-sci: Stop RX FIFO timer during port shutdown
+Date:   Tue,  2 Oct 2018 06:21:52 -0700
+Message-Id: <20181002132500.106737184@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,66 +53,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit d5b9653dd2bb7a2b1c8cc783c5d3b607bbb6b271 ]
+[ Upstream commit c5a9262fa8bfed0dddc7466ef10fcd292e2af61b ]
 
-Make sure to enable the clock before registering regions and exporting
-partitions to user space at which point we must be prepared for I/O.
+The RX FIFO timer may be armed when the port is shut down, hence the
+timer function may still be called afterwards.
 
-Fixes: ee895ccdf776 ("misc: sram: fix enabled clock leak on error path")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Fix this race condition by deleting the timer during port shutdown.
+
+Fixes: 039403765e5da3c6 ("serial: sh-sci: SCIFA/B RX FIFO software timeout")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/sram.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/tty/serial/sh-sci.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/misc/sram.c
-+++ b/drivers/misc/sram.c
-@@ -391,23 +391,23 @@ static int sram_probe(struct platform_de
- 	if (IS_ERR(sram->pool))
- 		return PTR_ERR(sram->pool);
- 
--	ret = sram_reserve_regions(sram, res);
--	if (ret)
--		return ret;
--
- 	sram->clk = devm_clk_get(sram->dev, NULL);
- 	if (IS_ERR(sram->clk))
- 		sram->clk = NULL;
- 	else
- 		clk_prepare_enable(sram->clk);
- 
-+	ret = sram_reserve_regions(sram, res);
-+	if (ret)
-+		goto err_disable_clk;
-+
- 	platform_set_drvdata(pdev, sram);
- 
- 	init_func = of_device_get_match_data(&pdev->dev);
- 	if (init_func) {
- 		ret = init_func();
- 		if (ret)
--			goto err_disable_clk;
-+			goto err_free_partitions;
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2099,6 +2099,8 @@ static void sci_shutdown(struct uart_por
  	}
+ #endif
  
- 	dev_dbg(sram->dev, "SRAM pool: %zu KiB @ 0x%p\n",
-@@ -415,10 +415,11 @@ static int sram_probe(struct platform_de
- 
- 	return 0;
- 
-+err_free_partitions:
-+	sram_free_partitions(sram);
- err_disable_clk:
- 	if (sram->clk)
- 		clk_disable_unprepare(sram->clk);
--	sram_free_partitions(sram);
- 
- 	return ret;
++	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0)
++		del_timer_sync(&s->rx_fifo_timer);
+ 	sci_free_irq(s);
+ 	sci_free_dma(port);
  }
 
 
