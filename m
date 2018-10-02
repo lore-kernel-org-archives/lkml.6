@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA4AC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B44EC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C108C2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C108C2089A
+	by mail.kernel.org (Postfix) with ESMTP id E04842083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E04842083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732050AbeJBURR (ORCPT
+        id S1732065AbeJBURT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:17:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35092 "EHLO
+        Tue, 2 Oct 2018 16:17:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35098 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732031AbeJBURQ (ORCPT
+        with ESMTP id S1732052AbeJBURR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:16 -0400
+        Tue, 2 Oct 2018 16:17:17 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3281D5AA;
-        Tue,  2 Oct 2018 13:33:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A76D5AA;
+        Tue,  2 Oct 2018 13:33:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.14 087/137] intel_th: Fix device removal logic
-Date:   Tue,  2 Oct 2018 06:24:48 -0700
-Message-Id: <20181002132504.613268310@linuxfoundation.org>
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.14 088/137] spi: tegra20-slink: explicitly enable/disable clock
+Date:   Tue,  2 Oct 2018 06:24:49 -0700
+Message-Id: <20181002132504.676540079@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -51,38 +52,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-commit 8801922cd94c918e4dc3a108ecaa500c4d40583f upstream.
+commit 7001cab1dabc0b72b2b672ef58a90ab64f5e2343 upstream.
 
-Commit a753bfcfdb1f ("intel_th: Make the switch allocate its subdevices")
-brings in new subdevice addition/removal logic that's broken for "host
-mode": the SWITCH device has no children to begin with, which is not
-handled in the code. This results in a null dereference bug later down
-the path.
+Depending on the SPI instance one may get an interrupt storm upon
+requesting resp. interrupt unless the clock is explicitly enabled
+beforehand. This has been observed trying to bring up instance 4 on
+T20.
 
-This patch fixes the subdevice removal code to handle host mode correctly.
-
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: a753bfcfdb1f ("intel_th: Make the switch allocate its subdevices")
-CC: stable@vger.kernel.org # v4.14+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/spi/spi-tegra20-slink.c |   31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
---- a/drivers/hwtracing/intel_th/core.c
-+++ b/drivers/hwtracing/intel_th/core.c
-@@ -147,7 +147,8 @@ static int intel_th_remove(struct device
- 			th->thdev[i] = NULL;
- 		}
- 
--		th->num_thdevs = lowest;
-+		if (lowest >= 0)
-+			th->num_thdevs = lowest;
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -1063,6 +1063,24 @@ static int tegra_slink_probe(struct plat
+ 		goto exit_free_master;
  	}
  
- 	if (thdrv->attr_group)
++	/* disabled clock may cause interrupt storm upon request */
++	tspi->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(tspi->clk)) {
++		ret = PTR_ERR(tspi->clk);
++		dev_err(&pdev->dev, "Can not get clock %d\n", ret);
++		goto exit_free_master;
++	}
++	ret = clk_prepare(tspi->clk);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Clock prepare failed %d\n", ret);
++		goto exit_free_master;
++	}
++	ret = clk_enable(tspi->clk);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
++		goto exit_free_master;
++	}
++
+ 	spi_irq = platform_get_irq(pdev, 0);
+ 	tspi->irq = spi_irq;
+ 	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
+@@ -1071,14 +1089,7 @@ static int tegra_slink_probe(struct plat
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
+ 					tspi->irq);
+-		goto exit_free_master;
+-	}
+-
+-	tspi->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(tspi->clk)) {
+-		dev_err(&pdev->dev, "can not get clock\n");
+-		ret = PTR_ERR(tspi->clk);
+-		goto exit_free_irq;
++		goto exit_clk_disable;
+ 	}
+ 
+ 	tspi->rst = devm_reset_control_get_exclusive(&pdev->dev, "spi");
+@@ -1138,6 +1149,8 @@ exit_rx_dma_free:
+ 	tegra_slink_deinit_dma_param(tspi, true);
+ exit_free_irq:
+ 	free_irq(spi_irq, tspi);
++exit_clk_disable:
++	clk_disable(tspi->clk);
+ exit_free_master:
+ 	spi_master_put(master);
+ 	return ret;
+@@ -1150,6 +1163,8 @@ static int tegra_slink_remove(struct pla
+ 
+ 	free_irq(tspi->irq, tspi);
+ 
++	clk_disable(tspi->clk);
++
+ 	if (tspi->tx_dma_chan)
+ 		tegra_slink_deinit_dma_param(tspi, false);
+ 
 
 
