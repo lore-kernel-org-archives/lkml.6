@@ -2,128 +2,95 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF72C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B6AC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C453420878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2DF420878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:56:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtBcOpWn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C453420878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Btbir0HX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2DF420878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbeJBQiO (ORCPT
+        id S1727472AbeJBQiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 12:38:14 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44100 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbeJBQiN (ORCPT
+        Tue, 2 Oct 2018 12:38:50 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37682 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726233AbeJBQiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 12:38:13 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 63-v6so1435737wra.11
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 02:55:47 -0700 (PDT)
+        Tue, 2 Oct 2018 12:38:50 -0400
+Received: by mail-wr1-f67.google.com with SMTP id u12-v6so1460153wrr.4
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 02:56:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FpHbMoWWsNR+8OF36JCZI/cedQhCwTaoUNjf9sTHGks=;
-        b=JtBcOpWnjvjsAxfRUx3hscM51Ds7SO1zVxg7Rcbm83edviF8D8tYPIKxxXD+AJNtvu
-         kUfnXe/evoN9wkRTptp5okAiKO4Mus0KO2SGCQUbw6zQ/RScym3fhqPHQ/9fmdtJ7O4+
-         q286ftpUZ9GUpWb++DgledRxOig/Skk2TLiQwbVGAsJP7s+JZAISixKL5d8fVb+AzTWo
-         n4Q2DNeK4b5NqefhMpxHba6abzbmBEndyZBVBAe60FGDZsjfaYyQVNxOyqSr1jMs5kU8
-         35oK0gguaCX5Mf28Zww8DaZxWKAuhFkMnH5jvyn2pIUcvY0gK2/8AiWcYB0MdDmQphZ4
-         l5Vw==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7TGMIP6D8qonLFU4s8mZ+OFcMF75sJhMqhDZ38/NaSE=;
+        b=Btbir0HXNzmwH2w6MWoiuvPIKNys8rVLQpz9FOZ096BwrgNEbkFOTsxzNjDtqyFPIb
+         s7S8jWSJqhlRrQKwI+hca+VBQfOwd7S3tezxUHIMs3jy8/P/CAwKo3fKAXfi53B88EWJ
+         a9/kxUaojG462ppxtt8Q8P6b83I9klbnn33Pc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FpHbMoWWsNR+8OF36JCZI/cedQhCwTaoUNjf9sTHGks=;
-        b=DDfqeqlfpYpCp2H4F1xC+7Ue2jTjpol+CJyZeXhPB2zUofbi3pT9eNidu/i2t5/TSt
-         oE6TDqmtwkwFbfZFVIQCiCn0DRed0n94cwqvWN77Pkhz4FCja9Ih6X8kf3YJcKyZ5PQY
-         6m7Nhx8supukeYpWOqq5n+P0JDstD0bNowK8LOvJNs7VTKpXTs+URtpRLE7MRXsCbeW1
-         990D9TS2EgSnkgUoJ/s1x87X0L03s+14GDwa/FIxHlObmOadLiu1Rtj+GnGx/jHnU8Gh
-         c9I7H6/DmNG/aY7z+uLnJ8qSi2mMpjSqUq5LYtKCe71M9IYDhphKa2tLLhvy4ELzucDP
-         dyvA==
-X-Gm-Message-State: ABuFfogtICUMPRDe1Zpt5vH5Y8ix6bgdipJYYagetyDDpqp3LwawLh3T
-        CatukxxpRTG7goHPkrqoj9p+QSl6
-X-Google-Smtp-Source: ACcGV62vidjdukBZt3tpV2ZqxRDMQp3XHQeuL4MzB83g2JBi1EXcGcpxmzyXxqYziPeZ/QfYUr/tAQ==
-X-Received: by 2002:adf:a1dd:: with SMTP id v29-v6mr9679920wrv.50.1538474146482;
-        Tue, 02 Oct 2018 02:55:46 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id u5-v6sm6359306wru.16.2018.10.02.02.55.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Oct 2018 02:55:45 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 11:55:43 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] locking/lockdep: Make class->ops a percpu counter
-Message-ID: <20181002095543.GA55344@gmail.com>
-References: <1538157201-29173-1-git-send-email-longman@redhat.com>
- <1538157201-29173-5-git-send-email-longman@redhat.com>
- <20181002093907.GV3439@hirez.programming.kicks-ass.net>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7TGMIP6D8qonLFU4s8mZ+OFcMF75sJhMqhDZ38/NaSE=;
+        b=cd47kUxshbdNVzH+ZnDRtrgvSoG9x8APZhXPX5B/BKs1UMdEJ4ds8CJNcOqdGPrPp1
+         QQkzoGY/GC6lX6hYZObsDmbKDYFm/N4oVzReSRF7o4j3u6CLaEyjkmUFjDexyKYNjuvs
+         UEDa0xK44QgzF/731y8IYYV7yoCqUBaiBDGQblFQJaiKN1W3Ox0OxB/C/E0LjqAUt1M7
+         D0nZSZa6SH1tF9CGxE2rnTWIj7oq3OQcEgSrhamUKr5Gx51IJwBACP7yNFtFs5IyRFHs
+         QlueJgCLPDNR6gvRhF6GRUmodR1/0oh6/OFtOY9kSsNfxvf2cXLkQ8DUEyOLl8TzAErc
+         rplA==
+X-Gm-Message-State: ABuFfoiHvWn16Z+fuVUjOycfFAVjAK83bZCw89cg1wtB/WnkhvZAYCbO
+        6BTOIpjyJmbb9UGjmc8hID53UA==
+X-Google-Smtp-Source: ACcGV60EDkFrHmVrs9ZZfXdi/Bk5UiKxflMvQDCjafc5CuFTq/1ZDEzbYydOJcp/+2xTqJv8Au+dwg==
+X-Received: by 2002:adf:b30f:: with SMTP id j15-v6mr10432224wrd.207.1538474182836;
+        Tue, 02 Oct 2018 02:56:22 -0700 (PDT)
+Received: from [192.168.0.19] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id o3-v6sm2581477wrw.93.2018.10.02.02.56.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 02:56:22 -0700 (PDT)
+Subject: Re: linux-next: build warning after merge of the char-misc tree
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-next@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20181002191236.0aa50539@canb.auug.org.au>
+ <CAMRc=Mf64AMBiMwBTCYeG18txVqbdvkQA35ZyZuRtwOCe70RpA@mail.gmail.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <dabf8577-418c-65bf-03b5-89f0236bc53e@linaro.org>
+Date:   Tue, 2 Oct 2018 10:56:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002093907.GV3439@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAMRc=Mf64AMBiMwBTCYeG18txVqbdvkQA35ZyZuRtwOCe70RpA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
 
-> On Fri, Sep 28, 2018 at 01:53:20PM -0400, Waiman Long wrote:
-> > diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> > index ca002c0..7a0ed1d 100644
-> > --- a/kernel/locking/lockdep.c
-> > +++ b/kernel/locking/lockdep.c
-> > @@ -139,6 +139,7 @@ static inline int debug_locks_off_graph_unlock(void)
-> >   */
-> >  unsigned long nr_lock_classes;
-> >  static struct lock_class lock_classes[MAX_LOCKDEP_KEYS];
-> > +static DEFINE_PER_CPU(unsigned long [MAX_LOCKDEP_KEYS], lock_class_ops);
+On 02/10/18 10:49, Bartosz Golaszewski wrote:
+> this looks like a false positive - this routine is used in
+> ./drivers/nvmem/core.c at line 943 in this revision.
 > 
-> > @@ -1387,11 +1391,15 @@ static inline int usage_match(struct lock_list *entry, void *bit)
-> >  
-> >  static void print_lock_class_header(struct lock_class *class, int depth)
-> >  {
-> > -	int bit;
-> > +	int bit, cpu;
-> > +	unsigned long ops = 0UL;
-> > +
-> > +	for_each_possible_cpu(cpu)
-> > +		ops += *per_cpu(class->pops, cpu);
-> >  
-> >  	printk("%*s->", depth, "");
-> >  	print_lock_name(class);
-> > -	printk(KERN_CONT " ops: %lu", class->ops);
-> > +	printk(KERN_CONT " ops: %lu", ops);
-> >  	printk(KERN_CONT " {\n");
-> >  
-> >  	for (bit = 0; bit < LOCK_USAGE_STATES; bit++) {
-> 
-> That is an aweful lot of storage for a stupid number. Some archs
-> (sparc64) are bzImage size constrained and this will hurt them.
-> 
-> Ingo, do you happen to remember what that number was good for?
+Note that the caller is under
+  #if IS_ENABLED(CONFIG_OF)
+so this warning!
 
-Just a spur of the moment statistics to satisfy curiousity, and it's useful to see how 'busy' a 
-particular class is, right?
 
-> Can't we simply ditch it?
+--srini
 
-We certainly could. Do we have roughly equivalent metrics to arrive at this number via other 
-methods?
-
-Thanks,
-
-	Ingo
+> Best regards,
