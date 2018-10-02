@@ -2,120 +2,117 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3381FC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB50C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E89A220666
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:28:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E89A220666
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ABD6120666
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:28:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="IusagCOo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABD6120666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbeJBWMf (ORCPT
+        id S1727439AbeJBWMq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 18:12:35 -0400
-Received: from mga03.intel.com ([134.134.136.65]:45098 "EHLO mga03.intel.com"
+        Tue, 2 Oct 2018 18:12:46 -0400
+Received: from vern.gendns.com ([206.190.152.46]:42362 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726330AbeJBWMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 18:12:35 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 08:28:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,332,1534834800"; 
-   d="scan'208";a="79256177"
-Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
-  by orsmga006.jf.intel.com with ESMTP; 02 Oct 2018 08:25:40 -0700
-Date:   Tue, 2 Oct 2018 23:31:10 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        H Peter Anvin <hpa@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Stuart R . Anderson" <stuart.r.anderson@intel.com>,
-        alan@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/earlyprintk: Add a force option for pciserial
- device
-Message-ID: <20181002153110.qyttitbdzhtatlev@shbuild888>
-References: <20180929163458.GA25608@zn.tnic>
- <20180930131619.jecqh4umrkmifavb@shbuild888>
- <20181001123916.GC7269@zn.tnic>
- <20181001141810.fbo3amfqnr5243mc@shbuild888>
- <20181001203004.GG7269@zn.tnic>
- <20181002091627.3vm6ow4y7me2uju3@shbuild888>
- <alpine.DEB.2.21.1810021112100.32062@nanos.tec.linutronix.de>
- <20181002094852.3bw2loje4zjriqe7@shbuild888>
- <alpine.DEB.2.21.1810021241000.32062@nanos.tec.linutronix.de>
- <20181002121046.lsqqnqfu42bazbfx@shbuild888>
+        id S1726330AbeJBWMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 18:12:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Ery2w7D+ksXEHdXAvw8WOM/X879V79mzUm4ZPMHAtsA=; b=IusagCOo6DokguKVtd+CJoYr0y
+        5sR1to8U/+nbMijYLPrFMsvBLtGaaUIHPA5ewTtHhmc4HJi6ga4yBdFBG6BurUYauKEe9H3LCrA1c
+        MFytb12jsjsGXcHOBLYlIlRCwA1f/nGbw345hs3q6hxF7IFbjmnEjRM2y+PlGo6xZvxHqvJieiJNg
+        hdENy0hNe9Vlrr2biLR3Z+UHywraFaQIkZh5jNBKHfDr1zLyQrR6SX1cswhF/Pbqedcv+TDQyCjZ6
+        w8O0nL87tXmqYtZWhgBej02e1mQef+h4Klf6c2G9jeYFehhVcXi3urQJLjPUTh2cHE64vppfFAtVK
+        4BTA6Aww==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:50784 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1g7MbN-004G7M-0d; Tue, 02 Oct 2018 11:28:45 -0400
+Subject: Re: [PATCH v7 2/4] clk: davinci: kill
+ davinci_clk_reset_assert/deassert()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180621073706.22812-1-brgl@bgdev.pl>
+ <20180621073706.22812-3-brgl@bgdev.pl>
+ <160f4225-236c-af54-9693-120e834af578@lechnology.com>
+ <CAMRc=McmwWt5OdCxGntDJ-5cxte+Ad2FJcnmWT8NxnBtzP40DA@mail.gmail.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <159d6244-8077-e21f-36d9-ccb1eeb3ed78@lechnology.com>
+Date:   Tue, 2 Oct 2018 10:28:44 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002121046.lsqqnqfu42bazbfx@shbuild888>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAMRc=McmwWt5OdCxGntDJ-5cxte+Ad2FJcnmWT8NxnBtzP40DA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 08:10:46PM +0800, Feng Tang wrote:
-> Hi Thomas,
+On 10/02/2018 10:08 AM, Bartosz Golaszewski wrote:
+> pt., 6 lip 2018 o 19:54 David Lechner <david@lechnology.com> napisał(a):
+>>
+>> On 06/21/2018 02:37 AM, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> This code is no longer used. Remove it.
+>>>
+>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>> Reviewed-by: David Lechner <david@lechnology.com>
+>>> Acked-by: Stephen Boyd <sboyd@kernel.org>
+>>> ---
+>>
+>> I've picked this up in clk-davinci-4.20, so it will just hang out
+>> there for a while until the rest of this series gets merged.
+>>
 > 
-> On Tue, Oct 02, 2018 at 12:44:36PM +0200, Thomas Gleixner wrote:
-> > On Tue, 2 Oct 2018, Feng Tang wrote:
-> > > On Tue, Oct 02, 2018 at 11:17:57AM +0200, Thomas Gleixner wrote:
-> > > > On Tue, 2 Oct 2018, Feng Tang wrote:
-> > > > 
-> > > > > Hi Boris,
-> > > > > 
-> > > > > On Mon, Oct 01, 2018 at 10:30:04PM +0200, Borislav Petkov wrote:
-> > > > > > On Mon, Oct 01, 2018 at 10:18:10PM +0800, Feng Tang wrote:
-> > > > > > > As I rechecked, the baud rate for pciserial is optional, so there may
-> > > > > > > be no ",baudrate" following the "force". So this 2 strncmp is to
-> > > > > > > cover conditions for with and without baudrate.
-> > > > > > 
-> > > > > > And what guarantees you have a space after the "force"?
-> > > > > > 
-> > > > > > 	!strncmp(s, "force ", 6)
-> > > > > > 			  ^
-> > > > > 
-> > > > > You are right, it can't be guranteed. Can we still use strncmp(s, "force", 5)
-> > > > > and rely on developer to set it right? any suggestions? thanks,
-> > > > 
-> > > > I don't know why you want strncmp() in the first place. "force" is null
-> > > > terminated already.
-> > > 
-> > > Current code uses: 
-> > > 	earlyprintk=pciserial,bus:device.function[,baudrate]
-> > > with the patch, it will be:
-> > > 	earlyprintk=pciserial,bus:device.function[,force][,baudrate]
-> > > 
-> > > So the force could be followed by ",baudrate".
-> > 
-> > Sure, but that has nothing to do with strncmp(). The earlyprintk argument
-> > string is tokenized by commata. It really does not matter where the 'force'
-> > string is, but it matters that you check whether it is 'force' and not
-> > 'force$RANDOMCHARACTERS'. That's why strncmp() is the wrong thing to do,
-> > because it only compares the first 5 characters and ignores anything
-> > beyond, unless you make sure that the command line part is exactly 5
-> > characters long.
+> Hi David,
 > 
-> I don't know if I get it right due to my poor English, so for both cases
-> of "xxx,force,baudrate" and "xxx,force", it could be covered by
+> I don't see this patch in next yet. Is it queued for 4.20?
 > 
-> 	if ((!strcmp(s, "force") || !strncmp(s, "force," 6))
-> 		force = 1;
+> Thanks in advance,
+> Bartosz
+> 
 
-One idea is to change the new format to
-	earlyprintk=pciserial[,force],bus:device.function[,baudrate]
-Then we can use what Boris has suggested:
-	!strncmp(s, "force,", 6)
+This is currently the only clk-davinici patch I have queued, so it
+might be easier to just resend it and let Stephen/Mike pick it up
+directly instead of me sending a pull request for one patch.
 
-Any thoughts?
-
-Thanks,
-Feng
