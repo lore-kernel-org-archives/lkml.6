@@ -3,39 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B139CC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 274D5C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D53206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:46:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D53206B2
+	by mail.kernel.org (Postfix) with ESMTP id EBAE02064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:46:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBAE02064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732901AbeJBU3p (ORCPT
+        id S1732997AbeJBU3z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:29:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35572 "EHLO
+        Tue, 2 Oct 2018 16:29:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35546 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732565AbeJBUSf (ORCPT
+        with ESMTP id S1731695AbeJBUSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:35 -0400
+        Tue, 2 Oct 2018 16:18:33 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7CE8B2F;
-        Tue,  2 Oct 2018 13:35:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9E6D9C3F;
+        Tue,  2 Oct 2018 13:35:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, James Smart <james.smart@broadcom.com>,
+        Christoph Hellwig <hch@lst.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 134/137] arm/arm64: smccc-1.1: Make return values unsigned long
-Date:   Tue,  2 Oct 2018 06:25:35 -0700
-Message-Id: <20181002132507.896512267@linuxfoundation.org>
+Subject: [PATCH 4.14 132/137] nvme-fcloop: Fix dropped LSs to removed target port
+Date:   Tue,  2 Oct 2018 06:25:33 -0700
+Message-Id: <20181002132507.750003426@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,71 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 1d8f574708a3fb6f18c85486d0c5217df893c0cf ]
+[ Upstream commit afd299ca996929f4f98ac20da0044c0cdc124879 ]
 
-An unfortunate consequence of having a strong typing for the input
-values to the SMC call is that it also affects the type of the
-return values, limiting r0 to 32 bits and r{1,2,3} to whatever
-was passed as an input.
+When a targetport is removed from the config, fcloop will avoid calling
+the LS done() routine thinking the targetport is gone. This leaves the
+initiator reset/reconnect hanging as it waits for a status on the
+Create_Association LS for the reconnect.
 
-Let's turn everything into "unsigned long", which satisfies the
-requirements of both architectures, and allows for the full
-range of return values.
+Change the filter in the LS callback path. If tport null (set when
+failed validation before "sending to remote port"), be sure to call
+done. This was the main bug. But, continue the logic that only calls
+done if tport was set but there is no remoteport (e.g. case where
+remoteport has been removed, thus host doesn't expect a completion).
 
-Reported-by: Julien Grall <julien.grall@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/arm-smccc.h |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/nvme/target/fcloop.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -199,31 +199,31 @@ asmlinkage void __arm_smccc_hvc(unsigned
+--- a/drivers/nvme/target/fcloop.c
++++ b/drivers/nvme/target/fcloop.c
+@@ -300,7 +300,7 @@ fcloop_tgt_lsrqst_done_work(struct work_
+ 	struct fcloop_tport *tport = tls_req->tport;
+ 	struct nvmefc_ls_req *lsreq = tls_req->lsreq;
  
- #define __declare_arg_0(a0, res)					\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
-+	register unsigned long r0 asm("r0") = (u32)a0;			\
- 	register unsigned long r1 asm("r1");				\
- 	register unsigned long r2 asm("r2");				\
- 	register unsigned long r3 asm("r3")
+-	if (tport->remoteport)
++	if (!tport || tport->remoteport)
+ 		lsreq->done(lsreq, tls_req->status);
+ }
  
- #define __declare_arg_1(a0, a1, res)					\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
--	register typeof(a1)    r1 asm("r1") = a1;			\
-+	register unsigned long r0 asm("r0") = (u32)a0;			\
-+	register unsigned long r1 asm("r1") = a1;			\
- 	register unsigned long r2 asm("r2");				\
- 	register unsigned long r3 asm("r3")
+@@ -318,6 +318,7 @@ fcloop_ls_req(struct nvme_fc_local_port
  
- #define __declare_arg_2(a0, a1, a2, res)				\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
--	register typeof(a1)    r1 asm("r1") = a1;			\
--	register typeof(a2)    r2 asm("r2") = a2;			\
-+	register unsigned long r0 asm("r0") = (u32)a0;			\
-+	register unsigned long r1 asm("r1") = a1;			\
-+	register unsigned long r2 asm("r2") = a2;			\
- 	register unsigned long r3 asm("r3")
- 
- #define __declare_arg_3(a0, a1, a2, a3, res)				\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
--	register typeof(a1)    r1 asm("r1") = a1;			\
--	register typeof(a2)    r2 asm("r2") = a2;			\
--	register typeof(a3)    r3 asm("r3") = a3
-+	register unsigned long r0 asm("r0") = (u32)a0;			\
-+	register unsigned long r1 asm("r1") = a1;			\
-+	register unsigned long r2 asm("r2") = a2;			\
-+	register unsigned long r3 asm("r3") = a3
- 
- #define __declare_arg_4(a0, a1, a2, a3, a4, res)			\
- 	__declare_arg_3(a0, a1, a2, a3, res);				\
+ 	if (!rport->targetport) {
+ 		tls_req->status = -ECONNREFUSED;
++		tls_req->tport = NULL;
+ 		schedule_work(&tls_req->work);
+ 		return ret;
+ 	}
 
 
