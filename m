@@ -2,93 +2,90 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 019DDC64EBD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D802C64EBC
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1A0920684
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:12:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A0920684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 31D4C20684
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:12:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="LPQ7HNHP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31D4C20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbeJCD5t (ORCPT
+        id S1728458AbeJCD6A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 23:57:49 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:53701 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728113AbeJCD5t (ORCPT
+        Tue, 2 Oct 2018 23:58:00 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:39334 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728139AbeJCD6A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 23:57:49 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M7auL-1g62mr0qsv-0080vt; Tue, 02 Oct 2018 23:12:16 +0200
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M7auL-1g62mr0qsv-0080vt; Tue, 02 Oct 2018 23:12:16 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: arch_timer: avoid unused function warning
-Date:   Tue,  2 Oct 2018 23:11:44 +0200
-Message-Id: <20181002211214.2672576-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:CJRvB1nT2xHgVp25Uun+bN7R5JwgkVt8LEcBJpQGDFyLk3RLvzM
- EROZeiG0AqeUFQHr5Q3tX/n1iR22tpo3euQjY6LkN3fkoFlIMsFopF94OwEcC3QfC/si9CI
- 0ykWpWsmeQkCyEh5xJulftxOffl+29CRZNE2DWR888xsClsaMsB5jVfGOYiy2H4G3MTGkCy
- xFuAb026cxO1MMNmc6+yQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:/JyWiJX2rA4=:uyUj5Xpvmr+Kqzjs/cQCcz
- 8xE58r3kt+woSzcyu5H9fZ5CGpLmDG3lHG+fPZEEFkFSQ0ED4EVJKzvBSWM9vrbwzMi1Vi2As
- SgTX9DcStVIzUzAgRVN8qL0A+2lp3jaPG92+25jLvganM4si6FCJwyCYgsQidzBX5o1UDIN+v
- 7T/GYj5EGxq+adUzCv68L0NThI3P90GrKfitdysuPYSKSgQCVH0WbIHQZ0clRgBwERTCNQWvA
- pKRz3mbKVzjIQL3O2pkbgqI2BO8XFII9tQteN/UCPp4Qo6PLwGZuBf2oO4waprfoiMPaorESg
- /SHb0Rcj+cunh2yQtOLIUXsNEhls87aqFQURKAN1YpmkKFQYu1nFbZWZ8HEJVWa3s9L/BxwYj
- YQmZnEnKx1fXKK7XqYqaJShctuRTNuJRlVwOxn06bHXChkRXclTiVaNj42rfMTSCyyl1ocgIT
- bSRvntDaGye0QcoEVv8cFkDKiues6AgpX3qquNuOAMs2CeEMHs2HFcrNVh4b0r26mGaGHh5VQ
- BdxXCrBqqnejSpkI2Sz6hgHR9IYzhLHB4S7IoeCDuvqZbwJjLIIwigvuOb7eZTzSmjwAuyhSe
- i7l+i1QvQ1mkd03OarXU/izfOrVHaP/NVYcr1FMUHoQHvrnTXeFdAZ/gHLx0EsCpahWGgkF4L
- 8InJ/VtcDBHkp5EPahNl7mDQfUx87Cw+/7yK2UxpHpLpgki0fnR75rdVIAnioSKTmo9o=
+        Tue, 2 Oct 2018 23:58:00 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A4FA68011F;
+        Wed,  3 Oct 2018 10:12:40 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail; t=1538514760;
+        bh=Pu+1ciGlEm6xZggihOkIbM7fZFzJGWqFxIymnxZ/nUc=;
+        h=From:To:Cc:Subject:Date;
+        b=LPQ7HNHPVSwsSNTtRs8BDHg6tLtV61CeILPyBJ6oQ06RCpn+tPmP6ahs3irtlEpi7
+         yI/r/0VJUNv2zdo15+JU8ZlkBSX3rww9xME4swohD7l+imbhOU+AOeQSM7NBKRy3K1
+         c20fOfKnNJT10+dgUWjVl4S+xqTo5DcSCshNF8iY=
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5bb3df480000>; Wed, 03 Oct 2018 10:12:40 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 87A3F13EEA8;
+        Wed,  3 Oct 2018 10:12:44 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 6A09E1E1D93; Wed,  3 Oct 2018 10:12:40 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     gregory.clement@bootlin.com, andrew@lunn.ch, jason@lakedaemon.net
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH] ARM: dts: auto-detect nand ECC properites for db-88f6820-amc
+Date:   Wed,  3 Oct 2018 10:12:33 +1300
+Message-Id: <20181002211233.20774-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.19.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm64_1188873_read_cntvct_el0() is protected by the correct
-CONFIG_ARM64_ERRATUM_1188873 #ifdef, but the only reference to it is
-also inside of an CONFIG_ARM_ARCH_TIMER_OOL_WORKAROUND section,
-and causes a warning if that is disabled:
+This board has a Micron MT29F8G08ABACAWP chip which requires a ECC
+strength of 8/512. Rather than hard coding any particular strength the
+the nand controller auto-detect the ECC strength based on the ONFI data.
 
-drivers/clocksource/arm_arch_timer.c:323:20: error: 'arm64_1188873_read_cntvct_el0' defined but not used [-Werror=unused-function]
-
-Since the erratum requires that we always apply the workaround
-in the timer driver, select that symbol as we do for SoC
-specific errata.
-
-Fixes: 95b861a4a6d9 ("arm64: arch_timer: Add workaround for ARM erratum 1188873")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
- arch/arm64/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+=20arch/arm/boot/dts/armada-385-db-88f6820-amc.dts | 2 --
+=201 file changed, 2 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 130f3a766aef..0661c6103c21 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -483,6 +483,7 @@ config ARM64_ERRATUM_1024718
- config ARM64_ERRATUM_1188873
- 	bool "Cortex-A76: MRC read following MRRC read of specific Generic Timer in AArch32 might give incorrect result"
- 	default y
-+	select ARM_ARCH_TIMER_OOL_WORKAROUND
- 	help
- 	  This option adds work arounds for ARM Cortex-A76 erratum 1188873
- 
--- 
-2.18.0
-
+diff --git a/arch/arm/boot/dts/armada-385-db-88f6820-amc.dts b/arch/arm/b=
+oot/dts/armada-385-db-88f6820-amc.dts
+index dc9ccce1d4a1..7881df3b28a0 100644
+--- a/arch/arm/boot/dts/armada-385-db-88f6820-amc.dts
++++ b/arch/arm/boot/dts/armada-385-db-88f6820-amc.dts
+@@ -99,8 +99,6 @@
+=20		label =3D "pxa3xx_nand-0";
+=20		nand-rb =3D <0>;
+=20		nand-on-flash-bbt;
+-		nand-ecc-strength =3D <4>;
+-		nand-ecc-step-size =3D <512>;
+=20
+=20		partitions {
+=20			compatible =3D "fixed-partitions";
+--=20
+2.19.0
