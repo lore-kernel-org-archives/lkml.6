@@ -2,103 +2,89 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE13DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E042FC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 753282083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:38:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AF7E2082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:39:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CKDIIyxI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 753282083F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tHDgDkFY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AF7E2082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbeJCBXi (ORCPT
+        id S1727245AbeJCBYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 21:23:38 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:40762 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbeJCBXh (ORCPT
+        Tue, 2 Oct 2018 21:24:05 -0400
+Received: from mail-wm1-f44.google.com ([209.85.128.44]:37269 "EHLO
+        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbeJCBYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 21:23:37 -0400
-Received: by mail-qk1-f195.google.com with SMTP id c126-v6so1808860qkd.7
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 11:38:53 -0700 (PDT)
+        Tue, 2 Oct 2018 21:24:05 -0400
+Received: by mail-wm1-f44.google.com with SMTP id 185-v6so3199996wmt.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 11:39:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BKdQzwh51gV1JERCvmSwQQQPrW/AB+E9U+aVA5B3Zo4=;
-        b=CKDIIyxIhcMsXx77Socv16pLMeZ1s7jzJeH7IG51FhBA/jMqMSBt8+KGRy2cir6d3A
-         l9zsBrgflLnrvLIUjhJHsWc0I9CuRmEBlidK+84m0ieDCmMlEl+Asl9lRahigGNNCmqq
-         xp0PqYK7Iuf1zBlbnaLGWovuwZe3cBGy8qS1wQdqeNEP6yD+6vPiQq77Cz8jobzc9USd
-         PHX3CmnapWIaZYympBPO7ymmTkCDwI0cBiiWlPGfCdbYpkef9LshPvyHaWAB0efpljRW
-         Rm6QEuGgkc/cKxv4l8Hdanos/WHwyFXoTCOVzpdj80IxHsln1RGicJmi8HcyLBLmbtZy
-         8E8Q==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=TuZRn11hrjvIKxv/2NbTFkClOg4u6Fk9KPY6HfAOP54=;
+        b=tHDgDkFYrCghQajruAxmzSRJZrYiqclhPkpLGgBHizxmPuuol8MQtDKu3Gkl69jEn5
+         4HcA2L+AqFgWJe2fCyXYj5RADlFJ/pjws2z4Hqy+bpjzUuIvlulYmLlFtymO2m+sQ7CS
+         XU4flu8LKnekkUQ8o6gLhNkYut3yCsA5O8RJjvsXCByGINUx1M+UvjxzCkRsWbjTXaG3
+         lyyAqK2m8rN+78k0HSFAa6Q15fl0ZG+S5d5NBMbcysPv9om4wRkSdRxMcdpek2MR8jM3
+         vgNH0rySTfqh+2Xu1cUwr20wUNemJIxVWtmLDg2GthVOXbsVUIMYFxldZpCNLPLGSrEl
+         lI1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BKdQzwh51gV1JERCvmSwQQQPrW/AB+E9U+aVA5B3Zo4=;
-        b=I4TB1Wrh4PSCbautMO9Kq+xKw1Bfaj7DiA67baGNqYrNI56VY8ByCQle9fpmb4eS9h
-         vlrE5MmvPXH+kOlaBnYfZR8+tfRADf2d+G78YxObe6e+JZfQgh1aZggK8q0UeVVil/My
-         Ig+pgzj1qjKbSdHRw9UPv1ay/QTWeCnsO0FbgzgcKBoJFMpmTk4gNpYr4lICrdksv1Kz
-         zDify+TuRb0IxEWJOkpRtUk/98sxv2BdRl+rX/YRap2zVq2yn7knrlLuFHXPr4d0pbPn
-         SrjZXxFExhxxxn0EOzZP/Gf8sGo43f6KnYykYwKmwmPBwHThiiIWfq2Tr3qliWujTIHY
-         2eQw==
-X-Gm-Message-State: ABuFfoidi+TYq/BtVmlh3r6oOW9Ftmm6bUYJ3O9WACyX8Q2Dp4dlg1Q4
-        pXqh8yoLOTh9oDnuxr6HQup6vrXVBMwEAC85RbuVD7c8
-X-Google-Smtp-Source: ACcGV62kM/6LLMlg+blnGE54Y60tRxA8shDKFg5k2spp8sDv24X8hED0S+uEcEpgZBDwUExbMFbMunLEEKNUghR4jvI=
-X-Received: by 2002:ae9:c107:: with SMTP id z7-v6mr6209376qki.192.1538505532715;
- Tue, 02 Oct 2018 11:38:52 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=TuZRn11hrjvIKxv/2NbTFkClOg4u6Fk9KPY6HfAOP54=;
+        b=F8PnSCqaaHGWduaOsoliCLmNngMdqLS11qNWYlsX7CKA3q8tf+qQYKw+Z4NjmGIiEc
+         TAHj6UcLo5Q6u8YQpftZKtwp5E11FzPWwNPBLQZ1gzTOVKoNuBQTGqsEnmqTLpa7m4+p
+         OwOWuQLIanR9loh+Wp00xKxkPjqtuFw5Qe2NLVlnwKa2i9BCQ/ethYPTi4enbGrtFgXQ
+         0Mnoq7H3AGaRhuJjRWLFH9iX7sStNAR5nW0FcUIXXfzsTbWtE0BtM6rxttEYwTpGxIE/
+         GmwrShvy6b3+tXoENVuzpRwDg9GAfBqz+IOau2V+qgrok/DbXbcbuJKkhjXEUP82bCJA
+         9XGA==
+X-Gm-Message-State: ABuFfojRMOm0147CLKAssZsnuIbaWK61lTmSA1RFLPRQTT6h/h6UjHUG
+        iTIeUhQ+JgBsFVPeXMGd9M0=
+X-Google-Smtp-Source: ACcGV61VeI9CWSai/6BTted3OfT+7H8JXffjoiW171VGoR/BQpI13ggSAKyfnxzFIm6hcetlUBtOtw==
+X-Received: by 2002:a1c:c2c3:: with SMTP id s186-v6mr2750166wmf.16.1538505560027;
+        Tue, 02 Oct 2018 11:39:20 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id y4-v6sm20689875wrd.25.2018.10.02.11.39.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 11:39:19 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 20:39:17 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     lgirdwood@gmail.com, broonie@kernel.org, linus.walleij@linaro.org
+Cc:     linux-kernel@vger.kernel.org, jmkrzyszt@gmail.com,
+        rppt@linux.vnet.ibm.com, linux-sunxi@googlegroups.com
+Subject: [REGRESSION] boot fail due to commit efdfeb079cc3("regulator: fixed:
+ Convert to use GPIO descriptor only")
+Message-ID: <20181002183917.GA6824@Red>
 MIME-Version: 1.0
-References: <20181002142327.GA19792@vkoul-mobl> <20181002163850.GA11549@kroah.com>
-In-Reply-To: <20181002163850.GA11549@kroah.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Tue, 2 Oct 2018 20:38:41 +0200
-Message-ID: <CANiq72meqnbNYd0syo4DJftZedOD3GitAGeFT_66bpjCV93ehg@mail.gmail.com>
-Subject: Re: [GIT PULL] SoundWire updates for 4.20-rc1
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     vkoul@kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
-        pierre-louis.bossart@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Hello
 
-On Tue, Oct 2, 2018 at 8:20 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Tue, Oct 02, 2018 at 07:53:27PM +0530, Vinod wrote:
-> > Hey Greg,
-> >
-> > Here are the SoundWire updates (again) for 4.20-rc1/5.0-rc1
-> > This brings in the multi-link streaming support and rst format
-> > corrections. The changes are in linux-next for quite some time.
-> >
-> > Please consider pull to receive:
-> >
-> > The following changes since commit 8d6ccf5cebbc7ed1dee9986e36853a78dfb64084:
-> >
-> >   soundwire: Fix acquiring bus lock twice during master release (2018-08-27 09:49:48 +0530)
-> >
-> > are available in the Git repository at:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/soundwire-4.20-rc1
->
-> Now pulled, thanks.
->
-> greg k-h
+The following boards fails to boot due to commit efdfeb079cc3("regulator: fixed: Convert to use GPIO descriptor only")
+- sun8i-h3-libretech-all-h3-cc
+- sun50i-h5-libretech-all-h3-cc
 
-Confused here -- pulled to where? 4.19 will still have rc7, no?
+reverting the commit mades them booting again.
+You could see two example of the boot failure log here:
+https://storage.kernelci.org/next/master/next-20181002/arm/sunxi_defconfig/lab-baylibre/boot-sun8i-h3-libretech-all-h3-cc.html
+https://storage.kernelci.org/next/master/next-20181002/arm64/defconfig+CONFIG_RANDOMIZE_BASE=y/lab-baylibre/boot-sun50i-h5-libretech-all-h3-cc.html
 
-Thanks.
-
-Cheers,
-Miguel
+Regards
