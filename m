@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D67E6C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB5BC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7FC32082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FC32082A
+	by mail.kernel.org (Postfix) with ESMTP id 193312064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:59:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 193312064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731199AbeJBUmN (ORCPT
+        id S1730993AbeJBUmo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:42:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33912 "EHLO
+        Tue, 2 Oct 2018 16:42:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33822 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729763AbeJBUOX (ORCPT
+        with ESMTP id S1730680AbeJBUOP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:23 -0400
+        Tue, 2 Oct 2018 16:14:15 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E6A0C2B;
-        Tue,  2 Oct 2018 13:31:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0891C2A;
+        Tue,  2 Oct 2018 13:30:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-        Rex Zhu <Rex.Zhu@amd.com>,
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 215/228] drm/amdgpu: Update power state at the end of smu hw_init.
-Date:   Tue,  2 Oct 2018 06:25:12 -0700
-Message-Id: <20181002132512.148826567@linuxfoundation.org>
+Subject: [PATCH 4.18 169/228] ARM: OMAP2+: Fix null hwmod for ti-sysc debug
+Date:   Tue,  2 Oct 2018 06:24:26 -0700
+Message-Id: <20181002132510.126704124@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,67 +51,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rex Zhu <Rex.Zhu@amd.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 2ab4d0e74256fc49b7b270f63c1d1e47c2455abc ]
+[ Upstream commit 4769c003e0fcff0ee001a9102e2605bdaa5880f0 ]
 
-For SI/Kv, the power state is managed by function
-amdgpu_pm_compute_clocks.
+We may call omap_hwmod_parse_module_range() with no hwmod allocated yet
+and may have debug enabled. Let's fix this by checking for hwmod before
+trying to use it's name.
 
-when dpm enabled, we should call amdgpu_pm_compute_clocks
-to update current power state instand of set boot state.
-
-this change can fix the oops when kfd driver was enabled on Kv.
-
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Tested-by: Michel Dänzer <michel.daenzer@amd.com>
-Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 6c72b3550672 ("ARM: OMAP2+: Parse module IO range from dts for legacy
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/kv_dpm.c |    4 +---
- drivers/gpu/drm/amd/amdgpu/si_dpm.c |    3 +--
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ arch/arm/mach-omap2/omap_hwmod.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/kv_dpm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/kv_dpm.c
-@@ -1354,8 +1354,6 @@ static int kv_dpm_enable(struct amdgpu_d
- 		return ret;
- 	}
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -2220,7 +2220,7 @@ int omap_hwmod_parse_module_range(struct
+ 	size = be32_to_cpup(ranges);
  
--	kv_update_current_ps(adev, adev->pm.dpm.boot_ps);
--
- 	if (adev->irq.installed &&
- 	    amdgpu_is_internal_thermal_sensor(adev->pm.int_thermal_type)) {
- 		ret = kv_set_thermal_temperature_range(adev, KV_TEMP_RANGE_MIN, KV_TEMP_RANGE_MAX);
-@@ -3061,7 +3059,7 @@ static int kv_dpm_hw_init(void *handle)
- 	else
- 		adev->pm.dpm_enabled = true;
- 	mutex_unlock(&adev->pm.mutex);
--
-+	amdgpu_pm_compute_clocks(adev);
- 	return ret;
- }
+ 	pr_debug("omap_hwmod: %s %s at 0x%llx size 0x%llx\n",
+-		 oh->name, np->name, base, size);
++		 oh ? oh->name : "", np->name, base, size);
  
---- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
-@@ -6887,7 +6887,6 @@ static int si_dpm_enable(struct amdgpu_d
- 
- 	si_enable_auto_throttle_source(adev, AMDGPU_DPM_AUTO_THROTTLE_SRC_THERMAL, true);
- 	si_thermal_start_thermal_controller(adev);
--	ni_update_current_ps(adev, boot_ps);
- 
- 	return 0;
- }
-@@ -7764,7 +7763,7 @@ static int si_dpm_hw_init(void *handle)
- 	else
- 		adev->pm.dpm_enabled = true;
- 	mutex_unlock(&adev->pm.mutex);
--
-+	amdgpu_pm_compute_clocks(adev);
- 	return ret;
- }
- 
+ 	res->start = base;
+ 	res->end = base + size - 1;
 
 
