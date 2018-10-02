@@ -2,245 +2,165 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCE5C65BAA
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C2DC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED7DB208AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:01:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CAB8205C9
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:12:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="e4CUmiTx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED7DB208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="OTIzihsK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CAB8205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbeJCBqp (ORCPT
+        id S1727719AbeJCB5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 21:46:45 -0400
-Received: from mail-eopbgr60045.outbound.protection.outlook.com ([40.107.6.45]:56665
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727433AbeJCBqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 21:46:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h4c/wD7jqOzPG3Ot7i2iU0XExk+qDN9FsVWLi5JL5wM=;
- b=e4CUmiTxDWQ0edmzkZo/3qCqYSzuSUjWen4N///eNrKF6IMOzY+XCUnBDztv8vU6RAddpTwlKgvGxAmNiHutE7aUXnCcXaoZjjhHEDHMd/ewIfAV6f5hbBwl/02LZIwNJF3UK7tYNSBEFg0tQUKBzhblvA3bPw7QS9F/MNIV70Y=
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
- AM0PR04MB4066.eurprd04.prod.outlook.com (52.134.125.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.24; Tue, 2 Oct 2018 19:01:52 +0000
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::3836:6416:4ebd:34ef]) by AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::3836:6416:4ebd:34ef%3]) with mapi id 15.20.1185.024; Tue, 2 Oct 2018
- 19:01:52 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Marek Vasut <marek.vasut@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-CC:     Horia Geanta <horia.geanta@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S . Miller " <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Radu Solea <radu.solea@nxp.com>
-Subject: [PATCH 3/3] crypto: mxs-dcp - Fix AES issues
-Thread-Topic: [PATCH 3/3] crypto: mxs-dcp - Fix AES issues
-Thread-Index: AQHUWoJh2w8j7EseakaJQGwS8a0M4Q==
-Date:   Tue, 2 Oct 2018 19:01:52 +0000
-Message-ID: <a032d88bf4cb620f4a2da17c92eb462eb436f7f7.1538505573.git.leonard.crestez@nxp.com>
-References: <cover.1538505573.git.leonard.crestez@nxp.com>
-In-Reply-To: <cover.1538505573.git.leonard.crestez@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [95.76.156.53]
-x-mailer: git-send-email 2.17.1
-x-clientproxiedby: HE1P190CA0020.EURP190.PROD.OUTLOOK.COM (2603:10a6:3:bc::30)
- To AM0PR04MB4290.eurprd04.prod.outlook.com (2603:10a6:208:67::17)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4066;6:Fz0tKxoscdkO1J4G8Z7Lh8Aa/R9YyoNJ934hcSF14wvflq20fKZ2mPVRlreInqB3uwYX19EySBMT7ffQR8rWx8U3sh82YAYSTagEsmU8TYn7cU7wJnPCi2bahu8vWWeTkUjGSJ9H5dOZA03GyJc3cwlIIuYnyaPvNp3g4pu5qvu+KY1Ex2MYqio/2kN73FK4clCGpkoxNPCZEcL6x4Inv7gbsbZ0WUM1hbPwq1Sh1HWwYVvGB2O3RJ9dPXcj9wqON2CQ8bDZUzU3Ss6iVn/MrYjaOKdrpVQxEchkwDYBFIxopvedWf70CpZuObERewq2n3A4pgBfcePBGvbl8HnIlKTPca9cZedFrmNEyU26QBBq+Flrl1C9nIRU15pfy4YeJq/3PoQJM5FemCEIp2s1fq+ru8mwVgLXx2HfiII9x9NzXdFp578G+c05rCKUBhGirpbi5RH4bdWmVUMh51wIqw==;5:rj8auJVIoiaBkcyiKTYG2vJwI0+gLhPq3IRmpws+N6GEx4RYOrfCe8pJH7f8xw1sTclkpCxxw3YIECsmLNM/RQgqxAhgd/tDS59PkEin3Vt6BOk04VuUWjEPZ4YIMUTsDdYWA/LBMKNBDFBfFHvYEIj6mST9dAJPuqvv01NP3VM=;7:Cfv353HWnE2ycXEPnOD2hr3DM8MpdHi7KYofM3kky9cPE/jbERFviJkZQX6U2xMQa2DBwofMsXfC9/fUJIS6JM/xfsYkKL51v9VWp0LJDkDvZkIFSLzyC0DoA1GOa9UBVEbctfGiUr07VGQuZn8kSSmGIv+ugrn32ygphNSHhh1v5Wqd/+xVKUmdzV7YmGZFDENKBMBTbEZUXtjVituROJB2SzlhXi6MWAFA5ByZeNa82g6sWmYDf5PlCYwPO8eN
-x-ms-office365-filtering-correlation-id: 24f5f886-b63b-4700-bddb-08d62899836b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4066;
-x-ms-traffictypediagnostic: AM0PR04MB4066:
-x-microsoft-antispam-prvs: <AM0PR04MB4066CB32B5921E86E58348F6EEE80@AM0PR04MB4066.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051);SRVR:AM0PR04MB4066;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4066;
-x-forefront-prvs: 0813C68E65
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(396003)(136003)(346002)(199004)(189003)(39060400002)(8676002)(14454004)(110136005)(54906003)(5660300001)(6116002)(3846002)(2616005)(476003)(44832011)(486006)(11346002)(14444005)(446003)(52116002)(6506007)(102836004)(386003)(105586002)(106356001)(478600001)(76176011)(2906002)(256004)(99286004)(186003)(26005)(6512007)(6436002)(81166006)(53936002)(81156014)(2900100001)(5250100002)(68736007)(36756003)(118296001)(97736004)(50226002)(8936002)(6486002)(4326008)(71190400001)(316002)(71200400001)(66066001)(25786009)(305945005)(7736002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4066;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: ttrthmfY8U6XGr/TcrEIPnxvVFLzP+lpDr9RmegAcxACbl98ya1by4gGYQQ8T9bYURPZxgeAe7RCI+d8r9aHzcBuuBdKpNCguhLRTgZhtR5wZCg8dIPtjptsucHBzsthoeMXiZyrauibtq/9XWQD6w5A0mpnZzAYubJ7XkjnTK8/YGKsUxwfT07KfakFTUmieefiGOVDn11VyPj6+5Sr3vugtD4HfuPJDv7ivCVdTH034EcD7lEDFY2E2gtEz7+cBJtuu13NTx6jEeyZa/AIXBk1a2RZZHkYoVNAg4v9FbUjjS6IIqzHskmozEUllnj9OKUNeWzEScUEEMCss3LXHmsTrwMTxIk/n8GXiTs+DDA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 2 Oct 2018 21:57:19 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46617 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbeJCB5T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 21:57:19 -0400
+Received: by mail-ed1-f68.google.com with SMTP id g32-v6so3073253edg.13
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 12:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ra+GoEMQmzFEAVO1u2FBW8dITr+pQqftJOFKpb+Zgec=;
+        b=OTIzihsKGOwijcMH675JbT7pIw0q7ANJDaDCwojbf14LZx8rlfomJ3D0xk3kKcXeir
+         fXOD2KLB6CbN5CR0EIeIp3QYjJ6WrrqC8/iXKioC9fUajTaAT2h+406AnX/BqllrffxZ
+         aIX2MddrnxKUZcgSXMQSxNpEs6PTVTFAQwnb4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ra+GoEMQmzFEAVO1u2FBW8dITr+pQqftJOFKpb+Zgec=;
+        b=Eu3gkWSAjOJ3bv3YYds3KzcyntaDUMiaxlnckgkVBruJWehswoIjY2pdqH5IcCaZjC
+         aVYi5vC1oOZeZbikHNC7T2dmSTyI3qPOkJ9Fm8GW0PBkVXDb2MItUH+SxqAfYkNM52nC
+         ho3Mw6NErn0rQCZebpDNyzc3eqDrHuYPLsktFu5ky55DTjgtACoFLCwJFATWUJhPj+Wj
+         lJiSK4pV7brVI0AsE4caNq+x+TAk9ZGVOUD6riB5OCLEqLG4b7BcrYcc0Xa6ERT5vjic
+         jTSXuttAoajURjT9elmHusFmy0iuG00l7qj3JIoIsm70pMGcM8LZ0NAbXw47cjiWPQ0C
+         UjFQ==
+X-Gm-Message-State: ABuFfoitrLfnLhOXUZ3avS5h6QId64asNm8Cx1v6eq43Bqk0ZESWaGE9
+        aulbRReW9IZVmiacf8Dq9m953g==
+X-Google-Smtp-Source: ACcGV624yJo9cNCHNyRy0J5ineNFFvg74/EDE9lXjyF/4MnwsppoibQERSf6nMNW9KTWLowltdthQg==
+X-Received: by 2002:a17:906:f87:: with SMTP id q7-v6mr9585169ejj.25.1538507545945;
+        Tue, 02 Oct 2018 12:12:25 -0700 (PDT)
+Received: from andrea (15.152.230.94.awnet.cz. [94.230.152.15])
+        by smtp.gmail.com with ESMTPSA id e5-v6sm2871732ejc.47.2018.10.02.12.12.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Oct 2018 12:12:25 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 21:12:17 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [PATCH v7 03/14] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20181002191217.GA4160@andrea>
+References: <20180912091309.7551-1-quentin.perret@arm.com>
+ <20180912091309.7551-4-quentin.perret@arm.com>
+ <20181002123031.GZ3439@hirez.programming.kicks-ass.net>
+ <20181002125115.245r3ocusvyiexno@queper01-lin>
+ <20181002134857.GE26858@hirez.programming.kicks-ass.net>
+ <20181002140430.fpeiqzblbcaewg6n@queper01-lin>
+ <20181002142924.GI26858@hirez.programming.kicks-ass.net>
+ <20181002144025.wnanxibhdcnl23sf@queper01-lin>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24f5f886-b63b-4700-bddb-08d62899836b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2018 19:01:52.3510
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4066
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181002144025.wnanxibhdcnl23sf@queper01-lin>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Radu Solea <radu.solea@nxp.com>
+On Tue, Oct 02, 2018 at 03:40:28PM +0100, Quentin Perret wrote:
+> On Tuesday 02 Oct 2018 at 16:29:24 (+0200), Peter Zijlstra wrote:
+> > On Tue, Oct 02, 2018 at 03:05:23PM +0100, Quentin Perret wrote:
+> > > On Tuesday 02 Oct 2018 at 15:48:57 (+0200), Peter Zijlstra wrote:
+> > > > +/**
+> > > > + * em_cpu_get() - Return the performance domain for a CPU
+> > > > + * @cpu : CPU to find the performance domain for
+> > > > + *
+> > > > + * Return: the performance domain to which 'cpu' belongs, or NULL if it doesn't
+> > > > + * exist.
+> > > > + */
+> > > > +struct em_perf_domain *em_cpu_get(int cpu)
+> > > > +{
+> > > > +       return READ_ONCE(per_cpu(em_data, cpu));
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(em_cpu_get);
+> > > > 
+> > > > But your read side doesn't take, not is required to take em_pd_mutex.
+> > > > 
+> > > > At that point, the mutex_unlock() doesn't guarantee anything.
+> > > > 
+> > > > A CPU observing the em_data store, doesn't need to observe the store
+> > > > that filled the data structure it points to.
+> > > 
+> > > Right but even if I add the smp_store_release(), I can still have a
+> > > CPU observing em_data while another is in the process of updating it.
+> > > So, if smp_store_release() doesn't guarantee that readers will see a
+> > > complete update, do I actually get something interesting from it ?
+> > > (That's not a rhetorical question, I'm actually wondering :-)
+> > 
+> > I thought the update would fail if em_data was already set.
+> > 
+> > That is, you can only set this thing up _once_ and then you'll have to
+> > forever live with it.
+> > 
+> > Or did I read that wrong?
+> 
+> No no, that's correct. em_data is populated once and kept as-is
+> forever.
+> 
+> What I was trying to say is, when em_data is being populated for the
+> first time, nothing prevents a reader from using em_cpu_get()
+> concurrently. And in this case, it doesn't matter if you use
+> smp_store_release() or not, the reader might see the table half-updated.
+> 
+> So, basically, smp_store_release() doesn't guarantee that readers won't
+> see a half-baked em_data. That's the point I'm trying to make at least :-)
 
-The DCP driver does not obey cryptlen, when doing android CTS this
-results in passing to hardware input stream lengths which are not
-multiple of block size.
+An example might help clarify this: here is a scenario I can _imagine,
+based on your description.
 
-Add a check to prevent future erroneous stream lengths from reaching the
-hardware and adjust the scatterlist walking code to obey cryptlen.
+CPU0 (em_register_perf_domain())	CPU1 (reader)
 
-Also properly copy-out the IV for chaining.
+[...]					my_pd = READ_ONCE(per_cpu(em_data, 1)); /* em_cpu_get() */
+pd->table = table			if (my_pd)
+WRITE_ONCE(per_cpu(em_data, 1), pd);		my_table = my_pd->table; /* process, dereference, ... my_table */
 
-Signed-off-by: Radu Solea <radu.solea@nxp.com>
-Signed-off-by: Franck LENORMAND <franck.lenormand@nxp.com>
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
----
- drivers/crypto/mxs-dcp.c | 33 +++++++++++++++++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
+In this scenario, we'd like CPU1 to see CPU0's store to ->table (as well
+as the stores to table[]) _if CPU1 sees CPU0's store to em_data (that is,
+if my_pd != NULL).
 
-diff --git a/drivers/crypto/mxs-dcp.c b/drivers/crypto/mxs-dcp.c
-index 3821cf971b5e..203c682dda99 100644
---- a/drivers/crypto/mxs-dcp.c
-+++ b/drivers/crypto/mxs-dcp.c
-@@ -230,10 +230,16 @@ static int mxs_dcp_run_aes(struct dcp_async_ctx *actx=
-,
- 	dma_addr_t src_phys =3D dma_map_single(sdcp->dev, sdcp->coh->aes_in_buf,
- 					     DCP_BUF_SZ, DMA_TO_DEVICE);
- 	dma_addr_t dst_phys =3D dma_map_single(sdcp->dev, sdcp->coh->aes_out_buf,
- 					     DCP_BUF_SZ, DMA_FROM_DEVICE);
-=20
-+	if (actx->fill % AES_BLOCK_SIZE) {
-+		dev_err(sdcp->dev, "Invalid block size!\n");
-+		ret =3D -EINVAL;
-+		goto aes_done_run;
-+	}
-+
- 	/* Fill in the DMA descriptor. */
- 	desc->control0 =3D MXS_DCP_CONTROL0_DECR_SEMAPHORE |
- 		    MXS_DCP_CONTROL0_INTERRUPT |
- 		    MXS_DCP_CONTROL0_ENABLE_CIPHER;
-=20
-@@ -259,10 +265,11 @@ static int mxs_dcp_run_aes(struct dcp_async_ctx *actx=
-,
- 	desc->payload =3D key_phys;
- 	desc->status =3D 0;
-=20
- 	ret =3D mxs_dcp_start_dma(actx);
-=20
-+aes_done_run:
- 	dma_unmap_single(sdcp->dev, key_phys, 2 * AES_KEYSIZE_128,
- 			 DMA_TO_DEVICE);
- 	dma_unmap_single(sdcp->dev, src_phys, DCP_BUF_SZ, DMA_TO_DEVICE);
- 	dma_unmap_single(sdcp->dev, dst_phys, DCP_BUF_SZ, DMA_FROM_DEVICE);
-=20
-@@ -285,17 +292,19 @@ static int mxs_dcp_aes_block_crypt(struct crypto_asyn=
-c_request *arq)
- 	uint8_t *in_buf =3D sdcp->coh->aes_in_buf;
- 	uint8_t *out_buf =3D sdcp->coh->aes_out_buf;
-=20
- 	uint8_t *out_tmp, *src_buf, *dst_buf =3D NULL;
- 	uint32_t dst_off =3D 0;
-+	uint32_t last_out_len =3D 0;
-=20
- 	uint8_t *key =3D sdcp->coh->aes_key;
-=20
- 	int ret =3D 0;
- 	int split =3D 0;
--	unsigned int i, len, clen, rem =3D 0;
-+	unsigned int i, len, clen, rem =3D 0, tlen =3D 0;
- 	int init =3D 0;
-+	bool limit_hit =3D false;
-=20
- 	actx->fill =3D 0;
-=20
- 	/* Copy the key from the temporary location. */
- 	memcpy(key, actx->key, actx->key_len);
-@@ -310,10 +319,15 @@ static int mxs_dcp_aes_block_crypt(struct crypto_asyn=
-c_request *arq)
- 	}
-=20
- 	for_each_sg(req->src, src, nents, i) {
- 		src_buf =3D sg_virt(src);
- 		len =3D sg_dma_len(src);
-+		tlen +=3D len;
-+		limit_hit =3D tlen > req->nbytes;
-+
-+		if (limit_hit)
-+			len =3D req->nbytes - (tlen - len);
-=20
- 		do {
- 			if (actx->fill + len > out_off)
- 				clen =3D out_off - actx->fill;
- 			else
-@@ -326,17 +340,19 @@ static int mxs_dcp_aes_block_crypt(struct crypto_asyn=
-c_request *arq)
-=20
- 			/*
- 			 * If we filled the buffer or this is the last SG,
- 			 * submit the buffer.
- 			 */
--			if (actx->fill =3D=3D out_off || sg_is_last(src)) {
-+			if (actx->fill =3D=3D out_off || sg_is_last(src) ||
-+				limit_hit) {
- 				ret =3D mxs_dcp_run_aes(actx, req, init);
- 				if (ret)
- 					return ret;
- 				init =3D 0;
-=20
- 				out_tmp =3D out_buf;
-+				last_out_len =3D actx->fill;
- 				while (dst && actx->fill) {
- 					if (!split) {
- 						dst_buf =3D sg_virt(dst);
- 						dst_off =3D 0;
- 					}
-@@ -355,10 +371,23 @@ static int mxs_dcp_aes_block_crypt(struct crypto_asyn=
-c_request *arq)
- 						split =3D 1;
- 					}
- 				}
- 			}
- 		} while (len);
-+
-+		if (limit_hit)
-+			break;
-+	}
-+
-+	/* Copy the IV for CBC for chaining */
-+	if (!rctx->ecb) {
-+		if (rctx->enc)
-+			memcpy(req->info, out_buf+(last_out_len-AES_BLOCK_SIZE),
-+				AES_BLOCK_SIZE);
-+		else
-+			memcpy(req->info, in_buf+(last_out_len-AES_BLOCK_SIZE),
-+				AES_BLOCK_SIZE);
- 	}
-=20
- 	return ret;
- }
-=20
---=20
-2.17.1
+This guarantee does not hold with the WRITE_ONCE(), because CPU0 could
+propagate the store to ->table and the store to em_data out-of-order.
+The smp_store_release(), together with the address dependency headed by
+the READ_ONCE(), provides this guarantee (and more...).
 
+(Enclosing the reader into an em_pd_mutex critical section would also
+provide this guarantee, but I can imagine a few arguments for not using
+a mutex... ;-) ).
+
+The question, I guess, is whether you want such a guarantee.
+
+  Andrea
