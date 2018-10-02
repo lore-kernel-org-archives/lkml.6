@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E04ACC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09746C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1B7B2089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1B7B2089C
+	by mail.kernel.org (Postfix) with ESMTP id C934D2089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C934D2089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731924AbeJBURE (ORCPT
+        id S1731940AbeJBURH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:17:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34988 "EHLO
+        Tue, 2 Oct 2018 16:17:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34996 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731866AbeJBURC (ORCPT
+        with ESMTP id S1731866AbeJBURF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:02 -0400
+        Tue, 2 Oct 2018 16:17:05 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF76BB2F;
-        Tue,  2 Oct 2018 13:33:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE6DD5AA;
+        Tue,  2 Oct 2018 13:33:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Denis Kirjanov <kirjanov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>,
+        stable@vger.kernel.org,
+        Konstantin Khorenko <khorenko@virtuozzo.com>,
+        Andrey Vagin <avagin@openvz.org>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 078/137] EDAC: Fix memleak in module init error path
-Date:   Tue,  2 Oct 2018 06:24:39 -0700
-Message-Id: <20181002132504.010141249@linuxfoundation.org>
+Subject: [PATCH 4.14 079/137] fs/lock: skip lock owner pid translation in case we are in init_pid_ns
+Date:   Tue,  2 Oct 2018 06:24:40 -0700
+Message-Id: <20181002132504.067703720@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -55,46 +55,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Konstantin Khorenko <khorenko@virtuozzo.com>
 
-[ Upstream commit 4708aa85d50cc6e962dfa8acf5ad4e0d290a21db ]
+[ Upstream commit 826d7bc9f013d01e92997883d2fd0c25f4af1f1c ]
 
-Make sure to use put_device() to free the initialised struct device so
-that resources managed by driver core also gets released in the event of
-a registration failure.
+If the flock owner process is dead and its pid has been already freed,
+pid translation won't work, but we still want to show flock owner pid
+number when expecting /proc/$PID/fdinfo/$FD in init pidns.
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Cc: Denis Kirjanov <kirjanov@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Fixes: 2d56b109e3a5 ("EDAC: Handle error path in edac_mc_sysfs_init() properly")
-Link: http://lkml.kernel.org/r/20180612124335.6420-1-johan@kernel.org
-Signed-off-by: Borislav Petkov <bp@suse.de>
+Reproducer:
+process A	process A1	process A2
+fork()--------->
+exit()		open()
+		flock()
+		fork()--------->
+		exit()		sleep()
+
+Before the patch:
+================
+(root@vz7)/: cat /proc/${PID_A2}/fdinfo/3
+pos:    4
+flags:  02100002
+mnt_id: 257
+lock:   (root@vz7)/:
+
+After the patch:
+===============
+(root@vz7)/:cat /proc/${PID_A2}/fdinfo/3
+pos:    4
+flags:  02100002
+mnt_id: 295
+lock:   1: FLOCK  ADVISORY  WRITE ${PID_A1} b6:f8a61:529946 0 EOF
+
+Fixes: 9d5b86ac13c5 ("fs/locks: Remove fl_nspid and use fs-specific l_pid for remote locks")
+Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
+Acked-by: Andrey Vagin <avagin@openvz.org>
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/edac/edac_mc_sysfs.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/locks.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -1097,14 +1097,14 @@ int __init edac_mc_sysfs_init(void)
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -2074,6 +2074,13 @@ static pid_t locks_translate_pid(struct
+ 		return -1;
+ 	if (IS_REMOTELCK(fl))
+ 		return fl->fl_pid;
++	/*
++	 * If the flock owner process is dead and its pid has been already
++	 * freed, the translation below won't work, but we still want to show
++	 * flock owner pid number in init pidns.
++	 */
++	if (ns == &init_pid_ns)
++		return (pid_t)fl->fl_pid;
  
- 	err = device_add(mci_pdev);
- 	if (err < 0)
--		goto out_dev_free;
-+		goto out_put_device;
- 
- 	edac_dbg(0, "device %s created\n", dev_name(mci_pdev));
- 
- 	return 0;
- 
-- out_dev_free:
--	kfree(mci_pdev);
-+ out_put_device:
-+	put_device(mci_pdev);
-  out:
- 	return err;
- }
+ 	rcu_read_lock();
+ 	pid = find_pid_ns(fl->fl_pid, &init_pid_ns);
 
 
