@@ -6,38 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22069C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D22EC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7F882064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F882064D
+	by mail.kernel.org (Postfix) with ESMTP id 2E5DE2064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E5DE2064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732968AbeJBUT0 (ORCPT
+        id S1732981AbeJBUT1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:19:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35978 "EHLO
+        Tue, 2 Oct 2018 16:19:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35990 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731920AbeJBUTZ (ORCPT
+        with ESMTP id S1732964AbeJBUT1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:25 -0400
+        Tue, 2 Oct 2018 16:19:27 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 55C32C3F;
-        Tue,  2 Oct 2018 13:36:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFFB9B2F;
+        Tue,  2 Oct 2018 13:36:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Todd Kjos <tkjos@android.com>,
-        devel@driverdev.osuosl.org, kernel-team@android.com,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Alistair Strachan <astrachan@google.com>,
-        Martijn Coenen <maco@android.com>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 33/94] staging: android: ashmem: Fix mmap size validation
-Date:   Tue,  2 Oct 2018 06:24:47 -0700
-Message-Id: <20181002132502.765038726@linuxfoundation.org>
+Subject: [PATCH 4.9 34/94] drivers/tty: add error handling for pcmcia_loop_config
+Date:   Tue,  2 Oct 2018 06:24:48 -0700
+Message-Id: <20181002132502.878082693@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -55,48 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alistair Strachan <astrachan@google.com>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 8632c614565d0c5fdde527889601c018e97b6384 ]
+[ Upstream commit 85c634e919bd6ef17427f26a52920aeba12e16ee ]
 
-The ashmem driver did not check that the size/offset of the vma passed
-to its .mmap() function was not larger than the ashmem object being
-mapped. This could cause mmap() to succeed, even though accessing parts
-of the mapping would later fail with a segmentation fault.
+When pcmcia_loop_config fails, the lack of error-handling code may
+cause unexpected results.
 
-Ensure an error is returned by the ashmem_mmap() function if the vma
-size is larger than the ashmem object size. This enables safer handling
-of the problem in userspace.
+This patch adds error-handling code after calling pcmcia_loop_config.
 
-Cc: Todd Kjos <tkjos@android.com>
-Cc: devel@driverdev.osuosl.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-team@android.com
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Signed-off-by: Alistair Strachan <astrachan@google.com>
-Acked-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Reviewed-by: Martijn Coenen <maco@android.com>
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/android/ashmem.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/tty/serial/8250/serial_cs.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/android/ashmem.c
-+++ b/drivers/staging/android/ashmem.c
-@@ -383,6 +383,12 @@ static int ashmem_mmap(struct file *file
- 		goto out;
- 	}
- 
-+	/* requested mapping size larger than object size */
-+	if (vma->vm_end - vma->vm_start > PAGE_ALIGN(asma->size)) {
-+		ret = -EINVAL;
-+		goto out;
+--- a/drivers/tty/serial/8250/serial_cs.c
++++ b/drivers/tty/serial/8250/serial_cs.c
+@@ -637,8 +637,10 @@ static int serial_config(struct pcmcia_d
+ 	    (link->has_func_id) &&
+ 	    (link->socket->pcmcia_pfc == 0) &&
+ 	    ((link->func_id == CISTPL_FUNCID_MULTI) ||
+-	     (link->func_id == CISTPL_FUNCID_SERIAL)))
+-		pcmcia_loop_config(link, serial_check_for_multi, info);
++	     (link->func_id == CISTPL_FUNCID_SERIAL))) {
++		if (pcmcia_loop_config(link, serial_check_for_multi, info))
++			goto failed;
 +	}
-+
- 	/* requested protection bits must match our allowed protection mask */
- 	if (unlikely((vma->vm_flags & ~calc_vm_prot_bits(asma->prot_mask, 0)) &
- 		     calc_vm_prot_bits(PROT_MASK, 0))) {
+ 
+ 	/*
+ 	 * Apply any multi-port quirk.
 
 
