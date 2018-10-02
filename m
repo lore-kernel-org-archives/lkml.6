@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB936C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54371C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A22D72064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:41:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A22D72064D
+	by mail.kernel.org (Postfix) with ESMTP id 24BD22064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:41:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24BD22064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733160AbeJBUTs (ORCPT
+        id S1733168AbeJBUYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:19:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36216 "EHLO
+        Tue, 2 Oct 2018 16:24:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36198 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731847AbeJBUTr (ORCPT
+        with ESMTP id S1733104AbeJBUTp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:47 -0400
+        Tue, 2 Oct 2018 16:19:45 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38F65B4A;
-        Tue,  2 Oct 2018 13:36:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FE4FB4A;
+        Tue,  2 Oct 2018 13:36:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 51/94] gpio: Fix wrong rounding in gpio-menz127
-Date:   Tue,  2 Oct 2018 06:25:05 -0700
-Message-Id: <20181002132504.045653439@linuxfoundation.org>
+Subject: [PATCH 4.9 50/94] module: exclude SHN_UNDEF symbols from kallsyms api
+Date:   Tue,  2 Oct 2018 06:25:04 -0700
+Message-Id: <20181002132503.973628561@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -52,38 +52,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nadav Amit <namit@vmware.com>
+From: Jessica Yu <jeyu@kernel.org>
 
-[ Upstream commit 7279d9917560bbd0d82813d6bf00490a82c06783 ]
+[ Upstream commit 9f2d1e68cf4d641def734adaccfc3823d3575e6c ]
 
-men_z127_debounce() tries to round up and down, but uses functions which
-are only suitable when the divider is a power of two, which is not the
-case. Use the appropriate ones.
+Livepatch modules are special in that we preserve their entire symbol
+tables in order to be able to apply relocations after module load. The
+unwanted side effect of this is that undefined (SHN_UNDEF) symbols of
+livepatch modules are accessible via the kallsyms api and this can
+confuse symbol resolution in livepatch (klp_find_object_symbol()) and
+cause subtle bugs in livepatch.
 
-Found by static check. Compile tested.
+Have the module kallsyms api skip over SHN_UNDEF symbols. These symbols
+are usually not available for normal modules anyway as we cut down their
+symbol tables to just the core (non-undefined) symbols, so this should
+really just affect livepatch modules. Note that this patch doesn't
+affect the display of undefined symbols in /proc/kallsyms.
 
-Fixes: f436bc2726c64 ("gpio: add driver for MEN 16Z127 GPIO controller")
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Tested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-menz127.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/module.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/gpio/gpio-menz127.c
-+++ b/drivers/gpio/gpio-menz127.c
-@@ -56,9 +56,9 @@ static int men_z127_debounce(struct gpio
- 		rnd = fls(debounce) - 1;
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -4011,7 +4011,7 @@ static unsigned long mod_find_symname(st
  
- 		if (rnd && (debounce & BIT(rnd - 1)))
--			debounce = round_up(debounce, MEN_Z127_DB_MIN_US);
-+			debounce = roundup(debounce, MEN_Z127_DB_MIN_US);
- 		else
--			debounce = round_down(debounce, MEN_Z127_DB_MIN_US);
-+			debounce = rounddown(debounce, MEN_Z127_DB_MIN_US);
- 
- 		if (debounce > MEN_Z127_DB_MAX_US)
- 			debounce = MEN_Z127_DB_MAX_US;
+ 	for (i = 0; i < kallsyms->num_symtab; i++)
+ 		if (strcmp(name, symname(kallsyms, i)) == 0 &&
+-		    kallsyms->symtab[i].st_info != 'U')
++		    kallsyms->symtab[i].st_shndx != SHN_UNDEF)
+ 			return kallsyms->symtab[i].st_value;
+ 	return 0;
+ }
+@@ -4057,6 +4057,10 @@ int module_kallsyms_on_each_symbol(int (
+ 		if (mod->state == MODULE_STATE_UNFORMED)
+ 			continue;
+ 		for (i = 0; i < kallsyms->num_symtab; i++) {
++
++			if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
++				continue;
++
+ 			ret = fn(data, symname(kallsyms, i),
+ 				 mod, kallsyms->symtab[i].st_value);
+ 			if (ret != 0)
 
 
