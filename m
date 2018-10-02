@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D57C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7C9C64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87AA62089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87AA62089C
+	by mail.kernel.org (Postfix) with ESMTP id EFEE22082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFEE22082A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730883AbeJBUOh (ORCPT
+        id S1731139AbeJBUlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34018 "EHLO
+        Tue, 2 Oct 2018 16:41:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730860AbeJBUOf (ORCPT
+        with ESMTP id S1730867AbeJBUOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:35 -0400
+        Tue, 2 Oct 2018 16:14:36 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 098C0BF0;
-        Tue,  2 Oct 2018 13:31:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2FC715AA;
+        Tue,  2 Oct 2018 13:31:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Akshu Agrawal <akshu.agrawal@amd.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 223/228] clk: x86: Set default parent to 48Mhz
-Date:   Tue,  2 Oct 2018 06:25:20 -0700
-Message-Id: <20181002132512.522484975@linuxfoundation.org>
+Subject: [PATCH 4.18 224/228] x86/pti: Fix section mismatch warning/error
+Date:   Tue,  2 Oct 2018 06:25:21 -0700
+Message-Id: <20181002132512.580004745@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,36 +54,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Akshu Agrawal <akshu.agrawal@amd.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit bded6c03e398dc6e862dc8301fb9a60175740653 ]
+[ Upstream commit ff924c5a1ec7548825cc2d07980b03be4224ffac ]
 
-System clk provided in ST soc can be set to:
-48Mhz, non-spread
-25Mhz, spread
-To get accurate rate, we need it to set it at non-spread
-option which is 48Mhz.
+Fix the section mismatch warning in arch/x86/mm/pti.c:
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-Fixes: 421bf6a1f061 ("clk: x86: Add ST oscout platform clock")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+WARNING: vmlinux.o(.text+0x6972a): Section mismatch in reference from the function pti_clone_pgtable() to the function .init.text:pti_user_pagetable_walk_pte()
+The function pti_clone_pgtable() references
+the function __init pti_user_pagetable_walk_pte().
+This is often because pti_clone_pgtable lacks a __init
+annotation or the annotation of pti_user_pagetable_walk_pte is wrong.
+FATAL: modpost: Section mismatches detected.
+
+Fixes: 85900ea51577 ("x86/pti: Map the vsyscall page if needed")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Link: https://lkml.kernel.org/r/43a6d6a3-d69d-5eda-da09-0b1c88215a2a@infradead.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/x86/clk-st.c |    2 +-
+ arch/x86/mm/pti.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/x86/clk-st.c
-+++ b/drivers/clk/x86/clk-st.c
-@@ -46,7 +46,7 @@ static int st_clk_probe(struct platform_
- 		clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
- 		0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
- 
--	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
-+	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_48M]->clk);
- 
- 	hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
- 		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -239,7 +239,7 @@ static pmd_t *pti_user_pagetable_walk_pm
+  *
+  * Returns a pointer to a PTE on success, or NULL on failure.
+  */
+-static __init pte_t *pti_user_pagetable_walk_pte(unsigned long address)
++static pte_t *pti_user_pagetable_walk_pte(unsigned long address)
+ {
+ 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
+ 	pmd_t *pmd;
 
 
