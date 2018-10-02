@@ -2,129 +2,135 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8CFC64EBA
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBA3C64EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47749206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:28:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47749206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CC34A206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:34:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC34A206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbeJCCN3 (ORCPT
+        id S1726868AbeJCCTX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 22:13:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41896 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726946AbeJCCN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 22:13:29 -0400
-Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 88D42307D858;
-        Tue,  2 Oct 2018 19:28:34 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 556A99D81B;
-        Tue,  2 Oct 2018 19:28:34 +0000 (UTC)
-Received: from zmail19.collab.prod.int.phx2.redhat.com (zmail19.collab.prod.int.phx2.redhat.com [10.5.83.22])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 12FB14BB74;
-        Tue,  2 Oct 2018 19:28:34 +0000 (UTC)
-Date:   Tue, 2 Oct 2018 15:28:33 -0400 (EDT)
-From:   Rodrigo Freire <rfreire@redhat.com>
-To:     Steve French <smfrench@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Pavel Shilovsky <piastryyy@gmail.com>
-Message-ID: <194690850.32402710.1538508513975.JavaMail.zimbra@redhat.com>
-In-Reply-To: <CAH2r5mtu9XbQfR=QevDqu36ZRYah1hrRGSQyynCfr82PRyunwQ@mail.gmail.com>
-References: <ad6b338c900a17c4ecb1655a42b954221f242be2.1538480816.git.rfreire@redhat.com> <CAH2r5mtu9XbQfR=QevDqu36ZRYah1hrRGSQyynCfr82PRyunwQ@mail.gmail.com>
-Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
+        Tue, 2 Oct 2018 22:19:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55151 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbeJCCTX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 22:19:23 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w92JXquf2076605
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 2 Oct 2018 12:33:52 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w92JXqY02076602;
+        Tue, 2 Oct 2018 12:33:52 -0700
+Date:   Tue, 2 Oct 2018 12:33:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Mike Travis <tipbot@zytor.com>
+Message-ID: <tip-20a8378aa9dd108a01cb0e695599f5257a885c4b@git.kernel.org>
+Cc:     rajvi.jingar@intel.com, peterz@infradead.org, mingo@kernel.org,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        pombredanne@nexb.com, rja@hpe.com, hedi.berriche@hpe.com,
+        bp@alien8.de, sivanich@hpe.com, russ.anderson@hpe.com,
+        pasha.tatashin@oracle.com, gxm.linux.kernel@gmail.com,
+        hpa@zytor.com, mike.travis@hpe.com, douly.fnst@cn.fujitsu.com,
+        tglx@linutronix.de, len.brown@intel.com,
+        linux-kernel@vger.kernel.org, dimitri.sivanich@hpe.com
+Reply-To: gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
+          pombredanne@nexb.com, sivanich@hpe.com, bp@alien8.de,
+          hedi.berriche@hpe.com, rja@hpe.com, rajvi.jingar@intel.com,
+          peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de,
+          len.brown@intel.com, dimitri.sivanich@hpe.com,
+          linux-kernel@vger.kernel.org, russ.anderson@hpe.com,
+          gxm.linux.kernel@gmail.com, pasha.tatashin@oracle.com,
+          hpa@zytor.com, douly.fnst@cn.fujitsu.com, mike.travis@hpe.com
+In-Reply-To: <20181002180144.801700401@stormcage.americas.sgi.com>
+References: <20181002180144.801700401@stormcage.americas.sgi.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/platform/uv: Provide is_early_uv_system()
+Git-Commit-ID: 20a8378aa9dd108a01cb0e695599f5257a885c4b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.120.119, 10.4.195.1]
-Thread-Topic: CIFS: Print message when attempting a mount
-Thread-Index: DmkaVEoUAU7ZbdNPMtxMOPPw1/ezlQ==
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 02 Oct 2018 19:28:34 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+Commit-ID:  20a8378aa9dd108a01cb0e695599f5257a885c4b
+Gitweb:     https://git.kernel.org/tip/20a8378aa9dd108a01cb0e695599f5257a885c4b
+Author:     Mike Travis <mike.travis@hpe.com>
+AuthorDate: Tue, 2 Oct 2018 13:01:45 -0500
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 2 Oct 2018 21:29:16 +0200
 
------ Original Message ----- 
-> From: "Steve French" <smfrench@gmail.com>
-> To: rfreire@redhat.com
-> Cc: "LKML" <linux-kernel@vger.kernel.org>, "Steve French"
-> <sfrench@samba.org>, "CIFS" <linux-cifs@vger.kernel.org>, "Pavel Shilovsky"
-> <piastryyy@gmail.com>
-> Sent: Tuesday, October 2, 2018 4:17:02 PM
-> Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
->
-> Are you sure that these aren't logged by the automounter (for ext4,
-> xfs etc.). When I looked in my dmesg logs I didn't find matching log
-> entries in the file systems themselves. Do you have an example?
+x86/platform/uv: Provide is_early_uv_system()
 
-I'm positive about it. Check it out:
+Introduce is_early_uv_system() which uses efi.uv_systab to decide early
+in the boot process whether the kernel runs on a UV system.
 
-[rfreire@rf ~]$ cd git/upstream/fs/ext4/
-[rfreire@rf ext4]$ 
-[rfreire@rf ext4]$ 
-[rfreire@rf ext4]$ grep -r "mounted filesystem with"
-super.c:		ext4_msg(sb, KERN_INFO, "mounted filesystem with%s. "
+This is needed to skip other early setup/init code that might break
+the UV platform if done too early such as before necessary ACPI tables
+parsing takes place.
 
+Suggested-by: Hedi Berriche <hedi.berriche@hpe.com>
+Signed-off-by: Mike Travis <mike.travis@hpe.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Russ Anderson <rja@hpe.com>
+Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Russ Anderson <russ.anderson@hpe.com>
+Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: Xiaoming Gao <gxm.linux.kernel@gmail.com>
+Cc: Rajvi Jingar <rajvi.jingar@intel.com>
+Link: https://lkml.kernel.org/r/20181002180144.801700401@stormcage.americas.sgi.com
 
-[rfreire@rf ext4]$ dmesg | grep mount
-[   21.550897] EXT4-fs (dm-1): mounted filesystem with ordered data mode. Opts: (null)
-[   22.216213] EXT4-fs (dm-1): re-mounted. Opts: discard
-[   22.598267] EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
-[   22.605225] EXT4-fs (sdc): mounted filesystem without journal. Opts: discard
-[   24.029161] EXT4-fs (dm-2): mounted filesystem with ordered data mode. Opts: (null)
-[   24.047777] EXT4-fs (dm-4): mounted filesystem without journal. Opts: (null)
+---
+ arch/x86/include/asm/uv/uv.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-XFS sample dmesg (from https://www.reddit.com/r/archlinux/comments/40b9r9/xfs_partition_is_mounted_during_boot_and_then/):
-
-[ 2.764491] XFS (sdb1): Mounting V5 Filesystem
-[ 3.200886] XFS (sdb1): Ending clean mount
-[ 5.384218] XFS (sdb1): Unmounting Filesystem
-
-Relevant code:
-
-[rfreire@rf ~]$ cd ../xfs
-
-[rfreire@rf xfs]$ grep "Mounting V" *.c
-xfs_log.c:		xfs_notice(mp, "Mounting V%d Filesystem",
-
-
-> On the idea of adding cifsFYI logging here - I slightly prefer using
-> ftrace (trace-cmd, ie dynamic tracing) so there is less overhead and
-> easier to turn on/off following the example of xfs, f2fs, nfs, nfsd
-> etc.
-
-Remember that cifsFYI already exists; I just moved it inside a if clause
-to print it only when running under debug. (they way it is originally).
-
-> On Tue, Oct 2, 2018 at 6:57 AM Rodrigo Freire <rfreire@redhat.com> wrote:
-> >
-> > Currently, no messages are printed when mounting a CIFS filesystem and
-> > no debug configuration is enabled.
-> >
-> > However, a CIFS mount information is valuable when troubleshooting
-> > and/or forensic analyzing a system and finding out if was a CIFS
-> > endpoint mount attempted.
-> >
-> > Other filesystems such as XFS, EXT* does issue a printk() when mounting
-> > their filesystems.
-
-
-> --
-> Thanks,
-
-Thank You! o/
+diff --git a/arch/x86/include/asm/uv/uv.h b/arch/x86/include/asm/uv/uv.h
+index a80c0673798f..e60c45fd3679 100644
+--- a/arch/x86/include/asm/uv/uv.h
++++ b/arch/x86/include/asm/uv/uv.h
+@@ -10,8 +10,13 @@ struct cpumask;
+ struct mm_struct;
+ 
+ #ifdef CONFIG_X86_UV
++#include <linux/efi.h>
+ 
+ extern enum uv_system_type get_uv_system_type(void);
++static inline bool is_early_uv_system(void)
++{
++	return !((efi.uv_systab == EFI_INVALID_TABLE_ADDR) || !efi.uv_systab);
++}
+ extern int is_uv_system(void);
+ extern int is_uv_hubless(void);
+ extern void uv_cpu_init(void);
+@@ -23,6 +28,7 @@ extern const struct cpumask *uv_flush_tlb_others(const struct cpumask *cpumask,
+ #else	/* X86_UV */
+ 
+ static inline enum uv_system_type get_uv_system_type(void) { return UV_NONE; }
++static inline bool is_early_uv_system(void)	{ return 0; }
+ static inline int is_uv_system(void)	{ return 0; }
+ static inline int is_uv_hubless(void)	{ return 0; }
+ static inline void uv_cpu_init(void)	{ }
