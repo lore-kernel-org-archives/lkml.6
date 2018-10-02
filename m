@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDC3C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2120C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0001B2064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0001B2064D
+	by mail.kernel.org (Postfix) with ESMTP id 9293C206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9293C206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733042AbeJBUTf (ORCPT
+        id S1733055AbeJBUTg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:19:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36052 "EHLO
+        Tue, 2 Oct 2018 16:19:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732998AbeJBUTa (ORCPT
+        with ESMTP id S1733019AbeJBUTf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:30 -0400
+        Tue, 2 Oct 2018 16:19:35 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC2399D9;
-        Tue,  2 Oct 2018 13:36:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4ADDAB4A;
+        Tue,  2 Oct 2018 13:36:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Greear <greearb@candelatech.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 38/94] ath10k: protect ath10k_htt_rx_ring_free with rx_ring.lock
-Date:   Tue,  2 Oct 2018 06:24:52 -0700
-Message-Id: <20181002132503.161409875@linuxfoundation.org>
+Subject: [PATCH 4.9 41/94] rndis_wlan: potential buffer overflow in rndis_wlan_auth_indication()
+Date:   Tue,  2 Oct 2018 06:24:55 -0700
+Message-Id: <20181002132503.350912631@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -52,52 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Greear <greearb@candelatech.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 168f75f11fe68455e0d058a818ebccfc329d8685 ]
+[ Upstream commit ae636fb1554833ee5133ca47bf4b2791b6739c52 ]
 
-While debugging driver crashes related to a buggy firmware
-crashing under load, I noticed that ath10k_htt_rx_ring_free
-could be called without being under lock.  I'm not sure if this
-is the root cause of the crash or not, but it seems prudent to
-protect it.
+This is a static checker fix, not something I have tested.  The issue
+is that on the second iteration through the loop, we jump forward by
+le32_to_cpu(auth_req->length) bytes.  The problem is that if the length
+is more than "buflen" then we end up with a negative "buflen".  A
+negative buflen is type promoted to a high positive value and the loop
+continues but it's accessing beyond the end of the buffer.
 
-Originally tested on 4.16+ kernel with ath10k-ct 10.4 firmware
-running on 9984 NIC.
+I believe the "auth_req->length" comes from the firmware and if the
+firmware is malicious or buggy, you're already toasted so the impact of
+this bug is probably not very severe.
 
-Signed-off-by: Ben Greear <greearb@candelatech.com>
+Fixes: 030645aceb3d ("rndis_wlan: handle 802.11 indications from device")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/htt_rx.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/wireless/rndis_wlan.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/wireless/ath/ath10k/htt_rx.c
-+++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
-@@ -214,11 +214,12 @@ int ath10k_htt_rx_ring_refill(struct ath
- 	spin_lock_bh(&htt->rx_ring.lock);
- 	ret = ath10k_htt_rx_ring_fill_n(htt, (htt->rx_ring.fill_level -
- 					      htt->rx_ring.fill_cnt));
--	spin_unlock_bh(&htt->rx_ring.lock);
+--- a/drivers/net/wireless/rndis_wlan.c
++++ b/drivers/net/wireless/rndis_wlan.c
+@@ -2921,6 +2921,8 @@ static void rndis_wlan_auth_indication(s
  
- 	if (ret)
- 		ath10k_htt_rx_ring_free(htt);
- 
-+	spin_unlock_bh(&htt->rx_ring.lock);
-+
- 	return ret;
- }
- 
-@@ -230,7 +231,9 @@ void ath10k_htt_rx_free(struct ath10k_ht
- 	skb_queue_purge(&htt->rx_in_ord_compl_q);
- 	skb_queue_purge(&htt->tx_fetch_ind_q);
- 
-+	spin_lock_bh(&htt->rx_ring.lock);
- 	ath10k_htt_rx_ring_free(htt);
-+	spin_unlock_bh(&htt->rx_ring.lock);
- 
- 	dma_free_coherent(htt->ar->dev,
- 			  (htt->rx_ring.size *
+ 	while (buflen >= sizeof(*auth_req)) {
+ 		auth_req = (void *)buf;
++		if (buflen < le32_to_cpu(auth_req->length))
++			return;
+ 		type = "unknown";
+ 		flags = le32_to_cpu(auth_req->flags);
+ 		pairwise_error = false;
 
 
