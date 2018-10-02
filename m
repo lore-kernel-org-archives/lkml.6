@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4026C64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D58FDC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F36E206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F36E206B2
+	by mail.kernel.org (Postfix) with ESMTP id A75BC2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A75BC2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730938AbeJBUOi (ORCPT
+        id S1730961AbeJBUOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34044 "EHLO
+        Tue, 2 Oct 2018 16:14:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34074 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730838AbeJBUOh (ORCPT
+        with ESMTP id S1730943AbeJBUOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:37 -0400
+        Tue, 2 Oct 2018 16:14:41 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4C82FBF0;
-        Tue,  2 Oct 2018 13:31:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 80C1ABF0;
+        Tue,  2 Oct 2018 13:31:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
-        Michael Neuling <mikey@neuling.org>,
+        stable@vger.kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.18 225/228] KVM: PPC: Book3S HV: Fix guest r11 corruption with POWER9 TM workarounds
-Date:   Tue,  2 Oct 2018 06:25:22 -0700
-Message-Id: <20181002132512.631123118@linuxfoundation.org>
+Subject: [PATCH 4.18 228/228] powerpc/pseries: Fix unitialized timer reset on migration
+Date:   Tue,  2 Oct 2018 06:25:25 -0700
+Message-Id: <20181002132512.758000711@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,55 +51,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Michael Bringmann <mwb@linux.vnet.ibm.com>
 
-commit f14040bca89258b8a1c71e2112e430462172ce93 upstream.
+commit 8604895a34d92f5e186ceb931b0d1b384030ea3d upstream.
 
-When we come into the softpatch handler (0x1500), we use r11 to store
-the HSRR0 for later use by the denorm handler.
+After migration of a powerpc LPAR, the kernel executes code to
+update the system state to reflect new platform characteristics.
 
-We also use the softpatch handler for the TM workarounds for
-POWER9. Unfortunately, in kvmppc_interrupt_hv we later store r11 out
-to the vcpu assuming it's still what we got from userspace.
+Such changes include modifications to device tree properties provided
+to the system by PHYP. Property notifications received by the
+post_mobility_fixup() code are passed along to the kernel in general
+through a call to of_update_property() which in turn passes such
+events back to all modules through entries like the '.notifier_call'
+function within the NUMA module.
 
-This causes r11 to be corrupted in the VCPU and hence when we restore
-the guest, we get a corrupted r11. We've seen this when running TM
-tests inside guests on P9.
+When the NUMA module updates its state, it resets its event timer. If
+this occurs after a previous call to stop_topology_update() or on a
+system without VPHN enabled, the code runs into an unitialized timer
+structure and crashes. This patch adds a safety check along this path
+toward the problem code.
 
-This fixes the problem by only touching r11 in the denorm case.
+An example crash log is as follows.
 
-Fixes: 4bb3c7a020 ("KVM: PPC: Book3S HV: Work around transactional memory bugs in POWER9")
-Cc: <stable@vger.kernel.org> # 4.17+
-Test-by: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
-Reviewed-by: Paul Mackerras <paulus@ozlabs.org>
-Signed-off-by: Michael Neuling <mikey@neuling.org>
+  ibmvscsi 30000081: Re-enabling adapter!
+  ------------[ cut here ]------------
+  kernel BUG at kernel/time/timer.c:958!
+  Oops: Exception in kernel mode, sig: 5 [#1]
+  LE SMP NR_CPUS=2048 NUMA pSeries
+  Modules linked in: nfsv3 nfs_acl nfs tcp_diag udp_diag inet_diag lockd unix_diag af_packet_diag netlink_diag grace fscache sunrpc xts vmx_crypto pseries_rng sg binfmt_misc ip_tables xfs libcrc32c sd_mod ibmvscsi ibmveth scsi_transport_srp dm_mirror dm_region_hash dm_log dm_mod
+  CPU: 11 PID: 3067 Comm: drmgr Not tainted 4.17.0+ #179
+  ...
+  NIP mod_timer+0x4c/0x400
+  LR  reset_topology_timer+0x40/0x60
+  Call Trace:
+    0xc0000003f9407830 (unreliable)
+    reset_topology_timer+0x40/0x60
+    dt_update_callback+0x100/0x120
+    notifier_call_chain+0x90/0x100
+    __blocking_notifier_call_chain+0x60/0x90
+    of_property_notify+0x90/0xd0
+    of_update_property+0x104/0x150
+    update_dt_property+0xdc/0x1f0
+    pseries_devicetree_update+0x2d0/0x510
+    post_mobility_fixup+0x7c/0xf0
+    migration_store+0xa4/0xc0
+    kobj_attr_store+0x30/0x60
+    sysfs_kf_write+0x64/0xa0
+    kernfs_fop_write+0x16c/0x240
+    __vfs_write+0x40/0x200
+    vfs_write+0xc8/0x240
+    ksys_write+0x5c/0x100
+    system_call+0x58/0x6c
+
+Fixes: 5d88aa85c00b ("powerpc/pseries: Update CPU maps when device tree is updated")
+Cc: stable@vger.kernel.org # v3.10+
+Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/exceptions-64s.S |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/mm/numa.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/exceptions-64s.S
-+++ b/arch/powerpc/kernel/exceptions-64s.S
-@@ -1321,9 +1321,7 @@ EXC_REAL_BEGIN(denorm_exception_hv, 0x15
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -1452,7 +1452,8 @@ static struct timer_list topology_timer;
  
- #ifdef CONFIG_PPC_DENORMALISATION
- 	mfspr	r10,SPRN_HSRR1
--	mfspr	r11,SPRN_HSRR0		/* save HSRR0 */
- 	andis.	r10,r10,(HSRR1_DENORM)@h /* denorm? */
--	addi	r11,r11,-4		/* HSRR0 is next instruction */
- 	bne+	denorm_assist
- #endif
+ static void reset_topology_timer(void)
+ {
+-	mod_timer(&topology_timer, jiffies + topology_timer_secs * HZ);
++	if (vphn_enabled)
++		mod_timer(&topology_timer, jiffies + topology_timer_secs * HZ);
+ }
  
-@@ -1389,6 +1387,8 @@ END_FTR_SECTION_IFCLR(CPU_FTR_ARCH_207S)
-  */
- 	XVCPSGNDP32(32)
- denorm_done:
-+	mfspr	r11,SPRN_HSRR0
-+	subi	r11,r11,4
- 	mtspr	SPRN_HSRR0,r11
- 	mtcrf	0x80,r9
- 	ld	r9,PACA_EXGEN+EX_R9(r13)
+ #ifdef CONFIG_SMP
 
 
