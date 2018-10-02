@@ -6,42 +6,43 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE717C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6CCC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A25C4206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A25C4206B2
+	by mail.kernel.org (Postfix) with ESMTP id 9AD822064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AD822064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732689AbeJBUS4 (ORCPT
+        id S1732703AbeJBUS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:18:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35656 "EHLO
+        Tue, 2 Oct 2018 16:18:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35668 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730901AbeJBUSz (ORCPT
+        with ESMTP id S1731386AbeJBUS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:55 -0400
+        Tue, 2 Oct 2018 16:18:56 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DAEBF5AA;
-        Tue,  2 Oct 2018 13:35:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A138FB2F;
+        Tue,  2 Oct 2018 13:35:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Stafford Horne <shorne@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 137/137] x86/pti: Fix section mismatch warning/error
-Date:   Tue,  2 Oct 2018 06:25:38 -0700
-Message-Id: <20181002132508.095916361@linuxfoundation.org>
+Subject: [PATCH 4.9 01/94] crypto: skcipher - Fix -Wstringop-truncation warnings
+Date:   Tue,  2 Oct 2018 06:24:15 -0700
+Message-Id: <20181002132500.572685138@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
-References: <20181002132458.446916963@linuxfoundation.org>
+In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
+References: <20181002132500.494838053@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -50,45 +51,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Stafford Horne <shorne@gmail.com>
 
-[ Upstream commit ff924c5a1ec7548825cc2d07980b03be4224ffac ]
+[ Upstream commit cefd769fd0192c84d638f66da202459ed8ad63ba ]
 
-Fix the section mismatch warning in arch/x86/mm/pti.c:
+As of GCC 9.0.0 the build is reporting warnings like:
 
-WARNING: vmlinux.o(.text+0x6972a): Section mismatch in reference from the function pti_clone_pgtable() to the function .init.text:pti_user_pagetable_walk_pte()
-The function pti_clone_pgtable() references
-the function __init pti_user_pagetable_walk_pte().
-This is often because pti_clone_pgtable lacks a __init
-annotation or the annotation of pti_user_pagetable_walk_pte is wrong.
-FATAL: modpost: Section mismatches detected.
+    crypto/ablkcipher.c: In function ‘crypto_ablkcipher_report’:
+    crypto/ablkcipher.c:374:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
+      strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       sizeof(rblkcipher.geniv));
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Fixes: 85900ea51577 ("x86/pti: Map the vsyscall page if needed")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Link: https://lkml.kernel.org/r/43a6d6a3-d69d-5eda-da09-0b1c88215a2a@infradead.org
+This means the strnycpy might create a non null terminated string.  Fix this by
+explicitly performing '\0' termination.
+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Eric Biggers <ebiggers3@gmail.com>
+Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
+Signed-off-by: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/pti.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/ablkcipher.c |    2 ++
+ crypto/blkcipher.c  |    1 +
+ 2 files changed, 3 insertions(+)
 
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -224,7 +224,7 @@ static __init pmd_t *pti_user_pagetable_
-  *
-  * Returns a pointer to a PTE on success, or NULL on failure.
-  */
--static __init pte_t *pti_user_pagetable_walk_pte(unsigned long address)
-+static pte_t *pti_user_pagetable_walk_pte(unsigned long address)
- {
- 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
- 	pmd_t *pmd;
+--- a/crypto/ablkcipher.c
++++ b/crypto/ablkcipher.c
+@@ -367,6 +367,7 @@ static int crypto_ablkcipher_report(stru
+ 	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+@@ -441,6 +442,7 @@ static int crypto_givcipher_report(struc
+ 	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+--- a/crypto/blkcipher.c
++++ b/crypto/blkcipher.c
+@@ -510,6 +510,7 @@ static int crypto_blkcipher_report(struc
+ 	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_blkcipher.min_keysize;
 
 
