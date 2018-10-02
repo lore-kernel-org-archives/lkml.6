@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF8EC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDFB2C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5522064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:45:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5522064D
+	by mail.kernel.org (Postfix) with ESMTP id 9E0072064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:45:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E0072064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732978AbeJBU3C (ORCPT
+        id S1733011AbeJBU3T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:29:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35636 "EHLO
+        Tue, 2 Oct 2018 16:29:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35618 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732607AbeJBUSp (ORCPT
+        with ESMTP id S1731578AbeJBUSm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:45 -0400
+        Tue, 2 Oct 2018 16:18:42 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A38B5C2B;
-        Tue,  2 Oct 2018 13:35:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2A7A8B2F;
+        Tue,  2 Oct 2018 13:35:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 104/137] IB/srp: Avoid that sg_reset -d ${srp_device} triggers an infinite loop
-Date:   Tue,  2 Oct 2018 06:25:05 -0700
-Message-Id: <20181002132505.764331834@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 4.14 101/137] Revert "usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()"
+Date:   Tue,  2 Oct 2018 06:25:02 -0700
+Message-Id: <20181002132505.582455147@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -51,45 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-commit ee92efe41cf358f4b99e73509f2bfd4733609f26 upstream.
+commit e871db8d78df1c411032cbb3acfdf8930509360e upstream.
 
-Use different loop variables for the inner and outer loop. This avoids
-that an infinite loop occurs if there are more RDMA channels than
-target->req_ring_size.
+This reverts commit 6e22e3af7bb3a7b9dc53cb4687659f6e63fca427.
 
-Fixes: d92c0da71a35 ("IB/srp: Add multichannel support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+The bug the patch describes to, has been already fixed in commit
+2df6948428542 ("USB: cdc-wdm: don't enable interrupts in USB-giveback")
+so need to this, revert it.
+
+Fixes: 6e22e3af7bb3 ("usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srp/ib_srp.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/usb/class/cdc-wdm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/srp/ib_srp.c
-+++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -2669,7 +2669,7 @@ static int srp_reset_device(struct scsi_
- {
- 	struct srp_target_port *target = host_to_target(scmnd->device->host);
- 	struct srp_rdma_ch *ch;
--	int i;
-+	int i, j;
- 	u8 status;
+--- a/drivers/usb/class/cdc-wdm.c
++++ b/drivers/usb/class/cdc-wdm.c
+@@ -457,7 +457,7 @@ static int service_outstanding_interrupt
  
- 	shost_printk(KERN_ERR, target->scsi_host, "SRP reset_device called\n");
-@@ -2683,8 +2683,8 @@ static int srp_reset_device(struct scsi_
- 
- 	for (i = 0; i < target->ch_count; i++) {
- 		ch = &target->ch[i];
--		for (i = 0; i < target->req_ring_size; ++i) {
--			struct srp_request *req = &ch->req_ring[i];
-+		for (j = 0; j < target->req_ring_size; ++j) {
-+			struct srp_request *req = &ch->req_ring[j];
- 
- 			srp_finish_req(ch, req, scmnd->device, DID_RESET << 16);
- 		}
+ 	set_bit(WDM_RESPONDING, &desc->flags);
+ 	spin_unlock_irq(&desc->iuspin);
+-	rv = usb_submit_urb(desc->response, GFP_ATOMIC);
++	rv = usb_submit_urb(desc->response, GFP_KERNEL);
+ 	spin_lock_irq(&desc->iuspin);
+ 	if (rv) {
+ 		dev_err(&desc->intf->dev,
 
 
