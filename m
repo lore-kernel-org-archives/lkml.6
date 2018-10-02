@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23411C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF59C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E86B62064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:40:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E86B62064D
+	by mail.kernel.org (Postfix) with ESMTP id 090532064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:40:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 090532064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733245AbeJBUUA (ORCPT
+        id S1733043AbeJBUX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36332 "EHLO
+        Tue, 2 Oct 2018 16:23:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36314 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731715AbeJBUT7 (ORCPT
+        with ESMTP id S1731711AbeJBUT4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:59 -0400
+        Tue, 2 Oct 2018 16:19:56 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BF3A0C47;
-        Tue,  2 Oct 2018 13:36:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8CE24C3F;
+        Tue,  2 Oct 2018 13:36:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        syzbot+f84aa7209ccec829536f@syzkaller.appspotmail.com
-Subject: [PATCH 4.9 64/94] USB: fix error handling in usb_driver_claim_interface()
-Date:   Tue,  2 Oct 2018 06:25:18 -0700
-Message-Id: <20181002132504.938991548@linuxfoundation.org>
+        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 54/94] ARM: dts: dra7: fix DCAN node addresses
+Date:   Tue,  2 Oct 2018 06:25:08 -0700
+Message-Id: <20181002132504.235860222@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -51,58 +53,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Kevin Hilman <khilman@baylibre.com>
 
-commit bd729f9d67aa9a303d8925bb8c4f06af25f407d1 upstream.
+[ Upstream commit 949bdcc8a97c6078f21c8d4966436b117f2e4cd3 ]
 
-The syzbot fuzzing project found a use-after-free bug in the USB
-core.  The bug was caused by usbfs not unbinding from an interface
-when the USB device file was closed, which led another process to
-attempt the unbind later on, after the private data structure had been
-deallocated.
+Fix the DT node addresses to match the reg property addresses,
+which were verified to match the TRM:
+http://www.ti.com/lit/pdf/sprui30
 
-The reason usbfs did not unbind the interface at the appropriate time
-was because it thought the interface had never been claimed in the
-first place.  This was caused by the fact that
-usb_driver_claim_interface() does not clean up properly when
-device_bind_driver() returns an error.  Although the error code gets
-passed back to the caller, the iface->dev.driver pointer remains set
-and iface->condition remains equal to USB_INTERFACE_BOUND.
-
-This patch adds proper error handling to usb_driver_claim_interface().
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-by: syzbot+f84aa7209ccec829536f@syzkaller.appspotmail.com
-CC: <stable@vger.kernel.org>
+Cc: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Acked-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/core/driver.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/boot/dts/dra7.dtsi |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -562,6 +562,21 @@ int usb_driver_claim_interface(struct us
- 	if (!lpm_disable_error)
- 		usb_unlocked_enable_lpm(udev);
+--- a/arch/arm/boot/dts/dra7.dtsi
++++ b/arch/arm/boot/dts/dra7.dtsi
+@@ -1770,7 +1770,7 @@
+ 			};
+ 		};
  
-+	if (retval) {
-+		dev->driver = NULL;
-+		usb_set_intfdata(iface, NULL);
-+		iface->needs_remote_wakeup = 0;
-+		iface->condition = USB_INTERFACE_UNBOUND;
-+
-+		/*
-+		 * Unbound interfaces are always runtime-PM-disabled
-+		 * and runtime-PM-suspended
-+		 */
-+		if (driver->supports_autosuspend)
-+			pm_runtime_disable(dev);
-+		pm_runtime_set_suspended(dev);
-+	}
-+
- 	return retval;
- }
- EXPORT_SYMBOL_GPL(usb_driver_claim_interface);
+-		dcan1: can@481cc000 {
++		dcan1: can@4ae3c000 {
+ 			compatible = "ti,dra7-d_can";
+ 			ti,hwmods = "dcan1";
+ 			reg = <0x4ae3c000 0x2000>;
+@@ -1780,7 +1780,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		dcan2: can@481d0000 {
++		dcan2: can@48480000 {
+ 			compatible = "ti,dra7-d_can";
+ 			ti,hwmods = "dcan2";
+ 			reg = <0x48480000 0x2000>;
 
 
