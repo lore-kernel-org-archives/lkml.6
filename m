@@ -3,114 +3,162 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E45A5C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE8EC64EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EEC12082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:45:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EEC12082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E0312089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:46:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E0312089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbeJCCap (ORCPT
+        id S1727420AbeJCCbA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 22:30:45 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36537 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbeJCCap (ORCPT
+        Tue, 2 Oct 2018 22:31:00 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58286 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726194AbeJCCa7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 22:30:45 -0400
-Received: by mail-ot1-f66.google.com with SMTP id c18-v6so3161830otm.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 12:45:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GL99KgLcEp3HA0hAdM86rhDV2Dm+/tGpMMSlb2PNrVc=;
-        b=Aa7rz+vbjrgNSE2zqCWg/o3FENxRrj6m2hu4mwnwwgK4Cpp9ISPdjTOriGPL7Jtx6b
-         306SEx0KF0xbK+C+hOl0Ioizm1mz+L5Bcpb563OZo3mZor90WNdxmvFEWkePzgEvfFQa
-         tLZquiurvT2isteT9hD6BAiKsN0obIxSFBddEdxaTXEkT3M03BeQtjTKHI6FsfMU5uIz
-         y67UMnjGgS3/0fWlx5GaAx0VXxAi1eqVOi5/C7Vtgbb7jJkWvjBWBdyC4ou9uU/NIMrI
-         5hf3FDc6qvNyxeFydI26x+hDPToEGdNrQtSpz3L9VhwCUtTs6m1hVjAG1ORuF+cwJ6iz
-         1QwQ==
-X-Gm-Message-State: ABuFfojGIWtrhk81D6pCA5K0rV1/HRUpDqIBxvMlem2HRo5YL7Jy2WdL
-        KPH6ssRi96ullDhsZGspxqvJHwGAkRE=
-X-Google-Smtp-Source: ACcGV63uotFqJaCi8aea+ujTQPy26wEi//rNjuG9C711z+2geiPvZeEZaoImC9vz29P+zQ9R5Jd+eQ==
-X-Received: by 2002:a9d:41f6:: with SMTP id v51-v6mr9376416oti.8.1538509544892;
-        Tue, 02 Oct 2018 12:45:44 -0700 (PDT)
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com. [209.85.210.45])
-        by smtp.gmail.com with ESMTPSA id 19-v6sm5746389oty.16.2018.10.02.12.45.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 12:45:44 -0700 (PDT)
-Received: by mail-ot1-f45.google.com with SMTP id h26-v6so3134605otl.9
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 12:45:44 -0700 (PDT)
-X-Received: by 2002:a9d:20e1:: with SMTP id x88-v6mr10250691ota.338.1538509544105;
- Tue, 02 Oct 2018 12:45:44 -0700 (PDT)
+        Tue, 2 Oct 2018 22:30:59 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w92JhmAG029514
+        for <linux-kernel@vger.kernel.org>; Tue, 2 Oct 2018 15:46:00 -0400
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mvbxvquv9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 15:45:59 -0400
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tyreld@linux.vnet.ibm.com>;
+        Tue, 2 Oct 2018 13:45:59 -0600
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 2 Oct 2018 13:45:55 -0600
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w92JjsUa24903798
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 2 Oct 2018 12:45:54 -0700
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C200CBE04F;
+        Tue,  2 Oct 2018 13:45:54 -0600 (MDT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 59244BE054;
+        Tue,  2 Oct 2018 13:45:51 -0600 (MDT)
+Received: from oc6857751186.ibm.com (unknown [9.85.193.168])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue,  2 Oct 2018 13:45:51 -0600 (MDT)
+Subject: Re: [PATCH] migration/mm: Add WARN_ON to try_offline_node
+To:     Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Juliet Kim <minkim@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Oscar Salvador <osalvador@suse.de>
+References: <20181001185616.11427.35521.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
+ <20181001202724.GL18290@dhcp22.suse.cz>
+ <bdbca329-7d35-0535-1737-94a06a19ae28@linux.vnet.ibm.com>
+ <df95f828-1963-d8b9-ab58-6d29d2d152d2@linux.vnet.ibm.com>
+ <20181002145922.GZ18290@dhcp22.suse.cz>
+ <d338b385-626b-0e79-9944-708178fe245d@linux.vnet.ibm.com>
+ <20181002160446.GA18290@dhcp22.suse.cz>
+ <e7dd66c1-d196-3a14-0115-acdaf538ebfd@linux.vnet.ibm.com>
+From:   Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Date:   Tue, 2 Oct 2018 12:45:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1538124204-31406-1-git-send-email-madalin.bucur@nxp.com>
- <CADRPPNTn99q=6fungYr-xcwY6vFiw9KTUp8UCEQ2u0+sv7vd4Q@mail.gmail.com> <AM6PR04MB40080234BA68140933F6B733ECE80@AM6PR04MB4008.eurprd04.prod.outlook.com>
-In-Reply-To: <AM6PR04MB40080234BA68140933F6B733ECE80@AM6PR04MB4008.eurprd04.prod.outlook.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Tue, 2 Oct 2018 14:45:32 -0500
-X-Gmail-Original-Message-ID: <CADRPPNQmCXwxP7xJh_md37TofRivU6w2EyX1rTTtZX4LGjj+ng@mail.gmail.com>
-Message-ID: <CADRPPNQmCXwxP7xJh_md37TofRivU6w2EyX1rTTtZX4LGjj+ng@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] soc/fsl/qbman: DPAA QBMan fixes and additions
-To:     madalin.bucur@nxp.com, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Roy Pledge <roy.pledge@nxp.com>, claudiu.manoil@nxp.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Scott Wood <oss@buserror.net>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e7dd66c1-d196-3a14-0115-acdaf538ebfd@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18100219-0004-0000-0000-00001495F4DB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009810; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01096924; UDB=6.00567240; IPR=6.00876967;
+ MB=3.00023593; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-02 19:45:58
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100219-0005-0000-0000-000089041A07
+Message-Id: <bbc5f219-614f-b024-0888-8ad216c5eaf8@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-02_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810020187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 1:29 AM Madalin-cristian Bucur
-<madalin.bucur@nxp.com> wrote:
->
-> > -----Original Message-----
-> > From: Li Yang [mailto:leoyang.li@nxp.com]
-> > Sent: Tuesday, October 2, 2018 1:30 AM
-> > To: Madalin-cristian Bucur <madalin.bucur@nxp.com>
-> > Cc: Roy Pledge <roy.pledge@nxp.com>; Claudiu Manoil
-> > <claudiu.manoil@nxp.com>; Catalin Marinas <catalin.marinas@arm.com>; Scott
-> > Wood <oss@buserror.net>; moderated list:ARM/FREESCALE IMX / MXC ARM
-> > ARCHITECTURE <linux-arm-kernel@lists.infradead.org>; linuxppc-dev
-> > <linuxppc-dev@lists.ozlabs.org>; lkml <linux-kernel@vger.kernel.org>
-> > Subject: Re: [PATCH v2 0/5] soc/fsl/qbman: DPAA QBMan fixes and additions
-> >
-> > On Fri, Sep 28, 2018 at 3:44 AM Madalin Bucur <madalin.bucur@nxp.com>
-> > wrote:
-> > >
-> >
-> > Applied 1-4 to for-next while waiting for clarification on 5/5.   And
-> > updated the prefix to "soc: fsl:" style to be aligned with arm-soc
-> > convention.  Please try to use that style in the future for soc/fsl
-> > patches.
->
-> Thank you, I've sent an email about the APIs.
-> I'm not sure we need to align the prefix to arm-soc as the soc/fsl does not
-> service only ARM but also PPC based SoCs and historically we've been using
-> the soc/* format.
+On 10/02/2018 11:13 AM, Michael Bringmann wrote:
+> 
+> 
+> On 10/02/2018 11:04 AM, Michal Hocko wrote:
+>> On Tue 02-10-18 10:14:49, Michael Bringmann wrote:
+>>> On 10/02/2018 09:59 AM, Michal Hocko wrote:
+>>>> On Tue 02-10-18 09:51:40, Michael Bringmann wrote:
+>>>> [...]
+>>>>> When the device-tree affinity attributes have changed for memory,
+>>>>> the 'nid' affinity calculated points to a different node for the
+>>>>> memory block than the one used to install it, previously on the
+>>>>> source system.  The newly calculated 'nid' affinity may not yet
+>>>>> be initialized on the target system.  The current memory tracking
+>>>>> mechanisms do not record the node to which a memory block was
+>>>>> associated when it was added.  Nathan is looking at adding this
+>>>>> feature to the new implementation of LMBs, but it is not there
+>>>>> yet, and won't be present in earlier kernels without backporting a
+>>>>> significant number of changes.
+>>>>
+>>>> Then the patch you have proposed here just papers over a real issue, no?
+>>>> IIUC then you simply do not remove the memory if you lose the race.
+>>>
+>>> The problem occurs when removing memory after an affinity change
+>>> references a node that was previously unreferenced.  Other code
+>>> in 'kernel/mm/memory_hotplug.c' deals with initializing an empty
+>>> node when adding memory to a system.  The 'removing memory' case is
+>>> specific to systems that perform LPM and allow device-tree changes.
+>>> The powerpc kernel does not have the option of accepting some PRRN
+>>> requests and accepting others.  It must perform them all.
+>>
+>> I am sorry, but you are still too cryptic for me. Either there is a
+>> correctness issue and the the patch doesn't really fix anything or the
+>> final race doesn't make any difference and then the ppc code should be
+>> explicit about that. Checking the node inside the hotplug core code just
+>> looks as a wrong layer to mitigate an arch specific problem. I am not
+>> saying the patch is a no-go but if anything we want a big fat comment
+>> explaining how this is possible because right now it just points to an
+>> incorrect API usage.
+>>
+>> That being said, this sounds pretty much ppc specific problem and I
+>> would _prefer_ it to be handled there (along with a big fat comment of
+>> course).
+> 
+> Let me try again.  Regardless of the path to which we get to this condition,
+> we currently crash the kernel.  This patch changes that to a WARN_ON notice
+> and continues executing the kernel without shutting down the system.  I saw
+> the problem during powerpc testing, because that is the focus of my work.
+> There are other paths to this function besides powerpc.  I feel that the
+> kernel should keep running instead of halting.
 
-There is no kernel wide guideline about the format of subsystem prefix
-in the patch subject. Different subsystems have their own
-preferrences.  Soc is not considered as a separate subsystem, so we
-followed the convention of the architectural subsystem that we merge
-patches through.  Since we normally get soc patches through the
-arm-soc tree right now, I think it would be better to follow the
-convention of arm-soc to make them not looking too different in the
-arm-soc pull requests.  Not sure how sensetive ARM-SOC maintainers
-feel about this though.
+This is still basically a hack to get around a known race. In itself this patch is still worth while in that we shouldn't crash the kernel on a null pointer dereference. However, I think the actual problem still needs to be addressed. We shouldn't run any PRRN events for the source system on the target after a migration. The device tree update should have taken care of telling us about new affinities and what not. Can we just throw out any queued PRRN events when we wake up on the target?
 
-Regards,
-Leo
+-Tyrel
+> 
+> Regards,
+> 
+
