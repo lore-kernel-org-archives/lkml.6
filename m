@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB057C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB47C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A46C5206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A46C5206B2
+	by mail.kernel.org (Postfix) with ESMTP id AE3B6206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3B6206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbeJBUKK (ORCPT
+        id S1727082AbeJBUKJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59956 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbeJBUKJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 16:10:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59938 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726881AbeJBUKI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:10:08 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 194C4C11;
-        Tue,  2 Oct 2018 13:26:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4846266;
+        Tue,  2 Oct 2018 13:26:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
-        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 027/228] md-cluster: clear another nodes suspend_area after the copy is finished
-Date:   Tue,  2 Oct 2018 06:22:04 -0700
-Message-Id: <20181002132500.937309360@linuxfoundation.org>
+Subject: [PATCH 4.18 025/228] drm/amd/display/dc/dce: Fix multiple potential integer overflows
+Date:   Tue,  2 Oct 2018 06:22:02 -0700
+Message-Id: <20181002132500.774246821@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,72 +54,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guoqing Jiang <gqjiang@suse.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 010228e4a932ca1e8365e3b58c8e1e44c16ff793 ]
+[ Upstream commit 6f3472a993e7cb63cde5d818dcabc8e42fc03744 ]
 
-When one node leaves cluster or stops the resyncing
-(resync or recovery) array, then other nodes need to
-call recover_bitmaps to continue the unfinished task.
+Add suffix ULL to constant 5 and cast variables target_pix_clk_khz and
+feedback_divider to uint64_t in order to avoid multiple potential integer
+overflows and give the compiler complete information about the proper
+arithmetic to use.
 
-But we need to clear suspend_area later after other
-nodes copy the resync information to their bitmap
-(by call bitmap_copy_from_slot). Otherwise, all nodes
-could write to the suspend_area even the suspend_area
-is not handled by any node, because area_resyncing
-returns 0 at the beginning of raid1_write_request.
-Which means one node could write suspend_area while
-another node is resyncing the same area, then data
-could be inconsistent.
+Notice that such constant and variables are used in contexts that
+expect expressions of type uint64_t (64 bits, unsigned). The current
+casts to uint64_t effectively apply to each expression as a whole,
+but they do not prevent them from being evaluated using 32-bit
+arithmetic instead of 64-bit arithmetic.
 
-So let's clear suspend_area later to avoid above issue
-with the protection of bm lock. Also it is straightforward
-to clear suspend_area after nodes have copied the resync
-info to bitmap.
+Also, once the expressions are properly evaluated using 64-bit
+arithmentic, there is no need for the parentheses that enclose
+them.
 
-Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
-Reviewed-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Addresses-Coverity-ID: 1460245 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1460286 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1460401 ("Unintentional integer overflow")
+Fixes: 4562236b3bc0 ("drm/amd/dc: Add dc display driver (v2)")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/md-cluster.c |   19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -304,15 +304,6 @@ static void recover_bitmaps(struct md_th
- 	while (cinfo->recovery_map) {
- 		slot = fls64((u64)cinfo->recovery_map) - 1;
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
+@@ -133,7 +133,7 @@ static bool calculate_fb_and_fractional_
+ 	uint64_t feedback_divider;
  
--		/* Clear suspend_area associated with the bitmap */
--		spin_lock_irq(&cinfo->suspend_lock);
--		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
--			if (slot == s->slot) {
--				list_del(&s->list);
--				kfree(s);
--			}
--		spin_unlock_irq(&cinfo->suspend_lock);
--
- 		snprintf(str, 64, "bitmap%04d", slot);
- 		bm_lockres = lockres_init(mddev, str, NULL, 1);
- 		if (!bm_lockres) {
-@@ -331,6 +322,16 @@ static void recover_bitmaps(struct md_th
- 			pr_err("md-cluster: Could not copy data from bitmap %d\n", slot);
- 			goto clear_bit;
- 		}
-+
-+		/* Clear suspend_area associated with the bitmap */
-+		spin_lock_irq(&cinfo->suspend_lock);
-+		list_for_each_entry_safe(s, tmp, &cinfo->suspend_list, list)
-+			if (slot == s->slot) {
-+				list_del(&s->list);
-+				kfree(s);
-+			}
-+		spin_unlock_irq(&cinfo->suspend_lock);
-+
- 		if (hi > 0) {
- 			if (lo < mddev->recovery_cp)
- 				mddev->recovery_cp = lo;
+ 	feedback_divider =
+-		(uint64_t)(target_pix_clk_khz * ref_divider * post_divider);
++		(uint64_t)target_pix_clk_khz * ref_divider * post_divider;
+ 	feedback_divider *= 10;
+ 	/* additional factor, since we divide by 10 afterwards */
+ 	feedback_divider *= (uint64_t)(calc_pll_cs->fract_fb_divider_factor);
+@@ -145,8 +145,8 @@ static bool calculate_fb_and_fractional_
+  * of fractional feedback decimal point and the fractional FB Divider precision
+  * is 2 then the equation becomes (ullfeedbackDivider + 5*100) / (10*100))*/
+ 
+-	feedback_divider += (uint64_t)
+-			(5 * calc_pll_cs->fract_fb_divider_precision_factor);
++	feedback_divider += 5ULL *
++			    calc_pll_cs->fract_fb_divider_precision_factor;
+ 	feedback_divider =
+ 		div_u64(feedback_divider,
+ 			calc_pll_cs->fract_fb_divider_precision_factor * 10);
+@@ -203,8 +203,8 @@ static bool calc_fb_divider_checking_tol
+ 			&fract_feedback_divider);
+ 
+ 	/*Actual calculated value*/
+-	actual_calc_clk_khz = (uint64_t)(feedback_divider *
+-					calc_pll_cs->fract_fb_divider_factor) +
++	actual_calc_clk_khz = (uint64_t)feedback_divider *
++					calc_pll_cs->fract_fb_divider_factor +
+ 							fract_feedback_divider;
+ 	actual_calc_clk_khz *= calc_pll_cs->ref_freq_khz;
+ 	actual_calc_clk_khz =
 
 
