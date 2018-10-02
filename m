@@ -2,126 +2,186 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 412C2C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22852C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:41:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D92204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:41:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D92204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id E668A204FD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:41:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E668A204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbeJBRYQ (ORCPT
+        id S1727460AbeJBRYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 13:24:16 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:34820 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727007AbeJBRYP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 13:24:15 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w92Aee4C030652;
-        Tue, 2 Oct 2018 05:41:36 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2mugjdhm6q-1;
-        Tue, 02 Oct 2018 05:41:36 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 91BD2611C8C1;
-        Tue,  2 Oct 2018 05:41:35 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 2 Oct 2018
- 11:41:34 +0100
-Received: from edi-sw-dsktp006.ad.cirrus.com (edi-sw-dsktp006.ad.cirrus.com
- [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- w92AfYlG022871;        Tue, 2 Oct 2018 11:41:34 +0100
-From:   Richard Fitzgerald <rf@opensource.cirrus.com>
-To:     <lee.jones@linaro.org>
-CC:     <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
-        "Richard Fitzgerald" <rf@opensource.cirrus.com>
-Subject: [PATCH v2 2/2] mfd: madera: Wait for BOOT_DONE before reading device ID
-Date:   Tue, 2 Oct 2018 11:41:34 +0100
-Message-ID: <20181002104134.29003-2-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181002104134.29003-1-rf@opensource.cirrus.com>
-References: <20181002104134.29003-1-rf@opensource.cirrus.com>
+        Tue, 2 Oct 2018 13:24:33 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13182 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727007AbeJBRYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 13:24:33 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 2AC4ABD57E7A7;
+        Tue,  2 Oct 2018 18:41:51 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Tue, 2 Oct 2018
+ 18:41:43 +0800
+Subject: Re: perf segmentation fault from NULL dereference
+To:     Jiri Olsa <jolsa@redhat.com>
+References: <712b7c31-f681-7737-71e7-c028b8d2bba5@huawei.com>
+ <20180927160210.GF6916@krava>
+CC:     Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Will Deacon" <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <4ac88076-60fa-4509-7fa0-2f99d73174d2@huawei.com>
+Date:   Tue, 2 Oct 2018 11:41:36 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1810020106
+In-Reply-To: <20180927160210.GF6916@krava>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It isn't safe to read the device ID in the SOFTWARE_RESET
-register until the silicon boot sequence has completed. This
-patch rearranges the code to wait until BOOT_DONE is set.
 
-If we don't have a hard reset line we want to defer writing a
-soft reset command until we have identified the silicon as
-something we recognize. As the BOOT_DONE bit is sticky it is
-safe to wait for it without issuing a soft reset first, because
-the most recent power-up will have caused a boot sequence and
-set the bit. Note that the boot sequence is not the same as a
-reset so we still have to soft reset to get the codec into a
-known state.
+>> I am suspicious that this is a real issue, as this patch has been in
+>> mainline for some time...
+>>
+>> This simple change fixes the issue me:
+>> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+>> index 91e6d9c..f4fd826 100644
+>> --- a/tools/perf/util/header.c
+>> +++ b/tools/perf/util/header.c
+>> @@ -3576,7 +3576,7 @@ int perf_event__process_feature(struct perf_tool
+>> *tool,
+>>      int max, err;
+>>      u16 type;
+>>
+>> -    if (!evsel->own_cpus)
+>> +    if (!evsel->own_cpus || !(evsel->attr.read_format & PERF_FORMAT_ID)) //
+>> roundabout check for !evsel->id
+>>          return 0;
+>>
+>>      ev = cpu_map_data__alloc(evsel->own_cpus, &size, &type, &max);
+>>
+>> It turns out that evsel->id is NULL on a call to
+>> perf_event__process_feature(), which upsets this code:
+>>
+>>     ev->header.type = PERF_RECORD_EVENT_UPDATE;
+>>     ev->header.size = (u16)size;
+>>     ev->type = PERF_EVENT_UPDATE__CPUS;
+>>     ev->id   = evsel->id[0];
+>>
+>> Please me let me know if a valid issue so we can get a fix in.
+>
+> yea, I can see how we can get here with event having
+> its own CPUs, and we allocate the id array later at
+> the time we map the event
+>
+> I wonder instead of skipping on this feature, we should
+> allocate the id array, like below
+>
+> I did not test that.. need to find the server having event
+> with its own cpus.. also need to make sure evsel->cpus is
+> the way to go in here
+>
 
-Signed-off-by: Stuart Henderson <stuarth@opensource.cirrus.com>
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
----
- drivers/mfd/madera-core.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+Thanks for the fix, but I got this:
+root@localhost:~# ./perf_debug_ record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
+Couldn't synthesize evsel cpus.
+root@localhost:~#
 
-diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
-index 1dedfe68a3dc..e114ca5e6c3f 100644
---- a/drivers/mfd/madera-core.c
-+++ b/drivers/mfd/madera-core.c
-@@ -455,10 +455,13 @@ int madera_dev_init(struct madera *madera)
- 	regcache_cache_only(madera->regmap, false);
- 	regcache_cache_only(madera->regmap_32bit, false);
- 
--	/*
--	 * Now we can power up and verify that this is a chip we know about
--	 * before we start doing any writes to its registers.
--	 */
-+	/* BOOT_DONE must be set before we can read the device ID */
-+	ret = madera_wait_for_boot(madera);
-+	if (ret) {
-+		dev_err(madera->dev, "Device failed initial boot: %d\n", ret);
-+		goto err_reset;
-+	}
-+
- 	ret = regmap_read(madera->regmap, MADERA_SOFTWARE_RESET, &hwid);
- 	if (ret) {
- 		dev_err(dev, "Failed to read ID register: %d\n", ret);
-@@ -528,12 +531,13 @@ int madera_dev_init(struct madera *madera)
- 		ret = madera_soft_reset(madera);
- 		if (ret)
- 			goto err_reset;
--	}
- 
--	ret = madera_wait_for_boot(madera);
--	if (ret) {
--		dev_err(madera->dev, "Device failed initial boot: %d\n", ret);
--		goto err_reset;
-+		ret = madera_wait_for_boot(madera);
-+		if (ret) {
-+			dev_err(madera->dev, "Device failed initial soft reboot: %d\n",
-+				ret);
-+			goto err_reset;
-+		}
- 	}
- 
- 	ret = regmap_read(madera->regmap, MADERA_HARDWARE_REVISION,
--- 
-2.11.0
+
+> thanks,
+> jirka
+>
+>
+> ---
+> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> index 1ec1d9bc2d63..fb2a0dab3978 100644
+> --- a/tools/perf/util/header.c
+> +++ b/tools/perf/util/header.c
+> @@ -29,6 +29,7 @@
+>  #include "symbol.h"
+>  #include "debug.h"
+>  #include "cpumap.h"
+> +#include "thread_map.h"
+>  #include "pmu.h"
+>  #include "vdso.h"
+>  #include "strbuf.h"
+> @@ -3579,6 +3580,11 @@ perf_event__synthesize_event_update_cpus(struct perf_tool *tool,
+> 	if (!evsel->own_cpus)
+> 		return 0;
+>
+> +	if (!evsel->id ||
+
+for my test, evsel->id is NULL
+
+> +	    perf_evsel__alloc_id(evsel, cpu_map__nr(evsel->cpus),
+> +				 thread_map__nr(evsel->threads)))
+
+and then this function is not called as we return immediately. So did 
+you really want this:
+
+if (!evsel->id && perf_evsel__alloc_id(...))
+	return -ENOMEM;
+
+This looks to work:
+
+root@localhost:~# ./perf_debug_ record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.001 MB perf.data (7 samples) ]
+root@localhost:~# ./perf_debug_ report
+# To display the perf.data header info, please use 
+--header/--header-only option
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 7  of event 'armv8_pmuv3_0/br_mis_pred/'
+# Event count (approx.): 8260
+#
+# Overhead  Command  Shared Object      Symbol
+# ........  .......  .................  ......................
+#
+     78.28%  sleep    libc-2.23.so       [.] 0x00000000000faef0
+     20.53%  sleep    [kernel.kallsyms]  [k] vmacache_find
+      1.09%  sleep    [kernel.kallsyms]  [k] find_vma
+      0.10%  perf_de  [kernel.kallsyms]  [k] perf_event_exec
+
+
+#
+# (Cannot load tips.txt file, please install perf!)
+#
+root@localhost:~#
+
+
+> +		return -ENOMEM;
+> +
+> 	ev = cpu_map_data__alloc(evsel->own_cpus, &size, &type, &max);
+> 	if (!ev)
+> 		return -ENOMEM;
+>
+> .
+>
+
+
+Thanks,
+John
 
