@@ -3,37 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1540EC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E516C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5114208D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5114208D9
+	by mail.kernel.org (Postfix) with ESMTP id 2980B206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2980B206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729820AbeJBUMe (ORCPT
+        id S1729838AbeJBUMh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:12:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33050 "EHLO
+        Tue, 2 Oct 2018 16:12:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33066 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729802AbeJBUMd (ORCPT
+        with ESMTP id S1729802AbeJBUMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:33 -0400
+        Tue, 2 Oct 2018 16:12:35 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A633C20;
-        Tue,  2 Oct 2018 13:29:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5E80FC11;
+        Tue,  2 Oct 2018 13:29:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.18 140/228] intel_th: Fix resource handling for ACPI glue layer
-Date:   Tue,  2 Oct 2018 06:23:57 -0700
-Message-Id: <20181002132508.774560466@linuxfoundation.org>
+        stable@vger.kernel.org, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.18 142/228] spi: sh-msiof: Fix invalid SPI use during system suspend
+Date:   Tue,  2 Oct 2018 06:23:59 -0700
+Message-Id: <20181002132508.866353724@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,75 +53,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
 
-commit ebe4582281d6e90972f057318a6edea14810ea48 upstream.
+commit ffa69d6a16f686efe45269342474e421f2aa58b2 upstream.
 
-The core of the driver expects the resource array from the glue layer
-to be indexed by even numbers, as is the case for 64-bit PCI resources.
-This doesn't hold true for others, ACPI in this instance, which leads
-to an out-of-bounds access and an ioremap() on whatever address that
-access fetches.
+If the SPI queue is running during system suspend, the system may lock
+up.
 
-This patch fixes the problem by reading resource array differently based
-on whether the 64-bit flag is set, which would indicate PCI glue layer.
+Fix this by stopping/restarting the queue during system suspend/resume
+by calling spi_master_suspend()/spi_master_resume() from the PM
+callbacks.  In-kernel users will receive an -ESHUTDOWN error while
+system suspend/resume is in progress.
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: ebc57e399b8e ("intel_th: Add ACPI glue layer")
-CC: stable@vger.kernel.org # v4.17+
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+[geert: Cleanup, reword]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/core.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/spi/spi-sh-msiof.c |   25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
---- a/drivers/hwtracing/intel_th/core.c
-+++ b/drivers/hwtracing/intel_th/core.c
-@@ -488,7 +488,7 @@ static const struct intel_th_subdevice {
- 				.flags	= IORESOURCE_MEM,
- 			},
- 			{
--				.start	= TH_MMIO_SW,
-+				.start	= 1, /* use resource[1] */
- 				.end	= 0,
- 				.flags	= IORESOURCE_MEM,
- 			},
-@@ -581,6 +581,7 @@ intel_th_subdevice_alloc(struct intel_th
- 	struct intel_th_device *thdev;
- 	struct resource res[3];
- 	unsigned int req = 0;
-+	bool is64bit = false;
- 	int r, err;
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1421,12 +1421,37 @@ static const struct platform_device_id s
+ };
+ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
  
- 	thdev = intel_th_device_alloc(th, subdev->type, subdev->name,
-@@ -590,12 +591,18 @@ intel_th_subdevice_alloc(struct intel_th
- 
- 	thdev->drvdata = th->drvdata;
- 
-+	for (r = 0; r < th->num_resources; r++)
-+		if (th->resource[r].flags & IORESOURCE_MEM_64) {
-+			is64bit = true;
-+			break;
-+		}
++#ifdef CONFIG_PM_SLEEP
++static int sh_msiof_spi_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
 +
- 	memcpy(res, subdev->res,
- 	       sizeof(struct resource) * subdev->nres);
- 
- 	for (r = 0; r < subdev->nres; r++) {
- 		struct resource *devres = th->resource;
--		int bar = TH_MMIO_CONFIG;
-+		int bar = 0; /* cut subdevices' MMIO from resource[0] */
- 
- 		/*
- 		 * Take .end == 0 to mean 'take the whole bar',
-@@ -604,6 +611,8 @@ intel_th_subdevice_alloc(struct intel_th
- 		 */
- 		if (!res[r].end && res[r].flags == IORESOURCE_MEM) {
- 			bar = res[r].start;
-+			if (is64bit)
-+				bar *= 2;
- 			res[r].start = 0;
- 			res[r].end = resource_size(&devres[bar]) - 1;
- 		}
++	return spi_master_suspend(p->master);
++}
++
++static int sh_msiof_spi_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
++
++	return spi_master_resume(p->master);
++}
++
++static SIMPLE_DEV_PM_OPS(sh_msiof_spi_pm_ops, sh_msiof_spi_suspend,
++			 sh_msiof_spi_resume);
++#define DEV_PM_OPS	&sh_msiof_spi_pm_ops
++#else
++#define DEV_PM_OPS	NULL
++#endif /* CONFIG_PM_SLEEP */
++
+ static struct platform_driver sh_msiof_spi_drv = {
+ 	.probe		= sh_msiof_spi_probe,
+ 	.remove		= sh_msiof_spi_remove,
+ 	.id_table	= spi_driver_ids,
+ 	.driver		= {
+ 		.name		= "spi_sh_msiof",
++		.pm		= DEV_PM_OPS,
+ 		.of_match_table = of_match_ptr(sh_msiof_match),
+ 	},
+ };
 
 
