@@ -2,80 +2,95 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 731F0C64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 857D3C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 382472089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:18:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3076E208AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:20:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsXGVLa5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 382472089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bw84vKsL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3076E208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbeJBOAU (ORCPT
+        id S1726875AbeJBOCi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:00:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbeJBOAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:00:19 -0400
-Received: from localhost (unknown [104.132.0.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C0652089A;
-        Tue,  2 Oct 2018 07:18:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538464711;
-        bh=gv8XA+Oh9Czgq+uiOsbl9jkuVzFTFtx2fdGGtyrtULQ=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=tsXGVLa5q5QJY19wSGB+nxU1gFWqPNRAUK2vTRU9xQIowE5PMmO/7zfPJ0+qWxaBM
-         8mfg99R6WVul2+HM2cZakfx243ji+LWsph6gK8wEpASSS7CcVc4NQ/8gCdn7sELsor
-         gAyL5IOC7uiQiPSWF1EWa6Rbpu/gHjSXeMCPTfQc=
+        Tue, 2 Oct 2018 10:02:38 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36871 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726565AbeJBOCi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 10:02:38 -0400
+Received: by mail-pl1-f196.google.com with SMTP id az3-v6so331020plb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 00:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=3iWfKK11EXdx40BLXc84u1PmKHb/02aUkSQa1evr1kA=;
+        b=Bw84vKsL3tX27UGC7s413oJxE3zx8ozyyu7mTqFIjS2MYf60FsVLKixO7GSZLnprZy
+         +LttYcpbitPeAof61SMXJrgXzHAfT0iD9akTGK7GCWG410m7iZAlSZTebb1nS9an4Mdp
+         3tIk76THN7b5vV26B3pHwHHXjWXhaVWRAsdeQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=3iWfKK11EXdx40BLXc84u1PmKHb/02aUkSQa1evr1kA=;
+        b=lfoGBT40aH3rPpyO2eaNmG1CbsYuGsLpYBw7xbUuUNErXhFjulOz7sLZogqWOlSBoE
+         2Iy0B77dFHhEHkZ1a9Ftxug3DvgvKY3qjquZ57rpRe5X2FzVn5NhK6FokE4+V6D0hG6E
+         7kTUq8229hzw/Ybhzh2jNN/5JzZxEdTskaX2lYQFxolCakpcU9GCKaMUJVDwHMPCdefO
+         jAO132hF1ZS8pI57twiUZrrToKgLW0oHk6VAlCXgfp5J66HO1mvrTG1Q71gvodybZr78
+         uZX0RQb9lW699HMwUv+OMiMcyuIXQbDG2LalDM9BPB/NJeho6Eq9EZPy1HvfnFbLHZDP
+         CIYQ==
+X-Gm-Message-State: ABuFfogf/rWErYYo65QqNwCnRE8Cu4CQmGc/4Rx/AFNhtJJjZKAnzLzq
+        FX9jU3Y8nLWoCSGM/uPMFJeaxg==
+X-Google-Smtp-Source: ACcGV624p8k1HVdbIUgbgyNg26jfk9WAvf0dDRtDJvOFDWr59xCXJELwbU8t9FVAlgsta6rOOWC2Kw==
+X-Received: by 2002:a63:df06:: with SMTP id u6-v6mr8378953pgg.202.1538464850056;
+        Tue, 02 Oct 2018 00:20:50 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id y86-v6sm24964486pfk.84.2018.10.02.00.20.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Oct 2018 00:20:49 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Lubomir Rintel <lkundrak@v3.sk>, linux-kernel@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180910112654.42061-5-lkundrak@v3.sk>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-input@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Lubomir Rintel <lkundrak@v3.sk>
-References: <20180910112654.42061-1-lkundrak@v3.sk>
- <20180910112654.42061-5-lkundrak@v3.sk>
-Message-ID: <153846471096.119890.948010578540326036@swboyd.mtv.corp.google.com>
+To:     Mark Brown <broonie@kernel.org>, Ryan Case <ryandcase@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20181002013142.209751-1-ryandcase@chromium.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>,
+        Trent Piepho <tpiepho@impinj.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Ryan Case <ryandcase@chromium.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20181002013142.209751-1-ryandcase@chromium.org>
+Message-ID: <153846484865.119890.9647250280891039183@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH 4/8] clk: mmp2: add SP clock
-Date:   Tue, 02 Oct 2018 00:18:30 -0700
+Subject: Re: [PATCH v5 1/2] dt-bindings: spi: Qualcomm Quad SPI(QSPI) documentation
+Date:   Tue, 02 Oct 2018 00:20:48 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lubomir Rintel (2018-09-10 04:26:50)
-> The "security processor", sometimes referred to as "wireless trusted
-> module" or "generic encrypt unit" is a low-power core present on MMP2,
-> that has nothing to do with security, wireless, trust or encryption.
+Quoting Ryan Case (2018-10-01 18:31:41)
+> From: Girish Mahadevan <girishm@codeaurora.org>
 > =
 
-> On an OLPC machine it runs CForth and serves as a keyboard controller:
-> http://dev.laptop.org/git/users/wmb/cforth/tree/src/app/arm-xo-1.75/ps2.f=
-th
+> Bindings for Qualcomm Quad SPI used on SoCs such as sdm845.
 > =
 
-> The register address was obtained from the OLPC kernel, since the
-> datasheet seems to be the Marvell's most important business secret.
-> =
-
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> Signed-off-by: Girish Mahadevan <girishm@codeaurora.org>
+> Signed-off-by: Ryan Case <ryandcase@chromium.org>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
