@@ -3,121 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05452C64EBC
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B55C64EBC
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C75CB20652
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:27:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C75CB20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C644420652
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:27:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C644420652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728628AbeJCEMZ (ORCPT
+        id S1728647AbeJCEM2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 00:12:25 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:32777 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727591AbeJCEMY (ORCPT
+        Wed, 3 Oct 2018 00:12:28 -0400
+Received: from mail-qt1-f181.google.com ([209.85.160.181]:40491 "EHLO
+        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727591AbeJCEM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 00:12:24 -0400
-Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g7SBb-0003Q4-KB; Tue, 02 Oct 2018 23:26:31 +0200
-Date:   Tue, 2 Oct 2018 23:26:30 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dmitry Safonov <0x7f454c46@gmail.com>
-cc:     Andrei Vagin <avagin@virtuozzo.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Dmitry Safonov <dima@arista.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        containers@lists.linux-foundation.org, crml <criu@openvz.org>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [RFC 00/20] ns: Introduce Time Namespace
-In-Reply-To: <CAJwJo6a+WWpAxVAUuYt8TrCF+1a=BdoFQjU9vto0iiUN5vygsA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1810022310360.1435@nanos.tec.linutronix.de>
-References: <20180919205037.9574-1-dima@arista.com> <874lej6nny.fsf@xmission.com> <20180924205119.GA14833@outlook.office365.com> <874leezh8n.fsf@xmission.com> <20180925014150.GA6302@outlook.office365.com> <87zhw4rwiq.fsf@xmission.com>
- <alpine.DEB.2.21.1809272247270.8118@nanos.tec.linutronix.de> <alpine.DEB.2.21.1809272335430.8118@nanos.tec.linutronix.de> <20181001232033.GA31324@outlook.office365.com> <alpine.DEB.2.21.1810020811290.32062@nanos.tec.linutronix.de>
- <CAJwJo6a+WWpAxVAUuYt8TrCF+1a=BdoFQjU9vto0iiUN5vygsA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 3 Oct 2018 00:12:27 -0400
+Received: by mail-qt1-f181.google.com with SMTP id e9-v6so3697136qtp.7
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 14:27:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cMdrEzYPUDnpNH+jjkeP89IUE/O0wULRuokAvvDMdw8=;
+        b=uQNbumBaWebnjb/kwOb+LAu9gAupFpcU3nNJhqnDHziByq3cjKA4aW9vYHY5uqlC3J
+         I1qWfqmk/zXuui9dGCRe+p+sntw5qgIh8va8AT9gtV0qsMAJ3taK9femSEeI3jmKCI7G
+         eIV4R1MsSeK6+HAkr7cc/4lt1RR8icj5FQCSWT40v8glEXK99DaXogGLKZMXN8JFNA5J
+         uEe/2w0KypIhoB2dJXqRwebwWfOIcUqcKgUAFRaUJgqDZn601OIp3SVzpZCZa9E4b9X8
+         p5nqiZg1EcBk5PjZwXaXGhxqrM/OgQmipdkQULPrwZsgPE15N+fAOL/0nHIHJ/XTLZ74
+         pxkw==
+X-Gm-Message-State: ABuFfojGxWS7XqE6Dr84GetJCaxw/gPpJfzCQLKlG5bn/g6DQqJuiQ39
+        lCCi76+jV9Gr5aj6LDVaLBU9ltJv5E7NVBD9y90=
+X-Google-Smtp-Source: ACcGV61RVmHQO1Od9Xl9rWkgp4Md6BQgiVuDLJebn8O3U2c/voPVnQDbtCl5b3H9i2uyEcgsjshrPoY8MJvJXruboIk=
+X-Received: by 2002:a0c:9e59:: with SMTP id z25-v6mr12462101qve.180.1538515625242;
+ Tue, 02 Oct 2018 14:27:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20181002211016.2638186-1-arnd@arndb.de> <CAMRc=MfOMp5qpZLBBLKHTrziBBV2kD1ZMv7OD4E3M85G=G++bQ@mail.gmail.com>
+In-Reply-To: <CAMRc=MfOMp5qpZLBBLKHTrziBBV2kD1ZMv7OD4E3M85G=G++bQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 2 Oct 2018 23:26:48 +0200
+Message-ID: <CAK8P3a1pyWGBX-gOufS196Bbgbvy7eAGN0SKe4edaiSuFVvgdA@mail.gmail.com>
+Subject: Re: [PATCH] nvmem: lpc18xx_eeprom: remove an unused variable
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Joachim Eastwood <manabian@gmail.com>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry,
-
-On Tue, 2 Oct 2018, Dmitry Safonov wrote:
-> On Tue, 2 Oct 2018 at 07:15, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > I explained that in detail in this thread, but it's not about the initial
-> > setting of clock mono/boot before any timers have been armed.
-> >
-> > It's about setting the offset or clock realtime (via settimeofday) when
-> > timers are already armed. Also having a entirely different time domain,
-> > e.g. separate NTP adjustments, makes that necessary.
-> 
-> It looks like, there is a bit of misunderstanding each other:
-> Andrei was talking about the current RFC version, where we haven't
-> introduced offsets for clock realtime. While Thomas IIUC, is looking
-> how-to expand time namespace over realtime.
+On Tue, Oct 2, 2018 at 11:22 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 >
-> As CLOCK_REALTIME virtualization raises so many complex questions
-> like a different length of the second or list of realtime timers in ns we
-> haven't added any realization for it.
-> 
-> It seems like an initial introduction for timens can be expanded after to cover
-> realtime clocks too. While it may seem incomplete, it solves issues for
-> restoring/migration of real-world applications like nodejs, Oracle DB server
-> which fails after being restored if there is a leap in monotonic time.
+> wt., 2 paź 2018 o 23:10 Arnd Bergmann <arnd@arndb.de> napisał(a):
 
-Well, yes. But you really have to think about the full picture. Just adding
-part of the overall solution right now, just because it can be glued into
-the code easily, is not the best approach IMO as it might result in
-substantial rework of the whole thing sooner than later. I really don't
-want to end up with something which is not extensible and has to be
-supported forever.
+> Hi Arnd,
+>
+> I had already sent a fix for that with you in Cc:
+> https://lkml.org/lkml/2018/10/2/439
 
-Just for the record, the current approach with name space offsets for
-monotonic is also prone to malfunction vs. timers, unless you can prevent
-changing the offset _after_ the namespace has been set up and timers have
-been armed. I admit, that I did not look close enough to verify that.
+Ah, good. I had some vague memory of that, but couldn't find it in
+my mailbox when I sent out the other fixes for today's
+linux-next build regressions, so I included this as well.
 
-> While solving the mentioned issues, it doesn't bring overhead.
-> (well, Andy noted that cmp for zero-offsets on vdso can be optimized too,
-> which will be done in v1).
-> 
-> Thomas, thanks much for your input - now we know that we'll need to
-> introduce list for timers in namespace when we'll add realtime clocks.
-> Do you believe that CLOCK_MONOTONIC_SYNC would be an easier
-> concept than offsets per-namespace?
+Please ignore my patch.
 
-Haven't thought it through. This was just an idea in reaction to Eric's
-question whether setting clock monotonic might be feasible. But yes, it
-might be worth to think about it.
-
-I think you should really define the long term requirements for time
-namespaces and perhaps set some limitations in functionality upfront.
-
-Thanks,
-
-	tglx
-
-
+      Arnd
