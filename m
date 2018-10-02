@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C40DC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9DCC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6636206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6636206B2
+	by mail.kernel.org (Postfix) with ESMTP id 08B38206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B38206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbeJBUJ3 (ORCPT
+        id S1727562AbeJBUJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:09:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59754 "EHLO
+        Tue, 2 Oct 2018 16:09:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59782 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbeJBUJ2 (ORCPT
+        with ESMTP id S1726810AbeJBUJc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:09:28 -0400
+        Tue, 2 Oct 2018 16:09:32 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EFB60266;
-        Tue,  2 Oct 2018 13:26:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9761B266;
+        Tue,  2 Oct 2018 13:26:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 010/228] net: hns3: Fix get_vector ops in hclgevf_main module
-Date:   Tue,  2 Oct 2018 06:21:47 -0700
-Message-Id: <20181002132459.731136894@linuxfoundation.org>
+Subject: [PATCH 4.18 012/228] staging: rts5208: fix missing error check on call to rtsx_write_register
+Date:   Tue,  2 Oct 2018 06:21:49 -0700
+Message-Id: <20181002132459.857111955@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -54,48 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 03718db97bfb57535f3aa8110f0cbe0c616a67c0 ]
+[ Upstream commit c5fae4f4fd28189b1062fb8ef7b21fec37cb8b17 ]
 
-The hclgevf_free_vector function expects the caller to pass
-the vector_id to it, and hclgevf_put_vector pass vector to
-it now, which will cause vector allocation problem.
+Currently the check on error return from the call to rtsx_write_register
+is checking the error status from the previous call. Fix this by adding
+in the missing assignment of retval.
 
-This patch fixes it by converting vector into vector_id before
-calling hclgevf_free_vector.
+Detected by CoverityScan, CID#709877
 
-Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: fa590c222fba ("staging: rts5208: add support for rts5208 and rts5288")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/staging/rts5208/sd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -648,8 +648,17 @@ static int hclgevf_unmap_ring_from_vecto
- static int hclgevf_put_vector(struct hnae3_handle *handle, int vector)
- {
- 	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
-+	int vector_id;
+--- a/drivers/staging/rts5208/sd.c
++++ b/drivers/staging/rts5208/sd.c
+@@ -4996,7 +4996,7 @@ int sd_execute_write_data(struct scsi_cm
+ 			goto sd_execute_write_cmd_failed;
+ 		}
  
--	hclgevf_free_vector(hdev, vector);
-+	vector_id = hclgevf_get_vector_index(hdev, vector);
-+	if (vector_id < 0) {
-+		dev_err(&handle->pdev->dev,
-+			"hclgevf_put_vector get vector index fail. ret =%d\n",
-+			vector_id);
-+		return vector_id;
-+	}
-+
-+	hclgevf_free_vector(hdev, vector_id);
- 
- 	return 0;
- }
+-		rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
++		retval = rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
+ 		if (retval != STATUS_SUCCESS) {
+ 			rtsx_trace(chip);
+ 			goto sd_execute_write_cmd_failed;
 
 
