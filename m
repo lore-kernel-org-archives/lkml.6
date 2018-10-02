@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CA9C64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A4BC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 175CB2064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175CB2064D
+	by mail.kernel.org (Postfix) with ESMTP id E750C2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E750C2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732845AbeJBUTN (ORCPT
+        id S1732861AbeJBUTP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:19:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35830 "EHLO
+        Tue, 2 Oct 2018 16:19:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35846 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731920AbeJBUTM (ORCPT
+        with ESMTP id S1731920AbeJBUTO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:12 -0400
+        Tue, 2 Oct 2018 16:19:14 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8FE50B2F;
-        Tue,  2 Oct 2018 13:35:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DEA9C2B;
+        Tue,  2 Oct 2018 13:35:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Mike Christie <mchristi@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Hannes Reinecke <hare@suse.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <jejb@linux.vnet.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 22/94] scsi: target/iscsi: Make iscsit_ta_authentication() respect the output buffer size
-Date:   Tue,  2 Oct 2018 06:24:36 -0700
-Message-Id: <20181002132502.054717330@linuxfoundation.org>
+Subject: [PATCH 4.9 23/94] scsi: klist: Make it safe to use klists in atomic context
+Date:   Tue,  2 Oct 2018 06:24:37 -0700
+Message-Id: <20181002132502.119983124@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -57,32 +55,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bart Van Assche <bart.vanassche@wdc.com>
 
-[ Upstream commit 35bea5c84fd13c643cce63f0b5cd4b148f8c901d ]
+[ Upstream commit 624fa7790f80575a4ec28fbdb2034097dc18d051 ]
 
-Fixes: e48354ce078c ("iscsi-target: Add iSCSI fabric support for target v4.1")
+In the scsi_transport_srp implementation it cannot be avoided to
+iterate over a klist from atomic context when using the legacy block
+layer instead of blk-mq. Hence this patch that makes it safe to use
+klists in atomic context. This patch avoids that lockdep reports the
+following:
+
+WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
+ Possible interrupt unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&(&k->k_lock)->rlock);
+                               local_irq_disable();
+                               lock(&(&q->__queue_lock)->rlock);
+                               lock(&(&k->k_lock)->rlock);
+  <Interrupt>
+    lock(&(&q->__queue_lock)->rlock);
+
+stack backtrace:
+Workqueue: kblockd blk_timeout_work
+Call Trace:
+ dump_stack+0xa4/0xf5
+ check_usage+0x6e6/0x700
+ __lock_acquire+0x185d/0x1b50
+ lock_acquire+0xd2/0x260
+ _raw_spin_lock+0x32/0x50
+ klist_next+0x47/0x190
+ device_for_each_child+0x8e/0x100
+ srp_timed_out+0xaf/0x1d0 [scsi_transport_srp]
+ scsi_times_out+0xd4/0x410 [scsi_mod]
+ blk_rq_timed_out+0x36/0x70
+ blk_timeout_work+0x1b5/0x220
+ process_one_work+0x4fe/0xad0
+ worker_thread+0x63/0x5a0
+ kthread+0x1c1/0x1e0
+ ret_from_fork+0x24/0x30
+
+See also commit c9ddf73476ff ("scsi: scsi_transport_srp: Fix shost to
+rport translation").
+
 Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Reviewed-by: Mike Christie <mchristi@redhat.com>
-Cc: Mike Christie <mchristi@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Hannes Reinecke <hare@suse.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: James Bottomley <jejb@linux.vnet.ibm.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/target/iscsi/iscsi_target_tpg.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ lib/klist.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/target/iscsi/iscsi_target_tpg.c
-+++ b/drivers/target/iscsi/iscsi_target_tpg.c
-@@ -637,8 +637,7 @@ int iscsit_ta_authentication(struct iscs
- 		none = strstr(buf1, NONE);
- 		if (none)
- 			goto out;
--		strncat(buf1, ",", strlen(","));
--		strncat(buf1, NONE, strlen(NONE));
-+		strlcat(buf1, "," NONE, sizeof(buf1));
- 		if (iscsi_update_param_value(param, buf1) < 0)
- 			return -EINVAL;
+--- a/lib/klist.c
++++ b/lib/klist.c
+@@ -336,8 +336,9 @@ struct klist_node *klist_prev(struct kli
+ 	void (*put)(struct klist_node *) = i->i_klist->put;
+ 	struct klist_node *last = i->i_cur;
+ 	struct klist_node *prev;
++	unsigned long flags;
+ 
+-	spin_lock(&i->i_klist->k_lock);
++	spin_lock_irqsave(&i->i_klist->k_lock, flags);
+ 
+ 	if (last) {
+ 		prev = to_klist_node(last->n_node.prev);
+@@ -356,7 +357,7 @@ struct klist_node *klist_prev(struct kli
+ 		prev = to_klist_node(prev->n_node.prev);
  	}
+ 
+-	spin_unlock(&i->i_klist->k_lock);
++	spin_unlock_irqrestore(&i->i_klist->k_lock, flags);
+ 
+ 	if (put && last)
+ 		put(last);
+@@ -377,8 +378,9 @@ struct klist_node *klist_next(struct kli
+ 	void (*put)(struct klist_node *) = i->i_klist->put;
+ 	struct klist_node *last = i->i_cur;
+ 	struct klist_node *next;
++	unsigned long flags;
+ 
+-	spin_lock(&i->i_klist->k_lock);
++	spin_lock_irqsave(&i->i_klist->k_lock, flags);
+ 
+ 	if (last) {
+ 		next = to_klist_node(last->n_node.next);
+@@ -397,7 +399,7 @@ struct klist_node *klist_next(struct kli
+ 		next = to_klist_node(next->n_node.next);
+ 	}
+ 
+-	spin_unlock(&i->i_klist->k_lock);
++	spin_unlock_irqrestore(&i->i_klist->k_lock, flags);
+ 
+ 	if (put && last)
+ 		put(last);
 
 
