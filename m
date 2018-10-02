@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B880C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B98C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33B432089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33B432089A
+	by mail.kernel.org (Postfix) with ESMTP id 2298E2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2298E2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730379AbeJBUNi (ORCPT
+        id S1730393AbeJBUNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:13:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33432 "EHLO
+        Tue, 2 Oct 2018 16:13:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33444 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730338AbeJBUNi (ORCPT
+        with ESMTP id S1730338AbeJBUNj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:13:38 -0400
+        Tue, 2 Oct 2018 16:13:39 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2EE92C2A;
-        Tue,  2 Oct 2018 13:30:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 77BE2C2B;
+        Tue,  2 Oct 2018 13:30:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 181/228] ARM: dts: omap4-droid4: fix vibrations on Droid 4
-Date:   Tue,  2 Oct 2018 06:24:38 -0700
-Message-Id: <20181002132510.675009013@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Lukasz Odzioba <lukasz.odzioba@intel.com>,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.18 164/228] IB/hfi1: Fix context recovery when PBC has an UnsupportedVL
+Date:   Tue,  2 Oct 2018 06:24:21 -0700
+Message-Id: <20181002132509.877079831@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,56 +55,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pavel Machek <pavel@ucw.cz>
+From: Michael J. Ruhl <michael.j.ruhl@intel.com>
 
-[ Upstream commit f4efa74c09a7eddcc12cd13208f78743763f6e7a ]
+commit d623500b3c4efd8d4e945ac9003c6b87b469a9ab upstream.
 
-Vibration GPIOs don't have anything to do with wakeup. Move it to
-normal section; this fixes vibrations on Droid 4.
+If a packet stream uses an UnsupportedVL (virtual lane), the send
+engine will not send the packet, and it will not indicate that an
+error has occurred.  This will cause the packet stream to block.
 
-Fixes: a5effd968301 ("ARM: dts: omap4-droid4: Add vibrator")
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+HFI has 8 virtual lanes available for packet streams.  Each lane can
+be enabled or disabled using the UnsupportedVL mask.  If a lane is
+disabled, adding a packet to the send context must be disallowed.
+
+The current mask for determining unsupported VLs defaults to 0 (allow
+all).  This is incorrect.  Only the VLs that are defined should be
+allowed.
+
+Determine which VLs are disabled (mtu == 0), and set the appropriate
+unsupported bit in the mask.  The correct mask will allow the send
+engine to error on the invalid VL, and error recovery will work
+correctly.
+
+Cc: <stable@vger.kernel.org> # 4.9.x+
+Fixes: 7724105686e7 ("IB/hfi1: add driver files")
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Reviewed-by: Lukasz Odzioba <lukasz.odzioba@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/boot/dts/omap4-droid4-xt894.dts |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
-+++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-@@ -618,15 +618,6 @@
- 		OMAP4_IOPAD(0x10c, PIN_INPUT | MUX_MODE1)	/* abe_mcbsp3_fsx */
- 		>;
- 	};
--};
--
--&omap4_pmx_wkup {
--	usb_gpio_mux_sel2: pinmux_usb_gpio_mux_sel2_pins {
--		/* gpio_wk0 */
--		pinctrl-single,pins = <
--		OMAP4_IOPAD(0x040, PIN_OUTPUT_PULLDOWN | MUX_MODE3)
--		>;
--	};
+---
+ drivers/infiniband/hw/hfi1/pio.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+--- a/drivers/infiniband/hw/hfi1/pio.c
++++ b/drivers/infiniband/hw/hfi1/pio.c
+@@ -86,6 +86,7 @@ void pio_send_control(struct hfi1_devdat
+ 	unsigned long flags;
+ 	int write = 1;	/* write sendctrl back */
+ 	int flush = 0;	/* re-read sendctrl to make sure it is flushed */
++	int i;
  
- 	vibrator_direction_pin: pinmux_vibrator_direction_pin {
- 		pinctrl-single,pins = <
-@@ -640,6 +631,15 @@
- 		>;
- 	};
- };
-+
-+&omap4_pmx_wkup {
-+	usb_gpio_mux_sel2: pinmux_usb_gpio_mux_sel2_pins {
-+		/* gpio_wk0 */
-+		pinctrl-single,pins = <
-+		OMAP4_IOPAD(0x040, PIN_OUTPUT_PULLDOWN | MUX_MODE3)
-+		>;
-+	};
-+};
+ 	spin_lock_irqsave(&dd->sendctrl_lock, flags);
  
- /*
-  * As uart1 is wired to mdm6600 with rts and cts, we can use the cts pin for
+@@ -95,9 +96,13 @@ void pio_send_control(struct hfi1_devdat
+ 		reg |= SEND_CTRL_SEND_ENABLE_SMASK;
+ 	/* Fall through */
+ 	case PSC_DATA_VL_ENABLE:
++		mask = 0;
++		for (i = 0; i < ARRAY_SIZE(dd->vld); i++)
++			if (!dd->vld[i].mtu)
++				mask |= BIT_ULL(i);
+ 		/* Disallow sending on VLs not enabled */
+-		mask = (((~0ull) << num_vls) & SEND_CTRL_UNSUPPORTED_VL_MASK) <<
+-				SEND_CTRL_UNSUPPORTED_VL_SHIFT;
++		mask = (mask & SEND_CTRL_UNSUPPORTED_VL_MASK) <<
++			SEND_CTRL_UNSUPPORTED_VL_SHIFT;
+ 		reg = (reg & ~SEND_CTRL_UNSUPPORTED_VL_SMASK) | mask;
+ 		break;
+ 	case PSC_GLOBAL_DISABLE:
 
 
