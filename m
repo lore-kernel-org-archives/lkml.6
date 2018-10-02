@@ -2,132 +2,82 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A24BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A32C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF8662089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:11:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF8662089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 09E3E2089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:12:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qDyTtmOx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09E3E2089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbeJBOwx (ORCPT
+        id S1727719AbeJBOyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:52:53 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:19895 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726943AbeJBOww (ORCPT
+        Tue, 2 Oct 2018 10:54:17 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47130 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbeJBOyR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:52:52 -0400
-X-UUID: a1c347b81b824e7b91a26b3e607bb015-20181002
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 259681089; Tue, 02 Oct 2018 16:10:45 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 2 Oct 2018 16:10:44 +0800
-Received: from mtkslt209.mediatek.inc (10.21.15.96) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 2 Oct 2018 16:10:44 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>
-CC:     Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Cawa Cheng <cawa.cheng@mediatek.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        CK Hu <ck.hu@mediatek.com>, Mao Huang <littlecvr@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        chunhui dai <chunhui.dai@mediatek.com>
-Subject: [PATCH v4 04/11] drm/mediatek: add clock factor for different IC
-Date:   Tue, 2 Oct 2018 16:10:34 +0800
-Message-ID: <20181002081041.32629-5-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.12.5.2.gbdf23ab
-In-Reply-To: <20181002081041.32629-1-bibby.hsieh@mediatek.com>
-References: <20181002081041.32629-1-bibby.hsieh@mediatek.com>
+        Tue, 2 Oct 2018 10:54:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XJGToe+j9/mqvY8OCPGKjl7mFmSBeeVhm+0S97N2Ca4=; b=qDyTtmOxvpmpcmE1+4np13Xbq
+        uhLe9Ip0TUq8aneRHKfsFPTFoI5MK8FKY4JYmu2hNuXFLJ/I/VL0QdXbMX09eXX8rY4XkdgERrj/o
+        wIm7ieiZI9/DhfOfmTyNQXjApnOQlZRVh2cf0RhcNJqoFgNDfLTV2P/ODoX0gzwjL93Ua21o8RitI
+        wOcrXzJxVh3VdIWraeyvM6++q6KqbYZjF8HOeYSuP4zwbxQ5x4k+z/Nfr1/U/UGAAjfEvD2QLDpUE
+        9/hVJ1OQNvvJLKwZblF3b62pDYmNmFBLCKAc/f77mTlJI+ZfeLsu6x+RulrC7lgZNw1V+HcHte24y
+        Ggjh4DvSg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g7Fmq-0003IJ-D4; Tue, 02 Oct 2018 08:12:08 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 017CE2025A358; Tue,  2 Oct 2018 10:12:06 +0200 (CEST)
+Date:   Tue, 2 Oct 2018 10:12:06 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v2 RESEND] trace_uprobe: support reference counter in
+ fd-based uprobe
+Message-ID: <20181002081206.GS3439@hirez.programming.kicks-ass.net>
+References: <20181002053636.1896903-1-songliubraving@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181002053636.1896903-1-songliubraving@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: chunhui dai <chunhui.dai@mediatek.com>
+On Mon, Oct 01, 2018 at 10:36:36PM -0700, Song Liu wrote:
+> Changes v1 -> v2: Fix PMU_FORMAT_ATTR as Peter suggested
+> 
+> This patch enables uprobes with reference counter in fd-based uprobe.
+> Highest 32 bits of perf_event_attr.config is used to stored offset
+> of the reference count (semaphore).
+> 
+> Format information in /sys/bus/event_source/devices/uprobe/format/ is
+> updated to reflect this new feature.
+> 
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> Reviewed-and-tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
 
-different IC has different clock designed in HDMI, the factor for
-calculate clock should be different. Usinng the data in of_node
-to find this factor.
+Works for me,
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_dpi.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index 0ce4b61efaeb..0dbe9345fa2e 100644
---- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -113,6 +113,7 @@ struct mtk_dpi_yc_limit {
- };
- 
- struct mtk_dpi_conf {
-+	unsigned int (*cal_factor)(int clock);
- 	u32 reg_h_fre_con;
- 	bool edge_sel_en;
- };
-@@ -431,15 +432,7 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
- 	unsigned int factor;
- 
- 	/* let pll_rate can fix the valid range of tvdpll (1G~2GHz) */
--
--	if (mode->clock <= 27000)
--		factor = 3 << 4;
--	else if (mode->clock <= 84000)
--		factor = 3 << 3;
--	else if (mode->clock <= 167000)
--		factor = 3 << 2;
--	else
--		factor = 3 << 1;
-+	factor = dpi->conf->cal_factor(mode->clock);
- 	drm_display_mode_to_videomode(mode, &vm);
- 	pll_rate = vm.pixelclock * factor;
- 
-@@ -653,7 +646,20 @@ static const struct component_ops mtk_dpi_component_ops = {
- 	.unbind = mtk_dpi_unbind,
- };
- 
-+static unsigned int mt8173_calculate_factor(int clock)
-+{
-+	if (clock <= 27000)
-+		return 3 << 4;
-+	else if (clock <= 84000)
-+		return 3 << 3;
-+	else if (clock <= 167000)
-+		return 3 << 2;
-+	else
-+		return 3 << 1;
-+}
-+
- static const struct mtk_dpi_conf mt8173_conf = {
-+	.cal_factor = mt8173_calculate_factor,
- 	.reg_h_fre_con = 0xe0,
- };
- 
--- 
-2.12.5.2.gbdf23ab
-
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
