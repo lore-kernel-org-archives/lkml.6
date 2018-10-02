@@ -7,58 +7,62 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0301C64EBC
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E1CC64EBC
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A129C20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B2D320645
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:10:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iRTfzzZh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A129C20645
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S/EGNlSl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B2D320645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbeJCF4N (ORCPT
+        id S1727416AbeJCF4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 01:56:13 -0400
-Received: from mail-ot1-f74.google.com ([209.85.210.74]:42264 "EHLO
-        mail-ot1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725198AbeJCF4N (ORCPT
+        Wed, 3 Oct 2018 01:56:18 -0400
+Received: from mail-io1-f74.google.com ([209.85.166.74]:33695 "EHLO
+        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725198AbeJCF4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 01:56:13 -0400
-Received: by mail-ot1-f74.google.com with SMTP id c21-v6so2556879otf.9
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 16:10:28 -0700 (PDT)
+        Wed, 3 Oct 2018 01:56:18 -0400
+Received: by mail-io1-f74.google.com with SMTP id c5-v6so3856657ioa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 16:10:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=/4s/uGgYRRDfIeiEH/wwc+WLllVoxTTEZLt3OAwHaYQ=;
-        b=iRTfzzZhLJySyCiVpxnlOQ1q0L582tsA1ZgiVeqvQhWGC6xkf+ZX5MEsxWfN7C+DKt
-         0xm/D65XF2yrCkucH7SQKBsDBF+uL99DdW9dV55DB81LKZ78DZTYiR0JbMR9d50wEcN+
-         GL8a5UV2cgNm4FFVH49rorNmlNW07Ldq8S7G8MjxY3xh8pXS/L4sJgJzs/ATnj9YohYO
-         bFXtKY71XSFC/iMvEmH7YItqGMcAWLKNXtJfo0c4wUTeDpmXRLzhhvScmnSV8Vur6YGG
-         mI9C8lHFixuS9j59+2dZgmh4n8wftnqDLf3LM0RaZmeeu8SbXb3HLFtNPsZLS0uVreYt
-         V96g==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=v1/PuiYfXT6aW7CBjL7YO5ci4U91JrGo4Hi2aBBjbu4=;
+        b=S/EGNlSlHqqGdAhWPXDmQyDxYkihn7gQPUQwMqnRb1WP6dwajZH6xi1LmaDtKGqToq
+         R4bdt3FVkjIXX+9DWoCAwoItrTqM6nzDvCV/U4iMAEMzEeJ39Oq0FdT5NeDGg21golNC
+         LsKEUXBN0Q48XjxF8VxwMoLxC3UCym5j7YYIL4xKAp2mxnhGb0Zwf21wzMN8DyT3RBFo
+         WTVC6fLLx7AaoqNEHyF9tK8apI/Zf78iP+cDZ2UCHBUrcbdmGbFK4EvhXQGAKz2XjP/a
+         FIPcIgVPkPfZjV0MlUbryoBikXWn+DQZahdN6u7MJjPm/KsY5zcFXW14hkWqCxh/wLXw
+         vdDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=/4s/uGgYRRDfIeiEH/wwc+WLllVoxTTEZLt3OAwHaYQ=;
-        b=aeSb4+6i2DfwAgUCUK+7TYNY3HobhLEnW3DtcKM7crvlZyiQYH+ctnkEjwlEvRZEek
-         hmDqXFamOlQFskG7HBUpMGeiBINa9PcQeKXt1NhJ6MPCGpTQXhanKZ6VLnANJjMS/vZS
-         cWwflz4SToijAwTwANye1CMh2DMMasBabW5IBoIRWaz9fqNwgJPwGATwC560zxmFeUtn
-         8fsIzTnY4nOUtY+/S75hamXtw8K6Q4m9aiOwL+TdaeXIjczUGTyHOAE1ZdFUMVSE7+MR
-         ItO355kBC5txSuKPc4z16F3bSAG5Isd4o6CChMxpL7anNi8+e4XDihzCG7BpWXO6S2ke
-         gulw==
-X-Gm-Message-State: ABuFfohdxXQzUWssr4tS3stfhXIMOjnhwkOw2/u2eh8B+ap8RyNAeceQ
-        R8XSK08+qtmuEujFWrKUwSR/l/Oc
-X-Google-Smtp-Source: ACcGV62DERduSVLs7n51rroi1x+xysYWU/vIrru1hkfm5C5pp4v19mt4Sy6YfXO2ZIiJvK++ojWTGfWf
-X-Received: by 2002:a9d:339b:: with SMTP id u27-v6mr13724531otc.55.1538521828556;
- Tue, 02 Oct 2018 16:10:28 -0700 (PDT)
-Date:   Tue,  2 Oct 2018 16:10:22 -0700
-Message-Id: <20181002231024.58408-1-rkir@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=v1/PuiYfXT6aW7CBjL7YO5ci4U91JrGo4Hi2aBBjbu4=;
+        b=ThNil7mdk3ycGNgPDRHDCZPmRw+UYVyfaMuFK5fVZ72CP2ygzz1blSMK1jUoLC5zRU
+         ImRTOGbsOqFQBs9FRtCVc5bvLx4b31VuMhkPGWnD3eFRt2K9suNEAF5KWia9Q8c9Ewps
+         eX4PoixNQ0tvGOYwXicDVq7rfd5Q0TURJY+ksrOGA7S+TPk7sNGbZKDS4hW3J6CRrIG6
+         SQi3GYFnJkCibWdzMuUejpgAnEuClBis6l7Qkot6kvnAWo70nhdQn/IkRGN5NdYowL5m
+         1msZJI6Zm0pwIJc2LYpFdn7xYWxHlZ+t1R36MCShXmxtwvb3SMDwNaaz8vSYkmJj5p5l
+         0sVA==
+X-Gm-Message-State: ABuFfoiE76dLq6uOwsMkW1NIhLJ76PQM4kxXIgRpuM/ZllPmWa6YAqNN
+        1OwRxua5rba3d5/eNWH58yNEqGv3
+X-Google-Smtp-Source: ACcGV604VwXqSJggliWS1dPmt9zkVHlBBfco7JiFTHqnEsCNCVlBwEMF1S5XrY0rvceBot+zhk6E5MJt
+X-Received: by 2002:a24:2414:: with SMTP id f20-v6mr16044275ita.0.1538521833179;
+ Tue, 02 Oct 2018 16:10:33 -0700 (PDT)
+Date:   Tue,  2 Oct 2018 16:10:23 -0700
+In-Reply-To: <20181002231024.58408-1-rkir@google.com>
+Message-Id: <20181002231024.58408-2-rkir@google.com>
 Mime-Version: 1.0
+References: <20181002231024.58408-1-rkir@google.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-Subject: [PATCH v2 01/15] platform: goldfish: pipe: Move the file-scope
- goldfish_interrupt_tasklet variable into the driver state
+Subject: [PATCH v2 02/15] platform: goldfish: pipe: Move the file-scope
+ goldfish_pipe_miscdev variable into the driver state
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
@@ -81,84 +85,61 @@ Signed-off-by: Roman Kiryanov <rkir@google.com>
 Changes in v2:
  - Updated the commit message.
 
- drivers/platform/goldfish/goldfish_pipe.c | 24 +++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/platform/goldfish/goldfish_pipe.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index 56665e879e5a..ba9aede17d57 100644
+index ba9aede17d57..8ca709b45e1f 100644
 --- a/drivers/platform/goldfish/goldfish_pipe.c
 +++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -208,6 +208,9 @@ struct goldfish_pipe_dev {
- 	int irq;
- 	int version;
- 	unsigned char __iomem *base;
+@@ -211,6 +211,8 @@ struct goldfish_pipe_dev {
+ 
+ 	/* an irq tasklet to run goldfish_interrupt_task */
+ 	struct tasklet_struct irq_tasklet;
 +
-+	/* an irq tasklet to run goldfish_interrupt_task */
-+	struct tasklet_struct irq_tasklet;
++	struct miscdevice miscdev;
  };
  
  static struct goldfish_pipe_dev goldfish_pipe_dev;
-@@ -582,14 +585,14 @@ static struct goldfish_pipe *signalled_pipes_pop_front(
- 	return pipe;
- }
+@@ -785,11 +787,14 @@ static const struct file_operations goldfish_pipe_fops = {
+ 	.release = goldfish_pipe_release,
+ };
  
--static void goldfish_interrupt_task(unsigned long unused)
-+static void goldfish_interrupt_task(unsigned long dev_addr)
- {
- 	/* Iterate over the signalled pipes and wake them one by one */
-+	struct goldfish_pipe_dev *dev = (struct goldfish_pipe_dev *)dev_addr;
- 	struct goldfish_pipe *pipe;
- 	int wakes;
- 
--	while ((pipe = signalled_pipes_pop_front(&goldfish_pipe_dev, &wakes)) !=
--			NULL) {
-+	while ((pipe = signalled_pipes_pop_front(dev, &wakes)) != NULL) {
- 		if (wakes & PIPE_WAKE_CLOSED) {
- 			pipe->flags = 1 << BIT_CLOSED_ON_HOST;
- 		} else {
-@@ -605,7 +608,6 @@ static void goldfish_interrupt_task(unsigned long unused)
- 		wake_up_interruptible(&pipe->wake_queue);
- 	}
- }
--static DECLARE_TASKLET(goldfish_interrupt_tasklet, goldfish_interrupt_task, 0);
- 
- /*
-  * The general idea of the interrupt handling:
-@@ -648,7 +650,7 @@ static irqreturn_t goldfish_pipe_interrupt(int irq, void *dev_id)
- 
- 	spin_unlock_irqrestore(&dev->lock, flags);
- 
--	tasklet_schedule(&goldfish_interrupt_tasklet);
-+	tasklet_schedule(&dev->irq_tasklet);
- 	return IRQ_HANDLED;
- }
- 
-@@ -800,9 +802,14 @@ static void write_pa_addr(void *addr, void __iomem *portl, void __iomem *porth)
- static int goldfish_pipe_device_init(struct platform_device *pdev)
- {
- 	struct goldfish_pipe_dev *dev = &goldfish_pipe_dev;
--	int err = devm_request_irq(&pdev->dev, dev->irq,
--				goldfish_pipe_interrupt,
--				IRQF_SHARED, "goldfish_pipe", dev);
-+	int err;
+-static struct miscdevice goldfish_pipe_miscdev = {
+-	.minor = MISC_DYNAMIC_MINOR,
+-	.name = "goldfish_pipe",
+-	.fops = &goldfish_pipe_fops,
+-};
++static void init_miscdevice(struct miscdevice *miscdev)
++{
++	memset(miscdev, 0, sizeof(*miscdev));
 +
-+	tasklet_init(&dev->irq_tasklet, &goldfish_interrupt_task,
-+		     (unsigned long)dev);
-+
-+	err = devm_request_irq(&pdev->dev, dev->irq,
-+			       goldfish_pipe_interrupt,
-+			       IRQF_SHARED, "goldfish_pipe", dev);
- 	if (err) {
- 		dev_err(&pdev->dev, "unable to allocate IRQ for v2\n");
++	miscdev->minor = MISC_DYNAMIC_MINOR;
++	miscdev->name = "goldfish_pipe";
++	miscdev->fops = &goldfish_pipe_fops;
++}
+ 
+ static void write_pa_addr(void *addr, void __iomem *portl, void __iomem *porth)
+ {
+@@ -815,7 +820,8 @@ static int goldfish_pipe_device_init(struct platform_device *pdev)
  		return err;
-@@ -854,6 +861,7 @@ static int goldfish_pipe_device_init(struct platform_device *pdev)
+ 	}
+ 
+-	err = misc_register(&goldfish_pipe_miscdev);
++	init_miscdevice(&dev->miscdev);
++	err = misc_register(&dev->miscdev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "unable to register v2 device\n");
+ 		return err;
+@@ -860,7 +866,7 @@ static int goldfish_pipe_device_init(struct platform_device *pdev)
+ 
  static void goldfish_pipe_device_deinit(struct platform_device *pdev)
  {
- 	misc_deregister(&goldfish_pipe_miscdev);
-+	tasklet_kill(&goldfish_pipe_dev.irq_tasklet);
+-	misc_deregister(&goldfish_pipe_miscdev);
++	misc_deregister(&goldfish_pipe_dev.miscdev);
+ 	tasklet_kill(&goldfish_pipe_dev.irq_tasklet);
  	kfree(goldfish_pipe_dev.pipes);
  	free_page((unsigned long)goldfish_pipe_dev.buffers);
- }
 -- 
 2.19.0.605.g01d371f741-goog
 
