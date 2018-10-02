@@ -3,38 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDA7C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 440FCC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFD8C206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFD8C206B2
+	by mail.kernel.org (Postfix) with ESMTP id 09A0C2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09A0C2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbeJBUJ7 (ORCPT
+        id S1727352AbeJBUKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:09:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59854 "EHLO
+        Tue, 2 Oct 2018 16:10:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59882 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeJBUJ5 (ORCPT
+        with ESMTP id S1727233AbeJBUJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:09:57 -0400
+        Tue, 2 Oct 2018 16:09:59 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 34CD0BF0;
-        Tue,  2 Oct 2018 13:26:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68ADBB2F;
+        Tue,  2 Oct 2018 13:26:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 019/228] Bluetooth: Add a new Realtek 8723DE ID 0bda:b009
-Date:   Tue,  2 Oct 2018 06:21:56 -0700
-Message-Id: <20181002132500.367558255@linuxfoundation.org>
+Subject: [PATCH 4.18 020/228] USB: serial: kobil_sct: fix modem-status error handling
+Date:   Tue,  2 Oct 2018 06:21:57 -0700
+Message-Id: <20181002132500.431463254@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,60 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jian-Hong Pan <jian-hong@endlessm.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 45ae68b8cfc25bdbffc11248001c47ab1b76ff6e ]
+[ Upstream commit a420b5d939ee58f1d950f0ea782834056520aeaa ]
 
-Without this patch we cannot turn on the Bluethooth adapter on HP
-14-bs007la.
+Make sure to return -EIO in case of a short modem-status read request.
 
-T:  Bus=01 Lev=02 Prnt=03 Port=00 Cnt=01 Dev#=  4 Spd=12   MxCh= 0
-D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0bda ProdID=b009 Rev= 2.00
-S:  Manufacturer=Realtek
-S:  Product=802.11n WLAN Adapter
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+While at it, split the debug message to not include the (zeroed)
+transfer-buffer content in case of errors.
 
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bluetooth/btusb.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/serial/kobil_sct.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -374,6 +374,7 @@ static const struct usb_device_id blackl
- 	{ USB_DEVICE(0x7392, 0xa611), .driver_info = BTUSB_REALTEK },
+--- a/drivers/usb/serial/kobil_sct.c
++++ b/drivers/usb/serial/kobil_sct.c
+@@ -393,12 +393,20 @@ static int kobil_tiocmget(struct tty_str
+ 			  transfer_buffer_length,
+ 			  KOBIL_TIMEOUT);
  
- 	/* Additional Realtek 8723DE Bluetooth devices */
-+	{ USB_DEVICE(0x0bda, 0xb009), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x2ff8, 0xb011), .driver_info = BTUSB_REALTEK },
+-	dev_dbg(&port->dev, "%s - Send get_status_line_state URB returns: %i. Statusline: %02x\n",
+-		__func__, result, transfer_buffer[0]);
++	dev_dbg(&port->dev, "Send get_status_line_state URB returns: %i\n",
++			result);
++	if (result < 1) {
++		if (result >= 0)
++			result = -EIO;
++		goto out_free;
++	}
++
++	dev_dbg(&port->dev, "Statusline: %02x\n", transfer_buffer[0]);
  
- 	/* Additional Realtek 8821AE Bluetooth devices */
+ 	result = 0;
+ 	if ((transfer_buffer[0] & SUSBCR_GSL_DSR) != 0)
+ 		result = TIOCM_DSR;
++out_free:
+ 	kfree(transfer_buffer);
+ 	return result;
+ }
 
 
