@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D63C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2702C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9023A206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9023A206B2
+	by mail.kernel.org (Postfix) with ESMTP id 8DE87208AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DE87208AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729402AbeJBULw (ORCPT
+        id S1729426AbeJBULx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60992 "EHLO
+        Tue, 2 Oct 2018 16:11:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32774 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729362AbeJBULu (ORCPT
+        with ESMTP id S1728632AbeJBULx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:50 -0400
+        Tue, 2 Oct 2018 16:11:53 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 597EAA67;
-        Tue,  2 Oct 2018 13:28:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DED1266;
+        Tue,  2 Oct 2018 13:28:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        stable@vger.kernel.org,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 111/228] ASoC: rt1305: Use ULL suffixes for 64-bit constants
-Date:   Tue,  2 Oct 2018 06:23:28 -0700
-Message-Id: <20181002132506.908357205@linuxfoundation.org>
+Subject: [PATCH 4.18 112/228] ASoC: rsnd: SSI parent cares SWSP bit
+Date:   Tue,  2 Oct 2018 06:23:29 -0700
+Message-Id: <20181002132506.966345961@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,46 +54,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-[ Upstream commit 4f29b663c08d369fe320a148179996c94cf7d01b ]
+[ Upstream commit 203cdf51f28820bee7893b4be392847418e6f4ec ]
 
-With gcc 4.1.2:
+SSICR has SWSP bit (= Serial WS Polarity) which decides WS pin 1st
+channel polarity (low or hi). This bit shouldn't exchange after running.
 
-    sound/soc/codecs/rt1305.c: In function ‘rt1305_calibrate’:
-    sound/soc/codecs/rt1305.c:1069: warning: integer constant is too large for ‘long’ type
-    sound/soc/codecs/rt1305.c:1086: warning: integer constant is too large for ‘long’ type
+Current SSI "parent" doesn't care SSICR, just controls clock only.
+Because of this behavior, if platform uses SSI0 as playback,
+SSI1 as capture, and if user starts capture -> playback order,
+SSI0 SSICR::SWSP bit exchanged 0 -> 1 during captureing, and it makes
+capture noise.
+This patch cares SSICR on SSI parent, too.
+Special thanks to Yokoyama-san
 
-Add the missing "ULL" suffixes to fix this.
-
-Fixes: 29bc643ddd7efb74 ("ASoC: rt1305: Add RT1305/RT1306 amplifier driver")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reported-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/codecs/rt1305.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/sh/rcar/ssi.c |   32 +++++++++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
 
---- a/sound/soc/codecs/rt1305.c
-+++ b/sound/soc/codecs/rt1305.c
-@@ -1066,7 +1066,7 @@ static void rt1305_calibrate(struct rt13
- 	pr_debug("Left_rhl = 0x%x rh=0x%x rl=0x%x\n", rhl, rh, rl);
- 	pr_info("Left channel %d.%dohm\n", (r0ohm/10), (r0ohm%10));
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -37,6 +37,7 @@
+ #define	CHNL_4		(1 << 22)	/* Channels */
+ #define	CHNL_6		(2 << 22)	/* Channels */
+ #define	CHNL_8		(3 << 22)	/* Channels */
++#define DWL_MASK	(7 << 19)	/* Data Word Length mask */
+ #define	DWL_8		(0 << 19)	/* Data Word Length */
+ #define	DWL_16		(1 << 19)	/* Data Word Length */
+ #define	DWL_18		(2 << 19)	/* Data Word Length */
+@@ -353,21 +354,18 @@ static void rsnd_ssi_config_init(struct
+ 	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
+ 	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
+ 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+-	u32 cr_own;
+-	u32 cr_mode;
+-	u32 wsr;
++	u32 cr_own	= ssi->cr_own;
++	u32 cr_mode	= ssi->cr_mode;
++	u32 wsr		= ssi->wsr;
+ 	int is_tdm;
  
--	r0l = 562949953421312;
-+	r0l = 562949953421312ULL;
- 	if (rhl != 0)
- 		do_div(r0l, rhl);
- 	pr_debug("Left_r0 = 0x%llx\n", r0l);
-@@ -1083,7 +1083,7 @@ static void rt1305_calibrate(struct rt13
- 	pr_debug("Right_rhl = 0x%x rh=0x%x rl=0x%x\n", rhl, rh, rl);
- 	pr_info("Right channel %d.%dohm\n", (r0ohm/10), (r0ohm%10));
+-	if (rsnd_ssi_is_parent(mod, io))
+-		return;
+-
+ 	is_tdm = rsnd_runtime_is_ssi_tdm(io);
  
--	r0r = 562949953421312;
-+	r0r = 562949953421312ULL;
- 	if (rhl != 0)
- 		do_div(r0r, rhl);
- 	pr_debug("Right_r0 = 0x%llx\n", r0r);
+ 	/*
+ 	 * always use 32bit system word.
+ 	 * see also rsnd_ssi_master_clk_enable()
+ 	 */
+-	cr_own = FORCE | SWL_32;
++	cr_own |= FORCE | SWL_32;
+ 
+ 	if (rdai->bit_clk_inv)
+ 		cr_own |= SCKP;
+@@ -377,9 +375,18 @@ static void rsnd_ssi_config_init(struct
+ 		cr_own |= SDTA;
+ 	if (rdai->sys_delay)
+ 		cr_own |= DEL;
++
++	/*
++	 * We shouldn't exchange SWSP after running.
++	 * This means, parent needs to care it.
++	 */
++	if (rsnd_ssi_is_parent(mod, io))
++		goto init_end;
++
+ 	if (rsnd_io_is_play(io))
+ 		cr_own |= TRMD;
+ 
++	cr_own &= ~DWL_MASK;
+ 	switch (snd_pcm_format_width(runtime->format)) {
+ 	case 16:
+ 		cr_own |= DWL_16;
+@@ -406,7 +413,7 @@ static void rsnd_ssi_config_init(struct
+ 		wsr	|= WS_MODE;
+ 		cr_own	|= CHNL_8;
+ 	}
+-
++init_end:
+ 	ssi->cr_own	= cr_own;
+ 	ssi->cr_mode	= cr_mode;
+ 	ssi->wsr	= wsr;
+@@ -465,15 +472,18 @@ static int rsnd_ssi_quit(struct rsnd_mod
+ 		return -EIO;
+ 	}
+ 
+-	if (!rsnd_ssi_is_parent(mod, io))
+-		ssi->cr_own	= 0;
+-
+ 	rsnd_ssi_master_clk_stop(mod, io);
+ 
+ 	rsnd_mod_power_off(mod);
+ 
+ 	ssi->usrcnt--;
+ 
++	if (!ssi->usrcnt) {
++		ssi->cr_own	= 0;
++		ssi->cr_mode	= 0;
++		ssi->wsr	= 0;
++	}
++
+ 	return 0;
+ }
+ 
 
 
