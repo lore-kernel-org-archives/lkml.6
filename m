@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA85C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A357C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2972206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2972206B2
+	by mail.kernel.org (Postfix) with ESMTP id 25A402083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A402083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731340AbeJBUPn (ORCPT
+        id S1731355AbeJBUPq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:15:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34464 "EHLO
+        Tue, 2 Oct 2018 16:15:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34476 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731329AbeJBUPm (ORCPT
+        with ESMTP id S1730304AbeJBUPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:15:42 -0400
+        Tue, 2 Oct 2018 16:15:45 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 399B35AA;
-        Tue,  2 Oct 2018 13:32:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2BAC5AA;
+        Tue,  2 Oct 2018 13:32:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Breno Leitao <leitao@debian.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <jejb@linux.vnet.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 033/137] scsi: klist: Make it safe to use klists in atomic context
-Date:   Tue,  2 Oct 2018 06:23:54 -0700
-Message-Id: <20181002132500.764822155@linuxfoundation.org>
+Subject: [PATCH 4.14 034/137] scsi: ibmvscsi: Improve strings handling
+Date:   Tue,  2 Oct 2018 06:23:55 -0700
+Message-Id: <20181002132500.843310424@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,102 +54,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit 624fa7790f80575a4ec28fbdb2034097dc18d051 ]
+[ Upstream commit 1262dc09dc9ae7bf4ad00b6a2c5ed6a6936bcd10 ]
 
-In the scsi_transport_srp implementation it cannot be avoided to
-iterate over a klist from atomic context when using the legacy block
-layer instead of blk-mq. Hence this patch that makes it safe to use
-klists in atomic context. This patch avoids that lockdep reports the
-following:
+Currently an open firmware property is copied into partition_name variable
+without keeping a room for \0.
 
-WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
- Possible interrupt unsafe locking scenario:
+Later one, this variable (partition_name), which is 97 bytes long, is
+strncpyed into ibmvcsci_host_data->madapter_info->partition_name, which is
+96 bytes long, possibly truncating it 'again' and removing the \0.
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&(&k->k_lock)->rlock);
-                               local_irq_disable();
-                               lock(&(&q->__queue_lock)->rlock);
-                               lock(&(&k->k_lock)->rlock);
-  <Interrupt>
-    lock(&(&q->__queue_lock)->rlock);
+This patch simply decreases the partition name to 96 and just copy using
+strlcpy() which guarantees that the string is \0 terminated. I think there
+is no issue if this there is a truncation in this very first copy, i.e,
+when the open firmware property is read and copied into the driver for the
+very first time;
 
-stack backtrace:
-Workqueue: kblockd blk_timeout_work
-Call Trace:
- dump_stack+0xa4/0xf5
- check_usage+0x6e6/0x700
- __lock_acquire+0x185d/0x1b50
- lock_acquire+0xd2/0x260
- _raw_spin_lock+0x32/0x50
- klist_next+0x47/0x190
- device_for_each_child+0x8e/0x100
- srp_timed_out+0xaf/0x1d0 [scsi_transport_srp]
- scsi_times_out+0xd4/0x410 [scsi_mod]
- blk_rq_timed_out+0x36/0x70
- blk_timeout_work+0x1b5/0x220
- process_one_work+0x4fe/0xad0
- worker_thread+0x63/0x5a0
- kthread+0x1c1/0x1e0
- ret_from_fork+0x24/0x30
+This issue also causes the following warning on GCC 8:
 
-See also commit c9ddf73476ff ("scsi: scsi_transport_srp: Fix shost to
-rport translation").
+	drivers/scsi/ibmvscsi/ibmvscsi.c:281:2: warning:  strncpy  output may be truncated copying 96 bytes from a string of length 96 [-Wstringop-truncation]
+	...
+	inlined from  ibmvscsi_probe  at drivers/scsi/ibmvscsi/ibmvscsi.c:2221:7:
+	drivers/scsi/ibmvscsi/ibmvscsi.c:265:3: warning:  strncpy  specified bound 97 equals destination size [-Wstringop-truncation]
 
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: James Bottomley <jejb@linux.vnet.ibm.com>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Bart Van Assche <bart.vanassche@wdc.com>
+CC: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Acked-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- lib/klist.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/scsi/ibmvscsi/ibmvscsi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/lib/klist.c
-+++ b/lib/klist.c
-@@ -336,8 +336,9 @@ struct klist_node *klist_prev(struct kli
- 	void (*put)(struct klist_node *) = i->i_klist->put;
- 	struct klist_node *last = i->i_cur;
- 	struct klist_node *prev;
-+	unsigned long flags;
+--- a/drivers/scsi/ibmvscsi/ibmvscsi.c
++++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
+@@ -93,7 +93,7 @@ static int max_requests = IBMVSCSI_MAX_R
+ static int max_events = IBMVSCSI_MAX_REQUESTS_DEFAULT + 2;
+ static int fast_fail = 1;
+ static int client_reserve = 1;
+-static char partition_name[97] = "UNKNOWN";
++static char partition_name[96] = "UNKNOWN";
+ static unsigned int partition_number = -1;
+ static LIST_HEAD(ibmvscsi_head);
  
--	spin_lock(&i->i_klist->k_lock);
-+	spin_lock_irqsave(&i->i_klist->k_lock, flags);
+@@ -262,7 +262,7 @@ static void gather_partition_info(void)
  
- 	if (last) {
- 		prev = to_klist_node(last->n_node.prev);
-@@ -356,7 +357,7 @@ struct klist_node *klist_prev(struct kli
- 		prev = to_klist_node(prev->n_node.prev);
- 	}
- 
--	spin_unlock(&i->i_klist->k_lock);
-+	spin_unlock_irqrestore(&i->i_klist->k_lock, flags);
- 
- 	if (put && last)
- 		put(last);
-@@ -377,8 +378,9 @@ struct klist_node *klist_next(struct kli
- 	void (*put)(struct klist_node *) = i->i_klist->put;
- 	struct klist_node *last = i->i_cur;
- 	struct klist_node *next;
-+	unsigned long flags;
- 
--	spin_lock(&i->i_klist->k_lock);
-+	spin_lock_irqsave(&i->i_klist->k_lock, flags);
- 
- 	if (last) {
- 		next = to_klist_node(last->n_node.next);
-@@ -397,7 +399,7 @@ struct klist_node *klist_next(struct kli
- 		next = to_klist_node(next->n_node.next);
- 	}
- 
--	spin_unlock(&i->i_klist->k_lock);
-+	spin_unlock_irqrestore(&i->i_klist->k_lock, flags);
- 
- 	if (put && last)
- 		put(last);
+ 	ppartition_name = of_get_property(of_root, "ibm,partition-name", NULL);
+ 	if (ppartition_name)
+-		strncpy(partition_name, ppartition_name,
++		strlcpy(partition_name, ppartition_name,
+ 				sizeof(partition_name));
+ 	p_number_ptr = of_get_property(of_root, "ibm,partition-no", NULL);
+ 	if (p_number_ptr)
 
 
