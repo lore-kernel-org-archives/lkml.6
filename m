@@ -2,185 +2,126 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E36C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6C3C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 980FD205C9
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:40:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980FD205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D2892083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:44:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GioNp5LJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D2892083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbeJBMWE (ORCPT
+        id S1726693AbeJBM0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 08:22:04 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:58981 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726305AbeJBMWE (ORCPT
+        Tue, 2 Oct 2018 08:26:14 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34294 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbeJBM0O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 08:22:04 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07440893|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03297;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.CyTRBK6_1538458825;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CyTRBK6_1538458825)
-          by smtp.aliyun-inc.com(10.147.41.231);
-          Tue, 02 Oct 2018 13:40:25 +0800
-Date:   Tue, 2 Oct 2018 13:40:25 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, anurup.m@huawei.com,
-        Jonathan.Cameron@huawei.com, will.deacon@arm.com,
-        zhangshaokun@hisilicon.com, jhogan@kernel.org,
-        paul.burton@mips.com, peterz@infradead.org, f.fainelli@gmail.com,
-        arnd@arndb.de, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V9 3/8] clocksource: add C-SKY SMP timer
-Message-ID: <20181002054024.GA12645@guoren>
-References: <cover.1538355281.git.ren_guo@c-sky.com>
- <eee964dd57d12bc630280ab84235b5356799b1fb.1538355281.git.ren_guo@c-sky.com>
- <88e320f2-8cf0-fdb9-c9b0-ee25d7a4d00f@linaro.org>
+        Tue, 2 Oct 2018 08:26:14 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f18-v6so23967plr.1;
+        Mon, 01 Oct 2018 22:44:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=mWIRY+fxZKlf3hZ/+YCd2DIXt8CKPqagyhrO4MqaBQ0=;
+        b=GioNp5LJkIjv+EgYrMlxUMUANrH5LEglfosNscqQ/XikkD6EFEqom6kKegkzMRIWrY
+         V6Pr0fEp7BacMlANjJLO5DquNKWkmO30pzZCs1rfwPS4OqpJg7GfXTgBWeAUMmYbv5dJ
+         rXEF+Mo5OTvHGk5d5owWuHrz2tkzofNY6ABV6zvtxzKA11EvMQyJ7CnSeMe+6ZlWVWGY
+         6/QxbUhqjTIKonBWKQg9f6ftGtvoDbJ7GUmQsaU8pprAmLfQFtkNBN9RbgmtGm0+4A99
+         FuEncHSFyihKZXIkUzsiHGSM4wrBmss0vT7MjZL2V9mU7lBeUfbo/yhqkoXDTg4SQ8gl
+         3wAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=mWIRY+fxZKlf3hZ/+YCd2DIXt8CKPqagyhrO4MqaBQ0=;
+        b=IlUMdN5A+oPQy/Un/tf6sqTpXF+Vulx/fEgJaYXS9VrJ/jRUtGkxcHGe0LqGHRLNm+
+         kolkna787Qq3YPgeh6E2KbO1Yh5msH3HAUsoD1FcnSX6XFRpePfjEIVJPHckUEkkV+uO
+         9x1eg7K/dCjWeUlH01R+QhrUf9rW4s31vEzQheJjK3/Iw/Bak5PiAPG8OBIRRfmx/2kB
+         T4A2mqm+M21xPRvIil6Iw001cNVz3eMhCnLzQ7L+cGU/FIpcg+HjzgYdCmkNH5eifBDE
+         FNaKDHhYirdPJXrtjZ6fb/A6az7w2VhPY85LWzC0A0VGIrlzaDADbu38CWn3R89X1r7v
+         tI7A==
+X-Gm-Message-State: ABuFfoi1IqNQRnS3Bf83sD2QIAUcZZn+SlsEcVEYxOvemIK53Cr80etb
+        HrH2EQhn8PaRo2fcBTlx0JUgdOay
+X-Google-Smtp-Source: ACcGV622hA5z6LCYolUdmyZ6kPepDgNXojBZYiW82UrxpKDZebvpLfBuh+1zVZknesCUTrlxGnYE4A==
+X-Received: by 2002:a63:61d0:: with SMTP id v199-v6mr13220970pgb.242.1538459087798;
+        Mon, 01 Oct 2018 22:44:47 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([49.205.217.11])
+        by smtp.gmail.com with ESMTPSA id o12-v6sm23807765pfh.20.2018.10.01.22.44.45
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 01 Oct 2018 22:44:46 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 11:18:04 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     sathya.prakash@broadcom.com, chaitra.basappa@broadcom.com,
+        suganath-prabu.subramani@broadcom.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, brajeswar.linux@gmail.com
+Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi/mpt3sas: Use dma_pool_zalloc
+Message-ID: <20181002054804.GA11315@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <88e320f2-8cf0-fdb9-c9b0-ee25d7a4d00f@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 11:14:14AM +0200, Daniel Lezcano wrote:
-> On 01/10/2018 03:35, Guo Ren wrote:
-> > This timer is used by SMP system and use mfcr/mtcr instruction
-> > to access the regs.
-> > 
-> > Changelog:
-> >  - Remove #define CPUHP_AP_CSKY_TIMER_STARTING
-> >  - Add CPUHP_AP_CSKY_TIMER_STARTING in cpuhotplug.h
-> >  - Support csky mp timer alpha version.
-> >  - Just use low-counter with 32bit width as clocksource.
-> >  - Coding convention with upstream feed-back.
-> > 
-> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> > ---
-> >  drivers/clocksource/Kconfig        |   8 ++
-> >  drivers/clocksource/Makefile       |   1 +
-> >  drivers/clocksource/csky_mptimer.c | 176 +++++++++++++++++++++++++++++++++++++
-> >  include/linux/cpuhotplug.h         |   1 +
-> >  4 files changed, 186 insertions(+)
-> >  create mode 100644 drivers/clocksource/csky_mptimer.c
-> > 
-> > diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> > index a11f4ba..a28043f 100644
-> > --- a/drivers/clocksource/Kconfig
-> > +++ b/drivers/clocksource/Kconfig
-> > @@ -620,4 +620,12 @@ config RISCV_TIMER
-> >  	  is accessed via both the SBI and the rdcycle instruction.  This is
-> >  	  required for all RISC-V systems.
-> >  
-> > +config CSKY_MPTIMER
-> > +	bool "C-SKY Multi Processor Timer"
-> > +	depends on CSKY
-> > +	select TIMER_OF
-> > +	help
-> > +	  Say yes here to enable C-SKY SMP timer driver used for C-SKY SMP
-> > +	  system.
-> > +
-> >  endmenu
-> 
-> The same rule applies here for COMPILE_TEST.
-Ok
+Replaced dma_pool_alloc + memset with dma_pool_zalloc.
 
-> And please rename the file: timer-mp-csky.c
-Ok
+Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> > +	return (u64) mfcr(PTIM_CCVR);
-> 
-> extra space
-Ok
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 59d7844..d7ef671 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -4516,7 +4516,7 @@ void mpt3sas_base_clear_st(struct MPT3SAS_ADAPTER *ioc,
+ 	i = 0;
+ 	do {
+ 		ioc->reply_post[i].reply_post_free =
+-		    dma_pool_alloc(ioc->reply_post_free_dma_pool,
++		    dma_pool_zalloc(ioc->reply_post_free_dma_pool,
+ 		    GFP_KERNEL,
+ 		    &ioc->reply_post[i].reply_post_free_dma);
+ 		if (!ioc->reply_post[i].reply_post_free) {
+@@ -4525,7 +4525,6 @@ void mpt3sas_base_clear_st(struct MPT3SAS_ADAPTER *ioc,
+ 			ioc->name);
+ 			goto out;
+ 		}
+-		memset(ioc->reply_post[i].reply_post_free, 0, sz);
+ 		dinitprintk(ioc, pr_info(MPT3SAS_FMT
+ 		    "reply post free pool (0x%p): depth(%d),"
+ 		    "element_size(%d), pool_size(%d kB)\n", ioc->name,
+@@ -4852,14 +4851,13 @@ void mpt3sas_base_clear_st(struct MPT3SAS_ADAPTER *ioc,
+ 			ioc->name);
+ 		goto out;
+ 	}
+-	ioc->reply_free = dma_pool_alloc(ioc->reply_free_dma_pool, GFP_KERNEL,
++	ioc->reply_free = dma_pool_zalloc(ioc->reply_free_dma_pool, GFP_KERNEL,
+ 	    &ioc->reply_free_dma);
+ 	if (!ioc->reply_free) {
+ 		pr_err(MPT3SAS_FMT "reply_free pool: dma_pool_alloc failed\n",
+ 			ioc->name);
+ 		goto out;
+ 	}
+-	memset(ioc->reply_free, 0, sz);
+ 	dinitprintk(ioc, pr_info(MPT3SAS_FMT "reply_free pool(0x%p): " \
+ 	    "depth(%d), element_size(%d), pool_size(%d kB)\n", ioc->name,
+ 	    ioc->reply_free, ioc->reply_free_queue_depth, 4, sz/1024));
+-- 
+1.9.1
 
-> 
-> > +}
-> > +
-> > +static u64 clksrc_read(struct clocksource *c)
-> > +{
-> > +	return (u64) mfcr(PTIM_CCVR);
-> 
-> extra space
-Ok
-
-> > +	 */
-> > +
-> 
-> extra line
-Ok
-
-> 
-> > +	for_each_possible_cpu(cpu) {
-> > +		to = per_cpu_ptr(&csky_to, cpu);
-> > +
-> > +		if (cpu == 0) {
-> > +			to->flags	  |= TIMER_OF_IRQ;
-> > +			to->of_irq.handler = timer_interrupt;
-> > +
-> > +			ret = timer_of_init(np, to);
-> > +			if (ret)
-> > +				return ret;
-> > +
-> > +			rate	= timer_of_rate(to);
-> > +			irq	= to->of_irq.irq;
-> > +		} else {
-> > +			ret = timer_of_init(np, to);
-> > +			if (ret)
-> > +				return ret;
-> > +
-> > +			to->of_clk.rate	= rate;
-> > +			to->of_irq.irq	= irq;
-> > +		}
-> > +	}
-> 
-> 
-> Isn't possible to replace this loop which is a bit confusing by:
-> 
->  - no irq flag specified for timer-of
->  - request irq before
-Ok, but I've a bit different :)
- 
-> So we end up with:
-> 
-> 	irq = irq_of_parse_and_map(np, 0);
-> 	if (irq <= 0)
-> 		return -EINVAL;
-		panic();
-I want a panic here. Return will make debug confused and directly tell
-the people where is wrong. It's root-timer for us and it must bootup.
-
-If it's a co-timer, I also think return is good.
-
-> 
-> 	ret = request_irq(irq, csky_timer_interrupt,
-> 			IRQF_TIMER | IRQF_PERCPU,
->                         "csky_mp_timer", &csky_to));
-	ret = request_percpu_irq(irq, csky_timer_interrupt,
-			"csky_mp_timer", &csky_to);
-I'll use request_percpu_irq the same as in timer_of and I've tested it's
-Ok.
-
-> 	if (ret)
-> 		return ret;
-Pls let me panic here.
-
-> 
-> 	for_each_possible_cpu(cpu) {
-> 		to = per_cpu_ptr(&csky_to, cpu);
-> 		ret = timer_of_init(np, to);
-> 		if (ret)
-> 			goto rollback;
-		Pls let me panic here.
-> 	}
-
-Best Regards
- Guo Ren
