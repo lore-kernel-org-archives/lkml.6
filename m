@@ -3,39 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A55C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8E1C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E17206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E17206B2
+	by mail.kernel.org (Postfix) with ESMTP id 023772089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 023772089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732315AbeJBUSC (ORCPT
+        id S1732324AbeJBUSF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:18:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35326 "EHLO
+        Tue, 2 Oct 2018 16:18:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35332 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730846AbeJBUSC (ORCPT
+        with ESMTP id S1730522AbeJBUSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:02 -0400
+        Tue, 2 Oct 2018 16:18:04 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40D9B5AA;
-        Tue,  2 Oct 2018 13:34:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3ABE85AA;
+        Tue,  2 Oct 2018 13:34:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomer Tayar <Tomer.Tayar@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 114/137] qed: Wait for MCP halt and resume commands to take place
-Date:   Tue,  2 Oct 2018 06:25:15 -0700
-Message-Id: <20181002132506.487253236@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        zhong jiang <zhongjiang@huawei.com>
+Subject: [PATCH 4.14 097/137] slub: make ->cpu_partial unsigned int
+Date:   Tue,  2 Oct 2018 06:24:58 -0700
+Message-Id: <20181002132505.287371672@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,107 +57,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomer Tayar <Tomer.Tayar@cavium.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
 
-[ Upstream commit 76271809f49056f079e202bf6513d17b0d6dd34d ]
+commit e5d9998f3e09359b372a037a6ac55ba235d95d57 upstream.
 
-Successive iterations of halting and resuming the management chip (MCP)
-might fail, since currently the driver doesn't wait for these operations to
-actually take place.
-This patch prevents the driver from moving forward before the operations
-are reflected in the state register.
+	/*
+	 * cpu_partial determined the maximum number of objects
+	 * kept in the per cpu partial lists of a processor.
+	 */
 
-Signed-off-by: Tomer Tayar <Tomer.Tayar@cavium.com>
-Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Can't be negative.
+
+Link: http://lkml.kernel.org/r/20180305200730.15812-15-adobriyan@gmail.com
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Acked-by: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/qlogic/qed/qed_mcp.c      |   46 ++++++++++++++++++++-----
- drivers/net/ethernet/qlogic/qed/qed_reg_addr.h |    1 
- 2 files changed, 39 insertions(+), 8 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-@@ -1998,31 +1998,61 @@ qed_mcp_send_drv_version(struct qed_hwfn
- 	return rc;
- }
+---
+ include/linux/slub_def.h |    3 ++-
+ mm/slub.c                |    6 +++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+--- a/include/linux/slub_def.h
++++ b/include/linux/slub_def.h
+@@ -88,7 +88,8 @@ struct kmem_cache {
+ 	int object_size;	/* The size of an object without meta data */
+ 	int offset;		/* Free pointer offset. */
+ #ifdef CONFIG_SLUB_CPU_PARTIAL
+-	int cpu_partial;	/* Number of per cpu partial objects to keep around */
++	/* Number of per cpu partial objects to keep around */
++	unsigned int cpu_partial;
+ #endif
+ 	struct kmem_cache_order_objects oo;
  
-+/* A maximal 100 msec waiting time for the MCP to halt */
-+#define QED_MCP_HALT_SLEEP_MS		10
-+#define QED_MCP_HALT_MAX_RETRIES	10
-+
- int qed_mcp_halt(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1807,7 +1807,7 @@ static void *get_partial_node(struct kme
  {
--	u32 resp = 0, param = 0;
-+	u32 resp = 0, param = 0, cpu_state, cnt = 0;
- 	int rc;
+ 	struct page *page, *page2;
+ 	void *object = NULL;
+-	int available = 0;
++	unsigned int available = 0;
+ 	int objects;
  
- 	rc = qed_mcp_cmd(p_hwfn, p_ptt, DRV_MSG_CODE_MCP_HALT, 0, &resp,
- 			 &param);
--	if (rc)
-+	if (rc) {
- 		DP_ERR(p_hwfn, "MCP response failure, aborting\n");
-+		return rc;
-+	}
- 
--	return rc;
-+	do {
-+		msleep(QED_MCP_HALT_SLEEP_MS);
-+		cpu_state = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_STATE);
-+		if (cpu_state & MCP_REG_CPU_STATE_SOFT_HALTED)
-+			break;
-+	} while (++cnt < QED_MCP_HALT_MAX_RETRIES);
-+
-+	if (cnt == QED_MCP_HALT_MAX_RETRIES) {
-+		DP_NOTICE(p_hwfn,
-+			  "Failed to halt the MCP [CPU_MODE = 0x%08x, CPU_STATE = 0x%08x]\n",
-+			  qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE), cpu_state);
-+		return -EBUSY;
-+	}
-+
-+	return 0;
- }
- 
-+#define QED_MCP_RESUME_SLEEP_MS	10
-+
- int qed_mcp_resume(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ 	/*
+@@ -4942,10 +4942,10 @@ static ssize_t cpu_partial_show(struct k
+ static ssize_t cpu_partial_store(struct kmem_cache *s, const char *buf,
+ 				 size_t length)
  {
--	u32 value, cpu_mode;
-+	u32 cpu_mode, cpu_state;
+-	unsigned long objects;
++	unsigned int objects;
+ 	int err;
  
- 	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_STATE, 0xffffffff);
- 
--	value = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE);
--	value &= ~MCP_REG_CPU_MODE_SOFT_HALT;
--	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_MODE, value);
- 	cpu_mode = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE);
-+	cpu_mode &= ~MCP_REG_CPU_MODE_SOFT_HALT;
-+	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_MODE, cpu_mode);
-+	msleep(QED_MCP_RESUME_SLEEP_MS);
-+	cpu_state = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_STATE);
-+
-+	if (cpu_state & MCP_REG_CPU_STATE_SOFT_HALTED) {
-+		DP_NOTICE(p_hwfn,
-+			  "Failed to resume the MCP [CPU_MODE = 0x%08x, CPU_STATE = 0x%08x]\n",
-+			  cpu_mode, cpu_state);
-+		return -EBUSY;
-+	}
- 
--	return (cpu_mode & MCP_REG_CPU_MODE_SOFT_HALT) ? -EAGAIN : 0;
-+	return 0;
- }
- 
- int qed_mcp_ov_update_current_config(struct qed_hwfn *p_hwfn,
---- a/drivers/net/ethernet/qlogic/qed/qed_reg_addr.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_reg_addr.h
-@@ -554,6 +554,7 @@
- 	0
- #define MCP_REG_CPU_STATE \
- 	0xe05004UL
-+#define MCP_REG_CPU_STATE_SOFT_HALTED	(0x1UL << 10)
- #define MCP_REG_CPU_EVENT_MASK \
- 	0xe05008UL
- #define PGLUE_B_REG_PF_BAR0_SIZE \
+-	err = kstrtoul(buf, 10, &objects);
++	err = kstrtouint(buf, 10, &objects);
+ 	if (err)
+ 		return err;
+ 	if (objects && !kmem_cache_has_cpu_partial(s))
 
 
