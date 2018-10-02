@@ -2,110 +2,118 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E2BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A7EC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B27FE208AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:43:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B27FE208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id EF71F2089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:43:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrZTI+gR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF71F2089A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbeJBNZB (ORCPT
+        id S1726809AbeJBNZT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 09:25:01 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34431 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbeJBNZB (ORCPT
+        Tue, 2 Oct 2018 09:25:19 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34675 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbeJBNZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 09:25:01 -0400
-Received: by mail-lj1-f196.google.com with SMTP id f8-v6so730774ljk.1;
-        Mon, 01 Oct 2018 23:43:20 -0700 (PDT)
+        Tue, 2 Oct 2018 09:25:19 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z4-v6so790377wrb.1;
+        Mon, 01 Oct 2018 23:43:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YgC+jWZtT87HLnwjqo8n4iVhpVAQFMI9z8ZIq7XC9uE=;
+        b=VrZTI+gRSNF+JiAg2SNnod+OBuXhTMR6IB3wW6VZ3RvtJUkFT5myXd9iNCrXoiZn8m
+         haWt05kugtVSpTfiWiQGE2FgjDWIDhE9t7up24i+D3DVcd7KSmgzlxzTdIT+1WyGFAej
+         GgiAXluodCZToSUSTbf8jh+sXsw0F+Y2193412fqmFrBbEG2ZOfQK5NmTBSG+nipQB9j
+         t6i6Tn7RqV7ba77aqQ7L42n8TjVwY4I1Z3vvm8w9+hSuqmAODUX/hOpN7f7IX3/+QGrm
+         p0uTBkN8EyOo9z6gnCtuFKS3VXWT+XKmmelpJi2fOnjQkMLlT1/cCZYrEss1ZBVDn+oK
+         1ueA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eRKxdfWBv5tPuMnMvh/PunIN0rSTzHryEfgPlLpOWeg=;
-        b=iybC+zLcLcQYw3ecCQqtnUrm3FKVjIQ8ZRItA6taPuPQLXZtkFBHE8DbqA3SflQ5Ur
-         kxUBrJFRMLlKoKiNRlxAOGnuQrtFNcL9stgQB4LJdZSZ9NCoArELFAy+9j66/BsauHUT
-         9ak9sLovdXGwS7AiYHxAheKtpDVzh4v2E1YF8R6aZTv4YnfYg4vzLVYp2x/fWCxkknfR
-         +V1K80X8Y8ZgDk8vWP6xWIdpUgACXnSzixTcJhY99Pmmw0CUWc32saOq6aN9bxPuEoVO
-         gTopJ0EuA6rqjRspniA73OItSSCOj+wtlrYW3UHqhMWk4uRTw4BRZQJRvclTo/0NMf7t
-         dwbg==
-X-Gm-Message-State: ABuFfojpczztLKDQyd6lY/ZZlGUDZMwMgxgt/pRKP+TdHJ3hsz5xNixU
-        0xlBJp58z1IFRd1CWpNw5pU=
-X-Google-Smtp-Source: ACcGV62Pb4UJcBdycI66zlcVFNuv4NbeANXHUJ313PDB+llQ1JQe+nUm3Zam38uP8FmxssmxGNrZ/Q==
-X-Received: by 2002:a2e:4702:: with SMTP id u2-v6mr9127605lja.147.1538462599756;
-        Mon, 01 Oct 2018 23:43:19 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id t5-v6sm102050lfg.90.2018.10.01.23.43.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 23:43:19 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 09:43:17 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the regulator tree
-Message-ID: <20181002064317.GD9389@localhost.localdomain>
-References: <20181002130748.61e33ad1@canb.auug.org.au>
- <20181002061644.GC9389@localhost.localdomain>
- <20181002162551.29b8c977@canb.auug.org.au>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YgC+jWZtT87HLnwjqo8n4iVhpVAQFMI9z8ZIq7XC9uE=;
+        b=PTsRBzgASkMZ4ex/X18XqOGFRpRn8747BThNFqwptN/ABRV5CbnoEuoy7e8ZTPCp/r
+         9sRk/Mg1Gg1v3Kfy5PaZTWfj0mRg/wKI9CGdVKhPtGBNOI4NYhduYDTP9Yk4J2eGxeKF
+         Z7C24Ya40wnFkmRNFLcWnUrzwViRs6PbtXDaXU8wUdNVZVSpQEAdVkn/yWTbaTz9J+nw
+         djnx/C5tvE9QAmqts2qYQbmSFvcViLEcZ7cRgauSC7vj4Vq7l2lKy3/x6pc+9WVy3DMx
+         wCjrf2E2WbedkeYjVFjpvlKOrdEqRJrExVAmG8wMR+Bx8TTxMtCjHfYYGJJKmeOfk8PU
+         wtKg==
+X-Gm-Message-State: ABuFfojRw7v2Bqa1i8iJYYwJ9nG2tDjxM7j2UDQmKWZRegcJmX/pHM3H
+        KPUMxHj8CcAFfxJHI6QYO2OkBxRG3vgsewcp+YO7LQ==
+X-Google-Smtp-Source: ACcGV6190fCql76pIvGxuBPM0z5GVJwDR0bPvBDpwccsVo181xKpI2L8cVQY2L7vkggz/U8hPV9g6+RPT94BxLjWyWw=
+X-Received: by 2002:a5d:4292:: with SMTP id k18-v6mr9185490wrq.225.1538462617213;
+ Mon, 01 Oct 2018 23:43:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002162551.29b8c977@canb.auug.org.au>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <CAKv+Gu-ZMR7zEAKv6_2tyD3OqnjVugOzKHzBEXW3pQs5W-SvLw@mail.gmail.com>
+ <20181002033908.324yhwqaohfsq65d@gondor.apana.org.au> <CAHmME9piX1kbUhOBcUKVdecr45EjxuruxYuMTepfXVvRrkVmyg@mail.gmail.com>
+ <CAKv+Gu8fr_qADiTJH05nVWF7Yi3U722nfKJsMaRE9CP3YjNBbg@mail.gmail.com>
+In-Reply-To: <CAKv+Gu8fr_qADiTJH05nVWF7Yi3U722nfKJsMaRE9CP3YjNBbg@mail.gmail.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Tue, 2 Oct 2018 08:43:25 +0200
+Message-ID: <CAFLxGvz3tR4Fy95Zu+-gRfk19HDd_N54QLftisdJJewPWbL3xA@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 00/23] WireGuard: Secure Network Tunnel
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>, ebiggers@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen, Mark & All,
-
-On Tue, Oct 02, 2018 at 04:25:51PM +1000, Stephen Rothwell wrote:
-> On Tue, 2 Oct 2018 09:16:44 +0300 Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> wrote:
+On Tue, Oct 2, 2018 at 8:04 AM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>
+> On 2 October 2018 at 05:45, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> > Hi Herbert,
 > >
-> > On Tue, Oct 02, 2018 at 01:07:48PM +1000, Stephen Rothwell wrote:
-> > > After merging the regulator tree, today's linux-next build (x86_64
-> > > allmodconfig) produced this warning:
-> > > 
-> > > drivers/mfd/rohm-bd718x7.c: In function 'bd718xx_i2c_probe':
-> > > drivers/mfd/rohm-bd718x7.c:101:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-> > >   bd718xx->chip_type = (unsigned int)  
-> > 
-> > I am pretty sure the last patch version corrected this to
-> > +       bd71837->chip_type = (unsigned int)(uintptr_t)
-> > +                               of_device_get_match_data(&i2c->dev);
-> > 
-> > is it possible one of the earlier versions has accidentally been
-> > applied? Should I create patch on top of the last regulator tree or what
-> > is the simplest way fix this?
-> 
-> Sorry, this came from commit
-> 
->   dd2be639f4a9 ("regulator/mfd: bd718xx: rename bd71837/bd71847 common instances")
-> 
-> which is later than the commit I noted.  In this later commit, this happens:
-> 
-> -	bd71837->chip_irq = i2c->irq;
-> -	bd71837->chip_type = (unsigned int)(uintptr_t)
-> +	bd718xx->chip_irq = i2c->irq;
-> +	bd718xx->chip_type = (unsigned int)
->  				of_device_get_match_data(&i2c->dev);
+> > On Tue, Oct 2, 2018 at 5:39 AM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> >> > I would also strongly prefer that all crypto work is taken through
+> >> > Herbert's tree, so we have a coherent view of it before it goes
+> >> > upstream.
+> >>
+> >> I agree.  I don't have any problems with the zinc code living in
+> >> its own git tree.  But any upstream merges should definitely go
+> >> through the crypto tree because the inherent ties between the two
+> >> code-base.
+> >
+> > I can send you pull requests then if there are development cycles when
+> > there are in fact relations between the two trees. I'll update the
+> > commit message describing Zinc to include this.
+> >
+>
+> Can you explain why you it is so important to you that your changes
+> remain outside the crypto tree?
+>
+> Also, I still think the name Zinc (zinc is not crypto/) is needlessly
+> divisive and condescending, and unsaying it (in v2 and up) doesn't
+> really work on the Internet (especially since you are still repeating
+> it in your conference talk.)
 
-Right. So looks like I am still the guilty one then. I've overwritten
-the fix in this rename patch which followed the corrected initial
-support patch. I guess sending incremental patch with fix to regulator
-tree is correct way to go, right? I'll prepare one against Mark's branch
-"origin/topic/bd718xx". Mark, please let me know if you want me to send
-it or if I should do it on top of some other branch.
+I've been following the drama^Wdiscussion on the zinc for a long time now
+and I also think that "zinc" is a misleading name.
+Jason, you seem to hate the existing crypto framework with passion,
+and the name reflects that.
+Since we all agree that the framework can do better and your patches actually
+make it better, please just rename it to something that reflects what
+it is, a base
+framework. I think Ard already suggested "crypto/base/" or "crypto/core/".
 
-Br,
-	Matti Vaittinen
+-- 
+Thanks,
+//richard
