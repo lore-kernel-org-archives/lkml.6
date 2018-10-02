@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28784C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D64C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECACD2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECACD2089A
+	by mail.kernel.org (Postfix) with ESMTP id B0C342083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0C342083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729484AbeJBUw7 (ORCPT
+        id S1729708AbeJBUxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:52:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60708 "EHLO
+        Tue, 2 Oct 2018 16:53:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60670 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729012AbeJBUL0 (ORCPT
+        with ESMTP id S1728964AbeJBULW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:26 -0400
+        Tue, 2 Oct 2018 16:11:22 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7208CC4D;
-        Tue,  2 Oct 2018 13:28:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07FCBC4D;
+        Tue,  2 Oct 2018 13:28:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 091/228] bitfield: fix *_encode_bits()
-Date:   Tue,  2 Oct 2018 06:23:08 -0700
-Message-Id: <20181002132505.510087314@linuxfoundation.org>
+Subject: [PATCH 4.18 080/228] ASoC: qdsp6: qdafe: fix some off by one bugs
+Date:   Tue,  2 Oct 2018 06:22:57 -0700
+Message-Id: <20181002132504.760009438@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -54,56 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Berg <johannes@sipsolutions.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit e7d4a95da86e0b048702765bbdcdc968aaf312e7 ]
+[ Upstream commit c54c1c5ee8e73b7cb752834e52e2129b1dab00bd ]
 
-There's a bug in *_encode_bits() in using ~field_multiplier() for
-the check whether or not the constant value fits into the field,
-this is wrong and clearly ~field_mask() was intended. This was
-triggering for me for both constant and non-constant values.
+The > should be >= or we could read one element beyond the end of the
+port_maps[] array.
 
-Additionally, make this case actually into an compile error.
-Declaring the extern function that will never exist with just a
-warning is pointless as then later we'll just get a link error.
-
-While at it, also fix the indentation in those lines I'm touching.
-
-Finally, as suggested by Andy Shevchenko, add some tests and for
-that introduce also u8 helpers. The tests don't compile without
-the fix, showing that it's necessary.
-
-Fixes: 00b0c9b82663 ("Add primitives for manipulating bitfields both in host- and fixed-endian.")
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 7fa2d70f9766 ("ASoC: qdsp6: q6afe: Add q6afe driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/bitfield.h |    6 +++---
+ sound/soc/qcom/qdsp6/q6afe.c |    6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/include/linux/bitfield.h
-+++ b/include/linux/bitfield.h
-@@ -104,7 +104,7 @@
- 		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
- 	})
+--- a/sound/soc/qcom/qdsp6/q6afe.c
++++ b/sound/soc/qcom/qdsp6/q6afe.c
+@@ -777,7 +777,7 @@ static int q6afe_callback(struct apr_dev
+  */
+ int q6afe_get_port_id(int index)
+ {
+-	if (index < 0 || index > AFE_PORT_MAX)
++	if (index < 0 || index >= AFE_PORT_MAX)
+ 		return -EINVAL;
  
--extern void __compiletime_warning("value doesn't fit into mask")
-+extern void __compiletime_error("value doesn't fit into mask")
- __field_overflow(void);
- extern void __compiletime_error("bad bitfield mask")
- __bad_mask(void);
-@@ -121,8 +121,8 @@ static __always_inline u64 field_mask(u6
- #define ____MAKE_OP(type,base,to,from)					\
- static __always_inline __##type type##_encode_bits(base v, base field)	\
- {									\
--        if (__builtin_constant_p(v) &&	(v & ~field_multiplier(field)))	\
--			    __field_overflow();				\
-+	if (__builtin_constant_p(v) && (v & ~field_mask(field)))	\
-+		__field_overflow();					\
- 	return to((v & field_mask(field)) * field_multiplier(field));	\
- }									\
- static __always_inline __##type type##_replace_bits(__##type old,	\
+ 	return port_maps[index].port_id;
+@@ -1014,7 +1014,7 @@ int q6afe_port_stop(struct q6afe_port *p
+ 
+ 	port_id = port->id;
+ 	index = port->token;
+-	if (index < 0 || index > AFE_PORT_MAX) {
++	if (index < 0 || index >= AFE_PORT_MAX) {
+ 		dev_err(afe->dev, "AFE port index[%d] invalid!\n", index);
+ 		return -EINVAL;
+ 	}
+@@ -1355,7 +1355,7 @@ struct q6afe_port *q6afe_port_get_from_i
+ 	unsigned long flags;
+ 	int cfg_type;
+ 
+-	if (id < 0 || id > AFE_PORT_MAX) {
++	if (id < 0 || id >= AFE_PORT_MAX) {
+ 		dev_err(dev, "AFE port token[%d] invalid!\n", id);
+ 		return ERR_PTR(-EINVAL);
+ 	}
 
 
