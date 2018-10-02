@@ -2,153 +2,170 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9A2C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C0FC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A45822064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:47:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tjader-xyz.20150623.gappssmtp.com header.i=@tjader-xyz.20150623.gappssmtp.com header.b="wyb6dxsJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A45822064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tjader.xyz
+	by mail.kernel.org (Postfix) with ESMTP id 4B03D2064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:47:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B03D2064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbeJBXcD (ORCPT
+        id S1728680AbeJBXcH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 19:32:03 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36762 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727691AbeJBXcD (ORCPT
+        Tue, 2 Oct 2018 19:32:07 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:34163 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728330AbeJBXcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 19:32:03 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c18-v6so2585291otm.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 09:47:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tjader-xyz.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9O0omtGSjzoyL2jCP/bfMQT09AxOFjStMl9Y8N+0pwM=;
-        b=wyb6dxsJcyihIOjbvmMJzcPezz8U6xBuH5Bz+5U2ZWFMFaiVINSNBYTjUhqc/r/YR9
-         Ab4wKwB5frgJaCcW9ntAtoRyhcZVltTnti/7Mfg4IsRbNIxOvPGUT9Y5zbbPANNszDrW
-         orHVU5RcPnaKiuqYyqHTiHM7H8ZnfA1128EjPRStOoUfBXIByv/j4N9o2gf4J9hAtPBw
-         gFY0Gor+d12FansnHsJ0lEH5jFAx9ubZYeUkA7vJA3R32bjYSMN8mtA1JgbIyqAh5WU3
-         5nEkfgrJaQuQh/vqqTENxe/kBShmGJrzUyBAbCBj07IJ9ypOOjyhjf6dbE830SwJHT4e
-         XAZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9O0omtGSjzoyL2jCP/bfMQT09AxOFjStMl9Y8N+0pwM=;
-        b=a/3gRmbFci50bNeAG4O25M4c5aiH/NLsycnaiwLmILlpnyLG7Dw7WdJ9QqL0Osh/YH
-         0lV0/hEzNNWD0SeoOvh/sxXacFAACiZczJ7n1IabEoDi90nvfniVmxMMWnvGVlJ5onLQ
-         qyxza6IacIsoxm3mbguX4JC0anshj9MB7uvUoYguAtXUm6Xf/oSfBgRoLDbrpf4eZvSW
-         lYRfhE/bepRVygUB0y1ACkR/zyX+7ciClc8JE/SY+A8k2xiXRBUNJIRXpllwIazHwUdf
-         py0P9xKhrx+gYpVSFxtYaobhtrTSHZROrNCL3bWlG8ITmRIESPfSLehCtaGT0/rZoL4X
-         lehQ==
-X-Gm-Message-State: ABuFfojcETa2EofkARQsBJZpQ0bk4Bx3hpp8HqgRQavOBXgDqKYv2FSt
-        qaETDrupOdeuzfHeVzAPqkoYlpGRciBM/GyKcI7UEw==
-X-Google-Smtp-Source: ACcGV61/lzitmgsaTs2crm9ku6vA1RHb3j8Neut87LiY7Cw+VMe/kLlI6HwL4V2Mef1ya4H+myEQJHqQjGI1va5F2FM=
-X-Received: by 2002:a9d:22a1:: with SMTP id y30-v6mr9223944ota.127.1538498865315;
- Tue, 02 Oct 2018 09:47:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180919141815.18737-1-rodrigo@tjader.xyz> <20180921142811.h5jraemk565alh3i@flea>
- <CAG7TQgE_KU_cK_4E+NG8Qcw-QB2=C6YoqBYR2svmWxywFyySCw@mail.gmail.com>
- <20180925090139.qbu6tqav5oth7zkw@flea> <CAG7TQgFTsR4pf4jAcWMFoOmiP7AXYqjts60RP2kuJGU44AcQJQ@mail.gmail.com>
- <20180927081711.llmwnvpu73loe5iv@flea> <CAG7TQgGMkvBnNE_WEth8gscKxN3qN8a44mNMWz3QP-2+JKfOzg@mail.gmail.com>
- <20180929154754.abz3byvrufvnf4dq@flea> <CAG7TQgGS7DkLpNVYqfCD-9vMZkeY6r+L-5oXKWef3x-OVbqjtw@mail.gmail.com>
- <20181002131312.soqwybsohdifvso3@flea>
-In-Reply-To: <20181002131312.soqwybsohdifvso3@flea>
-From:   =?UTF-8?Q?Rodrigo_Exterck=C3=B6tter_Tj=C3=A4der?= 
-        <rodrigo@tjader.xyz>
-Date:   Tue, 2 Oct 2018 13:47:33 -0300
-Message-ID: <CAG7TQgHWCJTaM+pFYFq0_8nWg7sA+d0huqu96sjhqZfeHwqbGQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: allwinner: Olimex A64-OLinuXino: enable eMMC.
-To:     maxime.ripard@bootlin.com
-Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Tue, 2 Oct 2018 19:32:04 -0400
+Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MPXxi-1gK7YF2kyY-00MaE3; Tue, 02 Oct 2018 18:47:17 +0200
+Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MPXxi-1gK7YF2kyY-00MaE3; Tue, 02 Oct 2018 18:47:17 +0200
+Subject: Re: [RFC v2 v2 0/1] ns: introduce binfmt_misc namespace
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     Andrei Vagin <avagin@openvz.org>, Dmitry Safonov <dima@arista.com>,
+        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20181002102054.13245-1-laurent@vivier.eu>
+ <1538496810.14607.5.camel@HansenPartnership.com>
+From:   Laurent Vivier <laurent@vivier.eu>
+Openpgp: preference=signencrypt
+Autocrypt: addr=laurent@vivier.eu; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a9997ce3-d63d-44b4-6a2a-09fd207a1550@vivier.eu>
+Date:   Tue, 2 Oct 2018 18:47:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <1538496810.14607.5.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:vyIQSkDYG89Djpn5nynY9BvNOqS8BNuuL/pGxPXGSkVFDflaG8c
+ 1R9IBVLusxFa+Nc17VVdRJ9Zo3fiox6mGpgUE+L0xiJ/d83flBSh4xyYieVZEoDvFOubBsr
+ 9b/FfOKi5hts1UoqOqZ3qM5sircKkOJlJ/govs83K2BLayXUYi185QV8TpvbTjjgb8HegM4
+ C11t+rsX3WLo+otMyfxJA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:F2YMhq6s3sM=:26Yuk9KikPq/Ftl3RYnApA
+ YqGnwJ2jU9w81xK7Juu6X/azpKTwFSLX8hzXahMySoxXEUUazFLA1VbI4UE66vHzfEFYwaA6x
+ u1lJjXRPrqb7eIDUwxxtQfbOj8AHz9ZDZQhIH6TLM0goHUlqcE8G+zxwe2O9iuAgn6y4Vq9z9
+ nx1fhvZuXsoqU84F6Ndpy/bMmWHGbXJ2LSnANrYIALJDIVdlX8za9Oz5N59Fp//DA+05ed7WP
+ eMyFfW8UQaq9E25PNAgrrsknFJBUPEWBjHbzhpZCBCNQ4Q3C1gAulHPBZuAzvhJY3tJuGcdlp
+ alE2Ahy2y+ofBOLihWOa6vnbNbOX5HzbDEVOllzU/Z5ZGpnVSPxTrlGRKleH4lk2ITAfRl5TW
+ jGkXtvUnlzw2yOt/PvA0mWmgZ4D9y/cvWOBmcwODkeJGvFE0VV/LgfjX3dy8MJWaQtny1DJl5
+ 7FgGiA92VVQnqMHZWZLVM/e5LP0sLxSklqSyAaKsjpUeZF7YQDcK3ofCuV6pjpaNHdRJ1JECq
+ 7OUv885pVDsFCJ8JuBb++BTS0VVNbKyoA7GeAwdgk62T8tbzHzPOMs/2hbx3e2rvZK5JNSHJ1
+ IycB19dxZ1BRnoPb7pFTpPpFrpKxEFg4V9Fctlhv7b3O4yTfcXZrJkNCfg4j2rFvNOfZ2ffmI
+ rrNnnS/X5vqTEOBbqpOzqmFWBA4VYMwuSBpUyLKx1TtwifrVluYCk34SKTydM3RPQbk3fnL3a
+ WsN0IsS6PxNK3eFm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 10:13 AM Maxime Ripard <maxime.ripard@bootlin.com> w=
-rote:
->
-> On Sat, Sep 29, 2018 at 01:51:02PM -0300, Rodrigo Exterck=C3=B6tter Tj=C3=
-=A4der wrote:
-> > On Sat, Sep 29, 2018 at 12:47 PM Maxime Ripard
-> > <maxime.ripard@bootlin.com> wrote:
-> > > > We can't even remove a node from a device tree? Removing the WiFi n=
-ode
-> > > > from the current tree would make it correspond to the variant with =
-the
-> > > > least features.
-> > >
-> > > Not really. How pissed would you be if you were a user, had wifi
-> > > running on your board, you upgrade your kernel, and then it's just
-> > > gone? :)
-> >
-> > That would suck, but what about someone who has the board with no wifi
-> > and problems start happening because the wifi is enabled on the device
-> > tree?
->
-> Did that happen or is it a theoretical issue?
+Le 02/10/2018 à 18:13, James Bottomley a écrit :
+> On Tue, 2018-10-02 at 12:20 +0200, Laurent Vivier wrote:
+>> v2: no new namespace, binfmt_misc data are now part of
+>>     the mount namespace
+>>     I put this in mount namespace instead of user namespace
+>>     because the mount namespace is already needed and
+>>     I don't want to force to have the user namespace for that.
+>>     As this is a filesystem, it seems logic to have it here.
+>>
+>> This allows to define a new interpreter for each new container.
+>>
+>> But the main goal is to be able to chroot to a directory
+>> using a binfmt_misc interpreter without being root.
+> 
+> Reading all this, I don't quite understand why this works for me and
+> not for you (I think I get from your explanation that it doesn't work
+> for you, but I might have missed something):
+> 
+> jejb@jarvis:~> uname -m
+> x86_64
+> jejb@jarvis:~> unshare -r -m
+> root@jarvis:~# chroot /home/jejb/containers/aarch64
+> jarvis:/ # uname -m
+> aarch64
+> 
+> Of course to get that to work I have an 'F' entry in
+> /etc/binfmt.d/qemu-aarch64.conf
+> 
 
-Theoretical. I don't know how likely having a non-existant device
-enabled is to cause problems.
+I'd like to configure the interpreter without being root.
 
-> > > > About device tree overlays, I read overlay-notes.txt, but I went
-> > > > looking for an example with "git grep /plugin/ arch" and it came
-> > > > empty. Is this approach not used for other boards?
-> > >
-> > > It is, it's simply not stored in the kernel, but through other third
-> > > party repos.
-> >
-> > So that would mean that it's up to every distro to support the boards
-> > instead of relying on mainline support?
->
-> Distros would have to integrate it either way. One would need to
-> detect and / or ask for the board variant in order to load say the BT
-> stack, or to know if you want to boot from the eMMC or from the SD
-> card.
+As a simple user can run a VM and a full system inside, I'd like to be
+able to start a container/chroot without having to configure something
+at the host level.
 
-Yeah, but now if a bug is found in the device tree it has to be fixed
-once per distro instead of only on mainline.
+For instance, I'd like to provide to "someone" (with no admin rights) a
+tar file with inside an OS environment for a given target and the
+interpreter, and allow him to run the binaries inside just by running a
+simple command (like qemu-system-XXX -hda my.img)
 
-> > > > Does the overlay approach make the device available at boot time? T=
-hat
-> > > > is important for a storage device such as eMMC.
-> > > >
-> > > > I went with the separate dts approach because that's what I saw was
-> > > > done for other similar cases, like Pine64 and Pine64+, OLinuXino-LI=
-ME2
-> > > > and its variant with eMMC, among others.
-> > >
-> > > Yeah, but in all these cases, it was done from day one, not after the
-> > > facts.
-> >
-> > For the LIME2 the dts for the emmc variant was commited two years
-> > after the base LIME2 dts.
-> >
-> > What if instead of keeping the current dt for the least featureful
-> > model we keep it for the most featureful model and create new dts for
-> > the two less featureful models?
->
-> This is a different story though. The LIME2 eMMC variant was created
-> way after the original LIME2, with a separate name.
+It's also interesting for a test purpose: I can test concurrently
+different interpreters for the same target without modifying the target
+root filesystem (with the 'F' flag but on a per directory basis) or the
+host configuration.
 
-What about the idea of keeping the current dt for the most featureful
-variant and creating new dts for the other two?
+Another case is we can't configure qemu-mips/qemu-mipsel (old kernel
+API) and qemu-mipsn32/qemu-mipsne32el (new kernel API) interpreters on
+the same system because they share the same ELF signature (to be honest
+qemu should have only one binary for the old and the new interface and
+dynamically change it according to the ELF binary that is loaded, as it
+is done for ARM).
 
-That would make it so that no one's device stops working and would
-have mailine support for all three devices.
+But if no one thinks it's useful, I don't want to push this more than
+that...
 
-Also, the current device tree doesn't represent any existing device:
-it has wifi on but no emmc. That variation does not exist.
+Thanks,
+Laurent
