@@ -3,102 +3,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C670C64EBD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05452C64EBC
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B3E220652
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:27:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B3E220652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rockbox.org
+	by mail.kernel.org (Postfix) with ESMTP id C75CB20652
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:27:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C75CB20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728599AbeJCEMX (ORCPT
+        id S1728628AbeJCEMZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 00:12:23 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:19904 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725976AbeJCEMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 00:12:22 -0400
-Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id AFE2649571;
-        Tue,  2 Oct 2018 23:26:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id 4tXfhGBJRgZo; Tue,  2 Oct 2018 23:26:57 +0200 (CEST)
-Subject: Re: [PATCH v3] PCI: Reprogram bridge prefetch registers on resume
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Daniel Drake <drake@endlessm.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        nouveau@lists.freedesktop.org, Linux PM <linux-pm@vger.kernel.org>,
-        Peter Wu <peter@lekensteyn.nl>, kherbst@redhat.com,
-        andy.shevchenko@linux.intel.com,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jon Derrick <jonathan.derrick@intel.com>,
-        David Miller <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        netdev <netdev@vger.kernel.org>, nic_swsd@realtek.com,
-        rchang@marvell.com, Linux Kernel <linux-kernel@vger.kernel.org>
-References: <20180913033745.11178-1-drake@endlessm.com>
- <20180918213244.GE13616@bhelgaas-glaptop.roam.corp.google.com>
- <20180927205247.GA18434@bhelgaas-glaptop.roam.corp.google.com>
- <3f8efcd6-7cd2-b41a-d984-28c9e1740d6c@rockbox.org>
- <CAD8Lp47uL3DQTBiVTduO1+Cg8px4CDpv26qVJsgT+RJ4WZx9oA@mail.gmail.com>
- <7b0a5388-5b3a-a6e0-347f-94f87fc2e540@rockbox.org>
- <20181002200350.GC120535@bhelgaas-glaptop.roam.corp.google.com>
-From:   Thomas Martitz <kugel@rockbox.org>
-Organization: Rockbox
-Message-ID: <0b3bc158-b836-7b44-ef09-7c124f479c58@rockbox.org>
-Date:   Tue, 2 Oct 2018 23:26:35 +0200
+        Wed, 3 Oct 2018 00:12:25 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:32777 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727591AbeJCEMY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 00:12:24 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g7SBb-0003Q4-KB; Tue, 02 Oct 2018 23:26:31 +0200
+Date:   Tue, 2 Oct 2018 23:26:30 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dmitry Safonov <0x7f454c46@gmail.com>
+cc:     Andrei Vagin <avagin@virtuozzo.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Dmitry Safonov <dima@arista.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        containers@lists.linux-foundation.org, crml <criu@openvz.org>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [RFC 00/20] ns: Introduce Time Namespace
+In-Reply-To: <CAJwJo6a+WWpAxVAUuYt8TrCF+1a=BdoFQjU9vto0iiUN5vygsA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1810022310360.1435@nanos.tec.linutronix.de>
+References: <20180919205037.9574-1-dima@arista.com> <874lej6nny.fsf@xmission.com> <20180924205119.GA14833@outlook.office365.com> <874leezh8n.fsf@xmission.com> <20180925014150.GA6302@outlook.office365.com> <87zhw4rwiq.fsf@xmission.com>
+ <alpine.DEB.2.21.1809272247270.8118@nanos.tec.linutronix.de> <alpine.DEB.2.21.1809272335430.8118@nanos.tec.linutronix.de> <20181001232033.GA31324@outlook.office365.com> <alpine.DEB.2.21.1810020811290.32062@nanos.tec.linutronix.de>
+ <CAJwJo6a+WWpAxVAUuYt8TrCF+1a=BdoFQjU9vto0iiUN5vygsA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181002200350.GC120535@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 02.10.18 um 22:03 schrieb Bjorn Helgaas:
-> Hi Thomas,
+Dmitry,
+
+On Tue, 2 Oct 2018, Dmitry Safonov wrote:
+> On Tue, 2 Oct 2018 at 07:15, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > I explained that in detail in this thread, but it's not about the initial
+> > setting of clock mono/boot before any timers have been armed.
+> >
+> > It's about setting the offset or clock realtime (via settimeofday) when
+> > timers are already armed. Also having a entirely different time domain,
+> > e.g. separate NTP adjustments, makes that necessary.
 > 
-> On Mon, Oct 01, 2018 at 04:25:06PM +0200, Thomas Martitz wrote:
->> Am 01.10.18 um 06:57 schrieb Daniel Drake:
->>> On Sun, Sep 30, 2018 at 5:07 AM Thomas Martitz <kugel@rockbox.org> wrote:
->>>> The latest iteration does not work on my HP system. The GPU fails to
->>>> power up just like the unpatched kernel.
->>>
->>> That's weird, I would not expect a behaviour change in the latest
->>> patch. pci_restore_config_dword() has some debug messages, could you
->>> please make them visible and show logs again?
->>> Also remind us of the PCI device address of the parent bridge (lspci -vt)
->>
->> I'll follow up with more the requested information on bugzilla
->> (Link: https://bugzilla.kernel.org/show_bug.cgi?id=201069).
->>
->> On a quick re-check, it seems to depend on if I used the eGPU before
->> the initial suspend. If I run glxgears (with DRI_PRIME=1) before suspend it
->> seems fine.
+> It looks like, there is a bit of misunderstanding each other:
+> Andrei was talking about the current RFC version, where we haven't
+> introduced offsets for clock realtime. While Thomas IIUC, is looking
+> how-to expand time namespace over realtime.
+>
+> As CLOCK_REALTIME virtualization raises so many complex questions
+> like a different length of the second or list of realtime timers in ns we
+> haven't added any realization for it.
 > 
-> Does the patch ([1]) make things *worse* compared to v4.19-rc5?
+> It seems like an initial introduction for timens can be expanded after to cover
+> realtime clocks too. While it may seem incomplete, it solves issues for
+> restoring/migration of real-world applications like nodejs, Oracle DB server
+> which fails after being restored if there is a leap in monotonic time.
+
+Well, yes. But you really have to think about the full picture. Just adding
+part of the overall solution right now, just because it can be glued into
+the code easily, is not the best approach IMO as it might result in
+substantial rework of the whole thing sooner than later. I really don't
+want to end up with something which is not extensible and has to be
+supported forever.
+
+Just for the record, the current approach with name space offsets for
+monotonic is also prone to malfunction vs. timers, unless you can prevent
+changing the offset _after_ the namespace has been set up and timers have
+been armed. I admit, that I did not look close enough to verify that.
+
+> While solving the mentioned issues, it doesn't bring overhead.
+> (well, Andy noted that cmp for zero-offsets on vdso can be optimized too,
+> which will be done in v1).
 > 
+> Thomas, thanks much for your input - now we know that we'll need to
+> introduce list for timers in namespace when we'll add realtime clocks.
+> Do you believe that CLOCK_MONOTONIC_SYNC would be an easier
+> concept than offsets per-namespace?
 
-No, certainly not. It does look like a different issue since resuming now
-works at least if I used the eGPU in some way before suspend 
-(DRI_PRIME=1 glxgears seems to be enough, I assume glxinfo would work as 
-well).
+Haven't thought it through. This was just an idea in reaction to Eric's
+question whether setting clock monotonic might be feasible. But yes, it
+might be worth to think about it.
 
-Without the patch resuming the eGPU does not work whatsoever.
+I think you should really define the long term requirements for time
+namespaces and perhaps set some limitations in functionality upfront.
 
-Please ship the patch. I'll hopefully sort this other issue out.
+Thanks,
 
-Best regards.
+	tglx
+
 
