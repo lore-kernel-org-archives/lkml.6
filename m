@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04267C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA75C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C991F206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C991F206B2
+	by mail.kernel.org (Postfix) with ESMTP id C168C2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C168C2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730764AbeJBUOW (ORCPT
+        id S1730780AbeJBUOY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33894 "EHLO
+        Tue, 2 Oct 2018 16:14:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33902 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730732AbeJBUOV (ORCPT
+        with ESMTP id S1730751AbeJBUOW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:21 -0400
+        Tue, 2 Oct 2018 16:14:22 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE069C3F;
-        Tue,  2 Oct 2018 13:30:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E7C5EC2A;
+        Tue,  2 Oct 2018 13:30:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+        Hang Zhou <hang.zhou@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 213/228] Revert "ARM: dts: imx7d: Invert legacy PCI irq mapping"
-Date:   Tue,  2 Oct 2018 06:25:10 -0700
-Message-Id: <20181002132512.062771901@linuxfoundation.org>
+Subject: [PATCH 4.18 214/228] drm/amdgpu: Enable/disable gfx PG feature in rlc safe mode
+Date:   Tue,  2 Oct 2018 06:25:11 -0700
+Message-Id: <20181002132512.112555260@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,47 +52,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Rex Zhu <Rex.Zhu@amd.com>
 
-[ Upstream commit 538d6e9d597584e80514698e24321645debde78f ]
+[ Upstream commit 8ef23364b654d44244400d79988e677e504b21ba ]
 
-This reverts commit 1c86c9dd82f859b474474a7fee0d5195da2c9c1d.
+This is required by gfx hw and can fix the rlc hang when
+do s3 stree test on Cz/St.
 
-That commit followed the reference manual but unfortunately the imx7d
-manual is incorrect.
-
-Tested with ath9k pcie card and confirmed internally.
-
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Acked-by: Lucas Stach <l.stach@pengutronix.de>
-Fixes: 1c86c9dd82f8 ("ARM: dts: imx7d: Invert legacy PCI irq mapping")
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Hang Zhou <hang.zhou@amd.com>
+Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/imx7d.dtsi |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/imx7d.dtsi
-+++ b/arch/arm/boot/dts/imx7d.dtsi
-@@ -125,10 +125,14 @@
- 		interrupt-names = "msi";
- 		#interrupt-cells = <1>;
- 		interrupt-map-mask = <0 0 0 0x7>;
--		interrupt-map = <0 0 0 1 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
--				<0 0 0 2 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
--				<0 0 0 3 &intc GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
--				<0 0 0 4 &intc GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
-+		/*
-+		 * Reference manual lists pci irqs incorrectly
-+		 * Real hardware ordering is same as imx6: D+MSI, C, B, A
-+		 */
-+		interrupt-map = <0 0 0 1 &intc GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+				<0 0 0 2 &intc GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+				<0 0 0 3 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+				<0 0 0 4 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&clks IMX7D_PCIE_CTRL_ROOT_CLK>,
- 			 <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>,
- 			 <&clks IMX7D_PCIE_PHY_ROOT_CLK>;
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+@@ -5614,6 +5614,11 @@ static int gfx_v8_0_set_powergating_stat
+ 	if (amdgpu_sriov_vf(adev))
+ 		return 0;
+ 
++	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
++				AMD_PG_SUPPORT_RLC_SMU_HS |
++				AMD_PG_SUPPORT_CP |
++				AMD_PG_SUPPORT_GFX_DMG))
++		adev->gfx.rlc.funcs->enter_safe_mode(adev);
+ 	switch (adev->asic_type) {
+ 	case CHIP_CARRIZO:
+ 	case CHIP_STONEY:
+@@ -5663,7 +5668,11 @@ static int gfx_v8_0_set_powergating_stat
+ 	default:
+ 		break;
+ 	}
+-
++	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
++				AMD_PG_SUPPORT_RLC_SMU_HS |
++				AMD_PG_SUPPORT_CP |
++				AMD_PG_SUPPORT_GFX_DMG))
++		adev->gfx.rlc.funcs->exit_safe_mode(adev);
+ 	return 0;
+ }
+ 
 
 
