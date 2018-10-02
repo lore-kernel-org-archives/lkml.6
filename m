@@ -2,146 +2,79 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25537C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F0CC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B964620878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:43:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TswmtvV/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B964620878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id ABE442089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:43:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE442089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbeJBQ0E (ORCPT
+        id S1727537AbeJBQ0M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 12:26:04 -0400
-Received: from mail-eopbgr00055.outbound.protection.outlook.com ([40.107.0.55]:64032
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        Tue, 2 Oct 2018 12:26:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33562 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726321AbeJBQ0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 12:26:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NBPNFL4IRLp9ozKvdY7RxFmMv8N4is682pl71zVzACo=;
- b=TswmtvV/RrmaGD+6CwDWk4ZPmTEfdpV3NuFASjgwIB2IlVnOh2gJGt+OEY+n+jH9RJmQIP73muMxi9EE4DCn7UBigRifmPl8wyqmOgXiybgEOHdmjueebvmVO/Vg9VGGMK9Co6VUDX45FY99FiyNkW9CTAFHs7NNPrftOaiB8Zs=
-Received: from HE1PR0401MB2363.eurprd04.prod.outlook.com (10.168.33.8) by
- HE1PR0401MB2508.eurprd04.prod.outlook.com (10.168.147.143) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.25; Tue, 2 Oct 2018 09:43:36 +0000
-Received: from HE1PR0401MB2363.eurprd04.prod.outlook.com
- ([fe80::10fa:841f:d25c:a565]) by HE1PR0401MB2363.eurprd04.prod.outlook.com
- ([fe80::10fa:841f:d25c:a565%10]) with mapi id 15.20.1185.024; Tue, 2 Oct 2018
- 09:43:36 +0000
-From:   Ioana Ciornei <ioana.ciornei@nxp.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "idryomov@gmail.com" <idryomov@gmail.com>,
-        "sage@redhat.com" <sage@redhat.com>,
-        "elder@kernel.org" <elder@kernel.org>,
-        "jth@kernel.org" <jth@kernel.org>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Subject: RE: [PATCH] driver core: device: add BUS_ATTR_WO macro
-Thread-Topic: [PATCH] driver core: device: add BUS_ATTR_WO macro
-Thread-Index: AQHUWZxbI1CVKGkJjk2ecx6zC3HfWaUK4nYAgADLczA=
-Date:   Tue, 2 Oct 2018 09:43:35 +0000
-Message-ID: <HE1PR0401MB236354F325B7A56355068E35E0E80@HE1PR0401MB2363.eurprd04.prod.outlook.com>
-References: <1538407972-9340-1-git-send-email-ioana.ciornei@nxp.com>
- <20181001210804.GA24332@kroah.com>
-In-Reply-To: <20181001210804.GA24332@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ioana.ciornei@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0401MB2508;6:zHoZUcXcF8mkm8RQWZ7rKWbwV2bn8rUUvtOyDReYfog6thQG67c3n6y/gZJt1hkY6berU36TuQmk9BEssgD0xq3CLKy0sLZvyN7X8mXbWZHELlmWaAQLEDrlAgipIM6Lfd5U95cD7VS7b0TLvFon/383rYe9dCw060OE29KIEFSxy6BRNa9idmqZMN9baZUFbMMlZVXu8I7iW05pFKssML+Y7eRAFLgUtfwyYyESGNU/rl7JBDp+84zzsHh1dkmB6Z627VtbR0tkrlw1FJ8tAfo0cmaH2JvrEI3iJoHVZ635/eB3W2u5eigoJeJvQ4TzI0p9XBEXrDIazqvB/cOlWIogtDFWkR6NffeXvJhDGaPA0NgOj+HvBTXXaL9niFSz+tXM9Rxpe7pqRcL09zEmuZYPl+NvAHEi7KJZRC1ybo2ma3Etywd7ykLhufOKi8eUveYiBqajeYS+W9mOFsCf7Q==;5:xa1U1OZQOxUsG2o565Et2ijNyHaOndo955V2yci39DeZGBJpDdcSSonEcNzPJsjIkI5uxJBs8FGCcq9dAQezk2l7P8D/DCNvJG9w3njqjgxsCjCWPah1RpVijn6+4xrWVvlUXjlVoAejKUpLjs+SP9HWBTeiqp1BsWJuYRzIZdI=;7:KjxrDnqymfpUikP91wGrYLb1nYsTM4axiOKWPet9RtOcjNX7B75Y1OXWBtuKUCVEJxPPA81L+sRI6977CWdY9BL5p9O/jlWbKQ1caMdFSd3X0/ISTgDqDt6nLyjlON47CuD+DC4HpAoQhznvypApxSDRnZlcYjQ27D28/MZCbe1l4Wiz1Y+vlZhdqQo+MYTBV2rcLyEZ0kLIQ1ON/8pNbiwA0PGF1FUfoznF51LBipWf+ACoi6WFLKRuP8I1m5QQ
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 51441aed-eaed-4c46-9d3b-08d6284b864d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0401MB2508;
-x-ms-traffictypediagnostic: HE1PR0401MB2508:
-x-microsoft-antispam-prvs: <HE1PR0401MB2508A888110132F1E03C0A89E0E80@HE1PR0401MB2508.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(84791874153150)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:HE1PR0401MB2508;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0401MB2508;
-x-forefront-prvs: 0813C68E65
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(396003)(136003)(346002)(189003)(199004)(86362001)(2900100001)(102836004)(5250100002)(316002)(186003)(26005)(105586002)(106356001)(6506007)(99286004)(478600001)(33656002)(76176011)(14454004)(7696005)(7736002)(966005)(39060400002)(7416002)(74316002)(6246003)(446003)(11346002)(54906003)(305945005)(68736007)(44832011)(486006)(25786009)(476003)(97736004)(53936002)(66066001)(81156014)(8936002)(4326008)(229853002)(5660300001)(6116002)(3846002)(9686003)(6306002)(6436002)(55016002)(256004)(8676002)(2906002)(71200400001)(81166006)(6916009)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0401MB2508;H:HE1PR0401MB2363.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 5FoqNjsn7vBGoeNb3DQlVHeW3V05jKX7J/rhE+bbkeu0NUVElk94KC4I9CV4Y0VjPI4OyeyobFNQyAkH4hwBqfoqZuxXJ5rubvp9bYJvESsCbb2mdFt/2PUogSS2AyS0zyDuDm1s0/LIA5SteHbbtJJrsBp+KUZbjubXCyqARH+xfIrrq85ND70P+pvO6kdo0wnVViPLlmrip1PYDkJrfUkhn7CiUMST+FGt8iSJNL0ltAqtnGfIe7zhu7RDQcYhui3/Z9ywoJ0NbWY8klM6q6KOyrmlEyFLsOO0txPJwOwklcJOHsvIjRdeXjQYlHawk0dq1thi9He7SlIP51JokYh90KoufcsH4oOWHj64sL0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726321AbeJBQ0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 12:26:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 564BCAD25;
+        Tue,  2 Oct 2018 09:43:48 +0000 (UTC)
+Date:   Tue, 2 Oct 2018 11:43:46 +0200
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] eeprom: New ee1004 driver for DDR4 memory
+Message-ID: <20181002114346.4bcf7927@endymion>
+In-Reply-To: <CAMRc=MernxfN-P29HnLUFzAiX-UiFx32ZYZW_v6_BH9dXnfCfw@mail.gmail.com>
+References: <20180226102000.1b76640e@endymion>
+        <CAMRc=MernxfN-P29HnLUFzAiX-UiFx32ZYZW_v6_BH9dXnfCfw@mail.gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51441aed-eaed-4c46-9d3b-08d6284b864d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2018 09:43:35.7739
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0401MB2508
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Add BUS_ATTR_WO macro to make it easier to add attributes without
-> > auditing the mode settings. Also, use the newly added macro where
-> > appropriate.
+On Mon, 26 Feb 2018 14:40:42 +0100, Bartosz Golaszewski wrote:
+> 2018-02-26 10:20 GMT+01:00 Jean Delvare <jdelvare@suse.de>:
+> > The EEPROMs which hold the SPD data on DDR4 memory modules are no
+> > longer standard AT24C02-compatible EEPROMs. They are 512-byte EEPROMs
+> > which use only 1 I2C address for data access. You need to switch
+> > between the lower page and the upper page of data by sending commands
+> > on the SMBus.
 > >
-> > Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> > Signed-off-by: Jean Delvare <jdelvare@suse.de>
 > > ---
-> >  arch/powerpc/platforms/pseries/ibmebus.c | 12 ++++----
-> >  drivers/block/rbd.c                      | 48 ++++++++++++++++--------=
---------
-> >  drivers/scsi/fcoe/fcoe_sysfs.c           |  4 +--
-> >  drivers/scsi/fcoe/fcoe_transport.c       | 10 +++----
-> >  include/linux/device.h                   |  2 ++
-> >  include/scsi/libfcoe.h                   |  8 +++---
-> >  6 files changed, 43 insertions(+), 41 deletions(-)
->=20
-> Nice!  This duplicates a lot of the work I did back in July but have not =
-pushed out
-> very far due to the other things that ended up happening around that time=
-:
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/l=
-og/?h=3Dbus_cleanup=20
->=20
-> As the patch series seen at that link shows, you can do this in more plac=
-es than
-> just what you did here.
->=20
-> Either way, you should break this up into the individual patches, like I =
-did or you
-> can take my patches if you want.  Getting the BUS_ATTR_WO() macro added i=
-s
-> good to do now, and then you can go and hit up all of the different subsy=
-stems
-> that should be converted over to it.
+> >  drivers/misc/eeprom/Kconfig  |   11 +
+> >  drivers/misc/eeprom/Makefile |    1
+> >  drivers/misc/eeprom/ee1004.c |  281 +++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 293 insertions(+)
+> 
+> is there any reason not to use regmap as is done currently in at24? It
+> would spare you a lot of code.
 
-I can of course split my patch into individual ones and resubmit them, but =
-as you already have the entire patch set ready, I feel like we can just pus=
-h those. I looked through your changes and it seems like you covered all th=
-e subsystems. Please let me know if there is something else I should do.
+As it turns out, I don't have the time to look into this. The driver is
+not exactly big, it is functional, and I would hate if someone else
+would duplicate the work just because my driver is not upstream.
 
-My intention here was to first add the _WO attribute so that afterwards I c=
-an add a new bus attribute in the fsl-mc bus.
+So, Greg, can we just get the driver in the kernel tree as is, and if
+anyone really cares about it using regmap, that person will convert the
+driver later?
 
-Ioana
-
->=20
-> thanks,
->=20
-> greg k-h
+Thanks,
+-- 
+Jean Delvare
+SUSE L3 Support
