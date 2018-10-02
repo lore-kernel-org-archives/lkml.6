@@ -3,38 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04846C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28784C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B70852083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B70852083F
+	by mail.kernel.org (Postfix) with ESMTP id ECACD2089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECACD2089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729744AbeJBUwo (ORCPT
+        id S1729484AbeJBUw7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:52:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60738 "EHLO
+        Tue, 2 Oct 2018 16:52:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60708 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729035AbeJBUL3 (ORCPT
+        with ESMTP id S1729012AbeJBUL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:29 -0400
+        Tue, 2 Oct 2018 16:11:26 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CD519266;
-        Tue,  2 Oct 2018 13:28:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7208CC4D;
+        Tue,  2 Oct 2018 13:28:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ethan Tuttle <ethan@ethantuttle.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 094/228] ARM: mvebu: declare asm symbols as character arrays in pmsu.c
-Date:   Tue,  2 Oct 2018 06:23:11 -0700
-Message-Id: <20181002132505.704062789@linuxfoundation.org>
+Subject: [PATCH 4.18 091/228] bitfield: fix *_encode_bits()
+Date:   Tue,  2 Oct 2018 06:23:08 -0700
+Message-Id: <20181002132505.510087314@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,62 +54,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ethan Tuttle <ethan@ethantuttle.com>
+From: Johannes Berg <johannes@sipsolutions.net>
 
-[ Upstream commit d0d378ff451a66e486488eec842e507d28145813 ]
+[ Upstream commit e7d4a95da86e0b048702765bbdcdc968aaf312e7 ]
 
-With CONFIG_FORTIFY_SOURCE, memcpy uses the declared size of operands to
-detect buffer overflows.  If src or dest is declared as a char, attempts to
-copy more than byte will result in a fortify_panic().
+There's a bug in *_encode_bits() in using ~field_multiplier() for
+the check whether or not the constant value fits into the field,
+this is wrong and clearly ~field_mask() was intended. This was
+triggering for me for both constant and non-constant values.
 
-Address this problem in mvebu_setup_boot_addr_wa() by declaring
-mvebu_boot_wa_start and mvebu_boot_wa_end as character arrays.  Also remove
-a couple addressof operators to avoid "arithmetic on pointer to an
-incomplete type" compiler error.
+Additionally, make this case actually into an compile error.
+Declaring the extern function that will never exist with just a
+warning is pointless as then later we'll just get a link error.
 
-See commit 54a7d50b9205 ("x86: mark kprobe templates as character arrays,
-not single characters") for a similar fix.
+While at it, also fix the indentation in those lines I'm touching.
 
-Fixes "detected buffer overflow in memcpy" error during init on some mvebu
-systems (armada-370-xp, armada-375):
+Finally, as suggested by Andy Shevchenko, add some tests and for
+that introduce also u8 helpers. The tests don't compile without
+the fix, showing that it's necessary.
 
-(fortify_panic) from (mvebu_setup_boot_addr_wa+0xb0/0xb4)
-(mvebu_setup_boot_addr_wa) from (mvebu_v7_cpu_pm_init+0x154/0x204)
-(mvebu_v7_cpu_pm_init) from (do_one_initcall+0x7c/0x1a8)
-(do_one_initcall) from (kernel_init_freeable+0x1bc/0x254)
-(kernel_init_freeable) from (kernel_init+0x8/0x114)
-(kernel_init) from (ret_from_fork+0x14/0x2c)
-
-Signed-off-by: Ethan Tuttle <ethan@ethantuttle.com>
-Tested-by: Ethan Tuttle <ethan@ethantuttle.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Fixes: 00b0c9b82663 ("Add primitives for manipulating bitfields both in host- and fixed-endian.")
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-mvebu/pmsu.c |    6 +++---
+ include/linux/bitfield.h |    6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/arm/mach-mvebu/pmsu.c
-+++ b/arch/arm/mach-mvebu/pmsu.c
-@@ -116,8 +116,8 @@ void mvebu_pmsu_set_cpu_boot_addr(int hw
- 		PMSU_BOOT_ADDR_REDIRECT_OFFSET(hw_cpu));
- }
+--- a/include/linux/bitfield.h
++++ b/include/linux/bitfield.h
+@@ -104,7 +104,7 @@
+ 		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
+ 	})
  
--extern unsigned char mvebu_boot_wa_start;
--extern unsigned char mvebu_boot_wa_end;
-+extern unsigned char mvebu_boot_wa_start[];
-+extern unsigned char mvebu_boot_wa_end[];
- 
- /*
-  * This function sets up the boot address workaround needed for SMP
-@@ -130,7 +130,7 @@ int mvebu_setup_boot_addr_wa(unsigned in
- 			     phys_addr_t resume_addr_reg)
- {
- 	void __iomem *sram_virt_base;
--	u32 code_len = &mvebu_boot_wa_end - &mvebu_boot_wa_start;
-+	u32 code_len = mvebu_boot_wa_end - mvebu_boot_wa_start;
- 
- 	mvebu_mbus_del_window(BOOTROM_BASE, BOOTROM_SIZE);
- 	mvebu_mbus_add_window_by_id(crypto_eng_target, crypto_eng_attribute,
+-extern void __compiletime_warning("value doesn't fit into mask")
++extern void __compiletime_error("value doesn't fit into mask")
+ __field_overflow(void);
+ extern void __compiletime_error("bad bitfield mask")
+ __bad_mask(void);
+@@ -121,8 +121,8 @@ static __always_inline u64 field_mask(u6
+ #define ____MAKE_OP(type,base,to,from)					\
+ static __always_inline __##type type##_encode_bits(base v, base field)	\
+ {									\
+-        if (__builtin_constant_p(v) &&	(v & ~field_multiplier(field)))	\
+-			    __field_overflow();				\
++	if (__builtin_constant_p(v) && (v & ~field_mask(field)))	\
++		__field_overflow();					\
+ 	return to((v & field_mask(field)) * field_multiplier(field));	\
+ }									\
+ static __always_inline __##type type##_replace_bits(__##type old,	\
 
 
