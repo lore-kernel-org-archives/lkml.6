@@ -2,665 +2,90 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6989C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D327FC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A3D20684
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:40:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A3D20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 91E2D20684
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:42:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91E2D20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbeJBPW5 (ORCPT
+        id S1726935AbeJBPYi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 11:22:57 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:13379 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726492AbeJBPW4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:22:56 -0400
-X-UUID: ba6038494bfe40edbdf9e1abf02873ee-20181002
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1007046698; Tue, 02 Oct 2018 16:40:41 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 2 Oct 2018 16:40:39 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 2 Oct 2018 16:40:39 +0800
-Message-ID: <1538469639.24335.2.camel@mtksdaap41>
-Subject: Re: [PATCH v4 07/11] drm/mediatek: separate hdmi phy to different
- file
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Cawa Cheng <cawa.cheng@mediatek.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        Mao Huang <littlecvr@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Sascha Hauer" <kernel@pengutronix.de>,
-        chunhui dai <chunhui.dai@mediatek.com>
-Date:   Tue, 2 Oct 2018 16:40:39 +0800
-In-Reply-To: <20181002081041.32629-8-bibby.hsieh@mediatek.com>
-References: <20181002081041.32629-1-bibby.hsieh@mediatek.com>
-         <20181002081041.32629-8-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 2 Oct 2018 11:24:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50274 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726508AbeJBPYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 11:24:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 01B41AD7D;
+        Tue,  2 Oct 2018 08:42:27 +0000 (UTC)
+Date:   Tue, 2 Oct 2018 10:42:25 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Daniel Wang <wonderfly@google.com>
+Cc:     rostedt@goodmis.org, stable@vger.kernel.org,
+        Alexander.Levin@microsoft.com, akpm@linux-foundation.org,
+        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mathieu.desnoyers@efficios.com, mgorman@suse.de, mhocko@kernel.org,
+        pavel@ucw.cz, penguin-kernel@i-love.sakura.ne.jp,
+        peterz@infradead.org, tj@kernel.org, torvalds@linux-foundation.org,
+        vbabka@suse.cz, xiyou.wangcong@gmail.com,
+        Peter Feiner <pfeiner@google.com>
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+Message-ID: <20181002084225.6z2b74qem3mywukx@pathway.suse.cz>
+References: <20180927194601.207765-1-wonderfly@google.com>
+ <20181001152324.72a20bea@gandalf.local.home>
+ <CAJmjG29Jwn_1E5zexcm8eXTG=cTWyEr1gjSfSAS2fueB_V0tfg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 23473B706BCAB2F955E8834E01E9D2108248BB12F2028B8D0FB73CEF47C712962000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJmjG29Jwn_1E5zexcm8eXTG=cTWyEr1gjSfSAS2fueB_V0tfg@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bibby:
-
-On Tue, 2018-10-02 at 16:10 +0800, Bibby Hsieh wrote:
-> From: chunhui dai <chunhui.dai@mediatek.com>
+On Mon 2018-10-01 13:37:30, Daniel Wang wrote:
+> On Mon, Oct 1, 2018 at 12:23 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > > Serial console logs leading up to the deadlock. As can be seen the stack trace
+> > > was incomplete because the printing path hit a timeout.
+> >
+> > I'm fine with having this backported.
 > 
-> Different IC has different phy setting of HDMI.
-> This patch separates the phy hardware relate part for mt8173.
+> Thanks. I can send the cherrypicks your way. Do you recommend that I
+> include the three follow-up fixes though?
 > 
+> c14376de3a1b printk: Wake klogd when passing console_lock owner
+> fd5f7cde1b85 printk: Never set console_may_schedule in console_trylock()
+> c162d5b4338d printk: Hide console waiter logic into helpers
+> dbdda842fe96 printk: Add console owner and waiter logic to load
+> balance console writes
 
-Reviewed-by: CK Hu <ck.hu@mediatek>
+This list looks complete and I am fine with backporting it to 4.14.
 
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/Makefile              |   6 +-
->  drivers/gpu/drm/mediatek/mtk_hdmi.c            |   1 +
->  drivers/gpu/drm/mediatek/mtk_hdmi.h            |   2 +-
->  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 210 +++++++++++++++++++++++++
->  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  54 +++++++
->  drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c | 204 +-----------------------
->  6 files changed, 276 insertions(+), 201 deletions(-)
->  create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
->  create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
-> 
-> diff --git a/drivers/gpu/drm/mediatek/Makefile b/drivers/gpu/drm/mediatek/Makefile
-> index ce83c396a742..61cf0d2ab28a 100644
-> --- a/drivers/gpu/drm/mediatek/Makefile
-> +++ b/drivers/gpu/drm/mediatek/Makefile
-> @@ -1,4 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +
->  mediatek-drm-y := mtk_disp_color.o \
->  		  mtk_disp_ovl.o \
->  		  mtk_disp_rdma.o \
-> @@ -18,6 +19,7 @@ obj-$(CONFIG_DRM_MEDIATEK) += mediatek-drm.o
->  mediatek-drm-hdmi-objs := mtk_cec.o \
->  			  mtk_hdmi.o \
->  			  mtk_hdmi_ddc.o \
-> -			  mtk_mt8173_hdmi_phy.o
-> +			  mtk_mt8173_hdmi_phy.o \
-> +			  mtk_hdmi_phy.o
->  
-> -obj-$(CONFIG_DRM_MEDIATEK_HDMI) += mediatek-drm-hdmi.o
-> +obj-$(CONFIG_DRM_MEDIATEK_HDMI) += mediatek-drm-hdmi.o
-> \ No newline at end of file
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> index 2d45d1dd9554..2ca9f6a64dab 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> @@ -233,6 +233,7 @@ static void mtk_hdmi_hw_vid_black(struct mtk_hdmi *hdmi, bool black)
->  static void mtk_hdmi_hw_make_reg_writable(struct mtk_hdmi *hdmi, bool enable)
->  {
->  	struct arm_smccc_res res;
-> +	struct mtk_hdmi_phy *hdmi_phy = phy_get_drvdata(hdmi->phy);
->  
->  	/*
->  	 * MT8173 HDMI hardware has an output control bit to enable/disable HDMI
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.h b/drivers/gpu/drm/mediatek/mtk_hdmi.h
-> index 6371b3de1ff6..3e9fb8d19802 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.h
-> @@ -13,11 +13,11 @@
->   */
->  #ifndef _MTK_HDMI_CTRL_H
->  #define _MTK_HDMI_CTRL_H
-> +#include "mtk_hdmi_phy.h"
->  
->  struct platform_driver;
->  
->  extern struct platform_driver mtk_cec_driver;
->  extern struct platform_driver mtk_hdmi_ddc_driver;
-> -extern struct platform_driver mtk_hdmi_phy_driver;
->  
->  #endif /* _MTK_HDMI_CTRL_H */
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
-> new file mode 100644
-> index 000000000000..d2dc50db1feb
-> --- /dev/null
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
-> @@ -0,0 +1,210 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + * Author: Jie Qiu <jie.qiu@mediatek.com>
-> + */
-> +
-> +#include "mtk_hdmi_phy.h"
-> +
-> +static int mtk_hdmi_phy_power_on(struct phy *phy);
-> +static int mtk_hdmi_phy_power_off(struct phy *phy);
-> +
-> +static const struct phy_ops mtk_hdmi_phy_dev_ops = {
-> +	.power_on = mtk_hdmi_phy_power_on,
-> +	.power_off = mtk_hdmi_phy_power_off,
-> +	.owner = THIS_MODULE,
-> +};
-> +
-> +void mtk_hdmi_phy_clear_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
-> +			     u32 bits)
-> +{
-> +	void __iomem *reg = hdmi_phy->regs + offset;
-> +	u32 tmp;
-> +
-> +	tmp = readl(reg);
-> +	tmp &= ~bits;
-> +	writel(tmp, reg);
-> +}
-> +
-> +void mtk_hdmi_phy_set_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
-> +			   u32 bits)
-> +{
-> +	void __iomem *reg = hdmi_phy->regs + offset;
-> +	u32 tmp;
-> +
-> +	tmp = readl(reg);
-> +	tmp |= bits;
-> +	writel(tmp, reg);
-> +}
-> +
-> +void mtk_hdmi_phy_mask(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
-> +		       u32 val, u32 mask)
-> +{
-> +	void __iomem *reg = hdmi_phy->regs + offset;
-> +	u32 tmp;
-> +
-> +	tmp = readl(reg);
-> +	tmp = (tmp & ~mask) | (val & mask);
-> +	writel(tmp, reg);
-> +}
-> +
-> +inline struct mtk_hdmi_phy *to_mtk_hdmi_phy(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct mtk_hdmi_phy, pll_hw);
-> +}
-> +
-> +static int mtk_hdmi_phy_power_on(struct phy *phy)
-> +{
-> +	struct mtk_hdmi_phy *hdmi_phy = phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(hdmi_phy->pll);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	hdmi_phy->conf->hdmi_phy_enable_tmds(hdmi_phy);
-> +	return 0;
-> +}
-> +
-> +static int mtk_hdmi_phy_power_off(struct phy *phy)
-> +{
-> +	struct mtk_hdmi_phy *hdmi_phy = phy_get_drvdata(phy);
-> +
-> +	hdmi_phy->conf->hdmi_phy_disable_tmds(hdmi_phy);
-> +	clk_disable_unprepare(hdmi_phy->pll);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops *
-> +mtk_hdmi_phy_dev_get_ops(const struct mtk_hdmi_phy *hdmi_phy)
-> +{
-> +	if (hdmi_phy && hdmi_phy->conf &&
-> +	    hdmi_phy->conf->hdmi_phy_enable_tmds &&
-> +	    hdmi_phy->conf->hdmi_phy_disable_tmds)
-> +		return &mtk_hdmi_phy_dev_ops;
-> +
-> +	dev_err(hdmi_phy->dev, "Failed to get dev ops of phy\n");
-> +		return NULL;
-> +}
-> +
-> +static void mtk_hdmi_phy_clk_get_ops(struct mtk_hdmi_phy *hdmi_phy,
-> +				     const struct clk_ops **ops)
-> +{
-> +	if (hdmi_phy && hdmi_phy->conf && hdmi_phy->conf->hdmi_phy_clk_ops)
-> +		*ops = hdmi_phy->conf->hdmi_phy_clk_ops;
-> +	else
-> +		dev_err(hdmi_phy->dev, "Failed to get clk ops of phy\n");
-> +}
-> +
-> +static int mtk_hdmi_phy_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct mtk_hdmi_phy *hdmi_phy;
-> +	struct resource *mem;
-> +	struct clk *ref_clk;
-> +	const char *ref_clk_name;
-> +	struct clk_init_data clk_init = {
-> +		.num_parents = 1,
-> +		.parent_names = (const char * const *)&ref_clk_name,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
-> +	};
-> +
-> +	struct phy *phy;
-> +	struct phy_provider *phy_provider;
-> +	int ret;
-> +
-> +	hdmi_phy = devm_kzalloc(dev, sizeof(*hdmi_phy), GFP_KERNEL);
-> +	if (!hdmi_phy)
-> +		return -ENOMEM;
-> +
-> +	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	hdmi_phy->regs = devm_ioremap_resource(dev, mem);
-> +	if (IS_ERR(hdmi_phy->regs)) {
-> +		ret = PTR_ERR(hdmi_phy->regs);
-> +		dev_err(dev, "Failed to get memory resource: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ref_clk = devm_clk_get(dev, "pll_ref");
-> +	if (IS_ERR(ref_clk)) {
-> +		ret = PTR_ERR(ref_clk);
-> +		dev_err(&pdev->dev, "Failed to get PLL reference clock: %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +	ref_clk_name = __clk_get_name(ref_clk);
-> +
-> +	ret = of_property_read_string(dev->of_node, "clock-output-names",
-> +				      &clk_init.name);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to read clock-output-names: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	hdmi_phy->dev = dev;
-> +	hdmi_phy->conf =
-> +		(struct mtk_hdmi_phy_conf *)of_device_get_match_data(dev);
-> +	mtk_hdmi_phy_clk_get_ops(hdmi_phy, &clk_init.ops);
-> +	hdmi_phy->pll_hw.init = &clk_init;
-> +	hdmi_phy->pll = devm_clk_register(dev, &hdmi_phy->pll_hw);
-> +	if (IS_ERR(hdmi_phy->pll)) {
-> +		ret = PTR_ERR(hdmi_phy->pll);
-> +		dev_err(dev, "Failed to register PLL: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = of_property_read_u32(dev->of_node, "mediatek,ibias",
-> +				   &hdmi_phy->ibias);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Failed to get ibias: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = of_property_read_u32(dev->of_node, "mediatek,ibias_up",
-> +				   &hdmi_phy->ibias_up);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Failed to get ibias up: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	dev_info(dev, "Using default TX DRV impedance: 4.2k/36\n");
-> +	hdmi_phy->drv_imp_clk = 0x30;
-> +	hdmi_phy->drv_imp_d2 = 0x30;
-> +	hdmi_phy->drv_imp_d1 = 0x30;
-> +	hdmi_phy->drv_imp_d0 = 0x30;
-> +
-> +	phy = devm_phy_create(dev, NULL, mtk_hdmi_phy_dev_get_ops(hdmi_phy));
-> +	if (IS_ERR(phy)) {
-> +		dev_err(dev, "Failed to create HDMI PHY\n");
-> +		return PTR_ERR(phy);
-> +	}
-> +	phy_set_drvdata(phy, hdmi_phy);
-> +
-> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> +	if (IS_ERR(phy_provider)) {
-> +		dev_err(dev, "Failed to register HDMI PHY\n");
-> +		return PTR_ERR(phy_provider);
-> +	}
-> +
-> +	return of_clk_add_provider(dev->of_node, of_clk_src_simple_get,
-> +				   hdmi_phy->pll);
-> +}
-> +
-> +static const struct of_device_id mtk_hdmi_phy_match[] = {
-> +	{ .compatible = "mediatek,mt8173-hdmi-phy",
-> +	  .data = &mtk_hdmi_phy_8173_conf,
-> +	},
-> +	{},
-> +};
-> +
-> +struct platform_driver mtk_hdmi_phy_driver = {
-> +	.probe = mtk_hdmi_phy_probe,
-> +	.driver = {
-> +		.name = "mediatek-hdmi-phy",
-> +		.of_match_table = mtk_hdmi_phy_match,
-> +	},
-> +};
-> +
-> +MODULE_DESCRIPTION("MediaTek HDMI PHY Driver");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
-> new file mode 100644
-> index 000000000000..e346fe319621
-> --- /dev/null
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
-> @@ -0,0 +1,54 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + * Author: Chunhui Dai <chunhui.dai@mediatek.com>
-> + */
-> +
-> +#ifndef _MTK_HDMI_PHY_H
-> +#define _MTK_HDMI_PHY_H
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/types.h>
-> +
-> +struct mtk_hdmi_phy;
-> +
-> +struct mtk_hdmi_phy_conf {
-> +	const struct clk_ops *hdmi_phy_clk_ops;
-> +	void (*hdmi_phy_enable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
-> +	void (*hdmi_phy_disable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
-> +};
-> +
-> +struct mtk_hdmi_phy {
-> +	void __iomem *regs;
-> +	struct device *dev;
-> +	struct mtk_hdmi_phy_conf *conf;
-> +	struct clk *pll;
-> +	struct clk_hw pll_hw;
-> +	unsigned long pll_rate;
-> +	unsigned char drv_imp_clk;
-> +	unsigned char drv_imp_d2;
-> +	unsigned char drv_imp_d1;
-> +	unsigned char drv_imp_d0;
-> +	unsigned int ibias;
-> +	unsigned int ibias_up;
-> +};
-> +
-> +void mtk_hdmi_phy_clear_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
-> +			     u32 bits);
-> +void mtk_hdmi_phy_set_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
-> +			   u32 bits);
-> +void mtk_hdmi_phy_mask(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
-> +		       u32 val, u32 mask);
-> +struct mtk_hdmi_phy *to_mtk_hdmi_phy(struct clk_hw *hw);
-> +
-> +extern struct platform_driver mtk_hdmi_phy_driver;
-> +extern struct mtk_hdmi_phy_conf mtk_hdmi_phy_8173_conf;
-> +
-> +#endif /* _MTK_HDMI_PHY_H */
-> diff --git a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
-> index 51cb9cfb6646..5dea03334042 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
-> @@ -12,15 +12,7 @@
->   * GNU General Public License for more details.
->   */
->  
-> -#include <linux/clk.h>
-> -#include <linux/clk-provider.h>
-> -#include <linux/delay.h>
-> -#include <linux/io.h>
-> -#include <linux/mfd/syscon.h>
-> -#include <linux/module.h>
-> -#include <linux/phy/phy.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/types.h>
-> +#include "mtk_hdmi_phy.h"
->  
->  #define HDMI_CON0		0x00
->  #define RG_HDMITX_PLL_EN		BIT(31)
-> @@ -123,20 +115,6 @@
->  #define RGS_HDMITX_5T1_EDG		(0xf << 4)
->  #define RGS_HDMITX_PLUG_TST		BIT(0)
->  
-> -struct mtk_hdmi_phy {
-> -	void __iomem *regs;
-> -	struct device *dev;
-> -	struct clk *pll;
-> -	struct clk_hw pll_hw;
-> -	unsigned long pll_rate;
-> -	u8 drv_imp_clk;
-> -	u8 drv_imp_d2;
-> -	u8 drv_imp_d1;
-> -	u8 drv_imp_d0;
-> -	u32 ibias;
-> -	u32 ibias_up;
-> -};
-> -
->  static const u8 PREDIV[3][4] = {
->  	{0x0, 0x0, 0x0, 0x0},	/* 27Mhz */
->  	{0x1, 0x1, 0x1, 0x1},	/* 74Mhz */
-> @@ -185,44 +163,6 @@ static const u8 HTPLLBR[3][4] = {
->  	{0x1, 0x2, 0x2, 0x1}	/* 148Mhz */
->  };
->  
-> -static void mtk_hdmi_phy_clear_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
-> -				    u32 bits)
-> -{
-> -	void __iomem *reg = hdmi_phy->regs + offset;
-> -	u32 tmp;
-> -
-> -	tmp = readl(reg);
-> -	tmp &= ~bits;
-> -	writel(tmp, reg);
-> -}
-> -
-> -static void mtk_hdmi_phy_set_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
-> -				  u32 bits)
-> -{
-> -	void __iomem *reg = hdmi_phy->regs + offset;
-> -	u32 tmp;
-> -
-> -	tmp = readl(reg);
-> -	tmp |= bits;
-> -	writel(tmp, reg);
-> -}
-> -
-> -static void mtk_hdmi_phy_mask(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
-> -			      u32 val, u32 mask)
-> -{
-> -	void __iomem *reg = hdmi_phy->regs + offset;
-> -	u32 tmp;
-> -
-> -	tmp = readl(reg);
-> -	tmp = (tmp & ~mask) | (val & mask);
-> -	writel(tmp, reg);
-> -}
-> -
-> -static inline struct mtk_hdmi_phy *to_mtk_hdmi_phy(struct clk_hw *hw)
-> -{
-> -	return container_of(hw, struct mtk_hdmi_phy, pll_hw);
-> -}
-> -
->  static int mtk_hdmi_pll_prepare(struct clk_hw *hw)
->  {
->  	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_phy(hw);
-> @@ -367,7 +307,7 @@ static unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
->  	return hdmi_phy->pll_rate;
->  }
->  
-> -static const struct clk_ops mtk_hdmi_pll_ops = {
-> +static const struct clk_ops mtk_hdmi_phy_pll_ops = {
->  	.prepare = mtk_hdmi_pll_prepare,
->  	.unprepare = mtk_hdmi_pll_unprepare,
->  	.set_rate = mtk_hdmi_pll_set_rate,
-> @@ -390,142 +330,10 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
->  				RG_HDMITX_SER_EN);
->  }
->  
-> -static int mtk_hdmi_phy_power_on(struct phy *phy)
-> -{
-> -	struct mtk_hdmi_phy *hdmi_phy = phy_get_drvdata(phy);
-> -	int ret;
-> -
-> -	ret = clk_prepare_enable(hdmi_phy->pll);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	mtk_hdmi_phy_enable_tmds(hdmi_phy);
-> -
-> -	return 0;
-> -}
-> -
-> -static int mtk_hdmi_phy_power_off(struct phy *phy)
-> -{
-> -	struct mtk_hdmi_phy *hdmi_phy = phy_get_drvdata(phy);
-> -
-> -	mtk_hdmi_phy_disable_tmds(hdmi_phy);
-> -	clk_disable_unprepare(hdmi_phy->pll);
-> -
-> -	return 0;
-> -}
-> -
-> -static const struct phy_ops mtk_hdmi_phy_ops = {
-> -	.power_on = mtk_hdmi_phy_power_on,
-> -	.power_off = mtk_hdmi_phy_power_off,
-> -	.owner = THIS_MODULE,
-> -};
-> -
-> -static int mtk_hdmi_phy_probe(struct platform_device *pdev)
-> -{
-> -	struct device *dev = &pdev->dev;
-> -	struct mtk_hdmi_phy *hdmi_phy;
-> -	struct resource *mem;
-> -	struct clk *ref_clk;
-> -	const char *ref_clk_name;
-> -	struct clk_init_data clk_init = {
-> -		.ops = &mtk_hdmi_pll_ops,
-> -		.num_parents = 1,
-> -		.parent_names = (const char * const *)&ref_clk_name,
-> -		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
-> -	};
-> -	struct phy *phy;
-> -	struct phy_provider *phy_provider;
-> -	int ret;
-> -
-> -	hdmi_phy = devm_kzalloc(dev, sizeof(*hdmi_phy), GFP_KERNEL);
-> -	if (!hdmi_phy)
-> -		return -ENOMEM;
-> -
-> -	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	hdmi_phy->regs = devm_ioremap_resource(dev, mem);
-> -	if (IS_ERR(hdmi_phy->regs)) {
-> -		ret = PTR_ERR(hdmi_phy->regs);
-> -		dev_err(dev, "Failed to get memory resource: %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	ref_clk = devm_clk_get(dev, "pll_ref");
-> -	if (IS_ERR(ref_clk)) {
-> -		ret = PTR_ERR(ref_clk);
-> -		dev_err(&pdev->dev, "Failed to get PLL reference clock: %d\n",
-> -			ret);
-> -		return ret;
-> -	}
-> -	ref_clk_name = __clk_get_name(ref_clk);
-> -
-> -	ret = of_property_read_string(dev->of_node, "clock-output-names",
-> -				      &clk_init.name);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to read clock-output-names: %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	hdmi_phy->pll_hw.init = &clk_init;
-> -	hdmi_phy->pll = devm_clk_register(dev, &hdmi_phy->pll_hw);
-> -	if (IS_ERR(hdmi_phy->pll)) {
-> -		ret = PTR_ERR(hdmi_phy->pll);
-> -		dev_err(dev, "Failed to register PLL: %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	ret = of_property_read_u32(dev->of_node, "mediatek,ibias",
-> -				   &hdmi_phy->ibias);
-> -	if (ret < 0) {
-> -		dev_err(&pdev->dev, "Failed to get ibias: %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	ret = of_property_read_u32(dev->of_node, "mediatek,ibias_up",
-> -				   &hdmi_phy->ibias_up);
-> -	if (ret < 0) {
-> -		dev_err(&pdev->dev, "Failed to get ibias up: %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	dev_info(dev, "Using default TX DRV impedance: 4.2k/36\n");
-> -	hdmi_phy->drv_imp_clk = 0x30;
-> -	hdmi_phy->drv_imp_d2 = 0x30;
-> -	hdmi_phy->drv_imp_d1 = 0x30;
-> -	hdmi_phy->drv_imp_d0 = 0x30;
-> -
-> -	phy = devm_phy_create(dev, NULL, &mtk_hdmi_phy_ops);
-> -	if (IS_ERR(phy)) {
-> -		dev_err(dev, "Failed to create HDMI PHY\n");
-> -		return PTR_ERR(phy);
-> -	}
-> -	phy_set_drvdata(phy, hdmi_phy);
-> -
-> -	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> -	if (IS_ERR(phy_provider))
-> -		return PTR_ERR(phy_provider);
-> -
-> -	hdmi_phy->dev = dev;
-> -	return of_clk_add_provider(dev->of_node, of_clk_src_simple_get,
-> -				   hdmi_phy->pll);
-> -}
-> -
-> -static int mtk_hdmi_phy_remove(struct platform_device *pdev)
-> -{
-> -	return 0;
-> -}
-> -
-> -static const struct of_device_id mtk_hdmi_phy_match[] = {
-> -	{ .compatible = "mediatek,mt8173-hdmi-phy", },
-> -	{},
-> -};
-> -
-> -struct platform_driver mtk_hdmi_phy_driver = {
-> -	.probe = mtk_hdmi_phy_probe,
-> -	.remove = mtk_hdmi_phy_remove,
-> -	.driver = {
-> -		.name = "mediatek-hdmi-phy",
-> -		.of_match_table = mtk_hdmi_phy_match,
-> -	},
-> +struct mtk_hdmi_phy_conf mtk_hdmi_phy_8173_conf = {
-> +	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
-> +	.hdmi_phy_enable_tmds = mtk_hdmi_phy_enable_tmds,
-> +	.hdmi_phy_disable_tmds = mtk_hdmi_phy_disable_tmds,
->  };
->  
->  MODULE_AUTHOR("Jie Qiu <jie.qiu@mediatek.com>");
+Well, I still wonder why it helped and why you do not see it with 4.4.
+I have a feeling that the console owner switch helped only by chance.
+In fact, you might be affected by a race in
+printk_safe_flush_on_panic() that was fixed by the commit:
 
+554755be08fba31c7 printk: drop in_nmi check from printk_safe_flush_on_panic()
 
+The above one commit might be enough. Well, there was one more
+NMI-related race that was fixed by:
+
+ba552399954dde1b printk: Split the code for storing a message into the log buffer
+a338f84dc196f44b printk: Create helper function to queue deferred console handling
+03fc7f9c99c1e7ae printk/nmi: Prevent deadlock when accessing the main log buffer in NMI
+
+Best Regards,
+Petr
