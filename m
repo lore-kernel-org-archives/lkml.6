@@ -2,114 +2,179 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F87C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF824C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16457206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:18:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16457206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id AE85320652
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:26:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE85320652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbeJBSAw (ORCPT
+        id S1727485AbeJBSJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 14:00:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35072 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727244AbeJBSAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 14:00:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9657E7A9;
-        Tue,  2 Oct 2018 04:18:05 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.emea.arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 735943F5B7;
-        Tue,  2 Oct 2018 04:18:01 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 12:17:58 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Saravana Kannan <skannan@codeaurora.org>
-Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh@kernel.org>, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, rjw@rjwysocki.net,
-        mturquette@baylibre.com, khilman@baylibre.com,
-        vincent.guittot@linaro.org, bjorn.andersson@linaro.org,
-        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, evgreen@chromium.org,
-        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
-        abailon@baylibre.com, maxime.ripard@bootlin.com, arnd@arndb.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v9 2/8] dt-bindings: Introduce interconnect binding
-Message-ID: <20181002111758.GC1086@e107155-lin>
-References: <20180831140151.13972-1-georgi.djakov@linaro.org>
- <20180831140151.13972-3-georgi.djakov@linaro.org>
- <20180925180215.GA12435@bogus>
- <b67253fb-d86d-2ddd-6c30-0833d6ed62ad@linaro.org>
- <20180926144830.GB25838@e107155-lin>
- <fa74c24f-1f22-f11f-60fe-5a4489d9c7c2@codeaurora.org>
+        Tue, 2 Oct 2018 14:09:15 -0400
+Received: from mga05.intel.com ([192.55.52.43]:54189 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727345AbeJBSJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 14:09:14 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 04:26:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,331,1534834800"; 
+   d="scan'208";a="75493044"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga008.fm.intel.com with ESMTP; 02 Oct 2018 04:26:24 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 5817D161; Tue,  2 Oct 2018 14:26:23 +0300 (EEST)
+Date:   Tue, 2 Oct 2018 14:26:23 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCHv3 6/6] mm/gup: Cache dev_pagemap while pinning pages
+Message-ID: <20181002112623.zlxtcclhtslfx3pa@black.fi.intel.com>
+References: <20180921223956.3485-1-keith.busch@intel.com>
+ <20180921223956.3485-7-keith.busch@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fa74c24f-1f22-f11f-60fe-5a4489d9c7c2@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180921223956.3485-7-keith.busch@intel.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 04:49:32PM -0700, Saravana Kannan wrote:
-> On 09/26/2018 07:48 AM, Sudeep Holla wrote:
-> > On Wed, Sep 26, 2018 at 05:42:15PM +0300, Georgi Djakov wrote:
-> > > Hi Rob,
-> > > 
-> > > Thanks for the comments!
-> > > 
-> > > On 09/25/2018 09:02 PM, Rob Herring wrote:
-> > > > On Fri, Aug 31, 2018 at 05:01:45PM +0300, Georgi Djakov wrote:
-> > > > > This binding is intended to represent the relations between the interconnect
-> > > > > controllers (providers) and consumer device nodes. It will allow creating links
-> > > > > between consumers and interconnect paths (exposed by interconnect providers).
-> > > > As I mentioned in person, I want to see other SoC families using this
-> > > > before accepting. They don't have to be ready for upstream, but WIP
-> > > > patches or even just a "yes, this works for us and we're going to use
-> > > > this binding on X".
-> > > Other than the 3 Qualcomm SoCs (msm8916, msm8996, sdm845) that are
-> > > currently using this binding, there is ongoing work from at least two
-> > > other vendors that would be using this same binding. I will check on
-> > > what is their progress so far.
-> > > 
-> > > > Also, I think the QCom GPU use of this should be fully sorted out. Or
-> > > > more generically how this fits into OPP binding which seems to be never
-> > > > ending extended...
-> > > I see this as a further step. It could be OPP binding which include
-> > > bandwidth values or some separate DT property. Jordan has already
-> > > proposed something, do you have any initial comments on that?
-> > I am curious as how this fits into new systems which have firmware driven
-> > CPUFreq and other DVFS. I would like to avoid using this in such systems
-> > and leave it upto the firmware to scale the bus/interconnect based on the
-> > other components that are connected to it and active.
-> > 
+On Fri, Sep 21, 2018 at 10:39:56PM +0000, Keith Busch wrote:
+> Pinning pages from ZONE_DEVICE memory needs to check the backing device's
+> live-ness, which is tracked in the device's dev_pagemap metadata. This
+> metadata is stored in a radix tree and looking it up adds measurable
+> software overhead.
 > 
-> You've made the same point multiple times across different patch sets. Not
-> all FW can do arbitrary functions. A lot of them are very limited in their
-> capabilities. So, as much as you and I would like to let the FW do the work,
-> it's not always possible. So, in those cases, we do need to have support for
-> the kernel scaling the interconnects correctly. Hopefully this clears up
-> your questions about FW capabilities.
+> This patch avoids repeating this relatively costly operation when
+> dev_pagemap is used by caching the last dev_pagemap when getting user
+> pages. The gup_benchmark reports this reduces the time to get user pages
+> to as low as 1/3 of the previous time.
+> 
+> The cached value is combined with other output parameters into a context
+> struct to keep the parameters fewer.
+> 
+> Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
+> ---
 
-Yes, I do understand I have made the same point multiple time and it's
-intentional. We need to get the fragmented f/w support story fixed.
-Different ARM vendors are doing different things in f/w and ARM sees the
-same fragmentation story as before. We have come up with new specification
-and my annoying multiple emails are just to constantly remind the same.
+....
 
-I do understand we have existing implementations to consider, but fixing
-the functionality in arbitrary way is not a good design and it better
-to get them fixed for future.
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index a61ebe8ad4ca..79c80496dd50 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2534,15 +2534,28 @@ static inline vm_fault_t vmf_error(int err)
+>  	return VM_FAULT_SIGBUS;
+>  }
+>  
+> +struct follow_page_context {
+> +	struct dev_pagemap *pgmap;
+> +	unsigned int page_mask;
+> +};
+> +
+>  struct page *follow_page_mask(struct vm_area_struct *vma,
+>  			      unsigned long address, unsigned int foll_flags,
+> -			      unsigned int *page_mask);
+> +			      struct follow_page_context *ctx);
+>  
+>  static inline struct page *follow_page(struct vm_area_struct *vma,
+>  		unsigned long address, unsigned int foll_flags)
+>  {
+> -	unsigned int unused_page_mask;
+> -	return follow_page_mask(vma, address, foll_flags, &unused_page_mask);
+> +	struct page *page;
+> +	struct follow_page_context ctx = {
+> +		.pgmap = NULL,
+> +		.page_mask = 0,
+> +	};
+> +
+> +	page = follow_page_mask(vma, address, foll_flags, &ctx);
+> +	if (ctx.pgmap)
+> +		put_dev_pagemap(ctx.pgmap);
+> +	return page;
+>  }
 
---
-Regards,
-Sudeep
+Do we still want to keep the function as inline? I don't think so.
+Let's move it into mm/gup.c and make struct follow_page_context private to
+the file.
+
+>  
+>  #define FOLL_WRITE	0x01	/* check pte is writable */
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 1abc8b4afff6..124e7293e381 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -71,10 +71,10 @@ static inline bool can_follow_write_pte(pte_t pte, unsigned int flags)
+>  }
+>  
+>  static struct page *follow_page_pte(struct vm_area_struct *vma,
+> -		unsigned long address, pmd_t *pmd, unsigned int flags)
+> +		unsigned long address, pmd_t *pmd, unsigned int flags,
+> +		struct dev_pagemap **pgmap)
+>  {
+>  	struct mm_struct *mm = vma->vm_mm;
+> -	struct dev_pagemap *pgmap = NULL;
+>  	struct page *page;
+>  	spinlock_t *ptl;
+>  	pte_t *ptep, pte;
+> @@ -116,8 +116,8 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+>  		 * Only return device mapping pages in the FOLL_GET case since
+>  		 * they are only valid while holding the pgmap reference.
+>  		 */
+> -		pgmap = get_dev_pagemap(pte_pfn(pte), NULL);
+> -		if (pgmap)
+> +		*pgmap = get_dev_pagemap(pte_pfn(pte), *pgmap);
+> +		if (*pgmap)
+>  			page = pte_page(pte);
+>  		else
+>  			goto no_page;
+
+Hm. Shouldn't get_dev_pagemap() call be under if (!*pgmap)?
+
+... ah, never mind. I've got confused by get_dev_pagemap() interface.
+
+>  static bool vma_permits_fault(struct vm_area_struct *vma,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 533f9b00147d..9839bf91b057 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -851,13 +851,23 @@ static void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
+>  		update_mmu_cache_pmd(vma, addr, pmd);
+>  }
+>  
+> +static struct page *pagemap_page(unsigned long pfn, struct dev_pagemap **pgmap)
+
+The function name doesn't reflect the fact that it takes pin on the page.
+Maybe pagemap_get_page()?
+
+> +{
+> +	struct page *page;
+> +
+> +	*pgmap = get_dev_pagemap(pfn, *pgmap);
+> +	if (!*pgmap)
+> +		return ERR_PTR(-EFAULT);
+> +	page = pfn_to_page(pfn);
+> +	get_page(page);
+> +	return page;
+> +}
+> +
+
+-- 
+ Kirill A. Shutemov
