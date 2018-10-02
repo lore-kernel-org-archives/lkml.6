@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDA0C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4026C64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E88206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E88206B2
+	by mail.kernel.org (Postfix) with ESMTP id 7F36E206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F36E206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730948AbeJBUOk (ORCPT
+        id S1730938AbeJBUOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34054 "EHLO
+        Tue, 2 Oct 2018 16:14:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34044 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730930AbeJBUOj (ORCPT
+        with ESMTP id S1730838AbeJBUOh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:39 -0400
+        Tue, 2 Oct 2018 16:14:37 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5E08DC2B;
-        Tue,  2 Oct 2018 13:31:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4C82FBF0;
+        Tue,  2 Oct 2018 13:31:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
+        Michael Neuling <mikey@neuling.org>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.18 226/228] powerpc: fix csum_ipv6_magic() on little endian platforms
-Date:   Tue,  2 Oct 2018 06:25:23 -0700
-Message-Id: <20181002132512.668266008@linuxfoundation.org>
+Subject: [PATCH 4.18 225/228] KVM: PPC: Book3S HV: Fix guest r11 corruption with POWER9 TM workarounds
+Date:   Tue,  2 Oct 2018 06:25:22 -0700
+Message-Id: <20181002132512.631123118@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,45 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Michael Neuling <mikey@neuling.org>
 
-commit 85682a7e3b9c664995ad477520f917039afdc330 upstream.
+commit f14040bca89258b8a1c71e2112e430462172ce93 upstream.
 
-On little endian platforms, csum_ipv6_magic() keeps len and proto in
-CPU byte order. This generates a bad results leading to ICMPv6 packets
-from other hosts being dropped by powerpc64le platforms.
+When we come into the softpatch handler (0x1500), we use r11 to store
+the HSRR0 for later use by the denorm handler.
 
-In order to fix this, len and proto should be converted to network
-byte order ie bigendian byte order. However checksumming 0x12345678
-and 0x56341278 provide the exact same result so it is enough to
-rotate the sum of len and proto by 1 byte.
+We also use the softpatch handler for the TM workarounds for
+POWER9. Unfortunately, in kvmppc_interrupt_hv we later store r11 out
+to the vcpu assuming it's still what we got from userspace.
 
-PPC32 only support bigendian so the fix is needed for PPC64 only
+This causes r11 to be corrupted in the VCPU and hence when we restore
+the guest, we get a corrupted r11. We've seen this when running TM
+tests inside guests on P9.
 
-Fixes: e9c4943a107b ("powerpc: Implement csum_ipv6_magic in assembly")
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Reported-by: Xin Long <lucien.xin@gmail.com>
-Cc: <stable@vger.kernel.org> # 4.18+
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Tested-by: Xin Long <lucien.xin@gmail.com>
+This fixes the problem by only touching r11 in the denorm case.
+
+Fixes: 4bb3c7a020 ("KVM: PPC: Book3S HV: Work around transactional memory bugs in POWER9")
+Cc: <stable@vger.kernel.org> # 4.17+
+Test-by: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
+Reviewed-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Michael Neuling <mikey@neuling.org>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/lib/checksum_64.S |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/powerpc/kernel/exceptions-64s.S |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/lib/checksum_64.S
-+++ b/arch/powerpc/lib/checksum_64.S
-@@ -443,6 +443,9 @@ _GLOBAL(csum_ipv6_magic)
- 	addc	r0, r8, r9
- 	ld	r10, 0(r4)
- 	ld	r11, 8(r4)
-+#ifdef CONFIG_CPU_LITTLE_ENDIAN
-+	rotldi	r5, r5, 8
-+#endif
- 	adde	r0, r0, r10
- 	add	r5, r5, r7
- 	adde	r0, r0, r11
+--- a/arch/powerpc/kernel/exceptions-64s.S
++++ b/arch/powerpc/kernel/exceptions-64s.S
+@@ -1321,9 +1321,7 @@ EXC_REAL_BEGIN(denorm_exception_hv, 0x15
+ 
+ #ifdef CONFIG_PPC_DENORMALISATION
+ 	mfspr	r10,SPRN_HSRR1
+-	mfspr	r11,SPRN_HSRR0		/* save HSRR0 */
+ 	andis.	r10,r10,(HSRR1_DENORM)@h /* denorm? */
+-	addi	r11,r11,-4		/* HSRR0 is next instruction */
+ 	bne+	denorm_assist
+ #endif
+ 
+@@ -1389,6 +1387,8 @@ END_FTR_SECTION_IFCLR(CPU_FTR_ARCH_207S)
+  */
+ 	XVCPSGNDP32(32)
+ denorm_done:
++	mfspr	r11,SPRN_HSRR0
++	subi	r11,r11,4
+ 	mtspr	SPRN_HSRR0,r11
+ 	mtcrf	0x80,r9
+ 	ld	r9,PACA_EXGEN+EX_R9(r13)
 
 
