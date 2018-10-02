@@ -2,145 +2,108 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9448FC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B65CC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A44220666
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:21:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6CB520666
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:22:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="czXpoDPy";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="czXpoDPy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A44220666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ABVtzyey"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6CB520666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbeJBWFT (ORCPT
+        id S1726823AbeJBWGD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 18:05:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34426 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbeJBWFS (ORCPT
+        Tue, 2 Oct 2018 18:06:03 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44477 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbeJBWGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 18:05:18 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A917360818; Tue,  2 Oct 2018 15:21:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538493683;
-        bh=k8ml4og2ShEOiCeC0Tzue6zXzk5Sef1UtHUdHtwdpFg=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=czXpoDPyUxcaYcO/tNzmyF02GjpeblSERVTAUSd8AFWQNqypT/soge/KGUF+rARQM
-         xqbq8Y69rKgamQoXLUIEomDA5QDAVwC9+BkSqutZT2JxMNRXd0QtFOSl2MFye1awEX
-         xXE2XnsFD5iv3h4lMGiGQl0/F50lsrnWS3iVGE1w=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 83E0160818;
-        Tue,  2 Oct 2018 15:21:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538493683;
-        bh=k8ml4og2ShEOiCeC0Tzue6zXzk5Sef1UtHUdHtwdpFg=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=czXpoDPyUxcaYcO/tNzmyF02GjpeblSERVTAUSd8AFWQNqypT/soge/KGUF+rARQM
-         xqbq8Y69rKgamQoXLUIEomDA5QDAVwC9+BkSqutZT2JxMNRXd0QtFOSl2MFye1awEX
-         xXE2XnsFD5iv3h4lMGiGQl0/F50lsrnWS3iVGE1w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83E0160818
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v4 3/3] gpiolib: Show correct direction from the beginning
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Timur Tabi <timur@kernel.org>, swboyd@chromium.org,
-        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20181002140858.16833-1-ricardo.ribalda@gmail.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <d1bbafcb-1b6a-b137-1fd1-954c17e14836@codeaurora.org>
-Date:   Tue, 2 Oct 2018 09:21:22 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 2 Oct 2018 18:06:02 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v6-v6so2112777ljc.11
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 08:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GCABJA274f7GptjJrL0hQdXxQxwNuRH/rCXy0Lx++Z8=;
+        b=ABVtzyeyrcF+aH2akPQjh0XNW2P1Pl7b9T98ZLKwiHqKk+ZRSLp9WzRv6xZiptvQuJ
+         8/ofdfzBBt8AE/dI3KvULSmxRusTbl4KZyGWEqr9viGRMPtsdrHN/fD5k7JcWhIBEOA9
+         NsVYmuY6t3IrkBbfM6cdkHQ2PCgcfhRu28MRo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GCABJA274f7GptjJrL0hQdXxQxwNuRH/rCXy0Lx++Z8=;
+        b=JaBXoDFcO80Pv7wBNt1fLNLMERq1aJf7swJwYNOU4ErMFIxBmo3bGdB9h6/YgiVNdO
+         /mjhdg536STy+sX5BPl3CkVCCVGYW1Ckx+MnJUAX+jP5v1KqTye+ELpH32JIFHVOmRIe
+         fg+bOSmh0LPMIBiyJOb6XHWO3V39nj4WNLLFHYRWL//Jw94f9G3cxvgdD67tdRtPIxUx
+         X+yZt010IZJRePuRnz3pjpu9nyUAa4leBIjoIyIn3GQuqc+kccup25DuqhkTLi7pbaaW
+         V8r00Mqdasu3cw+pt/g932gtT3s1Km/WrLcb5qnW5TIa4MPFd3hv6/9LqN8bvtM9fj17
+         U6dw==
+X-Gm-Message-State: ABuFfohUY/fI2sr8msugUJDFKKrDH2/fiGHqxB/V+QTbGJQ6N3+hRKwZ
+        xCyNhs6ouKXAg4n/MgGVhSOxF+Zag2k=
+X-Google-Smtp-Source: ACcGV61YaJfb6prrft0rmRAnh+pBPYcvzGu6vwb5kYPA6MS8toX4mZubOGALRJxPHZ25idJuU4a0qQ==
+X-Received: by 2002:a2e:800e:: with SMTP id j14-v6mr9633337ljg.114.1538493725836;
+        Tue, 02 Oct 2018 08:22:05 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id k23-v6sm2702518ljc.49.2018.10.02.08.22.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 08:22:05 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 63-v6so2140113ljs.4
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 08:22:03 -0700 (PDT)
+X-Received: by 2002:a2e:7c18:: with SMTP id x24-v6mr10458772ljc.174.1538493723329;
+ Tue, 02 Oct 2018 08:22:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181002140858.16833-1-ricardo.ribalda@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181001161506.100284-1-evgreen@chromium.org> <ef53fcb4-9001-c06b-779f-d40949224c98@interlog.com>
+In-Reply-To: <ef53fcb4-9001-c06b-779f-d40949224c98@interlog.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 2 Oct 2018 08:21:26 -0700
+X-Gmail-Original-Message-ID: <CAE=gft5TFz4XQMLp8zH83W-agq-B7Df_1X-kX-UrSg8g1vipmw@mail.gmail.com>
+Message-ID: <CAE=gft5TFz4XQMLp8zH83W-agq-B7Df_1X-kX-UrSg8g1vipmw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] scsi: sg: Prevent potential double frees in sg driver
+To:     dgilbert@interlog.com
+Cc:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ndesaulniers@google.com, hch@infradead.org, rglasser@google.com,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/2/2018 8:08 AM, Ricardo Ribalda Delgado wrote:
-> Current code assumes that the direction is input if direction_input
-> function is set.
-> This might not be the case on GPIOs with programmable direction.
-> 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+On Mon, Oct 1, 2018 at 4:34 PM Douglas Gilbert <dgilbert@interlog.com> wrote:
+>
+> On 2018-10-02 02:15 AM, Evan Green wrote:
+> > From: Robb Glasser <rglasser@google.com>
+> >
+> > sg_ioctl could be spammed by requests, leading to a double free in
+> > __free_pages. This protects the entry points of sg_ioctl where the
+> > memory could be corrupted by a double call to __free_pages if multiple
+> > requests are happening concurrently.
+>
+> Hi,
+> I  don't like this patch. I would like to see the trace for the double
+> call to the __free_pages you are referring too. A test program that
+> show the fault, perhaps?
+>
+> I have test code to "spam" the sg driver and have not seen a double
+> __free_pages that you refer to (see sg3_utils package version 1.44,
+> testing/sg_tst_async.cpp).
+>
+> Currently I am dusting off 20 years of "laparoscopic" patches to the sg
+> driver that have made a bit of a mess of the naming and comments. Also
+> the 16 outstanding requests per file descriptor limit is being removed.
+> Then I want to add the SG_IOSUBMIT and SG_IORECEIVE ioctls proposed by
+> Linus Torvalds two week ago.
+>
+> Executive summary: nak, without further information
 
-I'll try to get this series tested on QDF2400 by the end of the week.
-
-> ---
-> Changelog v4:
-> 
-> timur@kernel.org:
-> Remove REVISIT comment
-> 
->   drivers/gpio/gpiolib.c | 27 +++++++++++++--------------
->   1 file changed, 13 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 6925196136ce..cad859fece65 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1344,20 +1344,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->   
->   	spin_unlock_irqrestore(&gpio_lock, flags);
->   
-> -	for (i = 0; i < chip->ngpio; i++) {
-> -		struct gpio_desc *desc = &gdev->descs[i];
-> -
-> -		desc->gdev = gdev;
-> -
-> -		/* REVISIT: most hardware initializes GPIOs as inputs (often
-> -		 * with pullups enabled) so power usage is minimized. Linux
-> -		 * code should set the gpio direction first thing; but until
-> -		 * it does, and in case chip->get_direction is not set, we may
-> -		 * expose the wrong direction in sysfs.
-> -		 */
-> -		desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
-> -	}
-> -
->   #ifdef CONFIG_PINCTRL
->   	INIT_LIST_HEAD(&gdev->pin_ranges);
->   #endif
-> @@ -1374,6 +1360,19 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->   	if (status)
->   		goto err_remove_irqchip_mask;
->   
-> +	for (i = 0; i < chip->ngpio; i++) {
-> +		struct gpio_desc *desc = &gdev->descs[i];
-> +
-> +		desc->gdev = gdev;
-> +
-> +		if (chip->get_direction && gpiochip_line_is_valid(chip, i))
-> +			desc->flags = !chip->get_direction(chip, i) ?
-> +					(1 << FLAG_IS_OUT) : 0;
-> +		else
-> +			desc->flags = !chip->direction_input ?
-> +					(1 << FLAG_IS_OUT) : 0;
-> +	}
-> +
->   	status = gpiochip_add_irqchip(chip, lock_key, request_key);
->   	if (status)
->   		goto err_remove_chip;
-> 
-
-
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+That makes sense. Thanks for taking a look.
