@@ -2,101 +2,118 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CC5C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BC1C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24830208AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:52:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24830208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 8662D208AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:52:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8662D208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbeJBOdz (ORCPT
+        id S1727273AbeJBOea (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:33:55 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46519 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726884AbeJBOdy (ORCPT
+        Tue, 2 Oct 2018 10:34:30 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:33090 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbeJBOea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:33:54 -0400
-Received: by mail-qt1-f195.google.com with SMTP id d8-v6so930243qtk.13
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 00:51:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vZWgLN4V4KNLZVZAP7/7sWQOLGosJxKJCZfhqRP9t88=;
-        b=KstrZvJN+/IoLVMAir9UiSIMLxFhfyDfFBv4lciboxtKm8knaXPJIg2UMbjIo6whV0
-         w1cq+jJm65+xhu7fbRSPOnHJeDRFQUuglxzeWmsd9k6tFU3FRgZqxpxPqaqV47tgHlQ8
-         bnMTtN55W5ChfRN/5RKwo3tMQ29+kcI3YGnUuEVZlbnjcOR41jNsT4bQ4rhGOvPdZlh7
-         skOBW/Fg8JZNuDD3Z2WzU6DDbhtNzYv7Utb7MtP1Hy4pfsTj1t9JS3GNGN6C+e+5hLgI
-         5r4wSMbGACYORaI1NrH5wHTa3e07PgBI7uZhjhltCY+RKJKBPcp+v9AVn6bmDI+nsg9z
-         LsgA==
-X-Gm-Message-State: ABuFfoiroFbAyRGTHYsz50r+JcOMR7OX1slvz3q8Z5AqoE6UK42I2uvZ
-        5IbbqYqxX8RVQ/xChDM5mnSuGwWGJFCuJdr3Ss/L15cc
-X-Google-Smtp-Source: ACcGV61AHGaqQMgqzvCm2hT27rMtIblCDLIy2pfPU2pP7SahNRUvRQ2kdV8/XzAFsYsjg31bJRq1Q4K0xb+xt9ql4GY=
-X-Received: by 2002:aed:2bc6:: with SMTP id e64-v6mr11657826qtd.132.1538466718973;
- Tue, 02 Oct 2018 00:51:58 -0700 (PDT)
+        Tue, 2 Oct 2018 10:34:30 -0400
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g7FTq-0006oT-FL from Jiada_Wang@mentor.com ; Tue, 02 Oct 2018 00:52:30 -0700
+Received: from [172.30.112.170] (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Tue, 2 Oct 2018 00:52:26 -0700
+Subject: Re: [PATCH linux-next 01/10] ASoC: rsnd: ssi: Request dedicated dma
+ channels for busif1 to 7
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC:     Mark Brown <broonie@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-Kernel <linux-kernel@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <dragos_tarcatu@mentor.com>, <twischer@de.adit-jv.com>,
+        <tiwai@suse.com>, <perex@perex.cz>
+References: <20180927050407.17765-1-jiada_wang@mentor.com>
+ <20180927050407.17765-2-jiada_wang@mentor.com>
+ <87k1n6trsf.wl-kuninori.morimoto.gx@renesas.com>
+From:   Jiada Wang <jiada_wang@mentor.com>
+Message-ID: <01535cc6-bd85-aec1-b0ce-7ea9e60533d0@mentor.com>
+Date:   Tue, 2 Oct 2018 16:52:24 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180930024904.14240-1-Jason@zx2c4.com> <CAK8P3a0grG5OBjwpTeH0fqzoFFBLDH6-oGM4ibzHypUKWedg3A@mail.gmail.com>
- <CAHmME9rVbKCNJfVBEene0SvhBEm_g7N-XJ26ugoAab1Vj7G_ww@mail.gmail.com>
-In-Reply-To: <CAHmME9rVbKCNJfVBEene0SvhBEm_g7N-XJ26ugoAab1Vj7G_ww@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 2 Oct 2018 09:51:42 +0200
-Message-ID: <CAK8P3a3TE8HW0wD9ETCDWMf7quDRx94-2iS6goYDQ18JQ6r=rw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: makefile: pass -march=armv4 to assembler even on CPU32v3
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-soc <arm@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87k1n6trsf.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: SVR-ORW-MBX-09.mgc.mentorg.com (147.34.90.209) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 5:53 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->
-> Hi Arnd,
->
-> Apologies for the delay in getting back to you. I had some MTA issues
-> and stupidly assumed ARM developers were taking the day off instead...
->
-> On Tue, Oct 2, 2018 at 5:33 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > -arch-$(CONFIG_CPU_32v3)                =-D__LINUX_ARM_ARCH__=3 -march=armv3
-> > +arch-$(CONFIG_CPU_32v3)                =-D__LINUX_ARM_ARCH__=3 -march=armv3m
->
-> Unfortunately this doesn't really cut it in my case, as it's not only
-> those multiplications:
-> chacha20-arm.S:402: Error: selected processor does not support `bxeq
-> lr' in ARM mode
->
-> I think we're going to wind up playing whack-a-mole in silly ways. The
-> fact of the matter is that the ARM assembly I'm adding to the tree is
-> for ARMv4 and up, and not for ARMv3.
+Hi Morimoto-san
 
-I don't see what issues remain. The 'reteq lr' that Ard mentioned
-is definitely the correct way to return from assembly (you also need
-that for plain armv4, as 'bx' was added in armv4t), and Russell
-confirmed that using -march=armv3m is something we want
-anyway for mach-rpc.
 
-> I think there are three options to work around this issue:
+On 2018/09/28 9:08, Kuninori Morimoto wrote:
+> Hi Jiada
+> Cc: linux-renesas-soc ML
 >
-> 1) Not build my assembly when CONFIG_CPU_32v3 via a Kconfig "depends".
-> 2) Set asflags-$(CONFIG_CPU_32v3) inside my module locally to select
-> -march=armv4.
-> 3) This patch.
+> Thank you for your patch
 >
-> My initial plan was (1). ArdB recommended I do (2) instead. I thought
-> that was a bit too nuanced and submitted (3).
+>> From: Jiada Wang <jiada_wang@mentor.com>
+>>
+>> Currently ssi driver only request dma channel for SSI_0,
+>> which is used to transfer data to/from busif0.
+>>
+>> But since busif1 to busif7 also maybe used, dedicated dma channels
+>> are request for data transfer between these busif.
+>>
+>> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+>> ---
+> (snip)
+>> @@ -938,12 +940,20 @@ static struct dma_chan *rsnd_ssi_dma_req(struct rsnd_dai_stream *io,
+>>   {
+>>   	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
+>>   	int is_play = rsnd_io_is_play(io);
+>> -	char *name;
+>> +	int busif = rsnd_ssi_get_busif(io);
+>> +	char name[SSI_DMA_NAME_SIZE];
+>>   
+>> -	if (rsnd_ssi_use_busif(io))
+>> -		name = is_play ? "rxu" : "txu";
+>> -	else
+>> -		name = is_play ? "rx" : "tx";
+>> +	if (rsnd_ssi_use_busif(io)) {
+>> +		if (is_play)
+>> +			snprintf(name, SSI_DMA_NAME_SIZE, "rxu%d", busif);
+>> +		else
+>> +			snprintf(name, SSI_DMA_NAME_SIZE, "txu%d", busif);
+>> +	} else {
+>> +		if (is_play)
+>> +			snprintf(name, SSI_DMA_NAME_SIZE, "rx");
+>> +		else
+>> +			snprintf(name, SSI_DMA_NAME_SIZE, "tx");
+>> +	}
+> Unfortunately, this patch breaks "git bisect", and Gen2 platforms.
+> We need to keep existing "rxu/txu" more. Please consider compatibility.
+> # we can remove it 2 or 3 version later ?
+>
+> If the commit which has this patch, but doesn't have [02/xx] or later,
+> it can't use BUSIF.
+>
+> And your patch doesn't care Gen2 series.
+> DT compatibility is very sensitive...
+Thanks for your review comments, I will send out v2 patch set to take 
+care of GEN2 series,
+and move this patch after other DT related patches
 
-I suspect all three of the above fail to work for armv4.
-
-         Arnd
+Thanks,
+Jiada
