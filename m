@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66765C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB43C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC6C2089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC6C2089C
+	by mail.kernel.org (Postfix) with ESMTP id 2D7842089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D7842089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732479AbeJBUSY (ORCPT
+        id S1732508AbeJBUS0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:18:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35476 "EHLO
+        Tue, 2 Oct 2018 16:18:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35496 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731692AbeJBUSX (ORCPT
+        with ESMTP id S1732482AbeJBUSZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:23 -0400
+        Tue, 2 Oct 2018 16:18:25 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37E1BBF0;
-        Tue,  2 Oct 2018 13:34:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71BCEC47;
+        Tue,  2 Oct 2018 13:35:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srikanth Jampala <Jampala.Srikanth@cavium.com>,
-        Gadam Sreerama <sgadam@cavium.com>,
-        "Jha, Chandan" <Chandan.Jha@cavium.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 125/137] crypto: cavium/nitrox - fix for command corruption in queue full case with backlog submissions.
-Date:   Tue,  2 Oct 2018 06:25:26 -0700
-Message-Id: <20181002132507.257721994@linuxfoundation.org>
+Subject: [PATCH 4.14 127/137] hwmon: (adt7475) Make adt7475_read_word() return errors
+Date:   Tue,  2 Oct 2018 06:25:28 -0700
+Message-Id: <20181002132507.407561737@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -55,182 +53,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Srikanth Jampala <Jampala.Srikanth@cavium.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 3d7c82060d1fe65bde4023aac41a0b1bd7718e07 ]
+[ Upstream commit f196dec6d50abb2e65fb54a0621b2f1b4d922995 ]
 
-Earlier used to post the current command without checking queue full
-     after backlog submissions. So, post the current command only after
-     confirming the space in queue after backlog submissions.
+The adt7475_read_word() function was meant to return negative error
+codes on failure.
 
-     Maintain host write index instead of reading device registers
-     to get the next free slot to post the command.
-
-     Return -ENOSPC in queue full case.
-
-Signed-off-by: Srikanth Jampala <Jampala.Srikanth@cavium.com>
-Reviewed-by: Gadam Sreerama <sgadam@cavium.com>
-Tested-by: Jha, Chandan <Chandan.Jha@cavium.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/cavium/nitrox/nitrox_dev.h    |    3 -
- drivers/crypto/cavium/nitrox/nitrox_lib.c    |    1 
- drivers/crypto/cavium/nitrox/nitrox_reqmgr.c |   57 +++++++++++++++------------
- 3 files changed, 35 insertions(+), 26 deletions(-)
+ drivers/hwmon/adt7475.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/drivers/crypto/cavium/nitrox/nitrox_dev.h
-+++ b/drivers/crypto/cavium/nitrox/nitrox_dev.h
-@@ -35,6 +35,7 @@ struct nitrox_cmdq {
- 	/* requests in backlog queues */
- 	atomic_t backlog_count;
- 
-+	int write_idx;
- 	/* command size 32B/64B */
- 	u8 instr_size;
- 	u8 qno;
-@@ -87,7 +88,7 @@ struct nitrox_bh {
- 	struct bh_data *slc;
- };
- 
--/* NITROX-5 driver state */
-+/* NITROX-V driver state */
- #define NITROX_UCODE_LOADED	0
- #define NITROX_READY		1
- 
---- a/drivers/crypto/cavium/nitrox/nitrox_lib.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_lib.c
-@@ -36,6 +36,7 @@ static int cmdq_common_init(struct nitro
- 	cmdq->head = PTR_ALIGN(cmdq->head_unaligned, PKT_IN_ALIGN);
- 	cmdq->dma = PTR_ALIGN(cmdq->dma_unaligned, PKT_IN_ALIGN);
- 	cmdq->qsize = (qsize + PKT_IN_ALIGN);
-+	cmdq->write_idx = 0;
- 
- 	spin_lock_init(&cmdq->response_lock);
- 	spin_lock_init(&cmdq->cmdq_lock);
---- a/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
-@@ -43,6 +43,16 @@
-  *   Invalid flag options in AES-CCM IV.
-  */
- 
-+static inline int incr_index(int index, int count, int max)
-+{
-+	if ((index + count) >= max)
-+		index = index + count - max;
-+	else
-+		index += count;
-+
-+	return index;
-+}
-+
- /**
-  * dma_free_sglist - unmap and free the sg lists.
-  * @ndev: N5 device
-@@ -427,30 +437,29 @@ static void post_se_instr(struct nitrox_
- 			  struct nitrox_cmdq *cmdq)
- {
- 	struct nitrox_device *ndev = sr->ndev;
--	union nps_pkt_in_instr_baoff_dbell pkt_in_baoff_dbell;
--	u64 offset;
-+	int idx;
- 	u8 *ent;
- 
- 	spin_lock_bh(&cmdq->cmdq_lock);
- 
--	/* get the next write offset */
--	offset = NPS_PKT_IN_INSTR_BAOFF_DBELLX(cmdq->qno);
--	pkt_in_baoff_dbell.value = nitrox_read_csr(ndev, offset);
-+	idx = cmdq->write_idx;
- 	/* copy the instruction */
--	ent = cmdq->head + pkt_in_baoff_dbell.s.aoff;
-+	ent = cmdq->head + (idx * cmdq->instr_size);
- 	memcpy(ent, &sr->instr, cmdq->instr_size);
--	/* flush the command queue updates */
--	dma_wmb();
- 
--	sr->tstamp = jiffies;
- 	atomic_set(&sr->status, REQ_POSTED);
- 	response_list_add(sr, cmdq);
-+	sr->tstamp = jiffies;
-+	/* flush the command queue updates */
-+	dma_wmb();
- 
- 	/* Ring doorbell with count 1 */
- 	writeq(1, cmdq->dbell_csr_addr);
- 	/* orders the doorbell rings */
- 	mmiowb();
- 
-+	cmdq->write_idx = incr_index(idx, 1, ndev->qlen);
-+
- 	spin_unlock_bh(&cmdq->cmdq_lock);
+--- a/drivers/hwmon/adt7475.c
++++ b/drivers/hwmon/adt7475.c
+@@ -303,14 +303,18 @@ static inline u16 volt2reg(int channel,
+ 	return clamp_val(reg, 0, 1023) & (0xff << 2);
  }
  
-@@ -460,6 +469,9 @@ static int post_backlog_cmds(struct nitr
- 	struct nitrox_softreq *sr, *tmp;
- 	int ret = 0;
- 
-+	if (!atomic_read(&cmdq->backlog_count))
-+		return 0;
-+
- 	spin_lock_bh(&cmdq->backlog_lock);
- 
- 	list_for_each_entry_safe(sr, tmp, &cmdq->backlog_head, backlog) {
-@@ -467,7 +479,7 @@ static int post_backlog_cmds(struct nitr
- 
- 		/* submit until space available */
- 		if (unlikely(cmdq_full(cmdq, ndev->qlen))) {
--			ret = -EBUSY;
-+			ret = -ENOSPC;
- 			break;
- 		}
- 		/* delete from backlog list */
-@@ -492,23 +504,20 @@ static int nitrox_enqueue_request(struct
+-static u16 adt7475_read_word(struct i2c_client *client, int reg)
++static int adt7475_read_word(struct i2c_client *client, int reg)
  {
- 	struct nitrox_cmdq *cmdq = sr->cmdq;
- 	struct nitrox_device *ndev = sr->ndev;
--	int ret = -EBUSY;
-+
-+	/* try to post backlog requests */
-+	post_backlog_cmds(cmdq);
+-	u16 val;
++	int val1, val2;
  
- 	if (unlikely(cmdq_full(cmdq, ndev->qlen))) {
- 		if (!(sr->flags & CRYPTO_TFM_REQ_MAY_BACKLOG))
--			return -EAGAIN;
--
-+			return -ENOSPC;
-+		/* add to backlog list */
- 		backlog_list_add(sr, cmdq);
--	} else {
--		ret = post_backlog_cmds(cmdq);
--		if (ret) {
--			backlog_list_add(sr, cmdq);
--			return ret;
--		}
--		post_se_instr(sr, cmdq);
--		ret = -EINPROGRESS;
-+		return -EBUSY;
- 	}
--	return ret;
-+	post_se_instr(sr, cmdq);
-+
-+	return -EINPROGRESS;
+-	val = i2c_smbus_read_byte_data(client, reg);
+-	val |= (i2c_smbus_read_byte_data(client, reg + 1) << 8);
++	val1 = i2c_smbus_read_byte_data(client, reg);
++	if (val1 < 0)
++		return val1;
++	val2 = i2c_smbus_read_byte_data(client, reg + 1);
++	if (val2 < 0)
++		return val2;
+ 
+-	return val;
++	return val1 | (val2 << 8);
  }
  
- /**
-@@ -625,11 +634,9 @@ int nitrox_process_se_request(struct nit
- 	 */
- 	sr->instr.fdata[0] = *((u64 *)&req->gph);
- 	sr->instr.fdata[1] = 0;
--	/* flush the soft_req changes before posting the cmd */
--	wmb();
- 
- 	ret = nitrox_enqueue_request(sr);
--	if (ret == -EAGAIN)
-+	if (ret == -ENOSPC)
- 		goto send_fail;
- 
- 	return ret;
+ static void adt7475_write_word(struct i2c_client *client, int reg, u16 val)
 
 
