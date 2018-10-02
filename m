@@ -2,57 +2,57 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0797EC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EE8C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD6A521471
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F098121471
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kzWFgJJm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD6A521471
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BfoqLPXH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F098121471
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbeJBHf5 (ORCPT
+        id S1727378AbeJBHgJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:35:57 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40716 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727277AbeJBHfz (ORCPT
+        Tue, 2 Oct 2018 03:36:09 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:38026 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbeJBHf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 03:35:55 -0400
-Received: by mail-io1-f67.google.com with SMTP id w16-v6so249445iom.7
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 17:55:27 -0700 (PDT)
+        Tue, 2 Oct 2018 03:35:57 -0400
+Received: by mail-it1-f195.google.com with SMTP id i76-v6so1072297ita.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 17:55:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Yrxg82tWglVpM0LzDO19gBRT76KQ+r+VtAnKxAjxaGw=;
-        b=kzWFgJJmS3sGwMbhNznLZsOBUAz1QENcpGjEqbWWNbeSotA3wPZoRBriJAu0E9Hyfy
-         +X0HBhlQ2CNggRnx1zBoH/78G01MXdVG4J8UKQlH91ta37YOPNNz1JgV8AyYbsFjOR0q
-         smkmCDOOpY3agUDwWCVSy+RWt5tW5t/RCRXwg=
+        bh=mIdjYFq7c7fTSRHDRwel+J92+FbxHNrJN5VYoG9wIDw=;
+        b=BfoqLPXHxS93a/rzG/RVvfy+1Iq2aaNB5YzWDrysVIaxLdWw4ehaA2CZvl9Z9zHI96
+         2LQJlqERAi6K4wDOcLfhdsnl9Y26y+WRtuKNULt/9hYyFfikUF9eOeKLy5yNg+BbdFPJ
+         /8cUXpz0dMgGR4zDMQvHVQlbj0h3fi3jlodDY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Yrxg82tWglVpM0LzDO19gBRT76KQ+r+VtAnKxAjxaGw=;
-        b=ArqNK79q5+PQ9FhYWSDzcVt4+7716tTcJnsh7lEhih6hIQEmMv7ZQqxcINsLbVWOCF
-         rTPsm1Pi/P0cKjXlBl7BABzjh53+gYt/dt/iNcNIdxNDe/NNhexFWN7YRZ1ayIB/Vn6m
-         0o3mDqbfadOM8XOSpFbQD+8ws3LMAqomkla2T7yPQNdH1yc3tEAJ/ta5FfQaONGwlTRI
-         no/G0W9cK03xekkTLCE/sc8GPF9Ao6CeNEH6rig5ICppCtxkcGzoYfcoEPTK6MVTyp32
-         IxAhGQ7L8H/l53Bd/weMWELiyetmdMag81XIS9xLVZ6hXSFZjV7A1wFdB0R+7N7gAWlD
-         lTVg==
-X-Gm-Message-State: ABuFfohDACumJ4z+afcUhxIBsvpArQ9Wffu3t/YsXbowoV1QiiUN3p1e
-        LSXTt2wuky8Zv3C3JVTuCkK58Q==
-X-Google-Smtp-Source: ACcGV60tYDSsVxueUNUrEu7ICAtSzWhk018ow/vF8usOMRG78AX9/hf+xt8NurR8Hd9wvcO+EUwOSA==
-X-Received: by 2002:a17:902:bd4a:: with SMTP id b10-v6mr14346658plx.209.1538441727304;
-        Mon, 01 Oct 2018 17:55:27 -0700 (PDT)
+        bh=mIdjYFq7c7fTSRHDRwel+J92+FbxHNrJN5VYoG9wIDw=;
+        b=IJTzWmyEKCIP7IHEnTZ05LGiEHOf40FX82nOhgfC6VB8TuljmK9Datf8RKV5BDb94v
+         dSMVXxigQX3DiwFoj1m4/mTugK02iDBpcPEIWpAYXsbuy1yZCbFjId1MqJhBq8ffXjaW
+         CKm4Vbc8GzSFOrja8DZF1BMksNiOwbpx7b0r5t9R9htjaui9yAtgeHj3p9S3oKriR8Vh
+         UWL4YymMnBGiWT64Sb/w/rnQB0Be7tHmgXrBWeixd+gNjl94MEOMj42OLu0l+c/M8Gya
+         rTqbPR08kukGejk7ichROSOe+j9IX9uczp7RVrPMSZUAiQMR+SWVllTBu868IA50ihlO
+         /tJg==
+X-Gm-Message-State: ABuFfojZ3FZTNPKIS3q+8pQe3rbYPIol6lPVplFLmjbYVoZ80kWbbcG3
+        N+OgODHQw78c//eoK5zjpEtdzA==
+X-Google-Smtp-Source: ACcGV61bYTcllSbQSE6iCf++jH0jSlvI9K8UkWobmBPZcKEWmJ0mZxzh/SXlpclmCIFbzD6V+C7mCQ==
+X-Received: by 2002:a63:1624:: with SMTP id w36-v6mr12343353pgl.409.1538441728333;
+        Mon, 01 Oct 2018 17:55:28 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id f29-v6sm28485128pff.29.2018.10.01.17.55.19
+        by smtp.gmail.com with ESMTPSA id q23-v6sm22030901pfd.44.2018.10.01.17.55.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Mon, 01 Oct 2018 17:55:25 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -67,9 +67,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         LSM <linux-security-module@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v4 30/32] capability: Initialize as LSM_ORDER_FIRST
-Date:   Mon,  1 Oct 2018 17:55:03 -0700
-Message-Id: <20181002005505.6112-31-keescook@chromium.org>
+Subject: [PATCH security-next v4 31/32] LSM: Separate idea of "major" LSM from "exclusive" LSM
+Date:   Mon,  1 Oct 2018 17:55:04 -0700
+Message-Id: <20181002005505.6112-32-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181002005505.6112-1-keescook@chromium.org>
 References: <20181002005505.6112-1-keescook@chromium.org>
@@ -78,77 +78,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This converts capabilities to use the new LSM_ORDER_FIRST position.
+In order to both support old "security=" Legacy Major LSM selection, and
+handling real exclusivity, this creates LSM_FLAG_EXCLUSIVE and updates
+the selection logic to handle them.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/lsm_hooks.h | 2 --
- security/commoncap.c      | 9 ++++++++-
- security/security.c       | 9 ++++-----
- 3 files changed, 12 insertions(+), 8 deletions(-)
+ include/linux/lsm_hooks.h  |  1 +
+ security/apparmor/lsm.c    |  2 +-
+ security/security.c        | 12 ++++++++++++
+ security/selinux/hooks.c   |  2 +-
+ security/smack/smack_lsm.c |  2 +-
+ security/tomoyo/tomoyo.c   |  2 +-
+ 6 files changed, 17 insertions(+), 4 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 62bc230826e0..36e7a716fdfe 100644
+index 36e7a716fdfe..2c9cf89a20ad 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -2092,6 +2092,4 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
- #define __lsm_ro_after_init	__ro_after_init
- #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
+@@ -2040,6 +2040,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ 				char *lsm);
  
--extern void __init capability_add_hooks(void);
--
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 2e489d6a3ac8..c928eb3fe784 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1366,10 +1366,17 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(vm_enough_memory, cap_vm_enough_memory),
+ #define LSM_FLAG_LEGACY_MAJOR	BIT(0)
++#define LSM_FLAG_EXCLUSIVE	BIT(1)
+ 
+ enum lsm_order {
+ 	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 4cd96a66ed6f..4eb74a6f2020 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1599,7 +1599,7 @@ static int __init apparmor_init(void)
+ 
+ DEFINE_LSM(apparmor) = {
+ 	.name = "apparmor",
+-	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+ 	.enabled = &apparmor_enabled,
+ 	.init = apparmor_init,
  };
- 
--void __init capability_add_hooks(void)
-+static int __init capability_init(void)
- {
- 	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
- 				"capability");
-+	return 0;
- }
- 
-+DEFINE_LSM(capability) = {
-+	.name = "capability",
-+	.order = LSM_ORDER_FIRST,
-+	.init = capability_init,
-+};
-+
- #endif /* CONFIG_SECURITY */
 diff --git a/security/security.c b/security/security.c
-index dac379518e60..813dab3b5b97 100644
+index 813dab3b5b97..7d542e78b7e8 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -62,6 +62,10 @@ static __initdata bool debug;
+@@ -52,6 +52,7 @@ static __initconst const char * const builtin_lsm_order = CONFIG_LSM_ORDER;
  
- static bool __init is_enabled(struct lsm_info *lsm)
- {
-+	/* LSM_ORDER_FIRST is always enabled. */
-+	if (lsm->order == LSM_ORDER_FIRST)
-+		return true;
-+
- 	if (WARN_ON(!lsm->enabled))
+ /* Ordered list of LSMs to initialize. */
+ static __initdata struct lsm_info **ordered_lsms;
++static __initdata struct lsm_info *exclusive;
+ 
+ static __initdata bool debug;
+ #define init_debug(...)						\
+@@ -196,6 +197,12 @@ static bool __init lsm_allowed(struct lsm_info *lsm)
+ 	if (!is_enabled(lsm))
  		return false;
  
-@@ -306,11 +310,6 @@ int __init security_init(void)
- 	/* Figure out which LSMs are enabled and disabled. */
- 	prepare_lsm_enable();
++	/* Not allowed if another exclusive LSM already initialized. */
++	if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && exclusive) {
++		init_debug("exclusive disabled: %s\n", lsm->name);
++		return false;
++	}
++
+ 	return true;
+ }
  
--	/*
--	 * Load minor LSMs, with the capability module always first.
--	 */
--	capability_add_hooks();
--
- 	/* Load LSMs in specified order. */
- 	prepare_lsm_order();
- 	ordered_lsm_init();
+@@ -211,6 +218,11 @@ static void __init maybe_initialize_lsm(struct lsm_info *lsm)
+ 	if (enabled) {
+ 		int ret;
+ 
++		if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && !exclusive) {
++			exclusive = lsm;
++			init_debug("exclusive: %s\n", lsm->name);
++		}
++
+ 		init_debug("initializing %s\n", lsm->name);
+ 		ret = lsm->init();
+ 		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 8f5eea097612..c070d3761ddc 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7181,7 +7181,7 @@ void selinux_complete_init(void)
+    all processes and objects when they are created. */
+ DEFINE_LSM(selinux) = {
+ 	.name = "selinux",
+-	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+ 	.enabled = &selinux_enabled,
+ 	.init = selinux_init,
+ };
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index f243044d5a55..92e4baa342f8 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4881,6 +4881,6 @@ static __init int smack_init(void)
+  */
+ DEFINE_LSM(smack) = {
+ 	.name = "smack",
+-	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+ 	.init = smack_init,
+ };
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index a46f6bc1e97c..daff7d7897ad 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -550,6 +550,6 @@ static int __init tomoyo_init(void)
+ 
+ DEFINE_LSM(tomoyo) = {
+ 	.name = "tomoyo",
+-	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+ 	.init = tomoyo_init,
+ };
 -- 
 2.17.1
 
