@@ -2,74 +2,77 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7A6C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 398BCC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49A022082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:30:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49A022082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 07A3020666
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:31:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07A3020666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbeJBSNA (ORCPT
+        id S1727606AbeJBSNx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 14:13:00 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:18471 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727434AbeJBSM7 (ORCPT
+        Tue, 2 Oct 2018 14:13:53 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59740 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727434AbeJBSNx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 14:12:59 -0400
-X-IronPort-AV: E=Sophos;i="5.54,331,1534834800"; 
-   d="scan'208";a="20560199"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 02 Oct 2018 04:30:09 -0700
-Received: from localhost.localdomain.com (10.10.76.4) by
- chn-sv-exch06.mchp-main.com (10.10.76.107) with Microsoft SMTP Server id
- 14.3.352.0; Tue, 2 Oct 2018 04:30:08 -0700
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-To:     <nicolas.ferre@microchip.com>, <ludovic.desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: [PATCH 2/2] ARM: dts: at91: at91sam9x5cm: fix addressable nand flash size
-Date:   Tue, 2 Oct 2018 14:29:49 +0300
-Message-ID: <20181002112949.22961-2-tudor.ambarus@microchip.com>
-X-Mailer: git-send-email 2.9.4
-In-Reply-To: <20181002112949.22961-1-tudor.ambarus@microchip.com>
-References: <20181002112949.22961-1-tudor.ambarus@microchip.com>
+        Tue, 2 Oct 2018 14:13:53 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g7ItG-0000Ke-0A; Tue, 02 Oct 2018 13:30:58 +0200
+Date:   Tue, 2 Oct 2018 13:30:57 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Will Deacon <will.deacon@arm.com>
+cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        cpandya@codeaurora.org, toshi.kani@hpe.com, mhocko@suse.com,
+        akpm@linux-foundation.org, sean.j.christopherson@intel.com
+Subject: Re: [PATCH v2 3/5] x86: pgtable: Drop pXd_none() checks from
+ pXd_free_pYd_table()
+In-Reply-To: <1538478363-16255-4-git-send-email-will.deacon@arm.com>
+Message-ID: <alpine.DEB.2.21.1810021326300.32062@nanos.tec.linutronix.de>
+References: <1538478363-16255-1-git-send-email-will.deacon@arm.com> <1538478363-16255-4-git-send-email-will.deacon@arm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at91sam9x5cm comes with a 2Gb NAND flash. Fix the rootfs size to
-match this limit.
+On Tue, 2 Oct 2018, Will Deacon wrote:
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
----
- arch/arm/boot/dts/at91sam9x5cm.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Subject prefix wants to be 'x86/pgtable:' please
 
-diff --git a/arch/arm/boot/dts/at91sam9x5cm.dtsi b/arch/arm/boot/dts/at91sam9x5cm.dtsi
-index 4908ee07e628..993eabe1cf7a 100644
---- a/arch/arm/boot/dts/at91sam9x5cm.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5cm.dtsi
-@@ -100,7 +100,7 @@
- 
- 						rootfs@800000 {
- 							label = "rootfs";
--							reg = <0x800000 0x1f800000>;
-+							reg = <0x800000 0x0f800000>;
- 						};
- 					};
- 				};
--- 
-2.9.4
+> Now that the core code checks this for us, we don't need to do it in the
+> backend.
 
+According to Documentation changelogs want to be written in imperative
+mood.
+
+  The core code has a check for pXd_none() already. Remove it in the
+  architecture implementation.
+
+Or something like that.
+
+> Cc: Chintan Pandya <cpandya@codeaurora.org>
+> Cc: Toshi Kani <toshi.kani@hpe.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Reviewed-by: Toshi Kani <toshi.kani@hpe.com>
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
+
+Other than the nits above:
+
+  Acked-by: Thomas Gleixner <tglx@linutronix.de>
