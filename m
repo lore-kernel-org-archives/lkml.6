@@ -3,41 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1761C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F20C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3EB82064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EB82064A
+	by mail.kernel.org (Postfix) with ESMTP id 433142064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:57:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 433142064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731428AbeJBUkU (ORCPT
+        id S1731322AbeJBUkl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:40:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34116 "EHLO
+        Tue, 2 Oct 2018 16:40:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34078 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729981AbeJBUOs (ORCPT
+        with ESMTP id S1729986AbeJBUOm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:48 -0400
+        Tue, 2 Oct 2018 16:14:42 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 29509C2B;
-        Tue,  2 Oct 2018 13:31:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1573C47;
+        Tue,  2 Oct 2018 13:31:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Srikanth Jampala <Jampala.Srikanth@cavium.com>,
-        Gadam Sreerama <sgadam@cavium.com>,
-        "Jha, Chandan" <Chandan.Jha@cavium.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sebastian Basierski <sebastianx.basierski@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 210/228] crypto: cavium/nitrox - fix for command corruption in queue full case with backlog submissions.
-Date:   Tue,  2 Oct 2018 06:25:07 -0700
-Message-Id: <20181002132511.929448857@linuxfoundation.org>
+Subject: [PATCH 4.18 206/228] ixgbe: fix driver behaviour after issuing VFLR
+Date:   Tue,  2 Oct 2018 06:25:03 -0700
+Message-Id: <20181002132511.721772927@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -55,182 +54,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Srikanth Jampala <Jampala.Srikanth@cavium.com>
+From: Sebastian Basierski <sebastianx.basierski@intel.com>
 
-[ Upstream commit 3d7c82060d1fe65bde4023aac41a0b1bd7718e07 ]
+[ Upstream commit 939b701ad63314f5aa90dcd3d866f73954945209 ]
 
-Earlier used to post the current command without checking queue full
-     after backlog submissions. So, post the current command only after
-     confirming the space in queue after backlog submissions.
+Since VFLR doesn't clear VFMBMEM (VF Mailbox Memory)
+and is not re-enabling queues correctly we should fix
+this behavior.
 
-     Maintain host write index instead of reading device registers
-     to get the next free slot to post the command.
-
-     Return -ENOSPC in queue full case.
-
-Signed-off-by: Srikanth Jampala <Jampala.Srikanth@cavium.com>
-Reviewed-by: Gadam Sreerama <sgadam@cavium.com>
-Tested-by: Jha, Chandan <Chandan.Jha@cavium.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sebastian Basierski <sebastianx.basierski@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/cavium/nitrox/nitrox_dev.h    |    3 -
- drivers/crypto/cavium/nitrox/nitrox_lib.c    |    1 
- drivers/crypto/cavium/nitrox/nitrox_reqmgr.c |   57 +++++++++++++++------------
- 3 files changed, 35 insertions(+), 26 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c |   26 +++++++++++++++++++++++++
+ drivers/net/ethernet/intel/ixgbe/ixgbe_type.h  |    1 
+ 2 files changed, 27 insertions(+)
 
---- a/drivers/crypto/cavium/nitrox/nitrox_dev.h
-+++ b/drivers/crypto/cavium/nitrox/nitrox_dev.h
-@@ -35,6 +35,7 @@ struct nitrox_cmdq {
- 	/* requests in backlog queues */
- 	atomic_t backlog_count;
- 
-+	int write_idx;
- 	/* command size 32B/64B */
- 	u8 instr_size;
- 	u8 qno;
-@@ -87,7 +88,7 @@ struct nitrox_bh {
- 	struct bh_data *slc;
- };
- 
--/* NITROX-5 driver state */
-+/* NITROX-V driver state */
- #define NITROX_UCODE_LOADED	0
- #define NITROX_READY		1
- 
---- a/drivers/crypto/cavium/nitrox/nitrox_lib.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_lib.c
-@@ -36,6 +36,7 @@ static int cmdq_common_init(struct nitro
- 	cmdq->head = PTR_ALIGN(cmdq->head_unaligned, PKT_IN_ALIGN);
- 	cmdq->dma = PTR_ALIGN(cmdq->dma_unaligned, PKT_IN_ALIGN);
- 	cmdq->qsize = (qsize + PKT_IN_ALIGN);
-+	cmdq->write_idx = 0;
- 
- 	spin_lock_init(&cmdq->response_lock);
- 	spin_lock_init(&cmdq->cmdq_lock);
---- a/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
-@@ -42,6 +42,16 @@
-  *   Invalid flag options in AES-CCM IV.
-  */
- 
-+static inline int incr_index(int index, int count, int max)
-+{
-+	if ((index + count) >= max)
-+		index = index + count - max;
-+	else
-+		index += count;
-+
-+	return index;
-+}
-+
- /**
-  * dma_free_sglist - unmap and free the sg lists.
-  * @ndev: N5 device
-@@ -426,30 +436,29 @@ static void post_se_instr(struct nitrox_
- 			  struct nitrox_cmdq *cmdq)
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
+@@ -688,8 +688,13 @@ static int ixgbe_set_vf_macvlan(struct i
+ static inline void ixgbe_vf_reset_event(struct ixgbe_adapter *adapter, u32 vf)
  {
- 	struct nitrox_device *ndev = sr->ndev;
--	union nps_pkt_in_instr_baoff_dbell pkt_in_baoff_dbell;
--	u64 offset;
-+	int idx;
- 	u8 *ent;
+ 	struct ixgbe_hw *hw = &adapter->hw;
++	struct ixgbe_ring_feature *vmdq = &adapter->ring_feature[RING_F_VMDQ];
+ 	struct vf_data_storage *vfinfo = &adapter->vfinfo[vf];
++	u32 q_per_pool = __ALIGN_MASK(1, ~vmdq->mask);
+ 	u8 num_tcs = adapter->hw_tcs;
++	u32 reg_val;
++	u32 queue;
++	u32 word;
  
- 	spin_lock_bh(&cmdq->cmdq_lock);
+ 	/* remove VLAN filters beloning to this VF */
+ 	ixgbe_clear_vf_vlans(adapter, vf);
+@@ -726,6 +731,27 @@ static inline void ixgbe_vf_reset_event(
  
--	/* get the next write offset */
--	offset = NPS_PKT_IN_INSTR_BAOFF_DBELLX(cmdq->qno);
--	pkt_in_baoff_dbell.value = nitrox_read_csr(ndev, offset);
-+	idx = cmdq->write_idx;
- 	/* copy the instruction */
--	ent = cmdq->head + pkt_in_baoff_dbell.s.aoff;
-+	ent = cmdq->head + (idx * cmdq->instr_size);
- 	memcpy(ent, &sr->instr, cmdq->instr_size);
--	/* flush the command queue updates */
--	dma_wmb();
- 
--	sr->tstamp = jiffies;
- 	atomic_set(&sr->status, REQ_POSTED);
- 	response_list_add(sr, cmdq);
-+	sr->tstamp = jiffies;
-+	/* flush the command queue updates */
-+	dma_wmb();
- 
- 	/* Ring doorbell with count 1 */
- 	writeq(1, cmdq->dbell_csr_addr);
- 	/* orders the doorbell rings */
- 	mmiowb();
- 
-+	cmdq->write_idx = incr_index(idx, 1, ndev->qlen);
+ 	/* reset VF api back to unknown */
+ 	adapter->vfinfo[vf].vf_api = ixgbe_mbox_api_10;
 +
- 	spin_unlock_bh(&cmdq->cmdq_lock);
++	/* Restart each queue for given VF */
++	for (queue = 0; queue < q_per_pool; queue++) {
++		unsigned int reg_idx = (vf * q_per_pool) + queue;
++
++		reg_val = IXGBE_READ_REG(hw, IXGBE_PVFTXDCTL(reg_idx));
++
++		/* Re-enabling only configured queues */
++		if (reg_val) {
++			reg_val |= IXGBE_TXDCTL_ENABLE;
++			IXGBE_WRITE_REG(hw, IXGBE_PVFTXDCTL(reg_idx), reg_val);
++			reg_val &= ~IXGBE_TXDCTL_ENABLE;
++			IXGBE_WRITE_REG(hw, IXGBE_PVFTXDCTL(reg_idx), reg_val);
++		}
++	}
++
++	/* Clear VF's mailbox memory */
++	for (word = 0; word < IXGBE_VFMAILBOX_SIZE; word++)
++		IXGBE_WRITE_REG_ARRAY(hw, IXGBE_PFMBMEM(vf), word, 0);
++
++	IXGBE_WRITE_FLUSH(hw);
  }
  
-@@ -459,6 +468,9 @@ static int post_backlog_cmds(struct nitr
- 	struct nitrox_softreq *sr, *tmp;
- 	int ret = 0;
+ static int ixgbe_set_vf_mac(struct ixgbe_adapter *adapter,
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
+@@ -2518,6 +2518,7 @@ enum {
+ /* Translated register #defines */
+ #define IXGBE_PVFTDH(P)		(0x06010 + (0x40 * (P)))
+ #define IXGBE_PVFTDT(P)		(0x06018 + (0x40 * (P)))
++#define IXGBE_PVFTXDCTL(P)	(0x06028 + (0x40 * (P)))
+ #define IXGBE_PVFTDWBAL(P)	(0x06038 + (0x40 * (P)))
+ #define IXGBE_PVFTDWBAH(P)	(0x0603C + (0x40 * (P)))
  
-+	if (!atomic_read(&cmdq->backlog_count))
-+		return 0;
-+
- 	spin_lock_bh(&cmdq->backlog_lock);
- 
- 	list_for_each_entry_safe(sr, tmp, &cmdq->backlog_head, backlog) {
-@@ -466,7 +478,7 @@ static int post_backlog_cmds(struct nitr
- 
- 		/* submit until space available */
- 		if (unlikely(cmdq_full(cmdq, ndev->qlen))) {
--			ret = -EBUSY;
-+			ret = -ENOSPC;
- 			break;
- 		}
- 		/* delete from backlog list */
-@@ -491,23 +503,20 @@ static int nitrox_enqueue_request(struct
- {
- 	struct nitrox_cmdq *cmdq = sr->cmdq;
- 	struct nitrox_device *ndev = sr->ndev;
--	int ret = -EBUSY;
-+
-+	/* try to post backlog requests */
-+	post_backlog_cmds(cmdq);
- 
- 	if (unlikely(cmdq_full(cmdq, ndev->qlen))) {
- 		if (!(sr->flags & CRYPTO_TFM_REQ_MAY_BACKLOG))
--			return -EAGAIN;
--
-+			return -ENOSPC;
-+		/* add to backlog list */
- 		backlog_list_add(sr, cmdq);
--	} else {
--		ret = post_backlog_cmds(cmdq);
--		if (ret) {
--			backlog_list_add(sr, cmdq);
--			return ret;
--		}
--		post_se_instr(sr, cmdq);
--		ret = -EINPROGRESS;
-+		return -EBUSY;
- 	}
--	return ret;
-+	post_se_instr(sr, cmdq);
-+
-+	return -EINPROGRESS;
- }
- 
- /**
-@@ -624,11 +633,9 @@ int nitrox_process_se_request(struct nit
- 	 */
- 	sr->instr.fdata[0] = *((u64 *)&req->gph);
- 	sr->instr.fdata[1] = 0;
--	/* flush the soft_req changes before posting the cmd */
--	wmb();
- 
- 	ret = nitrox_enqueue_request(sr);
--	if (ret == -EAGAIN)
-+	if (ret == -ENOSPC)
- 		goto send_fail;
- 
- 	return ret;
 
 
