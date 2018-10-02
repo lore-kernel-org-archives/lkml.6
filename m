@@ -2,138 +2,139 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61068C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA54C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31C85208AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:30:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C85208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B98702089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:32:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="pTtdEKH7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B98702089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeJBXPK (ORCPT
+        id S1727562AbeJBXQd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 19:15:10 -0400
-Received: from mga07.intel.com ([134.134.136.100]:39304 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbeJBXPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 19:15:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 09:30:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,332,1534834800"; 
-   d="scan'208";a="79271488"
-Received: from ray.jf.intel.com (HELO [10.7.198.169]) ([10.7.198.169])
-  by orsmga006.jf.intel.com with ESMTP; 02 Oct 2018 09:30:52 -0700
-Subject: Re: [RFC PATCH v4 02/27] x86/fpu/xstate: Change some names to
- separate XSAVES system and user states
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, Borislav Petkov <bp@alien8.de>
-References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
- <20180921150351.20898-3-yu-cheng.yu@intel.com>
- <20181002152903.GB29601@zn.tnic>
- <ba13d643c21de8e1e01a8d528457fb5dd82c42aa.camel@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Tue, 2 Oct 2018 19:16:33 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54077 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbeJBXQb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 19:16:31 -0400
+Received: by mail-wm1-f68.google.com with SMTP id b19-v6so2916984wme.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 09:32:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=SHf7GKYXB5qhNZJjsebIev/DMis+sNL18W3mSMKT5p0=;
+        b=pTtdEKH7aBIc7YsVoPJt9NiDymLS6wdvRqAEuXXGKn4hY9Nl/o6kl2A/wN7/FNh7Zc
+         fhwD2YVORjYRrMqN3FGhpPTq0meCPRrp5tXx8Gii9mGbCj5kv4hwo5vIRr6qE+usmLgo
+         GM78Hd4H0VY9lolFt5Tlli8XbjF89n9xuDqST0JVPQE77/NQZwEzN9QOukcCReJ+urQh
+         EZ7i1GuB13rwnPJlYOM/wNXOk0830NR3RU/Sxd+VWXABoXQt4b+WPQXuMcap+5RqI85g
+         jLGzTEofbXiqlyeTxM9GvssnLq7cjSHTGdR0NwKihTW0/2JFgIGVCVraIEkwO9QrR8KT
+         xICw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=SHf7GKYXB5qhNZJjsebIev/DMis+sNL18W3mSMKT5p0=;
+        b=BiGPd06tl0AwSCfEqcaOgFkaow7jQu4mkrcB3byBq0baQTnWwdEq3We4VptoluXtNi
+         BcW9VqvkenT/dxPui4LS/IKq2Wmg03WftQSc8AtBFrQnnuzamazA0OgRdVr2CA3VO6bT
+         Nf8yg3tHWW1XlbAVbc911GIKopDLpOzpEmP0cdrGbneTxZDVee68fBCzAHav3VSwWay9
+         pVnsA7QLD089JhWMFxCeqm/bHuUyHL17hhlBDHywBwpxFwAUe/eHHplFi08YNr30O3m4
+         zIRdMtL1YRsYrxOWwzmxHdr/kWr1GxYDfAYSw31SThdkAxi4pRYOsOnCyS3FykY5Z4P8
+         GQjA==
+X-Gm-Message-State: ABuFfojUZ4rZSQaQz37amMJNMSRJ3PW8jK9jTeS/QWwYm3QoYwk4TR4W
+        0FRPgpWBctkMkbQFNPTpsm74xQ==
+X-Google-Smtp-Source: ACcGV60SgvAYNTFlPkSVEu9aHIkxY0WLuN5D3dohqCH/iZ/r9AN/1BEfP97yypIIBzCvD2Qjgs8RZA==
+X-Received: by 2002:a1c:a696:: with SMTP id p144-v6mr2444528wme.14.1538497936509;
+        Tue, 02 Oct 2018 09:32:16 -0700 (PDT)
+Received: from localhost.localdomain (p200300D993C77B00B5EB8DB179490446.dip0.t-ipconnect.de. [2003:d9:93c7:7b00:b5eb:8db1:7949:446])
+        by smtp.googlemail.com with ESMTPSA id k7-v6sm15661196wmf.41.2018.10.02.09.32.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 09:32:15 -0700 (PDT)
+Subject: Re: [PATCH v8 3/5] ipc: Allow boot time extension of IPCMNI from 32k
+ to 2M
+To:     Waiman Long <longman@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <498c8824-9255-96be-71c2-3ebfa684a9d3@linux.intel.com>
-Date:   Tue, 2 Oct 2018 09:30:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Takashi Iwai <tiwai@suse.de>, Davidlohr Bueso <dbueso@suse.de>
+References: <1529317698-16575-1-git-send-email-longman@redhat.com>
+ <1529317698-16575-4-git-send-email-longman@redhat.com>
+ <20180817164548.GA32382@linux-r8p5>
+ <5ddb67bb-872b-c8c1-7838-2622195ae1fc@redhat.com>
+From:   Manfred Spraul <manfred@colorfullife.com>
+Message-ID: <02ebafee-a295-58cf-044e-e2df0e878e0d@colorfullife.com>
+Date:   Tue, 2 Oct 2018 18:32:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <ba13d643c21de8e1e01a8d528457fb5dd82c42aa.camel@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <5ddb67bb-872b-c8c1-7838-2622195ae1fc@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/02/2018 09:21 AM, Yu-cheng Yu wrote:
-> On Tue, 2018-10-02 at 17:29 +0200, Borislav Petkov wrote:
->> On Fri, Sep 21, 2018 at 08:03:26AM -0700, Yu-cheng Yu wrote:
->>> To support XSAVES system states, change some names to distinguish
->>> user and system states.
->> I don't understand what the logic here is. SDM says:
->>
->> XSAVES—Save Processor Extended States Supervisor
->>
->> the stress being on "Supervisor" - why does it need to be renamed to
->> "system" now?
->>
-> Good point.  However, "system" is more indicative; CET states are per-task and
-> not "Supervisor".  Do we want to go back to "Supervisor" or add comments?
+Hello together,
 
-This is one of those things where the SDM language does not match what
-we use in the kernel.  I think it's fine to call them "system" or
-"kernel" states to make it consistent with our existing in-kernel
-nomenclature.
+On 8/18/18 3:15 AM, Waiman Long wrote:
+> On 08/17/2018 12:45 PM, Davidlohr Bueso wrote:
+>> Cc'ing Manfred.
+>>
+>> On Mon, 18 Jun 2018, Waiman Long wrote:
+>>
+>>> The maximum number of unique System V IPC identifiers was limited to
+>>> 32k.  That limit should be big enough for most use cases.
+>>>
+>>> However, there are some users out there requesting for more. To satisfy
+>>> the need of those users, a new boot time kernel option "ipcmni_extend"
+>>> is added to extend the IPCMNI value to 2M. This is a 64X increase which
+>>> hopefully is big enough for them.
+>> Could you please provide more info on the need of these users and how
+>> you came up with this new value (which just seems quite arbitrary)?
+>>
+>> Thanks,
+>> Davidlohr
+> Red Hat has a customer that is migrating from Solaris to Linux. Some of
+> their applications just happen to use more than 32k of shared memory
+> segments. I think Solaris allows up to 16M unique ID.
+>
+> Yes, the amount of increase is a bit arbitrary. I was trying to balance
+> how many bits should be left for sequence number. Maybe I should just
+> take 8 more bits for ID and leave 8 bits for sequence number to match
+> Solaris.
 
-I say add comments to clarify what the SDM calls it vs. what we do.
+- I think we should use the same numbers as Solaris.
+Otherwise we later have to touch it again.
+
+- What is the performance when using shmget() with already 10M segments 
+present?
+
+- I like the new logic for updating the sequence counter.
+
+Is there a reason why you only enable it for extended mode?
+
+You create a rarely used codepath, and I don't understand what speaks 
+against switching to the 'deleted' approach for all systems.
+
+
+--
+
+     Manfred
+
