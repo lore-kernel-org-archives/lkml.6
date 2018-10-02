@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D22EC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BF8C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E5DE2064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E5DE2064D
+	by mail.kernel.org (Postfix) with ESMTP id 5A6162064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A6162064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732981AbeJBUT1 (ORCPT
+        id S1732992AbeJBUT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:19:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35990 "EHLO
+        Tue, 2 Oct 2018 16:19:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36002 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732964AbeJBUT1 (ORCPT
+        with ESMTP id S1731920AbeJBUT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:27 -0400
+        Tue, 2 Oct 2018 16:19:28 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFFB9B2F;
-        Tue,  2 Oct 2018 13:36:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E45DBC2B;
+        Tue,  2 Oct 2018 13:36:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 34/94] drivers/tty: add error handling for pcmcia_loop_config
-Date:   Tue,  2 Oct 2018 06:24:48 -0700
-Message-Id: <20181002132502.878082693@linuxfoundation.org>
+Subject: [PATCH 4.9 35/94] media: tm6000: add error handling for dvb_register_adapter
+Date:   Tue,  2 Oct 2018 06:24:49 -0700
+Message-Id: <20181002132502.957844273@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -53,35 +55,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 85c634e919bd6ef17427f26a52920aeba12e16ee ]
+[ Upstream commit e95d7c6eb94c634852eaa5ff4caf3db05b5d2e86 ]
 
-When pcmcia_loop_config fails, the lack of error-handling code may
+When dvb_register_adapter fails, the lack of error-handling code may
 cause unexpected results.
 
-This patch adds error-handling code after calling pcmcia_loop_config.
+This patch adds error-handling code after calling dvb_register_adapter.
 
 Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[hans.verkuil@cisco.com: use pr_err and fix typo: adater -> adapter]
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/8250/serial_cs.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/usb/tm6000/tm6000-dvb.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/tty/serial/8250/serial_cs.c
-+++ b/drivers/tty/serial/8250/serial_cs.c
-@@ -637,8 +637,10 @@ static int serial_config(struct pcmcia_d
- 	    (link->has_func_id) &&
- 	    (link->socket->pcmcia_pfc == 0) &&
- 	    ((link->func_id == CISTPL_FUNCID_MULTI) ||
--	     (link->func_id == CISTPL_FUNCID_SERIAL)))
--		pcmcia_loop_config(link, serial_check_for_multi, info);
-+	     (link->func_id == CISTPL_FUNCID_SERIAL))) {
-+		if (pcmcia_loop_config(link, serial_check_for_multi, info))
-+			goto failed;
-+	}
+--- a/drivers/media/usb/tm6000/tm6000-dvb.c
++++ b/drivers/media/usb/tm6000/tm6000-dvb.c
+@@ -273,6 +273,11 @@ static int register_dvb(struct tm6000_co
  
- 	/*
- 	 * Apply any multi-port quirk.
+ 	ret = dvb_register_adapter(&dvb->adapter, "Trident TVMaster 6000 DVB-T",
+ 					THIS_MODULE, &dev->udev->dev, adapter_nr);
++	if (ret < 0) {
++		pr_err("tm6000: couldn't register the adapter!\n");
++		goto err;
++	}
++
+ 	dvb->adapter.priv = dev;
+ 
+ 	if (dvb->frontend) {
 
 
