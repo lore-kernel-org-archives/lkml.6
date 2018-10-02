@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B752DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DF9C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 881F7206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 881F7206B2
+	by mail.kernel.org (Postfix) with ESMTP id E608E206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E608E206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731708AbeJBUQa (ORCPT
+        id S1731722AbeJBUQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:16:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34788 "EHLO
+        Tue, 2 Oct 2018 16:16:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34800 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730099AbeJBUQa (ORCPT
+        with ESMTP id S1730099AbeJBUQe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:16:30 -0400
+        Tue, 2 Oct 2018 16:16:34 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA1205AA;
-        Tue,  2 Oct 2018 13:33:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E08C05AA;
+        Tue,  2 Oct 2018 13:33:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        stable@vger.kernel.org, Tobias Regnery <tobias.regnery@gmail.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 054/137] drivers/tty: add error handling for pcmcia_loop_config
-Date:   Tue,  2 Oct 2018 06:24:15 -0700
-Message-Id: <20181002132502.299155352@linuxfoundation.org>
+Subject: [PATCH 4.14 063/137] brcmsmac: fix wrap around in conversion from constant to s16
+Date:   Tue,  2 Oct 2018 06:24:24 -0700
+Message-Id: <20181002132502.983770740@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -51,37 +53,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit 85c634e919bd6ef17427f26a52920aeba12e16ee ]
+[ Upstream commit c9a61469fc97672a08b2f798830a55ea6e03dc4a ]
 
-When pcmcia_loop_config fails, the lack of error-handling code may
-cause unexpected results.
+The last value in the log_table wraps around to a negative value
+since s16 has a value range of -32768 to 32767. This is not what
+the table intends to represent. Use the closest positive value
+32767.
 
-This patch adds error-handling code after calling pcmcia_loop_config.
+This fixes a warning seen with clang:
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c:216:2: warning:
+      implicit conversion from 'int' to 's16' (aka 'short') changes
+value from 32768
+      to -32768 [-Wconstant-conversion]
+        32768
+        ^~~~~
+1 warning generated.
 
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 4c0bfeaae9f9 ("brcmsmac: fix array out-of-bounds access in qm_log10")
+Cc: Tobias Regnery <tobias.regnery@gmail.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/8250/serial_cs.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/serial/8250/serial_cs.c
-+++ b/drivers/tty/serial/8250/serial_cs.c
-@@ -637,8 +637,10 @@ static int serial_config(struct pcmcia_d
- 	    (link->has_func_id) &&
- 	    (link->socket->pcmcia_pfc == 0) &&
- 	    ((link->func_id == CISTPL_FUNCID_MULTI) ||
--	     (link->func_id == CISTPL_FUNCID_SERIAL)))
--		pcmcia_loop_config(link, serial_check_for_multi, info);
-+	     (link->func_id == CISTPL_FUNCID_SERIAL))) {
-+		if (pcmcia_loop_config(link, serial_check_for_multi, info))
-+			goto failed;
-+	}
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c
+@@ -213,7 +213,7 @@ static const s16 log_table[] = {
+ 	30498,
+ 	31267,
+ 	32024,
+-	32768
++	32767
+ };
  
- 	/*
- 	 * Apply any multi-port quirk.
+ #define LOG_TABLE_SIZE 32       /* log_table size */
 
 
