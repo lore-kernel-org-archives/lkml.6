@@ -2,247 +2,131 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69747C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E40ADC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D1DC206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:50:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1DC206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
+	by mail.kernel.org (Postfix) with ESMTP id B12FC20666
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:54:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B12FC20666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbeJBSdM (ORCPT
+        id S1727584AbeJBShS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 14:33:12 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:36828 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727606AbeJBSdM (ORCPT
+        Tue, 2 Oct 2018 14:37:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49368 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727434AbeJBShS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 14:33:12 -0400
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23994586AbeJBLuQ0I31M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 13:50:16 +0200
-Date:   Tue, 2 Oct 2018 12:50:16 +0100 (BST)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>
-cc:     linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] MIPS: memset: Limit excessive `noreorder' assembly mode
- use
-In-Reply-To: <alpine.LFD.2.21.1810020209310.20762@eddie.linux-mips.org>
-Message-ID: <alpine.LFD.2.21.1810020337090.20762@eddie.linux-mips.org>
-References: <alpine.LFD.2.21.1810020209310.20762@eddie.linux-mips.org>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Tue, 2 Oct 2018 14:37:18 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w92Bru1x031054
+        for <linux-kernel@vger.kernel.org>; Tue, 2 Oct 2018 07:54:22 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mv7w30nf4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 07:54:21 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Tue, 2 Oct 2018 12:54:19 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 2 Oct 2018 12:54:16 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w92BsFX162980242
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 2 Oct 2018 11:54:16 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BF660AE056;
+        Tue,  2 Oct 2018 14:53:08 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 176BBAE045;
+        Tue,  2 Oct 2018 14:53:07 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.102.1.150])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Tue,  2 Oct 2018 14:53:06 +0100 (BST)
+Date:   Tue, 2 Oct 2018 17:24:12 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jirka Hladky <jhladky@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/2] mm, numa: Remove rate-limiting of automatic numa
+ balancing migration
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20181001100525.29789-1-mgorman@techsingularity.net>
+ <20181001100525.29789-2-mgorman@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20181001100525.29789-2-mgorman@techsingularity.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18100211-4275-0000-0000-000002C3C107
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100211-4276-0000-0000-000037CED08F
+Message-Id: <20181002115412.GA4593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-02_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810020119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rewrite to use the `reorder' assembly mode and remove manually scheduled 
-delay slots except where GAS cannot schedule a delay-slot instruction 
-due to a data dependency or a section switch (as is the case with the EX 
-macro).  No change in machine code produced.
+* Mel Gorman <mgorman@techsingularity.net> [2018-10-01 11:05:24]:
 
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
----
- arch/mips/lib/memset.S |   48 ++++++++++++++++++++++++------------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+> Rate limiting of page migrations due to automatic NUMA balancing was
+> introduced to mitigate the worst-case scenario of migrating at high
+> frequency due to false sharing or slowly ping-ponging between nodes.
+> Since then, a lot of effort was spent on correctly identifying these
+> pages and avoiding unnecessary migrations and the safety net may no longer
+> be required.
+> 
+> Jirka Hladky reported a regression in 4.17 due to a scheduler patch that
+> avoids spreading STREAM tasks wide prematurely. However, once the task
+> was properly placed, it delayed migrating the memory due to rate limiting.
+> Increasing the limit fixed the problem for him.
+> 
+> Currently, the limit is hard-coded and does not account for the real
+> capabilities of the hardware. Even if an estimate was attempted, it would
+> not properly account for the number of memory controllers and it could
+> not account for the amount of bandwidth used for normal accesses. Rather
+> than fudging, this patch simply eliminates the rate limiting.
+> 
+> However, Jirka reports that a STREAM configuration using multiple
+> processes achieved similar performance to 4.16. In local tests, this patch
+> improved performance of STREAM relative to the baseline but it is somewhat
+> machine-dependent. Most workloads show little or not performance difference
+> implying that there is not a heavily reliance on the throttling mechanism
+> and it is safe to remove.
+> 
+> STREAM on 2-socket machine
+>                          4.19.0-rc5             4.19.0-rc5
+>                          numab-v1r1       noratelimit-v1r1
+> MB/sec copy     43298.52 (   0.00%)    44673.38 (   3.18%)
+> MB/sec scale    30115.06 (   0.00%)    31293.06 (   3.91%)
+> MB/sec add      32825.12 (   0.00%)    34883.62 (   6.27%)
+> MB/sec triad    32549.52 (   0.00%)    34906.60 (   7.24%
+> 
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+> ---
+Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
-linux-mips-memset-reorder.patch
-Index: linux-20180930-3maxp-defconfig/arch/mips/lib/memset.S
-===================================================================
---- linux-20180930-3maxp-defconfig.orig/arch/mips/lib/memset.S
-+++ linux-20180930-3maxp-defconfig/arch/mips/lib/memset.S
-@@ -78,7 +78,6 @@
- #endif
- 	.endm
- 
--	.set	noreorder
- 	.align	5
- 
- 	/*
-@@ -94,13 +93,16 @@
- 	.endif
- 
- 	sltiu		t0, a2, STORSIZE	/* very small region? */
-+	.set		noreorder
- 	bnez		t0, .Lsmall_memset\@
- 	 andi		t0, a0, STORMASK	/* aligned? */
-+	.set		reorder
- 
- #ifdef CONFIG_CPU_MICROMIPS
- 	move		t8, a1			/* used by 'swp' instruction */
- 	move		t9, a1
- #endif
-+	.set		noreorder
- #ifndef CONFIG_CPU_DADDI_WORKAROUNDS
- 	beqz		t0, 1f
- 	 PTR_SUBU	t0, STORSIZE		/* alignment in bytes */
-@@ -111,6 +113,7 @@
- 	 PTR_SUBU	t0, AT			/* alignment in bytes */
- 	.set		at
- #endif
-+	.set		reorder
- 
- #ifndef CONFIG_CPU_MIPSR6
- 	R10KCBARRIER(0(ra))
-@@ -125,8 +128,10 @@
- #else /* CONFIG_CPU_MIPSR6 */
- #define STORE_BYTE(N)				\
- 	EX(sb, a1, N(a0), .Lbyte_fixup\@);	\
-+	.set		noreorder;		\
- 	beqz		t0, 0f;			\
--	PTR_ADDU	t0, 1;
-+	 PTR_ADDU	t0, 1;			\
-+	.set		reorder;
- 
- 	PTR_ADDU	a2, t0			/* correct size */
- 	PTR_ADDU	t0, 1
-@@ -148,16 +153,14 @@
- #endif /* CONFIG_CPU_MIPSR6 */
- 1:	ori		t1, a2, 0x3f		/* # of full blocks */
- 	xori		t1, 0x3f
-+	andi		t0, a2, 0x40-STORSIZE
- 	beqz		t1, .Lmemset_partial\@	/* no block to fill */
--	 andi		t0, a2, 0x40-STORSIZE
- 
- 	PTR_ADDU	t1, a0			/* end address */
--	.set		reorder
- 1:	PTR_ADDIU	a0, 64
- 	R10KCBARRIER(0(ra))
- 	f_fill64 a0, -64, FILL64RG, .Lfwd_fixup\@, \mode
- 	bne		t1, a0, 1b
--	.set		noreorder
- 
- .Lmemset_partial\@:
- 	R10KCBARRIER(0(ra))
-@@ -173,20 +176,18 @@
- 	PTR_SUBU	t1, AT
- 	.set		at
- #endif
-+	PTR_ADDU	a0, t0			/* dest ptr */
- 	jr		t1
--	 PTR_ADDU	a0, t0			/* dest ptr */
- 
--	.set		push
--	.set		noreorder
--	.set		nomacro
- 	/* ... but first do longs ... */
- 	f_fill64 a0, -64, FILL64RG, .Lpartial_fixup\@, \mode
--2:	.set		pop
--	andi		a2, STORMASK		/* At most one long to go */
-+2:	andi		a2, STORMASK		/* At most one long to go */
- 
-+	.set		noreorder
- 	beqz		a2, 1f
- #ifndef CONFIG_CPU_MIPSR6
- 	 PTR_ADDU	a0, a2			/* What's left */
-+	.set		reorder
- 	R10KCBARRIER(0(ra))
- #ifdef __MIPSEB__
- 	EX(LONG_S_R, a1, -1(a0), .Llast_fixup\@)
-@@ -195,6 +196,7 @@
- #endif
- #else
- 	 PTR_SUBU	t0, $0, a2
-+	.set		reorder
- 	move		a2, zero		/* No remaining longs */
- 	PTR_ADDIU	t0, 1
- 	STORE_BYTE(0)
-@@ -210,20 +212,22 @@
- #endif
- 0:
- #endif
--1:	jr		ra
--	 move		a2, zero
-+1:	move		a2, zero
-+	jr		ra
- 
- .Lsmall_memset\@:
-+	PTR_ADDU	t1, a0, a2
- 	beqz		a2, 2f
--	 PTR_ADDU	t1, a0, a2
- 
- 1:	PTR_ADDIU	a0, 1			/* fill bytewise */
- 	R10KCBARRIER(0(ra))
-+	.set		noreorder
- 	bne		t1, a0, 1b
- 	 EX(sb, a1, -1(a0), .Lsmall_fixup\@)
-+	.set		reorder
- 
--2:	jr		ra			/* done */
--	 move		a2, zero
-+2:	move		a2, zero
-+	jr		ra			/* done */
- 	.if __memset == 1
- 	END(memset)
- 	.set __memset, 0
-@@ -237,14 +241,13 @@
- 	 *      a2     =             a2                -              t0                   + 1
- 	 */
- 	PTR_SUBU	a2, t0
-+	PTR_ADDIU	a2, 1
- 	jr		ra
--	 PTR_ADDIU	a2, 1
- #endif /* CONFIG_CPU_MIPSR6 */
- 
- .Lfirst_fixup\@:
- 	/* unset_bytes already in a2 */
- 	jr	ra
--	 nop
- 
- .Lfwd_fixup\@:
- 	/*
-@@ -255,8 +258,8 @@
- 	andi		a2, 0x3f
- 	LONG_L		t0, THREAD_BUADDR(t0)
- 	LONG_ADDU	a2, t1
-+	LONG_SUBU	a2, t0
- 	jr		ra
--	 LONG_SUBU	a2, t0
- 
- .Lpartial_fixup\@:
- 	/*
-@@ -267,24 +270,21 @@
- 	andi		a2, STORMASK
- 	LONG_L		t0, THREAD_BUADDR(t0)
- 	LONG_ADDU	a2, a0
-+	LONG_SUBU	a2, t0
- 	jr		ra
--	 LONG_SUBU	a2, t0
- 
- .Llast_fixup\@:
- 	/* unset_bytes already in a2 */
- 	jr		ra
--	 nop
- 
- .Lsmall_fixup\@:
- 	/*
- 	 * unset_bytes = end_addr - current_addr + 1
- 	 *      a2     =    t1    -      a0      + 1
- 	 */
--	.set		reorder
- 	PTR_SUBU	a2, t1, a0
- 	PTR_ADDIU	a2, 1
- 	jr		ra
--	.set		noreorder
- 
- 	.endm
- 
-@@ -298,8 +298,8 @@
- 
- LEAF(memset)
- EXPORT_SYMBOL(memset)
-+	move		v0, a0			/* result */
- 	beqz		a1, 1f
--	 move		v0, a0			/* result */
- 
- 	andi		a1, 0xff		/* spread fillword */
- 	LONG_SLL		t1, a1, 8
+-- 
+Thanks and Regards
+Srikar Dronamraju
+
