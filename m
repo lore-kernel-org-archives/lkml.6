@@ -2,123 +2,186 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B698C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14462C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD0F2064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:57:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD0F2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CFF5A2064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:57:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFF5A2064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731469AbeJBUlM (ORCPT
+        id S1730911AbeJBUOh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:41:12 -0400
-Received: from mga03.intel.com ([134.134.136.65]:33171 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727690AbeJBUlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:41:12 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 06:57:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,332,1534834800"; 
-   d="scan'208";a="95385105"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga001.fm.intel.com with ESMTP; 02 Oct 2018 06:57:39 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id C301520804; Tue,  2 Oct 2018 16:57:38 +0300 (EEST)
-Date:   Tue, 2 Oct 2018 16:57:38 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        jacopo@jmondi.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] [media] imx214: device tree binding
-Message-ID: <20181002135738.ox3jlujqzvyc4m2b@paasikivi.fi.intel.com>
-References: <20181002133058.12942-1-ricardo.ribalda@gmail.com>
- <3927913.3GBmOnKHNx@avalon>
+        Tue, 2 Oct 2018 16:14:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33982 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729789AbeJBUOc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:14:32 -0400
+Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0BE60BF0;
+        Tue,  2 Oct 2018 13:31:09 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 221/228] arm/arm64: smccc-1.1: Handle function result as parameters
+Date:   Tue,  2 Oct 2018 06:25:18 -0700
+Message-Id: <20181002132512.436058190@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
+References: <20181002132459.032960735@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3927913.3GBmOnKHNx@avalon>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-On Tue, Oct 02, 2018 at 04:47:55PM +0300, Laurent Pinchart wrote:
-> Hi Ricardo,
-> 
-> Thank you for the patch.
-> 
-> On Tuesday, 2 October 2018 16:30:57 EEST Ricardo Ribalda Delgado wrote:
+------------------
 
-...
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-> > +- clock-frequency = Frequency of the xclk clock. (Currently the
-> > +	driver only supports <24000000>).
-> 
-> Please don't mention drivers in DT bindings. I would drop the reference to the 
-> 24 MHz limitation.
-> 
-> I would actually drop the property completely :-) I don't see why you need it, 
-> and you don't make use of it in the driver.
+[ Upstream commit 755a8bf5579d22eb5636685c516d8dede799e27b ]
 
-Would you rely on assigned-clock-rates or what? There's no guarantee it'll
-actually be the desired frequency. That said, few (or no) drivers checks
-what they get when they set the frequency.
+If someone has the silly idea to write something along those lines:
 
-> 
-> > +Optional Properties:
-> > +- flash-leds: See ../video-interfaces.txt
-> > +- lens-focus: See ../video-interfaces.txt
-> > +
-> > +The imx274 device node should contain one 'port' child node with
+	extern u64 foo(void);
 
-s/should/shall/?
+	void bar(struct arm_smccc_res *res)
+	{
+		arm_smccc_1_1_smc(0xbad, foo(), res);
+	}
 
-If there's a need to support no port nodes, then say "one or none" or such.
-Usually that's useful on the receiver side only though.
+they are in for a surprise, as this gets compiled as:
 
-> > +Example:
-> > +
-> > +	camera_rear@1a {
-> > +		compatible = "sony,imx214";
-> > +		reg = <0x1a>;
-> > +		vdddo-supply = <&pm8994_lvs1>;
-> > +		vddd-supply = <&camera_vddd_1v12>;
-> > +		vdda-supply = <&pm8994_l17>;
-> > +		lens-focus = <&ad5820>;
-> > +		enable-gpios = <&msmgpio 25 GPIO_ACTIVE_HIGH>;
-> > +		clocks = <&mmcc CAMSS_MCLK0_CLK>;
-> > +		clock-names = "xclk";
-> > +		clock-frequency = <24000000>;
-> > +		port {
-> > +			imx214_ep: endpoint {
-> > +				clock-lanes = <0>;
+	0000000000000588 <bar>:
+	 588:   a9be7bfd        stp     x29, x30, [sp, #-32]!
+	 58c:   910003fd        mov     x29, sp
+	 590:   f9000bf3        str     x19, [sp, #16]
+	 594:   aa0003f3        mov     x19, x0
+	 598:   aa1e03e0        mov     x0, x30
+	 59c:   94000000        bl      0 <_mcount>
+	 5a0:   94000000        bl      0 <foo>
+	 5a4:   aa0003e1        mov     x1, x0
+	 5a8:   d4000003        smc     #0x0
+	 5ac:   b4000073        cbz     x19, 5b8 <bar+0x30>
+	 5b0:   a9000660        stp     x0, x1, [x19]
+	 5b4:   a9010e62        stp     x2, x3, [x19, #16]
+	 5b8:   f9400bf3        ldr     x19, [sp, #16]
+	 5bc:   a8c27bfd        ldp     x29, x30, [sp], #32
+	 5c0:   d65f03c0        ret
+	 5c4:   d503201f        nop
 
-I'd only put clock-lanes if the lane ordering is configurable.
+The call to foo "overwrites" the x0 register for the return value,
+and we end up calling the wrong secure service.
 
-> > +				data-lanes = <1 2 3 4>;
-> > +				link-frequencies = /bits/ 64 <480000000>;
-> > +				remote-endpoint = <&csiphy0_ep>;
-> > +			};
-> > +		};
-> > +	};
+A solution is to evaluate all the parameters before assigning
+anything to specific registers, leading to the expected result:
 
--- 
-Kind regards,
+	0000000000000588 <bar>:
+	 588:   a9be7bfd        stp     x29, x30, [sp, #-32]!
+	 58c:   910003fd        mov     x29, sp
+	 590:   f9000bf3        str     x19, [sp, #16]
+	 594:   aa0003f3        mov     x19, x0
+	 598:   aa1e03e0        mov     x0, x30
+	 59c:   94000000        bl      0 <_mcount>
+	 5a0:   94000000        bl      0 <foo>
+	 5a4:   aa0003e1        mov     x1, x0
+	 5a8:   d28175a0        mov     x0, #0xbad
+	 5ac:   d4000003        smc     #0x0
+	 5b0:   b4000073        cbz     x19, 5bc <bar+0x34>
+	 5b4:   a9000660        stp     x0, x1, [x19]
+	 5b8:   a9010e62        stp     x2, x3, [x19, #16]
+	 5bc:   f9400bf3        ldr     x19, [sp, #16]
+	 5c0:   a8c27bfd        ldp     x29, x30, [sp], #32
+	 5c4:   d65f03c0        ret
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Reported-by: Julien Grall <julien.grall@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/linux/arm-smccc.h |   30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
+
+--- a/include/linux/arm-smccc.h
++++ b/include/linux/arm-smccc.h
+@@ -205,41 +205,51 @@ asmlinkage void __arm_smccc_hvc(unsigned
+ 	register unsigned long r3 asm("r3")
+ 
+ #define __declare_arg_1(a0, a1, res)					\
++	typeof(a1) __a1 = a1;						\
+ 	struct arm_smccc_res   *___res = res;				\
+ 	register unsigned long r0 asm("r0") = (u32)a0;			\
+-	register unsigned long r1 asm("r1") = a1;			\
++	register unsigned long r1 asm("r1") = __a1;			\
+ 	register unsigned long r2 asm("r2");				\
+ 	register unsigned long r3 asm("r3")
+ 
+ #define __declare_arg_2(a0, a1, a2, res)				\
++	typeof(a1) __a1 = a1;						\
++	typeof(a2) __a2 = a2;						\
+ 	struct arm_smccc_res   *___res = res;				\
+ 	register unsigned long r0 asm("r0") = (u32)a0;			\
+-	register unsigned long r1 asm("r1") = a1;			\
+-	register unsigned long r2 asm("r2") = a2;			\
++	register unsigned long r1 asm("r1") = __a1;			\
++	register unsigned long r2 asm("r2") = __a2;			\
+ 	register unsigned long r3 asm("r3")
+ 
+ #define __declare_arg_3(a0, a1, a2, a3, res)				\
++	typeof(a1) __a1 = a1;						\
++	typeof(a2) __a2 = a2;						\
++	typeof(a3) __a3 = a3;						\
+ 	struct arm_smccc_res   *___res = res;				\
+ 	register unsigned long r0 asm("r0") = (u32)a0;			\
+-	register unsigned long r1 asm("r1") = a1;			\
+-	register unsigned long r2 asm("r2") = a2;			\
+-	register unsigned long r3 asm("r3") = a3
++	register unsigned long r1 asm("r1") = __a1;			\
++	register unsigned long r2 asm("r2") = __a2;			\
++	register unsigned long r3 asm("r3") = __a3
+ 
+ #define __declare_arg_4(a0, a1, a2, a3, a4, res)			\
++	typeof(a4) __a4 = a4;						\
+ 	__declare_arg_3(a0, a1, a2, a3, res);				\
+-	register typeof(a4) r4 asm("r4") = a4
++	register unsigned long r4 asm("r4") = __a4
+ 
+ #define __declare_arg_5(a0, a1, a2, a3, a4, a5, res)			\
++	typeof(a5) __a5 = a5;						\
+ 	__declare_arg_4(a0, a1, a2, a3, a4, res);			\
+-	register typeof(a5) r5 asm("r5") = a5
++	register unsigned long r5 asm("r5") = __a5
+ 
+ #define __declare_arg_6(a0, a1, a2, a3, a4, a5, a6, res)		\
++	typeof(a6) __a6 = a6;						\
+ 	__declare_arg_5(a0, a1, a2, a3, a4, a5, res);			\
+-	register typeof(a6) r6 asm("r6") = a6
++	register unsigned long r6 asm("r6") = __a6
+ 
+ #define __declare_arg_7(a0, a1, a2, a3, a4, a5, a6, a7, res)		\
++	typeof(a7) __a7 = a7;						\
+ 	__declare_arg_6(a0, a1, a2, a3, a4, a5, a6, res);		\
+-	register typeof(a7) r7 asm("r7") = a7
++	register unsigned long r7 asm("r7") = __a7
+ 
+ #define ___declare_args(count, ...) __declare_arg_ ## count(__VA_ARGS__)
+ #define __declare_args(count, ...)  ___declare_args(count, __VA_ARGS__)
+
+
