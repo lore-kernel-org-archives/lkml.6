@@ -2,125 +2,139 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6E1C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4911C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F7AC2147C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:39:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F7AC2147C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 74F5F2089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:41:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="aJ1r6ESx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F5F2089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbeJBXXs (ORCPT
+        id S1727551AbeJBXZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 19:23:48 -0400
-Received: from mga17.intel.com ([192.55.52.151]:37006 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbeJBXXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 19:23:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 09:39:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,332,1534834800"; 
-   d="scan'208";a="79273355"
-Received: from ray.jf.intel.com (HELO [10.7.198.169]) ([10.7.198.169])
-  by orsmga006.jf.intel.com with ESMTP; 02 Oct 2018 09:39:32 -0700
-Subject: Re: [RFC PATCH v4 02/27] x86/fpu/xstate: Change some names to
- separate XSAVES system and user states
-To:     Borislav Petkov <bp@alien8.de>, Yu-cheng Yu <yu-cheng.yu@intel.com>
-References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
- <20180921150351.20898-3-yu-cheng.yu@intel.com>
- <20181002152903.GB29601@zn.tnic>
- <ba13d643c21de8e1e01a8d528457fb5dd82c42aa.camel@intel.com>
- <498c8824-9255-96be-71c2-3ebfa684a9d3@linux.intel.com>
- <20181002163736.GD29601@zn.tnic>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <6859a180-8973-e794-7ac4-1ac8f0e1c709@linux.intel.com>
-Date:   Tue, 2 Oct 2018 09:39:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 2 Oct 2018 19:25:41 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44510 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbeJBXZl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 19:25:41 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 63-v6so2981257wra.11
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 09:41:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=lx0cw+9rF/07CO1RshCjn2zaAnRoqJpQJvSZ7+l+DRw=;
+        b=aJ1r6ESx/4Zn+D/z1M3S3UmtlyeBUi2Y7AOi/vgUyQmdFJY3bQ5FXHUdFWKFesRY4B
+         eL8oaAF7Ipb3BSyuDq2Jm4cOXiLH47iUQmMzjwiqY7jRbc3pYm3aUd/+CoPlULF1WkMG
+         0t+TyDudQClpl1eicP8tXD6mGWyNxoc57xJbki50t10aH0CtSZ2O7h0FncnkJmhQU9T0
+         cZeK2SYtGWM4gn5HROLaCOml4Bq79L29BOQjVqIQXk7rHvfTWscyUjAB5HOZAaiz0afp
+         deJw5tBG7tevMnfE5/UqjFzTqK2rhk+EJZ6d1NRTBWj2IzQZB4rWjQFXZGQoz9UYQX42
+         PmKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=lx0cw+9rF/07CO1RshCjn2zaAnRoqJpQJvSZ7+l+DRw=;
+        b=tIbT9nAsZvO2ZUoEH7JWKZ92zKjgxW6pAGvm1um4b0GIS5x7S41QQzkhACaW+MnSNP
+         kJdIXjVmEz5Hmrm8VM6qkUSxNI1V+uRUArCnD3Fxf/CraAIE4DPW9ysjcdqT9Ss2ZyLo
+         N2ZQySisafEI42gOusGtbrxoY9mlm73mhWncCM5vRnjHDM7TcIxrk8i3/wAe/L8lS2EV
+         p5MIsR02nShrl4fc5CaZ8r0Iq8e1UDm+bcaU6l8z8SMHKIx5XqqLy2gYuFpiI+Vt8LrO
+         VE2ycuveJEK7bu6K8aIJMQ9tPcHyRwT+7rZIJCBY9DO4n11gBcZkXf60oMvFJjNBsUj3
+         h8SA==
+X-Gm-Message-State: ABuFfoh1wZPi42etc+RSoX0QCB8saW5LZU+aV/IXb1ZF/7IDc/5MbIvt
+        Yq83NM5h5UcL0O4PyMz3BfElTAWgi9rCQw==
+X-Google-Smtp-Source: ACcGV60q6IEot5bodaCTy4XYxtu9aTEC4Oxt4qYReV83PZX+lj5vUeoiDI4lkfKYFun6XuHnUtVV6w==
+X-Received: by 2002:adf:db8e:: with SMTP id u14-v6mr11684165wri.217.1538498484331;
+        Tue, 02 Oct 2018 09:41:24 -0700 (PDT)
+Received: from pathfinder (host-78-148-28-244.as13285.net. [78.148.28.244])
+        by smtp.gmail.com with ESMTPSA id e127-v6sm10200217wmg.45.2018.10.02.09.41.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Oct 2018 09:41:23 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 17:41:23 +0100
+From:   Phillip Potter <phil@philpotter.co.uk>
+To:     dushistov@mail.ru
+Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: [PATCH] fs: ufs: Remove switch statement from ufs_set_de_type
+ function
+Message-ID: <20181002164123.GA17538@pathfinder>
 MIME-Version: 1.0
-In-Reply-To: <20181002163736.GD29601@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/02/2018 09:37 AM, Borislav Petkov wrote:
-> This patch's commit message is not even close. So I'd very much
-> appreciate a more verbose explanation, even if it repeats itself at
-> places.
+Remove switch statement from ufs_set_de_type function in fs/ufs/util.h
+header and replace with simple assignment. For each case, S_IFx >> 12
+is equal to DT_x, so in valid cases (mode & S_IFMT) >> 12 should give
+us the correct file type. For invalid cases, upper layer validation
+catches this anyway, so this improves readability and arguably
+performance by assigning (mode & S_IFMT) >> 12 directly.
 
-Yep, totally agree.
+Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
+---
+ fs/ufs/util.h | 30 ++----------------------------
+ 1 file changed, 2 insertions(+), 28 deletions(-)
+
+diff --git a/fs/ufs/util.h b/fs/ufs/util.h
+index 1fd3011ea623..7e0c0878b9f9 100644
+--- a/fs/ufs/util.h
++++ b/fs/ufs/util.h
+@@ -16,6 +16,7 @@
+  * some useful macros
+  */
+ #define in_range(b,first,len)	((b)>=(first)&&(b)<(first)+(len))
++#define S_SHIFT			12
+ 
+ /*
+  * functions used for retyping
+@@ -158,34 +159,7 @@ ufs_set_de_type(struct super_block *sb, struct ufs_dir_entry *de, int mode)
+ 	if ((UFS_SB(sb)->s_flags & UFS_DE_MASK) != UFS_DE_44BSD)
+ 		return;
+ 
+-	/*
+-	 * TODO turn this into a table lookup
+-	 */
+-	switch (mode & S_IFMT) {
+-	case S_IFSOCK:
+-		de->d_u.d_44.d_type = DT_SOCK;
+-		break;
+-	case S_IFLNK:
+-		de->d_u.d_44.d_type = DT_LNK;
+-		break;
+-	case S_IFREG:
+-		de->d_u.d_44.d_type = DT_REG;
+-		break;
+-	case S_IFBLK:
+-		de->d_u.d_44.d_type = DT_BLK;
+-		break;
+-	case S_IFDIR:
+-		de->d_u.d_44.d_type = DT_DIR;
+-		break;
+-	case S_IFCHR:
+-		de->d_u.d_44.d_type = DT_CHR;
+-		break;
+-	case S_IFIFO:
+-		de->d_u.d_44.d_type = DT_FIFO;
+-		break;
+-	default:
+-		de->d_u.d_44.d_type = DT_UNKNOWN;
+-	}
++	de->d_u.d_44.d_type = (mode & S_IFMT) >> S_SHIFT;
+ }
+ 
+ static inline u32
+-- 
+2.17.0
+
