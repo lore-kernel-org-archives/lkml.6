@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CA7C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7275FC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FB37206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FB37206B2
+	by mail.kernel.org (Postfix) with ESMTP id 42DD2206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42DD2206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732380AbeJBUSO (ORCPT
+        id S1732394AbeJBUSP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:18:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35388 "EHLO
+        Tue, 2 Oct 2018 16:18:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35410 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732352AbeJBUSM (ORCPT
+        with ESMTP id S1732373AbeJBUSO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:12 -0400
+        Tue, 2 Oct 2018 16:18:14 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 44FD9B2F;
-        Tue,  2 Oct 2018 13:34:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E62E5AA;
+        Tue,  2 Oct 2018 13:34:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bryan Gurney <bgurney@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>, Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 118/137] isofs: reject hardware sector size > 2048 bytes
-Date:   Tue,  2 Oct 2018 06:25:19 -0700
-Message-Id: <20181002132506.789967068@linuxfoundation.org>
+Subject: [PATCH 4.14 120/137] bpf: sockmap: write_space events need to be passed to TCP handler
+Date:   Tue,  2 Oct 2018 06:25:21 -0700
+Message-Id: <20181002132506.929797303@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,59 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Sandeen <sandeen@redhat.com>
+From: John Fastabend <john.fastabend@gmail.com>
 
-[ Upstream commit 09a4e0be5826aa66c4ce9954841f110ffe63ef4f ]
+[ Upstream commit 9b2e0388bec8ec5427403e23faff3b58dd1c3200 ]
 
-The largest block size supported by isofs is ISOFS_BLOCK_SIZE (2048), but
-isofs_fill_super calls sb_min_blocksize and sets the blocksize to the
-device's logical block size if it's larger than what we ended up with after
-option parsing.
+When sockmap code is using the stream parser it also handles the write
+space events in order to handle the case where (a) verdict redirects
+skb to another socket and (b) the sockmap then sends the skb but due
+to memory constraints (or other EAGAIN errors) needs to do a retry.
 
-If for some reason we try to mount a hard 4k device as an isofs filesystem,
-we'll set opt.blocksize to 4096, and when we try to read the superblock
-we found via:
+But the initial code missed a third case where the
+skb_send_sock_locked() triggers an sk_wait_event(). A typically case
+would be when sndbuf size is exceeded. If this happens because we
+do not pass the write_space event to the lower layers we never wake
+up the event and it will wait for sndtimeo. Which as noted in ktls
+fix may be rather large and look like a hang to the user.
 
-        block = iso_blknum << (ISOFS_BLOCK_BITS - s->s_blocksize_bits)
+To reproduce the best test is to reduce the sndbuf size and send
+1B data chunks to stress the memory handling. To fix this pass the
+event from the upper layer to the lower layer.
 
-with s_blocksize_bits greater than ISOFS_BLOCK_BITS, we'll have a negative
-shift and the bread will fail somewhat cryptically:
-
-  isofs_fill_super: bread failed, dev=sda, iso_blknum=17, block=-2147483648
-
-It seems best to just catch and clearly reject mounts of such a device.
-
-Reported-by: Bryan Gurney <bgurney@redhat.com>
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/isofs/inode.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/bpf/sockmap.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -24,6 +24,7 @@
- #include <linux/mpage.h>
- #include <linux/user_namespace.h>
- #include <linux/seq_file.h>
-+#include <linux/blkdev.h>
+--- a/kernel/bpf/sockmap.c
++++ b/kernel/bpf/sockmap.c
+@@ -313,12 +313,15 @@ out:
+ static void smap_write_space(struct sock *sk)
+ {
+ 	struct smap_psock *psock;
++	void (*write_space)(struct sock *sk);
  
- #include "isofs.h"
- #include "zisofs.h"
-@@ -653,6 +654,12 @@ static int isofs_fill_super(struct super
- 	/*
- 	 * What if bugger tells us to go beyond page size?
- 	 */
-+	if (bdev_logical_block_size(s->s_bdev) > 2048) {
-+		printk(KERN_WARNING
-+		       "ISOFS: unsupported/invalid hardware sector size %d\n",
-+			bdev_logical_block_size(s->s_bdev));
-+		goto out_freesbi;
-+	}
- 	opt.blocksize = sb_min_blocksize(s, opt.blocksize);
+ 	rcu_read_lock();
+ 	psock = smap_psock_sk(sk);
+ 	if (likely(psock && test_bit(SMAP_TX_RUNNING, &psock->state)))
+ 		schedule_work(&psock->tx_work);
++	write_space = psock->save_write_space;
+ 	rcu_read_unlock();
++	write_space(sk);
+ }
  
- 	sbi->s_high_sierra = 0; /* default is iso9660 */
+ static void smap_stop_sock(struct smap_psock *psock, struct sock *sk)
 
 
