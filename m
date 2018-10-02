@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE6DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF04C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 809FC2082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 809FC2082A
+	by mail.kernel.org (Postfix) with ESMTP id 0FFCA2064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:58:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FFCA2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731193AbeJBUl7 (ORCPT
+        id S1730800AbeJBUO1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:41:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33944 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730783AbeJBUO1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 16:14:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33932 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730751AbeJBUO0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:14:26 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7DA8C3F;
-        Tue,  2 Oct 2018 13:31:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C73D0C2B;
+        Tue,  2 Oct 2018 13:31:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marcel Partap <mpartap@gmx.net>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Michael Scott <hashcode0f@gmail.com>,
-        NeKit <nekit1000@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, James Smart <james.smart@broadcom.com>,
+        Christoph Hellwig <hch@lst.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 218/228] ARM: dts: omap4-droid4: Fix emmc errors seen on some devices
-Date:   Tue,  2 Oct 2018 06:25:15 -0700
-Message-Id: <20181002132512.290321236@linuxfoundation.org>
+Subject: [PATCH 4.18 217/228] nvme-fcloop: Fix dropped LSs to removed target port
+Date:   Tue,  2 Oct 2018 06:25:14 -0700
+Message-Id: <20181002132512.235321368@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -56,68 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 2d59bb602314a4b2593fde267734266b5e872dd0 ]
+[ Upstream commit afd299ca996929f4f98ac20da0044c0cdc124879 ]
 
-Otherwise we can get the following errors occasionally on some devices:
+When a targetport is removed from the config, fcloop will avoid calling
+the LS done() routine thinking the targetport is gone. This leaves the
+initiator reset/reconnect hanging as it waits for a status on the
+Create_Association LS for the reconnect.
 
-mmc1: tried to HW reset card, got error -110
-mmcblk1: error -110 requesting status
-mmcblk1: recovery failed!
-print_req_error: I/O error, dev mmcblk1, sector 14329
-...
+Change the filter in the LS callback path. If tport null (set when
+failed validation before "sending to remote port"), be sure to call
+done. This was the main bug. But, continue the logic that only calls
+done if tport was set but there is no remoteport (e.g. case where
+remoteport has been removed, thus host doesn't expect a completion).
 
-I have one device that hits this error almost on every boot, and another
-one that hits it only rarely with the other ones I've used behave without
-problems. I'm not sure if the issue is related to a particular eMMC card
-model, but in case it is, both of the machines with issues have:
-
-# cat /sys/class/mmc_host/mmc1/mmc1:0001/manfid \
-/sys/class/mmc_host/mmc1/mmc1:0001/oemid \
-/sys/class/mmc_host/mmc1/mmc1:0001/name
-0x000045
-0x0100
-SEM16G
-
-and the working ones have:
-
-0x000011
-0x0100
-016G92
-
-Note that "ti,non-removable" is different as omap_hsmmc_reg_get() does not
-call omap_hsmmc_disable_boot_regulators() if no_regulator_off_init is set.
-And currently we set no_regulator_off_init only for "ti,non-removable" and
-not for "non-removable". It seems that we should have "non-removable" with
-some other mmc generic property behave in the same way instead of having to
-use a non-generic property. But let's fix the issue first.
-
-Fixes: 7e2f8c0ae670 ("ARM: dts: Add minimal support for motorola droid 4
-xt894")
-Cc: Marcel Partap <mpartap@gmx.net>
-Cc: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Michael Scott <hashcode0f@gmail.com>
-Cc: NeKit <nekit1000@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/omap4-droid4-xt894.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvme/target/fcloop.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
-+++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-@@ -351,7 +351,7 @@
- &mmc2 {
- 	vmmc-supply = <&vsdio>;
- 	bus-width = <8>;
--	non-removable;
-+	ti,non-removable;
- };
+--- a/drivers/nvme/target/fcloop.c
++++ b/drivers/nvme/target/fcloop.c
+@@ -311,7 +311,7 @@ fcloop_tgt_lsrqst_done_work(struct work_
+ 	struct fcloop_tport *tport = tls_req->tport;
+ 	struct nvmefc_ls_req *lsreq = tls_req->lsreq;
  
- &mmc3 {
+-	if (tport->remoteport)
++	if (!tport || tport->remoteport)
+ 		lsreq->done(lsreq, tls_req->status);
+ }
+ 
+@@ -329,6 +329,7 @@ fcloop_ls_req(struct nvme_fc_local_port
+ 
+ 	if (!rport->targetport) {
+ 		tls_req->status = -ECONNREFUSED;
++		tls_req->tport = NULL;
+ 		schedule_work(&tls_req->work);
+ 		return ret;
+ 	}
 
 
