@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA7FC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98881C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5143D2089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5143D2089C
+	by mail.kernel.org (Postfix) with ESMTP id 56F6C208D9
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56F6C208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729632AbeJBUMO (ORCPT
+        id S1729649AbeJBUMQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:12:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32916 "EHLO
+        Tue, 2 Oct 2018 16:12:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32928 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726993AbeJBUMO (ORCPT
+        with ESMTP id S1729601AbeJBUMP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:14 -0400
+        Tue, 2 Oct 2018 16:12:15 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 116A2A67;
-        Tue,  2 Oct 2018 13:28:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2DD24B2F;
+        Tue,  2 Oct 2018 13:28:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 088/228] mt76x2: fix mrr idx/count estimation in mt76x2_mac_fill_tx_status()
-Date:   Tue,  2 Oct 2018 06:23:05 -0700
-Message-Id: <20181002132505.313316063@linuxfoundation.org>
+Subject: [PATCH 4.18 079/228] media: tm6000: add error handling for dvb_register_adapter
+Date:   Tue,  2 Oct 2018 06:22:56 -0700
+Message-Id: <20181002132504.687734022@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,42 +53,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 2d1e9be0016230f3707812243561fbd16f1aea4b ]
+[ Upstream commit e95d7c6eb94c634852eaa5ff4caf3db05b5d2e86 ]
 
-Fix mcs and attempt count estimation in mt76x2_mac_fill_tx_status routine
-if the number of tx retries reported by the hw is grater than
-IEEE80211_TX_MAX_RATES
+When dvb_register_adapter fails, the lack of error-handling code may
+cause unexpected results.
 
-Fixes: 7bc04215a66b ("mt76: add driver code for MT76x2e")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This patch adds error-handling code after calling dvb_register_adapter.
+
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+[hans.verkuil@cisco.com: use pr_err and fix typo: adater -> adapter]
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mediatek/mt76/mt76x2_mac.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/media/usb/tm6000/tm6000-dvb.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/wireless/mediatek/mt76/mt76x2_mac.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2_mac.c
-@@ -439,15 +439,13 @@ mt76x2_mac_fill_tx_status(struct mt76x2_
- 	if (last_rate < IEEE80211_TX_MAX_RATES - 1)
- 		rate[last_rate + 1].idx = -1;
+--- a/drivers/media/usb/tm6000/tm6000-dvb.c
++++ b/drivers/media/usb/tm6000/tm6000-dvb.c
+@@ -266,6 +266,11 @@ static int register_dvb(struct tm6000_co
  
--	cur_idx = rate[last_rate].idx + st->retry;
-+	cur_idx = rate[last_rate].idx + last_rate;
- 	for (i = 0; i <= last_rate; i++) {
- 		rate[i].flags = rate[last_rate].flags;
- 		rate[i].idx = max_t(int, 0, cur_idx - i);
- 		rate[i].count = 1;
- 	}
--
--	if (last_rate > 0)
--		rate[last_rate - 1].count = st->retry + 1 - last_rate;
-+	rate[last_rate].count = st->retry + 1 - last_rate;
+ 	ret = dvb_register_adapter(&dvb->adapter, "Trident TVMaster 6000 DVB-T",
+ 					THIS_MODULE, &dev->udev->dev, adapter_nr);
++	if (ret < 0) {
++		pr_err("tm6000: couldn't register the adapter!\n");
++		goto err;
++	}
++
+ 	dvb->adapter.priv = dev;
  
- 	info->status.ampdu_len = n_frames;
- 	info->status.ampdu_ack_len = st->success ? n_frames : 0;
+ 	if (dvb->frontend) {
 
 
