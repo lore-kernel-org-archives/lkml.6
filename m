@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBECC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4290C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA1E3208D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA1E3208D9
+	by mail.kernel.org (Postfix) with ESMTP id 8B306206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B306206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729329AbeJBULr (ORCPT
+        id S1729384AbeJBULu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60948 "EHLO
+        Tue, 2 Oct 2018 16:11:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60984 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729280AbeJBULq (ORCPT
+        with ESMTP id S1729362AbeJBULu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:46 -0400
+        Tue, 2 Oct 2018 16:11:50 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 624D3266;
-        Tue,  2 Oct 2018 13:28:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E6C1C11;
+        Tue,  2 Oct 2018 13:28:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 108/228] spi: orion: fix CS GPIO handling again
-Date:   Tue,  2 Oct 2018 06:23:25 -0700
-Message-Id: <20181002132506.699823053@linuxfoundation.org>
+Subject: [PATCH 4.18 110/228] ASoC: Intel: bytcr_rt5640: Fix Acer Iconia 8 over-current detect threshold
+Date:   Tue,  2 Oct 2018 06:23:27 -0700
+Message-Id: <20181002132506.847608804@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,149 +53,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kundrát <jan.kundrat@cesnet.cz>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit fb9acf5f1f21f1de193523ff780bda375b4c2e21 ]
+[ Upstream commit f12a0a3c4cc6f594d7c2ea361f2396ae5c518d2c ]
 
-The code did not de-assert any CS GPIOs before probing slaves. This
-means that several CS signals could be active at once, garbling the
-communication. Whether this was actually a problem depended on the type
-of the SPI device attached (so my "spidev" for userspace access worked
-correctly because its probe was effectively a no-op), and on the state
-of the GPIO pins at SoC's boot.
+Change the over-current detect threshold on the Acer Iconia 8 from
+2000ua to 1500uA, this fixes headset button presses not being detected.
 
-The code was already iterating through all DT children of the SPI
-controller, so this change re-uses that loop for CS GPIO setup as well.
-This means that this might change the number of the HW CS signal which
-is picked for all GPIO CS devices. Previously, the lowest one was used,
-but we now use the first one from the DT.
-
-With this move of the code, we can also finally initialize each GPIO CS
-lane before registering the SPI controller (which in turn probes for
-slaves).
-
-I tried to fix this in 544248623b95 already, but that only did it half
-way by registering the GPIOs properly. That patch failed to set their
-logic signals early enough, though.
-
-Signed-off-by: Jan Kundrát <jan.kundrat@cesnet.cz>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-orion.c |   77 ++++++++++++++++++++++++------------------------
- 1 file changed, 40 insertions(+), 37 deletions(-)
+ sound/soc/intel/boards/bytcr_rt5640.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/spi/spi-orion.c
-+++ b/drivers/spi/spi-orion.c
-@@ -20,6 +20,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/of_gpio.h>
- #include <linux/clk.h>
- #include <linux/sizes.h>
- #include <linux/gpio.h>
-@@ -681,9 +682,9 @@ static int orion_spi_probe(struct platfo
- 		goto out_rel_axi_clk;
- 	}
- 
--	/* Scan all SPI devices of this controller for direct mapped devices */
- 	for_each_available_child_of_node(pdev->dev.of_node, np) {
- 		u32 cs;
-+		int cs_gpio;
- 
- 		/* Get chip-select number from the "reg" property */
- 		status = of_property_read_u32(np, "reg", &cs);
-@@ -695,6 +696,44 @@ static int orion_spi_probe(struct platfo
- 		}
- 
- 		/*
-+		 * Initialize the CS GPIO:
-+		 * - properly request the actual GPIO signal
-+		 * - de-assert the logical signal so that all GPIO CS lines
-+		 *   are inactive when probing for slaves
-+		 * - find an unused physical CS which will be driven for any
-+		 *   slave which uses a CS GPIO
-+		 */
-+		cs_gpio = of_get_named_gpio(pdev->dev.of_node, "cs-gpios", cs);
-+		if (cs_gpio > 0) {
-+			char *gpio_name;
-+			int cs_flags;
-+
-+			if (spi->unused_hw_gpio == -1) {
-+				dev_info(&pdev->dev,
-+					"Selected unused HW CS#%d for any GPIO CSes\n",
-+					cs);
-+				spi->unused_hw_gpio = cs;
-+			}
-+
-+			gpio_name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
-+					"%s-CS%d", dev_name(&pdev->dev), cs);
-+			if (!gpio_name) {
-+				status = -ENOMEM;
-+				goto out_rel_axi_clk;
-+			}
-+
-+			cs_flags = of_property_read_bool(np, "spi-cs-high") ?
-+				GPIOF_OUT_INIT_LOW : GPIOF_OUT_INIT_HIGH;
-+			status = devm_gpio_request_one(&pdev->dev, cs_gpio,
-+					cs_flags, gpio_name);
-+			if (status) {
-+				dev_err(&pdev->dev,
-+					"Can't request GPIO for CS %d\n", cs);
-+				goto out_rel_axi_clk;
-+			}
-+		}
-+
-+		/*
- 		 * Check if an address is configured for this SPI device. If
- 		 * not, the MBus mapping via the 'ranges' property in the 'soc'
- 		 * node is not configured and this device should not use the
-@@ -740,44 +779,8 @@ static int orion_spi_probe(struct platfo
- 	if (status < 0)
- 		goto out_rel_pm;
- 
--	if (master->cs_gpios) {
--		int i;
--		for (i = 0; i < master->num_chipselect; ++i) {
--			char *gpio_name;
--
--			if (!gpio_is_valid(master->cs_gpios[i])) {
--				continue;
--			}
--
--			gpio_name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
--					"%s-CS%d", dev_name(&pdev->dev), i);
--			if (!gpio_name) {
--				status = -ENOMEM;
--				goto out_rel_master;
--			}
--
--			status = devm_gpio_request(&pdev->dev,
--					master->cs_gpios[i], gpio_name);
--			if (status) {
--				dev_err(&pdev->dev,
--					"Can't request GPIO for CS %d\n",
--					master->cs_gpios[i]);
--				goto out_rel_master;
--			}
--			if (spi->unused_hw_gpio == -1) {
--				dev_info(&pdev->dev,
--					"Selected unused HW CS#%d for any GPIO CSes\n",
--					i);
--				spi->unused_hw_gpio = i;
--			}
--		}
--	}
--
--
- 	return status;
- 
--out_rel_master:
--	spi_unregister_master(master);
- out_rel_pm:
- 	pm_runtime_disable(&pdev->dev);
- out_rel_axi_clk:
+--- a/sound/soc/intel/boards/bytcr_rt5640.c
++++ b/sound/soc/intel/boards/bytcr_rt5640.c
+@@ -404,7 +404,7 @@ static const struct dmi_system_id byt_rt
+ 		},
+ 		.driver_data = (void *)(BYT_RT5640_DMIC1_MAP |
+ 					BYT_RT5640_JD_SRC_JD1_IN4P |
+-					BYT_RT5640_OVCD_TH_2000UA |
++					BYT_RT5640_OVCD_TH_1500UA |
+ 					BYT_RT5640_OVCD_SF_0P75 |
+ 					BYT_RT5640_SSP0_AIF1 |
+ 					BYT_RT5640_MCLK_EN),
 
 
