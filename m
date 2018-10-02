@@ -2,87 +2,240 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D463AC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 637F9C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A66422089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:54:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A66422089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 26227204FD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:54:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26227204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731855AbeJBUhl (ORCPT
+        id S1731371AbeJBUPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:37:41 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41113 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728598AbeJBUhl (ORCPT
+        Tue, 2 Oct 2018 16:15:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34488 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731352AbeJBUPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:37:41 -0400
-Received: by mail-qt1-f194.google.com with SMTP id m15-v6so1955638qtp.8
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 06:54:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H+adXAmUh4JPmASSosCvBILHf//BLoylclOhihW3CiI=;
-        b=O7dTeke1ZcvyJnkmDfOKbF6ySYquKphqyQz2vNghfOODt9Zp/7rLZZLPCS4iIM09Nv
-         K4Ht5CKqSKzJheS9wfTG5oAUgMopyAiclrxgIbfovXrnsu+o3KaL03I/fL2Tj5QR+pdt
-         ug0irIZ42iIP9Z7rHvBim1zDCQtr+l+Bg6jOL3YXb+ETPVMp1/47x+Hq0Th2tfRNHi1S
-         N9GMHYyvmmFxI7Di3n0ObzJyImSSuCWzktnuXMIFWOLsA4thxkZptme5w4YnQPs824u/
-         kiXextrYSRi+Ro2pJh85cSodO17Rx1j+mz+9eATSWgmWNAJ5OpJqke16NMT4DclquIZd
-         0IPA==
-X-Gm-Message-State: ABuFfohK40eWMA7RJNvkh3RLsZnwH/qECpQNGP4K8AxedtNMf/gUCqQb
-        2YABCBtoAB6zlt4mWUyEGb2CI/Un0lBZsPJvhFw=
-X-Google-Smtp-Source: ACcGV60YusyoybOHEeD6mAt9AJXQyfCn87LiOOu2i4GbBy6LsteCobb4YnG0+o78s3g/iEOOEMqZCKNWOmX06dMTUQc=
-X-Received: by 2002:aed:210e:: with SMTP id 14-v6mr6200225qtc.9.1538488451361;
- Tue, 02 Oct 2018 06:54:11 -0700 (PDT)
+        Tue, 2 Oct 2018 16:15:47 -0400
+Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CC469BF0;
+        Tue,  2 Oct 2018 13:32:23 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Mike Christie <mchristi@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 035/137] scsi: target: Avoid that EXTENDED COPY commands trigger lock inversion
+Date:   Tue,  2 Oct 2018 06:23:56 -0700
+Message-Id: <20181002132500.936629160@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
+References: <20181002132458.446916963@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <CAKv+Gu8NXyfNAzk4Fe=J0QHEEV-txbRAoEcQmjG-6PgCyW5SZg@mail.gmail.com>
- <20181002132026.14931-1-Jason@zx2c4.com> <CAKv+Gu_mwu+TFrbRPqDZ8i5csSqS26a534yzJ_wAQL_Y+W6F7w@mail.gmail.com>
-In-Reply-To: <CAKv+Gu_mwu+TFrbRPqDZ8i5csSqS26a534yzJ_wAQL_Y+W6F7w@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 2 Oct 2018 15:53:55 +0200
-Message-ID: <CAK8P3a06uOvGcju7MppqqhsR5dwPKUBawrDbGYNXURqxGsZOKw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: makefile: use ARMv3M mode for RiscPC
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-soc <arm@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 3:28 PM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> On 2 October 2018 at 15:20, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > The purpose of CONFIG_CPU_32v3 is to avoid ldrh/strh on the RiscPC,
-> > which is pretty much an ARMv4 device, except its bus will choke on the
-> > half-words. The way to make the C compiler not output ldrh/strh is with
-> > -march=armv3, which doesn't support them in the ISA. However, this
-> > prevents certain cryptography code from working that uses instructions
-> > like umull. Fortunately there's also -march=armv3m that does support
-> > those, making it possible to continue assembling optimized cryptography
-> > routines for our beloved RiscPC.
-> >
-> > Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > Cc: Russell King <linux@armlinux.org.uk>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
->
-> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+------------------
 
-Please add this to Russell's patch tracker for inclusion at
-http://www.arm.linux.org.uk/developer/patches/
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-      Arnd
+[ Upstream commit 36d4cb460bcbe2a1323732a6e4bb9dd783284368 ]
+
+The approach for adding a device to the devices_idr data structure and for
+removing it is as follows:
+
+* &dev->dev_group.cg_item is initialized before a device is added to
+  devices_idr.
+
+* If the reference count of a device drops to zero then
+  target_free_device() removes the device from devices_idr.
+
+* All devices_idr manipulations are protected by device_mutex.
+
+This means that increasing the reference count of a device is sufficient to
+prevent removal from devices_idr and also that it is safe access
+dev_group.cg_item for any device that is referenced by devices_idr. Use
+this to modify target_find_device() and target_for_each_device() such that
+these functions no longer introduce a dependency between device_mutex and
+the configfs root inode mutex.
+
+Note: it is safe to pass a NULL pointer to config_item_put() and also to
+config_item_get_unless_zero().
+
+This patch prevents that lockdep reports the following complaint:
+
+======================================================
+WARNING: possible circular locking dependency detected
+4.12.0-rc1-dbg+ #1 Not tainted
+------------------------------------------------------
+rmdir/12053 is trying to acquire lock:
+ (device_mutex#2){+.+.+.}, at: [<ffffffffa010afce>]
+target_free_device+0xae/0xf0 [target_core_mod]
+
+but task is already holding lock:
+ (&sb->s_type->i_mutex_key#14){++++++}, at: [<ffffffff811c5c30>]
+vfs_rmdir+0x50/0x140
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&sb->s_type->i_mutex_key#14){++++++}:
+       lock_acquire+0x59/0x80
+       down_write+0x36/0x70
+       configfs_depend_item+0x3a/0xb0 [configfs]
+       target_depend_item+0x13/0x20 [target_core_mod]
+       target_xcopy_locate_se_dev_e4_iter+0x87/0x100 [target_core_mod]
+       target_devices_idr_iter+0x16/0x20 [target_core_mod]
+       idr_for_each+0x39/0xc0
+       target_for_each_device+0x36/0x50 [target_core_mod]
+       target_xcopy_locate_se_dev_e4+0x28/0x80 [target_core_mod]
+       target_xcopy_do_work+0x2e9/0xdd0 [target_core_mod]
+       process_one_work+0x1ca/0x3f0
+       worker_thread+0x49/0x3b0
+       kthread+0x109/0x140
+       ret_from_fork+0x31/0x40
+
+-> #0 (device_mutex#2){+.+.+.}:
+       __lock_acquire+0x101f/0x11d0
+       lock_acquire+0x59/0x80
+       __mutex_lock+0x7e/0x950
+       mutex_lock_nested+0x16/0x20
+       target_free_device+0xae/0xf0 [target_core_mod]
+       target_core_dev_release+0x10/0x20 [target_core_mod]
+       config_item_put+0x6e/0xb0 [configfs]
+       configfs_rmdir+0x1a6/0x300 [configfs]
+       vfs_rmdir+0xb7/0x140
+       do_rmdir+0x1f4/0x200
+       SyS_rmdir+0x11/0x20
+       entry_SYSCALL_64_fastpath+0x23/0xc2
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sb->s_type->i_mutex_key#14);
+                               lock(device_mutex#2);
+                               lock(&sb->s_type->i_mutex_key#14);
+  lock(device_mutex#2);
+
+ *** DEADLOCK ***
+
+3 locks held by rmdir/12053:
+ #0:  (sb_writers#10){.+.+.+}, at: [<ffffffff811e223f>]
+mnt_want_write+0x1f/0x50
+ #1:  (&sb->s_type->i_mutex_key#14/1){+.+.+.}, at: [<ffffffff811cb97e>]
+do_rmdir+0x15e/0x200
+ #2:  (&sb->s_type->i_mutex_key#14){++++++}, at: [<ffffffff811c5c30>]
+vfs_rmdir+0x50/0x140
+
+stack backtrace:
+CPU: 3 PID: 12053 Comm: rmdir Not tainted 4.12.0-rc1-dbg+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.0.0-prebuilt.qemu-project.org 04/01/2014
+Call Trace:
+ dump_stack+0x86/0xcf
+ print_circular_bug+0x1c7/0x220
+ __lock_acquire+0x101f/0x11d0
+ lock_acquire+0x59/0x80
+ __mutex_lock+0x7e/0x950
+ mutex_lock_nested+0x16/0x20
+ target_free_device+0xae/0xf0 [target_core_mod]
+ target_core_dev_release+0x10/0x20 [target_core_mod]
+ config_item_put+0x6e/0xb0 [configfs]
+ configfs_rmdir+0x1a6/0x300 [configfs]
+ vfs_rmdir+0xb7/0x140
+ do_rmdir+0x1f4/0x200
+ SyS_rmdir+0x11/0x20
+ entry_SYSCALL_64_fastpath+0x23/0xc2
+
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+[Rebased to handle conflict withe target_find_device removal]
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/target/target_core_device.c |   22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+--- a/drivers/target/target_core_device.c
++++ b/drivers/target/target_core_device.c
+@@ -904,14 +904,20 @@ struct se_device *target_find_device(int
+ EXPORT_SYMBOL(target_find_device);
+ 
+ struct devices_idr_iter {
++	struct config_item *prev_item;
+ 	int (*fn)(struct se_device *dev, void *data);
+ 	void *data;
+ };
+ 
+ static int target_devices_idr_iter(int id, void *p, void *data)
++	 __must_hold(&device_mutex)
+ {
+ 	struct devices_idr_iter *iter = data;
+ 	struct se_device *dev = p;
++	int ret;
++
++	config_item_put(iter->prev_item);
++	iter->prev_item = NULL;
+ 
+ 	/*
+ 	 * We add the device early to the idr, so it can be used
+@@ -922,7 +928,15 @@ static int target_devices_idr_iter(int i
+ 	if (!(dev->dev_flags & DF_CONFIGURED))
+ 		return 0;
+ 
+-	return iter->fn(dev, iter->data);
++	iter->prev_item = config_item_get_unless_zero(&dev->dev_group.cg_item);
++	if (!iter->prev_item)
++		return 0;
++	mutex_unlock(&device_mutex);
++
++	ret = iter->fn(dev, iter->data);
++
++	mutex_lock(&device_mutex);
++	return ret;
+ }
+ 
+ /**
+@@ -936,15 +950,13 @@ static int target_devices_idr_iter(int i
+ int target_for_each_device(int (*fn)(struct se_device *dev, void *data),
+ 			   void *data)
+ {
+-	struct devices_idr_iter iter;
++	struct devices_idr_iter iter = { .fn = fn, .data = data };
+ 	int ret;
+ 
+-	iter.fn = fn;
+-	iter.data = data;
+-
+ 	mutex_lock(&device_mutex);
+ 	ret = idr_for_each(&devices_idr, target_devices_idr_iter, &iter);
+ 	mutex_unlock(&device_mutex);
++	config_item_put(iter.prev_item);
+ 	return ret;
+ }
+ 
+
+
