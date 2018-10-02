@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38159C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B47C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F19C42064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F19C42064D
+	by mail.kernel.org (Postfix) with ESMTP id 0DB89206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB89206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387751AbeJBUUo (ORCPT
+        id S1732292AbeJBUVN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36690 "EHLO
+        Tue, 2 Oct 2018 16:21:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36646 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387680AbeJBUUo (ORCPT
+        with ESMTP id S1732404AbeJBUUj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:44 -0400
+        Tue, 2 Oct 2018 16:20:39 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82369B4B;
-        Tue,  2 Oct 2018 13:37:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5AC17B4A;
+        Tue,  2 Oct 2018 13:37:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Denis Kirjanov <kirjanov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 53/94] EDAC: Fix memleak in module init error path
-Date:   Tue,  2 Oct 2018 06:25:07 -0700
-Message-Id: <20181002132504.183267086@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 58/94] spi: tegra20-slink: explicitly enable/disable clock
+Date:   Tue,  2 Oct 2018 06:25:12 -0700
+Message-Id: <20181002132504.515190160@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -55,46 +52,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-[ Upstream commit 4708aa85d50cc6e962dfa8acf5ad4e0d290a21db ]
+commit 7001cab1dabc0b72b2b672ef58a90ab64f5e2343 upstream.
 
-Make sure to use put_device() to free the initialised struct device so
-that resources managed by driver core also gets released in the event of
-a registration failure.
+Depending on the SPI instance one may get an interrupt storm upon
+requesting resp. interrupt unless the clock is explicitly enabled
+beforehand. This has been observed trying to bring up instance 4 on
+T20.
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Cc: Denis Kirjanov <kirjanov@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Fixes: 2d56b109e3a5 ("EDAC: Handle error path in edac_mc_sysfs_init() properly")
-Link: http://lkml.kernel.org/r/20180612124335.6420-1-johan@kernel.org
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/edac/edac_mc_sysfs.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -1059,14 +1059,14 @@ int __init edac_mc_sysfs_init(void)
+---
+ drivers/spi/spi-tegra20-slink.c |   31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
+
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -1063,6 +1063,24 @@ static int tegra_slink_probe(struct plat
+ 		goto exit_free_master;
+ 	}
  
- 	err = device_add(mci_pdev);
- 	if (err < 0)
--		goto out_dev_free;
-+		goto out_put_device;
++	/* disabled clock may cause interrupt storm upon request */
++	tspi->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(tspi->clk)) {
++		ret = PTR_ERR(tspi->clk);
++		dev_err(&pdev->dev, "Can not get clock %d\n", ret);
++		goto exit_free_master;
++	}
++	ret = clk_prepare(tspi->clk);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Clock prepare failed %d\n", ret);
++		goto exit_free_master;
++	}
++	ret = clk_enable(tspi->clk);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Clock enable failed %d\n", ret);
++		goto exit_free_master;
++	}
++
+ 	spi_irq = platform_get_irq(pdev, 0);
+ 	tspi->irq = spi_irq;
+ 	ret = request_threaded_irq(tspi->irq, tegra_slink_isr,
+@@ -1071,14 +1089,7 @@ static int tegra_slink_probe(struct plat
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
+ 					tspi->irq);
+-		goto exit_free_master;
+-	}
+-
+-	tspi->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(tspi->clk)) {
+-		dev_err(&pdev->dev, "can not get clock\n");
+-		ret = PTR_ERR(tspi->clk);
+-		goto exit_free_irq;
++		goto exit_clk_disable;
+ 	}
  
- 	edac_dbg(0, "device %s created\n", dev_name(mci_pdev));
+ 	tspi->rst = devm_reset_control_get(&pdev->dev, "spi");
+@@ -1138,6 +1149,8 @@ exit_rx_dma_free:
+ 	tegra_slink_deinit_dma_param(tspi, true);
+ exit_free_irq:
+ 	free_irq(spi_irq, tspi);
++exit_clk_disable:
++	clk_disable(tspi->clk);
+ exit_free_master:
+ 	spi_master_put(master);
+ 	return ret;
+@@ -1150,6 +1163,8 @@ static int tegra_slink_remove(struct pla
  
- 	return 0;
+ 	free_irq(tspi->irq, tspi);
  
-- out_dev_free:
--	kfree(mci_pdev);
-+ out_put_device:
-+	put_device(mci_pdev);
-  out:
- 	return err;
- }
++	clk_disable(tspi->clk);
++
+ 	if (tspi->tx_dma_chan)
+ 		tegra_slink_deinit_dma_param(tspi, false);
+ 
 
 
