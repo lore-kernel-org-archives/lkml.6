@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFDBC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A442C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC072064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:42:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC072064D
+	by mail.kernel.org (Postfix) with ESMTP id 195CE2064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:42:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 195CE2064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733304AbeJBUZd (ORCPT
+        id S1733031AbeJBUTf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:25:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36116 "EHLO
+        Tue, 2 Oct 2018 16:19:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36068 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731271AbeJBUTi (ORCPT
+        with ESMTP id S1731709AbeJBUTc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:38 -0400
+        Tue, 2 Oct 2018 16:19:32 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 627C25AA;
-        Tue,  2 Oct 2018 13:36:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E7614B2F;
+        Tue,  2 Oct 2018 13:36:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ethan Tuttle <ethan@ethantuttle.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        stable@vger.kernel.org,
+        Brandon Maier <brandon.maier@rockwellcollins.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 43/94] ARM: mvebu: declare asm symbols as character arrays in pmsu.c
-Date:   Tue,  2 Oct 2018 06:24:57 -0700
-Message-Id: <20181002132503.499348045@linuxfoundation.org>
+Subject: [PATCH 4.9 39/94] net: phy: xgmiitorgmii: Check phy_driver ready before accessing
+Date:   Tue,  2 Oct 2018 06:24:53 -0700
+Message-Id: <20181002132503.230788807@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -52,62 +55,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ethan Tuttle <ethan@ethantuttle.com>
+From: Brandon Maier <brandon.maier@rockwellcollins.com>
 
-[ Upstream commit d0d378ff451a66e486488eec842e507d28145813 ]
+[ Upstream commit ab4e6ee578e88a659938db8fbf33720bc048d29c ]
 
-With CONFIG_FORTIFY_SOURCE, memcpy uses the declared size of operands to
-detect buffer overflows.  If src or dest is declared as a char, attempts to
-copy more than byte will result in a fortify_panic().
+Since a phy_device is added to the global mdio_bus list during
+phy_device_register(), but a phy_device's phy_driver doesn't get
+attached until phy_probe(). It's possible of_phy_find_device() in
+xgmiitorgmii will return a valid phy with a NULL phy_driver. Leading to
+a NULL pointer access during the memcpy().
 
-Address this problem in mvebu_setup_boot_addr_wa() by declaring
-mvebu_boot_wa_start and mvebu_boot_wa_end as character arrays.  Also remove
-a couple addressof operators to avoid "arithmetic on pointer to an
-incomplete type" compiler error.
+Fixes this Oops:
 
-See commit 54a7d50b9205 ("x86: mark kprobe templates as character arrays,
-not single characters") for a similar fix.
+Unable to handle kernel NULL pointer dereference at virtual address 00000000
+pgd = c0004000
+[00000000] *pgd=00000000
+Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.14.40 #1
+Hardware name: Xilinx Zynq Platform
+task: ce4c8d00 task.stack: ce4ca000
+PC is at memcpy+0x48/0x330
+LR is at xgmiitorgmii_probe+0x90/0xe8
+pc : [<c074bc68>]    lr : [<c0529548>]    psr: 20000013
+sp : ce4cbb54  ip : 00000000  fp : ce4cbb8c
+r10: 00000000  r9 : 00000000  r8 : c0c49178
+r7 : 00000000  r6 : cdc14718  r5 : ce762800  r4 : cdc14710
+r3 : 00000000  r2 : 00000054  r1 : 00000000  r0 : cdc14718
+Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+Control: 18c5387d  Table: 0000404a  DAC: 00000051
+Process swapper/0 (pid: 1, stack limit = 0xce4ca210)
+...
+[<c074bc68>] (memcpy) from [<c0529548>] (xgmiitorgmii_probe+0x90/0xe8)
+[<c0529548>] (xgmiitorgmii_probe) from [<c0526a94>] (mdio_probe+0x28/0x34)
+[<c0526a94>] (mdio_probe) from [<c04db98c>] (driver_probe_device+0x254/0x414)
+[<c04db98c>] (driver_probe_device) from [<c04dbd58>] (__device_attach_driver+0xac/0x10c)
+[<c04dbd58>] (__device_attach_driver) from [<c04d96f4>] (bus_for_each_drv+0x84/0xc8)
+[<c04d96f4>] (bus_for_each_drv) from [<c04db5bc>] (__device_attach+0xd0/0x134)
+[<c04db5bc>] (__device_attach) from [<c04dbdd4>] (device_initial_probe+0x1c/0x20)
+[<c04dbdd4>] (device_initial_probe) from [<c04da8fc>] (bus_probe_device+0x98/0xa0)
+[<c04da8fc>] (bus_probe_device) from [<c04d8660>] (device_add+0x43c/0x5d0)
+[<c04d8660>] (device_add) from [<c0526cb8>] (mdio_device_register+0x34/0x80)
+[<c0526cb8>] (mdio_device_register) from [<c0580b48>] (of_mdiobus_register+0x170/0x30c)
+[<c0580b48>] (of_mdiobus_register) from [<c05349c4>] (macb_probe+0x710/0xc00)
+[<c05349c4>] (macb_probe) from [<c04dd700>] (platform_drv_probe+0x44/0x80)
+[<c04dd700>] (platform_drv_probe) from [<c04db98c>] (driver_probe_device+0x254/0x414)
+[<c04db98c>] (driver_probe_device) from [<c04dbc58>] (__driver_attach+0x10c/0x118)
+[<c04dbc58>] (__driver_attach) from [<c04d9600>] (bus_for_each_dev+0x8c/0xd0)
+[<c04d9600>] (bus_for_each_dev) from [<c04db1fc>] (driver_attach+0x2c/0x30)
+[<c04db1fc>] (driver_attach) from [<c04daa98>] (bus_add_driver+0x50/0x260)
+[<c04daa98>] (bus_add_driver) from [<c04dc440>] (driver_register+0x88/0x108)
+[<c04dc440>] (driver_register) from [<c04dd6b4>] (__platform_driver_register+0x50/0x58)
+[<c04dd6b4>] (__platform_driver_register) from [<c0b31248>] (macb_driver_init+0x24/0x28)
+[<c0b31248>] (macb_driver_init) from [<c010203c>] (do_one_initcall+0x60/0x1a4)
+[<c010203c>] (do_one_initcall) from [<c0b00f78>] (kernel_init_freeable+0x15c/0x1f8)
+[<c0b00f78>] (kernel_init_freeable) from [<c0763d10>] (kernel_init+0x18/0x124)
+[<c0763d10>] (kernel_init) from [<c0112d74>] (ret_from_fork+0x14/0x20)
+Code: ba000002 f5d1f03c f5d1f05c f5d1f07c (e8b151f8)
+---[ end trace 3e4ec21905820a1f ]---
 
-Fixes "detected buffer overflow in memcpy" error during init on some mvebu
-systems (armada-370-xp, armada-375):
+Signed-off-by: Brandon Maier <brandon.maier@rockwellcollins.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 
-(fortify_panic) from (mvebu_setup_boot_addr_wa+0xb0/0xb4)
-(mvebu_setup_boot_addr_wa) from (mvebu_v7_cpu_pm_init+0x154/0x204)
-(mvebu_v7_cpu_pm_init) from (do_one_initcall+0x7c/0x1a8)
-(do_one_initcall) from (kernel_init_freeable+0x1bc/0x254)
-(kernel_init_freeable) from (kernel_init+0x8/0x114)
-(kernel_init) from (ret_from_fork+0x14/0x2c)
+Signed-off-by: David S. Miller <davem@davemloft.net>
 
-Signed-off-by: Ethan Tuttle <ethan@ethantuttle.com>
-Tested-by: Ethan Tuttle <ethan@ethantuttle.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-mvebu/pmsu.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/phy/xilinx_gmii2rgmii.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/arm/mach-mvebu/pmsu.c
-+++ b/arch/arm/mach-mvebu/pmsu.c
-@@ -116,8 +116,8 @@ void mvebu_pmsu_set_cpu_boot_addr(int hw
- 		PMSU_BOOT_ADDR_REDIRECT_OFFSET(hw_cpu));
- }
+--- a/drivers/net/phy/xilinx_gmii2rgmii.c
++++ b/drivers/net/phy/xilinx_gmii2rgmii.c
+@@ -84,6 +84,11 @@ static int xgmiitorgmii_probe(struct mdi
+ 		return -EPROBE_DEFER;
+ 	}
  
--extern unsigned char mvebu_boot_wa_start;
--extern unsigned char mvebu_boot_wa_end;
-+extern unsigned char mvebu_boot_wa_start[];
-+extern unsigned char mvebu_boot_wa_end[];
- 
- /*
-  * This function sets up the boot address workaround needed for SMP
-@@ -130,7 +130,7 @@ int mvebu_setup_boot_addr_wa(unsigned in
- 			     phys_addr_t resume_addr_reg)
- {
- 	void __iomem *sram_virt_base;
--	u32 code_len = &mvebu_boot_wa_end - &mvebu_boot_wa_start;
-+	u32 code_len = mvebu_boot_wa_end - mvebu_boot_wa_start;
- 
- 	mvebu_mbus_del_window(BOOTROM_BASE, BOOTROM_SIZE);
- 	mvebu_mbus_add_window_by_id(crypto_eng_target, crypto_eng_attribute,
++	if (!priv->phy_dev->drv) {
++		dev_info(dev, "Attached phy not ready\n");
++		return -EPROBE_DEFER;
++	}
++
+ 	priv->addr = mdiodev->addr;
+ 	priv->phy_drv = priv->phy_dev->drv;
+ 	memcpy(&priv->conv_phy_drv, priv->phy_dev->drv,
 
 
