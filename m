@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8AEEC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F63CC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C6902083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:15:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C6902083F
+	by mail.kernel.org (Postfix) with ESMTP id 6D0AE2064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:15:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D0AE2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbeJBUKF (ORCPT
+        id S1728277AbeJBU7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59914 "EHLO
+        Tue, 2 Oct 2018 16:59:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59872 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbeJBUKE (ORCPT
+        with ESMTP id S1727011AbeJBUJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:04 -0400
+        Tue, 2 Oct 2018 16:09:58 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2EB05266;
-        Tue,  2 Oct 2018 13:26:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 306DFC11;
+        Tue,  2 Oct 2018 13:26:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        =?UTF-8?q?Stefan=20Br=C3=BCns?= <stefan.bruens@rwth-aachen.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 023/228] s390/mm: correct allocate_pgste proc_handler callback
-Date:   Tue,  2 Oct 2018 06:22:00 -0700
-Message-Id: <20181002132500.628387158@linuxfoundation.org>
+Subject: [PATCH 4.18 002/228] iio: adc: ina2xx: avoid kthread_stop() with stale task_struct
+Date:   Tue,  2 Oct 2018 06:21:39 -0700
+Message-Id: <20181002132459.196066581@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -55,50 +55,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Akinobu Mita <akinobu.mita@gmail.com>
 
-[ Upstream commit 5bedf8aa03c28cb8dc98bdd32a41b66d8f7d3eaa ]
+[ Upstream commit 7d6cd21d82bacab2d1786fe5e989e4815b75d9a3 ]
 
-Since proc_dointvec does not perform value range control,
-proc_dointvec_minmax should be used to limit value range, which is
-clearly intended here, as the internal representation of the value:
+When the buffer is enabled for ina2xx driver, a dedicated kthread is
+invoked to capture mesurement data.  When the buffer is disabled, the
+kthread is stopped.
 
-unsigned int alloc_pgste:1;
+However if the kthread gets register access errors, it immediately exits
+and when the malfunctional buffer is disabled, the stale task_struct
+pointer is accessed as there is no kthread to be stopped.
 
-In fact it currently works, since we have
+A similar issue in the usbip driver is prevented by kthread_get_run and
+kthread_stop_put helpers by increasing usage count of the task_struct.
+This change applies the same solution.
 
-      mm->context.alloc_pgste = page_table_allocate_pgste || ...
-
-... since commit 23fefe119ceb5 ("s390/kvm: avoid global config of vm.alloc_pgste=1")
-
-Before that it was
-
-       mm->context.alloc_pgste = page_table_allocate_pgste;
-
-which was broken. That was introduced with commit 0b46e0a3ec0d7 ("s390/kvm:
-remove delayed reallocation of page tables for KVM").
-
-Fixes: 0b46e0a3ec0d7 ("s390/kvm: remove delayed reallocation of page tables for KVM")
-Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Stefan Brüns <stefan.bruens@rwth-aachen.de>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Fixes: c43a102e67db ("iio: ina2xx: add support for TI INA2xx Power Monitors")
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/mm/pgalloc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iio/adc/ina2xx-adc.c |   17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
---- a/arch/s390/mm/pgalloc.c
-+++ b/arch/s390/mm/pgalloc.c
-@@ -28,7 +28,7 @@ static struct ctl_table page_table_sysct
- 		.data		= &page_table_allocate_pgste,
- 		.maxlen		= sizeof(int),
- 		.mode		= S_IRUGO | S_IWUSR,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= &page_table_allocate_pgste_min,
- 		.extra2		= &page_table_allocate_pgste_max,
- 	},
+--- a/drivers/iio/adc/ina2xx-adc.c
++++ b/drivers/iio/adc/ina2xx-adc.c
+@@ -30,6 +30,7 @@
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/regmap.h>
++#include <linux/sched/task.h>
+ #include <linux/util_macros.h>
+ 
+ #include <linux/platform_data/ina2xx.h>
+@@ -826,6 +827,7 @@ static int ina2xx_buffer_enable(struct i
+ {
+ 	struct ina2xx_chip_info *chip = iio_priv(indio_dev);
+ 	unsigned int sampling_us = SAMPLING_PERIOD(chip);
++	struct task_struct *task;
+ 
+ 	dev_dbg(&indio_dev->dev, "Enabling buffer w/ scan_mask %02x, freq = %d, avg =%u\n",
+ 		(unsigned int)(*indio_dev->active_scan_mask),
+@@ -835,11 +837,17 @@ static int ina2xx_buffer_enable(struct i
+ 	dev_dbg(&indio_dev->dev, "Async readout mode: %d\n",
+ 		chip->allow_async_readout);
+ 
+-	chip->task = kthread_run(ina2xx_capture_thread, (void *)indio_dev,
+-				 "%s:%d-%uus", indio_dev->name, indio_dev->id,
+-				 sampling_us);
++	task = kthread_create(ina2xx_capture_thread, (void *)indio_dev,
++			      "%s:%d-%uus", indio_dev->name, indio_dev->id,
++			      sampling_us);
++	if (IS_ERR(task))
++		return PTR_ERR(task);
++
++	get_task_struct(task);
++	wake_up_process(task);
++	chip->task = task;
+ 
+-	return PTR_ERR_OR_ZERO(chip->task);
++	return 0;
+ }
+ 
+ static int ina2xx_buffer_disable(struct iio_dev *indio_dev)
+@@ -848,6 +856,7 @@ static int ina2xx_buffer_disable(struct
+ 
+ 	if (chip->task) {
+ 		kthread_stop(chip->task);
++		put_task_struct(chip->task);
+ 		chip->task = NULL;
+ 	}
+ 
 
 
