@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B92C64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8197AC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CF152089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF152089A
+	by mail.kernel.org (Postfix) with ESMTP id 427622089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 427622089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729006AbeJBULY (ORCPT
+        id S1729042AbeJBUL1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60684 "EHLO
+        Tue, 2 Oct 2018 16:11:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60694 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeJBULX (ORCPT
+        with ESMTP id S1727658AbeJBULY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:23 -0400
+        Tue, 2 Oct 2018 16:11:24 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E485266;
-        Tue,  2 Oct 2018 13:28:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4B103C47;
+        Tue,  2 Oct 2018 13:28:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Tobias Regnery <tobias.regnery@gmail.com>,
+        Stefan Agner <stefan@agner.ch>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 089/228] rndis_wlan: potential buffer overflow in rndis_wlan_auth_indication()
-Date:   Tue,  2 Oct 2018 06:23:06 -0700
-Message-Id: <20181002132505.353175538@linuxfoundation.org>
+Subject: [PATCH 4.18 090/228] brcmsmac: fix wrap around in conversion from constant to s16
+Date:   Tue,  2 Oct 2018 06:23:07 -0700
+Message-Id: <20181002132505.452827609@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,40 +53,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit ae636fb1554833ee5133ca47bf4b2791b6739c52 ]
+[ Upstream commit c9a61469fc97672a08b2f798830a55ea6e03dc4a ]
 
-This is a static checker fix, not something I have tested.  The issue
-is that on the second iteration through the loop, we jump forward by
-le32_to_cpu(auth_req->length) bytes.  The problem is that if the length
-is more than "buflen" then we end up with a negative "buflen".  A
-negative buflen is type promoted to a high positive value and the loop
-continues but it's accessing beyond the end of the buffer.
+The last value in the log_table wraps around to a negative value
+since s16 has a value range of -32768 to 32767. This is not what
+the table intends to represent. Use the closest positive value
+32767.
 
-I believe the "auth_req->length" comes from the firmware and if the
-firmware is malicious or buggy, you're already toasted so the impact of
-this bug is probably not very severe.
+This fixes a warning seen with clang:
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c:216:2: warning:
+      implicit conversion from 'int' to 's16' (aka 'short') changes
+value from 32768
+      to -32768 [-Wconstant-conversion]
+        32768
+        ^~~~~
+1 warning generated.
 
-Fixes: 030645aceb3d ("rndis_wlan: handle 802.11 indications from device")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 4c0bfeaae9f9 ("brcmsmac: fix array out-of-bounds access in qm_log10")
+Cc: Tobias Regnery <tobias.regnery@gmail.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/rndis_wlan.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/rndis_wlan.c
-+++ b/drivers/net/wireless/rndis_wlan.c
-@@ -2928,6 +2928,8 @@ static void rndis_wlan_auth_indication(s
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c
+@@ -213,7 +213,7 @@ static const s16 log_table[] = {
+ 	30498,
+ 	31267,
+ 	32024,
+-	32768
++	32767
+ };
  
- 	while (buflen >= sizeof(*auth_req)) {
- 		auth_req = (void *)buf;
-+		if (buflen < le32_to_cpu(auth_req->length))
-+			return;
- 		type = "unknown";
- 		flags = le32_to_cpu(auth_req->flags);
- 		pairwise_error = false;
+ #define LOG_TABLE_SIZE 32       /* log_table size */
 
 
