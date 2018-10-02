@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C8BC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDA0C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77EF22089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77EF22089C
+	by mail.kernel.org (Postfix) with ESMTP id 70E88206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E88206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730923AbeJBUOh (ORCPT
+        id S1730948AbeJBUOk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33992 "EHLO
+        Tue, 2 Oct 2018 16:14:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34054 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730859AbeJBUOd (ORCPT
+        with ESMTP id S1730930AbeJBUOj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:33 -0400
+        Tue, 2 Oct 2018 16:14:39 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 28E97C2B;
-        Tue,  2 Oct 2018 13:31:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5E08DC2B;
+        Tue,  2 Oct 2018 13:31:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yussuf Khalil <dev@pp3345.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 222/228] i2c: i801: Allow ACPI AML access I/O ports not reserved for SMBus
-Date:   Tue,  2 Oct 2018 06:25:19 -0700
-Message-Id: <20181002132512.476866445@linuxfoundation.org>
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.18 226/228] powerpc: fix csum_ipv6_magic() on little endian platforms
+Date:   Tue,  2 Oct 2018 06:25:23 -0700
+Message-Id: <20181002132512.668266008@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -54,94 +53,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit 7fd6d98b89f382d414e1db528e29a67bbd749457 ]
+commit 85682a7e3b9c664995ad477520f917039afdc330 upstream.
 
-Commit 7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to conflict
-with PCI BAR") made it possible for AML code to access SMBus I/O ports
-by installing custom SystemIO OpRegion handler and blocking i80i driver
-access upon first AML read/write to this OpRegion.
+On little endian platforms, csum_ipv6_magic() keeps len and proto in
+CPU byte order. This generates a bad results leading to ICMPv6 packets
+from other hosts being dropped by powerpc64le platforms.
 
-However, while ThinkPad T560 does have SystemIO OpRegion declared under
-the SMBus device, it does not access any of the SMBus registers:
+In order to fix this, len and proto should be converted to network
+byte order ie bigendian byte order. However checksumming 0x12345678
+and 0x56341278 provide the exact same result so it is enough to
+rotate the sum of len and proto by 1 byte.
 
-    Device (SMBU)
-    {
-        ...
+PPC32 only support bigendian so the fix is needed for PPC64 only
 
-        OperationRegion (SMBP, PCI_Config, 0x50, 0x04)
-        Field (SMBP, DWordAcc, NoLock, Preserve)
-        {
-            ,   5,
-            TCOB,   11,
-            Offset (0x04)
-        }
-
-        Name (TCBV, 0x00)
-        Method (TCBS, 0, NotSerialized)
-        {
-            If ((TCBV == 0x00))
-            {
-            TCBV = (\_SB.PCI0.SMBU.TCOB << 0x05)
-            }
-
-            Return (TCBV) /* \_SB_.PCI0.SMBU.TCBV */
-        }
-
-        OperationRegion (TCBA, SystemIO, TCBS (), 0x10)
-        Field (TCBA, ByteAcc, NoLock, Preserve)
-        {
-            Offset (0x04),
-            ,   9,
-            CPSC,   1
-        }
-    }
-
-Problem with the current approach is that it blocks all I/O port access
-and because this system has touchpad connected to the SMBus controller
-after first AML access (happens during suspend/resume cycle) the
-touchpad fails to work anymore.
-
-Fix this so that we allow ACPI AML I/O port access if it does not touch
-the region reserved for the SMBus.
-
-Fixes: 7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to conflict with PCI BAR")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200737
-Reported-by: Yussuf Khalil <dev@pp3345.net>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: e9c4943a107b ("powerpc: Implement csum_ipv6_magic in assembly")
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Reported-by: Xin Long <lucien.xin@gmail.com>
+Cc: <stable@vger.kernel.org> # 4.18+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Tested-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/i2c/busses/i2c-i801.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-i801.c
-+++ b/drivers/i2c/busses/i2c-i801.c
-@@ -1417,6 +1417,13 @@ static void i801_add_tco(struct i801_pri
- }
- 
- #ifdef CONFIG_ACPI
-+static bool i801_acpi_is_smbus_ioport(const struct i801_priv *priv,
-+				      acpi_physical_address address)
-+{
-+	return address >= priv->smba &&
-+	       address <= pci_resource_end(priv->pci_dev, SMBBAR);
-+}
-+
- static acpi_status
- i801_acpi_io_handler(u32 function, acpi_physical_address address, u32 bits,
- 		     u64 *value, void *handler_context, void *region_context)
-@@ -1432,7 +1439,7 @@ i801_acpi_io_handler(u32 function, acpi_
- 	 */
- 	mutex_lock(&priv->acpi_lock);
- 
--	if (!priv->acpi_reserved) {
-+	if (!priv->acpi_reserved && i801_acpi_is_smbus_ioport(priv, address)) {
- 		priv->acpi_reserved = true;
- 
- 		dev_warn(&pdev->dev, "BIOS is accessing SMBus registers\n");
+---
+ arch/powerpc/lib/checksum_64.S |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/arch/powerpc/lib/checksum_64.S
++++ b/arch/powerpc/lib/checksum_64.S
+@@ -443,6 +443,9 @@ _GLOBAL(csum_ipv6_magic)
+ 	addc	r0, r8, r9
+ 	ld	r10, 0(r4)
+ 	ld	r11, 8(r4)
++#ifdef CONFIG_CPU_LITTLE_ENDIAN
++	rotldi	r5, r5, 8
++#endif
+ 	adde	r0, r0, r10
+ 	add	r5, r5, r7
+ 	adde	r0, r0, r11
 
 
