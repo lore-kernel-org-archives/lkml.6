@@ -2,93 +2,60 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11821C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE327C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C52FC2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:46:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="dtFUj+2Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C52FC2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B0A3E2082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:47:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A3E2082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbeJCBbK (ORCPT
+        id S1727395AbeJCBbv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 21:31:10 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56398 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbeJCBbK (ORCPT
+        Tue, 2 Oct 2018 21:31:51 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:48138 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbeJCBbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 21:31:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=McKGpCoKqKBjnHomXQIwNDOJkIlDS2W6oEnKsrZWXpM=; b=dtFUj+2QRRdecaE1mgNNBkMzW
-        B3B0T3EIXkJ59IPb1mMijdbzPoSrQs7lpFggGIjkmg2WTIjhE9uJVVat8GhlKy0F7Doot0xk7Wjmh
-        V0jS4Vq6zZClsDaKUMDfIiEXhcv6pVNPRUdSZwV2NoQX/Nn0itJ9V6909i2gfjHCr1Aa8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g7PgY-0002Za-6O; Tue, 02 Oct 2018 18:46:18 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id E93CB1121A41; Tue,  2 Oct 2018 19:46:17 +0100 (BST)
-Date:   Tue, 2 Oct 2018 19:46:17 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     lgirdwood@gmail.com, linus.walleij@linaro.org,
-        linux-kernel@vger.kernel.org, jmkrzyszt@gmail.com,
-        rppt@linux.vnet.ibm.com, linux-sunxi@googlegroups.com
-Subject: Re: [REGRESSION] boot fail due to commit efdfeb079cc3("regulator:
- fixed: Convert to use GPIO descriptor only")
-Message-ID: <20181002184617.GE6338@sirena.org.uk>
-References: <20181002183917.GA6824@Red>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="C94crkcyjafcjHxo"
-Content-Disposition: inline
-In-Reply-To: <20181002183917.GA6824@Red>
-X-Cookie: Please take note:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 2 Oct 2018 21:31:51 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c06::30d2])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 68D3B1420756A;
+        Tue,  2 Oct 2018 11:47:05 -0700 (PDT)
+Date:   Tue, 02 Oct 2018 11:47:04 -0700 (PDT)
+Message-Id: <20181002.114704.1259775809107473278.davem@davemloft.net>
+To:     kvalo@codeaurora.org
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: pull-request: wireless-drivers-next 2018-10-02
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <87ftxojn1l.fsf@kamboji.qca.qualcomm.com>
+References: <87ftxojn1l.fsf@kamboji.qca.qualcomm.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 02 Oct 2018 11:47:05 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 02 Oct 2018 20:06:30 +0300
 
---C94crkcyjafcjHxo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> here's the first pull request to net-next for 4.20. This is rather large
+> due to mt76 refactoring and me not being able to send the pull request
+> earlier, sorry about that.
+> 
+> Most of this has been in linux-next for some time now so I'm hoping
+> there should not be any nasty surprises, but please let me know if you
+> have any problems.
 
-On Tue, Oct 02, 2018 at 08:39:17PM +0200, Corentin Labbe wrote:
-
-> The following boards fails to boot due to commit efdfeb079cc3("regulator: fixed: Convert to use GPIO descriptor only")
-> - sun8i-h3-libretech-all-h3-cc
-> - sun50i-h5-libretech-all-h3-cc
-
-I applied a fix for some issues with that commit from Linus today,
-hopefully it also helps these systems.
-
---C94crkcyjafcjHxo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluzvPkACgkQJNaLcl1U
-h9C+JAf9HRhEmIP0+jreSULWTdqhasqD0qrHlIqLsgZnU5XqC6EL9XAB1oH7pqic
-LXWrDV2XfUv1HG3ycsu5OlkwZzZ4e861X5QGnwtbEMQ9dP/fCCpqhgH7eGaaHhXr
-mMfLZx9gzxPJsannFg+7U95AfwUP0AV51THAQNiXhs5FVSUqDe93L+p/wNJSPoMk
-rI1vxeKyxLgedpqTV0AZMoEWb/sSzxMb9N5atHJG455u+mqK1qAQGZnwz2hYP2ls
-zSROoiFZ6YICtUcFeajHcRwaQRNGs+zU7qaQC/++syCYBeVGCyqiVNZUojgqoUaM
-JBUNqIitf2d1cMgQzg0KWG6/UajztA==
-=Jc8C
------END PGP SIGNATURE-----
-
---C94crkcyjafcjHxo--
+Pulled, thanks Kalle.
