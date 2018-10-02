@@ -3,39 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 581E2C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D25F4C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A14A206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A14A206B2
+	by mail.kernel.org (Postfix) with ESMTP id A47932083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A47932083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731032AbeJBUOw (ORCPT
+        id S1731047AbeJBUOy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34138 "EHLO
+        Tue, 2 Oct 2018 16:14:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34148 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731010AbeJBUOv (ORCPT
+        with ESMTP id S1731024AbeJBUOw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:51 -0400
+        Tue, 2 Oct 2018 16:14:52 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 561D25AA;
-        Tue,  2 Oct 2018 13:31:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE095BF0;
+        Tue,  2 Oct 2018 13:31:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
+        Tony Brelinski <tonyx.brelinski@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 212/228] hwmon: (adt7475) Make adt7475_read_word() return errors
-Date:   Tue,  2 Oct 2018 06:25:09 -0700
-Message-Id: <20181002132512.014067032@linuxfoundation.org>
+Subject: [PATCH 4.18 203/228] ice: Fix potential return of uninitialized value
+Date:   Tue,  2 Oct 2018 06:25:00 -0700
+Message-Id: <20181002132511.559476229@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,47 +55,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Jesse Brandeburg <jesse.brandeburg@intel.com>
 
-[ Upstream commit f196dec6d50abb2e65fb54a0621b2f1b4d922995 ]
+[ Upstream commit dab0588fb616c1774bbf108eab1749dda4ac6942 ]
 
-The adt7475_read_word() function was meant to return negative error
-codes on failure.
+In ice_vsi_setup_[tx|rx]_rings, err is uninitialized which can result in
+a garbage value return to the caller. Fix that.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
+Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
+Tested-by: Tony Brelinski <tonyx.brelinski@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/adt7475.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/intel/ice/ice_main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/hwmon/adt7475.c
-+++ b/drivers/hwmon/adt7475.c
-@@ -303,14 +303,18 @@ static inline u16 volt2reg(int channel,
- 	return clamp_val(reg, 0, 1023) & (0xff << 2);
- }
- 
--static u16 adt7475_read_word(struct i2c_client *client, int reg)
-+static int adt7475_read_word(struct i2c_client *client, int reg)
+--- a/drivers/net/ethernet/intel/ice/ice_main.c
++++ b/drivers/net/ethernet/intel/ice/ice_main.c
+@@ -4888,7 +4888,7 @@ int ice_down(struct ice_vsi *vsi)
+  */
+ static int ice_vsi_setup_tx_rings(struct ice_vsi *vsi)
  {
--	u16 val;
-+	int val1, val2;
+-	int i, err;
++	int i, err = 0;
  
--	val = i2c_smbus_read_byte_data(client, reg);
--	val |= (i2c_smbus_read_byte_data(client, reg + 1) << 8);
-+	val1 = i2c_smbus_read_byte_data(client, reg);
-+	if (val1 < 0)
-+		return val1;
-+	val2 = i2c_smbus_read_byte_data(client, reg + 1);
-+	if (val2 < 0)
-+		return val2;
+ 	if (!vsi->num_txq) {
+ 		dev_err(&vsi->back->pdev->dev, "VSI %d has 0 Tx queues\n",
+@@ -4913,7 +4913,7 @@ static int ice_vsi_setup_tx_rings(struct
+  */
+ static int ice_vsi_setup_rx_rings(struct ice_vsi *vsi)
+ {
+-	int i, err;
++	int i, err = 0;
  
--	return val;
-+	return val1 | (val2 << 8);
- }
- 
- static void adt7475_write_word(struct i2c_client *client, int reg, u16 val)
+ 	if (!vsi->num_rxq) {
+ 		dev_err(&vsi->back->pdev->dev, "VSI %d has 0 Rx queues\n",
 
 
