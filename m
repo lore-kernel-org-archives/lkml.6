@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19608C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF36C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5468206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5468206B2
+	by mail.kernel.org (Postfix) with ESMTP id 74DF3208AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74DF3208AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729779AbeJBUM3 (ORCPT
+        id S1729793AbeJBUMc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:12:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33022 "EHLO
+        Tue, 2 Oct 2018 16:12:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33034 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727625AbeJBUM3 (ORCPT
+        with ESMTP id S1726625AbeJBUMa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:29 -0400
+        Tue, 2 Oct 2018 16:12:30 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3594C11;
-        Tue,  2 Oct 2018 13:29:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 880D7BF0;
+        Tue,  2 Oct 2018 13:29:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 4.18 138/228] serial: cpm_uart: return immediately from console poll
-Date:   Tue,  2 Oct 2018 06:23:55 -0700
-Message-Id: <20181002132508.673250205@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 4.18 139/228] intel_th: Fix device removal logic
+Date:   Tue,  2 Oct 2018 06:23:56 -0700
+Message-Id: <20181002132508.723641662@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,48 +51,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit be28c1e3ca29887e207f0cbcd294cefe5074bab6 upstream.
+commit 8801922cd94c918e4dc3a108ecaa500c4d40583f upstream.
 
-kgdb expects poll function to return immediately and
-returning NO_POLL_CHAR when no character is available.
+Commit a753bfcfdb1f ("intel_th: Make the switch allocate its subdevices")
+brings in new subdevice addition/removal logic that's broken for "host
+mode": the SWITCH device has no children to begin with, which is not
+handled in the code. This results in a null dereference bug later down
+the path.
 
-Fixes: f5316b4aea024 ("kgdb,8250,pl011: Return immediately from console poll")
-Cc: Jason Wessel <jason.wessel@windriver.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+This patch fixes the subdevice removal code to handle host mode correctly.
+
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Fixes: a753bfcfdb1f ("intel_th: Make the switch allocate its subdevices")
+CC: stable@vger.kernel.org # v4.14+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/cpm_uart/cpm_uart_core.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/hwtracing/intel_th/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-+++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-@@ -1054,8 +1054,8 @@ static int poll_wait_key(char *obuf, str
- 	/* Get the address of the host memory buffer.
- 	 */
- 	bdp = pinfo->rx_cur;
--	while (bdp->cbd_sc & BD_SC_EMPTY)
--		;
-+	if (bdp->cbd_sc & BD_SC_EMPTY)
-+		return NO_POLL_CHAR;
+--- a/drivers/hwtracing/intel_th/core.c
++++ b/drivers/hwtracing/intel_th/core.c
+@@ -139,7 +139,8 @@ static int intel_th_remove(struct device
+ 			th->thdev[i] = NULL;
+ 		}
  
- 	/* If the buffer address is in the CPM DPRAM, don't
- 	 * convert it.
-@@ -1090,7 +1090,11 @@ static int cpm_get_poll_char(struct uart
- 		poll_chars = 0;
+-		th->num_thdevs = lowest;
++		if (lowest >= 0)
++			th->num_thdevs = lowest;
  	}
- 	if (poll_chars <= 0) {
--		poll_chars = poll_wait_key(poll_buf, pinfo);
-+		int ret = poll_wait_key(poll_buf, pinfo);
-+
-+		if (ret == NO_POLL_CHAR)
-+			return ret;
-+		poll_chars = ret;
- 		pollp = poll_buf;
- 	}
- 	poll_chars--;
+ 
+ 	if (thdrv->attr_group)
 
 
