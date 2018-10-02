@@ -2,99 +2,221 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB542C64EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9C6C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 586322082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:03:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qdUJ2qok"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 586322082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D6CD020652
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:04:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6CD020652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbeJCCsz (ORCPT
+        id S1727471AbeJCCt2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 22:48:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbeJCCsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 22:48:54 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84D5320652;
-        Tue,  2 Oct 2018 20:03:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538510631;
-        bh=X5xWHYlf5yWDwyydsBDtMo3blqnal0/vOvaUTVJEYiw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qdUJ2qokdwPf8dOlpp7shfKxIbF0BdYX7l5lhZwThLuz7nNrzINQjNe3bnXl2CveE
-         WOCJFR7YZA8kHoMZHopBunwhP7d5HxGWGdetjoR4hjazXfxpfX9PdSMbRklVgj1s5f
-         gllvwpr42zl16omXBq4poRp93LQ+CUhg5fTEPSaM=
-Date:   Tue, 2 Oct 2018 15:03:50 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Thomas Martitz <kugel@rockbox.org>
-Cc:     Daniel Drake <drake@endlessm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        nouveau@lists.freedesktop.org, Linux PM <linux-pm@vger.kernel.org>,
-        Peter Wu <peter@lekensteyn.nl>, kherbst@redhat.com,
-        andy.shevchenko@linux.intel.com,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jon Derrick <jonathan.derrick@intel.com>,
-        David Miller <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        netdev <netdev@vger.kernel.org>, nic_swsd@realtek.com,
-        rchang@marvell.com, Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] PCI: Reprogram bridge prefetch registers on resume
-Message-ID: <20181002200350.GC120535@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180913033745.11178-1-drake@endlessm.com>
- <20180918213244.GE13616@bhelgaas-glaptop.roam.corp.google.com>
- <20180927205247.GA18434@bhelgaas-glaptop.roam.corp.google.com>
- <3f8efcd6-7cd2-b41a-d984-28c9e1740d6c@rockbox.org>
- <CAD8Lp47uL3DQTBiVTduO1+Cg8px4CDpv26qVJsgT+RJ4WZx9oA@mail.gmail.com>
- <7b0a5388-5b3a-a6e0-347f-94f87fc2e540@rockbox.org>
+        Tue, 2 Oct 2018 22:49:28 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60928 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbeJCCt2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 22:49:28 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g7Qtq-0002K0-7H; Tue, 02 Oct 2018 22:04:06 +0200
+Date:   Tue, 2 Oct 2018 22:04:05 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [Patch v2 1/4] x86/speculation: Option to select app to app
+ mitigation for spectre_v2
+In-Reply-To: <cb7314d6deb8d1c58e2ead56fef8848b642e4e5a.1537920575.git.tim.c.chen@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1810022145570.1435@nanos.tec.linutronix.de>
+References: <cover.1537920575.git.tim.c.chen@linux.intel.com> <cb7314d6deb8d1c58e2ead56fef8848b642e4e5a.1537920575.git.tim.c.chen@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7b0a5388-5b3a-a6e0-347f-94f87fc2e540@rockbox.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Tue, 25 Sep 2018, Tim Chen wrote:
+> +enum spectre_v2_app2app_mitigation {
+> +	SPECTRE_V2_APP2APP_NONE,
+> +	SPECTRE_V2_APP2APP_LITE,
+> +	SPECTRE_V2_APP2APP_STRICT,
+> +};
+>  
+>  static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
+>  	SPECTRE_V2_NONE;
+>  
+> +static enum spectre_v2_mitigation spectre_v2_app2app_enabled __ro_after_init =
 
-On Mon, Oct 01, 2018 at 04:25:06PM +0200, Thomas Martitz wrote:
-> Am 01.10.18 um 06:57 schrieb Daniel Drake:
-> > On Sun, Sep 30, 2018 at 5:07 AM Thomas Martitz <kugel@rockbox.org> wrote:
-> > > The latest iteration does not work on my HP system. The GPU fails to
-> > > power up just like the unpatched kernel.
-> > 
-> > That's weird, I would not expect a behaviour change in the latest
-> > patch. pci_restore_config_dword() has some debug messages, could you
-> > please make them visible and show logs again?
-> > Also remind us of the PCI device address of the parent bridge (lspci -vt)
-> 
-> I'll follow up with more the requested information on bugzilla
-> (Link: https://bugzilla.kernel.org/show_bug.cgi?id=201069).
-> 
-> On a quick re-check, it seems to depend on if I used the eGPU before
-> the initial suspend. If I run glxgears (with DRI_PRIME=1) before suspend it
-> seems fine.
+Copy and paste. The enum type is wrong.
 
-Does the patch ([1]) make things *worse* compared to v4.19-rc5?
+> +	SPECTRE_V2_APP2APP_NONE;
+> +
 
-If so, I'll drop the patch until we figure this out.  But if the GPU
-power issue also occurs in v4.19-rc5, I think we can assume it's a
-different problem and we can go ahead and merge [1].
+> +static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_app2app_cmdline(void)
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/commit/?h=for-linus&id=083874549fdfefa629dfa752785e20427dde1511
+Ditto
+
+> +{
+> +	char arg[20];
+> +	int ret, i;
+> +	enum spectre_v2_mitigation_cmd cmd = SPECTRE_V2_APP2APP_CMD_AUTO;
+
+Please use reverse fir tree ordering of the variables:
+
+	enum spectre_v2_mitigation_cmd cmd = SPECTRE_V2_APP2APP_CMD_AUTO;
+	char arg[20];
+	int ret, i;
+
+> +
+> +	ret = cmdline_find_option(boot_command_line, "spectre_v2_app2app", arg, sizeof(arg));
+
+Line break around 78 please
+
+> @@ -325,6 +383,9 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
+>  
+>  static bool stibp_needed(void)
+>  {
+> +	if (static_branch_unlikely(&spectre_v2_app_lite))
+> +		return false;
+> +
+>  	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+>  		return false;
+>  
+> @@ -366,7 +427,9 @@ void arch_smt_update(void)
+>  static void __init spectre_v2_select_mitigation(void)
+>  {
+>  	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+> +	enum spectre_v2_app2app_mitigation_cmd app2app_cmd = spectre_v2_parse_app2app_cmdline();
+
+Please avoid these overlong lines. Move the initialization to the code if
+it does not fit into the declaration part.
+
+>  	enum spectre_v2_mitigation mode = SPECTRE_V2_NONE;
+> +	enum spectre_v2_app2app_mitigation app2app_mode = SPECTRE_V2_APP2APP_NONE;
+
+>  	/*
+>  	 * If the CPU is not affected and the command line mode is NONE or AUTO
+> @@ -376,6 +439,17 @@ static void __init spectre_v2_select_mitigation(void)
+>  	    (cmd == SPECTRE_V2_CMD_NONE || cmd == SPECTRE_V2_CMD_AUTO))
+>  		return;
+>  
+> +	switch (app2app_cmd) {
+> +	case SPECTRE_V2_APP2APP_CMD_LITE:
+> +	case SPECTRE_V2_APP2APP_CMD_AUTO:
+> +		app2app_mode = SPECTRE_V2_APP2APP_LITE;
+> +		break;
+> +
+> +	case SPECTRE_V2_APP2APP_CMD_STRICT:
+> +		app2app_mode = SPECTRE_V2_APP2APP_STRICT;
+> +		break;
+> +	}
+> +
+>  	switch (cmd) {
+>  	case SPECTRE_V2_CMD_NONE:
+>  		return;
+> @@ -427,6 +501,11 @@ static void __init spectre_v2_select_mitigation(void)
+>  	}
+>  
+>  specv2_set_mode:
+> +	spectre_v2_app2app_enabled = app2app_mode;
+> +	pr_info("%s\n", spectre_v2_app2app_strings[app2app_mode]);
+> +	if (app2app_mode == SPECTRE_V2_APP2APP_LITE)
+> +		static_branch_enable(&spectre_v2_app_lite);
+> +
+>  	spectre_v2_enabled = mode;
+>  	pr_info("%s\n", spectre_v2_strings[mode]);
+>  
+> @@ -441,8 +520,8 @@ static void __init spectre_v2_select_mitigation(void)
+>  	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+>  	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
+>  
+> -	/* Initialize Indirect Branch Prediction Barrier if supported */
+> -	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+> +	/* Initialize Indirect Branch Prediction Barrier if supported and not disabled */
+> +	if (boot_cpu_has(X86_FEATURE_IBPB) && app2app_mode != SPECTRE_V2_APP2APP_NONE) {
+
+Line breaks exist for a reason. Applies to comments and code.
+
+>  		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+>  		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
+>  	}
+> @@ -875,8 +954,16 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
+>  
+>  	case X86_BUG_SPECTRE_V2:
+>  		mutex_lock(&spec_ctrl_mutex);
+> -		ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+> -			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+> +		if (static_branch_unlikely(&spectre_v2_app_lite))
+> +			ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+> +			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB-lite" : "",
+> +			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+> +			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
+> +			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
+> +			       spectre_v2_module_string());
+> +		else
+> +			ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+> +			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB-strict" : "",
+>  			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+>  			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
+>  			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
+
+Why do you need to copy the whole thing? What's wrong with using
+spectre_v2_app2app_enabled for getting the proper string for the IBPB
+mitigation?
+
+> -	 * Check if the current (previous) task has access to the memory
+> -	 * of the @tsk (next) task. If access is denied, make sure to
+> +	 * For lite protection mode, we only protect the non-dumpable
+> +	 * processes.
+> +	 *
+> +	 * Otherwise check if the current (previous) task has access to the memory
+> +	 * of the @tsk (next) task for strict app to app protection.
+> +	 * If access is denied, make sure to
+>  	 * issue a IBPB to stop user->user Spectre-v2 attacks.
+>  	 *
+>  	 * Note: __ptrace_may_access() returns 0 or -ERRNO.
+>  	 */
+> -	return (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id &&
+> -			__ptrace_may_access(tsk, PTRACE_MODE_IBPB));
+
+Needs to be updated to the latest code in tip x86/pti
+
+> +	/* skip IBPB if no context changes */
+> +	if (!tsk || !tsk->mm || tsk->mm->context.ctx_id == last_ctx_id)
+> +		return false;
+> +
+> +	if (static_branch_unlikely(&spectre_v2_app_lite))
+> +		return (get_dumpable(tsk->mm) != SUID_DUMP_USER);
+> +	else
+> +		return (__ptrace_may_access(tsk, PTRACE_MODE_IBPB));
+
+Neither of the branches needs braces for the return 
+
+Thanks,
+
+	tglx
