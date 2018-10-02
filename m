@@ -2,146 +2,108 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB3AEC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5422C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 632B020878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:17:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 895A42089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:17:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HoSbyXia"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 632B020878
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pEeuvuzd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 895A42089C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbeJBO7B (ORCPT
+        id S1727488AbeJBO7C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:59:01 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33613 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbeJBO7A (ORCPT
+        Tue, 2 Oct 2018 10:59:02 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37805 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbeJBO7B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:59:00 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e4-v6so1106794wrs.0;
-        Tue, 02 Oct 2018 01:16:57 -0700 (PDT)
+        Tue, 2 Oct 2018 10:59:01 -0400
+Received: by mail-pl1-f193.google.com with SMTP id az3-v6so516828plb.4;
+        Tue, 02 Oct 2018 01:16:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=3xymGV0Fy+yTVbyIBTZbMlgPy4Q29cAgGLgkXnxjr/g=;
-        b=HoSbyXiaQLqYHTfzMZ3EE4buztOCfDDHCrVKqVkJJB16srrfPDXyOFZqfEMiOJOESq
-         tLqfE0Hp8IKCkcQI19Zg5NC1uf2OfbQlO7ewwuig+LpZaCMitHZECc7p6wyJ6FZixT4W
-         SnPmoCT13ElHfjYCMKefpij41XnWsd71H5VfC5UVxwcqYC7GHOfeXU2RRLwwVPSMLxH3
-         zf0rqfYhxbWXwhP6CvGrAqiJnKyNuOSiL6xArZ0gVQdR4+wHLP0dxnUDibyCURGz2Hm0
-         QBaOeShvrfADSRnCeYOppan4/38gcJv2ZyFlzrbczh0BUQQFyn/8XIJBBs6ykuvfKW2g
-         f36w==
+         :content-disposition:in-reply-to:user-agent;
+        bh=r9c0v6k5yYT3ldRRauxDANN9klpUOh7jyIlXr5bZ5j4=;
+        b=pEeuvuzdZEBLx5yPXCSxgQ3jrshhAmwzryfiKpQzHU75uo5OoE8SDg7+A6/0XuaH0z
+         SJJsTRgX4rcMXJPECloSiF0cmaIRHAEqzH2EOZvdxW22oxUwjX+jvEVj8rr4x/75GK3a
+         /HmH1iTe9nlUfzjw0yNuSDY/iwVxSRxhguqjBX08mV/DDx+gk3s7bJeXXjA6ZBE3R2O6
+         fK/fphqAfqAmGo2ZoYqNL1Fx+Gnw0Bpl0veaBnyWjP1KhjlhCDRQsaBD/P2Rs8WOlApl
+         9rnoPNq1fkhZZFgg1BfAi12Th1KcxbJzH58P4DFt2EyCg+GmgSj8MdkQVcD40byPTiGb
+         0dFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=3xymGV0Fy+yTVbyIBTZbMlgPy4Q29cAgGLgkXnxjr/g=;
-        b=uFbHlR3gec7fMSgR1rvVUb6R01EydPZz5MsUphMgv8Y3Vj7fhu2f3jJbqMJrjOYXQd
-         O9J7VwVTP0g8St3jIQXB1hRlVSEpkAc6fiWbQiHJM5Y/Uy+85JMQnRfUTmdEnvJwNLbK
-         ApWnqQsHmf7P9zGK4hLkZfg23MsWsQfRZekiF2sJjrjLrfwalmkk7R4JrhLrmI/7j6Dh
-         HX32KCZ8saOji1p2j3H8ECLE+FvhEsF21osRuxYPHQcRxFwrDPayJxBXL+3sNxkCoYO3
-         IOwuq63UuqFFyFSUXJuWua+4BffrdUeht7g1FZSYQl0P8vczAXFTSBEsuh+4OLdNHlJB
-         RHAQ==
-X-Gm-Message-State: ABuFfogGGjREdOHDijeWXH5jbIAqhXEwIbtjq8KqWVlReTD2DkMUYoWy
-        hEkHZ1AeqRRdKmos7n67GA6z0Wkw
-X-Google-Smtp-Source: ACcGV61BHMwmdXBa0gslBRUgx4K6RNB8oXUIlyiuMl6No5L9yAUCrTqkxGdlVsRt+Fh5cfh685atxA==
-X-Received: by 2002:a5d:6490:: with SMTP id r16-v6mr5716827wru.99.1538468216331;
-        Tue, 02 Oct 2018 01:16:56 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id k1-v6sm18152420wrl.39.2018.10.02.01.16.54
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=r9c0v6k5yYT3ldRRauxDANN9klpUOh7jyIlXr5bZ5j4=;
+        b=qjAQHCEhobdrPHSmtehFMwoj8qO0VblXTd565SZ3ZNie6bETkX00NDhflVjbcERyl2
+         b6GmmkGAWI7ILb2EE/VIC2+8zB3lWFAAUtkjcC/jXYd2rWrYGftN+r3FAIlYM6nA5DQL
+         DO1HkEO721wTBhvhrZ/VHIKndDLAuzWntnp5uMrF40u4CQNwa/ptDwrIkJ5odPNOGIEC
+         OB5q4vAIh6KkiKExdXT2feZQcv1mTLnK0DaorU8kRMBJG4Tm1S1YhLLcsR1vockkqhYH
+         ozh7EiJbqEhh0RPD3ddZsodnRhgL+kdaSPCHcvJeGEGcTRzzvB1Oim1ddPDp+Mk59QDa
+         5t2w==
+X-Gm-Message-State: ABuFfogwWB3F9zaSpGhc70iaRd5d7h4Y8HIztsyUv6Tl6nmKMFsRiHFX
+        L1PN40ScslFG1BrZ4kmb7qw=
+X-Google-Smtp-Source: ACcGV62lUJT55kRqXlBHmLMhoVO4qgiI02vYuGYvMjMNkVzPbikIps85XFpLTvO4vKKdqdDF7fFDXA==
+X-Received: by 2002:a62:c40f:: with SMTP id y15-v6mr15272213pff.161.1538468219012;
+        Tue, 02 Oct 2018 01:16:59 -0700 (PDT)
+Received: from localhost ([39.7.19.27])
+        by smtp.gmail.com with ESMTPSA id s14-v6sm16944915pgv.29.2018.10.02.01.16.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Oct 2018 01:16:55 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 10:16:54 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, util-linux@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jaroslav =?utf-8?B?xaBrYXJ2YWRh?= <jskarvad@redhat.com>,
-        mpluskal@suse.com, base-system@gentoo.org
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Karel Zak <kzak@redhat.com>, Andreas Bombe <aeb@debian.org>,
-        Andreas Bombe <andreas.bombe@gmail.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Richard Weinberger <richard.weinberger@gmail.com>
-Subject: Re: Future of dosfstools project (FAT)
-Message-ID: <20181002081654.jxesr3kj62snzez5@pali>
-References: <20180929084038.an6pfhnsd6tblejl@pali>
+        Tue, 02 Oct 2018 01:16:57 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 17:16:53 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Daniel Wang <wonderfly@google.com>
+Cc:     stable@vger.kernel.org, pmladek@suse.com,
+        Alexander.Levin@microsoft.com, akpm@linux-foundation.org,
+        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mathieu.desnoyers@efficios.com, mgorman@suse.de, mhocko@kernel.org,
+        pavel@ucw.cz, penguin-kernel@i-love.sakura.ne.jp,
+        peterz@infradead.org, rostedt@goodmis.org, tj@kernel.org,
+        torvalds@linux-foundation.org, vbabka@suse.cz,
+        xiyou.wangcong@gmail.com, pfeiner@google.com
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+Message-ID: <20181002081653.GJ598@jagdpanzerIV>
+References: <20180927194601.207765-1-wonderfly@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFLxGvxfegQFh0kvk81VLhLh0AkgvpT=hWMDCJz5FmgoTUNRqA@mail.gmail.com>
- <20180929084038.an6pfhnsd6tblejl@pali>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180927194601.207765-1-wonderfly@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 01 October 2018 22:13:41 Richard Weinberger wrote:
-> On Mon, Oct 1, 2018 at 10:01 PM Andreas Dilger <adilger@dilger.ca> wrote:
-> > If the current dosfstools maintainer is non-responsive, you could always
-> > fork the project in GitHub, land the critical patches into your branch,
-> >  and make a release on your own.  If the maintainer surfaces again, then
-> > they can pull in your patches.  If not, then you are the new maintainer.
->-
-> I also recommend talking to package maintainers of major distros.
-> Maybe one of them forked the project already and did what you plan to do.
->-
-> In any case, let's try to avoid a drama like util-linux-ng was.
+On (09/27/18 12:46), Daniel Wang wrote:
+> Prior to this change, the combination of `softlockup_panic=1` and
+> `softlockup_all_cpu_stacktrace=1` may result in a deadlock when the reboot path
+> is trying to grab the console lock that is held by the stack trace printing
+> path. What seems to be happening is that while there are multiple CPUs, only one
+> of them is tasked to print the back trace of all CPUs. On a machine with many
+> CPUs and a slow serial console (on Google Compute Engine for example), the stack
+> trace printing routine hits a timeout and the reboot path kicks in. The latter
+> then tries to print something else, but can't get the lock because it's still
+> held by earlier printing path.
 
-Based on Richard's comment, I'm forwarding my original email (below) to
-the Fedora, Suse and Gentoo maintainers.
+Sorry, I'm missing something here. Steven's patch deals with lockups and
+I understand why you want to backport the patch set; but console output
+deadlock on panic() is another thing.
 
-On Saturday 29 September 2018 10:40:38 Pali Rohár wrote:
-> Hi!
-> 
-> Last year I did some research how Windows and Linux tools handle FAT
-> labels (boot sector vs root directory) and proposed some unification.
-> More in thread: https://www.spinics.net/lists/kernel/msg2640891.html
-> 
-> My proposed change for manipulating with FAT labels is now implemented
-> in util-linux v2.33, prepared new mtools version, and also in dosfstools
-> git (unreleased) https://www.spinics.net/lists/kernel/msg2645732.html
-> 
-> Project dosfstools contains de-facto standard Linux userspace tools for
-> FAT filesystems (mkfs.fat, fsck.fat, fatlabel) and so it is quite
-> important because of high usage of FAT.
-> 
-> But there was no new release of dosfstools since Jan 2017 and for more
-> then month I'm unsuccessfully try to contact maintainer of dosfstools
-> project (Andreas) about future of project itself.
-> 
-> I do not know what happened, if either Andreas do not have time or
-> something else...
-> 
-> So does somebody know what is state of dosfstools project?
-> 
-> Also there are lot of proposed changes (with patches) for this project
-> https://github.com/dosfstools/dosfstools/pulls and also more reported
-> bugs https://github.com/dosfstools/dosfstools/issues
-> 
-> If Andreas does not have time, can somebody else at least look at pull
-> requests and do some code review?
-> 
-> I have some other unpublished/unfinished changes for dosfstools, but I
-> do not know now if it make sense to invest more time in this project
-> when maintainer does not respond... if this project is active or going
-> to be dead...
-> 
-> If dosfstools is going to be inactive/dead, there is still mtools
-> project with provides FAT tools too and maintainer of it is now
-> preparing new bugfix version. So at least some alternative exists.
+You said
+	"then tries to print something else, but can't get the lock
+	 because it's still held by earlier printing path"
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+Can't get which of the locks?
+
+	-ss
