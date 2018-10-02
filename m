@@ -2,162 +2,105 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07846C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47731C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:08:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBD3720878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:08:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBD3720878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0CC1020878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:08:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CC1020878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbeJBQuz (ORCPT
+        id S1727361AbeJBQvV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 12:50:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60343 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbeJBQuz (ORCPT
+        Tue, 2 Oct 2018 12:51:21 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.250]:35811 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726194AbeJBQvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 12:50:55 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w92A7uve1915805
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 2 Oct 2018 03:07:56 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w92A7u1Q1915802;
-        Tue, 2 Oct 2018 03:07:56 -0700
-Date:   Tue, 2 Oct 2018 03:07:56 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Matthew Wilcox <tipbot@zytor.com>
-Message-ID: <tip-27df89689e257cccb604fdf56c91a75a25aa554a@git.kernel.org>
-Cc:     peterz@infradead.org, will.deacon@arm.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, longman@redhat.com,
-        torvalds@linux-foundation.org, mingo@kernel.org, hpa@zytor.com,
-        willy@infradead.org, arnd@arndb.de
-Reply-To: tglx@linutronix.de, longman@redhat.com,
-          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-          peterz@infradead.org, will.deacon@arm.com, arnd@arndb.de,
-          hpa@zytor.com, mingo@kernel.org, willy@infradead.org
-In-Reply-To: <20180820162639.GC25153@bombadil.infradead.org>
-References: <20180820162639.GC25153@bombadil.infradead.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/spinlocks: Remove an instruction from
- spin and write locks
-Git-Commit-ID: 27df89689e257cccb604fdf56c91a75a25aa554a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 2 Oct 2018 12:51:21 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 125091E60B
+        for <linux-kernel@vger.kernel.org>; Tue,  2 Oct 2018 05:08:51 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 7Hbng3zK8PvAd7HbnguuGk; Tue, 02 Oct 2018 05:08:51 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:47828 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g7Hbm-000e3D-Dz; Tue, 02 Oct 2018 05:08:50 -0500
+Date:   Tue, 2 Oct 2018 12:08:48 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] nfsd: fix fall-through annotations
+Message-ID: <20181002100848.GA31166@embeddedor.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g7Hbm-000e3D-Dz
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:47828
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  27df89689e257cccb604fdf56c91a75a25aa554a
-Gitweb:     https://git.kernel.org/tip/27df89689e257cccb604fdf56c91a75a25aa554a
-Author:     Matthew Wilcox <willy@infradead.org>
-AuthorDate: Mon, 20 Aug 2018 10:19:14 -0400
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 2 Oct 2018 09:49:42 +0200
+Replace "fallthru" with a proper "fall through" annotation.
 
-locking/spinlocks: Remove an instruction from spin and write locks
+Also, add an annotation were it is expected to fall through.
 
-Both spin locks and write locks currently do:
+These fixes are part of the ongoing efforts to enabling
+-Wimplicit-fallthrough
 
- f0 0f b1 17             lock cmpxchg %edx,(%rdi)
- 85 c0                   test   %eax,%eax
- 75 05                   jne    [slowpath]
-
-This 'test' insn is superfluous; the cmpxchg insn sets the Z flag
-appropriately.  Peter pointed out that using atomic_try_cmpxchg_acquire()
-will let the compiler know this is true.  Comparing before/after
-disassemblies show the only effect is to remove this insn.
-
-Take this opportunity to make the spin & write lock code resemble each
-other more closely and have similar likely() hints.
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Waiman Long <longman@redhat.com>
-Link: http://lkml.kernel.org/r/20180820162639.GC25153@bombadil.infradead.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- include/asm-generic/qrwlock.h   |  7 ++++---
- include/asm-generic/qspinlock.h | 16 +++++++++-------
- 2 files changed, 13 insertions(+), 10 deletions(-)
+ fs/nfsd/vfs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/asm-generic/qrwlock.h b/include/asm-generic/qrwlock.h
-index 0f7062bd55e5..36254d2da8e0 100644
---- a/include/asm-generic/qrwlock.h
-+++ b/include/asm-generic/qrwlock.h
-@@ -71,8 +71,8 @@ static inline int queued_write_trylock(struct qrwlock *lock)
- 	if (unlikely(cnts))
- 		return 0;
- 
--	return likely(atomic_cmpxchg_acquire(&lock->cnts,
--					     cnts, cnts | _QW_LOCKED) == cnts);
-+	return likely(atomic_try_cmpxchg_acquire(&lock->cnts, &cnts,
-+				_QW_LOCKED));
- }
- /**
-  * queued_read_lock - acquire read lock of a queue rwlock
-@@ -96,8 +96,9 @@ static inline void queued_read_lock(struct qrwlock *lock)
-  */
- static inline void queued_write_lock(struct qrwlock *lock)
- {
-+	u32 cnts = 0;
- 	/* Optimize for the unfair lock case where the fair flag is 0. */
--	if (atomic_cmpxchg_acquire(&lock->cnts, 0, _QW_LOCKED) == 0)
-+	if (likely(atomic_try_cmpxchg_acquire(&lock->cnts, &cnts, _QW_LOCKED)))
- 		return;
- 
- 	queued_write_lock_slowpath(lock);
-diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qspinlock.h
-index 9cc457597ddf..7541fa707f5b 100644
---- a/include/asm-generic/qspinlock.h
-+++ b/include/asm-generic/qspinlock.h
-@@ -66,10 +66,12 @@ static __always_inline int queued_spin_is_contended(struct qspinlock *lock)
-  */
- static __always_inline int queued_spin_trylock(struct qspinlock *lock)
- {
--	if (!atomic_read(&lock->val) &&
--	   (atomic_cmpxchg_acquire(&lock->val, 0, _Q_LOCKED_VAL) == 0))
--		return 1;
--	return 0;
-+	u32 val = atomic_read(&lock->val);
-+
-+	if (unlikely(val))
-+		return 0;
-+
-+	return likely(atomic_try_cmpxchg_acquire(&lock->val, &val, _Q_LOCKED_VAL));
- }
- 
- extern void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val);
-@@ -80,11 +82,11 @@ extern void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val);
-  */
- static __always_inline void queued_spin_lock(struct qspinlock *lock)
- {
--	u32 val;
-+	u32 val = 0;
- 
--	val = atomic_cmpxchg_acquire(&lock->val, 0, _Q_LOCKED_VAL);
--	if (likely(val == 0))
-+	if (likely(atomic_try_cmpxchg_acquire(&lock->val, &val, _Q_LOCKED_VAL)))
- 		return;
-+
- 	queued_spin_lock_slowpath(lock, val);
- }
- 
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index d74583f..2751976 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -1407,6 +1407,7 @@ do_nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 					*created = 1;
+ 				break;
+ 			}
++			/* fall through */
+ 		case NFS4_CREATE_EXCLUSIVE4_1:
+ 			if (   d_inode(dchild)->i_mtime.tv_sec == v_mtime
+ 			    && d_inode(dchild)->i_atime.tv_sec == v_atime
+@@ -1415,7 +1416,7 @@ do_nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 					*created = 1;
+ 				goto set_attr;
+ 			}
+-			 /* fallthru */
++			/* fall through */
+ 		case NFS3_CREATE_GUARDED:
+ 			err = nfserr_exist;
+ 		}
+-- 
+2.7.4
+
