@@ -2,126 +2,129 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97705C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEC9C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B07A20878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:39:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91C3320878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:42:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gguNK8L1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B07A20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="rdv7BvnH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C3320878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbeJBQWH (ORCPT
+        id S1726946AbeJBQZG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 12:22:07 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40282 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbeJBQWH (ORCPT
+        Tue, 2 Oct 2018 12:25:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38641 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbeJBQZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 12:22:07 -0400
-Received: by mail-wm1-f66.google.com with SMTP id z204-v6so651068wmc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 02:39:44 -0700 (PDT)
+        Tue, 2 Oct 2018 12:25:06 -0400
+Received: by mail-wr1-f65.google.com with SMTP id a13-v6so1399621wrt.5
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 02:42:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Wz4zqbhuF7x0PHSfwD1x5xnncNEJYOJ+KJtr+RIT5zY=;
-        b=gguNK8L1b/kJ/GiyYaieqU7Cn8Q0cgdK0Lcv+10kUyv+YbBGyrt9kHhi13Q7QSMeDP
-         36VbYU7PZUEcmDbuAVUF7PCyS+1/CB6E6SCjAvUl/NvvzIaNsZCgzZQxO3G0TFHo25Iv
-         Ez6fCNIimEBYDR++AYhOO+lOJlnCBTTb/FCrlHXM3Nw95evYzaZcl04KPN2t/7A2q2ys
-         PDJ/eGly3fAtjfge8WbdFn+QLFztgoyzq8to1tz9Y5vOn0mdXDT0atVgNWxRByLx+p16
-         1ZjjyoY6shLGAtX9IN9/Stc348H/vmRZ+UlDIgHsbZEw8jL6sFhRirDxHGCqss5qwtMn
-         zjLQ==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V3jZM2zRxZov3RiYJJND5l9o9GvRdVPeg8Domw0sixQ=;
+        b=rdv7BvnHz8eN8fvqCehuj2i61008VQhDgwsFte0rmXuwF4XjOBndwGkgD915PwUulq
+         Py+qaQbXLcBFT1H8ujLvfpIGCjq91U5NvKmDIjKy6YNCyT1eZtCbVp5cGw7OiClk/SSh
+         42JhDXElxUZ9RfMGFi4gEc1p5l1rCT1heo3eEH4Dr7y5nMOIuzfp+R1vi41Kcmh7tzsL
+         yIFrWWFmV5SWhEV9FF1yZA3irU2gYJhOe1R3IJE8EAhkGN5qc+AxvbxoxmruGoktgrNm
+         ChVdvOX3eu5ka3qfMC6xTV4cYHmVUJl7g/1LoozLCnwGac7RR1ISwQyPWHHX8MOqjucP
+         YbeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Wz4zqbhuF7x0PHSfwD1x5xnncNEJYOJ+KJtr+RIT5zY=;
-        b=qo0P+miKJ3OGKwPXiEwtaajzSSLP4oeWCx5Vy6Qh3RM8oz9DWgb8OuWE86Qhbxl3J/
-         bnpHgDH62AoHqDzerxvJ1OHwQWmw/ZmKZrqYKL60AP3QCW8pA4B9Il13s8srozUnsu3e
-         V4UmCwiDttA/OjSvLDe/xT/Pl4QJqZahOrVM7BUbzVPpz9yd48oPDc3cJrONRbFG9G/A
-         1/FrE2wYs8EpfyTdKNcWcohtP7F9/IL47U/MAkaw+VUTcmWIXUwiadrfC6JSthN7S+kZ
-         bUiFjynNyQ/lLc1ssY4Ean6PMu0KPmb0x+sjjfJ/TlDnsSpB+6FYb7Hh/NV9jtQCdUua
-         JHdA==
-X-Gm-Message-State: ABuFfojgU/U6P96P6F+lnKOzgZBtS26TF7GDj5kouj4DE4T9NCZffbYo
-        VAUJZA1OV3N21UEKrqCxZV4=
-X-Google-Smtp-Source: ACcGV631+YMMuP4LTbXmhpNBs7U1M6zyrqWZbdR5gykNzawiTiAlinFHgIKWc1pHmoR+bjLqGDn6Zw==
-X-Received: by 2002:a1c:5d8c:: with SMTP id r134-v6mr918580wmb.147.1538473183663;
-        Tue, 02 Oct 2018 02:39:43 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 130-v6sm1602335wmn.7.2018.10.02.02.39.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Oct 2018 02:39:43 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 11:39:40 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     linux-mm@kvack.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v2 1/3] Revert "x86/e820: put !E820_TYPE_RAM regions into
- memblock.reserved"
-Message-ID: <20181002093940.GA98058@gmail.com>
-References: <20180925153532.6206-1-msys.mizuma@gmail.com>
- <20180925153532.6206-2-msys.mizuma@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V3jZM2zRxZov3RiYJJND5l9o9GvRdVPeg8Domw0sixQ=;
+        b=PdO5IPf+PmlzdxquEWUTvus11pZShmunaXqGb9JvtQ0aHQSHu3Ik+ebzkApVacfIFs
+         qXnBWQ4RD8dlYscF7anvSac4t1ttnqC4Ddc7seuiYn2yYBVwxaYZZ6Xy9HMdQ1o81KWx
+         hxPoVYb3zR0e11+0B34hSSHwELdjXv1wy2Xs0uJDqpBOCTarD3MVYCLnXgqsO7+OOLg8
+         BT0389d1qY2lRZRbNN3OGrDUvb0b0msT625a2WYnGt27EPf/sKxxB4BW43oBg8S7Gob3
+         Yg7G50Kb0xgz6ph79/nPC4bVup9mweyKvk+GByNCs2ZixvFkafTgO9wXC0W/gJ+3f305
+         zQRA==
+X-Gm-Message-State: ABuFfojFGgl0/xsa0QePyzlVDbNY2Liv9iRLIDpG88dbNvpgjTMTjTPB
+        h2kX/36XmaWMWXi7DtLwX10x/g==
+X-Google-Smtp-Source: ACcGV62jIN8Ly1/AfBCWyCVlRXJsTUr0dIBMhUhhs65Yxv+Rpg09qePIuNNWr7cCxX4A0Kr6HQ0oOw==
+X-Received: by 2002:adf:dcc7:: with SMTP id x7-v6mr6148953wrm.21.1538473362270;
+        Tue, 02 Oct 2018 02:42:42 -0700 (PDT)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:217b:7d7b:52aa:bc53])
+        by smtp.gmail.com with ESMTPSA id t24-v6sm4036840wra.5.2018.10.02.02.42.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 02:42:41 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH] nvmem: fix nvmem_cell_get_from_lookup()
+Date:   Tue,  2 Oct 2018 11:42:38 +0200
+Message-Id: <20181002094238.17571-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925153532.6206-2-msys.mizuma@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-* Masayoshi Mizuma <msys.mizuma@gmail.com> wrote:
+We check if the pointer returned by __nvmem_device_get() is not NULL
+while we should actually check if it is not IS_ERR(nvmem). Fix it.
 
-> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> 
-> commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
-> memblock.reserved") breaks movable_node kernel option because it
-> changed the memory gap range to reserved memblock. So, the node
-> is marked as Normal zone even if the SRAT has Hot plaggable affinity.
-> 
->     =====================================================================
->     kernel: BIOS-e820: [mem 0x0000180000000000-0x0000180fffffffff] usable
->     kernel: BIOS-e820: [mem 0x00001c0000000000-0x00001c0fffffffff] usable
->     ...
->     kernel: reserved[0x12]#011[0x0000181000000000-0x00001bffffffffff], 0x000003f000000000 bytes flags: 0x0
->     ...
->     kernel: ACPI: SRAT: Node 2 PXM 6 [mem 0x180000000000-0x1bffffffffff] hotplug
->     kernel: ACPI: SRAT: Node 3 PXM 7 [mem 0x1c0000000000-0x1fffffffffff] hotplug
->     ...
->     kernel: Movable zone start for each node
->     kernel:  Node 3: 0x00001c0000000000
->     kernel: Early memory node ranges
->     ...
->     =====================================================================
-> 
-> Naoya's v1 patch [*] fixes the original issue and this movable_node
-> issue doesn't occur.
-> Let's revert commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM
-> regions into memblock.reserved") and apply the v1 patch.
-> 
-> [*] https://lkml.org/lkml/2018/6/13/27
-> 
-> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
-> ---
->  arch/x86/kernel/e820.c | 15 +++------------
->  1 file changed, 3 insertions(+), 12 deletions(-)
+While we're at it: fix the next error path where we should assign an
+error value to cell before returning.
 
-Bad ordering which introduces the bug and thus breaks bisection of related issues: the fixes 
-should come first, then the revert of the unnecessary or bad fix.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/nvmem/core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks,
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index ad1227df1984..f49474e1ad49 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -952,9 +952,9 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
+ 		    (strcmp(lookup->con_id, con_id) == 0)) {
+ 			/* This is the right entry. */
+ 			nvmem = __nvmem_device_get(NULL, lookup->nvmem_name);
+-			if (!nvmem) {
++			if (IS_ERR(nvmem)) {
+ 				/* Provider may not be registered yet. */
+-				cell = ERR_PTR(-EPROBE_DEFER);
++				cell = ERR_CAST(nvmem);
+ 				goto out;
+ 			}
+ 
+@@ -962,6 +962,7 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
+ 						       lookup->cell_name);
+ 			if (!cell) {
+ 				__nvmem_device_put(nvmem);
++				cell = ERR_PTR(-ENOENT);
+ 				goto out;
+ 			}
+ 		}
+-- 
+2.19.0
 
-	Ingo
