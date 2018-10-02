@@ -2,70 +2,154 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92668C00449
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DA9C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56E992147D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:12:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56E992147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C666213A2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:13:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z06/SIKK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C666213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbeJBHx2 (ORCPT
+        id S1726970AbeJBHxs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:53:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36628 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeJBHx1 (ORCPT
+        Tue, 2 Oct 2018 03:53:48 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35479 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeJBHxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 03:53:27 -0400
-Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 261A482;
-        Tue,  2 Oct 2018 01:12:53 +0000 (UTC)
-Date:   Mon, 1 Oct 2018 17:53:34 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        marc.zyngier@arm.com, christoffer.dall@arm.com
-Subject: Re: [GIT PULL] Late arm64 fixes for 4.19
-Message-ID: <20181002005334.GC29284@kroah.com>
-References: <20181001174600.GB14755@arm.com>
+        Tue, 2 Oct 2018 03:53:48 -0400
+Received: by mail-io1-f68.google.com with SMTP id w11-v6so324822iob.2;
+        Mon, 01 Oct 2018 18:13:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kxoVlUB0gxo40vXl38z0GrK1GeDonW7N5dpqkna0AGU=;
+        b=Z06/SIKK9Yudnda3tee2EpNyqRfT+9aIfNdbj+IBRYcY2A64ukWRQwpq2zSITifwU+
+         QGdEQVVn1T9Q6wSr5EMc19vWxWdNlgccz8/xhg7nyeyznZ75CWpbTChdfUpXLhKiTVRw
+         TqJGQlT1eV5x4g9I/qyoXwlj3fixzPA678qTl1SXzZI7dWhrcuICbqbmkYTJB2YbXm87
+         6oNJWiVrQaWBSZyu0Gm64bQo0D6oYotyCmMQWUZN1jexDqfPIAm/s82UnudY7tXteyH0
+         12DQsF7jOye37JIC679AZHw+V0gb4P/TMh8r4cEM2wwH05siSIisXfknKdSw4AWu07gk
+         fqjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kxoVlUB0gxo40vXl38z0GrK1GeDonW7N5dpqkna0AGU=;
+        b=FCUMb7rFSVF+3YX0DecX+/KT94rj6FuUOfTPO/6b18zzuQrfU2a8t+lI2VtsGU4lTg
+         ucqVCIxFoLiVXUJU8QHwDTfVym8AHj92pG8ZVLpI6Elt3ypxY0egc2v9t/7WY2Mxf9Ot
+         brYADWCaigQQfkOp9PWn9gRvxn9xTG0ZIqvfJCgM+2RVfn0nuavacVmilGRGh9liDoSP
+         ks/iQGdXbEVTjJ8teYTN1sYWt5OqQ8K7h/tRnIByVf8JyVgrhDsUuJvNJPNhNr1tc+3s
+         NfzoxHQ7yRbj/G3BBaqwJqL2eS3QpFTitytMJvXKQuf0g/c/PPE6MopXLwFEgcYLGvH/
+         2SJQ==
+X-Gm-Message-State: ABuFfogcLvTpFWX8A6pIeS/Uwo0OCjmTKH5cNXScsV6xHAVBDRfpZIkc
+        B9sMllifEZpodjkbOY97Iv4=
+X-Google-Smtp-Source: ACcGV60UTyHkRAMKa0Jk2GKaWguWnKRFfzq2FGJKMHcibRCGlIPg8+U+Kc1Qih95T6JkNMR1q+pQdg==
+X-Received: by 2002:a17:902:64c1:: with SMTP id y1-v6mr13801912pli.301.1538442793915;
+        Mon, 01 Oct 2018 18:13:13 -0700 (PDT)
+Received: from localhost.localdomain (122-223-50-245.fukuoka.fdn.vectant.ne.jp. [122.223.50.245])
+        by smtp.gmail.com with ESMTPSA id e190-v6sm23709696pfc.81.2018.10.01.18.13.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 18:13:13 -0700 (PDT)
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     linus.walleij@linaro.org, akpm@linux-foundation.org
+Cc:     linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [RESEND PATCH v4 0/8] Introduce the for_each_set_clump macro
+Date:   Tue,  2 Oct 2018 10:12:39 +0900
+Message-Id: <cover.1538441919.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181001174600.GB14755@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 06:46:01PM +0100, Will Deacon wrote:
-> Hi Greg,
-> 
-> Please pull these late arm64 fixes for 4.19. Details in the tag, but we've
-> fixed a hugetlb livelock issue that was reported by Fujitsu as well as
-> removing some useless flexibility in our KVM SET_ONE_REG ioctl().
-> 
-> Cheers,
-> 
-> Will
-> 
-> --->8
-> 
-> The following changes since commit 6bf4ca7fbc85d80446ac01c0d1d77db4d91a6d84:
-> 
->   Linux 4.19-rc5 (2018-09-23 19:15:18 +0200)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+This is a resend of v4 in hopes of getting some more ACKS and a few more
+eyes on this patchset.
 
-Now pulled, thanks.
+Changes in v4:
+  - Fix bitmap_set arguments (last parameter is nbits not endbit)
 
-greg k-h
+While adding GPIO get_multiple/set_multiple callback support for various
+drivers, I noticed a pattern of looping manifesting that would be useful
+standardized as a macro.
+
+This patchset introduces the for_each_set_clump macro and utilizes it in
+several GPIO drivers. The for_each_set_clump macro facilitates a
+for-loop syntax that iterates over entire groups of set bits at a time.
+
+For example, suppose you would like to iterate over a 16-bit integer 4
+bits at a time, skipping over 4-bit groups with no set bit, where XXXX
+represents the current 4-bit group:
+
+    Example:        1011 1110 0000 1111
+    First loop:     1011 1110 0000 XXXX
+    Second loop:    1011 XXXX 0000 1111
+    Third loop:     XXXX 1110 0000 1111
+
+Each iteration of the loop returns the next 4-bit group that has at
+least one set bit.
+
+The for_each_set_clump macro has six parameters:
+
+    * clump: set to current clump index for the iteration
+    * index: set to current bitmap word index for the iteration
+    * offset: bits offset of the found clump in the bitmap word
+    * bits: bitmap to search within
+    * size: bitmap size in number of clumps
+    * clump_size: clump size in number of bits
+
+The clump_size argument can be an arbitrary number of bits and is not
+required to be a multiple of 2.
+
+This patchset was rebased on top of the following three commits:
+
+    * commit aaf96e51de11 ("gpio: pci-idio-16: Fix port memory offset for get_multiple callback")
+    * commit 304440aa96c6 ("gpio: pcie-idio-24: Fix port memory offset for get_multiple/set_multiple callbacks")
+    * commit e026646c178d ("gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop")
+
+When I implemented the test_for_each_set_clump function, I used
+bitmap_set to set the expected bitmap for the test. This method of
+setting bits only segments at a time was rather tedious and error-prone;
+is there a better way to accomplish what I did (set a bitmap after a
+DECLARE_BITMAP)?
+
+William Breathitt Gray
+
+William Breathitt Gray (8):
+  bitops: Introduce the for_each_set_clump macro
+  lib/test_bitmap.c: Add for_each_set_clump test cases
+  gpio: 104-dio-48e: Utilize for_each_set_clump macro
+  gpio: 104-idi-48: Utilize for_each_set_clump macro
+  gpio: gpio-mm: Utilize for_each_set_clump macro
+  gpio: ws16c48: Utilize for_each_set_clump macro
+  gpio: pci-idio-16: Utilize for_each_set_clump macro
+  gpio: pcie-idio-24: Utilize for_each_set_clump macro
+
+ drivers/gpio/gpio-104-dio-48e.c   |  67 +++++---------------
+ drivers/gpio/gpio-104-idi-48.c    |  32 ++--------
+ drivers/gpio/gpio-gpio-mm.c       |  67 +++++---------------
+ drivers/gpio/gpio-pci-idio-16.c   |  67 ++++++--------------
+ drivers/gpio/gpio-pcie-idio-24.c  | 102 +++++++++++-------------------
+ drivers/gpio/gpio-ws16c48.c       |  66 +++++--------------
+ include/asm-generic/bitops/find.h |   9 +++
+ include/linux/bitops.h            |   7 ++
+ lib/find_bit.c                    |  40 ++++++++++++
+ lib/test_bitmap.c                 |  71 +++++++++++++++++++++
+ 10 files changed, 236 insertions(+), 292 deletions(-)
+
+-- 
+2.19.0
+
