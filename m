@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C63C004D2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66765C43143
 	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C862208E7
+	by mail.kernel.org (Postfix) with ESMTP id 2EC6C2089C
 	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C862208E7
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC6C2089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732494AbeJBUSZ (ORCPT
+        id S1732479AbeJBUSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:18:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35486 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730235AbeJBUSY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 16:18:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35476 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731692AbeJBUSX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:18:23 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4863BC2B;
-        Tue,  2 Oct 2018 13:35:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37E1BBF0;
+        Tue,  2 Oct 2018 13:34:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lothar Felten <lothar.felten@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org,
+        Srikanth Jampala <Jampala.Srikanth@cavium.com>,
+        Gadam Sreerama <sgadam@cavium.com>,
+        "Jha, Chandan" <Chandan.Jha@cavium.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 126/137] hwmon: (ina2xx) fix sysfs shunt resistor read access
-Date:   Tue,  2 Oct 2018 06:25:27 -0700
-Message-Id: <20181002132507.331148396@linuxfoundation.org>
+Subject: [PATCH 4.14 125/137] crypto: cavium/nitrox - fix for command corruption in queue full case with backlog submissions.
+Date:   Tue,  2 Oct 2018 06:25:26 -0700
+Message-Id: <20181002132507.257721994@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,82 +55,182 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lothar Felten <lothar.felten@gmail.com>
+From: Srikanth Jampala <Jampala.Srikanth@cavium.com>
 
-[ Upstream commit 3ad867001c91657c46dcf6656d52eb6080286fd5 ]
+[ Upstream commit 3d7c82060d1fe65bde4023aac41a0b1bd7718e07 ]
 
-fix the sysfs shunt resistor read access: return the shunt resistor
-value, not the calibration register contents.
+Earlier used to post the current command without checking queue full
+     after backlog submissions. So, post the current command only after
+     confirming the space in queue after backlog submissions.
 
-update email address
+     Maintain host write index instead of reading device registers
+     to get the next free slot to post the command.
 
-Signed-off-by: Lothar Felten <lothar.felten@gmail.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+     Return -ENOSPC in queue full case.
+
+Signed-off-by: Srikanth Jampala <Jampala.Srikanth@cavium.com>
+Reviewed-by: Gadam Sreerama <sgadam@cavium.com>
+Tested-by: Jha, Chandan <Chandan.Jha@cavium.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/hwmon/ina2xx           |    2 +-
- drivers/hwmon/ina2xx.c               |   13 +++++++++++--
- include/linux/platform_data/ina2xx.h |    2 +-
- 3 files changed, 13 insertions(+), 4 deletions(-)
+ drivers/crypto/cavium/nitrox/nitrox_dev.h    |    3 -
+ drivers/crypto/cavium/nitrox/nitrox_lib.c    |    1 
+ drivers/crypto/cavium/nitrox/nitrox_reqmgr.c |   57 +++++++++++++++------------
+ 3 files changed, 35 insertions(+), 26 deletions(-)
 
---- a/Documentation/hwmon/ina2xx
-+++ b/Documentation/hwmon/ina2xx
-@@ -32,7 +32,7 @@ Supported chips:
-     Datasheet: Publicly available at the Texas Instruments website
-                http://www.ti.com/
+--- a/drivers/crypto/cavium/nitrox/nitrox_dev.h
++++ b/drivers/crypto/cavium/nitrox/nitrox_dev.h
+@@ -35,6 +35,7 @@ struct nitrox_cmdq {
+ 	/* requests in backlog queues */
+ 	atomic_t backlog_count;
  
--Author: Lothar Felten <l-felten@ti.com>
-+Author: Lothar Felten <lothar.felten@gmail.com>
++	int write_idx;
+ 	/* command size 32B/64B */
+ 	u8 instr_size;
+ 	u8 qno;
+@@ -87,7 +88,7 @@ struct nitrox_bh {
+ 	struct bh_data *slc;
+ };
  
- Description
- -----------
---- a/drivers/hwmon/ina2xx.c
-+++ b/drivers/hwmon/ina2xx.c
-@@ -17,7 +17,7 @@
-  * Bi-directional Current/Power Monitor with I2C Interface
-  * Datasheet: http://www.ti.com/product/ina230
-  *
-- * Copyright (C) 2012 Lothar Felten <l-felten@ti.com>
-+ * Copyright (C) 2012 Lothar Felten <lothar.felten@gmail.com>
-  * Thanks to Jan Volkering
-  *
-  * This program is free software; you can redistribute it and/or modify
-@@ -329,6 +329,15 @@ static int ina2xx_set_shunt(struct ina2x
- 	return 0;
- }
+-/* NITROX-5 driver state */
++/* NITROX-V driver state */
+ #define NITROX_UCODE_LOADED	0
+ #define NITROX_READY		1
  
-+static ssize_t ina2xx_show_shunt(struct device *dev,
-+			      struct device_attribute *da,
-+			      char *buf)
+--- a/drivers/crypto/cavium/nitrox/nitrox_lib.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_lib.c
+@@ -36,6 +36,7 @@ static int cmdq_common_init(struct nitro
+ 	cmdq->head = PTR_ALIGN(cmdq->head_unaligned, PKT_IN_ALIGN);
+ 	cmdq->dma = PTR_ALIGN(cmdq->dma_unaligned, PKT_IN_ALIGN);
+ 	cmdq->qsize = (qsize + PKT_IN_ALIGN);
++	cmdq->write_idx = 0;
+ 
+ 	spin_lock_init(&cmdq->response_lock);
+ 	spin_lock_init(&cmdq->cmdq_lock);
+--- a/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
+@@ -43,6 +43,16 @@
+  *   Invalid flag options in AES-CCM IV.
+  */
+ 
++static inline int incr_index(int index, int count, int max)
 +{
-+	struct ina2xx_data *data = dev_get_drvdata(dev);
++	if ((index + count) >= max)
++		index = index + count - max;
++	else
++		index += count;
 +
-+	return snprintf(buf, PAGE_SIZE, "%li\n", data->rshunt);
++	return index;
 +}
 +
- static ssize_t ina2xx_store_shunt(struct device *dev,
- 				  struct device_attribute *da,
- 				  const char *buf, size_t count)
-@@ -403,7 +412,7 @@ static SENSOR_DEVICE_ATTR(power1_input,
+ /**
+  * dma_free_sglist - unmap and free the sg lists.
+  * @ndev: N5 device
+@@ -427,30 +437,29 @@ static void post_se_instr(struct nitrox_
+ 			  struct nitrox_cmdq *cmdq)
+ {
+ 	struct nitrox_device *ndev = sr->ndev;
+-	union nps_pkt_in_instr_baoff_dbell pkt_in_baoff_dbell;
+-	u64 offset;
++	int idx;
+ 	u8 *ent;
  
- /* shunt resistance */
- static SENSOR_DEVICE_ATTR(shunt_resistor, S_IRUGO | S_IWUSR,
--			  ina2xx_show_value, ina2xx_store_shunt,
-+			  ina2xx_show_shunt, ina2xx_store_shunt,
- 			  INA2XX_CALIBRATION);
+ 	spin_lock_bh(&cmdq->cmdq_lock);
  
- /* update interval (ina226 only) */
---- a/include/linux/platform_data/ina2xx.h
-+++ b/include/linux/platform_data/ina2xx.h
-@@ -1,7 +1,7 @@
- /*
-  * Driver for Texas Instruments INA219, INA226 power monitor chips
-  *
-- * Copyright (C) 2012 Lothar Felten <l-felten@ti.com>
-+ * Copyright (C) 2012 Lothar Felten <lothar.felten@gmail.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
+-	/* get the next write offset */
+-	offset = NPS_PKT_IN_INSTR_BAOFF_DBELLX(cmdq->qno);
+-	pkt_in_baoff_dbell.value = nitrox_read_csr(ndev, offset);
++	idx = cmdq->write_idx;
+ 	/* copy the instruction */
+-	ent = cmdq->head + pkt_in_baoff_dbell.s.aoff;
++	ent = cmdq->head + (idx * cmdq->instr_size);
+ 	memcpy(ent, &sr->instr, cmdq->instr_size);
+-	/* flush the command queue updates */
+-	dma_wmb();
+ 
+-	sr->tstamp = jiffies;
+ 	atomic_set(&sr->status, REQ_POSTED);
+ 	response_list_add(sr, cmdq);
++	sr->tstamp = jiffies;
++	/* flush the command queue updates */
++	dma_wmb();
+ 
+ 	/* Ring doorbell with count 1 */
+ 	writeq(1, cmdq->dbell_csr_addr);
+ 	/* orders the doorbell rings */
+ 	mmiowb();
+ 
++	cmdq->write_idx = incr_index(idx, 1, ndev->qlen);
++
+ 	spin_unlock_bh(&cmdq->cmdq_lock);
+ }
+ 
+@@ -460,6 +469,9 @@ static int post_backlog_cmds(struct nitr
+ 	struct nitrox_softreq *sr, *tmp;
+ 	int ret = 0;
+ 
++	if (!atomic_read(&cmdq->backlog_count))
++		return 0;
++
+ 	spin_lock_bh(&cmdq->backlog_lock);
+ 
+ 	list_for_each_entry_safe(sr, tmp, &cmdq->backlog_head, backlog) {
+@@ -467,7 +479,7 @@ static int post_backlog_cmds(struct nitr
+ 
+ 		/* submit until space available */
+ 		if (unlikely(cmdq_full(cmdq, ndev->qlen))) {
+-			ret = -EBUSY;
++			ret = -ENOSPC;
+ 			break;
+ 		}
+ 		/* delete from backlog list */
+@@ -492,23 +504,20 @@ static int nitrox_enqueue_request(struct
+ {
+ 	struct nitrox_cmdq *cmdq = sr->cmdq;
+ 	struct nitrox_device *ndev = sr->ndev;
+-	int ret = -EBUSY;
++
++	/* try to post backlog requests */
++	post_backlog_cmds(cmdq);
+ 
+ 	if (unlikely(cmdq_full(cmdq, ndev->qlen))) {
+ 		if (!(sr->flags & CRYPTO_TFM_REQ_MAY_BACKLOG))
+-			return -EAGAIN;
+-
++			return -ENOSPC;
++		/* add to backlog list */
+ 		backlog_list_add(sr, cmdq);
+-	} else {
+-		ret = post_backlog_cmds(cmdq);
+-		if (ret) {
+-			backlog_list_add(sr, cmdq);
+-			return ret;
+-		}
+-		post_se_instr(sr, cmdq);
+-		ret = -EINPROGRESS;
++		return -EBUSY;
+ 	}
+-	return ret;
++	post_se_instr(sr, cmdq);
++
++	return -EINPROGRESS;
+ }
+ 
+ /**
+@@ -625,11 +634,9 @@ int nitrox_process_se_request(struct nit
+ 	 */
+ 	sr->instr.fdata[0] = *((u64 *)&req->gph);
+ 	sr->instr.fdata[1] = 0;
+-	/* flush the soft_req changes before posting the cmd */
+-	wmb();
+ 
+ 	ret = nitrox_enqueue_request(sr);
+-	if (ret == -EAGAIN)
++	if (ret == -ENOSPC)
+ 		goto send_fail;
+ 
+ 	return ret;
 
 
