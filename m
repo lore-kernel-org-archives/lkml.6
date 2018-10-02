@@ -2,160 +2,98 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A69BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C82C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5898E21471
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:28:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C958820C0A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:31:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ECJWV4n2";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Gf7IuF8U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5898E21471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oGwHT0HZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C958820C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbeJBMKJ (ORCPT
+        id S1726537AbeJBMNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 08:10:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48726 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbeJBMKJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 08:10:09 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 33D2D60C4E; Tue,  2 Oct 2018 05:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538458126;
-        bh=u/bChvMKQYWeEDaSGIQoKrg1Cv4arnCrBf4Cfqx1eq4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ECJWV4n2aGslCZv0iz34V6FF4QTCpnkA6V+3K1skM4kdtUkDi5FWyaI4ciHYd4CJw
-         6K6p1ij24s8UJ0W017UdENmxhDLI+MjXi2kwaxr/CqDsEeqltt32JZvYObehoykn9/
-         v1PDuOFdOCdzwmzL4jj3XHW+riDS+1f75wdl5tB8=
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 2 Oct 2018 08:13:18 -0400
+Received: from ozlabs.org ([203.11.71.1]:57515 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726305AbeJBMNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 08:13:18 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3D06460C5F;
-        Tue,  2 Oct 2018 05:28:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538458124;
-        bh=u/bChvMKQYWeEDaSGIQoKrg1Cv4arnCrBf4Cfqx1eq4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Gf7IuF8Uun/Yc4a/lH5KUkhDDOpAG0Wwo+sXs/0jeHMEmR9d3AofA/bpIQYS0q2DL
-         Bo6Y4UJMgAinyqr83zehgjeW3uQMMPFdI0oACwreb1RISkELZJqPvOtwOC1ICyz3s2
-         iAKIMXKtSfCGTUuXUk1p2uZEEukJPxx7wmg/Mmjo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D06460C5F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt1-f170.google.com with SMTP id e9-v6so705141qtp.7;
-        Mon, 01 Oct 2018 22:28:44 -0700 (PDT)
-X-Gm-Message-State: ABuFfoj0C/TxjYsEKSMtq4Vjx49gjlbz3Ab/N0cm4pMQfyrAeuQmLmul
-        jzKN1BBhehXDY6Qni7/k5BAoAv3daI1lFxDw91c=
-X-Google-Smtp-Source: ACcGV63a1KqH1DVO6gYc2PyyOuJ1Spzywbm4k6IXJaH+oGncfqMP2Xv0iWF/MZiCwsifOOqiokKeqg7Eu26p5lIRtYc=
-X-Received: by 2002:a0c:e803:: with SMTP id y3-v6mr5141524qvn.56.1538458123408;
- Mon, 01 Oct 2018 22:28:43 -0700 (PDT)
+        by ozlabs.org (Postfix) with ESMTPSA id 42PSSn3v2Lz9sCq;
+        Tue,  2 Oct 2018 15:31:53 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538458313;
+        bh=70giA5rDcm6pnyYjzP6RMZVdHpcXxwHuMAyFUiPIqQs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=oGwHT0HZhadf5iMvBXBePs84ugzdp/8Ygjb5z8VXcXCYxjrj8P1wBYOKn8WBmFo5n
+         Mmz2xq0cZvL0fiYh6HE0pyoap3TrLC4r58bGgYEOH31pB88Yow1RZQMop8LErsjyKb
+         NKflGSIdB/f/tp7ceM27UPxtLJprsLxp2IAjbCRGq4qMC/tQnLSq2scT1eUlmkugKd
+         37svdDpJsQv6n6N+mRy6oU3lYIWgKyq+hczHPEZNukMTnK5JAmJQvFWYX/pHcFYQxL
+         x6H/f4oY/ZGqs5tcRpb7SHTr8YzgKFoGavvCweIRRuAT8HGm0bnwc0fknmSlw2xnha
+         UnnjKQvLLj2aQ==
+Date:   Tue, 2 Oct 2018 15:31:49 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: linux-next: build warning after merge of the char-misc tree
+Message-ID: <20181002153149.2a312771@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
- <20180830144541.17740-3-vivek.gautam@codeaurora.org> <20181001125854.GB31488@arm.com>
- <CAFp+6iGkudBtZFfk4ST+k9OMRSGgU=pzVGC4QaSmPb+Xkdp3Xw@mail.gmail.com>
-In-Reply-To: <CAFp+6iGkudBtZFfk4ST+k9OMRSGgU=pzVGC4QaSmPb+Xkdp3Xw@mail.gmail.com>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Tue, 2 Oct 2018 10:58:31 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iFpm05Uu8HkYCC+O+gYwFwvxirc6=e6oOed+ZJk6QLDPw@mail.gmail.com>
-Message-ID: <CAFp+6iFpm05Uu8HkYCC+O+gYwFwvxirc6=e6oOed+ZJk6QLDPw@mail.gmail.com>
-Subject: Re: [PATCH v16 2/5] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, "robh+dt" <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Clark <robdclark@gmail.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>, sboyd@kernel.org,
-        Tomasz Figa <tfiga@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/irOtuQOPhLavSwGr2qkY3n8"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 9:44 AM Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
->
-> Hi Will,
->
-> On Mon, Oct 1, 2018 at 6:29 PM Will Deacon <will.deacon@arm.com> wrote:
-> >
-> > Hi Vivek,
-> >
-> > On Thu, Aug 30, 2018 at 08:15:38PM +0530, Vivek Gautam wrote:
-> > > From: Sricharan R <sricharan@codeaurora.org>
-> > >
-> > > The smmu device probe/remove and add/remove master device callbacks
-> > > gets called when the smmu is not linked to its master, that is without
-> > > the context of the master device. So calling runtime apis in those places
-> > > separately.
-> > > Global locks are also initialized before enabling runtime pm as the
-> > > runtime_resume() calls device_reset() which does tlb_sync_global()
-> > > that ultimately requires locks to be initialized.
-> > >
-> > > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> > > [vivek: Cleanup pm runtime calls]
-> > > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > > Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> > > Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > > ---
-> > >  drivers/iommu/arm-smmu.c | 89 +++++++++++++++++++++++++++++++++++++++++++-----
-> > >  1 file changed, 81 insertions(+), 8 deletions(-)
-> >
-> > This doesn't apply on my tree[1], possibly because I've got Robin's non-strict
-> > invalidation queued there. However, that got me thinking -- how does this
-> > work in conjunction with the timer-based TLB invalidation? Do we need to
-> > rpm_{get,put} around flush_iotlb_all()? If so, do we still need the calls
-> > in map/unmap when non-strict mode is in use?
+--Sig_/irOtuQOPhLavSwGr2qkY3n8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-For map/unmap(), i think there would be no harm in having additional
-power.usage_count even for the non-strict mode.
-So, I will just add rpm{get,put} in arm_smmu_flush_iotlb_all(), and
-arm_smmu_iotlb_sync().
+Hi all,
 
-Regards
-Vivek
+After merging the char-misc tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
->
-> I haven't tested things with flush queues, but from what it looks like
-> both .flush_iotlb_all, and .iotlb_sync callbacks need rpm_get/put().
-> I will respin the patches.
->
-> Thanks
-> Vivek
-> >
-> > Will
-> >
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-joerg/arm-smmu/updates
->
->
->
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
+drivers/nvmem/lpc18xx_eeprom.c: In function 'lpc18xx_eeprom_remove':
+drivers/nvmem/lpc18xx_eeprom.c:258:6: warning: unused variable 'ret' [-Wunu=
+sed-variable]
+  int ret;
+      ^~~
 
+Introduced by commit
 
+  226014d13fa5 ("nvmem: lpc18xx_eeprom: use devm_nvmem_register()")
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/irOtuQOPhLavSwGr2qkY3n8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluzAsUACgkQAVBC80lX
+0GytxAgAmDRpiVPYk/tReHOcZ70FO+s7MLVHlQNZi5jF5P2axIfTYHgzbHX6YxX2
+DE4uPhPNnIva0JGGuF6utg3v51jdqhJDskJ95YofP5KofX/2r5O7iZxIBSC2C11K
++wMn3SknP7Y7GGShxDDVJyunPnv7N6dUYPjr+COGsjVZxVwL/kbCnQIpBpQEpywJ
+PKglAOE4RFQDz0Y13qgKlOlzVD0pUsB+8nq9U3hOnyTJgYhSCi/k7k2ZwRhDTjWE
+WKEMOtLmRPqwVUp8sZ1ZLBoo3NeUJEqhwNOPSTE1Ua5jPxW7kKvs/SD6Ubr40iT3
+R0tJ6ec+3Al0rJtjwJYPk+I2R+omLA==
+=U5lr
+-----END PGP SIGNATURE-----
+
+--Sig_/irOtuQOPhLavSwGr2qkY3n8--
