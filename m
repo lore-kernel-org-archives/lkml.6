@@ -2,113 +2,185 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D22C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E36C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79AB120684
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:39:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SloH2imw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79AB120684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 980FD205C9
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 05:40:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980FD205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbeJBMUb (ORCPT
+        id S1726712AbeJBMWE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 08:20:31 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40871 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbeJBMUb (ORCPT
+        Tue, 2 Oct 2018 08:22:04 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:58981 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726305AbeJBMWE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 08:20:31 -0400
-Received: by mail-io1-f65.google.com with SMTP id w16-v6so1145197iom.7
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 22:39:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Xev2zmbezSA+/lohmc8EdKhVAjHCTh2WA/XQaSPKjwI=;
-        b=SloH2imwTAoFFm1RJL89OUhWs3BDnxiCdfeuqH1n5gYXQfmiM5LddA/L61ZBHXcGyf
-         PHkDUq0sXp+DVdI8zn9B65qHmKU6T+v/Com6QYCFup0FVbuazLNlMjNjQ7t+5sW4BHSX
-         HVVb4dJN2S/zzztGaAtpl6wGTY5C8iYIWQ1vI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Xev2zmbezSA+/lohmc8EdKhVAjHCTh2WA/XQaSPKjwI=;
-        b=GFOXxX4BlBoNcXkhBNbzupt/F6qntLrq6BDWP9Zsa47YbgAwe4qZcNPqeEeIq6IC8c
-         GUYqVc3ub/f/eWb6gGj94VX7gtqz9vKRQSDw7yKSTv1pbzQCL7GYZZT4WjJzPy9O/3q8
-         Rq9MVGu3aKRUBLc9vc5xDPaRJXXbu5Ivwz1d+m53+UVSAfHvE5PF5uXkOt2Kmbft9H0i
-         haKrFqAIVF90x5HZy3B/6Tz0t4LvqU/B66jcKg9A89MgJoruRNx/Gqg0fWtRUDqHpY6N
-         EXLScCIjgPrxb462EUo7gZdgUPsgUifkDwVQgPfI4hm6nQgoXYzPRPFOWnuNdw6rA3vk
-         8NXg==
-X-Gm-Message-State: ABuFfoimRAln6+wc4v9GYvWx31oFUSeBuGk1V1deVTbEszVhHGtVgnmn
-        JU94Y4Xk2LwD4hA743ikVNgpMqvgcMTdKV2AGARS9g==
-X-Google-Smtp-Source: ACcGV61koNS0XXNHcmsTGnkJz7Avc88af9E1oqyUk2QYOFw/QjbKya5Bkglcaliq4hpPKtZ/RoBBMiW5Txrzeiy44IY=
-X-Received: by 2002:a6b:5d12:: with SMTP id r18-v6mr9273735iob.170.1538458746596;
- Mon, 01 Oct 2018 22:39:06 -0700 (PDT)
+        Tue, 2 Oct 2018 08:22:04 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07440893|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03297;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=17;RT=17;SR=0;TI=SMTPD_---.CyTRBK6_1538458825;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CyTRBK6_1538458825)
+          by smtp.aliyun-inc.com(10.147.41.231);
+          Tue, 02 Oct 2018 13:40:25 +0800
+Date:   Tue, 2 Oct 2018 13:40:25 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, anurup.m@huawei.com,
+        Jonathan.Cameron@huawei.com, will.deacon@arm.com,
+        zhangshaokun@hisilicon.com, jhogan@kernel.org,
+        paul.burton@mips.com, peterz@infradead.org, f.fainelli@gmail.com,
+        arnd@arndb.de, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH V9 3/8] clocksource: add C-SKY SMP timer
+Message-ID: <20181002054024.GA12645@guoren>
+References: <cover.1538355281.git.ren_guo@c-sky.com>
+ <eee964dd57d12bc630280ab84235b5356799b1fb.1538355281.git.ren_guo@c-sky.com>
+ <88e320f2-8cf0-fdb9-c9b0-ee25d7a4d00f@linaro.org>
 MIME-Version: 1.0
-Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 22:39:06 -0700 (PDT)
-In-Reply-To: <CAHmME9rVbKCNJfVBEene0SvhBEm_g7N-XJ26ugoAab1Vj7G_ww@mail.gmail.com>
-References: <20180930024904.14240-1-Jason@zx2c4.com> <CAK8P3a0grG5OBjwpTeH0fqzoFFBLDH6-oGM4ibzHypUKWedg3A@mail.gmail.com>
- <CAHmME9rVbKCNJfVBEene0SvhBEm_g7N-XJ26ugoAab1Vj7G_ww@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 2 Oct 2018 07:39:06 +0200
-Message-ID: <CAKv+Gu94x+pPp_CrPYj=3aFb6fDcZKM9MficvKkkfXhDib2sYg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: makefile: pass -march=armv4 to assembler even on CPU32v3
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, arm@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88e320f2-8cf0-fdb9-c9b0-ee25d7a4d00f@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 October 2018 at 05:53, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> Hi Arnd,
->
-> Apologies for the delay in getting back to you. I had some MTA issues
-> and stupidly assumed ARM developers were taking the day off instead...
->
-> On Tue, Oct 2, 2018 at 5:33 AM Arnd Bergmann <arnd@arndb.de> wrote:
->> -arch-$(CONFIG_CPU_32v3)                =-D__LINUX_ARM_ARCH__=3 -march=armv3
->> +arch-$(CONFIG_CPU_32v3)                =-D__LINUX_ARM_ARCH__=3 -march=armv3m
->
-> Unfortunately this doesn't really cut it in my case, as it's not only
-> those multiplications:
-> chacha20-arm.S:402: Error: selected processor does not support `bxeq
-> lr' in ARM mode
->
+On Mon, Oct 01, 2018 at 11:14:14AM +0200, Daniel Lezcano wrote:
+> On 01/10/2018 03:35, Guo Ren wrote:
+> > This timer is used by SMP system and use mfcr/mtcr instruction
+> > to access the regs.
+> > 
+> > Changelog:
+> >  - Remove #define CPUHP_AP_CSKY_TIMER_STARTING
+> >  - Add CPUHP_AP_CSKY_TIMER_STARTING in cpuhotplug.h
+> >  - Support csky mp timer alpha version.
+> >  - Just use low-counter with 32bit width as clocksource.
+> >  - Coding convention with upstream feed-back.
+> > 
+> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> > ---
+> >  drivers/clocksource/Kconfig        |   8 ++
+> >  drivers/clocksource/Makefile       |   1 +
+> >  drivers/clocksource/csky_mptimer.c | 176 +++++++++++++++++++++++++++++++++++++
+> >  include/linux/cpuhotplug.h         |   1 +
+> >  4 files changed, 186 insertions(+)
+> >  create mode 100644 drivers/clocksource/csky_mptimer.c
+> > 
+> > diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> > index a11f4ba..a28043f 100644
+> > --- a/drivers/clocksource/Kconfig
+> > +++ b/drivers/clocksource/Kconfig
+> > @@ -620,4 +620,12 @@ config RISCV_TIMER
+> >  	  is accessed via both the SBI and the rdcycle instruction.  This is
+> >  	  required for all RISC-V systems.
+> >  
+> > +config CSKY_MPTIMER
+> > +	bool "C-SKY Multi Processor Timer"
+> > +	depends on CSKY
+> > +	select TIMER_OF
+> > +	help
+> > +	  Say yes here to enable C-SKY SMP timer driver used for C-SKY SMP
+> > +	  system.
+> > +
+> >  endmenu
+> 
+> The same rule applies here for COMPILE_TEST.
+Ok
 
-We have a macro for doing function returns: just replace 'bxeq lr'
-with 'reteq lr' (and be sure to include <asm/assembler.h>)
+> And please rename the file: timer-mp-csky.c
+Ok
 
+> > +	return (u64) mfcr(PTIM_CCVR);
+> 
+> extra space
+Ok
 
-> I think we're going to wind up playing whack-a-mole in silly ways. The
-> fact of the matter is that the ARM assembly I'm adding to the tree is
-> for ARMv4 and up, and not for ARMv3.
->
-> I think there are three options to work around this issue:
->
-> 1) Not build my assembly when CONFIG_CPU_32v3 via a Kconfig "depends".
-> 2) Set asflags-$(CONFIG_CPU_32v3) inside my module locally to select
-> -march=armv4.
-> 3) This patch.
->
-> My initial plan was (1). ArdB recommended I do (2) instead. I thought
-> that was a bit too nuanced and submitted (3).
->
-> It sounds like in light of the bus issues, (1) might be the best
-> solution after all?
->
-> Let me know, and I'll follow your direction.
->
-> Regards,
-> Jason
+> 
+> > +}
+> > +
+> > +static u64 clksrc_read(struct clocksource *c)
+> > +{
+> > +	return (u64) mfcr(PTIM_CCVR);
+> 
+> extra space
+Ok
+
+> > +	 */
+> > +
+> 
+> extra line
+Ok
+
+> 
+> > +	for_each_possible_cpu(cpu) {
+> > +		to = per_cpu_ptr(&csky_to, cpu);
+> > +
+> > +		if (cpu == 0) {
+> > +			to->flags	  |= TIMER_OF_IRQ;
+> > +			to->of_irq.handler = timer_interrupt;
+> > +
+> > +			ret = timer_of_init(np, to);
+> > +			if (ret)
+> > +				return ret;
+> > +
+> > +			rate	= timer_of_rate(to);
+> > +			irq	= to->of_irq.irq;
+> > +		} else {
+> > +			ret = timer_of_init(np, to);
+> > +			if (ret)
+> > +				return ret;
+> > +
+> > +			to->of_clk.rate	= rate;
+> > +			to->of_irq.irq	= irq;
+> > +		}
+> > +	}
+> 
+> 
+> Isn't possible to replace this loop which is a bit confusing by:
+> 
+>  - no irq flag specified for timer-of
+>  - request irq before
+Ok, but I've a bit different :)
+ 
+> So we end up with:
+> 
+> 	irq = irq_of_parse_and_map(np, 0);
+> 	if (irq <= 0)
+> 		return -EINVAL;
+		panic();
+I want a panic here. Return will make debug confused and directly tell
+the people where is wrong. It's root-timer for us and it must bootup.
+
+If it's a co-timer, I also think return is good.
+
+> 
+> 	ret = request_irq(irq, csky_timer_interrupt,
+> 			IRQF_TIMER | IRQF_PERCPU,
+>                         "csky_mp_timer", &csky_to));
+	ret = request_percpu_irq(irq, csky_timer_interrupt,
+			"csky_mp_timer", &csky_to);
+I'll use request_percpu_irq the same as in timer_of and I've tested it's
+Ok.
+
+> 	if (ret)
+> 		return ret;
+Pls let me panic here.
+
+> 
+> 	for_each_possible_cpu(cpu) {
+> 		to = per_cpu_ptr(&csky_to, cpu);
+> 		ret = timer_of_init(np, to);
+> 		if (ret)
+> 			goto rollback;
+		Pls let me panic here.
+> 	}
+
+Best Regards
+ Guo Ren
