@@ -6,34 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92F7C64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFEDC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C866206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C866206B2
+	by mail.kernel.org (Postfix) with ESMTP id 59A8B208AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59A8B208AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730678AbeJBUON (ORCPT
+        id S1730693AbeJBUOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33804 "EHLO
+        Tue, 2 Oct 2018 16:14:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33812 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730643AbeJBUON (ORCPT
+        with ESMTP id S1730643AbeJBUOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:13 -0400
+        Tue, 2 Oct 2018 16:14:14 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4E25C3F;
-        Tue,  2 Oct 2018 13:30:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D91C1C2B;
+        Tue,  2 Oct 2018 13:30:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.18 167/228] RDMA/uverbs: Atomically flush and mark closed the comp event queue
-Date:   Tue,  2 Oct 2018 06:24:24 -0700
-Message-Id: <20181002132510.031356150@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.18 168/228] arm64: KVM: Tighten guest core register access from userspace
+Date:   Tue,  2 Oct 2018 06:24:25 -0700
+Message-Id: <20181002132510.080763631@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,45 +55,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve Wise <swise@opengridcomputing.com>
+From: Dave Martin <Dave.Martin@arm.com>
 
-commit 67e3816842fe6414d629c7515b955952ec40c7d7 upstream.
+commit d26c25a9d19b5976b319af528886f89cf455692d upstream.
 
-Currently a uverbs completion event queue is flushed of events in
-ib_uverbs_comp_event_close() with the queue spinlock held and then
-released.  Yet setting ev_queue->is_closed is not set until later in
-uverbs_hot_unplug_completion_event_file().
+We currently allow userspace to access the core register file
+in about any possible way, including straddling multiple
+registers and doing unaligned accesses.
 
-In between the time ib_uverbs_comp_event_close() releases the lock and
-uverbs_hot_unplug_completion_event_file() acquires the lock, a completion
-event can arrive and be inserted into the event queue by
-ib_uverbs_comp_handler().
+This is not the expected use of the ABI, and nobody is actually
+using it that way. Let's tighten it by explicitly checking
+the size and alignment for each field of the register file.
 
-This can cause a "double add" list_add warning or crash depending on the
-kernel configuration, or a memory leak because the event is never dequeued
-since the queue is already closed down.
-
-So add setting ev_queue->is_closed = 1 to ib_uverbs_comp_event_close().
-
-Cc: stable@vger.kernel.org
-Fixes: 1e7710f3f656 ("IB/core: Change completion channel to use the reworked objects schema")
-Signed-off-by: Steve Wise <swise@opengridcomputing.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 2f4a07c5f9fe ("arm64: KVM: guest one-reg interface")
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+[maz: rewrote Dave's initial patch to be more easily backported]
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/uverbs_main.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/kvm/guest.c |   45 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
---- a/drivers/infiniband/core/uverbs_main.c
-+++ b/drivers/infiniband/core/uverbs_main.c
-@@ -429,6 +429,7 @@ static int ib_uverbs_comp_event_close(st
- 			list_del(&entry->obj_list);
- 		kfree(entry);
- 	}
-+	file->ev_queue.is_closed = 1;
- 	spin_unlock_irq(&file->ev_queue.lock);
+--- a/arch/arm64/kvm/guest.c
++++ b/arch/arm64/kvm/guest.c
+@@ -57,6 +57,45 @@ static u64 core_reg_offset_from_id(u64 i
+ 	return id & ~(KVM_REG_ARCH_MASK | KVM_REG_SIZE_MASK | KVM_REG_ARM_CORE);
+ }
  
- 	uverbs_close_fd(filp);
++static int validate_core_offset(const struct kvm_one_reg *reg)
++{
++	u64 off = core_reg_offset_from_id(reg->id);
++	int size;
++
++	switch (off) {
++	case KVM_REG_ARM_CORE_REG(regs.regs[0]) ...
++	     KVM_REG_ARM_CORE_REG(regs.regs[30]):
++	case KVM_REG_ARM_CORE_REG(regs.sp):
++	case KVM_REG_ARM_CORE_REG(regs.pc):
++	case KVM_REG_ARM_CORE_REG(regs.pstate):
++	case KVM_REG_ARM_CORE_REG(sp_el1):
++	case KVM_REG_ARM_CORE_REG(elr_el1):
++	case KVM_REG_ARM_CORE_REG(spsr[0]) ...
++	     KVM_REG_ARM_CORE_REG(spsr[KVM_NR_SPSR - 1]):
++		size = sizeof(__u64);
++		break;
++
++	case KVM_REG_ARM_CORE_REG(fp_regs.vregs[0]) ...
++	     KVM_REG_ARM_CORE_REG(fp_regs.vregs[31]):
++		size = sizeof(__uint128_t);
++		break;
++
++	case KVM_REG_ARM_CORE_REG(fp_regs.fpsr):
++	case KVM_REG_ARM_CORE_REG(fp_regs.fpcr):
++		size = sizeof(__u32);
++		break;
++
++	default:
++		return -EINVAL;
++	}
++
++	if (KVM_REG_SIZE(reg->id) == size &&
++	    IS_ALIGNED(off, size / sizeof(__u32)))
++		return 0;
++
++	return -EINVAL;
++}
++
+ static int get_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+ {
+ 	/*
+@@ -76,6 +115,9 @@ static int get_core_reg(struct kvm_vcpu
+ 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
+ 		return -ENOENT;
+ 
++	if (validate_core_offset(reg))
++		return -EINVAL;
++
+ 	if (copy_to_user(uaddr, ((u32 *)regs) + off, KVM_REG_SIZE(reg->id)))
+ 		return -EFAULT;
+ 
+@@ -98,6 +140,9 @@ static int set_core_reg(struct kvm_vcpu
+ 	    (off + (KVM_REG_SIZE(reg->id) / sizeof(__u32))) >= nr_regs)
+ 		return -ENOENT;
+ 
++	if (validate_core_offset(reg))
++		return -EINVAL;
++
+ 	if (KVM_REG_SIZE(reg->id) > sizeof(tmp))
+ 		return -EINVAL;
+ 
 
 
