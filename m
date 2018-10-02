@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14462C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B40C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFF5A2064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:57:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFF5A2064A
+	by mail.kernel.org (Postfix) with ESMTP id DEB902064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:57:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB902064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730911AbeJBUOh (ORCPT
+        id S1730897AbeJBUOh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 2 Oct 2018 16:14:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33982 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34006 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729789AbeJBUOc (ORCPT
+        with ESMTP id S1730838AbeJBUOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:32 -0400
+        Tue, 2 Oct 2018 16:14:33 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0BE60BF0;
-        Tue,  2 Oct 2018 13:31:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 318995AA;
+        Tue,  2 Oct 2018 13:31:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Bo Chen <chenbo@pdx.edu>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 221/228] arm/arm64: smccc-1.1: Handle function result as parameters
-Date:   Tue,  2 Oct 2018 06:25:18 -0700
-Message-Id: <20181002132512.436058190@linuxfoundation.org>
+Subject: [PATCH 4.18 205/228] e1000: ensure to free old tx/rx rings in set_ringparam()
+Date:   Tue,  2 Oct 2018 06:25:02 -0700
+Message-Id: <20181002132511.673729560@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,135 +54,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Bo Chen <chenbo@pdx.edu>
 
-[ Upstream commit 755a8bf5579d22eb5636685c516d8dede799e27b ]
+[ Upstream commit ee400a3f1bfe7004a3e14b81c38ccc5583c26295 ]
 
-If someone has the silly idea to write something along those lines:
+In 'e1000_set_ringparam()', the tx_ring and rx_ring are updated with new value
+and the old tx/rx rings are freed only when the device is up. There are resource
+leaks on old tx/rx rings when the device is not up. This bug is reported by COD,
+a tool for testing kernel module binaries I am building.
 
-	extern u64 foo(void);
+This patch fixes the bug by always calling 'kfree()' on old tx/rx rings in
+'e1000_set_ringparam()'.
 
-	void bar(struct arm_smccc_res *res)
-	{
-		arm_smccc_1_1_smc(0xbad, foo(), res);
-	}
-
-they are in for a surprise, as this gets compiled as:
-
-	0000000000000588 <bar>:
-	 588:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-	 58c:   910003fd        mov     x29, sp
-	 590:   f9000bf3        str     x19, [sp, #16]
-	 594:   aa0003f3        mov     x19, x0
-	 598:   aa1e03e0        mov     x0, x30
-	 59c:   94000000        bl      0 <_mcount>
-	 5a0:   94000000        bl      0 <foo>
-	 5a4:   aa0003e1        mov     x1, x0
-	 5a8:   d4000003        smc     #0x0
-	 5ac:   b4000073        cbz     x19, 5b8 <bar+0x30>
-	 5b0:   a9000660        stp     x0, x1, [x19]
-	 5b4:   a9010e62        stp     x2, x3, [x19, #16]
-	 5b8:   f9400bf3        ldr     x19, [sp, #16]
-	 5bc:   a8c27bfd        ldp     x29, x30, [sp], #32
-	 5c0:   d65f03c0        ret
-	 5c4:   d503201f        nop
-
-The call to foo "overwrites" the x0 register for the return value,
-and we end up calling the wrong secure service.
-
-A solution is to evaluate all the parameters before assigning
-anything to specific registers, leading to the expected result:
-
-	0000000000000588 <bar>:
-	 588:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-	 58c:   910003fd        mov     x29, sp
-	 590:   f9000bf3        str     x19, [sp, #16]
-	 594:   aa0003f3        mov     x19, x0
-	 598:   aa1e03e0        mov     x0, x30
-	 59c:   94000000        bl      0 <_mcount>
-	 5a0:   94000000        bl      0 <foo>
-	 5a4:   aa0003e1        mov     x1, x0
-	 5a8:   d28175a0        mov     x0, #0xbad
-	 5ac:   d4000003        smc     #0x0
-	 5b0:   b4000073        cbz     x19, 5bc <bar+0x34>
-	 5b4:   a9000660        stp     x0, x1, [x19]
-	 5b8:   a9010e62        stp     x2, x3, [x19, #16]
-	 5bc:   f9400bf3        ldr     x19, [sp, #16]
-	 5c0:   a8c27bfd        ldp     x29, x30, [sp], #32
-	 5c4:   d65f03c0        ret
-
-Reported-by: Julien Grall <julien.grall@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Bo Chen <chenbo@pdx.edu>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/arm-smccc.h |   30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -205,41 +205,51 @@ asmlinkage void __arm_smccc_hvc(unsigned
- 	register unsigned long r3 asm("r3")
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -624,14 +624,14 @@ static int e1000_set_ringparam(struct ne
+ 		adapter->tx_ring = tx_old;
+ 		e1000_free_all_rx_resources(adapter);
+ 		e1000_free_all_tx_resources(adapter);
+-		kfree(tx_old);
+-		kfree(rx_old);
+ 		adapter->rx_ring = rxdr;
+ 		adapter->tx_ring = txdr;
+ 		err = e1000_up(adapter);
+ 		if (err)
+ 			goto err_setup;
+ 	}
++	kfree(tx_old);
++	kfree(rx_old);
  
- #define __declare_arg_1(a0, a1, res)					\
-+	typeof(a1) __a1 = a1;						\
- 	struct arm_smccc_res   *___res = res;				\
- 	register unsigned long r0 asm("r0") = (u32)a0;			\
--	register unsigned long r1 asm("r1") = a1;			\
-+	register unsigned long r1 asm("r1") = __a1;			\
- 	register unsigned long r2 asm("r2");				\
- 	register unsigned long r3 asm("r3")
- 
- #define __declare_arg_2(a0, a1, a2, res)				\
-+	typeof(a1) __a1 = a1;						\
-+	typeof(a2) __a2 = a2;						\
- 	struct arm_smccc_res   *___res = res;				\
- 	register unsigned long r0 asm("r0") = (u32)a0;			\
--	register unsigned long r1 asm("r1") = a1;			\
--	register unsigned long r2 asm("r2") = a2;			\
-+	register unsigned long r1 asm("r1") = __a1;			\
-+	register unsigned long r2 asm("r2") = __a2;			\
- 	register unsigned long r3 asm("r3")
- 
- #define __declare_arg_3(a0, a1, a2, a3, res)				\
-+	typeof(a1) __a1 = a1;						\
-+	typeof(a2) __a2 = a2;						\
-+	typeof(a3) __a3 = a3;						\
- 	struct arm_smccc_res   *___res = res;				\
- 	register unsigned long r0 asm("r0") = (u32)a0;			\
--	register unsigned long r1 asm("r1") = a1;			\
--	register unsigned long r2 asm("r2") = a2;			\
--	register unsigned long r3 asm("r3") = a3
-+	register unsigned long r1 asm("r1") = __a1;			\
-+	register unsigned long r2 asm("r2") = __a2;			\
-+	register unsigned long r3 asm("r3") = __a3
- 
- #define __declare_arg_4(a0, a1, a2, a3, a4, res)			\
-+	typeof(a4) __a4 = a4;						\
- 	__declare_arg_3(a0, a1, a2, a3, res);				\
--	register typeof(a4) r4 asm("r4") = a4
-+	register unsigned long r4 asm("r4") = __a4
- 
- #define __declare_arg_5(a0, a1, a2, a3, a4, a5, res)			\
-+	typeof(a5) __a5 = a5;						\
- 	__declare_arg_4(a0, a1, a2, a3, a4, res);			\
--	register typeof(a5) r5 asm("r5") = a5
-+	register unsigned long r5 asm("r5") = __a5
- 
- #define __declare_arg_6(a0, a1, a2, a3, a4, a5, a6, res)		\
-+	typeof(a6) __a6 = a6;						\
- 	__declare_arg_5(a0, a1, a2, a3, a4, a5, res);			\
--	register typeof(a6) r6 asm("r6") = a6
-+	register unsigned long r6 asm("r6") = __a6
- 
- #define __declare_arg_7(a0, a1, a2, a3, a4, a5, a6, a7, res)		\
-+	typeof(a7) __a7 = a7;						\
- 	__declare_arg_6(a0, a1, a2, a3, a4, a5, a6, res);		\
--	register typeof(a7) r7 asm("r7") = a7
-+	register unsigned long r7 asm("r7") = __a7
- 
- #define ___declare_args(count, ...) __declare_arg_ ## count(__VA_ARGS__)
- #define __declare_args(count, ...)  ___declare_args(count, __VA_ARGS__)
+ 	clear_bit(__E1000_RESETTING, &adapter->flags);
+ 	return 0;
 
 
