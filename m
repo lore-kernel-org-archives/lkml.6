@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3F6C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0057AC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEB9F2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB9F2083F
+	by mail.kernel.org (Postfix) with ESMTP id C6041206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6041206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733300AbeJBUUG (ORCPT
+        id S2387394AbeJBUUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36388 "EHLO
+        Tue, 2 Oct 2018 16:20:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36396 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733264AbeJBUUF (ORCPT
+        with ESMTP id S1733297AbeJBUUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:05 -0400
+        Tue, 2 Oct 2018 16:20:07 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F6709D9;
-        Tue,  2 Oct 2018 13:36:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E4FDB4B;
+        Tue,  2 Oct 2018 13:36:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.9 69/94] USB: usbdevfs: restore warning for nonsensical flags
-Date:   Tue,  2 Oct 2018 06:25:23 -0700
-Message-Id: <20181002132505.301820420@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 4.9 70/94] Revert "usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()"
+Date:   Tue,  2 Oct 2018 06:25:24 -0700
+Message-Id: <20181002132505.374820025@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -50,35 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-commit 81e0403b26d94360abd1f6a57311337973bc82cd upstream.
+commit e871db8d78df1c411032cbb3acfdf8930509360e upstream.
 
-If we filter flags before they reach the core we need to generate our
-own warnings.
+This reverts commit 6e22e3af7bb3a7b9dc53cb4687659f6e63fca427.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Fixes: 0cb54a3e47cb ("USB: debugging code shouldn't alter control flow")
+The bug the patch describes to, has been already fixed in commit
+2df6948428542 ("USB: cdc-wdm: don't enable interrupts in USB-giveback")
+so need to this, revert it.
+
+Fixes: 6e22e3af7bb3 ("usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()")
 Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/devio.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/usb/class/cdc-wdm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -1714,6 +1714,11 @@ static int proc_do_submiturb(struct usb_
- 		u |= URB_NO_INTERRUPT;
- 	as->urb->transfer_flags = u;
+--- a/drivers/usb/class/cdc-wdm.c
++++ b/drivers/usb/class/cdc-wdm.c
+@@ -470,7 +470,7 @@ static int service_outstanding_interrupt
  
-+	if (!allow_short && uurb->flags & USBDEVFS_URB_SHORT_NOT_OK)
-+		dev_warn(&ps->dev->dev, "Requested nonsensical USBDEVFS_URB_SHORT_NOT_OK.\n");
-+	if (!allow_zero && uurb->flags & USBDEVFS_URB_ZERO_PACKET)
-+		dev_warn(&ps->dev->dev, "Requested nonsensical USBDEVFS_URB_ZERO_PACKET.\n");
-+
- 	as->urb->transfer_buffer_length = uurb->buffer_length;
- 	as->urb->setup_packet = (unsigned char *)dr;
- 	dr = NULL;
+ 	set_bit(WDM_RESPONDING, &desc->flags);
+ 	spin_unlock_irq(&desc->iuspin);
+-	rv = usb_submit_urb(desc->response, GFP_ATOMIC);
++	rv = usb_submit_urb(desc->response, GFP_KERNEL);
+ 	spin_lock_irq(&desc->iuspin);
+ 	if (rv) {
+ 		dev_err(&desc->intf->dev,
 
 
