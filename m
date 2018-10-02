@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D64C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1023CC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0C342083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0C342083F
+	by mail.kernel.org (Postfix) with ESMTP id D49832083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D49832083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729708AbeJBUxL (ORCPT
+        id S1729784AbeJBUxT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:53:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60670 "EHLO
+        Tue, 2 Oct 2018 16:53:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60642 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728964AbeJBULW (ORCPT
+        with ESMTP id S1726789AbeJBULU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:22 -0400
+        Tue, 2 Oct 2018 16:11:20 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07FCBC4D;
-        Tue,  2 Oct 2018 13:28:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7E6D266;
+        Tue,  2 Oct 2018 13:27:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Jean-Christophe Dubois <jcd@tribudubois.net>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 080/228] ASoC: qdsp6: qdafe: fix some off by one bugs
-Date:   Tue,  2 Oct 2018 06:22:57 -0700
-Message-Id: <20181002132504.760009438@linuxfoundation.org>
+Subject: [PATCH 4.18 046/228] thermal: i.MX: Allow thermal probe to fail gracefully in case of bad calibration.
+Date:   Tue,  2 Oct 2018 06:22:23 -0700
+Message-Id: <20181002132502.287709813@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,51 +54,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Jean-Christophe Dubois <jcd@tribudubois.net>
 
-[ Upstream commit c54c1c5ee8e73b7cb752834e52e2129b1dab00bd ]
+[ Upstream commit be926ceeb4efc3bf44cb9b56f5c71aac9b1f8bbe ]
 
-The > should be >= or we could read one element beyond the end of the
-port_maps[] array.
+Without this fix, the thermal probe on i.MX6 might trigger a division
+by zero exception later in the probe if the calibration does fail.
 
-Fixes: 7fa2d70f9766 ("ASoC: qdsp6: q6afe: Add q6afe driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Note: This linux behavior (Division by zero in kernel) has been triggered
+on a Qemu i.MX6 emulation where parameters in nvmem were not set. With this
+fix the division by zero is not triggeed anymore as the thermal probe does
+fail early.
+
+Signed-off-by: Jean-Christophe Dubois <jcd@tribudubois.net>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/qcom/qdsp6/q6afe.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/thermal/imx_thermal.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/sound/soc/qcom/qdsp6/q6afe.c
-+++ b/sound/soc/qcom/qdsp6/q6afe.c
-@@ -777,7 +777,7 @@ static int q6afe_callback(struct apr_dev
-  */
- int q6afe_get_port_id(int index)
- {
--	if (index < 0 || index > AFE_PORT_MAX)
-+	if (index < 0 || index >= AFE_PORT_MAX)
- 		return -EINVAL;
+--- a/drivers/thermal/imx_thermal.c
++++ b/drivers/thermal/imx_thermal.c
+@@ -604,7 +604,10 @@ static int imx_init_from_nvmem_cells(str
+ 	ret = nvmem_cell_read_u32(&pdev->dev, "calib", &val);
+ 	if (ret)
+ 		return ret;
+-	imx_init_calib(pdev, val);
++
++	ret = imx_init_calib(pdev, val);
++	if (ret)
++		return ret;
  
- 	return port_maps[index].port_id;
-@@ -1014,7 +1014,7 @@ int q6afe_port_stop(struct q6afe_port *p
- 
- 	port_id = port->id;
- 	index = port->token;
--	if (index < 0 || index > AFE_PORT_MAX) {
-+	if (index < 0 || index >= AFE_PORT_MAX) {
- 		dev_err(afe->dev, "AFE port index[%d] invalid!\n", index);
- 		return -EINVAL;
- 	}
-@@ -1355,7 +1355,7 @@ struct q6afe_port *q6afe_port_get_from_i
- 	unsigned long flags;
- 	int cfg_type;
- 
--	if (id < 0 || id > AFE_PORT_MAX) {
-+	if (id < 0 || id >= AFE_PORT_MAX) {
- 		dev_err(dev, "AFE port token[%d] invalid!\n", id);
- 		return ERR_PTR(-EINVAL);
- 	}
+ 	ret = nvmem_cell_read_u32(&pdev->dev, "temp_grade", &val);
+ 	if (ret)
 
 
