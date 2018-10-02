@@ -2,205 +2,331 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5274FC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11934C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3BE4206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A525A206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:13:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J3dKMYqf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3BE4206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TI/EZA3F";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GctS6vfT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A525A206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbeJBNvv (ORCPT
+        id S1726861AbeJBNyq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 09:51:51 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40792 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeJBNvv (ORCPT
+        Tue, 2 Oct 2018 09:54:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56002 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbeJBNyp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 09:51:51 -0400
-Received: by mail-it1-f195.google.com with SMTP id i191-v6so2274594iti.5
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 00:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hNGs8ZxOtswDTv0FLWA43Rd4O4Ltf5vqGPG3TTYisD4=;
-        b=J3dKMYqfmImPz5PgPx937Ab7J4rg88otgmLnnIenlb4o4hUwijXdiBCnRHOxcVFinb
-         kbl1v7deHKdAbO3m4yUMVofHYRq33DT2zW8lO4SBTutbFGGCAy7gqaDjJoL9O71RSzyd
-         KqW1E8xMTwYH2Gw4+5kPpZOQGFmGSWLdLW+wc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hNGs8ZxOtswDTv0FLWA43Rd4O4Ltf5vqGPG3TTYisD4=;
-        b=Lu0k4NeaJl3lR9xE1iG5Ho0WZ6WQ2zUR9aN6hUz+2DUVdpPVpXu5tgKBjOMUtHOUd4
-         o60f7hjx+hALizujdDtSVeZa8WxCByO526B/GxY/FATs5Vp/cmpsBPTHYqaludlbTgY0
-         DTtnmSuifyrXlsoOGvjsV0Lod8Q/KtQ8tg1AMUifX8AXgDhPOPcwvzMw79gqFsD4Akyx
-         lPQW3yjJSGk0L7bvfL6OR7AWoXrmUZIDYEwhC3WXzqTbFTAICsso+PIOGLKl6Me7fzMB
-         59LBknKHLRSFW2dZo41K3/jk2xcm3Gyaiunjgcsxm3facEBmN/uWYGFfGufxvxIizesL
-         +/DA==
-X-Gm-Message-State: ABuFfogA1eMohS/FTOt8SEOB82AQGuyXuAdb8jnVl3yja+fGDnr6lG/F
-        lqbwIvxbT/a5piMjBiFg4inOKMm331Db90pTwJjKBw==
-X-Google-Smtp-Source: ACcGV61Qmv8k/4iugS78Ul0PZmpVt2ifrleeWC2mHaGI8H/h0jniMeWu9WMaaeubil4iHova29U5bkG0JIV+m2LVzD0=
-X-Received: by 2002:a24:e00e:: with SMTP id c14-v6mr1076283ith.108.1538464204422;
- Tue, 02 Oct 2018 00:10:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <1537867062-27285-1-git-send-email-vincent.guittot@linaro.org>
-In-Reply-To: <1537867062-27285-1-git-send-email-vincent.guittot@linaro.org>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 2 Oct 2018 09:09:53 +0200
-Message-ID: <CAKfTPtCgiEBhq49r=r88swExCJK80vYbbC+mr9KU+J-HsUsZOQ@mail.gmail.com>
-Subject: Re: [PATCH] sched/pelt: fix warning and cleanup irq pelt config
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, dou_liyang@163.com
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 2 Oct 2018 09:54:45 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2D2A760C65; Tue,  2 Oct 2018 07:12:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538464378;
+        bh=ggyTXjo+P0ftCf/XJz+SZ63OlHvrN/TxTPtpdPHPuGs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=TI/EZA3F4+cTnj2d7Vi/j3MiRVBL5dEnE+3XstIaL3cBcfDb9mWsBxzNgomcucHAY
+         NGgz8GxXWe2YpevvMf3m5N+8/IURik/si5nOikhQ+1u4XvX4SlnaCeHBFhnByNSPA6
+         bpjRoP9koEr6Zm6fYR17o+r/+4ug2wGkrKAIZes8=
+Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D1D0F60C1D;
+        Tue,  2 Oct 2018 07:12:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538464376;
+        bh=ggyTXjo+P0ftCf/XJz+SZ63OlHvrN/TxTPtpdPHPuGs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GctS6vfTkl2Afbt+k0gVPsZzT9Yzkh457aNxwCgZtnWICzJ57nsoTRsnt1mv92FgJ
+         pJphEyHwPJvNxEwoslw9HpXWbRu7P2mJca8Rk5xQ7OkXWyfW2Fe+qztXr6Brx+SYEt
+         CkG/JvOe9m1Y2H2N0YlQWh1SF1GzZvBrc//+kv50=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1D0F60C1D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+To:     joro@8bytes.org, robh+dt@kernel.org, rjw@rjwysocki.net,
+        robin.murphy@arm.com, will.deacon@arm.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc:     alex.williamson@redhat.com, mark.rutland@arm.com,
+        robdclark@gmail.com, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        sboyd@kernel.org, tfiga@chromium.org, jcrouse@codeaurora.org,
+        sricharan@codeaurora.org, m.szyprowski@samsung.com,
+        architt@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH v17 2/5] iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
+Date:   Tue,  2 Oct 2018 12:42:31 +0530
+Message-Id: <20181002071231.9787-1-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+In-Reply-To: <CAFp+6iFpm05Uu8HkYCC+O+gYwFwvxirc6=e6oOed+ZJk6QLDPw@mail.gmail.com>
+References: <CAFp+6iFpm05Uu8HkYCC+O+gYwFwvxirc6=e6oOed+ZJk6QLDPw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Sep 2018 at 11:17, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> Create a config for enabling irq load tracking in the scheduler.
-> irq load tracking is useful only when irq or paravirtual time is
-> accounted but it's only possible with SMP for now.
->
-> Also use __maybe_unused to remove the compilation warning in
-> update_rq_clock_task() that has been introduced by:
->   commit 2e62c4743adc ("sched/fair: Remove #ifdefs from scale_rt_capacity()")
+From: Sricharan R <sricharan@codeaurora.org>
 
-Gentle ping.
+The smmu device probe/remove and add/remove master device callbacks
+gets called when the smmu is not linked to its master, that is without
+the context of the master device. So calling runtime apis in those places
+separately.
+Global locks are also initialized before enabling runtime pm as the
+runtime_resume() calls device_reset() which does tlb_sync_global()
+that ultimately requires locks to be initialized.
 
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+[vivek: Cleanup pm runtime calls]
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+---
 
->
-> Reported-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-> Reported-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> Suggested-by: Ingo Molnar <mingo@redhat.com>
-> Fixes: 2e62c4743adc ("sched/fair: Remove #ifdefs from scale_rt_capacity()")
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  init/Kconfig         | 5 +++++
->  kernel/sched/core.c  | 7 +++----
->  kernel/sched/fair.c  | 2 +-
->  kernel/sched/pelt.c  | 2 +-
->  kernel/sched/pelt.h  | 2 +-
->  kernel/sched/sched.h | 5 ++---
->  6 files changed, 13 insertions(+), 10 deletions(-)
->
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 1e234e2..317d5cc 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -415,6 +415,11 @@ config IRQ_TIME_ACCOUNTING
->
->           If in doubt, say N here.
->
-> +config HAVE_SCHED_AVG_IRQ
-> +       def_bool y
-> +       depends on IRQ_TIME_ACCOUNTING || PARAVIRT_TIME_ACCOUNTING
-> +       depends on SMP
-> +
->  config BSD_PROCESS_ACCT
->         bool "BSD Process Accounting"
->         depends on MULTIUSER
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 625bc98..bf7b745 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -135,9 +135,8 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
->   * In theory, the compile should just see 0 here, and optimize out the call
->   * to sched_rt_avg_update. But I don't trust it...
->   */
-> -#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> -       s64 steal = 0, irq_delta = 0;
-> -#endif
-> +       s64 __maybe_unused steal = 0, irq_delta = 0;
-> +
->  #ifdef CONFIG_IRQ_TIME_ACCOUNTING
->         irq_delta = irq_time_read(cpu_of(rq)) - rq->prev_irq_time;
->
-> @@ -177,7 +176,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
->
->         rq->clock_task += delta;
->
-> -#ifdef HAVE_SCHED_AVG_IRQ
-> +#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
->         if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
->                 update_irq_load_avg(rq, irq_delta + steal);
->  #endif
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 6bd142d..2c05aac 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7249,7 +7249,7 @@ static inline bool others_have_blocked(struct rq *rq)
->         if (READ_ONCE(rq->avg_dl.util_avg))
->                 return true;
->
-> -#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> +#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
->         if (READ_ONCE(rq->avg_irq.util_avg))
->                 return true;
->  #endif
-> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-> index 35475c0..48a1264 100644
-> --- a/kernel/sched/pelt.c
-> +++ b/kernel/sched/pelt.c
-> @@ -358,7 +358,7 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
->         return 0;
->  }
->
-> -#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> +#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
->  /*
->   * irq:
->   *
-> diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
-> index d2894db..7e56b48 100644
-> --- a/kernel/sched/pelt.h
-> +++ b/kernel/sched/pelt.h
-> @@ -6,7 +6,7 @@ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
->  int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
->  int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
->
-> -#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> +#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
->  int update_irq_load_avg(struct rq *rq, u64 running);
->  #else
->  static inline int
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 3a4ef8f..f3477e0 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -861,8 +861,7 @@ struct rq {
->
->         struct sched_avg        avg_rt;
->         struct sched_avg        avg_dl;
-> -#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> -#define HAVE_SCHED_AVG_IRQ
-> +#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
->         struct sched_avg        avg_irq;
->  #endif
->         u64                     idle_stamp;
-> @@ -2222,7 +2221,7 @@ static inline unsigned long cpu_util_rt(struct rq *rq)
->  }
->  #endif
->
-> -#ifdef HAVE_SCHED_AVG_IRQ
-> +#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
->  static inline unsigned long cpu_util_irq(struct rq *rq)
->  {
->         return rq->avg_irq.util_avg;
-> --
-> 2.7.4
->
+Changes since v16:
+ - Rebased on Will's tree for arm-smmu updates [1].
+ - Added rpm{get|put} calls to .flush_iotlb_all, and .iotlb_sync
+   callbacks to take care of non-strict tlb flush queue updates.
+
+ drivers/iommu/arm-smmu.c | 101 ++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 91 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 59d1430a9f2d..bf106688ab7a 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -269,6 +269,20 @@ static struct arm_smmu_option_prop arm_smmu_options[] = {
+ 	{ 0, NULL},
+ };
+ 
++static inline int arm_smmu_rpm_get(struct arm_smmu_device *smmu)
++{
++	if (pm_runtime_enabled(smmu->dev))
++		return pm_runtime_get_sync(smmu->dev);
++
++	return 0;
++}
++
++static inline void arm_smmu_rpm_put(struct arm_smmu_device *smmu)
++{
++	if (pm_runtime_enabled(smmu->dev))
++		pm_runtime_put(smmu->dev);
++}
++
+ static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
+ {
+ 	return container_of(dom, struct arm_smmu_domain, domain);
+@@ -928,11 +942,15 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
+ 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+ 	struct arm_smmu_device *smmu = smmu_domain->smmu;
+ 	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+-	int irq;
++	int ret, irq;
+ 
+ 	if (!smmu || domain->type == IOMMU_DOMAIN_IDENTITY)
+ 		return;
+ 
++	ret = arm_smmu_rpm_get(smmu);
++	if (ret < 0)
++		return;
++
+ 	/*
+ 	 * Disable the context bank and free the page tables before freeing
+ 	 * it.
+@@ -947,6 +965,8 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
+ 
+ 	free_io_pgtable_ops(smmu_domain->pgtbl_ops);
+ 	__arm_smmu_free_bitmap(smmu->context_map, cfg->cbndx);
++
++	arm_smmu_rpm_put(smmu);
+ }
+ 
+ static struct iommu_domain *arm_smmu_domain_alloc(unsigned type)
+@@ -1228,10 +1248,15 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
+ 		return -ENODEV;
+ 
+ 	smmu = fwspec_smmu(fwspec);
++
++	ret = arm_smmu_rpm_get(smmu);
++	if (ret < 0)
++		return ret;
++
+ 	/* Ensure that the domain is finalised */
+ 	ret = arm_smmu_init_domain_context(domain, smmu);
+ 	if (ret < 0)
+-		return ret;
++		goto rpm_put;
+ 
+ 	/*
+ 	 * Sanity check the domain. We don't support domains across
+@@ -1241,49 +1266,74 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
+ 		dev_err(dev,
+ 			"cannot attach to SMMU %s whilst already attached to domain on SMMU %s\n",
+ 			dev_name(smmu_domain->smmu->dev), dev_name(smmu->dev));
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto rpm_put;
+ 	}
+ 
+ 	/* Looks ok, so add the device to the domain */
+-	return arm_smmu_domain_add_master(smmu_domain, fwspec);
++	ret = arm_smmu_domain_add_master(smmu_domain, fwspec);
++
++rpm_put:
++	arm_smmu_rpm_put(smmu);
++	return ret;
+ }
+ 
+ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+ 			phys_addr_t paddr, size_t size, int prot)
+ {
+ 	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
++	struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
++	int ret;
+ 
+ 	if (!ops)
+ 		return -ENODEV;
+ 
+-	return ops->map(ops, iova, paddr, size, prot);
++	arm_smmu_rpm_get(smmu);
++	ret = ops->map(ops, iova, paddr, size, prot);
++	arm_smmu_rpm_put(smmu);
++
++	return ret;
+ }
+ 
+ static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+ 			     size_t size)
+ {
+ 	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
++	struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
++	size_t ret;
+ 
+ 	if (!ops)
+ 		return 0;
+ 
+-	return ops->unmap(ops, iova, size);
++	arm_smmu_rpm_get(smmu);
++	ret = ops->unmap(ops, iova, size);
++	arm_smmu_rpm_put(smmu);
++
++	return ret;
+ }
+ 
+ static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
+ {
+ 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
++	struct arm_smmu_device *smmu = smmu_domain->smmu;
+ 
+-	if (smmu_domain->tlb_ops)
++	if (smmu_domain->tlb_ops) {
++		arm_smmu_rpm_get(smmu);
+ 		smmu_domain->tlb_ops->tlb_flush_all(smmu_domain);
++		arm_smmu_rpm_put(smmu);
++	}
+ }
+ 
+ static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
+ {
+ 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
++	struct arm_smmu_device *smmu = smmu_domain->smmu;
+ 
+-	if (smmu_domain->tlb_ops)
++	if (smmu_domain->tlb_ops) {
++		arm_smmu_rpm_get(smmu);
+ 		smmu_domain->tlb_ops->tlb_sync(smmu_domain);
++		arm_smmu_rpm_put(smmu);
++	}
+ }
+ 
+ static phys_addr_t arm_smmu_iova_to_phys_hard(struct iommu_domain *domain,
+@@ -1430,7 +1480,13 @@ static int arm_smmu_add_device(struct device *dev)
+ 	while (i--)
+ 		cfg->smendx[i] = INVALID_SMENDX;
+ 
++	ret = arm_smmu_rpm_get(smmu);
++	if (ret < 0)
++		goto out_cfg_free;
++
+ 	ret = arm_smmu_master_alloc_smes(dev);
++	arm_smmu_rpm_put(smmu);
++
+ 	if (ret)
+ 		goto out_cfg_free;
+ 
+@@ -1450,7 +1506,7 @@ static void arm_smmu_remove_device(struct device *dev)
+ 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
+ 	struct arm_smmu_master_cfg *cfg;
+ 	struct arm_smmu_device *smmu;
+-
++	int ret;
+ 
+ 	if (!fwspec || fwspec->ops != &arm_smmu_ops)
+ 		return;
+@@ -1458,8 +1514,15 @@ static void arm_smmu_remove_device(struct device *dev)
+ 	cfg  = fwspec->iommu_priv;
+ 	smmu = cfg->smmu;
+ 
++	ret = arm_smmu_rpm_get(smmu);
++	if (ret < 0)
++		return;
++
+ 	iommu_device_unlink(&smmu->iommu, dev);
+ 	arm_smmu_master_free_smes(fwspec);
++
++	arm_smmu_rpm_put(smmu);
++
+ 	iommu_group_remove_device(dev);
+ 	kfree(fwspec->iommu_priv);
+ 	iommu_fwspec_free(dev);
+@@ -2225,6 +2288,17 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 	arm_smmu_device_reset(smmu);
+ 	arm_smmu_test_smr_masks(smmu);
+ 
++	/*
++	 * We want to avoid touching dev->power.lock in fastpaths unless
++	 * it's really going to do something useful - pm_runtime_enabled()
++	 * can serve as an ideal proxy for that decision. So, conditionally
++	 * enable pm_runtime.
++	 */
++	if (dev->pm_domain) {
++		pm_runtime_set_active(dev);
++		pm_runtime_enable(dev);
++	}
++
+ 	/*
+ 	 * For ACPI and generic DT bindings, an SMMU will be probed before
+ 	 * any device which might need it, so we want the bus ops in place
+@@ -2260,10 +2334,17 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
+ 	if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
+ 		dev_err(&pdev->dev, "removing device with active domains!\n");
+ 
++	arm_smmu_rpm_get(smmu);
+ 	/* Turn the thing off */
+ 	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
++	arm_smmu_rpm_put(smmu);
++
++	if (pm_runtime_enabled(smmu->dev))
++		pm_runtime_force_suspend(smmu->dev);
++	else
++		clk_bulk_disable(smmu->num_clks, smmu->clks);
+ 
+-	clk_bulk_disable_unprepare(smmu->num_clks, smmu->clks);
++	clk_bulk_unprepare(smmu->num_clks, smmu->clks);
+ 
+ 	return 0;
+ }
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
