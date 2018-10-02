@@ -2,86 +2,190 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EF8C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 690E7C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:44:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99D02206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:43:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99D02206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CBBF5206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:44:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="UivRnt5q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBBF5206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeJBS0Y (ORCPT
+        id S1727614AbeJBS1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 14:26:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:3371 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727510AbeJBS0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 14:26:24 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6BC78C04AC54;
-        Tue,  2 Oct 2018 11:43:31 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-29.ams2.redhat.com [10.36.116.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 09B3A60BD4;
-        Tue,  2 Oct 2018 11:43:30 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id EB74D982BC; Tue,  2 Oct 2018 13:43:28 +0200 (CEST)
-Date:   Tue, 2 Oct 2018 13:43:28 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] drm/virtio: Use IDAs more efficiently
-Message-ID: <20181002114328.kltyrjlojzrhzwgl@sirius.home.kraxel.org>
-References: <20180926160031.15721-1-willy@infradead.org>
- <20180926160031.15721-5-willy@infradead.org>
- <20180926160455.GA20337@bombadil.infradead.org>
+        Tue, 2 Oct 2018 14:27:49 -0400
+Received: from mail-eopbgr50128.outbound.protection.outlook.com ([40.107.5.128]:15878
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727512AbeJBS1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 14:27:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0+5pAeiPyTx6s/tTHobRW8LrVJ3qtoqBtXO6i1reyT0=;
+ b=UivRnt5qd/wCp0tWCo2/F0fl9iZ7xfAMSweerSFIbsMKE4zZWrbSGodZIx+L9kY5nL4lTqanDq9d/OCdbRE9UwZKjCLYrKwBJz6jucHJPtb8dLpHgK9ss0y0wMRVDXtccaEf65UwesCE0iAkNXfxjX2Zmdsgfkbw5I9RI+i9+6Y=
+Received: from HE1PR0801MB2026.eurprd08.prod.outlook.com (10.168.95.15) by
+ HE1SPR8PMB90.eurprd08.prod.outlook.com (10.166.196.136) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.25; Tue, 2 Oct 2018 11:44:45 +0000
+Received: from HE1PR0801MB2026.eurprd08.prod.outlook.com
+ ([fe80::81:90cd:bab6:ed7a]) by HE1PR0801MB2026.eurprd08.prod.outlook.com
+ ([fe80::81:90cd:bab6:ed7a%2]) with mapi id 15.20.1207.018; Tue, 2 Oct 2018
+ 11:44:45 +0000
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     syzbot <syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "miklos@szeredi.hu" <miklos@szeredi.hu>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
+Subject: Re: general protection fault in fuse_dev_do_write
+Thread-Topic: general protection fault in fuse_dev_do_write
+Thread-Index: AQHUWkVOcmzkYQoUGky9/Pssaf8YDA==
+Date:   Tue, 2 Oct 2018 11:44:45 +0000
+Message-ID: <a85b2aaa-9390-ef85-0db7-8f3549cdad59@virtuozzo.com>
+References: <000000000000f7af8605773cc09f@google.com>
+In-Reply-To: <000000000000f7af8605773cc09f@google.com>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM4PR07CA0018.eurprd07.prod.outlook.com
+ (2603:10a6:205:1::31) To HE1PR0801MB2026.eurprd08.prod.outlook.com
+ (2603:10a6:3:50::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [185.231.240.5]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1SPR8PMB90;20:3S5Ij/c7do4YJlcYB7TsgFInYYu+WQybmEYXWG4/ddFM5kgb1fZsB5bJnlSgDzJgMeAEzTnceMzSMGHMQPHprCzcUusbm5xCJS4oyZWiuqQ7dfY98kmAtKUNHUmET93uMPi8If8DV/sHBNn84BUIc1dgtF6tB+nPCVMej8lY214=
+x-ms-office365-filtering-correlation-id: 5887ff27-8b4d-4408-b0d6-08d6285c72a3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:HE1SPR8PMB90;
+x-ms-traffictypediagnostic: HE1SPR8PMB90:
+x-microsoft-antispam-prvs: <HE1SPR8PMB90F21B9FBE18D4021D1740CDE80@HE1SPR8PMB90.eurprd08.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(148501403981450);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(10201501046)(3002001)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051);SRVR:HE1SPR8PMB90;BCL:0;PCL:0;RULEID:;SRVR:HE1SPR8PMB90;
+x-forefront-prvs: 0813C68E65
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(346002)(39850400004)(376002)(396003)(199004)(189003)(52116002)(76176011)(229853002)(8676002)(81166006)(81156014)(478600001)(2900100001)(53936002)(97736004)(6436002)(14444005)(256004)(66066001)(68736007)(7736002)(316002)(5660300001)(11609785009)(71200400001)(71190400001)(2906002)(110136005)(99286004)(25786009)(36756003)(186003)(966005)(2616005)(446003)(31686004)(86362001)(6306002)(2201001)(6512007)(45080400002)(14454004)(11346002)(8936002)(6246003)(6486002)(476003)(486006)(26005)(305945005)(106356001)(5250100002)(53546011)(6506007)(6116002)(31696002)(2501003)(105586002)(386003)(3846002)(102836004)(99710200001);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1SPR8PMB90;H:HE1PR0801MB2026.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 2KmKswL8Jgmx1TPu8KLlejAYDM0wuxqOKGt3e9hzpMtMXoZa4UOD3Q6iHNGVDgwqI3qUHIVQ14posFBpJBpfB9RROYeuKeAeiwLAVJtZ3adpVoeszqtm+TJAyfoFvieCiAIGaAmyZqXj/0/N7gM4a4tQJeXhuWUsfFnAkxn1MPk/aY8ayUtPo8q1RHzWMwSNi6uW72id2cvEeabaAtj1u/o7BmWsHsYv4BHONx3ELu+8weaged5XiQn+JYWH00EZfpFTCsfaco06yEQGqxfneU5Ohl8YjhWJ/lNrvGLfNNWgCkeRsPhqNx/qslgsDogg93qFm9Lp8rdh2QD6ERJB1hjwhUH4J4FF79cXqK79k54=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B2665827438BBE499DE5362271C9FF10@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180926160455.GA20337@bombadil.infradead.org>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 02 Oct 2018 11:43:31 +0000 (UTC)
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5887ff27-8b4d-4408-b0d6-08d6285c72a3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2018 11:44:45.1431
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1SPR8PMB90
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 09:04:55AM -0700, Matthew Wilcox wrote:
-> On Wed, Sep 26, 2018 at 09:00:31AM -0700, Matthew Wilcox wrote:
-> > @@ -59,6 +59,7 @@ static int virtio_gpu_context_create(struct virtio_gpu_device *vgdev,
-> >  
-> >  	if (handle < 0)
-> >  		return handle;
-> > +	handle++;
-> >  	virtio_gpu_cmd_context_create(vgdev, handle, nlen, name);
-> >  	return handle;
-> >  }
-> 
-> Uh.  This line is missing.
-> 
-> -       int handle = ida_alloc_min(&vgdev->ctx_id_ida, 1, GFP_KERNEL);
-> +       int handle = ida_alloc(&vgdev->ctx_id_ida, GFP_KERNEL);
-> 
-> It'll be there in v2 ;-)
-
-I've touched the resource/object id handling too, see my "drm/virtio:
-rework ttm resource handling" patch series
-(https://patchwork.freedesktop.org/series/50382/).  Which still needs a
-review btw.
-
-I think that series obsoletes patch 3/4 (object id fixes) of your
-series.  The other patches should rebase without too much trouble, you
-could do that as well when preparing v2 ...
-
-cheers,
-  Gerd
-
+T24gMDIuMTAuMjAxOCAxMzo1NSwgc3l6Ym90IHdyb3RlOg0KPiBIZWxsbywNCj4gDQo+IHN5emJv
+dCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KPiANCj4gSEVBRCBjb21taXQ6wqDCoMKg
+IDYyZjNkMjU5MDBjOSBBZGQgbGludXgtbmV4dCBzcGVjaWZpYyBmaWxlcyBmb3IgMjAxODEwMDIN
+Cj4gZ2l0IHRyZWU6wqDCoMKgwqDCoMKgIGxpbnV4LW5leHQNCj4gY29uc29sZSBvdXRwdXQ6IGh0
+dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvbG9nLnR4dD94PTE0N2Q1ZWI5NDAwMDAwDQo+
+IGtlcm5lbCBjb25maWc6wqAgaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC8uY29uZmln
+P3g9NzdhNmRmYWU5N2Q0YjQ5Ng0KPiBkYXNoYm9hcmQgbGluazogaHR0cHM6Ly9zeXprYWxsZXIu
+YXBwc3BvdC5jb20vYnVnP2V4dGlkPWMxZTM2ZDMwZWUzNDE2Mjg5Y2MwDQo+IGNvbXBpbGVyOsKg
+wqDCoMKgwqDCoCBnY2MgKEdDQykgOC4wLjEgMjAxODA0MTMgKGV4cGVyaW1lbnRhbCkNCj4gDQo+
+IFVuZm9ydHVuYXRlbHksIEkgZG9uJ3QgaGF2ZSBhbnkgcmVwcm9kdWNlciBmb3IgdGhpcyBjcmFz
+aCB5ZXQuDQo+IA0KPiBJTVBPUlRBTlQ6IGlmIHlvdSBmaXggdGhlIGJ1ZywgcGxlYXNlIGFkZCB0
+aGUgZm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0Og0KPiBSZXBvcnRlZC1ieTogc3l6Ym90K2Mx
+ZTM2ZDMwZWUzNDE2Mjg5Y2MwQHN5emthbGxlci5hcHBzcG90bWFpbC5jb20NCj4gDQo+IGthc2Fu
+OiBDT05GSUdfS0FTQU5fSU5MSU5FIGVuYWJsZWQNCj4ga2FzYW46IEdQRiBjb3VsZCBiZSBjYXVz
+ZWQgYnkgTlVMTC1wdHIgZGVyZWYgb3IgdXNlciBtZW1vcnkgYWNjZXNzDQo+IGdlbmVyYWwgcHJv
+dGVjdGlvbiBmYXVsdDogMDAwMCBbIzFdIFBSRUVNUFQgU01QIEtBU0FODQo+IENQVTogMSBQSUQ6
+IDIwMzA0IENvbW06IHN5ei1leGVjdXRvcjEgTm90IHRhaW50ZWQgNC4xOS4wLXJjNi1uZXh0LTIw
+MTgxMDAyKyAjODUNCj4gSGFyZHdhcmUgbmFtZTogR29vZ2xlIEdvb2dsZSBDb21wdXRlIEVuZ2lu
+ZS9Hb29nbGUgQ29tcHV0ZSBFbmdpbmUsIEJJT1MgR29vZ2xlIDAxLzAxLzIwMTENCj4gUklQOiAw
+MDEwOmZ1c2VfcmV0cmlldmUgZnMvZnVzZS9kZXYuYzoxNzQxIFtpbmxpbmVdDQoNCkl0IGxvb2tz
+IGxpa2UgYm90aCBudW0gYW5kIG9mZnNldCBhcmUgMCwgc28gbnVtX3BhZ2VzID09IDAgYW5kIHJl
+cS0+cGFnZV9kZXNjcyA9PSBOVUxMLg0KUG9zc2libGUsIHdlIHNob3VsZCBpZ25vcmUgcmVxdWVz
+dHMgd2l0aCBzdWNoIHRoZSBwYXJhbWV0ZXJzLCBidXQgSSdtIG5vdCBzdXJlLi4uDQoNCj4gUklQ
+OiAwMDEwOmZ1c2Vfbm90aWZ5X3JldHJpZXZlIGZzL2Z1c2UvZGV2LmM6MTgwMSBbaW5saW5lXQ0K
+PiBSSVA6IDAwMTA6ZnVzZV9ub3RpZnkgZnMvZnVzZS9kZXYuYzoxODM0IFtpbmxpbmVdDQo+IFJJ
+UDogMDAxMDpmdXNlX2Rldl9kb193cml0ZSsweDFkYzIvMHgzODEwIGZzL2Z1c2UvZGV2LmM6MTkx
+Mw0KPiBDb2RlOiAwMCA0OCBjMSBlMCAyYSA4MCAzYyAwMiAwMCAwZiA4NSBkYyAxNyAwMCAwMCA0
+OSA4YiA5ZCA1OCAwMSAwMCAwMCBiOCBmZiBmZiAzNyAwMCA0OCBjMSBlMCAyYSA0OCA4ZCA3YiAw
+NCA0OCA4OSBmYSA0OCBjMSBlYSAwMyA8MGY+IGI2IDE0IDAyIDQ4IDg5IGY4IDgzIGUwIDA3IDgz
+IGMwIDAzIDM4IGQwIDdjIDA4IDg0IGQyIDBmIDg1IDgyDQo+IFJTUDogMDAxODpmZmZmODgwMTli
+ZDQ3NGI4IEVGTEFHUzogMDAwMTAyNDcNCj4gUkFYOiBkZmZmZmMwMDAwMDAwMDAwIFJCWDogMDAw
+MDAwMDAwMDAwMDAwMCBSQ1g6IGZmZmZjOTAwMDNlNzYwMDANCj4gUkRYOiAwMDAwMDAwMDAwMDAw
+MDAwIFJTSTogZmZmZmZmZmY4Mjg3ZmJkMyBSREk6IDAwMDAwMDAwMDAwMDAwMDQNCj4gUkJQOiBm
+ZmZmODgwMTliZDQ3YTUwIFIwODogZmZmZjg4MDFjMDU1MjUwMCBSMDk6IGZmZmZlZDAwMzlhZTkz
+N2UNCj4gUjEwOiBmZmZmZWQwMDM5YWU5MzdlIFIxMTogZmZmZjg4MDFjZDc0OWJmMyBSMTI6IDAw
+MDAwMDAwMDAwMDAwMDANCj4gUjEzOiBmZmZmODgwMWNkNzQ5YmQwIFIxNDogMDAwMDAwMDAwMDAw
+MDAwMCBSMTU6IDAwMDAwMDAwMDAwMDAwMzANCj4gRlM6wqAgMDAwMDdmNTc0MGRiNzcwMCgwMDAw
+KSBHUzpmZmZmODgwMWRhZjAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDANCj4gQ1M6
+wqAgMDAxMCBEUzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMNCj4gQ1IyOiAw
+MDAwMDAwMDAwNjI1MjA4IENSMzogMDAwMDAwMDFjNDEwOTAwMCBDUjQ6IDAwMDAwMDAwMDAxNDA2
+ZTANCj4gQ2FsbCBUcmFjZToNCj4gwqBmdXNlX2Rldl93cml0ZSsweDE5YS8weDI0MCBmcy9mdXNl
+L2Rldi5jOjE5OTcNCj4gwqBjYWxsX3dyaXRlX2l0ZXIgaW5jbHVkZS9saW51eC9mcy5oOjE4NDQg
+W2lubGluZV0NCj4gwqBuZXdfc3luY193cml0ZSBmcy9yZWFkX3dyaXRlLmM6NDc0IFtpbmxpbmVd
+DQo+IMKgX192ZnNfd3JpdGUrMHg2YjgvMHg5ZjAgZnMvcmVhZF93cml0ZS5jOjQ4Nw0KPiDCoHZm
+c193cml0ZSsweDFmYy8weDU2MCBmcy9yZWFkX3dyaXRlLmM6NTQ5DQo+IMKga3N5c193cml0ZSsw
+eDEwMS8weDI2MCBmcy9yZWFkX3dyaXRlLmM6NTk4DQo+IMKgX19kb19zeXNfd3JpdGUgZnMvcmVh
+ZF93cml0ZS5jOjYxMCBbaW5saW5lXQ0KPiDCoF9fc2Vfc3lzX3dyaXRlIGZzL3JlYWRfd3JpdGUu
+Yzo2MDcgW2lubGluZV0NCj4gwqBfX3g2NF9zeXNfd3JpdGUrMHg3My8weGIwIGZzL3JlYWRfd3Jp
+dGUuYzo2MDcNCj4gwqBkb19zeXNjYWxsXzY0KzB4MWI5LzB4ODIwIGFyY2gveDg2L2VudHJ5L2Nv
+bW1vbi5jOjI5MA0KPiDCoGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDQ5LzB4YmUN
+Cj4gUklQOiAwMDMzOjB4NDU3NTc5DQo+IENvZGU6IDFkIGI0IGZiIGZmIGMzIDY2IDJlIDBmIDFm
+IDg0IDAwIDAwIDAwIDAwIDAwIDY2IDkwIDQ4IDg5IGY4IDQ4IDg5IGY3IDQ4IDg5IGQ2IDQ4IDg5
+IGNhIDRkIDg5IGMyIDRkIDg5IGM4IDRjIDhiIDRjIDI0IDA4IDBmIDA1IDw0OD4gM2QgMDEgZjAg
+ZmYgZmYgMGYgODMgZWIgYjMgZmIgZmYgYzMgNjYgMmUgMGYgMWYgODQgMDAgMDAgMDAgMDANCj4g
+UlNQOiAwMDJiOjAwMDA3ZjU3NDBkYjZjNzggRUZMQUdTOiAwMDAwMDI0NiBPUklHX1JBWDogMDAw
+MDAwMDAwMDAwMDAwMQ0KPiBSQVg6IGZmZmZmZmZmZmZmZmZmZGEgUkJYOiAwMDAwMDAwMDAwMDAw
+MDAzIFJDWDogMDAwMDAwMDAwMDQ1NzU3OQ0KPiBSRFg6IDAwMDAwMDAwMDAwMDAwMzAgUlNJOiAw
+MDAwMDAwMDIwMDAwMDgwIFJESTogMDAwMDAwMDAwMDAwMDAwNA0KPiBSQlA6IDAwMDAwMDAwMDA3
+MmJmMDAgUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAwMDAwMDAwMDAwMA0KPiBSMTA6
+IDAwMDAwMDAwMDAwMDAwMDAgUjExOiAwMDAwMDAwMDAwMDAwMjQ2IFIxMjogMDAwMDdmNTc0MGRi
+NzZkNA0KPiBSMTM6IDAwMDAwMDAwMDA0YzUwYzUgUjE0OiAwMDAwMDAwMDAwNGQ4NzE4IFIxNTog
+MDAwMDAwMDBmZmZmZmZmZg0KPiBNb2R1bGVzIGxpbmtlZCBpbjoNCj4gLS0tWyBlbmQgdHJhY2Ug
+OGIzNzQ1NmYxYzExMDBiYyBdLS0tDQo+IFJJUDogMDAxMDpmdXNlX3JldHJpZXZlIGZzL2Z1c2Uv
+ZGV2LmM6MTc0MSBbaW5saW5lXQ0KPiBSSVA6IDAwMTA6ZnVzZV9ub3RpZnlfcmV0cmlldmUgZnMv
+ZnVzZS9kZXYuYzoxODAxIFtpbmxpbmVdDQo+IFJJUDogMDAxMDpmdXNlX25vdGlmeSBmcy9mdXNl
+L2Rldi5jOjE4MzQgW2lubGluZV0NCj4gUklQOiAwMDEwOmZ1c2VfZGV2X2RvX3dyaXRlKzB4MWRj
+Mi8weDM4MTAgZnMvZnVzZS9kZXYuYzoxOTEzDQo+IENvZGU6IDAwIDQ4IGMxIGUwIDJhIDgwIDNj
+IDAyIDAwIDBmIDg1IGRjIDE3IDAwIDAwIDQ5IDhiIDlkIDU4IDAxIDAwIDAwIGI4IGZmIGZmIDM3
+IDAwIDQ4IGMxIGUwIDJhIDQ4IDhkIDdiIDA0IDQ4IDg5IGZhIDQ4IGMxIGVhIDAzIDwwZj4gYjYg
+MTQgMDIgNDggODkgZjggODMgZTAgMDcgODMgYzAgMDMgMzggZDAgN2MgMDggODQgZDIgMGYgODUg
+ODINCj4gUlNQOiAwMDE4OmZmZmY4ODAxOWJkNDc0YjggRUZMQUdTOiAwMDAxMDI0Nw0KPiBSQVg6
+IGRmZmZmYzAwMDAwMDAwMDAgUkJYOiAwMDAwMDAwMDAwMDAwMDAwIFJDWDogZmZmZmM5MDAwM2U3
+NjAwMA0KPiBSRFg6IDAwMDAwMDAwMDAwMDAwMDAgUlNJOiBmZmZmZmZmZjgyODdmYmQzIFJESTog
+MDAwMDAwMDAwMDAwMDAwNA0KPiBSQlA6IGZmZmY4ODAxOWJkNDdhNTAgUjA4OiBmZmZmODgwMWMw
+NTUyNTAwIFIwOTogZmZmZmVkMDAzOWFlOTM3ZQ0KPiBrb2JqZWN0OiAnbG9vcDUnICgwMDAwMDAw
+MDI1NDI1MzAyKToga29iamVjdF91ZXZlbnRfZW52DQo+IFIxMDogZmZmZmVkMDAzOWFlOTM3ZSBS
+MTE6IGZmZmY4ODAxY2Q3NDliZjMgUjEyOiAwMDAwMDAwMDAwMDAwMDAwDQo+IGtvYmplY3Q6ICds
+b29wNScgKDAwMDAwMDAwMjU0MjUzMDIpOiBmaWxsX2tvYmpfcGF0aDogcGF0aCA9ICcvZGV2aWNl
+cy92aXJ0dWFsL2Jsb2NrL2xvb3A1Jw0KPiBSMTM6IGZmZmY4ODAxY2Q3NDliZDAgUjE0OiAwMDAw
+MDAwMDAwMDAwMDAwIFIxNTogMDAwMDAwMDAwMDAwMDAzMA0KPiBGUzrCoCAwMDAwN2Y1NzQwZGI3
+NzAwKDAwMDApIEdTOmZmZmY4ODAxZGFmMDAwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAw
+MA0KPiBrb2JqZWN0OiAnbG9vcDMnICgwMDAwMDAwMDY0MzlkMmZlKToga29iamVjdF91ZXZlbnRf
+ZW52DQo+IGtvYmplY3Q6ICdsb29wMycgKDAwMDAwMDAwNjQzOWQyZmUpOiBmaWxsX2tvYmpfcGF0
+aDogcGF0aCA9ICcvZGV2aWNlcy92aXJ0dWFsL2Jsb2NrL2xvb3AzJw0KPiBDUzrCoCAwMDEwIERT
+OiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KPiBrb2JqZWN0OiAnbG9vcDUn
+ICgwMDAwMDAwMDI1NDI1MzAyKToga29iamVjdF91ZXZlbnRfZW52DQo+IGtvYmplY3Q6ICdsb29w
+NScgKDAwMDAwMDAwMjU0MjUzMDIpOiBmaWxsX2tvYmpfcGF0aDogcGF0aCA9ICcvZGV2aWNlcy92
+aXJ0dWFsL2Jsb2NrL2xvb3A1Jw0KPiBDUjI6IDAwMDAwMDFiMmY1NDEwMDAgQ1IzOiAwMDAwMDAw
+MWM0MTA5MDAwIENSNDogMDAwMDAwMDAwMDE0MDZlMA0KPiANCj4gDQo+IC0tLQ0KPiBUaGlzIGJ1
+ZyBpcyBnZW5lcmF0ZWQgYnkgYSBib3QuIEl0IG1heSBjb250YWluIGVycm9ycy4NCj4gU2VlIGh0
+dHBzOi8vZ29vLmdsL3Rwc21FSiBmb3IgbW9yZSBpbmZvcm1hdGlvbiBhYm91dCBzeXpib3QuDQo+
+IHN5emJvdCBlbmdpbmVlcnMgY2FuIGJlIHJlYWNoZWQgYXQgc3l6a2FsbGVyQGdvb2dsZWdyb3Vw
+cy5jb20uDQo+IA0KPiBzeXpib3Qgd2lsbCBrZWVwIHRyYWNrIG9mIHRoaXMgYnVnIHJlcG9ydC4g
+U2VlOg0KPiBodHRwczovL2dvby5nbC90cHNtRUojYnVnLXN0YXR1cy10cmFja2luZyBmb3IgaG93
+IHRvIGNvbW11bmljYXRlIHdpdGggc3l6Ym90Lg0K
