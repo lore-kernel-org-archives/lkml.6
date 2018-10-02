@@ -2,146 +2,86 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A7FC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB59CC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BDBF206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:23:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0XBKdhIM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BDBF206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9D8CA206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:24:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D8CA206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbeJBVHQ (ORCPT
+        id S1727434AbeJBVHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 17:07:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46566 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726118AbeJBVHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 17:07:15 -0400
-Received: from localhost (unknown [171.76.113.63])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B323206B2;
-        Tue,  2 Oct 2018 14:23:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538490216;
-        bh=T5oXuWlWI9g8ZoXmiq/871JqmR91wxlWvHPwMgX8v18=;
-        h=Date:From:To:Cc:Subject:From;
-        b=0XBKdhIM51JmZeiqr0FXo0gpKthiI1HRlrxBWCN4CMw3ZD9M0FpGhGA5uDNLjsuUt
-         4Y5dhecAnGpSLIK6pRK7GMlG9xocK8GlwvOIU3oUZYVHL7RU3JC2yuP9q9CXc5SLax
-         Xxx7P1Lb/oF3L/+s66YOdivBuqsc28IlIaqwri5U=
-Date:   Tue, 2 Oct 2018 19:53:27 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [GIT PULL] SoundWire updates for 4.20-rc1
-Message-ID: <20181002142327.GA19792@vkoul-mobl>
+        Tue, 2 Oct 2018 17:07:48 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60211 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbeJBVHs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 17:07:48 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g7LaC-0005fO-Ni; Tue, 02 Oct 2018 16:23:28 +0200
+Date:   Tue, 2 Oct 2018 16:23:28 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Mike Travis <mike.travis@hpe.com>
+cc:     Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Hedi Berriche <hedi@sgi.com>,
+        Russ Anderson <russ.anderson@hpe.com>,
+        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ram Pai <linuxram@us.ibm.com>, Juergen Gross <jgross@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Petr Tesarik <ptesarik@suse.cz>,
+        Sinan Kaya <okaya@codeaurora.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Hedi Berriche <hedi.berriche@hpe.com>
+Subject: Re: [PATCH 1/2] x86/platform/uv: Add is_early_uv_system check
+In-Reply-To: <b63d338b-c93f-cd05-2d99-59d66662d390@hpe.com>
+Message-ID: <alpine.DEB.2.21.1810021622550.12704@nanos.tec.linutronix.de>
+References: <20181002012204.297193336@stormcage.americas.sgi.com> <20181002012204.453928259@stormcage.americas.sgi.com> <alpine.DEB.2.21.1810020818530.32062@nanos.tec.linutronix.de> <b63d338b-c93f-cd05-2d99-59d66662d390@hpe.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2 Oct 2018, Mike Travis wrote:
+> On 10/1/2018 11:20 PM, Thomas Gleixner wrote:
+> > On Mon, 1 Oct 2018, Mike Travis wrote:
+> > 
+> > > Introduce is_early_uv_system() which uses efi.uv_systab to decide early
+> > > in the boot process whether we're on a UV system.
+> > > 
+> > > This is needed to skip other early setup/init code that might break UV
+> > > platform if done too early such as before necessary ACPI tables parsing
+> > > takes place.
+> > > 
+> > > Signed-off-by: Mike Travis <mike.travis@hpe.com>
+> > > Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
+> > 
+> > This SOB chain is wrong. I don't see how Hedi is involved in this. If this
+> > wants to express that the patch was developed together please see
+> > Documentation for the Co-developed-by tag.
+> 
+> Hedi suggested a "Suggested-by:" tag, would that suffice?
 
---LQksG6bCIzRHxTLp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure, instead of the SOB. 
 
-Hey Greg,
+Thanks,
 
-Here are the SoundWire updates (again) for 4.20-rc1/5.0-rc1
-This brings in the multi-link streaming support and rst format
-corrections. The changes are in linux-next for quite some time.
-
-Please consider pull to receive:
-
-The following changes since commit 8d6ccf5cebbc7ed1dee9986e36853a78dfb64084:
-
-  soundwire: Fix acquiring bus lock twice during master release (2018-08-27=
- 09:49:48 +0530)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/so=
-undwire-4.20-rc1
-
-for you to fetch changes up to 502c00d9c3159e7dd3184b0e7c2cd0c0446d2546:
-
-  Documentation: soundwire: fix stream.rst markup warnings (2018-09-17 09:1=
-2:36 -0700)
-
-----------------------------------------------------------------
-soundwire updates for 4.20-rc1
-
- - support for multi-link streaming
- - updates in intel driver for multi-link streaming
- - Update Vinod's email
- - Fix rst formatting
-
-----------------------------------------------------------------
-Randy Dunlap (1):
-      Documentation: soundwire: fix stream.rst markup warnings
-
-Sanyog Kale (2):
-      Documentation: soundwire: Add documentation for multi link
-      soundwire: Add support to lock across bus instances
-
-Shreyas NC (5):
-      soundwire: Initialize completion for defer messages
-      soundwire: Add support for multi link bank switch
-      soundwire: keep track of Masters in a stream
-      soundwire: intel: Add pre/post bank switch ops
-      soundwire: intel: Remove duplicate assignment
-
-Vinod Koul (3):
-      soundwire: Handle multiple master instances in a stream
-      soundwire: intel: Fix uninitialized adev deref
-      MAINTAINERS: Update Vinod's email
-
- Documentation/driver-api/soundwire/stream.rst |  36 ++
- MAINTAINERS                                   |   2 +-
- drivers/soundwire/bus.c                       |   6 +
- drivers/soundwire/bus.h                       |   4 +
- drivers/soundwire/intel.c                     |  68 +++-
- drivers/soundwire/intel_init.c                |   2 +-
- drivers/soundwire/stream.c                    | 488 +++++++++++++++++++---=
-----
- include/linux/soundwire/sdw.h                 |  12 +-
- 8 files changed, 482 insertions(+), 136 deletions(-)
-
---=20
-~Vinod
-
---LQksG6bCIzRHxTLp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbs39fAAoJEHwUBw8lI4NHpx4P/ig6o8pdqsdmoOrVhtLVjr0p
-8jLgoKudCbBTKm5iJWhOsjntaCsTefeQVACGhf7MnDNU6pLx9BYgcBwtDArs4+Xz
-wWFbMwHFycgRrL0Kh6ze8oHREVeShs7XXYqziNsF4gOiGB6fv9rxidyfqTzvTFG5
-ROqaeXs4acHQD1Rb/4yqAWHnBfBKfbyrPK1Drtqm3kpSjWfAeyOVI6/0ypfU2qMJ
-Pu7SpClcNaw4PugssBMdBbRE3pDdxTzELl9h/leRGzFvUV8nxR4jYZYBX0CGgK4k
-pqG8k3JVZzDphl/cAM2lPjshfWkgTzeRY1wgq8QD/D1xQHlz2Ovd4SHqRANEFkZR
-xi5GC5kve4s0EiKixKImYMCtjRpFnvG3Ein5yR2M78SWqkU+BZ4M9BWPrsRbTQdc
-3IIdnIJrnEHj3HX4jS9CB2OhpyBnRdnQxnYQzdkGJvjA/6IET5P2e2HKmWEFPbA3
-Pz/n8I/cYWJWYwC2DdosZeneUZPC9k+H1SSV8dfReq/HbE0pQzMyTpA0QYf3Qx6+
-zSrNW9NMXtCOHeIPUMkm77jgl8KOa5vyiMUlfkMjwj0Ko0JUlRUAvQl34b/vNTpr
-otfuVryChcQTnf+M9RWSl2QigizFdu5vIsN55gPh0wIwrpdckqzGqWKYJe0qu5xT
-bQWqrqWamBgoPPnigRKH
-=w/xC
------END PGP SIGNATURE-----
-
---LQksG6bCIzRHxTLp--
+	tglx
