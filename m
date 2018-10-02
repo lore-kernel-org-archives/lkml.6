@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C3DC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0D9C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A6C12083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A6C12083F
+	by mail.kernel.org (Postfix) with ESMTP id 79F992089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79F992089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387507AbeJBUUR (ORCPT
+        id S2387537AbeJBUUT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36446 "EHLO
+        Tue, 2 Oct 2018 16:20:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36484 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731241AbeJBUUO (ORCPT
+        with ESMTP id S1731241AbeJBUUS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:14 -0400
+        Tue, 2 Oct 2018 16:20:18 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DD4AA9D9;
-        Tue,  2 Oct 2018 13:36:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 492615AA;
+        Tue,  2 Oct 2018 13:36:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Pelletier <plr.vincent@gmail.com>,
-        Mike Christie <mchristi@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 76/94] scsi: target: iscsi: Use bin2hex instead of a re-implementation
-Date:   Tue,  2 Oct 2018 06:25:30 -0700
-Message-Id: <20181002132505.784331589@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.9 80/94] ext4: never move the system.data xattr out of the inode body
+Date:   Tue,  2 Oct 2018 06:25:34 -0700
+Message-Id: <20181002132506.076671947@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -52,64 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vincent Pelletier <plr.vincent@gmail.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 8c39e2699f8acb2e29782a834e56306da24937fe upstream.
+commit 8cdb5240ec5928b20490a2bb34cb87e9a5f40226 upstream.
 
-Signed-off-by: Vincent Pelletier <plr.vincent@gmail.com>
-Reviewed-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[plr.vincent@gmail.com: hunk context change for 4.4 and 4.9, no code change]
+When expanding the extra isize space, we must never move the
+system.data xattr out of the inode body.  For performance reasons, it
+doesn't make any sense, and the inline data implementation assumes
+that system.data xattr is never in the external xattr block.
+
+This addresses CVE-2018-10880
+
+https://bugzilla.kernel.org/show_bug.cgi?id=200005
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
+[groeck: Context changes]
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/target/iscsi/iscsi_target_auth.c |   15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ fs/ext4/xattr.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/target/iscsi/iscsi_target_auth.c
-+++ b/drivers/target/iscsi/iscsi_target_auth.c
-@@ -26,15 +26,6 @@
- #include "iscsi_target_nego.h"
- #include "iscsi_target_auth.h"
- 
--static void chap_binaryhex_to_asciihex(char *dst, char *src, int src_len)
--{
--	int i;
--
--	for (i = 0; i < src_len; i++) {
--		sprintf(&dst[i*2], "%02x", (int) src[i] & 0xff);
--	}
--}
--
- static void chap_gen_challenge(
- 	struct iscsi_conn *conn,
- 	int caller,
-@@ -47,7 +38,7 @@ static void chap_gen_challenge(
- 	memset(challenge_asciihex, 0, CHAP_CHALLENGE_LENGTH * 2 + 1);
- 
- 	get_random_bytes(chap->challenge, CHAP_CHALLENGE_LENGTH);
--	chap_binaryhex_to_asciihex(challenge_asciihex, chap->challenge,
-+	bin2hex(challenge_asciihex, chap->challenge,
- 				CHAP_CHALLENGE_LENGTH);
- 	/*
- 	 * Set CHAP_C, and copy the generated challenge into c_str.
-@@ -281,7 +272,7 @@ static int chap_server_compute_md5(
- 		goto out;
- 	}
- 
--	chap_binaryhex_to_asciihex(response, server_digest, MD5_SIGNATURE_SIZE);
-+	bin2hex(response, server_digest, MD5_SIGNATURE_SIZE);
- 	pr_debug("[server] MD5 Server Digest: %s\n", response);
- 
- 	if (memcmp(server_digest, client_digest, MD5_SIGNATURE_SIZE) != 0) {
-@@ -403,7 +394,7 @@ static int chap_server_compute_md5(
- 	/*
- 	 * Convert response from binary hex to ascii hext.
- 	 */
--	chap_binaryhex_to_asciihex(response, digest, MD5_SIGNATURE_SIZE);
-+	bin2hex(response, digest, MD5_SIGNATURE_SIZE);
- 	*nr_out_len += sprintf(nr_out_ptr + *nr_out_len, "CHAP_R=0x%s",
- 			response);
- 	*nr_out_len += 1;
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1426,6 +1426,11 @@ static int ext4_xattr_make_inode_space(h
+ 		last = IFIRST(header);
+ 		/* Find the entry best suited to be pushed into EA block */
+ 		for (; !IS_LAST_ENTRY(last); last = EXT4_XATTR_NEXT(last)) {
++			/* never move system.data out of the inode */
++			if ((last->e_name_len == 4) &&
++			    (last->e_name_index == EXT4_XATTR_INDEX_SYSTEM) &&
++			    !memcmp(last->e_name, "data", 4))
++				continue;
+ 			total_size =
+ 			EXT4_XATTR_SIZE(le32_to_cpu(last->e_value_size)) +
+ 					EXT4_XATTR_LEN(last->e_name_len);
 
 
