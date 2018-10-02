@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B57D2C64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF253C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81471206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81471206B2
+	by mail.kernel.org (Postfix) with ESMTP id 7DD192083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DD192083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387718AbeJBUUk (ORCPT
+        id S2387733AbeJBUUl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36638 "EHLO
+        Tue, 2 Oct 2018 16:20:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36668 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387692AbeJBUUk (ORCPT
+        with ESMTP id S2387680AbeJBUUk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 16:20:40 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 54A5ABF0;
-        Tue,  2 Oct 2018 13:37:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59DA2C3F;
+        Tue,  2 Oct 2018 13:37:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        stable@vger.kernel.org,
         Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 59/94] spi: sh-msiof: Fix invalid SPI use during system suspend
-Date:   Tue,  2 Oct 2018 06:25:13 -0700
-Message-Id: <20181002132504.596588146@linuxfoundation.org>
+Subject: [PATCH 4.9 60/94] spi: sh-msiof: Fix handling of write value for SISTR register
+Date:   Tue,  2 Oct 2018 06:25:14 -0700
+Message-Id: <20181002132504.662660854@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -53,69 +53,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 
-commit ffa69d6a16f686efe45269342474e421f2aa58b2 upstream.
+commit 31a5fae4c5a009898da6d177901d5328051641ff upstream.
 
-If the SPI queue is running during system suspend, the system may lock
-up.
+This patch changes writing to the SISTR register according to the H/W
+user's manual.
 
-Fix this by stopping/restarting the queue during system suspend/resume
-by calling spi_master_suspend()/spi_master_resume() from the PM
-callbacks.  In-kernel users will receive an -ESHUTDOWN error while
-system suspend/resume is in progress.
+The TDREQ bit and RDREQ bits of SISTR are read-only, and must be written
+their initial values of zero.
 
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
 Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-[geert: Cleanup, reword]
+[geert: reword]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-sh-msiof.c |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/spi/spi-sh-msiof.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --- a/drivers/spi/spi-sh-msiof.c
 +++ b/drivers/spi/spi-sh-msiof.c
-@@ -1275,12 +1275,37 @@ static const struct platform_device_id s
- };
- MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+@@ -373,7 +373,8 @@ static void sh_msiof_spi_set_mode_regs(s
  
-+#ifdef CONFIG_PM_SLEEP
-+static int sh_msiof_spi_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
-+
-+	return spi_master_suspend(p->master);
-+}
-+
-+static int sh_msiof_spi_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
-+
-+	return spi_master_resume(p->master);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(sh_msiof_spi_pm_ops, sh_msiof_spi_suspend,
-+			 sh_msiof_spi_resume);
-+#define DEV_PM_OPS	&sh_msiof_spi_pm_ops
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static struct platform_driver sh_msiof_spi_drv = {
- 	.probe		= sh_msiof_spi_probe,
- 	.remove		= sh_msiof_spi_remove,
- 	.id_table	= spi_driver_ids,
- 	.driver		= {
- 		.name		= "spi_sh_msiof",
-+		.pm		= DEV_PM_OPS,
- 		.of_match_table = of_match_ptr(sh_msiof_match),
- 	},
- };
+ static void sh_msiof_reset_str(struct sh_msiof_spi_priv *p)
+ {
+-	sh_msiof_write(p, STR, sh_msiof_read(p, STR));
++	sh_msiof_write(p, STR,
++		       sh_msiof_read(p, STR) & ~(STR_TDREQ | STR_RDREQ));
+ }
+ 
+ static void sh_msiof_spi_write_fifo_8(struct sh_msiof_spi_priv *p,
 
 
