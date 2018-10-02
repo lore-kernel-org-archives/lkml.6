@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98768C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BD6C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5CB2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5CB2089A
+	by mail.kernel.org (Postfix) with ESMTP id C17F92089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C17F92089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727970AbeJBUKT (ORCPT
+        id S1728016AbeJBUKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60032 "EHLO
+        Tue, 2 Oct 2018 16:10:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60052 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727815AbeJBUKR (ORCPT
+        with ESMTP id S1727881AbeJBUKT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:17 -0400
+        Tue, 2 Oct 2018 16:10:19 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BAA41C11;
-        Tue,  2 Oct 2018 13:26:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E01CA266;
+        Tue,  2 Oct 2018 13:26:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Hari Bathini <hbathini@linux.ibm.com>,
+        David Gibson <dgibson@redhat.com>,
+        Dave Young <dyoung@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 033/228] media: exynos4-is: Prevent NULL pointer dereference in __isp_video_try_fmt()
-Date:   Tue,  2 Oct 2018 06:22:10 -0700
-Message-Id: <20181002132501.326265070@linuxfoundation.org>
+Subject: [PATCH 4.18 035/228] powerpc/kdump: Handle crashkernel memory reservation failure
+Date:   Tue,  2 Oct 2018 06:22:12 -0700
+Message-Id: <20181002132501.472449963@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,49 +54,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Hari Bathini <hbathini@linux.ibm.com>
 
-[ Upstream commit 7c1b9a5aeed91bef98988ac0fcf38c8c1f4f9a3a ]
+[ Upstream commit 8950329c4a64c6d3ca0bc34711a1afbd9ce05657 ]
 
-This patch fixes potential NULL pointer dereference as indicated
-by the following static checker warning:
+Memory reservation for crashkernel could fail if there are holes around
+kdump kernel offset (128M). Fail gracefully in such cases and print an
+error message.
 
-drivers/media/platform/exynos4-is/fimc-isp-video.c:408 isp_video_try_fmt_mplane()
-error: NULL dereference inside function '__isp_video_try_fmt(isp, &f->fmt.pix_mp, (0))()'.
-
-Fixes: 34947b8aebe3: ("[media] exynos4-is: Add the FIMC-IS ISP capture DMA driver")
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
+Tested-by: David Gibson <dgibson@redhat.com>
+Reviewed-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/exynos4-is/fimc-isp-video.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/machine_kexec.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -384,12 +384,17 @@ static void __isp_video_try_fmt(struct f
- 				struct v4l2_pix_format_mplane *pixm,
- 				const struct fimc_fmt **fmt)
- {
--	*fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
-+	const struct fimc_fmt *__fmt;
-+
-+	__fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
-+
-+	if (fmt)
-+		*fmt = __fmt;
+--- a/arch/powerpc/kernel/machine_kexec.c
++++ b/arch/powerpc/kernel/machine_kexec.c
+@@ -188,7 +188,12 @@ void __init reserve_crashkernel(void)
+ 			(unsigned long)(crashk_res.start >> 20),
+ 			(unsigned long)(memblock_phys_mem_size() >> 20));
  
- 	pixm->colorspace = V4L2_COLORSPACE_SRGB;
- 	pixm->field = V4L2_FIELD_NONE;
--	pixm->num_planes = (*fmt)->memplanes;
--	pixm->pixelformat = (*fmt)->fourcc;
-+	pixm->num_planes = __fmt->memplanes;
-+	pixm->pixelformat = __fmt->fourcc;
- 	/*
- 	 * TODO: double check with the docmentation these width/height
- 	 * constraints are correct.
+-	memblock_reserve(crashk_res.start, crash_size);
++	if (!memblock_is_region_memory(crashk_res.start, crash_size) ||
++	    memblock_reserve(crashk_res.start, crash_size)) {
++		pr_err("Failed to reserve memory for crashkernel!\n");
++		crashk_res.start = crashk_res.end = 0;
++		return;
++	}
+ }
+ 
+ int overlaps_crashkernel(unsigned long start, unsigned long size)
 
 
