@@ -2,129 +2,97 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEC9C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7745C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91C3320878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:42:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="rdv7BvnH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C3320878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 8F23820878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:43:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F23820878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbeJBQZG (ORCPT
+        id S1727160AbeJBQZt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 12:25:06 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38641 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbeJBQZG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 12:25:06 -0400
-Received: by mail-wr1-f65.google.com with SMTP id a13-v6so1399621wrt.5
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 02:42:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V3jZM2zRxZov3RiYJJND5l9o9GvRdVPeg8Domw0sixQ=;
-        b=rdv7BvnHz8eN8fvqCehuj2i61008VQhDgwsFte0rmXuwF4XjOBndwGkgD915PwUulq
-         Py+qaQbXLcBFT1H8ujLvfpIGCjq91U5NvKmDIjKy6YNCyT1eZtCbVp5cGw7OiClk/SSh
-         42JhDXElxUZ9RfMGFi4gEc1p5l1rCT1heo3eEH4Dr7y5nMOIuzfp+R1vi41Kcmh7tzsL
-         yIFrWWFmV5SWhEV9FF1yZA3irU2gYJhOe1R3IJE8EAhkGN5qc+AxvbxoxmruGoktgrNm
-         ChVdvOX3eu5ka3qfMC6xTV4cYHmVUJl7g/1LoozLCnwGac7RR1ISwQyPWHHX8MOqjucP
-         YbeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V3jZM2zRxZov3RiYJJND5l9o9GvRdVPeg8Domw0sixQ=;
-        b=PdO5IPf+PmlzdxquEWUTvus11pZShmunaXqGb9JvtQ0aHQSHu3Ik+ebzkApVacfIFs
-         qXnBWQ4RD8dlYscF7anvSac4t1ttnqC4Ddc7seuiYn2yYBVwxaYZZ6Xy9HMdQ1o81KWx
-         hxPoVYb3zR0e11+0B34hSSHwELdjXv1wy2Xs0uJDqpBOCTarD3MVYCLnXgqsO7+OOLg8
-         BT0389d1qY2lRZRbNN3OGrDUvb0b0msT625a2WYnGt27EPf/sKxxB4BW43oBg8S7Gob3
-         Yg7G50Kb0xgz6ph79/nPC4bVup9mweyKvk+GByNCs2ZixvFkafTgO9wXC0W/gJ+3f305
-         zQRA==
-X-Gm-Message-State: ABuFfojFGgl0/xsa0QePyzlVDbNY2Liv9iRLIDpG88dbNvpgjTMTjTPB
-        h2kX/36XmaWMWXi7DtLwX10x/g==
-X-Google-Smtp-Source: ACcGV62jIN8Ly1/AfBCWyCVlRXJsTUr0dIBMhUhhs65Yxv+Rpg09qePIuNNWr7cCxX4A0Kr6HQ0oOw==
-X-Received: by 2002:adf:dcc7:: with SMTP id x7-v6mr6148953wrm.21.1538473362270;
-        Tue, 02 Oct 2018 02:42:42 -0700 (PDT)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:217b:7d7b:52aa:bc53])
-        by smtp.gmail.com with ESMTPSA id t24-v6sm4036840wra.5.2018.10.02.02.42.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 02:42:41 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH] nvmem: fix nvmem_cell_get_from_lookup()
-Date:   Tue,  2 Oct 2018 11:42:38 +0200
-Message-Id: <20181002094238.17571-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.19.0
+        Tue, 2 Oct 2018 12:25:49 -0400
+Received: from mga12.intel.com ([192.55.52.136]:21031 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726330AbeJBQZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 12:25:48 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 02:43:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,331,1534834800"; 
+   d="scan'208";a="237805674"
+Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
+  by orsmga004.jf.intel.com with ESMTP; 02 Oct 2018 02:43:24 -0700
+Date:   Tue, 2 Oct 2018 17:48:52 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        H Peter Anvin <hpa@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Stuart R . Anderson" <stuart.r.anderson@intel.com>,
+        alan@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/earlyprintk: Add a force option for pciserial
+ device
+Message-ID: <20181002094852.3bw2loje4zjriqe7@shbuild888>
+References: <20180928094008.23138-1-feng.tang@intel.com>
+ <20180929163458.GA25608@zn.tnic>
+ <20180930131619.jecqh4umrkmifavb@shbuild888>
+ <20181001123916.GC7269@zn.tnic>
+ <20181001141810.fbo3amfqnr5243mc@shbuild888>
+ <20181001203004.GG7269@zn.tnic>
+ <20181002091627.3vm6ow4y7me2uju3@shbuild888>
+ <alpine.DEB.2.21.1810021112100.32062@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1810021112100.32062@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Thomas,
 
-We check if the pointer returned by __nvmem_device_get() is not NULL
-while we should actually check if it is not IS_ERR(nvmem). Fix it.
+On Tue, Oct 02, 2018 at 11:17:57AM +0200, Thomas Gleixner wrote:
+> On Tue, 2 Oct 2018, Feng Tang wrote:
+> 
+> > Hi Boris,
+> > 
+> > On Mon, Oct 01, 2018 at 10:30:04PM +0200, Borislav Petkov wrote:
+> > > On Mon, Oct 01, 2018 at 10:18:10PM +0800, Feng Tang wrote:
+> > > > As I rechecked, the baud rate for pciserial is optional, so there may
+> > > > be no ",baudrate" following the "force". So this 2 strncmp is to
+> > > > cover conditions for with and without baudrate.
+> > > 
+> > > And what guarantees you have a space after the "force"?
+> > > 
+> > > 	!strncmp(s, "force ", 6)
+> > > 			  ^
+> > 
+> > You are right, it can't be guranteed. Can we still use strncmp(s, "force", 5)
+> > and rely on developer to set it right? any suggestions? thanks,
+> 
+> I don't know why you want strncmp() in the first place. "force" is null
+> terminated already.
 
-While we're at it: fix the next error path where we should assign an
-error value to cell before returning.
+Current code uses: 
+	earlyprintk=pciserial,bus:device.function[,baudrate]
+with the patch, it will be:
+	earlyprintk=pciserial,bus:device.function[,force][,baudrate]
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/nvmem/core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+So the force could be followed by ",baudrate".
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index ad1227df1984..f49474e1ad49 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -952,9 +952,9 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
- 		    (strcmp(lookup->con_id, con_id) == 0)) {
- 			/* This is the right entry. */
- 			nvmem = __nvmem_device_get(NULL, lookup->nvmem_name);
--			if (!nvmem) {
-+			if (IS_ERR(nvmem)) {
- 				/* Provider may not be registered yet. */
--				cell = ERR_PTR(-EPROBE_DEFER);
-+				cell = ERR_CAST(nvmem);
- 				goto out;
- 			}
- 
-@@ -962,6 +962,7 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
- 						       lookup->cell_name);
- 			if (!cell) {
- 				__nvmem_device_put(nvmem);
-+				cell = ERR_PTR(-ENOENT);
- 				goto out;
- 			}
- 		}
--- 
-2.19.0
+Thanks,
+Feng
+
 
