@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C84C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A296DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 205CF2064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:14:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 205CF2064A
+	by mail.kernel.org (Postfix) with ESMTP id 749242064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:14:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 749242064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbeJBUKR (ORCPT
+        id S1728674AbeJBU5r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60018 "EHLO
+        Tue, 2 Oct 2018 16:57:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60042 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727802AbeJBUKQ (ORCPT
+        with ESMTP id S1727802AbeJBUKS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:16 -0400
+        Tue, 2 Oct 2018 16:10:18 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A92D5B2F;
-        Tue,  2 Oct 2018 13:26:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C3989BF0;
+        Tue,  2 Oct 2018 13:26:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Tarick Bedeir <tarick@google.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 032/228] IB/core: type promotion bug in rdma_rw_init_one_mr()
-Date:   Tue,  2 Oct 2018 06:22:09 -0700
-Message-Id: <20181002132501.261521292@linuxfoundation.org>
+Subject: [PATCH 4.18 034/228] IB/mlx4: Test port number before querying type.
+Date:   Tue,  2 Oct 2018 06:22:11 -0700
+Message-Id: <20181002132501.412167541@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,33 +53,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Tarick Bedeir <tarick@google.com>
 
-[ Upstream commit c2d7c8ff89b22ddefb1ac2986c0d48444a667689 ]
+[ Upstream commit f1228867adaf8890826f2b59e4caddb1c5cc2df7 ]
 
-"nents" is an unsigned int, so if ib_map_mr_sg() returns a negative
-error code then it's type promoted to a high unsigned int which is
-treated as success.
+rdma_ah_find_type() can reach into ib_device->port_immutable with a
+potentially out-of-bounds port number, so check that the port number is
+valid first.
 
-Fixes: a060b5629ab0 ("IB/core: generic RDMA READ/WRITE API")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 44c58487d51a ("IB/core: Define 'ib' and 'roce' rdma_ah_attr types")
+Signed-off-by: Tarick Bedeir <tarick@google.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/rw.c |    2 +-
+ drivers/infiniband/hw/mlx4/qp.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/rw.c
-+++ b/drivers/infiniband/core/rw.c
-@@ -87,7 +87,7 @@ static int rdma_rw_init_one_mr(struct ib
- 	}
+--- a/drivers/infiniband/hw/mlx4/qp.c
++++ b/drivers/infiniband/hw/mlx4/qp.c
+@@ -4047,9 +4047,9 @@ static void to_rdma_ah_attr(struct mlx4_
+ 	u8 port_num = path->sched_queue & 0x40 ? 2 : 1;
  
- 	ret = ib_map_mr_sg(reg->mr, sg, nents, &offset, PAGE_SIZE);
--	if (ret < nents) {
-+	if (ret < 0 || ret < nents) {
- 		ib_mr_pool_put(qp, &qp->rdma_mrs, reg->mr);
- 		return -EINVAL;
- 	}
+ 	memset(ah_attr, 0, sizeof(*ah_attr));
+-	ah_attr->type = rdma_ah_find_type(&ibdev->ib_dev, port_num);
+ 	if (port_num == 0 || port_num > dev->caps.num_ports)
+ 		return;
++	ah_attr->type = rdma_ah_find_type(&ibdev->ib_dev, port_num);
+ 
+ 	if (ah_attr->type == RDMA_AH_ATTR_TYPE_ROCE)
+ 		rdma_ah_set_sl(ah_attr, ((path->sched_queue >> 3) & 0x7) |
 
 
