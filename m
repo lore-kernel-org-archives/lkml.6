@@ -2,103 +2,148 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63981C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C40DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:05:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3609920666
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:04:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3609920666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 3E40E206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:05:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E40E206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729230AbeJBVr4 (ORCPT
+        id S1728560AbeJBVtI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 17:47:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36016 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728382AbeJBVr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 17:47:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 42CF9AF11;
-        Tue,  2 Oct 2018 15:04:04 +0000 (UTC)
-Subject: Re: [PATCH] mm:slab: Adjust the print format for the slabinfo
-To:     jun qian <hangdianqj@163.com>, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Barry song <21cnbao@gmail.com>
-References: <20181002025939.115804-1-hangdianqj@163.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <ad1bbce1-bca9-ff8e-c2c5-7ab672203dd9@suse.cz>
-Date:   Tue, 2 Oct 2018 17:04:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 2 Oct 2018 17:49:08 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:59418 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726353AbeJBVtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 17:49:07 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Vv44BM3WC-eU; Tue,  2 Oct 2018 17:05:16 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BC64F00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:4f00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CC8F91EC021C;
+        Tue,  2 Oct 2018 17:05:15 +0200 (CEST)
+Date:   Tue, 2 Oct 2018 17:05:18 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     m.mizuma@jp.fujitsu.com
+Cc:     bhe@redhat.com, torvalds@linux-foundation.org,
+        msys.mizuma@gmail.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@kernel.org, hpa@zytor.com, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/boot] ACPI/NUMA: Add warning message if the padding
+ size for KASLR is not enough
+Message-ID: <20181002150517.GA19822@zn.tnic>
+References: <20181001140843.26137-3-msys.mizuma@gmail.com>
+ <tip-3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41@git.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181002025939.115804-1-hangdianqj@163.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <tip-3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41@git.kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/2/18 4:59 AM, jun qian wrote:
-> Header and the corresponding information is not aligned,
-> adjust the printing format helps us to understand the slabinfo better.
+On Tue, Oct 02, 2018 at 03:18:41AM -0700, tip-bot for Masayoshi Mizuma wrote:
+> Commit-ID:  3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41
+> Gitweb:     https://git.kernel.org/tip/3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41
+> Author:     Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> AuthorDate: Mon, 1 Oct 2018 10:08:42 -0400
+> Committer:  Ingo Molnar <mingo@kernel.org>
+> CommitDate: Tue, 2 Oct 2018 11:47:21 +0200
 > 
-> Signed-off-by: jun qian <hangdianqj@163.com>
-> Cc: Barry song <21cnbao@gmail.com>
+> ACPI/NUMA: Add warning message if the padding size for KASLR is not enough
+> 
+> Add warning message if the padding size for KASLR,
+> rand_mem_physical_padding, is not enough. The message also
+> says the suitable padding size.
+> 
+> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Masayoshi Mizuma <msys.mizuma@gmail.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Link: http://lkml.kernel.org/r/20181001140843.26137-3-msys.mizuma@gmail.com
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> ---
+>  arch/x86/include/asm/setup.h |  2 ++
+>  drivers/acpi/numa.c          | 14 ++++++++++++++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+> index ae13bc974416..65a5bf8f6aba 100644
+> --- a/arch/x86/include/asm/setup.h
+> +++ b/arch/x86/include/asm/setup.h
+> @@ -80,6 +80,8 @@ static inline unsigned long kaslr_offset(void)
+>  	return (unsigned long)&_text - __START_KERNEL;
+>  }
+>  
+> +extern int rand_mem_physical_padding;
+> +
+>  /*
+>   * Do NOT EVER look at the BIOS memory size location.
+>   * It does not work on many machines.
+> diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> index 85167603b9c9..3d69834c692f 100644
+> --- a/drivers/acpi/numa.c
+> +++ b/drivers/acpi/numa.c
+> @@ -32,6 +32,7 @@
+>  #include <linux/numa.h>
+>  #include <linux/nodemask.h>
+>  #include <linux/topology.h>
+> +#include <asm/setup.h>
+>  
+>  static nodemask_t nodes_found_map = NODE_MASK_NONE;
+>  
+> @@ -435,6 +436,7 @@ acpi_table_parse_srat(enum acpi_srat_type id,
+>  int __init acpi_numa_init(void)
+>  {
+>  	int cnt = 0;
+> +	u64 max_possible_phys, max_actual_phys, threshold;
+>  
+>  	if (acpi_disabled)
+>  		return -EINVAL;
+> @@ -463,6 +465,18 @@ int __init acpi_numa_init(void)
+>  
+>  		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+>  					    acpi_parse_memory_affinity, 0);
+> +
+> +		/* check the padding size for KASLR is enough. */
+> +		if (parsed_numa_memblks && kaslr_enabled()) {
+> +			max_actual_phys = roundup(PFN_PHYS(max_pfn), 1ULL << 40);
+> +			max_possible_phys = roundup(PFN_PHYS(max_possible_pfn), 1ULL << 40);
+> +			threshold = max_actual_phys + ((u64)rand_mem_physical_padding << 40);
 
-I've tried the patch and it makes the slabinfo not fit my screen
-anymore, and the value density is very sparse. IMHO the current layout
-is better, sorry.
+Nope, not really:
 
-Vlastimil
+ld: drivers/acpi/numa.o: in function `acpi_numa_init':
+/home/boris/kernel/linux/drivers/acpi/numa.c:473: undefined reference to `rand_mem_physical_padding'
+make: *** [Makefile:1030: vmlinux] Error 1
+
+due to CONFIG_RANDOMIZE_MEMORY=n in my .config.
+
+You need to add a fix ontop which adds a function
+get_rand_mem_physical_padding() which is defined in CONFIG_RANDOMIZE_MEMORY=y
+and outside returns 0.
+
+And then make that rand_mem_physical_padding static and do not export it
+to anything outside of kaslr.c but use the accessor.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
