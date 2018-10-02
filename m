@@ -3,39 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 200ECC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F13CC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5F62204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:53:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5F62204FD
+	by mail.kernel.org (Postfix) with ESMTP id 29FF1204FD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:53:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29FF1204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731496AbeJBUP7 (ORCPT
+        id S1731824AbeJBUhT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:15:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34596 "EHLO
+        Tue, 2 Oct 2018 16:37:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34566 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729878AbeJBUP6 (ORCPT
+        with ESMTP id S1730612AbeJBUPz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:15:58 -0400
+        Tue, 2 Oct 2018 16:15:55 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6296EC47;
-        Tue,  2 Oct 2018 13:32:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0ACF6B2F;
+        Tue,  2 Oct 2018 13:32:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org,
+        Michael Scott <michael@opensourcefoundries.com>,
+        Alexander Aring <aring@mojatatu.com>,
+        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 044/137] s390/extmem: fix gcc 8 stringop-overflow warning
-Date:   Tue,  2 Oct 2018 06:24:05 -0700
-Message-Id: <20181002132501.561132091@linuxfoundation.org>
+Subject: [PATCH 4.14 015/137] 6lowpan: iphc: reset mac_header after decompress to fix panic
+Date:   Tue,  2 Oct 2018 06:23:36 -0700
+Message-Id: <20181002132459.567372463@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,52 +55,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Michael Scott <michael@opensourcefoundries.com>
 
-[ Upstream commit 6b2ddf33baec23dace85bd647e3fc4ac070963e8 ]
+[ Upstream commit 03bc05e1a4972f73b4eb8907aa373369e825c252 ]
 
-arch/s390/mm/extmem.c: In function '__segment_load':
-arch/s390/mm/extmem.c:436:2: warning: 'strncat' specified bound 7 equals
-source length [-Wstringop-overflow=]
-  strncat(seg->res_name, " (DCSS)", 7);
+After decompression of 6lowpan socket data, an IPv6 header is inserted
+before the existing socket payload.  After this, we reset the
+network_header value of the skb to account for the difference in payload
+size from prior to decompression + the addition of the IPv6 header.
 
-What gcc complains about here is the misuse of strncat function, which
-in this case does not limit a number of bytes taken from "src", so it is
-in the end the same as strcat(seg->res_name, " (DCSS)");
+However, we fail to reset the mac_header value.
 
-Keeping in mind that a res_name is 15 bytes, strncat in this case
-would overflow the buffer and write 0 into alignment byte between the
-fields in the struct. To avoid that increasing res_name size to 16,
-and reusing strlcat.
+Leaving the mac_header value untouched here, can cause a calculation
+error in net/packet/af_packet.c packet_rcv() function when an
+AF_PACKET socket is opened in SOCK_RAW mode for use on a 6lowpan
+interface.
 
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+On line 2088, the data pointer is moved backward by the value returned
+from skb_mac_header().  If skb->data is adjusted so that it is before
+the skb->head pointer (which can happen when an old value of mac_header
+is left in place) the kernel generates a panic in net/core/skbuff.c
+line 1717.
+
+This panic can be generated by BLE 6lowpan interfaces (such as bt0) and
+802.15.4 interfaces (such as lowpan0) as they both use the same 6lowpan
+sources for compression and decompression.
+
+Signed-off-by: Michael Scott <michael@opensourcefoundries.com>
+Acked-by: Alexander Aring <aring@mojatatu.com>
+Acked-by: Jukka Rissanen <jukka.rissanen@linux.intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/mm/extmem.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/6lowpan/iphc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/s390/mm/extmem.c
-+++ b/arch/s390/mm/extmem.c
-@@ -80,7 +80,7 @@ struct qin64 {
- struct dcss_segment {
- 	struct list_head list;
- 	char dcss_name[8];
--	char res_name[15];
-+	char res_name[16];
- 	unsigned long start_addr;
- 	unsigned long end;
- 	atomic_t ref_count;
-@@ -433,7 +433,7 @@ __segment_load (char *name, int do_nonsh
- 	memcpy(&seg->res_name, seg->dcss_name, 8);
- 	EBCASC(seg->res_name, 8);
- 	seg->res_name[8] = '\0';
--	strncat(seg->res_name, " (DCSS)", 7);
-+	strlcat(seg->res_name, " (DCSS)", sizeof(seg->res_name));
- 	seg->res->name = seg->res_name;
- 	rc = seg->vm_segtype;
- 	if (rc == SEG_TYPE_SC ||
+--- a/net/6lowpan/iphc.c
++++ b/net/6lowpan/iphc.c
+@@ -770,6 +770,7 @@ int lowpan_header_decompress(struct sk_b
+ 		hdr.hop_limit, &hdr.daddr);
+ 
+ 	skb_push(skb, sizeof(hdr));
++	skb_reset_mac_header(skb);
+ 	skb_reset_network_header(skb);
+ 	skb_copy_to_linear_data(skb, &hdr, sizeof(hdr));
+ 
 
 
