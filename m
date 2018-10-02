@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33390C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3BFC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC6D6206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC6D6206B2
+	by mail.kernel.org (Postfix) with ESMTP id 7E7EB2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E7EB2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731683AbeJBUQW (ORCPT
+        id S1731698AbeJBUQ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:16:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34770 "EHLO
+        Tue, 2 Oct 2018 16:16:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34778 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730099AbeJBUQV (ORCPT
+        with ESMTP id S1730099AbeJBUQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:16:21 -0400
+        Tue, 2 Oct 2018 16:16:26 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1FE7A5AA;
-        Tue,  2 Oct 2018 13:32:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45C805AA;
+        Tue,  2 Oct 2018 13:33:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Zhen Lei <thunder.leizhen@huawei.com>,
+        Joerg Roedel <jroedel@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 021/137] RDMA/i40w: Hold read semaphore while looking after VMA
-Date:   Tue,  2 Oct 2018 06:23:42 -0700
-Message-Id: <20181002132459.982773832@linuxfoundation.org>
+Subject: [PATCH 4.14 012/137] iommu/amd: make sure TLB to be flushed before IOVA freed
+Date:   Tue,  2 Oct 2018 06:23:33 -0700
+Message-Id: <20181002132459.350005780@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,38 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Zhen Lei <thunder.leizhen@huawei.com>
 
-[ Upstream commit 5d9a2b0e28759e319a623da33940dbb3ce952b7d ]
+[ Upstream commit 3c120143f584360a13614787e23ae2cdcb5e5ccd ]
 
-VMA lookup is supposed to be performed while mmap_sem is held.
+Although the mapping has already been removed in the page table, it maybe
+still exist in TLB. Suppose the freed IOVAs is reused by others before the
+flush operation completed, the new user can not correctly access to its
+meomory.
 
-Fixes: f26c7c83395b ("i40iw: Add 2MB page support")
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+Fixes: b1516a14657a ('iommu/amd: Implement flush queue')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/i40iw/i40iw_verbs.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iommu/amd_iommu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-@@ -1408,6 +1408,7 @@ static void i40iw_set_hugetlb_values(u64
- 	struct vm_area_struct *vma;
- 	struct hstate *h;
- 
-+	down_read(&current->mm->mmap_sem);
- 	vma = find_vma(current->mm, addr);
- 	if (vma && is_vm_hugetlb_page(vma)) {
- 		h = hstate_vma(vma);
-@@ -1416,6 +1417,7 @@ static void i40iw_set_hugetlb_values(u64
- 			iwmr->page_msk = huge_page_mask(h);
- 		}
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -2400,9 +2400,9 @@ static void __unmap_single(struct dma_op
  	}
-+	up_read(&current->mm->mmap_sem);
- }
  
- /**
+ 	if (amd_iommu_unmap_flush) {
+-		dma_ops_free_iova(dma_dom, dma_addr, pages);
+ 		domain_flush_tlb(&dma_dom->domain);
+ 		domain_flush_complete(&dma_dom->domain);
++		dma_ops_free_iova(dma_dom, dma_addr, pages);
+ 	} else {
+ 		pages = __roundup_pow_of_two(pages);
+ 		queue_iova(&dma_dom->iovad, dma_addr >> PAGE_SHIFT, pages, 0);
 
 
