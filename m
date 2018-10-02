@@ -2,57 +2,59 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A88C00449
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 872F6C64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BAF221471
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4143E21471
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:55:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WsnlpMzi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BAF221471
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IQslETTm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4143E21471
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbeJBHfn (ORCPT
+        id S1726855AbeJBHfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:35:43 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38053 "EHLO
+        Tue, 2 Oct 2018 03:35:44 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37589 "EHLO
         mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeJBHfm (ORCPT
+        with ESMTP id S1726762AbeJBHfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 03:35:42 -0400
-Received: by mail-io1-f67.google.com with SMTP id y3-v6so252846ioc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 17:55:13 -0700 (PDT)
+        Tue, 2 Oct 2018 03:35:43 -0400
+Received: by mail-io1-f67.google.com with SMTP id v14-v6so258343iob.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 17:55:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ktt3JW7jGajBPkbbI86StPv6XdFH/coirzVsiU2QTCI=;
-        b=WsnlpMzijI+cNWStBdptmpOPjCjntMQWOfaJ7G9i5XCOtEWeQGJ1kkOABZQWNyu6vY
-         /cWurmB5WQzqL82Zc+62wsVK0lkBUTkLVPsu4jsVPd8y/OASeyExCtGSF2luoQY+FK9S
-         mx7usAq9lT2DTCSDVJtuTOwamo3bkFP9lvCRo=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=BVWMrSfJ2AOZ0A0KwCR2pOLnq5busYj1TGlJinCC/UA=;
+        b=IQslETTmaX/vE5TiqMHEBMFTcvf++gvoVEM55S5sv4IS80a+PZDCyavQUjLOI7nRO2
+         PcSyUD2v6XGoT6mUziVeb5w0qnYGZe4qSqoi+YyY7dmz7Qrx4NKzVPi1XyRas+fxzhOe
+         KEU6kbs7mLQ3bPppC1KWl7vTYtiNrraEk2NIQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ktt3JW7jGajBPkbbI86StPv6XdFH/coirzVsiU2QTCI=;
-        b=k8T5l1eq4O1mOEi73iYhmDNvDy0LoeGY03i8r92x7OEWpq0MqyQVoiJIzrTlEQbUP5
-         fRLfzln5PJqmEGrslY+K6r5Dj21650sazVxqRlH7UhLHB5SjMpNio2enw1c5WB6c0wjf
-         h6Xjf0jB3v8Scbd863wYo057RqWWT8okLB+6sAdFuTC0RLVtkBACbxUfSd9siDy0Ab3G
-         p5NfWpX5A1q2g/NE7Y6qiaLBYktvObwcl6Gw9g1j7+7nTF9wJuSHLmNqA144UssfsZj2
-         xQV4Ymm5ZjyIAAWEQfbYedHRu3dtodvie80kypwt0YEU6AQUMBb0BOXtVpB4yADzaXfj
-         3UBQ==
-X-Gm-Message-State: ABuFfogL09OdzJS+oKdl2Pi6ZX79ksdmACZ1sfJQfZaI7+atTU/38fcB
-        XO4gbf5PlYupwSugrD2BANyGcQ==
-X-Google-Smtp-Source: ACcGV61WlLOZVFk1/m2qEStw++h04w6VcNpbkgAorONOYszqy4VpKm9PQbU14j5TJ9h8dPApWps6dA==
-X-Received: by 2002:a17:902:14d:: with SMTP id 71-v6mr13848665plb.146.1538441713455;
-        Mon, 01 Oct 2018 17:55:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=BVWMrSfJ2AOZ0A0KwCR2pOLnq5busYj1TGlJinCC/UA=;
+        b=mMXZT16Lj0Zyh+05XfIrcQvua4s7dRk8F2JKrS7r8z+R/LCTxwUEt3SBnSJjGmMnQT
+         PSO0nTZxz/aVLmIbC/Wby0YzzUrRrA7uQubIOe02gGKdVjSV3uQMSdVvneyDOWj5kVy/
+         pvwGP7RRMhTZjStsi3KQNk6ykn6NqCNAEUqGo+KbYE1A9QPa1JPIyhhWf6zigdi2LURa
+         4wOBS845+I5EJ2BQGWmfUcha0vjSgIVLcvkT1gcsodDtVoOFQrTMuJ7hKuuheuI3dWi/
+         sT/hQq/GDXCN+5Rarf58IuFVCRNbEGNzVVnEXD4htVo06O2vewZqN8O1wx2IWXu6mm5J
+         pdiQ==
+X-Gm-Message-State: ABuFfohprSlGRgqfb4NMJvCuEceFnAkW8XV2OTsGNG6ub1EmANMH8CMl
+        ZU7bR0cukvtfLTvx42ookbKy5w==
+X-Google-Smtp-Source: ACcGV60/2S6VYSbbTOmm3k8+ev4lgfSXZIgG1zOt9QOuKWL6FZqCOzj3wlk4Bt9Bi0I6bYC8eJoj7w==
+X-Received: by 2002:a62:9c8c:: with SMTP id u12-v6mr13890909pfk.162.1538441714659;
+        Mon, 01 Oct 2018 17:55:14 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id s14-v6sm15958720pgv.29.2018.10.01.17.55.07
+        by smtp.gmail.com with ESMTPSA id l16-v6sm27663155pfj.179.2018.10.01.17.55.10
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 17:55:08 -0700 (PDT)
+        Mon, 01 Oct 2018 17:55:13 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     James Morris <jmorris@namei.org>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -65,153 +67,134 @@ Cc:     Kees Cook <keescook@chromium.org>,
         LSM <linux-security-module@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v4 00/32] LSM: Explict LSM ordering
-Date:   Mon,  1 Oct 2018 17:54:33 -0700
-Message-Id: <20181002005505.6112-1-keescook@chromium.org>
+Subject: [PATCH security-next v4 05/32] LSM: Convert from initcall to struct lsm_info
+Date:   Mon,  1 Oct 2018 17:54:38 -0700
+Message-Id: <20181002005505.6112-6-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181002005505.6112-1-keescook@chromium.org>
+References: <20181002005505.6112-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v4:
-- add Reviewed-bys.
-- cosmetic tweaks.
-- New patches to fully centralize LSM "enable" decisions:
-    LSM: Finalize centralized LSM enabling logic
-    apparmor: Remove boot parameter
-    selinux: Remove boot parameter
+In preparation for doing more interesting LSM init probing, this converts
+the existing initcall system into an explicit call into a function pointer
+from a section-collected struct lsm_info array.
 
-v3:
-- add CONFIG_LSM_ENABLE and refactor resulting logic
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Reviewed-by: James Morris <james.morris@microsoft.com>
+Reviewed-by: John Johansen <john.johansen@canonical.com>
+---
+ include/linux/init.h      |  2 --
+ include/linux/lsm_hooks.h | 12 ++++++++++++
+ include/linux/module.h    |  1 -
+ security/integrity/iint.c |  1 +
+ security/security.c       | 14 +++++---------
+ 5 files changed, 18 insertions(+), 12 deletions(-)
 
-v2:
-- add "lsm.order=" and CONFIG_LSM_ORDER instead of overloading "security="
-- reorganize introduction of ordering logic code
-
-Overview:
-
-This refactors the LSM registration and initialization infrastructure to
-more centrally support different LSM types for more cleanly supporting the
-future expansion of LSM stacking via the "blob-sharing" patch series. What
-was considered a "major" LSM is kept for legacy use of the "security="
-boot parameter, and now overlaps with the new class of "exclusive" LSMs
-for the future blob sharing. The "minor" LSMs become more well defined
-as a result of the refactoring.
-
-Approach:
-
-To better show LSMs activation some debug reporting was added (enabled
-with the "lsm.debug" boot commandline option).
-
-I added a WARN() around LSM initialization failures, which appear to
-have always been silently ignored. (Realistically any LSM init failures
-would have only been due to catastrophic kernel issues that would render
-a system unworkable anyway, but it'd be better to expose the problem as
-early as possible.)
-
-Instead of continuing to (somewhat improperly) overload the kernel's
-initcall system, this changes the LSM infrastructure to store a
-registration structure (struct lsm_info) table instead, where metadata
-about each LSM can be recorded (name, flags, order, enable flag, init
-function). This can be extended in the future to include things like
-required blob size for the coming "blob sharing" LSMs.
-
-The "major" LSMs had to individually negotiate which of them should be
-enabled. This didn't provide a way to negotiate combinations of other
-LSMs (as will be needed for "blob sharing" LSMs). This is solved by
-providing the LSM infrastructure with all the details needed to make
-the choice (exposing the per-LSM "enabled" flag, if used, the LSM
-characteristics, and ordering expectations).
-
-As a result of the refactoring, the "minor" LSMs are able to remove
-the open-coded security_add_hooks() calls for "capability", "yama",
-and "loadpin", and to redefine "integrity" properly as a general LSM.
-(Note that "integrity" actually defined _no_ hooks, but needs the early
-initialization).
-
-With all LSMs being proessed centrally, it was possible to implement
-a new boot parameter "lsm.order=" to provide explicit ordering, which
-is helpful for the future "blob sharing" LSMs. Matching this is the
-new CONFIG_LSM_ORDER, which replaces CONFIG_DEFAULT_SECURITY, as it
-provides a higher granularity of control.
-
-Breakdown of patches:
-
-Infrastructure improvements (no logical changes):
-  LSM: Correctly announce start of LSM initialization
-  vmlinux.lds.h: Avoid copy/paste of security_init section
-  LSM: Rename .security_initcall section to .lsm_info
-  LSM: Remove initcall tracing
-  LSM: Convert from initcall to struct lsm_info
-  vmlinux.lds.h: Move LSM_TABLE into INIT_DATA
-  LSM: Convert security_initcall() into DEFINE_LSM()
-  LSM: Record LSM name in struct lsm_info
-  LSM: Provide init debugging infrastructure
-  LSM: Don't ignore initialization failures
-
-Split "integrity" out into "ordered initialization" (no logical changes):
-  LSM: Introduce LSM_FLAG_LEGACY_MAJOR
-  LSM: Provide separate ordered initialization
-
-Provide centralized LSM enable/disable infrastructure:
-  LoadPin: Rename "enable" to "enforce"
-  LSM: Plumb visibility into optional "enabled" state
-  LSM: Lift LSM selection out of individual LSMs
-  LSM: Prepare for arbitrary LSM enabling
-  LSM: Introduce CONFIG_LSM_ENABLE
-  LSM: Introduce lsm.enable= and lsm.disable=
-  LSM: Prepare for reorganizing "security=" logic
-  LSM: Refactor "security=" in terms of enable/disable
-  LSM: Finalize centralized LSM enabling logic
-  apparmor: Remove boot parameter
-  selinux: Remove boot parameter
-
-Provide centralized LSM ordering infrastructure:
-  LSM: Build ordered list of ordered LSMs for init
-  LSM: Introduce CONFIG_LSM_ORDER
-  LSM: Introduce "lsm.order=" for boottime ordering
-
-Move minor LSMs into ordered LSM initialization:
-  LoadPin: Initialize as ordered LSM
-  Yama: Initialize as ordered LSM
-  LSM: Introduce enum lsm_order
-  capability: Initialize as LSM_ORDER_FIRST
-
-Move major LSMs into ordered LSM initialization:
-  LSM: Separate idea of "major" LSM from "exclusive" LSM
-  LSM: Add all exclusive LSMs to ordered initialization
-
--Kees
-
- .../admin-guide/kernel-parameters.txt         |  34 +-
- arch/arc/kernel/vmlinux.lds.S                 |   1 -
- arch/arm/kernel/vmlinux-xip.lds.S             |   1 -
- arch/arm64/kernel/vmlinux.lds.S               |   1 -
- arch/h8300/kernel/vmlinux.lds.S               |   1 -
- arch/microblaze/kernel/vmlinux.lds.S          |   2 -
- arch/powerpc/kernel/vmlinux.lds.S             |   2 -
- arch/um/include/asm/common.lds.S              |   2 -
- arch/xtensa/kernel/vmlinux.lds.S              |   1 -
- include/asm-generic/vmlinux.lds.h             |  25 +-
- include/linux/init.h                          |   2 -
- include/linux/lsm_hooks.h                     |  37 +-
- include/linux/module.h                        |   1 -
- security/Kconfig                              |  61 ++--
- security/apparmor/Kconfig                     |  16 -
- security/apparmor/lsm.c                       |  22 +-
- security/commoncap.c                          |   9 +-
- security/integrity/iint.c                     |   6 +-
- security/loadpin/Kconfig                      |   4 +-
- security/loadpin/loadpin.c                    |  29 +-
- security/security.c                           | 343 +++++++++++++++---
- security/selinux/Kconfig                      |  29 --
- security/selinux/hooks.c                      |  32 +-
- security/smack/smack_lsm.c                    |   9 +-
- security/tomoyo/tomoyo.c                      |   8 +-
- security/yama/yama_lsm.c                      |   8 +-
- 26 files changed, 432 insertions(+), 254 deletions(-)
-
+diff --git a/include/linux/init.h b/include/linux/init.h
+index 77636539e77c..9c2aba1dbabf 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -133,7 +133,6 @@ static inline initcall_t initcall_from_entry(initcall_entry_t *entry)
+ #endif
+ 
+ extern initcall_entry_t __con_initcall_start[], __con_initcall_end[];
+-extern initcall_entry_t __start_lsm_info[], __end_lsm_info[];
+ 
+ /* Used for contructor calls. */
+ typedef void (*ctor_fn_t)(void);
+@@ -236,7 +235,6 @@ extern bool initcall_debug;
+ 	static exitcall_t __exitcall_##fn __exit_call = fn
+ 
+ #define console_initcall(fn)	___define_initcall(fn,, .con_initcall)
+-#define security_initcall(fn)	___define_initcall(fn,, .lsm_info)
+ 
+ struct obs_kernel_param {
+ 	const char *str;
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 97a020c616ad..d13059feca09 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2039,6 +2039,18 @@ extern char *lsm_names;
+ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ 				char *lsm);
+ 
++struct lsm_info {
++	int (*init)(void);	/* Required. */
++};
++
++extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
++
++#define security_initcall(lsm)						\
++	static struct lsm_info __lsm_##lsm				\
++		__used __section(.lsm_info.init)			\
++		__aligned(sizeof(unsigned long))			\
++		= { .init = lsm, }
++
+ #ifdef CONFIG_SECURITY_SELINUX_DISABLE
+ /*
+  * Assuring the safety of deleting a security module is up to
+diff --git a/include/linux/module.h b/include/linux/module.h
+index f807f15bebbe..264979283756 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -123,7 +123,6 @@ extern void cleanup_module(void);
+ #define late_initcall_sync(fn)		module_init(fn)
+ 
+ #define console_initcall(fn)		module_init(fn)
+-#define security_initcall(fn)		module_init(fn)
+ 
+ /* Each module must use one module_init(). */
+ #define module_init(initfn)					\
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index 5a6810041e5c..70d21b566955 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -22,6 +22,7 @@
+ #include <linux/file.h>
+ #include <linux/uaccess.h>
+ #include <linux/security.h>
++#include <linux/lsm_hooks.h>
+ #include "integrity.h"
+ 
+ static struct rb_root integrity_iint_tree = RB_ROOT;
+diff --git a/security/security.c b/security/security.c
+index 41a5da2c7faf..e74f46fba591 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -43,16 +43,12 @@ char *lsm_names;
+ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+ 	CONFIG_DEFAULT_SECURITY;
+ 
+-static void __init do_security_initcalls(void)
++static void __init major_lsm_init(void)
+ {
+-	initcall_t call;
+-	initcall_entry_t *ce;
++	struct lsm_info *lsm;
+ 
+-	ce = __start_lsm_info;
+-	while (ce < __end_lsm_info) {
+-		call = initcall_from_entry(ce);
+-		call();
+-		ce++;
++	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		lsm->init();
+ 	}
+ }
+ 
+@@ -82,7 +78,7 @@ int __init security_init(void)
+ 	/*
+ 	 * Load all the remaining security modules.
+ 	 */
+-	do_security_initcalls();
++	major_lsm_init();
+ 
+ 	return 0;
+ }
 -- 
 2.17.1
 
