@@ -2,72 +2,152 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D41B7C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273E9C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90B262083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:19:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90B262083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DC8082083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:19:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="QcoxN2VA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC8082083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbeJBXDc (ORCPT
+        id S1729541AbeJBXED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 19:03:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41148 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbeJBXDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 19:03:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A0F87A9;
-        Tue,  2 Oct 2018 09:19:23 -0700 (PDT)
-Received: from [10.4.12.111] (ostrya.emea.arm.com [10.4.12.111])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9CB713F5D3;
-        Tue,  2 Oct 2018 09:19:20 -0700 (PDT)
-Subject: Re: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-To:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        lorenzo.pieralisi@arm.com, robin.murphy@arm.com
-Cc:     mark.rutland@arm.com, vkilari@codeaurora.org,
-        neil.m.leeder@gmail.com, pabba@codeaurora.org,
-        john.garry@huawei.com, will.deacon@arm.com,
-        rruigrok@codeaurora.org, linuxarm@huawei.com,
-        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        guohanjun@huawei.com, linux-kernel@vger.kernel.org
-References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
- <20180921150803.25444-3-shameerali.kolothum.thodi@huawei.com>
- <ecc2877c-146c-d70f-efd7-306fe704d55f@arm.com>
-Message-ID: <1dc554eb-7ed2-45b3-109f-8cec286b4525@arm.com>
-Date:   Tue, 2 Oct 2018 17:19:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <ecc2877c-146c-d70f-efd7-306fe704d55f@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 2 Oct 2018 19:04:03 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45300 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727351AbeJBXED (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 19:04:03 -0400
+Received: by mail-wr1-f68.google.com with SMTP id q5-v6so2892564wrw.12
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 09:19:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=dVKmxQVrpJZvJn5/VP1CGLfRDCwvpj/jGRXVi3uRGZs=;
+        b=QcoxN2VAs2N5Q1NYLKQxeewfB3zvI9XuMvNeu/znNJojq++3LNi1acunL6WGfNhfZn
+         /ehQgUKwqgjbQlYS8cRct1pqLc4uXoIjGLW2Telb1bCXhs10YGIntGV10WDCpEKsBWmx
+         8AuNKSNzTD+S/VCfgMcHeU0MyLaAZUiMmYA+ijhdHNPXKbH5b35JebcU3Cz2ZoaO+0cS
+         J2pVph2wUZlYYbWQBcpMqw8ohn62jaZpDXu7o62J3H+5x4+55bttBxLRnHSY5QHevavY
+         udkS6QTi/U1LAtbfUMrln2PYxja5YnzXUasnVewVZSRFUEg2BxzzqP/bne6OOYEhP9SG
+         5BWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dVKmxQVrpJZvJn5/VP1CGLfRDCwvpj/jGRXVi3uRGZs=;
+        b=oHuyTdy/gNxIpRoKkV3cTrhCQ6eczf+DjOrCgdF56Gu0vWwpqahuA6/FvaBktWLETL
+         tCDZatrPxTLQtGzCLKyf1Y+YE6xmeF0BRR/82nHAmOjILRr4nDkaloTcgmLWNN9Zqq9M
+         WIptwzGWvNmBsxR3dZLaqz/YzZgkYkNN4YgeodoH1RO4pHmjLX6oWy/nHrKjlokKmpVH
+         4tTFLXiis0uCXXFUPDjgxeB0MzqOOX3hLJaK6bZp+xFRX6A3SdkrzTVAyI7FNR4BMVAA
+         ok2OI4gofHSj2jOqVQBehhP7Hs/uaGuigNE7gpx5Erl6tBeiGLfEw58HSx5GLJOzAt2/
+         oEZg==
+X-Gm-Message-State: ABuFfojK3lUxMG2gTyphFhwL8UEhf5EUWdYLz6B/z4KllR8BOa/Tvupa
+        bHMedNWficF+/EsavUzclmfGrVulHM0=
+X-Google-Smtp-Source: ACcGV60wBGlF+e7oq8VOrjWM0k6fWe4EXUFVQMf4bvmzQjyIqJE/Ta4cf3qzf/LjS+MQtCy3DVIj0Q==
+X-Received: by 2002:adf:8382:: with SMTP id 2-v6mr2938704wre.13.1538497192488;
+        Tue, 02 Oct 2018 09:19:52 -0700 (PDT)
+Received: from localhost.localdomain (p200300D993C77B00B5EB8DB179490446.dip0.t-ipconnect.de. [2003:d9:93c7:7b00:b5eb:8db1:7949:446])
+        by smtp.googlemail.com with ESMTPSA id n14-v6sm9132139wmc.14.2018.10.02.09.19.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Oct 2018 09:19:51 -0700 (PDT)
+From:   Manfred Spraul <manfred@colorfullife.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Waiman Long <longman@redhat.com>
+Cc:     1vier1@web.de, Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Manfred Spraul <manfred@colorfullife.com>
+Subject: [RFC, PATCH] ipc/util.c: use idr_alloc_cyclic() for ipc allocations
+Date:   Tue,  2 Oct 2018 18:19:42 +0200
+Message-Id: <20181002161942.1037-1-manfred@colorfullife.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/10/2018 15:11, Jean-Philippe Brucker wrote:
->> +	cfgr = readl_relaxed(smmu_pmu->reg_base + SMMU_PMCG_CFGR);
+A bit related to the patch series that increases IPC_MNI:
 
-Something I missed previously: when SMMU_PMCG_CFGR.SID_FILTER_TYPE is 1,
-filtering for all counters is configured by SMMU_PMCG_SMR0 and
-SMMU_PMCG_EVTYPER0 (instead of having one separate filter per counter).
+(User space) id reuse create the risk of data corruption:
 
-In that mode with your patch, if the user applies a filter to the first
-event in the list passed to perf, it will be applied to all events.
-Filter applied on any subsequent event will be ignored. Could we make
-this more explicit? Maybe in the probe print that the PMCG is
-global-filtering, and when attempting to apply a filter to something
-else than EVCNTR0, return an error?
+Process A: calls ipc function
+Process A: sleeps just at the beginning of the syscall
+Process B: Frees the ipc object (i.e.: calls ...ctl(IPC_RMID)
+Process B: Creates a new ipc object (i.e.: calls ...get())
+	<If new object and old object have the same id>
+Process A: is woken up, and accesses the new object
 
-Thanks,
-Jean
+To reduce the probability that the new and the old object
+have the same id, the current implementation adds a
+sequence number to the index of the object in the idr tree.
+
+To further reduce the probability for a reuse, switch from
+idr_alloc to idr_alloc_cyclic.
+
+The patch cycles over at least RADIX_TREE_MAP_SIZE, i.e.
+if there is only a small number of objects, the accesses
+continue to be direct.
+
+As an option, this could be made dependent on the extended
+mode: In extended mode, cycle over e.g. at least 16k ids.
+
+Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
+---
+
+Open questions:
+- Is there a significant performance advantage, especially
+  there are many ipc ids?
+- Over how many ids should the code cycle always?
+- Further review remarks?
+
+ ipc/util.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/ipc/util.c b/ipc/util.c
+index 0af05752969f..6f83841f6761 100644
+--- a/ipc/util.c
++++ b/ipc/util.c
+@@ -216,10 +216,30 @@ static inline int ipc_idr_alloc(struct ipc_ids *ids, struct kern_ipc_perm *new)
+ 	 */
+ 
+ 	if (next_id < 0) { /* !CHECKPOINT_RESTORE or next_id is unset */
++		int idr_max;
++
+ 		new->seq = ids->seq++;
+ 		if (ids->seq > IPCID_SEQ_MAX)
+ 			ids->seq = 0;
+-		idx = idr_alloc(&ids->ipcs_idr, new, 0, 0, GFP_NOWAIT);
++
++		/*
++		 * If a user space visible id is reused, then this creates a
++		 * risk for data corruption. To reduce the probability that
++		 * a number is reduced, two approaches are used:
++		 * 1) the idr index is allocated cyclically.
++		 * 2) the use space id is build by concatenating the
++		 *    internal idr index with a sequence number
++		 * To avoid that both numbers have the same cycle time, try
++		 * to set the size for the cyclic alloc to an odd number.
++		 */
++		idr_max = ids->in_use*2+1;
++		if (idr_max < RADIX_TREE_MAP_SIZE-1)
++			idr_max = RADIX_TREE_MAP_SIZE-1;
++		if (idr_max > IPCMNI)
++			idr_max = IPCMNI;
++
++		idx = idr_alloc_cyclic(&ids->ipcs_idr, new, 0, idr_max,
++					GFP_NOWAIT);
+ 	} else {
+ 		new->seq = ipcid_to_seqx(next_id);
+ 		idx = idr_alloc(&ids->ipcs_idr, new, ipcid_to_idx(next_id),
+-- 
+2.17.1
 
