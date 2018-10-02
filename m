@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC01C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5AEC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FE592089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:06:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FE592089A
+	by mail.kernel.org (Postfix) with ESMTP id C05382083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:07:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C05382083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbeJBUu1 (ORCPT
+        id S1729449AbeJBULz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:50:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32812 "EHLO
+        Tue, 2 Oct 2018 16:11:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32786 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729472AbeJBUL4 (ORCPT
+        with ESMTP id S1728683AbeJBULx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:56 -0400
+        Tue, 2 Oct 2018 16:11:53 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CEAAE266;
-        Tue,  2 Oct 2018 13:28:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 880C6A67;
+        Tue,  2 Oct 2018 13:28:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Borislav Petkov <bp@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 116/228] gpio: Fix wrong rounding in gpio-menz127
-Date:   Tue,  2 Oct 2018 06:23:33 -0700
-Message-Id: <20181002132507.235357295@linuxfoundation.org>
+Subject: [PATCH 4.18 113/228] EDAC, i7core: Fix memleaks and use-after-free on probe and remove
+Date:   Tue,  2 Oct 2018 06:23:30 -0700
+Message-Id: <20181002132507.031301446@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,38 +54,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nadav Amit <namit@vmware.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 7279d9917560bbd0d82813d6bf00490a82c06783 ]
+[ Upstream commit 6c974d4dfafe5e9ee754f2a6fba0eb1864f1649e ]
 
-men_z127_debounce() tries to round up and down, but uses functions which
-are only suitable when the divider is a power of two, which is not the
-case. Use the appropriate ones.
+Make sure to free and deregister the addrmatch and chancounts devices
+allocated during probe in all error paths. Also fix use-after-free in a
+probe error path and in the remove success path where the devices were
+being put before before deregistration.
 
-Found by static check. Compile tested.
-
-Fixes: f436bc2726c64 ("gpio: add driver for MEN 16Z127 GPIO controller")
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Fixes: 356f0a30860d ("i7core_edac: change the mem allocation scheme to make Documentation/kobject.txt happy")
+Link: http://lkml.kernel.org/r/20180612124335.6420-2-johan@kernel.org
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-menz127.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/edac/i7core_edac.c |   22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
---- a/drivers/gpio/gpio-menz127.c
-+++ b/drivers/gpio/gpio-menz127.c
-@@ -56,9 +56,9 @@ static int men_z127_debounce(struct gpio
- 		rnd = fls(debounce) - 1;
+--- a/drivers/edac/i7core_edac.c
++++ b/drivers/edac/i7core_edac.c
+@@ -1177,15 +1177,14 @@ static int i7core_create_sysfs_devices(s
  
- 		if (rnd && (debounce & BIT(rnd - 1)))
--			debounce = round_up(debounce, MEN_Z127_DB_MIN_US);
-+			debounce = roundup(debounce, MEN_Z127_DB_MIN_US);
- 		else
--			debounce = round_down(debounce, MEN_Z127_DB_MIN_US);
-+			debounce = rounddown(debounce, MEN_Z127_DB_MIN_US);
+ 	rc = device_add(pvt->addrmatch_dev);
+ 	if (rc < 0)
+-		return rc;
++		goto err_put_addrmatch;
  
- 		if (debounce > MEN_Z127_DB_MAX_US)
- 			debounce = MEN_Z127_DB_MAX_US;
+ 	if (!pvt->is_registered) {
+ 		pvt->chancounts_dev = kzalloc(sizeof(*pvt->chancounts_dev),
+ 					      GFP_KERNEL);
+ 		if (!pvt->chancounts_dev) {
+-			put_device(pvt->addrmatch_dev);
+-			device_del(pvt->addrmatch_dev);
+-			return -ENOMEM;
++			rc = -ENOMEM;
++			goto err_del_addrmatch;
+ 		}
+ 
+ 		pvt->chancounts_dev->type = &all_channel_counts_type;
+@@ -1199,9 +1198,18 @@ static int i7core_create_sysfs_devices(s
+ 
+ 		rc = device_add(pvt->chancounts_dev);
+ 		if (rc < 0)
+-			return rc;
++			goto err_put_chancounts;
+ 	}
+ 	return 0;
++
++err_put_chancounts:
++	put_device(pvt->chancounts_dev);
++err_del_addrmatch:
++	device_del(pvt->addrmatch_dev);
++err_put_addrmatch:
++	put_device(pvt->addrmatch_dev);
++
++	return rc;
+ }
+ 
+ static void i7core_delete_sysfs_devices(struct mem_ctl_info *mci)
+@@ -1211,11 +1219,11 @@ static void i7core_delete_sysfs_devices(
+ 	edac_dbg(1, "\n");
+ 
+ 	if (!pvt->is_registered) {
+-		put_device(pvt->chancounts_dev);
+ 		device_del(pvt->chancounts_dev);
++		put_device(pvt->chancounts_dev);
+ 	}
+-	put_device(pvt->addrmatch_dev);
+ 	device_del(pvt->addrmatch_dev);
++	put_device(pvt->addrmatch_dev);
+ }
+ 
+ /****************************************************************************
 
 
