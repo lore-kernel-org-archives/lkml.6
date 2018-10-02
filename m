@@ -2,218 +2,147 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CF6C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2C8C64EBA
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08787206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:07:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08787206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 216982064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:17:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9tjs6CV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 216982064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbeJCBwU (ORCPT
+        id S1727588AbeJCCCG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 21:52:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58861 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbeJCBwU (ORCPT
+        Tue, 2 Oct 2018 22:02:06 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46798 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727281AbeJCCCG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 21:52:20 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w92J6pQP2069910
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 2 Oct 2018 12:06:51 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w92J6o0N2069907;
-        Tue, 2 Oct 2018 12:06:50 -0700
-Date:   Tue, 2 Oct 2018 12:06:50 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Feng Tang <tipbot@zytor.com>
-Message-ID: <tip-d2266bbfa9e3e32e3b642965088ca461bd24a94f@git.kernel.org>
-Cc:     corbet@lwn.net, jkosina@suse.cz, peterz@infradead.org,
-        frederic@kernel.org, rientjes@google.com, tglx@linutronix.de,
-        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        kai.heng.feng@canonical.com, hpa@zytor.com,
-        stuart.r.anderson@intel.com, konrad.wilk@oracle.com,
-        thymovanbeers@gmail.com, bp@suse.de, hpa@linux.intel.com,
-        feng.tang@intel.com, bp@alien8.de, pombredanne@nexb.com,
-        bhelgaas@google.com, mingo@kernel.org, gregkh@linuxfoundation.org
-Reply-To: gregkh@linuxfoundation.org, mingo@kernel.org,
-          bhelgaas@google.com, pombredanne@nexb.com, bp@alien8.de,
-          feng.tang@intel.com, hpa@linux.intel.com, bp@suse.de,
-          thymovanbeers@gmail.com, konrad.wilk@oracle.com,
-          stuart.r.anderson@intel.com, kai.heng.feng@canonical.com,
-          hpa@zytor.com, linux-kernel@vger.kernel.org,
-          kstewart@linuxfoundation.org, tglx@linutronix.de,
-          rientjes@google.com, peterz@infradead.org, frederic@kernel.org,
-          jkosina@suse.cz, corbet@lwn.net
-In-Reply-To: <20181002164921.25833-1-feng.tang@intel.com>
-References: <20181002164921.25833-1-feng.tang@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/early-printk] x86/earlyprintk: Add a force option for
- pciserial device
-Git-Commit-ID: d2266bbfa9e3e32e3b642965088ca461bd24a94f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 2 Oct 2018 22:02:06 -0400
+Received: by mail-pg1-f195.google.com with SMTP id a5-v6so380033pgv.13;
+        Tue, 02 Oct 2018 12:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Hr5dcYumIG6JIbThdJSOFbybVtoBzDv7zhZH3CEGRbI=;
+        b=D9tjs6CVVZz5LOF5qVaTsUzVHUVkLJBx2KuX9Vdrf/GULRTHIRsPXoAeX02IRpcGso
+         K7aPu/KlPKLfLXlB9V/zHW5eCkw3Y1s4Yp/SuF9mzIQHtcr8XHswAl5O7BoFXcv6q2i8
+         qtSovk1zWFTFDo81xb/2lXJ9cOils0zsILZNn8w4t/Sw0Of4Jy/4HK9oF6yqtQcRrxdj
+         U0A86SXPmYxEcWaolPWS2yhQAebyna8BBZuBAyZJKo4VaB9dq/h1NcQhBUWyWrgsiixg
+         KsdXkfrMw0KlfiNFP2gGlk+TCHBH2Q9X/gD6aVfIB20aXgctXcL0JD1NNZm52KAq9rh4
+         jUig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Hr5dcYumIG6JIbThdJSOFbybVtoBzDv7zhZH3CEGRbI=;
+        b=sACL9ADsvdGflhq0clxlvtwVHXipJ7BtRViKaz04/hivCdhWjoTHfr9bbj2sB+lXeD
+         CtmYZlJjrGQbaJaZawqM6fWPWf1nj99QIi0b0PD3SgqvhawBLClR9tEtLzV/lYEl11JJ
+         wZv4kMpIUX6gbusedzBAYI5OXS3eRzHweoHemoRcPfaik4WD3bSuFvSZuJ/MRPRxGP9+
+         QC69GN3tTLZVN2uq4CyOYO+Gc96uiLTNvmyMUVkFkTT4kr2rGMD1vo7g5aSiYTAQSnv/
+         fgj4D8v95lf2+8ZkanJ7bFx7zUVm8ByN5yWvFVMhi4U0ySleCg/5//HNyo95qfvUcnU5
+         PcIA==
+X-Gm-Message-State: ABuFfohuwq7yKOsysIijZCd7gM9v8p+qnCP09EERvUgf3C9F7qIt00tL
+        MVPdPbLvt2NDZyxMN+EjVWrp9b4cqcq63b7A8iU=
+X-Google-Smtp-Source: ACcGV62DObUQTlYcCm/jq7RfsGeNQihQ+JHvipCKyMc71kR8AAly4drgNliRlOsK1LvA9XGfkGGtF6Ygz2UFfgAoxwM=
+X-Received: by 2002:a62:c999:: with SMTP id l25-v6mr7708480pfk.10.1538507833762;
+ Tue, 02 Oct 2018 12:17:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <ad6b338c900a17c4ecb1655a42b954221f242be2.1538480816.git.rfreire@redhat.com>
+In-Reply-To: <ad6b338c900a17c4ecb1655a42b954221f242be2.1538480816.git.rfreire@redhat.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 2 Oct 2018 14:17:02 -0500
+Message-ID: <CAH2r5mtu9XbQfR=QevDqu36ZRYah1hrRGSQyynCfr82PRyunwQ@mail.gmail.com>
+Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
+To:     rfreire@redhat.com
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Pavel Shilovsky <piastryyy@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d2266bbfa9e3e32e3b642965088ca461bd24a94f
-Gitweb:     https://git.kernel.org/tip/d2266bbfa9e3e32e3b642965088ca461bd24a94f
-Author:     Feng Tang <feng.tang@intel.com>
-AuthorDate: Wed, 3 Oct 2018 00:49:21 +0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 2 Oct 2018 21:02:47 +0200
+Are you sure that these aren't logged by the automounter (for ext4,
+xfs etc.).  When I looked in my dmesg logs I didn't find matching log
+entries in the file systems themselves.  Do you have an example?
 
-x86/earlyprintk: Add a force option for pciserial device
+On the idea of adding cifsFYI logging here - I slightly prefer using
+ftrace (trace-cmd, ie dynamic tracing) so there is less overhead and
+easier to turn on/off following the example of xfs, f2fs, nfs, nfsd
+etc.
+On Tue, Oct 2, 2018 at 6:57 AM Rodrigo Freire <rfreire@redhat.com> wrote:
+>
+> Currently, no messages are printed when mounting a CIFS filesystem and
+> no debug configuration is enabled.
+>
+> However, a CIFS mount information is valuable when troubleshooting
+> and/or forensic analyzing a system and finding out if was a CIFS
+> endpoint mount attempted.
+>
+> Other filesystems such as XFS, EXT* does issue a printk() when mounting
+> their filesystems.
+>
+> A terse log message is printed only if cifsFYI is not enabled.
+>
+> Sample mount operations:
+>
+> [root@corinthians ~]# mount -o user=administrator //172.25.250.18/c$ /mnt
+> (non-existent system)
+>
+> [root@corinthians ~]# mount -o user=administrator //172.25.250.19/c$ /mnt
+> (Valid system)
+>
+> Kernel message log for the mount operations:
+>
+> [  450.464543] CIFS VFS: Attempting to mount //172.25.250.18/c$
+> [  456.478186] CIFS VFS: Error connecting to socket. Aborting operation.
+> [  456.478381] CIFS VFS: cifs_mount failed w/return code = -113
+> [  467.688866] CIFS VFS: Attempting to mount //172.25.250.19/c$
+>
+> v2: Created a loop to select the right cifs_dbg message to be printed,
+>     considering the current system's scenario, in order to avoid a
+>     duplicate message or stripping out important information in
+>     debug.
+>
+> Signed-off-by: Rodrigo Freire <rfreire@redhat.com>
+> ---
+>  fs/cifs/cifsfs.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+> index 7065426..7fde6bc 100644
+> --- a/fs/cifs/cifsfs.c
+> +++ b/fs/cifs/cifsfs.c
+> @@ -707,7 +707,11 @@ static int cifs_set_super(struct super_block *sb, void *data)
+>         struct cifs_mnt_data mnt_data;
+>         struct dentry *root;
+>
+> -       cifs_dbg(FYI, "Devname: %s flags: %d\n", dev_name, flags);
+> +       /* Prints in Kernel / CIFS log the attempted mount operation */
+> +       if (cifsFYI)
+> +               cifs_dbg(FYI, "Devname: %s flags: %d\n", dev_name, flags);
+> +       else
+> +               cifs_dbg(VFS, "Attempting to mount %s\n", dev_name);
+>
+>         volume_info = cifs_get_volume_info((char *)data, dev_name, is_smb3);
+>         if (IS_ERR(volume_info))
+> --
+> 1.8.3.1
+>
 
-The "pciserial" earlyprintk variant helps much on many modern x86
-platforms, but unfortunately there are still some platforms with PCI
-UART devices which have the wrong PCI class code. In that case, the
-current class code check does not allow for them to be used for logging.
 
-Add a sub-option "force" which overrides the class code check and thus
-the use of such device can be enforced.
+-- 
+Thanks,
 
- [ bp: massage formulations. ]
-
-Suggested-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Feng Tang <feng.tang@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Stuart R . Anderson" <stuart.r.anderson@intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Feng Tang <feng.tang@intel.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: H Peter Anvin <hpa@linux.intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thymo van Beers <thymovanbeers@gmail.com>
-Cc: alan@linux.intel.com
-Cc: linux-doc@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181002164921.25833-1-feng.tang@intel.com
----
- Documentation/admin-guide/kernel-parameters.txt |  6 ++++-
- arch/x86/kernel/early_printk.c                  | 29 ++++++++++++++++---------
- 2 files changed, 24 insertions(+), 11 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 92eb1f42240d..34e6800dea0e 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1063,7 +1063,7 @@
- 			earlyprintk=serial[,0x...[,baudrate]]
- 			earlyprintk=ttySn[,baudrate]
- 			earlyprintk=dbgp[debugController#]
--			earlyprintk=pciserial,bus:device.function[,baudrate]
-+			earlyprintk=pciserial[,force],bus:device.function[,baudrate]
- 			earlyprintk=xdbc[xhciController#]
- 
- 			earlyprintk is useful when the kernel crashes before
-@@ -1095,6 +1095,10 @@
- 
- 			The sclp output can only be used on s390.
- 
-+			The optional "force" to "pciserial" enables use of a
-+			PCI device even when its classcode is not of the
-+			UART class.
-+
- 	edac_report=	[HW,EDAC] Control how to report EDAC event
- 			Format: {"on" | "off" | "force"}
- 			on: enable EDAC to report H/W event. May be overridden
-diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
-index 5e801c8c8ce7..374a52fa5296 100644
---- a/arch/x86/kernel/early_printk.c
-+++ b/arch/x86/kernel/early_printk.c
-@@ -213,8 +213,9 @@ static unsigned int mem32_serial_in(unsigned long addr, int offset)
-  * early_pci_serial_init()
-  *
-  * This function is invoked when the early_printk param starts with "pciserial"
-- * The rest of the param should be ",B:D.F,baud" where B, D & F describe the
-- * location of a PCI device that must be a UART device.
-+ * The rest of the param should be "[force],B:D.F,baud", where B, D & F describe
-+ * the location of a PCI device that must be a UART device. "force" is optional
-+ * and overrides the use of an UART device with a wrong PCI class code.
-  */
- static __init void early_pci_serial_init(char *s)
- {
-@@ -224,17 +225,23 @@ static __init void early_pci_serial_init(char *s)
- 	u32 classcode, bar0;
- 	u16 cmdreg;
- 	char *e;
-+	int force = 0;
- 
--
--	/*
--	 * First, part the param to get the BDF values
--	 */
- 	if (*s == ',')
- 		++s;
- 
- 	if (*s == 0)
- 		return;
- 
-+	/* Force the use of an UART device with wrong class code */
-+	if (!strncmp(s, "force,", 6)) {
-+		force = 1;
-+		s += 6;
-+	}
-+
-+	/*
-+	 * Part the param to get the BDF values
-+	 */
- 	bus = (u8)simple_strtoul(s, &e, 16);
- 	s = e;
- 	if (*s != ':')
-@@ -253,7 +260,7 @@ static __init void early_pci_serial_init(char *s)
- 		s++;
- 
- 	/*
--	 * Second, find the device from the BDF
-+	 * Find the device from the BDF
- 	 */
- 	cmdreg = read_pci_config(bus, slot, func, PCI_COMMAND);
- 	classcode = read_pci_config(bus, slot, func, PCI_CLASS_REVISION);
-@@ -264,8 +271,10 @@ static __init void early_pci_serial_init(char *s)
- 	 */
- 	if (((classcode >> 16 != PCI_CLASS_COMMUNICATION_MODEM) &&
- 	     (classcode >> 16 != PCI_CLASS_COMMUNICATION_SERIAL)) ||
--	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */
--		return;
-+	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */ {
-+		if (!force)
-+			return;
-+	}
- 
- 	/*
- 	 * Determine if it is IO or memory mapped
-@@ -289,7 +298,7 @@ static __init void early_pci_serial_init(char *s)
- 	}
- 
- 	/*
--	 * Lastly, initialize the hardware
-+	 * Initialize the hardware
- 	 */
- 	if (*s) {
- 		if (strcmp(s, "nocfg") == 0)
+Steve
