@@ -2,240 +2,140 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 637F9C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B347C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26227204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:54:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26227204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2FD09204FD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:55:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FD09204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731371AbeJBUPs (ORCPT
+        id S1731597AbeJBUih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:15:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34488 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731352AbeJBUPr (ORCPT
+        Tue, 2 Oct 2018 16:38:37 -0400
+Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:33506 "EHLO
+        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730694AbeJBUig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:15:47 -0400
-Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CC469BF0;
-        Tue,  2 Oct 2018 13:32:23 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Mike Christie <mchristi@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 035/137] scsi: target: Avoid that EXTENDED COPY commands trigger lock inversion
-Date:   Tue,  2 Oct 2018 06:23:56 -0700
-Message-Id: <20181002132500.936629160@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
-References: <20181002132458.446916963@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 2 Oct 2018 16:38:36 -0400
+Received: from mail.blacknight.com (unknown [81.17.254.10])
+        by outbound-smtp13.blacknight.com (Postfix) with ESMTPS id 9B4461C2CCA
+        for <linux-kernel@vger.kernel.org>; Tue,  2 Oct 2018 14:55:04 +0100 (IST)
+Received: (qmail 6180 invoked from network); 2 Oct 2018 13:55:04 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.88])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 2 Oct 2018 13:55:04 -0000
+Date:   Tue, 2 Oct 2018 14:54:59 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jirka Hladky <jhladky@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: [PATCH 2/2] mm, numa: Migrate pages to local nodes quicker early
+ in the lifetime of a task
+Message-ID: <20181002135459.GA7003@techsingularity.net>
+References: <20181001100525.29789-1-mgorman@techsingularity.net>
+ <20181001100525.29789-3-mgorman@techsingularity.net>
+ <20181002124149.GB4593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20181002124149.GB4593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Oct 02, 2018 at 06:11:49PM +0530, Srikar Dronamraju wrote:
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 25c7c7e09cbd..7fc4a371bdd2 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -1392,6 +1392,17 @@ bool should_numa_migrate_memory(struct task_struct *p, struct page * page,
+> >  	int last_cpupid, this_cpupid;
+> >
+> >  	this_cpupid = cpu_pid_to_cpupid(dst_cpu, current->pid);
+> > +	last_cpupid = page_cpupid_xchg_last(page, this_cpupid);
+> > +
+> > +	/*
+> > +	 * Allow first faults or private faults to migrate immediately early in
+> > +	 * the lifetime of a task. The magic number 4 is based on waiting for
+> > +	 * two full passes of the "multi-stage node selection" test that is
+> > +	 * executed below.
+> > +	 */
+> > +	if ((p->numa_preferred_nid == -1 || p->numa_scan_seq <= 4) &&
+> > +	    (cpupid_pid_unset(last_cpupid) || cpupid_match_pid(p, last_cpupid)))
+> > +		return true;
+> >
+> 
+> This does have issues when using with workloads that access more shared faults
+> than private faults.
+> 
 
-------------------
+Not as such. It can have issues on workloads where memory is initialised
+by one thread, then additional threads are created and access the same
+memory. They are not necessarily shared once buffers are handed over. In
+such a case, migrating quickly is the right thing to do. If it's truely
+shared pages then there may be some unnecessary migrations early in the
+lifetime of the task but it'll settle down quickly enough.
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+> In such workloads, this change would spread the memory causing regression in
+> behaviour.
+> 
+> 5 runs of on 2 socket/ 4 node power 8 box
+> 
+> 
+> Without this patch
+> ./numa01.sh      Real:  382.82    454.29    422.31    29.72
+> ./numa01.sh      Sys:   40.12     74.53     58.50     13.37
+> ./numa01.sh      User:  34230.22  46398.84  40292.62  4915.93
+> 
+> With this patch
+> ./numa01.sh      Real:  415.56    555.04    473.45    51.17    -10.8016%
+> ./numa01.sh      Sys:   43.42     94.22     73.59     17.31    -20.5055%
+> ./numa01.sh      User:  35271.95  56644.19  45615.72  7165.01  -11.6694%
+> 
+> Since we are looking at time, smaller numbers are better.
+> 
 
-[ Upstream commit 36d4cb460bcbe2a1323732a6e4bb9dd783284368 ]
+Is it just numa01 that was affected for you? I ask because that particular
+workload is an averse workload on any machine with more than sockets and
+your machine description says it has 4 nodes. What it is testing is quite
+specific to 2-node machines.
 
-The approach for adding a device to the devices_idr data structure and for
-removing it is as follows:
+> SPECJbb did show some small loss and gains.
+> 
 
-* &dev->dev_group.cg_item is initialized before a device is added to
-  devices_idr.
+That almost always shows small gains and losses so that's not too
+surprising.
 
-* If the reference count of a device drops to zero then
-  target_free_device() removes the device from devices_idr.
+> Our numa grouping is not fast enough. It can take sometimes several
+> iterations before all the tasks belonging to the same group end up being
+> part of the group. With the current check we end up spreading memory faster
+> than we should hence hurting the chance of early consolidation.
+> 
+> Can we restrict to something like this?
+> 
+> if (p->numa_scan_seq >=MIN && p->numa_scan_seq <= MIN+4 &&
+>     (cpupid_match_pid(p, last_cpupid)))
+> 	return true;
+> 
+> meaning, we ran atleast MIN number of scans, and we find the task to be most likely
+> task using this page.
+> 
 
-* All devices_idr manipulations are protected by device_mutex.
+What's MIN? Assuming it's any type of delay, note that this will regress
+STREAM again because it's very sensitive to the starting state.
 
-This means that increasing the reference count of a device is sufficient to
-prevent removal from devices_idr and also that it is safe access
-dev_group.cg_item for any device that is referenced by devices_idr. Use
-this to modify target_find_device() and target_for_each_device() such that
-these functions no longer introduce a dependency between device_mutex and
-the configfs root inode mutex.
-
-Note: it is safe to pass a NULL pointer to config_item_put() and also to
-config_item_get_unless_zero().
-
-This patch prevents that lockdep reports the following complaint:
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.12.0-rc1-dbg+ #1 Not tainted
-------------------------------------------------------
-rmdir/12053 is trying to acquire lock:
- (device_mutex#2){+.+.+.}, at: [<ffffffffa010afce>]
-target_free_device+0xae/0xf0 [target_core_mod]
-
-but task is already holding lock:
- (&sb->s_type->i_mutex_key#14){++++++}, at: [<ffffffff811c5c30>]
-vfs_rmdir+0x50/0x140
-
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&sb->s_type->i_mutex_key#14){++++++}:
-       lock_acquire+0x59/0x80
-       down_write+0x36/0x70
-       configfs_depend_item+0x3a/0xb0 [configfs]
-       target_depend_item+0x13/0x20 [target_core_mod]
-       target_xcopy_locate_se_dev_e4_iter+0x87/0x100 [target_core_mod]
-       target_devices_idr_iter+0x16/0x20 [target_core_mod]
-       idr_for_each+0x39/0xc0
-       target_for_each_device+0x36/0x50 [target_core_mod]
-       target_xcopy_locate_se_dev_e4+0x28/0x80 [target_core_mod]
-       target_xcopy_do_work+0x2e9/0xdd0 [target_core_mod]
-       process_one_work+0x1ca/0x3f0
-       worker_thread+0x49/0x3b0
-       kthread+0x109/0x140
-       ret_from_fork+0x31/0x40
-
--> #0 (device_mutex#2){+.+.+.}:
-       __lock_acquire+0x101f/0x11d0
-       lock_acquire+0x59/0x80
-       __mutex_lock+0x7e/0x950
-       mutex_lock_nested+0x16/0x20
-       target_free_device+0xae/0xf0 [target_core_mod]
-       target_core_dev_release+0x10/0x20 [target_core_mod]
-       config_item_put+0x6e/0xb0 [configfs]
-       configfs_rmdir+0x1a6/0x300 [configfs]
-       vfs_rmdir+0xb7/0x140
-       do_rmdir+0x1f4/0x200
-       SyS_rmdir+0x11/0x20
-       entry_SYSCALL_64_fastpath+0x23/0xc2
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&sb->s_type->i_mutex_key#14);
-                               lock(device_mutex#2);
-                               lock(&sb->s_type->i_mutex_key#14);
-  lock(device_mutex#2);
-
- *** DEADLOCK ***
-
-3 locks held by rmdir/12053:
- #0:  (sb_writers#10){.+.+.+}, at: [<ffffffff811e223f>]
-mnt_want_write+0x1f/0x50
- #1:  (&sb->s_type->i_mutex_key#14/1){+.+.+.}, at: [<ffffffff811cb97e>]
-do_rmdir+0x15e/0x200
- #2:  (&sb->s_type->i_mutex_key#14){++++++}, at: [<ffffffff811c5c30>]
-vfs_rmdir+0x50/0x140
-
-stack backtrace:
-CPU: 3 PID: 12053 Comm: rmdir Not tainted 4.12.0-rc1-dbg+ #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.0.0-prebuilt.qemu-project.org 04/01/2014
-Call Trace:
- dump_stack+0x86/0xcf
- print_circular_bug+0x1c7/0x220
- __lock_acquire+0x101f/0x11d0
- lock_acquire+0x59/0x80
- __mutex_lock+0x7e/0x950
- mutex_lock_nested+0x16/0x20
- target_free_device+0xae/0xf0 [target_core_mod]
- target_core_dev_release+0x10/0x20 [target_core_mod]
- config_item_put+0x6e/0xb0 [configfs]
- configfs_rmdir+0x1a6/0x300 [configfs]
- vfs_rmdir+0xb7/0x140
- do_rmdir+0x1f4/0x200
- SyS_rmdir+0x11/0x20
- entry_SYSCALL_64_fastpath+0x23/0xc2
-
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-[Rebased to handle conflict withe target_find_device removal]
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/target/target_core_device.c |   22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
-
---- a/drivers/target/target_core_device.c
-+++ b/drivers/target/target_core_device.c
-@@ -904,14 +904,20 @@ struct se_device *target_find_device(int
- EXPORT_SYMBOL(target_find_device);
- 
- struct devices_idr_iter {
-+	struct config_item *prev_item;
- 	int (*fn)(struct se_device *dev, void *data);
- 	void *data;
- };
- 
- static int target_devices_idr_iter(int id, void *p, void *data)
-+	 __must_hold(&device_mutex)
- {
- 	struct devices_idr_iter *iter = data;
- 	struct se_device *dev = p;
-+	int ret;
-+
-+	config_item_put(iter->prev_item);
-+	iter->prev_item = NULL;
- 
- 	/*
- 	 * We add the device early to the idr, so it can be used
-@@ -922,7 +928,15 @@ static int target_devices_idr_iter(int i
- 	if (!(dev->dev_flags & DF_CONFIGURED))
- 		return 0;
- 
--	return iter->fn(dev, iter->data);
-+	iter->prev_item = config_item_get_unless_zero(&dev->dev_group.cg_item);
-+	if (!iter->prev_item)
-+		return 0;
-+	mutex_unlock(&device_mutex);
-+
-+	ret = iter->fn(dev, iter->data);
-+
-+	mutex_lock(&device_mutex);
-+	return ret;
- }
- 
- /**
-@@ -936,15 +950,13 @@ static int target_devices_idr_iter(int i
- int target_for_each_device(int (*fn)(struct se_device *dev, void *data),
- 			   void *data)
- {
--	struct devices_idr_iter iter;
-+	struct devices_idr_iter iter = { .fn = fn, .data = data };
- 	int ret;
- 
--	iter.fn = fn;
--	iter.data = data;
--
- 	mutex_lock(&device_mutex);
- 	ret = idr_for_each(&devices_idr, target_devices_idr_iter, &iter);
- 	mutex_unlock(&device_mutex);
-+	config_item_put(iter.prev_item);
- 	return ret;
- }
- 
-
-
+-- 
+Mel Gorman
+SUSE Labs
