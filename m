@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDAD7C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E04ACC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FDE42089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FDE42089C
+	by mail.kernel.org (Postfix) with ESMTP id B1B7B2089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1B7B2089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731908AbeJBURC (ORCPT
+        id S1731924AbeJBURE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:17:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34976 "EHLO
+        Tue, 2 Oct 2018 16:17:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34988 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731866AbeJBURA (ORCPT
+        with ESMTP id S1731866AbeJBURC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:00 -0400
+        Tue, 2 Oct 2018 16:17:02 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F1E54B2F;
-        Tue,  2 Oct 2018 13:33:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF76BB2F;
+        Tue,  2 Oct 2018 13:33:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@redhat.com>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Denis Kirjanov <kirjanov@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Borislav Petkov <bp@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 077/137] nfsd: fix corrupted reply to badly ordered compound
-Date:   Tue,  2 Oct 2018 06:24:38 -0700
-Message-Id: <20181002132503.944309704@linuxfoundation.org>
+Subject: [PATCH 4.14 078/137] EDAC: Fix memleak in module init error path
+Date:   Tue,  2 Oct 2018 06:24:39 -0700
+Message-Id: <20181002132504.010141249@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,33 +55,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "J. Bruce Fields" <bfields@redhat.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 5b7b15aee641904ae269be9846610a3950cbd64c ]
+[ Upstream commit 4708aa85d50cc6e962dfa8acf5ad4e0d290a21db ]
 
-We're encoding a single op in the reply but leaving the number of ops
-zero, so the reply makes no sense.
+Make sure to use put_device() to free the initialised struct device so
+that resources managed by driver core also gets released in the event of
+a registration failure.
 
-Somewhat academic as this isn't a case any real client will hit, though
-in theory perhaps that could change in a future protocol extension.
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: Denis Kirjanov <kirjanov@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Fixes: 2d56b109e3a5 ("EDAC: Handle error path in edac_mc_sysfs_init() properly")
+Link: http://lkml.kernel.org/r/20180612124335.6420-1-johan@kernel.org
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfsd/nfs4proc.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/edac/edac_mc_sysfs.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1725,6 +1725,7 @@ nfsd4_proc_compound(struct svc_rqst *rqs
- 	if (status) {
- 		op = &args->ops[0];
- 		op->status = status;
-+		resp->opcnt = 1;
- 		goto encode_op;
- 	}
+--- a/drivers/edac/edac_mc_sysfs.c
++++ b/drivers/edac/edac_mc_sysfs.c
+@@ -1097,14 +1097,14 @@ int __init edac_mc_sysfs_init(void)
  
+ 	err = device_add(mci_pdev);
+ 	if (err < 0)
+-		goto out_dev_free;
++		goto out_put_device;
+ 
+ 	edac_dbg(0, "device %s created\n", dev_name(mci_pdev));
+ 
+ 	return 0;
+ 
+- out_dev_free:
+-	kfree(mci_pdev);
++ out_put_device:
++	put_device(mci_pdev);
+  out:
+ 	return err;
+ }
 
 
