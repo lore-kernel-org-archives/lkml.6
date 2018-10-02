@@ -2,142 +2,117 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F5FC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D49C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3321C21473
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:27:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 247752064E
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:28:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qNo6/epD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3321C21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="psldWJY+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 247752064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeJBPJp (ORCPT
+        id S1727555AbeJBPKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 11:09:45 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33447 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727383AbeJBPJp (ORCPT
+        Tue, 2 Oct 2018 11:10:48 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38960 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727383AbeJBPKr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:09:45 -0400
-Received: by mail-lj1-f195.google.com with SMTP id z21-v6so975190ljz.0;
-        Tue, 02 Oct 2018 01:27:39 -0700 (PDT)
+        Tue, 2 Oct 2018 11:10:47 -0400
+Received: by mail-wm1-f67.google.com with SMTP id q8-v6so1259766wmq.4;
+        Tue, 02 Oct 2018 01:28:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mDcT737/quUU7Lv5/p9BcXm7XROdXOvHTo1MWEuta7M=;
-        b=qNo6/epD9zhT9i7eFl392ifXVFVIgpDQ3gEaS0KRaTKwRHDZX4EmYmRNOPcZZ5m8xK
-         DKc+GmXVTnD3wnkuzXvQXILLrHh54aDMXOqtlqZg/BgRep7sno7JiynAvegud7NmobV/
-         HwgP+Y5xXcy/AK6GBVxtXUaCy1vsSLQzMrObVZNrvvL1Urhb1aGbLyV7LLbooI7wTjSJ
-         P6p6Y9P0vo5whlzP1cFntFyYpZ2rklcUjPBf1LjbWRu5bnZJfl3Ow2QX1VeIt7Ebf+0S
-         FNhughZh+SAYJe0rYNodiYnJ5w2QwhBdDWStIjsZ2PMBJPyXp1+o8LotaXibJoMaVTS+
-         Nq5g==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=f7BbdS5AMkoj7s+HNtl3QGBqiscDNb/dpwOy93R4ZSg=;
+        b=psldWJY+UZQ03rYyfCJOolbuhZeT5exWTupwg5jyGcrftTw5fA4T75bToluRIPIsZh
+         BEQQvSg2dOwaHktdGm3iDbsEqOeR5yhDZrSZZOZhaVlNF/urgSnAq0zHG9zoVERFrQEp
+         kbXWkdVByXzLD8aLC/s7Vox+cl8oFwMimTlK1Kui2YXAvBglRmcpMTtRRM0Mh1Bcsv+o
+         AhPA23l1NdwahveKW0fZYE3K+H3Ta+tL28dwetpZ3E8sXV2ELYU2z4zbD/h8KhpKH1DD
+         6gJtLpKnEXZIaDj+PKP/cME9GfjgHfzmNLwitvuU2iH686l0tjTLscdqM/fucEOoqrqy
+         Trrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mDcT737/quUU7Lv5/p9BcXm7XROdXOvHTo1MWEuta7M=;
-        b=pv6NYUnJmCdzsQrmJF95lJetrjlfl+/YcvB9gm+5oKhZz0im333ce435YgZTd7YTDv
-         74oC4otZphlzUubaFS0Q0+HMshBPuY68l9c5bswBNTBQ/BE33RnjFbMLtPRq125MLdAC
-         byT492pT6vqZ7EopjbJ/voA7OlDeaLzAixUwhQmnusq6j107mF+lV2JB5TdLXdx63IfG
-         6riVRInyVBQndjCw9aO/GBqYDfJUCEPrHF3v+TctA0w2Svd07CFaP2YuYWKE8TdiumDK
-         C9ughxxZ2ixaWICNIgHZmULq8rm0pps2A8niWpmNXnO3p1E1AtsWDVargcKc29mzocUc
-         BgwQ==
-X-Gm-Message-State: ABuFfohBbhBp77XThqZ1gdbIAXgCQz8uUyBoXsWh3rN/RBLhKiANuga4
-        MkAj9sdtwLaVw94vicY3Pdk=
-X-Google-Smtp-Source: ACcGV63bNydptegBMlTLCfRHlza2rLgeH7lmgrrH6O5gMeDN7D6ynlNS3V/LZUI1NRwfReIyv/sDTA==
-X-Received: by 2002:a2e:6f0c:: with SMTP id k12-v6mr8918282ljc.66.1538468858362;
-        Tue, 02 Oct 2018 01:27:38 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm1493531lji.87.2018.10.02.01.27.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 01:27:37 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Timur Tabi <timur@codeaurora.org>, swboyd@chromium.org,
-        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v3 3/3] gpiolib: Show correct direction from the beginning
-Date:   Tue,  2 Oct 2018 10:27:31 +0200
-Message-Id: <20181002082731.20141-3-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181002082731.20141-1-ricardo.ribalda@gmail.com>
-References: <20181002082731.20141-1-ricardo.ribalda@gmail.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=f7BbdS5AMkoj7s+HNtl3QGBqiscDNb/dpwOy93R4ZSg=;
+        b=ix6g5RUV1hKDE1pTPrLf4RA0s1hP7GDp5Hlqg2xy83pIPC3LIw+04VPIXFShDWRboE
+         0ExRiIyqSVZfq5BTda7vyGossFuNXsNp1vaLq2fM/naFpIOOzzUxDcN9rXbTnla/8MA+
+         ka6izryk8Ph+AyvX6f6M5Q5nnMvJ6GwyB2X8jX+UZEnYduarKqP6ZhXg4RRvkXRGICuU
+         G6Gr9r9KxJPfeTik/iMmmkqw4OfJJQ5CYfW8aMy2G04Hprh/rQBhqXxGTXBnrEih8aAD
+         t04lLhE3UPkCjAgbkvMQbSl/LpqsvqMCs1gNAuAnkDJ6jasNYVctIAkhogP9iybzIVO2
+         E3Zw==
+X-Gm-Message-State: ABuFfojUzT1Wdz64sdhdzq4ihSXFJ+/5SPFL58Q4c4lSbqI0hWsmsgV3
+        ws8DDkfNo/bur+/OTlh5Aj0=
+X-Google-Smtp-Source: ACcGV61BZ6yDDGPIEWozUU9jR93XeOh2VMC/Ywbje1Z9/K5TOQdVLksgcDISxx6fy+1gtaV6tQktNw==
+X-Received: by 2002:a1c:88c6:: with SMTP id k189-v6mr1060967wmd.32.1538468920798;
+        Tue, 02 Oct 2018 01:28:40 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id r13-v6sm10418251wmf.34.2018.10.02.01.28.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Oct 2018 01:28:40 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 10:28:37 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com
+Subject: Re: [PATCH memory-model 0/5] Updates to the formal memory model
+Message-ID: <20181002082837.GB69893@gmail.com>
+References: <20180926182845.GA24839@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926182845.GA24839@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current code assumes that the direction is input if direction_input
-function is set.
-This might not be the case on GPIOs with programmable direction.
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/gpio/gpiolib.c | 33 +++++++++++++++++++--------------
- 1 file changed, 19 insertions(+), 14 deletions(-)
+* Paul E. McKenney <paulmck@linux.ibm.com> wrote:
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 6925196136ce..eaadbcb5c0f8 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1344,20 +1344,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- 
--	for (i = 0; i < chip->ngpio; i++) {
--		struct gpio_desc *desc = &gdev->descs[i];
--
--		desc->gdev = gdev;
--
--		/* REVISIT: most hardware initializes GPIOs as inputs (often
--		 * with pullups enabled) so power usage is minimized. Linux
--		 * code should set the gpio direction first thing; but until
--		 * it does, and in case chip->get_direction is not set, we may
--		 * expose the wrong direction in sysfs.
--		 */
--		desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
--	}
--
- #ifdef CONFIG_PINCTRL
- 	INIT_LIST_HEAD(&gdev->pin_ranges);
- #endif
-@@ -1374,6 +1360,25 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	if (status)
- 		goto err_remove_irqchip_mask;
- 
-+	for (i = 0; i < chip->ngpio; i++) {
-+		struct gpio_desc *desc = &gdev->descs[i];
-+
-+		desc->gdev = gdev;
-+
-+		/* REVISIT: most hardware initializes GPIOs as inputs (often
-+		 * with pullups enabled) so power usage is minimized. Linux
-+		 * code should set the gpio direction first thing; but until
-+		 * it does, and in case chip->get_direction is not set, we may
-+		 * expose the wrong direction in sysfs.
-+		 */
-+		if (chip->get_direction && gpiochip_line_is_valid(chip, i))
-+			desc->flags = !chip->get_direction(chip, i) ?
-+					(1 << FLAG_IS_OUT) : 0;
-+		else
-+			desc->flags = !chip->direction_input ?
-+					(1 << FLAG_IS_OUT) : 0;
-+	}
-+
- 	status = gpiochip_add_irqchip(chip, lock_key, request_key);
- 	if (status)
- 		goto err_remove_chip;
--- 
-2.19.0
+> Hello, Ingo!
+> 
+> This series contains updates to the Linux kernel's formal memory model
+> in tools/memory-model, along with corresponding changes in documentation
+> and Linux-kernel code.  These patches are ready for inclusion into -tip.
+> 
+> 1.	Document litmus-test naming scheme.
+> 
+> 2.	Add extra ordering for locks and remove it for ordinary
+> 	release/acquire, courtesy of Alan Stern.
+> 
+> 3.	Fix a README typo, courtesy of SeongJae Park.
+> 
+> 4.	Expand the list of LKMM limitations.
+> 
+> 5.	Replace smp_cond_acquire() with smp_cond_load_acquire(),
+> 	courtesy of Andrea Parri.
+> 
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+>  Documentation/memory-barriers.txt                                          |    3 
+>  tools/memory-model/Documentation/explanation.txt                           |  186 +++++++---
+>  tools/memory-model/Documentation/recipes.txt                               |    2 
+>  tools/memory-model/README                                                  |   39 ++
+>  tools/memory-model/linux-kernel.cat                                        |    8 
+>  tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus |    7 
+>  tools/memory-model/litmus-tests/README                                     |  104 +++++
+>  7 files changed, 293 insertions(+), 56 deletions(-)
 
+Applied to tip:locking/core, thanks Paul!
+
+	Ingo
