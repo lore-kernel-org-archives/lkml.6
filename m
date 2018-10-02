@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 397BAC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDA7C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF6D0206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF6D0206B2
+	by mail.kernel.org (Postfix) with ESMTP id BFD8C206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFD8C206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbeJBUJ5 (ORCPT
+        id S1727267AbeJBUJ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:09:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59846 "EHLO
+        Tue, 2 Oct 2018 16:09:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59854 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeJBUJ4 (ORCPT
+        with ESMTP id S1726304AbeJBUJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:09:56 -0400
+        Tue, 2 Oct 2018 16:09:57 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E3298B2F;
-        Tue,  2 Oct 2018 13:26:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 34CD0BF0;
+        Tue,  2 Oct 2018 13:26:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhen Lei <thunder.leizhen@huawei.com>,
-        Joerg Roedel <jroedel@suse.de>,
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 018/228] iommu/amd: make sure TLB to be flushed before IOVA freed
-Date:   Tue,  2 Oct 2018 06:21:55 -0700
-Message-Id: <20181002132500.298968294@linuxfoundation.org>
+Subject: [PATCH 4.18 019/228] Bluetooth: Add a new Realtek 8723DE ID 0bda:b009
+Date:   Tue,  2 Oct 2018 06:21:56 -0700
+Message-Id: <20181002132500.367558255@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,36 +52,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhen Lei <thunder.leizhen@huawei.com>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-[ Upstream commit 3c120143f584360a13614787e23ae2cdcb5e5ccd ]
+[ Upstream commit 45ae68b8cfc25bdbffc11248001c47ab1b76ff6e ]
 
-Although the mapping has already been removed in the page table, it maybe
-still exist in TLB. Suppose the freed IOVAs is reused by others before the
-flush operation completed, the new user can not correctly access to its
-meomory.
+Without this patch we cannot turn on the Bluethooth adapter on HP
+14-bs007la.
 
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-Fixes: b1516a14657a ('iommu/amd: Implement flush queue')
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+T:  Bus=01 Lev=02 Prnt=03 Port=00 Cnt=01 Dev#=  4 Spd=12   MxCh= 0
+D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0bda ProdID=b009 Rev= 2.00
+S:  Manufacturer=Realtek
+S:  Product=802.11n WLAN Adapter
+S:  SerialNumber=00e04c000001
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/amd_iommu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/btusb.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -2405,9 +2405,9 @@ static void __unmap_single(struct dma_op
- 	}
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -374,6 +374,7 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x7392, 0xa611), .driver_info = BTUSB_REALTEK },
  
- 	if (amd_iommu_unmap_flush) {
--		dma_ops_free_iova(dma_dom, dma_addr, pages);
- 		domain_flush_tlb(&dma_dom->domain);
- 		domain_flush_complete(&dma_dom->domain);
-+		dma_ops_free_iova(dma_dom, dma_addr, pages);
- 	} else {
- 		pages = __roundup_pow_of_two(pages);
- 		queue_iova(&dma_dom->iovad, dma_addr >> PAGE_SHIFT, pages, 0);
+ 	/* Additional Realtek 8723DE Bluetooth devices */
++	{ USB_DEVICE(0x0bda, 0xb009), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x2ff8, 0xb011), .driver_info = BTUSB_REALTEK },
+ 
+ 	/* Additional Realtek 8821AE Bluetooth devices */
 
 
