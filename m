@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E03DC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA7FC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F2BB2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F2BB2083F
+	by mail.kernel.org (Postfix) with ESMTP id 5143D2089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5143D2089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729615AbeJBUMO (ORCPT
+        id S1729632AbeJBUMO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 2 Oct 2018 16:12:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32906 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729601AbeJBUMN (ORCPT
+        with ESMTP id S1726993AbeJBUMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:13 -0400
+        Tue, 2 Oct 2018 16:12:14 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E6CB6B2F;
-        Tue,  2 Oct 2018 13:28:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 116A2A67;
+        Tue,  2 Oct 2018 13:28:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 087/228] ath10k: transmit queued frames after processing rx packets
-Date:   Tue,  2 Oct 2018 06:23:04 -0700
-Message-Id: <20181002132505.236700755@linuxfoundation.org>
+Subject: [PATCH 4.18 088/228] mt76x2: fix mrr idx/count estimation in mt76x2_mac_fill_tx_status()
+Date:   Tue,  2 Oct 2018 06:23:05 -0700
+Message-Id: <20181002132505.313316063@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,89 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Niklas Cassel <niklas.cassel@linaro.org>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit 3f04950f32d5d592ab4fcaecac2178558a6f7437 ]
+[ Upstream commit 2d1e9be0016230f3707812243561fbd16f1aea4b ]
 
-When running iperf on ath10k SDIO, TX can stop working:
+Fix mcs and attempt count estimation in mt76x2_mac_fill_tx_status routine
+if the number of tx retries reported by the hw is grater than
+IEEE80211_TX_MAX_RATES
 
-iperf -c 192.168.1.1 -i 1 -t 20 -w 10K
-[  3]  0.0- 1.0 sec  2.00 MBytes  16.8 Mbits/sec
-[  3]  1.0- 2.0 sec  3.12 MBytes  26.2 Mbits/sec
-[  3]  2.0- 3.0 sec  3.25 MBytes  27.3 Mbits/sec
-[  3]  3.0- 4.0 sec   655 KBytes  5.36 Mbits/sec
-[  3]  4.0- 5.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  5.0- 6.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  6.0- 7.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  7.0- 8.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  8.0- 9.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  9.0-10.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  0.0-10.3 sec  9.01 MBytes  7.32 Mbits/sec
-
-There are frames in the ieee80211_txq and there are frames that have
-been removed from from this queue, but haven't yet been sent on the wire
-(num_pending_tx).
-
-When num_pending_tx reaches max_num_pending_tx, we will stop the queues
-by calling ieee80211_stop_queues().
-
-As frames that have previously been sent for transmission
-(num_pending_tx) are completed, we will decrease num_pending_tx and wake
-the queues by calling ieee80211_wake_queue(). ieee80211_wake_queue()
-does not call wake_tx_queue, so we might still have frames in the
-queue at this point.
-
-While the queues were stopped, the socket buffer might have filled up,
-and in order for user space to write more, we need to free the frames
-in the queue, since they are accounted to the socket. In order to free
-them, we first need to transmit them.
-
-This problem cannot be reproduced on low-latency devices, e.g. pci,
-since they call ath10k_mac_tx_push_pending() from
-ath10k_htt_txrx_compl_task(). ath10k_htt_txrx_compl_task() is not called
-on high-latency devices.
-Fix the problem by calling ath10k_mac_tx_push_pending(), after
-processing rx packets, just like for low-latency devices, also in the
-SDIO case. Since we are calling ath10k_mac_tx_push_pending() directly,
-we also need to export it.
-
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Fixes: 7bc04215a66b ("mt76: add driver code for MT76x2e")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c  |    1 +
- drivers/net/wireless/ath/ath10k/sdio.c |    3 +++
- 2 files changed, 4 insertions(+)
+ drivers/net/wireless/mediatek/mt76/mt76x2_mac.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -4054,6 +4054,7 @@ void ath10k_mac_tx_push_pending(struct a
- 	rcu_read_unlock();
- 	spin_unlock_bh(&ar->txqs_lock);
- }
-+EXPORT_SYMBOL(ath10k_mac_tx_push_pending);
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2_mac.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2_mac.c
+@@ -439,15 +439,13 @@ mt76x2_mac_fill_tx_status(struct mt76x2_
+ 	if (last_rate < IEEE80211_TX_MAX_RATES - 1)
+ 		rate[last_rate + 1].idx = -1;
  
- /************/
- /* Scanning */
---- a/drivers/net/wireless/ath/ath10k/sdio.c
-+++ b/drivers/net/wireless/ath/ath10k/sdio.c
-@@ -30,6 +30,7 @@
- #include "debug.h"
- #include "hif.h"
- #include "htc.h"
-+#include "mac.h"
- #include "targaddrs.h"
- #include "trace.h"
- #include "sdio.h"
-@@ -1346,6 +1347,8 @@ static void ath10k_sdio_irq_handler(stru
- 			break;
- 	} while (time_before(jiffies, timeout) && !done);
+-	cur_idx = rate[last_rate].idx + st->retry;
++	cur_idx = rate[last_rate].idx + last_rate;
+ 	for (i = 0; i <= last_rate; i++) {
+ 		rate[i].flags = rate[last_rate].flags;
+ 		rate[i].idx = max_t(int, 0, cur_idx - i);
+ 		rate[i].count = 1;
+ 	}
+-
+-	if (last_rate > 0)
+-		rate[last_rate - 1].count = st->retry + 1 - last_rate;
++	rate[last_rate].count = st->retry + 1 - last_rate;
  
-+	ath10k_mac_tx_push_pending(ar);
-+
- 	sdio_claim_host(ar_sdio->func);
- 
- 	if (ret && ret != -ECANCELED)
+ 	info->status.ampdu_len = n_frames;
+ 	info->status.ampdu_ack_len = st->success ? n_frames : 0;
 
 
