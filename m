@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C80DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A55C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC6A32089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6A32089C
+	by mail.kernel.org (Postfix) with ESMTP id 22E17206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E17206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731335AbeJBUR7 (ORCPT
+        id S1732315AbeJBUSC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:17:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35312 "EHLO
+        Tue, 2 Oct 2018 16:18:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35326 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730846AbeJBUR6 (ORCPT
+        with ESMTP id S1730846AbeJBUSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:58 -0400
+        Tue, 2 Oct 2018 16:18:02 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E1D85AA;
-        Tue,  2 Oct 2018 13:34:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40D9B5AA;
+        Tue,  2 Oct 2018 13:34:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ariel Elior <Ariel.Elior@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 113/137] qed: Wait for ready indication before rereading the shmem
-Date:   Tue,  2 Oct 2018 06:25:14 -0700
-Message-Id: <20181002132506.430572784@linuxfoundation.org>
+Subject: [PATCH 4.14 114/137] qed: Wait for MCP halt and resume commands to take place
+Date:   Tue,  2 Oct 2018 06:25:15 -0700
+Message-Id: <20181002132506.487253236@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -55,12 +55,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tomer Tayar <Tomer.Tayar@cavium.com>
 
-[ Upstream commit f00d25f3154b676fcea4502a25b94bd7f142ca74 ]
+[ Upstream commit 76271809f49056f079e202bf6513d17b0d6dd34d ]
 
-The MFW might be reset and re-update its shared memory.
-Upon the detection of such a reset the driver rereads this memory, but it
-has to wait till the data is valid.
-This patch adds the missing wait for a data ready indication.
+Successive iterations of halting and resuming the management chip (MCP)
+might fail, since currently the driver doesn't wait for these operations to
+actually take place.
+This patch prevents the driver from moving forward before the operations
+are reflected in the state register.
 
 Signed-off-by: Tomer Tayar <Tomer.Tayar@cavium.com>
 Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
@@ -68,84 +69,91 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_mcp.c |   50 ++++++++++++++++++++++++------
- 1 file changed, 41 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_mcp.c      |   46 ++++++++++++++++++++-----
+ drivers/net/ethernet/qlogic/qed/qed_reg_addr.h |    1 
+ 2 files changed, 39 insertions(+), 8 deletions(-)
 
 --- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
 +++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-@@ -182,18 +182,57 @@ int qed_mcp_free(struct qed_hwfn *p_hwfn
- 	return 0;
+@@ -1998,31 +1998,61 @@ qed_mcp_send_drv_version(struct qed_hwfn
+ 	return rc;
  }
  
-+/* Maximum of 1 sec to wait for the SHMEM ready indication */
-+#define QED_MCP_SHMEM_RDY_MAX_RETRIES	20
-+#define QED_MCP_SHMEM_RDY_ITER_MS	50
++/* A maximal 100 msec waiting time for the MCP to halt */
++#define QED_MCP_HALT_SLEEP_MS		10
++#define QED_MCP_HALT_MAX_RETRIES	10
 +
- static int qed_load_mcp_offsets(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ int qed_mcp_halt(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
  {
- 	struct qed_mcp_info *p_info = p_hwfn->mcp_info;
-+	u8 cnt = QED_MCP_SHMEM_RDY_MAX_RETRIES;
-+	u8 msec = QED_MCP_SHMEM_RDY_ITER_MS;
- 	u32 drv_mb_offsize, mfw_mb_offsize;
- 	u32 mcp_pf_id = MCP_PF_ID(p_hwfn);
+-	u32 resp = 0, param = 0;
++	u32 resp = 0, param = 0, cpu_state, cnt = 0;
+ 	int rc;
  
- 	p_info->public_base = qed_rd(p_hwfn, p_ptt, MISC_REG_SHARED_MEM_ADDR);
--	if (!p_info->public_base)
--		return 0;
-+	if (!p_info->public_base) {
-+		DP_NOTICE(p_hwfn,
-+			  "The address of the MCP scratch-pad is not configured\n");
-+		return -EINVAL;
+ 	rc = qed_mcp_cmd(p_hwfn, p_ptt, DRV_MSG_CODE_MCP_HALT, 0, &resp,
+ 			 &param);
+-	if (rc)
++	if (rc) {
+ 		DP_ERR(p_hwfn, "MCP response failure, aborting\n");
++		return rc;
 +	}
  
- 	p_info->public_base |= GRCBASE_MCP;
- 
-+	/* Get the MFW MB address and number of supported messages */
-+	mfw_mb_offsize = qed_rd(p_hwfn, p_ptt,
-+				SECTION_OFFSIZE_ADDR(p_info->public_base,
-+						     PUBLIC_MFW_MB));
-+	p_info->mfw_mb_addr = SECTION_ADDR(mfw_mb_offsize, mcp_pf_id);
-+	p_info->mfw_mb_length = (u16)qed_rd(p_hwfn, p_ptt,
-+					    p_info->mfw_mb_addr +
-+					    offsetof(struct public_mfw_mb,
-+						     sup_msgs));
+-	return rc;
++	do {
++		msleep(QED_MCP_HALT_SLEEP_MS);
++		cpu_state = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_STATE);
++		if (cpu_state & MCP_REG_CPU_STATE_SOFT_HALTED)
++			break;
++	} while (++cnt < QED_MCP_HALT_MAX_RETRIES);
 +
-+	/* The driver can notify that there was an MCP reset, and might read the
-+	 * SHMEM values before the MFW has completed initializing them.
-+	 * To avoid this, the "sup_msgs" field in the MFW mailbox is used as a
-+	 * data ready indication.
-+	 */
-+	while (!p_info->mfw_mb_length && --cnt) {
-+		msleep(msec);
-+		p_info->mfw_mb_length =
-+			(u16)qed_rd(p_hwfn, p_ptt,
-+				    p_info->mfw_mb_addr +
-+				    offsetof(struct public_mfw_mb, sup_msgs));
-+	}
-+
-+	if (!cnt) {
++	if (cnt == QED_MCP_HALT_MAX_RETRIES) {
 +		DP_NOTICE(p_hwfn,
-+			  "Failed to get the SHMEM ready notification after %d msec\n",
-+			  QED_MCP_SHMEM_RDY_MAX_RETRIES * msec);
++			  "Failed to halt the MCP [CPU_MODE = 0x%08x, CPU_STATE = 0x%08x]\n",
++			  qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE), cpu_state);
 +		return -EBUSY;
 +	}
 +
- 	/* Calculate the driver and MFW mailbox address */
- 	drv_mb_offsize = qed_rd(p_hwfn, p_ptt,
- 				SECTION_OFFSIZE_ADDR(p_info->public_base,
-@@ -203,13 +242,6 @@ static int qed_load_mcp_offsets(struct q
- 		   "drv_mb_offsiz = 0x%x, drv_mb_addr = 0x%x mcp_pf_id = 0x%x\n",
- 		   drv_mb_offsize, p_info->drv_mb_addr, mcp_pf_id);
++	return 0;
+ }
  
--	/* Set the MFW MB address */
--	mfw_mb_offsize = qed_rd(p_hwfn, p_ptt,
--				SECTION_OFFSIZE_ADDR(p_info->public_base,
--						     PUBLIC_MFW_MB));
--	p_info->mfw_mb_addr = SECTION_ADDR(mfw_mb_offsize, mcp_pf_id);
--	p_info->mfw_mb_length =	(u16)qed_rd(p_hwfn, p_ptt, p_info->mfw_mb_addr);
--
- 	/* Get the current driver mailbox sequence before sending
- 	 * the first command
- 	 */
++#define QED_MCP_RESUME_SLEEP_MS	10
++
+ int qed_mcp_resume(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ {
+-	u32 value, cpu_mode;
++	u32 cpu_mode, cpu_state;
+ 
+ 	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_STATE, 0xffffffff);
+ 
+-	value = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE);
+-	value &= ~MCP_REG_CPU_MODE_SOFT_HALT;
+-	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_MODE, value);
+ 	cpu_mode = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE);
++	cpu_mode &= ~MCP_REG_CPU_MODE_SOFT_HALT;
++	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_MODE, cpu_mode);
++	msleep(QED_MCP_RESUME_SLEEP_MS);
++	cpu_state = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_STATE);
++
++	if (cpu_state & MCP_REG_CPU_STATE_SOFT_HALTED) {
++		DP_NOTICE(p_hwfn,
++			  "Failed to resume the MCP [CPU_MODE = 0x%08x, CPU_STATE = 0x%08x]\n",
++			  cpu_mode, cpu_state);
++		return -EBUSY;
++	}
+ 
+-	return (cpu_mode & MCP_REG_CPU_MODE_SOFT_HALT) ? -EAGAIN : 0;
++	return 0;
+ }
+ 
+ int qed_mcp_ov_update_current_config(struct qed_hwfn *p_hwfn,
+--- a/drivers/net/ethernet/qlogic/qed/qed_reg_addr.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_reg_addr.h
+@@ -554,6 +554,7 @@
+ 	0
+ #define MCP_REG_CPU_STATE \
+ 	0xe05004UL
++#define MCP_REG_CPU_STATE_SOFT_HALTED	(0x1UL << 10)
+ #define MCP_REG_CPU_EVENT_MASK \
+ 	0xe05008UL
+ #define PGLUE_B_REG_PF_BAR0_SIZE \
 
 
