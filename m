@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A67ECC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A84C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78D102089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D102089C
+	by mail.kernel.org (Postfix) with ESMTP id 7594D2064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7594D2064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387764AbeJBUUp (ORCPT
+        id S2387776AbeJBUUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 2 Oct 2018 16:20:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36684 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36676 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732593AbeJBUUn (ORCPT
+        with ESMTP id S2387724AbeJBUUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:43 -0400
+        Tue, 2 Oct 2018 16:20:42 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75AC15AA;
-        Tue,  2 Oct 2018 13:37:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69889C4D;
+        Tue,  2 Oct 2018 13:37:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 62/94] spi: rspi: Fix interrupted DMA transfers
-Date:   Tue,  2 Oct 2018 06:25:16 -0700
-Message-Id: <20181002132504.801786338@linuxfoundation.org>
+Subject: [PATCH 4.9 61/94] spi: rspi: Fix invalid SPI use during system suspend
+Date:   Tue,  2 Oct 2018 06:25:15 -0700
+Message-Id: <20181002132504.731383275@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -54,27 +54,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 8dbbaa47b96f6ea5f09f922b4effff3c505cd8cf upstream.
+commit c1ca59c22c56930b377a665fdd1b43351887830b upstream.
 
-When interrupted, wait_event_interruptible_timeout() returns
--ERESTARTSYS, and the SPI transfer in progress will fail, as expected:
+If the SPI queue is running during system suspend, the system may lock
+up.
 
-    m25p80 spi0.0: SPI transfer failed: -512
-    spi_master spi0: failed to transfer one message from queue
+Fix this by stopping/restarting the queue during system suspend/resume,
+by calling spi_master_suspend()/spi_master_resume() from the PM
+callbacks.  In-kernel users will receive an -ESHUTDOWN error while
+system suspend/resume is in progress.
 
-However, as the underlying DMA transfers may not have completed, all
-subsequent SPI transfers may start to fail:
-
-    spi_master spi0: receive timeout
-    qspi_transfer_out_in() returned -110
-    m25p80 spi0.0: SPI transfer failed: -110
-    spi_master spi0: failed to transfer one message from queue
-
-Fix this by calling dmaengine_terminate_all() not only for timeouts, but
-also for errors.
-
-This can be reproduced on r8a7991/koelsch, using "hd /dev/mtd0" followed
-by CTRL-C.
+Based on a patch for sh-msiof by Gaku Inami.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Mark Brown <broonie@kernel.org>
@@ -82,28 +72,47 @@ Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-rspi.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/spi/spi-rspi.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 --- a/drivers/spi/spi-rspi.c
 +++ b/drivers/spi/spi-rspi.c
-@@ -597,11 +597,13 @@ static int rspi_dma_transfer(struct rspi
+@@ -1313,12 +1313,36 @@ static const struct platform_device_id s
  
- 	ret = wait_event_interruptible_timeout(rspi->wait,
- 					       rspi->dma_callbacked, HZ);
--	if (ret > 0 && rspi->dma_callbacked)
-+	if (ret > 0 && rspi->dma_callbacked) {
- 		ret = 0;
--	else if (!ret) {
--		dev_err(&rspi->master->dev, "DMA timeout\n");
--		ret = -ETIMEDOUT;
-+	} else {
-+		if (!ret) {
-+			dev_err(&rspi->master->dev, "DMA timeout\n");
-+			ret = -ETIMEDOUT;
-+		}
- 		if (tx)
- 			dmaengine_terminate_all(rspi->master->dma_tx);
- 		if (rx)
+ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+ 
++#ifdef CONFIG_PM_SLEEP
++static int rspi_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct rspi_data *rspi = platform_get_drvdata(pdev);
++
++	return spi_master_suspend(rspi->master);
++}
++
++static int rspi_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct rspi_data *rspi = platform_get_drvdata(pdev);
++
++	return spi_master_resume(rspi->master);
++}
++
++static SIMPLE_DEV_PM_OPS(rspi_pm_ops, rspi_suspend, rspi_resume);
++#define DEV_PM_OPS	&rspi_pm_ops
++#else
++#define DEV_PM_OPS	NULL
++#endif /* CONFIG_PM_SLEEP */
++
+ static struct platform_driver rspi_driver = {
+ 	.probe =	rspi_probe,
+ 	.remove =	rspi_remove,
+ 	.id_table =	spi_driver_ids,
+ 	.driver		= {
+ 		.name = "renesas_spi",
++		.pm = DEV_PM_OPS,
+ 		.of_match_table = of_match_ptr(rspi_of_match),
+ 	},
+ };
 
 
