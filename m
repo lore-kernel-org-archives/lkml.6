@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98881C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D07E5C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56F6C208D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56F6C208D9
+	by mail.kernel.org (Postfix) with ESMTP id 9916B206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9916B206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729649AbeJBUMQ (ORCPT
+        id S1729668AbeJBUMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:12:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32928 "EHLO
+        Tue, 2 Oct 2018 16:12:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32938 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729601AbeJBUMP (ORCPT
+        with ESMTP id S1729639AbeJBUMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:15 -0400
+        Tue, 2 Oct 2018 16:12:16 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2DD24B2F;
-        Tue,  2 Oct 2018 13:28:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3BD09A67;
+        Tue,  2 Oct 2018 13:28:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 079/228] media: tm6000: add error handling for dvb_register_adapter
-Date:   Tue,  2 Oct 2018 06:22:56 -0700
-Message-Id: <20181002132504.687734022@linuxfoundation.org>
+Subject: [PATCH 4.18 121/228] ath10k: fix incorrect size of dma_free_coherent in ath10k_ce_alloc_src_ring_64
+Date:   Tue,  2 Oct 2018 06:23:38 -0700
+Message-Id: <20181002132507.638805791@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,38 +52,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit e95d7c6eb94c634852eaa5ff4caf3db05b5d2e86 ]
+[ Upstream commit 5a211627004e2cddd0ab8b9df19e5fb0bbe97634 ]
 
-When dvb_register_adapter fails, the lack of error-handling code may
-cause unexpected results.
+sizeof(struct ce_desc) should be a copy-paste mistake
+just use sizeof(struct ce_desc_64) to avoid mem leak
 
-This patch adds error-handling code after calling dvb_register_adapter.
-
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-[hans.verkuil@cisco.com: use pr_err and fix typo: adater -> adapter]
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: b7ba83f7c414 ("ath10k: add support for shadow register for WNC3990")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/tm6000/tm6000-dvb.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/wireless/ath/ath10k/ce.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/usb/tm6000/tm6000-dvb.c
-+++ b/drivers/media/usb/tm6000/tm6000-dvb.c
-@@ -266,6 +266,11 @@ static int register_dvb(struct tm6000_co
- 
- 	ret = dvb_register_adapter(&dvb->adapter, "Trident TVMaster 6000 DVB-T",
- 					THIS_MODULE, &dev->udev->dev, adapter_nr);
-+	if (ret < 0) {
-+		pr_err("tm6000: couldn't register the adapter!\n");
-+		goto err;
-+	}
-+
- 	dvb->adapter.priv = dev;
- 
- 	if (dvb->frontend) {
+--- a/drivers/net/wireless/ath/ath10k/ce.c
++++ b/drivers/net/wireless/ath/ath10k/ce.c
+@@ -1512,7 +1512,7 @@ ath10k_ce_alloc_src_ring_64(struct ath10
+ 		ret = ath10k_ce_alloc_shadow_base(ar, src_ring, nentries);
+ 		if (ret) {
+ 			dma_free_coherent(ar->dev,
+-					  (nentries * sizeof(struct ce_desc) +
++					  (nentries * sizeof(struct ce_desc_64) +
+ 					   CE_DESC_RING_ALIGN),
+ 					  src_ring->base_addr_owner_space_unaligned,
+ 					  base_addr);
 
 
