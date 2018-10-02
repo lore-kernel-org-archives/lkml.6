@@ -2,154 +2,74 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B04DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 284F7C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ACFA2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:38:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ACFA2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D12AA2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:39:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D12AA2083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbeJBKTL (ORCPT
+        id S1726943AbeJBKUT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 06:19:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59036 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726562AbeJBKTK (ORCPT
+        Tue, 2 Oct 2018 06:20:19 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:49834 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeJBKUT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 06:19:10 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w923Xl8X130044
-        for <linux-kernel@vger.kernel.org>; Mon, 1 Oct 2018 23:38:06 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2muymva9hx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 23:38:05 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 1 Oct 2018 23:38:05 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 1 Oct 2018 23:38:02 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w923c1qH46399624
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 2 Oct 2018 03:38:01 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 57179B205F;
-        Mon,  1 Oct 2018 23:36:14 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 34E1FB2064;
-        Mon,  1 Oct 2018 23:36:14 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.185.184])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  1 Oct 2018 23:36:14 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 36DEE16C39D4; Mon,  1 Oct 2018 20:38:01 -0700 (PDT)
-Date:   Mon, 1 Oct 2018 20:38:01 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH RFC 1/2] sched/core: Convert synchronize_rcu_mult to
- synchronize_rcu
-Reply-To: paulmck@linux.ibm.com
-References: <20181002012012.13133-1-joel@joelfernandes.org>
+        Tue, 2 Oct 2018 06:20:19 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1g7BWh-0005DN-Ti; Tue, 02 Oct 2018 11:39:11 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1g7BWe-0002JK-CD; Tue, 02 Oct 2018 11:39:08 +0800
+Date:   Tue, 2 Oct 2018 11:39:08 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Jason@zx2c4.com, ebiggers@kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-crypto@vger.kernel.org,
+        davem@davemloft.net, gregkh@linuxfoundation.org
+Subject: Re: [PATCH net-next v6 00/23] WireGuard: Secure Network Tunnel
+Message-ID: <20181002033908.324yhwqaohfsq65d@gondor.apana.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181002012012.13133-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18100203-0052-0000-0000-0000033AD676
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009806; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01096602; UDB=6.00567046; IPR=6.00876644;
- MB=3.00023582; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-02 03:38:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100203-0053-0000-0000-00005E440881
-Message-Id: <20181002033801.GP4222@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-01_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810020034
+In-Reply-To: <CAKv+Gu-ZMR7zEAKv6_2tyD3OqnjVugOzKHzBEXW3pQs5W-SvLw@mail.gmail.com>
+X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel,apana.lists.os.linux.netdev
+Organization: Core
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 06:20:11PM -0700, Joel Fernandes wrote:
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 28 September 2018 at 07:46, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+>> If an implementation enters Zinc, it will go through my tree. If it
+>> enters the crypto API, it will go through Herbert's tree. If there
+>> wind up being messy tree dependency and merge timing issues, I can
+>> work this out in the usual way with Herbert. I'll be sure to discuss
+>> these edge cases with him when we discuss. I think there's a way to
+>> handle that with minimum friction.
 > 
-> synchronize_rcu_mult is now obsolete since all the different RCU flavors
-> have been consolidated and the API is now common on the updater side.
-> sched/core.c is the only user of it. All call_rcu_<flavor> calls boil
-> down to the same call_rcu. So there's no point in calling
-> synchronize_rcu_mult infact it could potentially be slower due to
-> waiting for the call_rcu callback twice. Just call synchronize_rcu here
-> which should do the job.
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> I would also strongly prefer that all crypto work is taken through
+> Herbert's tree, so we have a coherent view of it before it goes
+> upstream.
 
-Well, the theory was that I was going to keep this series hidden until
-the consolidation hit mainline just to avoid confusion, but please see
-5fc9d4e000b1 ("rcu: Eliminate synchronize_rcu_mult()"), which I just
-now pushed to -rcu.  To your credit, you did get most of it.  ;-)
+I agree.  I don't have any problems with the zinc code living in
+its own git tree.  But any upstream merges should definitely go
+through the crypto tree because the inherent ties between the two
+code-base.
 
-Here is the full list:
-
-pick 1f3e6eaed8fa Apply coccinelle script to consolidate calls to RCU-bh and RCU-sched
-pick 5fc9d4e000b1 rcu: Eliminate synchronize_rcu_mult()
-pick a8475496801e rcu: Consolidate the RCU update functions invoked by sync.c
-pick d8ffb03461ad sched/membarrier: Replace synchronize_sched() with synchronize_rcu()
-
-Of course, I will need to rerun the coccinelle script and split the
-result across subsystems, but I am waiting until the current pull
-request hits mainline.  Let's face it, none of us need to do debugging
-on someone consolidating their RCU updates before at least this commit
-and its predecessors hit mainline:
-
-709fdce7545c ("rcu: Express Tiny RCU updates in terms of RCU rather than RCU-sched")
-
-I sent the pull request to Ingo a few days ago, so with some luck this
-will all get to mainline during the next merge window, and then it is
-open season on outside-of-RCU cleanups.  ;-)
-
-							Thanx, Paul
-
-> ---
->  kernel/sched/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 625bc9897f62..d8311f3cf58c 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -5791,7 +5791,7 @@ int sched_cpu_deactivate(unsigned int cpu)
->  	 *
->  	 * Do sync before park smpboot threads to take care the rcu boost case.
->  	 */
-> -	synchronize_rcu_mult(call_rcu, call_rcu_sched);
-> +	synchronize_rcu();
->  
->  	if (!sched_smp_initialized)
->  		return 0;
-> -- 
-> 2.19.0.605.g01d371f741-goog
-> 
-
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
