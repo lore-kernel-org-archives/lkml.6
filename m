@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D946C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13791C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AD8F2064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:12:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AD8F2064A
+	by mail.kernel.org (Postfix) with ESMTP id DB2D62083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:12:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB2D62083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbeJBUzx (ORCPT
+        id S1729136AbeJBU4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:55:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60288 "EHLO
+        Tue, 2 Oct 2018 16:56:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60260 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728470AbeJBUKq (ORCPT
+        with ESMTP id S1728488AbeJBUKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:46 -0400
+        Tue, 2 Oct 2018 16:10:43 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CBF7266;
-        Tue,  2 Oct 2018 13:27:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74F5EB2F;
+        Tue,  2 Oct 2018 13:27:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Team OWL337 <icytxw@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
+        stable@vger.kernel.org,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 057/228] alarmtimer: Prevent overflow for relative nanosleep
-Date:   Tue,  2 Oct 2018 06:22:34 -0700
-Message-Id: <20181002132503.120807103@linuxfoundation.org>
+Subject: [PATCH 4.18 055/228] ACPI / button: increment wakeup count only when notified
+Date:   Tue,  2 Oct 2018 06:22:32 -0700
+Message-Id: <20181002132503.001654655@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,51 +53,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Ravi Chandra Sadineni <ravisadineni@chromium.org>
 
-[ Upstream commit 5f936e19cc0ef97dbe3a56e9498922ad5ba1edef ]
+[ Upstream commit 7c058c7c74b3dbeb7d157c273959f87faf710350 ]
 
-Air Icy reported:
+Because acpi_lid_initialize_state() is called on every system
+resume and it triggers acpi_lid_notify_state() which invokes
+acpi_pm_wakeup_event() for the lid device, the lid's wakeup count is
+incremented even if the lid was not the source of the event that woke up
+the system. That behavior confuses user space deamons using
+wakeup_count to identify the potential system wakeup source. To avoid
+the confusion, only trigger acpi_pm_wakeup_event() in the
+acpi_button_notify() path and don't do that in the
+acpi_lid_initialize_state() path.
 
-  UBSAN: Undefined behaviour in kernel/time/alarmtimer.c:811:7
-  signed integer overflow:
-  1529859276030040771 + 9223372036854775807 cannot be represented in type 'long long int'
-  Call Trace:
-   alarm_timer_nsleep+0x44c/0x510 kernel/time/alarmtimer.c:811
-   __do_sys_clock_nanosleep kernel/time/posix-timers.c:1235 [inline]
-   __se_sys_clock_nanosleep kernel/time/posix-timers.c:1213 [inline]
-   __x64_sys_clock_nanosleep+0x326/0x4e0 kernel/time/posix-timers.c:1213
-   do_syscall_64+0xb8/0x3a0 arch/x86/entry/common.c:290
-
-alarm_timer_nsleep() uses ktime_add() to add the current time and the
-relative expiry value. ktime_add() has no sanity checks so the addition
-can overflow when the relative timeout is large enough.
-
-Use ktime_add_safe() which has the necessary sanity checks in place and
-limits the result to the valid range.
-
-Fixes: 9a7adcf5c6de ("timers: Posix interface for alarm-timers")
-Reported-by: Team OWL337 <icytxw@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1807020926360.1595@nanos.tec.linutronix.de
+Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/time/alarmtimer.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/acpi/button.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -808,7 +808,8 @@ static int alarm_timer_nsleep(const cloc
- 	/* Convert (if necessary) to absolute time */
- 	if (flags != TIMER_ABSTIME) {
- 		ktime_t now = alarm_bases[type].gettime();
--		exp = ktime_add(now, exp);
-+
-+		exp = ktime_add_safe(now, exp);
+--- a/drivers/acpi/button.c
++++ b/drivers/acpi/button.c
+@@ -235,9 +235,6 @@ static int acpi_lid_notify_state(struct
+ 		button->last_time = ktime_get();
  	}
  
- 	ret = alarmtimer_do_nsleep(&alarm, exp, type);
+-	if (state)
+-		acpi_pm_wakeup_event(&device->dev);
+-
+ 	ret = blocking_notifier_call_chain(&acpi_lid_notifier, state, device);
+ 	if (ret == NOTIFY_DONE)
+ 		ret = blocking_notifier_call_chain(&acpi_lid_notifier, state,
+@@ -366,7 +363,8 @@ int acpi_lid_open(void)
+ }
+ EXPORT_SYMBOL(acpi_lid_open);
+ 
+-static int acpi_lid_update_state(struct acpi_device *device)
++static int acpi_lid_update_state(struct acpi_device *device,
++				 bool signal_wakeup)
+ {
+ 	int state;
+ 
+@@ -374,6 +372,9 @@ static int acpi_lid_update_state(struct
+ 	if (state < 0)
+ 		return state;
+ 
++	if (state && signal_wakeup)
++		acpi_pm_wakeup_event(&device->dev);
++
+ 	return acpi_lid_notify_state(device, state);
+ }
+ 
+@@ -384,7 +385,7 @@ static void acpi_lid_initialize_state(st
+ 		(void)acpi_lid_notify_state(device, 1);
+ 		break;
+ 	case ACPI_BUTTON_LID_INIT_METHOD:
+-		(void)acpi_lid_update_state(device);
++		(void)acpi_lid_update_state(device, false);
+ 		break;
+ 	case ACPI_BUTTON_LID_INIT_IGNORE:
+ 	default:
+@@ -409,7 +410,7 @@ static void acpi_button_notify(struct ac
+ 			users = button->input->users;
+ 			mutex_unlock(&button->input->mutex);
+ 			if (users)
+-				acpi_lid_update_state(device);
++				acpi_lid_update_state(device, true);
+ 		} else {
+ 			int keycode;
+ 
 
 
