@@ -2,118 +2,131 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A7EC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42020C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF71F2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:43:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrZTI+gR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF71F2089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EF25B20878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:46:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF25B20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbeJBNZT (ORCPT
+        id S1726717AbeJBN2a convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 09:25:19 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34675 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbeJBNZT (ORCPT
+        Tue, 2 Oct 2018 09:28:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39562 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726492AbeJBN2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 09:25:19 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z4-v6so790377wrb.1;
-        Mon, 01 Oct 2018 23:43:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YgC+jWZtT87HLnwjqo8n4iVhpVAQFMI9z8ZIq7XC9uE=;
-        b=VrZTI+gRSNF+JiAg2SNnod+OBuXhTMR6IB3wW6VZ3RvtJUkFT5myXd9iNCrXoiZn8m
-         haWt05kugtVSpTfiWiQGE2FgjDWIDhE9t7up24i+D3DVcd7KSmgzlxzTdIT+1WyGFAej
-         GgiAXluodCZToSUSTbf8jh+sXsw0F+Y2193412fqmFrBbEG2ZOfQK5NmTBSG+nipQB9j
-         t6i6Tn7RqV7ba77aqQ7L42n8TjVwY4I1Z3vvm8w9+hSuqmAODUX/hOpN7f7IX3/+QGrm
-         p0uTBkN8EyOo9z6gnCtuFKS3VXWT+XKmmelpJi2fOnjQkMLlT1/cCZYrEss1ZBVDn+oK
-         1ueA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YgC+jWZtT87HLnwjqo8n4iVhpVAQFMI9z8ZIq7XC9uE=;
-        b=PTsRBzgASkMZ4ex/X18XqOGFRpRn8747BThNFqwptN/ABRV5CbnoEuoy7e8ZTPCp/r
-         9sRk/Mg1Gg1v3Kfy5PaZTWfj0mRg/wKI9CGdVKhPtGBNOI4NYhduYDTP9Yk4J2eGxeKF
-         Z7C24Ya40wnFkmRNFLcWnUrzwViRs6PbtXDaXU8wUdNVZVSpQEAdVkn/yWTbaTz9J+nw
-         djnx/C5tvE9QAmqts2qYQbmSFvcViLEcZ7cRgauSC7vj4Vq7l2lKy3/x6pc+9WVy3DMx
-         wCjrf2E2WbedkeYjVFjpvlKOrdEqRJrExVAmG8wMR+Bx8TTxMtCjHfYYGJJKmeOfk8PU
-         wtKg==
-X-Gm-Message-State: ABuFfojRw7v2Bqa1i8iJYYwJ9nG2tDjxM7j2UDQmKWZRegcJmX/pHM3H
-        KPUMxHj8CcAFfxJHI6QYO2OkBxRG3vgsewcp+YO7LQ==
-X-Google-Smtp-Source: ACcGV6190fCql76pIvGxuBPM0z5GVJwDR0bPvBDpwccsVo181xKpI2L8cVQY2L7vkggz/U8hPV9g6+RPT94BxLjWyWw=
-X-Received: by 2002:a5d:4292:: with SMTP id k18-v6mr9185490wrq.225.1538462617213;
- Mon, 01 Oct 2018 23:43:37 -0700 (PDT)
+        Tue, 2 Oct 2018 09:28:30 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w926iJVm034115
+        for <linux-kernel@vger.kernel.org>; Tue, 2 Oct 2018 02:46:49 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mv10hn37t-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 02:46:48 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Tue, 2 Oct 2018 07:46:46 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 2 Oct 2018 07:46:43 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w926kgmR62652492
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 2 Oct 2018 06:46:42 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 243DA42047;
+        Tue,  2 Oct 2018 09:46:23 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C97724204B;
+        Tue,  2 Oct 2018 09:46:22 +0100 (BST)
+Received: from osiris (unknown [9.152.212.171])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  2 Oct 2018 09:46:22 +0100 (BST)
+Date:   Tue, 2 Oct 2018 08:46:40 +0200
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Ursula Braun <ubraun@linux.ibm.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>, kbuild@01.org,
+        kbuild-all@01.org, davem@davemloft.net, netdev@vger.kernel.org,
+        linux-s390@vger.kernel.org, schwidefsky@de.ibm.com,
+        raspl@linux.ibm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 2/5] net/smc: remove duplicate mutex_unlock
+References: <20180920091243.xgansymg6a4dfixg@mwanda>
+ <c0fe2ae3-38b4-5023-9140-20f7acac6028@linux.ibm.com>
+In-Reply-To: <c0fe2ae3-38b4-5023-9140-20f7acac6028@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18100206-0016-0000-0000-0000020D25A0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100206-0017-0000-0000-000032646183
+Message-Id: <20181002064640.GA16762@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <CAKv+Gu-ZMR7zEAKv6_2tyD3OqnjVugOzKHzBEXW3pQs5W-SvLw@mail.gmail.com>
- <20181002033908.324yhwqaohfsq65d@gondor.apana.org.au> <CAHmME9piX1kbUhOBcUKVdecr45EjxuruxYuMTepfXVvRrkVmyg@mail.gmail.com>
- <CAKv+Gu8fr_qADiTJH05nVWF7Yi3U722nfKJsMaRE9CP3YjNBbg@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8fr_qADiTJH05nVWF7Yi3U722nfKJsMaRE9CP3YjNBbg@mail.gmail.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Tue, 2 Oct 2018 08:43:25 +0200
-Message-ID: <CAFLxGvz3tR4Fy95Zu+-gRfk19HDd_N54QLftisdJJewPWbL3xA@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 00/23] WireGuard: Secure Network Tunnel
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>, ebiggers@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-02_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=956 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810020069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 8:04 AM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> On 2 October 2018 at 05:45, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > Hi Herbert,
+On Mon, Oct 01, 2018 at 05:22:22PM +0200, Ursula Braun wrote:
+> 
+> > 3b2dec260 Hans Wippel   2018-05-18  1282  	/* finish worker */
+> > c69342ef9 Ursula Braun  2018-09-18  1283  	if (!ism_supported) {
+> > c69342ef9 Ursula Braun  2018-09-18  1284  		if (smc_listen_rdma_finish(new_smc, &cclc, local_contact))
+> > c69342ef9 Ursula Braun  2018-09-18  1285  			return;
+> >                                                                 ^^^^^^
+> > We need to mutex_unlock(&smc_create_lgr_pending); before the return.
 > >
-> > On Tue, Oct 2, 2018 at 5:39 AM Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> >> > I would also strongly prefer that all crypto work is taken through
-> >> > Herbert's tree, so we have a coherent view of it before it goes
-> >> > upstream.
-> >>
-> >> I agree.  I don't have any problems with the zinc code living in
-> >> its own git tree.  But any upstream merges should definitely go
-> >> through the crypto tree because the inherent ties between the two
-> >> code-base.
-> >
-> > I can send you pull requests then if there are development cycles when
-> > there are in fact relations between the two trees. I'll update the
-> > commit message describing Zinc to include this.
-> >
->
-> Can you explain why you it is so important to you that your changes
-> remain outside the crypto tree?
->
-> Also, I still think the name Zinc (zinc is not crypto/) is needlessly
-> divisive and condescending, and unsaying it (in v2 and up) doesn't
-> really work on the Internet (especially since you are still repeating
-> it in your conference talk.)
+> 
+> The smatch warning is not necessary, since the mutex_unlock(&smc_create_lgr_pending)
+> for this case is done within smc_listen_rdma_finish().
+> 
+> > c69342ef9 Ursula Braun  2018-09-18  1286  	}
+> > 3b2dec260 Hans Wippel   2018-05-18  1287  	smc_conn_save_peer_info(new_smc, &cclc);
+> > 3b2dec260 Hans Wippel   2018-05-18  1288  	mutex_unlock(&smc_create_lgr_pending);
+> > 3b2dec260 Hans Wippel   2018-05-18 @1289  	smc_listen_out_connected(new_smc);
+> > a046d57da Ursula Braun  2017-01-09  1290  }
+> > a046d57da Ursula Braun  2017-01-09  1291  
+> > 
+> > ---
+> > 0-DAY kernel test infrastructure                Open Source Technology Center
+> > https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> > 
+> 
+> But you could argue the code confuses smatch and other readers. Thus I could improve
+> readability with a patch like this:
 
-I've been following the drama^Wdiscussion on the zinc for a long time now
-and I also think that "zinc" is a misleading name.
-Jason, you seem to hate the existing crypto framework with passion,
-and the name reflects that.
-Since we all agree that the framework can do better and your patches actually
-make it better, please just rename it to something that reflects what
-it is, a base
-framework. I think Ard already suggested "crypto/base/" or "crypto/core/".
+Yes, please.
 
--- 
-Thanks,
-//richard
+> ---
+>  net/smc/af_smc.c |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> --- a/net/smc/af_smc.c
+> +++ b/net/smc/af_smc.c
+> @@ -1184,7 +1184,6 @@ static int smc_listen_rdma_finish(struct
+>  	return 0;
+>  
+>  decline:
+> -	mutex_unlock(&smc_create_lgr_pending);
+>  	smc_listen_decline(new_smc, reason_code, local_contact);
+>  	return reason_code;
+>  }
+
+The lonely mutex_unlock() also _looks_ like a bug ;)
+
