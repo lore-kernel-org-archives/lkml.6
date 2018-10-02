@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A3BC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFAFC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 426C2206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 426C2206B2
+	by mail.kernel.org (Postfix) with ESMTP id 4ECD42083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ECD42083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbeJBUMH (ORCPT
+        id S1729582AbeJBUMJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:12:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32860 "EHLO
+        Tue, 2 Oct 2018 16:12:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32868 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726993AbeJBUMH (ORCPT
+        with ESMTP id S1726993AbeJBUMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:07 -0400
+        Tue, 2 Oct 2018 16:12:08 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6188DA67;
-        Tue,  2 Oct 2018 13:28:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F3AFBF0;
+        Tue,  2 Oct 2018 13:28:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>,
+        stable@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 119/228] EDAC, altera: Fix an error handling path in altr_s10_sdram_probe()
-Date:   Tue,  2 Oct 2018 06:23:36 -0700
-Message-Id: <20181002132507.456195101@linuxfoundation.org>
+Subject: [PATCH 4.18 084/228] drm/sun4i: Enable DW HDMI PHY clock
+Date:   Tue,  2 Oct 2018 06:23:01 -0700
+Message-Id: <20181002132505.040009212@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -55,36 +52,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
 
-[ Upstream commit 9d72fe1ce81bc757ecb6d57b58e5fd95b9ad1b26 ]
+[ Upstream commit 09773c532d30187f86a142901c27c93e629ce6ba ]
 
-If regmap_write() fails, we should release some resources as done in all
-the other error handling paths of the function.
+Current DW HDMI PHY code never prepares and enables PHY clock after it is
+created. It's just used as it is. This may work in some cases, but it's
+clearly wrong. Fix it by adding proper calls to enable/disable PHY
+clock.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20180610174532.22071-1-christophe.jaillet@wanadoo.fr
-Fixes: e9918d7fafae ("EDAC, altera: Handle SDRAM Uncorrectable Errors on Stratix10")
-Signed-off-by: Borislav Petkov <bp@suse.de>
+Fixes: 4f86e81748fe ("drm/sun4i: Add support for H3 HDMI PHY variant")
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180625120304.7543-17-jernej.skrabec@siol.net
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/edac/altera_edac.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -730,7 +730,8 @@ static int altr_s10_sdram_probe(struct p
- 			 S10_DDR0_IRQ_MASK)) {
- 		edac_printk(KERN_ERR, EDAC_MC,
- 			    "Error clearing SDRAM ECC count\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err2;
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -477,13 +477,15 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw
+ 			dev_err(dev, "Couldn't create the PHY clock\n");
+ 			goto err_put_clk_pll0;
+ 		}
++
++		clk_prepare_enable(phy->clk_phy);
  	}
  
- 	if (regmap_update_bits(drvdata->mc_vbase, priv->ecc_irq_en_offset,
+ 	phy->rst_phy = of_reset_control_get_shared(node, "phy");
+ 	if (IS_ERR(phy->rst_phy)) {
+ 		dev_err(dev, "Could not get phy reset control\n");
+ 		ret = PTR_ERR(phy->rst_phy);
+-		goto err_put_clk_pll0;
++		goto err_disable_clk_phy;
+ 	}
+ 
+ 	ret = reset_control_deassert(phy->rst_phy);
+@@ -514,6 +516,8 @@ err_deassert_rst_phy:
+ 	reset_control_assert(phy->rst_phy);
+ err_put_rst_phy:
+ 	reset_control_put(phy->rst_phy);
++err_disable_clk_phy:
++	clk_disable_unprepare(phy->clk_phy);
+ err_put_clk_pll0:
+ 	if (phy->variant->has_phy_clk)
+ 		clk_put(phy->clk_pll0);
+@@ -531,6 +535,7 @@ void sun8i_hdmi_phy_remove(struct sun8i_
+ 
+ 	clk_disable_unprepare(phy->clk_mod);
+ 	clk_disable_unprepare(phy->clk_bus);
++	clk_disable_unprepare(phy->clk_phy);
+ 
+ 	reset_control_assert(phy->rst_phy);
+ 
 
 
