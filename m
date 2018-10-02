@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9AB7C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C8BC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA092089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:43:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7903420684
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:43:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="n9FCU1qr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA092089A
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Fi/eYR8p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7903420684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbeJBP0A (ORCPT
+        id S1727369AbeJBP0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 11:26:00 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38192 "EHLO
+        Tue, 2 Oct 2018 11:26:01 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53135 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbeJBP0A (ORCPT
+        with ESMTP id S1726508AbeJBP0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:26:00 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 193-v6so1309209wme.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 01:43:50 -0700 (PDT)
+        Tue, 2 Oct 2018 11:26:01 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 189-v6so1351984wmw.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 01:43:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pS2sZN7Q59sh8X96tfZBc9kwSl+jTGdPA860nux7XN0=;
-        b=n9FCU1qrVBmX7yQKuZcBMhPsby8uQzkk+ojuTq/SFgxuu6NPb2zoa3vE4XHhcgRms+
-         olYdwqBSKooS9Q4hrHr4cLBOQ5EkmJLtZF99+aY1ujTvDGbo2W55Usl8WO8DDdB7MXhs
-         Df2r9szSKDED1Xma6c3UMECAAAgpGSZ7wVs8Co+KwJKPMO9BJYl3gjZ08A7ouMZhoqud
-         qJi7sYzursU0sy016mGXEfMOSnSYv+RuZt4K51AMNEEHhSZe1QrIyVHLdJ6nqTzc+sft
-         FIlLtno66u+z3hFFV+g3HgRfeyRdfmpJTmUA5Gt32axzchALFVDj5u7hpetZ4t7wjPDX
-         iKdw==
+        bh=PKzH8oYKZ82Z9TWd7i02OlmOTFAJUgwk8t5GyaIR3Bc=;
+        b=Fi/eYR8pwykHWHOKpYSmKoc+0Wmlao7S1/rdIXXxB/GD9s7jVvZJ/5YovtSwd6Susj
+         6qPpJLPAat6p/M925sKVHsJ7RlM1rEdqOsIcEReJoHeXe8ee+vWhFA9ufBhrGzD12hgz
+         FNWa4ZQjWu9hoIaYqSJDrYcCbFD4pqTa6hkkSCqxys29pNh0wuJ7tnuSvaFA8X/CfL6K
+         mj+pyzR8NmAKsWveqZamci3eG932H1eUYbOu2f+QQYlYrYrU0ueUYphxwwS9r1/ds0nU
+         1V1zWZT3IPOf0jFgiSW0o3KxaWOq5E/MxzsRmAMqSjM8W6Fv7cXpzF9ThNqKOIJ9PYkV
+         +EKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=pS2sZN7Q59sh8X96tfZBc9kwSl+jTGdPA860nux7XN0=;
-        b=r1p4NFNFmru8RVScABrtLer16gwP/k8YTWpeQNaFCvAMR3ryan02ktu0GQ1i8gtUNi
-         uWRNXSkHW3UAU780bG/63274KFsTwxJ24a+FuVlFpx+uk8AHwDSfAWb8mE1RP6ScRHf4
-         bvoESc4Sg74J6d9z2mXYbhMWxu76t+MrsgomCakIm+T2Ox6aefVf/IAH5WRzYDlkLAVR
-         KwKzDnb5mIT9K3Gm4n020g+veuXR222X+mSZk4T6HlzkyOJINRqUky+lWVor2iA9oOFH
-         tt8SWmzoNVVQXLKeGXq4g5lid/EMx4VLak0jmF8lI8eVF9Efkaj9OKv1dtx8RffucGMC
-         ktjw==
-X-Gm-Message-State: ABuFfohfQ2G4KuKHqhZHjaBBiau94YDKNWAYHVoVWQg4hD2KzVvTkGoq
-        Uz6GF6NDG6mTHW5eDst83AArgF+1C48=
-X-Google-Smtp-Source: ACcGV63mYUMTBIi0NSP36N+RoVqQeqbagJzAMl0E9Z5fc/GEubQa/FkjDz/DllZtDciSweHeggHEfA==
-X-Received: by 2002:a1c:a015:: with SMTP id j21-v6mr1211791wme.78.1538469830094;
-        Tue, 02 Oct 2018 01:43:50 -0700 (PDT)
+        bh=PKzH8oYKZ82Z9TWd7i02OlmOTFAJUgwk8t5GyaIR3Bc=;
+        b=E4EzdSn+uRCXtlwzYRrI60wo0VvGbo2Z+3/b/dCRESlEJ05c1OfQ0sLT3scFhz3BJk
+         sCASZKB3Lpl8FCryP3/L746zUo9gdvdiAG22MvBmVziFaD/Q+ybElH4XIA7pgepf2FdQ
+         JIwg+99ce2VlOHiKqL1nvb5Pg22km9ILttIMwRnFM24MVmDG8NEqKgkxknLmy52I7m9D
+         fhv0F6VdMX6ZwOeN9jc/nVTQz+dyKktCXmASi7LjiWIswgaUSBgEX8yjWPDkR5FTyflr
+         o7UZ06JrrToI503p8JCjdENxVnro1um5Vu+PIn6kUe6l9yG4bpmbFmIoyQnJms/Es9dD
+         3GIA==
+X-Gm-Message-State: ABuFfogk6LHbq96qMmUvRbRgVh2oTfhapYd9hgEe6vvFzRWBrC+M4Dql
+        w8K1mGDXSO4sdJ3kBbpXI9b4wg==
+X-Google-Smtp-Source: ACcGV623DtWlOgdp/InigkmS4w1yiXL61w0NCjABKQqR/Iw2XTwnXTqxSHuU7fvpyC8nKrNCv8wWPg==
+X-Received: by 2002:a1c:ee0c:: with SMTP id m12-v6mr1209010wmh.112.1538469831403;
+        Tue, 02 Oct 2018 01:43:51 -0700 (PDT)
 Received: from boomer.baylibre.local ([2a01:e34:eeb6:4690:3146:aafc:91d9:4b96])
-        by smtp.googlemail.com with ESMTPSA id 198-v6sm16162298wmm.0.2018.10.02.01.43.48
+        by smtp.googlemail.com with ESMTPSA id 198-v6sm16162298wmm.0.2018.10.02.01.43.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Oct 2018 01:43:49 -0700 (PDT)
+        Tue, 02 Oct 2018 01:43:50 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Kevin Hilman <khilman@baylibre.com>,
         Carlo Caione <carlo@caione.org>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/2] arm64: dts: meson-axg: s400: add missing emmc pwrseq
-Date:   Tue,  2 Oct 2018 10:43:40 +0200
-Message-Id: <20181002084341.5487-2-jbrunet@baylibre.com>
+Subject: [PATCH 2/2] arm64: dts: meson-axg: s400: disable emmc
+Date:   Tue,  2 Oct 2018 10:43:41 +0200
+Message-Id: <20181002084341.5487-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181002084341.5487-1-jbrunet@baylibre.com>
 References: <20181002084341.5487-1-jbrunet@baylibre.com>
@@ -75,28 +75,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-eMMC pwrseq is defined in the s400 dts but not used in the emmc node.
-This is probably just a copy/paste error
+While it is possible to rework the s400 board to solder an eMMC on it,
+it is not the default option and most boards are fitted with a NAND
+instead.
 
-Fixes: 221cf34bac54 ("ARM64: dts: meson-axg: enable the eMMC controller")
+Let's disable the emmc device by default to reflect this. The board
+equipped with an eMMC will just have to alter the DT in the
+bootloader, like we do for the reserved memory regions.
+
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-axg-s400.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-axg-s400.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-index d6467ac333ec..166ab598395e 100644
+index 166ab598395e..c74ff1efebb8 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-@@ -493,6 +493,8 @@
- 	mmc-ddr-1_8v;
- 	mmc-hs200-1_8v;
+@@ -479,7 +479,7 @@
  
-+	mmc-pwrseq = <&emmc_pwrseq>;
-+
- 	vmmc-supply = <&vcc_3v3>;
- 	vqmmc-supply = <&vddio_boot>;
- };
+ /* emmc storage */
+ &sd_emmc_c {
+-	status = "okay";
++	status = "disabled";
+ 	pinctrl-0 = <&emmc_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
 -- 
 2.17.1
 
