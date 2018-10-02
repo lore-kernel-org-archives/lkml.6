@@ -2,169 +2,121 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A09EC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA175C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3004C206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:06:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dqb0CBbB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3004C206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 79FC9206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:07:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79FC9206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbeJCCvq (ORCPT
+        id S1727588AbeJCCwE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 22:51:46 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49138 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbeJCCvq (ORCPT
+        Tue, 2 Oct 2018 22:52:04 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60946 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbeJCCwE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 22:51:46 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4E7B2B7F;
-        Tue,  2 Oct 2018 22:06:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1538510801;
-        bh=JqVegfD7cJSpYnTK6WX2rQKLdNLsrMy7T47yWVe7yjs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dqb0CBbBht7JaLMFWbsvkXJ0e1FML0JHahk1mWsqJx3HtgrYAzUp3btBebreA6/WB
-         CGZLhnhPzCkYF1XkT5LhS/bAvAe/DbO8CZCm7Am/s9cu0pjXeSCRCYkA2U6WFeNR08
-         OrUiXPECIwYowt7egqqzyvn1xRIwudRJ1pg9hNxQ=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        jacopo@jmondi.org, phdm@macq.eu, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] [media] imx214: device tree binding
-Date:   Tue, 02 Oct 2018 23:06:57 +0300
-Message-ID: <4555006.y1GbRfQLCO@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20181002140515.16299-1-ricardo.ribalda@gmail.com>
-References: <20181002140515.16299-1-ricardo.ribalda@gmail.com>
+        Tue, 2 Oct 2018 22:52:04 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g7Qw9-0002Lg-Jv; Tue, 02 Oct 2018 22:06:29 +0200
+Date:   Tue, 2 Oct 2018 22:06:28 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+cc:     "Eric W . Biederman" <ebiederm@xmission.com>, avagin@virtuozzo.com,
+        dima@arista.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        0x7f454c46@gmail.com, adrian@lisas.de,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        gorcunov@openvz.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>, xemul@virtuozzo.com,
+        Shuah Khan <shuah@kernel.org>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        Linux API <linux-api@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-kselftest@vger.kernel.org
+Subject: Re: Setting monotonic time?
+In-Reply-To: <CAK8P3a2zTqrCGURE3XVpn3_w6C4R5O+cq8TdtbyKCMGyRk9_jw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1810022205080.1435@nanos.tec.linutronix.de>
+References: <20180919205037.9574-1-dima@arista.com> <874lej6nny.fsf@xmission.com> <20180924205119.GA14833@outlook.office365.com> <874leezh8n.fsf@xmission.com> <20180925014150.GA6302@outlook.office365.com> <87zhw4rwiq.fsf@xmission.com>
+ <alpine.DEB.2.21.1809272247270.8118@nanos.tec.linutronix.de> <87mus1ftb9.fsf@xmission.com> <alpine.DEB.2.21.1809282023350.1432@nanos.tec.linutronix.de> <877ej2xc23.fsf_-_@xmission.com> <alpine.DEB.2.21.1810012047520.32062@nanos.tec.linutronix.de>
+ <CAK8P3a2zTqrCGURE3XVpn3_w6C4R5O+cq8TdtbyKCMGyRk9_jw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
-
-Thank you for the patch.
-
-On Tuesday, 2 October 2018 17:05:15 EEST Ricardo Ribalda Delgado wrote:
-> Document bindings for imx214 camera sensor
+On Tue, 2 Oct 2018, Arnd Bergmann wrote:
+> On Mon, Oct 1, 2018 at 8:53 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> >
+> > On Mon, 1 Oct 2018, Eric W. Biederman wrote:
+> > > In the context of process migration there is a simpler subproblem that I
+> > > think it is worth exploring if we can do something about.
+> > >
+> > > For a cluster of machines all running with synchronized
+> > > clocks. CLOCK_REALTIME matches. CLOCK_MONOTNIC does not match between
+> > > machines.   Not having a matching CLOCK_MONOTONIC prevents successful
+> > > process migration between nodes in that cluster.
+> > >
+> > > Would it be possible to allow setting CLOCK_MONOTONIC at the very
+> > > beginning of time?  So that all of the nodes in a cluster can be in
+> > > sync?
+> > >
+> > > No change in skew just in offset for CLOCK_MONOTONIC.
+> > >
+> > > There are also dragons involved in coordinating things so that
+> > > CLOCK_MONOTONIC gets set before CLOCK_MONOTONIC gets used.  So I don't
+> > > know if allowing CLOCK_MONOTONIC to be set would be practical but it
+> > > seems work exploring all on it's own.
+> >
+> > It's used very early on in the kernel, so that would be a major surprise
+> > for many things including user space which has expectations on clock
+> > monotonic.
+> >
+> > It would be reasonably easy to add CLOCK_MONONOTIC_SYNC which can be set in
+> > the way you described and then in name spaces make it possible to magically
+> > map CLOCK_MONOTONIC to CLOCK_MONOTONIC_SYNC.
+> >
+> > It still wouldn't allow to have different NTP/PTP time domains, but might
+> > be a good start to address the main migration headaches.
 > 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
-> Changelog from v3:
+> If we make CLOCK_MONOTONIC settable this way in a namespace,
+> do you think that should include device drivers that report timestamps
+> in CLOCK_MONOTONIC base, or only the timekeeping clock and timer
+> interfaces?
+
+Uurgh. That gets messy very fast.
+
+> Examples for drivers that can report timestamps are input, sound, v4l,
+> and drm. I think most of these can report stamps in either monotonic
+> or realtime base, while socket timestamps notably are always in
+> realtime.
 > 
-> Sakari Ailus:
-> -s/should/shall/
-> -remove clock-lanes
-> 
-> Philippe De Muyter:
-> -s/imx274/imx214/
-> 
-> Laurent Pinchart:
-> -s/to to/to/
-> -Better description of lanes
-> -clock-names: Shall be "xclk"
-> -Drop clock-freq
-> 
->  .../devicetree/bindings/media/i2c/imx214.txt  | 53 +++++++++++++++++++
->  1 file changed, 53 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx214.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/imx214.txt
-> b/Documentation/devicetree/bindings/media/i2c/imx214.txt new file mode
-> 100644
-> index 000000000000..421a019ab7f9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/imx214.txt
-> @@ -0,0 +1,53 @@
-> +* Sony 1/3.06-Inch 13.13Mp CMOS Digital Image Sensor
-> +
-> +The Sony imx214 is a 1/3.06-inch CMOS active pixel digital image sensor
-> with +an active array size of 4224H x 3200V. It is programmable through an
-> I2C +interface. The I2C address can be configured to 0x1a or 0x10,
-> depending on +how the hardware is wired.
-> +Image data is sent through MIPI CSI-2, through 2 or 4 lanes at a maximum
-> +throughput of 1.2Gbps/lane.
-> +
-> +
-> +Required Properties:
-> +- compatible: value should be "sony,imx214" for imx214 sensor
-> +- reg: I2C bus address of the device
-> +- enable-gpios: GPIO descriptor for the enable pin.
-> +- vdddo-supply: Chip digital IO regulator (1.8V).
-> +- vdda-supply: Chip analog regulator (2.7V).
-> +- vddd-supply: Chip digital core regulator (1.12V).
-> +- clocks: Reference to the xclk clock.
-> +- clock-names:  Shall be "xclk".
-> +
-> +Optional Properties:
-> +- flash-leds: See ../video-interfaces.txt
-> +- lens-focus: See ../video-interfaces.txt
-> +
-> +The imx214 device node shall contain one 'port' child node with
-> +an 'endpoint' subnode. For further reading on port node refer to
-> +Documentation/devicetree/bindings/media/video-interfaces.txt.
-> +
-> +Required Properties on endpoint:
-> +- data-lanes: check ../video-interfaces.txt
+> We can probably get away with not setting the timebase for those
+> device drivers as long as the checkpoint/restart and migration features
+> are not expected to restore the state of an open character device
+> in that way. I don't know if that is a reasonable assumption to make
+> for the examples I listed.
 
-As I suppose you got access to the datasheet which doesn't appear to be 
-public, I'll take this as an opportunity to fish for information :-) Does the 
-sensor support remapping data lanes ? Could you please document that here ?
+No idea. I'm not a container migration wizard.
 
-You should also state that only the 2 lanes and 4 lanes options are valid, and 
-what lanes can be used in those cases. I assume that would be <1 2> and <1 2 3 
-4>, but if other options are possible, it would be useful to document that.
+Thanks,
 
-With this updated,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +- link-frequencies: check ../video-interfaces.txt
-> +- remote-endpoint: check ../video-interfaces.txt
-> +
-> +Example:
-> +
-> +	camera_rear@1a {
-> +		compatible = "sony,imx214";
-> +		reg = <0x1a>;
-> +		vdddo-supply = <&pm8994_lvs1>;
-> +		vddd-supply = <&camera_vddd_1v12>;
-> +		vdda-supply = <&pm8994_l17>;
-> +		lens-focus = <&ad5820>;
-> +		enable-gpios = <&msmgpio 25 GPIO_ACTIVE_HIGH>;
-> +		clocks = <&mmcc CAMSS_MCLK0_CLK>;
-> +		clock-names = "xclk";
-> +		port {
-> +			imx214_ep: endpoint {
-> +				data-lanes = <1 2 3 4>;
-> +				link-frequencies = /bits/ 64 <480000000>;
-> +				remote-endpoint = <&csiphy0_ep>;
-> +			};
-> +		};
-> +	};
-
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
-
+	tglx
