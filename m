@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E74C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31382C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D153206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D153206B2
+	by mail.kernel.org (Postfix) with ESMTP id F29CA206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F29CA206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbeJBUJm (ORCPT
+        id S1726842AbeJBUJq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:09:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59812 "EHLO
+        Tue, 2 Oct 2018 16:09:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59822 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbeJBUJl (ORCPT
+        with ESMTP id S1726529AbeJBUJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:09:41 -0400
+        Tue, 2 Oct 2018 16:09:45 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D9452266;
-        Tue,  2 Oct 2018 13:26:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 072F7266;
+        Tue,  2 Oct 2018 13:26:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 015/228] serial: sh-sci: Stop RX FIFO timer during port shutdown
-Date:   Tue,  2 Oct 2018 06:21:52 -0700
-Message-Id: <20181002132500.106737184@linuxfoundation.org>
+Subject: [PATCH 4.18 016/228] uwb: hwa-rc: fix memory leak at probe
+Date:   Tue,  2 Oct 2018 06:21:53 -0700
+Message-Id: <20181002132500.174257948@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,35 +51,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit c5a9262fa8bfed0dddc7466ef10fcd292e2af61b ]
+[ Upstream commit 11b71782c1d10d9bccc31825cf84291cd7588a1e ]
 
-The RX FIFO timer may be armed when the port is shut down, hence the
-timer function may still be called afterwards.
+hwarc_probe() allocates memory for hwarc, but does not free it
+if uwb_rc_add() or hwarc_get_version() fail.
 
-Fix this race condition by deleting the timer during port shutdown.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Fixes: 039403765e5da3c6 ("serial: sh-sci: SCIFA/B RX FIFO software timeout")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/sh-sci.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/uwb/hwa-rc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2099,6 +2099,8 @@ static void sci_shutdown(struct uart_por
- 	}
- #endif
- 
-+	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0)
-+		del_timer_sync(&s->rx_fifo_timer);
- 	sci_free_irq(s);
- 	sci_free_dma(port);
- }
+--- a/drivers/uwb/hwa-rc.c
++++ b/drivers/uwb/hwa-rc.c
+@@ -873,6 +873,7 @@ error_get_version:
+ error_rc_add:
+ 	usb_put_intf(iface);
+ 	usb_put_dev(hwarc->usb_dev);
++	kfree(hwarc);
+ error_alloc:
+ 	uwb_rc_put(uwb_rc);
+ error_rc_alloc:
 
 
