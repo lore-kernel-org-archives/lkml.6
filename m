@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DF5C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D14DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013172083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:11:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013172083F
+	by mail.kernel.org (Postfix) with ESMTP id 5CBE62064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:11:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CBE62064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeJBUyf (ORCPT
+        id S1728707AbeJBULB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:54:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60458 "EHLO
+        Tue, 2 Oct 2018 16:11:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60426 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727609AbeJBULD (ORCPT
+        with ESMTP id S1727485AbeJBULA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:03 -0400
+        Tue, 2 Oct 2018 16:11:00 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9595BF0;
-        Tue,  2 Oct 2018 13:27:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F130BF0;
+        Tue,  2 Oct 2018 13:27:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 070/228] media: omap3isp: zero-initialize the isp cam_xclk{a,b} initial data
-Date:   Tue,  2 Oct 2018 06:22:47 -0700
-Message-Id: <20181002132504.033287322@linuxfoundation.org>
+Subject: [PATCH 4.18 068/228] media: s3c-camif: ignore -ENOIOCTLCMD from v4l2_subdev_call for s_power
+Date:   Tue,  2 Oct 2018 06:22:45 -0700
+Message-Id: <20181002132503.893207717@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -55,48 +55,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Javier Martinez Canillas <javierm@redhat.com>
+From: Akinobu Mita <akinobu.mita@gmail.com>
 
-[ Upstream commit 2ec7debd44b49927a6e2861521994cc075a389ed ]
+[ Upstream commit 30ed2b83343bd1e07884ca7355dac70d25ffc158 ]
 
-The struct clk_init_data init variable is declared in the isp_xclk_init()
-function so is an automatic variable allocated in the stack. But it's not
-explicitly zero-initialized, so some init fields are left uninitialized.
+When the subdevice doesn't provide s_power core ops callback, the
+v4l2_subdev_call for s_power returns -ENOIOCTLCMD.  If the subdevice
+doesn't have the special handling for its power saving mode, the s_power
+isn't required.  So -ENOIOCTLCMD from the v4l2_subdev_call should be
+ignored.
 
-This causes the data structure to have undefined values that may confuse
-the common clock framework when the clock is registered.
-
-For example, the uninitialized .flags field could have the CLK_IS_CRITICAL
-bit set, causing the framework to wrongly prepare the clk on registration.
-This leads to the isp_xclk_prepare() callback being called, which in turn
-calls to the omap3isp_get() function that increments the isp dev refcount.
-
-Since this omap3isp_get() call is unexpected, this leads to an unbalanced
-omap3isp_get() call that prevents the requested IRQ to be later enabled,
-due the refcount not being 0 when the correct omap3isp_get() call happens.
-
-Fixes: 9b28ee3c9122 ("[media] omap3isp: Use the common clock framework")
-
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Acked-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/omap3isp/isp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/s3c-camif/camif-capture.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -300,7 +300,7 @@ static struct clk *isp_xclk_src_get(stru
- static int isp_xclk_init(struct isp_device *isp)
- {
- 	struct device_node *np = isp->dev->of_node;
--	struct clk_init_data init;
-+	struct clk_init_data init = { 0 };
- 	unsigned int i;
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -117,6 +117,8 @@ static int sensor_set_power(struct camif
  
- 	for (i = 0; i < ARRAY_SIZE(isp->xclks); ++i)
+ 	if (camif->sensor.power_count == !on)
+ 		err = v4l2_subdev_call(sensor->sd, core, s_power, on);
++	if (err == -ENOIOCTLCMD)
++		err = 0;
+ 	if (!err)
+ 		sensor->power_count += on ? 1 : -1;
+ 
 
 
