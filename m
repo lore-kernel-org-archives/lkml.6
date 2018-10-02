@@ -2,136 +2,150 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B99C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E715DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 855D320878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:52:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 855D320878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9994A20878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:52:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9994A20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbeJBPe4 (ORCPT
+        id S1727268AbeJBPfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 11:34:56 -0400
-Received: from foss.arm.com ([217.140.101.70]:60928 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726475AbeJBPe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:34:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3765F18A;
-        Tue,  2 Oct 2018 01:52:45 -0700 (PDT)
-Received: from localhost (e105922-lin.Emea.Arm.com [10.4.13.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CDDE93F5B3;
-        Tue,  2 Oct 2018 01:52:44 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     <kvmarm@lists.cs.columbia.edu>, <marc.zyngier@arm.com>,
-        <will.deacon@arm.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v8 9/9] KVM: arm64: Add support for creating PUD hugepages at stage 2
-References: <20181001155443.23032-1-punit.agrawal@arm.com>
-        <20181001155443.23032-10-punit.agrawal@arm.com>
-        <3bd022cd-e470-479a-d7a5-680810db6a42@arm.com>
-Date:   Tue, 02 Oct 2018 09:52:43 +0100
-In-Reply-To: <3bd022cd-e470-479a-d7a5-680810db6a42@arm.com> (Suzuki
-        K. Poulose's message of "Mon, 1 Oct 2018 22:30:00 +0100")
-Message-ID: <87y3bgk9wk.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Tue, 2 Oct 2018 11:35:07 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:59922 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726884AbeJBPfH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 11:35:07 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w928nR7x008034;
+        Tue, 2 Oct 2018 03:52:54 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2mugja1f30-1;
+        Tue, 02 Oct 2018 03:52:54 -0500
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id 0E51E611C8A7;
+        Tue,  2 Oct 2018 03:55:00 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 2 Oct 2018
+ 09:52:53 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w928qqBG032116; Tue,
+ 2 Oct 2018 09:52:52 +0100
+Date:   Tue, 2 Oct 2018 09:52:52 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Richard Fitzgerald <rf@opensource.cirrus.com>
+CC:     <lee.jones@linaro.org>, <patches@opensource.cirrus.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mfd: madera: Wait for BOOT_DONE before reading
+ device ID
+Message-ID: <20181002085252.GQ1653@imbe.wolfsonmicro.main>
+References: <20181001143357.28428-1-rf@opensource.cirrus.com>
+ <20181001143357.28428-2-rf@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181001143357.28428-2-rf@opensource.cirrus.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1810020089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suzuki K Poulose <suzuki.poulose@arm.com> writes:
+On Mon, Oct 01, 2018 at 03:33:57PM +0100, Richard Fitzgerald wrote:
+> It isn't safe to read the device ID in SOFTWARE_RESET register
+> until the silicon boot sequence has completed. This patch
+> rearranges the code to wait for BOOT_DONE first.
+> 
+> If we don't have a GPIO to control hard reset we must issue
+> a soft reset to get the silicon into a known-good booted state
+> before reading the device ID.
+> 
+> Signed-off-by: Stuart Henderson <stuarth@opensource.cirrus.com>
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> ---
+>  drivers/mfd/madera-core.c | 33 +++++++++++++++------------------
+>  1 file changed, 15 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
+> index 3ff9a0615658..b9d42edf96c9 100644
+> --- a/drivers/mfd/madera-core.c
+> +++ b/drivers/mfd/madera-core.c
+> @@ -454,10 +454,23 @@ int madera_dev_init(struct madera *madera)
+>  	regcache_cache_only(madera->regmap, false);
+>  	regcache_cache_only(madera->regmap_32bit, false);
+>  
+> +	/* If we don't have a reset GPIO use a soft reset */
+> +	if (!madera->pdata.reset) {
+> +		ret = madera_soft_reset(madera);
+> +		if (ret)
+> +			goto err_reset;
+> +	}
+> +
 
-> On 10/01/2018 04:54 PM, Punit Agrawal wrote:
->> KVM only supports PMD hugepages at stage 2. Now that the various page
->> handling routines are updated, extend the stage 2 fault handling to
->> map in PUD hugepages.
->>
->> Addition of PUD hugepage support enables additional page sizes (e.g.,
->> 1G with 4K granule) which can be useful on cores that support mapping
->> larger block sizes in the TLB entries.
->>
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> ---
->>   arch/arm/include/asm/kvm_mmu.h         |  20 +++++
->>   arch/arm/include/asm/stage2_pgtable.h  |   9 +++
->>   arch/arm64/include/asm/kvm_mmu.h       |  16 ++++
->>   arch/arm64/include/asm/pgtable-hwdef.h |   2 +
->>   arch/arm64/include/asm/pgtable.h       |   2 +
->>   virt/kvm/arm/mmu.c                     | 106 +++++++++++++++++++++++--
->>   6 files changed, 149 insertions(+), 6 deletions(-)
->>
->
-> ...
->
->> diff --git a/arch/arm/include/asm/stage2_pgtable.h b/arch/arm/include/asm/stage2_pgtable.h
->> index f6a7ea805232..a4ec25360e50 100644
->> --- a/arch/arm/include/asm/stage2_pgtable.h
->> +++ b/arch/arm/include/asm/stage2_pgtable.h
->> @@ -68,4 +68,13 @@ stage2_pmd_addr_end(struct kvm *kvm, phys_addr_t addr, phys_addr_t end)
->>   #define stage2_pmd_table_empty(kvm, pmdp)	kvm_page_empty(pmdp)
->>   #define stage2_pud_table_empty(kvm, pudp)	false
->>   +static inline bool kvm_stage2_has_pud(struct kvm *kvm)
->> +{
->> +#if CONFIG_PGTABLE_LEVELS > 3
->> +	return true;
->> +#else
->> +	return false;
->> +#endif
->
-> nit: We can only have PGTABLE_LEVELS=3 on ARM with LPAE.
-> AFAIT, this can be set to false always for ARM.
+I think we should leave this soft reset lower down its better
+to only write to the chip once we have identified it. It will
+mean we need to wait for boot done twice (in the soft reset
+case) but its only on probe and that is probably better than
+doing some writes to an unknown chip.
 
-I debated this and veered towards being generic but not committed either
-ways.
+>  	/*
+> -	 * Now we can power up and verify that this is a chip we know about
+> -	 * before we start doing any writes to its registers.
+> +	 * Must wait for internal boot sequence to complete before
+> +	 * reading the device ID
+>  	 */
+> +	ret = madera_wait_for_boot(madera);
+> +	if (ret) {
+> +		dev_err(madera->dev, "Device failed initial boot: %d\n", ret);
+> +		goto err_reset;
+> +	}
+> +
+>  	ret = regmap_read(madera->regmap, MADERA_SOFTWARE_RESET, &hwid);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to read ID register: %d\n", ret);
+> @@ -519,22 +532,6 @@ int madera_dev_init(struct madera *madera)
+>  		goto err_reset;
+>  	}
+>  
+> -	/*
+> -	 * It looks like a device we support. If we don't have a hard reset
+> -	 * we can now attempt a soft reset.
+> -	 */
+> -	if (!madera->pdata.reset) {
+> -		ret = madera_soft_reset(madera);
+> -		if (ret)
+> -			goto err_reset;
+> -	}
+> -
+> -	ret = madera_wait_for_boot(madera);
+> -	if (ret) {
+> -		dev_err(madera->dev, "Device failed initial boot: %d\n", ret);
+> -		goto err_reset;
+> -	}
 
-I've updated this locally but will wait for further comments before
-re-posting.
+And this guy would then only need done in the case of a soft
+reset.
 
->
->> +}
->> +
->
-> ...
->
->> @@ -1669,7 +1752,18 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>   	needs_exec = exec_fault ||
->>   		(fault_status == FSC_PERM && stage2_is_exec(kvm, fault_ipa));
->>   -	if (hugetlb && vma_pagesize == PMD_SIZE) {
->> +	if (hugetlb && vma_pagesize == PUD_SIZE) {
->> +		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
->> +
->> +		new_pud = kvm_pud_mkhuge(new_pud);
->> +		if (writable)
->> +			new_pud = kvm_s2pud_mkwrite(new_pud);
->> +
->> +		if (needs_exec)
->> +			new_pud = kvm_s2pud_mkexec(new_pud);
->> +
->> +		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
->> +	} else if (hugetlb && vma_pagesize == PMD_SIZE) {
->>   		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
->>     		new_pmd = kvm_pmd_mkhuge(new_pmd);
->>
->
->
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Thanks,
+Charles
 
-Thanks a lot for going through the series.
+> -
+>  	ret = regmap_read(madera->regmap, MADERA_HARDWARE_REVISION,
+>  			  &madera->rev);
+>  	if (ret) {
+> -- 
+> 2.11.0
