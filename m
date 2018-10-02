@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE99C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42257C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2F9D2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:08:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2F9D2089A
+	by mail.kernel.org (Postfix) with ESMTP id 14B7E2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:08:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14B7E2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729721AbeJBUvh (ORCPT
+        id S1729645AbeJBUwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:51:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60914 "EHLO
+        Tue, 2 Oct 2018 16:52:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60834 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729218AbeJBULm (ORCPT
+        with ESMTP id S1729134AbeJBULg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:42 -0400
+        Tue, 2 Oct 2018 16:11:36 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 334D1A67;
-        Tue,  2 Oct 2018 13:28:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E2C1C11;
+        Tue,  2 Oct 2018 13:28:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Manish Rangankar <Manish.Rangankar@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 105/228] scsi: bnx2i: add error handling for ioremap_nocache
-Date:   Tue,  2 Oct 2018 06:23:22 -0700
-Message-Id: <20181002132506.510127848@linuxfoundation.org>
+Subject: [PATCH 4.18 099/228] HID: hid-ntrig: add error handling for sysfs_create_group
+Date:   Tue,  2 Oct 2018 06:23:16 -0700
+Message-Id: <20181002132506.093596553@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -56,33 +54,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit aa154ea885eb0c2407457ce9c1538d78c95456fa ]
+[ Upstream commit 44d4d51de9a3534a2b63d69efda02a10e66541e4 ]
 
-When ioremap_nocache fails, the lack of error-handling code may cause
-unexpected results.
+When sysfs_create_group fails, the lack of error-handling code may
+cause unexpected results.
 
-This patch adds error-handling code after calling ioremap_nocache.
+This patch adds error-handling code after calling sysfs_create_group.
 
 Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Acked-by: Manish Rangankar <Manish.Rangankar@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/bnx2i/bnx2i_hwi.c |    2 ++
+ drivers/hid/hid-ntrig.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/bnx2i/bnx2i_hwi.c
-+++ b/drivers/scsi/bnx2i/bnx2i_hwi.c
-@@ -2727,6 +2727,8 @@ int bnx2i_map_ep_dbell_regs(struct bnx2i
- 					      BNX2X_DOORBELL_PCI_BAR);
- 		reg_off = (1 << BNX2X_DB_SHIFT) * (cid_num & 0x1FFFF);
- 		ep->qp.ctx_base = ioremap_nocache(reg_base + reg_off, 4);
-+		if (!ep->qp.ctx_base)
-+			return -ENOMEM;
- 		goto arm_cq;
- 	}
+--- a/drivers/hid/hid-ntrig.c
++++ b/drivers/hid/hid-ntrig.c
+@@ -955,6 +955,8 @@ static int ntrig_probe(struct hid_device
  
+ 	ret = sysfs_create_group(&hdev->dev.kobj,
+ 			&ntrig_attribute_group);
++	if (ret)
++		hid_err(hdev, "cannot create sysfs group\n");
+ 
+ 	return 0;
+ err_free:
 
 
