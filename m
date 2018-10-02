@@ -2,103 +2,192 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F5EC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D3CC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45BAA20684
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:59:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45BAA20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 515E020666
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 18:13:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515E020666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbeJCAoP (ORCPT
+        id S1726720AbeJCA6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 20:44:15 -0400
-Received: from relay2.sgi.com ([192.48.180.65]:60103 "EHLO relay.sgi.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726305AbeJCAoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 20:44:15 -0400
-Received: from stormcage.americas.sgi.com (stormcage.americas.sgi.com [128.162.236.70])
-        by relay2.corp.sgi.com (Postfix) with ESMTP id E9190304043;
-        Tue,  2 Oct 2018 10:59:40 -0700 (PDT)
-Received: by stormcage.americas.sgi.com (Postfix, from userid 5508)
-        id 08AFE20160707; Tue,  2 Oct 2018 13:01:45 -0500 (CDT)
-Message-Id: <20181002180144.923579706@stormcage.americas.sgi.com>
-References: <20181002180144.636925675@stormcage.americas.sgi.com>
-User-Agent: quilt/0.46-1
-Date:   Tue, 02 Oct 2018 13:01:46 -0500
-From:   Mike Travis <mike.travis@hpe.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Hedi Berriche <hedi.berriche@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+        Tue, 2 Oct 2018 20:58:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38538 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726143AbeJCA6K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 20:58:10 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w92IAU5q011674
+        for <linux-kernel@vger.kernel.org>; Tue, 2 Oct 2018 14:13:31 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mvcu6t9y6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 14:13:31 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
+        Tue, 2 Oct 2018 14:13:29 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 2 Oct 2018 14:13:25 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w92IDPKE30212326
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 2 Oct 2018 18:13:25 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 879E7AC05F;
+        Tue,  2 Oct 2018 14:12:42 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A537AAC065;
+        Tue,  2 Oct 2018 14:12:40 -0400 (EDT)
+Received: from oc5000245537.ibm.com (unknown [9.53.179.212])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  2 Oct 2018 14:12:40 -0400 (EDT)
+Subject: Re: [PATCH] migration/mm: Add WARN_ON to try_offline_node
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Malaterre <malat@debian.org>,
         Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Len Brown <len.brown@intel.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Xiaoming Gao <gxm.linux.kernel@gmail.com>,
-        Rajvi Jingar <rajvi.jingar@intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH 2/2] x86/tsc: Fix UV TSC initialization
-Content-Disposition: inline; filename=fix_tsc_early_init
+        Nicholas Piggin <npiggin@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Juliet Kim <minkim@us.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Oscar Salvador <osalvador@suse.de>
+References: <20181001185616.11427.35521.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
+ <20181001202724.GL18290@dhcp22.suse.cz>
+ <bdbca329-7d35-0535-1737-94a06a19ae28@linux.vnet.ibm.com>
+ <df95f828-1963-d8b9-ab58-6d29d2d152d2@linux.vnet.ibm.com>
+ <20181002145922.GZ18290@dhcp22.suse.cz>
+ <d338b385-626b-0e79-9944-708178fe245d@linux.vnet.ibm.com>
+ <20181002160446.GA18290@dhcp22.suse.cz>
+From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
+ xsBNBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
+ lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
+ DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
+ t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
+ AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
+ AAHNLU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPsLAeAQT
+ AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
+ CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
+ 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
+ QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
+ AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
+ oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/Us7ATQRXGOxnAQgAmJ5Y
+ ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
+ DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
+ 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
+ 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
+ qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABwsBfBBgBAgAJBQJX
+ GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
+ efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
+ ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
+ yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
+ IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
+ 53/hcWvxHVs=
+Organization: IBM Linux Technology Center
+Date:   Tue, 2 Oct 2018 13:13:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181002160446.GA18290@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18100218-0064-0000-0000-00000358DBDF
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009810; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01096894; UDB=6.00567221; IPR=6.00876936;
+ MB=3.00023591; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-02 18:13:29
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100218-0065-0000-0000-00003AD8B2A9
+Message-Id: <e7dd66c1-d196-3a14-0115-acdaf538ebfd@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-02_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810020173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix regression introduced by
 
-commit cf7a63ef4e02 ("x86/tsc: Calibrate tsc only once")
 
-as it added a call to tsc_early_init() which initializes the TSC ADJUST
-values before acpi_boot_table_init().  In the case of UV systems,
-that is a necessary step thats calls uv_system_init().  This informs
-tsc_sanitize_first_cpu() that we're on a platform with async TSC resets
-as documented in
+On 10/02/2018 11:04 AM, Michal Hocko wrote:
+> On Tue 02-10-18 10:14:49, Michael Bringmann wrote:
+>> On 10/02/2018 09:59 AM, Michal Hocko wrote:
+>>> On Tue 02-10-18 09:51:40, Michael Bringmann wrote:
+>>> [...]
+>>>> When the device-tree affinity attributes have changed for memory,
+>>>> the 'nid' affinity calculated points to a different node for the
+>>>> memory block than the one used to install it, previously on the
+>>>> source system.  The newly calculated 'nid' affinity may not yet
+>>>> be initialized on the target system.  The current memory tracking
+>>>> mechanisms do not record the node to which a memory block was
+>>>> associated when it was added.  Nathan is looking at adding this
+>>>> feature to the new implementation of LMBs, but it is not there
+>>>> yet, and won't be present in earlier kernels without backporting a
+>>>> significant number of changes.
+>>>
+>>> Then the patch you have proposed here just papers over a real issue, no?
+>>> IIUC then you simply do not remove the memory if you lose the race.
+>>
+>> The problem occurs when removing memory after an affinity change
+>> references a node that was previously unreferenced.  Other code
+>> in 'kernel/mm/memory_hotplug.c' deals with initializing an empty
+>> node when adding memory to a system.  The 'removing memory' case is
+>> specific to systems that perform LPM and allow device-tree changes.
+>> The powerpc kernel does not have the option of accepting some PRRN
+>> requests and accepting others.  It must perform them all.
+> 
+> I am sorry, but you are still too cryptic for me. Either there is a
+> correctness issue and the the patch doesn't really fix anything or the
+> final race doesn't make any difference and then the ppc code should be
+> explicit about that. Checking the node inside the hotplug core code just
+> looks as a wrong layer to mitigate an arch specific problem. I am not
+> saying the patch is a no-go but if anything we want a big fat comment
+> explaining how this is possible because right now it just points to an
+> incorrect API usage.
+> 
+> That being said, this sounds pretty much ppc specific problem and I
+> would _prefer_ it to be handled there (along with a big fat comment of
+> course).
 
-commit 341102c3ef29 ("x86/tsc: Add option that TSC on Socket 0 being non-zero is valid")
+Let me try again.  Regardless of the path to which we get to this condition,
+we currently crash the kernel.  This patch changes that to a WARN_ON notice
+and continues executing the kernel without shutting down the system.  I saw
+the problem during powerpc testing, because that is the focus of my work.
+There are other paths to this function besides powerpc.  I feel that the
+kernel should keep running instead of halting.
 
-Fix by skipping the early tsc initialization on UV systems and let TSC
-init tests take place later in tsc_init().
-
-Fixes: cf7a63ef4e02 ("x86/tsc: Calibrate tsc only once") 
-Signed-off-by: Mike Travis <mike.travis@hpe.com>
-Suggested-by: Hedi Berriche <hedi.berriche@hpe.com>
-Reviewed-by: Russ Anderson <rja@hpe.com>
-Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
----
- arch/x86/kernel/tsc.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- linux.orig/arch/x86/kernel/tsc.c
-+++ linux/arch/x86/kernel/tsc.c
-@@ -26,6 +26,7 @@
- #include <asm/apic.h>
- #include <asm/intel-family.h>
- #include <asm/i8259.h>
-+#include <asm/uv/uv.h>
- 
- unsigned int __read_mostly cpu_khz;	/* TSC clocks / usec, not used here */
- EXPORT_SYMBOL(cpu_khz);
-@@ -1433,6 +1434,9 @@ void __init tsc_early_init(void)
- {
- 	if (!boot_cpu_has(X86_FEATURE_TSC))
- 		return;
-+	/* Don't change UV TSC multi-chassis synchronization */
-+	if (is_early_uv_system())
-+		return;
- 	if (!determine_cpu_tsc_frequencies(true))
- 		return;
- 	loops_per_jiffy = get_loops_per_jiffy();
+Regards,
 
 -- 
+Michael W. Bringmann
+Linux Technology Center
+IBM Corporation
+Tie-Line  363-5196
+External: (512) 286-5196
+Cell:       (512) 466-0650
+mwb@linux.vnet.ibm.com
+
