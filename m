@@ -2,293 +2,122 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B14EFC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1EFC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9642064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:18:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62F332064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:18:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="fnfe9+1A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9642064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UMR6hNaN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62F332064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbeJCCCy (ORCPT
+        id S1728095AbeJCCDQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 22:02:54 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:27235 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727576AbeJCCCy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 22:02:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1538507882; x=1570043882;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=A39qH3ZGW6Bt3uRzn6SdP9xVcGPk530pyzGLsA+rMtQ=;
-  b=fnfe9+1Ad3y882BW5yEoCpN6C3fy1yefUeFDz4S0i9DcNino78fXHf1M
-   bOMAh7XvaeDnEQULrx7T8h7qyZ4QElwdXFFxxqRTidnyqQ7oUTgUM94NF
-   f5FDNeT3v4Qjx+rZR/edvJTiRvi/THMgyCO7RpqSlxVUz8+STmzYZEWSY
-   MS/k0hgLo2j+jxamO+lUDxDtKF8QJ64waxOhWJ2yVcQk6+ggiQYb3faKb
-   B8QsUqzpo4ZdjqFnFbYOtWiF2vwDMbLlIqMrAqB/NG6tkhwhRr974lekw
-   MzK2z0uStI9PyE0nmdmuLXUyeNEJnWv605yB4ba9CyZOsaonwriCuYfI5
-   g==;
-X-IronPort-AV: E=Sophos;i="5.54,332,1534780800"; 
-   d="scan'208";a="95621043"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Oct 2018 03:18:02 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 02 Oct 2018 12:03:39 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
-  by uls-op-cesaip02.wdc.com with ESMTP; 02 Oct 2018 12:18:02 -0700
-Subject: Re: [PATCH v3] RISC-V: Show IPI stats
-To:     Anup Patel <anup@brainfault.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-References: <20180929062605.12888-1-anup@brainfault.org>
- <7d40c900-cfb2-f3a0-fce9-0136814781fe@wdc.com>
- <CAAhSdy1DQFNEvW2Nr6g5mv9y_+GrhFL4nVxOROwGwGcqsHhqtg@mail.gmail.com>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <54503b86-cb77-9eaf-6bd9-5e8caa2ebb78@wdc.com>
-Date:   Tue, 2 Oct 2018 12:18:01 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAAhSdy1DQFNEvW2Nr6g5mv9y_+GrhFL4nVxOROwGwGcqsHhqtg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 2 Oct 2018 22:03:16 -0400
+Received: from mail-eopbgr00045.outbound.protection.outlook.com ([40.107.0.45]:51904
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727082AbeJCCDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 22:03:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l0ic0fZ6XMLxrsyYXtAtUZvzYGMgmOLgoGk/sN+lEBc=;
+ b=UMR6hNaNAxK1WRuNPq0YcdX7UXdziyqcaccWr0JJnxV8ptUYkeFtxs43O8KhaeVuIE1ORvQFxgnUq878TaISQoFqLLzTtt8C9m/0XLvoXe7yg2WAvtygKG/SoV53nLVGDySv+wdfNXtENTYIbncjD61EWhL/BTkugR/Io0Ugq0E=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB4593.eurprd04.prod.outlook.com (52.135.149.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.18; Tue, 2 Oct 2018 19:18:21 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::3836:6416:4ebd:34ef]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::3836:6416:4ebd:34ef%3]) with mapi id 15.20.1185.024; Tue, 2 Oct 2018
+ 19:18:21 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>
+CC:     Marek Vasut <marek.vasut@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        "David S . Miller " <davem@davemloft.net>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] Port mxs-dcp to 6ull and 6sll
+Thread-Topic: [PATCH 0/3] Port mxs-dcp to 6ull and 6sll
+Thread-Index: AQHUWoSu3c1hkwx9a0qjlkSgiHJVFQ==
+Date:   Tue, 2 Oct 2018 19:18:21 +0000
+Message-ID: <cover.1538507155.git.leonard.crestez@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [95.76.156.53]
+x-mailer: git-send-email 2.17.1
+x-clientproxiedby: AM5PR0502CA0009.eurprd05.prod.outlook.com
+ (2603:10a6:203:91::19) To AM0PR04MB4290.eurprd04.prod.outlook.com
+ (2603:10a6:208:67::17)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4593;6:KSwsSyKqneu+qcw8X6QRrzAGEO1YIHx5ndBGHChe5kYbNZg3rZx8D001ta7tUUFXT5UB85f21fIOleram9geav6BONQqWJvAWqWZfoURZL8809AXkizgxudqybgunP+2/mmDuxc2uVsPrR5bR7FhcuDYaYG+7So9gf36hr0bsuj19dJpSIwWeDPJxPw7/lM0M0ynxPC54SO7fwHC6oMWYmirDIkE6sBdCnw1ntYGKdhi00uZQWqouASFw8KK2/1qpAq5Q/ZHBIxcUFkGlKdGi5y26PAQugsxqdn+uvKigNvIXn9/nN9AT8oNIDnkgsBkOibFtdXufCw1RVkoeWTMRLEGBfH1dm6ZKC06Qe2Kfe+0Zbde7VFnzhY1u7koufAyvgD9ufruVIxCbiyOt0eTyZbIR8XTqBekZBUu9RkS5WXJP1JjPHjqG80jU1oYhHBL+vFApkPRXi2Q8KKDdDuVfg==;5:zJcEbwv5yGhtGBsWIgziWJ48ImlHYMytxRSQR4ybO6A5Av+3zQvGXPTCDAEJjg4Zi1uiyNOrEaVHnU3ZxXvzLfHWlWiHwc/w6E8Gk6oTeyQmiFsbYlW8+ozYC+l+nUIFKkbeEuKQejojEmtFQfaSmwo734tDwBSFX3vgFuhUfew=;7:w0vriVsixYiMPKQ0Qn0P9L5A4de1pHA/xeVBxda4PQ3n6xNtV+ibrD/yFt2RL0MLL036yYjwYYslRvrMc5ULNvP7WiOsRwBRTktIzifaDddq55kHVZeQLkt5aRLvStEApbqeJXJ4ezc86lQALEJw+eGqJTJZvi4aMPthN1mOt0n5Mk79aePeoaLrUjZWs2VOE71JoyC3om1TQpudnMfyPRrAMIMmRtoZjF7jbaM2BHePaTJLlsOzuGetfwzS3SPL
+x-ms-office365-filtering-correlation-id: 97149e60-7267-423e-517e-08d6289bd0b2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4593;
+x-ms-traffictypediagnostic: AM0PR04MB4593:
+x-microsoft-antispam-prvs: <AM0PR04MB4593EE513DCC767516340869EEE80@AM0PR04MB4593.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:AM0PR04MB4593;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4593;
+x-forefront-prvs: 0813C68E65
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(376002)(366004)(136003)(199004)(189003)(6486002)(54906003)(8676002)(81166006)(478600001)(5660300001)(6436002)(3846002)(81156014)(486006)(110136005)(97736004)(44832011)(53936002)(5250100002)(6512007)(6306002)(6116002)(966005)(2906002)(8936002)(68736007)(39060400002)(186003)(7736002)(305945005)(36756003)(50226002)(26005)(71200400001)(386003)(6506007)(14454004)(316002)(71190400001)(2900100001)(106356001)(2616005)(66066001)(476003)(6346003)(102836004)(99286004)(105586002)(86362001)(4326008)(256004)(25786009)(52116002)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4593;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-microsoft-antispam-message-info: 53vKOxRfIgvEDliVfkV7HYJtyourPzGZ4qz6AX78lQoibA+0bPU1ZrhElvc1pAkU9fK55l1qjdQ0D8lJiKcKFKbWP0OVj95eYPlJ1FbQV9uPKRGIAtLcnWk15ZlGSUqLecABW1y3OUvtKMcV3br4IxamRZQUFcsiCJ+P2YRfi7CzwVTeGUOYXoc8rKHEJBRHb1Pl0/s9uPMC91VMzAE2+VA4tqGLe0931NnJziHrohcDffMDZkrGXFITyUWQrPsgZE18KIhbs2T4aSPD7tJUBQRz9DExJ9Qc9X0N8oX0GzmtG0EPW/i+/W9ZaddLa6Pi3fhuwgd9dn+u1vQiWufPaOQtYg6E0Gq/eQyMj0Y8gpg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97149e60-7267-423e-517e-08d6289bd0b2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2018 19:18:21.0866
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4593
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/1/18 8:29 PM, Anup Patel wrote:
-> On Tue, Oct 2, 2018 at 8:45 AM Atish Patra <atish.patra@wdc.com> wrote:
->>
->> On 9/28/18 11:26 PM, Anup Patel wrote:
->>> This patch provides arch_show_interrupts() implementation to
->>> show IPI stats via /proc/interrupts.
->>>
->>> Now the contents of /proc/interrupts" will look like below:
->>>              CPU0       CPU1       CPU2       CPU3
->>>     8:         17          7          6         14  SiFive PLIC   8  virtio0
->>>    10:         10         10          9         11  SiFive PLIC  10  ttyS0
->>> IPI0:       170        673        251         79  Rescheduling interrupts
->>> IPI1:         1         12         27          1  Function call interrupts
->>>
->>> Signed-off-by: Anup Patel <anup@brainfault.org>
->>>
->>> Changes since v2:
->>>    - Remove use of IPI_CALL_WAKEUP because it's being removed
->>>
->>> Changes since v1:
->>>    - Add stub inline show_ipi_stats() function for !CONFIG_SMP
->>>    - Make ipi_names[] dynamically sized at compile time
->>>    - Minor beautification of ipi_names[] using tabs
->>>
->>> ---
->>>    arch/riscv/include/asm/smp.h |  9 +++++++++
->>>    arch/riscv/kernel/irq.c      |  8 ++++++++
->>>    arch/riscv/kernel/smp.c      | 39 +++++++++++++++++++++++++++++-------
->>>    3 files changed, 49 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
->>> index fce312ce3516..5278ae8f1346 100644
->>> --- a/arch/riscv/include/asm/smp.h
->>> +++ b/arch/riscv/include/asm/smp.h
->>> @@ -25,8 +25,13 @@
->>>    extern unsigned long __cpuid_to_hardid_map[NR_CPUS];
->>>    #define cpuid_to_hardid_map(cpu)    __cpuid_to_hardid_map[cpu]
->>>
->>> +struct seq_file;
->>> +
->>>    #ifdef CONFIG_SMP
->>>
->>> +/* print IPI stats */
->>> +void show_ipi_stats(struct seq_file *p, int prec);
->>> +
->>>    /* SMP initialization hook for setup_arch */
->>>    void __init setup_smp(void);
->>>
->>> @@ -47,6 +52,10 @@ void riscv_cpuid_to_hartid_mask(const struct cpumask *in, struct cpumask *out);
->>>
->>>    #else
->>>
->>> +static inline void show_ipi_stats(struct seq_file *p, int prec)
->>> +{
->>> +}
->>> +
->>>    static inline int riscv_hartid_to_cpuid(int hartid)
->>>    {
->>>        return 0;
->>> diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
->>> index ca4593317e45..48e6b7db83a1 100644
->>> --- a/arch/riscv/kernel/irq.c
->>> +++ b/arch/riscv/kernel/irq.c
->>> @@ -8,6 +8,8 @@
->>>    #include <linux/interrupt.h>
->>>    #include <linux/irqchip.h>
->>>    #include <linux/irqdomain.h>
->>> +#include <linux/seq_file.h>
->>> +#include <asm/smp.h>
->>>
->>>    /*
->>>     * Possible interrupt causes:
->>> @@ -24,6 +26,12 @@
->>>     */
->>>    #define INTERRUPT_CAUSE_FLAG        (1UL << (__riscv_xlen - 1))
->>>
->>> +int arch_show_interrupts(struct seq_file *p, int prec)
->>> +{
->>> +     show_ipi_stats(p, prec);
->>> +     return 0;
->>> +}
->>> +
->>>    asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs)
->>>    {
->>>        struct pt_regs *old_regs = set_irq_regs(regs);
->>> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
->>> index 89d95866f562..686fa7a427ff 100644
->>> --- a/arch/riscv/kernel/smp.c
->>> +++ b/arch/riscv/kernel/smp.c
->>> @@ -22,22 +22,24 @@
->>>    #include <linux/interrupt.h>
->>>    #include <linux/smp.h>
->>>    #include <linux/sched.h>
->>> +#include <linux/seq_file.h>
->>>
->>>    #include <asm/sbi.h>
->>>    #include <asm/tlbflush.h>
->>>    #include <asm/cacheflush.h>
->>>
->>> -/* A collection of single bit ipi messages.  */
->>> -static struct {
->>> -     unsigned long bits ____cacheline_aligned;
->>> -} ipi_data[NR_CPUS] __cacheline_aligned;
->>> -
->>>    enum ipi_message_type {
->>>        IPI_RESCHEDULE,
->>>        IPI_CALL_FUNC,
->>>        IPI_MAX
->>>    };
->>>
->>> +/* A collection of single bit ipi messages.  */
->>> +static struct {
->>> +     unsigned long stats[IPI_MAX] ____cacheline_aligned;
->>> +     unsigned long bits ____cacheline_aligned;
->>> +} ipi_data[NR_CPUS] __cacheline_aligned;
->>> +
->>>    int riscv_hartid_to_cpuid(int hartid)
->>>    {
->>>        int i = -1;
->>> @@ -67,6 +69,7 @@ int setup_profiling_timer(unsigned int multiplier)
->>>    void riscv_software_interrupt(void)
->>>    {
->>>        unsigned long *pending_ipis = &ipi_data[smp_processor_id()].bits;
->>> +     unsigned long *stats = ipi_data[smp_processor_id()].stats;
->>>
->>>        /* Clear pending IPI */
->>>        csr_clear(sip, SIE_SSIE);
->>> @@ -81,11 +84,15 @@ void riscv_software_interrupt(void)
->>>                if (ops == 0)
->>>                        return;
->>>
->>> -             if (ops & (1 << IPI_RESCHEDULE))
->>> +             if (ops & (1 << IPI_RESCHEDULE)) {
->>> +                     stats[IPI_RESCHEDULE]++;
->>>                        scheduler_ipi();
->>> +             }
->>>
->>> -             if (ops & (1 << IPI_CALL_FUNC))
->>> +             if (ops & (1 << IPI_CALL_FUNC)) {
->>> +                     stats[IPI_CALL_FUNC]++;
->>>                        generic_smp_call_function_interrupt();
->>> +             }
->>>
->>>                BUG_ON((ops >> IPI_MAX) != 0);
->>>
->>> @@ -111,6 +118,24 @@ send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
->>>        sbi_send_ipi(cpumask_bits(&hartid_mask));
->>>    }
->>>
->>> +static const char *ipi_names[] = {
->>> +     [IPI_RESCHEDULE]        = "Rescheduling interrupts",
->>> +     [IPI_CALL_FUNC]         = "Function call interrupts",
->>> +};
->>> +
->>> +void show_ipi_stats(struct seq_file *p, int prec)
->>> +{
->>> +     unsigned int cpu, i;
->>> +
->>> +     for (i = 0; i < IPI_MAX; i++) {
->>> +             seq_printf(p, "%*s%u:%s", prec - 1, "IPI", i,
->>> +                        prec >= 4 ? " " : "");
->>> +             for_each_online_cpu(cpu)
->>> +                     seq_printf(p, "%10lu ", ipi_data[cpu].stats[i]);
->>> +             seq_printf(p, " %s\n", ipi_names[i]);
->>> +     }
->>> +}
->>> +
->>>    void arch_send_call_function_ipi_mask(struct cpumask *mask)
->>>    {
->>>        send_ipi_message(mask, IPI_CALL_FUNC);
->>>
->> some checkpatch errors.
->>
->> patches/smp_cleanup/0014-RISC-V-Show-IPI-stats.patch
->> ----------------------------------------------------
->> WARNING: Missing a blank line after declarations
->> #115: FILE: arch/riscv/kernel/smp.c:40:
->> +       unsigned long stats[IPI_MAX] ____cacheline_aligned;
->> +       unsigned long bits ____cacheline_aligned;
-> 
-> This was already there in existing code.
-> 
->>
->> WARNING: usage of NR_CPUS is often wrong - consider using
->> cpu_possible(), num_possible_cpus(), for_each_possible_cpu(), etc
->> #116: FILE: arch/riscv/kernel/smp.c:41:
->> +} ipi_data[NR_CPUS] __cacheline_aligned;
-> 
-> Even this was already there in existing code.
-> 
->>
->> WARNING: static const char * array should probably be static const char
->> * const
->> #151: FILE: arch/riscv/kernel/smp.c:121:
->> +static const char *ipi_names[] = {
->>
->> total: 0 errors, 3 warnings, 120 lines checked
->>
->> Let me know if they were ignored on purpose.
->>
-> 
-> Yes, this one was added by this patch.
-> 
-> Do you want me to send revised patch?
-> 
+The only important difference relative to 6sl is that explicit clock
+enabling is required.
 
-Nope. That's just a one line fix. I fixed it and submitted the patch as 
-part of my v6.
+The driver currently doesn't even probe on 6sl, a separate series was
+posted to deal with the crypto functionality, those might take a while:
+  https://lkml.org/lkml/2018/10/2/1355
 
-I will send a separate patch fix for the patch errors introduced by the 
-existing code as the fix was bit involved.
+Since the functionality issues are not SOC-specific it seems reasonable
+to deal with porting separately.
 
-Regards,
-Atish
-> Regards,
-> Anup
-> 
+Leonard Crestez (3):
+  dt-bindings: crypto: Mention clocks for mxs-dcp
+  crypto: mxs-dcp - Add support for dcp clk
+  ARM: dts: imx6ull: Add dcp node
 
+ .../devicetree/bindings/crypto/fsl-dcp.txt     |  2 ++
+ arch/arm/boot/dts/imx6ull.dtsi                 | 10 ++++++++++
+ drivers/crypto/mxs-dcp.c                       | 18 ++++++++++++++++++
+ 3 files changed, 30 insertions(+)
 
-Regards,
-Atish
+--=20
+2.17.1
+
