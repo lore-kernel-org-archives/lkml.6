@@ -2,77 +2,76 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34A0C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E490C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA8542064E
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:06:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E99092064E
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:06:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAw6v0UG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA8542064E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c6e04E+6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E99092064E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbeJBPsV (ORCPT
+        id S1727344AbeJBPtL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 11:48:21 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45338 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbeJBPsV (ORCPT
+        Tue, 2 Oct 2018 11:49:11 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51258 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726734AbeJBPtL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:48:21 -0400
-Received: by mail-wr1-f67.google.com with SMTP id q5-v6so1240303wrw.12
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 02:06:05 -0700 (PDT)
+        Tue, 2 Oct 2018 11:49:11 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 143-v6so1422626wmf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 02:06:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=yNRQXzEfoVmNJXYOquCGCe94H0Jg5bRMybSjq64Ljg8=;
-        b=FAw6v0UGISB6vp/DBviRnbhxjjqbL01Bk8xbc/E3as+rMvhiVaQsV6it/epUKESyQb
-         ATaRPxeWsBKYLAzUUqeqcwR320SfmSdqHH42cVBY9xEARRurK3R4QVT8dhoo+uy3anV/
-         pXq2LOT9eL1NMprfpFmJJWJBa+KkguQyRPi2684tLgCEahTRao2vYbOqXcuUmhNrWfek
-         25TDag7HZ4cXNKXftSmwbgU3Vny8MQ9kMm7XoHPjCD/Cjy52tSfrsgQ1hTebaueXmzMb
-         qPH+/pIjRLx/mRDumCkp6a3DuyR+HjAVAmmAL/QePSd5UEljt3LLQk1FEyJdXNTZWeXP
-         hYYg==
+        bh=T+Rz3WdRBT4t8rpJAavJ80egcc7RJhyuLQ/wzFViB+A=;
+        b=c6e04E+6uDcd6K3SVEkJZNwsSA3gLLHVj9oE58k170ynKgr1u/V4NcO2q8WSoawzOQ
+         EpirdRfm6rrtiLw01zEoNQvdpq+I0fUDR9Aj8SizoAOC67mOyTjmZsb2NSBSMqid8p8Q
+         9Zy6xTiCrPTmylEjYJGc8q5pf9wmHswgGo0/rK5FJ5Umg0XUWrEsV3xww4buKX9Kcf4i
+         RmoovEwRbrtyHIU6MhzWzsb4Zz6FMVyndTjn4tR0QnssjPJy+uCqk1t4ROWVcealxGCM
+         xdfIkb+D+fGEfdQm/HVwanj8iJMfYA0fX+rasEnIBgZlfrK0/PLuqlIm0oQ7ct4Gvbiy
+         Do8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yNRQXzEfoVmNJXYOquCGCe94H0Jg5bRMybSjq64Ljg8=;
-        b=ff4K6auccC5E29A/PKEZ4veuAWztKHUwp9YNpxa0t8uIj24rdmWsUCHwjSobf8jt8p
-         /KcbC/q9iSYEFF8SQdNopTwb8orKGX/FogyDxTqo/Ol+fCQEp7f38Zl6KgfgVzzUZgfk
-         3K0QjP8B8gcdl7sXw8bYZeUlucnPyjxMX9+TA0wyRq6MQqr1GIX8sKHNTs8Db5vZ/yuk
-         BMdZ0riwUxyjTwtfVdSTvizFYCjblsjU+PIM/Tp9CNKpqw1DxA63vJhjsEwj8yVwQbEm
-         mUPO65UPVXYoNXWnzO65o/1xJsF6hPQOtIHY9pXaFrsiyOqk9zAcgBarpZ0Vx8CBXDF7
-         wV8w==
-X-Gm-Message-State: ABuFfoi2rW4WcS/4Vfgu37jdRRuUwhY/gtdvo4ANxnM/53UuEtYAsIL+
-        dxkbG4M39h+lTzC4BqknOGs=
-X-Google-Smtp-Source: ACcGV63UPH6XeS5vpigEo2b52MvZQzC9kREcje6NAUkhmvBBnSf6+WcUlKVxd2ARMUggIii5cWH4Ug==
-X-Received: by 2002:adf:c650:: with SMTP id u16-v6mr10756261wrg.177.1538471164972;
-        Tue, 02 Oct 2018 02:06:04 -0700 (PDT)
+        bh=T+Rz3WdRBT4t8rpJAavJ80egcc7RJhyuLQ/wzFViB+A=;
+        b=gLL/E/CfVOCHOFc+syBG4Dyw9Mu07+9q7ktbSrmKOj7Vnu2MGSMzOZXYg1ylXChgei
+         oB+V2SxIxPV627DDMesA3iEfYpUWIXAR2r1Pmba1iOMDL42hE3G0dpDAmWgcmO/xhDE2
+         PwviPAs0PvHuJgMBSGf1cgt91U2tX8Ndefj7afhT705PemHM18FAwUCcCr8tTjgiHduS
+         +ttXaD0abjpg7mBq+r4IQb1jDRUVdN7EsI30MPcbwKuV7wd56LLIDZQD6JaoE105pXqW
+         If3LBKwbACB9wENzJHH65NuFxOADW0tMKEsl/6f0oRhDR6ws63O6y2bpSekxgqwCGXY4
+         6F8g==
+X-Gm-Message-State: ABuFfogDkZdNTpIL+MoK991gfDPFJntY1RbozVP9zBlAfrWl2z+EDgn+
+        xJ7j9XejYqs/YMgjwQhMO7U=
+X-Google-Smtp-Source: ACcGV61rLd8lPEQYyy6o73ZAPs1VIiIWSa/hQAeizBtJzC8VfS9vNfA4y07M5CRVRuvib2Qly6LVLQ==
+X-Received: by 2002:a1c:9908:: with SMTP id b8-v6mr1138291wme.59.1538471215358;
+        Tue, 02 Oct 2018 02:06:55 -0700 (PDT)
 Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id x5-v6sm10793662wmi.37.2018.10.02.02.06.04
+        by smtp.gmail.com with ESMTPSA id l67-v6sm1679602wma.20.2018.10.02.02.06.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Oct 2018 02:06:04 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 11:06:02 +0200
+        Tue, 02 Oct 2018 02:06:54 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 11:06:52 +0200
 From:   Ingo Molnar <mingo@kernel.org>
 To:     Waiman Long <longman@redhat.com>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] locking/lockdep: Eliminate redundant irqs check in
- __lock_acquire()
-Message-ID: <20181002090602.GB116695@gmail.com>
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 0/5] locking/lockdep: Improve lockdep performance
+Message-ID: <20181002090652.GC116695@gmail.com>
 References: <1538157201-29173-1-git-send-email-longman@redhat.com>
- <1538157201-29173-3-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1538157201-29173-3-git-send-email-longman@redhat.com>
+In-Reply-To: <1538157201-29173-1-git-send-email-longman@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -82,58 +81,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 * Waiman Long <longman@redhat.com> wrote:
 
-> The static __lock_acquire() function has only two callers:
+> Enabling CONFIG_LOCKDEP and other related debug options will greatly
+> reduce system performance. This patchset aims to reduce the performance
+> slowdown caused by the lockdep code.
 > 
->  1) lock_acquire()
->  2) reacquire_held_locks()
+> Patch 1 just removes an inline function that wasn't used.
 > 
-> In lock_acquire(), raw_local_irq_save() is called before hand. So
-> irqs must have been disabled. So the check
-
-s/before hand/
- /beforehand
-
-s/irqs
- /IRQs
-
+> Patches 2 and 3 are minor twists to optimize the code.
 > 
-> 	DEBUG_LOCKS_WARN_ON(!irqs_disabled())
+> Patch 4 makes class->ops a per-cpu counter.
 > 
-> is kind of redundant in thise case. So move the above check
-> to reacquire_held_locks() to eliminate redundant code in the
-> lock_acquire path.
-
-s/thise
- /this
-
-s/lock_acquire path
- /lock_acquire() path
- 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  kernel/locking/lockdep.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
+> Patch 5 moves the lock_release() call outside of a lock critical section.
 > 
-> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> index 8f9de7c..add0468 100644
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -3192,6 +3192,10 @@ void lockdep_init_map(struct lockdep_map *lock, const char *name,
->  /*
->   * This gets called for every mutex_lock*()/spin_lock*() operation.
->   * We maintain the dependency maps and validate the locking attempt:
-> + *
-> + * The callers must make sure that IRQs are disabled before calling it.
-> + * otherwise we could get an interrupt which would want to take locks,
-> + * which would end up in lockdep again.
+> Parallel kernel compilation tests (make -j <#cpu>) were performed on
+> 2 different systems:
+> 
+>  1) an 1-socket 22-core 44-thread Skylake system
+>  2) a 4-socket 72-core 144-thread Broadwell system
+> 
+> The build times with pre-patch and post-patch debug kernels were:
+> 
+>    System      Pre-patch     Post-patch    %Change
+>    ------      ---------     ----------    -------
+>   1-socket      8m53.9s        8m41.2s      -2.4%
+>   4-socket      7m27.0s        5m31.0s      -26%
+> 
+> I think it is the last 2 patches that yield most of the performance
+> improvement.
 
-Spelling nit: a comma after the first line, like it was in the original version:
+Impressive speedup!
 
-> -	/*
-> -	 * Lockdep should run with IRQs disabled, otherwise we could
-> -	 * get an interrupt which would want to take locks, which would
-> -	 * end up in lockdep and have you got a head-ache already?
-> -	 */
+Mind including the non-lockdep numbers as well, for reference?
 
 Thanks,
 
