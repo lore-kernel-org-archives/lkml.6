@@ -2,280 +2,123 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8C3C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEBCC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFFC220666
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:29:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 208DA2089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:31:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="jjW4w0Jj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFFC220666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UCT2imHq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208DA2089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbeJBKKP (ORCPT
+        id S1726835AbeJBKMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 06:10:15 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40925 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbeJBKKP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 06:10:15 -0400
-Received: by mail-wm1-f68.google.com with SMTP id o2-v6so663137wmh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 20:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dCX/GwmzqqaEro7lRxjOyoDyyqxVketAetl48jxdvcg=;
-        b=jjW4w0JjqF0rbDnvztAYmvi+AfTV1Sf2zj9wMGftS16NsZ2+vwmdO1dMS6Ph0zt2zK
-         AzT838Loq9GU0xiwkDlg5LnQvnn7EKQcKENW779CCTwlwxU7l40T6lqvUXPvmfB7HqOY
-         7gN4v4NpzPmPfqesZUhBB4MnNupEPMCOFYqStFrgP6HnvCliS/Tk2zde4nIKoZPStpDp
-         tOfZNA1JYvyXeErD4kN7ilYN9Fz7Hrjn6QjAEqFYqIC8zks3wlTE9OGBcCabR+eutSMt
-         JRmKoap+Z5ln75v2lFK7nr1mVROFoD7PWy6ze+q9AoClwMBZmSH7qjozAB3nZPka1oc7
-         gdqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dCX/GwmzqqaEro7lRxjOyoDyyqxVketAetl48jxdvcg=;
-        b=A4hivPTz+Um7gTwkU39OVfJ9jx6B2H1TJs1AevrOfLqa4I+ZJFutlaAKO5N+b+u47n
-         XSQFwdb2z1CInkvl8QZ1HUfWwxkpwERAa15HlruxuzpRV2Zlrs16xX9SERAjgaripAOZ
-         ukZQLI2LFz3KDsByEKfGDjy9dcHNv3JigfFzgePVb/8+A92HY8+FgmZZs+dq4IhEiLIM
-         fUgzuy2lENX8p4WQ8B8hdFHTuxfEq9N5qRyPdrlU/A8hWfhW8CuI6Upxpt0AdTGH8U3Y
-         I5/ENL3v88CpSYu3SkkfVqn82mERf/5iclTpdSYmBq5HtkBMS//4ClbFxLaRLf2o203g
-         y1eQ==
-X-Gm-Message-State: ABuFfojn7QY7UP3aXO8DycOtb9l2er4ye85VAPysZ2uy3vaR8t6JIsJo
-        vIC3SELTfH1fq5zGvk3jIPCM510GNFQI8YJQXimZDw==
-X-Google-Smtp-Source: ACcGV610ApY0NX6kjMXZO69tX0bXy69BPjQ9ar5M5RKIIlJEWdbSMGoZs8oruITX7D51P2E3opvMK/D4Q9c6VrK5X5c=
-X-Received: by 2002:a1c:1fc2:: with SMTP id f185-v6mr435326wmf.18.1538450950644;
- Mon, 01 Oct 2018 20:29:10 -0700 (PDT)
+        Tue, 2 Oct 2018 06:12:49 -0400
+Received: from ozlabs.org ([203.11.71.1]:54089 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726374AbeJBKMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 06:12:49 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42PPp85Mxpz9s3x;
+        Tue,  2 Oct 2018 13:31:44 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538451104;
+        bh=HydV3e0aQs1K10v+d6AoD9f7U8wrFOadY4qSFVgz0nc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=UCT2imHqmTRLgJo42Oba8i+bQ79xsB8TOSJsyN3dEflN9ul0l1g084meSF2T9QcuI
+         ziucfIjUL5FhBmOX1dq1JuAyH9hsVmNwqCiunxfRdKT4Z7++qP2esnIHEAs4ScOuEH
+         FF74D7D7/7PB5bTTQip0NJra4AwOvoUeltoF/xSc+xH2UW3u2UqRpjWI/4ipYoJ9Lw
+         lOqkH2fPCnacLLss2S6ROi3EKocUSWzUAF/D5olKzFaORKFiP8Dvjg8P/lCla+V627
+         DcXmRVY0r5aUonO5fxmc0vOM3K3etaqIch7uCwaXE6VblWNxDdRujbUeZGgLQPClPO
+         uVlLrgpKX9aZw==
+Date:   Tue, 2 Oct 2018 13:31:44 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Rob Herring <robherring2@gmail.com>,
+        Andy Gross <agross@codeaurora.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>
+Subject: linux-next: manual merge of the devicetree tree with the qcom tree
+Message-ID: <20181002133144.4ea80f23@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20180929062605.12888-1-anup@brainfault.org> <7d40c900-cfb2-f3a0-fce9-0136814781fe@wdc.com>
-In-Reply-To: <7d40c900-cfb2-f3a0-fce9-0136814781fe@wdc.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Tue, 2 Oct 2018 08:58:59 +0530
-Message-ID: <CAAhSdy1DQFNEvW2Nr6g5mv9y_+GrhFL4nVxOROwGwGcqsHhqtg@mail.gmail.com>
-Subject: Re: [PATCH v3] RISC-V: Show IPI stats
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5tcLE6c.4bdLcwazvQcTehZ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 8:45 AM Atish Patra <atish.patra@wdc.com> wrote:
->
-> On 9/28/18 11:26 PM, Anup Patel wrote:
-> > This patch provides arch_show_interrupts() implementation to
-> > show IPI stats via /proc/interrupts.
-> >
-> > Now the contents of /proc/interrupts" will look like below:
-> >             CPU0       CPU1       CPU2       CPU3
-> >    8:         17          7          6         14  SiFive PLIC   8  virtio0
-> >   10:         10         10          9         11  SiFive PLIC  10  ttyS0
-> > IPI0:       170        673        251         79  Rescheduling interrupts
-> > IPI1:         1         12         27          1  Function call interrupts
-> >
-> > Signed-off-by: Anup Patel <anup@brainfault.org>
-> >
-> > Changes since v2:
-> >   - Remove use of IPI_CALL_WAKEUP because it's being removed
-> >
-> > Changes since v1:
-> >   - Add stub inline show_ipi_stats() function for !CONFIG_SMP
-> >   - Make ipi_names[] dynamically sized at compile time
-> >   - Minor beautification of ipi_names[] using tabs
-> >
-> > ---
-> >   arch/riscv/include/asm/smp.h |  9 +++++++++
-> >   arch/riscv/kernel/irq.c      |  8 ++++++++
-> >   arch/riscv/kernel/smp.c      | 39 +++++++++++++++++++++++++++++-------
-> >   3 files changed, 49 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
-> > index fce312ce3516..5278ae8f1346 100644
-> > --- a/arch/riscv/include/asm/smp.h
-> > +++ b/arch/riscv/include/asm/smp.h
-> > @@ -25,8 +25,13 @@
-> >   extern unsigned long __cpuid_to_hardid_map[NR_CPUS];
-> >   #define cpuid_to_hardid_map(cpu)    __cpuid_to_hardid_map[cpu]
-> >
-> > +struct seq_file;
-> > +
-> >   #ifdef CONFIG_SMP
-> >
-> > +/* print IPI stats */
-> > +void show_ipi_stats(struct seq_file *p, int prec);
-> > +
-> >   /* SMP initialization hook for setup_arch */
-> >   void __init setup_smp(void);
-> >
-> > @@ -47,6 +52,10 @@ void riscv_cpuid_to_hartid_mask(const struct cpumask *in, struct cpumask *out);
-> >
-> >   #else
-> >
-> > +static inline void show_ipi_stats(struct seq_file *p, int prec)
-> > +{
-> > +}
-> > +
-> >   static inline int riscv_hartid_to_cpuid(int hartid)
-> >   {
-> >       return 0;
-> > diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
-> > index ca4593317e45..48e6b7db83a1 100644
-> > --- a/arch/riscv/kernel/irq.c
-> > +++ b/arch/riscv/kernel/irq.c
-> > @@ -8,6 +8,8 @@
-> >   #include <linux/interrupt.h>
-> >   #include <linux/irqchip.h>
-> >   #include <linux/irqdomain.h>
-> > +#include <linux/seq_file.h>
-> > +#include <asm/smp.h>
-> >
-> >   /*
-> >    * Possible interrupt causes:
-> > @@ -24,6 +26,12 @@
-> >    */
-> >   #define INTERRUPT_CAUSE_FLAG        (1UL << (__riscv_xlen - 1))
-> >
-> > +int arch_show_interrupts(struct seq_file *p, int prec)
-> > +{
-> > +     show_ipi_stats(p, prec);
-> > +     return 0;
-> > +}
-> > +
-> >   asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs)
-> >   {
-> >       struct pt_regs *old_regs = set_irq_regs(regs);
-> > diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-> > index 89d95866f562..686fa7a427ff 100644
-> > --- a/arch/riscv/kernel/smp.c
-> > +++ b/arch/riscv/kernel/smp.c
-> > @@ -22,22 +22,24 @@
-> >   #include <linux/interrupt.h>
-> >   #include <linux/smp.h>
-> >   #include <linux/sched.h>
-> > +#include <linux/seq_file.h>
-> >
-> >   #include <asm/sbi.h>
-> >   #include <asm/tlbflush.h>
-> >   #include <asm/cacheflush.h>
-> >
-> > -/* A collection of single bit ipi messages.  */
-> > -static struct {
-> > -     unsigned long bits ____cacheline_aligned;
-> > -} ipi_data[NR_CPUS] __cacheline_aligned;
-> > -
-> >   enum ipi_message_type {
-> >       IPI_RESCHEDULE,
-> >       IPI_CALL_FUNC,
-> >       IPI_MAX
-> >   };
-> >
-> > +/* A collection of single bit ipi messages.  */
-> > +static struct {
-> > +     unsigned long stats[IPI_MAX] ____cacheline_aligned;
-> > +     unsigned long bits ____cacheline_aligned;
-> > +} ipi_data[NR_CPUS] __cacheline_aligned;
-> > +
-> >   int riscv_hartid_to_cpuid(int hartid)
-> >   {
-> >       int i = -1;
-> > @@ -67,6 +69,7 @@ int setup_profiling_timer(unsigned int multiplier)
-> >   void riscv_software_interrupt(void)
-> >   {
-> >       unsigned long *pending_ipis = &ipi_data[smp_processor_id()].bits;
-> > +     unsigned long *stats = ipi_data[smp_processor_id()].stats;
-> >
-> >       /* Clear pending IPI */
-> >       csr_clear(sip, SIE_SSIE);
-> > @@ -81,11 +84,15 @@ void riscv_software_interrupt(void)
-> >               if (ops == 0)
-> >                       return;
-> >
-> > -             if (ops & (1 << IPI_RESCHEDULE))
-> > +             if (ops & (1 << IPI_RESCHEDULE)) {
-> > +                     stats[IPI_RESCHEDULE]++;
-> >                       scheduler_ipi();
-> > +             }
-> >
-> > -             if (ops & (1 << IPI_CALL_FUNC))
-> > +             if (ops & (1 << IPI_CALL_FUNC)) {
-> > +                     stats[IPI_CALL_FUNC]++;
-> >                       generic_smp_call_function_interrupt();
-> > +             }
-> >
-> >               BUG_ON((ops >> IPI_MAX) != 0);
-> >
-> > @@ -111,6 +118,24 @@ send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
-> >       sbi_send_ipi(cpumask_bits(&hartid_mask));
-> >   }
-> >
-> > +static const char *ipi_names[] = {
-> > +     [IPI_RESCHEDULE]        = "Rescheduling interrupts",
-> > +     [IPI_CALL_FUNC]         = "Function call interrupts",
-> > +};
-> > +
-> > +void show_ipi_stats(struct seq_file *p, int prec)
-> > +{
-> > +     unsigned int cpu, i;
-> > +
-> > +     for (i = 0; i < IPI_MAX; i++) {
-> > +             seq_printf(p, "%*s%u:%s", prec - 1, "IPI", i,
-> > +                        prec >= 4 ? " " : "");
-> > +             for_each_online_cpu(cpu)
-> > +                     seq_printf(p, "%10lu ", ipi_data[cpu].stats[i]);
-> > +             seq_printf(p, " %s\n", ipi_names[i]);
-> > +     }
-> > +}
-> > +
-> >   void arch_send_call_function_ipi_mask(struct cpumask *mask)
-> >   {
-> >       send_ipi_message(mask, IPI_CALL_FUNC);
-> >
-> some checkpatch errors.
->
-> patches/smp_cleanup/0014-RISC-V-Show-IPI-stats.patch
-> ----------------------------------------------------
-> WARNING: Missing a blank line after declarations
-> #115: FILE: arch/riscv/kernel/smp.c:40:
-> +       unsigned long stats[IPI_MAX] ____cacheline_aligned;
-> +       unsigned long bits ____cacheline_aligned;
+--Sig_/5tcLE6c.4bdLcwazvQcTehZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This was already there in existing code.
+Hi Rob,
 
->
-> WARNING: usage of NR_CPUS is often wrong - consider using
-> cpu_possible(), num_possible_cpus(), for_each_possible_cpu(), etc
-> #116: FILE: arch/riscv/kernel/smp.c:41:
-> +} ipi_data[NR_CPUS] __cacheline_aligned;
+Today's linux-next merge of the devicetree tree got a conflict in:
 
-Even this was already there in existing code.
+  drivers/soc/qcom/apr.c
 
->
-> WARNING: static const char * array should probably be static const char
-> * const
-> #151: FILE: arch/riscv/kernel/smp.c:121:
-> +static const char *ipi_names[] = {
->
-> total: 0 errors, 3 warnings, 120 lines checked
->
-> Let me know if they were ignored on purpose.
->
+between commit:
 
-Yes, this one was added by this patch.
+  4fadb26574cb ("soc: qcom: apr: Avoid string overflow")
 
-Do you want me to send revised patch?
+from the qcom tree and commit:
 
-Regards,
-Anup
+  b2efb5b04591 ("soc: Convert to using %pOFn instead of device_node.name")
+
+from the devicetree tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/soc/qcom/apr.c
+index 716762d59c1f,4bda793ba6ae..000000000000
+--- a/drivers/soc/qcom/apr.c
++++ b/drivers/soc/qcom/apr.c
+@@@ -219,9 -219,9 +219,9 @@@ static int apr_add_device(struct devic
+  	adev->domain_id =3D id->domain_id;
+  	adev->version =3D id->svc_version;
+  	if (np)
+- 		strscpy(adev->name, np->name, APR_NAME_SIZE);
++ 		snprintf(adev->name, APR_NAME_SIZE, "%pOFn", np);
+  	else
+ -		strncpy(adev->name, id->name, APR_NAME_SIZE);
+ +		strscpy(adev->name, id->name, APR_NAME_SIZE);
+ =20
+  	dev_set_name(&adev->dev, "aprsvc:%s:%x:%x", adev->name,
+  		     id->domain_id, id->svc_id);
+
+--Sig_/5tcLE6c.4bdLcwazvQcTehZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluy5qAACgkQAVBC80lX
+0Gyg1wf9Gxvpbo+KXpmdbSJkTrWo2gTHntDv/w2PivEmYLWqVvuTTcMOWEEFF7wS
+j/pC2rpyPIXh2z4Vd83uV0lUoezukfs2Hq4s9fdWUvXmLDpTXr9e+hyOdM1y5QMZ
+mQa1cFCqDz5bS9K21/tpDDtaDWiYQHOonkS5wXqcldC8OhRSmM/fZc09m321mm/W
+8RKlZgM0ATMuzCNlbGHK+m38XAQDDbB1g08F1zB7pJNszDNfdK3XigVMjELanTpu
+mXE+j7JcZj+Gm9t5ZJ5mlbDEJAzm/KPS6eShQLTpkzMUZ4ch+eqXV8l1SMmaHp7L
+2b1qjXkf2ixLXnmCsMU86Lh3yS3dYQ==
+=yk49
+-----END PGP SIGNATURE-----
+
+--Sig_/5tcLE6c.4bdLcwazvQcTehZ--
