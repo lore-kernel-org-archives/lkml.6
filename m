@@ -2,87 +2,145 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0229C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7379C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 920C6204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:55:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 920C6204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 724062064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:55:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724062064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731628AbeJBUiq (ORCPT
+        id S1731775AbeJBUir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 2 Oct 2018 16:38:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50808 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729700AbeJBUiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 16:38:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34328 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729495AbeJBUPQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:15:16 -0400
-Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE21C5AA;
-        Tue,  2 Oct 2018 13:31:53 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tarick Bedeir <tarick@google.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 024/137] IB/mlx4: Test port number before querying type.
-Date:   Tue,  2 Oct 2018 06:23:45 -0700
-Message-Id: <20181002132500.192249010@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
-References: <20181002132458.446916963@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 320D2AD90;
+        Tue,  2 Oct 2018 13:55:15 +0000 (UTC)
+Date:   Tue, 2 Oct 2018 15:55:06 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        pasha.tatashin@oracle.com, riel@redhat.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Huang, Ying" <ying.huang@intel.com>, ak@linux.intel.com,
+        rppt@linux.vnet.ibm.com, linux@dominikbrodowski.net,
+        Arnd Bergmann <arnd@arndb.de>, mcgrof@kernel.org,
+        Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: Introduce new function vm_insert_kmem_page
+Message-ID: <20181002135506.GU18290@dhcp22.suse.cz>
+References: <20180927175123.GA16367@jordon-HP-15-Notebook-PC>
+ <20180927183236.GJ6278@dhcp22.suse.cz>
+ <CAFqt6zbnV+wV+O2EMi1mE4qWDjsZ=Y847MFUc+zv6g8OoVM30g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqt6zbnV+wV+O2EMi1mE4qWDjsZ=Y847MFUc+zv6g8OoVM30g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Fri 28-09-18 17:57:17, Souptick Joarder wrote:
+> On Fri, Sep 28, 2018 at 12:02 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Thu 27-09-18 23:21:23, Souptick Joarder wrote:
+> > > vm_insert_kmem_page is similar to vm_insert_page and will
+> > > be used by drivers to map kernel (kmalloc/vmalloc/pages)
+> > > allocated memory to user vma.
+> > >
+> > > Previously vm_insert_page is used for both page fault
+> > > handlers and outside page fault handlers context. When
+> > > vm_insert_page is used in page fault handlers context,
+> > > each driver have to map errno to VM_FAULT_CODE in their
+> > > own way. But as part of vm_fault_t migration all the
+> > > page fault handlers are cleaned up by using new vmf_insert_page.
+> > > Going forward, vm_insert_page will be removed by converting
+> > > it to vmf_insert_page.
+> > >
+> > > But their are places where vm_insert_page is used outside
+> > > page fault handlers context and converting those to
+> > > vmf_insert_page is not a good approach as drivers will end
+> > > up with new VM_FAULT_CODE to errno conversion code and it will
+> > > make each user more complex.
+> > >
+> > > So this new vm_insert_kmem_page can be used to map kernel
+> > > memory to user vma outside page fault handler context.
+> > >
+> > > In short, vmf_insert_page will be used in page fault handlers
+> > > context and vm_insert_kmem_page will be used to map kernel
+> > > memory to user vma outside page fault handlers context.
+> > >
+> > > We will slowly convert all the user of vm_insert_page to
+> > > vm_insert_kmem_page after this API be available in linus tree.
+> >
+> > In general I do not like patches adding a new exports/functionality
+> > without any user added at the same time. I am not going to look at the
+> > implementation right now but the above opens more questions than it
+> > gives answers. Why do we have to distinguish #PF from other paths?
+> 
+> Going forward, the plan is to restrict future drivers not to use vm_insert_page
+> ( *it will generate new errno to VM_FAULT_CODE mapping code for new drivers
+> which were already cleaned up for existing drivers*) in #PF context but to make
+> use of vmf_insert_page which returns VMF_FAULT_CODE and that is not possible
+> until both vm_insert_page and vmf_insert_page API exists.
+> 
+> But there are some consumers of vm_insert_page which use it outside #PF context.
+> straight forward conversion of vm_insert_page to vmf_insert_page won't
+> work there as
+> those function calls expects errno not vm_fault_t in return.
+> 
+> e.g - drivers/auxdisplay/cfag12864bfb.c, line 55
+>         drivers/auxdisplay/ht16k33.c, line 227
+>         drivers/firewire/core-iso.c, line 115
+>         drivers/gpu/drm/rockchip/rockchip_drm_gem.c, line 237
+>         drivers/gpu/drm/xen/xen_drm_front_gem.c, line 253
+>         drivers/iommu/dma-iommu.c, line 600
+>         drivers/media/common/videobuf2/videobuf2-dma-sg.c, line 343
+>         drivers/media/usb/usbvision/usbvision-video.c, line 1056
+>         drivers/xen/gntalloc.c, line 548
+>         drivers/xen/gntdev.c, line 1149
+>         drivers/xen/privcmd-buf.c, line 184
+>         mm/vmalloc.c, line 2254
+>         net/ipv4/tcp.c, line 1806
+>         net/packet/af_packet.c, line 4407
+> 
+> These are the approaches which could have been taken to handle this scenario -
+> 
+> 1. Replace vm_insert_page with vmf_insert_page and then write few
+>    extra lines of code to convert VM_FAULT_CODE to errno which
+>    makes driver users more complex ( also the reverse mapping errno to
+>    VM_FAULT_CODE have been cleaned up as part of vm_fault_t migration ,
+>    not preferred to introduce anything similar again)
+> 
+> 2. Maintain both vm_insert_page and vmf_insert_page and use it in
+>    respective places. But it won't gurantee that vm_insert_page will
+>    never be used in #PF context.
+> 
+> 3. Introduce a similar API like vm_insert_page, convert all non #PF
+>    consumer to use it and finally remove vm_insert_page by converting
+>    it to vmf_insert_page.
+> 
+> And the 3rd approach was taken by introducing vm_insert_kmem_page().
 
-------------------
+OK, the make sure to convert some of those users in the same patch. This
+will allow both to review the api and that it serves it purpose. Other
+users can also see how the initial conversion has been done and do it in
+a similar way.
 
-From: Tarick Bedeir <tarick@google.com>
-
-[ Upstream commit f1228867adaf8890826f2b59e4caddb1c5cc2df7 ]
-
-rdma_ah_find_type() can reach into ib_device->port_immutable with a
-potentially out-of-bounds port number, so check that the port number is
-valid first.
-
-Fixes: 44c58487d51a ("IB/core: Define 'ib' and 'roce' rdma_ah_attr types")
-Signed-off-by: Tarick Bedeir <tarick@google.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/infiniband/hw/mlx4/qp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/infiniband/hw/mlx4/qp.c
-+++ b/drivers/infiniband/hw/mlx4/qp.c
-@@ -4014,9 +4014,9 @@ static void to_rdma_ah_attr(struct mlx4_
- 	u8 port_num = path->sched_queue & 0x40 ? 2 : 1;
- 
- 	memset(ah_attr, 0, sizeof(*ah_attr));
--	ah_attr->type = rdma_ah_find_type(&ibdev->ib_dev, port_num);
- 	if (port_num == 0 || port_num > dev->caps.num_ports)
- 		return;
-+	ah_attr->type = rdma_ah_find_type(&ibdev->ib_dev, port_num);
- 
- 	if (ah_attr->type == RDMA_AH_ATTR_TYPE_ROCE)
- 		rdma_ah_set_sl(ah_attr, ((path->sched_queue >> 3) & 0x7) |
-
-
+-- 
+Michal Hocko
+SUSE Labs
