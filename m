@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 682BCC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50839C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B40420878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:27:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B40420878
+	by mail.kernel.org (Postfix) with ESMTP id 22A152089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 09:27:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22A152089C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbeJBQJM (ORCPT
+        id S1727545AbeJBQJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 12:09:12 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:50405 "EHLO
+        Tue, 2 Oct 2018 12:09:31 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:50409 "EHLO
         imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727164AbeJBQJM (ORCPT
+        with ESMTP id S1727160AbeJBQJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 12:09:12 -0400
 Received: from [148.252.241.226] (helo=rainbowdash)
         by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1g7Gx6-0002za-CP; Tue, 02 Oct 2018 10:26:48 +0100
+        id 1g7Gx6-0002zb-Di; Tue, 02 Oct 2018 10:26:48 +0100
 Received: from ben by rainbowdash with local (Exim 4.91)
         (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1g7Gx6-0000Jd-4b; Tue, 02 Oct 2018 10:26:48 +0100
+        id 1g7Gx6-0000Jh-5c; Tue, 02 Oct 2018 10:26:48 +0100
 From:   Ben Dooks <ben.dooks@codethink.co.uk>
 To:     netdev@vger.kernel.org
 Cc:     oneukum@suse.com, davem@davemloft.net, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-kernel@lists.codethink.co.uk,
         Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH 2/4] usbnet: smsc95xx: align tx-buffer to word
-Date:   Tue,  2 Oct 2018 10:26:43 +0100
-Message-Id: <20181002092645.1115-3-ben.dooks@codethink.co.uk>
+Subject: [PATCH 3/4] usbnet: smsc95xx: check for csum being in last four bytes
+Date:   Tue,  2 Oct 2018 10:26:44 +0100
+Message-Id: <20181002092645.1115-4-ben.dooks@codethink.co.uk>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002092645.1115-1-ben.dooks@codethink.co.uk>
 References: <20181002092645.1115-1-ben.dooks@codethink.co.uk>
@@ -47,101 +47,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tegra driver requires alignment of the buffer, so try and
-make this better by pushing the buffer start back to an word
-aligned address. At the worst this makes memcpy() easier as
-it is word aligned, at best it makes sure the usb can directly
-map the buffer.
+The manual states that the checksum cannot lie in the last DWORD of the
+transmission, so add a basic check for this and fall back to software
+checksumming the packet.
+
+This only seems to trigger for ACK packets with no options or data to
+return to the other end, and the use of the tx-alignment option makes
+it more likely to happen.
 
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-[todo - make this configurable]
 ---
- drivers/net/usb/Kconfig    | 12 ++++++++++++
- drivers/net/usb/smsc95xx.c | 22 ++++++++++++++++++++--
- 2 files changed, 32 insertions(+), 2 deletions(-)
+ drivers/net/usb/smsc95xx.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/Kconfig b/drivers/net/usb/Kconfig
-index a32f1a446ce9..35bad8bd2e2a 100644
---- a/drivers/net/usb/Kconfig
-+++ b/drivers/net/usb/Kconfig
-@@ -360,6 +360,18 @@ config USB_NET_SMSC95XX_TURBO
- 	  driver's receive path. These can also be altered by the
- 	  turbo_mode module parameter.
- 
-+config USB_NET_SMSC95XX_TXALIGN
-+	bool "Add bytes to align transmit buffers"
-+	depends on USB_NET_SMSC95XX
-+	default n
-+	help
-+	  This option makes the tx buffers 32 bit aligned which might
-+	  help with systems that want tx data aligned to a 32 bit
-+	  boundary.
-+
-+	  Using this option will mean there may be up to 3 bytes of
-+	  data per packet sent.
-+
- config USB_NET_GL620A
- 	tristate "GeneSys GL620USB-A based cables"
- 	depends on USB_USBNET
 diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index fe13bef9579e..d244357bf1ad 100644
+index d244357bf1ad..46385a4b8b98 100644
 --- a/drivers/net/usb/smsc95xx.c
 +++ b/drivers/net/usb/smsc95xx.c
-@@ -78,6 +78,10 @@ struct smsc95xx_priv {
- 	struct usbnet *dev;
- };
+@@ -2003,6 +2003,20 @@ static u32 smsc95xx_calc_csum_preamble(struct sk_buff *skb)
+ 	return (high_16 << 16) | low_16;
+ }
  
-+static bool align_tx = IS_ENABLED(CONFIG_USB_NET_SMSC95XX_TXALIGN);
-+module_param(align_tx, bool, 0644);
-+MODULE_PARM_DESC(align_tx, "Align TX buffers to word boundaries");
++/* The CSUM won't work if the checksum lies in the last 4 bytes of the
++ * transmission. This is fairly unlikely, only seems to trigger with some
++ * short TCP ACK packets sent.
++ *
++ * Note, this calculation should probably check for the alignment of the
++ * data as well, but a straight chec for csum being in the last four bytes
++ * of the packet should be ok for now.
++*/
++static bool smsc95xx_can_checksum(struct sk_buff *skb)
++{
++       unsigned int len = skb->len - skb_checksum_start_offset(skb);
++       return skb->csum_offset < (len - (4 + 1));
++}
 +
- static bool turbo_mode = IS_ENABLED(CONFIG_USB_NET_SMSC95XX_TURBO);
- module_param(turbo_mode, bool, 0644);
- MODULE_PARM_DESC(turbo_mode, "Enable multiple frames per Rx transaction");
-@@ -2005,10 +2009,18 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
- 	bool csum = skb->ip_summed == CHECKSUM_PARTIAL;
- 	int overhead = csum ? SMSC95XX_TX_OVERHEAD_CSUM : SMSC95XX_TX_OVERHEAD;
- 	u32 tx_cmd_a, tx_cmd_b;
-+	u32 data_len;
-+	uintptr_t align = 0;
- 
- 	/* We do not advertise SG, so skbs should be already linearized */
- 	BUG_ON(skb_shinfo(skb)->nr_frags);
- 
-+	if (IS_ENABLED(CONFIG_USB_NET_SMSC95XX_TXALIGN) && align_tx) {
-+		align = (uintptr_t)skb->data & 3;
-+		if (align)
-+			overhead += 4 - align;
-+	}
-+
- 	/* Make writable and expand header space by overhead if required */
- 	if (skb_cow_head(skb, overhead)) {
- 		/* Must deallocate here as returning NULL to indicate error
-@@ -2037,16 +2049,22 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
- 		}
+ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
+ 					 struct sk_buff *skb, gfp_t flags)
+ {
+@@ -2031,7 +2045,8 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
  	}
  
-+	data_len = skb->len;
-+	if (align)
-+		skb_push(skb, 4 - align);
-+
- 	skb_push(skb, 4);
--	tx_cmd_b = (u32)(skb->len - 4);
-+	tx_cmd_b = (u32)(data_len);
- 	if (csum)
- 		tx_cmd_b |= TX_CMD_B_CSUM_ENABLE;
- 	cpu_to_le32s(&tx_cmd_b);
- 	memcpy(skb->data, &tx_cmd_b, 4);
- 
- 	skb_push(skb, 4);
--	tx_cmd_a = (u32)(skb->len - 8) | TX_CMD_A_FIRST_SEG_ |
-+	tx_cmd_a = (u32)(data_len) | TX_CMD_A_FIRST_SEG_ |
- 		TX_CMD_A_LAST_SEG_;
-+	if (align)
-+		tx_cmd_a |= (4 - align) << 16;
- 	cpu_to_le32s(&tx_cmd_a);
- 	memcpy(skb->data, &tx_cmd_a, 4);
- 
+ 	if (csum) {
+-		if (skb->len <= 45) {
++		/* note, csum does not work if csum in last DWORD of packet */
++		if (skb->len <= 45 || !smsc95xx_can_checksum(skb)) {
+ 			/* workaround - hardware tx checksum does not work
+ 			 * properly with extremely small packets */
+ 			long csstart = skb_checksum_start_offset(skb);
 -- 
 2.19.0
 
