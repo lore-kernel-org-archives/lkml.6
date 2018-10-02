@@ -2,66 +2,67 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E895AC64EBD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BDFC64EBD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A721F20666
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1B402082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:20:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JuXNfmXf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A721F20666
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="klra96Vb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1B402082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbeJCFGX (ORCPT
+        id S1728387AbeJCFGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 01:06:23 -0400
-Received: from mail-vk1-f202.google.com ([209.85.221.202]:43517 "EHLO
-        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725198AbeJCFGW (ORCPT
+        Wed, 3 Oct 2018 01:06:25 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:57304 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725198AbeJCFGZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 01:06:22 -0400
-Received: by mail-vk1-f202.google.com with SMTP id r11-v6so842486vke.10
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 15:20:47 -0700 (PDT)
+        Wed, 3 Oct 2018 01:06:25 -0400
+Received: by mail-pl1-f201.google.com with SMTP id v7-v6so3996721plo.23
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 15:20:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=x4wSw6xf1XRnq0lS/nECfCGfJyirDBwNxRG/QeNClV8=;
-        b=JuXNfmXfsiO2jTdtpw/+6ukxSIDiPIl5hSDCMSjx8uXkwwiYhxbnXkCA3DdbIrN6nr
-         f50TBUpfsR6UON1gdWQDd6JsOuau0Ul7r/blwryed/PXbw03MoUeibX3CbPM38cSaLjT
-         JnG/Llh9mYIaSGgiVrtJ/uclXl4/evs9JYiCOfaBNfCn2on4CUzzWizH0+YigCRZseDx
-         yh2QUpYY4PD23e6UAEc5rM03eIYuPD6+wiDjgcfiEFYyc+VTtlrtNC6f0LKU1lP9U/5/
-         Zom2LPMDzrI+AlKxY/OUfyHK/BXBLxX8v7rQC7okwkXdTmoZqNnqwRuJT1mK++dEFf7T
-         MS7A==
+        bh=QkSX0jMYrsg+ctosVnJt3SWNB+wWVP6PkDmWoypdc8E=;
+        b=klra96VbyD+TxdbIjLoP8tSWFaXHuSicDTzAqFQOjRLapp84/yJFwyx/JFeGTR4nhG
+         qTXW+J8kyH4mYq+PZwtGmflatPR0u9RN8Jb6pwsGaCtNviT8nqaOK9sikvQyu5Zmd/oK
+         gzUiAc01XrnIz7aH/ToWrsxl+b5JO/XTXV4JF9KWBNM17On1BbqQrUZDTslWJl3z3rt7
+         uM5ryKRmdsNEaoSChCnvfMj1KSGnGIcX2QsYOB96Yf1nnyhyYByQ2mZjNSd/ii0LI9d4
+         RExgS1hU29pxfzr0FLTEs4xrmZUm2iG2GLFssjSqKEKw8VgucWvexHs6VKVQKM5jD9LX
+         mniQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=x4wSw6xf1XRnq0lS/nECfCGfJyirDBwNxRG/QeNClV8=;
-        b=dgM+WjjoFsuh5fd8tpZKEIdC/dKU/XPZNJPs78W7GRjoN8ecyqJ+IV5Rx2A8bzXfG2
-         1Pqac1yEVUgBThTIN2Mf5Gj1jxUItYHnFEBo4PwRv/XPYF0mBKD4EFlkKkuoHIRmYRLW
-         S4l8F7STZAUgq1FBhNt/9UAI9iNQP5W48nFKx7gDgItEqOTRC8H+Rw2wqLTFbZ4cgHkx
-         s1bZmU1iSZmnopOp1ybrO7gQ06ycuO5zUp3JzeiXLcQ+HX4yX9JoBcapMA6jqb0ngQqN
-         iAFqEoVab/sEEa1DGqAzAeU2zX7jukm/HGN2HHWzvp1ldQa8MQsl6IP7lleeCwqEzKzl
-         UEPw==
-X-Gm-Message-State: ABuFfoi3hrouuAEl7wVNyPWo8Kw1nR7Q7vm/fTZwitHe4jBh5nLZ/Dbt
-        y4Xi9BhI/Tq7n07S5ravrqSycLwY
-X-Google-Smtp-Source: ACcGV63XsT8s6slcbDBhaQ/h/R5APqQ8m4L7hSM1276PBA8CeHA6WDL7mLUj29JkVA5jaztFuWe51aG4
-X-Received: by 2002:ab0:2102:: with SMTP id d2-v6mr17506777ual.6.1538518847237;
- Tue, 02 Oct 2018 15:20:47 -0700 (PDT)
-Date:   Tue,  2 Oct 2018 15:19:00 -0700
+        bh=QkSX0jMYrsg+ctosVnJt3SWNB+wWVP6PkDmWoypdc8E=;
+        b=qsjMmaD67RxK11oESfuahEfaCi+rqbF8UU7qLaxqwdhFNYBR43cAErayYU1taHnYw/
+         rdTdsptwdubzx8T0zJTLlvn/oVMwZVas2ao3ZzRkFY0bunFsZb1BBGp/v01rwut8LO+s
+         xkuHLZ1o2g5XkNbNqGOViDlItUD1Ww0M7dbd1jJp4REBEECojUrMv8mXc96QFf7gYYxt
+         7kd0eQUETXu5jW+ULFNe6ITO4pQlCpQabBmcRkfbVHxEoEwfrsjEyG8byYImeY1dDTQO
+         MbNo+hRPHH5L3kL+ZrJHBDj7+agKZ1wcetwPxVeZ3AaeVjg/epuuNK71k7SyOJOHWC4Q
+         VN+g==
+X-Gm-Message-State: ABuFfoi9xt83GUEYpiJGWxT8WEG8WxuaYWHOZvS3ocsbKjvuVn9YcG+p
+        pA1AKvYS4b65LLOj9N1l9WQ2eIwE
+X-Google-Smtp-Source: ACcGV63TA0uL7eADTeQL5b5XCgT8e2YPA+iIRlKcVn/49CBkB4ulXyPtx71VfIk1fup9PY6ZWXZj+UJH
+X-Received: by 2002:a62:cc4e:: with SMTP id a75-v6mr8396380pfg.38.1538518850448;
+ Tue, 02 Oct 2018 15:20:50 -0700 (PDT)
+Date:   Tue,  2 Oct 2018 15:19:01 -0700
 In-Reply-To: <20181002221903.19476-1-rkir@google.com>
-Message-Id: <20181002221903.19476-12-rkir@google.com>
+Message-Id: <20181002221903.19476-13-rkir@google.com>
 Mime-Version: 1.0
 References: <20181002221903.19476-1-rkir@google.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-Subject: [PATCH 12/15] platform: goldfish: pipe: Rename the init function (add "v2")
+Subject: [PATCH 13/15] platform: goldfish: pipe: Add a dedicated constant for
+ the device name
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
@@ -74,61 +75,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Kiryanov <rkir@google.com>
 
-This is the v2 driver. v1 will be added later.
+Create a constant to refer to the device name instead if several copies
+of a string.
 
 Signed-off-by: Roman Kiryanov <rkir@google.com>
 ---
- drivers/platform/goldfish/goldfish_pipe.c    | 2 +-
- drivers/platform/goldfish/goldfish_pipe_v2.c | 6 +++---
- drivers/platform/goldfish/goldfish_pipe_v2.h | 6 +++---
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/platform/goldfish/goldfish_pipe.h    | 2 ++
+ drivers/platform/goldfish/goldfish_pipe_v2.c | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index 792b20bdf76c..7b0920e962eb 100644
---- a/drivers/platform/goldfish/goldfish_pipe.c
-+++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -87,7 +87,7 @@ static int goldfish_pipe_probe(struct platform_device *pdev)
- 	if (WARN_ON(version < PIPE_CURRENT_DEVICE_VERSION))
- 		return -EINVAL;
+diff --git a/drivers/platform/goldfish/goldfish_pipe.h b/drivers/platform/goldfish/goldfish_pipe.h
+index ee0b54bcb165..0fa6ecb32c6d 100644
+--- a/drivers/platform/goldfish/goldfish_pipe.h
++++ b/drivers/platform/goldfish/goldfish_pipe.h
+@@ -2,6 +2,8 @@
+ #ifndef GOLDFISH_PIPE_H
+ #define GOLDFISH_PIPE_H
  
--	return goldfish_pipe_device_init(pdev, base, irq);
-+	return goldfish_pipe_device_v2_init(pdev, base, irq);
- }
- 
- static int goldfish_pipe_remove(struct platform_device *pdev)
++#define DEVICE_NAME "goldfish_pipe"
++
+ struct goldfish_pipe_dev_base {
+ 	/* the destructor, the pointer is set in init */
+ 	int (*deinit)(void *pipe_dev, struct platform_device *pdev);
 diff --git a/drivers/platform/goldfish/goldfish_pipe_v2.c b/drivers/platform/goldfish/goldfish_pipe_v2.c
-index 641dfdcc3ffd..9857ce07d0e6 100644
+index 9857ce07d0e6..0e2a62322477 100644
 --- a/drivers/platform/goldfish/goldfish_pipe_v2.c
 +++ b/drivers/platform/goldfish/goldfish_pipe_v2.c
-@@ -787,9 +787,9 @@ static void write_pa_addr(void *addr, void __iomem *portl, void __iomem *porth)
- 	writel(lower_32_bits(paddr), portl);
+@@ -775,7 +775,7 @@ static void init_miscdevice(struct miscdevice *miscdev)
+ 	memset(miscdev, 0, sizeof(*miscdev));
+ 
+ 	miscdev->minor = MISC_DYNAMIC_MINOR;
+-	miscdev->name = "goldfish_pipe";
++	miscdev->name = DEVICE_NAME;
+ 	miscdev->fops = &goldfish_pipe_fops;
  }
  
--int goldfish_pipe_device_init(struct platform_device *pdev,
--			      char __iomem *base,
--			      int irq)
-+int goldfish_pipe_device_v2_init(struct platform_device *pdev,
-+				 char __iomem *base,
-+				 int irq)
- {
- 	struct goldfish_pipe_dev *dev;
- 	int err;
-diff --git a/drivers/platform/goldfish/goldfish_pipe_v2.h b/drivers/platform/goldfish/goldfish_pipe_v2.h
-index 03b476fb9978..70bf4ec1fd66 100644
---- a/drivers/platform/goldfish/goldfish_pipe_v2.h
-+++ b/drivers/platform/goldfish/goldfish_pipe_v2.h
-@@ -3,8 +3,8 @@
- #define GOLDFISH_PIPE_V2_H
+@@ -806,7 +806,7 @@ int goldfish_pipe_device_v2_init(struct platform_device *pdev,
  
- /* The entry point to the pipe v2 driver */
--int goldfish_pipe_device_init(struct platform_device *pdev,
--			      char __iomem *base,
--			      int irq);
-+int goldfish_pipe_device_v2_init(struct platform_device *pdev,
-+				 char __iomem *base,
-+				 int irq);
- 
- #endif /* #define GOLDFISH_PIPE_V2_H */
+ 	err = devm_request_irq(&pdev->dev, irq,
+ 			       goldfish_pipe_interrupt,
+-			       IRQF_SHARED, "goldfish_pipe", dev);
++			       IRQF_SHARED, DEVICE_NAME, dev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "unable to allocate IRQ for v2\n");
+ 		return err;
 -- 
 2.19.0.605.g01d371f741-goog
 
