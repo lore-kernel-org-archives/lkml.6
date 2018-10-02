@@ -2,191 +2,140 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B7DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6116C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 778C620878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:40:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98B5620878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:40:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rIZG5ttY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778C620878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="okyBIlgt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98B5620878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbeJBOVy (ORCPT
+        id S1727241AbeJBOWA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:21:54 -0400
-Received: from ozlabs.org ([203.11.71.1]:55291 "EHLO ozlabs.org"
+        Tue, 2 Oct 2018 10:22:00 -0400
+Received: from mail.kdab.com ([176.9.126.58]:7480 "EHLO mail.kdab.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726822AbeJBOVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:21:54 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42PWJX61lcz9sCw;
-        Tue,  2 Oct 2018 17:39:56 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538465998;
-        bh=G0kR297fPBpLK4nF3W1uSDsaH3urs67xqomIk7cgBMU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=rIZG5ttYuJJBz3Vhxk909Arp6QpMWY1InP4v9oV12uINw2y5b7d0gVas0aFP5wVCj
-         6Fh4TflhyjFuHyopLQX1RVac1+11mg9mJuzmmx5i6zTBk+dymiyPFzzfv6Z/ub26C9
-         784vlIhcBKWV45MYamr8EvWtckzPIkwFrTEZpaHPEy/DKn8hMB1juJ5VX77GtjRxTG
-         tjDUIXnvpuTcSUapQnWbZ98aIW/F3vubjFjUelwar9gtVYej27QPO6slkURmjLut/g
-         kdi1ZPEKpPXFTvYR1ZmTqSSEkD9oyI4VHlr0sjy+P70kF3ssYIO3uisSjYigL4aZDc
-         YEsaf+OOjjaPw==
-Date:   Tue, 2 Oct 2018 17:39:56 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: linux-next: manual merge of the akpm-current tree with the xarray
- tree
-Message-ID: <20181002173956.7e5ca5c3@canb.auug.org.au>
+        id S1726822AbeJBOWA (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 10:22:00 -0400
+Authentication-Results: mail.kdab.com (amavisd-new); dkim=pass (1024-bit key)
+ reason="pass (just generated,
+ assumed good)" header.d=kdab.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
+ content-transfer-encoding:mime-version:message-id:date:date
+ :subject:subject:from:from; s=dkim; t=1538466004; x=1539330005;
+ bh=fSNSN0ifXjv0HqkVLvT/ifNvgE6kJOXSVwYBJ3eY+Zk=; b=okyBIlgt+1VN
+ jrG+wBNLam4aL9ASD65k0OjjeldB/mSPLBlck4tpdO26s89wUdpJfHJTNgLBeFak
+ i7XqR8b6Ns8JsXAO1QnEni9rNV1NsDLpa4vOxMM7NU8fI/WOLHT8IjF/z0kj8iMq
+ uFZF551UrFjUzvTDAxyhvGjtVkwNpeA=
+X-Virus-Scanned: amavisd-new at kdab.com
+From:   Milian Wolff <milian.wolff@kdab.com>
+To:     acme@kernel.org, jolsa@kernel.org,
+        Jin Yao <yao.jin@linux.intel.com>
+Cc:     Linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Milian Wolff <milian.wolff@kdab.com>
+Subject: [PATCH] perf record: use unmapped IP for inline callchain cursors
+Date:   Tue,  2 Oct 2018 09:39:49 +0200
+Message-Id: <20181002073949.3297-1-milian.wolff@kdab.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4v0_9cQEZYInn9tmPdZtC0M"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/4v0_9cQEZYInn9tmPdZtC0M
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Only use the mapped IP to find inline frames, but keep
+using the unmapped IP for the callchain cursor. This
+ensures we properly show the unmapped IP when displaying
+a frame we received via the dso__parse_addr_inlines API
+for a module which does not contain sufficient debug symbols
+to show the srcline.
 
-Hi all,
+Before:
+$ perf record -e cycles:u --call-graph ls
+$ perf script
+...
+ls 12853  2735.563911:      43354 cycles:u:
+                   17878 __GI___tunables_init+0xffff01d1d63a0118 (/usr/li=
+b/ld-2.28.so)
+                   19ee9 _dl_sysdep_start+0xffff01d1d63a02e9 (/usr/lib/ld=
+-2.28.so)
+                    3087 _dl_start+0xffff01d1d63a0287 (/usr/lib/ld-2.28.s=
+o)
+                    2007 _start+0xffff01d1d63a0007 (/usr/lib/ld-2.28.so)
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+After:
 
-  mm/workingset.c
+$ perf script
+...
+ls 12853  2735.563911:      43354 cycles:u:
+            7f1714e46878 __GI___tunables_init+0x118 (/usr/lib/ld-2.28.so)
+            7f1714e48ee9 _dl_sysdep_start+0x2e9 (/usr/lib/ld-2.28.so)
+            7f1714e32087 _dl_start+0x287 (/usr/lib/ld-2.28.so)
+            7f1714e31007 _start+0x7 (/usr/lib/ld-2.28.so)
 
-between commit:
+For frames with sufficient debug symbols, the behavior is
+still sane and works as expected in my tests.
 
-  3159f943aafd ("xarray: Replace exceptional entries")
-  bb7bbd491985 ("mm: Convert workingset to XArray")
+This patch series shows that we desperately need
+an automated test for inline frame resolution. I'll try to
+come up with something for the various regressions in the future.
 
-from the xarray tree and commit:
+Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Reported-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+# Tested-by:
+# Reviewed-by:
+# Suggested-b:
+Fixes: bfe16b0653 ("perf report: Don't crash on invalid inline debug info=
+rmation")
+---
+ tools/perf/util/machine.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-  2685383fce55 ("mm: workingset: don't drop refault information prematurely=
-")
-  544eea1cbede ("mm: workingset: tell cache transitions from workingset thr=
-ashing")
-
-from the akpm-current tree.
-
-I fixed it up (hopefully - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 73a651f10a0f..111ae858cbcb 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2286,7 +2286,8 @@ static int append_inlines(struct callchain_cursor *=
+cursor,
+ 	if (!symbol_conf.inline_name || !map || !sym)
+ 		return ret;
+=20
+-	addr =3D map__rip_2objdump(map, ip);
++	addr =3D map__map_ip(map, ip);
++	addr =3D map__rip_2objdump(map, addr);
+=20
+ 	inline_node =3D inlines__tree_find(&map->dso->inlined_nodes, addr);
+ 	if (!inline_node) {
+@@ -2317,6 +2318,9 @@ static int unwind_entry(struct unwind_entry *entry,=
+ void *arg)
+ 	if (symbol_conf.hide_unresolved && entry->sym =3D=3D NULL)
+ 		return 0;
+=20
++	if (append_inlines(cursor, entry->map, entry->sym, entry->ip) =3D=3D 0)
++		return 0;
++
+ 	/*
+ 	 * Convert entry->ip from a virtual address to an offset in
+ 	 * its corresponding binary.
+@@ -2324,9 +2328,6 @@ static int unwind_entry(struct unwind_entry *entry,=
+ void *arg)
+ 	if (entry->map)
+ 		addr =3D map__map_ip(entry->map, entry->ip);
+=20
+-	if (append_inlines(cursor, entry->map, entry->sym, addr) =3D=3D 0)
+-		return 0;
+-
+ 	srcline =3D callchain_srcline(entry->map, entry->sym, addr);
+ 	return callchain_cursor_append(cursor, entry->ip,
+ 				       entry->map, entry->sym,
 --=20
-Cheers,
-Stephen Rothwell
-
-diff --cc mm/workingset.c
-index 5cfb29ec3fd9,c3a9bb797b6d..000000000000
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@@ -155,9 -167,8 +167,8 @@@
-   * refault distance will immediately activate the refaulting page.
-   */
- =20
- -#define EVICTION_SHIFT	(RADIX_TREE_EXCEPTIONAL_ENTRY + \
- +#define EVICTION_SHIFT	((BITS_PER_LONG - BITS_PER_XA_VALUE) +	\
-- 			 NODES_SHIFT +				\
-- 			 MEM_CGROUP_ID_SHIFT)
-+ 			 1 + NODES_SHIFT + MEM_CGROUP_ID_SHIFT)
-  #define EVICTION_MASK	(~0UL >> EVICTION_SHIFT)
- =20
-  /*
-@@@ -170,22 -181,28 +181,27 @@@
-   */
-  static unsigned int bucket_order __read_mostly;
- =20
-- static void *pack_shadow(int memcgid, pg_data_t *pgdat, unsigned long evi=
-ction)
-+ static void *pack_shadow(int memcgid, pg_data_t *pgdat, unsigned long evi=
-ction,
-+ 			 bool workingset)
-  {
-  	eviction >>=3D bucket_order;
- +	eviction &=3D EVICTION_MASK;
-  	eviction =3D (eviction << MEM_CGROUP_ID_SHIFT) | memcgid;
-  	eviction =3D (eviction << NODES_SHIFT) | pgdat->node_id;
-+ 	eviction =3D (eviction << 1) | workingset;
- -	eviction =3D (eviction << RADIX_TREE_EXCEPTIONAL_SHIFT);
- =20
- -	return (void *)(eviction | RADIX_TREE_EXCEPTIONAL_ENTRY);
- +	return xa_mk_value(eviction);
-  }
- =20
-  static void unpack_shadow(void *shadow, int *memcgidp, pg_data_t **pgdat,
-- 			  unsigned long *evictionp)
-+ 			  unsigned long *evictionp, bool *workingsetp)
-  {
- -	unsigned long entry =3D (unsigned long)shadow;
- +	unsigned long entry =3D xa_to_value(shadow);
-  	int memcgid, nid;
-+ 	bool workingset;
- =20
- -	entry >>=3D RADIX_TREE_EXCEPTIONAL_SHIFT;
-+ 	workingset =3D entry & 1;
-+ 	entry >>=3D 1;
-  	nid =3D entry & ((1UL << NODES_SHIFT) - 1);
-  	entry >>=3D NODES_SHIFT;
-  	memcgid =3D entry & ((1UL << MEM_CGROUP_ID_SHIFT) - 1);
-@@@ -387,16 -415,16 +414,16 @@@ static unsigned long count_shadow_nodes
-  	 * each, this will reclaim shadow entries when they consume
-  	 * ~1.8% of available memory:
-  	 *
- -	 * PAGE_SIZE / radix_tree_nodes / node_entries * 8 / PAGE_SIZE
- +	 * PAGE_SIZE / xa_nodes / node_entries * 8 / PAGE_SIZE
-  	 */
-- 	if (sc->memcg) {
-- 		cache =3D mem_cgroup_node_nr_lru_pages(sc->memcg, sc->nid,
-- 						     LRU_ALL_FILE);
-- 	} else {
-- 		cache =3D node_page_state(NODE_DATA(sc->nid), NR_ACTIVE_FILE) +
-- 			node_page_state(NODE_DATA(sc->nid), NR_INACTIVE_FILE);
-- 	}
-- 	max_nodes =3D cache >> (XA_CHUNK_SHIFT - 3);
-+ #ifdef CONFIG_MEMCG
-+ 	if (sc->memcg)
-+ 		pages =3D page_counter_read(&sc->memcg->memory);
-+ 	else
-+ #endif
-+ 		pages =3D node_present_pages(sc->nid);
-+=20
- -	max_nodes =3D pages >> (RADIX_TREE_MAP_SHIFT - 3);
-++	max_nodes =3D pages >> (XA_CHUNK_SHIFT - 3);
- =20
-  	if (!nodes)
-  		return SHRINK_EMPTY;
-
---Sig_/4v0_9cQEZYInn9tmPdZtC0M
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluzIMwACgkQAVBC80lX
-0GyiNwf+LK0XNefW5rusNsN1oHbpH1wQKNpSKPHwfW/H+Gi3+743c3j1u1Q5CsXd
-61W99lBP4b3q4WjZ8CdhAdBky/67a3BqRTQXaFq4jbqP4tLjhpoonYBBvuQeY7Jv
-vemYz9RkD5lHyYfg7GIz0XiyWhumOeX8tbHjw5AyyxgHuYbElPKznS2dx1HTFWAw
-WfFMnOAlOi68VtFgR/N5d7l/WshZIyBaTg/FLzmP3foO2mmVnUeIrMbcCkojpTbg
-XI+lbSW3SleTiM72bHipXBSYbIGD5tg8NuzhdspqiWjmmiBXi5EBR+GPNx62ds2+
-LhRC4hPycSRRMOALFa/ShYIWp+ypuw==
-=dNPz
------END PGP SIGNATURE-----
-
---Sig_/4v0_9cQEZYInn9tmPdZtC0M--
+2.19.0
