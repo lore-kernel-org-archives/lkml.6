@@ -2,249 +2,232 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A0AC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CB7C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 420D7206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:54:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 420D7206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A7D620645
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:55:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7D620645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbeJBOgT (ORCPT
+        id S1727353AbeJBOhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:36:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45488 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726870AbeJBOgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:36:19 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DEECD308424F;
-        Tue,  2 Oct 2018 07:54:22 +0000 (UTC)
-Received: from [10.36.116.105] (ovpn-116-105.ams2.redhat.com [10.36.116.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0136261B78;
-        Tue,  2 Oct 2018 07:54:19 +0000 (UTC)
-Subject: Re: [PATCH v6 11/18] kvm: arm64: Dynamic configuration of VTTBR mask
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        marc.zyngier@arm.com, cdall@kernel.org, will.deacon@arm.com,
-        dave.martin@arm.com, peter.maydell@linaro.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, julien.grall@arm.com,
-        linux-kernel@vger.kernel.org
-References: <20180926163258.20218-1-suzuki.poulose@arm.com>
- <20180926163258.20218-12-suzuki.poulose@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <ec1a9aa3-e164-a353-609e-e9aabbd33d2b@redhat.com>
-Date:   Tue, 2 Oct 2018 09:54:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 2 Oct 2018 10:37:10 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:60707 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726906AbeJBOhK (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 2 Oct 2018 10:37:10 -0400
+Received: from linux-l9pv.suse (unknown.telstraglobal.net [134.159.103.118])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 02 Oct 2018 09:55:07 +0200
+Date:   Tue, 2 Oct 2018 15:54:39 +0800
+From:   joeyli <jlee@suse.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     joeyli.kernel@gmail.com, rjw@rjwysocki.net,
+        Pavel Machek <pavel@ucw.cz>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com,
+        yu.c.chen@intel.com, oneukum@suse.com, yu.chen.surf@gmail.com,
+        David Howells <dhowells@redhat.com>, ggherdovich@suse.cz,
+        keyrings@vger.kernel.org
+Subject: Re: [PATCH 1/5] PM / hibernate: Create snapshot keys handler
+Message-ID: <20181002075243.GB6040@linux-l9pv.suse>
+References: <20180912142337.21955-1-jlee@suse.com>
+ <20180912142337.21955-2-jlee@suse.com>
+ <CAG48ez2pRwpv0V0MNbeBN26isW2peebf+S3cqLxUgdUfARfhiw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180926163258.20218-12-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 02 Oct 2018 07:54:23 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez2pRwpv0V0MNbeBN26isW2peebf+S3cqLxUgdUfARfhiw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+Hi Jann,
 
-On 9/26/18 6:32 PM, Suzuki K Poulose wrote:
-> On arm64 VTTBR_EL2:BADDR holds the base address for the stage2
-> translation table. The Arm ARM mandates that the bits BADDR[x-1:0]
-> should be 0, where 'x' is defined for a given IPA Size and the
-> number of levels for a translation granule size. It is defined
-> using some magical constants. This patch is a reverse engineered
-> implementation to calculate the 'x' at runtime for a given ipa and
-> number of page table levels. See patch for more details.
-> 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Thanks for your review and very sorry for my delay!
 
-Thanks
+On Thu, Sep 13, 2018 at 04:31:18PM +0200, Jann Horn wrote:
+> +cc keyrings list
+> 
+> On Thu, Sep 13, 2018 at 4:08 PM Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
+> > This patch adds a snapshot keys handler for using the key retention
+> > service api to create keys for snapshot image encryption and
+> > authentication.
+[...snip]
+> > +static ssize_t disk_kmk_store(struct kobject *kobj, struct kobj_attribute *attr,
+> > +                             const char *buf, size_t n)
+> > +{
+> > +       int error = 0;
+> > +       char *p;
+> > +       int len;
+> > +
+> > +       if (!capable(CAP_SYS_ADMIN))
+> > +               return -EPERM;
+> 
+> This is wrong, you can't use capable() in a write handler. You'd have
+> to use file_ns_capable(), and I think sysfs currently doesn't give you
+> a pointer to the struct file.
+> If you want to do this in a write handler, you'll have to either get
+> rid of this check or plumb through the cred struct pointer.
+> Alternatively, you could use some interface that doesn't go through a
+> write handler.
+>
 
-Eric
-> ---
-> Changes since v5:
->  - Update comment about the Magic_N for VTTBR_X calculation
->  - Remove the obsolete VTTBR_TGRAN_MAGIC value defintions
-> Changes since V3:
->  - Update reference to latest ARM ARM and improve commentary
-> ---
->  arch/arm64/include/asm/kvm_arm.h | 73 ++++++++++++++++++++++++++++----
->  arch/arm64/include/asm/kvm_mmu.h | 25 ++++++++++-
->  2 files changed, 88 insertions(+), 10 deletions(-)
+Thank you for point out this problem.
+
+Actually the evm_write_key() is the example for my code. The
+difference is that evm creates interface file on securityfs, but my
+implementation is on sysfs:
+
+security/integrity/evm/evm_secfs.c
+
+static ssize_t evm_write_key(struct file *file, const char __user *buf,
+			     size_t count, loff_t *ppos)
+{
+	int i, ret;
+
+	if (!capable(CAP_SYS_ADMIN) || (evm_initialized & EVM_SETUP)) 
+		return -EPERM;
+...
+
+On the other hand, the writing handler of /sys/power/wake_lock also
+uses capable() to check the CAP_BLOCK_SUSPEND capability: 
+
+kernel/power/main.c     
+static ssize_t wake_lock_store(struct kobject *kobj,
+			       struct kobj_attribute *attr,
+			       const char *buf, size_t n)
+{
+	int error = pm_wake_lock(buf);
+	return error ? error : n;
+}
+power_attr(wake_lock);
+
+kernel/power/wakelock.c
+int pm_wake_lock(const char *buf)
+{
+...
+	if (!capable(CAP_BLOCK_SUSPEND))
+		return -EPERM;
+...
+
+
+So I confused for when can capable() be used in sysfs interface? Is
+capable() only allowed in reading handler? Why the writing handler
+of securityfs can use capable()?
+
+> > +
+> > +static int user_key_init(void)
+> > +{
+> > +       struct user_key_payload *ukp;
+> > +       struct key *key;
+> > +       int err = 0;
+> > +
+> > +       pr_debug("%s\n", __func__);
+> > +
+> > +       /* find out swsusp-key */
+> > +       key = request_key(&key_type_user, skey.key_name, NULL);
 > 
-> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> index 14317b3a1820..b236d90ca056 100644
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -123,7 +123,6 @@
->  #define VTCR_EL2_SL0_MASK	(3 << VTCR_EL2_SL0_SHIFT)
->  #define VTCR_EL2_SL0_LVL1	(1 << VTCR_EL2_SL0_SHIFT)
->  #define VTCR_EL2_T0SZ_MASK	0x3f
-> -#define VTCR_EL2_T0SZ_40B	24
->  #define VTCR_EL2_VS_SHIFT	19
->  #define VTCR_EL2_VS_8BIT	(0 << VTCR_EL2_VS_SHIFT)
->  #define VTCR_EL2_VS_16BIT	(1 << VTCR_EL2_VS_SHIFT)
-> @@ -140,11 +139,8 @@
->   * Note that when using 4K pages, we concatenate two first level page tables
->   * together. With 16K pages, we concatenate 16 first level page tables.
->   *
-> - * The magic numbers used for VTTBR_X in this patch can be found in Tables
-> - * D4-23 and D4-25 in ARM DDI 0487A.b.
->   */
->  
-> -#define VTCR_EL2_T0SZ_IPA	VTCR_EL2_T0SZ_40B
->  #define VTCR_EL2_COMMON_BITS	(VTCR_EL2_SH0_INNER | VTCR_EL2_ORGN0_WBWA | \
->  				 VTCR_EL2_IRGN0_WBWA | VTCR_EL2_RES1)
->  
-> @@ -155,7 +151,6 @@
->   * 2 level page tables (SL = 1)
->   */
->  #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_64K | VTCR_EL2_SL0_LVL1)
-> -#define VTTBR_X_TGRAN_MAGIC		38
->  #elif defined(CONFIG_ARM64_16K_PAGES)
->  /*
->   * Stage2 translation configuration:
-> @@ -163,7 +158,6 @@
->   * 2 level page tables (SL = 1)
->   */
->  #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_16K | VTCR_EL2_SL0_LVL1)
-> -#define VTTBR_X_TGRAN_MAGIC		42
->  #else	/* 4K */
->  /*
->   * Stage2 translation configuration:
-> @@ -171,13 +165,74 @@
->   * 3 level page tables (SL = 1)
->   */
->  #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_4K | VTCR_EL2_SL0_LVL1)
-> -#define VTTBR_X_TGRAN_MAGIC		37
->  #endif
->  
->  #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
-> -#define VTTBR_X				(VTTBR_X_TGRAN_MAGIC - VTCR_EL2_T0SZ_IPA)
-> +/*
-> + * ARM VMSAv8-64 defines an algorithm for finding the translation table
-> + * descriptors in section D4.2.8 in ARM DDI 0487C.a.
-> + *
-> + * The algorithm defines the expectations on the translation table
-> + * addresses for each level, based on PAGE_SIZE, entry level
-> + * and the translation table size (T0SZ). The variable "x" in the
-> + * algorithm determines the alignment of a table base address at a given
-> + * level and thus determines the alignment of VTTBR:BADDR for stage2
-> + * page table entry level.
-> + * Since the number of bits resolved at the entry level could vary
-> + * depending on the T0SZ, the value of "x" is defined based on a
-> + * Magic constant for a given PAGE_SIZE and Entry Level. The
-> + * intermediate levels must be always aligned to the PAGE_SIZE (i.e,
-> + * x = PAGE_SHIFT).
-> + *
-> + * The value of "x" for entry level is calculated as :
-> + *    x = Magic_N - T0SZ
-> + *
-> + * where Magic_N is an integer depending on the page size and the entry
-> + * level of the page table as below:
-> + *
-> + *	--------------------------------------------
-> + *	| Entry level		|  4K    16K   64K |
-> + *	--------------------------------------------
-> + *	| Level: 0 (4 levels)	| 28   |  -  |  -  |
-> + *	--------------------------------------------
-> + *	| Level: 1 (3 levels)	| 37   | 31  | 25  |
-> + *	--------------------------------------------
-> + *	| Level: 2 (2 levels)	| 46   | 42  | 38  |
-> + *	--------------------------------------------
-> + *	| Level: 3 (1 level)	| -    | 53  | 51  |
-> + *	--------------------------------------------
-> + *
-> + * We have a magic formula for the Magic_N below:
-> + *
-> + *  Magic_N(PAGE_SIZE, Level) = 64 - ((PAGE_SHIFT - 3) * Number_of_levels)
-> + *
-> + * where Number_of_levels = (4 - Level). We are only interested in the
-> + * value for Entry_Level for the stage2 page table.
-> + *
-> + * So, given that T0SZ = (64 - IPA_SHIFT), we can compute 'x' as follows:
-> + *
-> + *	x = (64 - ((PAGE_SHIFT - 3) * Number_of_levels)) - (64 - IPA_SHIFT)
-> + *	  = IPA_SHIFT - ((PAGE_SHIFT - 3) * Number of levels)
-> + *
-> + * Here is one way to explain the Magic Formula:
-> + *
-> + *  x = log2(Size_of_Entry_Level_Table)
-> + *
-> + * Since, we can resolve (PAGE_SHIFT - 3) bits at each level, and another
-> + * PAGE_SHIFT bits in the PTE, we have :
-> + *
-> + *  Bits_Entry_level = IPA_SHIFT - ((PAGE_SHIFT - 3) * (n - 1) + PAGE_SHIFT)
-> + *		     = IPA_SHIFT - (PAGE_SHIFT - 3) * n - 3
-> + *  where n = number of levels, and since each pointer is 8bytes, we have:
-> + *
-> + *  x = Bits_Entry_Level + 3
-> + *    = IPA_SHIFT - (PAGE_SHIFT - 3) * n
-> + *
-> + * The only constraint here is that, we have to find the number of page table
-> + * levels for a given IPA size (which we do, see stage2_pt_levels())
-> + */
-> +#define ARM64_VTTBR_X(ipa, levels)	((ipa) - ((levels) * (PAGE_SHIFT - 3)))
->  
-> -#define VTTBR_BADDR_MASK  (((UL(1) << (PHYS_MASK_SHIFT - VTTBR_X)) - 1) << VTTBR_X)
->  #define VTTBR_VMID_SHIFT  (UL(48))
->  #define VTTBR_VMID_MASK(size) (_AT(u64, (1 << size) - 1) << VTTBR_VMID_SHIFT)
->  
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index 7342d2c51773..ac3ca9690bad 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -145,7 +145,6 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
->  #define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
->  #define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
->  #define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
-> -#define kvm_vttbr_baddr_mask(kvm)	VTTBR_BADDR_MASK
->  
->  static inline bool kvm_page_empty(void *ptr)
->  {
-> @@ -520,5 +519,29 @@ static inline int hyp_map_aux_data(void)
->  
->  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
->  
-> +/*
-> + * Get the magic number 'x' for VTTBR:BADDR of this KVM instance.
-> + * With v8.2 LVA extensions, 'x' should be a minimum of 6 with
-> + * 52bit IPS.
-> + */
-> +static inline int arm64_vttbr_x(u32 ipa_shift, u32 levels)
-> +{
-> +	int x = ARM64_VTTBR_X(ipa_shift, levels);
-> +
-> +	return (IS_ENABLED(CONFIG_ARM64_PA_BITS_52) && x < 6) ? 6 : x;
-> +}
-> +
-> +static inline u64 vttbr_baddr_mask(u32 ipa_shift, u32 levels)
-> +{
-> +	unsigned int x = arm64_vttbr_x(ipa_shift, levels);
-> +
-> +	return GENMASK_ULL(PHYS_MASK_SHIFT - 1, x);
-> +}
-> +
-> +static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
-> +{
-> +	return vttbr_baddr_mask(kvm_phys_shift(kvm), kvm_stage2_levels(kvm));
-> +}
-> +
->  #endif /* __ASSEMBLY__ */
->  #endif /* __ARM64_KVM_MMU_H__ */
+> request_key() looks at current's keyring. That shouldn't happen in a
+> write handler.
+>
+
+The evm_write_key() also uses request_key() but it's on securityfs. Should
+I move my sysfs interface to securityfs?
+
+> > +       if (IS_ERR(key)) {
+> > +               pr_err("Request key error: %ld\n", PTR_ERR(key));
+> > +               err = PTR_ERR(key);
+> > +               return err;
+> > +       }
+> > +
+> > +       down_write(&key->sem);
+> > +       ukp = user_key_payload_locked(key);
+> > +       if (!ukp) {
+> > +               /* key was revoked before we acquired its semaphore */
+> > +               err = -EKEYREVOKED;
+> > +               goto key_invalid;
+> > +       }
+> > +       if (invalid_key(ukp->data, ukp->datalen)) {
+> > +               err = -EINVAL;
+> > +               goto key_invalid;
+> > +       }
+> > +       skey.key_len = ukp->datalen;
+> > +       memcpy(skey.key, ukp->data, ukp->datalen);
+> > +       /* burn the original key contents */
+> > +       memzero_explicit(ukp->data, ukp->datalen);
 > 
+> You just zero out the contents of the supplied key? That seems very
+> unidiomatic for the keys subsystem, and makes me wonder why you're
+> using the keys subsystem for this in the first place. It doesn't look
+> like normal use of the keys subsystem.
+> 
+
+Because I want that only one decrypted key in kernel memory. Then hibernation
+can handle the key more easy. In evm_init_key(), it also burned the key
+contents after evm key be initialled: 
+
+security/integrity/evm/evm_crypto.c
+int evm_init_key(void)
+{
+[...snip]
+	/* burn the original key contents */
+	memset(ekp->decrypted_data, 0, ekp->decrypted_datalen);
+	up_read(&evm_key->sem);
+	key_put(evm_key);
+	return rc;
+}
+
+The keys subsystem already handles the interactive with userland and TPM.
+That's the reason for using keys subsystem in hibernation. 
+
+> > +key_invalid:
+> > +       up_write(&key->sem);
+> > +       key_put(key);
+> > +
+> > +       return err;
+> > +}
+> > +
+> > +/* this function may sleeps */
+> > +int snapshot_key_init(void)
+> > +{
+> > +       int err;
+> > +
+> > +       pr_debug("%s\n", __func__);
+> > +
+> > +       if (skey.initialized)
+> > +               return 0;
+> > +
+> > +       hash_tfm = crypto_alloc_shash(hash_alg, 0, CRYPTO_ALG_ASYNC);
+> > +       if (IS_ERR(hash_tfm)) {
+> > +               pr_err("Can't allocate %s transform: %ld\n",
+> > +                       hash_alg, PTR_ERR(hash_tfm));
+> > +               return PTR_ERR(hash_tfm);
+> > +       }
+> > +
+> > +       err = trusted_key_init();
+> > +       if (err)
+> > +               err = user_key_init();
+> > +       if (err)
+> > +               goto key_fail;
+> > +
+> > +       skey.initialized = true;
+> 
+> Does this need a memory barrier to prevent reordering of the
+> "skey.initialized = true" assignment before the key is fully
+> initialized?
+>
+
+Thanks for your reminding. I will add memory barrier here.
+
+
+Thank a lot!
+Joey Lee 
