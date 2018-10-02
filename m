@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09746C004D2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F8EC64EB5
 	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C934D2089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C934D2089C
+	by mail.kernel.org (Postfix) with ESMTP id C2769206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2769206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731940AbeJBURH (ORCPT
+        id S1731955AbeJBURH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 2 Oct 2018 16:17:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34996 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35024 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731866AbeJBURF (ORCPT
+        with ESMTP id S1731936AbeJBURH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:05 -0400
+        Tue, 2 Oct 2018 16:17:07 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE6DD5AA;
-        Tue,  2 Oct 2018 13:33:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FA44BF0;
+        Tue,  2 Oct 2018 13:33:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Konstantin Khorenko <khorenko@virtuozzo.com>,
-        Andrey Vagin <avagin@openvz.org>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 079/137] fs/lock: skip lock owner pid translation in case we are in init_pid_ns
-Date:   Tue,  2 Oct 2018 06:24:40 -0700
-Message-Id: <20181002132504.067703720@linuxfoundation.org>
+Subject: [PATCH 4.14 081/137] iio: 104-quad-8: Fix off-by-one error in register selection
+Date:   Tue,  2 Oct 2018 06:24:42 -0700
+Message-Id: <20181002132504.202127183@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -55,64 +53,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konstantin Khorenko <khorenko@virtuozzo.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-[ Upstream commit 826d7bc9f013d01e92997883d2fd0c25f4af1f1c ]
+[ Upstream commit 2873c3f0e2bd12a7612e905c920c058855f4072a ]
 
-If the flock owner process is dead and its pid has been already freed,
-pid translation won't work, but we still want to show flock owner pid
-number when expecting /proc/$PID/fdinfo/$FD in init pidns.
+The reset flags operation is selected by bit 2 in the "Reset and Load
+Signals Decoders" register, not bit 1.
 
-Reproducer:
-process A	process A1	process A2
-fork()--------->
-exit()		open()
-		flock()
-		fork()--------->
-		exit()		sleep()
-
-Before the patch:
-================
-(root@vz7)/: cat /proc/${PID_A2}/fdinfo/3
-pos:    4
-flags:  02100002
-mnt_id: 257
-lock:   (root@vz7)/:
-
-After the patch:
-===============
-(root@vz7)/:cat /proc/${PID_A2}/fdinfo/3
-pos:    4
-flags:  02100002
-mnt_id: 295
-lock:   1: FLOCK  ADVISORY  WRITE ${PID_A1} b6:f8a61:529946 0 EOF
-
-Fixes: 9d5b86ac13c5 ("fs/locks: Remove fl_nspid and use fs-specific l_pid for remote locks")
-Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
-Acked-by: Andrey Vagin <avagin@openvz.org>
-Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
+Fixes: 28e5d3bb0325 ("iio: 104-quad-8: Add IIO support for the ACCES 104-QUAD-8")
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/locks.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/iio/counter/104-quad-8.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2074,6 +2074,13 @@ static pid_t locks_translate_pid(struct
- 		return -1;
- 	if (IS_REMOTELCK(fl))
- 		return fl->fl_pid;
-+	/*
-+	 * If the flock owner process is dead and its pid has been already
-+	 * freed, the translation below won't work, but we still want to show
-+	 * flock owner pid number in init pidns.
-+	 */
-+	if (ns == &init_pid_ns)
-+		return (pid_t)fl->fl_pid;
+--- a/drivers/iio/counter/104-quad-8.c
++++ b/drivers/iio/counter/104-quad-8.c
+@@ -138,7 +138,7 @@ static int quad8_write_raw(struct iio_de
+ 			outb(val >> (8 * i), base_offset);
  
- 	rcu_read_lock();
- 	pid = find_pid_ns(fl->fl_pid, &init_pid_ns);
+ 		/* Reset Borrow, Carry, Compare, and Sign flags */
+-		outb(0x02, base_offset + 1);
++		outb(0x04, base_offset + 1);
+ 		/* Reset Error flag */
+ 		outb(0x06, base_offset + 1);
+ 
 
 
