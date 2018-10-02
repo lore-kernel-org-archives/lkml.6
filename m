@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597B9C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33390C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28FCB2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28FCB2089A
+	by mail.kernel.org (Postfix) with ESMTP id DC6D6206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC6D6206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731673AbeJBUQP (ORCPT
+        id S1731683AbeJBUQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:16:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34758 "EHLO
+        Tue, 2 Oct 2018 16:16:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34770 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730694AbeJBUQN (ORCPT
+        with ESMTP id S1730099AbeJBUQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:16:13 -0400
+        Tue, 2 Oct 2018 16:16:21 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 193B4C51;
-        Tue,  2 Oct 2018 13:32:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1FE7A5AA;
+        Tue,  2 Oct 2018 13:32:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
+        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 020/137] RDMA/bnxt_re: Fix a couple off by one bugs
-Date:   Tue,  2 Oct 2018 06:23:41 -0700
-Message-Id: <20181002132459.896064215@linuxfoundation.org>
+Subject: [PATCH 4.14 021/137] RDMA/i40w: Hold read semaphore while looking after VMA
+Date:   Tue,  2 Oct 2018 06:23:42 -0700
+Message-Id: <20181002132459.982773832@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,43 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-[ Upstream commit 474e5a86067e5f12c97d1db8b170c7f45b53097a ]
+[ Upstream commit 5d9a2b0e28759e319a623da33940dbb3ce952b7d ]
 
-The sgid_tbl->tbl[] array is allocated in bnxt_qplib_alloc_sgid_tbl().
-It has sgid_tbl->max elements.  So the > should be >= to prevent
-accessing one element beyond the end of the array.
+VMA lookup is supposed to be performed while mmap_sem is held.
 
-Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
+Fixes: f26c7c83395b ("i40iw: Add 2MB page support")
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/bnxt_re/qplib_sp.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/i40iw/i40iw_verbs.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-@@ -156,7 +156,7 @@ int bnxt_qplib_get_sgid(struct bnxt_qpli
- 			struct bnxt_qplib_sgid_tbl *sgid_tbl, int index,
- 			struct bnxt_qplib_gid *gid)
- {
--	if (index > sgid_tbl->max) {
-+	if (index >= sgid_tbl->max) {
- 		dev_err(&res->pdev->dev,
- 			"QPLIB: Index %d exceeded SGID table max (%d)",
- 			index, sgid_tbl->max);
-@@ -361,7 +361,7 @@ int bnxt_qplib_get_pkey(struct bnxt_qpli
- 		*pkey = 0xFFFF;
- 		return 0;
+--- a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
+@@ -1408,6 +1408,7 @@ static void i40iw_set_hugetlb_values(u64
+ 	struct vm_area_struct *vma;
+ 	struct hstate *h;
+ 
++	down_read(&current->mm->mmap_sem);
+ 	vma = find_vma(current->mm, addr);
+ 	if (vma && is_vm_hugetlb_page(vma)) {
+ 		h = hstate_vma(vma);
+@@ -1416,6 +1417,7 @@ static void i40iw_set_hugetlb_values(u64
+ 			iwmr->page_msk = huge_page_mask(h);
+ 		}
  	}
--	if (index > pkey_tbl->max) {
-+	if (index >= pkey_tbl->max) {
- 		dev_err(&res->pdev->dev,
- 			"QPLIB: Index %d exceeded PKEY table max (%d)",
- 			index, pkey_tbl->max);
++	up_read(&current->mm->mmap_sem);
+ }
+ 
+ /**
 
 
