@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E10FC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF50DC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E03C52083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E03C52083F
+	by mail.kernel.org (Postfix) with ESMTP id 935172083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 935172083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731731AbeJBUQk (ORCPT
+        id S1731743AbeJBUQn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:16:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34814 "EHLO
+        Tue, 2 Oct 2018 16:16:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34824 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730263AbeJBUQj (ORCPT
+        with ESMTP id S1730263AbeJBUQn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:16:39 -0400
+        Tue, 2 Oct 2018 16:16:43 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDC725AA;
-        Tue,  2 Oct 2018 13:33:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5F2B0B2F;
+        Tue,  2 Oct 2018 13:33:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Ethan Tuttle <ethan@ethantuttle.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 064/137] wlcore: Add missing PM call for wlcore_cmd_wait_for_event_or_timeout()
-Date:   Tue,  2 Oct 2018 06:24:25 -0700
-Message-Id: <20181002132503.051229405@linuxfoundation.org>
+Subject: [PATCH 4.14 065/137] ARM: mvebu: declare asm symbols as character arrays in pmsu.c
+Date:   Tue,  2 Oct 2018 06:24:26 -0700
+Message-Id: <20181002132503.130978209@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,55 +52,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Ethan Tuttle <ethan@ethantuttle.com>
 
-[ Upstream commit 4ec7cece87b3ed21ffcd407c62fb2f151a366bc1 ]
+[ Upstream commit d0d378ff451a66e486488eec842e507d28145813 ]
 
-Otherwise we can get:
+With CONFIG_FORTIFY_SOURCE, memcpy uses the declared size of operands to
+detect buffer overflows.  If src or dest is declared as a char, attempts to
+copy more than byte will result in a fortify_panic().
 
-WARNING: CPU: 0 PID: 55 at drivers/net/wireless/ti/wlcore/io.h:84
+Address this problem in mvebu_setup_boot_addr_wa() by declaring
+mvebu_boot_wa_start and mvebu_boot_wa_end as character arrays.  Also remove
+a couple addressof operators to avoid "arithmetic on pointer to an
+incomplete type" compiler error.
 
-I've only seen this few times with the runtime PM patches enabled
-so this one is probably not needed before that. This seems to
-work currently based on the current PM implementation timer. Let's
-apply this separately though in case others are hitting this issue.
+See commit 54a7d50b9205 ("x86: mark kprobe templates as character arrays,
+not single characters") for a similar fix.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes "detected buffer overflow in memcpy" error during init on some mvebu
+systems (armada-370-xp, armada-375):
+
+(fortify_panic) from (mvebu_setup_boot_addr_wa+0xb0/0xb4)
+(mvebu_setup_boot_addr_wa) from (mvebu_v7_cpu_pm_init+0x154/0x204)
+(mvebu_v7_cpu_pm_init) from (do_one_initcall+0x7c/0x1a8)
+(do_one_initcall) from (kernel_init_freeable+0x1bc/0x254)
+(kernel_init_freeable) from (kernel_init+0x8/0x114)
+(kernel_init) from (ret_from_fork+0x14/0x2c)
+
+Signed-off-by: Ethan Tuttle <ethan@ethantuttle.com>
+Tested-by: Ethan Tuttle <ethan@ethantuttle.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ti/wlcore/cmd.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/mach-mvebu/pmsu.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/ti/wlcore/cmd.c
-+++ b/drivers/net/wireless/ti/wlcore/cmd.c
-@@ -35,6 +35,7 @@
- #include "wl12xx_80211.h"
- #include "cmd.h"
- #include "event.h"
-+#include "ps.h"
- #include "tx.h"
- #include "hw_ops.h"
- 
-@@ -191,6 +192,10 @@ int wlcore_cmd_wait_for_event_or_timeout
- 
- 	timeout_time = jiffies + msecs_to_jiffies(WL1271_EVENT_TIMEOUT);
- 
-+	ret = wl1271_ps_elp_wakeup(wl);
-+	if (ret < 0)
-+		return ret;
-+
- 	do {
- 		if (time_after(jiffies, timeout_time)) {
- 			wl1271_debug(DEBUG_CMD, "timeout waiting for event %d",
-@@ -222,6 +227,7 @@ int wlcore_cmd_wait_for_event_or_timeout
- 	} while (!event);
- 
- out:
-+	wl1271_ps_elp_sleep(wl);
- 	kfree(events_vector);
- 	return ret;
+--- a/arch/arm/mach-mvebu/pmsu.c
++++ b/arch/arm/mach-mvebu/pmsu.c
+@@ -116,8 +116,8 @@ void mvebu_pmsu_set_cpu_boot_addr(int hw
+ 		PMSU_BOOT_ADDR_REDIRECT_OFFSET(hw_cpu));
  }
+ 
+-extern unsigned char mvebu_boot_wa_start;
+-extern unsigned char mvebu_boot_wa_end;
++extern unsigned char mvebu_boot_wa_start[];
++extern unsigned char mvebu_boot_wa_end[];
+ 
+ /*
+  * This function sets up the boot address workaround needed for SMP
+@@ -130,7 +130,7 @@ int mvebu_setup_boot_addr_wa(unsigned in
+ 			     phys_addr_t resume_addr_reg)
+ {
+ 	void __iomem *sram_virt_base;
+-	u32 code_len = &mvebu_boot_wa_end - &mvebu_boot_wa_start;
++	u32 code_len = mvebu_boot_wa_end - mvebu_boot_wa_start;
+ 
+ 	mvebu_mbus_del_window(BOOTROM_BASE, BOOTROM_SIZE);
+ 	mvebu_mbus_add_window_by_id(crypto_eng_target, crypto_eng_attribute,
 
 
