@@ -2,120 +2,75 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E28AC64EBD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B690C64EBC
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0B2B2082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:41:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B2B2082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C28E2082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:42:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C28E2082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbeJCF0z (ORCPT
+        id S1728407AbeJCF2C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 01:26:55 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:38126 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727167AbeJCF0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 01:26:54 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g7TLs-0003R8-4L; Tue, 02 Oct 2018 16:41:13 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g7TLp-0000sb-O3; Tue, 02 Oct 2018 16:41:09 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Tue,  2 Oct 2018 16:41:07 -0600
-Message-Id: <20181002224108.3321-6-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181002224108.3321-1-logang@deltatee.com>
-References: <20181002224108.3321-1-logang@deltatee.com>
+        Wed, 3 Oct 2018 01:28:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59274 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbeJCF2C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 01:28:02 -0400
+Received: from localhost (unknown [64.124.202.226])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9055511F5;
+        Tue,  2 Oct 2018 22:42:22 +0000 (UTC)
+Date:   Tue, 2 Oct 2018 15:42:21 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Roman Kiryanov <rkir@google.com>
+Cc:     linux-kernel@vger.kernel.org, Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH 01/15] platform: goldfish: pipe: Remove the
+ goldfish_interrupt_tasklet global variable
+Message-ID: <20181002224221.GC25355@kroah.com>
+References: <20181002221903.19476-1-rkir@google.com>
+ <20181002223021.GA30567@kroah.com>
+ <CAOGAQer-MSSsUocmjing7FhJb1SEV0T5v9StYr=DDPdTJeU0cw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, akpm@linux-foundation.org, arnd@arndb.de, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v22 5/6] ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOGAQer-MSSsUocmjing7FhJb1SEV0T5v9StYr=DDPdTJeU0cw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that ioread64 and iowrite64 are available in io-64-nonatomic,
-we can remove the hack at the top of ntb_hw_intel.c and replace it
-with an include.
+On Tue, Oct 02, 2018 at 03:33:11PM -0700, Roman Kiryanov wrote:
+> > I don't see a "global" variable here, what are you referring to.
+> >
+> > This one:
+> >
+> > > -static DECLARE_TASKLET(goldfish_interrupt_tasklet, goldfish_interrupt_task, 0);
+> >
+> > ?
+> 
+> Yes.
+> 
+> > That looks static to this file to me.
+> > what am I missing here?
+> 
+> It has a global lifetime but it is visible only in this file. How do I
+> say better, just drop the word "global"?
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Dave Jiang <dave.jiang@intel.com>
-Acked-by: Allen Hubbe <Allen.Hubbe@dell.com>
-Acked-by: Jon Mason <jdmason@kudzu.us>
----
- drivers/ntb/hw/intel/ntb_hw_intel.h | 30 +----------------------------
- 1 file changed, 1 insertion(+), 29 deletions(-)
+Yes.  It's not a global variable at all.  It's file-scope only.
 
-diff --git a/drivers/ntb/hw/intel/ntb_hw_intel.h b/drivers/ntb/hw/intel/ntb_hw_intel.h
-index c49ff8970ce3..e071e28bca3f 100644
---- a/drivers/ntb/hw/intel/ntb_hw_intel.h
-+++ b/drivers/ntb/hw/intel/ntb_hw_intel.h
-@@ -53,6 +53,7 @@
- 
- #include <linux/ntb.h>
- #include <linux/pci.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- 
- /* PCI device IDs */
- #define PCI_DEVICE_ID_INTEL_NTB_B2B_JSF	0x3725
-@@ -218,33 +219,4 @@ static inline int pdev_is_gen3(struct pci_dev *pdev)
- 	return 0;
- }
- 
--#ifndef ioread64
--#ifdef readq
--#define ioread64 readq
--#else
--#define ioread64 _ioread64
--static inline u64 _ioread64(void __iomem *mmio)
--{
--	u64 low, high;
--
--	low = ioread32(mmio);
--	high = ioread32(mmio + sizeof(u32));
--	return low | (high << 32);
--}
--#endif
--#endif
--
--#ifndef iowrite64
--#ifdef writeq
--#define iowrite64 writeq
--#else
--#define iowrite64 _iowrite64
--static inline void _iowrite64(u64 val, void __iomem *mmio)
--{
--	iowrite32(val, mmio);
--	iowrite32(val >> 32, mmio + sizeof(u32));
--}
--#endif
--#endif
--
- #endif
--- 
-2.19.0
+What you are doing is moving the variable to be attached to the device
+itself, allowing you to have multiple devices handled by the same code,
+which is great.  But please document it as such.
 
+Same goes for the other patches in this series.
+
+thanks,
+
+greg k-h
