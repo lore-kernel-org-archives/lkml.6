@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2702C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3BCC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DE87208AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DE87208AE
+	by mail.kernel.org (Postfix) with ESMTP id 94D212089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D212089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729426AbeJBULx (ORCPT
+        id S1729467AbeJBULz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32774 "EHLO
+        Tue, 2 Oct 2018 16:11:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32798 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728632AbeJBULx (ORCPT
+        with ESMTP id S1728632AbeJBULy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:53 -0400
+        Tue, 2 Oct 2018 16:11:54 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DED1266;
-        Tue,  2 Oct 2018 13:28:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BC79266;
+        Tue,  2 Oct 2018 13:28:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 112/228] ASoC: rsnd: SSI parent cares SWSP bit
-Date:   Tue,  2 Oct 2018 06:23:29 -0700
-Message-Id: <20181002132506.966345961@linuxfoundation.org>
+Subject: [PATCH 4.18 114/228] ASoC: dapm: Fix potential DAI widget pointer deref when linking DAIs
+Date:   Tue,  2 Oct 2018 06:23:31 -0700
+Message-Id: <20181002132507.111900821@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -54,116 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Liam Girdwood <liam.r.girdwood@linux.intel.com>
 
-[ Upstream commit 203cdf51f28820bee7893b4be392847418e6f4ec ]
+[ Upstream commit e01b4f624278d5efe5fb5da585ca371947b16680 ]
 
-SSICR has SWSP bit (= Serial WS Polarity) which decides WS pin 1st
-channel polarity (low or hi). This bit shouldn't exchange after running.
+Sometime a component or topology may configure a DAI widget with no
+private data leading to a dev_dbg() dereferencne of this data.
 
-Current SSI "parent" doesn't care SSICR, just controls clock only.
-Because of this behavior, if platform uses SSI0 as playback,
-SSI1 as capture, and if user starts capture -> playback order,
-SSI0 SSICR::SWSP bit exchanged 0 -> 1 during captureing, and it makes
-capture noise.
-This patch cares SSICR on SSI parent, too.
-Special thanks to Yokoyama-san
+Fix this to check for non NULL private data and let users know if widget
+is missing DAI.
 
-Reported-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Liam Girdwood <liam.r.girdwood@linux.intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/sh/rcar/ssi.c |   32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ sound/soc/soc-dapm.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -37,6 +37,7 @@
- #define	CHNL_4		(1 << 22)	/* Channels */
- #define	CHNL_6		(2 << 22)	/* Channels */
- #define	CHNL_8		(3 << 22)	/* Channels */
-+#define DWL_MASK	(7 << 19)	/* Data Word Length mask */
- #define	DWL_8		(0 << 19)	/* Data Word Length */
- #define	DWL_16		(1 << 19)	/* Data Word Length */
- #define	DWL_18		(2 << 19)	/* Data Word Length */
-@@ -353,21 +354,18 @@ static void rsnd_ssi_config_init(struct
- 	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
- 	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
- 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
--	u32 cr_own;
--	u32 cr_mode;
--	u32 wsr;
-+	u32 cr_own	= ssi->cr_own;
-+	u32 cr_mode	= ssi->cr_mode;
-+	u32 wsr		= ssi->wsr;
- 	int is_tdm;
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -4073,6 +4073,13 @@ int snd_soc_dapm_link_dai_widgets(struct
+ 			continue;
+ 		}
  
--	if (rsnd_ssi_is_parent(mod, io))
--		return;
--
- 	is_tdm = rsnd_runtime_is_ssi_tdm(io);
- 
- 	/*
- 	 * always use 32bit system word.
- 	 * see also rsnd_ssi_master_clk_enable()
- 	 */
--	cr_own = FORCE | SWL_32;
-+	cr_own |= FORCE | SWL_32;
- 
- 	if (rdai->bit_clk_inv)
- 		cr_own |= SCKP;
-@@ -377,9 +375,18 @@ static void rsnd_ssi_config_init(struct
- 		cr_own |= SDTA;
- 	if (rdai->sys_delay)
- 		cr_own |= DEL;
++		/* let users know there is no DAI to link */
++		if (!dai_w->priv) {
++			dev_dbg(card->dev, "dai widget %s has no DAI\n",
++				dai_w->name);
++			continue;
++		}
 +
-+	/*
-+	 * We shouldn't exchange SWSP after running.
-+	 * This means, parent needs to care it.
-+	 */
-+	if (rsnd_ssi_is_parent(mod, io))
-+		goto init_end;
-+
- 	if (rsnd_io_is_play(io))
- 		cr_own |= TRMD;
+ 		dai = dai_w->priv;
  
-+	cr_own &= ~DWL_MASK;
- 	switch (snd_pcm_format_width(runtime->format)) {
- 	case 16:
- 		cr_own |= DWL_16;
-@@ -406,7 +413,7 @@ static void rsnd_ssi_config_init(struct
- 		wsr	|= WS_MODE;
- 		cr_own	|= CHNL_8;
- 	}
--
-+init_end:
- 	ssi->cr_own	= cr_own;
- 	ssi->cr_mode	= cr_mode;
- 	ssi->wsr	= wsr;
-@@ -465,15 +472,18 @@ static int rsnd_ssi_quit(struct rsnd_mod
- 		return -EIO;
- 	}
- 
--	if (!rsnd_ssi_is_parent(mod, io))
--		ssi->cr_own	= 0;
--
- 	rsnd_ssi_master_clk_stop(mod, io);
- 
- 	rsnd_mod_power_off(mod);
- 
- 	ssi->usrcnt--;
- 
-+	if (!ssi->usrcnt) {
-+		ssi->cr_own	= 0;
-+		ssi->cr_mode	= 0;
-+		ssi->wsr	= 0;
-+	}
-+
- 	return 0;
- }
- 
+ 		/* ...find all widgets with the same stream and link them */
 
 
