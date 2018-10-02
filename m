@@ -2,84 +2,120 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C231C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FEDC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF6F22082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:46:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF6F22082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B7C29206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:48:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxbox.cz header.i=@linuxbox.cz header.b="mOpe2BEt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7C29206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxbox.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeJBS3Z (ORCPT
+        id S1727588AbeJBSbM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 14:29:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:35514 "EHLO foss.arm.com"
+        Tue, 2 Oct 2018 14:31:12 -0400
+Received: from gwu.lbox.cz ([62.245.111.132]:37454 "EHLO gwu.lbox.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727528AbeJBS3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 14:29:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B4007A9;
-        Tue,  2 Oct 2018 04:46:31 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D12E83F5B7;
-        Tue,  2 Oct 2018 04:46:29 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 12:46:27 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Hoan Tran <hoan.tran@amperecomputing.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Tai Nguyen <ttnguyen@amperecomputing.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Open Source Submission <patches@amperecomputing.com>
-Subject: Re: [PATCH v2] perf: xgene: Add CPU hotplug support
-Message-ID: <20181002114627.omsungd77lfmbqfj@lakrids.cambridge.arm.com>
-References: <1537382649-17266-1-git-send-email-hoan.tran@amperecomputing.com>
+        id S1727434AbeJBSbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 14:31:12 -0400
+Received: from linuxbox.linuxbox.cz (linuxbox.linuxbox.cz [10.76.66.10])
+        by gwu.lbox.cz (Sendmail) with ESMTPS id w92BlYnX016801
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 2 Oct 2018 13:47:34 +0200
+DKIM-Filter: OpenDKIM Filter v2.11.0 gwu.lbox.cz w92BlYnX016801
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxbox.cz;
+        s=default; t=1538480856;
+        bh=OXvxD5+VRNhbhOvEmceclUz9ANoOaxApf34HWj0BZ4Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mOpe2BEtSg1LeD77HvR3grSawpfC14uN4JHv0bfGrCKGI6MokyHG/N0WNSVKGDFZX
+         /QfkYv0q9n5T25ZIieLWgzMx/nBVeYutO7p84Dv+vrJXbkYLzUJAL2aGgfsgogxMtC
+         jCuafQ21oNoIlXCpcuacjq5ZkF9f7T6LKoh38jhM=
+Received: from pcnci.linuxbox.cz (pcnci.linuxbox.cz [10.76.3.14])
+        by linuxbox.linuxbox.cz (Sendmail) with ESMTPS id w92BlYXO005107
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 2 Oct 2018 13:47:34 +0200
+Received: from pcnci.linuxbox.cz (localhost [127.0.0.1])
+        by pcnci.linuxbox.cz (8.15.2/8.15.2) with SMTP id w92BlYNl000662;
+        Tue, 2 Oct 2018 13:47:34 +0200
+Date:   Tue, 2 Oct 2018 13:47:34 +0200
+From:   Nikola Ciprich <nikola.ciprich@linuxbox.cz>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matt Rickard <matt@softrans.com.au>,
+        Borislav Petkov <bp@alien8.de>,
+        Jason Vas Dias <jason.vas.dias@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Nikola Ciprich <nikola.ciprich@linuxbox.cz>
+Subject: Re: [PATCH 4.14 114/165] x86/vdso: Fix vDSO build if a retpoline is
+ emitted
+Message-ID: <20181002114734.GA31855@pcnci.linuxbox.cz>
+References: <20180903165655.003605184@linuxfoundation.org>
+ <20180903165701.245301231@linuxfoundation.org>
+ <20181002080655.GV31855@pcnci.linuxbox.cz>
+ <20181002114614.GA2581@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1537382649-17266-1-git-send-email-hoan.tran@amperecomputing.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181002114614.GA2581@kroah.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Antivirus: on proxybox by F-Secure antivirus, database version 2018-10-02_03
+X-Scanned-By: MIMEDefang v2.74/SpamAssassin v3.004001 on proxybox (nik)
+X-Milter-Copy-Status: O
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hoan,
+RHEL / centos 6: 
 
-On Wed, Sep 19, 2018 at 06:44:30PM +0000, Hoan Tran wrote:
-> This patch adds CPU hotplug support where the PMU migrates the context to
-> another online CPU when its CPU is offline.
-> 
-> It fixes the below issue where the user does offline the CPU which is assigned
-> to this PMU.
-> 
-> Assuming, CPU0 is assigned for this PMU. When the user does offline CPU0
-> [root@(none) ~]# echo 0 > /sys/devices/system/cpu/cpu0/online
-> This PMU does not work anymore and shows the below error.
-> [root@(none) ~]# perf stat -a -e l3c0/cycle-count/,l3c0/write/ sleep 1
-> Error:
-> The sys_perf_event_open() syscall returned with 19 (No such device) for event (l3c0/cycle-count/).
-> /bin/dmesg may provide additional information.
-> No CONFIG_PERF_EVENTS=y kernel support configured?
-> 
-> With this patch, when CPU0 is offline, PMU migrates to another online CPU and
-> works on that CPU.
-> 
-> Signed-off-by: Hoan Tran <hoan.tran@amperecomputing.com>
-> ---
-> v2:
->  * Remove the cpuhp instance when unregistering the PMU
+gcc-4.4.7
 
-Unfortunately, this has come through whitespae-damaged, with a
-disclaimer in the footer.
+will check newer kernels too..
 
-Could you please resend with those two details fixed?
+thanks
 
-Thanks,
-Mark.
+n.
+
+On Tue, Oct 02, 2018 at 04:46:14AM -0700, Greg Kroah-Hartman wrote:
+> On Tue, Oct 02, 2018 at 10:06:55AM +0200, Nikola Ciprich wrote:
+> > Hi Greg and others,
+> > 
+> > sorry for reporting this so late, but still...
+> > 
+> > this breaks build on older compilers, since it requires
+> > -mindirect-branch=thunk-inline -mindirect-branch-register even though
+> > retpoline support is disabled in kernel config.. is this expected?
+> 
+> What exact "older compilers" break here?
+> 
+> And does the same breakage happen in 4.18.6 or 4.19-rc?
+> 
+> thanks,
+> 
+> greg k-h
+> 
+
+-- 
+-------------------------------------
+Ing. Nikola CIPRICH
+LinuxBox.cz, s.r.o.
+28.rijna 168, 709 00 Ostrava
+
+tel.:   +420 591 166 214
+fax:    +420 596 621 273
+mobil:  +420 777 093 799
+www.linuxbox.cz
+
+mobil servis: +420 737 238 656
+email servis: servis@linuxbox.cz
+-------------------------------------
