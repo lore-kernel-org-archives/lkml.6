@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C8DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB2CC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79686206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79686206B2
+	by mail.kernel.org (Postfix) with ESMTP id A4F35206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F35206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728742AbeJBULE (ORCPT
+        id S1728764AbeJBULF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60442 "EHLO
+        Tue, 2 Oct 2018 16:11:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60478 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728723AbeJBULC (ORCPT
+        with ESMTP id S1728723AbeJBULE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:02 -0400
+        Tue, 2 Oct 2018 16:11:04 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8335EC2B;
-        Tue,  2 Oct 2018 13:27:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB304B2F;
+        Tue,  2 Oct 2018 13:27:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        stable@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Hans Verkuil <hans.verkuil@cisco.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
         Akinobu Mita <akinobu.mita@gmail.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 069/228] media: soc_camera: ov772x: correct setting of banding filter
-Date:   Tue,  2 Oct 2018 06:22:46 -0700
-Message-Id: <20181002132503.967106474@linuxfoundation.org>
+Subject: [PATCH 4.18 071/228] media: ov772x: add checks for register read errors
+Date:   Tue,  2 Oct 2018 06:22:48 -0700
+Message-Id: <20181002132504.114038206@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -58,46 +59,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Akinobu Mita <akinobu.mita@gmail.com>
 
-[ Upstream commit 22216ec41e919682c15345e95928f266e8ba6f9e ]
+[ Upstream commit 30f3b17eaf4913e9e56be15915ce57aae69db701 ]
 
-The banding filter ON/OFF is controlled via bit 5 of COM8 register.  It
-is attempted to be enabled in ov772x_set_params() by the following line.
+This change adds checks for register read errors and returns correct
+error code.
 
-	ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, 1);
-
-But this unexpectedly results disabling the banding filter, because the
-mask and set bits are exclusive.
-
-On the other hand, ov772x_s_ctrl() correctly sets the bit by:
-
-	ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, BNDF_ON_OFF);
-
-The same fix was already applied to non-soc_camera version of ov772x
-driver in the commit commit a024ee14cd36 ("media: ov772x: correct setting
-of banding filter")
-
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
 Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/i2c/soc_camera/ov772x.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/ov772x.c |   20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
---- a/drivers/media/i2c/soc_camera/ov772x.c
-+++ b/drivers/media/i2c/soc_camera/ov772x.c
-@@ -834,7 +834,7 @@ static int ov772x_set_params(struct ov77
- 	 * set COM8
- 	 */
- 	if (priv->band_filter) {
--		ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, 1);
-+		ret = ov772x_mask_set(client, COM8, BNDF_ON_OFF, BNDF_ON_OFF);
- 		if (!ret)
- 			ret = ov772x_mask_set(client, BDBASE,
- 					      0xff, 256 - priv->band_filter);
+--- a/drivers/media/i2c/ov772x.c
++++ b/drivers/media/i2c/ov772x.c
+@@ -1136,7 +1136,7 @@ static int ov772x_set_fmt(struct v4l2_su
+ static int ov772x_video_probe(struct ov772x_priv *priv)
+ {
+ 	struct i2c_client  *client = v4l2_get_subdevdata(&priv->subdev);
+-	u8                  pid, ver;
++	int		    pid, ver, midh, midl;
+ 	const char         *devname;
+ 	int		    ret;
+ 
+@@ -1146,7 +1146,11 @@ static int ov772x_video_probe(struct ov7
+ 
+ 	/* Check and show product ID and manufacturer ID. */
+ 	pid = ov772x_read(client, PID);
++	if (pid < 0)
++		return pid;
+ 	ver = ov772x_read(client, VER);
++	if (ver < 0)
++		return ver;
+ 
+ 	switch (VERSION(pid, ver)) {
+ 	case OV7720:
+@@ -1162,13 +1166,17 @@ static int ov772x_video_probe(struct ov7
+ 		goto done;
+ 	}
+ 
++	midh = ov772x_read(client, MIDH);
++	if (midh < 0)
++		return midh;
++	midl = ov772x_read(client, MIDL);
++	if (midl < 0)
++		return midl;
++
+ 	dev_info(&client->dev,
+ 		 "%s Product ID %0x:%0x Manufacturer ID %x:%x\n",
+-		 devname,
+-		 pid,
+-		 ver,
+-		 ov772x_read(client, MIDH),
+-		 ov772x_read(client, MIDL));
++		 devname, pid, ver, midh, midl);
++
+ 	ret = v4l2_ctrl_handler_setup(&priv->hdl);
+ 
+ done:
 
 
