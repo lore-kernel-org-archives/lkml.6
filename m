@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF253C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A67ECC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DD192083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DD192083F
+	by mail.kernel.org (Postfix) with ESMTP id 78D102089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D102089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387733AbeJBUUl (ORCPT
+        id S2387764AbeJBUUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36668 "EHLO
+        Tue, 2 Oct 2018 16:20:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36684 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387680AbeJBUUk (ORCPT
+        with ESMTP id S1732593AbeJBUUn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:40 -0400
+        Tue, 2 Oct 2018 16:20:43 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59DA2C3F;
-        Tue,  2 Oct 2018 13:37:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75AC15AA;
+        Tue,  2 Oct 2018 13:37:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 60/94] spi: sh-msiof: Fix handling of write value for SISTR register
-Date:   Tue,  2 Oct 2018 06:25:14 -0700
-Message-Id: <20181002132504.662660854@linuxfoundation.org>
+Subject: [PATCH 4.9 62/94] spi: rspi: Fix interrupted DMA transfers
+Date:   Tue,  2 Oct 2018 06:25:16 -0700
+Message-Id: <20181002132504.801786338@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -53,38 +52,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 31a5fae4c5a009898da6d177901d5328051641ff upstream.
+commit 8dbbaa47b96f6ea5f09f922b4effff3c505cd8cf upstream.
 
-This patch changes writing to the SISTR register according to the H/W
-user's manual.
+When interrupted, wait_event_interruptible_timeout() returns
+-ERESTARTSYS, and the SPI transfer in progress will fail, as expected:
 
-The TDREQ bit and RDREQ bits of SISTR are read-only, and must be written
-their initial values of zero.
+    m25p80 spi0.0: SPI transfer failed: -512
+    spi_master spi0: failed to transfer one message from queue
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-[geert: reword]
+However, as the underlying DMA transfers may not have completed, all
+subsequent SPI transfers may start to fail:
+
+    spi_master spi0: receive timeout
+    qspi_transfer_out_in() returned -110
+    m25p80 spi0.0: SPI transfer failed: -110
+    spi_master spi0: failed to transfer one message from queue
+
+Fix this by calling dmaengine_terminate_all() not only for timeouts, but
+also for errors.
+
+This can be reproduced on r8a7991/koelsch, using "hd /dev/mtd0" followed
+by CTRL-C.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-sh-msiof.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/spi/spi-rspi.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -373,7 +373,8 @@ static void sh_msiof_spi_set_mode_regs(s
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -597,11 +597,13 @@ static int rspi_dma_transfer(struct rspi
  
- static void sh_msiof_reset_str(struct sh_msiof_spi_priv *p)
- {
--	sh_msiof_write(p, STR, sh_msiof_read(p, STR));
-+	sh_msiof_write(p, STR,
-+		       sh_msiof_read(p, STR) & ~(STR_TDREQ | STR_RDREQ));
- }
- 
- static void sh_msiof_spi_write_fifo_8(struct sh_msiof_spi_priv *p,
+ 	ret = wait_event_interruptible_timeout(rspi->wait,
+ 					       rspi->dma_callbacked, HZ);
+-	if (ret > 0 && rspi->dma_callbacked)
++	if (ret > 0 && rspi->dma_callbacked) {
+ 		ret = 0;
+-	else if (!ret) {
+-		dev_err(&rspi->master->dev, "DMA timeout\n");
+-		ret = -ETIMEDOUT;
++	} else {
++		if (!ret) {
++			dev_err(&rspi->master->dev, "DMA timeout\n");
++			ret = -ETIMEDOUT;
++		}
+ 		if (tx)
+ 			dmaengine_terminate_all(rspi->master->dma_tx);
+ 		if (rx)
 
 
