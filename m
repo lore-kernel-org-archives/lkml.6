@@ -2,248 +2,336 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75330C64EBD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF08C64EBC
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E9B820645
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:10:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 968C120666
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:11:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tr+JBwTO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9B820645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDhHGpu4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 968C120666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbeJCF4W (ORCPT
+        id S1727562AbeJCF5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 01:56:22 -0400
-Received: from mail-io1-f74.google.com ([209.85.166.74]:55084 "EHLO
-        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725198AbeJCF4V (ORCPT
+        Wed, 3 Oct 2018 01:57:21 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39467 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725198AbeJCF5V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 01:56:21 -0400
-Received: by mail-io1-f74.google.com with SMTP id l24-v6so3837354iok.21
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 16:10:36 -0700 (PDT)
+        Wed, 3 Oct 2018 01:57:21 -0400
+Received: by mail-qt1-f196.google.com with SMTP id c25-v6so3965454qtp.6
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 16:11:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=bt808xPWO7iokz7xZhNlvRo4FLNGh72DZpv+hDCmUM8=;
-        b=tr+JBwTOplqP2n9fMrWezCjwOF7lICu7g4m7P1mnAlDH+8ie5swu5Zs7YcNtxPHpRE
-         iUu6Ys/YiCNmbTBdDw7THsce621ROrGFbdhpgTl7+qvoa7QmAkDnCL9xSeY+VnJ1FDNd
-         tuOK9OosWAgyybJPz1Zz4k2qED65OhjuuiF+zoX+yyGBS2XQxfQd+nfNr+nFot7wwqlv
-         ch1g3dRke8vvUZ5wackzI/SwFrPHsrY5bxacyVeAqfuEVDSKGMkLaowplD7Vsl0au5ot
-         5okFRxF/Ir5eaSPzhb870Bwy7dOrnKGgkldExbRhk7f3YWS26TSNI/phekKnM0hJBGqk
-         PGKg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=3N1wzedVA0efFG3NGyvrjlOjwranfgU0sWxolivwhmU=;
+        b=lDhHGpu4FL6jTB66+i2Ribf3NKhMXp3iPoZRBxUGEauFai4f9/JQXho+fBFOt/TTFF
+         zE/a7VWgF1oHW2cTyOkmy47gQmZt8+WU82eWhPZ3Y14DKIJSruPU7SEqlnDbhT+FIb16
+         ww5v+yf1S8YXR0XWt90AmB+hqkqgtqny6T2zZhMwGTTIr5BFTYB8/j63E4Xbvq6zhI/J
+         ipKduHTnDhMaG0fSlLVPvVN2gemrpwaPy1FStM1YvteqP6E/1PBh8AOjxTXuwfpO2wkh
+         x6ffW8Mi2fFH/nhSw0q8hSytVhMK++plW36rLUjc9u936WAfia8m0BQk+Y37dtODYbsM
+         yzJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=bt808xPWO7iokz7xZhNlvRo4FLNGh72DZpv+hDCmUM8=;
-        b=r/JkNn198VCdSvr2KvZDTlwystAtAgdq5VResoAVe91RXijSBztU9AAUDwp0BVO7dw
-         wL34/zhwo1prJt8qS76z2mmB5JQGnG6F+m/SQZGY3EOwbx1g3knTXGqDvDfAtB9wLdT0
-         tRVfkvzOQ6D50I+9D7xHMB/wdAOCJD8gKkf70gwMi4h+wgsqCc+xSAsgLNkKlwX6wHcm
-         K0uCHYKHYBhd2kU0A7q5XiywBeRubbDNbOM15CHzAqHNEsnpnE8b0OeGtiLFh4sdxIWu
-         FhMBTWDAkS7P2RL72C0ylxqC1umdpW/SRYmzyioHgN3iT/t00OIyzvDXAAY1NrwUcWnA
-         WO5w==
-X-Gm-Message-State: ABuFfog38Y+vTHl5zgcO7mK1A01J8nZ1BoDxSM+2aYWn8TVfehxDdOgN
-        7Snpm0JyDwCsqVfuCefbL16jM+nn
-X-Google-Smtp-Source: ACcGV60FyZJSRxgs7pOSTI4Vj0xtaiuvu3BqXaBLpL91HPyomgo9qSnjqy+NOx/i4WhcxhUFn/mL1ruM
-X-Received: by 2002:a24:8306:: with SMTP id d6-v6mr3547242ite.24.1538521836077;
- Tue, 02 Oct 2018 16:10:36 -0700 (PDT)
-Date:   Tue,  2 Oct 2018 16:10:24 -0700
-In-Reply-To: <20181002231024.58408-1-rkir@google.com>
-Message-Id: <20181002231024.58408-3-rkir@google.com>
-Mime-Version: 1.0
-References: <20181002231024.58408-1-rkir@google.com>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-Subject: [PATCH v2 03/15] platform: goldfish: pipe: Move the file-scope
- goldfish_pipe_dev variable into the driver state
-From:   rkir@google.com
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3N1wzedVA0efFG3NGyvrjlOjwranfgU0sWxolivwhmU=;
+        b=e643HZwMycQ5+EytKj5HLxxgDDFX5v6Qmmqd5PI6XsnG9gEQWFL2LD8ZchVKk9baZn
+         zJn1BtJ5p7q+tGdOwgLOX8DLmIq/a7OkGh1mpVE8vpV+kBY5rS0FiXSquAncLQi+2i6s
+         6iAIDxmQfjZ6PWaMi3IEb3mqnDVv9lVB/MwPYiMzfK20knjt/qPPo48O/9b0sXr8Tonj
+         tyWnTShXyLgrmTc2c2kccfgA6BFHmIKUd94tjPbe7gdUEsDTvDJWWsVLOW7ZQII/NoEQ
+         OfF3SlVjKG3SDQ+f/LNuJpiuGUddgpOMhhb0SDnWY+iFjL0DdybB/6Ff36aMIbR60baj
+         Q9mA==
+X-Gm-Message-State: ABuFfoicPeOu6mpSgO9B7AQ0nJNfsdkNf52XvHhxoalfABsuQaIyhirw
+        rBCmkSnx0ZnlUv3XxNt7UOA=
+X-Google-Smtp-Source: ACcGV62F/K3M75fGhKBqiTqOyYx9viFQ0BK4zVgL0VYw/AJuMDl7RaN/J2bJC1nQWRq/umOPvXfTVw==
+X-Received: by 2002:ac8:440d:: with SMTP id j13-v6mr14771274qtn.257.1538521895274;
+        Tue, 02 Oct 2018 16:11:35 -0700 (PDT)
+Received: from localhost.localdomain (modemcable043.227-201-24.mc.videotron.ca. [24.201.227.43])
+        by smtp.gmail.com with ESMTPSA id 35-v6sm5535423qtr.91.2018.10.02.16.11.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 16:11:34 -0700 (PDT)
+From:   Maxime Desroches <desroches.maxime@gmail.com>
 To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
-        Roman Kiryanov <rkir@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Maxime Desroches <desroches.maxime@gmail.com>
+Subject: [PATCH 1/6] Staging: rts5208: rtsx_card.c: Fixed all braces issues of the file
+Date:   Tue,  2 Oct 2018 19:11:26 -0400
+Message-Id: <20181002231126.10352-1-desroches.maxime@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Kiryanov <rkir@google.com>
+Fixed all the braces issues of the rtsx_card.c file
 
-This is the last patch in the series of patches to move file-scope
-variables into the driver state. This change will help to introduce
-another version of the pipe driver (with different state) for the
-older host interface or having several instances of this device.
-
-Signed-off-by: Roman Kiryanov <rkir@google.com>
+Signed-off-by: Maxime Desroches <desroches.maxime@gmail.com>
 ---
-Changes in v2:
- - Updated the commit message.
+ drivers/staging/rts5208/rtsx_card.c | 96 +++++++++++------------------
+ 1 file changed, 37 insertions(+), 59 deletions(-)
 
- drivers/platform/goldfish/goldfish_pipe.c | 66 +++++++++++++----------
- 1 file changed, 37 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index 8ca709b45e1f..4013832f38fb 100644
---- a/drivers/platform/goldfish/goldfish_pipe.c
-+++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -169,6 +169,9 @@ struct goldfish_pipe {
-  * waiting to be awoken.
-  */
- struct goldfish_pipe_dev {
-+	/* A magic number to check if this is an instance of this struct */
-+	void *magic;
-+
- 	/*
- 	 * Global device spinlock. Protects the following members:
- 	 *  - pipes, pipes_capacity
-@@ -215,8 +218,6 @@ struct goldfish_pipe_dev {
- 	struct miscdevice miscdev;
- };
+diff --git a/drivers/staging/rts5208/rtsx_card.c b/drivers/staging/rts5208/rtsx_card.c
+index d26a8e372fce..b45abbe29bc2 100644
+--- a/drivers/staging/rts5208/rtsx_card.c
++++ b/drivers/staging/rts5208/rtsx_card.c
+@@ -647,9 +647,8 @@ int switch_ssc_clock(struct rtsx_chip *chip, int clk)
+ 	dev_dbg(rtsx_dev(chip), "Switch SSC clock to %dMHz (cur_clk = %d)\n",
+ 		clk, chip->cur_clk);
  
--static struct goldfish_pipe_dev goldfish_pipe_dev;
--
- static int goldfish_pipe_cmd_locked(struct goldfish_pipe *pipe,
- 				    enum PipeCmdCode cmd)
- {
-@@ -611,6 +612,9 @@ static void goldfish_interrupt_task(unsigned long dev_addr)
- 	}
- }
- 
-+static void goldfish_pipe_device_deinit(struct platform_device *pdev,
-+					struct goldfish_pipe_dev *dev);
-+
- /*
-  * The general idea of the interrupt handling:
-  *
-@@ -631,7 +635,7 @@ static irqreturn_t goldfish_pipe_interrupt(int irq, void *dev_id)
- 	unsigned long flags;
- 	struct goldfish_pipe_dev *dev = dev_id;
- 
--	if (dev != &goldfish_pipe_dev)
-+	if (dev->magic != &goldfish_pipe_device_deinit)
- 		return IRQ_NONE;
- 
- 	/* Request the signalled pipes from the device */
-@@ -683,6 +687,14 @@ static int get_free_pipe_id_locked(struct goldfish_pipe_dev *dev)
- 	return id;
- }
- 
-+/* A helper function to get the instance of goldfish_pipe_dev from file */
-+static struct goldfish_pipe_dev *to_goldfish_pipe_dev(struct file *file)
-+{
-+	struct miscdevice *miscdev = file->private_data;
-+
-+	return container_of(miscdev, struct goldfish_pipe_dev, miscdev);
-+}
-+
- /**
-  *	goldfish_pipe_open - open a channel to the AVD
-  *	@inode: inode of device
-@@ -696,7 +708,7 @@ static int get_free_pipe_id_locked(struct goldfish_pipe_dev *dev)
-  */
- static int goldfish_pipe_open(struct inode *inode, struct file *file)
- {
--	struct goldfish_pipe_dev *dev = &goldfish_pipe_dev;
-+	struct goldfish_pipe_dev *dev = to_goldfish_pipe_dev(file);
- 	unsigned long flags;
- 	int id;
- 	int status;
-@@ -804,9 +816,9 @@ static void write_pa_addr(void *addr, void __iomem *portl, void __iomem *porth)
- 	writel(lower_32_bits(paddr), portl);
- }
- 
--static int goldfish_pipe_device_init(struct platform_device *pdev)
-+static int goldfish_pipe_device_init(struct platform_device *pdev,
-+				     struct goldfish_pipe_dev *dev)
- {
--	struct goldfish_pipe_dev *dev = &goldfish_pipe_dev;
- 	int err;
- 
- 	tasklet_init(&dev->irq_tasklet, &goldfish_interrupt_task,
-@@ -861,26 +873,29 @@ static int goldfish_pipe_device_init(struct platform_device *pdev)
- 		      dev->base + PIPE_REG_OPEN_BUFFER,
- 		      dev->base + PIPE_REG_OPEN_BUFFER_HIGH);
- 
-+	platform_set_drvdata(pdev, dev);
- 	return 0;
- }
- 
--static void goldfish_pipe_device_deinit(struct platform_device *pdev)
-+static void goldfish_pipe_device_deinit(struct platform_device *pdev,
-+					struct goldfish_pipe_dev *dev)
- {
--	misc_deregister(&goldfish_pipe_dev.miscdev);
--	tasklet_kill(&goldfish_pipe_dev.irq_tasklet);
--	kfree(goldfish_pipe_dev.pipes);
--	free_page((unsigned long)goldfish_pipe_dev.buffers);
-+	misc_deregister(&dev->miscdev);
-+	tasklet_kill(&dev->irq_tasklet);
-+	kfree(dev->pipes);
-+	free_page((unsigned long)dev->buffers);
- }
- 
- static int goldfish_pipe_probe(struct platform_device *pdev)
- {
--	int err;
- 	struct resource *r;
--	struct goldfish_pipe_dev *dev = &goldfish_pipe_dev;
-+	struct goldfish_pipe_dev *dev;
- 
--	/* not thread safe, but this should not happen */
--	WARN_ON(dev->base);
-+	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
-+	if (!dev)
-+		return -ENOMEM;
- 
-+	dev->magic = &goldfish_pipe_device_deinit;
- 	spin_lock_init(&dev->lock);
- 
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -895,10 +910,9 @@ static int goldfish_pipe_probe(struct platform_device *pdev)
- 	}
- 
- 	r = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (!r) {
--		err = -EINVAL;
--		goto error;
+-	if ((clk <= 2) || (n > max_n)) {
++	if ((clk <= 2) || (n > max_n))
+ 		return STATUS_FAIL;
 -	}
-+	if (!r)
-+		return -EINVAL;
+ 
+ 	mcu_cnt = (u8)(125 / clk + 3);
+ 	if (mcu_cnt > 7)
+@@ -688,15 +687,13 @@ int switch_ssc_clock(struct rtsx_chip *chip, int clk)
+ 	}
+ 
+ 	retval = rtsx_send_cmd(chip, 0, WAIT_TIME);
+-	if (retval < 0) {
++	if (retval < 0)
+ 		return STATUS_ERROR;
+-	}
+ 
+ 	udelay(10);
+ 	retval = rtsx_write_register(chip, CLK_CTL, CLK_LOW_FREQ, 0);
+-	if (retval) {
++	if (retval)
+ 		return retval;
+-	}
+ 
+ 	chip->cur_clk = clk;
+ 
+@@ -790,49 +787,44 @@ int switch_normal_clock(struct rtsx_chip *chip, int clk)
+ 	}
+ 
+ 	retval = rtsx_write_register(chip, CLK_CTL, 0xFF, CLK_LOW_FREQ);
+-	if (retval) {
++	if (retval)
+ 		return retval;
+-	}
+ 	if (sd_vpclk_phase_reset) {
+ 		retval = rtsx_write_register(chip, SD_VPCLK0_CTL,
+ 					     PHASE_NOT_RESET, 0);
+-		if (retval) {
++		if (retval)
+ 			return retval;
+-		}
 +
- 	dev->irq = r->start;
+ 		retval = rtsx_write_register(chip, SD_VPCLK1_CTL,
+ 					     PHASE_NOT_RESET, 0);
+-		if (retval) {
++		if (retval)
+ 			return retval;
+-		}
+ 	}
+ 	retval = rtsx_write_register(chip, CLK_DIV, 0xFF,
+ 				     (div << 4) | mcu_cnt);
+-	if (retval) {
++	if (retval)
+ 		return retval;
+-	}
+ 	retval = rtsx_write_register(chip, CLK_SEL, 0xFF, sel);
+-	if (retval) {
++	if (retval)
+ 		return retval;
+-	}
  
- 	/*
-@@ -913,20 +927,14 @@ static int goldfish_pipe_probe(struct platform_device *pdev)
- 	if (WARN_ON(dev->version < PIPE_CURRENT_DEVICE_VERSION))
- 		return -EINVAL;
+ 	if (sd_vpclk_phase_reset) {
+ 		udelay(200);
+ 		retval = rtsx_write_register(chip, SD_VPCLK0_CTL,
+ 					     PHASE_NOT_RESET, PHASE_NOT_RESET);
+-		if (retval) {
++		if (retval)
+ 			return retval;
+-		}
++
+ 		retval = rtsx_write_register(chip, SD_VPCLK1_CTL,
+ 					     PHASE_NOT_RESET, PHASE_NOT_RESET);
+-		if (retval) {
++		if (retval)
+ 			return retval;
+-		}
++
+ 		udelay(200);
+ 	}
+ 	retval = rtsx_write_register(chip, CLK_CTL, 0xFF, 0);
+-	if (retval) {
++	if (retval)
+ 		return retval;
+-	}
  
--	err = goldfish_pipe_device_init(pdev);
--	if (!err)
--		return 0;
+ 	chip->cur_clk = clk;
+ 
+@@ -878,9 +870,8 @@ int enable_card_clock(struct rtsx_chip *chip, u8 card)
+ 		clk_en |= MS_CLK_EN;
+ 
+ 	retval = rtsx_write_register(chip, CARD_CLK_EN, clk_en, clk_en);
+-	if (retval) {
++	if (retval)
+ 		return retval;
+-	}
+ 
+ 	return STATUS_SUCCESS;
+ }
+@@ -898,9 +889,8 @@ int disable_card_clock(struct rtsx_chip *chip, u8 card)
+ 		clk_en |= MS_CLK_EN;
+ 
+ 	retval = rtsx_write_register(chip, CARD_CLK_EN, clk_en, 0);
+-	if (retval) {
++	if (retval)
+ 		return retval;
+-	}
+ 
+ 	return STATUS_SUCCESS;
+ }
+@@ -924,9 +914,8 @@ int card_power_on(struct rtsx_chip *chip, u8 card)
+ 	rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_PWR_CTL, mask, val1);
+ 
+ 	retval = rtsx_send_cmd(chip, 0, 100);
+-	if (retval != STATUS_SUCCESS) {
++	if (retval != STATUS_SUCCESS)
+ 		return STATUS_FAIL;
+-	}
+ 
+ 	udelay(chip->pmos_pwr_on_interval);
+ 
+@@ -934,9 +923,8 @@ int card_power_on(struct rtsx_chip *chip, u8 card)
+ 	rtsx_add_cmd(chip, WRITE_REG_CMD, CARD_PWR_CTL, mask, val2);
+ 
+ 	retval = rtsx_send_cmd(chip, 0, 100);
+-	if (retval != STATUS_SUCCESS) {
++	if (retval != STATUS_SUCCESS)
+ 		return STATUS_FAIL;
+-	}
+ 
+ 	return STATUS_SUCCESS;
+ }
+@@ -955,9 +943,8 @@ int card_power_off(struct rtsx_chip *chip, u8 card)
+ 	}
+ 
+ 	retval = rtsx_write_register(chip, CARD_PWR_CTL, mask, val);
+-	if (retval) {
++	if (retval)
+ 		return retval;
+-	}
+ 
+ 	return STATUS_SUCCESS;
+ }
+@@ -969,9 +956,8 @@ int card_rw(struct scsi_cmnd *srb, struct rtsx_chip *chip,
+ 	unsigned int lun = SCSI_LUN(srb);
+ 	int i;
+ 
+-	if (!chip->rw_card[lun]) {
++	if (!chip->rw_card[lun])
+ 		return STATUS_FAIL;
+-	}
+ 
+ 	for (i = 0; i < 3; i++) {
+ 		chip->rw_need_retry = 0;
+@@ -1009,36 +995,33 @@ int card_share_mode(struct rtsx_chip *chip, int card)
+ 
+ 	if (CHECK_PID(chip, 0x5208)) {
+ 		mask = CARD_SHARE_MASK;
+-		if (card == SD_CARD) {
++		if (card == SD_CARD)
+ 			value = CARD_SHARE_48_SD;
+-		} else if (card == MS_CARD) {
++		else if (card == MS_CARD)
+ 			value = CARD_SHARE_48_MS;
+-		} else if (card == XD_CARD) {
++		else if (card == XD_CARD)
+ 			value = CARD_SHARE_48_XD;
+-		} else {
++		else
+ 			return STATUS_FAIL;
+-		}
+ 
+ 	} else if (CHECK_PID(chip, 0x5288)) {
+ 		mask = 0x03;
+-		if (card == SD_CARD) {
++		if (card == SD_CARD)
+ 			value = CARD_SHARE_BAROSSA_SD;
+-		} else if (card == MS_CARD) {
++		else if (card == MS_CARD)
+ 			value = CARD_SHARE_BAROSSA_MS;
+-		} else if (card == XD_CARD) {
++		else if (card == XD_CARD)
+ 			value = CARD_SHARE_BAROSSA_XD;
+-		} else {
++		else
+ 			return STATUS_FAIL;
+-		}
+ 
+ 	} else {
+ 		return STATUS_FAIL;
+ 	}
+ 
+ 	retval = rtsx_write_register(chip, CARD_SHARE_MODE, mask, value);
+-	if (retval) {
++	if (retval)
+ 		return retval;
+-	}
+ 
+ 	return STATUS_SUCCESS;
+ }
+@@ -1050,30 +1033,26 @@ int select_card(struct rtsx_chip *chip, int card)
+ 	if (chip->cur_card != card) {
+ 		u8 mod;
+ 
+-		if (card == SD_CARD) {
++		if (card == SD_CARD)
+ 			mod = SD_MOD_SEL;
+-		} else if (card == MS_CARD) {
++		else if (card == MS_CARD)
+ 			mod = MS_MOD_SEL;
+-		} else if (card == XD_CARD) {
++		else if (card == XD_CARD)
+ 			mod = XD_MOD_SEL;
+-		} else if (card == SPI_CARD) {
++		else if (card == SPI_CARD)
+ 			mod = SPI_MOD_SEL;
+-		} else {
++		else
+ 			return STATUS_FAIL;
+-		}
+ 
+ 		retval = rtsx_write_register(chip, CARD_SELECT, 0x07, mod);
+-		if (retval) {
++		if (retval)
+ 			return retval;
+-		}
+ 		chip->cur_card = card;
+ 
+ 		retval =  card_share_mode(chip, card);
+-		if (retval != STATUS_SUCCESS) {
++		if (retval != STATUS_SUCCESS)
+ 			return STATUS_FAIL;
+-		}
+ 	}
 -
--error:
--	dev->base = NULL;
--	return err;
-+	return goldfish_pipe_device_init(pdev, dev);
+ 	return STATUS_SUCCESS;
  }
  
- static int goldfish_pipe_remove(struct platform_device *pdev)
- {
--	struct goldfish_pipe_dev *dev = &goldfish_pipe_dev;
--	goldfish_pipe_device_deinit(pdev);
--	dev->base = NULL;
-+	struct goldfish_pipe_dev *dev = platform_get_drvdata(pdev);
-+
-+	goldfish_pipe_device_deinit(pdev, dev);
- 	return 0;
- }
+@@ -1120,9 +1099,8 @@ int detect_card_cd(struct rtsx_chip *chip, int card)
+ 	}
  
+ 	status = rtsx_readl(chip, RTSX_BIPR);
+-	if (!(status & card_cd)) {
++	if (!(status & card_cd))
+ 		return STATUS_FAIL;
+-	}
+ 
+ 	return STATUS_SUCCESS;
+ }
 -- 
-2.19.0.605.g01d371f741-goog
+2.17.1
 
