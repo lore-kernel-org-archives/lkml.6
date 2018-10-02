@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9AEC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AECFC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41111206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41111206B2
+	by mail.kernel.org (Postfix) with ESMTP id 1C71E206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C71E206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732204AbeJBURh (ORCPT
+        id S1732216AbeJBURj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:17:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35218 "EHLO
+        Tue, 2 Oct 2018 16:17:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35238 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732083AbeJBURb (ORCPT
+        with ESMTP id S1732083AbeJBURi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:31 -0400
+        Tue, 2 Oct 2018 16:17:38 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78BC7C3F;
-        Tue,  2 Oct 2018 13:34:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 257FAB2F;
+        Tue,  2 Oct 2018 13:34:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 062/137] rndis_wlan: potential buffer overflow in rndis_wlan_auth_indication()
-Date:   Tue,  2 Oct 2018 06:24:23 -0700
-Message-Id: <20181002132502.917146669@linuxfoundation.org>
+        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>
+Subject: [PATCH 4.14 096/137] usb: musb: dsps: do not disable CPPI41 irq in driver teardown
+Date:   Tue,  2 Oct 2018 06:24:57 -0700
+Message-Id: <20181002132505.213201823@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,40 +50,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Bin Liu <b-liu@ti.com>
 
-[ Upstream commit ae636fb1554833ee5133ca47bf4b2791b6739c52 ]
+commit 783f3b4e9ec50491c21746e7e05ec6c39c21f563 upstream.
 
-This is a static checker fix, not something I have tested.  The issue
-is that on the second iteration through the loop, we jump forward by
-le32_to_cpu(auth_req->length) bytes.  The problem is that if the length
-is more than "buflen" then we end up with a negative "buflen".  A
-negative buflen is type promoted to a high positive value and the loop
-continues but it's accessing beyond the end of the buffer.
+TI AM335x CPPI 4.1 module uses a single register bit for CPPI interrupts
+in both musb controllers. So disabling the CPPI irq in one musb driver
+breaks the other musb module.
 
-I believe the "auth_req->length" comes from the firmware and if the
-firmware is malicious or buggy, you're already toasted so the impact of
-this bug is probably not very severe.
+Since musb is already disabled before tearing down dma controller in
+musb_remove(), it is safe to not disable CPPI irq in
+musb_dma_controller_destroy().
 
-Fixes: 030645aceb3d ("rndis_wlan: handle 802.11 indications from device")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 255348289f71 ("usb: musb: dsps: Manage CPPI 4.1 DMA interrupt in DSPS")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bin Liu <b-liu@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/rndis_wlan.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/net/wireless/rndis_wlan.c
-+++ b/drivers/net/wireless/rndis_wlan.c
-@@ -2928,6 +2928,8 @@ static void rndis_wlan_auth_indication(s
+---
+ drivers/usb/musb/musb_dsps.c |   12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+--- a/drivers/usb/musb/musb_dsps.c
++++ b/drivers/usb/musb/musb_dsps.c
+@@ -684,16 +684,6 @@ dsps_dma_controller_create(struct musb *
+ 	return controller;
+ }
  
- 	while (buflen >= sizeof(*auth_req)) {
- 		auth_req = (void *)buf;
-+		if (buflen < le32_to_cpu(auth_req->length))
-+			return;
- 		type = "unknown";
- 		flags = le32_to_cpu(auth_req->flags);
- 		pairwise_error = false;
+-static void dsps_dma_controller_destroy(struct dma_controller *c)
+-{
+-	struct musb *musb = c->musb;
+-	struct dsps_glue *glue = dev_get_drvdata(musb->controller->parent);
+-	void __iomem *usbss_base = glue->usbss_base;
+-
+-	musb_writel(usbss_base, USBSS_IRQ_CLEARR, USBSS_IRQ_PD_COMP);
+-	cppi41_dma_controller_destroy(c);
+-}
+-
+ #ifdef CONFIG_PM_SLEEP
+ static void dsps_dma_controller_suspend(struct dsps_glue *glue)
+ {
+@@ -723,7 +713,7 @@ static struct musb_platform_ops dsps_ops
+ 
+ #ifdef CONFIG_USB_TI_CPPI41_DMA
+ 	.dma_init	= dsps_dma_controller_create,
+-	.dma_exit	= dsps_dma_controller_destroy,
++	.dma_exit	= cppi41_dma_controller_destroy,
+ #endif
+ 	.enable		= dsps_musb_enable,
+ 	.disable	= dsps_musb_disable,
 
 
