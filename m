@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D39FEC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D788C64EBA
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99F1120684
+	by mail.kernel.org (Postfix) with ESMTP id D24DB2089C
 	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:10:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99F1120684
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24DB2089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbeJBOwy (ORCPT
+        id S1727561AbeJBOwz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:52:54 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:11182 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727251AbeJBOww (ORCPT
+        Tue, 2 Oct 2018 10:52:55 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:65418 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727379AbeJBOwx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:52:52 -0400
-X-UUID: eb4d9310e9124841b78fe238972b94c4-20181002
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        Tue, 2 Oct 2018 10:52:53 -0400
+X-UUID: 1e754a0cfc5847709071f2b73ac4efb0-20181002
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1734780241; Tue, 02 Oct 2018 16:10:46 +0800
+        with ESMTP id 1409082121; Tue, 02 Oct 2018 16:10:47 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Tue, 2 Oct 2018 16:10:45 +0800
 Received: from mtkslt209.mediatek.inc (10.21.15.96) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -50,44 +50,49 @@ CC:     Yingjoe Chen <yingjoe.chen@mediatek.com>,
         CK Hu <ck.hu@mediatek.com>, Mao Huang <littlecvr@chromium.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>
-Subject: [PATCH v4 11/11] drm/mediatek: add a error return value when clock driver has been prepared
-Date:   Tue, 2 Oct 2018 16:10:41 +0800
-Message-ID: <20181002081041.32629-12-bibby.hsieh@mediatek.com>
+        Sascha Hauer <kernel@pengutronix.de>,
+        chunhui dai <chunhui.dai@mediatek.com>
+Subject: [PATCH v4 08/11] drm/mediatek: add support for SPDIF audio in HDMI
+Date:   Tue, 2 Oct 2018 16:10:38 +0800
+Message-ID: <20181002081041.32629-9-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.12.5.2.gbdf23ab
 In-Reply-To: <20181002081041.32629-1-bibby.hsieh@mediatek.com>
 References: <20181002081041.32629-1-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: A30B79C77C935FF3D044A4301F75DCC51690CA7454F90F571018814760EC4FFE2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DRM driver get the comp->clk by of_clk_get(), we only
-assign NULL to comp->clk when error happened, but do
-not return the error number.
+From: chunhui dai <chunhui.dai@mediatek.com>
 
-Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+add support for SPDIF audio  in HDMI
+
+Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_hdmi.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-index ff974d82a4a6..54ca794db3e9 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-@@ -294,7 +294,7 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
- 	comp->irq = of_irq_get(node, 0);
- 	comp->clk = of_clk_get(node, 0);
- 	if (IS_ERR(comp->clk))
--		comp->clk = NULL;
-+		return PTR_ERR(comp->clk);
- 
- 	/* Only DMA capable components need the LARB property */
- 	comp->larb_dev = NULL;
+diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+index 2ca9f6a64dab..d62e685cec73 100644
+--- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
++++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+@@ -1576,6 +1576,11 @@ static int mtk_hdmi_audio_hw_params(struct device *dev, void *data,
+ 		hdmi_params.aud_i2s_fmt = HDMI_I2S_MODE_I2S_24BIT;
+ 		hdmi_params.aud_mclk = HDMI_AUD_MCLK_128FS;
+ 		break;
++	case HDMI_SPDIF:
++		hdmi_params.aud_codec = HDMI_AUDIO_CODING_TYPE_PCM;
++		hdmi_params.aud_sampe_size = HDMI_AUDIO_SAMPLE_SIZE_16;
++		hdmi_params.aud_input_type = HDMI_AUD_INPUT_SPDIF;
++		break;
+ 	default:
+ 		dev_err(hdmi->dev, "%s: Invalid DAI format %d\n", __func__,
+ 			daifmt->fmt);
 -- 
 2.12.5.2.gbdf23ab
 
