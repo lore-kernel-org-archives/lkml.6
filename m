@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B082C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C8BC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0846206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0846206B2
+	by mail.kernel.org (Postfix) with ESMTP id 77EF22089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77EF22089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730857AbeJBUOc (ORCPT
+        id S1730923AbeJBUOh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33974 "EHLO
+        Tue, 2 Oct 2018 16:14:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33992 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730838AbeJBUOa (ORCPT
+        with ESMTP id S1730859AbeJBUOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:30 -0400
+        Tue, 2 Oct 2018 16:14:33 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2F855AA;
-        Tue,  2 Oct 2018 13:31:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 28E97C2B;
+        Tue,  2 Oct 2018 13:31:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Yussuf Khalil <dev@pp3345.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 220/228] arm/arm64: smccc-1.1: Make return values unsigned long
-Date:   Tue,  2 Oct 2018 06:25:17 -0700
-Message-Id: <20181002132512.383176436@linuxfoundation.org>
+Subject: [PATCH 4.18 222/228] i2c: i801: Allow ACPI AML access I/O ports not reserved for SMBus
+Date:   Tue,  2 Oct 2018 06:25:19 -0700
+Message-Id: <20181002132512.476866445@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,71 +54,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit 1d8f574708a3fb6f18c85486d0c5217df893c0cf ]
+[ Upstream commit 7fd6d98b89f382d414e1db528e29a67bbd749457 ]
 
-An unfortunate consequence of having a strong typing for the input
-values to the SMC call is that it also affects the type of the
-return values, limiting r0 to 32 bits and r{1,2,3} to whatever
-was passed as an input.
+Commit 7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to conflict
+with PCI BAR") made it possible for AML code to access SMBus I/O ports
+by installing custom SystemIO OpRegion handler and blocking i80i driver
+access upon first AML read/write to this OpRegion.
 
-Let's turn everything into "unsigned long", which satisfies the
-requirements of both architectures, and allows for the full
-range of return values.
+However, while ThinkPad T560 does have SystemIO OpRegion declared under
+the SMBus device, it does not access any of the SMBus registers:
 
-Reported-by: Julien Grall <julien.grall@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+    Device (SMBU)
+    {
+        ...
+
+        OperationRegion (SMBP, PCI_Config, 0x50, 0x04)
+        Field (SMBP, DWordAcc, NoLock, Preserve)
+        {
+            ,   5,
+            TCOB,   11,
+            Offset (0x04)
+        }
+
+        Name (TCBV, 0x00)
+        Method (TCBS, 0, NotSerialized)
+        {
+            If ((TCBV == 0x00))
+            {
+            TCBV = (\_SB.PCI0.SMBU.TCOB << 0x05)
+            }
+
+            Return (TCBV) /* \_SB_.PCI0.SMBU.TCBV */
+        }
+
+        OperationRegion (TCBA, SystemIO, TCBS (), 0x10)
+        Field (TCBA, ByteAcc, NoLock, Preserve)
+        {
+            Offset (0x04),
+            ,   9,
+            CPSC,   1
+        }
+    }
+
+Problem with the current approach is that it blocks all I/O port access
+and because this system has touchpad connected to the SMBus controller
+after first AML access (happens during suspend/resume cycle) the
+touchpad fails to work anymore.
+
+Fix this so that we allow ACPI AML I/O port access if it does not touch
+the region reserved for the SMBus.
+
+Fixes: 7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to conflict with PCI BAR")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200737
+Reported-by: Yussuf Khalil <dev@pp3345.net>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/arm-smccc.h |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/i2c/busses/i2c-i801.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -199,31 +199,31 @@ asmlinkage void __arm_smccc_hvc(unsigned
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -1417,6 +1417,13 @@ static void i801_add_tco(struct i801_pri
+ }
  
- #define __declare_arg_0(a0, res)					\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
-+	register unsigned long r0 asm("r0") = (u32)a0;			\
- 	register unsigned long r1 asm("r1");				\
- 	register unsigned long r2 asm("r2");				\
- 	register unsigned long r3 asm("r3")
+ #ifdef CONFIG_ACPI
++static bool i801_acpi_is_smbus_ioport(const struct i801_priv *priv,
++				      acpi_physical_address address)
++{
++	return address >= priv->smba &&
++	       address <= pci_resource_end(priv->pci_dev, SMBBAR);
++}
++
+ static acpi_status
+ i801_acpi_io_handler(u32 function, acpi_physical_address address, u32 bits,
+ 		     u64 *value, void *handler_context, void *region_context)
+@@ -1432,7 +1439,7 @@ i801_acpi_io_handler(u32 function, acpi_
+ 	 */
+ 	mutex_lock(&priv->acpi_lock);
  
- #define __declare_arg_1(a0, a1, res)					\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
--	register typeof(a1)    r1 asm("r1") = a1;			\
-+	register unsigned long r0 asm("r0") = (u32)a0;			\
-+	register unsigned long r1 asm("r1") = a1;			\
- 	register unsigned long r2 asm("r2");				\
- 	register unsigned long r3 asm("r3")
+-	if (!priv->acpi_reserved) {
++	if (!priv->acpi_reserved && i801_acpi_is_smbus_ioport(priv, address)) {
+ 		priv->acpi_reserved = true;
  
- #define __declare_arg_2(a0, a1, a2, res)				\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
--	register typeof(a1)    r1 asm("r1") = a1;			\
--	register typeof(a2)    r2 asm("r2") = a2;			\
-+	register unsigned long r0 asm("r0") = (u32)a0;			\
-+	register unsigned long r1 asm("r1") = a1;			\
-+	register unsigned long r2 asm("r2") = a2;			\
- 	register unsigned long r3 asm("r3")
- 
- #define __declare_arg_3(a0, a1, a2, a3, res)				\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
--	register typeof(a1)    r1 asm("r1") = a1;			\
--	register typeof(a2)    r2 asm("r2") = a2;			\
--	register typeof(a3)    r3 asm("r3") = a3
-+	register unsigned long r0 asm("r0") = (u32)a0;			\
-+	register unsigned long r1 asm("r1") = a1;			\
-+	register unsigned long r2 asm("r2") = a2;			\
-+	register unsigned long r3 asm("r3") = a3
- 
- #define __declare_arg_4(a0, a1, a2, a3, a4, res)			\
- 	__declare_arg_3(a0, a1, a2, a3, res);				\
+ 		dev_warn(&pdev->dev, "BIOS is accessing SMBus registers\n");
 
 
