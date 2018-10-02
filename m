@@ -2,113 +2,147 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6964BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74072C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F336206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:14:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lOvQJ7Xd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F336206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 32AAD206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:16:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32AAD206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbeJBR5K (ORCPT
+        id S1727546AbeJBR7M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 13:57:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38234 "EHLO mail.kernel.org"
+        Tue, 2 Oct 2018 13:59:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52592 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727321AbeJBR5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 13:57:10 -0400
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727321AbeJBR7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 13:59:11 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7512206B2;
-        Tue,  2 Oct 2018 11:14:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538478864;
-        bh=h59U8tc1PbnHw7ZjAW66npZWOicrsq97Qd0G7hnX/ds=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lOvQJ7Xd/KjzU65aYuyeSYxfyiSdbtcyS6plNZ5bOJlj4F8GI8J/kmE0nd0wOnpef
-         9/lYAftjrN+Ds8mP/04nXCGyn8vRiY3DNpRk5fAcO+PcUjQ9/huiCqvijIEUK7Sdvd
-         ldCYXdYQaaqOWqsCjE8pL2qWBj57mwh7hL1JN4q8=
-Received: by mail-wr1-f44.google.com with SMTP id a13-v6so1732404wrt.5;
-        Tue, 02 Oct 2018 04:14:23 -0700 (PDT)
-X-Gm-Message-State: ABuFfojI319i5UpZvMoutTbzvrrdAlEnc6thghesVPKcyBnO3AYWOI0S
-        d6qDetegZDNGKWuPzB7a6dHDo2N0NZDYYMCP+Cw=
-X-Google-Smtp-Source: ACcGV60Dazo2lDxPrZI5J4901H4sYi9OHuFb2edr0heUnL1xNcMNa3JYek6DGcoTWtjrh9r7jpEpGu8iiNLw7TGIVBc=
-X-Received: by 2002:a5d:6a8d:: with SMTP id s13-v6mr9614331wru.44.1538478862138;
- Tue, 02 Oct 2018 04:14:22 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id AA31A3083391;
+        Tue,  2 Oct 2018 11:16:25 +0000 (UTC)
+Received: from krava (unknown [10.43.17.97])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D7637756A5;
+        Tue,  2 Oct 2018 11:16:22 +0000 (UTC)
+Date:   Tue, 2 Oct 2018 13:16:21 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: perf segmentation fault from NULL dereference
+Message-ID: <20181002111621.GA6357@krava>
+References: <712b7c31-f681-7737-71e7-c028b8d2bba5@huawei.com>
+ <20180927160210.GF6916@krava>
+ <4ac88076-60fa-4509-7fa0-2f99d73174d2@huawei.com>
 MIME-Version: 1.0
-References: <CGME20181002075700epcas2p1e1650ae02c1d6b1bfb946b146d4ce223@epcas2p1.samsung.com>
- <CAL_JsqLoZfU+DMxHJg7ZqD06dgcsxiDbYYW99x8H4C0sOwdiiw@mail.gmail.com> <20181002075633.25658-1-l.stelmach@samsung.com>
-In-Reply-To: <20181002075633.25658-1-l.stelmach@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 2 Oct 2018 13:14:11 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdrtCGa_doOk_fQDC6d9=ZDY460X-0qmWjaGyJpxeB+Ug@mail.gmail.com>
-Message-ID: <CAJKOXPdrtCGa_doOk_fQDC6d9=ZDY460X-0qmWjaGyJpxeB+Ug@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: hwrng: Add Samsung Exynos 5250+ True RNG bindings
-To:     l.stelmach@samsung.com
-Cc:     robh+dt@kernel.org, joe@perches.com, linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ac88076-60fa-4509-7fa0-2f99d73174d2@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 02 Oct 2018 11:16:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2 Oct 2018 at 09:57, =C5=81ukasz Stelmach <l.stelmach@samsung.com> =
-wrote:
->
-> Add binding documentation for the True Random Number Generator
-> found on Samsung Exynos 5250+ SoCs.
->
-> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  .../bindings/rng/samsung,exynos5250-trng.txt    | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos5=
-250-trng.txt
+On Tue, Oct 02, 2018 at 11:41:36AM +0100, John Garry wrote:
 
-Mine and Rob's tags disappeared already once (v2->v3) and...  now
-again (from v3 to here). Just amend the commit in your local repo and
-add them permanently.
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+SNIP
 
-Best regards,
-Krzysztof
+> > 
+> > 
+> > ---
+> > diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> > index 1ec1d9bc2d63..fb2a0dab3978 100644
+> > --- a/tools/perf/util/header.c
+> > +++ b/tools/perf/util/header.c
+> > @@ -29,6 +29,7 @@
+> >  #include "symbol.h"
+> >  #include "debug.h"
+> >  #include "cpumap.h"
+> > +#include "thread_map.h"
+> >  #include "pmu.h"
+> >  #include "vdso.h"
+> >  #include "strbuf.h"
+> > @@ -3579,6 +3580,11 @@ perf_event__synthesize_event_update_cpus(struct perf_tool *tool,
+> > 	if (!evsel->own_cpus)
+> > 		return 0;
+> > 
+> > +	if (!evsel->id ||
+> 
+> for my test, evsel->id is NULL
+> 
+> > +	    perf_evsel__alloc_id(evsel, cpu_map__nr(evsel->cpus),
+> > +				 thread_map__nr(evsel->threads)))
+> 
+> and then this function is not called as we return immediately. So did you
+> really want this:
+> 
+> if (!evsel->id && perf_evsel__alloc_id(...))
+> 	return -ENOMEM;
 
-> diff --git a/Documentation/devicetree/bindings/rng/samsung,exynos5250-trn=
-g.txt b/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
-> new file mode 100644
-> index 000000000000..5a613a4ec780
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
-> @@ -0,0 +1,17 @@
-> +Exynos True Random Number Generator
-> +
-> +Required properties:
-> +
-> +- compatible  : Should be "samsung,exynos5250-trng".
-> +- reg         : Specifies base physical address and size of the register=
-s map.
-> +- clocks      : Phandle to clock-controller plus clock-specifier pair.
-> +- clock-names : "secss" as a clock name.
-> +
-> +Example:
-> +
-> +       rng@10830600 {
-> +               compatible =3D "samsung,exynos5250-trng";
-> +               reg =3D <0x10830600 0x100>;
-> +               clocks =3D <&clock CLK_SSS>;
-> +               clock-names =3D "secss";
-> +       };
-> --
-> 2.19.0
->
+ugh.. yes ;-) thanks for the fix.. I'll double
+check the logic and post the patch this week
+
+jirka
+
+> 
+> This looks to work:
+> 
+> root@localhost:~# ./perf_debug_ record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.001 MB perf.data (7 samples) ]
+> root@localhost:~# ./perf_debug_ report
+> # To display the perf.data header info, please use --header/--header-only
+> option
+> #
+> #
+> # Total Lost Samples: 0
+> #
+> # Samples: 7  of event 'armv8_pmuv3_0/br_mis_pred/'
+> # Event count (approx.): 8260
+> #
+> # Overhead  Command  Shared Object      Symbol
+> # ........  .......  .................  ......................
+> #
+>     78.28%  sleep    libc-2.23.so       [.] 0x00000000000faef0
+>     20.53%  sleep    [kernel.kallsyms]  [k] vmacache_find
+>      1.09%  sleep    [kernel.kallsyms]  [k] find_vma
+>      0.10%  perf_de  [kernel.kallsyms]  [k] perf_event_exec
+> 
+> 
+> #
+> # (Cannot load tips.txt file, please install perf!)
+> #
+> root@localhost:~#
+> 
+> 
+> > +		return -ENOMEM;
+> > +
+> > 	ev = cpu_map_data__alloc(evsel->own_cpus, &size, &type, &max);
+> > 	if (!ev)
+> > 		return -ENOMEM;
+> > 
+> > .
+> > 
+> 
+> 
+> Thanks,
+> John
+> 
