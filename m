@@ -3,43 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91915C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38932C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C40A2082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C40A2082A
+	by mail.kernel.org (Postfix) with ESMTP id 092712064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092712064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731431AbeJBUjl (ORCPT
+        id S1731377AbeJBUkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:39:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34204 "EHLO
+        Tue, 2 Oct 2018 16:40:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34160 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730090AbeJBUO6 (ORCPT
+        with ESMTP id S1731010AbeJBUOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:58 -0400
+        Tue, 2 Oct 2018 16:14:53 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 44CA4BF0;
-        Tue,  2 Oct 2018 13:31:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA9D8C47;
+        Tue,  2 Oct 2018 13:31:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Matt Ranostay <matt.ranostay@konsulko.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Stafford Horne <shorne@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 003/137] tsl2550: fix lux1_input error in low light
-Date:   Tue,  2 Oct 2018 06:23:24 -0700
-Message-Id: <20181002132458.642120445@linuxfoundation.org>
+Subject: [PATCH 4.14 001/137] crypto: skcipher - Fix -Wstringop-truncation warnings
+Date:   Tue,  2 Oct 2018 06:23:22 -0700
+Message-Id: <20181002132458.526593446@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -52,39 +55,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matt Ranostay <matt.ranostay@konsulko.com>
+From: Stafford Horne <shorne@gmail.com>
 
-[ Upstream commit ce054546cc2c26891cefa2f284d90d93b52205de ]
+[ Upstream commit cefd769fd0192c84d638f66da202459ed8ad63ba ]
 
-ADC channel 0 photodiode detects both infrared + visible light,
-but ADC channel 1 just detects infrared. However, the latter is a bit
-more sensitive in that range so complete darkness or low light causes
-a error condition in which the chan0 - chan1 is negative that
-results in a -EAGAIN.
+As of GCC 9.0.0 the build is reporting warnings like:
 
-This patch changes the resulting lux1_input sysfs attribute message from
-"Resource temporarily unavailable" to a user-grokable lux value of 0.
+    crypto/ablkcipher.c: In function ‘crypto_ablkcipher_report’:
+    crypto/ablkcipher.c:374:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
+      strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       sizeof(rblkcipher.geniv));
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Cc: Arnd Bergmann <arnd@arndb.de>
+This means the strnycpy might create a non null terminated string.  Fix this by
+explicitly performing '\0' termination.
+
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Matt Ranostay <matt.ranostay@konsulko.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Eric Biggers <ebiggers3@gmail.com>
+Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
+Signed-off-by: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/tsl2550.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/ablkcipher.c |    2 ++
+ crypto/blkcipher.c  |    1 +
+ 2 files changed, 3 insertions(+)
 
---- a/drivers/misc/tsl2550.c
-+++ b/drivers/misc/tsl2550.c
-@@ -177,7 +177,7 @@ static int tsl2550_calculate_lux(u8 ch0,
- 		} else
- 			lux = 0;
- 	else
--		return -EAGAIN;
-+		return 0;
+--- a/crypto/ablkcipher.c
++++ b/crypto/ablkcipher.c
+@@ -368,6 +368,7 @@ static int crypto_ablkcipher_report(stru
+ 	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
  
- 	/* LUX range check */
- 	return lux > TSL2550_MAX_LUX ? TSL2550_MAX_LUX : lux;
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+@@ -442,6 +443,7 @@ static int crypto_givcipher_report(struc
+ 	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+--- a/crypto/blkcipher.c
++++ b/crypto/blkcipher.c
+@@ -511,6 +511,7 @@ static int crypto_blkcipher_report(struc
+ 	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_blkcipher.min_keysize;
 
 
