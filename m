@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A84C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38159C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7594D2064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7594D2064D
+	by mail.kernel.org (Postfix) with ESMTP id F19C42064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F19C42064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387776AbeJBUUp (ORCPT
+        id S2387751AbeJBUUo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36676 "EHLO
+        Tue, 2 Oct 2018 16:20:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36690 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387724AbeJBUUm (ORCPT
+        with ESMTP id S2387680AbeJBUUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:42 -0400
+        Tue, 2 Oct 2018 16:20:44 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69889C4D;
-        Tue,  2 Oct 2018 13:37:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82369B4B;
+        Tue,  2 Oct 2018 13:37:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 61/94] spi: rspi: Fix invalid SPI use during system suspend
-Date:   Tue,  2 Oct 2018 06:25:15 -0700
-Message-Id: <20181002132504.731383275@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Denis Kirjanov <kirjanov@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 53/94] EDAC: Fix memleak in module init error path
+Date:   Tue,  2 Oct 2018 06:25:07 -0700
+Message-Id: <20181002132504.183267086@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -52,67 +55,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Johan Hovold <johan@kernel.org>
 
-commit c1ca59c22c56930b377a665fdd1b43351887830b upstream.
+[ Upstream commit 4708aa85d50cc6e962dfa8acf5ad4e0d290a21db ]
 
-If the SPI queue is running during system suspend, the system may lock
-up.
+Make sure to use put_device() to free the initialised struct device so
+that resources managed by driver core also gets released in the event of
+a registration failure.
 
-Fix this by stopping/restarting the queue during system suspend/resume,
-by calling spi_master_suspend()/spi_master_resume() from the PM
-callbacks.  In-kernel users will receive an -ESHUTDOWN error while
-system suspend/resume is in progress.
-
-Based on a patch for sh-msiof by Gaku Inami.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: Denis Kirjanov <kirjanov@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Fixes: 2d56b109e3a5 ("EDAC: Handle error path in edac_mc_sysfs_init() properly")
+Link: http://lkml.kernel.org/r/20180612124335.6420-1-johan@kernel.org
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/spi/spi-rspi.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/edac/edac_mc_sysfs.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -1313,12 +1313,36 @@ static const struct platform_device_id s
+--- a/drivers/edac/edac_mc_sysfs.c
++++ b/drivers/edac/edac_mc_sysfs.c
+@@ -1059,14 +1059,14 @@ int __init edac_mc_sysfs_init(void)
  
- MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+ 	err = device_add(mci_pdev);
+ 	if (err < 0)
+-		goto out_dev_free;
++		goto out_put_device;
  
-+#ifdef CONFIG_PM_SLEEP
-+static int rspi_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rspi_data *rspi = platform_get_drvdata(pdev);
-+
-+	return spi_master_suspend(rspi->master);
-+}
-+
-+static int rspi_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rspi_data *rspi = platform_get_drvdata(pdev);
-+
-+	return spi_master_resume(rspi->master);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rspi_pm_ops, rspi_suspend, rspi_resume);
-+#define DEV_PM_OPS	&rspi_pm_ops
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static struct platform_driver rspi_driver = {
- 	.probe =	rspi_probe,
- 	.remove =	rspi_remove,
- 	.id_table =	spi_driver_ids,
- 	.driver		= {
- 		.name = "renesas_spi",
-+		.pm = DEV_PM_OPS,
- 		.of_match_table = of_match_ptr(rspi_of_match),
- 	},
- };
+ 	edac_dbg(0, "device %s created\n", dev_name(mci_pdev));
+ 
+ 	return 0;
+ 
+- out_dev_free:
+-	kfree(mci_pdev);
++ out_put_device:
++	put_device(mci_pdev);
+  out:
+ 	return err;
+ }
 
 
