@@ -7,61 +7,62 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70901C65BA7
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D188EC64EBC
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 231E120666
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A67520666
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:20:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FhtPLsQy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 231E120666
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JDUc1Acr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A67520666
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728141AbeJCFGQ (ORCPT
+        id S1728228AbeJCFGT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 01:06:16 -0400
-Received: from mail-ot1-f74.google.com ([209.85.210.74]:55885 "EHLO
-        mail-ot1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725198AbeJCFGP (ORCPT
+        Wed, 3 Oct 2018 01:06:19 -0400
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:48699 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725198AbeJCFGT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 01:06:15 -0400
-Received: by mail-ot1-f74.google.com with SMTP id n12-v6so2412668otk.22
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 15:20:41 -0700 (PDT)
+        Wed, 3 Oct 2018 01:06:19 -0400
+Received: by mail-pf1-f201.google.com with SMTP id x19-v6so1435966pfh.15
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 15:20:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=J3Qh3Bl2YClR6CwBKobPsyQGEuRhLQSgqIJoc4enZwQ=;
-        b=FhtPLsQyFnV7mIHUg4+qdFMVqvkJDOFuWx17/Yv2EoMqHDLVYHX9uIH2myuNsr/g0a
-         uI7IUy/ZFnUkPbJRBfySiNXniDDAPBeE8P7bUJnDj48SN6OmRPa8pkmGnSkZvphcbPpQ
-         5xArOtzMzIVCaoa0Ug2z5r8roIYyw1UGlAkj+/80n7H0TsIkXuhvP/KA7BjD+6ZrILPd
-         WUJUdOxMLqKRIMca+1PHVeudwu6wvBAEtPZErvQStU/+KaH2qpkW+AGs2TiBqAussq3a
-         ZcGFI9Aqm+xzS452XWeL8Oils/ByqdyF9SGjtJeMSnJlzx6OGSIcuLUeNol3QzvhI4NC
-         AbEQ==
+        bh=nyaj8DLOBPq/oflKl9beV/oO/co8S0qsTTX2ctxagSo=;
+        b=JDUc1Acrq7VxTukapWJmnkKDyJKp1ZLSLK5Q12xvqCnech7m4qyga//YRhGAyqFLbz
+         y9v5pJeOw+7wTBxd4QIYgSXJ33Ukth+48VF8A8qrpwIctTdA2lor4j3khoHKLabq6mkY
+         pqOjnC8liZ3VHlOE3qRvsEvACnPSiklnBskfOh/wwD+R4wh6ooQdyZMJot6yzvLkvqNa
+         ZKHnnYNT7OnZgrscO8tna+1/hNCLC3g032N65zhN3iVxZrWyhy24T8DUnRSY6UBnjXUz
+         cCrufLR0jopFu3Js3DEha873VSWUINtQSzah5fK9lCyFpUynHhT6TYjPXoZxZuyRq9GQ
+         bSBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=J3Qh3Bl2YClR6CwBKobPsyQGEuRhLQSgqIJoc4enZwQ=;
-        b=Ptf0VaLLndRW1+G1RukQLQKp8t/l5AjAn/aDyq6WDORsyu+qaCC00qSVvtp9mNYkBi
-         C6ODNdhm8p2J/CWt524KHzqvHx1EwyeB1I3CFBTtcC5/XMetMaVpVlD4XB0rqb4xVLsl
-         1lfzL0QctiMpiip6++fHMH8HVvidc77vWQZN/Gk/mtBIID+ych2Gmjzvc6XcuC9Nx5dm
-         46SHRu5MJKCIbdFTS2oXTUIuKT2ZmEHsUYAM2VpSlTPfTQS3QdhqQZ7TfjYj9UOIxE+u
-         PXIq86zjYY7mV4gg2TGBAuhq08B8KVxhLvITNuAfk9cgHx+XZru29kfjqHEYCQ5xAnQm
-         oPaQ==
-X-Gm-Message-State: ABuFfojBrw0e3pTN9owv1U4y+Z/WJpzGJobeZ0Od3t5d6IoQvW7wviFo
-        33haNlFwKjyho62jrzrR9xydcY2r
-X-Google-Smtp-Source: ACcGV62CBqNBjVo2szQrMa4b4XwqdY+r4u5dX7RutGpk9y0S//35QMU03nkVRzWH3OR//6VOH16jVN4F
-X-Received: by 2002:aca:3203:: with SMTP id y3-v6mr14124891oiy.14.1538518841055;
- Tue, 02 Oct 2018 15:20:41 -0700 (PDT)
-Date:   Tue,  2 Oct 2018 15:18:58 -0700
+        bh=nyaj8DLOBPq/oflKl9beV/oO/co8S0qsTTX2ctxagSo=;
+        b=mXCx397RxX2ZW4FJdRSJCos4DjPZTiEaFbwZNjy97BMTyzJUbt50wJzFJLvg5IErAM
+         Aqtxov/VzU7z+GAVhBIyLxwuESjjGw9rMv11wJlcga+HL3dyZnbrOmjENw8U5y2aM36m
+         avHfbUKC2qjkoDdw0IWNyhqKD9zLHoZh+TBX0so35UyOjuFYdysa+U3u+2HVgr/TljOQ
+         BE7LBRQirWu5LYojmVQAiMd59yBtMoRcM2GnY14f0B1tuXiC2CFrM1pHTJN9fUGH5VVE
+         plCOGWLurpRAOrXnB50ssTVvKY6r0Y6n8zSGWpAh01+baVBV1S5bYV+V49QXN3Dn17x4
+         9CcA==
+X-Gm-Message-State: ABuFfogmK9nphPL3QwGsSnicoqrXOFXn12iUuZkYM39FMZRgZQ8ummQw
+        rznFO74qB9I2sSs+nPhAElshVGsh
+X-Google-Smtp-Source: ACcGV60yRhUSZJ+mKCdpe6Luue3Yj8iUFORaISI3Wps5/jA7u3sJ4gXSZyxOp8p3nBYGXzcjexu5oqj+
+X-Received: by 2002:a63:84c1:: with SMTP id k184-v6mr7497961pgd.42.1538518844008;
+ Tue, 02 Oct 2018 15:20:44 -0700 (PDT)
+Date:   Tue,  2 Oct 2018 15:18:59 -0700
 In-Reply-To: <20181002221903.19476-1-rkir@google.com>
-Message-Id: <20181002221903.19476-10-rkir@google.com>
+Message-Id: <20181002221903.19476-11-rkir@google.com>
 Mime-Version: 1.0
 References: <20181002221903.19476-1-rkir@google.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-Subject: [PATCH 10/15] platform: goldfish: pipe: Remove the license boilerplate
+Subject: [PATCH 11/15] platform: goldfish: pipe: Split the driver to v2
+ specific and the rest
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
@@ -74,39 +75,380 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Kiryanov <rkir@google.com>
 
-Not required with the SPDX-License-Identifier header.
+Move probe/remove and other driver stuff to a separate file
+to plug v1 there later.
 
 Signed-off-by: Roman Kiryanov <rkir@google.com>
 ---
- drivers/platform/goldfish/goldfish_pipe_v2.c | 17 -----------------
- 1 file changed, 17 deletions(-)
+ drivers/platform/goldfish/Makefile           |   3 +-
+ drivers/platform/goldfish/goldfish_pipe.c    | 124 +++++++++++++++++++
+ drivers/platform/goldfish/goldfish_pipe.h    |  10 ++
+ drivers/platform/goldfish/goldfish_pipe_v2.c | 112 +++--------------
+ drivers/platform/goldfish/goldfish_pipe_v2.h |  10 ++
+ 5 files changed, 161 insertions(+), 98 deletions(-)
+ create mode 100644 drivers/platform/goldfish/goldfish_pipe.c
+ create mode 100644 drivers/platform/goldfish/goldfish_pipe.h
+ create mode 100644 drivers/platform/goldfish/goldfish_pipe_v2.h
 
+diff --git a/drivers/platform/goldfish/Makefile b/drivers/platform/goldfish/Makefile
+index 81f899a987a2..016769e003d8 100644
+--- a/drivers/platform/goldfish/Makefile
++++ b/drivers/platform/goldfish/Makefile
+@@ -1,4 +1,5 @@
+ #
+ # Makefile for Goldfish platform specific drivers
+ #
+-obj-$(CONFIG_GOLDFISH_PIPE)	+= goldfish_pipe_v2.o
++obj-$(CONFIG_GOLDFISH_PIPE)    += goldfish_pipe_all.o
++goldfish_pipe_all-objs := goldfish_pipe.o goldfish_pipe_v2.o
+diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
+new file mode 100644
+index 000000000000..792b20bdf76c
+--- /dev/null
++++ b/drivers/platform/goldfish/goldfish_pipe.c
+@@ -0,0 +1,124 @@
++// SPDX-License-Identifier: GPL-2.0
++/* This source file contains the implementation of a special device driver
++ * that intends to provide a *very* fast communication channel between the
++ * guest system and the QEMU emulator.
++ *
++ * Usage from the guest is simply the following (error handling simplified):
++ *
++ *    int  fd = open("/dev/qemu_pipe",O_RDWR);
++ *    .... write() or read() through the pipe.
++ *
++ * This driver doesn't deal with the exact protocol used during the session.
++ * It is intended to be as simple as something like:
++ *
++ *    // do this _just_ after opening the fd to connect to a specific
++ *    // emulator service.
++ *    const char*  msg = "<pipename>";
++ *    if (write(fd, msg, strlen(msg)+1) < 0) {
++ *       ... could not connect to <pipename> service
++ *       close(fd);
++ *    }
++ *
++ *    // after this, simply read() and write() to communicate with the
++ *    // service. Exact protocol details left as an exercise to the reader.
++ *
++ * This driver is very fast because it doesn't copy any data through
++ * intermediate buffers, since the emulator is capable of translating
++ * guest user addresses into host ones.
++ *
++ * Note that we must however ensure that each user page involved in the
++ * exchange is properly mapped during a transfer.
++ */
++
++#include <linux/module.h>
++#include <linux/mod_devicetable.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/io.h>
++#include <linux/acpi.h>
++#include "goldfish_pipe_qemu.h"
++#include "goldfish_pipe.h"
++#include "goldfish_pipe_v2.h"
++
++/*
++ * Update this when something changes in the driver's behavior so the host
++ * can benefit from knowing it
++ */
++enum {
++	PIPE_DRIVER_VERSION = 2,
++	PIPE_CURRENT_DEVICE_VERSION = 2
++};
++
++static int goldfish_pipe_probe(struct platform_device *pdev)
++{
++	struct resource *r;
++	char __iomem *base;
++	int irq;
++	int version;
++
++	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!r || resource_size(r) < PAGE_SIZE) {
++		dev_err(&pdev->dev, "can't allocate i/o page\n");
++		return -EINVAL;
++	}
++	base = devm_ioremap(&pdev->dev, r->start, PAGE_SIZE);
++	if (!base) {
++		dev_err(&pdev->dev, "ioremap failed\n");
++		return -EINVAL;
++	}
++
++	r = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
++	if (!r)
++		return -EINVAL;
++
++	irq = r->start;
++
++	/*
++	 * Exchange the versions with the host device
++	 *
++	 * Note: v1 driver used to not report its version, so we write it before
++	 *  reading device version back: this allows the host implementation to
++	 *  detect the old driver (if there was no version write before read).
++	 */
++	writel(PIPE_DRIVER_VERSION, base + PIPE_REG_VERSION);
++	version = readl(base + PIPE_REG_VERSION);
++
++	if (WARN_ON(version < PIPE_CURRENT_DEVICE_VERSION))
++		return -EINVAL;
++
++	return goldfish_pipe_device_init(pdev, base, irq);
++}
++
++static int goldfish_pipe_remove(struct platform_device *pdev)
++{
++	struct goldfish_pipe_dev_base *dev = platform_get_drvdata(pdev);
++
++	return dev->deinit(dev, pdev);
++}
++
++static const struct acpi_device_id goldfish_pipe_acpi_match[] = {
++	{ "GFSH0003", 0 },
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, goldfish_pipe_acpi_match);
++
++static const struct of_device_id goldfish_pipe_of_match[] = {
++	{ .compatible = "google,android-pipe", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, goldfish_pipe_of_match);
++
++static struct platform_driver goldfish_pipe_driver = {
++	.probe = goldfish_pipe_probe,
++	.remove = goldfish_pipe_remove,
++	.driver = {
++		.name = "goldfish_pipe",
++		.of_match_table = goldfish_pipe_of_match,
++		.acpi_match_table = ACPI_PTR(goldfish_pipe_acpi_match),
++	}
++};
++
++module_platform_driver(goldfish_pipe_driver);
++MODULE_AUTHOR("David Turner <digit@google.com>");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/platform/goldfish/goldfish_pipe.h b/drivers/platform/goldfish/goldfish_pipe.h
+new file mode 100644
+index 000000000000..ee0b54bcb165
+--- /dev/null
++++ b/drivers/platform/goldfish/goldfish_pipe.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef GOLDFISH_PIPE_H
++#define GOLDFISH_PIPE_H
++
++struct goldfish_pipe_dev_base {
++	/* the destructor, the pointer is set in init */
++	int (*deinit)(void *pipe_dev, struct platform_device *pdev);
++};
++
++#endif /* GOLDFISH_PIPE_H */
 diff --git a/drivers/platform/goldfish/goldfish_pipe_v2.c b/drivers/platform/goldfish/goldfish_pipe_v2.c
-index a1fbbf49cc3f..ff5d88e7959a 100644
+index ff5d88e7959a..641dfdcc3ffd 100644
 --- a/drivers/platform/goldfish/goldfish_pipe_v2.c
 +++ b/drivers/platform/goldfish/goldfish_pipe_v2.c
-@@ -1,21 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright (C) 2012 Intel, Inc.
-- * Copyright (C) 2013 Intel, Inc.
-- * Copyright (C) 2014 Linaro Limited
-- * Copyright (C) 2011-2016 Google, Inc.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- */
+@@ -30,8 +30,6 @@
+  * exchange is properly mapped during a transfer.
+  */
+ 
+-#include <linux/module.h>
+-#include <linux/mod_devicetable.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/spinlock.h>
+@@ -44,18 +42,9 @@
+ #include <linux/io.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/mm.h>
+-#include <linux/acpi.h>
+ #include <linux/bug.h>
+ #include "goldfish_pipe_qemu.h"
 -
- /* This source file contains the implementation of a special device driver
-  * that intends to provide a *very* fast communication channel between the
-  * guest system and the QEMU emulator.
+-/*
+- * Update this when something changes in the driver's behavior so the host
+- * can benefit from knowing it
+- */
+-enum {
+-	PIPE_DRIVER_VERSION = 2,
+-	PIPE_CURRENT_DEVICE_VERSION = 2
+-};
++#include "goldfish_pipe.h"
+ 
+ enum {
+ 	MAX_BUFFERS_PER_COMMAND = 336,
+@@ -65,6 +54,9 @@ enum {
+ 
+ struct goldfish_pipe_dev;
+ 
++static int goldfish_pipe_device_deinit(void *raw_dev,
++				       struct platform_device *pdev);
++
+ /* A per-pipe command structure, shared with the host */
+ struct goldfish_pipe_command {
+ 	s32 cmd;	/* PipeCmdCode, guest -> host */
+@@ -152,8 +144,8 @@ struct goldfish_pipe {
+  * waiting to be awoken.
+  */
+ struct goldfish_pipe_dev {
+-	/* A magic number to check if this is an instance of this struct */
+-	void *magic;
++	/* Needed for 'remove' */
++	struct goldfish_pipe_dev_base super;
+ 
+ 	/*
+ 	 * Global device spinlock. Protects the following members:
+@@ -593,9 +585,6 @@ static void goldfish_interrupt_task(unsigned long dev_addr)
+ 	}
+ }
+ 
+-static void goldfish_pipe_device_deinit(struct platform_device *pdev,
+-					struct goldfish_pipe_dev *dev);
+-
+ /*
+  * The general idea of the interrupt handling:
+  *
+@@ -616,7 +605,7 @@ static irqreturn_t goldfish_pipe_interrupt(int irq, void *dev_id)
+ 	unsigned long flags;
+ 	struct goldfish_pipe_dev *dev = dev_id;
+ 
+-	if (dev->magic != &goldfish_pipe_device_deinit)
++	if (dev->super.deinit != &goldfish_pipe_device_deinit)
+ 		return IRQ_NONE;
+ 
+ 	/* Request the signalled pipes from the device */
+@@ -798,9 +787,9 @@ static void write_pa_addr(void *addr, void __iomem *portl, void __iomem *porth)
+ 	writel(lower_32_bits(paddr), portl);
+ }
+ 
+-static int goldfish_pipe_device_init(struct platform_device *pdev,
+-				     char __iomem *base,
+-				     int irq)
++int goldfish_pipe_device_init(struct platform_device *pdev,
++			      char __iomem *base,
++			      int irq)
+ {
+ 	struct goldfish_pipe_dev *dev;
+ 	int err;
+@@ -809,7 +798,7 @@ static int goldfish_pipe_device_init(struct platform_device *pdev,
+ 	if (!dev)
+ 		return -ENOMEM;
+ 
+-	dev->magic = &goldfish_pipe_device_deinit;
++	dev->super.deinit = &goldfish_pipe_device_deinit;
+ 	spin_lock_init(&dev->lock);
+ 
+ 	tasklet_init(&dev->irq_tasklet, &goldfish_interrupt_task,
+@@ -872,9 +861,11 @@ static int goldfish_pipe_device_init(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
+-static int goldfish_pipe_device_deinit(struct platform_device *pdev,
+-				       struct goldfish_pipe_dev *dev)
++static int goldfish_pipe_device_deinit(void *raw_dev,
++				       struct platform_device *pdev)
+ {
++	struct goldfish_pipe_dev *dev = raw_dev;
++
+ 	misc_deregister(&dev->miscdev);
+ 	tasklet_kill(&dev->irq_tasklet);
+ 	kfree(dev->pipes);
+@@ -882,76 +873,3 @@ static int goldfish_pipe_device_deinit(struct platform_device *pdev,
+ 
+ 	return 0;
+ }
+-
+-static int goldfish_pipe_probe(struct platform_device *pdev)
+-{
+-	struct resource *r;
+-	char __iomem *base;
+-	int irq;
+-	int version;
+-
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!r || resource_size(r) < PAGE_SIZE) {
+-		dev_err(&pdev->dev, "can't allocate i/o page\n");
+-		return -EINVAL;
+-	}
+-
+-	base = devm_ioremap(&pdev->dev, r->start, PAGE_SIZE);
+-	if (!base) {
+-		dev_err(&pdev->dev, "ioremap failed\n");
+-		return -EINVAL;
+-	}
+-
+-	r = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (!r)
+-		return -EINVAL;
+-
+-	irq = r->start;
+-
+-	/*
+-	 * Exchange the versions with the host device
+-	 *
+-	 * Note: v1 driver used to not report its version, so we write it before
+-	 *  reading device version back: this allows the host implementation to
+-	 *  detect the old driver (if there was no version write before read).
+-	 */
+-	writel(PIPE_DRIVER_VERSION, base + PIPE_REG_VERSION);
+-	version = readl(base + PIPE_REG_VERSION);
+-	if (WARN_ON(version < PIPE_CURRENT_DEVICE_VERSION))
+-		return -EINVAL;
+-
+-	return goldfish_pipe_device_init(pdev, base, irq);
+-}
+-
+-static int goldfish_pipe_remove(struct platform_device *pdev)
+-{
+-	struct goldfish_pipe_dev *dev = platform_get_drvdata(pdev);
+-
+-	return goldfish_pipe_device_deinit(pdev, dev);
+-}
+-
+-static const struct acpi_device_id goldfish_pipe_acpi_match[] = {
+-	{ "GFSH0003", 0 },
+-	{ },
+-};
+-MODULE_DEVICE_TABLE(acpi, goldfish_pipe_acpi_match);
+-
+-static const struct of_device_id goldfish_pipe_of_match[] = {
+-	{ .compatible = "google,android-pipe", },
+-	{},
+-};
+-MODULE_DEVICE_TABLE(of, goldfish_pipe_of_match);
+-
+-static struct platform_driver goldfish_pipe_driver = {
+-	.probe = goldfish_pipe_probe,
+-	.remove = goldfish_pipe_remove,
+-	.driver = {
+-		.name = "goldfish_pipe",
+-		.of_match_table = goldfish_pipe_of_match,
+-		.acpi_match_table = ACPI_PTR(goldfish_pipe_acpi_match),
+-	}
+-};
+-
+-module_platform_driver(goldfish_pipe_driver);
+-MODULE_AUTHOR("David Turner <digit@google.com>");
+-MODULE_LICENSE("GPL v2");
+diff --git a/drivers/platform/goldfish/goldfish_pipe_v2.h b/drivers/platform/goldfish/goldfish_pipe_v2.h
+new file mode 100644
+index 000000000000..03b476fb9978
+--- /dev/null
++++ b/drivers/platform/goldfish/goldfish_pipe_v2.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef GOLDFISH_PIPE_V2_H
++#define GOLDFISH_PIPE_V2_H
++
++/* The entry point to the pipe v2 driver */
++int goldfish_pipe_device_init(struct platform_device *pdev,
++			      char __iomem *base,
++			      int irq);
++
++#endif /* #define GOLDFISH_PIPE_V2_H */
 -- 
 2.19.0.605.g01d371f741-goog
 
