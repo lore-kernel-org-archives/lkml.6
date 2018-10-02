@@ -2,91 +2,95 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3167AC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD3FC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7AAC2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:05:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7AAC2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BC5222089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:05:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC5222089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730300AbeJBUtE (ORCPT
+        id S1729682AbeJBUMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:49:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:38928 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730078AbeJBUtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:49:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55B6F18A;
-        Tue,  2 Oct 2018 07:05:32 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 389483F5A0;
-        Tue,  2 Oct 2018 07:05:28 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 15:05:23 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v7 03/14] PM: Introduce an Energy Model management
- framework
-Message-ID: <20181002140430.fpeiqzblbcaewg6n@queper01-lin>
-References: <20180912091309.7551-1-quentin.perret@arm.com>
- <20180912091309.7551-4-quentin.perret@arm.com>
- <20181002123031.GZ3439@hirez.programming.kicks-ass.net>
- <20181002125115.245r3ocusvyiexno@queper01-lin>
- <20181002134857.GE26858@hirez.programming.kicks-ass.net>
+        Tue, 2 Oct 2018 16:12:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32972 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726970AbeJBUMT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:12:19 -0400
+Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 95B02A67;
+        Tue,  2 Oct 2018 13:28:57 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.18 132/228] floppy: Do not copy a kernel pointer to user memory in FDGETPRM ioctl
+Date:   Tue,  2 Oct 2018 06:23:49 -0700
+Message-Id: <20181002132508.353163783@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
+References: <20181002132459.032960735@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002134857.GE26858@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 02 Oct 2018 at 15:48:57 (+0200), Peter Zijlstra wrote:
-> +/**
-> + * em_cpu_get() - Return the performance domain for a CPU
-> + * @cpu : CPU to find the performance domain for
-> + *
-> + * Return: the performance domain to which 'cpu' belongs, or NULL if it doesn't
-> + * exist.
-> + */
-> +struct em_perf_domain *em_cpu_get(int cpu)
-> +{
-> +       return READ_ONCE(per_cpu(em_data, cpu));
-> +}
-> +EXPORT_SYMBOL_GPL(em_cpu_get);
-> 
-> But your read side doesn't take, not is required to take em_pd_mutex.
-> 
-> At that point, the mutex_unlock() doesn't guarantee anything.
-> 
-> A CPU observing the em_data store, doesn't need to observe the store
-> that filled the data structure it points to.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-Right but even if I add the smp_store_release(), I can still have a
-CPU observing em_data while another is in the process of updating it.
-So, if smp_store_release() doesn't guarantee that readers will see a
-complete update, do I actually get something interesting from it ?
-(That's not a rhetorical question, I'm actually wondering :-)
+------------------
 
-Thanks,
-Quentin
+From: Andy Whitcroft <apw@canonical.com>
+
+commit 65eea8edc315589d6c993cf12dbb5d0e9ef1fe4e upstream.
+
+The final field of a floppy_struct is the field "name", which is a pointer
+to a string in kernel memory.  The kernel pointer should not be copied to
+user memory.  The FDGETPRM ioctl copies a floppy_struct to user memory,
+including this "name" field.  This pointer cannot be used by the user
+and it will leak a kernel address to user-space, which will reveal the
+location of kernel code and data and undermine KASLR protection.
+
+Model this code after the compat ioctl which copies the returned data
+to a previously cleared temporary structure on the stack (excluding the
+name pointer) and copy out to userspace from there.  As we already have
+an inparam union with an appropriate member and that memory is already
+cleared even for read only calls make use of that as a temporary store.
+
+Based on an initial patch by Brian Belleville.
+
+CVE-2018-7755
+Signed-off-by: Andy Whitcroft <apw@canonical.com>
+Broke up long line.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/block/floppy.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -3470,6 +3470,9 @@ static int fd_locked_ioctl(struct block_
+ 					  (struct floppy_struct **)&outparam);
+ 		if (ret)
+ 			return ret;
++		memcpy(&inparam.g, outparam,
++				offsetof(struct floppy_struct, name));
++		outparam = &inparam.g;
+ 		break;
+ 	case FDMSGON:
+ 		UDP->flags |= FTD_MSG;
+
+
