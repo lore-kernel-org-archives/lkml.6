@@ -2,107 +2,101 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9110FC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 082E0C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62CDD20684
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:57:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62CDD20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BE28420684
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 12:58:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE28420684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbeJBTkw (ORCPT
+        id S1727848AbeJBTlv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 15:40:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36762 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727742AbeJBTkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 15:40:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69CC77A9;
-        Tue,  2 Oct 2018 05:57:39 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F0063F5B7;
-        Tue,  2 Oct 2018 05:57:36 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 13:57:34 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] arm64: implement ftrace with regs
-Message-ID: <20181002125734.mhkz4o46oxf3mtu6@lakrids.cambridge.arm.com>
-References: <20181001140910.086E768BC7@newverein.lst.de>
- <20181001141648.1DBED68BDF@newverein.lst.de>
- <20181002112741.mvav4ar4v25gj46e@lakrids.cambridge.arm.com>
- <20181002121817.GB2398@lst.de>
+        Tue, 2 Oct 2018 15:41:51 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33096 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727739AbeJBTlv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 15:41:51 -0400
+Received: by mail-qk1-f195.google.com with SMTP id 84-v6so1030527qkf.0;
+        Tue, 02 Oct 2018 05:58:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BfHPq4uwznvhsxeo9Nr8Uug8WVsmwzyPotert9gMGC8=;
+        b=dRFFSLAhXDGZ7w9UxwNd+aZ1bt04nsLGjI14V3J3iuwZLB2MoI7Jti8OxFuqWbdVeX
+         rpy1OxIIYEwS5LPhrjQALM8bVM+mFsS7tFMYsgybiipw9SThVfm4P3XSZ9w4l0H9hICj
+         giqqk26JQbnwbHgxQSCIcIlsIwzuRptc4WimBs2Qsvw3fK336Udw9LQesG48lWwIvg/h
+         IqscXm8Zn3QiheI5zcw+jaJtl0GfUTwFdnvYpStXcUSCJx/Db7Atar3mryPx0qCwb/hw
+         rMCS8kKswgiENcud08U35o+EFqe5qJ5f4MWoLaqyaiVX6GTR2GNZCW/B3fnqBcNUb6Ka
+         vjTw==
+X-Gm-Message-State: ABuFfoih7Yys5AYUUcJE4gjkxwUVUy51LXN1vXzp4gdkfQ9OnHx6BXPj
+        cvlcBHFMCg9+OVq8dKdAGmC1XAukzV/EyMAIuIA=
+X-Google-Smtp-Source: ACcGV61zjfFypuvwOJGESFzv3dAX7k88uvbTMzydAojR/mLULqVTxMHMMVOB4CuiGVsNneQOyahs1AHd/Eq1SNtdZPc=
+X-Received: by 2002:a37:e21a:: with SMTP id g26-v6mr1488386qki.330.1538485117203;
+ Tue, 02 Oct 2018 05:58:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002121817.GB2398@lst.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20180915063645.31295-1-natechancellor@gmail.com>
+In-Reply-To: <20180915063645.31295-1-natechancellor@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 2 Oct 2018 14:58:21 +0200
+Message-ID: <CAK8P3a3PaWgieA0_HBJJ-FVeBO+iAdN8_kv5YUbpKURJ3gsoaQ@mail.gmail.com>
+Subject: Re: [PATCH] scsi: mptfusion: Remove unnecessary parentheses and
+ simplify null checks
+To:     natechancellor@gmail.com
+Cc:     Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>,
+        MPT-FusionLinux.pdl@broadcom.com,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 02:18:17PM +0200, Torsten Duwe wrote:
-> Hi Mark,
+On Sat, Sep 15, 2018 at 8:38 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
 
-Hi,
- 
-> thank you for your very detailed feedback, I'll incorporate it
-> all into the next version, besides one issue:
-> 
-> On Tue, Oct 02, 2018 at 12:27:41PM +0100, Mark Rutland wrote:
-> > 
-> > Please use the insn framework, as we do to generate all the other
-> > instruction sequences in ftrace.
-> > 
-> > MOV (register) is an alias of ORR (shifted register), i.e.
-> > 
-> > 	mov	<xd>, <xm>
-> > 
-> > ... is:
-> > 
-> > 	orr	<xd>, xzr, <xm>
-> > 
-> > ... and we have code to generate ORR, so we can add a trivial wrapper to
-> > generate MOV.
-> 
-> I had something similar in v2; but it was hardly any better to read or
-> understand. My main question however is: how do you justify the runtime
-> overhead of aarch64_insn_gen_logical_shifted_reg for every function that
-> gets its tracing switched on or off?
+> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/message/fusion/mptbase.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+> index dc1e43a02599..ba551d8dfba4 100644
+> --- a/drivers/message/fusion/mptbase.c
+> +++ b/drivers/message/fusion/mptbase.c
+> @@ -335,11 +335,11 @@ static int mpt_remove_dead_ioc_func(void *arg)
+>         MPT_ADAPTER *ioc = (MPT_ADAPTER *)arg;
+>         struct pci_dev *pdev;
+>
+> -       if ((ioc == NULL))
+> +       if (!ioc)
+>                 return -1;
+>
+>         pdev = ioc->pcidev;
+> -       if ((pdev == NULL))
+> +       if (!pdev)
+>                 return -1;
+>
+>         pci_stop_and_remove_bus_device_locked(pdev);
+> --
 
-How do you justify doing something different from the established
-pattern? Do you have any numbers indicating that this overhead is a
-problem on a real workload?
 
-For the moment at least, please use aarch64_insn_gen_*(), as we do for
-all other instructions generated in the ftrace code. It's vastly simpler
-for everyone if we have consistency here.
+The exact same code also exists in drivers/scsi/mpt3sas/. I had a similar
+patch for both drivers, but saw that yours now got merged for fusion.
 
-> The result is always the same 4-byte constant, so why not use a macro
-> and a comment that says what it does?
+If you don't mind, could you fix mpt3sas_base.c the same way?
 
-I'd rather that we stick to the usual pattern that we have in arm64.
-
-Note that aarch64_insn_gen_nop() also always returns the same 4-byte
-constant, but it's an out-of-line function in insn.c. There haven't been
-any complaints as to its overhead so far...
-
-Thanks,
-Mark.
+     Arnd
