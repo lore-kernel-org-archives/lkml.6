@@ -2,148 +2,131 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C40DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F98C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E40E206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:05:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E40E206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id C43AF206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:06:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iV1dFkDV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C43AF206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbeJBVtI (ORCPT
+        id S1729165AbeJBVtx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 17:49:08 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:59418 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726353AbeJBVtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 17:49:07 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Vv44BM3WC-eU; Tue,  2 Oct 2018 17:05:16 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC64F00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:4f00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CC8F91EC021C;
-        Tue,  2 Oct 2018 17:05:15 +0200 (CEST)
-Date:   Tue, 2 Oct 2018 17:05:18 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     m.mizuma@jp.fujitsu.com
-Cc:     bhe@redhat.com, torvalds@linux-foundation.org,
-        msys.mizuma@gmail.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@kernel.org, hpa@zytor.com, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/boot] ACPI/NUMA: Add warning message if the padding
- size for KASLR is not enough
-Message-ID: <20181002150517.GA19822@zn.tnic>
-References: <20181001140843.26137-3-msys.mizuma@gmail.com>
- <tip-3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41@git.kernel.org>
+        Tue, 2 Oct 2018 17:49:53 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:44692 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728755AbeJBVtx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 17:49:53 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w92F5xWj127853;
+        Tue, 2 Oct 2018 10:05:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1538492759;
+        bh=/S4P3S2Wi5sTSHL0dEhr56FzgAgKDp3pZIDIEAKczEw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=iV1dFkDV6s9ZvkICazYwaNfenA+ElXn7OXPZQrZsjMxweBVR6CXPYcbBqd/IdJJBw
+         puapaWj5PHJOZlMES2Mjd06NtOrChzyWtZ1RUFLj+kk3R27WtYqPeiXkl4c0Bg6fo5
+         7ZfhaWspqrQjT7PHm0RnDX/t+yQgbJ8UT+f2zxPo=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w92F5xKT020640;
+        Tue, 2 Oct 2018 10:05:59 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 2 Oct
+ 2018 10:05:59 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 2 Oct 2018 10:05:59 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w92F5wUa024715;
+        Tue, 2 Oct 2018 10:05:58 -0500
+Subject: Re: [PATCH 2/5] remoteproc: Check for NULL firmwares in sysfs
+ interface
+To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20180915003725.17549-1-s-anna@ti.com>
+ <20180915003725.17549-3-s-anna@ti.com>
+ <a74114d9-e4d6-3f13-add8-2025d0d320f8@st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <505f8177-9e27-d864-6355-2bc4171abf47@ti.com>
+Date:   Tue, 2 Oct 2018 10:05:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <tip-3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41@git.kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a74114d9-e4d6-3f13-add8-2025d0d320f8@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 03:18:41AM -0700, tip-bot for Masayoshi Mizuma wrote:
-> Commit-ID:  3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41
-> Gitweb:     https://git.kernel.org/tip/3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41
-> Author:     Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> AuthorDate: Mon, 1 Oct 2018 10:08:42 -0400
-> Committer:  Ingo Molnar <mingo@kernel.org>
-> CommitDate: Tue, 2 Oct 2018 11:47:21 +0200
+Hi Arnaud,
+
+On 10/02/2018 04:43 AM, Arnaud Pouliquen wrote:
+> Hi Suman,
 > 
-> ACPI/NUMA: Add warning message if the padding size for KASLR is not enough
+> On 09/15/2018 02:37 AM, Suman Anna wrote:
+>> The remoteproc framework provides a sysfs file 'firmware'
+>> for modifying the firmware image name from userspace. Add
+>> an additional check to ensure NULL firmwares are errored
+>> out right away, rather than getting a delayed error while
+>> requesting a firmware during the start of a remoteproc
+>> later on.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>  drivers/remoteproc/remoteproc_sysfs.c | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+>> index 2142b3ea726e..ce93f4d710f3 100644
+>> --- a/drivers/remoteproc/remoteproc_sysfs.c
+>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+>> @@ -49,6 +49,11 @@ static ssize_t firmware_store(struct device *dev,
+>>  	}
+>>  
+>>  	len = strcspn(buf, "\n");
+>> +	if (!len) {
+>> +		dev_err(dev, "can't provide a NULL firmware\n");
+>> +		err = -EINVAL;
+>> +		goto out;
+>> +	}
+
+> This patch fixes only the case of a null name but not a bad name. So I'm
+> not one hundred percent sure that it is relevant, as it treats only a
+> part of the problem. But it's fine with me if it is accepted.
+
+Yeah, it is a minor fix catching only NULL names. There is no way for
+the interface to know a bad name until the corresponding firmware is
+requested.
+
+regards
+Suman
+
 > 
-> Add warning message if the padding size for KASLR,
-> rand_mem_physical_padding, is not enough. The message also
-> says the suitable padding size.
+> Tested-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 > 
-> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Masayoshi Mizuma <msys.mizuma@gmail.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Link: http://lkml.kernel.org/r/20181001140843.26137-3-msys.mizuma@gmail.com
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> ---
->  arch/x86/include/asm/setup.h |  2 ++
->  drivers/acpi/numa.c          | 14 ++++++++++++++
->  2 files changed, 16 insertions(+)
+> Regards
+> Arnaud
 > 
-> diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-> index ae13bc974416..65a5bf8f6aba 100644
-> --- a/arch/x86/include/asm/setup.h
-> +++ b/arch/x86/include/asm/setup.h
-> @@ -80,6 +80,8 @@ static inline unsigned long kaslr_offset(void)
->  	return (unsigned long)&_text - __START_KERNEL;
->  }
->  
-> +extern int rand_mem_physical_padding;
-> +
->  /*
->   * Do NOT EVER look at the BIOS memory size location.
->   * It does not work on many machines.
-> diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-> index 85167603b9c9..3d69834c692f 100644
-> --- a/drivers/acpi/numa.c
-> +++ b/drivers/acpi/numa.c
-> @@ -32,6 +32,7 @@
->  #include <linux/numa.h>
->  #include <linux/nodemask.h>
->  #include <linux/topology.h>
-> +#include <asm/setup.h>
->  
->  static nodemask_t nodes_found_map = NODE_MASK_NONE;
->  
-> @@ -435,6 +436,7 @@ acpi_table_parse_srat(enum acpi_srat_type id,
->  int __init acpi_numa_init(void)
->  {
->  	int cnt = 0;
-> +	u64 max_possible_phys, max_actual_phys, threshold;
->  
->  	if (acpi_disabled)
->  		return -EINVAL;
-> @@ -463,6 +465,18 @@ int __init acpi_numa_init(void)
->  
->  		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
->  					    acpi_parse_memory_affinity, 0);
-> +
-> +		/* check the padding size for KASLR is enough. */
-> +		if (parsed_numa_memblks && kaslr_enabled()) {
-> +			max_actual_phys = roundup(PFN_PHYS(max_pfn), 1ULL << 40);
-> +			max_possible_phys = roundup(PFN_PHYS(max_possible_pfn), 1ULL << 40);
-> +			threshold = max_actual_phys + ((u64)rand_mem_physical_padding << 40);
+>>  
+>>  	p = kstrndup(buf, len, GFP_KERNEL);
+>>  	if (!p) {
+>>
 
-Nope, not really:
-
-ld: drivers/acpi/numa.o: in function `acpi_numa_init':
-/home/boris/kernel/linux/drivers/acpi/numa.c:473: undefined reference to `rand_mem_physical_padding'
-make: *** [Makefile:1030: vmlinux] Error 1
-
-due to CONFIG_RANDOMIZE_MEMORY=n in my .config.
-
-You need to add a fix ontop which adds a function
-get_rand_mem_physical_padding() which is defined in CONFIG_RANDOMIZE_MEMORY=y
-and outside returns 0.
-
-And then make that rand_mem_physical_padding static and do not export it
-to anything outside of kaslr.c but use the accessor.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
