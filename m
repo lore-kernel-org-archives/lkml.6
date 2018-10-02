@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 508FDC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F82C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DBEF208AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DBEF208AE
+	by mail.kernel.org (Postfix) with ESMTP id 2AAC42083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AAC42083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbeJBUK5 (ORCPT
+        id S1728693AbeJBUK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60390 "EHLO
+        Tue, 2 Oct 2018 16:10:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60402 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S1727485AbeJBUK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 16:10:57 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8923DBF0;
-        Tue,  2 Oct 2018 13:27:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC6AAC2B;
+        Tue,  2 Oct 2018 13:27:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Venkata Sandeep Dhanalakota <venkata.s.dhanalakota@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 066/228] selftests: forwarding: Tweak tc filters for mirror-to-gretap tests
-Date:   Tue,  2 Oct 2018 06:22:43 -0700
-Message-Id: <20181002132503.761221651@linuxfoundation.org>
+Subject: [PATCH 4.18 040/228] include/rdma/opa_addr.h: Fix an endianness issue
+Date:   Tue,  2 Oct 2018 06:22:17 -0700
+Message-Id: <20181002132501.801360645@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,78 +55,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Petr Machata <petrm@mellanox.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-[ Upstream commit ec9fdc99f5a6a2cfe4061e807fcb0cc1129f0a2d ]
+[ Upstream commit 4eefd62c17a9a5e7576207e84f3d2b4f73aba750 ]
 
-When running mirror_gre_bridge_1d_vlan tests on veth, several issues
-cause spurious failures:
+IB_MULTICAST_LID_BASE is defined as follows:
 
-- vlan_ethtype should be ip, not ipv6 even in mirror-to-ip6gretap case,
-  because the overlay packet is still IPv4.
-- Similarly ip_proto matches the innermost IP protocol, so can't be used
-  to filter out GRE packet. Drop the corresponding condition.
-- Because the above fixes the filters to match in slow path as well,
-  they need to be made skip_hw so as not to double-count packets.
+  #define IB_MULTICAST_LID_BASE   cpu_to_be16(0xC000)
 
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Hence use be16_to_cpu() to convert it to CPU endianness. Compile-tested
+only.
+
+Fixes: af808ece5ce9 ("IB/SA: Check dlid before SA agent queries for ClassPortInfo")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Venkata Sandeep Dhanalakota <venkata.s.dhanalakota@intel.com>
+Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/net/forwarding/mirror_gre_bridge_1d_vlan.sh |    6 ++++--
- tools/testing/selftests/net/forwarding/mirror_gre_lib.sh            |    2 +-
- tools/testing/selftests/net/forwarding/mirror_gre_vlan_bridge_1q.sh |    6 ++++--
- 3 files changed, 9 insertions(+), 5 deletions(-)
+ include/rdma/opa_addr.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/net/forwarding/mirror_gre_bridge_1d_vlan.sh
-+++ b/tools/testing/selftests/net/forwarding/mirror_gre_bridge_1d_vlan.sh
-@@ -74,12 +74,14 @@ test_vlan_match()
- 
- test_gretap()
- {
--	test_vlan_match gt4 'vlan_id 555 vlan_ethtype ip' "mirror to gretap"
-+	test_vlan_match gt4 'skip_hw vlan_id 555 vlan_ethtype ip' \
-+			"mirror to gretap"
- }
- 
- test_ip6gretap()
- {
--	test_vlan_match gt6 'vlan_id 555 vlan_ethtype ipv6' "mirror to ip6gretap"
-+	test_vlan_match gt6 'skip_hw vlan_id 555 vlan_ethtype ip' \
-+			"mirror to ip6gretap"
- }
- 
- test_gretap_stp()
---- a/tools/testing/selftests/net/forwarding/mirror_gre_lib.sh
-+++ b/tools/testing/selftests/net/forwarding/mirror_gre_lib.sh
-@@ -62,7 +62,7 @@ full_test_span_gre_dir_vlan_ips()
- 			  "$backward_type" "$ip1" "$ip2"
- 
- 	tc filter add dev $h3 ingress pref 77 prot 802.1q \
--		flower $vlan_match ip_proto 0x2f \
-+		flower $vlan_match \
- 		action pass
- 	mirror_test v$h1 $ip1 $ip2 $h3 77 10
- 	tc filter del dev $h3 ingress pref 77
---- a/tools/testing/selftests/net/forwarding/mirror_gre_vlan_bridge_1q.sh
-+++ b/tools/testing/selftests/net/forwarding/mirror_gre_vlan_bridge_1q.sh
-@@ -79,12 +79,14 @@ test_vlan_match()
- 
- test_gretap()
- {
--	test_vlan_match gt4 'vlan_id 555 vlan_ethtype ip' "mirror to gretap"
-+	test_vlan_match gt4 'skip_hw vlan_id 555 vlan_ethtype ip' \
-+			"mirror to gretap"
- }
- 
- test_ip6gretap()
- {
--	test_vlan_match gt6 'vlan_id 555 vlan_ethtype ipv6' "mirror to ip6gretap"
-+	test_vlan_match gt6 'skip_hw vlan_id 555 vlan_ethtype ip' \
-+			"mirror to ip6gretap"
- }
- 
- test_span_gre_forbidden_cpu()
+--- a/include/rdma/opa_addr.h
++++ b/include/rdma/opa_addr.h
+@@ -120,7 +120,7 @@ static inline bool rdma_is_valid_unicast
+ 	if (attr->type == RDMA_AH_ATTR_TYPE_IB) {
+ 		if (!rdma_ah_get_dlid(attr) ||
+ 		    rdma_ah_get_dlid(attr) >=
+-		    be32_to_cpu(IB_MULTICAST_LID_BASE))
++		    be16_to_cpu(IB_MULTICAST_LID_BASE))
+ 			return false;
+ 	} else if (attr->type == RDMA_AH_ATTR_TYPE_OPA) {
+ 		if (!rdma_ah_get_dlid(attr) ||
 
 
