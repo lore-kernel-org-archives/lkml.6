@@ -2,145 +2,103 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B56C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63981C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7239E2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:02:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="HU71PMl3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7239E2089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id 3609920666
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:04:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3609920666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729317AbeJBVqk (ORCPT
+        id S1729230AbeJBVr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 17:46:40 -0400
-Received: from mail-pl1-f171.google.com ([209.85.214.171]:36841 "EHLO
-        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727970AbeJBVqj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 17:46:39 -0400
-Received: by mail-pl1-f171.google.com with SMTP id p5-v6so1840477plk.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 08:02:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d2CF0k82WvxlhQY1DrC5bSUsm2VCZF/3wkDQIrTo6sQ=;
-        b=HU71PMl3Wri9ctt6+i3RPVSSh3glZ2Cm6Pvwchek4UgHdFe5kIjVVa6uVECKNSuwnN
-         rWFx1/rhovlA3d9tXQrIrO92iwa7/UnYjrlmLqT09kLXnOkJY2lYH4rGj8reOyYCHlyU
-         XZcSlLW9zjZCsP+woxXTzEOdkprY2nOEC8tQmh+hp/285HQcU1Isa3pcQRmfZqDFlRqQ
-         HYZGSBDjWexLRJFQ+6kqIr4ApKD1OnEJLonPOEeTxImcOxJOaalRgY5+PkTxHURgOPQc
-         1HkEKzumbMyrO6xbLDV135H2q+i2xwgTeie5zT4y/TY9b8szvqWRW+4MxdpXcqLhR+fu
-         yF9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=d2CF0k82WvxlhQY1DrC5bSUsm2VCZF/3wkDQIrTo6sQ=;
-        b=Pye/gPRwgX06ySifQH2cBkyH2H6dJqPaBxsMJ4Mix6KEpZpyf+dd22tMVcYKqhCZlp
-         TmStG3C6KrA/LN4VJ9K+TVPpO2gFooIK0KWZYKqS5O9OnjXVh4PKMmA8ESfHQDsCjxHl
-         48BUeMxWzawrDtePO7qq93gQ1N+8GxwJiBdIOCu+9UFsKdm4/6zNDz58fW0jMhS8MgR2
-         pEeidP4cDzuVx6iBIxOShHFxiGjdX8aiWUNgu2lrr0RZ66W1MTh+v6/hMqMkRqoRf9hx
-         BRVoHVO8PHpDnSFkoXVKuUOnW//GOspOyr5k4Ywq0OYIj0leJkLrtL50ylevtCPSlLTL
-         vbRg==
-X-Gm-Message-State: ABuFfoirDfseZ1dW384NxmkLWTMGoSh0xbqi96smmzHbrBlJfGaSO3Dg
-        jdZa5s4c3Z2CbXBP3SDAsba8Hg==
-X-Google-Smtp-Source: ACcGV62EwD4y3SBd8pwUOyD33jtOAiS4o1ikoySfClbcM6K097toJJ2gI6ii95BlqwDJpEP74IFhUw==
-X-Received: by 2002:a17:902:784a:: with SMTP id e10-v6mr17044577pln.197.1538492569681;
-        Tue, 02 Oct 2018 08:02:49 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id p24-v6sm20376372pgm.70.2018.10.02.08.02.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 08:02:48 -0700 (PDT)
-Date:   Tue, 02 Oct 2018 08:02:48 -0700 (PDT)
-X-Google-Original-Date: Tue, 02 Oct 2018 08:01:58 PDT (-0700)
-Subject:     Re: [PATCH v3 3/5] lib: Add umoddi3 and udivmoddi4 of GCC library routines
-In-Reply-To: <20181002145041.GC3889@infradead.org>
-CC:     zongbox@gmail.com, aou@eecs.berkeley.edu,
-        Christoph Hellwig <hch@infradead.org>, zong@andestech.com,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Message-ID: <mhng-2b0c98e6-298b-4fc4-842c-809002de3451@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 2 Oct 2018 17:47:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36016 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728382AbeJBVr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 17:47:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 42CF9AF11;
+        Tue,  2 Oct 2018 15:04:04 +0000 (UTC)
+Subject: Re: [PATCH] mm:slab: Adjust the print format for the slabinfo
+To:     jun qian <hangdianqj@163.com>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Barry song <21cnbao@gmail.com>
+References: <20181002025939.115804-1-hangdianqj@163.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <ad1bbce1-bca9-ff8e-c2c5-7ab672203dd9@suse.cz>
+Date:   Tue, 2 Oct 2018 17:04:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20181002025939.115804-1-hangdianqj@163.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 02 Oct 2018 07:50:41 PDT (-0700), Christoph Hellwig wrote:
->> The udivmoddi4 and umoddi3 are copies from libgcc in gcc. There are other
->> functions use the udivmoddi4 in libgcc, so I separate the umoddi3 and
->> udivmoddi4 for flexible extension in the future.
->
-> Can you please mention which exact version of an external projected
-> you imported things from?  That will generally help if/when someone
-> has to dig into diverging versions.
->
->> +++ b/lib/udivmoddi4.c
->> @@ -0,0 +1,310 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +/*
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + *
->> + * You should have received a copy of the GNU General Public License
->> + * along with this program; if not, see the file COPYING, or write
->> + * to the Free Software Foundation, Inc.
->> + */
->
-> The SPDX tag was supposed to replace this boiler plate.  On the other
-> hand I'm surpriced there is no Copyright statement here - the FSF is
-> usually very good about having them uptodate in every GNU project.
+On 10/2/18 4:59 AM, jun qian wrote:
+> Header and the corresponding information is not aligned,
+> adjust the printing format helps us to understand the slabinfo better.
+> 
+> Signed-off-by: jun qian <hangdianqj@163.com>
+> Cc: Barry song <21cnbao@gmail.com>
 
-I suggested he import the gcc-4.2.1 version, which has a big copyright notice
+I've tried the patch and it makes the slabinfo not fit my screen
+anymore, and the value density is very sparse. IMHO the current layout
+is better, sorry.
 
-    /* More subroutines needed by GCC output code on some machines.  */
-    /* Compile this one with gcc.  */
-    /* Copyright (C) 1989, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
-       2000, 2001, 2002, 2003, 2004, 2005  Free Software Foundation, Inc.
-    
-    This file is part of GCC.
-    
-    GCC is free software; you can redistribute it and/or modify it under
-    the terms of the GNU General Public License as published by the Free
-    Software Foundation; either version 2, or (at your option) any later
-    version.
-    
-    In addition to the permissions in the GNU General Public License, the
-    Free Software Foundation gives you unlimited permission to link the
-    compiled version of this file into combinations with other programs,
-    and to distribute those combinations without any restriction coming
-    from the use of this file.  (The General Public License restrictions
-    do apply in other respects; for example, they cover modification of
-    the file, and distribution when not linked into a combine
-    executable.)
-    
-    GCC is distributed in the hope that it will be useful, but WITHOUT ANY
-    WARRANTY; without even the implied warranty of MERCHANTABILITY or
-    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-    for more details.
-    
-    You should have received a copy of the GNU General Public License
-    along with GCC; see the file COPYING.  If not, write to the Free
-    Software Foundation, 51 Franklin Street, Fifth Floor, Boston, MA
-    02110-1301, USA.  */
-
-so it looks like something went wrong here.  Zong: did you go back and 
-re-construct this function from the GPLv2 source?
+Vlastimil
