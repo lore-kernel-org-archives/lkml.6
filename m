@@ -2,115 +2,107 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E59C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDA3C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF8E5206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:08:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF8E5206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 48DE82083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:09:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tGGjReek"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48DE82083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeJBTvn (ORCPT
+        id S1727841AbeJBTxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 15:51:43 -0400
-Received: from foss.arm.com ([217.140.101.70]:36908 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727729AbeJBTvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 15:51:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8FFE7A9;
-        Tue,  2 Oct 2018 06:08:26 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBC1B3F5B7;
-        Tue,  2 Oct 2018 06:08:22 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 14:08:21 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v7 05/14] sched: Introduce a sched_feat for Energy Aware
- Scheduling
-Message-ID: <20181002130818.fciw7cmlwggymxrz@queper01-lin>
-References: <20180912091309.7551-1-quentin.perret@arm.com>
- <20180912091309.7551-6-quentin.perret@arm.com>
- <20181002123416.GA3439@hirez.programming.kicks-ass.net>
+        Tue, 2 Oct 2018 15:53:11 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56410 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727729AbeJBTxK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 15:53:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UVegUocUh1V+C4iex/SsT/n8Sipv6x8r2ZhndK8lB+0=; b=tGGjReekYT/NAXYSlWeDesQ6T
+        o4l+09lHnLrWMIIVDnD+VNvo36/AAg3Tapjh1q3PADUOWhHptdg5uE0nk1f+i9+VAG17Wyhp2XR+G
+        obqxAzI2CfMHHfoeSfkpnR34OroMGsT/vVeOp/SPA1yHTOKbKNMGTygggG0ky9UVE799w=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g7KQw-0001oS-JI; Tue, 02 Oct 2018 13:09:50 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 3D8531121CA5; Tue,  2 Oct 2018 14:09:50 +0100 (BST)
+Date:   Tue, 2 Oct 2018 14:09:50 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Lukasz Majewski <lukma@denx.de>
+Cc:     Jan =?iso-8859-1?Q?Kundr=E1t?= <jan.kundrat@cesnet.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spidev: Enable the Liebherr's BK4 board to work with
+ spidev driver
+Message-ID: <20181002130950.GB6338@sirena.org.uk>
+References: <20180927223152.24990-1-lukma@denx.de>
+ <47e37a54-6df6-47c0-b38b-ad35e9bd4ce4@cesnet.cz>
+ <20181001142219.GB19099@sirena.org.uk>
+ <20181002101120.0f92f296@jawa>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="cvVnyQ+4j833TQvp"
 Content-Disposition: inline
-In-Reply-To: <20181002123416.GA3439@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20181002101120.0f92f296@jawa>
+X-Cookie: Please take note:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 02 Oct 2018 at 14:34:16 (+0200), Peter Zijlstra wrote:
-> On Wed, Sep 12, 2018 at 10:13:00AM +0100, Quentin Perret wrote:
-> > In order to make sure Energy Aware Scheduling (EAS) doesn't hurt
-> > systems not using it, add a new sched_feat, called ENERGY_AWARE,
-> > guarding the access to EAS code paths.
-> > 
-> > Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-> > ---
-> >  kernel/sched/features.h | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-> > index 85ae8488039c..26ff6752e492 100644
-> > --- a/kernel/sched/features.h
-> > +++ b/kernel/sched/features.h
-> > @@ -90,3 +90,10 @@ SCHED_FEAT(WA_BIAS, true)
-> >   * UtilEstimation. Use estimated CPU utilization.
-> >   */
-> >  SCHED_FEAT(UTIL_EST, true)
-> > +
-> > +/*
-> > + * Energy-Aware Scheduling. Whether or not tasks will be placed into an
-> > + * energy-aware fashion depends on this feature being enabled and on the
-> > + * root domain having an Energy Model attached.
-> > + */
-> > +SCHED_FEAT(ENERGY_AWARE, false)
-> 
-> So these are debug knobs.. I would expect there to be a regular
-> static_key that is controlled by the presence of EM data.
 
-Right, the issue I'm trying to solve with this is basically that _some_
-users will want to have an EM for the thermal stuff, but they will want
-EAS disabled. Some people (not very many that's true, but still) use
-big.little and don't care much about energy ...
+--cvVnyQ+4j833TQvp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So, there is a need for an EAS knob on the scheduler side. I don't mind
-it being something else than a sched_feat, but I couldn't see a better
-option. Another Kconfig (CONFIG_SCHED_ENERGY) ? A sysctl ?
+On Tue, Oct 02, 2018 at 10:11:20AM +0200, Lukasz Majewski wrote:
 
-FWIW, the Android kernel has had an ENERGY_AWARE sched_feat since the
-very beginning of EAS.
+> > As documented in SubmittingPatches please send patches to the=20
+> > maintainers for the code you would like to change.=20
 
-> Remember, if you compile with SCHED_DEBUG=n, this becomes a compile time
-> constant: false, and the compiler gets to do lots of DCE.
+> I'm using the ./scripts/get_maintainer.py script to obtain list of
+> relevant people.
 
-Indeed, and what happens in the mobile market sometimes is that people
-play with those options as needed and then they put patches in their
-device kernels to change the defaults before compiling with
-!SCHED_DEBUG.
+Your patch went to the right place (and I applied it yesterday), that
+was directed at Jan - the reason his patch got missed is that he didn't
+send it to me.
 
-I'd say it's not the worst kind of device-specific out-of-tree changes
-to Linux. That's debatable however
+> Please also document in the ./Documentation/devicetree the introduced
+> compatible -> there are some examples (ge,ahca) in the misc directory.
 
-Thanks,
-Quentin
+Good point.
+
+--cvVnyQ+4j833TQvp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluzbh0ACgkQJNaLcl1U
+h9CCLAf+O8ovcnyt7n217i3PNbpBCy2tXuBEjw9QNZgqhrb5w4odEBh1nvZqHnH5
+N0Eh0Ym6BFKxJoNu9u9478neqSNOo7EIy+jMOQ3JYRLDiuzmMRBz6KMeSpE5LqZm
+PGt9xy4D1XwuCj1qLdjN875BIqS2gWAsbQUXFbVw7Bk8R0JTwjHb6A2w05lhu2nD
+zCI9Hpzcqe0MzQAsQqvg1DVAXUNFBcI1vVdIFqBxDfjoCrAhM4dPgLAx3CteU1gt
+xl7/uUCVEtnThIjp21wvaqs8rdsP0nWZDJULMLj+XfHxD5htLeep6MRbo8jFDttl
+eFwV0QBMtC4i3Efe1+InfR9K+7mnUQ==
+=mBMW
+-----END PGP SIGNATURE-----
+
+--cvVnyQ+4j833TQvp--
