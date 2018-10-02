@@ -3,32 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E44DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 696CBC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:23:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42707208AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:21:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42707208AE
+	by mail.kernel.org (Postfix) with ESMTP id 1F5B021477
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:23:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F5B021477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbeJBNCt (ORCPT
+        id S1726829AbeJBNEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 09:02:49 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58887 "EHLO
+        Tue, 2 Oct 2018 09:04:49 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58906 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbeJBNCt (ORCPT
+        with ESMTP id S1726303AbeJBNEs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 09:02:49 -0400
+        Tue, 2 Oct 2018 09:04:48 -0400
 Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1g7E2x-0002oz-9u; Tue, 02 Oct 2018 08:20:39 +0200
-Date:   Tue, 2 Oct 2018 08:20:38 +0200 (CEST)
+        id 1g7E56-0002rB-4A; Tue, 02 Oct 2018 08:22:52 +0200
+Date:   Tue, 2 Oct 2018 08:22:51 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Mike Travis <mike.travis@hpe.com>
 cc:     Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
@@ -48,10 +48,10 @@ cc:     Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
         Petr Tesarik <ptesarik@suse.cz>,
         Sinan Kaya <okaya@codeaurora.org>, x86@kernel.org,
         linux-kernel@vger.kernel.org, Hedi Berriche <hedi.berriche@hpe.com>
-Subject: Re: [PATCH 1/2] x86/platform/uv: Add is_early_uv_system check
-In-Reply-To: <20181002012204.453928259@stormcage.americas.sgi.com>
-Message-ID: <alpine.DEB.2.21.1810020818530.32062@nanos.tec.linutronix.de>
-References: <20181002012204.297193336@stormcage.americas.sgi.com> <20181002012204.453928259@stormcage.americas.sgi.com>
+Subject: Re: [PATCH 2/2] x86/tsc: Fix UV TSC initialization
+In-Reply-To: <20181002012204.568382740@stormcage.americas.sgi.com>
+Message-ID: <alpine.DEB.2.21.1810020820430.32062@nanos.tec.linutronix.de>
+References: <20181002012204.297193336@stormcage.americas.sgi.com> <20181002012204.568382740@stormcage.americas.sgi.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -65,42 +65,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, 1 Oct 2018, Mike Travis wrote:
 
-> Introduce is_early_uv_system() which uses efi.uv_systab to decide early
-> in the boot process whether we're on a UV system.
+> Fix regression introduced by
 > 
-> This is needed to skip other early setup/init code that might break UV
-> platform if done too early such as before necessary ACPI tables parsing
-> takes place.
+> commit cf7a63ef4e02 ("x86/tsc: Calibrate tsc only once")
 > 
+> as it changed setup_arch() so that it now calls tsc_early_init() before
+> acpi_boot_table_init() which is a necessary step, in the case of UV
+> systems, to inform tsc_sanitize_first_cpu() that we're on a platform
+> with async TSC resets as documented in
+> 
+> commit 341102c3ef29 ("x86/tsc: Add option that TSC on Socket 0 being non-zero is valid")
+> 
+> Fix by skipping tsc_early_init() on UV systems and let TSC initialization
+> take place later in tsc_init().
+> 
+> Fixes: cf7a63ef4e02 ("x86/tsc: Calibrate tsc only once") 
 > Signed-off-by: Mike Travis <mike.travis@hpe.com>
 > Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
 
-This SOB chain is wrong. I don't see how Hedi is involved in this. If this
-wants to express that the patch was developed together please see
-Documentation for the Co-developed-by tag.
+See previous mail.
 
 > Reviewed-by: Russ Anderson <rja@hpe.com>
 > Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
 > ---
->  arch/x86/include/asm/uv/uv.h |    6 ++++++
->  1 file changed, 6 insertions(+)
+>  arch/x86/kernel/setup.c |    6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> --- linux.orig/arch/x86/include/asm/uv/uv.h
-> +++ linux/arch/x86/include/asm/uv/uv.h
-> @@ -10,8 +10,13 @@ struct cpumask;
->  struct mm_struct;
+> --- linux.orig/arch/x86/kernel/setup.c
+> +++ linux/arch/x86/kernel/setup.c
+> @@ -117,6 +117,7 @@
+>  #include <asm/microcode.h>
+>  #include <asm/kaslr.h>
+>  #include <asm/unwind.h>
+> +#include <asm/uv/uv.h>
 >  
->  #ifdef CONFIG_X86_UV
-> +#include <linux/efi.h>
+>  /*
+>   * max_low_pfn_mapped: highest direct mapped pfn under 4GB
+> @@ -1015,7 +1016,10 @@ void __init setup_arch(char **cmdline_p)
+>  	 */
+>  	init_hypervisor_platform();
 >  
->  extern enum uv_system_type get_uv_system_type(void);
-> +static inline int is_early_uv_system(void)
+> -	tsc_early_init();
+> +	/* UV TSC multi-chassis synchronization already set, don't change it */
+> +	if (!is_early_uv_system())
+> +		tsc_early_init();
 
-Can you please make this bool?
-
-> +{
-> +	return !((efi.uv_systab == EFI_INVALID_TABLE_ADDR) || !efi.uv_systab);
-> +}
+tsc_early_init() has already a check which makes it not invoke the
+calibration code, so please put your uv check into that.
 
 Thanks,
 
