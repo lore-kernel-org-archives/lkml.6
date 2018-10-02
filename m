@@ -2,123 +2,142 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCCDC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D472EC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4F4C2064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:50:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4F4C2064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=electrozaur.com
+	by mail.kernel.org (Postfix) with ESMTP id 999642064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:54:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AuCTrPWP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999642064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbeJBXez (ORCPT
+        id S1728629AbeJBXia (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 19:34:55 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43202 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbeJBXez (ORCPT
+        Tue, 2 Oct 2018 19:38:30 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:40722 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbeJBXia (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 19:34:55 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n1-v6so3016567wrt.10
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 09:50:36 -0700 (PDT)
+        Tue, 2 Oct 2018 19:38:30 -0400
+Received: by mail-yw1-f66.google.com with SMTP id l79-v6so1036050ywc.7
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 09:54:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=3KjyMR08bmd9YZmum53kS/V/XW07F6Rp6ifIGqpPh2M=;
+        b=AuCTrPWPVkjdDsflK4b3v5Nu5F/wwaZZXIByGqgI4xNRRHvWAYxNTFlAZcADMZCmiK
+         NQJOPjWhluzj0VV4MUcGKvZKg4vjuWEs+7asTr7PD8ZltruGrOB0CBGbCVWuvc5q7yYd
+         KZWRcJ2X1SYMqNEa2sf+yZh7xIBMqw4pgbv08=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=hnC/TeBmK/Yl/SPUz/dMPzHbKoi0qdN5wTFk/eNDrcU=;
-        b=BI3kjTsWjYjv8FwN0Ld4EAaCdabggL02FvkooRWN5qE8gSWOMHb/Xv7ZQuVr+Fsya0
-         e3+kOFbNcQkezyFGxJmasYxuRi8CWFt+kYF5fDw+SU/jmVYf+sjxQ72oaT5hrWtL99W6
-         3U9nZWrKLSvAUSeFfIIdIMVOPYQui0v4gWlEmGZOSuZx/2WIQAo1THPAf3Gosx7FQKBH
-         T4BcKOpyCfIPYUTgSSGzm5LUwvAM7qY0H/f98kA7A2YMxamGJSzMJT6c1EpZhzutUnm6
-         TminuTL+IBQzMw0YrqdrrXxnj7b48J2EMfkQT868EkVgZOxNOAmAuiS94LdQVm0bz0Dp
-         IBig==
-X-Gm-Message-State: ABuFfohOorU044W/vCtdVSMqTTSYH0/cirdz8eKCoscwHdCd6Y7qze4W
-        bYIEkP46Y5KOLGQqhIJmVtk9WIla
-X-Google-Smtp-Source: ACcGV60Zj1QlaaB302cuZVQ43qK5VQ8otCmXUxudMeIWvAb589lhYDFC0A7HgVBElI0iGFY6XS3NzQ==
-X-Received: by 2002:adf:e348:: with SMTP id n8-v6mr10708472wrj.158.1538499035844;
-        Tue, 02 Oct 2018 09:50:35 -0700 (PDT)
-Received: from [10.0.0.5] ([207.232.55.62])
-        by smtp.gmail.com with ESMTPSA id j66-v6sm18837409wrj.28.2018.10.02.09.50.33
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=3KjyMR08bmd9YZmum53kS/V/XW07F6Rp6ifIGqpPh2M=;
+        b=g1w9YR2Tgfjhbc+wLtB1gHC5kGqZmqj4bYz8EJm7RTlGLute6cN5mlG8+AXEPY8yLF
+         w01Dvhbw/pDn0Ff7mLSzQZ6tdwJ+QyP5rdA+1NWtfnA66Nthw0uPHQXrF/JGQf2sipuc
+         QgA7PPhla45vcVqAXszW8m00V5CtFtGtgfiQvAyXEGwV/G491XUXCwpyp75D57drE/+K
+         sAk0SXamYIROc3VGVcc43BC9zNoHKf+Wgo8NeF40NmbeGfI7sYEREAiEULZsIoJu2f6j
+         QC0KO8p9CxkRe3Tz9ZOLjIQ0/V0L8dQxXpBCXaSKrDWJCmL3PfPYF5uBPqrbOOFmMmfA
+         7vmg==
+X-Gm-Message-State: ABuFfogZ1kZ0OgeV/719b5CGC/8Vl3I6QLzHTrJfH64hyT/8YTeVi2wD
+        SwTvKwITNh/2JDe5VljJVJi/jHd4DRI=
+X-Google-Smtp-Source: ACcGV62TKzK4RgUiL4D/rPx0g+5H18ClpPcw4Snxs2BkKOky07av8QXNkEYLTzSI5tbnMATerm/qow==
+X-Received: by 2002:a81:2d89:: with SMTP id t131-v6mr9053499ywt.222.1538499250693;
+        Tue, 02 Oct 2018 09:54:10 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id f194-v6sm7649840ywb.53.2018.10.02.09.54.06
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 09:50:34 -0700 (PDT)
-Subject: Re: [PATCH] fs/exofs: Remove ignored __weak attribute
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20180930205126.25840-1-natechancellor@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-From:   Boaz Harrosh <ooo@electrozaur.com>
-Message-ID: <aca03ebc-ff33-1734-5364-5ca1ab897f16@electrozaur.com>
-Date:   Tue, 2 Oct 2018 19:50:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Tue, 02 Oct 2018 09:54:07 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id u88-v6so1087163ybi.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 09:54:06 -0700 (PDT)
+X-Received: by 2002:a25:3588:: with SMTP id c130-v6mr7666980yba.410.1538499246259;
+ Tue, 02 Oct 2018 09:54:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180930205126.25840-1-natechancellor@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Tue, 2 Oct 2018 09:54:05 -0700 (PDT)
+In-Reply-To: <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-24-keescook@chromium.org>
+ <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
+ <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
+ <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 2 Oct 2018 09:54:05 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
+Message-ID: <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+To:     Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/09/18 23:51, Nathan Chancellor wrote:
-> Clang warns that the __weak attribute is going to be ignored on
-> g_attr_inode_data because it's not in the correct location (needs to be
-> after the type).
-> 
-> In file included from fs/exofs/dir.c:35:
-> In file included from fs/exofs/exofs.h:41:
-> fs/exofs/common.h:186:21: warning: 'weak' attribute only applies to
-> variables, functions, and classes [-Wignored-attributes]
-> static const struct __weak osd_attr g_attr_inode_data = ATTR_DEF(
->                     ^
-> 
-> Turns out that GCC ignores the attribute too albeit silently because
-> moving the attribute after either osd_attr or g_attr_inode_data like
-> all other uses of __weak on variables in the kernel causes a build
-> error on both GCC and Clang because static variables cannot be weak
-> since weak definitions rely on not having internal linkage:
-> 
-> In file included from fs/exofs/namei.c:34:
-> In file included from fs/exofs/exofs.h:41:
-> fs/exofs/common.h:186:30: error: weak declaration cannot have internal
-> linkage
-> static const struct osd_attr __weak g_attr_inode_data = ATTR_DEF(
->                              ^
-> 
-> Just remove the attribute because it hasn't been correct since the
-> initial addition of this file in commit b14f8ab28449 ("exofs: Kbuild,
-> Headers and osd utils").
-> 
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+On Tue, Oct 2, 2018 at 9:33 AM, Jordan Glover
+<Golden_Miller83@protonmail.ch> wrote:
+> It's always documented as: "selinux=1 security=selinux" so security= should
+> still do the job and selinux=1 become no-op, no?
 
-ACK-by: Boaz Harrosh <ooo@electrozaur.com>
+The v3 patch set worked this way, yes. (The per-LSM enable defaults
+were set by the LSM. Only in the case of "lsm.disable=selinux" would
+the above stop working.)
 
-Yes! thanks
-Boaz
+John did not like the separation of having two CONFIG and two
+bootparams mixing the controls. The v3 resolution rules were:
 
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  fs/exofs/common.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/exofs/common.h b/fs/exofs/common.h
-> index 7d88ef566213..45da96a1528d 100644
-> --- a/fs/exofs/common.h
-> +++ b/fs/exofs/common.h
-> @@ -183,7 +183,7 @@ struct exofs_fcb {
->  #define EXOFS_INO_ATTR_SIZE	sizeof(struct exofs_fcb)
->  
->  /* This is the Attribute the fcb is stored in */
-> -static const struct __weak osd_attr g_attr_inode_data = ATTR_DEF(
-> +static const struct osd_attr g_attr_inode_data = ATTR_DEF(
->  	EXOFS_APAGE_FS_DATA,
->  	EXOFS_ATTR_INODE_DATA,
->  	EXOFS_INO_ATTR_SIZE);
-> 
+SECURITY_SELINUX_BOOTPARAM_VALUE overrides CONFIG_LSM_ENABLE.
+SECURITY_APPARMOR_BOOTPARAM_VALUE overrides CONFIG_LSM_ENABLE.
+selinux= overrides SECURITY_SELINUX_BOOTPARAM_VALUE.
+apparmor.enabled= overrides SECURITY_APPARMOR_BOOTPARAM_VALUE.
+apparmor= overrides apparmor.enabled=.
+lsm.enable= overrides selinux=.
+lsm.enable= overrides apparmor=.
+lsm.disable= overrides lsm.enable=.
+major LSM _omission_ from security= (if present) overrides lsm.enable.
 
+v4 removed the per-LSM boot params and CONFIGs at John's request, but
+Paul and Stephen don't want this for SELinux.
+
+The pieces for reducing conflict with CONFIG_LSM_ENABLE and
+lsm.{enable,disable}= were:
+
+1- Remove SECURITY_APPARMOR_BOOTPARAM_VALUE.
+2- Remove apparmor= and apparmor.enabled=.
+3- Remove SECURITY_SELINUX_BOOTPARAM_VALUE.
+4- Remove selinux=.
+
+v4 used all of 1-4 above. SELinux says "4" cannot happen as it's too
+commonly used. Would 3 be okay for SELinux?
+
+John, with 4 not happening, do you prefer to not have 2 happen?
+
+With CONFIGs removed, then the boot time defaults are controlled by
+CONFIG_LSM_ENABLE, but the boot params continue to work as before.
+Only the use of the new lsm.enable= and lsm.disable= would override
+the per-LSM boot params. This would clean up the build-time CONFIG
+weirdness, and leave the existing boot params as before (putting us
+functionally in between the v3 and v4 series).
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
