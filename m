@@ -2,457 +2,249 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C99C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A0AC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D31232089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:53:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B93Wgoen"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D31232089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 420D7206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:54:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 420D7206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbeJBOfK (ORCPT
+        id S1727346AbeJBOgT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:35:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45140 "EHLO mail.kernel.org"
+        Tue, 2 Oct 2018 10:36:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45488 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726884AbeJBOfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:35:10 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726870AbeJBOgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 10:36:19 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08054206B2;
-        Tue,  2 Oct 2018 07:53:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538466792;
-        bh=ZQ2S3UlLbfxpQi53E4MUQ6AlPD0ZkaVPrVNsA1ieVbE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=B93WgoentClY0xrcgQ6l5bxf3uQfNjdZUoShUF32UU5+yZrvXLx6ivOsvJ405U4VC
-         ZvM+5NBpZQumHQHQGgVown49aVC7yepigLTW5ZxlnvUXOEStJaIgLQlX+WD/E2tB25
-         9QefpKkZ0czZCTqS7i/7k/a+zGYpfa7RmGisIhLs=
-Date:   Tue, 2 Oct 2018 16:53:09 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
-        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v5 7/8] tracing: Add hist trigger onchange() handler
-Message-Id: <20181002165309.da3d63365ca774cf6b47b80c@kernel.org>
-In-Reply-To: <0a17743dc24db781ebe72dcae1306ea5d9a0f7ef.1538403550.git.tom.zanussi@linux.intel.com>
-References: <cover.1538403550.git.tom.zanussi@linux.intel.com>
-        <0a17743dc24db781ebe72dcae1306ea5d9a0f7ef.1538403550.git.tom.zanussi@linux.intel.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        by mx1.redhat.com (Postfix) with ESMTPS id DEECD308424F;
+        Tue,  2 Oct 2018 07:54:22 +0000 (UTC)
+Received: from [10.36.116.105] (ovpn-116-105.ams2.redhat.com [10.36.116.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0136261B78;
+        Tue,  2 Oct 2018 07:54:19 +0000 (UTC)
+Subject: Re: [PATCH v6 11/18] kvm: arm64: Dynamic configuration of VTTBR mask
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        marc.zyngier@arm.com, cdall@kernel.org, will.deacon@arm.com,
+        dave.martin@arm.com, peter.maydell@linaro.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, julien.grall@arm.com,
+        linux-kernel@vger.kernel.org
+References: <20180926163258.20218-1-suzuki.poulose@arm.com>
+ <20180926163258.20218-12-suzuki.poulose@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <ec1a9aa3-e164-a353-609e-e9aabbd33d2b@redhat.com>
+Date:   Tue, 2 Oct 2018 09:54:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180926163258.20218-12-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 02 Oct 2018 07:54:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  1 Oct 2018 11:18:07 -0500
-Tom Zanussi <zanussi@kernel.org> wrote:
+Hi Suzuki,
 
-> From: Tom Zanussi <tom.zanussi@linux.intel.com>
+On 9/26/18 6:32 PM, Suzuki K Poulose wrote:
+> On arm64 VTTBR_EL2:BADDR holds the base address for the stage2
+> translation table. The Arm ARM mandates that the bits BADDR[x-1:0]
+> should be 0, where 'x' is defined for a given IPA Size and the
+> number of levels for a translation granule size. It is defined
+> using some magical constants. This patch is a reverse engineered
+> implementation to calculate the 'x' at runtime for a given ipa and
+> number of page table levels. See patch for more details.
 > 
-> Add support for a hist:onchange($var) handler, similar to the onmax()
-> handler but triggering whenever there's any change in $var, not just a
-> max.
-> 
-> Also, add a testcase for it.
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-Could you separate the testcase and document update from this patch,
-since those are maintained in different trees?
+Thanks
 
-And also, could you update <tracefs>/README so that the testcase can
-ensure the kernel supports this feature? Since the testcase (kselftest)
-will be used for stable kernels, it should check the kernel carefully
-and exit with "unsupported" instead of failure.
-
-Thank you,
-
-> 
-> Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Eric
 > ---
->  Documentation/trace/histogram.rst                  | 97 ++++++++++++++++++++++
->  kernel/trace/trace_events_hist.c                   | 68 ++++++++++++---
->  .../inter-event/trigger-onchange-action-hist.tc    | 43 ++++++++++
->  3 files changed, 195 insertions(+), 13 deletions(-)
->  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
+> Changes since v5:
+>  - Update comment about the Magic_N for VTTBR_X calculation
+>  - Remove the obsolete VTTBR_TGRAN_MAGIC value defintions
+> Changes since V3:
+>  - Update reference to latest ARM ARM and improve commentary
+> ---
+>  arch/arm64/include/asm/kvm_arm.h | 73 ++++++++++++++++++++++++++++----
+>  arch/arm64/include/asm/kvm_mmu.h | 25 ++++++++++-
+>  2 files changed, 88 insertions(+), 10 deletions(-)
 > 
-> diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-> index ce715dc0ec2c..e73a840a3598 100644
-> --- a/Documentation/trace/histogram.rst
-> +++ b/Documentation/trace/histogram.rst
-> @@ -2109,6 +2109,103 @@ hist trigger specification.
->        <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
->       <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
+> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+> index 14317b3a1820..b236d90ca056 100644
+> --- a/arch/arm64/include/asm/kvm_arm.h
+> +++ b/arch/arm64/include/asm/kvm_arm.h
+> @@ -123,7 +123,6 @@
+>  #define VTCR_EL2_SL0_MASK	(3 << VTCR_EL2_SL0_SHIFT)
+>  #define VTCR_EL2_SL0_LVL1	(1 << VTCR_EL2_SL0_SHIFT)
+>  #define VTCR_EL2_T0SZ_MASK	0x3f
+> -#define VTCR_EL2_T0SZ_40B	24
+>  #define VTCR_EL2_VS_SHIFT	19
+>  #define VTCR_EL2_VS_8BIT	(0 << VTCR_EL2_VS_SHIFT)
+>  #define VTCR_EL2_VS_16BIT	(1 << VTCR_EL2_VS_SHIFT)
+> @@ -140,11 +139,8 @@
+>   * Note that when using 4K pages, we concatenate two first level page tables
+>   * together. With 16K pages, we concatenate 16 first level page tables.
+>   *
+> - * The magic numbers used for VTTBR_X in this patch can be found in Tables
+> - * D4-23 and D4-25 in ARM DDI 0487A.b.
+>   */
 >  
-> +  - onchange(var).save(field,..	.)
-> +
-> +    The 'onchange(var).save(field,...)' hist trigger action is invoked
-> +    whenever the value of 'var' associated with a histogram entry
-> +    changes.
-> +
-> +    The end result is that the trace event fields specified as the
-> +    onchange.save() params will be saved if 'var' changes for that
-> +    hist trigger entry.  This allows context from the event that
-> +    changed the value to be saved for later reference.  When the
-> +    histogram is displayed, additional fields displaying the saved
-> +    values will be printed.
-> +
-> +  - onchange(var).snapshot()
-> +
-> +    The 'onchange(var).snapshot()' hist trigger action is invoked
-> +    whenever the value of 'var' associated with a histogram entry
-> +    changes.
-> +
-> +    The end result is that a global snapshot of the trace buffer will
-> +    be saved in the tracing/snapshot file if 'var' changes for any
-> +    hist trigger entry.
-> +
-> +    Note that in this case the changed value is a global variable
-> +    associated withe current trace instance.  The key of the specific
-> +    trace event that caused the value to change and the global value
-> +    itself are displayed, along with a message stating that a snapshot
-> +    has been taken and where to find it.  The user can use the key
-> +    information displayed to locate the corresponding bucket in the
-> +    histogram for even more detail.
-> +
-> +    As an example the below defines a hist trigger on the tcp_probe
-> +    event, keyed on dport.  Whenever a tcp_probe event occurs, the
-> +    cwnd field is checked against the current value stored in the
-> +    $cwnd variable.  If the value has changed, a snapshot is taken.
-> +    As part of the setup, all the scheduler and tcp events are also
-> +    enabled, which are the events that will show up in the snapshot
-> +    when it is taken at some point:
-> +
-> +    # echo 1 > /sys/kernel/debug/tracing/events/sched/enable
-> +    # echo 1 > /sys/kernel/debug/tracing/events/tcp/enable
-> +
-> +    # echo 'hist:keys=dport:cwnd=snd_cwnd: \
-> +            onchange($cwnd).save(snd_wnd,srtt,rcv_wnd): \
-> +	    onchange($cwnd).snapshot()' >> \
-> +	    /sys/kernel/debug/tracing/events/tcp/tcp_probe/trigger
-> +
-> +    When the histogram is displayed, for each bucket the tracked value
-> +    and the saved values corresponding to that value are displayed
-> +    following the rest of the fields.
-> +
-> +    If a snaphot was taken, there is also a message indicating that,
-> +    along with the value and event that triggered the snapshot:
-> +
-> +    # cat /sys/kernel/debug/tracing/events/tcp/tcp_probe/hist
-> +      { dport:       1521 } hitcount:          8
-> +	changed:         10  snd_wnd:      35456  srtt:     154262  rcv_wnd:      42112
-> +
-> +      { dport:         80 } hitcount:         23
-> +	changed:         10  snd_wnd:      28960  srtt:      19604  rcv_wnd:      29312
-> +
-> +      { dport:       9001 } hitcount:        172
-> +	changed:         10  snd_wnd:      48384  srtt:     260444  rcv_wnd:      55168
-> +
-> +      { dport:        443 } hitcount:        211
-> +	changed:         10  snd_wnd:      26960  srtt:      17379  rcv_wnd:      28800
-> +
-> +    Snapshot taken (see tracing/snapshot).  Details:
-> +        triggering value { onchange($cwnd) }:         10
-> +        triggered by event with key: { dport:         80 }
-> +
-> +    Totals:
-> +        Hits: 414
-> +        Entries: 4
-> +        Dropped: 0
-> +
-> +    In the above case, the event that triggered the snapshot has the
-> +    key with dport == 80.  If you look at the bucket that has 80 as
-> +    the key, you'll find the additional values save()'d along with the
-> +    changed value for that bucket, which should be the same as the
-> +    global changed value (since that was the same value that triggered
-> +    the global snapshot).
-> +
-> +    And finally, looking at the snapshot data should show at or near
-> +    the end the event that triggered the snapshot:
-> +
-> +    # cat /sys/kernel/debug/tracing/snapshot
-> +
-> +       gnome-shell-1261  [006] dN.3    49.823113: sched_stat_runtime: comm=gnome-shell pid=1261 runtime=49347 [ns] vruntime=1835730389 [ns]
-> +     kworker/u16:4-773   [003] d..3    49.823114: sched_switch: prev_comm=kworker/u16:4 prev_pid=773 prev_prio=120 prev_state=R+ ==> next_comm=kworker/3:2 next_pid=135 next_prio=120
-> +       gnome-shell-1261  [006] d..3    49.823114: sched_switch: prev_comm=gnome-shell prev_pid=1261 prev_prio=120 prev_state=R+ ==> next_comm=kworker/6:2 next_pid=387 next_prio=120
-> +       kworker/3:2-135   [003] d..3    49.823118: sched_stat_runtime: comm=kworker/3:2 pid=135 runtime=5339 [ns] vruntime=17815800388 [ns]
-> +       kworker/6:2-387   [006] d..3    49.823120: sched_stat_runtime: comm=kworker/6:2 pid=387 runtime=9594 [ns] vruntime=14589605367 [ns]
-> +       kworker/6:2-387   [006] d..3    49.823122: sched_switch: prev_comm=kworker/6:2 prev_pid=387 prev_prio=120 prev_state=R+ ==> next_comm=gnome-shell next_pid=1261 next_prio=120
-> +       kworker/3:2-135   [003] d..3    49.823123: sched_switch: prev_comm=kworker/3:2 prev_pid=135 prev_prio=120 prev_state=T ==> next_comm=swapper/3 next_pid=0 next_prio=120
-> +            <idle>-0     [004] ..s7    49.823798: tcp_probe: src=10.0.0.10:54326 dest=23.215.104.193:80 mark=0x0 length=32 snd_nxt=0xe3ae2ff5 snd_una=0xe3ae2ecd snd_cwnd=10 ssthresh=2147483647 snd_wnd=28960 srtt=19604 rcv_wnd=29312
-> +
->  3. User space creating a trigger
->  --------------------------------
+> -#define VTCR_EL2_T0SZ_IPA	VTCR_EL2_T0SZ_40B
+>  #define VTCR_EL2_COMMON_BITS	(VTCR_EL2_SH0_INNER | VTCR_EL2_ORGN0_WBWA | \
+>  				 VTCR_EL2_IRGN0_WBWA | VTCR_EL2_RES1)
 >  
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> index 8d6e9fde0826..90f1a0cf34c0 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -331,6 +331,7 @@ typedef u64 (*get_track_val_fn_t) (struct hist_trigger_data *hist_data,
->  enum handler_id {
->  	HANDLER_ONMATCH = 1,
->  	HANDLER_ONMAX,
-> +	HANDLER_ONCHANGE,
->  };
+> @@ -155,7 +151,6 @@
+>   * 2 level page tables (SL = 1)
+>   */
+>  #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_64K | VTCR_EL2_SL0_LVL1)
+> -#define VTTBR_X_TGRAN_MAGIC		38
+>  #elif defined(CONFIG_ARM64_16K_PAGES)
+>  /*
+>   * Stage2 translation configuration:
+> @@ -163,7 +158,6 @@
+>   * 2 level page tables (SL = 1)
+>   */
+>  #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_16K | VTCR_EL2_SL0_LVL1)
+> -#define VTTBR_X_TGRAN_MAGIC		42
+>  #else	/* 4K */
+>  /*
+>   * Stage2 translation configuration:
+> @@ -171,13 +165,74 @@
+>   * 3 level page tables (SL = 1)
+>   */
+>  #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_4K | VTCR_EL2_SL0_LVL1)
+> -#define VTTBR_X_TGRAN_MAGIC		37
+>  #endif
 >  
->  enum action_id {
-> @@ -1886,7 +1887,8 @@ static int parse_action(char *str, struct hist_trigger_attrs *attrs)
->  		return ret;
+>  #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
+> -#define VTTBR_X				(VTTBR_X_TGRAN_MAGIC - VTCR_EL2_T0SZ_IPA)
+> +/*
+> + * ARM VMSAv8-64 defines an algorithm for finding the translation table
+> + * descriptors in section D4.2.8 in ARM DDI 0487C.a.
+> + *
+> + * The algorithm defines the expectations on the translation table
+> + * addresses for each level, based on PAGE_SIZE, entry level
+> + * and the translation table size (T0SZ). The variable "x" in the
+> + * algorithm determines the alignment of a table base address at a given
+> + * level and thus determines the alignment of VTTBR:BADDR for stage2
+> + * page table entry level.
+> + * Since the number of bits resolved at the entry level could vary
+> + * depending on the T0SZ, the value of "x" is defined based on a
+> + * Magic constant for a given PAGE_SIZE and Entry Level. The
+> + * intermediate levels must be always aligned to the PAGE_SIZE (i.e,
+> + * x = PAGE_SHIFT).
+> + *
+> + * The value of "x" for entry level is calculated as :
+> + *    x = Magic_N - T0SZ
+> + *
+> + * where Magic_N is an integer depending on the page size and the entry
+> + * level of the page table as below:
+> + *
+> + *	--------------------------------------------
+> + *	| Entry level		|  4K    16K   64K |
+> + *	--------------------------------------------
+> + *	| Level: 0 (4 levels)	| 28   |  -  |  -  |
+> + *	--------------------------------------------
+> + *	| Level: 1 (3 levels)	| 37   | 31  | 25  |
+> + *	--------------------------------------------
+> + *	| Level: 2 (2 levels)	| 46   | 42  | 38  |
+> + *	--------------------------------------------
+> + *	| Level: 3 (1 level)	| -    | 53  | 51  |
+> + *	--------------------------------------------
+> + *
+> + * We have a magic formula for the Magic_N below:
+> + *
+> + *  Magic_N(PAGE_SIZE, Level) = 64 - ((PAGE_SHIFT - 3) * Number_of_levels)
+> + *
+> + * where Number_of_levels = (4 - Level). We are only interested in the
+> + * value for Entry_Level for the stage2 page table.
+> + *
+> + * So, given that T0SZ = (64 - IPA_SHIFT), we can compute 'x' as follows:
+> + *
+> + *	x = (64 - ((PAGE_SHIFT - 3) * Number_of_levels)) - (64 - IPA_SHIFT)
+> + *	  = IPA_SHIFT - ((PAGE_SHIFT - 3) * Number of levels)
+> + *
+> + * Here is one way to explain the Magic Formula:
+> + *
+> + *  x = log2(Size_of_Entry_Level_Table)
+> + *
+> + * Since, we can resolve (PAGE_SHIFT - 3) bits at each level, and another
+> + * PAGE_SHIFT bits in the PTE, we have :
+> + *
+> + *  Bits_Entry_level = IPA_SHIFT - ((PAGE_SHIFT - 3) * (n - 1) + PAGE_SHIFT)
+> + *		     = IPA_SHIFT - (PAGE_SHIFT - 3) * n - 3
+> + *  where n = number of levels, and since each pointer is 8bytes, we have:
+> + *
+> + *  x = Bits_Entry_Level + 3
+> + *    = IPA_SHIFT - (PAGE_SHIFT - 3) * n
+> + *
+> + * The only constraint here is that, we have to find the number of page table
+> + * levels for a given IPA size (which we do, see stage2_pt_levels())
+> + */
+> +#define ARM64_VTTBR_X(ipa, levels)	((ipa) - ((levels) * (PAGE_SHIFT - 3)))
 >  
->  	if ((strncmp(str, "onmatch(", strlen("onmatch(")) == 0) ||
-> -	    (strncmp(str, "onmax(", strlen("onmax(")) == 0)) {
-> +	    (strncmp(str, "onmax(", strlen("onmax(")) == 0) ||
-> +	    (strncmp(str, "onchange(", strlen("onchange(")) == 0)) {
->  		attrs->action_str[attrs->n_actions] = kstrdup(str, GFP_KERNEL);
->  		if (!attrs->action_str[attrs->n_actions]) {
->  			ret = -ENOMEM;
-> @@ -3346,6 +3348,14 @@ static bool check_track_val_max(u64 track_val, u64 var_val)
->  	return true;
->  }
+> -#define VTTBR_BADDR_MASK  (((UL(1) << (PHYS_MASK_SHIFT - VTTBR_X)) - 1) << VTTBR_X)
+>  #define VTTBR_VMID_SHIFT  (UL(48))
+>  #define VTTBR_VMID_MASK(size) (_AT(u64, (1 << size) - 1) << VTTBR_VMID_SHIFT)
 >  
-> +static bool check_track_val_changed(u64 track_val, u64 var_val)
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index 7342d2c51773..ac3ca9690bad 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -145,7 +145,6 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
+>  #define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
+>  #define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
+>  #define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
+> -#define kvm_vttbr_baddr_mask(kvm)	VTTBR_BADDR_MASK
+>  
+>  static inline bool kvm_page_empty(void *ptr)
+>  {
+> @@ -520,5 +519,29 @@ static inline int hyp_map_aux_data(void)
+>  
+>  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
+>  
+> +/*
+> + * Get the magic number 'x' for VTTBR:BADDR of this KVM instance.
+> + * With v8.2 LVA extensions, 'x' should be a minimum of 6 with
+> + * 52bit IPS.
+> + */
+> +static inline int arm64_vttbr_x(u32 ipa_shift, u32 levels)
 > +{
-> +	if (var_val == track_val)
-> +		return false;
+> +	int x = ARM64_VTTBR_X(ipa_shift, levels);
 > +
-> +	return true;
+> +	return (IS_ENABLED(CONFIG_ARM64_PA_BITS_52) && x < 6) ? 6 : x;
 > +}
 > +
->  static u64 get_track_val_local(struct hist_trigger_data *hist_data,
->  			       struct tracing_map_elt *elt,
->  			       struct action_data *data)
-> @@ -3520,6 +3530,8 @@ static void track_data_print(struct seq_file *m,
->  
->  	if (data->handler == HANDLER_ONMAX)
->  		seq_printf(m, "\n\tmax: %10llu", track_val);
-> +	else if (data->handler == HANDLER_ONCHANGE)
-> +		seq_printf(m, "\n\tchanged: %10llu", track_val);
->  
->  	if (data->action == ACTION_SNAPSHOT)
->  		return;
-> @@ -3550,10 +3562,10 @@ static void ontrack_save(struct hist_trigger_data *hist_data,
->  		update_save_vars(hist_data, elt, rbe, rec);
->  }
->  
-> -static void onmax_snapshot(struct hist_trigger_data *hist_data,
-> -			   struct tracing_map_elt *elt, void *rec,
-> -			   struct ring_buffer_event *rbe,
-> -			   struct action_data *data, u64 *var_ref_vals)
-> +static void ontrack_snapshot(struct hist_trigger_data *hist_data,
-> +			     struct tracing_map_elt *elt, void *rec,
-> +			     struct ring_buffer_event *rbe,
-> +			     struct action_data *data, u64 *var_ref_vals)
->  {
->  	update_track_val(hist_data, elt, data, var_ref_vals);
->  }
-> @@ -3614,14 +3626,14 @@ static int track_data_create(struct hist_trigger_data *hist_data,
->  
->  	track_data_var_str = data->track_data.var_str;
->  	if (track_data_var_str[0] != '$') {
-> -		hist_err("For onmax(x), x must be a variable: ", track_data_var_str);
-> +		hist_err("For onmax(x) or onchange(x), x must be a variable: ", track_data_var_str);
->  		return -EINVAL;
->  	}
->  	track_data_var_str++;
->  
->  	var_field = find_target_event_var(hist_data, NULL, NULL, track_data_var_str);
->  	if (!var_field) {
-> -		hist_err("Couldn't find onmax variable: ", track_data_var_str);
-> +		hist_err("Couldn't find onmax or onchange variable: ", track_data_var_str);
->  		return -EINVAL;
->  	}
->  
-> @@ -3648,6 +3660,14 @@ static int track_data_create(struct hist_trigger_data *hist_data,
->  		ret = PTR_ERR(track_var);
->  		goto out;
->  	}
+> +static inline u64 vttbr_baddr_mask(u32 ipa_shift, u32 levels)
+> +{
+> +	unsigned int x = arm64_vttbr_x(ipa_shift, levels);
 > +
-> +	if (data->handler == HANDLER_ONCHANGE)
-> +		track_var = create_var(hist_data, file, "__change", sizeof(u64), "u64");
-> +	if (IS_ERR(track_var)) {
-> +		hist_err("Couldn't create onchange variable: ", "__change");
-> +		ret = PTR_ERR(track_var);
-> +		goto out;
-> +	}
->  	data->track_data.track_var = track_var;
->  
->  	ret = action_create(hist_data, data);
-> @@ -3727,6 +3747,8 @@ static int action_parse(char *str, struct action_data *data,
->  
->  		if (handler == HANDLER_ONMAX)
->  			data->track_data.check_val = check_track_val_max;
-> +		else if (handler == HANDLER_ONCHANGE)
-> +			data->track_data.check_val = check_track_val_changed;
->  		else {
->  			hist_err("action parsing: Handler doesn't support action: ", action_name);
->  			ret = -EINVAL;
-> @@ -3750,6 +3772,8 @@ static int action_parse(char *str, struct action_data *data,
->  
->  		if (handler == HANDLER_ONMAX)
->  			data->track_data.check_val = check_track_val_max;
-> +		else if (handler == HANDLER_ONCHANGE)
-> +			data->track_data.check_val = check_track_val_changed;
->  		else {
->  			hist_err("action parsing: Handler doesn't support action: ", action_name);
->  			ret = -EINVAL;
-> @@ -3759,7 +3783,7 @@ static int action_parse(char *str, struct action_data *data,
->  		data->track_data.save_val = save_track_val_snapshot;
->  		data->track_data.get_val = get_track_val_snapshot;
->  
-> -		data->fn = onmax_snapshot;
-> +		data->fn = ontrack_snapshot;
->  
->  		data->action = ACTION_SNAPSHOT;
->  	} else {
-> @@ -3773,6 +3797,8 @@ static int action_parse(char *str, struct action_data *data,
->  
->  		if (handler == HANDLER_ONMAX)
->  			data->track_data.check_val = check_track_val_max;
-> +		else if (handler == HANDLER_ONCHANGE)
-> +			data->track_data.check_val = check_track_val_changed;
->  
->  		data->track_data.save_val = save_track_val_local;
->  		data->track_data.get_val = get_track_val_local;
-> @@ -4638,7 +4664,8 @@ static void destroy_actions(struct hist_trigger_data *hist_data)
->  
->  		if (data->handler == HANDLER_ONMATCH)
->  			onmatch_destroy(data);
-> -		else if (data->handler == HANDLER_ONMAX)
-> +		else if (data->handler == HANDLER_ONMAX ||
-> +			 data->handler == HANDLER_ONCHANGE)
->  			track_data_destroy(hist_data, data);
->  		else
->  			kfree(data);
-> @@ -4673,6 +4700,15 @@ static int parse_actions(struct hist_trigger_data *hist_data)
->  				ret = PTR_ERR(data);
->  				break;
->  			}
-> +		} else if (strncmp(str, "onchange(", strlen("onchange(")) == 0) {
-> +			char *action_str = str + strlen("onchange(");
-> +
-> +			data = track_data_parse(hist_data, action_str,
-> +						HANDLER_ONCHANGE);
-> +			if (IS_ERR(data)) {
-> +				ret = PTR_ERR(data);
-> +				break;
-> +			}
->  		} else {
->  			ret = -EINVAL;
->  			break;
-> @@ -4697,7 +4733,8 @@ static int create_actions(struct hist_trigger_data *hist_data)
->  			ret = onmatch_create(hist_data, data);
->  			if (ret)
->  				return ret;
-> -		} else if (data->handler == HANDLER_ONMAX) {
-> +		} else if (data->handler == HANDLER_ONMAX ||
-> +			   data->handler == HANDLER_ONCHANGE) {
->  			ret = track_data_create(hist_data, data);
->  			if (ret)
->  				return ret;
-> @@ -4725,7 +4762,8 @@ static void print_actions(struct seq_file *m,
->  			continue;
->  		}
->  
-> -		if (data->handler == HANDLER_ONMAX)
-> +		if (data->handler == HANDLER_ONMAX ||
-> +		    data->handler == HANDLER_ONCHANGE)
->  			track_data_print(m, hist_data, elt, data);
->  	}
->  }
-> @@ -4757,6 +4795,8 @@ static void print_track_data_spec(struct seq_file *m,
->  {
->  	if (data->handler == HANDLER_ONMAX)
->  		seq_puts(m, ":onmax(");
-> +	else if (data->handler == HANDLER_ONCHANGE)
-> +		seq_puts(m, ":onchange(");
->  	seq_printf(m, "%s", data->track_data.var_str);
->  	seq_printf(m, ").%s(", data->action_name);
->  
-> @@ -4814,7 +4854,8 @@ static bool actions_match(struct hist_trigger_data *hist_data,
->  			if (strcmp(data->match_data.event,
->  				   data_test->match_data.event) != 0)
->  				return false;
-> -		} else if (data->handler == HANDLER_ONMAX) {
-> +		} else if (data->handler == HANDLER_ONMAX ||
-> +			   data->handler == HANDLER_ONCHANGE) {
->  			if (strcmp(data->track_data.var_str,
->  				   data_test->track_data.var_str) != 0)
->  				return false;
-> @@ -4835,7 +4876,8 @@ static void print_actions_spec(struct seq_file *m,
->  
->  		if (data->handler == HANDLER_ONMATCH)
->  			print_onmatch_spec(m, hist_data, data);
-> -		else if (data->handler == HANDLER_ONMAX)
-> +		else if (data->handler == HANDLER_ONMAX ||
-> +			 data->handler == HANDLER_ONCHANGE)
->  			print_track_data_spec(m, hist_data, data);
->  	}
->  }
-> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
-> new file mode 100644
-> index 000000000000..585f77f064f2
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
-> @@ -0,0 +1,43 @@
-> +#!/bin/sh
-> +# description: event trigger - test inter-event histogram trigger onchange action
-> +
-> +do_reset() {
-> +    reset_trigger
-> +    echo > set_event
-> +    clear_trace
+> +	return GENMASK_ULL(PHYS_MASK_SHIFT - 1, x);
 > +}
 > +
-> +fail() { #msg
-> +    do_reset
-> +    echo $1
-> +    exit_fail
+> +static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
+> +{
+> +	return vttbr_baddr_mask(kvm_phys_shift(kvm), kvm_stage2_levels(kvm));
 > +}
 > +
-> +if [ ! -f set_event ]; then
-> +    echo "event tracing is not supported"
-> +    exit_unsupported
-> +fi
-> +
-> +if [ ! -f synthetic_events ]; then
-> +    echo "synthetic event is not supported"
-> +    exit_unsupported
-> +fi
-> +
-> +clear_synthetic_events
-> +reset_tracer
-> +do_reset
-> +
-> +echo "Test onchange action"
-> +
-> +echo 'hist:keys=comm:newprio=prio:onchange($newprio).save(comm,prio) if comm=="ping"' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
-> +
-> +ping localhost -c 3
-> +nice -n 1 ping localhost -c 3
-> +
-> +if ! grep -q "changed:" events/sched/sched_waking/hist; then
-> +    fail "Failed to create onchange action inter-event histogram"
-> +fi
-> +
-> +do_reset
-> +
-> +exit 0
-> -- 
-> 2.14.1
+>  #endif /* __ASSEMBLY__ */
+>  #endif /* __ARM64_KVM_MMU_H__ */
 > 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
