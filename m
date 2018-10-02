@@ -2,116 +2,108 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2492C64EBC
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C99C64EBC
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60A0A20666
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:35:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n0tBlNNF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A0A20666
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B1E6B20878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 22:37:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E6B20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbeJCFUw (ORCPT
+        id S1727454AbeJCFWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 01:20:52 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50207 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726806AbeJCFUw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 01:20:52 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s12-v6so3806701wmc.0;
-        Tue, 02 Oct 2018 15:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7COVNgoUxWRFYJfErKst2gvfTbMi6GzF5VFDBPSnFvo=;
-        b=n0tBlNNFPHJ3tXP984tM81G6RvURGtBl4lRJiNCR12eRD996mApObEDSTCZKeRUKtJ
-         x6HNB7nTE/Zbi4QkESjZHWI5a32IIA3KHI4z7xi+8UGtRN4mAzMuVi9OaDcKg+GyS12O
-         IMk7W3MU+ZrfZbBwjqcn8BxetPu0i9zCLeEUaynPoHaKWEZm1xfA2g6vIzNu1llMOeVK
-         bjRgdaf6muiBR/flll7mNw7wc3ncNG0NZbxQv11UHJRLQYUDGGAMzTAiitBqcRtYW18T
-         WlBQVCh53RSeronwPYJoD1EeltIJrgH6M+1q/sBnL2scYNG+Mt/yEabPojK+doP81FOD
-         +Z9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7COVNgoUxWRFYJfErKst2gvfTbMi6GzF5VFDBPSnFvo=;
-        b=OkvINIt+g2Eytq4XInzAss0po0caXE/XpYv/9h0xFjLc1ZCxbsVgIZIBUKGDcvHVdY
-         Q3+1/WmkeLAMOCkD7gdmoZ7afVrMXRSsr/3l7xmEr31aA1+v9TT7RpcgbqSMJrAjo0Qz
-         8Uwbij2yxpGDyzK0aZ1cX6bEe4W6f0nWc51alW4xMhL+NxvQpT64nHVoVKgIgEe8A8VV
-         PgDmZIOvoOIh+KV3M3Blf0IhGdZO0uWejW0YrzislSLvQYjXj2OlWQUbS3qwCtBNUidj
-         HbIJPe3YrxwqN1hhslz47MtDXCaMAkHIKLxrNCP+nC3ZWd8vPOCrOnSyf6ox7ZrtLvEE
-         VBdg==
-X-Gm-Message-State: ABuFfogmHkscs/w1LV2P9F3EurR6zljlXgb0cAsd5SaC2r93v/a1IHCv
-        2WzOeffR5/vSYsIccs1S9mI=
-X-Google-Smtp-Source: ACcGV63XHQnevco13uYq7wfDhlT8Aw5v6Bz9WgV9aCTMBZCT6rir1vF5Jna6p0aIVVlVHWA4iIhyGw==
-X-Received: by 2002:a1c:be09:: with SMTP id o9-v6mr3208734wmf.109.1538519711932;
-        Tue, 02 Oct 2018 15:35:11 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id b1-v6sm15161426wrt.43.2018.10.02.15.35.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 15:35:11 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] cpufreq / CPPC: Mark acpi_ids as used
-Date:   Tue,  2 Oct 2018 15:34:57 -0700
-Message-Id: <20181002223457.7564-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Wed, 3 Oct 2018 01:22:49 -0400
+Received: from nautica.notk.org ([91.121.71.147]:59029 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726666AbeJCFWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 01:22:49 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id AE877C009; Wed,  3 Oct 2018 00:37:07 +0200 (CEST)
+Date:   Wed, 3 Oct 2018 00:36:52 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Olof Johansson <olof@lxom.net>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        David Miller <davem@davemloft.net>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Paul Burton <paul.burton@mips.com>,
+        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
+        Martin Sebor <msebor@gmail.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Jonathan Corbet <corbet@lwn.net>, Ted Ts'o <tytso@mit.edu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
+        Stefan Agner <stefan@agner.ch>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [GIT PULL linux-next] Add Compiler Attributes tree
+Message-ID: <20181002223652.GA4290@nautica>
+References: <CANiq72=rgT9cPWH64Tf_8gAU09EiH5FvGqFUdOjV=spVbM5m8Q@mail.gmail.com>
+ <20181003071059.02b3fd6f@canb.auug.org.au>
+ <CAKwvOdmt4-jFv6d-ZVUH5OOvXSz38jpuNvQy-jtoSS3xEoh78A@mail.gmail.com>
+ <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+Miguel Ojeda wrote on Wed, Oct 03, 2018:
+> As I have read, -next is supposed to be a vision of what the merge
+> window will look like after merging everything, i.e. ideally -rc1. For
+> that to work for files out-of-tree (like these ones, which are not
+> maintained by a single tree), changes should be allowed to be stacked
+> on each other; otherwise, we cannot handle conflicts :-(
 
-drivers/cpufreq/cppc_cpufreq.c:431:36: warning: variable 'cppc_acpi_ids'
-is not needed and will not be emitted [-Wunneeded-internal-declaration]
-static const struct acpi_device_id cppc_acpi_ids[] = {
-                                   ^
-1 warning generated.
+The rule is the same as with a regular mainline pull; I don't have the
+reference at hand but in some recent-ish pull request Linus said he
+prefers the stable version with the conflict, and optionally you can
+provide a second branch with the conflict resolved for reference, but
+the pull request should be based on something stable even if it has
+conflicts
 
-Mark the definition as used so that Clang understands we don't want this
-warning while not inhibiting Clang's dead code elimination from removing
-the unreferenced internal symbol when moving the data it contains to the
-globally available symbol via MODULE_DEVICE_TABLE.
+If there is a conflict Stefen will resolve it like Linus/Greg would, and
+the resolved bit will be carried over everyday so it's not much more
+work -- exactly like a regular pull request for inclusion in the main
+tree :)
 
-$ nm -S drivers/cpufreq/cppc_cpufreq.o | grep acpi | tail -1
-0000000000000000 0000000000000040 R __mod_acpi__cppc_acpi_ids_device_table
 
-Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/cpufreq/cppc_cpufreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+(Found another mail arguing for stable base[1], but can't find the mail I
+was thinking of)
+ [1] http://lkml.kernel.org/r/CA+55aFw+dwofadgvzrM-UCMSih+f1choCwW+xFFM3aPjoRQX_g@mail.gmail.com
 
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index 30f302149730..fd25c21cee72 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -428,7 +428,7 @@ MODULE_LICENSE("GPL");
- 
- late_initcall(cppc_cpufreq_init);
- 
--static const struct acpi_device_id cppc_acpi_ids[] = {
-+static const struct acpi_device_id cppc_acpi_ids[] __used = {
- 	{ACPI_PROCESSOR_DEVICE_HID, },
- 	{}
- };
 -- 
-2.19.0
-
+Dominique Martinet
