@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC0DC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEA0C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F08CF2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F08CF2083F
+	by mail.kernel.org (Postfix) with ESMTP id 9D3FC206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D3FC206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731240AbeJBUPU (ORCPT
+        id S1731252AbeJBUPW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:15:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34352 "EHLO
+        Tue, 2 Oct 2018 16:15:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34368 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729480AbeJBUPT (ORCPT
+        with ESMTP id S1729480AbeJBUPV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:15:19 -0400
+        Tue, 2 Oct 2018 16:15:21 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6365FC3F;
-        Tue,  2 Oct 2018 13:31:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 247635AA;
+        Tue,  2 Oct 2018 13:31:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        stable@vger.kernel.org, Peter Seiderer <ps.report@gmx.net>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
         Hans Verkuil <hans.verkuil@cisco.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 026/137] media: fsl-viu: fix error handling in viu_of_probe()
-Date:   Tue,  2 Oct 2018 06:23:47 -0700
-Message-Id: <20181002132500.309918427@linuxfoundation.org>
+Subject: [PATCH 4.14 027/137] media: staging/imx: fill vb2_v4l2_buffer field entry
+Date:   Tue,  2 Oct 2018 06:23:48 -0700
+Message-Id: <20181002132500.386329922@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,145 +54,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Peter Seiderer <ps.report@gmx.net>
 
-[ Upstream commit 662a99e145661c2b35155cf375044deae9b79896 ]
+[ Upstream commit a38d4b71cb7a12b65317f4e3d59883a918957719 ]
 
-viu_of_probe() ignores fails in i2c_get_adapter(),
-tries to unlock uninitialized mutex on error path.
+- fixes gstreamer v4l2src warning:
 
-The patch streamlining the error handling in viu_of_probe().
+  0:00:00.716640334  349  0x164f720 WARN  v4l2bufferpool gstv4l2bufferpool.c:1195:gst_v4l2_buffer_pool_dqbuf:<v4l2src0:pool:src> Driver should never set v4l2_buffer.field to ANY
 
-Found by Linux Driver Verification project (linuxtesting.org).
+- fixes v4l2-compliance test failure:
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+  Streaming ioctls:
+          test read/write: OK (Not Supported)
+              Video Capture:
+                  Buffer: 0 Sequence: 0 Field: Any Timestamp: 58.383658s
+                  fail: v4l2-test-buffers.cpp(297): g_field() == V4L2_FIELD_ANY
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+Reviewed-by: Steve Longerbeam <steve_longerbeam@mentor.com>
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/fsl-viu.c |   38 +++++++++++++++++++++++---------------
- 1 file changed, 23 insertions(+), 15 deletions(-)
+ drivers/staging/media/imx/imx-ic-prpencvf.c |    1 +
+ drivers/staging/media/imx/imx-media-csi.c   |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/media/platform/fsl-viu.c
-+++ b/drivers/media/platform/fsl-viu.c
-@@ -1417,7 +1417,7 @@ static int viu_of_probe(struct platform_
- 				     sizeof(struct viu_reg), DRV_NAME)) {
- 		dev_err(&op->dev, "Error while requesting mem region\n");
- 		ret = -EBUSY;
--		goto err;
-+		goto err_irq;
- 	}
+--- a/drivers/staging/media/imx/imx-ic-prpencvf.c
++++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
+@@ -210,6 +210,7 @@ static void prp_vb2_buf_done(struct prp_
  
- 	/* remap registers */
-@@ -1425,7 +1425,7 @@ static int viu_of_probe(struct platform_
- 	if (!viu_regs) {
- 		dev_err(&op->dev, "Can't map register set\n");
- 		ret = -ENOMEM;
--		goto err;
-+		goto err_irq;
- 	}
+ 	done = priv->active_vb2_buf[priv->ipu_buf_num];
+ 	if (done) {
++		done->vbuf.field = vdev->fmt.fmt.pix.field;
+ 		vb = &done->vbuf.vb2_buf;
+ 		vb->timestamp = ktime_get_ns();
+ 		vb2_buffer_done(vb, priv->nfb4eof ?
+--- a/drivers/staging/media/imx/imx-media-csi.c
++++ b/drivers/staging/media/imx/imx-media-csi.c
+@@ -171,6 +171,7 @@ static void csi_vb2_buf_done(struct csi_
  
- 	/* Prepare our private structure */
-@@ -1433,7 +1433,7 @@ static int viu_of_probe(struct platform_
- 	if (!viu_dev) {
- 		dev_err(&op->dev, "Can't allocate private structure\n");
- 		ret = -ENOMEM;
--		goto err;
-+		goto err_irq;
- 	}
- 
- 	viu_dev->vr = viu_regs;
-@@ -1449,16 +1449,21 @@ static int viu_of_probe(struct platform_
- 	ret = v4l2_device_register(viu_dev->dev, &viu_dev->v4l2_dev);
- 	if (ret < 0) {
- 		dev_err(&op->dev, "v4l2_device_register() failed: %d\n", ret);
--		goto err;
-+		goto err_irq;
- 	}
- 
- 	ad = i2c_get_adapter(0);
-+	if (!ad) {
-+		ret = -EFAULT;
-+		dev_err(&op->dev, "couldn't get i2c adapter\n");
-+		goto err_v4l2;
-+	}
- 
- 	v4l2_ctrl_handler_init(&viu_dev->hdl, 5);
- 	if (viu_dev->hdl.error) {
- 		ret = viu_dev->hdl.error;
- 		dev_err(&op->dev, "couldn't register control\n");
--		goto err_vdev;
-+		goto err_i2c;
- 	}
- 	/* This control handler will inherit the control(s) from the
- 	   sub-device(s). */
-@@ -1475,7 +1480,7 @@ static int viu_of_probe(struct platform_
- 	vdev = video_device_alloc();
- 	if (vdev == NULL) {
- 		ret = -ENOMEM;
--		goto err_vdev;
-+		goto err_hdl;
- 	}
- 
- 	*vdev = viu_template;
-@@ -1496,7 +1501,7 @@ static int viu_of_probe(struct platform_
- 	ret = video_register_device(viu_dev->vdev, VFL_TYPE_GRABBER, -1);
- 	if (ret < 0) {
- 		video_device_release(viu_dev->vdev);
--		goto err_vdev;
-+		goto err_unlock;
- 	}
- 
- 	/* enable VIU clock */
-@@ -1504,12 +1509,12 @@ static int viu_of_probe(struct platform_
- 	if (IS_ERR(clk)) {
- 		dev_err(&op->dev, "failed to lookup the clock!\n");
- 		ret = PTR_ERR(clk);
--		goto err_clk;
-+		goto err_vdev;
- 	}
- 	ret = clk_prepare_enable(clk);
- 	if (ret) {
- 		dev_err(&op->dev, "failed to enable the clock!\n");
--		goto err_clk;
-+		goto err_vdev;
- 	}
- 	viu_dev->clk = clk;
- 
-@@ -1520,7 +1525,7 @@ static int viu_of_probe(struct platform_
- 	if (request_irq(viu_dev->irq, viu_intr, 0, "viu", (void *)viu_dev)) {
- 		dev_err(&op->dev, "Request VIU IRQ failed.\n");
- 		ret = -ENODEV;
--		goto err_irq;
-+		goto err_clk;
- 	}
- 
- 	mutex_unlock(&viu_dev->lock);
-@@ -1528,16 +1533,19 @@ static int viu_of_probe(struct platform_
- 	dev_info(&op->dev, "Freescale VIU Video Capture Board\n");
- 	return ret;
- 
--err_irq:
--	clk_disable_unprepare(viu_dev->clk);
- err_clk:
--	video_unregister_device(viu_dev->vdev);
-+	clk_disable_unprepare(viu_dev->clk);
- err_vdev:
--	v4l2_ctrl_handler_free(&viu_dev->hdl);
-+	video_unregister_device(viu_dev->vdev);
-+err_unlock:
- 	mutex_unlock(&viu_dev->lock);
-+err_hdl:
-+	v4l2_ctrl_handler_free(&viu_dev->hdl);
-+err_i2c:
- 	i2c_put_adapter(ad);
-+err_v4l2:
- 	v4l2_device_unregister(&viu_dev->v4l2_dev);
--err:
-+err_irq:
- 	irq_dispose_mapping(viu_irq);
- 	return ret;
- }
+ 	done = priv->active_vb2_buf[priv->ipu_buf_num];
+ 	if (done) {
++		done->vbuf.field = vdev->fmt.fmt.pix.field;
+ 		vb = &done->vbuf.vb2_buf;
+ 		vb->timestamp = ktime_get_ns();
+ 		vb2_buffer_done(vb, priv->nfb4eof ?
 
 
