@@ -2,335 +2,72 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6454CC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB9BC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33C7020666
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:01:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33C7020666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 163032083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 15:02:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ynOy+GQG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 163032083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729411AbeJBVo7 (ORCPT
+        id S1729077AbeJBVq2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 17:44:59 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54703 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728560AbeJBVol (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 17:44:41 -0400
-Received: by mail-wm1-f65.google.com with SMTP id r63-v6so2602660wma.4
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 08:00:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=rffykfS8GnnC5FY6HrPy1m+B8yF9Iyvro/mIhUV67Fk=;
-        b=LkBHTAtcLC8RoMGx930FhH4tBYzsjT95K+JfzVkgIVtBrwCTenHzvDwcNqmAuU/Pmj
-         op5oaB+WfhHaj5W6v1ARCKS9cNiD+MKT2PfLY6ui5GMTmTJWySoKIbn0V9rrnMOV96Uz
-         YR9GFV6GGvPB2FEbrMj9zKHSC4/iWJ31ed1cJOqGilQ8GW8CoVPm8gNTtkvsbZBIJXWf
-         kEW2fBG4JnBzsGU0t/gxuTJv3XGLZAdl0cm1sDG9ce9+VEHOl8iJ4pY/Xl7TEctPFDmp
-         n05bSAuXuRAOqOcAc1UqoN7XDZQH+hPPLMrPK8TwS/Nel6x9XU4LaidDcGaHoletva7z
-         rDXw==
-X-Gm-Message-State: ABuFfojrabA4PjlgRshMnhtPfDY/eL6XIvHoYIhLZu3ZDGG2I845VXxc
-        sXKb6M7bbndWeOZoHfJXLNw=
-X-Google-Smtp-Source: ACcGV63lWXoZ8OOrBe9MPcA/4IoJOYcPZxofXSp0Ou4pVNE+mt6ihwP9AZLU96bk43bnXO9Dfp3Lzw==
-X-Received: by 2002:a1c:2052:: with SMTP id g79-v6mr2246463wmg.42.1538492449309;
-        Tue, 02 Oct 2018 08:00:49 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id r16-v6sm4286132wrv.21.2018.10.02.08.00.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 08:00:48 -0700 (PDT)
-Received: from d104.suse.de (charybdis-ext.suse.de [195.135.221.2])
-        by techadventures.net (Postfix) with ESMTPA id 61D6912561E;
-        Tue,  2 Oct 2018 17:00:47 +0200 (CEST)
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     linux-mm@kvack.org
-Cc:     mhocko@suse.com, dan.j.williams@intel.com, yasu.isimatu@gmail.com,
-        rppt@linux.vnet.ibm.com, malat@debian.org,
-        linux-kernel@vger.kernel.org, pavel.tatashin@microsoft.com,
-        jglisse@redhat.com, Jonathan.Cameron@huawei.com, rafael@kernel.org,
-        david@redhat.com, dave.jiang@intel.com,
-        Oscar Salvador <osalvador@suse.de>
-Subject: [RFC PATCH v3 2/5] mm/memory_hotplug: Create add/del_device_memory functions
-Date:   Tue,  2 Oct 2018 17:00:26 +0200
-Message-Id: <20181002150029.23461-3-osalvador@techadventures.net>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20181002150029.23461-1-osalvador@techadventures.net>
-References: <20181002150029.23461-1-osalvador@techadventures.net>
+        Tue, 2 Oct 2018 17:46:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60068 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727970AbeJBVq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 17:46:28 -0400
+Received: from localhost (unknown [171.76.113.63])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BBA420666;
+        Tue,  2 Oct 2018 15:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538492558;
+        bh=XzMW2mi9ykGzG1GqBVcER0tbk+5fM/RRh3d3vc7FVAI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ynOy+GQG2F2GW8YCvYZPqOTGITbHi9btxemZb7ckI+u8dxXzdohOE8dknGIKk6Odr
+         80nqAW2B3y119m8lPIZ31lAcgQQaWLXQ4qOVeL9MlnFhyhasOSMNO5IRgkFZ+XrTjb
+         q2pxPzSYqKdlmG7zM9EYERgbOq+1T1944igoFtBI=
+Date:   Tue, 2 Oct 2018 20:32:29 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] dmaengine: stm32-dma: check whether length is
+ aligned on FIFO threshold
+Message-ID: <20181002150229.GI19792@vkoul-mobl>
+References: <1536651076-17005-1-git-send-email-pierre-yves.mordret@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536651076-17005-1-git-send-email-pierre-yves.mordret@st.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oscar Salvador <osalvador@suse.de>
+On 11-09-18, 09:31, Pierre-Yves MORDRET wrote:
+> When a period length is not multiple of FIFO some data may be stuck
+> within FIFO.
+> 
+> Burst/FIFO Threshold/Period or buffer length check has to be hardened
+> 
+> In any case DMA will grant any request from client but will degraded
+> any parameters whether awkward.
 
-HMM/devm have a particular handling of memory-hotplug.
-They do not go through the common path, and so, they do not
-call either offline_pages() or online_pages().
+Applied, thanks
 
-The operations they perform are the following ones:
-
-1) Create the linear mapping in case the memory is not private
-2) Initialize the pages and add the sections
-3) Move the pages to ZONE_DEVICE in case the memory is not private.
-
-Due to this particular handling of hot-add/remove memory from HMM/devm,
-I think it would be nice to provide a helper function in order to
-make this cleaner, and not populate other regions with code
-that should belong to memory-hotplug.
-
-The helpers are named:
-
-del_device_memory
-add_device_memory
-
-The idea is that add_device_memory will be in charge of:
-
-a) call either arch_add_memory() or add_pages(), depending on whether
-   we want a linear mapping
-b) online the memory sections that correspond to the pfn range
-c) call move_pfn_range_to_zone() being zone ZONE_DEVICE to
-   expand zone/pgdat spanned pages and initialize its pages
-
-del_device_memory, on the other hand, will be in charge of:
-
-a) offline the memory sections that correspond to the pfn range
-b) call shrink_zone_pgdat_pages(), which shrinks node/zone spanned pages.
-c) call either arch_remove_memory() or __remove_pages(), depending on
-   whether we need to tear down the linear mapping or not
-
-In order to split up better the patches and ease the review,
-this patch will only make a) case work for add_device_memory(),
-and case c) for del_device_memory.
-
-The other cases will be added in the next patch.
-
-Since [1], hmm is using devm_memremap_pages and devm_memremap_pages_release
-instead of its own functions, so these two functions have to only be called
-from devm code.
-
-add_device_memory:
-        - devm_memremap_pages()
-
-del_device_memory:
-        - devm_memremap_pages_release()
-
-Another thing that this patch does is to move init_currently_empty_zone to be
-protected by the span_lock lock.
-
-Zone locking rules states the following:
-
- * Locking rules:
- *
- * zone_start_pfn and spanned_pages are protected by span_seqlock.
- * It is a seqlock because it has to be read outside of zone->lock,
- * and it is done in the main allocator path.  But, it is written
- * quite infrequently.
- *
-
-Since init_currently_empty_zone changes zone_start_pfn,
-it makes sense to have it envolved by its lock.
-
-[1] https://patchwork.kernel.org/patch/10598657/
-
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
----
- include/linux/memory_hotplug.h |  7 ++++++
- kernel/memremap.c              | 48 ++++++++++++++------------------------
- mm/memory_hotplug.c            | 53 +++++++++++++++++++++++++++++++++++++++---
- 3 files changed, 74 insertions(+), 34 deletions(-)
-
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index f9fc35819e65..2f7b8eb4cddb 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -117,6 +117,13 @@ extern int __remove_pages(struct zone *zone, unsigned long start_pfn,
- extern int __add_pages(int nid, unsigned long start_pfn, unsigned long nr_pages,
- 		struct vmem_altmap *altmap, bool want_memblock);
- 
-+#ifdef CONFIG_ZONE_DEVICE
-+extern int del_device_memory(int nid, unsigned long start, unsigned long size,
-+				struct vmem_altmap *altmap, bool private_mem);
-+extern int add_device_memory(int nid, unsigned long start, unsigned long size,
-+				struct vmem_altmap *altmap, bool private_mem);
-+#endif
-+
- #ifndef CONFIG_ARCH_HAS_ADD_PAGES
- static inline int add_pages(int nid, unsigned long start_pfn,
- 		unsigned long nr_pages, struct vmem_altmap *altmap,
-diff --git a/kernel/memremap.c b/kernel/memremap.c
-index fe54bba2d7e2..0f168a75c5b0 100644
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@ -120,8 +120,11 @@ static void devm_memremap_pages_release(void *data)
- 	struct device *dev = pgmap->dev;
- 	struct resource *res = &pgmap->res;
- 	resource_size_t align_start, align_size;
-+	struct vmem_altmap *altmap = pgmap->altmap_valid ?
-+					&pgmap->altmap : NULL;
- 	unsigned long pfn;
- 	int nid;
-+	bool private_mem;
- 
- 	pgmap->kill(pgmap->ref);
- 	for_each_device_pfn(pfn, pgmap)
-@@ -133,17 +136,14 @@ static void devm_memremap_pages_release(void *data)
- 		- align_start;
- 	nid = dev_to_node(dev);
- 
--	mem_hotplug_begin();
--	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
--		pfn = align_start >> PAGE_SHIFT;
--		__remove_pages(page_zone(pfn_to_page(pfn)), pfn,
--				align_size >> PAGE_SHIFT, NULL);
--	} else {
--		arch_remove_memory(nid, align_start, align_size,
--				pgmap->altmap_valid ? &pgmap->altmap : NULL);
-+	if (pgmap->type == MEMORY_DEVICE_PRIVATE)
-+		private_mem = true;
-+	else
-+		private_mem = false;
-+
-+	del_device_memory(nid, align_start, align_size, altmap, private_mem);
-+	if (!private_mem)
- 		kasan_remove_zero_shadow(__va(align_start), align_size);
--	}
--	mem_hotplug_done();
- 
- 	untrack_pfn(NULL, PHYS_PFN(align_start), align_size);
- 	pgmap_radix_release(res, -1);
-@@ -180,6 +180,7 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
- 	pgprot_t pgprot = PAGE_KERNEL;
- 	int error, nid, is_ram;
- 	struct dev_pagemap *conflict_pgmap;
-+	bool private_mem;
- 
- 	if (!pgmap->ref || !pgmap->kill)
- 		return ERR_PTR(-EINVAL);
-@@ -239,8 +240,6 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
- 	if (error)
- 		goto err_pfn_remap;
- 
--	mem_hotplug_begin();
--
- 	/*
- 	 * For device private memory we call add_pages() as we only need to
- 	 * allocate and initialize struct page for the device memory. More-
-@@ -252,29 +251,16 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
- 	 * the CPU, we do want the linear mapping and thus use
- 	 * arch_add_memory().
- 	 */
--	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
--		error = add_pages(nid, align_start >> PAGE_SHIFT,
--				align_size >> PAGE_SHIFT, NULL, false);
--	} else {
-+	if (pgmap->type == MEMORY_DEVICE_PRIVATE)
-+		private_mem = true;
-+	else {
- 		error = kasan_add_zero_shadow(__va(align_start), align_size);
--		if (error) {
--			mem_hotplug_done();
-+		if (error)
- 			goto err_kasan;
--		}
--
--		error = arch_add_memory(nid, align_start, align_size, altmap,
--				false);
--	}
--
--	if (!error) {
--		struct zone *zone;
--
--		zone = &NODE_DATA(nid)->node_zones[ZONE_DEVICE];
--		move_pfn_range_to_zone(zone, align_start >> PAGE_SHIFT,
--				align_size >> PAGE_SHIFT, altmap);
-+		private_mem = false;
- 	}
- 
--	mem_hotplug_done();
-+	error = add_device_memory(nid, align_start, align_size, altmap, private_mem);
- 	if (error)
- 		goto err_add_memory;
- 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 11b7dcf83323..72928808c5e9 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -764,14 +764,13 @@ void __ref move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
- 	int nid = pgdat->node_id;
- 	unsigned long flags;
- 
--	if (zone_is_empty(zone))
--		init_currently_empty_zone(zone, start_pfn, nr_pages);
--
- 	clear_zone_contiguous(zone);
- 
- 	/* TODO Huh pgdat is irqsave while zone is not. It used to be like that before */
- 	pgdat_resize_lock(pgdat, &flags);
- 	zone_span_writelock(zone);
-+	if (zone_is_empty(zone))
-+		init_currently_empty_zone(zone, start_pfn, nr_pages);
- 	resize_zone_range(zone, start_pfn, nr_pages);
- 	zone_span_writeunlock(zone);
- 	resize_pgdat_range(pgdat, start_pfn, nr_pages);
-@@ -1904,4 +1903,52 @@ void remove_memory(int nid, u64 start, u64 size)
- 	unlock_device_hotplug();
- }
- EXPORT_SYMBOL_GPL(remove_memory);
-+
-+#ifdef CONFIG_ZONE_DEVICE
-+int del_device_memory(int nid, unsigned long start, unsigned long size,
-+				struct vmem_altmap *altmap, bool private_mem)
-+{
-+	int ret;
-+	unsigned long start_pfn = PHYS_PFN(start);
-+	unsigned long nr_pages = size >> PAGE_SHIFT;
-+	struct zone *zone = page_zone(pfn_to_page(pfn));
-+
-+	mem_hotplug_begin();
-+
-+	if (private_mem)
-+		ret = __remove_pages(zone, start_pfn, nr_pages, NULL);
-+	else
-+		ret = arch_remove_memory(nid, start, size, altmap);
-+
-+	mem_hotplug_done();
-+
-+	return ret;
-+}
-+#endif
- #endif /* CONFIG_MEMORY_HOTREMOVE */
-+
-+#ifdef CONFIG_ZONE_DEVICE
-+int add_device_memory(int nid, unsigned long start, unsigned long size,
-+				struct vmem_altmap *altmap, bool private_mem)
-+{
-+	int ret;
-+	unsigned long start_pfn = PHYS_PFN(start);
-+	unsigned long nr_pages = size >> PAGE_SHIFT;
-+
-+	mem_hotplug_begin();
-+
-+	if (private_mem)
-+		ret = add_pages(nid, start_pfn, nr_pages, NULL, false);
-+	else
-+		ret = arch_add_memory(nid, start, size, altmap, false);
-+
-+	mem_hotplug_done();
-+
-+	if (!ret) {
-+		struct zone *zone = &NODE_DATA(nid)->node_zones[ZONE_DEVICE];
-+		move_pfn_range_to_zone(zone, start_pfn, nr_pages, altmap);
-+	}
-+
-+	return ret;
-+}
-+#endif
 -- 
-2.13.6
-
+~Vinod
