@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C75C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98768C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ED982089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED982089A
+	by mail.kernel.org (Postfix) with ESMTP id 5A5CB2089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5CB2089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbeJBUKP (ORCPT
+        id S1727970AbeJBUKT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59990 "EHLO
+        Tue, 2 Oct 2018 16:10:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbeJBUKM (ORCPT
+        with ESMTP id S1727815AbeJBUKR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:12 -0400
+        Tue, 2 Oct 2018 16:10:17 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 70E9AB2F;
-        Tue,  2 Oct 2018 13:26:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BAA41C11;
+        Tue,  2 Oct 2018 13:26:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Matt Ranostay <matt.ranostay@konsulko.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 003/228] tsl2550: fix lux1_input error in low light
-Date:   Tue,  2 Oct 2018 06:21:40 -0700
-Message-Id: <20181002132459.260658259@linuxfoundation.org>
+Subject: [PATCH 4.18 033/228] media: exynos4-is: Prevent NULL pointer dereference in __isp_video_try_fmt()
+Date:   Tue,  2 Oct 2018 06:22:10 -0700
+Message-Id: <20181002132501.326265070@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,39 +53,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matt Ranostay <matt.ranostay@konsulko.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-[ Upstream commit ce054546cc2c26891cefa2f284d90d93b52205de ]
+[ Upstream commit 7c1b9a5aeed91bef98988ac0fcf38c8c1f4f9a3a ]
 
-ADC channel 0 photodiode detects both infrared + visible light,
-but ADC channel 1 just detects infrared. However, the latter is a bit
-more sensitive in that range so complete darkness or low light causes
-a error condition in which the chan0 - chan1 is negative that
-results in a -EAGAIN.
+This patch fixes potential NULL pointer dereference as indicated
+by the following static checker warning:
 
-This patch changes the resulting lux1_input sysfs attribute message from
-"Resource temporarily unavailable" to a user-grokable lux value of 0.
+drivers/media/platform/exynos4-is/fimc-isp-video.c:408 isp_video_try_fmt_mplane()
+error: NULL dereference inside function '__isp_video_try_fmt(isp, &f->fmt.pix_mp, (0))()'.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Matt Ranostay <matt.ranostay@konsulko.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 34947b8aebe3: ("[media] exynos4-is: Add the FIMC-IS ISP capture DMA driver")
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/tsl2550.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/exynos4-is/fimc-isp-video.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/misc/tsl2550.c
-+++ b/drivers/misc/tsl2550.c
-@@ -177,7 +177,7 @@ static int tsl2550_calculate_lux(u8 ch0,
- 		} else
- 			lux = 0;
- 	else
--		return -EAGAIN;
-+		return 0;
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -384,12 +384,17 @@ static void __isp_video_try_fmt(struct f
+ 				struct v4l2_pix_format_mplane *pixm,
+ 				const struct fimc_fmt **fmt)
+ {
+-	*fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
++	const struct fimc_fmt *__fmt;
++
++	__fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
++
++	if (fmt)
++		*fmt = __fmt;
  
- 	/* LUX range check */
- 	return lux > TSL2550_MAX_LUX ? TSL2550_MAX_LUX : lux;
+ 	pixm->colorspace = V4L2_COLORSPACE_SRGB;
+ 	pixm->field = V4L2_FIELD_NONE;
+-	pixm->num_planes = (*fmt)->memplanes;
+-	pixm->pixelformat = (*fmt)->fourcc;
++	pixm->num_planes = __fmt->memplanes;
++	pixm->pixelformat = __fmt->fourcc;
+ 	/*
+ 	 * TODO: double check with the docmentation these width/height
+ 	 * constraints are correct.
 
 
