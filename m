@@ -2,134 +2,103 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9659BC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF7FC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B2E12089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:33:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2E5520878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:34:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zIR5ys01"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B2E12089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gXw/Zh8U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2E5520878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbeJBOPI (ORCPT
+        id S1727195AbeJBOQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:15:08 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46802 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeJBOPI (ORCPT
+        Tue, 2 Oct 2018 10:16:17 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36066 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbeJBOQQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:15:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=g30chNroOsCcTq0XM/87mT8sVrXJqZNSEg5Z+ph/xR0=; b=zIR5ys01W6eqWQ/wmZ7NQHs/ms
-        pYiYOoopXA/YfJRWehDK2C0y1GdByyJLti4BEWQg80rCcCn7Xz8KyyLScTHXEnYSy5lIzJLDaEmF0
-        dNjGKQRz0GOhvavJzWO6l0FQMtlioPSteRkTZTyhjyEjvd+Pc+G1wnoz4FwDpwbdIGjsigy++VprC
-        rSZpQPdWzbjt8kLRiJPi4kPSEEMfz/HovM4ptDLd/oxj3SDW/qn8foCXUnZicoBR7t4Akf2cQ/QT+
-        qeg8evgAdE+Rnnq5wWs5OgMfOg6YDB8NL2/i2Mh15A27CaFopB3dnoxAMzi/eVtnR7he5hoo03NCA
-        gD3cMjAw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g7FAv-00039C-Sb; Tue, 02 Oct 2018 07:32:58 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 347CE20255986; Tue,  2 Oct 2018 09:32:54 +0200 (CEST)
-Date:   Tue, 2 Oct 2018 09:32:54 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        will.deacon@arm.com, songliubraving@fb.com, mingo@kernel.org,
-        luto@kernel.org, hpa@zytor.com, npiggin@gmail.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de
-Subject: Re: [PATCH 2/7] x86/mm/tlb: Restructure switch_mm_irqs_off()
-Message-ID: <20181002073254.GP3439@hirez.programming.kicks-ass.net>
-References: <20180926035844.1420-1-riel@surriel.com>
- <20180926035844.1420-3-riel@surriel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180926035844.1420-3-riel@surriel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 2 Oct 2018 10:16:16 -0400
+Received: by mail-wm1-f66.google.com with SMTP id n23-v6so1111208wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 00:34:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=pLII2LRqsWid2S759f1Dke3ghEEXgn8dyYxpyWLSt/o=;
+        b=gXw/Zh8ULL7jJJLgMe3+hxjUUgCWwFzVhWrscGLPfOoRLi9KXlNjHauUPzpHpJislk
+         HAKUotctt36OVdLfw4Kl8IF67lKZJkPDsq554CBWYp+PW9J4rn0LcCLNOGgA+Ni/Q/Qc
+         MXkcmlQsxF0HGeV7TYTDWpDsrDbPBO3tIbQtE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pLII2LRqsWid2S759f1Dke3ghEEXgn8dyYxpyWLSt/o=;
+        b=QIRF3oGKx9/US3WnU6PZZfRyHwNWFRWCV+nEgeKCKIG0JQPDiWn9JX9NPqKDJkeEq6
+         KnAI2CX+MWvSvlEYxwpjwfLgc52d2I9D9S7VgFp3ZiaUuukT3gGvGwXknmDuLfGol0xs
+         a65R+iG/y4EVj2CbqGbVx9TBp9+9PwOXV87c8zDOnx456ryQjNiYTzaz7CrSRZt3i321
+         hniS+aHMzjt6RaGtaKRp/dC6W9wrpuV0fPkm+VXwqRXSOGQZvBTCyOcQ8n5EAA0SUkKL
+         9wc8YB5b/wiDTqov0VTtcMivgrJJOi1+QWvs77t4dkFSomI1tl8y5iTVg9yNWHwpW4eO
+         loxw==
+X-Gm-Message-State: ABuFfojsr1wpcJTvIdBaWqynRuMM+QwkfXKIJx7tUWnmypJE3OoR+bnQ
+        xQtwciMxeSkHRaO/9zvuzMLaWA==
+X-Google-Smtp-Source: ACcGV60JlmTYNUNedE6qh7C7d9r4Cqn1k6Q17ZcqwkJh7xwunjU1or4M/kQSYjBwFkTQ2o3wH27rPQ==
+X-Received: by 2002:a1c:4406:: with SMTP id r6-v6mr1002756wma.4.1538465663860;
+        Tue, 02 Oct 2018 00:34:23 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:99b3:4272:8254:6430])
+        by smtp.gmail.com with ESMTPSA id w2-v6sm16967782wre.46.2018.10.02.00.34.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 02 Oct 2018 00:34:23 -0700 (PDT)
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     peterz@infradead.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     kernellwp@gmail.com, rjw@rjwysocki.net,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH v2] sched/schedutil : optimize computation of utilization in schedutil
+Date:   Tue,  2 Oct 2018 09:34:17 +0200
+Message-Id: <1538465657-20605-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 11:58:39PM -0400, Rik van Riel wrote:
-> Move some code that will be needed for the lazy -> !lazy state
-> transition when a lazy TLB CPU has gotten out of date.
-> 
-> No functional changes, since the if (real_prev == next) branch
-> always returns.
-> 
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> Acked-by: Dave Hansen <dave.hansen@intel.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: efault@gmx.de
-> Cc: kernel-team@fb.com
-> Link: http://lkml.kernel.org/r/20180716190337.26133-4-riel@surriel.com
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> (cherry picked from commit 61d0beb5796ab11f7f3bf38cb2eccc6579aaa70b)
-> ---
->  arch/x86/mm/tlb.c | 64 ++++++++++++++++++++++++-----------------------
->  1 file changed, 33 insertions(+), 31 deletions(-)
-> 
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 54a5870190a6..1224f7fb1311 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -187,6 +187,8 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
->  	u16 prev_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
->  	unsigned cpu = smp_processor_id();
->  	u64 next_tlb_gen;
-> +	bool need_flush;
-> +	u16 new_asid;
->  
->  	/*
->  	 * NB: The scheduler will call us with prev == next when switching
-> @@ -308,44 +310,44 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
->  		/* Let nmi_uaccess_okay() know that we're changing CR3. */
->  		this_cpu_write(cpu_tlbstate.loaded_mm, LOADED_MM_SWITCHING);
->  		barrier();
-> +	}
+Scaling the utilization of CPUs with irq util_avg in schedutil doesn't give
+any benefit and just waste CPU cycles when irq time is not accounted but
+only steal time.
+Skip the irq scaling when irq time is not accounted
 
-Compiling this gives me:
-
-CC      arch/x86/mm/tlb.o
-../arch/x86/mm/tlb.c: In function ‘switch_mm_irqs_off’:
-../arch/x86/mm/tlb.c:315:5: warning: ‘need_flush’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-if (need_flush) {
-^
-../arch/x86/mm/tlb.c:316:45: warning: ‘new_asid’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
-^
-
-Because you shadow need_flush and new_asid in a branch. I need the below
-delta to make it happy again.
-
+Suggested-by: Wanpeng Li <kernellwp@gmail.com>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -254,8 +254,6 @@ void switch_mm_irqs_off(struct mm_struct
+ kernel/sched/cpufreq_schedutil.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 3fffad3..edbc4d2 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -238,6 +238,7 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+ 	if ((util + cpu_util_dl(rq)) >= max)
+ 		return max;
  
- 		return;
- 	} else {
--		u16 new_asid;
--		bool need_flush;
- 		u64 last_ctx_id = this_cpu_read(cpu_tlbstate.last_ctx_id);
++#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+ 	/*
+ 	 * There is still idle time; further improve the number by using the
+ 	 * irq metric. Because IRQ/steal time is hidden from the task clock we
+@@ -249,6 +250,7 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+ 	 */
+ 	util = scale_irq_capacity(util, irq, max);
+ 	util += irq;
++#endif
  
- 		/*
+ 	/*
+ 	 * Bandwidth required by DEADLINE must always be granted while, for
+-- 
+2.7.4
+
