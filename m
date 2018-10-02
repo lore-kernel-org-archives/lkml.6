@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9DCC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0034FC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B38206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B38206B2
+	by mail.kernel.org (Postfix) with ESMTP id B7E43206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7E43206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeJBUJc (ORCPT
+        id S1727617AbeJBUJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:09:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59782 "EHLO
+        Tue, 2 Oct 2018 16:09:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbeJBUJc (ORCPT
+        with ESMTP id S1726810AbeJBUJe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:09:32 -0400
+        Tue, 2 Oct 2018 16:09:34 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9761B266;
-        Tue,  2 Oct 2018 13:26:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E821ABF0;
+        Tue,  2 Oct 2018 13:26:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 012/228] staging: rts5208: fix missing error check on call to rtsx_write_register
-Date:   Tue,  2 Oct 2018 06:21:49 -0700
-Message-Id: <20181002132459.857111955@linuxfoundation.org>
+Subject: [PATCH 4.18 013/228] power: supply: axp288_charger: Fix initial constant_charge_current value
+Date:   Tue,  2 Oct 2018 06:21:50 -0700
+Message-Id: <20181002132459.978790792@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,35 +52,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit c5fae4f4fd28189b1062fb8ef7b21fec37cb8b17 ]
+[ Upstream commit f2a42595f0865886a2d40524b0e9d15600848670 ]
 
-Currently the check on error return from the call to rtsx_write_register
-is checking the error status from the previous call. Fix this by adding
-in the missing assignment of retval.
+We should look at val which contains the value read from the register,
+not ret which is always 0 on a successful read.
 
-Detected by CoverityScan, CID#709877
-
-Fixes: fa590c222fba ("staging: rts5208: add support for rts5208 and rts5288")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Fixes: eac53b3664f59 ("power: supply: axp288_charger: Drop platform_data dependency")
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/rts5208/sd.c |    2 +-
+ drivers/power/supply/axp288_charger.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/rts5208/sd.c
-+++ b/drivers/staging/rts5208/sd.c
-@@ -4996,7 +4996,7 @@ int sd_execute_write_data(struct scsi_cm
- 			goto sd_execute_write_cmd_failed;
- 		}
+--- a/drivers/power/supply/axp288_charger.c
++++ b/drivers/power/supply/axp288_charger.c
+@@ -718,7 +718,7 @@ static int charger_init_hw_regs(struct a
+ 	}
  
--		rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
-+		retval = rtsx_write_register(chip, SD_BYTE_CNT_L, 0xFF, 0x00);
- 		if (retval != STATUS_SUCCESS) {
- 			rtsx_trace(chip);
- 			goto sd_execute_write_cmd_failed;
+ 	/* Determine charge current limit */
+-	cc = (ret & CHRG_CCCV_CC_MASK) >> CHRG_CCCV_CC_BIT_POS;
++	cc = (val & CHRG_CCCV_CC_MASK) >> CHRG_CCCV_CC_BIT_POS;
+ 	cc = (cc * CHRG_CCCV_CC_LSB_RES) + CHRG_CCCV_CC_OFFSET;
+ 	info->cc = cc;
+ 
 
 
