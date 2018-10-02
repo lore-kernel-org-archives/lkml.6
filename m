@@ -2,38 +2,39 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLACK,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B8CC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C3EC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AFB32064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AFB32064D
+	by mail.kernel.org (Postfix) with ESMTP id 15ED02064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15ED02064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732877AbeJBUTQ (ORCPT
+        id S1732891AbeJBUTR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:19:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35870 "EHLO
+        Tue, 2 Oct 2018 16:19:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35880 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732848AbeJBUTQ (ORCPT
+        with ESMTP id S1731920AbeJBUTQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 16:19:16 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF93EC2B;
-        Tue,  2 Oct 2018 13:35:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF366C47;
+        Tue,  2 Oct 2018 13:35:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 25/94] usb: wusbcore: security: cast sizeof to int for comparison
-Date:   Tue,  2 Oct 2018 06:24:39 -0700
-Message-Id: <20181002132502.263311089@linuxfoundation.org>
+Subject: [PATCH 4.9 26/94] powerpc/powernv/ioda2: Reduce upper limit for DMA window size
+Date:   Tue,  2 Oct 2018 06:24:40 -0700
+Message-Id: <20181002132502.326664645@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -51,48 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-[ Upstream commit d3ac5598c5010a8999978ebbcca3b1c6188ca36b ]
+[ Upstream commit d3d4ffaae439981e1e441ebb125aa3588627c5d8 ]
 
-Comparing an int to a size, which is unsigned, causes the int to become
-unsigned, giving the wrong result.  usb_get_descriptor can return a
-negative error code.
+We use PHB in mode1 which uses bit 59 to select a correct DMA window.
+However there is mode2 which uses bits 59:55 and allows up to 32 DMA
+windows per a PE.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Even though documentation does not clearly specify that, it seems that
+the actual hardware does not support bits 59:55 even in mode1, in other
+words we can create a window as big as 1<<58 but DMA simply won't work.
 
-// <smpl>
-@@
-int x;
-expression e,e1;
-identifier f;
-@@
+This reduces the upper limit from 59 to 55 bits to let the userspace know
+about the hardware limits.
 
-*x = f(...);
-... when != x = e1
-    when != if (x < 0 || ...) { ... return ...; }
-*x < sizeof(e)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 7aafac11e3 "powerpc/powernv/ioda2: Gracefully fail if too many TCE levels requested"
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/wusbcore/security.c |    2 +-
+ arch/powerpc/platforms/powernv/pci-ioda.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/wusbcore/security.c
-+++ b/drivers/usb/wusbcore/security.c
-@@ -230,7 +230,7 @@ int wusb_dev_sec_add(struct wusbhc *wusb
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -2623,7 +2623,7 @@ static long pnv_pci_ioda2_table_alloc_pa
+ 	level_shift = entries_shift + 3;
+ 	level_shift = max_t(unsigned, level_shift, PAGE_SHIFT);
  
- 	result = usb_get_descriptor(usb_dev, USB_DT_SECURITY,
- 				    0, secd, sizeof(*secd));
--	if (result < sizeof(*secd)) {
-+	if (result < (int)sizeof(*secd)) {
- 		dev_err(dev, "Can't read security descriptor or "
- 			"not enough data: %d\n", result);
- 		goto out;
+-	if ((level_shift - 3) * levels + page_shift >= 60)
++	if ((level_shift - 3) * levels + page_shift >= 55)
+ 		return -EINVAL;
+ 
+ 	/* Allocate TCE table */
 
 
