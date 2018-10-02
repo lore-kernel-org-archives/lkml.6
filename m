@@ -2,198 +2,130 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CC9C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBB2C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D792C204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:51:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D792C204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 89D49204FD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:51:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VsRKLc9M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89D49204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732489AbeJBUex (ORCPT
+        id S1732305AbeJBUfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:34:53 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39087 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731403AbeJBUew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:34:52 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A1C512090A; Tue,  2 Oct 2018 15:51:21 +0200 (CEST)
-Received: from qschulz (AAubervilliers-681-1-24-95.w90-88.abo.wanadoo.fr [90.88.144.95])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5F557208C2;
-        Tue,  2 Oct 2018 15:51:11 +0200 (CEST)
-Date:   Tue, 2 Oct 2018 15:51:11 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     davem@davemloft.net, f.fainelli@gmail.com,
-        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        Raju Lakkaraju <Raju.Lakkaraju@microsemi.com>,
-        rmk+kernel@armlinux.org.uk
-Subject: Re: [PATCH net-next 1/5] net: phy: mscc: add ethtool statistics
- counters
-Message-ID: <20181002135111.b4ykicst5ipp4o74@qschulz>
-References: <cover.616d15610d44a0e3d463acd8119859f243163ad2.1536913944.git-series.quentin.schulz@bootlin.com>
- <e220fe75053e200f91554b752905d84b14b76eb6.1536913944.git-series.quentin.schulz@bootlin.com>
- <20180914130156.GB14865@lunn.ch>
- <20180914131645.64k4w4h7ir3u5yuk@qschulz>
- <20180914132959.GH14865@lunn.ch>
+        Tue, 2 Oct 2018 16:35:17 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42726 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728741AbeJBUfQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:35:16 -0400
+Received: by mail-qt1-f195.google.com with SMTP id z8-v6so1930607qto.9
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 06:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tWzAXi2t51cz5Y9LEZOu4OxxvTmIahxPicMlKKfQGoo=;
+        b=VsRKLc9M/lQ05Hb79HuuhBXhtT/+9YZOq+qaRgAqx5iFJeof4KorC+UNPH7gpYFvUL
+         lFWpAMMCUnLwYsfsb7gqtiZtAGW6bhTY/0aeqs0a69ikgvWeRu5Xr6GjvTRvIllO9RRa
+         7emM7L/f19xYt9SmOwQwKTyBjdnbnuqYY5/5agLAVkB+VwICuCMX756z3KhRsq7k/Cgt
+         VCFE8M4FYcLnvYmUjlA4Mrv3a7c7DUnpqYC/UZ1LqiRgHv9r28RNXpVgikFexGEZ6THX
+         kI4+bX4UFwJBig+5W2nS7KzaI5ywVMbJVVtfCngatkBjcuxvq32WqFSoyPBopm0CEbH0
+         RRxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tWzAXi2t51cz5Y9LEZOu4OxxvTmIahxPicMlKKfQGoo=;
+        b=JrW5sa5OsxAYCNygu+zWJe1dBIZdEhZaDt8I2JYtRYkIHHxGJTUWP7mw0pu/Jk/0iB
+         BJRicf07KJNZVTwE3YCbY2rs4Z7zyHGiPPfeOjhLjkAekxFC2FFZ+y2bgC1A9F69Z83Y
+         KOcFZpwHl2HmnAOJuJXxZDZX4YTz7N/qu6CaYgd/Z8fbU9qAVZoggac51EKBjj6cfT4M
+         6BSAIoIPiSAayBkBTin6sETpYfTz1VPsaTspncrRFzy9q34MbTYdNWZxtlWLXBGSdg2h
+         4rm7HtxdUGXmV0bTliNKU1v5rid5GDt2o2g1BXcNqcuMuXacjV6tT2Knf274OCumq1Ki
+         p5Ow==
+X-Gm-Message-State: ABuFfojWxVKJ9l86qm2/kBZPA/X0nTCdCQ3ajJNme3eCNm4U66VHG3F/
+        y4mmnH9dEIA04N5/7GoBHg==
+X-Google-Smtp-Source: ACcGV62sZbMs4x6IVaGfrgCCDN/KW/Dhi4JkmLzYyXWo8j1GgxIq/YkFlTxoT6v5Y3iR/cHfe0vIGw==
+X-Received: by 2002:ad4:530b:: with SMTP id y11-v6mr11544785qvr.29.1538488307969;
+        Tue, 02 Oct 2018 06:51:47 -0700 (PDT)
+Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id z14-v6sm7784409qti.83.2018.10.02.06.51.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Oct 2018 06:51:47 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 09:51:41 -0400
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     linux-mm@kvack.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v2 1/3] Revert "x86/e820: put !E820_TYPE_RAM regions into
+ memblock.reserved"
+Message-ID: <20181002135141.3yqedau2nrvwpxmy@gabell>
+References: <20180925153532.6206-1-msys.mizuma@gmail.com>
+ <20180925153532.6206-2-msys.mizuma@gmail.com>
+ <20181002093940.GA98058@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gjv45ertnpioqog3"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180914132959.GH14865@lunn.ch>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20181002093940.GA98058@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 02, 2018 at 11:39:40AM +0200, Ingo Molnar wrote:
+> 
+> * Masayoshi Mizuma <msys.mizuma@gmail.com> wrote:
+> 
+> > From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > 
+> > commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
+> > memblock.reserved") breaks movable_node kernel option because it
+> > changed the memory gap range to reserved memblock. So, the node
+> > is marked as Normal zone even if the SRAT has Hot plaggable affinity.
+> > 
+> >     =====================================================================
+> >     kernel: BIOS-e820: [mem 0x0000180000000000-0x0000180fffffffff] usable
+> >     kernel: BIOS-e820: [mem 0x00001c0000000000-0x00001c0fffffffff] usable
+> >     ...
+> >     kernel: reserved[0x12]#011[0x0000181000000000-0x00001bffffffffff], 0x000003f000000000 bytes flags: 0x0
+> >     ...
+> >     kernel: ACPI: SRAT: Node 2 PXM 6 [mem 0x180000000000-0x1bffffffffff] hotplug
+> >     kernel: ACPI: SRAT: Node 3 PXM 7 [mem 0x1c0000000000-0x1fffffffffff] hotplug
+> >     ...
+> >     kernel: Movable zone start for each node
+> >     kernel:  Node 3: 0x00001c0000000000
+> >     kernel: Early memory node ranges
+> >     ...
+> >     =====================================================================
+> > 
+> > Naoya's v1 patch [*] fixes the original issue and this movable_node
+> > issue doesn't occur.
+> > Let's revert commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM
+> > regions into memblock.reserved") and apply the v1 patch.
+> > 
+> > [*] https://lkml.org/lkml/2018/6/13/27
+> > 
+> > Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> > ---
+> >  arch/x86/kernel/e820.c | 15 +++------------
+> >  1 file changed, 3 insertions(+), 12 deletions(-)
+> 
+> Bad ordering which introduces the bug and thus breaks bisection of related issues: the fixes 
+> should come first, then the revert of the unnecessary or bad fix.
 
---gjv45ertnpioqog3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks. I'll change the order, then resend them.
 
-Hi Russel,
-
-Adding you to the discussion as you're the author and commiter of the
-patch adding support for all the paged access in the phy core.
-
-On Fri, Sep 14, 2018 at 03:29:59PM +0200, Andrew Lunn wrote:
-> > When you change a page, you basically can access only the registers in
-> > this page so if there are two functions requesting different pages at
-> > the same time or registers of different pages, it won't work well
-> > indeed.
-> >=20
-> > > phy_read_page() and phy_write_page() will do the needed locking if
-> > > this is an issue.
-> > >=20
-> >=20
-> > That's awesome! Didn't know it existed. Thanks a ton!
-> >=20
-> > Well, that means I should migrate the whole driver to use
-> > phy_read/write_paged instead of the phy_read/write that is currently in
-> > use.
-> >=20
-> > That's impacting performance though as per phy_read/write_paged we read
-> > the current page, set the desired page, read/write the register, set the
-> > old page back. That's 4 times more operations.
->=20
-> You can use the lower level locking primatives. See m88e1318_set_wol()
-> for example.
->=20
-
-I'm converting the drivers/net/phy/mscc.c driver to make use of the
-paged accesses but I'm hitting something confusing to me.
-
-Firstly, just to be sure, I should use paged accesses only for read/write
-outside of the standard page, right? I'm guessing that because we need
-to be able to use the genphy functions which are using phy_write/read
-and not __phy_write/read, thus we assume the mdio lock is not taken
-(which is taken by phy_select/restore_page) and those functions
-read/write to the standard page.
-
-Secondly, I should refactor the driver to do the following:
-
-oldpage =3D phy_select_page();
-if (oldpage < 0) {
-	phy_restore_page();
-	error_path;
-}
-
-[...]
-/* paged accesses */
-__phy_write/read();
-[...]
-
-phy_restore_page();
-
-I assume this is the correct way to handle paged accesses. Let me know
-if it's not clear enough or wrong. (depending on the function, we could
-of course put phy_restore_page in the error_path).
-
-Now, I saw that phy_restore_page takes the phydev, the oldpage and a ret
-parameters[1].
-
-The (ret >=3D 0 && r < 0) condition of [2] seems counterintuitive to me.
-
-ret being the argument passed to the function and r being the return of
-__phy_write_page (which is phydev->drv->phy_write_page()).
-
-In my understanding of C best practices, any return value equal to zero
-marks a successful call to the function.
-
-That would mean that with:
-if (ret >=3D 0 && r < 0)
-	ret =3D r;
-
-If ret is greather than 0, if __phy_write_page is successful (r =3D=3D 0),
-ret will be > 0, which would result in phy_restore_page not returning 0
-thus signaling (IMO) an error occured in phy_restore_page.
-
-One example is the following:
-oldpage =3D phy_select_page(phydev, new_page);
-[...]
-return phy_restore_page(phydev, oldpage, oldpage);
-
-If phy_select_page is successful, return phy_restore_page(phydev,
-oldpage, oldpage) would return the value of oldpage which can be
-different from 0.
-
-This code could (I think) be working with `if (ret >=3D 0 && r <=3D 0)` (or
-even `if (ret >=3D 0)`).
-
-Now to have the same behaviour, I need to do:
-oldpage =3D phy_select_page(phydev, new_page);
-[...]
-return phy_restore_page(phydev, oldpage, oldpage > 0 ? 0 : oldpage);
-
-Another example is:
-oldpage =3D phy_select_page(phydev, new_page);
-ret =3D `any function returning a value > 0 in case of success and < 0 in
-case of failure`().
-return phy_restore_page(phydev, oldpage, ret);
-
-Is there any reason for not wanting to overwrite the ret value when
-__phy_write_page is successful in phy_restore_page?
-
-I'd say that it could be more readable without the ternary condition in
-the argument of phy_restore_page.
-
-Let me know your thoughts on this.
-
-Thanks,
-Quentin
-
-[1] https://elixir.bootlin.com/linux/latest/source/drivers/net/phy/phy-core=
-=2Ec#L444
-[2] https://elixir.bootlin.com/linux/latest/source/drivers/net/phy/phy-core=
-=2Ec#L454
-
---gjv45ertnpioqog3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAluzd84ACgkQhLiadT7g
-8aMhSw/+LHoScr++3UaWA0oOi6zP7sL6wRR9AtpxiTKNSuGIr319Gk1tKffk3vJZ
-nogBZcOqzPl8uqJ9cqMiVesrPjVJ8ADEJzk3N/A76/RQyKcjnSBvR+MAg0bssSvE
-n8Eb7p+FGFEbqhvQW61K1xo9o1JdYIGAy8t2o20xtTG8wVO+5B1t0zIFQw1znA1r
-lTD0Ha4XzAS2DpPlflpFZCXr5M5d3P+I1RT2OObLEXkZRNdg2Hu3758FFDVAzrxD
-VN0RDrPKOzelQdgLW8r+A71uTaSk+bSMKJdEBHJAzIvl8PSeaxyTVxn+NGQzoF9V
-fmCBFcALI6onQCOpH/1J/iX+vdDmAqtL0Wvw1mXu/ZLh9+1vZJqbzYP3/smKjcyo
-hNI12wNCQgMst9SwdMtWV5glXBXsDiTk7n5CCQbPTtu0el9CguND5kk9xBa9ukle
-GKZO5X+FQSVBHUgXTVbculxQ5ZEHbkXiLdqkHyuiImpWG/UZHNH+/g5Sh36pw9Vn
-jiwf4lbThcvdCiuDq4SP0zqrHcI0skd4dMouLxQGlAbxcu5Un4oYm4d4yHnAUHv8
-7cN1Ch6FTQ4Cd6+bFButj+/lYv9iTAqMW+kVLlHb3l53Zlc14Tx8ZrUWDDEd988B
-o45KXsRkkL5ZWITh93Yg7Bidqj8CuOMzDVUxJriY2cfzjralEv8=
-=D27P
------END PGP SIGNATURE-----
-
---gjv45ertnpioqog3--
+- Masa
