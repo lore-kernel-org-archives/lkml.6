@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B46EAC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FE2C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 794E32064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:38:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 794E32064D
+	by mail.kernel.org (Postfix) with ESMTP id A25732064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:38:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A25732064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732465AbeJBUWJ (ORCPT
+        id S1732654AbeJBUWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:22:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36520 "EHLO
+        Tue, 2 Oct 2018 16:22:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36506 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731241AbeJBUUX (ORCPT
+        with ESMTP id S2387539AbeJBUUV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:23 -0400
+        Tue, 2 Oct 2018 16:20:21 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CBAB99D9;
-        Tue,  2 Oct 2018 13:36:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 750A09D9;
+        Tue,  2 Oct 2018 13:36:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, Tomer Tayar <Tomer.Tayar@cavium.com>,
+        Ariel Elior <Ariel.Elior@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 83/94] thermal: of-thermal: disable passive polling when thermal zone is disabled
-Date:   Tue,  2 Oct 2018 06:25:37 -0700
-Message-Id: <20181002132506.271668546@linuxfoundation.org>
+Subject: [PATCH 4.9 82/94] qed: Wait for MCP halt and resume commands to take place
+Date:   Tue,  2 Oct 2018 06:25:36 -0700
+Message-Id: <20181002132506.207327269@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -52,43 +53,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Tomer Tayar <Tomer.Tayar@cavium.com>
 
-[ Upstream commit 152395fd03d4ce1e535a75cdbf58105e50587611 ]
+[ Upstream commit 76271809f49056f079e202bf6513d17b0d6dd34d ]
 
-When thermal zone is in passive mode, disabling its mode from
-sysfs is NOT taking effect at all, it is still polling the
-temperature of the disabled thermal zone and handling all thermal
-trips, it makes user confused. The disabling operation should
-disable the thermal zone behavior completely, for both active and
-passive mode, this patch clears the passive_delay when thermal
-zone is disabled and restores it when it is enabled.
+Successive iterations of halting and resuming the management chip (MCP)
+might fail, since currently the driver doesn't wait for these operations to
+actually take place.
+This patch prevents the driver from moving forward before the operations
+are reflected in the state register.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Tomer Tayar <Tomer.Tayar@cavium.com>
+Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/thermal/of-thermal.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_mcp.c      |   46 ++++++++++++++++++++-----
+ drivers/net/ethernet/qlogic/qed/qed_reg_addr.h |    1 
+ 2 files changed, 39 insertions(+), 8 deletions(-)
 
---- a/drivers/thermal/of-thermal.c
-+++ b/drivers/thermal/of-thermal.c
-@@ -278,10 +278,13 @@ static int of_thermal_set_mode(struct th
+--- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+@@ -1230,31 +1230,61 @@ qed_mcp_send_drv_version(struct qed_hwfn
+ 	return rc;
+ }
  
- 	mutex_lock(&tz->lock);
++/* A maximal 100 msec waiting time for the MCP to halt */
++#define QED_MCP_HALT_SLEEP_MS		10
++#define QED_MCP_HALT_MAX_RETRIES	10
++
+ int qed_mcp_halt(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ {
+-	u32 resp = 0, param = 0;
++	u32 resp = 0, param = 0, cpu_state, cnt = 0;
+ 	int rc;
  
--	if (mode == THERMAL_DEVICE_ENABLED)
-+	if (mode == THERMAL_DEVICE_ENABLED) {
- 		tz->polling_delay = data->polling_delay;
--	else
-+		tz->passive_delay = data->passive_delay;
-+	} else {
- 		tz->polling_delay = 0;
-+		tz->passive_delay = 0;
+ 	rc = qed_mcp_cmd(p_hwfn, p_ptt, DRV_MSG_CODE_MCP_HALT, 0, &resp,
+ 			 &param);
+-	if (rc)
++	if (rc) {
+ 		DP_ERR(p_hwfn, "MCP response failure, aborting\n");
++		return rc;
 +	}
  
- 	mutex_unlock(&tz->lock);
+-	return rc;
++	do {
++		msleep(QED_MCP_HALT_SLEEP_MS);
++		cpu_state = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_STATE);
++		if (cpu_state & MCP_REG_CPU_STATE_SOFT_HALTED)
++			break;
++	} while (++cnt < QED_MCP_HALT_MAX_RETRIES);
++
++	if (cnt == QED_MCP_HALT_MAX_RETRIES) {
++		DP_NOTICE(p_hwfn,
++			  "Failed to halt the MCP [CPU_MODE = 0x%08x, CPU_STATE = 0x%08x]\n",
++			  qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE), cpu_state);
++		return -EBUSY;
++	}
++
++	return 0;
+ }
  
++#define QED_MCP_RESUME_SLEEP_MS	10
++
+ int qed_mcp_resume(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ {
+-	u32 value, cpu_mode;
++	u32 cpu_mode, cpu_state;
+ 
+ 	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_STATE, 0xffffffff);
+ 
+-	value = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE);
+-	value &= ~MCP_REG_CPU_MODE_SOFT_HALT;
+-	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_MODE, value);
+ 	cpu_mode = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_MODE);
++	cpu_mode &= ~MCP_REG_CPU_MODE_SOFT_HALT;
++	qed_wr(p_hwfn, p_ptt, MCP_REG_CPU_MODE, cpu_mode);
++	msleep(QED_MCP_RESUME_SLEEP_MS);
++	cpu_state = qed_rd(p_hwfn, p_ptt, MCP_REG_CPU_STATE);
++
++	if (cpu_state & MCP_REG_CPU_STATE_SOFT_HALTED) {
++		DP_NOTICE(p_hwfn,
++			  "Failed to resume the MCP [CPU_MODE = 0x%08x, CPU_STATE = 0x%08x]\n",
++			  cpu_mode, cpu_state);
++		return -EBUSY;
++	}
+ 
+-	return (cpu_mode & MCP_REG_CPU_MODE_SOFT_HALT) ? -EAGAIN : 0;
++	return 0;
+ }
+ 
+ int qed_mcp_set_led(struct qed_hwfn *p_hwfn,
+--- a/drivers/net/ethernet/qlogic/qed/qed_reg_addr.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_reg_addr.h
+@@ -510,6 +510,7 @@
+ 	0
+ #define MCP_REG_CPU_STATE \
+ 	0xe05004UL
++#define MCP_REG_CPU_STATE_SOFT_HALTED	(0x1UL << 10)
+ #define MCP_REG_CPU_EVENT_MASK \
+ 	0xe05008UL
+ #define PGLUE_B_REG_PF_BAR0_SIZE \
 
 
