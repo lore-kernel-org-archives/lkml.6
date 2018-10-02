@@ -2,179 +2,81 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4B7C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED72C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EE692083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:34:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hVKPWYCQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE692083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id A4C802064E
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 16:35:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4C802064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728529AbeJBXSl (ORCPT
+        id S1728567AbeJBXTr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 19:18:41 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:34921 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728298AbeJBXSk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 19:18:40 -0400
-Received: by mail-yw1-f66.google.com with SMTP id y76-v6so1018349ywd.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 09:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=79+/1lnmQzDOwK5HjNBMwdoNS2u8Fqf6+NB+3YIyrKs=;
-        b=hVKPWYCQf4YO1PzD8ic2zHzeBnAZmrxWciQlXzQW9jE5qrO3YTGORvqcIbtlfPrwRU
-         0EE/v1d4SErKRtJ0y7iTO1Wrhw72FZqW796mUgEejUuDXsrRvUfD0wCEY8/YobRlevwi
-         eJePZNVgA5yHLLC/7+1X1HX0Ri4k/wqhPkfTI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=79+/1lnmQzDOwK5HjNBMwdoNS2u8Fqf6+NB+3YIyrKs=;
-        b=sOtypr+/58s4pXNm8lmlBcWYoLrgh8OwMfeD+XYdvcSPvi53gEYrds0kZ3alwMSGyt
-         VJNMVeKDgAVCW0wjKCU/DIKmbW4pavN84Kuve6BkWUq0k3+PK1r1V6hnRDsn9IHqtqeP
-         ibiRlAPhUDvC3UDaCTh3Xma1tdHsDhXXomOMnfj1Bp7Aj0wtb98UP5CQVDcBZswWVzl8
-         jp+Q+M9NEyGZPnSQFnVUYOXkF6lxhkCH7HS/wYiTI7GEUYGkPxZ7wcBWkkmo8rhfvj0q
-         VLS1UmlaQaSbZPqKgSd83aVLLELbm3rCz8l+X4lBdwNmMKdt4OZ5ONvXYafEuyDZ9ohO
-         /wWg==
-X-Gm-Message-State: ABuFfojBzIK9Cakgg1V3bdSsyVYdz1y39HNcP8qekHGBxaPo+wiN80Nb
-        EtyOmMwocrN6yxXEAT3ICzAyZ7UXENs=
-X-Google-Smtp-Source: ACcGV614pVFWhCBr4YA5CLYH0EXXAa8X8/vQ8i1LJx64DKMAX3pvYvuA75ZBMZYGjaOT0rEMPTJOiQ==
-X-Received: by 2002:a81:3c57:: with SMTP id j84-v6mr324232ywa.448.1538498065205;
-        Tue, 02 Oct 2018 09:34:25 -0700 (PDT)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
-        by smtp.gmail.com with ESMTPSA id p185-v6sm3267637ywc.14.2018.10.02.09.34.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 09:34:23 -0700 (PDT)
-Received: by mail-yb1-f179.google.com with SMTP id o63-v6so1054868yba.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 09:34:23 -0700 (PDT)
-X-Received: by 2002:a25:dd82:: with SMTP id u124-v6mr8866057ybg.171.1538498062769;
- Tue, 02 Oct 2018 09:34:22 -0700 (PDT)
+        Tue, 2 Oct 2018 19:19:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41462 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726906AbeJBXTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 19:19:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A9827A9;
+        Tue,  2 Oct 2018 09:35:33 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6648B3F5D3;
+        Tue,  2 Oct 2018 09:35:30 -0700 (PDT)
+Subject: Re: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        lorenzo.pieralisi@arm.com
+Cc:     mark.rutland@arm.com, vkilari@codeaurora.org,
+        neil.m.leeder@gmail.com, pabba@codeaurora.org,
+        john.garry@huawei.com, will.deacon@arm.com,
+        rruigrok@codeaurora.org, linuxarm@huawei.com,
+        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        guohanjun@huawei.com, linux-kernel@vger.kernel.org
+References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
+ <20180921150803.25444-3-shameerali.kolothum.thodi@huawei.com>
+ <ecc2877c-146c-d70f-efd7-306fe704d55f@arm.com>
+ <1dc554eb-7ed2-45b3-109f-8cec286b4525@arm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <1cdc3c01-e8f9-fd60-da88-cc49d22fe0be@arm.com>
+Date:   Tue, 2 Oct 2018 17:35:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Tue, 2 Oct 2018 09:34:22 -0700 (PDT)
-In-Reply-To: <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov>
-References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-24-keescook@chromium.org>
- <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
- <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
- <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 2 Oct 2018 09:34:22 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLLg-anBAPmfDzeQA--HYzYAGaRamUiJS8HTt+wMFp_qA@mail.gmail.com>
-Message-ID: <CAGXu5jLLg-anBAPmfDzeQA--HYzYAGaRamUiJS8HTt+wMFp_qA@mail.gmail.com>
-Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1dc554eb-7ed2-45b3-109f-8cec286b4525@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 7:58 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 10/02/2018 10:44 AM, Kees Cook wrote:
->>
->> On Tue, Oct 2, 2018 at 6:42 AM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
->>>
->>> On 10/02/2018 08:12 AM, Paul Moore wrote:
->>>>
->>>>
->>>> On Mon, Oct 1, 2018 at 9:04 PM Kees Cook <keescook@chromium.org> wrote:
->>>>>
->>>>>
->>>>> Since LSM enabling is now centralized with CONFIG_LSM_ENABLE and
->>>>> "lsm.enable=...", this removes the LSM-specific enabling logic from
->>>>> SELinux.
->>>>>
->>>>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>>>> ---
->>>>>    .../admin-guide/kernel-parameters.txt         |  9 ------
->>>>>    security/selinux/Kconfig                      | 29
->>>>> -------------------
->>>>>    security/selinux/hooks.c                      | 15 +---------
->>>>>    3 files changed, 1 insertion(+), 52 deletions(-)
->>>>>
->>>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt
->>>>> b/Documentation/admin-guide/kernel-parameters.txt
->>>>> index cf963febebb0..0d10ab3d020e 100644
->>>>> --- a/Documentation/admin-guide/kernel-parameters.txt
->>>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
->>>>> @@ -4045,15 +4045,6 @@
->>>>>                           loaded. An invalid security module name will
->>>>> be
->>>>> treated
->>>>>                           as if no module has been chosen.
->>>>>
->>>>> -       selinux=        [SELINUX] Disable or enable SELinux at boot
->>>>> time.
->>>>> -                       Format: { "0" | "1" }
->>>>> -                       See security/selinux/Kconfig help text.
->>>>> -                       0 -- disable.
->>>>> -                       1 -- enable.
->>>>> -                       Default value is set via kernel config option.
->>>>> -                       If enabled at boot time, /selinux/disable can
->>>>> be
->>>>> used
->>>>> -                       later to disable prior to initial policy load.
->>>>
->>>>
->>>>
->>>> No comments yet on the rest of the patchset, but the subject line of
->>>> this patch caught my eye and I wanted to comment quickly on this one
->>>> ...
->>>>
->>>> Not a fan unfortunately.
->>>>
->>>> Much like the SELinux bits under /proc/self/attr, this is a user
->>>> visible thing which has made its way into a lot of docs, scripts, and
->>>> minds; I believe removing it would be a big mistake.
->>>
->>>
->>>
->>> Yes, we can't suddenly break existing systems that had selinux=0 in their
->>> grub config.  We have to retain the support.
->>
->>
->> Is it okay to only support selinux=0 (instead of also selinux=1)?
->
->
-> For Fedora/RHEL kernels, selinux=1 would be redundant since it is the
-> default.  However, in other distros where SELinux is not the default, I
-> think they have documented selinux=1 as the way to enable SELinux.  So users
-> may be relying on that as well. I don't think we can safely drop support for
-> either one.  Sorry.
+On 02/10/18 17:19, Jean-Philippe Brucker wrote:
+> On 02/10/2018 15:11, Jean-Philippe Brucker wrote:
+>>> +	cfgr = readl_relaxed(smmu_pmu->reg_base + SMMU_PMCG_CFGR);
+> 
+> Something I missed previously: when SMMU_PMCG_CFGR.SID_FILTER_TYPE is 1,
+> filtering for all counters is configured by SMMU_PMCG_SMR0 and
+> SMMU_PMCG_EVTYPER0 (instead of having one separate filter per counter).
 
-Okay. How would you like to resolve this? Should SELinux remain
-"enable special", and AppArmor is okay to remove the LSM-specific
-enabling?
+Oh, I hadn't even noticed it had that mode as well...
 
-The trouble is with handling CONFIG_LSM_ENABLE vs lsm.enable=... boot
-param vs the SELinux bootparam. I.e. CONFIG_LSM_ENABLE is redundant to
-SECURITY_SELINUX_BOOTPARAM_VALUE, and selinux= is redundant to
-lsm.enable=. Specifically, how should the kernel distinguish between
-the four settings?
+> In that mode with your patch, if the user applies a filter to the first
+> event in the list passed to perf, it will be applied to all events.
+> Filter applied on any subsequent event will be ignored. Could we make
+> this more explicit? Maybe in the probe print that the PMCG is
+> global-filtering, and when attempting to apply a filter to something
+> else than EVCNTR0, return an error?
 
--Kees
+FWIW filtering is always per-counter-group on the SMMUv2 PMU, and it's 
+actually pretty straightforward to cope with - pmu->add() just needs to 
+reject the event if one with an incompatible configuration is already 
+scheduled, so perf core handles it much like having more events than 
+counters, by rotating the mutually-exclusive sets.
 
--- 
-Kees Cook
-Pixel Security
+Robin.
