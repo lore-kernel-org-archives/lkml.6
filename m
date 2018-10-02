@@ -6,181 +6,136 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB73DC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E60DC64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B79C82083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:20:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B79C82083F
+	by mail.kernel.org (Postfix) with ESMTP id 0A66F20684
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:21:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A66F20684
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbeJCDFv (ORCPT
+        id S1727505AbeJCDFr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 23:05:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40440 "EHLO mx1.redhat.com"
+        Tue, 2 Oct 2018 23:05:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:64411 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727644AbeJCDFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 23:05:50 -0400
+        id S1726194AbeJCDFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 23:05:46 -0400
 Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C197AA53CE;
-        Tue,  2 Oct 2018 20:20:44 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id AB70330014DC;
+        Tue,  2 Oct 2018 20:20:41 +0000 (UTC)
 Received: from llong.com (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2214A308BDA0;
-        Tue,  2 Oct 2018 20:20:44 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 24C94308BDA0;
+        Tue,  2 Oct 2018 20:20:41 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         Will Deacon <will.deacon@arm.com>
 Cc:     linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: [PATCH v2 5/5] locking/lockdep: Call lock_release() after releasing the lock
-Date:   Tue,  2 Oct 2018 16:19:20 -0400
-Message-Id: <1538511560-10090-6-git-send-email-longman@redhat.com>
+Subject: [PATCH v2 1/5] locking/lockdep: Remove add_chain_cache_classes()
+Date:   Tue,  2 Oct 2018 16:19:16 -0400
+Message-Id: <1538511560-10090-2-git-send-email-longman@redhat.com>
 In-Reply-To: <1538511560-10090-1-git-send-email-longman@redhat.com>
 References: <1538511560-10090-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 02 Oct 2018 20:20:44 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 02 Oct 2018 20:20:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, lock_acquire() is called before acquiring the lock and
-lock_release() is called before the releasing the lock. As a result,
-the execution time of lock_release() is added to the lock hold time
-reducing locking throughput, especially for spinlocks and rwlocks which
-tend to have a much shorter lock hold time.
-
-As lock_release() is not going to update any shared data that needs
-protection from the lock, we don't actually need to call it before
-releasing the lock. So the lock_release() calls are now postponed to
-after releasing the lock for spinlocks and rwlocks.
+The inline function add_chain_cache_classes() is defined, but has no
+caller. Just remove it.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- include/linux/rwlock_api_smp.h   | 16 ++++++++--------
- include/linux/spinlock_api_smp.h |  8 ++++----
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ kernel/locking/lockdep.c | 70 ----------------------------------------
+ 1 file changed, 70 deletions(-)
 
-diff --git a/include/linux/rwlock_api_smp.h b/include/linux/rwlock_api_smp.h
-index 86ebb4bf9c6e..b026940a0962 100644
---- a/include/linux/rwlock_api_smp.h
-+++ b/include/linux/rwlock_api_smp.h
-@@ -215,63 +215,63 @@ static inline void __raw_write_lock(rwlock_t *lock)
- 
- static inline void __raw_write_unlock(rwlock_t *lock)
- {
--	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_write_unlock(lock);
-+	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	preempt_enable();
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index dd13f865ad40..8f9de7cd11ab 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -2147,76 +2147,6 @@ static int check_no_collision(struct task_struct *curr,
+ 	return 1;
  }
  
- static inline void __raw_read_unlock(rwlock_t *lock)
- {
--	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_read_unlock(lock);
-+	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	preempt_enable();
- }
- 
- static inline void
- __raw_read_unlock_irqrestore(rwlock_t *lock, unsigned long flags)
- {
--	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_read_unlock(lock);
-+	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	local_irq_restore(flags);
- 	preempt_enable();
- }
- 
- static inline void __raw_read_unlock_irq(rwlock_t *lock)
- {
--	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_read_unlock(lock);
-+	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	local_irq_enable();
- 	preempt_enable();
- }
- 
- static inline void __raw_read_unlock_bh(rwlock_t *lock)
- {
--	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_read_unlock(lock);
-+	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	__local_bh_enable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
- }
- 
- static inline void __raw_write_unlock_irqrestore(rwlock_t *lock,
- 					     unsigned long flags)
- {
--	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_write_unlock(lock);
-+	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	local_irq_restore(flags);
- 	preempt_enable();
- }
- 
- static inline void __raw_write_unlock_irq(rwlock_t *lock)
- {
--	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_write_unlock(lock);
-+	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	local_irq_enable();
- 	preempt_enable();
- }
- 
- static inline void __raw_write_unlock_bh(rwlock_t *lock)
- {
--	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_write_unlock(lock);
-+	rwlock_release(&lock->dep_map, 1, _RET_IP_);
- 	__local_bh_enable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
- }
- 
-diff --git a/include/linux/spinlock_api_smp.h b/include/linux/spinlock_api_smp.h
-index 42dfab89e740..fcb84df0678b 100644
---- a/include/linux/spinlock_api_smp.h
-+++ b/include/linux/spinlock_api_smp.h
-@@ -147,32 +147,32 @@ static inline void __raw_spin_lock(raw_spinlock_t *lock)
- 
- static inline void __raw_spin_unlock(raw_spinlock_t *lock)
- {
--	spin_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_spin_unlock(lock);
-+	spin_release(&lock->dep_map, 1, _RET_IP_);
- 	preempt_enable();
- }
- 
- static inline void __raw_spin_unlock_irqrestore(raw_spinlock_t *lock,
- 					    unsigned long flags)
- {
--	spin_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_spin_unlock(lock);
-+	spin_release(&lock->dep_map, 1, _RET_IP_);
- 	local_irq_restore(flags);
- 	preempt_enable();
- }
- 
- static inline void __raw_spin_unlock_irq(raw_spinlock_t *lock)
- {
--	spin_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_spin_unlock(lock);
-+	spin_release(&lock->dep_map, 1, _RET_IP_);
- 	local_irq_enable();
- 	preempt_enable();
- }
- 
- static inline void __raw_spin_unlock_bh(raw_spinlock_t *lock)
- {
--	spin_release(&lock->dep_map, 1, _RET_IP_);
- 	do_raw_spin_unlock(lock);
-+	spin_release(&lock->dep_map, 1, _RET_IP_);
- 	__local_bh_enable_ip(_RET_IP_, SOFTIRQ_LOCK_OFFSET);
- }
- 
+-/*
+- * This is for building a chain between just two different classes,
+- * instead of adding a new hlock upon current, which is done by
+- * add_chain_cache().
+- *
+- * This can be called in any context with two classes, while
+- * add_chain_cache() must be done within the lock owener's context
+- * since it uses hlock which might be racy in another context.
+- */
+-static inline int add_chain_cache_classes(unsigned int prev,
+-					  unsigned int next,
+-					  unsigned int irq_context,
+-					  u64 chain_key)
+-{
+-	struct hlist_head *hash_head = chainhashentry(chain_key);
+-	struct lock_chain *chain;
+-
+-	/*
+-	 * Allocate a new chain entry from the static array, and add
+-	 * it to the hash:
+-	 */
+-
+-	/*
+-	 * We might need to take the graph lock, ensure we've got IRQs
+-	 * disabled to make this an IRQ-safe lock.. for recursion reasons
+-	 * lockdep won't complain about its own locking errors.
+-	 */
+-	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
+-		return 0;
+-
+-	if (unlikely(nr_lock_chains >= MAX_LOCKDEP_CHAINS)) {
+-		if (!debug_locks_off_graph_unlock())
+-			return 0;
+-
+-		print_lockdep_off("BUG: MAX_LOCKDEP_CHAINS too low!");
+-		dump_stack();
+-		return 0;
+-	}
+-
+-	chain = lock_chains + nr_lock_chains++;
+-	chain->chain_key = chain_key;
+-	chain->irq_context = irq_context;
+-	chain->depth = 2;
+-	if (likely(nr_chain_hlocks + chain->depth <= MAX_LOCKDEP_CHAIN_HLOCKS)) {
+-		chain->base = nr_chain_hlocks;
+-		nr_chain_hlocks += chain->depth;
+-		chain_hlocks[chain->base] = prev - 1;
+-		chain_hlocks[chain->base + 1] = next -1;
+-	}
+-#ifdef CONFIG_DEBUG_LOCKDEP
+-	/*
+-	 * Important for check_no_collision().
+-	 */
+-	else {
+-		if (!debug_locks_off_graph_unlock())
+-			return 0;
+-
+-		print_lockdep_off("BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!");
+-		dump_stack();
+-		return 0;
+-	}
+-#endif
+-
+-	hlist_add_head_rcu(&chain->entry, hash_head);
+-	debug_atomic_inc(chain_lookup_misses);
+-	inc_chains();
+-
+-	return 1;
+-}
+-
+ /*
+  * Adds a dependency chain into chain hashtable. And must be called with
+  * graph_lock held.
 -- 
 2.18.0
 
