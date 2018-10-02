@@ -2,74 +2,103 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C47C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9936AC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A35852064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:02:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="yi3sl9nc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A35852064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C08A2089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:03:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C08A2089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730475AbeJBUqX (ORCPT
+        id S1730465AbeJBUqq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:46:23 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:44757 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728811AbeJBUqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:46:22 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c36e9f43
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 2 Oct 2018 14:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=xXGtl1BYH3b3OZvgTyR3YLsG7gk=; b=yi3sl9
-        ncQAnqF5IPPXKzDyiQhWDJmZfgR+4jU3bfggjxLA7IZ0OaOAJtljTED8T1iaGjOP
-        xNBST08gEFUc61gTflV6X9YjWPdKy8acT83Y6ntK+1aqqNhAof9OE+1I8C8SQS+n
-        KbAJur45fbH9wIorunMqnctcZxKLxASw/vm1e6v8qd+8B9OaOvbLEIr58lRHayx/
-        9BUg9YyqIqQ0eMSxn0lflYkwA8TxgYEAHEXUgX1+Y70wdtmu3VdBHpXDjJnjFH4Y
-        64YS871/RUXON7Be4l/HYC+DW4HfjD4j6NyQFhif4QRmRjrHxcCznPS7VH0c6+c4
-        faanAEPkZsoY9rrQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b6064f8f (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 2 Oct 2018 14:02:45 +0000 (UTC)
-Received: by mail-ot1-f50.google.com with SMTP id c20-v6so1963685otl.6
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 07:02:48 -0700 (PDT)
-X-Gm-Message-State: ABuFfoiMIvhoGHTOgwXEMqkSzx8q8c96RyAyVH5SCCD+erOs+9P0Rp9x
-        DFQ5nqgOytmmVCSl65gqyeOWmXA0OygCDpzCOHk=
-X-Google-Smtp-Source: ACcGV60RyCBfs3wUFSAs7eVRODZUUhGE0W8wRnpXNc55n115KID2MsdhWYLWXyrDvln/KbvMyTtkGMVKCc25qsD+n/U=
-X-Received: by 2002:a9d:48ac:: with SMTP id d41-v6mr9007309otf.144.1538488963292;
- Tue, 02 Oct 2018 07:02:43 -0700 (PDT)
+        Tue, 2 Oct 2018 16:46:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33208 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728626AbeJBUNE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:13:04 -0400
+Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 35D6CBF0;
+        Tue,  2 Oct 2018 13:29:41 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Toshi Kani <toshi.kani@hpe.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Theodore Tso" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Subject: [PATCH 4.18 158/228] ext2, dax: set ext2_dax_aops for dax files
+Date:   Tue,  2 Oct 2018 06:24:15 -0700
+Message-Id: <20181002132509.607306230@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
+References: <20181002132459.032960735@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <CAKv+Gu8NXyfNAzk4Fe=J0QHEEV-txbRAoEcQmjG-6PgCyW5SZg@mail.gmail.com>
- <20181002132026.14931-1-Jason@zx2c4.com> <CAKv+Gu_mwu+TFrbRPqDZ8i5csSqS26a534yzJ_wAQL_Y+W6F7w@mail.gmail.com>
- <CAK8P3a06uOvGcju7MppqqhsR5dwPKUBawrDbGYNXURqxGsZOKw@mail.gmail.com>
-In-Reply-To: <CAK8P3a06uOvGcju7MppqqhsR5dwPKUBawrDbGYNXURqxGsZOKw@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 2 Oct 2018 16:02:31 +0200
-X-Gmail-Original-Message-ID: <CAHmME9ozKiYvBz2zGoxKBZuYLcqqsDDddsvcUEeEWtMwCcaGuQ@mail.gmail.com>
-Message-ID: <CAHmME9ozKiYvBz2zGoxKBZuYLcqqsDDddsvcUEeEWtMwCcaGuQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: makefile: use ARMv3M mode for RiscPC
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>, arm@kernel.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 3:54 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> Please add this to Russell's patch tracker for inclusion at
-> http://www.arm.linux.org.uk/developer/patches/
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-Wild! And done:
-http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=8801/1
+------------------
+
+From: Toshi Kani <toshi.kani@hpe.com>
+
+commit 9e796c9db93b4840d1b00e550eea26db7cb741e2 upstream.
+
+Sync syscall to DAX file needs to flush processor cache, but it
+currently does not flush to existing DAX files.  This is because
+'ext2_da_aops' is set to address_space_operations of existing DAX
+files, instead of 'ext2_dax_aops', since S_DAX flag is set after
+ext2_set_aops() in the open path.
+
+Similar to ext4, change ext2_iget() to initialize i_flags before
+ext2_set_aops().
+
+Fixes: fb094c90748f ("ext2, dax: introduce ext2_dax_aops")
+Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+Suggested-by: Jan Kara <jack@suse.cz>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ fs/ext2/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -1448,6 +1448,7 @@ struct inode *ext2_iget (struct super_bl
+ 	}
+ 	inode->i_blocks = le32_to_cpu(raw_inode->i_blocks);
+ 	ei->i_flags = le32_to_cpu(raw_inode->i_flags);
++	ext2_set_inode_flags(inode);
+ 	ei->i_faddr = le32_to_cpu(raw_inode->i_faddr);
+ 	ei->i_frag_no = raw_inode->i_frag;
+ 	ei->i_frag_size = raw_inode->i_fsize;
+@@ -1517,7 +1518,6 @@ struct inode *ext2_iget (struct super_bl
+ 			   new_decode_dev(le32_to_cpu(raw_inode->i_block[1])));
+ 	}
+ 	brelse (bh);
+-	ext2_set_inode_flags(inode);
+ 	unlock_new_inode(inode);
+ 	return inode;
+ 	
+
+
