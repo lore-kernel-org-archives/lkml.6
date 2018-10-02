@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8A5C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B92F7C64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49F83206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49F83206B2
+	by mail.kernel.org (Postfix) with ESMTP id 8C866206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C866206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730661AbeJBUOM (ORCPT
+        id S1730678AbeJBUON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33738 "EHLO
+        Tue, 2 Oct 2018 16:14:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33804 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730643AbeJBUOL (ORCPT
+        with ESMTP id S1730643AbeJBUON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:11 -0400
+        Tue, 2 Oct 2018 16:14:13 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93612C2A;
-        Tue,  2 Oct 2018 13:30:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4E25C3F;
+        Tue,  2 Oct 2018 13:30:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Anemone <peter.anemone@gmail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.18 166/228] ACPI / hotplug / PCI: Dont scan for non-hotplug bridges if slot is not bridge
-Date:   Tue,  2 Oct 2018 06:24:23 -0700
-Message-Id: <20181002132509.971550298@linuxfoundation.org>
+        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.18 167/228] RDMA/uverbs: Atomically flush and mark closed the comp event queue
+Date:   Tue,  2 Oct 2018 06:24:24 -0700
+Message-Id: <20181002132510.031356150@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,96 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Steve Wise <swise@opengridcomputing.com>
 
-commit f188b99f0b2d33794b4af8a225f95d1e968c0a3f upstream.
+commit 67e3816842fe6414d629c7515b955952ec40c7d7 upstream.
 
-HP 6730b laptop has an ethernet NIC connected to one of the PCIe root
-ports.  The root ports themselves are native PCIe hotplug capable.  Now,
-during boot after PCI devices are scanned the BIOS triggers ACPI bus check
-directly to the NIC:
+Currently a uverbs completion event queue is flushed of events in
+ib_uverbs_comp_event_close() with the queue spinlock held and then
+released.  Yet setting ev_queue->is_closed is not set until later in
+uverbs_hot_unplug_completion_event_file().
 
-  ACPI: \_SB_.PCI0.RP06.NIC_: Bus check in hotplug_event()
+In between the time ib_uverbs_comp_event_close() releases the lock and
+uverbs_hot_unplug_completion_event_file() acquires the lock, a completion
+event can arrive and be inserted into the event queue by
+ib_uverbs_comp_handler().
 
-It is not clear why it is sending bus check but regardless the ACPI hotplug
-notify handler calls enable_slot() directly (instead of going through
-acpiphp_check_bridge() as there is no bridge), which ends up handling
-special case for non-hotplug bridges with native PCIe hotplug.  This
-results a crash of some kind but the reporter only sees black screen so it
-is hard to figure out the exact spot and what actually happens.  Based on
-a few fix proposals it was tracked to crash somewhere inside
-pci_assign_unassigned_bridge_resources().
+This can cause a "double add" list_add warning or crash depending on the
+kernel configuration, or a memory leak because the event is never dequeued
+since the queue is already closed down.
 
-In any case we should not really be in that special branch at all because
-the ACPI notify happened to a slot that is not a PCI bridge (it is just a
-regular PCI device).
+So add setting ev_queue->is_closed = 1 to ib_uverbs_comp_event_close().
 
-Fix this so that we only go to that special branch if we are calling
-enable_slot() for a bridge (e.g., the ACPI notification was for the
-bridge).
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=201127
-Fixes: 84c8b58ed3ad ("ACPI / hotplug / PCI: Don't scan bridges managed by native hotplug")
-Reported-by: Peter Anemone <peter.anemone@gmail.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-CC: stable@vger.kernel.org	# v4.18+
+Cc: stable@vger.kernel.org
+Fixes: 1e7710f3f656 ("IB/core: Change completion channel to use the reworked objects schema")
+Signed-off-by: Steve Wise <swise@opengridcomputing.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/acpiphp_glue.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/infiniband/core/uverbs_main.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/pci/hotplug/acpiphp_glue.c
-+++ b/drivers/pci/hotplug/acpiphp_glue.c
-@@ -457,17 +457,18 @@ static void acpiphp_native_scan_bridge(s
- /**
-  * enable_slot - enable, configure a slot
-  * @slot: slot to be enabled
-+ * @bridge: true if enable is for the whole bridge (not a single slot)
-  *
-  * This function should be called per *physical slot*,
-  * not per each slot object in ACPI namespace.
-  */
--static void enable_slot(struct acpiphp_slot *slot)
-+static void enable_slot(struct acpiphp_slot *slot, bool bridge)
- {
- 	struct pci_dev *dev;
- 	struct pci_bus *bus = slot->bus;
- 	struct acpiphp_func *func;
+--- a/drivers/infiniband/core/uverbs_main.c
++++ b/drivers/infiniband/core/uverbs_main.c
+@@ -429,6 +429,7 @@ static int ib_uverbs_comp_event_close(st
+ 			list_del(&entry->obj_list);
+ 		kfree(entry);
+ 	}
++	file->ev_queue.is_closed = 1;
+ 	spin_unlock_irq(&file->ev_queue.lock);
  
--	if (bus->self && hotplug_is_native(bus->self)) {
-+	if (bridge && bus->self && hotplug_is_native(bus->self)) {
- 		/*
- 		 * If native hotplug is used, it will take care of hotplug
- 		 * slot management and resource allocation for hotplug
-@@ -701,7 +702,7 @@ static void acpiphp_check_bridge(struct
- 					trim_stale_devices(dev);
- 
- 			/* configure all functions */
--			enable_slot(slot);
-+			enable_slot(slot, true);
- 		} else {
- 			disable_slot(slot);
- 		}
-@@ -785,7 +786,7 @@ static void hotplug_event(u32 type, stru
- 		if (bridge)
- 			acpiphp_check_bridge(bridge);
- 		else if (!(slot->flags & SLOT_IS_GOING_AWAY))
--			enable_slot(slot);
-+			enable_slot(slot, false);
- 
- 		break;
- 
-@@ -973,7 +974,7 @@ int acpiphp_enable_slot(struct acpiphp_s
- 
- 	/* configure all functions */
- 	if (!(slot->flags & SLOT_ENABLED))
--		enable_slot(slot);
-+		enable_slot(slot, false);
- 
- 	pci_unlock_rescan_remove();
- 	return 0;
+ 	uverbs_close_fd(filp);
 
 
