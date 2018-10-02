@@ -6,50 +6,52 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D9AC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2086C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:11:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DAA620878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:10:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DAA620878
+	by mail.kernel.org (Postfix) with ESMTP id 99F8D20878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:11:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99F8D20878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbeJBQxI (ORCPT
+        id S1727505AbeJBQx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 12:53:08 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50011 "EHLO
+        Tue, 2 Oct 2018 12:53:58 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54767 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbeJBQxI (ORCPT
+        with ESMTP id S1727128AbeJBQx4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 12:53:08 -0400
+        Tue, 2 Oct 2018 12:53:56 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w92AA6401916140
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w92AAcrN1916203
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 2 Oct 2018 03:10:06 -0700
+        Tue, 2 Oct 2018 03:10:38 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w92AA5Tg1916137;
-        Tue, 2 Oct 2018 03:10:05 -0700
-Date:   Tue, 2 Oct 2018 03:10:05 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w92AAbWC1916199;
+        Tue, 2 Oct 2018 03:10:37 -0700
+Date:   Tue, 2 Oct 2018 03:10:37 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-7c5314b88da6d5af98239786772a1c44cc5eb67d@git.kernel.org>
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        jolsa@redhat.com, tglx@linutronix.de, vincent.weaver@maine.edu,
-        eranian@google.com, hpa@zytor.com, mingo@kernel.org,
-        torvalds@linux-foundation.org, alexander.shishkin@linux.intel.com,
-        acme@redhat.com, kan.liang@linux.intel.com
-Reply-To: hpa@zytor.com, eranian@google.com, vincent.weaver@maine.edu,
-          acme@redhat.com, kan.liang@linux.intel.com,
-          alexander.shishkin@linux.intel.com,
-          torvalds@linux-foundation.org, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, peterz@infradead.org,
-          tglx@linutronix.de, jolsa@redhat.com
-In-Reply-To: <1533712328-2834-3-git-send-email-kan.liang@linux.intel.com>
-References: <1533712328-2834-3-git-send-email-kan.liang@linux.intel.com>
+From:   "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
+Message-ID: <tip-c4f790f244070dbab486805276ba4d1f87a057af@git.kernel.org>
+Cc:     vincent.weaver@maine.edu, eranian@google.com, tglx@linutronix.de,
+        paulmck@linux.vnet.ibm.com, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, acme@redhat.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        will.deacon@arm.com
+Reply-To: tglx@linutronix.de, eranian@google.com, vincent.weaver@maine.edu,
+          linux-kernel@vger.kernel.org, acme@redhat.com,
+          paulmck@linux.vnet.ibm.com, jolsa@redhat.com,
+          alexander.shishkin@linux.intel.com, hpa@zytor.com,
+          mingo@kernel.org, will.deacon@arm.com, peterz@infradead.org,
+          torvalds@linux-foundation.org
+In-Reply-To: <20180926182920.27644-1-paulmck@linux.ibm.com>
+References: <20180926182920.27644-1-paulmck@linux.ibm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86/intel: Add quirk for Goldmont Plus
-Git-Commit-ID: 7c5314b88da6d5af98239786772a1c44cc5eb67d
+Subject: [tip:locking/core] tools/memory-model: Add litmus-test naming
+ scheme
+Git-Commit-ID: c4f790f244070dbab486805276ba4d1f87a057af
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,24 +65,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7c5314b88da6d5af98239786772a1c44cc5eb67d
-Gitweb:     https://git.kernel.org/tip/7c5314b88da6d5af98239786772a1c44cc5eb67d
-Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Wed, 8 Aug 2018 00:12:08 -0700
+Commit-ID:  c4f790f244070dbab486805276ba4d1f87a057af
+Gitweb:     https://git.kernel.org/tip/c4f790f244070dbab486805276ba4d1f87a057af
+Author:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+AuthorDate: Wed, 26 Sep 2018 11:29:16 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 2 Oct 2018 10:14:33 +0200
+CommitDate: Tue, 2 Oct 2018 10:28:00 +0200
 
-perf/x86/intel: Add quirk for Goldmont Plus
+tools/memory-model: Add litmus-test naming scheme
 
-A ucode patch is needed for Goldmont Plus while counter freezing feature
-is enabled. Otherwise, there will be some issues, e.g. PMI flood with
-some events.
+This commit documents the scheme used to generate the names for the
+litmus tests.
 
-Add a quirk to check microcode version. If the system starts with the
-wrong ucode, leave the counter-freezing feature permanently disabled.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+[ paulmck: Apply feedback from Andrea Parri and Will Deacon. ]
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
@@ -89,63 +88,141 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: acme@kernel.org
-Link: http://lkml.kernel.org/r/1533712328-2834-3-git-send-email-kan.liang@linux.intel.com
+Cc: akiyks@gmail.com
+Cc: boqun.feng@gmail.com
+Cc: dhowells@redhat.com
+Cc: j.alglave@ucl.ac.uk
+Cc: linux-arch@vger.kernel.org
+Cc: luc.maranget@inria.fr
+Cc: npiggin@gmail.com
+Cc: parri.andrea@gmail.com
+Cc: stern@rowland.harvard.edu
+Link: http://lkml.kernel.org/r/20180926182920.27644-1-paulmck@linux.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/intel/core.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ tools/memory-model/litmus-tests/README | 104 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 102 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index f17cf6c3ec6f..ab01ef9ddd77 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3839,6 +3839,40 @@ static __init void intel_nehalem_quirk(void)
- 	}
- }
+diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
+index 4581ec2d3c57..5ee08f129094 100644
+--- a/tools/memory-model/litmus-tests/README
++++ b/tools/memory-model/litmus-tests/README
+@@ -1,4 +1,6 @@
+-This directory contains the following litmus tests:
++============
++LITMUS TESTS
++============
  
-+static bool intel_glp_counter_freezing_broken(int cpu)
-+{
-+	u32 rev = UINT_MAX; /* default to broken for unknown stepping */
+ CoRR+poonceonce+Once.litmus
+ 	Test of read-read coherence, that is, whether or not two
+@@ -36,7 +38,7 @@ IRIW+poonceonces+OnceOnce.litmus
+ ISA2+pooncelock+pooncelock+pombonce.litmus
+ 	Tests whether the ordering provided by a lock-protected S
+ 	litmus test is visible to an external process whose accesses are
+-	separated by smp_mb().	This addition of an external process to
++	separated by smp_mb().  This addition of an external process to
+ 	S is otherwise known as ISA2.
+ 
+ ISA2+poonceonces.litmus
+@@ -151,3 +153,101 @@ Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
+ A great many more litmus tests are available here:
+ 
+ 	https://github.com/paulmckrcu/litmus
 +
-+	switch (cpu_data(cpu).x86_stepping) {
-+	case 1:
-+		rev = 0x28;
-+		break;
-+	case 8:
-+		rev = 0x6;
-+		break;
++==================
++LITMUS TEST NAMING
++==================
++
++Litmus tests are usually named based on their contents, which means that
++looking at the name tells you what the litmus test does.  The naming
++scheme covers litmus tests having a single cycle that passes through
++each process exactly once, so litmus tests not fitting this description
++are named on an ad-hoc basis.
++
++The structure of a litmus-test name is the litmus-test class, a plus
++sign ("+"), and one string for each process, separated by plus signs.
++The end of the name is ".litmus".
++
++The litmus-test classes may be found in the infamous test6.pdf:
++https://www.cl.cam.ac.uk/~pes20/ppc-supplemental/test6.pdf
++Each class defines the pattern of accesses and of the variables accessed.
++For example, if the one process writes to a pair of variables, and
++the other process reads from these same variables, the corresponding
++litmus-test class is "MP" (message passing), which may be found on the
++left-hand end of the second row of tests on page one of test6.pdf.
++
++The strings used to identify the actions carried out by each process are
++complex due to a desire to have short(er) names.  Thus, there is a tool to
++generate these strings from a given litmus test's actions.  For example,
++consider the processes from SB+rfionceonce-poonceonces.litmus:
++
++	P0(int *x, int *y)
++	{
++		int r1;
++		int r2;
++
++		WRITE_ONCE(*x, 1);
++		r1 = READ_ONCE(*x);
++		r2 = READ_ONCE(*y);
 +	}
 +
-+	return (cpu_data(cpu).microcode < rev);
-+}
++	P1(int *x, int *y)
++	{
++		int r3;
++		int r4;
 +
-+static __init void intel_glp_counter_freezing_quirk(void)
-+{
-+	/* Check if it's already disabled */
-+	if (disable_counter_freezing)
-+		return;
-+
-+	/*
-+	 * If the system starts with the wrong ucode, leave the
-+	 * counter-freezing feature permanently disabled.
-+	 */
-+	if (intel_glp_counter_freezing_broken(raw_smp_processor_id())) {
-+		pr_info("PMU counter freezing disabled due to CPU errata,"
-+			"please upgrade microcode\n");
-+		x86_pmu.counter_freezing = false;
-+		x86_pmu.handle_irq = intel_pmu_handle_irq;
++		WRITE_ONCE(*y, 1);
++		r3 = READ_ONCE(*y);
++		r4 = READ_ONCE(*x);
 +	}
-+}
 +
- /*
-  * enable software workaround for errata:
-  * SNB: BJ122
-@@ -4188,6 +4222,7 @@ __init int intel_pmu_init(void)
- 		break;
- 
- 	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
-+		x86_add_quirk(intel_glp_counter_freezing_quirk);
- 		memcpy(hw_cache_event_ids, glp_hw_cache_event_ids,
- 		       sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, glp_hw_cache_extra_regs,
++The next step is to construct a space-separated list of descriptors,
++interleaving descriptions of the relation between a pair of consecutive
++accesses with descriptions of the second access in the pair.
++
++P0()'s WRITE_ONCE() is read by its first READ_ONCE(), which is a
++reads-from link (rf) and internal to the P0() process.  This is
++"rfi", which is an abbreviation for "reads-from internal".  Because
++some of the tools string these abbreviations together with space
++characters separating processes, the first character is capitalized,
++resulting in "Rfi".
++
++P0()'s second access is a READ_ONCE(), as opposed to (for example)
++smp_load_acquire(), so next is "Once".  Thus far, we have "Rfi Once".
++
++P0()'s third access is also a READ_ONCE(), but to y rather than x.
++This is related to P0()'s second access by program order ("po"),
++to a different variable ("d"), and both accesses are reads ("RR").
++The resulting descriptor is "PodRR".  Because P0()'s third access is
++READ_ONCE(), we add another "Once" descriptor.
++
++A from-read ("fre") relation links P0()'s third to P1()'s first
++access, and the resulting descriptor is "Fre".  P1()'s first access is
++WRITE_ONCE(), which as before gives the descriptor "Once".  The string
++thus far is thus "Rfi Once PodRR Once Fre Once".
++
++The remainder of P1() is similar to P0(), which means we add
++"Rfi Once PodRR Once".  Another fre links P1()'s last access to
++P0()'s first access, which is WRITE_ONCE(), so we add "Fre Once".
++The full string is thus:
++
++	Rfi Once PodRR Once Fre Once Rfi Once PodRR Once Fre Once
++
++This string can be given to the "norm7" and "classify7" tools to
++produce the name:
++
++	$ norm7 -bell linux-kernel.bell \
++		Rfi Once PodRR Once Fre Once Rfi Once PodRR Once Fre Once | \
++	  sed -e 's/:.*//g'
++	SB+rfionceonce-poonceonces
++
++Adding the ".litmus" suffix: SB+rfionceonce-poonceonces.litmus
++
++The descriptors that describe connections between consecutive accesses
++within the cycle through a given litmus test can be provided by the herd
++tool (Rfi, Po, Fre, and so on) or by the linux-kernel.bell file (Once,
++Release, Acquire, and so on).
++
++To see the full list of descriptors, execute the following command:
++
++	$ diyone7 -bell linux-kernel.bell -show edges
