@@ -2,243 +2,91 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7266CC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD5BC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 384DD20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:20:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384DD20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9957120645
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:21:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="dxmP8ZE4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9957120645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbeJBPC3 (ORCPT
+        id S1727536AbeJBPDb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 11:02:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58208 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbeJBPC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:02:29 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id ADEB774D;
-        Tue,  2 Oct 2018 08:20:25 +0000 (UTC)
-Received: from [10.36.116.105] (ovpn-116-105.ams2.redhat.com [10.36.116.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C08C319742;
-        Tue,  2 Oct 2018 08:20:22 +0000 (UTC)
-Subject: Re: [PATCH v6 16/18] kvm: arm64: Set a limit on the IPA size
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        marc.zyngier@arm.com, cdall@kernel.org, will.deacon@arm.com,
-        dave.martin@arm.com, peter.maydell@linaro.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, julien.grall@arm.com,
-        linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>
-References: <20180926163258.20218-1-suzuki.poulose@arm.com>
- <20180926163258.20218-17-suzuki.poulose@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <b8c4ee4e-b9f2-c1ac-cea3-f11106c2aafd@redhat.com>
-Date:   Tue, 2 Oct 2018 10:20:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 2 Oct 2018 11:03:31 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39394 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727351AbeJBPDb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 11:03:31 -0400
+Received: by mail-lf1-f68.google.com with SMTP id w21-v6so760466lff.6
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 01:21:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wE+BvKsJkLdkPJp/ba16f33yHNu6JUmQduE9ppUGyhY=;
+        b=dxmP8ZE4uF2YUhdOazJfBI26guKgvVohSgUIkX2JbgVkzSJDrlo9RxVPZQQ4hznBpO
+         mGOv0ZvFkE6tHTOEtfJ3nCjy17BEJkSK9FsOKae/I4Hr4rH875JCjoorCTelhhBfQSjs
+         iSQBKXXaOgeE3OJEtA5Z5hNKrHSLpwHEWSmlM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wE+BvKsJkLdkPJp/ba16f33yHNu6JUmQduE9ppUGyhY=;
+        b=V/mxEwV3TcG4zsIJydShAdcfgEQZXfFGDaY6by2rEPf1dnr8TqNGx9g+m9YnkL7swe
+         5RnC0VUH8z7V5CbAbTTiISlXtUyNnkpBvKCacYYfbXhQ0MY3l7scZgELBtyjKdk9eNxo
+         NQYj1JDAVSNOlu+8uR6+5ZEsONUf9+2AygEPtGSmQDZ3VlJXSBP11MHYyzExe2Wb2IDc
+         xrhQdCOTO5mO77PG5zBq1TSl797IgNswFMwCNpnqpDN59PNiDKfu+lgTEPPvezByFkvv
+         a5YT2/DeLeZ5Z3Y5qYSyUm8AEjbFjSkXHcZRnOj7i4K3aJfNB4SqrdqjUxwf2u/DyV+h
+         vTPQ==
+X-Gm-Message-State: ABuFfohNc81uIr7NvQiMVMa7Clgu8HdlhKPmwcMT+m9pnoEbDHxG9gpQ
+        ctSOTqjmD38QgRKwDnifURQ6jMcwQprc3wPd
+X-Google-Smtp-Source: ACcGV60m5IINNqD1hHWQGuOZcg0yV8X9TlA9AUTDSuiqcMOE3k/C9YRJ19ls5eqjkLBlDjYjT3WkZQ==
+X-Received: by 2002:a19:7409:: with SMTP id v9-v6mr1821371lfe.147.1538468486537;
+        Tue, 02 Oct 2018 01:21:26 -0700 (PDT)
+Received: from [172.16.11.40] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id l14-v6sm3172529ljh.91.2018.10.02.01.21.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 01:21:25 -0700 (PDT)
+Subject: Re: [PATCH 21/22] x86: jump_label: introduce
+ ASM_STATIC_KEY_INIT_{TRUE,FALSE}
+To:     Jason Baron <jbaron@akamai.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
+References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
+ <20180919220444.23190-22-linux@rasmusvillemoes.dk>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <395d8874-40c7-3703-48a8-2a7ee232f49b@rasmusvillemoes.dk>
+Date:   Tue, 2 Oct 2018 10:21:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180926163258.20218-17-suzuki.poulose@arm.com>
+In-Reply-To: <20180919220444.23190-22-linux@rasmusvillemoes.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 02 Oct 2018 08:20:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2018-09-20 00:04, Rasmus Villemoes wrote:
+> These will be useful when defining the contents of (a struct containing)
+> a static key in inline assembly.
 
-On 9/26/18 6:32 PM, Suzuki K Poulose wrote:
-> So far we have restricted the IPA size of the VM to the default
-> value (40bits). Now that we can manage the IPA size per VM and
-> support dynamic stage2 page tables, we can allow VMs to have
-> larger IPA. This patch introduces a the maximum IPA size
-> supported on the host.
-nit: a the -> computes the max IPA size that can be supported for any VM ?
+May I politely ask someone in the x86 camp to comment on patches
+21,22,23 in this series? If the memory savings is deemed
+not-worth-the-asm-complexity, a number of preparatory patches become
+pointless, and I'd like to figure out which ones I should ask Andrew to
+pick up.
 
-Besides
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-
-Thanks
-
-Eric
-
- This is decided by the following factors :
-> 
->  1) Maximum PARange supported by the CPUs - This can be inferred
->     from the system wide safe value.
->  2) Maximum PA size supported by the host kernel (48 vs 52)
->  3) Number of levels in the host page table (as we base our
->     stage2 tables on the host table helpers).
-> 
-> Since the stage2 page table code is dependent on the stage1
-> page table, we always ensure that :
-> 
->   Number of Levels at Stage1 >= Number of Levels at Stage2
-> 
-> So we limit the IPA to make sure that the above condition
-> is satisfied. This will affect the following combinations
-> of VA_BITS and IPA for different page sizes.
-> 
->   Host configuration | Unsupported IPA ranges
->   39bit VA, 4K       | [44, 48]
->   36bit VA, 16K      | [41, 48]
->   42bit VA, 64K      | [47, 52]
-> 
-> Supporting the above combinations need independent stage2
-> page table manipulation code, which would need substantial
-> changes. We could purse the solution independently and
-> switch the page table code once we have it ready.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
-> Changes since v5:
->  - Don't raise the IPA limit to 40bits
->  - Print the KVM IPA limit, WARN if the limit is less than the
->    default size. Drop the per-CPU PARange check
->  - If the limit was reduced due to kernel configuration,
->    report the limiting factor. i.e, kernel virtual vs physical
->    address limit.
-> Changes since V2:
->  - Restrict the IPA size to limit the number of page table
->    levels in stage2 to that of stage1 or less.
-> ---
->  arch/arm/include/asm/kvm_mmu.h    |  2 ++
->  arch/arm64/include/asm/kvm_host.h | 12 +++------
->  arch/arm64/kvm/reset.c            | 43 +++++++++++++++++++++++++++++++
->  virt/kvm/arm/arm.c                |  2 ++
->  4 files changed, 50 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-> index 12ae5fbbcf01..5ad1a54f98dc 100644
-> --- a/arch/arm/include/asm/kvm_mmu.h
-> +++ b/arch/arm/include/asm/kvm_mmu.h
-> @@ -358,6 +358,8 @@ static inline int hyp_map_aux_data(void)
->  
->  #define kvm_phys_to_vttbr(addr)		(addr)
->  
-> +static inline void kvm_set_ipa_limit(void) {}
-> +
->  #endif	/* !__ASSEMBLY__ */
->  
->  #endif /* __ARM_KVM_MMU_H__ */
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 5ecd457bce7d..f008f8866b2a 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -442,15 +442,7 @@ int kvm_arm_vcpu_arch_get_attr(struct kvm_vcpu *vcpu,
->  int kvm_arm_vcpu_arch_has_attr(struct kvm_vcpu *vcpu,
->  			       struct kvm_device_attr *attr);
->  
-> -static inline void __cpu_init_stage2(void)
-> -{
-> -	u32 ps;
-> -
-> -	/* Sanity check for minimum IPA size support */
-> -	ps = id_aa64mmfr0_parange_to_phys_shift(read_sysreg(id_aa64mmfr0_el1) & 0x7);
-> -	WARN_ONCE(ps < 40,
-> -		  "PARange is %d bits, unsupported configuration!", ps);
-> -}
-> +static inline void __cpu_init_stage2(void) {}
->  
->  /* Guest/host FPSIMD coordination helpers */
->  int kvm_arch_vcpu_run_map_fp(struct kvm_vcpu *vcpu);
-> @@ -513,6 +505,8 @@ static inline int kvm_arm_have_ssbd(void)
->  void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu);
->  void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu);
->  
-> +void kvm_set_ipa_limit(void);
-> +
->  #define __KVM_HAVE_ARCH_VM_ALLOC
->  struct kvm *kvm_arch_alloc_vm(void);
->  void kvm_arch_free_vm(struct kvm *kvm);
-> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-> index 2bf41e007390..96b3f50101bc 100644
-> --- a/arch/arm64/kvm/reset.c
-> +++ b/arch/arm64/kvm/reset.c
-> @@ -34,6 +34,9 @@
->  #include <asm/kvm_coproc.h>
->  #include <asm/kvm_mmu.h>
->  
-> +/* Maximum phys_shift supported for any VM on this host */
-> +static u32 kvm_ipa_limit;
-> +
->  /*
->   * ARMv8 Reset Values
->   */
-> @@ -135,6 +138,46 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu)
->  	return kvm_timer_vcpu_reset(vcpu);
->  }
->  
-> +void kvm_set_ipa_limit(void)
-> +{
-> +	unsigned int ipa_max, pa_max, va_max, parange;
-> +
-> +	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 0x7;
-> +	pa_max = id_aa64mmfr0_parange_to_phys_shift(parange);
-> +
-> +	/* Clamp the IPA limit to the PA size supported by the kernel */
-> +	ipa_max = (pa_max > PHYS_MASK_SHIFT) ? PHYS_MASK_SHIFT : pa_max;
-> +	/*
-> +	 * Since our stage2 table is dependent on the stage1 page table code,
-> +	 * we must always honor the following condition:
-> +	 *
-> +	 *  Number of levels in Stage1 >= Number of levels in Stage2.
-> +	 *
-> +	 * So clamp the ipa limit further down to limit the number of levels.
-> +	 * Since we can concatenate upto 16 tables at entry level, we could
-> +	 * go upto 4bits above the maximum VA addressible with the current
-> +	 * number of levels.
-> +	 */
-> +	va_max = PGDIR_SHIFT + PAGE_SHIFT - 3;
-> +	va_max += 4;
-> +
-> +	if (va_max < ipa_max)
-> +		ipa_max = va_max;
-> +
-> +	/*
-> +	 * If the final limit is lower than the real physical address
-> +	 * limit of the CPUs, report the reason.
-> +	 */
-> +	if (ipa_max < pa_max)
-> +		pr_info("kvm: Limiting the IPA size due to kernel %s Address limit\n",
-> +			(va_max < pa_max) ? "Virtual" : "Physical");
-> +
-> +	WARN(ipa_max < KVM_PHYS_SHIFT,
-> +	     "KVM IPA limit (%d bit) is smaller than default size\n", ipa_max);
-> +	kvm_ipa_limit = ipa_max;
-> +	kvm_info("IPA Size Limit: %dbits\n", kvm_ipa_limit);
-> +}
-> +
->  /*
->   * Configure the VTCR_EL2 for this VM. The VTCR value is common
->   * across all the physical CPUs on the system. We use system wide
-> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-> index 43e716bc3f08..631f9a3ad99a 100644
-> --- a/virt/kvm/arm/arm.c
-> +++ b/virt/kvm/arm/arm.c
-> @@ -1413,6 +1413,8 @@ static int init_common_resources(void)
->  	kvm_vmid_bits = kvm_get_vmid_bits();
->  	kvm_info("%d-bit VMID\n", kvm_vmid_bits);
->  
-> +	kvm_set_ipa_limit();
-> +
->  	return 0;
->  }
->  
-> 
+Thanks,
+Rasmus
