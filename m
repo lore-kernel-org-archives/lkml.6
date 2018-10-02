@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C0FC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2139AC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE01A206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE01A206B2
+	by mail.kernel.org (Postfix) with ESMTP id DAE6E206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAE6E206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730171AbeJBUNN (ORCPT
+        id S1730187AbeJBUNO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:13:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33270 "EHLO
+        Tue, 2 Oct 2018 16:13:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33284 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728809AbeJBUNM (ORCPT
+        with ESMTP id S1728809AbeJBUNO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:13:12 -0400
+        Tue, 2 Oct 2018 16:13:14 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 22D63C11;
-        Tue,  2 Oct 2018 13:29:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1F5B266;
+        Tue,  2 Oct 2018 13:29:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        Daniel Stone <daniels@collabora.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 126/228] iio: 104-quad-8: Fix off-by-one error in register selection
-Date:   Tue,  2 Oct 2018 06:23:43 -0700
-Message-Id: <20181002132507.989217611@linuxfoundation.org>
+Subject: [PATCH 4.18 127/228] drm/vc4: Add missing formats to vc4_format_mod_supported().
+Date:   Tue,  2 Oct 2018 06:23:44 -0700
+Message-Id: <20181002132508.045871938@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,32 +53,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
+From: Eric Anholt <eric@anholt.net>
 
-[ Upstream commit 2873c3f0e2bd12a7612e905c920c058855f4072a ]
+[ Upstream commit 1e871d65e375280757833d9fce91dda71980bdf5 ]
 
-The reset flags operation is selected by bit 2 in the "Reset and Load
-Signals Decoders" register, not bit 1.
+Daniel's format_mod_supported() patch predated Dave's for NV21/61, and
+I didn't catch that when rebasing.  This is a problem since the
+formats are now getting validated before being passed to the driver's
+atomic hooks.
 
-Fixes: 28e5d3bb0325 ("iio: 104-quad-8: Add IIO support for the ACCES 104-QUAD-8")
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Acked-by: Daniel Stone <daniels@collabora.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.org>
+Fixes: 423ad7b3cbd1 ("drm/vc4: Advertise supported modifiers for planes")
+Link: https://patchwork.freedesktop.org/patch/msgid/20180316220435.31416-2-eric@anholt.net
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iio/counter/104-quad-8.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/vc4/vc4_plane.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/iio/counter/104-quad-8.c
-+++ b/drivers/iio/counter/104-quad-8.c
-@@ -138,7 +138,7 @@ static int quad8_write_raw(struct iio_de
- 			outb(val >> (8 * i), base_offset);
- 
- 		/* Reset Borrow, Carry, Compare, and Sign flags */
--		outb(0x02, base_offset + 1);
-+		outb(0x04, base_offset + 1);
- 		/* Reset Error flag */
- 		outb(0x06, base_offset + 1);
- 
+--- a/drivers/gpu/drm/vc4/vc4_plane.c
++++ b/drivers/gpu/drm/vc4/vc4_plane.c
+@@ -874,7 +874,9 @@ static bool vc4_format_mod_supported(str
+ 	case DRM_FORMAT_YUV420:
+ 	case DRM_FORMAT_YVU420:
+ 	case DRM_FORMAT_NV12:
++	case DRM_FORMAT_NV21:
+ 	case DRM_FORMAT_NV16:
++	case DRM_FORMAT_NV61:
+ 	default:
+ 		return (modifier == DRM_FORMAT_MOD_LINEAR);
+ 	}
 
 
