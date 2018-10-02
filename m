@@ -2,102 +2,112 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7621C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFDBC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6F26206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:41:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6F26206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EC072064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:42:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC072064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733301AbeJBUZU (ORCPT
+        id S1733304AbeJBUZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:25:20 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:58824 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730649AbeJBUZT (ORCPT
+        Tue, 2 Oct 2018 16:25:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36116 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731271AbeJBUTi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:25:19 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1g7Kvu-0006ZK-FY; Tue, 02 Oct 2018 09:41:50 -0400
-Message-ID: <8654bb0845d054bc1c228793168ffa1b1a67943c.camel@surriel.com>
-Subject: Re: [PATCH v2 0/7] x86/mm/tlb: make lazy TLB mode even lazier
-From:   Rik van Riel <riel@surriel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        will.deacon@arm.com, songliubraving@fb.com, mingo@kernel.org,
-        luto@kernel.org, hpa@zytor.com, npiggin@gmail.com,
-        Dave Hansen <dave.hansen@intel.com>
-Date:   Tue, 02 Oct 2018 09:41:50 -0400
-In-Reply-To: <20181002074421.GQ3439@hirez.programming.kicks-ass.net>
-References: <20180926035844.1420-1-riel@surriel.com>
-         <20181002074421.GQ3439@hirez.programming.kicks-ass.net>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-4/A465V/k7fq5vQrsXR4"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Tue, 2 Oct 2018 16:19:38 -0400
+Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 627C25AA;
+        Tue,  2 Oct 2018 13:36:13 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Ethan Tuttle <ethan@ethantuttle.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 43/94] ARM: mvebu: declare asm symbols as character arrays in pmsu.c
+Date:   Tue,  2 Oct 2018 06:24:57 -0700
+Message-Id: <20181002132503.499348045@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
+References: <20181002132500.494838053@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
---=-4/A465V/k7fq5vQrsXR4
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+------------------
 
-On Tue, 2018-10-02 at 09:44 +0200, Peter Zijlstra wrote:
-> On Tue, Sep 25, 2018 at 11:58:37PM -0400, Rik van Riel wrote:
->=20
-> > This v2 is "identical" to the version I posted yesterday,
-> > except this one is actually against current -tip (not sure
-> > what went wrong before), with a number of relevant patches
-> > on top:
-> > - tip x86/core
-> > 	012e77a903d ("x86/nmi: Fix NMI uaccess race against CR3
-> > switching")
-> > - arm64 tlb/asm-generic (entire branch)
-> > - peterz queue mm/tlb
-> > 	12b2b80ec6f4 ("x86/mm: Page size aware flush_tlb_mm_range()")
->=20
-> If you could please double check:
->=20
->  =20
-> https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=
-=3Dx86/mm
->=20
-> If 0day comes up green on that, I'll attempt to push it to tip.
+From: Ethan Tuttle <ethan@ethantuttle.com>
 
-That looks good to me.
+[ Upstream commit d0d378ff451a66e486488eec842e507d28145813 ]
 
-Thank you!
+With CONFIG_FORTIFY_SOURCE, memcpy uses the declared size of operands to
+detect buffer overflows.  If src or dest is declared as a char, attempts to
+copy more than byte will result in a fortify_panic().
 
---=20
-All Rights Reversed.
+Address this problem in mvebu_setup_boot_addr_wa() by declaring
+mvebu_boot_wa_start and mvebu_boot_wa_end as character arrays.  Also remove
+a couple addressof operators to avoid "arithmetic on pointer to an
+incomplete type" compiler error.
 
---=-4/A465V/k7fq5vQrsXR4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+See commit 54a7d50b9205 ("x86: mark kprobe templates as character arrays,
+not single characters") for a similar fix.
 
------BEGIN PGP SIGNATURE-----
+Fixes "detected buffer overflow in memcpy" error during init on some mvebu
+systems (armada-370-xp, armada-375):
 
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAluzdZ4ACgkQznnekoTE
-3oPXFQf/VYOExtTpj3on6/kxVzEOxxwip7ae+xgsO7Zznic2i8JzJUoSV7dT38Ch
-nG5QB3oI2PG+VkHLQ1IN3fqd0/7W8XmdROXR3TUAX/LwXaXsFWZy/092Q9dc1ghT
-WxDvv0c2wuG9W50rkF5osPK5u7bQD+lUiJ8OYFnKyCbnKMoQKi3oEV4MY1hvtiWw
-9hN9HwhEe2+l+7Vpt9VvaWXuoxAh7pfWShRYEbl6XvvIhrg9Vf2shTw9lmDFKG4t
-fWsNgCXE8SRLdhUIEjIA1IBBSyqdjTvRphctyxCzk7R8udunOgCuDpBWtm7jv03/
-QoId/b3+WyrXxOT/Mb5DXqpz45e7Tg==
-=nBtV
------END PGP SIGNATURE-----
+(fortify_panic) from (mvebu_setup_boot_addr_wa+0xb0/0xb4)
+(mvebu_setup_boot_addr_wa) from (mvebu_v7_cpu_pm_init+0x154/0x204)
+(mvebu_v7_cpu_pm_init) from (do_one_initcall+0x7c/0x1a8)
+(do_one_initcall) from (kernel_init_freeable+0x1bc/0x254)
+(kernel_init_freeable) from (kernel_init+0x8/0x114)
+(kernel_init) from (ret_from_fork+0x14/0x2c)
 
---=-4/A465V/k7fq5vQrsXR4--
+Signed-off-by: Ethan Tuttle <ethan@ethantuttle.com>
+Tested-by: Ethan Tuttle <ethan@ethantuttle.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/arm/mach-mvebu/pmsu.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/arch/arm/mach-mvebu/pmsu.c
++++ b/arch/arm/mach-mvebu/pmsu.c
+@@ -116,8 +116,8 @@ void mvebu_pmsu_set_cpu_boot_addr(int hw
+ 		PMSU_BOOT_ADDR_REDIRECT_OFFSET(hw_cpu));
+ }
+ 
+-extern unsigned char mvebu_boot_wa_start;
+-extern unsigned char mvebu_boot_wa_end;
++extern unsigned char mvebu_boot_wa_start[];
++extern unsigned char mvebu_boot_wa_end[];
+ 
+ /*
+  * This function sets up the boot address workaround needed for SMP
+@@ -130,7 +130,7 @@ int mvebu_setup_boot_addr_wa(unsigned in
+ 			     phys_addr_t resume_addr_reg)
+ {
+ 	void __iomem *sram_virt_base;
+-	u32 code_len = &mvebu_boot_wa_end - &mvebu_boot_wa_start;
++	u32 code_len = mvebu_boot_wa_end - mvebu_boot_wa_start;
+ 
+ 	mvebu_mbus_del_window(BOOTROM_BASE, BOOTROM_SIZE);
+ 	mvebu_mbus_add_window_by_id(crypto_eng_target, crypto_eng_attribute,
+
 
