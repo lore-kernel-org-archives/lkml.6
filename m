@@ -2,202 +2,125 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D5DC64EBD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D25C65BA7
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33FDA206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:46:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33FDA206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 54458206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:46:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amperecomputing.com header.i=@amperecomputing.com header.b="WTkrElLJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54458206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=amperecomputing.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbeJCGcl (ORCPT
+        id S1726666AbeJCGcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 3 Oct 2018 02:32:42 -0400
+Received: from mail-eopbgr700136.outbound.protection.outlook.com ([40.107.70.136]:61953
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725976AbeJCGcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 3 Oct 2018 02:32:41 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47985 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbeJCGcl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 02:32:41 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1g7UNM-00042V-48; Tue, 02 Oct 2018 23:46:48 +0000
-Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
-To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
-Cc:     Jordan Glover <Golden_Miller83@protonmail.ch>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181002005505.6112-1-keescook@chromium.org>
- <20181002005505.6112-24-keescook@chromium.org>
- <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
- <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov>
- <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
- <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov>
- <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
- <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
- <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com>
- <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
- <alpine.LRH.2.21.1810030758460.23596@namei.org>
- <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com>
-Date:   Tue, 2 Oct 2018 16:46:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amperecomputing.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YENjHTEtxR+i++IdWKao3N//K7rJDwu6vSsF3866yb0=;
+ b=WTkrElLJvdZi7Va+IJDzMqX2eoyYNjnFu4wv1g8/EZDPJS8OPMX14NZX9lh2MCP3voThIhX6UkxGvddrcI+kw6UhhOoe2qErIujOoDSCn8c2HbHQgXyw0x0qUlYcQRTHwku2CG1CFs1vjn8w84Uw2+rpu/n+SwidF6Kz6/hq8ms=
+Received: from SN1PR0101MB1567.prod.exchangelabs.com (10.163.128.25) by
+ SN1PR0101MB1566.prod.exchangelabs.com (10.163.128.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.25; Tue, 2 Oct 2018 23:46:47 +0000
+Received: from SN1PR0101MB1567.prod.exchangelabs.com
+ ([fe80::ec7f:209a:3446:f7fc]) by SN1PR0101MB1567.prod.exchangelabs.com
+ ([fe80::ec7f:209a:3446:f7fc%2]) with mapi id 15.20.1185.024; Tue, 2 Oct 2018
+ 23:46:45 +0000
+From:   Hoan Tran <hoan.tran@amperecomputing.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+CC:     Will Deacon <will.deacon@arm.com>,
+        Tai Nguyen <ttnguyen@amperecomputing.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Open Source Submission <patches@amperecomputing.com>
+Subject: Re: [PATCH v2] perf: xgene: Add CPU hotplug support
+Thread-Topic: [PATCH v2] perf: xgene: Add CPU hotplug support
+Thread-Index: AQHUUEjL6iCB7dX6uku+nmQs71SmF6UL6oiAgADJPQA=
+Date:   Tue, 2 Oct 2018 23:46:45 +0000
+Message-ID: <5B51DDE7-B248-474D-8787-8127E73D82B1@amperecomputing.com>
+References: <1537382649-17266-1-git-send-email-hoan.tran@amperecomputing.com>
+ <20181002114627.omsungd77lfmbqfj@lakrids.cambridge.arm.com>
+In-Reply-To: <20181002114627.omsungd77lfmbqfj@lakrids.cambridge.arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=hoan.tran@amperecomputing.com; 
+x-originating-ip: [4.28.13.142]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN1PR0101MB1566;6:2afvdIDXQnbZ3DehZthup79DZlUH0BqHgFHIPTEOdBeCm94uO4vN7vhkGhMXnIPOdz1j62k733S1e6QOTy9djMUhIIM6K9tlsstXV2lsjW0JXseyKb4ASTsHBufQVZjw46oQKoAnPCXJF2DDtQ4Ornx/Bp6iY8vajb+SlDoYOD7R/Lzw2gT5xvap09cy4lvdp1okMRdf7qATc4dCJjkFOR8h+lw+1mzn1DR+QkN9Pdl+I5F7Tu6IVRCU6bRl4N7RCUN9XnjhuB+wAeiH3ecpiGNWwgh61j46pOzQD6Mu6L62ySUs0hIrU2t3lqylxlbAItXeSfYG71g4TbOk08mkjXDkjfgicG2rmWUKbEmjcop8EJDT8FYf+FQwwQBD1NitfBgZg9JRratNCuXmexwljUxJ5qq9iBvIpISlnvu+v0Ytq06XWPCG6PvD+pY533va6OXNykMPjbaRjwyU3M1Igw==;5:cwl7B5Lo8mg6Higr+z0NQOGOrazk7YDk0mbrMKi7FHcDoRMqtW8xng2kvPaxoHPWxu0wOdB0SIa/1vayr3pF/kRa2Aoc6dg54oYdoxOY/O1bBYNjzm3m83lRkOpxNS+9viKYBOdkqF+Vsfw7aQ8LwaEBsgNxdu+NCBG0PgKmbO4=;7:hw4nUJxGhuPTXcctWXVboJSp6wdt8j/bMEXD5wbPElCuplNEENSrZB7JJjMCL0EBtOIrXh3doZ/cL0Iq/SNrVMALpgbuJJWoFufcVMjz6y6TpSGk9g4OoT3FMN3Gk6tCV2wgR7qgguUVZwdEs//eDT/iIRt/DWpbkhLMG9ylB8+IpXLjTN0EHFlOp1Ggtsl4IbdNzW3ho6yHEEUE7HbGFRDaiIZ12IolJHt3s6DAhFr3eUeaUonjD12+Hc5sk7/R
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(346002)(366004)(39840400004)(136003)(396003)(376002)(189003)(199004)(5660300001)(107886003)(3846002)(6916009)(6116002)(97736004)(6246003)(256004)(14444005)(5250100002)(33656002)(36756003)(106356001)(105586002)(2906002)(486006)(44832011)(2900100001)(11346002)(446003)(2616005)(229853002)(14454004)(476003)(86362001)(478600001)(82746002)(53936002)(6486002)(316002)(186003)(102836004)(6436002)(26005)(6512007)(71200400001)(8676002)(99286004)(81156014)(81166006)(305945005)(8936002)(76176011)(68736007)(83716004)(25786009)(6506007)(4326008)(53546011)(71190400001)(7736002)(66066001)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:SN1PR0101MB1566;H:SN1PR0101MB1567.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 82352734-25f9-45b0-12c0-08d628c14fdb
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN1PR0101MB1566;
+x-ms-traffictypediagnostic: SN1PR0101MB1566:
+x-microsoft-antispam-prvs: <SN1PR0101MB1566EA0A644C004948531564E4E80@SN1PR0101MB1566.prod.exchangelabs.com>
+x-exchange-antispam-report-test: UriScan:(209352067349851)(180628864354917);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991048);SRVR:SN1PR0101MB1566;BCL:0;PCL:0;RULEID:;SRVR:SN1PR0101MB1566;
+x-forefront-prvs: 0813C68E65
+received-spf: None (protection.outlook.com: amperecomputing.com does not
+ designate permitted sender hosts)
+x-microsoft-antispam-message-info: 1DR9TQNpz7gMt98r/bXRAOHMDjZ5IAv+u4cdWDU3qc+vLDTHkKFDHSjeHNkSqNi/qcL/Nv15miZz2kEM8RY34tGOnJ9VX/sF3Q5SrWIjQvLd4ru/7MNcArkx+p3pkjWIFhiKjaysOaPokqlT9f0XpZQ0FaX33MDGO1GY+aCvydStJb+73TFmAXyXtqGyZpunaSPEmJZIQ2O4/DAgqziYdseY9TKnC3heB6cfp2AuQEbt8RG40LtukjX6XMqHUexxSmkQLtJEezLGsZocHEvUBCQfdGoxpUInS/casaDxVInO7UUncrPtTv0EGa8eTH+/3k9DlsATL6UQdmFLl6824wPHPDX8HB9I23L47/PGimU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2D5C8ACD75BF364DA579FCF8C236EBBF@prod.exchangelabs.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82352734-25f9-45b0-12c0-08d628c14fdb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2018 23:46:45.0872
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR0101MB1566
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/02/2018 04:06 PM, Kees Cook wrote:
-> On Tue, Oct 2, 2018 at 3:06 PM, James Morris <jmorris@namei.org> wrote:
->> On Tue, 2 Oct 2018, Kees Cook wrote:
->>
->>> On Tue, Oct 2, 2018 at 11:57 AM, John Johansen
->>> <john.johansen@canonical.com> wrote:
->>>> Under the current scheme
->>>>
->>>> lsm.enabled=selinux
->>>>
->>>> could actually mean selinux,yama,loadpin,something_else are
->>>> enabled. If we extend this behavior to when full stacking lands
->>>>
->>>> lsm.enabled=selinux,yama
->>>>
->>>> might mean selinux,yama,apparmor,loadpin,something_else
->>>>
->>>> and what that list is will vary from kernel to kernel, which I think
->>>> is harder for the user than the lsm.enabled list being what is
->>>> actually enabled at boot
->>>
->>> Ah, I think I missed this in your earlier emails. What you don't like
->>> here is that "lsm.enable=" is additive. You want it to be explicit.
->>>
->>
->> This is a path to madness.
->>
->> How about enable flags set ONLY per LSM:
->>
->> lsm.selinux.enable=x
->> lsm.apparmor.enable=x
->>
->> With no lsm.enable, and removing selinux=x and apparmor=x.
->>
->> Yes this will break existing docs, but they can be updated for newer
->> kernel versions to say "replace selinux=0 with lsm.selinux.enable=0" from
->> kernel X onwards.
->>
->> Surely distro packages and bootloaders are able to cope with changes to
->> kernel parameters?
->>
->> We can either take a one-time hit now, or build new usability debt, which
->> will confuse people forever.
-> 
-> I'd like to avoid this for a few reasons:
-> 
-> - this requires per-LSM plumbing instead of centralized plumbing
->   - each LSM needs to have its own CONFIG flag
->   - each LSM needs to have its own bootparam flag
-> - SELinux has explicited stated they do not want to lose selinux=
-> - this doesn't meet John's goal of having a "single explicit enable list"
-> 
-I can compromise on a single explicit list. My main goal is something that
-is consistent and easy for the end user, and I would like to avoid
-potential points of confusion if possible.
-
-To me a list like
-  lsm.enable=X,Y,Z
-
-is best as a single explicit enable list, and it would be best to avoid
-lsm.disable as it just introduces confusion.
-
-I do think per-LSM bootparams looses the advantages of centralization,
-and still requires the user to know some Kconfig info but it also gets
-rid of the lsm.disable confusion.
-
-With ordering separated out from being enabled there is a certain
-cleanness to it. And perhaps most users are looking to enable/disable
-a single lsm, instead of specifying exactly what security they want
-on their system.
-
-If we were to go this route I would rather drop the lsm. prefix
-
-
-> I think the current proposal (in the other thread) is likely the
-> sanest approach:
-> 
-> - Drop CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE
-> - Drop CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE
-> - All enabled LSMs are listed at build-time in CONFIG_LSM_ENABLE
-
-Hrrmmm isn't this a Kconfig selectable list, with each built-in LSM
-available to be enabled by default at boot.
-
-> - Boot time enabling for selinux= and apparmor= remain
-> - lsm.enable= is explicit: overrides above and omissions are disabled
-wfm
-
-> - maybe include lsm.disable= to disable anything
+SGkgTWFyaywNCg0KPiBPbiBPY3QgMiwgMjAxOCwgYXQgNDo0NiBBTSwgTWFyayBSdXRsYW5kIDxt
+YXJrLnJ1dGxhbmRAYXJtLmNvbT4gd3JvdGU6DQo+IA0KPiBbTk9USUNFOiBUaGlzIGVtYWlsIG9y
+aWdpbmF0ZWQgZnJvbSBhbiBleHRlcm5hbCBzZW5kZXIuIFBsZWFzZSBiZSBtaW5kZnVsIG9mIHNh
+ZmUgZW1haWwgaGFuZGxpbmcgYW5kIHByb3ByaWV0YXJ5IGluZm9ybWF0aW9uIHByb3RlY3Rpb24g
+cHJhY3RpY2VzLl0gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fDQo+IA0KPiBIaSBIb2FuLA0KPiANCj4gT24gV2VkLCBTZXAgMTks
+IDIwMTggYXQgMDY6NDQ6MzBQTSArMDAwMCwgSG9hbiBUcmFuIHdyb3RlOg0KPj4gVGhpcyBwYXRj
+aCBhZGRzIENQVSBob3RwbHVnIHN1cHBvcnQgd2hlcmUgdGhlIFBNVSBtaWdyYXRlcyB0aGUgY29u
+dGV4dCB0bw0KPj4gYW5vdGhlciBvbmxpbmUgQ1BVIHdoZW4gaXRzIENQVSBpcyBvZmZsaW5lLg0K
+Pj4gDQo+PiBJdCBmaXhlcyB0aGUgYmVsb3cgaXNzdWUgd2hlcmUgdGhlIHVzZXIgZG9lcyBvZmZs
+aW5lIHRoZSBDUFUgd2hpY2ggaXMgYXNzaWduZWQNCj4+IHRvIHRoaXMgUE1VLg0KPj4gDQo+PiBB
+c3N1bWluZywgQ1BVMCBpcyBhc3NpZ25lZCBmb3IgdGhpcyBQTVUuIFdoZW4gdGhlIHVzZXIgZG9l
+cyBvZmZsaW5lIENQVTANCj4+IFtyb290QChub25lKSB+XSMgZWNobyAwID4gL3N5cy9kZXZpY2Vz
+L3N5c3RlbS9jcHUvY3B1MC9vbmxpbmUNCj4+IFRoaXMgUE1VIGRvZXMgbm90IHdvcmsgYW55bW9y
+ZSBhbmQgc2hvd3MgdGhlIGJlbG93IGVycm9yLg0KPj4gW3Jvb3RAKG5vbmUpIH5dIyBwZXJmIHN0
+YXQgLWEgLWUgbDNjMC9jeWNsZS1jb3VudC8sbDNjMC93cml0ZS8gc2xlZXAgMQ0KPj4gRXJyb3I6
+DQo+PiBUaGUgc3lzX3BlcmZfZXZlbnRfb3BlbigpIHN5c2NhbGwgcmV0dXJuZWQgd2l0aCAxOSAo
+Tm8gc3VjaCBkZXZpY2UpIGZvciBldmVudCAobDNjMC9jeWNsZS1jb3VudC8pLg0KPj4gL2Jpbi9k
+bWVzZyBtYXkgcHJvdmlkZSBhZGRpdGlvbmFsIGluZm9ybWF0aW9uLg0KPj4gTm8gQ09ORklHX1BF
+UkZfRVZFTlRTPXkga2VybmVsIHN1cHBvcnQgY29uZmlndXJlZD8NCj4+IA0KPj4gV2l0aCB0aGlz
+IHBhdGNoLCB3aGVuIENQVTAgaXMgb2ZmbGluZSwgUE1VIG1pZ3JhdGVzIHRvIGFub3RoZXIgb25s
+aW5lIENQVSBhbmQNCj4+IHdvcmtzIG9uIHRoYXQgQ1BVLg0KPj4gDQo+PiBTaWduZWQtb2ZmLWJ5
+OiBIb2FuIFRyYW4gPGhvYW4udHJhbkBhbXBlcmVjb21wdXRpbmcuY29tPg0KPj4gLS0tDQo+PiB2
+MjoNCj4+ICogUmVtb3ZlIHRoZSBjcHVocCBpbnN0YW5jZSB3aGVuIHVucmVnaXN0ZXJpbmcgdGhl
+IFBNVQ0KPiANCj4gVW5mb3J0dW5hdGVseSwgdGhpcyBoYXMgY29tZSB0aHJvdWdoIHdoaXRlc3Bh
+ZS1kYW1hZ2VkLCB3aXRoIGENCj4gZGlzY2xhaW1lciBpbiB0aGUgZm9vdGVyLg0KPiANCj4gQ291
+bGQgeW91IHBsZWFzZSByZXNlbmQgd2l0aCB0aG9zZSB0d28gZGV0YWlscyBmaXhlZD8NCg0KSeKA
+mWxsIGZpeCBpdCBhbmQgc2VuZCB5b3UgYW5vdGhlciB2ZXJzaW9uIGxhdGVyLg0KDQpUaGFua3Mg
+YW5kIFJlZ2FyZHMNCkhvYW4NCg0KPiANCj4gVGhhbmtzLA0KPiBNYXJrLg0KDQo=
