@@ -3,50 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD09C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 430FDC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:17:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D0B8206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:16:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D0B8206B2
+	by mail.kernel.org (Postfix) with ESMTP id DE4FD206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:17:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE4FD206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbeJBQ7Y (ORCPT
+        id S1727454AbeJBRAA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 12:59:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59821 "EHLO
+        Tue, 2 Oct 2018 13:00:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44323 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbeJBQ7Y (ORCPT
+        with ESMTP id S1726178AbeJBQ77 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 12:59:24 -0400
+        Tue, 2 Oct 2018 12:59:59 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w92AGUs71917382
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w92AH2vj1917437
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 2 Oct 2018 03:16:30 -0700
+        Tue, 2 Oct 2018 03:17:02 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w92AGTp31917379;
-        Tue, 2 Oct 2018 03:16:29 -0700
-Date:   Tue, 2 Oct 2018 03:16:29 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w92AH2mJ1917434;
+        Tue, 2 Oct 2018 03:17:02 -0700
+Date:   Tue, 2 Oct 2018 03:17:02 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andrew Murray <tipbot@zytor.com>
-Message-ID: <tip-bccb484b9a8d1695df1094991df2bdcf83a4b921@git.kernel.org>
-Cc:     hpa@zytor.com, will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, corbet@lwn.net,
-        peterz@infradead.org, tglx@linutronix.de, andrew.murray@arm.com,
-        mingo@kernel.org, trivial@kernel.org
-Reply-To: hpa@zytor.com, corbet@lwn.net, torvalds@linux-foundation.org,
-          linux-kernel@vger.kernel.org, will.deacon@arm.com,
-          tglx@linutronix.de, peterz@infradead.org, trivial@kernel.org,
-          mingo@kernel.org, andrew.murray@arm.com
-In-Reply-To: <1538391663-54524-1-git-send-email-andrew.murray@arm.com>
-References: <1538391663-54524-1-git-send-email-andrew.murray@arm.com>
+From:   tip-bot for Mel Gorman <tipbot@zytor.com>
+Message-ID: <tip-efaffc5e40aeced0bcb497ed7a0a5b8c14abfcdf@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        jhladky@redhat.com, mingo@kernel.org, a.p.zijlstra@chello.nl,
+        mgorman@techsingularity.net, riel@surriel.com, tglx@linutronix.de,
+        hpa@zytor.com, srikar@linux.vnet.ibm.com, linux-mm@kvack.org
+Reply-To: linux-mm@kvack.org, srikar@linux.vnet.ibm.com,
+          tglx@linutronix.de, hpa@zytor.com, riel@surriel.com,
+          mgorman@techsingularity.net, a.p.zijlstra@chello.nl,
+          mingo@kernel.org, jhladky@redhat.com,
+          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+In-Reply-To: <20181001100525.29789-2-mgorman@techsingularity.net>
+References: <20181001100525.29789-2-mgorman@techsingularity.net>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] Documentation/lockstat: Fix trivial typo
-Git-Commit-ID: bccb484b9a8d1695df1094991df2bdcf83a4b921
+Subject: [tip:sched/urgent] mm, sched/numa: Remove rate-limiting of
+ automatic NUMA balancing migration
+Git-Commit-ID: efaffc5e40aeced0bcb497ed7a0a5b8c14abfcdf
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,41 +62,227 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bccb484b9a8d1695df1094991df2bdcf83a4b921
-Gitweb:     https://git.kernel.org/tip/bccb484b9a8d1695df1094991df2bdcf83a4b921
-Author:     Andrew Murray <andrew.murray@arm.com>
-AuthorDate: Mon, 1 Oct 2018 12:01:03 +0100
+Commit-ID:  efaffc5e40aeced0bcb497ed7a0a5b8c14abfcdf
+Gitweb:     https://git.kernel.org/tip/efaffc5e40aeced0bcb497ed7a0a5b8c14abfcdf
+Author:     Mel Gorman <mgorman@techsingularity.net>
+AuthorDate: Mon, 1 Oct 2018 11:05:24 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 2 Oct 2018 10:59:25 +0200
+CommitDate: Tue, 2 Oct 2018 11:31:14 +0200
 
-Documentation/lockstat: Fix trivial typo
+mm, sched/numa: Remove rate-limiting of automatic NUMA balancing migration
 
-Fix incorrect line number in example output
+Rate limiting of page migrations due to automatic NUMA balancing was
+introduced to mitigate the worst-case scenario of migrating at high
+frequency due to false sharing or slowly ping-ponging between nodes.
+Since then, a lot of effort was spent on correctly identifying these
+pages and avoiding unnecessary migrations and the safety net may no longer
+be required.
 
-Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-Cc: Jiri Kosina <trivial@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
+Jirka Hladky reported a regression in 4.17 due to a scheduler patch that
+avoids spreading STREAM tasks wide prematurely. However, once the task
+was properly placed, it delayed migrating the memory due to rate limiting.
+Increasing the limit fixed the problem for him.
+
+Currently, the limit is hard-coded and does not account for the real
+capabilities of the hardware. Even if an estimate was attempted, it would
+not properly account for the number of memory controllers and it could
+not account for the amount of bandwidth used for normal accesses. Rather
+than fudging, this patch simply eliminates the rate limiting.
+
+However, Jirka reports that a STREAM configuration using multiple
+processes achieved similar performance to 4.16. In local tests, this patch
+improved performance of STREAM relative to the baseline but it is somewhat
+machine-dependent. Most workloads show little or not performance difference
+implying that there is not a heavily reliance on the throttling mechanism
+and it is safe to remove.
+
+STREAM on 2-socket machine
+                         4.19.0-rc5             4.19.0-rc5
+                         numab-v1r1       noratelimit-v1r1
+MB/sec copy     43298.52 (   0.00%)    44673.38 (   3.18%)
+MB/sec scale    30115.06 (   0.00%)    31293.06 (   3.91%)
+MB/sec add      32825.12 (   0.00%)    34883.62 (   6.27%)
+MB/sec triad    32549.52 (   0.00%)    34906.60 (   7.24%
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Jirka Hladky <jhladky@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-MM <linux-mm@kvack.org>
+Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-doc@vger.kernel.org
-Link: http://lkml.kernel.org/r/1538391663-54524-1-git-send-email-andrew.murray@arm.com
+Link: http://lkml.kernel.org/r/20181001100525.29789-2-mgorman@techsingularity.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/locking/lockstat.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/mmzone.h         |  6 ----
+ include/trace/events/migrate.h | 27 ------------------
+ mm/migrate.c                   | 65 ------------------------------------------
+ mm/page_alloc.c                |  2 --
+ 4 files changed, 100 deletions(-)
 
-diff --git a/Documentation/locking/lockstat.txt b/Documentation/locking/lockstat.txt
-index 5786ad2cd5e6..fdbeb0c45ef3 100644
---- a/Documentation/locking/lockstat.txt
-+++ b/Documentation/locking/lockstat.txt
-@@ -91,7 +91,7 @@ Look at the current lock statistics:
- 07                         &mm->mmap_sem-R:            37            100           1.31      299502.61      325629.52        3256.30         212344       34316685           0.10        7744.91    95016910.20           2.77
- 08                         ---------------
- 09                           &mm->mmap_sem              1          [<ffffffff811502a7>] khugepaged_scan_mm_slot+0x57/0x280
--19                           &mm->mmap_sem             96          [<ffffffff815351c4>] __do_page_fault+0x1d4/0x510
-+10                           &mm->mmap_sem             96          [<ffffffff815351c4>] __do_page_fault+0x1d4/0x510
- 11                           &mm->mmap_sem             34          [<ffffffff81113d77>] vm_mmap_pgoff+0x87/0xd0
- 12                           &mm->mmap_sem             17          [<ffffffff81127e71>] vm_munmap+0x41/0x80
- 13                         ---------------
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 1e22d96734e0..3f4c0b167333 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -671,12 +671,6 @@ typedef struct pglist_data {
+ #ifdef CONFIG_NUMA_BALANCING
+ 	/* Lock serializing the migrate rate limiting window */
+ 	spinlock_t numabalancing_migrate_lock;
+-
+-	/* Rate limiting time interval */
+-	unsigned long numabalancing_migrate_next_window;
+-
+-	/* Number of pages migrated during the rate limiting time interval */
+-	unsigned long numabalancing_migrate_nr_pages;
+ #endif
+ 	/*
+ 	 * This is a per-node reserve of pages that are not available
+diff --git a/include/trace/events/migrate.h b/include/trace/events/migrate.h
+index 711372845945..705b33d1e395 100644
+--- a/include/trace/events/migrate.h
++++ b/include/trace/events/migrate.h
+@@ -70,33 +70,6 @@ TRACE_EVENT(mm_migrate_pages,
+ 		__print_symbolic(__entry->mode, MIGRATE_MODE),
+ 		__print_symbolic(__entry->reason, MIGRATE_REASON))
+ );
+-
+-TRACE_EVENT(mm_numa_migrate_ratelimit,
+-
+-	TP_PROTO(struct task_struct *p, int dst_nid, unsigned long nr_pages),
+-
+-	TP_ARGS(p, dst_nid, nr_pages),
+-
+-	TP_STRUCT__entry(
+-		__array(	char,		comm,	TASK_COMM_LEN)
+-		__field(	pid_t,		pid)
+-		__field(	int,		dst_nid)
+-		__field(	unsigned long,	nr_pages)
+-	),
+-
+-	TP_fast_assign(
+-		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
+-		__entry->pid		= p->pid;
+-		__entry->dst_nid	= dst_nid;
+-		__entry->nr_pages	= nr_pages;
+-	),
+-
+-	TP_printk("comm=%s pid=%d dst_nid=%d nr_pages=%lu",
+-		__entry->comm,
+-		__entry->pid,
+-		__entry->dst_nid,
+-		__entry->nr_pages)
+-);
+ #endif /* _TRACE_MIGRATE_H */
+ 
+ /* This part must be outside protection */
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 4f1d894835b5..5e285c1249a0 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1855,54 +1855,6 @@ static struct page *alloc_misplaced_dst_page(struct page *page,
+ 	return newpage;
+ }
+ 
+-/*
+- * page migration rate limiting control.
+- * Do not migrate more than @pages_to_migrate in a @migrate_interval_millisecs
+- * window of time. Default here says do not migrate more than 1280M per second.
+- */
+-static unsigned int migrate_interval_millisecs __read_mostly = 100;
+-static unsigned int ratelimit_pages __read_mostly = 128 << (20 - PAGE_SHIFT);
+-
+-/* Returns true if the node is migrate rate-limited after the update */
+-static bool numamigrate_update_ratelimit(pg_data_t *pgdat,
+-					unsigned long nr_pages)
+-{
+-	unsigned long next_window, interval;
+-
+-	next_window = READ_ONCE(pgdat->numabalancing_migrate_next_window);
+-	interval = msecs_to_jiffies(migrate_interval_millisecs);
+-
+-	/*
+-	 * Rate-limit the amount of data that is being migrated to a node.
+-	 * Optimal placement is no good if the memory bus is saturated and
+-	 * all the time is being spent migrating!
+-	 */
+-	if (time_after(jiffies, next_window) &&
+-			spin_trylock(&pgdat->numabalancing_migrate_lock)) {
+-		pgdat->numabalancing_migrate_nr_pages = 0;
+-		do {
+-			next_window += interval;
+-		} while (unlikely(time_after(jiffies, next_window)));
+-
+-		WRITE_ONCE(pgdat->numabalancing_migrate_next_window, next_window);
+-		spin_unlock(&pgdat->numabalancing_migrate_lock);
+-	}
+-	if (pgdat->numabalancing_migrate_nr_pages > ratelimit_pages) {
+-		trace_mm_numa_migrate_ratelimit(current, pgdat->node_id,
+-								nr_pages);
+-		return true;
+-	}
+-
+-	/*
+-	 * This is an unlocked non-atomic update so errors are possible.
+-	 * The consequences are failing to migrate when we potentiall should
+-	 * have which is not severe enough to warrant locking. If it is ever
+-	 * a problem, it can be converted to a per-cpu counter.
+-	 */
+-	pgdat->numabalancing_migrate_nr_pages += nr_pages;
+-	return false;
+-}
+-
+ static int numamigrate_isolate_page(pg_data_t *pgdat, struct page *page)
+ {
+ 	int page_lru;
+@@ -1975,14 +1927,6 @@ int migrate_misplaced_page(struct page *page, struct vm_area_struct *vma,
+ 	if (page_is_file_cache(page) && PageDirty(page))
+ 		goto out;
+ 
+-	/*
+-	 * Rate-limit the amount of data that is being migrated to a node.
+-	 * Optimal placement is no good if the memory bus is saturated and
+-	 * all the time is being spent migrating!
+-	 */
+-	if (numamigrate_update_ratelimit(pgdat, 1))
+-		goto out;
+-
+ 	isolated = numamigrate_isolate_page(pgdat, page);
+ 	if (!isolated)
+ 		goto out;
+@@ -2029,14 +1973,6 @@ int migrate_misplaced_transhuge_page(struct mm_struct *mm,
+ 	unsigned long mmun_start = address & HPAGE_PMD_MASK;
+ 	unsigned long mmun_end = mmun_start + HPAGE_PMD_SIZE;
+ 
+-	/*
+-	 * Rate-limit the amount of data that is being migrated to a node.
+-	 * Optimal placement is no good if the memory bus is saturated and
+-	 * all the time is being spent migrating!
+-	 */
+-	if (numamigrate_update_ratelimit(pgdat, HPAGE_PMD_NR))
+-		goto out_dropref;
+-
+ 	new_page = alloc_pages_node(node,
+ 		(GFP_TRANSHUGE_LIGHT | __GFP_THISNODE),
+ 		HPAGE_PMD_ORDER);
+@@ -2133,7 +2069,6 @@ int migrate_misplaced_transhuge_page(struct mm_struct *mm,
+ 
+ out_fail:
+ 	count_vm_events(PGMIGRATE_FAIL, HPAGE_PMD_NR);
+-out_dropref:
+ 	ptl = pmd_lock(mm, pmd);
+ 	if (pmd_same(*pmd, entry)) {
+ 		entry = pmd_modify(entry, vma->vm_page_prot);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 89d2a2ab3fe6..706a738c0aee 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6197,8 +6197,6 @@ static unsigned long __init calc_memmap_size(unsigned long spanned_pages,
+ static void pgdat_init_numabalancing(struct pglist_data *pgdat)
+ {
+ 	spin_lock_init(&pgdat->numabalancing_migrate_lock);
+-	pgdat->numabalancing_migrate_nr_pages = 0;
+-	pgdat->numabalancing_migrate_next_window = jiffies;
+ }
+ #else
+ static void pgdat_init_numabalancing(struct pglist_data *pgdat) {}
