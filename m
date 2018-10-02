@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF59C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B209C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 090532064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:40:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 090532064D
+	by mail.kernel.org (Postfix) with ESMTP id 3C0722064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:40:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0722064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733043AbeJBUX4 (ORCPT
+        id S1732564AbeJBUYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:23:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36314 "EHLO
+        Tue, 2 Oct 2018 16:24:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36252 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731711AbeJBUT4 (ORCPT
+        with ESMTP id S1732099AbeJBUTu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:56 -0400
+        Tue, 2 Oct 2018 16:19:50 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8CE24C3F;
-        Tue,  2 Oct 2018 13:36:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6D346B4A;
+        Tue,  2 Oct 2018 13:36:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Hari Bathini <hbathini@linux.ibm.com>,
+        David Gibson <dgibson@redhat.com>,
+        Dave Young <dyoung@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 54/94] ARM: dts: dra7: fix DCAN node addresses
-Date:   Tue,  2 Oct 2018 06:25:08 -0700
-Message-Id: <20181002132504.235860222@linuxfoundation.org>
+Subject: [PATCH 4.9 17/94] powerpc/kdump: Handle crashkernel memory reservation failure
+Date:   Tue,  2 Oct 2018 06:24:31 -0700
+Message-Id: <20181002132501.673653360@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -53,43 +54,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kevin Hilman <khilman@baylibre.com>
+From: Hari Bathini <hbathini@linux.ibm.com>
 
-[ Upstream commit 949bdcc8a97c6078f21c8d4966436b117f2e4cd3 ]
+[ Upstream commit 8950329c4a64c6d3ca0bc34711a1afbd9ce05657 ]
 
-Fix the DT node addresses to match the reg property addresses,
-which were verified to match the TRM:
-http://www.ti.com/lit/pdf/sprui30
+Memory reservation for crashkernel could fail if there are holes around
+kdump kernel offset (128M). Fail gracefully in such cases and print an
+error message.
 
-Cc: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-Acked-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
+Tested-by: David Gibson <dgibson@redhat.com>
+Reviewed-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/dra7.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/machine_kexec.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/dra7.dtsi
-+++ b/arch/arm/boot/dts/dra7.dtsi
-@@ -1770,7 +1770,7 @@
- 			};
- 		};
+--- a/arch/powerpc/kernel/machine_kexec.c
++++ b/arch/powerpc/kernel/machine_kexec.c
+@@ -186,7 +186,12 @@ void __init reserve_crashkernel(void)
+ 			(unsigned long)(crashk_res.start >> 20),
+ 			(unsigned long)(memblock_phys_mem_size() >> 20));
  
--		dcan1: can@481cc000 {
-+		dcan1: can@4ae3c000 {
- 			compatible = "ti,dra7-d_can";
- 			ti,hwmods = "dcan1";
- 			reg = <0x4ae3c000 0x2000>;
-@@ -1780,7 +1780,7 @@
- 			status = "disabled";
- 		};
+-	memblock_reserve(crashk_res.start, crash_size);
++	if (!memblock_is_region_memory(crashk_res.start, crash_size) ||
++	    memblock_reserve(crashk_res.start, crash_size)) {
++		pr_err("Failed to reserve memory for crashkernel!\n");
++		crashk_res.start = crashk_res.end = 0;
++		return;
++	}
+ }
  
--		dcan2: can@481d0000 {
-+		dcan2: can@48480000 {
- 			compatible = "ti,dra7-d_can";
- 			ti,hwmods = "dcan2";
- 			reg = <0x48480000 0x2000>;
+ int overlaps_crashkernel(unsigned long start, unsigned long size)
 
 
