@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99327C64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7D9C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B7D8206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7D8206B2
+	by mail.kernel.org (Postfix) with ESMTP id EF12F206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF12F206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732562AbeJBUSd (ORCPT
+        id S1732549AbeJBUSb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:18:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35534 "EHLO
+        Tue, 2 Oct 2018 16:18:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35530 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730199AbeJBUSc (ORCPT
+        with ESMTP id S1730199AbeJBUSa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:32 -0400
+        Tue, 2 Oct 2018 16:18:30 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8D8A0B2F;
-        Tue,  2 Oct 2018 13:35:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09B92C4E;
+        Tue,  2 Oct 2018 13:35:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+        Rex Zhu <Rex.Zhu@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 131/137] ata: ftide010: Add a quirk for SQ201
-Date:   Tue,  2 Oct 2018 06:25:32 -0700
-Message-Id: <20181002132507.673315802@linuxfoundation.org>
+Subject: [PATCH 4.14 130/137] drm/amdgpu: Update power state at the end of smu hw_init.
+Date:   Tue,  2 Oct 2018 06:25:31 -0700
+Message-Id: <20181002132507.610666026@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,97 +53,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Rex Zhu <Rex.Zhu@amd.com>
 
-[ Upstream commit 46cb52ad414ac829680d0bb8cc7090ac2b577ca7 ]
+[ Upstream commit 2ab4d0e74256fc49b7b270f63c1d1e47c2455abc ]
 
-The DMA is broken on this specific device for some unknown
-reason (probably badly designed or plain broken interface
-electronics) and will only work with PIO. Other users of
-the same hardware does not have this problem.
+For SI/Kv, the power state is managed by function
+amdgpu_pm_compute_clocks.
 
-Add a specific quirk so that this Gemini device gets
-DMA turned off. Also fix up some code around passing the
-port information around in probe while we're at it.
+when dpm enabled, we should call amdgpu_pm_compute_clocks
+to update current power state instand of set boot state.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+this change can fix the oops when kfd driver was enabled on Kv.
+
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Tested-by: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/ata/pata_ftide010.c |   27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/kv_dpm.c |    4 +---
+ drivers/gpu/drm/amd/amdgpu/si_dpm.c |    3 +--
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
---- a/drivers/ata/pata_ftide010.c
-+++ b/drivers/ata/pata_ftide010.c
-@@ -256,14 +256,12 @@ static struct ata_port_operations pata_f
- 	.qc_issue	= ftide010_qc_issue,
- };
+--- a/drivers/gpu/drm/amd/amdgpu/kv_dpm.c
++++ b/drivers/gpu/drm/amd/amdgpu/kv_dpm.c
+@@ -1352,8 +1352,6 @@ static int kv_dpm_enable(struct amdgpu_d
+ 		return ret;
+ 	}
  
--static struct ata_port_info ftide010_port_info[] = {
--	{
--		.flags		= ATA_FLAG_SLAVE_POSS,
--		.mwdma_mask	= ATA_MWDMA2,
--		.udma_mask	= ATA_UDMA6,
--		.pio_mask	= ATA_PIO4,
--		.port_ops	= &pata_ftide010_port_ops,
--	},
-+static struct ata_port_info ftide010_port_info = {
-+	.flags		= ATA_FLAG_SLAVE_POSS,
-+	.mwdma_mask	= ATA_MWDMA2,
-+	.udma_mask	= ATA_UDMA6,
-+	.pio_mask	= ATA_PIO4,
-+	.port_ops	= &pata_ftide010_port_ops,
- };
- 
- #if IS_ENABLED(CONFIG_SATA_GEMINI)
-@@ -349,6 +347,7 @@ static int pata_ftide010_gemini_cable_de
+-	kv_update_current_ps(adev, adev->pm.dpm.boot_ps);
+-
+ 	if (adev->irq.installed &&
+ 	    amdgpu_is_internal_thermal_sensor(adev->pm.int_thermal_type)) {
+ 		ret = kv_set_thermal_temperature_range(adev, KV_TEMP_RANGE_MIN, KV_TEMP_RANGE_MAX);
+@@ -3054,7 +3052,7 @@ static int kv_dpm_hw_init(void *handle)
+ 	else
+ 		adev->pm.dpm_enabled = true;
+ 	mutex_unlock(&adev->pm.mutex);
+-
++	amdgpu_pm_compute_clocks(adev);
+ 	return ret;
  }
  
- static int pata_ftide010_gemini_init(struct ftide010 *ftide,
-+				     struct ata_port_info *pi,
- 				     bool is_ata1)
- {
- 	struct device *dev = ftide->dev;
-@@ -373,7 +372,13 @@ static int pata_ftide010_gemini_init(str
+--- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c
++++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
+@@ -6884,7 +6884,6 @@ static int si_dpm_enable(struct amdgpu_d
  
- 	/* Flag port as SATA-capable */
- 	if (gemini_sata_bridge_enabled(sg, is_ata1))
--		ftide010_port_info[0].flags |= ATA_FLAG_SATA;
-+		pi->flags |= ATA_FLAG_SATA;
-+
-+	/* This device has broken DMA, only PIO works */
-+	if (of_machine_is_compatible("itian,sq201")) {
-+		pi->mwdma_mask = 0;
-+		pi->udma_mask = 0;
-+	}
+ 	si_enable_auto_throttle_source(adev, AMDGPU_DPM_AUTO_THROTTLE_SRC_THERMAL, true);
+ 	si_thermal_start_thermal_controller(adev);
+-	ni_update_current_ps(adev, boot_ps);
  
- 	/*
- 	 * We assume that a simple 40-wire cable is used in the PATA mode.
-@@ -435,6 +440,7 @@ static int pata_ftide010_gemini_init(str
+ 	return 0;
  }
- #else
- static int pata_ftide010_gemini_init(struct ftide010 *ftide,
-+				     struct ata_port_info *pi,
- 				     bool is_ata1)
- {
- 	return -ENOTSUPP;
-@@ -446,7 +452,7 @@ static int pata_ftide010_probe(struct pl
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	const struct ata_port_info pi = ftide010_port_info[0];
-+	struct ata_port_info pi = ftide010_port_info;
- 	const struct ata_port_info *ppi[] = { &pi, NULL };
- 	struct ftide010 *ftide;
- 	struct resource *res;
-@@ -490,6 +496,7 @@ static int pata_ftide010_probe(struct pl
- 		 * are ATA0. This will also set up the cable types.
- 		 */
- 		ret = pata_ftide010_gemini_init(ftide,
-+				&pi,
- 				(res->start == 0x63400000));
- 		if (ret)
- 			goto err_dis_clk;
+@@ -7758,7 +7757,7 @@ static int si_dpm_hw_init(void *handle)
+ 	else
+ 		adev->pm.dpm_enabled = true;
+ 	mutex_unlock(&adev->pm.mutex);
+-
++	amdgpu_pm_compute_clocks(adev);
+ 	return ret;
+ }
+ 
 
 
