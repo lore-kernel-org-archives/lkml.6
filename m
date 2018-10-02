@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DC9C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C4ADC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 765F3206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 765F3206B2
+	by mail.kernel.org (Postfix) with ESMTP id 71A482089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71A482089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732422AbeJBUST (ORCPT
+        id S1732438AbeJBUST (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 2 Oct 2018 16:18:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35440 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35428 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732415AbeJBUSS (ORCPT
+        with ESMTP id S1729867AbeJBUSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:18 -0400
+        Tue, 2 Oct 2018 16:18:16 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 010DEBF0;
-        Tue,  2 Oct 2018 13:34:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C3183C2B;
+        Tue,  2 Oct 2018 13:34:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bo Chen <chenbo@pdx.edu>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Huazhong tan <tanhuazhong@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 123/137] e1000: check on netif_running() before calling e1000_up()
-Date:   Tue,  2 Oct 2018 06:25:24 -0700
-Message-Id: <20181002132507.116230400@linuxfoundation.org>
+Subject: [PATCH 4.14 122/137] net: hns: fix skb->truesize underestimation
+Date:   Tue,  2 Oct 2018 06:25:23 -0700
+Message-Id: <20181002132507.058306128@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -54,42 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bo Chen <chenbo@pdx.edu>
+From: Huazhong Tan <tanhuazhong@huawei.com>
 
-[ Upstream commit cf1acec008f8d7761aa3fd7c4bca7e17b2d2512d ]
+[ Upstream commit b1ccd4c0ab6ef499f47dd84ed4920502a7147bba ]
 
-When the device is not up, the call to 'e1000_up()' from the error handling path
-of 'e1000_set_ringparam()' causes a kernel oops with a null-pointer
-dereference. The null-pointer dereference is triggered in function
-'e1000_alloc_rx_buffers()' at line 'buffer_info = &rx_ring->buffer_info[i]'.
+skb->truesize is not meant to be tracking amount of used bytes in a skb,
+but amount of reserved/consumed bytes in memory.
 
-This bug was reported by COD, a tool for testing kernel module binaries I am
-building. This bug was also detected by KFI from Dr. Kai Cong.
+For instance, if we use a single byte in last page fragment, we have to
+account the full size of the fragment.
 
-This patch fixes the bug by checking on 'netif_running()' before calling
-'e1000_up()' in 'e1000_set_ringparam()'.
+So skb_add_rx_frag needs to calculate the length of the entire buffer into
+turesize.
 
-Signed-off-by: Bo Chen <chenbo@pdx.edu>
-Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 9cbe9fd5214e ("net: hns: optimize XGE capability by reducing cpu usage")
+Signed-off-by: Huazhong tan <tanhuazhong@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000/e1000_ethtool.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-@@ -664,7 +664,8 @@ err_setup_rx:
- err_alloc_rx:
- 	kfree(txdr);
- err_alloc_tx:
--	e1000_up(adapter);
-+	if (netif_running(adapter->netdev))
-+		e1000_up(adapter);
- err_setup:
- 	clear_bit(__E1000_RESETTING, &adapter->flags);
- 	return err;
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -530,7 +530,7 @@ static void hns_nic_reuse_page(struct sk
+ 	}
+ 
+ 	skb_add_rx_frag(skb, i, desc_cb->priv, desc_cb->page_offset + pull_len,
+-			size - pull_len, truesize - pull_len);
++			size - pull_len, truesize);
+ 
+ 	 /* avoid re-using remote pages,flag default unreuse */
+ 	if (unlikely(page_to_nid(desc_cb->priv) != numa_node_id()))
 
 
