@@ -3,58 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CFDC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5AC2C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 188B12083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:08:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 188B12083F
+	by mail.kernel.org (Postfix) with ESMTP id 75DF82083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:08:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75DF82083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbeJBULg (ORCPT
+        id S1729571AbeJBUwa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60790 "EHLO
+        Tue, 2 Oct 2018 16:52:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60750 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729087AbeJBULe (ORCPT
+        with ESMTP id S1726717AbeJBULa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:34 -0400
+        Tue, 2 Oct 2018 16:11:30 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 498C2C20;
-        Tue,  2 Oct 2018 13:28:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E6AFBC4D;
+        Tue,  2 Oct 2018 13:28:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>, Jiri Olsa <jolsa@redhat.com>,
-        Joel Fernandes <joel.opensrc@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 097/228] perf/hw_breakpoint: Split attribute parse and commit
-Date:   Tue,  2 Oct 2018 06:23:14 -0700
-Message-Id: <20181002132505.947485721@linuxfoundation.org>
+Subject: [PATCH 4.18 095/228] RDMA/uverbs: Dont overwrite NULL pointer with ZERO_SIZE_PTR
+Date:   Tue,  2 Oct 2018 06:23:12 -0700
+Message-Id: <20181002132505.786446480@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -72,155 +52,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frederic Weisbecker <frederic@kernel.org>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-[ Upstream commit 9a4903dde2c8633c5fcf887b98c4e047a6154a54 ]
+[ Upstream commit a5cc9831af05e658543593abaee45a29d061bac4 ]
 
-arch_validate_hwbkpt_settings() mixes up attribute check and commit into
-a single code entity. Therefore the validation may return an error due to
-incorrect atributes while still leaving halfway modified architecture
-breakpoint data.
+Number of specs is provided by user and in valid case can be equal to zero.
+Such argument causes to call to kcalloc() with zero-length request and in
+return the ZERO_SIZE_PTR is assigned. This pointer is different from NULL
+and makes various if (..) checks to success.
 
-This is harmless when we deal with a new breakpoint but it becomes a
-problem when we modify an existing breakpoint.
-
-Split attribute parse and commit to fix that. The architecture is
-passed a "struct arch_hw_breakpoint" to fill on top of the new attr
-and the core takes care about copying the backend data once it's fully
-validated. The architectures then need to implement the new API.
-
-Original-patch-by: Andy Lutomirski <luto@kernel.org>
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Joel Fernandes <joel.opensrc@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rich Felker <dalias@libc.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Link: http://lkml.kernel.org/r/1529981939-8231-2-git-send-email-frederic@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: b6ba4a9aa59f ("IB/uverbs: Add support for flow counters")
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/events/hw_breakpoint.c |   57 ++++++++++++++++++++++++++++++------------
- 1 file changed, 41 insertions(+), 16 deletions(-)
+ drivers/infiniband/core/uverbs_cmd.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -400,16 +400,35 @@ int dbg_release_bp_slot(struct perf_even
- 	return 0;
- }
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -2812,6 +2812,9 @@ static struct ib_uflow_resources *flow_r
+ 	if (!resources)
+ 		goto err_res;
  
--static int validate_hw_breakpoint(struct perf_event *bp)
-+#ifndef hw_breakpoint_arch_parse
-+int hw_breakpoint_arch_parse(struct perf_event *bp,
-+			     const struct perf_event_attr *attr,
-+			     struct arch_hw_breakpoint *hw)
- {
--	int ret;
-+	int err;
- 
--	ret = arch_validate_hwbkpt_settings(bp);
--	if (ret)
--		return ret;
-+	err = arch_validate_hwbkpt_settings(bp);
-+	if (err)
-+		return err;
++	if (!num_specs)
++		goto out;
 +
-+	*hw = bp->hw.info;
-+
-+	return 0;
-+}
-+#endif
-+
-+static int hw_breakpoint_parse(struct perf_event *bp,
-+			       const struct perf_event_attr *attr,
-+			       struct arch_hw_breakpoint *hw)
-+{
-+	int err;
-+
-+	err = hw_breakpoint_arch_parse(bp, attr, hw);
-+	if (err)
-+		return err;
+ 	resources->counters =
+ 		kcalloc(num_specs, sizeof(*resources->counters), GFP_KERNEL);
  
- 	if (arch_check_bp_in_kernelspace(bp)) {
--		if (bp->attr.exclude_kernel)
-+		if (attr->exclude_kernel)
- 			return -EINVAL;
- 		/*
- 		 * Don't let unprivileged users set a breakpoint in the trap
-@@ -424,19 +443,22 @@ static int validate_hw_breakpoint(struct
+@@ -2824,8 +2827,8 @@ static struct ib_uflow_resources *flow_r
+ 	if (!resources->collection)
+ 		goto err_collection;
  
- int register_perf_hw_breakpoint(struct perf_event *bp)
- {
--	int ret;
-+	struct arch_hw_breakpoint hw;
-+	int err;
- 
--	ret = reserve_bp_slot(bp);
--	if (ret)
--		return ret;
++out:
+ 	resources->max = num_specs;
 -
--	ret = validate_hw_breakpoint(bp);
-+	err = reserve_bp_slot(bp);
-+	if (err)
-+		return err;
+ 	return resources;
  
--	/* if arch_validate_hwbkpt_settings() fails then release bp slot */
--	if (ret)
-+	err = hw_breakpoint_parse(bp, &bp->attr, &hw);
-+	if (err) {
- 		release_bp_slot(bp);
-+		return err;
-+	}
-+
-+	bp->hw.info = hw;
- 
--	return ret;
-+	return 0;
- }
- 
- /**
-@@ -464,6 +486,7 @@ modify_user_hw_breakpoint_check(struct p
- 	u64 old_len  = bp->attr.bp_len;
- 	int old_type = bp->attr.bp_type;
- 	bool modify  = attr->bp_type != old_type;
-+	struct arch_hw_breakpoint hw;
- 	int err = 0;
- 
- 	bp->attr.bp_addr = attr->bp_addr;
-@@ -473,7 +496,7 @@ modify_user_hw_breakpoint_check(struct p
- 	if (check && memcmp(&bp->attr, attr, sizeof(*attr)))
- 		return -EINVAL;
- 
--	err = validate_hw_breakpoint(bp);
-+	err = hw_breakpoint_parse(bp, attr, &hw);
- 	if (!err && modify)
- 		err = modify_bp_slot(bp, old_type);
- 
-@@ -484,7 +507,9 @@ modify_user_hw_breakpoint_check(struct p
- 		return err;
- 	}
- 
-+	bp->hw.info = hw;
- 	bp->attr.disabled = attr->disabled;
-+
- 	return 0;
- }
- 
+ err_collection:
 
 
