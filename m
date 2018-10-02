@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFB9C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C3DC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E7FB2064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E7FB2064D
+	by mail.kernel.org (Postfix) with ESMTP id 9A6C12083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A6C12083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387462AbeJBUUO (ORCPT
+        id S2387507AbeJBUUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36440 "EHLO
+        Tue, 2 Oct 2018 16:20:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36446 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731764AbeJBUUN (ORCPT
+        with ESMTP id S1731241AbeJBUUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:13 -0400
+        Tue, 2 Oct 2018 16:20:14 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DC33AC51;
-        Tue,  2 Oct 2018 13:36:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DD4AA9D9;
+        Tue,  2 Oct 2018 13:36:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Lukasz Odzioba <lukasz.odzioba@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.9 75/94] IB/hfi1: Fix context recovery when PBC has an UnsupportedVL
-Date:   Tue,  2 Oct 2018 06:25:29 -0700
-Message-Id: <20181002132505.690604349@linuxfoundation.org>
+        stable@vger.kernel.org, Vincent Pelletier <plr.vincent@gmail.com>,
+        Mike Christie <mchristi@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 76/94] scsi: target: iscsi: Use bin2hex instead of a re-implementation
+Date:   Tue,  2 Oct 2018 06:25:30 -0700
+Message-Id: <20181002132505.784331589@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -55,65 +52,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael J. Ruhl <michael.j.ruhl@intel.com>
+From: Vincent Pelletier <plr.vincent@gmail.com>
 
-commit d623500b3c4efd8d4e945ac9003c6b87b469a9ab upstream.
+commit 8c39e2699f8acb2e29782a834e56306da24937fe upstream.
 
-If a packet stream uses an UnsupportedVL (virtual lane), the send
-engine will not send the packet, and it will not indicate that an
-error has occurred.  This will cause the packet stream to block.
-
-HFI has 8 virtual lanes available for packet streams.  Each lane can
-be enabled or disabled using the UnsupportedVL mask.  If a lane is
-disabled, adding a packet to the send context must be disallowed.
-
-The current mask for determining unsupported VLs defaults to 0 (allow
-all).  This is incorrect.  Only the VLs that are defined should be
-allowed.
-
-Determine which VLs are disabled (mtu == 0), and set the appropriate
-unsupported bit in the mask.  The correct mask will allow the send
-engine to error on the invalid VL, and error recovery will work
-correctly.
-
-Cc: <stable@vger.kernel.org> # 4.9.x+
-Fixes: 7724105686e7 ("IB/hfi1: add driver files")
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Reviewed-by: Lukasz Odzioba <lukasz.odzioba@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Vincent Pelletier <plr.vincent@gmail.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+[plr.vincent@gmail.com: hunk context change for 4.4 and 4.9, no code change]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/pio.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/target/iscsi/iscsi_target_auth.c |   15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/pio.c
-+++ b/drivers/infiniband/hw/hfi1/pio.c
-@@ -88,6 +88,7 @@ void pio_send_control(struct hfi1_devdat
- 	unsigned long flags;
- 	int write = 1;	/* write sendctrl back */
- 	int flush = 0;	/* re-read sendctrl to make sure it is flushed */
-+	int i;
+--- a/drivers/target/iscsi/iscsi_target_auth.c
++++ b/drivers/target/iscsi/iscsi_target_auth.c
+@@ -26,15 +26,6 @@
+ #include "iscsi_target_nego.h"
+ #include "iscsi_target_auth.h"
  
- 	spin_lock_irqsave(&dd->sendctrl_lock, flags);
+-static void chap_binaryhex_to_asciihex(char *dst, char *src, int src_len)
+-{
+-	int i;
+-
+-	for (i = 0; i < src_len; i++) {
+-		sprintf(&dst[i*2], "%02x", (int) src[i] & 0xff);
+-	}
+-}
+-
+ static void chap_gen_challenge(
+ 	struct iscsi_conn *conn,
+ 	int caller,
+@@ -47,7 +38,7 @@ static void chap_gen_challenge(
+ 	memset(challenge_asciihex, 0, CHAP_CHALLENGE_LENGTH * 2 + 1);
  
-@@ -97,9 +98,13 @@ void pio_send_control(struct hfi1_devdat
- 		reg |= SEND_CTRL_SEND_ENABLE_SMASK;
- 	/* Fall through */
- 	case PSC_DATA_VL_ENABLE:
-+		mask = 0;
-+		for (i = 0; i < ARRAY_SIZE(dd->vld); i++)
-+			if (!dd->vld[i].mtu)
-+				mask |= BIT_ULL(i);
- 		/* Disallow sending on VLs not enabled */
--		mask = (((~0ull) << num_vls) & SEND_CTRL_UNSUPPORTED_VL_MASK) <<
--				SEND_CTRL_UNSUPPORTED_VL_SHIFT;
-+		mask = (mask & SEND_CTRL_UNSUPPORTED_VL_MASK) <<
-+			SEND_CTRL_UNSUPPORTED_VL_SHIFT;
- 		reg = (reg & ~SEND_CTRL_UNSUPPORTED_VL_SMASK) | mask;
- 		break;
- 	case PSC_GLOBAL_DISABLE:
+ 	get_random_bytes(chap->challenge, CHAP_CHALLENGE_LENGTH);
+-	chap_binaryhex_to_asciihex(challenge_asciihex, chap->challenge,
++	bin2hex(challenge_asciihex, chap->challenge,
+ 				CHAP_CHALLENGE_LENGTH);
+ 	/*
+ 	 * Set CHAP_C, and copy the generated challenge into c_str.
+@@ -281,7 +272,7 @@ static int chap_server_compute_md5(
+ 		goto out;
+ 	}
+ 
+-	chap_binaryhex_to_asciihex(response, server_digest, MD5_SIGNATURE_SIZE);
++	bin2hex(response, server_digest, MD5_SIGNATURE_SIZE);
+ 	pr_debug("[server] MD5 Server Digest: %s\n", response);
+ 
+ 	if (memcmp(server_digest, client_digest, MD5_SIGNATURE_SIZE) != 0) {
+@@ -403,7 +394,7 @@ static int chap_server_compute_md5(
+ 	/*
+ 	 * Convert response from binary hex to ascii hext.
+ 	 */
+-	chap_binaryhex_to_asciihex(response, digest, MD5_SIGNATURE_SIZE);
++	bin2hex(response, digest, MD5_SIGNATURE_SIZE);
+ 	*nr_out_len += sprintf(nr_out_ptr + *nr_out_len, "CHAP_R=0x%s",
+ 			response);
+ 	*nr_out_len += 1;
 
 
