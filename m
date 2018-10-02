@@ -2,86 +2,202 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 052E4C64EBC
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D5DC64EBD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68334206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:44:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cukUdAHf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68334206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
+	by mail.kernel.org (Postfix) with ESMTP id 33FDA206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:46:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33FDA206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbeJCGab (ORCPT
+        id S1726569AbeJCGcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 02:30:31 -0400
-Received: from mail-oi1-f173.google.com ([209.85.167.173]:36742 "EHLO
-        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbeJCGab (ORCPT
+        Wed, 3 Oct 2018 02:32:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47985 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbeJCGcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 02:30:31 -0400
-Received: by mail-oi1-f173.google.com with SMTP id p125-v6so3037359oic.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 16:44:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=pAKI+vQY+uxqUZMl0o3kBgnfukf4svc7ZRjW/w2YqlY=;
-        b=cukUdAHfiqAZk60ZDdNuJf5bt3OqUaDs2iq2Yv6/poPS9LD7hzWn4ZvaUlGv5/VqL8
-         GuOrivjldGejpRMirq/4Oie+sq6PF0XVp9V5Ux311mujDAlfupJ4iv55xhdPSQQGBr/Q
-         rTW4wvRusSXC51RP9dmPlKc9exgLUtcikrQWB63JIpJC6JsdhoNRaKuTTXzXGddF6Jmg
-         6jVw7AHOZfh+QvaJ8vLk8UpX3tqeY8miAcoAekaH1aDtNHSATV2/FNyNMpGdDkVeKyyh
-         so7Co45jhR0GIv7N9tNWFUU1GtYy4JxFSghSl+NA3kH/3H4/LIYd7acLbwGwYKifEBNk
-         8bmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:to:from:subject:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=pAKI+vQY+uxqUZMl0o3kBgnfukf4svc7ZRjW/w2YqlY=;
-        b=MQ2owMKE5SddJWowwOi8SszQRuotsSxYhPPIB/PcgTeJfX2uRPX0vievOuA8kz46Oc
-         x0JsQ01gR76DnFXGtpgm6syfN27WuNz+pfo4ZEic8Wywunyq6CTNBJMI8t5PjTZxC7Xp
-         9A+g5L+4qNmZh6CW6wd3IH4Nc8MXVzJ8Z2HZDtTL5CP6niX+guoOC9IVzXmdeKNDrUv/
-         W9ZXNpsV2KMErDU7N5INesEaDRXtwByoIZWzc+52Awod4RyQsiWtC0D5ouOxCrOBgIQh
-         YpLP4FcKxrYp6sUVhbnzDtZiMusmtwfgcywFhgYcvitxa1RloayI5FEspPt531b+i0g9
-         Zxbg==
-X-Gm-Message-State: ABuFfojqHMea+bA8oBWDX5PrQPhPwGSHeogLBt58XFyG7rt2ZQy8i3n2
-        S6zetX74miuvIVCIR+bCXHEJHqZZ
-X-Google-Smtp-Source: ACcGV608d1wgY5N1pT/9sL5YnG4GOxJO/oX5fGxFp6sIejBPNMxjy30rcOgvXcEqBTGKaOwGHjV7rg==
-X-Received: by 2002:aca:c351:: with SMTP id t78-v6mr4149468oif.338.1538523880867;
-        Tue, 02 Oct 2018 16:44:40 -0700 (PDT)
-Received: from [192.168.1.107] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id 143-v6sm3901212oii.16.2018.10.02.16.44.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 16:44:40 -0700 (PDT)
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Christopher Li <sparse@chrisli.org>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Subject: Sparse warnings from calls to max3() and max
-Message-ID: <3afaa0ad-33a1-33d1-f306-8e0e467936dd@lwfinger.net>
-Date:   Tue, 2 Oct 2018 18:44:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 3 Oct 2018 02:32:41 -0400
+Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1g7UNM-00042V-48; Tue, 02 Oct 2018 23:46:48 +0000
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
+Cc:     Jordan Glover <Golden_Miller83@protonmail.ch>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181002005505.6112-1-keescook@chromium.org>
+ <20181002005505.6112-24-keescook@chromium.org>
+ <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
+ <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov>
+ <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
+ <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov>
+ <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+ <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
+ <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com>
+ <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
+ <alpine.LRH.2.21.1810030758460.23596@namei.org>
+ <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com>
+Date:   Tue, 2 Oct 2018 16:46:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 10/02/2018 04:06 PM, Kees Cook wrote:
+> On Tue, Oct 2, 2018 at 3:06 PM, James Morris <jmorris@namei.org> wrote:
+>> On Tue, 2 Oct 2018, Kees Cook wrote:
+>>
+>>> On Tue, Oct 2, 2018 at 11:57 AM, John Johansen
+>>> <john.johansen@canonical.com> wrote:
+>>>> Under the current scheme
+>>>>
+>>>> lsm.enabled=selinux
+>>>>
+>>>> could actually mean selinux,yama,loadpin,something_else are
+>>>> enabled. If we extend this behavior to when full stacking lands
+>>>>
+>>>> lsm.enabled=selinux,yama
+>>>>
+>>>> might mean selinux,yama,apparmor,loadpin,something_else
+>>>>
+>>>> and what that list is will vary from kernel to kernel, which I think
+>>>> is harder for the user than the lsm.enabled list being what is
+>>>> actually enabled at boot
+>>>
+>>> Ah, I think I missed this in your earlier emails. What you don't like
+>>> here is that "lsm.enable=" is additive. You want it to be explicit.
+>>>
+>>
+>> This is a path to madness.
+>>
+>> How about enable flags set ONLY per LSM:
+>>
+>> lsm.selinux.enable=x
+>> lsm.apparmor.enable=x
+>>
+>> With no lsm.enable, and removing selinux=x and apparmor=x.
+>>
+>> Yes this will break existing docs, but they can be updated for newer
+>> kernel versions to say "replace selinux=0 with lsm.selinux.enable=0" from
+>> kernel X onwards.
+>>
+>> Surely distro packages and bootloaders are able to cope with changes to
+>> kernel parameters?
+>>
+>> We can either take a one-time hit now, or build new usability debt, which
+>> will confuse people forever.
+> 
+> I'd like to avoid this for a few reasons:
+> 
+> - this requires per-LSM plumbing instead of centralized plumbing
+>   - each LSM needs to have its own CONFIG flag
+>   - each LSM needs to have its own bootparam flag
+> - SELinux has explicited stated they do not want to lose selinux=
+> - this doesn't meet John's goal of having a "single explicit enable list"
+> 
+I can compromise on a single explicit list. My main goal is something that
+is consistent and easy for the end user, and I would like to avoid
+potential points of confusion if possible.
 
-Sparse has suddenly started issuing as many as 11 warnings of "expression using 
-sizeof(void)" for each call to max3(). There are similar warnings for calls to 
-max(), thus I think this is the origin of the problem. My sparse version is 
-20180324-1.3-x86_64 installed in openSUSE Tumbleweed. My kernel is 4.19.0-rc6.
+To me a list like
+  lsm.enable=X,Y,Z
 
-Thanks,
+is best as a single explicit enable list, and it would be best to avoid
+lsm.disable as it just introduces confusion.
 
-Larry
+I do think per-LSM bootparams looses the advantages of centralization,
+and still requires the user to know some Kconfig info but it also gets
+rid of the lsm.disable confusion.
+
+With ordering separated out from being enabled there is a certain
+cleanness to it. And perhaps most users are looking to enable/disable
+a single lsm, instead of specifying exactly what security they want
+on their system.
+
+If we were to go this route I would rather drop the lsm. prefix
+
+
+> I think the current proposal (in the other thread) is likely the
+> sanest approach:
+> 
+> - Drop CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE
+> - Drop CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE
+> - All enabled LSMs are listed at build-time in CONFIG_LSM_ENABLE
+
+Hrrmmm isn't this a Kconfig selectable list, with each built-in LSM
+available to be enabled by default at boot.
+
+> - Boot time enabling for selinux= and apparmor= remain
+> - lsm.enable= is explicit: overrides above and omissions are disabled
+wfm
+
+> - maybe include lsm.disable= to disable anything
