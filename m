@@ -2,211 +2,183 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F13C64EBD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FEDC64EBD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 690F720878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:25:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="LXE/K1XF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 690F720878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id E9B722082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:28:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9B722082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbeJCGLm (ORCPT
+        id S1726543AbeJCGOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 02:11:42 -0400
-Received: from imap.thunk.org ([74.207.234.97]:48222 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725724AbeJCGLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 02:11:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=t6Nj3tOXaCalTYPbdK5Vd/1HsNLBCQAbMp0xxwDDHxI=; b=LXE/K1XFvQSohP3wAfgTc26dsU
-        7XUnWpdet4SvTKD954MHcZgqMjwmdGBIUwqGAWOiCuuWSETQpZlzZiu4rss0hJVuNJw6G7rD9AUb/
-        FycQpvL0UEHQndsuwzaFNP5itIP4V4Fl2OM+wMpmzPIWgXO3e6B+36ON93GacljErXfk=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1g7U2A-0001CS-Ui; Tue, 02 Oct 2018 23:24:54 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 366767A5186; Tue,  2 Oct 2018 19:24:54 -0400 (EDT)
-Date:   Tue, 2 Oct 2018 19:24:54 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
+        Wed, 3 Oct 2018 02:14:43 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47711 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725746AbeJCGOm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 02:14:42 -0400
+Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1g7U5w-0001rP-Ee; Tue, 02 Oct 2018 23:28:48 +0000
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+To:     James Morris <jmorris@namei.org>, Kees Cook <keescook@chromium.org>
+Cc:     Jordan Glover <Golden_Miller83@protonmail.ch>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [GIT PULL linux-next] Add Compiler Attributes tree
-Message-ID: <20181002232454.GB2483@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-References: <CANiq72=rgT9cPWH64Tf_8gAU09EiH5FvGqFUdOjV=spVbM5m8Q@mail.gmail.com>
- <20181003071059.02b3fd6f@canb.auug.org.au>
- <CAKwvOdmt4-jFv6d-ZVUH5OOvXSz38jpuNvQy-jtoSS3xEoh78A@mail.gmail.com>
- <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com>
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181002005505.6112-1-keescook@chromium.org>
+ <20181002005505.6112-24-keescook@chromium.org>
+ <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
+ <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov>
+ <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
+ <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov>
+ <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+ <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
+ <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com>
+ <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
+ <alpine.LRH.2.21.1810030758460.23596@namei.org>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <c0a5b479-72d7-8b03-09ce-31e0a4cd09ba@canonical.com>
+Date:   Tue, 2 Oct 2018 16:28:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <alpine.LRH.2.21.1810030758460.23596@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 12:12:10AM +0200, Miguel Ojeda wrote:
-> As I have read, -next is supposed to be a vision of what the merge
-> window will look like after merging everything, i.e. ideally -rc1. For
-> that to work for files out-of-tree (like these ones, which are not
-> maintained by a single tree), changes should be allowed to be stacked
-> on each other; otherwise, we cannot handle conflicts :-(
+On 10/02/2018 03:06 PM, James Morris wrote:
+> On Tue, 2 Oct 2018, Kees Cook wrote:
+> 
+>> On Tue, Oct 2, 2018 at 11:57 AM, John Johansen
+>> <john.johansen@canonical.com> wrote:
+>>> Under the current scheme
+>>>
+>>> lsm.enabled=selinux
+>>>
+>>> could actually mean selinux,yama,loadpin,something_else are
+>>> enabled. If we extend this behavior to when full stacking lands
+>>>
+>>> lsm.enabled=selinux,yama
+>>>
+>>> might mean selinux,yama,apparmor,loadpin,something_else
+>>>
+>>> and what that list is will vary from kernel to kernel, which I think
+>>> is harder for the user than the lsm.enabled list being what is
+>>> actually enabled at boot
+>>
+>> Ah, I think I missed this in your earlier emails. What you don't like
+>> here is that "lsm.enable=" is additive. You want it to be explicit.
+>>
+> 
+> This is a path to madness.
+> 
+> How about enable flags set ONLY per LSM:
+> 
+> lsm.selinux.enable=x
+> lsm.apparmor.enable=x
+> 
+why add the lsm. prefix? I think if we go this route
+selinux.enable=x
+apparmor.enable=x
 
-In general, best practice is to base tree on an -rcX commit.  I
-usually will use something like -rc4 which is after most of the major
-changes have gone in.  This tends to reduce conflicts for most git
-trees.
+is a little cleaner
 
-There are times when a commit in one tree needs to depend on a commit
-in another tree.  What to do depends on the circumstances.
+the question then becomes is this easier for users? Doing something
+similar to this was discussed earlier but its more tedious to type
+each of these out, and since they are separate options they can
+get spread out making it easy to miss one when you are changing
+your boot options.
 
-One solution is to base one subsystem's git tree on another
-subsystem's git tree --- *if* that git tree is one that doesn't get
-rebase.  You'll need to talk to the subsystem maintainer to find out
-whether or not that's the case.  But that's actually not a great
-solution, because what can happen is if the tree A is based on tree B,
-and there is something in tree B which Linus objects to, tree B won't
-get pulled.  And since tree A depends on tree B, Linus will refuse to
-pull tree A as well.  We recently had a case where a subsystem pull
-got delayed by a full development cycle because of this.
+I honestly don't think we are going to come to a consensus on what is
+best for users because different sets of users have different priorities.
+But I do think we need to come up with something cleaner than v3
 
-So another solution is to simply evade the problem.  If the reason why
-tree A needs to depend on tree B is that tree B is using some
-interface which has changed, if it's a minor change, then Stephen will
-fix it up when he pulls the changes; just as Linus will.
+> With no lsm.enable, and removing selinux=x and apparmor=x.
+>
+this will break the user api, not just the distro/builder kernel
+config. I do think it is probably worth doing, but not everyone agrees.
 
-If the issue is that there is some common infrastructure which two git
-tree needs, what will often happen is that just those patches which
-provide the new infastructure will get put on a branch based on -rcX
-on one of the git trees.  And then the subsystems will base their work
-on that sub-branche.  For example, suppose the file system developers
-have collectively decided that there should be a new fallocate(2)
-flag, FALLOC_FL_DONT_RANDOMLY_LOSE (ala RFC 748).  The work to define
-and enable that feature in the VFS layer might be placed on the
-randomly-lose git branch on xfs.git.  And then the xfs and ext4
-development branches will both be based on the randomly-lose branch.
+> Yes this will break existing docs, but they can be updated for newer 
+> kernel versions to say "replace selinux=0 with lsm.selinux.enable=0" from 
+> kernel X onwards.
+> 
+yes docs can be updated but it does take time to propagate out and their
+are always the dozens of blog, and forum posts etc that google will
+drag up that won't get updated
 
-Yet another solution is to arrange the code changes to avoid needing
-commits that might conflict.  For example, in fs/ext4/ext4.h, I very
-deliberately did this.
+> Surely distro packages and bootloaders are able to cope with changes to 
+> kernel parameters?
+> 
+yes, but users who have been taught to add certain incantations to their
+kernel parameters find it a lot harder
 
-/* Until this gets included into linux/compiler-gcc.h */
-#ifndef __nonstring
-#if defined(GCC_VERSION) && (GCC_VERSION >= 80000)
-#define __nonstring __attribute__((nonstring))
-#else
-#define __nonstring
-#endif
-#endif
+> We can either take a one-time hit now, or build new usability debt, which 
+> will confuse people forever.
+> 
 
-You included a cleanup patch to remove it in your git tree, but it
-wasn't actually necessary.  If there was a merge conflict, it would be
-simple enough to just drop your cleanup patch, since I had carefully
-used #ifndef __nonstring... #endif.  So the idea was that if someone
-defined __nonstring somewhere else, it wouldn't break the build with a
-duplicate #define since it was protected with an #ifndef.
-
-I didn't mind that you included a cleanup patch; but I set things up
-so that it would not be necessary, since often the best way to solve a
-merge conflict is by avoiding the need for the change (in some other
-git tree) in the first place.  :-)
-
-Cheers,
-
-					- Ted
+I'm not opposed to taking a one-time hit for usability in the future.
