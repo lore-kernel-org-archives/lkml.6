@@ -2,170 +2,99 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39822C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C9CC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6E432064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:07:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6E432064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3BD682064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:07:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qYZgrAUc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD682064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbeJBXvv (ORCPT
+        id S1728860AbeJBXwR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 19:51:51 -0400
-Received: from mga18.intel.com ([134.134.136.126]:26642 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbeJBXvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 19:51:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 10:07:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,332,1534834800"; 
-   d="scan'208";a="88565746"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.165]) ([10.7.198.165])
-  by orsmga003.jf.intel.com with ESMTP; 02 Oct 2018 10:07:28 -0700
-Subject: Re: [PATCH v2] libnvdimm, dimm: Maximize label transfer size
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <153842839852.2679462.16816747305002065908.stgit@dwillia2-desk3.amr.corp.intel.com>
- <71e2a4b6-68d9-d90d-b927-90840d8c6ee1@linux.intel.com>
- <CAPcyv4jQ7eAbEaUUP0R_JFKRADGU1kXhMd_Q=Gw5+1Xki5WYjA@mail.gmail.com>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <051ce2c1-41ed-a42d-7f55-1303f8f33c32@linux.intel.com>
-Date:   Tue, 2 Oct 2018 10:07:27 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 2 Oct 2018 19:52:17 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38535 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbeJBXwR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 19:52:17 -0400
+Received: by mail-pl1-f194.google.com with SMTP id b5-v6so2056965plr.5;
+        Tue, 02 Oct 2018 10:07:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EIPbGsjH+rmJ9Zn47a7tfgVu+weQ1wqkfOQ2S8mBr4I=;
+        b=qYZgrAUcbHktnYnGOkdsT05b52u/Y4uaiTevfTIueMt58SU3nnuVG20beFIziNE7OZ
+         15y/JFWGY8JfwW50jXXb5KPYu17Zo1wf3ccrunnnYBFnWlsH479NhTukUbyPlc9LtfuB
+         1uoNPUGVYD18mzSyxPsdBTWtEyzfH697dJr3RapRt6JFcGCOAbPrl3oVk2ZNgYT3LsuR
+         Z+GoSJinoWDnScNGQgljxHqBcd2mprJr3ApjSgh2H2sopSQNQEPakloNHV+yZCFgelqP
+         Zg547fj7vfohfvwMQ/6vGl9lXo9cNwCkcHjEEK/yh9fyRuoTbB6i74iwGi0QoqyBqYMS
+         JwEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EIPbGsjH+rmJ9Zn47a7tfgVu+weQ1wqkfOQ2S8mBr4I=;
+        b=cicJc4a9uXqDtDKlR3HCMlOmZdc2lTTLVitjKfyr+TaKrtssP9RWE8tODXNRwvU9D8
+         q9t6wyNxzxcdTOHrf6vz2scSfO833Jbxk7DLwieheQQlCr0JIPTfcxhr4ypw7yDRY9cO
+         rpY6fEY/xa4aeLeROv/mkx2aJsbLWkplEdBextwKNftuhirpvU5CIBI6SlO3/I8cN481
+         iviJqWZhUJpLwFC/nDd8ZZNXPmmrJQZs7ELXXyqF4hCAw4KUjgN1ZLdwIvGY7ZQfosQ6
+         dRfg/Rz2mjAjz6JkZYSZoAq23f0GSt7KB4CcKLNUnKoPmbHL5mKgvvNBsz0TCBbBrdG7
+         I/Eg==
+X-Gm-Message-State: ABuFfogDdXiAgIz22yO2yep7w7ngWMp41W8x55inA2+cwiS5a1uK9t2U
+        bjwmjqMwYrSPvgTRLTyk3N0=
+X-Google-Smtp-Source: ACcGV60h5Efv+5JOEULseLI0KR0v4Ku2dXv1SvkHuNRDL1rKZJ/4oUnRT4DUFV1gbE6erKl+H/4YjA==
+X-Received: by 2002:a17:902:8690:: with SMTP id g16-v6mr17106926plo.302.1538500074222;
+        Tue, 02 Oct 2018 10:07:54 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id i2-v6sm23136550pgq.35.2018.10.02.10.07.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Oct 2018 10:07:54 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 10:07:48 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        corbet@lwn.net, afd@ti.com, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v9 1/2] dt-bindings: hwmon: Add ina3221 documentation
+Message-ID: <20181002170748.GA24384@Asurada-Nvidia.nvidia.com>
+References: <20181002010523.2019-1-nicoleotsuka@gmail.com>
+ <20181002010523.2019-2-nicoleotsuka@gmail.com>
+ <20181002170518.GA27236@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jQ7eAbEaUUP0R_JFKRADGU1kXhMd_Q=Gw5+1Xki5WYjA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181002170518.GA27236@roeck-us.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 10/1/2018 3:02 PM, Dan Williams wrote:
-> On Mon, Oct 1, 2018 at 2:54 PM Alexander Duyck
-> <alexander.h.duyck@linux.intel.com> wrote:
->>
->>
->>
->> On 10/1/2018 2:14 PM, Dan Williams wrote:
->>> Use kvzalloc() to bypass the arbitrary PAGE_SIZE limit of label transfer
->>> operations. Given the expense of calling into firmware, maximize the
->>> amount of label data we transfer per call to be up to the total label
->>> space if allowed by the firmware, or 256K whichever is smaller.
->>>
->>> Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
->>> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->>> ---
->>> Changes in v2:
->>> * clamp the max allocation size at 256K in case large label areas with
->>>     unlimited transfer sizes appear in the future.
->>>
->>>    drivers/nvdimm/dimm_devs.c       |   14 ++++++++------
->>>    tools/testing/nvdimm/test/nfit.c |    2 +-
->>>    2 files changed, 9 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
->>> index 863cabc35215..3616e2e47788 100644
->>> --- a/drivers/nvdimm/dimm_devs.c
->>> +++ b/drivers/nvdimm/dimm_devs.c
->>> @@ -111,8 +111,9 @@ int nvdimm_init_config_data(struct nvdimm_drvdata *ndd)
->>>        if (!ndd->data)
->>>                return -ENOMEM;
->>>
->>> -     max_cmd_size = min_t(u32, PAGE_SIZE, ndd->nsarea.max_xfer);
->>> -     cmd = kzalloc(max_cmd_size + sizeof(*cmd), GFP_KERNEL);
->>> +     max_cmd_size = min_t(u32, ndd->nsarea.config_size, SZ_256K);
->>> +     max_cmd_size = min_t(u32, max_cmd_size, ndd->nsarea.max_xfer);
->>> +     cmd = kvzalloc(max_cmd_size + sizeof(*cmd), GFP_KERNEL);
->>>        if (!cmd)
->>>                return -ENOMEM;
->>>
->>
->> So I wouldn't use 256K as the limit, maybe 256K minus the sizeof(*cmd).
->> Otherwise you are still allocating additional memory to take care of
->> that little trailing bit that is being added.
+On Tue, Oct 02, 2018 at 10:05:18AM -0700, Guenter Roeck wrote:
+> Hi Nicolin,
 > 
-> Does it matter? This is a slow / infrequently used path and I do don't
-> see the practical difference of 256K vs slightly less than 256K.
-
-It depends on the approach used. From past experience 256K could easily 
-become 512K with just that extra bit of overhead. That is why I was 
-thinking if we are going to make 256K the limit, we should make that the 
-hard limit and not add a little bit extra onto it.
-
->>> @@ -134,7 +135,7 @@ int nvdimm_init_config_data(struct nvdimm_drvdata *ndd)
->>>                memcpy(ndd->data + offset, cmd->out_buf, cmd->in_length);
->>>        }
->>>        dev_dbg(ndd->dev, "len: %zu rc: %d\n", offset, rc);
->>> -     kfree(cmd);
->>> +     kvfree(cmd);
->>>
->>>        return rc;
->>>    }
->>> @@ -157,9 +158,10 @@ int nvdimm_set_config_data(struct nvdimm_drvdata *ndd, size_t offset,
->>>        if (offset + len > ndd->nsarea.config_size)
->>>                return -ENXIO;
->>>
->>> -     max_cmd_size = min_t(u32, PAGE_SIZE, len);
->>> +     max_cmd_size = min_t(u32, ndd->nsarea.config_size, SZ_256K);
->>>        max_cmd_size = min_t(u32, max_cmd_size, ndd->nsarea.max_xfer);
->>> -     cmd = kzalloc(max_cmd_size + sizeof(*cmd) + sizeof(u32), GFP_KERNEL);
->>> +     max_cmd_size = min_t(u32, max_cmd_size, len);
->>> +     cmd = kvzalloc(max_cmd_size + sizeof(*cmd) + sizeof(u32), GFP_KERNEL);
->>>        if (!cmd)
->>>                return -ENOMEM;
->>>
->>
->> For the set operation I am not sure you have any code that is going to
->> be updating things multiple labels at a time. From what I can tell the
->> largest set call you ever make is probably for a namespace index and
->> odds are that will only ever be 256 or 512 bytes.
+> On Mon, Oct 01, 2018 at 06:05:22PM -0700, Nicolin Chen wrote:
+> > Texas Instruments INA3221 is a triple-channel shunt and bus
+> > voltage monitor. This patch adds a DT binding doc for it.
+> > 
+> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> > ---
 > 
-> Inside the kernel, true, but we do perform large sets from userspace.
-> That said I don't see why this low level routine should encode
-> layering violation knowledge of how it might be used.
+> This version of the series looks good to me. I'll add both patches to
+> hwmon-next, with the understanding that I may pull them if Rob has
+> bindings related concerns.
 
-Can userspace call this directly? I only see 3 callers of this and all 
-of them limit themselves to writing either a single namespace index or 
-label.
+Thanks a lot, especially for the review.
 
-Also we know that the behavior is supposed to be that we only update 
-what we have to as it introduces issues if we try to overwrite all of 
-the config space. That is why I think it would be better to keep the 
-upper limit for writes small anyway. That way we make it painful for 
-somebody to do the wrong thing.
-
->> Also the limitations here could probably use some additional clean-up.
->> For example you have a check for offset + len > config_size above this
->> min_t calls. As such it should be impossible for length to ever be
->> greater than config_size so you shouldn't need to test for the min of
->> both and could just use the min of len versus the max_xfer.
-> 
-> Again that's a case of this leaf routine encoding assumptions about
-> how it might be used. I'd rather be pedantic since this is not a hot
-> path.
-
-No. This is me reading the code. Just to be clear, before we start 
-trying to determine the max_cmd_size we have the following bit of code:
-	if (offset + len > ndd->nsarea.config_size)
-		return -ENXIO;
-
-So if that logic is already there how can we have len be greater than 
-ndd->nsarea.config_size? As far as I can tell we can't so we could save 
-ourselves one of the min_t checks since we know len should always be 
-less than or equal to ndd->nsarea.config_size.
-
+Nicolin
