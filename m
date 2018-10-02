@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C70C64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 802F5C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4850A208D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4850A208D9
+	by mail.kernel.org (Postfix) with ESMTP id 52E29206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E29206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387675AbeJBUUf (ORCPT
+        id S2387659AbeJBUUd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36600 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387654AbeJBUUd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 16:20:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36590 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387634AbeJBUUc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:20:32 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A40BB4B;
-        Tue,  2 Oct 2018 13:37:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4753CB4A;
+        Tue,  2 Oct 2018 13:37:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-        Rex Zhu <Rex.Zhu@amd.com>,
+        Hang Zhou <hang.zhou@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 91/94] drm/amdgpu: Update power state at the end of smu hw_init.
-Date:   Tue,  2 Oct 2018 06:25:45 -0700
-Message-Id: <20181002132506.846924153@linuxfoundation.org>
+Subject: [PATCH 4.9 90/94] drm/amdgpu: Enable/disable gfx PG feature in rlc safe mode
+Date:   Tue,  2 Oct 2018 06:25:44 -0700
+Message-Id: <20181002132506.759978896@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -55,64 +54,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rex Zhu <Rex.Zhu@amd.com>
 
-[ Upstream commit 2ab4d0e74256fc49b7b270f63c1d1e47c2455abc ]
+[ Upstream commit 8ef23364b654d44244400d79988e677e504b21ba ]
 
-For SI/Kv, the power state is managed by function
-amdgpu_pm_compute_clocks.
-
-when dpm enabled, we should call amdgpu_pm_compute_clocks
-to update current power state instand of set boot state.
-
-this change can fix the oops when kfd driver was enabled on Kv.
+This is required by gfx hw and can fix the rlc hang when
+do s3 stree test on Cz/St.
 
 Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Tested-by: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Hang Zhou <hang.zhou@amd.com>
 Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/kv_dpm.c |    4 +---
- drivers/gpu/drm/amd/amdgpu/si_dpm.c |    3 +--
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/kv_dpm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/kv_dpm.c
-@@ -1350,8 +1350,6 @@ static int kv_dpm_enable(struct amdgpu_d
- 		return ret;
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+@@ -5551,6 +5551,11 @@ static int gfx_v8_0_set_powergating_stat
+ 	if (!(adev->pg_flags & AMD_PG_SUPPORT_GFX_PG))
+ 		return 0;
+ 
++	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
++				AMD_PG_SUPPORT_RLC_SMU_HS |
++				AMD_PG_SUPPORT_CP |
++				AMD_PG_SUPPORT_GFX_DMG))
++		adev->gfx.rlc.funcs->enter_safe_mode(adev);
+ 	switch (adev->asic_type) {
+ 	case CHIP_CARRIZO:
+ 	case CHIP_STONEY:
+@@ -5586,7 +5591,11 @@ static int gfx_v8_0_set_powergating_stat
+ 	default:
+ 		break;
  	}
- 
--	kv_update_current_ps(adev, adev->pm.dpm.boot_ps);
 -
- 	if (adev->irq.installed &&
- 	    amdgpu_is_internal_thermal_sensor(adev->pm.int_thermal_type)) {
- 		ret = kv_set_thermal_temperature_range(adev, KV_TEMP_RANGE_MIN, KV_TEMP_RANGE_MAX);
-@@ -3086,7 +3084,7 @@ static int kv_dpm_hw_init(void *handle)
- 	else
- 		adev->pm.dpm_enabled = true;
- 	mutex_unlock(&adev->pm.mutex);
--
-+	amdgpu_pm_compute_clocks(adev);
- 	return ret;
- }
- 
---- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
-@@ -6959,7 +6959,6 @@ static int si_dpm_enable(struct amdgpu_d
- 
- 	si_enable_auto_throttle_source(adev, AMDGPU_DPM_AUTO_THROTTLE_SRC_THERMAL, true);
- 	si_thermal_start_thermal_controller(adev);
--	ni_update_current_ps(adev, boot_ps);
- 
++	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
++				AMD_PG_SUPPORT_RLC_SMU_HS |
++				AMD_PG_SUPPORT_CP |
++				AMD_PG_SUPPORT_GFX_DMG))
++		adev->gfx.rlc.funcs->exit_safe_mode(adev);
  	return 0;
- }
-@@ -7836,7 +7835,7 @@ static int si_dpm_hw_init(void *handle)
- 	else
- 		adev->pm.dpm_enabled = true;
- 	mutex_unlock(&adev->pm.mutex);
--
-+	amdgpu_pm_compute_clocks(adev);
- 	return ret;
  }
  
 
