@@ -2,111 +2,116 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0252C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0770C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D809206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:23:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D809206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
+	by mail.kernel.org (Postfix) with ESMTP id A1FEA206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1FEA206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbeJBUHH (ORCPT
+        id S1727353AbeJBUJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:07:07 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:48222 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbeJBUHH (ORCPT
+        Tue, 2 Oct 2018 16:09:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59700 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbeJBUJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:07:07 -0400
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23994586AbeJBNXpLcvTY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org> + 1 other);
-        Tue, 2 Oct 2018 15:23:45 +0200
-Date:   Tue, 2 Oct 2018 14:23:45 +0100 (BST)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     netdev@vger.kernel.org
-cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] declance: Fix continuation with the adapter identification
- message
-Message-ID: <alpine.LFD.2.21.1810021401530.5483@eddie.linux-mips.org>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Tue, 2 Oct 2018 16:09:27 -0400
+Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3512BF0;
+        Tue,  2 Oct 2018 13:26:05 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Stafford Horne <shorne@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 001/228] crypto: skcipher - Fix -Wstringop-truncation warnings
+Date:   Tue,  2 Oct 2018 06:21:38 -0700
+Message-Id: <20181002132459.134160656@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
+References: <20181002132459.032960735@linuxfoundation.org>
+User-Agent: quilt/0.65
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix a commit 4bcc595ccd80 ("printk: reinstate KERN_CONT for printing
-continuation lines") regression with the `declance' driver, which caused
-the adapter identification message to be split between two lines, e.g.:
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-declance.c: v0.011 by Linux MIPS DECstation task force
-tc6: PMAD-AA
-, addr = 08:00:2b:1b:2a:6a, irq = 14
-tc6: registered as eth0.
+------------------
 
-Address that properly, by printing identification with a single call,
-making the messages now look like:
+From: Stafford Horne <shorne@gmail.com>
 
-declance.c: v0.011 by Linux MIPS DECstation task force
-tc6: PMAD-AA, addr = 08:00:2b:1b:2a:6a, irq = 14
-tc6: registered as eth0.
+[ Upstream commit cefd769fd0192c84d638f66da202459ed8ad63ba ]
 
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-Fixes: 4bcc595ccd80 ("printk: reinstate KERN_CONT for printing continuation lines")
+As of GCC 9.0.0 the build is reporting warnings like:
+
+    crypto/ablkcipher.c: In function ‘crypto_ablkcipher_report’:
+    crypto/ablkcipher.c:374:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
+      strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       sizeof(rblkcipher.geniv));
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This means the strnycpy might create a non null terminated string.  Fix this by
+explicitly performing '\0' termination.
+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Eric Biggers <ebiggers3@gmail.com>
+Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
+Signed-off-by: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-Hi,
+ crypto/ablkcipher.c |    2 ++
+ crypto/blkcipher.c  |    1 +
+ 2 files changed, 3 insertions(+)
 
- Not requesting a backport as the impact of this issue is purely cosmetic.  
-Deferring driver review to use `netdev_info', etc. in place of `printk' to 
-another time.  Please apply.
+--- a/crypto/ablkcipher.c
++++ b/crypto/ablkcipher.c
+@@ -368,6 +368,7 @@ static int crypto_ablkcipher_report(stru
+ 	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+@@ -442,6 +443,7 @@ static int crypto_givcipher_report(struc
+ 	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
+--- a/crypto/blkcipher.c
++++ b/crypto/blkcipher.c
+@@ -510,6 +510,7 @@ static int crypto_blkcipher_report(struc
+ 	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
+ 	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
+ 		sizeof(rblkcipher.geniv));
++	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+ 	rblkcipher.min_keysize = alg->cra_blkcipher.min_keysize;
 
-  Maciej
----
- drivers/net/ethernet/amd/declance.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
 
-linux-net-declance-pr-cont.patch
-Index: linux-20180930-4maxp64/drivers/net/ethernet/amd/declance.c
-===================================================================
---- linux-20180930-4maxp64.orig/drivers/net/ethernet/amd/declance.c
-+++ linux-20180930-4maxp64/drivers/net/ethernet/amd/declance.c
-@@ -1031,6 +1031,7 @@ static int dec_lance_probe(struct device
- 	int i, ret;
- 	unsigned long esar_base;
- 	unsigned char *esar;
-+	const char *desc;
- 
- 	if (dec_lance_debug && version_printed++ == 0)
- 		printk(version);
-@@ -1216,19 +1217,20 @@ static int dec_lance_probe(struct device
- 	 */
- 	switch (type) {
- 	case ASIC_LANCE:
--		printk("%s: IOASIC onboard LANCE", name);
-+		desc = "IOASIC onboard LANCE";
- 		break;
- 	case PMAD_LANCE:
--		printk("%s: PMAD-AA", name);
-+		desc = "PMAD-AA";
- 		break;
- 	case PMAX_LANCE:
--		printk("%s: PMAX onboard LANCE", name);
-+		desc = "PMAX onboard LANCE";
- 		break;
- 	}
- 	for (i = 0; i < 6; i++)
- 		dev->dev_addr[i] = esar[i * 4];
- 
--	printk(", addr = %pM, irq = %d\n", dev->dev_addr, dev->irq);
-+	printk("%s: %s, addr = %pM, irq = %d\n",
-+	       name, desc, dev->dev_addr, dev->irq);
- 
- 	dev->netdev_ops = &lance_netdev_ops;
- 	dev->watchdog_timeo = 5*HZ;
