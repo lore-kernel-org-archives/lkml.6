@@ -2,99 +2,134 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4809C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D080EC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88A5F2089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:07:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 834F0206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:10:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kq/LgO9+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88A5F2089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MfUe7O/o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 834F0206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbeJBRtr (ORCPT
+        id S1727482AbeJBRxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 13:49:47 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43531 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727321AbeJBRtr (ORCPT
+        Tue, 2 Oct 2018 13:53:04 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:40918 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727244AbeJBRxE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 13:49:47 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 30-v6so1050838plb.10;
-        Tue, 02 Oct 2018 04:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=xKOWY3ZtkI/ivBPYkF7de7JpAw2y8izYnMGez5xJs+8=;
-        b=Kq/LgO9+GZgtGNbTAlTSnV3cAW6ceQ5KgmQ8aSnTgyhusHLf3WtYrBgjPpMpg0rK+s
-         gJFHyOfXP/F0iT0NqLHp6JHuXigd27qTx32pSMjkKX6y8X64pUyDpT4Bek+bPNHFuUd1
-         X1STTO6FvrtO4BH5DpnwoBUv5l2JBZzGE73pWTUwfXJTqzmKCq4sTV7mtTDxMQ9dIROs
-         uuFQA/gbdCrxjCZgj/ejeZY0z0LbqfEp+g1KAduXHHPCly+fw+IQqY7Aj/HKolLFF1wh
-         8DxdVERWU5SaRHYvOkNWRD0P9GC0SgqPWlPnsf+bWfhO8Bv7Ag/U1WXicKFv400QVIhx
-         ZX2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xKOWY3ZtkI/ivBPYkF7de7JpAw2y8izYnMGez5xJs+8=;
-        b=JR4+l4DqI80xp+1i+D68QqKt6KiVr/BJjaG4GPkAJWsGQp1JFt/Gc0+t/nLBTVklmm
-         ExXsXN7/ns3Jp32kzY8tuUzC20cZgA97qdBvp+hDgNweQZgbGAzsmGld3BxPA5ctc8is
-         +68lUAT8XYte0A+V0SOGH5WSYrV9rAdnGsmGI95mE++kRbIfoEe1eMJJfoEWBFSc+Aev
-         ASxh03ucSOtemhNA2Vn2vATARCXTkwyIHoyfFY43TZJs4g8andKDYwseczrLORYLt18k
-         9dB1haPikGILmNHKHwgs/b6LW0edsEtRKlkOzQ7r1dZq9va/OGwdtW9vJcULn1u2mC/v
-         jQ/Q==
-X-Gm-Message-State: ABuFfojW49I8lYx5LeXV+afZvmq/UICYEJn9b9GI5bIDt7eBI/HAUjKZ
-        rpgqbEbputaJsCamyzDVY6GWb/EOYDo=
-X-Google-Smtp-Source: ACcGV63x6la2ew6DEodlzLnHfUt18/5CuiRJOIcwsHx38aibRvqla5tfwod0Hsc/j8a+NK/obSHX1w==
-X-Received: by 2002:a63:145f:: with SMTP id 31-v6mr13786962pgu.35.1538478422865;
-        Tue, 02 Oct 2018 04:07:02 -0700 (PDT)
-Received: from hieu-Inspiron-7577.net.fpt ([1.54.224.16])
-        by smtp.gmail.com with ESMTPSA id f1-v6sm22917929pgc.4.2018.10.02.04.07.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 04:07:01 -0700 (PDT)
-From:   Hieu Tran Dang <dangtranhieu2012@gmail.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Hieu Tran Dang <dangtranhieu2012@gmail.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: fsl-lpspi: Prevent FIFO under/overrun by default
-Date:   Tue,  2 Oct 2018 18:06:36 +0700
-Message-Id: <20181002110636.5052-1-dangtranhieu2012@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 2 Oct 2018 13:53:04 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1371FB7F;
+        Tue,  2 Oct 2018 13:10:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1538478617;
+        bh=qfENirQdex8moT0jHhtyaBqkZ60FYletjMkQYxhNQdY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MfUe7O/od0s4mqE2GkC1CDwN8/OzTROqf5vWNR5DZigGhbYbIyj/4XSujTKhiHDLj
+         +gj/Mjzkanfhem2RYWxPq9g7xYR9timMZD4LechFLjfE5ZwuFUjXLgHDubjcVRS/GB
+         66sWZMi5lMz21XnEv6I4w5ke++kJGBRcrjpl22fU=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/6] [media] ad5820: DT new optional field enable-gpios
+Date:   Tue, 02 Oct 2018 14:10:33 +0300
+Message-ID: <13152589.2v2DAIKa7y@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAPybu_1xmsuQVx94Lx+5UyX_+aerPdGVsgVkoNy=XkS98nmAmw@mail.gmail.com>
+References: <20181002073222.11368-1-ricardo.ribalda@gmail.com> <2128166.ZAkUExjJHM@avalon> <CAPybu_1xmsuQVx94Lx+5UyX_+aerPdGVsgVkoNy=XkS98nmAmw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Certain devices don't work well when a transmit FIFO underrun or
-receive FIFO overrun occurs. Example is the SAF400x radio chip when
-running at high speed which leads to garbage being sent to/received from
-the chip. In which case, it should stall waiting for further data to be
-available before proceeding. This patch unset the NOSTALL bit in CFGR1
-by default to prevent this issue.
+Hi Ricardo,
 
-Signed-off-by: Hieu Tran Dang <dangtranhieu2012@gmail.com>
----
- drivers/spi/spi-fsl-lpspi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tuesday, 2 October 2018 13:57:22 EEST Ricardo Ribalda Delgado wrote:
+> On Tue, Oct 2, 2018 at 12:35 PM Laurent Pinchart wrote:
+> > On Tuesday, 2 October 2018 10:32:18 EEST Ricardo Ribalda Delgado wrote:
+> > > Document new enable-gpio field. It can be used to disable the part
+> > > without turning down its regulator.
+> > > 
+> > > Cc: devicetree@vger.kernel.org
+> > > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> > > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > > ---
+> > > 
+> > >  Documentation/devicetree/bindings/media/i2c/ad5820.txt | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+> > > b/Documentation/devicetree/bindings/media/i2c/ad5820.txt index
+> > > 5940ca11c021..9ccd96d3d5f0 100644
+> > > --- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+> > > +++ b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+> > > 
+> > > @@ -8,6 +8,12 @@ Required Properties:
+> > >    - VANA-supply: supply of voltage for VANA pin
+> > > 
+> > > +Optional properties:
+> > > +
+> > > +   - enable-gpios : GPIO spec for the XSHUTDOWN pin. Note that the
+> > > polarity of +the enable GPIO is the opposite of the XSHUTDOWN pin
+> > > (asserting the enable +GPIO deasserts the XSHUTDOWN signal and vice
+> > > versa).
+> > 
+> > After reading this one more time, I think the text is at the very least
+> > confusing. The logic level of the enable GPIO is the same as the logic
+> > level of the XSHUTDOWN pin. The latter being active low, asserting
+> > "enable" will deassert "shutdown", but talking about "desserting
+> > XSHUTDOWN" is confusing.
+> 
+> what about:
+> 
+> - enable-gpios : GPIO spec for the XSHUTDOWN pin. When the XSHUTDOWN pin
+> is asserted the device is enabled.
 
-diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
-index e6d5cc6ab108..51670976faa3 100644
---- a/drivers/spi/spi-fsl-lpspi.c
-+++ b/drivers/spi/spi-fsl-lpspi.c
-@@ -276,7 +276,7 @@ static int fsl_lpspi_config(struct fsl_lpspi_data *fsl_lpspi)
- 
- 	fsl_lpspi_set_watermark(fsl_lpspi);
- 
--	temp = CFGR1_PCSCFG | CFGR1_MASTER | CFGR1_NOSTALL;
-+	temp = CFGR1_PCSCFG | CFGR1_MASTER;
- 	if (fsl_lpspi->config.mode & SPI_CS_HIGH)
- 		temp |= CFGR1_PCSPOL;
- 	writel(temp, fsl_lpspi->base + IMX7ULP_CFGR1);
+For some reason "asserting a pin" doesn't seem right to me. How about
+
+- enable-gpios: GPIO spec for the XSHUTDOWN pin. The XSHUTDOWN signal is 
+active low, a high level on the pin enables the device.
+
+> > > of +the enable GPIO is the opposite of the XSHUTDOWN pin (asserting the
+> > > enable +GPIO deasserts the XSHUTDOWN signal and vice versa).
+> > > 
+> > >  Example:
+> > >         ad5820: coil@c {
+> > > 
+> > > @@ -15,5 +21,6 @@ Example:
+> > >                 reg = <0x0c>;
+> > >                 
+> > >                 VANA-supply = <&vaux4>;
+> > > 
+> > > +               enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
+> > > 
+> > >         };
+> > 
+> > --
+> > Regards,
+> > 
+> > Laurent Pinchart
+
+
 -- 
-2.17.1
+Regards,
+
+Laurent Pinchart
+
+
 
