@@ -2,106 +2,141 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DBFC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77224C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D93582089A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:39:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MTKOOTM+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D93582089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 383E82089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 06:40:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 383E82089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbeJBNVR (ORCPT
+        id S1726772AbeJBNWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 09:21:17 -0400
-Received: from ozlabs.org ([203.11.71.1]:52273 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726305AbeJBNVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 09:21:17 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42PTyv26PTz9sj0;
-        Tue,  2 Oct 2018 16:39:35 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538462375;
-        bh=bOrze7tzFddrQuz0m9F63XsgGNWR8yJ5kk3Qco+HGCQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=MTKOOTM+b6knit336bzhsz6MYCEFWibeK/LF2Pw8YVoycuJCg0rWx/OIu5pcV9mhP
-         4ew+5Oa3L9LBY+W2lAc3eBIrcCIhtelpUyF7uuTiyRH7APOmynaLAkLKGNhhroVgR3
-         vJwCsCkBxZeoexIkNIzkvmsm7ElpsStLokLVoHheAARMpxkP8rKcuhd1kjLnE6HIp4
-         iv5QNtBd1VE4kZQILjl+g3HMUvtd0PqKU19v7/13j39oinhdNIiRgV/B6PmcHsZVS7
-         PCWU5VtiBkjKrjFrRonXuNkGfuFdMUNrctGVQJyE/LkYC10JXt92Y8iDEgxDfVbqMB
-         FwbxW57aIvyrA==
-Date:   Tue, 2 Oct 2018 16:39:34 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: linux-next: manual merge of the xarray tree with Linus' tree
-Message-ID: <20181002163934.32aeee62@canb.auug.org.au>
+        Tue, 2 Oct 2018 09:22:11 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58949 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbeJBNWL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 09:22:11 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g7EM5-00036k-Ug; Tue, 02 Oct 2018 08:40:26 +0200
+Date:   Tue, 2 Oct 2018 08:40:25 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+cc:     Jann Horn <jannh@google.com>, Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andi Kleen <ak@linux.intel.com>, tursulin@ursulin.net,
+        kernel list <linux-kernel@vger.kernel.org>,
+        tvrtko.ursulin@linux.intel.com,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, maddy@linux.vnet.ibm.com
+Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
+In-Reply-To: <905796f8-4704-66a8-ee0a-ac8aba90b179@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1810020832430.32062@nanos.tec.linutronix.de>
+References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com> <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de> <20180928164111.i6nba2j6mnegwslw@lakrids.cambridge.arm.com> <20180928172340.GA32651@tassilo.jf.intel.com>
+ <20180928174016.i7d24puv7y3jwzf6@lakrids.cambridge.arm.com> <20180928204930.GC32651@tassilo.jf.intel.com> <CAG48ez16ECnLMNggTZQQJOuPK5ZJ8dLSkGDzvxwK1zVh1BFExw@mail.gmail.com> <20180928205907.GD32651@tassilo.jf.intel.com> <CAG48ez1xJ+Y=snnHJ5k6J6O3qqD=bHdjRioLFuzPZpxU9v7xxA@mail.gmail.com>
+ <20180928212757.GE32651@tassilo.jf.intel.com> <22155f49-2f57-73b8-6e89-ddd8a127967b@linux.intel.com> <alpine.DEB.2.21.1810011741070.32062@nanos.tec.linutronix.de> <905796f8-4704-66a8-ee0a-ac8aba90b179@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vw9bzuR363NXV3RCgNa3_ua"; protocol="application/pgp-signature"
+Content-Type: multipart/mixed; boundary="8323329-784198692-1538462425=:32062"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/vw9bzuR363NXV3RCgNa3_ua
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hi Matthew,
+--8323329-784198692-1538462425=:32062
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-Today's linux-next merge of the xarray tree got a conflict in:
+Alexey,
 
-  fs/dax.c
+On Mon, 1 Oct 2018, Alexey Budankov wrote:
+> > perf_event_open() knows which PMU is associated with the event the caller
+> > tries to open. So perf_event_open() can try to access/open the special per
+> > PMU file on behalf of the caller. That should get the same security
+> > treatment like a regular open() from user space. If that succeeds, access
+> > is granted.
+> > 
+> > The magic file could still be writeable for root to give general
+> > restrictions aside of the file based ones similar to what you are
+> > proposing.
+> 
+> Let me wrap up all the requirements and ideas that have been captured so far.
+> 
+> 1. A file [1] is added so that it can belong to a group of users allowed to use ${PMU}, 
+>    something like this:
+> 
+> ls -alh /sys/bus/event_source/devices/${PMU}/caps/
+> total 0
+> drwxr-xr-x 2 root root            0 Oct  1 20:36 .
+> drwxr-xr-x 6 root root            0 Oct  1 20:36 ..
+> -r--r--r-- 1 root root         4.0K Oct  1 20:36 branches
+> -r--r--r-- 1 root root         4.0K Oct  1 20:36 max_precise
+> -r--r--r-- 1 root root         4.0K Oct  1 20:36 pmu_name
+> -rw-r--r--   root ${PMU}_users                   paranoid        <===
 
-between commit:
+Right, though I personaly prefer something like 'access_control' as file
+name, but that's bike shed painting realm.
 
-  f52afc93cd01 ("dax: Fix deadlock in dax_lock_mapping_entry()")
+>    Modifications of file content are allowed to those who can 
+>    modify /proc/sys/kernel/perf_event_paranoid setting.
+> 
+> 2. Semantics and content of the introduced paranoid file is 
+>    similar to /proc/sys/kernel/perf_even_paranoid [2]:
+> 
+>    The perf_event_paranoid file can be set to restrict access
+>    to the performance counters.
+> 
+>    2   allow only user-space measurements (default since Linux 4.6).
+>    1   allow both kernel and user measurements (default before Linux 4.6).
+>    0   allow access to CPU-specific data but not raw trace‐point samples.
+>   -1  no restrictions.
+>
+>    The existence of the perf_event_paranoid file is the official method 
+>    for determining if a kernel supports perf_event_open().
+> 
+> 3. Every time an event for ${PMU} is created over perf_event_open():
+>    a) the calling thread's euid is checked to belong to ${PMU}_users group 
+>       and if it does then the event's fd is allocated;
 
-from Linus' tree and commit:
+Not only the user group, it really should do the full security checks which
+are done on open().
 
-  a31521132da6 ("dax: Convert dax_lock_mapping_entry to XArray")
+>    b) then traditional checks against perf_event_pranoid content are applied;
 
-from the xarray tree.
+Hmm, not sure about that because that might be conflicting.
 
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+>    c) if the file doesn't exist the access is governed by global setting 
+>       at /proc/sys/kernel/perf_even_paranoid;
 
---=20
-Cheers,
-Stephen Rothwell
+Correct.
 
---Sig_/vw9bzuR363NXV3RCgNa3_ua
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> 4. Documentation/admin-guide/perf-security.rst file is introduced that:
 
------BEGIN PGP SIGNATURE-----
+     0) Better documentation of /proc/sys/kernel/perf_even_paranoid
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluzEqYACgkQAVBC80lX
-0Gy1owf7BJ3gob7WbtYou4hmlpB0yfKArPQ1QJonX0fV4550sz59XJ209qpSodo+
-++DdNXeUjFsrgPdkHjDKCdOw3GP78UVCbXXPrueHWe8VmrfQuo+UMLHEPnXwFLQL
-fnDCNLQUhRweh037pXLIihU8xAmVxiyyaBys48EV04/CnWMqCafzP4hTeMurKUvT
-HyxWDjEy82jfuSfYkluFJkwzyqPFnB97GPXCUnFqIy5TUkn+VwuPwTH85PhVVJmU
-cYuRKWdTzDUC2exQjqte2EHmgTMDRN8EzgTmv/n7nO0ycnI1sXeT/4YhIC+kVERr
-xlSPo9Ce6QELPP8O1Rz+3cKw3uyFNg==
-=ReJk
------END PGP SIGNATURE-----
+>    a) contains general explanation for fine grained access control;
+>    b) contains a section with guidance about scope and risk for each PMU
+>       which is enabled for fine grained access control;
+>    c) file is extended when more PMUs are enabled for fine grain control;
 
---Sig_/vw9bzuR363NXV3RCgNa3_ua--
+Thanks,
+
+	tglx
+--8323329-784198692-1538462425=:32062--
