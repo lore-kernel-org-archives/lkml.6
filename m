@@ -2,75 +2,142 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DAEC64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF320C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B46A02082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:53:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DYpEXvya"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46A02082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A8B842082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:55:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8B842082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbeJCDiO (ORCPT
+        id S1727781AbeJCDkx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 23:38:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45454 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbeJCDiO (ORCPT
+        Tue, 2 Oct 2018 23:40:53 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:49678 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727353AbeJCDkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 23:38:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=s/+/7TEkAEF50qRGpH+Ef2QjMYpAS6gTA+UyyGHNe9s=; b=DYpEXvyaW7xZaHRysIvKHSl81
-        Sik3VgDYHLd9FlikVIdbJspTk1n83rNtuECxNLNKRZ+hbz/rFadt4JyrXkXVfgPHgrFfEuldzzwc6
-        Xy6bljMxoBlzP8V1RE3hj5hy6czraej9vUBBP1DYVJxYpg9VenGF0CESlOqczeGwMN8TkDMc2TdUZ
-        Ah81eVKUhNGGNG30ZAL9Cd9ea0EL3w4HNuy3d1Mrc3l0+bK+WSYEjRu3rNGbG54C2ndgs1/XcncX7
-        fHG5zAICREAIUoifeiXxk6SybhTbBbpNP/3U+ElOYuNIZPnWAcLeXTfECWXfxVaKsPokhlBkzXkuT
-        SHRCpzDQg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g7RfA-0007jf-1K; Tue, 02 Oct 2018 20:53:00 +0000
-Date:   Tue, 2 Oct 2018 13:52:59 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Yves-Alexis Perez <corsac@corsac.net>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, trivial@kernel.org
-Subject: Re: [PATCH] yama: clarify ptrace_scope=2 in Yama documentation
-Message-ID: <20181002205259.GA16090@bombadil.infradead.org>
-References: <20181002204722.GA9610@scapa.corsac.net>
+        Tue, 2 Oct 2018 23:40:53 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 8349642705;
+        Tue,  2 Oct 2018 20:55:38 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id VV67ZuhJoV9v; Tue,  2 Oct 2018 20:55:38 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 8D5B041369;
+        Tue,  2 Oct 2018 20:55:25 +0000 (UTC)
+Subject: Re: [PATCH v3 1/2] selftests: gpio: restructure Makefile
+To:     =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>,
+        Shuah Khan <shuahkh@osg.samsung.com>,
+        linux-kselftest@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
+        Bamvor Jian Zhang <bamv2005@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        "open list:GPIO MOCKUP DRIVER" <linux-gpio@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>
+References: <1536330895-8391-1-git-send-email-daniel.diaz@linaro.org>
+ <CAEUSe79yNJ_2FsLsxKW6J0dfrJ2HoVvk+_NZGWHCsy_Kc0+pQw@mail.gmail.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <aee2d946-eecb-ca39-0802-9755a01a7312@kernel.org>
+Date:   Tue, 2 Oct 2018 14:55:24 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002204722.GA9610@scapa.corsac.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAEUSe79yNJ_2FsLsxKW6J0dfrJ2HoVvk+_NZGWHCsy_Kc0+pQw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 10:47:23PM +0200, Yves-Alexis Perez wrote:
-> Current phrasing is ambiguous since it's unclear if attaching to a
-> children through PTRACE_TRACEME requires CAP_SYS_PTRACE. Rephrase the
-> sentence to make that clear.
+On 10/02/2018 02:48 PM, Daniel Díaz wrote:
+> Hello!
+> 
+> On Fri, 7 Sep 2018 at 09:35, Daniel Díaz <daniel.diaz@linaro.org> wrote:
+>> From: Fathi Boudra <fathi.boudra@linaro.org>
+>>
+>> This patch cleans up the Makefile by restructuring a couple of
+>> things, namely:
+>> 1) change explicit paths in targets for variables
+>> 2) substitute a variable (BINARIES) for another, part of the
+>>    selftests build system (TEST_PROGS_EXTENDED)
+>> 3) proper cleaning up of the EXTRA objects
+>>
+>> The resulting Makefile is much more readable and manageable.
+>>
+>> Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
+>> Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
+>> ---
+>>  tools/testing/selftests/gpio/Makefile | 32 +++++++++++++++-----------------
+>>  1 file changed, 15 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+>> index 4665cdb..a4a01ec8 100644
+>> --- a/tools/testing/selftests/gpio/Makefile
+>> +++ b/tools/testing/selftests/gpio/Makefile
+>> @@ -1,28 +1,26 @@
+>>  # SPDX-License-Identifier: GPL-2.0
+>>
+>> +CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
+>> +LDLIBS += -lmount -I/usr/include/libmount
+>> +
+>>  TEST_PROGS := gpio-mockup.sh
+>> -TEST_FILES := gpio-mockup-sysfs.sh $(BINARIES)
+>> -BINARIES := gpio-mockup-chardev
+>> -EXTRA_PROGS := ../gpiogpio-event-mon ../gpiogpio-hammer ../gpiolsgpio
+>> -EXTRA_DIRS := ../gpioinclude/
+>> -EXTRA_OBJS := ../gpiogpio-event-mon-in.o ../gpiogpio-event-mon.o
+>> -EXTRA_OBJS += ../gpiogpio-hammer-in.o ../gpiogpio-utils.o ../gpiolsgpio-in.o
+>> -EXTRA_OBJS += ../gpiolsgpio.o
+>> +TEST_FILES := gpio-mockup-sysfs.sh
+>> +TEST_PROGS_EXTENDED := gpio-mockup-chardev
+>> +
+>> +GPIODIR := ../../../gpio
+>> +GPIOOBJ := gpio-utils.o
+>>
+>>  include ../lib.mk
+>>
+>> -all: $(BINARIES)
+>> +all: $(TEST_PROGS_EXTENDED)
+>>
+>>  override define CLEAN
+>> -       $(RM) $(BINARIES) $(EXTRA_PROGS) $(EXTRA_OBJS)
+>> -       $(RM) -r $(EXTRA_DIRS)
+>> +       $(RM) $(TEST_PROGS_EXTENDED)
+>> +       $(MAKE) -C $(GPIODIR) clean
+>>  endef
+>>
+>> -CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
+>> -LDLIBS += -lmount -I/usr/include/libmount
+>> -
+>> -$(BINARIES):| khdr
+>> -$(BINARIES): ../../../gpio/gpio-utils.o
+>> +$(TEST_PROGS_EXTENDED):| khdr
+>> +$(TEST_PROGS_EXTENDED): $(GPIODIR)/$(GPIOOBJ)
+>>
+>> -../../../gpio/gpio-utils.o:
+>> -       make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
+>> +$(GPIODIR)/$(GPIOOBJ):
+>> +       $(MAKE) -C $(GPIODIR)
+>> --
+>> 2.7.4
+> 
+> Ping on this series.
+> 
 
-I disagree that your sentence makes that clear.  How about:
+Thanks for the ping. I will queue these up for 4.20-rc1.
 
->  2 - admin-only attach:
-> -    only processes with ``CAP_SYS_PTRACE`` may use ptrace
-> -    with ``PTRACE_ATTACH``, or through children calling ``PTRACE_TRACEME``.
-> +    only processes with ``CAP_SYS_PTRACE`` may use ptrace, either with
-> +    ``PTRACE_ATTACH`` or through children calling ``PTRACE_TRACEME``.
-
-+    only processes with ``CAP_SYS_PTRACE`` may use ptrace.  This
-+    restricts both ``PTRACE_ATTACH`` and ``PTRACE_TRACEME``.
-
+thanks,
+-- Shuah
