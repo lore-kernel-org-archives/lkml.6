@@ -2,86 +2,112 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C933C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A29AC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42BCF2064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:44:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EHFfW63s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42BCF2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E7E022064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:44:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E022064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733096AbeJBU1b (ORCPT
+        id S1733203AbeJBU1k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:27:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42710 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727281AbeJBU1a (ORCPT
+        Tue, 2 Oct 2018 16:27:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35858 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732850AbeJBUTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:27:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Z+1DHCMtT1rpDk0wVDBVGbwYd6IFZBoKrS8mEskjcpM=; b=EHFfW63sbg6RE44XCx9/mN5cE
-        uR5+Bw2qu2r8KjMyp4TL+UQO7WRwhzVtLzZGL/eUv+MQBh/UfDMG1aOIjV38t9OP7CarkHzpt7bvx
-        EPfdGjpMPBUhwCdizkWro+cE/Afp37Ba3r6xMtVzVrqzQ8V+irqmIZ2uvP8A4drm2vgWD/UGeVxkN
-        VeqV1Mwia0RMiYxPNQXgFPk0kCu2tiB3866sjUYKmiG6m97Lltg4/zLs7Uv+ET0MwMjYfKmPKyJFc
-        hTWdseCUJzYjYzuc7jN0m2pYzy/wbC5unF+HQFOe5toxYDSpnAzBmpN6dkJGdZBq/4KQiy/9rKQRL
-        shJP7JLGQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g7Ky1-0006ab-1a; Tue, 02 Oct 2018 13:44:01 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A3128202B9CBA; Tue,  2 Oct 2018 15:43:58 +0200 (CEST)
-Date:   Tue, 2 Oct 2018 15:43:58 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, longman@redhat.com,
-        andrea.parri@amarulasolutions.com, tglx@linutronix.de
-Subject: Re: [RFC][PATCH 2/3] locking/qspinlock: Rework some comments
-Message-ID: <20181002134358.GD26858@hirez.programming.kicks-ass.net>
-References: <20180926110117.405325143@infradead.org>
- <20180926111307.457488877@infradead.org>
- <20181001171707.GE13918@arm.com>
- <20181001191022.GN3439@hirez.programming.kicks-ass.net>
- <20181002132005.GE16422@arm.com>
+        Tue, 2 Oct 2018 16:19:15 -0400
+Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C98EBC3F;
+        Tue,  2 Oct 2018 13:35:50 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Breno Leitao <leitao@debian.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 24/94] scsi: ibmvscsi: Improve strings handling
+Date:   Tue,  2 Oct 2018 06:24:38 -0700
+Message-Id: <20181002132502.191082577@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
+References: <20181002132500.494838053@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002132005.GE16422@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 02:20:05PM +0100, Will Deacon wrote:
-> > Ah, so the reason I write it like so is because when we get here,
-> > val.locked_pending == 0, per the atomic_cond_read_acquire() condition.
-> 
-> Ah, and I vaguely remember discussing this before. The way I read these
-> transition diagrams, I find it most useful if they correspond to the lock
-> word in memory. That way, it makes it clear about exactly which fields are
-> stable, and which can be concurrently modified. So in the comment above,
-> saying:
-> 
-> 	 *,*,0 -> *,*,1 : lock, contended
-> 
-> is really helpful, because it clearly says "we're taking the lock, but the
-> rest of the lock word could be modified by others at the same time", whereas
-> saying:
-> 
-> 	 *,0,0 -> *,0,1 : lock, contended
-> 
-> implies to me that pending is stable and cannot be set concurrently.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Fair enough, will restore.
+------------------
+
+From: Breno Leitao <leitao@debian.org>
+
+[ Upstream commit 1262dc09dc9ae7bf4ad00b6a2c5ed6a6936bcd10 ]
+
+Currently an open firmware property is copied into partition_name variable
+without keeping a room for \0.
+
+Later one, this variable (partition_name), which is 97 bytes long, is
+strncpyed into ibmvcsci_host_data->madapter_info->partition_name, which is
+96 bytes long, possibly truncating it 'again' and removing the \0.
+
+This patch simply decreases the partition name to 96 and just copy using
+strlcpy() which guarantees that the string is \0 terminated. I think there
+is no issue if this there is a truncation in this very first copy, i.e,
+when the open firmware property is read and copied into the driver for the
+very first time;
+
+This issue also causes the following warning on GCC 8:
+
+	drivers/scsi/ibmvscsi/ibmvscsi.c:281:2: warning:  strncpy  output may be truncated copying 96 bytes from a string of length 96 [-Wstringop-truncation]
+	...
+	inlined from  ibmvscsi_probe  at drivers/scsi/ibmvscsi/ibmvscsi.c:2221:7:
+	drivers/scsi/ibmvscsi/ibmvscsi.c:265:3: warning:  strncpy  specified bound 97 equals destination size [-Wstringop-truncation]
+
+CC: Bart Van Assche <bart.vanassche@wdc.com>
+CC: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Acked-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/scsi/ibmvscsi/ibmvscsi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/scsi/ibmvscsi/ibmvscsi.c
++++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
+@@ -93,7 +93,7 @@ static int max_requests = IBMVSCSI_MAX_R
+ static int max_events = IBMVSCSI_MAX_REQUESTS_DEFAULT + 2;
+ static int fast_fail = 1;
+ static int client_reserve = 1;
+-static char partition_name[97] = "UNKNOWN";
++static char partition_name[96] = "UNKNOWN";
+ static unsigned int partition_number = -1;
+ 
+ static struct scsi_transport_template *ibmvscsi_transport_template;
+@@ -259,7 +259,7 @@ static void gather_partition_info(void)
+ 
+ 	ppartition_name = of_get_property(of_root, "ibm,partition-name", NULL);
+ 	if (ppartition_name)
+-		strncpy(partition_name, ppartition_name,
++		strlcpy(partition_name, ppartition_name,
+ 				sizeof(partition_name));
+ 	p_number_ptr = of_get_property(of_root, "ibm,partition-no", NULL);
+ 	if (p_number_ptr)
+
+
