@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BF8C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D621C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A6162064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A6162064D
+	by mail.kernel.org (Postfix) with ESMTP id 4C20F2089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C20F2089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732992AbeJBUT3 (ORCPT
+        id S1733007AbeJBUTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:19:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36002 "EHLO
+        Tue, 2 Oct 2018 16:19:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36028 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731920AbeJBUT2 (ORCPT
+        with ESMTP id S1731709AbeJBUT3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:28 -0400
+        Tue, 2 Oct 2018 16:19:29 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E45DBC2B;
-        Tue,  2 Oct 2018 13:36:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA43E5AA;
+        Tue,  2 Oct 2018 13:36:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org,
+        Brandon Maier <brandon.maier@rockwellcollins.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 35/94] media: tm6000: add error handling for dvb_register_adapter
-Date:   Tue,  2 Oct 2018 06:24:49 -0700
-Message-Id: <20181002132502.957844273@linuxfoundation.org>
+Subject: [PATCH 4.9 37/94] net: phy: xgmiitorgmii: Check read_status results
+Date:   Tue,  2 Oct 2018 06:24:51 -0700
+Message-Id: <20181002132503.103400464@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -53,38 +54,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: Brandon Maier <brandon.maier@rockwellcollins.com>
 
-[ Upstream commit e95d7c6eb94c634852eaa5ff4caf3db05b5d2e86 ]
+[ Upstream commit 8d0752d11312be830c33e84dfd1016e6a47c2938 ]
 
-When dvb_register_adapter fails, the lack of error-handling code may
-cause unexpected results.
+We're ignoring the result of the attached phy device's read_status().
+Return it so we can detect errors.
 
-This patch adds error-handling code after calling dvb_register_adapter.
-
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-[hans.verkuil@cisco.com: use pr_err and fix typo: adater -> adapter]
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Brandon Maier <brandon.maier@rockwellcollins.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/tm6000/tm6000-dvb.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/phy/xilinx_gmii2rgmii.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/media/usb/tm6000/tm6000-dvb.c
-+++ b/drivers/media/usb/tm6000/tm6000-dvb.c
-@@ -273,6 +273,11 @@ static int register_dvb(struct tm6000_co
+--- a/drivers/net/phy/xilinx_gmii2rgmii.c
++++ b/drivers/net/phy/xilinx_gmii2rgmii.c
+@@ -40,8 +40,11 @@ static int xgmiitorgmii_read_status(stru
+ {
+ 	struct gmii2rgmii *priv = phydev->priv;
+ 	u16 val = 0;
++	int err;
  
- 	ret = dvb_register_adapter(&dvb->adapter, "Trident TVMaster 6000 DVB-T",
- 					THIS_MODULE, &dev->udev->dev, adapter_nr);
-+	if (ret < 0) {
-+		pr_err("tm6000: couldn't register the adapter!\n");
-+		goto err;
-+	}
-+
- 	dvb->adapter.priv = dev;
+-	priv->phy_drv->read_status(phydev);
++	err = priv->phy_drv->read_status(phydev);
++	if (err < 0)
++		return err;
  
- 	if (dvb->frontend) {
+ 	val = mdiobus_read(phydev->mdio.bus, priv->addr, XILINX_GMII2RGMII_REG);
+ 	val &= ~XILINX_GMII2RGMII_SPEED_MASK;
 
 
