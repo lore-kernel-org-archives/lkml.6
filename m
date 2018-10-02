@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C30C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBECC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A38142083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38142083F
+	by mail.kernel.org (Postfix) with ESMTP id DA1E3208D9
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA1E3208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729309AbeJBULq (ORCPT
+        id S1729329AbeJBULr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60936 "EHLO
+        Tue, 2 Oct 2018 16:11:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729262AbeJBULp (ORCPT
+        with ESMTP id S1729280AbeJBULq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:45 -0400
+        Tue, 2 Oct 2018 16:11:46 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49033A67;
-        Tue,  2 Oct 2018 13:28:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 624D3266;
+        Tue,  2 Oct 2018 13:28:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiaofei Tan <tanxiaofei@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 107/228] scsi: hisi_sas: Fix the conflict between dev gone and host reset
-Date:   Tue,  2 Oct 2018 06:23:24 -0700
-Message-Id: <20181002132506.646709915@linuxfoundation.org>
+Subject: [PATCH 4.18 108/228] spi: orion: fix CS GPIO handling again
+Date:   Tue,  2 Oct 2018 06:23:25 -0700
+Message-Id: <20181002132506.699823053@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,87 +53,149 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+From: Jan Kundrát <jan.kundrat@cesnet.cz>
 
-[ Upstream commit d2fc401e47529d9ffd2673a5395d56002e31ad98 ]
+[ Upstream commit fb9acf5f1f21f1de193523ff780bda375b4c2e21 ]
 
-There is a possible conflict when a device is removed and host reset occurs
-concurrently.
+The code did not de-assert any CS GPIOs before probing slaves. This
+means that several CS signals could be active at once, garbling the
+communication. Whether this was actually a problem depended on the type
+of the SPI device attached (so my "spidev" for userspace access worked
+correctly because its probe was effectively a no-op), and on the state
+of the GPIO pins at SoC's boot.
 
-The reason is that then the device is notified as gone, we try to clear the
-ITCT, which is notified via an interrupt. The dev gone function pends on
-this event with a completion, which is completed when the ITCT interrupt
-occurs.
+The code was already iterating through all DT children of the SPI
+controller, so this change re-uses that loop for CS GPIO setup as well.
+This means that this might change the number of the HW CS signal which
+is picked for all GPIO CS devices. Previously, the lowest one was used,
+but we now use the first one from the DT.
 
-But host reset will disable all interrupts, the wait_for_completion() may
-wait indefinitely.
+With this move of the code, we can also finally initialize each GPIO CS
+lane before registering the SPI controller (which in turn probes for
+slaves).
 
-This patch adds an semaphore to synchronise this two processes. The
-semaphore is taken by the host reset as the basis of synchronising.
+I tried to fix this in 544248623b95 already, but that only did it half
+way by registering the GPIOs properly. That patch failed to set their
+logic signals early enough, though.
 
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Jan Kundrát <jan.kundrat@cesnet.cz>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/hisi_sas/hisi_sas.h      |    1 +
- drivers/scsi/hisi_sas/hisi_sas_main.c |    6 ++++++
- 2 files changed, 7 insertions(+)
+ drivers/spi/spi-orion.c |   77 ++++++++++++++++++++++++------------------------
+ 1 file changed, 40 insertions(+), 37 deletions(-)
 
---- a/drivers/scsi/hisi_sas/hisi_sas.h
-+++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -277,6 +277,7 @@ struct hisi_hba {
- 
- 	int n_phy;
- 	spinlock_t lock;
-+	struct semaphore sem;
- 
- 	struct timer_list timer;
- 	struct workqueue_struct *wq;
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -914,7 +914,9 @@ static void hisi_sas_dev_gone(struct dom
- 
- 		hisi_sas_dereg_device(hisi_hba, device);
- 
-+		down(&hisi_hba->sem);
- 		hisi_hba->hw->clear_itct(hisi_hba, sas_dev);
-+		up(&hisi_hba->sem);
- 		device->lldd_dev = NULL;
+--- a/drivers/spi/spi-orion.c
++++ b/drivers/spi/spi-orion.c
+@@ -20,6 +20,7 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
++#include <linux/of_gpio.h>
+ #include <linux/clk.h>
+ #include <linux/sizes.h>
+ #include <linux/gpio.h>
+@@ -681,9 +682,9 @@ static int orion_spi_probe(struct platfo
+ 		goto out_rel_axi_clk;
  	}
  
-@@ -1364,6 +1366,7 @@ static int hisi_sas_controller_reset(str
- 	if (test_and_set_bit(HISI_SAS_RESET_BIT, &hisi_hba->flags))
- 		return -1;
+-	/* Scan all SPI devices of this controller for direct mapped devices */
+ 	for_each_available_child_of_node(pdev->dev.of_node, np) {
+ 		u32 cs;
++		int cs_gpio;
  
-+	down(&hisi_hba->sem);
- 	dev_info(dev, "controller resetting...\n");
- 	old_state = hisi_hba->hw->get_phys_state(hisi_hba);
+ 		/* Get chip-select number from the "reg" property */
+ 		status = of_property_read_u32(np, "reg", &cs);
+@@ -695,6 +696,44 @@ static int orion_spi_probe(struct platfo
+ 		}
  
-@@ -1378,6 +1381,7 @@ static int hisi_sas_controller_reset(str
- 	if (rc) {
- 		dev_warn(dev, "controller reset failed (%d)\n", rc);
- 		clear_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags);
-+		up(&hisi_hba->sem);
- 		scsi_unblock_requests(shost);
- 		goto out;
- 	}
-@@ -1388,6 +1392,7 @@ static int hisi_sas_controller_reset(str
- 	hisi_hba->hw->phys_init(hisi_hba);
- 	msleep(1000);
- 	hisi_sas_refresh_port_id(hisi_hba);
-+	up(&hisi_hba->sem);
+ 		/*
++		 * Initialize the CS GPIO:
++		 * - properly request the actual GPIO signal
++		 * - de-assert the logical signal so that all GPIO CS lines
++		 *   are inactive when probing for slaves
++		 * - find an unused physical CS which will be driven for any
++		 *   slave which uses a CS GPIO
++		 */
++		cs_gpio = of_get_named_gpio(pdev->dev.of_node, "cs-gpios", cs);
++		if (cs_gpio > 0) {
++			char *gpio_name;
++			int cs_flags;
++
++			if (spi->unused_hw_gpio == -1) {
++				dev_info(&pdev->dev,
++					"Selected unused HW CS#%d for any GPIO CSes\n",
++					cs);
++				spi->unused_hw_gpio = cs;
++			}
++
++			gpio_name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
++					"%s-CS%d", dev_name(&pdev->dev), cs);
++			if (!gpio_name) {
++				status = -ENOMEM;
++				goto out_rel_axi_clk;
++			}
++
++			cs_flags = of_property_read_bool(np, "spi-cs-high") ?
++				GPIOF_OUT_INIT_LOW : GPIOF_OUT_INIT_HIGH;
++			status = devm_gpio_request_one(&pdev->dev, cs_gpio,
++					cs_flags, gpio_name);
++			if (status) {
++				dev_err(&pdev->dev,
++					"Can't request GPIO for CS %d\n", cs);
++				goto out_rel_axi_clk;
++			}
++		}
++
++		/*
+ 		 * Check if an address is configured for this SPI device. If
+ 		 * not, the MBus mapping via the 'ranges' property in the 'soc'
+ 		 * node is not configured and this device should not use the
+@@ -740,44 +779,8 @@ static int orion_spi_probe(struct platfo
+ 	if (status < 0)
+ 		goto out_rel_pm;
  
- 	if (hisi_hba->reject_stp_links_msk)
- 		hisi_sas_terminate_stp_reject(hisi_hba);
-@@ -2016,6 +2021,7 @@ int hisi_sas_alloc(struct hisi_hba *hisi
- 	struct device *dev = hisi_hba->dev;
- 	int i, s, max_command_entries = hisi_hba->hw->max_command_entries;
+-	if (master->cs_gpios) {
+-		int i;
+-		for (i = 0; i < master->num_chipselect; ++i) {
+-			char *gpio_name;
+-
+-			if (!gpio_is_valid(master->cs_gpios[i])) {
+-				continue;
+-			}
+-
+-			gpio_name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+-					"%s-CS%d", dev_name(&pdev->dev), i);
+-			if (!gpio_name) {
+-				status = -ENOMEM;
+-				goto out_rel_master;
+-			}
+-
+-			status = devm_gpio_request(&pdev->dev,
+-					master->cs_gpios[i], gpio_name);
+-			if (status) {
+-				dev_err(&pdev->dev,
+-					"Can't request GPIO for CS %d\n",
+-					master->cs_gpios[i]);
+-				goto out_rel_master;
+-			}
+-			if (spi->unused_hw_gpio == -1) {
+-				dev_info(&pdev->dev,
+-					"Selected unused HW CS#%d for any GPIO CSes\n",
+-					i);
+-				spi->unused_hw_gpio = i;
+-			}
+-		}
+-	}
+-
+-
+ 	return status;
  
-+	sema_init(&hisi_hba->sem, 1);
- 	spin_lock_init(&hisi_hba->lock);
- 	for (i = 0; i < hisi_hba->n_phy; i++) {
- 		hisi_sas_phy_init(hisi_hba, i);
+-out_rel_master:
+-	spi_unregister_master(master);
+ out_rel_pm:
+ 	pm_runtime_disable(&pdev->dev);
+ out_rel_axi_clk:
 
 
