@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5132DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A76FC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FF532064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:01:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FF532064A
+	by mail.kernel.org (Postfix) with ESMTP id 5A64B2064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:01:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A64B2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730768AbeJBUog (ORCPT
+        id S1730419AbeJBUNu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:44:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33506 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729502AbeJBUNu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 16:13:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33488 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729496AbeJBUNt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:13:49 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3EFBCC3F;
-        Tue,  2 Oct 2018 13:30:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D39DC2B;
+        Tue,  2 Oct 2018 13:30:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
+        Dave Watson <davejwatson@fb.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 185/228] bpf: sockmap: write_space events need to be passed to TCP handler
-Date:   Tue,  2 Oct 2018 06:24:42 -0700
-Message-Id: <20181002132510.823294744@linuxfoundation.org>
+Subject: [PATCH 4.18 184/228] tls: possible hang when do_tcp_sendpages hits sndbuf is full case
+Date:   Tue,  2 Oct 2018 06:24:41 -0700
+Message-Id: <20181002132510.784554266@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -54,49 +55,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: John Fastabend <john.fastabend@gmail.com>
 
-[ Upstream commit 9b2e0388bec8ec5427403e23faff3b58dd1c3200 ]
+[ Upstream commit 67db7cd249e71f64346f481b629724376d063e08 ]
 
-When sockmap code is using the stream parser it also handles the write
-space events in order to handle the case where (a) verdict redirects
-skb to another socket and (b) the sockmap then sends the skb but due
-to memory constraints (or other EAGAIN errors) needs to do a retry.
+Currently, the lower protocols sk_write_space handler is not called if
+TLS is sending a scatterlist via  tls_push_sg. However, normally
+tls_push_sg calls do_tcp_sendpage, which may be under memory pressure,
+that in turn may trigger a wait via sk_wait_event. Typically, this
+happens when the in-flight bytes exceed the sdnbuf size. In the normal
+case when enough ACKs are received sk_write_space() will be called and
+the sk_wait_event will be woken up allowing it to send more data
+and/or return to the user.
 
-But the initial code missed a third case where the
-skb_send_sock_locked() triggers an sk_wait_event(). A typically case
-would be when sndbuf size is exceeded. If this happens because we
-do not pass the write_space event to the lower layers we never wake
-up the event and it will wait for sndtimeo. Which as noted in ktls
-fix may be rather large and look like a hang to the user.
+But, in the TLS case because the sk_write_space() handler does not
+wake up the events the above send will wait until the sndtimeo is
+exceeded. By default this is MAX_SCHEDULE_TIMEOUT so it look like a
+hang to the user (especially this impatient user). To fix this pass
+the sk_write_space event to the lower layers sk_write_space event
+which in the TCP case will wake any pending events.
 
-To reproduce the best test is to reduce the sndbuf size and send
-1B data chunks to stress the memory handling. To fix this pass the
-event from the upper layer to the lower layer.
+I observed the above while integrating sockmap and ktls. It
+initially appeared as test_sockmap (modified to use ktls) occasionally
+hanging. To reliably reproduce this reduce the sndbuf size and stress
+the tls layer by sending many 1B sends. This results in every byte
+needing a header and each byte individually being sent to the crypto
+layer.
 
 Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+Acked-by: Dave Watson <davejwatson@fb.com>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/sockmap.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/tls/tls_main.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/kernel/bpf/sockmap.c
-+++ b/kernel/bpf/sockmap.c
-@@ -1430,12 +1430,15 @@ out:
- static void smap_write_space(struct sock *sk)
+--- a/net/tls/tls_main.c
++++ b/net/tls/tls_main.c
+@@ -222,9 +222,14 @@ static void tls_write_space(struct sock
  {
- 	struct smap_psock *psock;
-+	void (*write_space)(struct sock *sk);
+ 	struct tls_context *ctx = tls_get_ctx(sk);
  
- 	rcu_read_lock();
- 	psock = smap_psock_sk(sk);
- 	if (likely(psock && test_bit(SMAP_TX_RUNNING, &psock->state)))
- 		schedule_work(&psock->tx_work);
-+	write_space = psock->save_write_space;
- 	rcu_read_unlock();
-+	write_space(sk);
- }
+-	/* We are already sending pages, ignore notification */
+-	if (ctx->in_tcp_sendpages)
++	/* If in_tcp_sendpages call lower protocol write space handler
++	 * to ensure we wake up any waiting operations there. For example
++	 * if do_tcp_sendpages where to call sk_wait_event.
++	 */
++	if (ctx->in_tcp_sendpages) {
++		ctx->sk_write_space(sk);
+ 		return;
++	}
  
- static void smap_stop_sock(struct smap_psock *psock, struct sock *sk)
+ 	if (!sk->sk_write_pending && tls_is_pending_closed_record(ctx)) {
+ 		gfp_t sk_allocation = sk->sk_allocation;
 
 
