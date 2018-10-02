@@ -2,117 +2,242 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D49C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD1FC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 247752064E
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:28:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="psldWJY+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 247752064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3EBF92064E
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:28:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EBF92064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbeJBPKs (ORCPT
+        id S1727644AbeJBPK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 11:10:48 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38960 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727383AbeJBPKr (ORCPT
+        Tue, 2 Oct 2018 11:10:59 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:62734 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727383AbeJBPK7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:10:47 -0400
-Received: by mail-wm1-f67.google.com with SMTP id q8-v6so1259766wmq.4;
-        Tue, 02 Oct 2018 01:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=f7BbdS5AMkoj7s+HNtl3QGBqiscDNb/dpwOy93R4ZSg=;
-        b=psldWJY+UZQ03rYyfCJOolbuhZeT5exWTupwg5jyGcrftTw5fA4T75bToluRIPIsZh
-         BEQQvSg2dOwaHktdGm3iDbsEqOeR5yhDZrSZZOZhaVlNF/urgSnAq0zHG9zoVERFrQEp
-         kbXWkdVByXzLD8aLC/s7Vox+cl8oFwMimTlK1Kui2YXAvBglRmcpMTtRRM0Mh1Bcsv+o
-         AhPA23l1NdwahveKW0fZYE3K+H3Ta+tL28dwetpZ3E8sXV2ELYU2z4zbD/h8KhpKH1DD
-         6gJtLpKnEXZIaDj+PKP/cME9GfjgHfzmNLwitvuU2iH686l0tjTLscdqM/fucEOoqrqy
-         Trrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f7BbdS5AMkoj7s+HNtl3QGBqiscDNb/dpwOy93R4ZSg=;
-        b=ix6g5RUV1hKDE1pTPrLf4RA0s1hP7GDp5Hlqg2xy83pIPC3LIw+04VPIXFShDWRboE
-         0ExRiIyqSVZfq5BTda7vyGossFuNXsNp1vaLq2fM/naFpIOOzzUxDcN9rXbTnla/8MA+
-         ka6izryk8Ph+AyvX6f6M5Q5nnMvJ6GwyB2X8jX+UZEnYduarKqP6ZhXg4RRvkXRGICuU
-         G6Gr9r9KxJPfeTik/iMmmkqw4OfJJQ5CYfW8aMy2G04Hprh/rQBhqXxGTXBnrEih8aAD
-         t04lLhE3UPkCjAgbkvMQbSl/LpqsvqMCs1gNAuAnkDJ6jasNYVctIAkhogP9iybzIVO2
-         E3Zw==
-X-Gm-Message-State: ABuFfojUzT1Wdz64sdhdzq4ihSXFJ+/5SPFL58Q4c4lSbqI0hWsmsgV3
-        ws8DDkfNo/bur+/OTlh5Aj0=
-X-Google-Smtp-Source: ACcGV61BZ6yDDGPIEWozUU9jR93XeOh2VMC/Ywbje1Z9/K5TOQdVLksgcDISxx6fy+1gtaV6tQktNw==
-X-Received: by 2002:a1c:88c6:: with SMTP id k189-v6mr1060967wmd.32.1538468920798;
-        Tue, 02 Oct 2018 01:28:40 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id r13-v6sm10418251wmf.34.2018.10.02.01.28.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Oct 2018 01:28:40 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 10:28:37 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com
-Subject: Re: [PATCH memory-model 0/5] Updates to the formal memory model
-Message-ID: <20181002082837.GB69893@gmail.com>
-References: <20180926182845.GA24839@linux.ibm.com>
+        Tue, 2 Oct 2018 11:10:59 -0400
+X-UUID: 0aeab31df7ea4f0c98afde4ca4a3a7b7-20181002
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1679286505; Tue, 02 Oct 2018 16:28:42 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 2 Oct 2018 16:28:40 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 2 Oct 2018 16:28:40 +0800
+Message-ID: <1538468920.24335.0.camel@mtksdaap41>
+Subject: Re: [PATCH v4 01/11] drm/mediatek: add refcount for DPI power on/off
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cawa Cheng <cawa.cheng@mediatek.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Mao Huang <littlecvr@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
+        chunhui dai <chunhui.dai@mediatek.com>
+Date:   Tue, 2 Oct 2018 16:28:40 +0800
+In-Reply-To: <20181002081041.32629-2-bibby.hsieh@mediatek.com>
+References: <20181002081041.32629-1-bibby.hsieh@mediatek.com>
+         <20181002081041.32629-2-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180926182845.GA24839@linux.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: F4858768E1123E7D73B09031D93B629FF34718C5C08131C14034D848BCD580032000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Bibby:
 
-* Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+On Tue, 2018-10-02 at 16:10 +0800, Bibby Hsieh wrote:
+> From: chunhui dai <chunhui.dai@mediatek.com>
+> 
+> After the kernel 4.4, the DRM disable flow was changed, if DPI was
+> disableed before CRTC, it will cause warning message as following:
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 1339 at ../../linux/linux-4.4.24-mtk/drivers/gpu/drm/drm_irq.c:1326 drm_wait_one_vblank+0x188/0x18c()
+> vblank wait timed out on crtc 0
+> Modules linked in: bridge mt8521p_ir_shim(O) i2c_eeprom(O) mtk_m4(O) fuse_ctrl(O) virtual_block(O) caamkeys(PO) chk(PO) amperctl(O) ledctl(O) apple_auth(PO) micctl(O) sensors(PO) lla(O) sdd(PO) ice40_fpga(O) psmon(O) event_queue(PO) utils(O) blackbox(O)
+> CPU: 0 PID: 1339 Comm: kworker/0:1 Tainted: P        W  O    4.4.24 #1
+> Hardware name: Mediatek Cortex-A7 (Device Tree)
+> Workqueue: events drm_mode_rmfb_work_fn
+> [<c001a710>] (unwind_backtrace) from [<c00151e4>] (show_stack+0x20/0x24)
+> [<c00151e4>] (show_stack) from [<c027961c>] (dump_stack+0x98/0xac)
+> [<c027961c>] (dump_stack) from [<c002ac54>] (warn_slowpath_common+0x94/0xc4)
+> [<c002ac54>] (warn_slowpath_common) from [<c002acc4>] (warn_slowpath_fmt+0x40/0x48)
+> [<c002acc4>] (warn_slowpath_fmt) from [<c03307ac>] (drm_wait_one_vblank+0x188/0x18c)
+> [<c03307ac>] (drm_wait_one_vblank) from [<c03307d8>] (drm_crtc_wait_one_vblank+0x28/0x2c)
+> [<c03307d8>] (drm_crtc_wait_one_vblank) from [<c034f48c>] (mtk_drm_crtc_disable+0x78/0x240)
+> [<c034f48c>] (mtk_drm_crtc_disable) from [<c03240d4>] (drm_atomic_helper_commit_modeset_disables+0x128/0x3b8)
+> [<c03240d4>] (drm_atomic_helper_commit_modeset_disables) from [<c0350a7c>] (mtk_atomic_complete+0x74/0xb4)
+> [<c0350a7c>] (mtk_atomic_complete) from [<c0350b24>] (mtk_atomic_commit+0x68/0x98)
+> [<c0350b24>] (mtk_atomic_commit) from [<c034ab48>] (drm_atomic_commit+0x54/0x74)
+> [<c034ab48>] (drm_atomic_commit) from [<c0325c4c>] (drm_atomic_helper_set_config+0x7c/0xa0)
+> [<c0325c4c>] (drm_atomic_helper_set_config) from [<c0338594>] (drm_mode_set_config_internal+0x68/0xe4)
+> [<c0338594>] (drm_mode_set_config_internal) from [<c033967c>] (drm_framebuffer_remove+0xe4/0x120)
+> [<c033967c>] (drm_framebuffer_remove) from [<c0339700>] (drm_mode_rmfb_work_fn+0x48/0x58)
+> [<c0339700>] (drm_mode_rmfb_work_fn) from [<c0043a38>] (process_one_work+0x154/0x50c)
+> [<c0043a38>] (process_one_work) from [<c0044074>] (worker_thread+0x284/0x568)
+> [<c0044074>] (worker_thread) from [<c0049dc4>] (kthread+0xec/0x104)
+> [<c0049dc4>] (kthread) from [<c0010678>] (ret_from_fork+0x14/0x3c)
+> ---[ end trace 12ae5358e992abd5 ]---
+> 
+> so, we add refcount for DPI power on/off to protect the flow.
+> 
 
-> Hello, Ingo!
-> 
-> This series contains updates to the Linux kernel's formal memory model
-> in tools/memory-model, along with corresponding changes in documentation
-> and Linux-kernel code.  These patches are ready for inclusion into -tip.
-> 
-> 1.	Document litmus-test naming scheme.
-> 
-> 2.	Add extra ordering for locks and remove it for ordinary
-> 	release/acquire, courtesy of Alan Stern.
-> 
-> 3.	Fix a README typo, courtesy of SeongJae Park.
-> 
-> 4.	Expand the list of LKMM limitations.
-> 
-> 5.	Replace smp_cond_acquire() with smp_cond_load_acquire(),
-> 	courtesy of Andrea Parri.
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
->  Documentation/memory-barriers.txt                                          |    3 
->  tools/memory-model/Documentation/explanation.txt                           |  186 +++++++---
->  tools/memory-model/Documentation/recipes.txt                               |    2 
->  tools/memory-model/README                                                  |   39 ++
->  tools/memory-model/linux-kernel.cat                                        |    8 
->  tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus |    7 
->  tools/memory-model/litmus-tests/README                                     |  104 +++++
->  7 files changed, 293 insertions(+), 56 deletions(-)
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 
-Applied to tip:locking/core, thanks Paul!
+> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dpi.c | 43 ++++++++++++--------------------------
+>  1 file changed, 13 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> index 6c0ea39d5739..5ede1ddbaa1a 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> @@ -76,8 +76,7 @@ struct mtk_dpi {
+>  	enum mtk_dpi_out_yc_map yc_map;
+>  	enum mtk_dpi_out_bit_num bit_num;
+>  	enum mtk_dpi_out_channel_swap channel_swap;
+> -	bool power_sta;
+> -	u8 power_ctl;
+> +	int refcount;
+>  };
+>  
+>  static inline struct mtk_dpi *mtk_dpi_from_encoder(struct drm_encoder *e)
+> @@ -90,11 +89,6 @@ enum mtk_dpi_polarity {
+>  	MTK_DPI_POLARITY_FALLING,
+>  };
+>  
+> -enum mtk_dpi_power_ctl {
+> -	DPI_POWER_START = BIT(0),
+> -	DPI_POWER_ENABLE = BIT(1),
+> -};
+> -
+>  struct mtk_dpi_polarities {
+>  	enum mtk_dpi_polarity de_pol;
+>  	enum mtk_dpi_polarity ck_pol;
+> @@ -367,40 +361,30 @@ static void mtk_dpi_config_color_format(struct mtk_dpi *dpi,
+>  	}
+>  }
+>  
+> -static void mtk_dpi_power_off(struct mtk_dpi *dpi, enum mtk_dpi_power_ctl pctl)
+> +static void mtk_dpi_power_off(struct mtk_dpi *dpi)
+>  {
+> -	dpi->power_ctl &= ~pctl;
+> -
+> -	if ((dpi->power_ctl & DPI_POWER_START) ||
+> -	    (dpi->power_ctl & DPI_POWER_ENABLE))
+> +	if (WARN_ON(dpi->refcount == 0))
+>  		return;
+>  
+> -	if (!dpi->power_sta)
+> +	if (--dpi->refcount != 0)
+>  		return;
+>  
+>  	mtk_dpi_disable(dpi);
+>  	clk_disable_unprepare(dpi->pixel_clk);
+>  	clk_disable_unprepare(dpi->engine_clk);
+> -	dpi->power_sta = false;
+>  }
+>  
+> -static int mtk_dpi_power_on(struct mtk_dpi *dpi, enum mtk_dpi_power_ctl pctl)
+> +static int mtk_dpi_power_on(struct mtk_dpi *dpi)
+>  {
+>  	int ret;
+>  
+> -	dpi->power_ctl |= pctl;
+> -
+> -	if (!(dpi->power_ctl & DPI_POWER_START) &&
+> -	    !(dpi->power_ctl & DPI_POWER_ENABLE))
+> -		return 0;
+> -
+> -	if (dpi->power_sta)
+> +	if (++dpi->refcount != 1)
+>  		return 0;
+>  
+>  	ret = clk_prepare_enable(dpi->engine_clk);
+>  	if (ret) {
+>  		dev_err(dpi->dev, "Failed to enable engine clock: %d\n", ret);
+> -		goto err_eng;
+> +		goto err_refcount;
+>  	}
+>  
+>  	ret = clk_prepare_enable(dpi->pixel_clk);
+> @@ -410,13 +394,12 @@ static int mtk_dpi_power_on(struct mtk_dpi *dpi, enum mtk_dpi_power_ctl pctl)
+>  	}
+>  
+>  	mtk_dpi_enable(dpi);
+> -	dpi->power_sta = true;
+>  	return 0;
+>  
+>  err_pixel:
+>  	clk_disable_unprepare(dpi->engine_clk);
+> -err_eng:
+> -	dpi->power_ctl &= ~pctl;
+> +err_refcount:
+> +	dpi->refcount--;
+>  	return ret;
+>  }
+>  
+> @@ -552,14 +535,14 @@ static void mtk_dpi_encoder_disable(struct drm_encoder *encoder)
+>  {
+>  	struct mtk_dpi *dpi = mtk_dpi_from_encoder(encoder);
+>  
+> -	mtk_dpi_power_off(dpi, DPI_POWER_ENABLE);
+> +	mtk_dpi_power_off(dpi);
+>  }
+>  
+>  static void mtk_dpi_encoder_enable(struct drm_encoder *encoder)
+>  {
+>  	struct mtk_dpi *dpi = mtk_dpi_from_encoder(encoder);
+>  
+> -	mtk_dpi_power_on(dpi, DPI_POWER_ENABLE);
+> +	mtk_dpi_power_on(dpi);
+>  	mtk_dpi_set_display_mode(dpi, &dpi->mode);
+>  }
+>  
+> @@ -582,14 +565,14 @@ static void mtk_dpi_start(struct mtk_ddp_comp *comp)
+>  {
+>  	struct mtk_dpi *dpi = container_of(comp, struct mtk_dpi, ddp_comp);
+>  
+> -	mtk_dpi_power_on(dpi, DPI_POWER_START);
+> +	mtk_dpi_power_on(dpi);
+>  }
+>  
+>  static void mtk_dpi_stop(struct mtk_ddp_comp *comp)
+>  {
+>  	struct mtk_dpi *dpi = container_of(comp, struct mtk_dpi, ddp_comp);
+>  
+> -	mtk_dpi_power_off(dpi, DPI_POWER_START);
+> +	mtk_dpi_power_off(dpi);
+>  }
+>  
+>  static const struct mtk_ddp_comp_funcs mtk_dpi_funcs = {
 
-	Ingo
+
