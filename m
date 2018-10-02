@@ -6,34 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A55C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B45DDC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B7E32083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7E32083F
+	by mail.kernel.org (Postfix) with ESMTP id 78CF42083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:32:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78CF42083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731312AbeJBUPi (ORCPT
+        id S1731327AbeJBUPl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:15:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34434 "EHLO
+        Tue, 2 Oct 2018 16:15:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34444 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726739AbeJBUPh (ORCPT
+        with ESMTP id S1726739AbeJBUPk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:15:37 -0400
+        Tue, 2 Oct 2018 16:15:40 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A7A33B2F;
-        Tue,  2 Oct 2018 13:32:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38FE3B2F;
+        Tue,  2 Oct 2018 13:32:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Mike Christie <mchristi@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 014/137] USB: serial: kobil_sct: fix modem-status error handling
-Date:   Tue,  2 Oct 2018 06:23:35 -0700
-Message-Id: <20181002132459.505501113@linuxfoundation.org>
+Subject: [PATCH 4.14 032/137] scsi: target/iscsi: Make iscsit_ta_authentication() respect the output buffer size
+Date:   Tue,  2 Oct 2018 06:23:53 -0700
+Message-Id: <20181002132500.711402786@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -51,47 +55,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-[ Upstream commit a420b5d939ee58f1d950f0ea782834056520aeaa ]
+[ Upstream commit 35bea5c84fd13c643cce63f0b5cd4b148f8c901d ]
 
-Make sure to return -EIO in case of a short modem-status read request.
-
-While at it, split the debug message to not include the (zeroed)
-transfer-buffer content in case of errors.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: e48354ce078c ("iscsi-target: Add iSCSI fabric support for target v4.1")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Cc: Mike Christie <mchristi@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/serial/kobil_sct.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/target/iscsi/iscsi_target_tpg.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/usb/serial/kobil_sct.c
-+++ b/drivers/usb/serial/kobil_sct.c
-@@ -397,12 +397,20 @@ static int kobil_tiocmget(struct tty_str
- 			  transfer_buffer_length,
- 			  KOBIL_TIMEOUT);
- 
--	dev_dbg(&port->dev, "%s - Send get_status_line_state URB returns: %i. Statusline: %02x\n",
--		__func__, result, transfer_buffer[0]);
-+	dev_dbg(&port->dev, "Send get_status_line_state URB returns: %i\n",
-+			result);
-+	if (result < 1) {
-+		if (result >= 0)
-+			result = -EIO;
-+		goto out_free;
-+	}
-+
-+	dev_dbg(&port->dev, "Statusline: %02x\n", transfer_buffer[0]);
- 
- 	result = 0;
- 	if ((transfer_buffer[0] & SUSBCR_GSL_DSR) != 0)
- 		result = TIOCM_DSR;
-+out_free:
- 	kfree(transfer_buffer);
- 	return result;
- }
+--- a/drivers/target/iscsi/iscsi_target_tpg.c
++++ b/drivers/target/iscsi/iscsi_target_tpg.c
+@@ -633,8 +633,7 @@ int iscsit_ta_authentication(struct iscs
+ 		none = strstr(buf1, NONE);
+ 		if (none)
+ 			goto out;
+-		strncat(buf1, ",", strlen(","));
+-		strncat(buf1, NONE, strlen(NONE));
++		strlcat(buf1, "," NONE, sizeof(buf1));
+ 		if (iscsi_update_param_value(param, buf1) < 0)
+ 			return -EINVAL;
+ 	}
 
 
