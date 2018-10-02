@@ -6,69 +6,51 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA461C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9745CC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6515B21473
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:12:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6515B21473
+	by mail.kernel.org (Postfix) with ESMTP id 6574421473
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 01:12:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6574421473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbeJBHxJ (ORCPT
+        id S1726630AbeJBHxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:53:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36540 "EHLO
+        Tue, 2 Oct 2018 03:53:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36546 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S1726027AbeJBHxJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 03:53:09 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8DC06B;
-        Tue,  2 Oct 2018 01:12:35 +0000 (UTC)
-Date:   Mon, 1 Oct 2018 17:33:59 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] PHY: for 4.20
-Message-ID: <20181002003359.GA5381@kroah.com>
-References: <20181001101912.1081-1-kishon@ti.com>
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AFE136B;
+        Tue,  2 Oct 2018 01:12:36 +0000 (UTC)
+Date:   Mon, 1 Oct 2018 17:42:45 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chanwoo Choi (chanwoo@kernel.org)" <chanwoo@kernel.org>,
+        =?utf-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
+Subject: Re: [GIT PULL] extcon next for v4.20
+Message-ID: <20181002004245.GA16580@kroah.com>
+References: <CGME20181001101407epcas2p133c98fcd05385608a2a5d2dca859f6cb@epcas2p1.samsung.com>
+ <5BB1F36E.9090804@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181001101912.1081-1-kishon@ti.com>
+In-Reply-To: <5BB1F36E.9090804@samsung.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 03:49:12PM +0530, Kishon Vijay Abraham I wrote:
-> Hi Greg,
+On Mon, Oct 01, 2018 at 07:14:06PM +0900, Chanwoo Choi wrote:
+> Dear Greg,
 > 
-> Please find the pull request for 4.20 merge window below. It adds PHY
-> drivers for Socionext's PCIe PHY, USB2 PHY and USB3 PHY, Rockchip HDMI PHY
-> and Cadence display port PHY. Patches to add Qualcomm UFS PHY support and
-> Broadcom's BCM63138 PHY support is also included in this pull request. For
-> the complete list of changes, please see the tag message below.
-> 
-> For one of the Qualcomm PHY driver cleanup, a patch in SCSI layer is
-> modified. I've included that here after getting Ack from SCSI SUBSYSTEM
-> MAINTAINER Martin K. Petersen.
-> 
-> Consider merging it for the next merge window and let me know if I have
-> to make any changes.
-> 
-> Thanks
-> Kishon
-> 
-> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-> 
->   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git tags/phy-for-4.20
+> This is extcon-next pull request for v4.20. I add detailed description of
+> this pull request on below. Please pull extcon with following updates.
 
 Now merged, thanks.
 
