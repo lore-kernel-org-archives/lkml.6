@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D161C64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0406C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28015206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28015206B2
+	by mail.kernel.org (Postfix) with ESMTP id 07D8C2089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07D8C2089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728408AbeJBUKi (ORCPT
+        id S1728458AbeJBUKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60208 "EHLO
+        Tue, 2 Oct 2018 16:10:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60232 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728367AbeJBUKh (ORCPT
+        with ESMTP id S1728431AbeJBUKj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:37 -0400
+        Tue, 2 Oct 2018 16:10:39 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 843ABA67;
-        Tue,  2 Oct 2018 13:27:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C1B6AA67;
+        Tue,  2 Oct 2018 13:27:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        stable@vger.kernel.org, Alagu Sankar <alagusankar@silex-india.com>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 050/228] usb: wusbcore: security: cast sizeof to int for comparison
-Date:   Tue,  2 Oct 2018 06:22:27 -0700
-Message-Id: <20181002132502.543704374@linuxfoundation.org>
+Subject: [PATCH 4.18 052/228] ath10k: sdio: set skb len for all rx packets
+Date:   Tue,  2 Oct 2018 06:22:29 -0700
+Message-Id: <20181002132502.692630148@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,48 +53,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Alagu Sankar <alagusankar@silex-india.com>
 
-[ Upstream commit d3ac5598c5010a8999978ebbcca3b1c6188ca36b ]
+[ Upstream commit 8530b4e7b22bc3bd8240579f3844c73947cd5f71 ]
 
-Comparing an int to a size, which is unsigned, causes the int to become
-unsigned, giving the wrong result.  usb_get_descriptor can return a
-negative error code.
+Without this, packets larger than 1500 will silently be dropped.
+Easily reproduced by sending a ping packet with a size larger
+than 1500.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-int x;
-expression e,e1;
-identifier f;
-@@
-
-*x = f(...);
-... when != x = e1
-    when != if (x < 0 || ...) { ... return ...; }
-*x < sizeof(e)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Co-Developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Alagu Sankar <alagusankar@silex-india.com>
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/wusbcore/security.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/sdio.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/wusbcore/security.c
-+++ b/drivers/usb/wusbcore/security.c
-@@ -217,7 +217,7 @@ int wusb_dev_sec_add(struct wusbhc *wusb
+--- a/drivers/net/wireless/ath/ath10k/sdio.c
++++ b/drivers/net/wireless/ath/ath10k/sdio.c
+@@ -396,6 +396,7 @@ static int ath10k_sdio_mbox_rx_process_p
+ 	int ret;
  
- 	result = usb_get_descriptor(usb_dev, USB_DT_SECURITY,
- 				    0, secd, sizeof(*secd));
--	if (result < sizeof(*secd)) {
-+	if (result < (int)sizeof(*secd)) {
- 		dev_err(dev, "Can't read security descriptor or "
- 			"not enough data: %d\n", result);
- 		goto out;
+ 	payload_len = le16_to_cpu(htc_hdr->len);
++	skb->len = payload_len + sizeof(struct ath10k_htc_hdr);
+ 
+ 	if (trailer_present) {
+ 		trailer = skb->data + sizeof(*htc_hdr) +
 
 
