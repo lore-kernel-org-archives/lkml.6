@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7FFC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 423CDC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0E902064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0E902064D
+	by mail.kernel.org (Postfix) with ESMTP id 14DAF208AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:36:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14DAF208AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733171AbeJBUTt (ORCPT
+        id S1733186AbeJBUTv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:19:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36228 "EHLO
+        Tue, 2 Oct 2018 16:19:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36236 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733151AbeJBUTs (ORCPT
+        with ESMTP id S1733173AbeJBUTt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:48 -0400
+        Tue, 2 Oct 2018 16:19:49 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 511E0B4B;
-        Tue,  2 Oct 2018 13:36:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B006B2F;
+        Tue,  2 Oct 2018 13:36:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@redhat.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 52/94] nfsd: fix corrupted reply to badly ordered compound
-Date:   Tue,  2 Oct 2018 06:25:06 -0700
-Message-Id: <20181002132504.113002475@linuxfoundation.org>
+Subject: [PATCH 4.9 16/94] media: exynos4-is: Prevent NULL pointer dereference in __isp_video_try_fmt()
+Date:   Tue,  2 Oct 2018 06:24:30 -0700
+Message-Id: <20181002132501.600585238@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -52,33 +53,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "J. Bruce Fields" <bfields@redhat.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-[ Upstream commit 5b7b15aee641904ae269be9846610a3950cbd64c ]
+[ Upstream commit 7c1b9a5aeed91bef98988ac0fcf38c8c1f4f9a3a ]
 
-We're encoding a single op in the reply but leaving the number of ops
-zero, so the reply makes no sense.
+This patch fixes potential NULL pointer dereference as indicated
+by the following static checker warning:
 
-Somewhat academic as this isn't a case any real client will hit, though
-in theory perhaps that could change in a future protocol extension.
+drivers/media/platform/exynos4-is/fimc-isp-video.c:408 isp_video_try_fmt_mplane()
+error: NULL dereference inside function '__isp_video_try_fmt(isp, &f->fmt.pix_mp, (0))()'.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Fixes: 34947b8aebe3: ("[media] exynos4-is: Add the FIMC-IS ISP capture DMA driver")
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfsd/nfs4proc.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/exynos4-is/fimc-isp-video.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1725,6 +1725,7 @@ nfsd4_proc_compound(struct svc_rqst *rqs
- 	if (status) {
- 		op = &args->ops[0];
- 		op->status = status;
-+		resp->opcnt = 1;
- 		goto encode_op;
- 	}
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -384,12 +384,17 @@ static void __isp_video_try_fmt(struct f
+ 				struct v4l2_pix_format_mplane *pixm,
+ 				const struct fimc_fmt **fmt)
+ {
+-	*fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
++	const struct fimc_fmt *__fmt;
++
++	__fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
++
++	if (fmt)
++		*fmt = __fmt;
  
+ 	pixm->colorspace = V4L2_COLORSPACE_SRGB;
+ 	pixm->field = V4L2_FIELD_NONE;
+-	pixm->num_planes = (*fmt)->memplanes;
+-	pixm->pixelformat = (*fmt)->fourcc;
++	pixm->num_planes = __fmt->memplanes;
++	pixm->pixelformat = __fmt->fourcc;
+ 	/*
+ 	 * TODO: double check with the docmentation these width/height
+ 	 * constraints are correct.
 
 
