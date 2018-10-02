@@ -3,40 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1023CC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C404C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D49832083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:09:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D49832083F
+	by mail.kernel.org (Postfix) with ESMTP id 0561A2064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:10:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0561A2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729784AbeJBUxT (ORCPT
+        id S1726746AbeJBULS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:53:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60642 "EHLO
+        Tue, 2 Oct 2018 16:11:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60594 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeJBULU (ORCPT
+        with ESMTP id S1728900AbeJBULR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:20 -0400
+        Tue, 2 Oct 2018 16:11:17 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7E6D266;
-        Tue,  2 Oct 2018 13:27:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89E22C2A;
+        Tue,  2 Oct 2018 13:27:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jean-Christophe Dubois <jcd@tribudubois.net>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 046/228] thermal: i.MX: Allow thermal probe to fail gracefully in case of bad calibration.
-Date:   Tue,  2 Oct 2018 06:22:23 -0700
-Message-Id: <20181002132502.287709813@linuxfoundation.org>
+Subject: [PATCH 4.18 043/228] x86/entry/64: Add two more instruction suffixes
+Date:   Tue,  2 Oct 2018 06:22:20 -0700
+Message-Id: <20181002132502.069633926@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -54,40 +61,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jean-Christophe Dubois <jcd@tribudubois.net>
+From: Jan Beulich <JBeulich@suse.com>
 
-[ Upstream commit be926ceeb4efc3bf44cb9b56f5c71aac9b1f8bbe ]
+[ Upstream commit 6709812f094d96543b443645c68daaa32d3d3e77 ]
 
-Without this fix, the thermal probe on i.MX6 might trigger a division
-by zero exception later in the probe if the calibration does fail.
+Sadly, other than claimed in:
 
-Note: This linux behavior (Division by zero in kernel) has been triggered
-on a Qemu i.MX6 emulation where parameters in nvmem were not set. With this
-fix the division by zero is not triggeed anymore as the thermal probe does
-fail early.
+  a368d7fd2a ("x86/entry/64: Add instruction suffix")
 
-Signed-off-by: Jean-Christophe Dubois <jcd@tribudubois.net>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+... there are two more instances which want to be adjusted.
+
+As said there, omitting suffixes from instructions in AT&T mode is bad
+practice when operand size cannot be determined by the assembler from
+register operands, and is likely going to be warned about by upstream
+gas in the future (mine does already).
+
+Add the other missing suffixes here as well.
+
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/5B3A02DD02000078001CFB78@prv1-mh.provo.novell.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/thermal/imx_thermal.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/entry/entry_64.S |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -604,7 +604,10 @@ static int imx_init_from_nvmem_cells(str
- 	ret = nvmem_cell_read_u32(&pdev->dev, "calib", &val);
- 	if (ret)
- 		return ret;
--	imx_init_calib(pdev, val);
-+
-+	ret = imx_init_calib(pdev, val);
-+	if (ret)
-+		return ret;
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -92,7 +92,7 @@ END(native_usergs_sysret64)
+ .endm
  
- 	ret = nvmem_cell_read_u32(&pdev->dev, "temp_grade", &val);
- 	if (ret)
+ .macro TRACE_IRQS_IRETQ_DEBUG
+-	bt	$9, EFLAGS(%rsp)		/* interrupts off? */
++	btl	$9, EFLAGS(%rsp)		/* interrupts off? */
+ 	jnc	1f
+ 	TRACE_IRQS_ON_DEBUG
+ 1:
+@@ -701,7 +701,7 @@ retint_kernel:
+ #ifdef CONFIG_PREEMPT
+ 	/* Interrupts are off */
+ 	/* Check if we need preemption */
+-	bt	$9, EFLAGS(%rsp)		/* were interrupts off? */
++	btl	$9, EFLAGS(%rsp)		/* were interrupts off? */
+ 	jnc	1f
+ 0:	cmpl	$0, PER_CPU_VAR(__preempt_count)
+ 	jnz	1f
 
 
