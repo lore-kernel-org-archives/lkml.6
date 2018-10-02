@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E5DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C84C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49F972064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:13:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49F972064A
+	by mail.kernel.org (Postfix) with ESMTP id 205CF2064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:14:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 205CF2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728652AbeJBU5a (ORCPT
+        id S1727862AbeJBUKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:57:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60072 "EHLO
+        Tue, 2 Oct 2018 16:10:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60018 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbeJBUKW (ORCPT
+        with ESMTP id S1727802AbeJBUKQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:22 -0400
+        Tue, 2 Oct 2018 16:10:16 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45A41C11;
-        Tue,  2 Oct 2018 13:27:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A92D5B2F;
+        Tue,  2 Oct 2018 13:26:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-        "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 004/228] misc: ibmvmc: Use GFP_ATOMIC under spin lock
-Date:   Tue,  2 Oct 2018 06:21:41 -0700
-Message-Id: <20181002132459.328218551@linuxfoundation.org>
+Subject: [PATCH 4.18 032/228] IB/core: type promotion bug in rdma_rw_init_one_mr()
+Date:   Tue,  2 Oct 2018 06:22:09 -0700
+Message-Id: <20181002132501.261521292@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,34 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 97b715b62e5b4c6edb75d023f556fd09a46cb4e1 ]
+[ Upstream commit c2d7c8ff89b22ddefb1ac2986c0d48444a667689 ]
 
-The function alloc_dma_buffer() is called from ibmvmc_add_buffer(),
-in which a spin lock be held here, so we should use GFP_ATOMIC when
-a lock is held.
+"nents" is an unsigned int, so if ib_map_mr_sg() returns a negative
+error code then it's type promoted to a high unsigned int which is
+treated as success.
 
-Fixes: 0eca353e7ae7 ("misc: IBM Virtual Management Channel Driver (VMC)")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Bryant G. Ly <bryantly@linux.vnet.ibm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: a060b5629ab0 ("IB/core: generic RDMA READ/WRITE API")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/ibmvmc.c |    2 +-
+ drivers/infiniband/core/rw.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/ibmvmc.c
-+++ b/drivers/misc/ibmvmc.c
-@@ -273,7 +273,7 @@ static void *alloc_dma_buffer(struct vio
- 			      dma_addr_t *dma_handle)
- {
- 	/* allocate memory */
--	void *buffer = kzalloc(size, GFP_KERNEL);
-+	void *buffer = kzalloc(size, GFP_ATOMIC);
+--- a/drivers/infiniband/core/rw.c
++++ b/drivers/infiniband/core/rw.c
+@@ -87,7 +87,7 @@ static int rdma_rw_init_one_mr(struct ib
+ 	}
  
- 	if (!buffer) {
- 		*dma_handle = 0;
+ 	ret = ib_map_mr_sg(reg->mr, sg, nents, &offset, PAGE_SIZE);
+-	if (ret < nents) {
++	if (ret < 0 || ret < nents) {
+ 		ib_mr_pool_put(qp, &qp->rdma_mrs, reg->mr);
+ 		return -EINVAL;
+ 	}
 
 
