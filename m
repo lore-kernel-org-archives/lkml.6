@@ -2,95 +2,201 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857D3C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79851C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3076E208AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:20:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B1D12089A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:21:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bw84vKsL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3076E208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZM70HUsq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B1D12089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbeJBOCi (ORCPT
+        id S1726941AbeJBODK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:02:38 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36871 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbeJBOCi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:02:38 -0400
-Received: by mail-pl1-f196.google.com with SMTP id az3-v6so331020plb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 00:20:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=3iWfKK11EXdx40BLXc84u1PmKHb/02aUkSQa1evr1kA=;
-        b=Bw84vKsL3tX27UGC7s413oJxE3zx8ozyyu7mTqFIjS2MYf60FsVLKixO7GSZLnprZy
-         +LttYcpbitPeAof61SMXJrgXzHAfT0iD9akTGK7GCWG410m7iZAlSZTebb1nS9an4Mdp
-         3tIk76THN7b5vV26B3pHwHHXjWXhaVWRAsdeQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=3iWfKK11EXdx40BLXc84u1PmKHb/02aUkSQa1evr1kA=;
-        b=lfoGBT40aH3rPpyO2eaNmG1CbsYuGsLpYBw7xbUuUNErXhFjulOz7sLZogqWOlSBoE
-         2Iy0B77dFHhEHkZ1a9Ftxug3DvgvKY3qjquZ57rpRe5X2FzVn5NhK6FokE4+V6D0hG6E
-         7kTUq8229hzw/Ybhzh2jNN/5JzZxEdTskaX2lYQFxolCakpcU9GCKaMUJVDwHMPCdefO
-         jAO132hF1ZS8pI57twiUZrrToKgLW0oHk6VAlCXgfp5J66HO1mvrTG1Q71gvodybZr78
-         uZX0RQb9lW699HMwUv+OMiMcyuIXQbDG2LalDM9BPB/NJeho6Eq9EZPy1HvfnFbLHZDP
-         CIYQ==
-X-Gm-Message-State: ABuFfogf/rWErYYo65QqNwCnRE8Cu4CQmGc/4Rx/AFNhtJJjZKAnzLzq
-        FX9jU3Y8nLWoCSGM/uPMFJeaxg==
-X-Google-Smtp-Source: ACcGV624p8k1HVdbIUgbgyNg26jfk9WAvf0dDRtDJvOFDWr59xCXJELwbU8t9FVAlgsta6rOOWC2Kw==
-X-Received: by 2002:a63:df06:: with SMTP id u6-v6mr8378953pgg.202.1538464850056;
-        Tue, 02 Oct 2018 00:20:50 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id y86-v6sm24964486pfk.84.2018.10.02.00.20.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Oct 2018 00:20:49 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 2 Oct 2018 10:03:10 -0400
+Received: from ozlabs.org ([203.11.71.1]:41425 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726554AbeJBODJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 10:03:09 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42PVv00cBcz9sBJ;
+        Tue,  2 Oct 2018 17:21:16 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538464878;
+        bh=9t76xXW3EaXd7ZEUZQ1D6hfKF4ZBziLbyPwg/7IAfFw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ZM70HUsqWwuORDg2kuPC0yW33sPxpdA6fBYIxPAMHFJ9OxjRUj9Qv+eHxmwXCSxBu
+         iM37OMun/q73p/o6X2zBA8HfLiAM/E9438/sOsx55CZrfPX6vLNJa1OeRyyP/4n483
+         ioq2bfIAM6KyNjnEgCu1HFmUwH9X2ZRlDyQxyvG69ndZL7cHpML/BuxbjZ3UEwkN1q
+         RVw3KakH8SxswlItQu8X41xCnnHu+EvmdXFjMWBSklY36Veq/1AdSA8rdZZQTrmmDc
+         b9wHrpiO5C0cPx+sQrZdoVqnSPDYObD3AaVGYCyQGEwYlU4L6RFeceZAPw+Lim9NOX
+         2BB9hpKdVyEBQ==
+Date:   Tue, 2 Oct 2018 17:21:13 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: linux-next: manual merge of the akpm-current tree with the block
+ tree
+Message-ID: <20181002172113.33dfbd9d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Mark Brown <broonie@kernel.org>, Ryan Case <ryandcase@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181002013142.209751-1-ryandcase@chromium.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        linux-arm-msm@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        Ryan Case <ryandcase@chromium.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20181002013142.209751-1-ryandcase@chromium.org>
-Message-ID: <153846484865.119890.9647250280891039183@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v5 1/2] dt-bindings: spi: Qualcomm Quad SPI(QSPI) documentation
-Date:   Tue, 02 Oct 2018 00:20:48 -0700
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/z0nytnICs3AqwM/QDe8a9+E"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Ryan Case (2018-10-01 18:31:41)
-> From: Girish Mahadevan <girishm@codeaurora.org>
-> =
+--Sig_/z0nytnICs3AqwM/QDe8a9+E
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Bindings for Qualcomm Quad SPI used on SoCs such as sdm845.
-> =
+Hi Andrew,
 
-> Signed-off-by: Girish Mahadevan <girishm@codeaurora.org>
-> Signed-off-by: Ryan Case <ryandcase@chromium.org>
-> ---
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+  block/blk-iolatency.c
 
+between commit:
+
+  1fa2840e56f9 ("blk-iolatency: use a percentile approache for ssd's")
+
+from the block tree and commit:
+
+  07360251b445 ("sched-loadavg-consolidate-load_int-load_frac-calc_load-fix=
+")
+  1ccc64569a48 ("sched-loadavg-consolidate-load_int-load_frac-calc_load-fix=
+-fix")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc block/blk-iolatency.c
+index 35c48d7b8f78,8793f1344e11..000000000000
+--- a/block/blk-iolatency.c
++++ b/block/blk-iolatency.c
+@@@ -186,80 -172,6 +186,81 @@@ static inline struct blkcg_gq *lat_to_b
+  	return pd_to_blkg(&iolat->pd);
+  }
+ =20
+ +static inline void latency_stat_init(struct iolatency_grp *iolat,
+ +				     struct latency_stat *stat)
+ +{
+ +	if (iolat->ssd) {
+ +		stat->ps.total =3D 0;
+ +		stat->ps.missed =3D 0;
+ +	} else
+ +		blk_rq_stat_init(&stat->rqs);
+ +}
+ +
+ +static inline void latency_stat_sum(struct iolatency_grp *iolat,
+ +				    struct latency_stat *sum,
+ +				    struct latency_stat *stat)
+ +{
+ +	if (iolat->ssd) {
+ +		sum->ps.total +=3D stat->ps.total;
+ +		sum->ps.missed +=3D stat->ps.missed;
+ +	} else
+ +		blk_rq_stat_sum(&sum->rqs, &stat->rqs);
+ +}
+ +
+ +static inline void latency_stat_record_time(struct iolatency_grp *iolat,
+ +					    u64 req_time)
+ +{
+ +	struct latency_stat *stat =3D get_cpu_ptr(iolat->stats);
+ +	if (iolat->ssd) {
+ +		if (req_time >=3D iolat->min_lat_nsec)
+ +			stat->ps.missed++;
+ +		stat->ps.total++;
+ +	} else
+ +		blk_rq_stat_add(&stat->rqs, req_time);
+ +	put_cpu_ptr(stat);
+ +}
+ +
+ +static inline bool latency_sum_ok(struct iolatency_grp *iolat,
+ +				  struct latency_stat *stat)
+ +{
+ +	if (iolat->ssd) {
+ +		u64 thresh =3D div64_u64(stat->ps.total, 10);
+ +		thresh =3D max(thresh, 1ULL);
+ +		return stat->ps.missed < thresh;
+ +	}
+ +	return stat->rqs.mean <=3D iolat->min_lat_nsec;
+ +}
+ +
+ +static inline u64 latency_stat_samples(struct iolatency_grp *iolat,
+ +				       struct latency_stat *stat)
+ +{
+ +	if (iolat->ssd)
+ +		return stat->ps.total;
+ +	return stat->rqs.nr_samples;
+ +}
+ +
+ +static inline void iolat_update_total_lat_avg(struct iolatency_grp *iolat,
+ +					      struct latency_stat *stat)
+ +{
+ +	int exp_idx;
+ +
+ +	if (iolat->ssd)
+ +		return;
+ +
+ +	/*
+- 	 * CALC_LOAD takes in a number stored in fixed point representation.
+++	 * calc_load takes in a number stored in fixed point representation.
+ +	 * Because we are using this for IO time in ns, the values stored
+ +	 * are significantly larger than the FIXED_1 denominator (2048).
+ +	 * Therefore, rounding errors in the calculation are negligible and
+ +	 * can be ignored.
+ +	 */
+ +	exp_idx =3D min_t(int, BLKIOLATENCY_NR_EXP_FACTORS - 1,
+ +			div64_u64(iolat->cur_win_nsec,
+ +				  BLKIOLATENCY_EXP_BUCKET_SIZE));
+- 	CALC_LOAD(iolat->lat_avg, iolatency_exp_factors[exp_idx], stat->rqs.mean=
+);
+++	iolat->lat_avg =3D calc_load(iolat->lat_avg,
+++				   iolatency_exp_factors[exp_idx], stat->rqs.mean);
+ +}
+ +
+  static inline bool iolatency_may_queue(struct iolatency_grp *iolat,
+  				       wait_queue_entry_t *wait,
+  				       bool first_block)
+
+--Sig_/z0nytnICs3AqwM/QDe8a9+E
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluzHGkACgkQAVBC80lX
+0Gx88gf/Y4nDG8a3w5gSgM3kuhMi/cA5SuHgtmOFKNHoYZQSQr5T/mZosMLxyYSX
+Qx/de9yzWyR/8PO3rxSU03MuCniZlKbE/1QZEdYi0Cx5g6Xw99iSL+osAvEJdlVd
+AO10UjUkafEO1sBywzJgXC8JlF1a6x0Uuo8qhFltimLJq2A4IL78iKQPCoZpQaDl
+iHH8X3sEqAHOV7blJ4m7NHzPB/yd+z0kWVyptXBQAgW7/mLKOIsO/AsjuNo0EsvX
+ljr8Sz0ALyLTdzUDFnXQ2hASDLmIq5/aH4xTBQpct6Pg8voBuKan5vR/6GSFE9hz
+eSztnksNAocYuWe2Ypgt9Rwywy8Qyw==
+=8H48
+-----END PGP SIGNATURE-----
+
+--Sig_/z0nytnICs3AqwM/QDe8a9+E--
