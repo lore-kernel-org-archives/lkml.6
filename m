@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B438C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E5DC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE1DE2064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:13:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE1DE2064A
+	by mail.kernel.org (Postfix) with ESMTP id 49F972064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:13:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49F972064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbeJBUK3 (ORCPT
+        id S1728652AbeJBU5a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60116 "EHLO
+        Tue, 2 Oct 2018 16:57:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60072 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728153AbeJBUK2 (ORCPT
+        with ESMTP id S1727881AbeJBUKW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:28 -0400
+        Tue, 2 Oct 2018 16:10:22 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30E79266;
-        Tue,  2 Oct 2018 13:27:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45A41C11;
+        Tue,  2 Oct 2018 13:27:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 008/228] net: hns3: Fix for mac pause not disable in pfc mode
-Date:   Tue,  2 Oct 2018 06:21:45 -0700
-Message-Id: <20181002132459.600314898@linuxfoundation.org>
+Subject: [PATCH 4.18 004/228] misc: ibmvmc: Use GFP_ATOMIC under spin lock
+Date:   Tue,  2 Oct 2018 06:21:41 -0700
+Message-Id: <20181002132459.328218551@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -54,52 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-[ Upstream commit 6d0ec65cb5810f9bf08671be008785bb8c84d39f ]
+[ Upstream commit 97b715b62e5b4c6edb75d023f556fd09a46cb4e1 ]
 
-When pfc pause mode is enable, the mac pause mode need to be
-disabled, otherwise the pfc pause packet will not be sent when
-congestion happens.
+The function alloc_dma_buffer() is called from ibmvmc_add_buffer(),
+in which a spin lock be held here, so we should use GFP_ATOMIC when
+a lock is held.
 
-This patch fixes by disabling the mac pause when pfc pause is
-enabled.
-
-Fixes: 848440544b41 ("net: hns3: Add support of TX Scheduler & Shaper to HNS3 driver")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 0eca353e7ae7 ("misc: IBM Virtual Management Channel Driver (VMC)")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Bryant G. Ly <bryantly@linux.vnet.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/misc/ibmvmc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -1223,6 +1223,10 @@ static int hclge_mac_pause_setup_hw(stru
- 		tx_en = true;
- 		rx_en = true;
- 		break;
-+	case HCLGE_FC_PFC:
-+		tx_en = false;
-+		rx_en = false;
-+		break;
- 	default:
- 		tx_en = true;
- 		rx_en = true;
-@@ -1240,8 +1244,9 @@ int hclge_pause_setup_hw(struct hclge_de
- 	if (ret)
- 		return ret;
+--- a/drivers/misc/ibmvmc.c
++++ b/drivers/misc/ibmvmc.c
+@@ -273,7 +273,7 @@ static void *alloc_dma_buffer(struct vio
+ 			      dma_addr_t *dma_handle)
+ {
+ 	/* allocate memory */
+-	void *buffer = kzalloc(size, GFP_KERNEL);
++	void *buffer = kzalloc(size, GFP_ATOMIC);
  
--	if (hdev->tm_info.fc_mode != HCLGE_FC_PFC)
--		return hclge_mac_pause_setup_hw(hdev);
-+	ret = hclge_mac_pause_setup_hw(hdev);
-+	if (ret)
-+		return ret;
- 
- 	/* Only DCB-supported dev supports qset back pressure and pfc cmd */
- 	if (!hnae3_dev_dcb_supported(hdev))
+ 	if (!buffer) {
+ 		*dma_handle = 0;
 
 
