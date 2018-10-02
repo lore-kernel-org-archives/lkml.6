@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45FAAC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E03DC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18B9C2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B9C2083F
+	by mail.kernel.org (Postfix) with ESMTP id 2F2BB2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:28:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F2BB2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbeJBUML (ORCPT
+        id S1729615AbeJBUMO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:12:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32882 "EHLO
+        Tue, 2 Oct 2018 16:12:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32906 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726993AbeJBUML (ORCPT
+        with ESMTP id S1729601AbeJBUMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:11 -0400
+        Tue, 2 Oct 2018 16:12:13 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09F76266;
-        Tue,  2 Oct 2018 13:28:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E6CB6B2F;
+        Tue,  2 Oct 2018 13:28:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Brandon Maier <brandon.maier@rockwellcollins.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 085/228] net: phy: xgmiitorgmii: Check phy_driver ready before accessing
-Date:   Tue,  2 Oct 2018 06:23:02 -0700
-Message-Id: <20181002132505.103815149@linuxfoundation.org>
+Subject: [PATCH 4.18 087/228] ath10k: transmit queued frames after processing rx packets
+Date:   Tue,  2 Oct 2018 06:23:04 -0700
+Message-Id: <20181002132505.236700755@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -55,90 +52,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brandon Maier <brandon.maier@rockwellcollins.com>
+From: Niklas Cassel <niklas.cassel@linaro.org>
 
-[ Upstream commit ab4e6ee578e88a659938db8fbf33720bc048d29c ]
+[ Upstream commit 3f04950f32d5d592ab4fcaecac2178558a6f7437 ]
 
-Since a phy_device is added to the global mdio_bus list during
-phy_device_register(), but a phy_device's phy_driver doesn't get
-attached until phy_probe(). It's possible of_phy_find_device() in
-xgmiitorgmii will return a valid phy with a NULL phy_driver. Leading to
-a NULL pointer access during the memcpy().
+When running iperf on ath10k SDIO, TX can stop working:
 
-Fixes this Oops:
+iperf -c 192.168.1.1 -i 1 -t 20 -w 10K
+[  3]  0.0- 1.0 sec  2.00 MBytes  16.8 Mbits/sec
+[  3]  1.0- 2.0 sec  3.12 MBytes  26.2 Mbits/sec
+[  3]  2.0- 3.0 sec  3.25 MBytes  27.3 Mbits/sec
+[  3]  3.0- 4.0 sec   655 KBytes  5.36 Mbits/sec
+[  3]  4.0- 5.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  5.0- 6.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  6.0- 7.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  7.0- 8.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  8.0- 9.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  9.0-10.0 sec  0.00 Bytes  0.00 bits/sec
+[  3]  0.0-10.3 sec  9.01 MBytes  7.32 Mbits/sec
 
-Unable to handle kernel NULL pointer dereference at virtual address 00000000
-pgd = c0004000
-[00000000] *pgd=00000000
-Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.14.40 #1
-Hardware name: Xilinx Zynq Platform
-task: ce4c8d00 task.stack: ce4ca000
-PC is at memcpy+0x48/0x330
-LR is at xgmiitorgmii_probe+0x90/0xe8
-pc : [<c074bc68>]    lr : [<c0529548>]    psr: 20000013
-sp : ce4cbb54  ip : 00000000  fp : ce4cbb8c
-r10: 00000000  r9 : 00000000  r8 : c0c49178
-r7 : 00000000  r6 : cdc14718  r5 : ce762800  r4 : cdc14710
-r3 : 00000000  r2 : 00000054  r1 : 00000000  r0 : cdc14718
-Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-Control: 18c5387d  Table: 0000404a  DAC: 00000051
-Process swapper/0 (pid: 1, stack limit = 0xce4ca210)
-...
-[<c074bc68>] (memcpy) from [<c0529548>] (xgmiitorgmii_probe+0x90/0xe8)
-[<c0529548>] (xgmiitorgmii_probe) from [<c0526a94>] (mdio_probe+0x28/0x34)
-[<c0526a94>] (mdio_probe) from [<c04db98c>] (driver_probe_device+0x254/0x414)
-[<c04db98c>] (driver_probe_device) from [<c04dbd58>] (__device_attach_driver+0xac/0x10c)
-[<c04dbd58>] (__device_attach_driver) from [<c04d96f4>] (bus_for_each_drv+0x84/0xc8)
-[<c04d96f4>] (bus_for_each_drv) from [<c04db5bc>] (__device_attach+0xd0/0x134)
-[<c04db5bc>] (__device_attach) from [<c04dbdd4>] (device_initial_probe+0x1c/0x20)
-[<c04dbdd4>] (device_initial_probe) from [<c04da8fc>] (bus_probe_device+0x98/0xa0)
-[<c04da8fc>] (bus_probe_device) from [<c04d8660>] (device_add+0x43c/0x5d0)
-[<c04d8660>] (device_add) from [<c0526cb8>] (mdio_device_register+0x34/0x80)
-[<c0526cb8>] (mdio_device_register) from [<c0580b48>] (of_mdiobus_register+0x170/0x30c)
-[<c0580b48>] (of_mdiobus_register) from [<c05349c4>] (macb_probe+0x710/0xc00)
-[<c05349c4>] (macb_probe) from [<c04dd700>] (platform_drv_probe+0x44/0x80)
-[<c04dd700>] (platform_drv_probe) from [<c04db98c>] (driver_probe_device+0x254/0x414)
-[<c04db98c>] (driver_probe_device) from [<c04dbc58>] (__driver_attach+0x10c/0x118)
-[<c04dbc58>] (__driver_attach) from [<c04d9600>] (bus_for_each_dev+0x8c/0xd0)
-[<c04d9600>] (bus_for_each_dev) from [<c04db1fc>] (driver_attach+0x2c/0x30)
-[<c04db1fc>] (driver_attach) from [<c04daa98>] (bus_add_driver+0x50/0x260)
-[<c04daa98>] (bus_add_driver) from [<c04dc440>] (driver_register+0x88/0x108)
-[<c04dc440>] (driver_register) from [<c04dd6b4>] (__platform_driver_register+0x50/0x58)
-[<c04dd6b4>] (__platform_driver_register) from [<c0b31248>] (macb_driver_init+0x24/0x28)
-[<c0b31248>] (macb_driver_init) from [<c010203c>] (do_one_initcall+0x60/0x1a4)
-[<c010203c>] (do_one_initcall) from [<c0b00f78>] (kernel_init_freeable+0x15c/0x1f8)
-[<c0b00f78>] (kernel_init_freeable) from [<c0763d10>] (kernel_init+0x18/0x124)
-[<c0763d10>] (kernel_init) from [<c0112d74>] (ret_from_fork+0x14/0x20)
-Code: ba000002 f5d1f03c f5d1f05c f5d1f07c (e8b151f8)
----[ end trace 3e4ec21905820a1f ]---
+There are frames in the ieee80211_txq and there are frames that have
+been removed from from this queue, but haven't yet been sent on the wire
+(num_pending_tx).
 
-Signed-off-by: Brandon Maier <brandon.maier@rockwellcollins.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+When num_pending_tx reaches max_num_pending_tx, we will stop the queues
+by calling ieee80211_stop_queues().
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
+As frames that have previously been sent for transmission
+(num_pending_tx) are completed, we will decrease num_pending_tx and wake
+the queues by calling ieee80211_wake_queue(). ieee80211_wake_queue()
+does not call wake_tx_queue, so we might still have frames in the
+queue at this point.
 
+While the queues were stopped, the socket buffer might have filled up,
+and in order for user space to write more, we need to free the frames
+in the queue, since they are accounted to the socket. In order to free
+them, we first need to transmit them.
+
+This problem cannot be reproduced on low-latency devices, e.g. pci,
+since they call ath10k_mac_tx_push_pending() from
+ath10k_htt_txrx_compl_task(). ath10k_htt_txrx_compl_task() is not called
+on high-latency devices.
+Fix the problem by calling ath10k_mac_tx_push_pending(), after
+processing rx packets, just like for low-latency devices, also in the
+SDIO case. Since we are calling ath10k_mac_tx_push_pending() directly,
+we also need to export it.
+
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/xilinx_gmii2rgmii.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/wireless/ath/ath10k/mac.c  |    1 +
+ drivers/net/wireless/ath/ath10k/sdio.c |    3 +++
+ 2 files changed, 4 insertions(+)
 
---- a/drivers/net/phy/xilinx_gmii2rgmii.c
-+++ b/drivers/net/phy/xilinx_gmii2rgmii.c
-@@ -84,6 +84,11 @@ static int xgmiitorgmii_probe(struct mdi
- 		return -EPROBE_DEFER;
- 	}
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -4054,6 +4054,7 @@ void ath10k_mac_tx_push_pending(struct a
+ 	rcu_read_unlock();
+ 	spin_unlock_bh(&ar->txqs_lock);
+ }
++EXPORT_SYMBOL(ath10k_mac_tx_push_pending);
  
-+	if (!priv->phy_dev->drv) {
-+		dev_info(dev, "Attached phy not ready\n");
-+		return -EPROBE_DEFER;
-+	}
+ /************/
+ /* Scanning */
+--- a/drivers/net/wireless/ath/ath10k/sdio.c
++++ b/drivers/net/wireless/ath/ath10k/sdio.c
+@@ -30,6 +30,7 @@
+ #include "debug.h"
+ #include "hif.h"
+ #include "htc.h"
++#include "mac.h"
+ #include "targaddrs.h"
+ #include "trace.h"
+ #include "sdio.h"
+@@ -1346,6 +1347,8 @@ static void ath10k_sdio_irq_handler(stru
+ 			break;
+ 	} while (time_before(jiffies, timeout) && !done);
+ 
++	ath10k_mac_tx_push_pending(ar);
 +
- 	priv->addr = mdiodev->addr;
- 	priv->phy_drv = priv->phy_dev->drv;
- 	memcpy(&priv->conv_phy_drv, priv->phy_dev->drv,
+ 	sdio_claim_host(ar_sdio->func);
+ 
+ 	if (ret && ret != -ECANCELED)
 
 
