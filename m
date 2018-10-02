@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D1FC00449
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 02:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1952BC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 02:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B76D208AE
+	by mail.kernel.org (Postfix) with ESMTP id D3FC8208AE
 	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 02:39:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQCiVT1y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B76D208AE
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/zzUTTo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3FC8208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbeJBJTt (ORCPT
+        id S1726882AbeJBJUC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 05:19:49 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:54164 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbeJBJTt (ORCPT
+        Tue, 2 Oct 2018 05:20:02 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41949 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbeJBJUB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 05:19:49 -0400
-Received: by mail-it1-f195.google.com with SMTP id q70-v6so1358330itb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 19:38:56 -0700 (PDT)
+        Tue, 2 Oct 2018 05:20:01 -0400
+Received: by mail-io1-f68.google.com with SMTP id q4-v6so590781iob.8
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Oct 2018 19:39:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=a0stoVsAw0VRDll7xKIRYaZk/NNhRyx/JgJ4JBhyYBI=;
-        b=MQCiVT1yBHZwhB1okfLL+82FvWp4GoO2TF0lo8c8BbIiB3TwHiwU1yv+AtrW74bum0
-         ZrH9D4NnR2Q7185gqVr03WF+df6ykmmjIgdLxz9ITQ98FUpqKDy+j1T64DOlDBIS3/ri
-         dTx4U8A0+Bi3UOebtpHAGMsSHd0qiuQqWkeTU3J6HVXuT2XpKjiQQzhWQLgCZZscxhyN
-         07S5A5sdr3DDLUy4fxAWfGjQU1opQgqVZ61Jht7adcS4rLjFDW503bAgf+Jsm5Npco6n
-         S//rTFy2nlO5BOBAearo71JbNKuXxKhqLPtUOR8oAqKkiBN8m+agSyy5iKXkQ1lDZ7pJ
-         BZFA==
+        bh=BPastX5rxgolCsxo1cZqs/8RTdInA/A4IVQNI1iEWho=;
+        b=R/zzUTTo6d3MGVRUCJkaEfKvtAm1IJncakiS+Yz5NsHzw+3xYqERCScs4TmLiCWTPD
+         +2V9/IHtvnBgISEnULbTezwD6Wu/dy4CLiXQ2J6v5N0FVAhPbqQFG7/AIxnHAq0/DU4W
+         QcLpJL308ow0xKeelx5vFZq7ZcI0uuQVcqvOfpPxJOmQkeoZocITzNTue7fgVFlsVNdH
+         9SQQoKsRufdDNY0CAeayD8T/Lqna0Gs2qFMCqTJhzExwRI+XMSSm6WHSfUitMDNz6/Ol
+         YKGHyH2wwkI27Qwyht8OVHk+3/Wk+K1/yku4mFI4gHQbsBUeOhpq/97x2Ped0350VcXG
+         9Y9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=a0stoVsAw0VRDll7xKIRYaZk/NNhRyx/JgJ4JBhyYBI=;
-        b=DaU/qkHA4shURwjhFpBXPAu0gBZIwnXsN26p3Hc6v4tjtcATr2k57HhIdW9dwLDwqo
-         koWd5MY0eXeREwwV5ZqSk5o4WerMnjsIrXZJ8DGT97DvSgSwRUiDnJCc9AZx9llqXSpk
-         GFaE7jivGVvd/WohXU/q2MrZmlac6/ARo2hdPHUbn8k+eMO3aBqR+vKmq0MPY/OPQ0Kr
-         AhAzPEgmnSND+vUmDg8qe9j4Z2xGWjvqGX97FzmDYaiMuQQXEa8P3NiCiAwA9T8Z3zVd
-         i+eqRoCOEMRDoPo6OZLy4a7138Jn1bSc2yUhlCObglFf9GgDYE0UcsCComLEBM9yzA9k
-         VpLQ==
-X-Gm-Message-State: ABuFfohHyEl73g79SFrvzwCNH0qnCYuBP3zpPX8OE6Fu/2/6zQe51qJQ
-        6Hm5c2UFekAkEWVGKgJxmZw=
-X-Google-Smtp-Source: ACcGV60vQ9D5L8UDYEI9Pq6eXE4BdCOmCN3VaFYhn5DAfU6p3EJlyUuCnfXG5Zoy4EM0CVlLbIm64g==
-X-Received: by 2002:a63:4f20:: with SMTP id d32-v6mr12278543pgb.231.1538447936479;
-        Mon, 01 Oct 2018 19:38:56 -0700 (PDT)
+        bh=BPastX5rxgolCsxo1cZqs/8RTdInA/A4IVQNI1iEWho=;
+        b=DFnQ1Y1AWL2ANcV5V9QVdo/A8GQcHfdCoPDfIXLM88wdp2BzbTGNAG/rfctZKzaknK
+         bkjlgnWNzxrTx1feWG9mxbgZHD5sUd4hTeTKyk0W1pQD1BZvY5P5AEZJBJcWJjrNi02h
+         jeVFXOTiK7v+ayz+RA61nxx8Buv0aKx5UQqLa1po0+Rh8wRoa8B8NMNNjTQBoLUYocfC
+         ypKr9tZQ9xT1SqECOlcnPV5NiiKjoYoglL6ICVFs0/2ojYYnih4CWlruZffRTmY5fgOz
+         H/XseAqAZ95gEdGoslJVdHTZ+FidTun0LPrVONEMm5ju+ZlPS5fVkdcy7veVXloJDNux
+         d/RA==
+X-Gm-Message-State: ABuFfoilxLtsyh13bwbIM/rMc2XYJk1AMxEH7Xp2/EGeek/5qIn/lFbG
+        hd5rmBeg3DsExt0ptguNPPM=
+X-Google-Smtp-Source: ACcGV62c6epA9k4d0Ra6G1XWWwxXk184jdXz/ocPQlGCPYE1Wwzdmc+YsE78+WuojGO3a9nawAPtUA==
+X-Received: by 2002:a62:6d02:: with SMTP id i2-v6mr14436880pfc.218.1538447948938;
+        Mon, 01 Oct 2018 19:39:08 -0700 (PDT)
 Received: from localhost.localdomain ([39.7.19.27])
-        by smtp.gmail.com with ESMTPSA id v83-v6sm35902744pfa.103.2018.10.01.19.38.51
+        by smtp.gmail.com with ESMTPSA id v83-v6sm35902744pfa.103.2018.10.01.19.39.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 19:38:55 -0700 (PDT)
+        Mon, 01 Oct 2018 19:39:07 -0700 (PDT)
 From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 To:     Steven Rostedt <rostedt@goodmis.org>,
@@ -71,9 +71,9 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: [RFC][PATCH 1/3] printk: keep kernel cont support always enabled
-Date:   Tue,  2 Oct 2018 11:38:34 +0900
-Message-Id: <20181002023836.4487-2-sergey.senozhatsky@gmail.com>
+Subject: [RFC][PATCH 3/3] printk: do not preliminary split up cont buffer
+Date:   Tue,  2 Oct 2018 11:38:36 +0900
+Message-Id: <20181002023836.4487-4-sergey.senozhatsky@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002023836.4487-1-sergey.senozhatsky@gmail.com>
 References: <20181002023836.4487-1-sergey.senozhatsky@gmail.com>
@@ -84,77 +84,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since 5c2992ee7fd8a29 ("printk: remove console flushing special
-cases for partial buffered lines") we don't print cont fragments
-to the consoles; cont lines are now proper log_buf entries and
-there is no "consecutive continuation flag" anymore: we either
-have 'c' entries that mark continuation lines without fragments;
-or '-' entries that mark normal logbuf entries. There are no '+'
-entries anymore.
+We have a proper 'overflow' check which tells us that we need to
+split up existing cont buffer in separate records:
 
-However, we still have a small leftover - presence of ext_console
-drivers disables kernel cont support and we flush each pr_cont()
-and store it as a separate log_buf entry. Previously, it worked
-because msg_print_ext_header() had that "an optional external merge
-of the records" functionality:
+	if (cont.len + len > sizeof(cont.buf))
+		cont_flush();
 
-	if (msg->flags & LOG_CONT)
-		cont = (prev_flags & LOG_CONT) ? '+' : 'c';
+At the same time we also have one extra flush: "if cont buffer is
+80% full then split it up" in cont_add():
 
-We don't do this as of now, so keep kernel cont always enabled.
+	if (cont.len > (sizeof(cont.buf) * 80) / 100)
+		cont_flush();
+
+This looks to be redundant, since the existing "overflow" check
+should work just fine, so remove this 80% check and wait for either
+a normal cont termination \n, for preliminary flush due to
+possible buffer overflow or for preliminary flush due to cont race.
 
 Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 ---
- kernel/printk/printk.c | 22 ++++------------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
+ kernel/printk/printk.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 308497194bd4..e72cb793aff1 100644
+index aea37b7927dd..1856db8128c6 100644
 --- a/kernel/printk/printk.c
 +++ b/kernel/printk/printk.c
-@@ -192,16 +192,7 @@ int devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write,
- 	return 0;
+@@ -1822,9 +1822,6 @@ static bool cont_add(int facility, int level, enum log_flags flags, const char *
+ 		cont_flush();
+ 	}
+ 
+-	if (cont.len > (sizeof(cont.buf) * 80) / 100)
+-		cont_flush();
+-
+ 	return true;
  }
  
--/*
-- * Number of registered extended console drivers.
-- *
-- * If extended consoles are present, in-kernel cont reassembly is disabled
-- * and each fragment is stored as a separate log entry with proper
-- * continuation flag so that every emitted message has full metadata.  This
-- * doesn't change the result for regular consoles or /proc/kmsg.  For
-- * /dev/kmsg, as long as the reader concatenates messages according to
-- * consecutive continuation flags, the end result should be the same too.
-- */
-+/* Number of registered extended console drivers. */
- static int nr_ext_console_drivers;
- 
- /*
-@@ -1806,12 +1797,8 @@ static void cont_flush(void)
- 
- static bool cont_add(int facility, int level, enum log_flags flags, const char *text, size_t len)
- {
--	/*
--	 * If ext consoles are present, flush and skip in-kernel
--	 * continuation.  See nr_ext_console_drivers definition.  Also, if
--	 * the line gets too long, split it up in separate records.
--	 */
--	if (nr_ext_console_drivers || cont.len + len > sizeof(cont.buf)) {
-+	/* If the line gets too long, split it up in separate records. */
-+	if (cont.len + len > sizeof(cont.buf)) {
- 		cont_flush();
- 		return false;
- 	}
-@@ -2731,8 +2718,7 @@ void register_console(struct console *newcon)
- 	}
- 
- 	if (newcon->flags & CON_EXTENDED)
--		if (!nr_ext_console_drivers++)
--			pr_info("printk: continuation disabled due to ext consoles, expect more fragments in /dev/kmsg\n");
-+		nr_ext_console_drivers++;
- 
- 	if (newcon->flags & CON_PRINTBUFFER) {
- 		/*
 -- 
 2.19.0
 
