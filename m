@@ -2,78 +2,81 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6744C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C492EC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5918B2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:28:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gUd5ufkG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5918B2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 952F12089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:28:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 952F12089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbeJBVLw (ORCPT
+        id S1727781AbeJBVML (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 17:11:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39754 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbeJBVLw (ORCPT
+        Tue, 2 Oct 2018 17:12:11 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60237 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbeJBVMK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 17:11:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4AMiJ06wJT0aqlGZntN890lxEZFNTF2KcatGwH9hxoQ=; b=gUd5ufkG/ByagFRv4cmkUZHLK
-        tA5hHMHc7zjG862BsGSbL0hoHxGmWhzheJimSK+4wfLbs/lD7Zmpc/K3uEriB0rL5IIeR3910xz3v
-        NWUv+kyvuQFRoDniev8YfhSYPTgl2jlE2F4hBeJqetiqWHIzr7gibXnudWsyVBTphMLF4jjUdxyl1
-        1giBd0M4hODoBNrpR41erbfSm7BChWX/gYjtZipOvsjVQK13c1hxJzi6z77zXUwhI21x/6rbVrnXI
-        Db0WG0+JU8+sm/rbcNVEKLk//WpzZSBXQwagvdm5GkL4H+Ge8v9ExVpZf6RwhuOh6WJCMYBp/A7DQ
-        sa0qHiE6A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g7Lel-00012s-7y; Tue, 02 Oct 2018 14:28:11 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B1E18202B9CBE; Tue,  2 Oct 2018 16:28:09 +0200 (CEST)
-Date:   Tue, 2 Oct 2018 16:28:09 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] locking/lockdep: Make class->ops a percpu counter
-Message-ID: <20181002142809.GH26858@hirez.programming.kicks-ass.net>
-References: <1538157201-29173-1-git-send-email-longman@redhat.com>
- <1538157201-29173-5-git-send-email-longman@redhat.com>
- <20181002093907.GV3439@hirez.programming.kicks-ass.net>
- <20181002095543.GA55344@gmail.com>
- <dbc5a70a-91bb-d365-8977-2d88049e39bb@redhat.com>
+        Tue, 2 Oct 2018 17:12:10 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g7Lec-0005jn-3q; Tue, 02 Oct 2018 16:28:02 +0200
+Date:   Tue, 2 Oct 2018 16:28:01 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Travis, Mike" <mike.travis@hpe.com>
+cc:     Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Hedi Berriche <hedi@sgi.com>,
+        "Anderson, Russ" <russ.anderson@hpe.com>,
+        "Sivanich, Dimitri" <dimitri.sivanich@hpe.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        "Gross, Juergen" <JGross@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Petr Tesarik <ptesarik@suse.cz>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] Fix community TSC ADJUST breakage causing TSC
+ failure
+In-Reply-To: <3351341c-6288-ac68-b4f6-b5794078f63c@hpe.com>
+Message-ID: <alpine.DEB.2.21.1810021627180.12704@nanos.tec.linutronix.de>
+References: <20181002012204.297193336@stormcage.americas.sgi.com> <alpine.DEB.2.21.1810020823550.32062@nanos.tec.linutronix.de> <3351341c-6288-ac68-b4f6-b5794078f63c@hpe.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dbc5a70a-91bb-d365-8977-2d88049e39bb@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 10:10:48AM -0400, Waiman Long wrote:
-> One alternative is to group it under CONFIG_DEBUG_LOCKDEP again. This
-> metric was originally under CONFIG_DEBUG_LOCKDEP, but was moved to
-> CONFIG_LOCKDEP when trying to make other lock debugging statistics
-> per-cpu counters. It was probably because this metric is per lock class
-> while the rests are global.
+On Tue, 2 Oct 2018, Travis, Mike wrote:
+> On 10/1/2018 11:24 PM, Thomas Gleixner wrote:
+> > On Mon, 1 Oct 2018, Mike Travis wrote:
+> > 
+> > I'm not sure what a 'community TSC adjust breakage' means.
+> > 
 > 
-> By doing so, you incur the memory cost only when CONFIG_DEBUG_LOCKDEP is
-> defined.
-> 
-> What do you think?
+> I probably should have cleaned that up.  The title is from our internal 
+> bug report and we target where the earliest place where the fix should 
+> be applied.  "Community" is shorthand for the Linux Community Kernel (as 
+> opposed to internal or distro specific problems).
 
-Works for me.
+That was my guess. I just found the subject line amusing.
+
+Thanks,
+
+	tglx
+
