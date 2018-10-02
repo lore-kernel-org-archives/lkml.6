@@ -6,36 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70203C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F4BC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 421B72064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:55:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 421B72064A
+	by mail.kernel.org (Postfix) with ESMTP id B37912064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B37912064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731533AbeJBUjP (ORCPT
+        id S1731273AbeJBUjd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:39:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34272 "EHLO
+        Tue, 2 Oct 2018 16:39:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34230 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730067AbeJBUPK (ORCPT
+        with ESMTP id S1730098AbeJBUPA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:15:10 -0400
+        Tue, 2 Oct 2018 16:15:00 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD4B2BF0;
-        Tue,  2 Oct 2018 13:31:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 684CCC47;
+        Tue,  2 Oct 2018 13:31:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 009/137] serial: sh-sci: Stop RX FIFO timer during port shutdown
-Date:   Tue,  2 Oct 2018 06:23:30 -0700
-Message-Id: <20181002132459.083502442@linuxfoundation.org>
+Subject: [PATCH 4.14 005/137] x86/numa_emulation: Fix emulated-to-physical node mapping
+Date:   Tue,  2 Oct 2018 06:23:26 -0700
+Message-Id: <20181002132458.779929451@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,35 +57,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Dan Williams <dan.j.williams@intel.com>
 
-[ Upstream commit c5a9262fa8bfed0dddc7466ef10fcd292e2af61b ]
+[ Upstream commit 3b6c62f363a19ce82bf378187ab97c9dc01e3927 ]
 
-The RX FIFO timer may be armed when the port is shut down, hence the
-timer function may still be called afterwards.
+Without this change the distance table calculation for emulated nodes
+may use the wrong numa node and report an incorrect distance.
 
-Fix this race condition by deleting the timer during port shutdown.
-
-Fixes: 039403765e5da3c6 ("serial: sh-sci: SCIFA/B RX FIFO software timeout")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wei Yang <richard.weiyang@gmail.com>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/153089328103.27680.14778434392225818887.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/sh-sci.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/mm/numa_emulation.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2060,6 +2060,8 @@ static void sci_shutdown(struct uart_por
- 	}
- #endif
+--- a/arch/x86/mm/numa_emulation.c
++++ b/arch/x86/mm/numa_emulation.c
+@@ -61,7 +61,7 @@ static int __init emu_setup_memblk(struc
+ 	eb->nid = nid;
  
-+	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0)
-+		del_timer_sync(&s->rx_fifo_timer);
- 	sci_free_irq(s);
- 	sci_free_dma(port);
- }
+ 	if (emu_nid_to_phys[nid] == NUMA_NO_NODE)
+-		emu_nid_to_phys[nid] = nid;
++		emu_nid_to_phys[nid] = pb->nid;
+ 
+ 	pb->start += size;
+ 	if (pb->start >= pb->end) {
 
 
