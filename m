@@ -2,111 +2,98 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7164C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C47B3C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62003204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:01:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CCE9208AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 03:07:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bVvk9bbE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62003204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="vB+qhRPp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CCE9208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbeJBJmn (ORCPT
+        id S1726895AbeJBJsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 05:42:43 -0400
-Received: from m12-14.163.com ([220.181.12.14]:44154 "EHLO m12-14.163.com"
+        Tue, 2 Oct 2018 05:48:50 -0400
+Received: from ozlabs.org ([203.11.71.1]:36095 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726720AbeJBJmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 05:42:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=/JQZIX+zvmfNbG4mUX
-        W50jwQ83j36qjnhRJIjM3rb9g=; b=bVvk9bbEqh0cUX/RyEv9IT8OR4aDlyEfGz
-        ztqAn4f93ClmQmCcEQrCwnV5uvWO5+Q5QJqH6KThc18M63BF9YibJjvWr9iDo2lD
-        zXme01nYxtx98295nLbJ1LirndG/A7SZsbd9QNox5ONHVPHIT0QHLB5kQzsyXBKg
-        H7Q/WnzgM=
-Received: from localhost (unknown [183.156.114.194])
-        by smtp10 (Coremail) with SMTP id DsCowACHm7FJ37JbxXe7Sw--.17030S5;
-        Tue, 02 Oct 2018 11:00:27 +0800 (CST)
-From:   jun qian <hangdianqj@163.com>
-To:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        jun qian <hangdianqj@163.com>, Barry song <21cnbao@gmail.com>
-Subject: [PATCH] mm:slab: Adjust the print format for the slabinfo
-Date:   Mon,  1 Oct 2018 19:59:39 -0700
-Message-Id: <20181002025939.115804-1-hangdianqj@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: DsCowACHm7FJ37JbxXe7Sw--.17030S5
-X-Coremail-Antispam: 1Uf129KBjvJXoW7urWxGw1ruw47Ar4UArW7CFg_yoW8tF4Upw
-        43twnrX3yxJryjgrZIva4vqryYgFn5AFWUZr97tw1vvw1UCwn7W34j9r1xZFZxtFySyana
-        vw4v9F13WFWkX3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UlPfQUUUUU=
-X-Originating-IP: [183.156.114.194]
-X-CM-SenderInfo: pkdqwvpldq1yi6rwjhhfrp/xtbBSQvTR1aDzWPJewAAsf
+        id S1726618AbeJBJst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 05:48:49 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42PPGX672Fz9s55;
+        Tue,  2 Oct 2018 13:07:48 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538449669;
+        bh=Z5aFgl+6brQtSDxTwqUv1fvWNnW3/6UKueJTbvFY+b0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=vB+qhRPp12z0AQYS6kLnOsk1NoczxSnsbgfn69Tbz2mi6ue841wLTlrXGgYbgJXUI
+         /VdeMLDzjh5gN8motBRTKnOXM1H+eSlTE/3yoU/apvTl1PPQpZIeCOhx7WUFWu2zOF
+         N1+o9AlprFU2kEnqM/mLk+2/Di4bOvx6G/bYMyZyVxsq8tJ6TBmCKXhsi5Z4myRagF
+         irb+l8GcRS+LfxNRnFw37Ib66krnsDFLks+uXCiU8z+z8miGC7DhBpubBxlAU9LuWJ
+         DvGHB7D0JheBz9ukdbA7vVIHoRWTVYtYSNJ3oHYSoMJIIPI0rAiwYFayauIdJHINrx
+         QPFjM2hY3SZ9g==
+Date:   Tue, 2 Oct 2018 13:07:48 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: linux-next: build warning after merge of the regulator tree
+Message-ID: <20181002130748.61e33ad1@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/lWcejf6.y1SUup2Oj10x+Z."; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Header and the corresponding information is not aligned,
-adjust the printing format helps us to understand the slabinfo better.
+--Sig_/lWcejf6.y1SUup2Oj10x+Z.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: jun qian <hangdianqj@163.com>
-Cc: Barry song <21cnbao@gmail.com>
----
- mm/slab_common.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Hi all,
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index fea3376f9816..07a324cbbfb6 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1263,9 +1263,13 @@ static void print_slabinfo_header(struct seq_file *m)
- #else
- 	seq_puts(m, "slabinfo - version: 2.1\n");
- #endif
--	seq_puts(m, "# name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab>");
--	seq_puts(m, " : tunables <limit> <batchcount> <sharedfactor>");
--	seq_puts(m, " : slabdata <active_slabs> <num_slabs> <sharedavail>");
-+	seq_printf(m, "%-22s %-14s %-11s %-10s %-13s %-14s",
-+		  "# name", "<active_objs>", "<num_objs>", "<objsize>",
-+		  "<objperslab>", "<pagesperslab>");
-+	seq_printf(m, " : %-9s %-8s %-13s %-14s",
-+		  "tunables", "<limit>", "<batchcount>", "<sharedfactor>");
-+	seq_printf(m, " : %-9s %-15s %-12s %-16s",
-+		  "slabdata", "<active_slabs>", "<num_slabs>", "<sharedavail>");
- #ifdef CONFIG_DEBUG_SLAB
- 	seq_puts(m, " : globalstat <listallocs> <maxobjs> <grown> <reaped> <error> <maxfreeable> <nodeallocs> <remotefrees> <alienoverflow>");
- 	seq_puts(m, " : cpustat <allochit> <allocmiss> <freehit> <freemiss>");
-@@ -1319,13 +1323,13 @@ static void cache_show(struct kmem_cache *s, struct seq_file *m)
- 
- 	memcg_accumulate_slabinfo(s, &sinfo);
- 
--	seq_printf(m, "%-17s %6lu %6lu %6u %4u %4d",
-+	seq_printf(m, "%-22s %-14lu %-11lu %-10u %-13u %-14d",
- 		   cache_name(s), sinfo.active_objs, sinfo.num_objs, s->size,
- 		   sinfo.objects_per_slab, (1 << sinfo.cache_order));
- 
--	seq_printf(m, " : tunables %4u %4u %4u",
-+	seq_printf(m, " : %-9s %-8u %-13u %-14u", "tunables",
- 		   sinfo.limit, sinfo.batchcount, sinfo.shared);
--	seq_printf(m, " : slabdata %6lu %6lu %6lu",
-+	seq_printf(m, " : %-9s %-15lu %-12lu %-16lu", "slabdata",
- 		   sinfo.active_slabs, sinfo.num_slabs, sinfo.shared_avail);
- 	slabinfo_show_stats(m, s);
- 	seq_putc(m, '\n');
--- 
-2.17.1
+After merging the regulator tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
+drivers/mfd/rohm-bd718x7.c: In function 'bd718xx_i2c_probe':
+drivers/mfd/rohm-bd718x7.c:101:23: warning: cast from pointer to integer of=
+ different size [-Wpointer-to-int-cast]
+  bd718xx->chip_type =3D (unsigned int)
+                       ^
 
+Introduced by commit
 
+  494edd266b94 ("regulator/mfd: Support ROHM BD71847 power management IC")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/lWcejf6.y1SUup2Oj10x+Z.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluy4QQACgkQAVBC80lX
+0GwbcAf+MsjPOmu3Z29V95rFk2s9TsbOK2F3/8MvHrmZImRvckGcvjuqiXIOcT7t
+hOrZF8+BZi4tMjgy0ROyoCmnod4gujEZS0vnNGxLYtl4voEdBuQyy0T9xw2iTUds
+0D2cpzxXLD3sk6JhjG+HLTpfedzaAFwLglDV/Byi0Sc2XO9mi3EWcMl47ASqXj7n
+imjibhXVVYEktRKjzTI+czj/Dd6XV2CCIDms2ZkrdGxLkFGu0X4elbWYxWMuPbGn
+7/ZP/DAhGj21BTr7CDVKhxQTNjZ76oOZvmm2IsVLwvLo1KVd90QOLFlnZB/iOOaw
+vBL4X0q3otF6nMY/LqqBhEuI5uL2Hg==
+=JOgX
+-----END PGP SIGNATURE-----
+
+--Sig_/lWcejf6.y1SUup2Oj10x+Z.--
