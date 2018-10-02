@@ -2,136 +2,97 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 815E4C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 802A3C64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 519A220645
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:58:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519A220645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4FF8A2089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:58:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF8A2089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbeJBOk3 (ORCPT
+        id S1727415AbeJBOk3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 2 Oct 2018 10:40:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44728 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727181AbeJBOk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:40:28 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2080E356D4;
-        Tue,  2 Oct 2018 07:58:31 +0000 (UTC)
-Received: from [10.36.116.105] (ovpn-116-105.ams2.redhat.com [10.36.116.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6BFA917A72;
-        Tue,  2 Oct 2018 07:58:28 +0000 (UTC)
-Subject: Re: [PATCH v6 13/18] kvm: arm64: Switch to per VM IPA limit
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        marc.zyngier@arm.com, cdall@kernel.org, will.deacon@arm.com,
-        dave.martin@arm.com, peter.maydell@linaro.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, julien.grall@arm.com,
-        linux-kernel@vger.kernel.org
-References: <20180926163258.20218-1-suzuki.poulose@arm.com>
- <20180926163258.20218-14-suzuki.poulose@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <ecaafbc4-ea70-d0e6-ced0-8ab90f445e4b@redhat.com>
-Date:   Tue, 2 Oct 2018 09:58:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+Received: from relay1.mentorg.com ([192.94.38.131]:33535 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726870AbeJBOk3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 10:40:29 -0400
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g7FZe-0007Vd-8M from Jiada_Wang@mentor.com ; Tue, 02 Oct 2018 00:58:30 -0700
+Received: from [172.30.112.170] (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Tue, 2 Oct 2018 00:58:26 -0700
+Subject: Re: [PATCH linux-next 09/10] ASoC: rsnd: add busif property to dai
+ stream
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <twischer@de.adit-jv.com>,
+        <dragos_tarcatu@mentor.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180927051212.18032-1-jiada_wang@mentor.com>
+ <87in2qtr6f.wl-kuninori.morimoto.gx@renesas.com>
+From:   Jiada Wang <jiada_wang@mentor.com>
+Message-ID: <042e51bb-7c48-9145-51f2-b6687c044c19@mentor.com>
+Date:   Tue, 2 Oct 2018 16:58:24 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180926163258.20218-14-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <87in2qtr6f.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 02 Oct 2018 07:58:31 +0000 (UTC)
+X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
-On 9/26/18 6:32 PM, Suzuki K Poulose wrote:
-> Now that we can manage the stage2 page table per VM, switch the
-> configuration details to per VM instance. The VTCR is updated
-> with the values specific to the VM based on the configuration.
-> We store the IPA size and the number of stage2 page table levels
-> for the guest already in VTCR. Decode it back from the vtcr
-> field wherever we need it.
-> 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Hi Morimoto-san
 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-Thanks
+On 2018/09/28 9:21, Kuninori Morimoto wrote:
+> Hi Jiada
+>
+>
+>> SSI may use different busif for data transfer, this patch
+>> adds busif property to each dai stream, to indicate the
+>> busif used by playback/capture stream.
+> (snip)
+>> +	io_playback->busif = rsnd_busif_get(priv, dai_i);
+>> +	io_capture->busif  = rsnd_busif_get(priv, rsnd_rdai_nr(priv) + dai_i);
+> (snip)
+>> +	busif = devm_kcalloc(dev, 2 * nr, sizeof(*busif), GFP_KERNEL);
+> (snip)
+>> @@ -456,6 +456,7 @@ struct rsnd_dai_stream {
+>>   	struct rsnd_mod *dma;
+>>   	struct rsnd_dai *rdai;
+>>   	struct device *dmac_dev; /* for IPMMU */
+>> +	struct rsnd_kctrl_cfg_s *busif;
+>>   	u32 parent_ssi_status;
+>>   };
+> It looks very complex to me.
+> Why don't you just have "busif" on rsnd_dai_stream, instead of "*busif" ?
+yes, it can be replaced with *busif instead,
+but it will result in some reorder of declarations in rsnd.h
+will update this patch in v2 patch set.
 
-Eric
-> ---
->  arch/arm64/include/asm/kvm_arm.h        | 2 ++
->  arch/arm64/include/asm/kvm_mmu.h        | 2 +-
->  arch/arm64/include/asm/stage2_pgtable.h | 2 +-
->  arch/arm64/kvm/reset.c                  | 2 +-
->  4 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> index f913adb44f93..e4240568cc18 100644
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -197,6 +197,8 @@
->  	VTCR_EL2_SL0_TO_LVLS(((vtcr) & VTCR_EL2_SL0_MASK) >> VTCR_EL2_SL0_SHIFT)
->  
->  #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN)
-> +#define VTCR_EL2_IPA(vtcr)		(64 - ((vtcr) & VTCR_EL2_T0SZ_MASK))
-> +
->  /*
->   * ARM VMSAv8-64 defines an algorithm for finding the translation table
->   * descriptors in section D4.2.8 in ARM DDI 0487C.a.
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index ac3ca9690bad..77b1af9e64db 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -142,7 +142,7 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
->   */
->  #define KVM_PHYS_SHIFT	(40)
->  
-> -#define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
-> +#define kvm_phys_shift(kvm)		VTCR_EL2_IPA(kvm->arch.vtcr)
->  #define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
->  #define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
->  
-> diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
-> index 36a0a1165003..c62fe118a898 100644
-> --- a/arch/arm64/include/asm/stage2_pgtable.h
-> +++ b/arch/arm64/include/asm/stage2_pgtable.h
-> @@ -43,7 +43,7 @@
->   */
->  #define stage2_pgtable_levels(ipa)	ARM64_HW_PGTABLE_LEVELS((ipa) - 4)
->  #define STAGE2_PGTABLE_LEVELS		stage2_pgtable_levels(KVM_PHYS_SHIFT)
-> -#define kvm_stage2_levels(kvm)		stage2_pgtable_levels(kvm_phys_shift(kvm))
-> +#define kvm_stage2_levels(kvm)		VTCR_EL2_LVLS(kvm->arch.vtcr)
->  
->  /*
->   * With all the supported VA_BITs and 40bit guest IPA, the following condition
-> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-> index 1ced1e37374e..2bf41e007390 100644
-> --- a/arch/arm64/kvm/reset.c
-> +++ b/arch/arm64/kvm/reset.c
-> @@ -160,7 +160,7 @@ int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
->  	if (phys_shift > KVM_PHYS_SHIFT)
->  		phys_shift = KVM_PHYS_SHIFT;
->  	vtcr |= VTCR_EL2_T0SZ(phys_shift);
-> -	vtcr |= VTCR_EL2_LVLS_TO_SL0(kvm_stage2_levels(kvm));
-> +	vtcr |= VTCR_EL2_LVLS_TO_SL0(stage2_pgtable_levels(phys_shift));
->  
->  	/*
->  	 * Enable the Hardware Access Flag management, unconditionally
-> 
+  Thanks,
+Jiada
+>>   int rsnd_ssi_get_busif(struct rsnd_dai_stream *io)
+>>   {
+>> -	return 0; /* BUSIF0 only for now */
+>> +	if (!rsnd_ssi_use_busif(io))
+>> +		return 0;
+>> +
+>> +	return io->busif->val;
+>>   }
+> Who/How update val ?
+>
+
