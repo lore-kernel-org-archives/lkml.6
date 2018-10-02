@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5ADC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4782FC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E00B2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E00B2083F
+	by mail.kernel.org (Postfix) with ESMTP id 172DC2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 172DC2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731845AbeJBUQz (ORCPT
+        id S1731864AbeJBUQ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:16:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34922 "EHLO
+        Tue, 2 Oct 2018 16:16:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34936 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731813AbeJBUQy (ORCPT
+        with ESMTP id S1731846AbeJBUQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:16:54 -0400
+        Tue, 2 Oct 2018 16:16:56 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 525F6C2B;
-        Tue,  2 Oct 2018 13:33:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8101FB2F;
+        Tue,  2 Oct 2018 13:33:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Borislav Petkov <bp@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 055/137] media: tm6000: add error handling for dvb_register_adapter
-Date:   Tue,  2 Oct 2018 06:24:16 -0700
-Message-Id: <20181002132502.363146225@linuxfoundation.org>
+Subject: [PATCH 4.14 073/137] EDAC, i7core: Fix memleaks and use-after-free on probe and remove
+Date:   Tue,  2 Oct 2018 06:24:34 -0700
+Message-Id: <20181002132503.701999974@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,38 +54,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit e95d7c6eb94c634852eaa5ff4caf3db05b5d2e86 ]
+[ Upstream commit 6c974d4dfafe5e9ee754f2a6fba0eb1864f1649e ]
 
-When dvb_register_adapter fails, the lack of error-handling code may
-cause unexpected results.
+Make sure to free and deregister the addrmatch and chancounts devices
+allocated during probe in all error paths. Also fix use-after-free in a
+probe error path and in the remove success path where the devices were
+being put before before deregistration.
 
-This patch adds error-handling code after calling dvb_register_adapter.
-
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-[hans.verkuil@cisco.com: use pr_err and fix typo: adater -> adapter]
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Fixes: 356f0a30860d ("i7core_edac: change the mem allocation scheme to make Documentation/kobject.txt happy")
+Link: http://lkml.kernel.org/r/20180612124335.6420-2-johan@kernel.org
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/tm6000/tm6000-dvb.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/edac/i7core_edac.c |   22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
---- a/drivers/media/usb/tm6000/tm6000-dvb.c
-+++ b/drivers/media/usb/tm6000/tm6000-dvb.c
-@@ -267,6 +267,11 @@ static int register_dvb(struct tm6000_co
+--- a/drivers/edac/i7core_edac.c
++++ b/drivers/edac/i7core_edac.c
+@@ -1177,15 +1177,14 @@ static int i7core_create_sysfs_devices(s
  
- 	ret = dvb_register_adapter(&dvb->adapter, "Trident TVMaster 6000 DVB-T",
- 					THIS_MODULE, &dev->udev->dev, adapter_nr);
-+	if (ret < 0) {
-+		pr_err("tm6000: couldn't register the adapter!\n");
-+		goto err;
-+	}
+ 	rc = device_add(pvt->addrmatch_dev);
+ 	if (rc < 0)
+-		return rc;
++		goto err_put_addrmatch;
+ 
+ 	if (!pvt->is_registered) {
+ 		pvt->chancounts_dev = kzalloc(sizeof(*pvt->chancounts_dev),
+ 					      GFP_KERNEL);
+ 		if (!pvt->chancounts_dev) {
+-			put_device(pvt->addrmatch_dev);
+-			device_del(pvt->addrmatch_dev);
+-			return -ENOMEM;
++			rc = -ENOMEM;
++			goto err_del_addrmatch;
+ 		}
+ 
+ 		pvt->chancounts_dev->type = &all_channel_counts_type;
+@@ -1199,9 +1198,18 @@ static int i7core_create_sysfs_devices(s
+ 
+ 		rc = device_add(pvt->chancounts_dev);
+ 		if (rc < 0)
+-			return rc;
++			goto err_put_chancounts;
+ 	}
+ 	return 0;
 +
- 	dvb->adapter.priv = dev;
++err_put_chancounts:
++	put_device(pvt->chancounts_dev);
++err_del_addrmatch:
++	device_del(pvt->addrmatch_dev);
++err_put_addrmatch:
++	put_device(pvt->addrmatch_dev);
++
++	return rc;
+ }
  
- 	if (dvb->frontend) {
+ static void i7core_delete_sysfs_devices(struct mem_ctl_info *mci)
+@@ -1211,11 +1219,11 @@ static void i7core_delete_sysfs_devices(
+ 	edac_dbg(1, "\n");
+ 
+ 	if (!pvt->is_registered) {
+-		put_device(pvt->chancounts_dev);
+ 		device_del(pvt->chancounts_dev);
++		put_device(pvt->chancounts_dev);
+ 	}
+-	put_device(pvt->addrmatch_dev);
+ 	device_del(pvt->addrmatch_dev);
++	put_device(pvt->addrmatch_dev);
+ }
+ 
+ /****************************************************************************
 
 
