@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B209C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB936C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C0722064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:40:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0722064D
+	by mail.kernel.org (Postfix) with ESMTP id A22D72064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:41:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A22D72064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732564AbeJBUYV (ORCPT
+        id S1733160AbeJBUTs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:24:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36252 "EHLO
+        Tue, 2 Oct 2018 16:19:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36216 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732099AbeJBUTu (ORCPT
+        with ESMTP id S1731847AbeJBUTr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:19:50 -0400
+        Tue, 2 Oct 2018 16:19:47 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6D346B4A;
-        Tue,  2 Oct 2018 13:36:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38F65B4A;
+        Tue,  2 Oct 2018 13:36:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hari Bathini <hbathini@linux.ibm.com>,
-        David Gibson <dgibson@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 17/94] powerpc/kdump: Handle crashkernel memory reservation failure
-Date:   Tue,  2 Oct 2018 06:24:31 -0700
-Message-Id: <20181002132501.673653360@linuxfoundation.org>
+Subject: [PATCH 4.9 51/94] gpio: Fix wrong rounding in gpio-menz127
+Date:   Tue,  2 Oct 2018 06:25:05 -0700
+Message-Id: <20181002132504.045653439@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -54,39 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hari Bathini <hbathini@linux.ibm.com>
+From: Nadav Amit <namit@vmware.com>
 
-[ Upstream commit 8950329c4a64c6d3ca0bc34711a1afbd9ce05657 ]
+[ Upstream commit 7279d9917560bbd0d82813d6bf00490a82c06783 ]
 
-Memory reservation for crashkernel could fail if there are holes around
-kdump kernel offset (128M). Fail gracefully in such cases and print an
-error message.
+men_z127_debounce() tries to round up and down, but uses functions which
+are only suitable when the divider is a power of two, which is not the
+case. Use the appropriate ones.
 
-Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
-Tested-by: David Gibson <dgibson@redhat.com>
-Reviewed-by: Dave Young <dyoung@redhat.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Found by static check. Compile tested.
+
+Fixes: f436bc2726c64 ("gpio: add driver for MEN 16Z127 GPIO controller")
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/machine_kexec.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-menz127.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/kernel/machine_kexec.c
-+++ b/arch/powerpc/kernel/machine_kexec.c
-@@ -186,7 +186,12 @@ void __init reserve_crashkernel(void)
- 			(unsigned long)(crashk_res.start >> 20),
- 			(unsigned long)(memblock_phys_mem_size() >> 20));
+--- a/drivers/gpio/gpio-menz127.c
++++ b/drivers/gpio/gpio-menz127.c
+@@ -56,9 +56,9 @@ static int men_z127_debounce(struct gpio
+ 		rnd = fls(debounce) - 1;
  
--	memblock_reserve(crashk_res.start, crash_size);
-+	if (!memblock_is_region_memory(crashk_res.start, crash_size) ||
-+	    memblock_reserve(crashk_res.start, crash_size)) {
-+		pr_err("Failed to reserve memory for crashkernel!\n");
-+		crashk_res.start = crashk_res.end = 0;
-+		return;
-+	}
- }
+ 		if (rnd && (debounce & BIT(rnd - 1)))
+-			debounce = round_up(debounce, MEN_Z127_DB_MIN_US);
++			debounce = roundup(debounce, MEN_Z127_DB_MIN_US);
+ 		else
+-			debounce = round_down(debounce, MEN_Z127_DB_MIN_US);
++			debounce = rounddown(debounce, MEN_Z127_DB_MIN_US);
  
- int overlaps_crashkernel(unsigned long start, unsigned long size)
+ 		if (debounce > MEN_Z127_DB_MAX_US)
+ 			debounce = MEN_Z127_DB_MAX_US;
 
 
