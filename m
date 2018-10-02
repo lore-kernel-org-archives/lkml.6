@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A82C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCA6C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A67E206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A67E206B2
+	by mail.kernel.org (Postfix) with ESMTP id E1BE1206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1BE1206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731753AbeJBUQq (ORCPT
+        id S1731770AbeJBUQs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:16:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34832 "EHLO
+        Tue, 2 Oct 2018 16:16:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34840 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730263AbeJBUQp (ORCPT
+        with ESMTP id S1730263AbeJBUQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:16:45 -0400
+        Tue, 2 Oct 2018 16:16:47 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8FEB05AA;
-        Tue,  2 Oct 2018 13:33:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0B215AA;
+        Tue,  2 Oct 2018 13:33:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 066/137] arm: dts: mediatek: Add missing cooling device properties for CPUs
-Date:   Tue,  2 Oct 2018 06:24:27 -0700
-Message-Id: <20181002132503.212940951@linuxfoundation.org>
+Subject: [PATCH 4.14 067/137] HID: hid-ntrig: add error handling for sysfs_create_group
+Date:   Tue,  2 Oct 2018 06:24:28 -0700
+Message-Id: <20181002132503.285272581@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,53 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 0c7f7a5150023f3c6f0b27c4d4940ce3dfaf62cc ]
+[ Upstream commit 44d4d51de9a3534a2b63d69efda02a10e66541e4 ]
 
-The cooling device properties, like "#cooling-cells" and
-"dynamic-power-coefficient", should either be present for all the CPUs
-of a cluster or none. If these are present only for a subset of CPUs of
-a cluster then things will start falling apart as soon as the CPUs are
-brought online in a different order. For example, this will happen
-because the operating system looks for such properties in the CPU node
-it is trying to bring up, so that it can register a cooling device.
+When sysfs_create_group fails, the lack of error-handling code may
+cause unexpected results.
 
-Add such missing properties.
+This patch adds error-handling code after calling sysfs_create_group.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/mt7623.dtsi |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/hid/hid-ntrig.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/arm/boot/dts/mt7623.dtsi
-+++ b/arch/arm/boot/dts/mt7623.dtsi
-@@ -98,6 +98,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x1>;
- 			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
- 			clock-frequency = <1300000000>;
- 		};
+--- a/drivers/hid/hid-ntrig.c
++++ b/drivers/hid/hid-ntrig.c
+@@ -955,6 +955,8 @@ static int ntrig_probe(struct hid_device
  
-@@ -106,6 +107,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x2>;
- 			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
- 			clock-frequency = <1300000000>;
- 		};
+ 	ret = sysfs_create_group(&hdev->dev.kobj,
+ 			&ntrig_attribute_group);
++	if (ret)
++		hid_err(hdev, "cannot create sysfs group\n");
  
-@@ -114,6 +116,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x3>;
- 			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
- 			clock-frequency = <1300000000>;
- 		};
- 	};
+ 	return 0;
+ err_free:
 
 
