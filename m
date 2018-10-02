@@ -2,138 +2,177 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 370BBC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0B2C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F221E21471
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:32:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7B0F20878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:32:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxjwbUaL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F221E21471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T9WbiKYH";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PVRuajPa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7B0F20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeJBOO2 (ORCPT
+        id S1727415AbeJBOOh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:14:28 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45977 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbeJBOO0 (ORCPT
+        Tue, 2 Oct 2018 10:14:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33270 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbeJBOOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:14:26 -0400
-Received: by mail-lj1-f193.google.com with SMTP id x16-v6so802921ljd.12;
-        Tue, 02 Oct 2018 00:32:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Wmog6lAgqKOhpPrEYXjVkbDL7dvr+abZ89S+iJGxfPU=;
-        b=fxjwbUaLGwRZ6dZJknYfqV2FfhvYr6xgQyif+yYApN6icSgkBIBfBB370kHk76VVkV
-         Q6p2RDhWNF0dpBcVo6tuZh9SYzMIq6nrMTCRqiqqR185ilIUd+j3hT69rGTHBCYVMjBr
-         W7t7eHVrnXHSJ2MdE3UlgtXOReMxFqwK4Z9kqDyVDOxUoUJKmkZEuvrwdJ7Ze4qGaD8q
-         3lo5nYx6rf5CKaH974u9LVZLssf/u59zs43ln9Qb8b08kFDDNo6Qmot57SCtALv2UZpB
-         r36ajRmpYAGN2VjS8OoQVTRe5PdjCLBKqV+cZr3NH34AGIkCIsMXRzUpqyfzmO+74q+v
-         zvow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Wmog6lAgqKOhpPrEYXjVkbDL7dvr+abZ89S+iJGxfPU=;
-        b=Nf21oLlJcGzMyTifiQcrI593HGo7QwYUxQnl80NRKyzWjuHOLOqKgWX7S/4BJuZ2oa
-         X6bJmm/6yCnbSPfxMCgSkWF8ZLeWC4EqV5SjPEdyILixQekSZgx4s724mRaAskEMTmaY
-         kUTBlBTkmfCS1yj7CH34vQcwh5Bw4YBVzEw3+wuEsXYSzQFjX/yef/Gmo1gTXlcu7+k6
-         67LyYkzhmhX+ebZRHmlN3L7VS9vKc2h3pcobFPldccOs1EGb0dn8bsxMAw+xZyAn65I2
-         ZGTXzakWq4z4s0/5NKQBAxeXC9hITyU/lITumc9DFHPmEpo7emLIwec3F89FYHM+lhec
-         UFMg==
-X-Gm-Message-State: ABuFfohoFrLJW/BBo0uAJbSkMfJRhWLehzdvgeGcNOzSjp2YFfXadwLd
-        x+2RjlDAC/VZsjUOyp5B5+QIJKZV
-X-Google-Smtp-Source: ACcGV63qYPFA1s8otWAUMxBFgdoDgVdLJaR3Jvjp7hGmbWZoEC4JFf7+dxbMRhE+pEhikRmhQSYrzA==
-X-Received: by 2002:a2e:50e:: with SMTP id 14-v6mr7824895ljf.152.1538465553647;
-        Tue, 02 Oct 2018 00:32:33 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id d17-v6sm1242246lfj.9.2018.10.02.00.32.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 00:32:32 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 6/6] [media] ad5820: Add support for ad5821 and ad5823
-Date:   Tue,  2 Oct 2018 09:32:22 +0200
-Message-Id: <20181002073222.11368-6-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181002073222.11368-1-ricardo.ribalda@gmail.com>
-References: <20181002073222.11368-1-ricardo.ribalda@gmail.com>
+        Tue, 2 Oct 2018 10:14:36 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 24D9A60397; Tue,  2 Oct 2018 07:32:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538465565;
+        bh=tUlfmW5aV9ZtLXvsrD+JrK/a6+a3QMyifa3gApfVOZ0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=T9WbiKYHWjlS9QFrwdUX8+94otxW45bUDYBXkJnLhN4fFHqBhVmfhGJGGI5T+F4jO
+         fLdKm4cPOKbj4ZTXfeVtNx3xJnqvQlSYAZZpDFmOttxv4p9LFcNeXlcySBbz1PiW6d
+         aAqGdvG25Ozpo+336mGpm+DeG9w26EYDpsrN1y/A=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 39A1760866;
+        Tue,  2 Oct 2018 07:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538465564;
+        bh=tUlfmW5aV9ZtLXvsrD+JrK/a6+a3QMyifa3gApfVOZ0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PVRuajPaB2+Y8370LNeLoWelLLsFGM7xbhzwbkSbWZ5YsYKCGJmMu2BKHHgd5PBZZ
+         VdRo9hc7e7ls6T7l5slYMc8tq67gZpd24jlKbIJQ5IX5OCtnFvPZIBAjIhYlqiUIzb
+         NUBhlN+keC7xMW4jF0dtXBT3Zxgkoed5c47QFzmk=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 02 Oct 2018 13:02:44 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Harish Bandi <c-hbandi@codeaurora.org>
+Subject: Re: [PATCH v1] Bluetooth: hci_qca: Add support for controller debug
+ logs.
+In-Reply-To: <20181001194821.GH22824@google.com>
+References: <20181001135102.17453-1-bgodavar@codeaurora.org>
+ <20181001194821.GH22824@google.com>
+Message-ID: <3eb67181ab722c9cc1af76d80bde9e76@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the datasheet, both AD5821 and AD5820 share a compatible
-register-set:
-http://www.analog.com/media/en/technical-documentation/data-sheets/AD5821.pdf
+Hi Matthias,
 
-Some camera modules also refer that AD5823 is a replacement of AD5820:
-https://download.kamami.com/p564094-OV8865_DS.pdf
+On 2018-10-02 01:18, Matthias Kaehlcke wrote:
+> Hi Balakrishna,
+> 
+> On Mon, Oct 01, 2018 at 07:21:02PM +0530, Balakrishna Godavarthi wrote:
+>> This patch will prevent error messages splashing on console.
+>> 
+>> [   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL 
+>> packet for unknown connection handle 3804
+>> [   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL 
+>> packet for unknown connection handle 3804
+>> [   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL 
+>> packet for unknown connection handle 3804
+>> [   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL 
+>> packet for unknown connection handle 3804
+>> 
+>> QCA wcn3990 will send the debug logs in the form of ACL packets.
+>> While decoding packet in qca_recv(), marking the received debug log
+>> packet as diagnostic packet.
+>> 
+>> Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
+>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> ---
+>>  drivers/bluetooth/hci_qca.c | 27 ++++++++++++++++++++++++++-
+>>  1 file changed, 26 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index d98ed0442201..a00910aaed54 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -63,6 +63,10 @@
+>>  /* susclk rate */
+>>  #define SUSCLK_RATE_32KHZ	32768
+>> 
+>> +/* Controller debug log header */
+>> +#define QCA_DEBUG_HDR_MSB	0xDC
+>> +#define QCA_DEBUG_HDR_LSB	0x2E
+>> +
+>>  /* HCI_IBS transmit side sleep protocol states */
+>>  enum tx_ibs_states {
+>>  	HCI_IBS_TX_ASLEEP,
+>> @@ -849,6 +853,20 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, 
+>> struct sk_buff *skb)
+>>  	return 0;
+>>  }
+>> 
+>> +static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff 
+>> *skb)
+>> +{
+>> +	/* We receive debug logs from chip as an ACL packets.
+>> +	 * Instead of sending the data to ACL to decode the
+>> +	 * received data, we are pushing them to the above layers
+>> +	 * as a diagnostic packet.
+>> +	 */
+>> +	if ((skb->len > 2) && (skb->data[0] == QCA_DEBUG_HDR_MSB) &&
+>> +	    (skb->data[1] == QCA_DEBUG_HDR_LSB))
+>> +		return hci_recv_diag(hdev, skb);
+>> +	else
+>> +		return hci_recv_frame(hdev, skb);
+> 
+> nit: you could just do hci_recv_frame() after the if branch, instead
+> of doing it in 'else'. That would make it clearer at first sight that
+> the QCA debug packets are a special case and other packets normal
+> operation.
+> 
 
-Suggested-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/media/i2c/ad5820.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+[Bala]: will update.
 
-diff --git a/drivers/media/i2c/ad5820.c b/drivers/media/i2c/ad5820.c
-index 4ae4e6a776fd..2c0dd9960268 100644
---- a/drivers/media/i2c/ad5820.c
-+++ b/drivers/media/i2c/ad5820.c
-@@ -33,8 +33,6 @@
- #include <media/v4l2-device.h>
- #include <media/v4l2-subdev.h>
- 
--#define AD5820_NAME		"ad5820"
--
- /* Register definitions */
- #define AD5820_POWER_DOWN		(1 << 15)
- #define AD5820_DAC_SHIFT		4
-@@ -367,13 +365,17 @@ static int ad5820_remove(struct i2c_client *client)
- }
- 
- static const struct i2c_device_id ad5820_id_table[] = {
--	{ AD5820_NAME, 0 },
-+	{ "ad5820", 0 },
-+	{ "ad5821", 0 },
-+	{ "ad5823", 0 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, ad5820_id_table);
- 
- static const struct of_device_id ad5820_of_table[] = {
- 	{ .compatible = "adi,ad5820" },
-+	{ .compatible = "adi,ad5821" },
-+	{ .compatible = "adi,ad5823" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ad5820_of_table);
-@@ -382,7 +384,7 @@ static SIMPLE_DEV_PM_OPS(ad5820_pm, ad5820_suspend, ad5820_resume);
- 
- static struct i2c_driver ad5820_i2c_driver = {
- 	.driver		= {
--		.name	= AD5820_NAME,
-+		.name	= "ad5820",
- 		.pm	= &ad5820_pm,
- 		.of_match_table = ad5820_of_table,
- 	},
+>> +}
+>> +
+>>  #define QCA_IBS_SLEEP_IND_EVENT \
+>>  	.type = HCI_IBS_SLEEP_IND, \
+>>  	.hlen = 0, \
+>> @@ -870,13 +888,20 @@ static int qca_ibs_wake_ack(struct hci_dev 
+>> *hdev, struct sk_buff *skb)
+>>  	.lsize = 0, \
+>>  	.maxlen = HCI_MAX_IBS_SIZE
+>> 
+>> +#define QCA_RECV_ACL_DATA \
+>> +	.type = HCI_ACLDATA_PKT, \
+>> +	.hlen = HCI_ACL_HDR_SIZE, \
+>> +	.loff = 2, \
+>> +	.lsize = 2, \
+>> +	.maxlen = HCI_MAX_FRAME_SIZE
+> 
+> Is there any actual advantage of adding this 'macro' instead of just
+> using H4_RECV_ACL, which is exactly the same?
+> 
+
+[Bala]: yes we can use same macro, will update.
+
+>>  static const struct h4_recv_pkt qca_recv_pkts[] = {
+>> -	{ H4_RECV_ACL,             .recv = hci_recv_frame    },
+>>  	{ H4_RECV_SCO,             .recv = hci_recv_frame    },
+>>  	{ H4_RECV_EVENT,           .recv = hci_recv_frame    },
+>>  	{ QCA_IBS_WAKE_IND_EVENT,  .recv = qca_ibs_wake_ind  },
+>>  	{ QCA_IBS_WAKE_ACK_EVENT,  .recv = qca_ibs_wake_ack  },
+>>  	{ QCA_IBS_SLEEP_IND_EVENT, .recv = qca_ibs_sleep_ind },
+>> +	{ QCA_RECV_ACL_DATA,       .recv = qca_recv_acl_data },
+>>  };
+>> 
+>>  static int qca_recv(struct hci_uart *hu, const void *data, int count)
+
 -- 
-2.19.0
-
+Regards
+Balakrishna.
