@@ -2,102 +2,153 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDB8C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E915CC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFF2E2064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:49:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF2E2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B93882064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:49:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B93882064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732540AbeJBUcv (ORCPT
+        id S1732558AbeJBUc5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 2 Oct 2018 16:32:57 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38288 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731269AbeJBUcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 16:32:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35174 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732127AbeJBUR0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:26 -0400
-Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE8BF5AA;
-        Tue,  2 Oct 2018 13:34:02 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Greear <greearb@candelatech.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 058/137] ath10k: protect ath10k_htt_rx_ring_free with rx_ring.lock
-Date:   Tue,  2 Oct 2018 06:24:19 -0700
-Message-Id: <20181002132502.582670848@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
-References: <20181002132458.446916963@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E46DA18A;
+        Tue,  2 Oct 2018 06:49:23 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.Emea.Arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73B623F5A0;
+        Tue,  2 Oct 2018 06:49:21 -0700 (PDT)
+Date:   Tue, 2 Oct 2018 14:49:18 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] PCI: imx: Add PME_Turn_Off support
+Message-ID: <20181002134918.GC27736@e107981-ln.cambridge.arm.com>
+References: <cover.1538423063.git.leonard.crestez@nxp.com>
+ <1cf53d188657bba7df06ad417eb2a65160238196.1538423063.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1cf53d188657bba7df06ad417eb2a65160238196.1538423063.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Oct 01, 2018 at 10:53:48PM +0300, Leonard Crestez wrote:
+> When the root complex suspends it must send a PME_Turn_Off TLP.
+> Implement this by asserting the "turnoff" reset.
+> 
+> On imx7d this is functionality is part of the SRC and exposed through
+> the linux reset-controller subsystem. On imx6 equivalent bits are in the
+> IOMUXC GPR area which the imx6-pcie driver accesses directly.
+> 
+> This is only for imx7d right now but it's deliberately implemented as an
+> optional reset, ignoring the chip variant:
+> * Older dtbs won't have this reset so it will be ignored.
+> * Future chips might also expose this as a reset controller.
+> 
+> For example imx8m (not yet supported) has the exact same
+> PCIE_CTRL_APPS_TURNOFF bit in the same location.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 
-------------------
+I need an ACK from Lucas on this patch to merge this series; also, if
+you can keep versioning your patch series please it would be easier for
+me to track them, I understand the patches content changed over time but
+that's for future postings too.
 
-From: Ben Greear <greearb@candelatech.com>
+Thanks,
+Lorenzo
 
-[ Upstream commit 168f75f11fe68455e0d058a818ebccfc329d8685 ]
-
-While debugging driver crashes related to a buggy firmware
-crashing under load, I noticed that ath10k_htt_rx_ring_free
-could be called without being under lock.  I'm not sure if this
-is the root cause of the crash or not, but it seems prudent to
-protect it.
-
-Originally tested on 4.16+ kernel with ath10k-ct 10.4 firmware
-running on 9984 NIC.
-
-Signed-off-by: Ben Greear <greearb@candelatech.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/ath/ath10k/htt_rx.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
---- a/drivers/net/wireless/ath/ath10k/htt_rx.c
-+++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
-@@ -215,11 +215,12 @@ int ath10k_htt_rx_ring_refill(struct ath
- 	spin_lock_bh(&htt->rx_ring.lock);
- 	ret = ath10k_htt_rx_ring_fill_n(htt, (htt->rx_ring.fill_level -
- 					      htt->rx_ring.fill_cnt));
--	spin_unlock_bh(&htt->rx_ring.lock);
- 
- 	if (ret)
- 		ath10k_htt_rx_ring_free(htt);
- 
-+	spin_unlock_bh(&htt->rx_ring.lock);
-+
- 	return ret;
- }
- 
-@@ -231,7 +232,9 @@ void ath10k_htt_rx_free(struct ath10k_ht
- 	skb_queue_purge(&htt->rx_in_ord_compl_q);
- 	skb_queue_purge(&htt->tx_fetch_ind_q);
- 
-+	spin_lock_bh(&htt->rx_ring.lock);
- 	ath10k_htt_rx_ring_free(htt);
-+	spin_unlock_bh(&htt->rx_ring.lock);
- 
- 	dma_free_coherent(htt->ar->dev,
- 			  (htt->rx_ring.size *
-
-
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 6ba16fd1373c..13cb1a200442 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -50,10 +50,11 @@ struct imx6_pcie {
+>  	struct clk		*pcie_inbound_axi;
+>  	struct clk		*pcie;
+>  	struct regmap		*iomuxc_gpr;
+>  	struct reset_control	*pciephy_reset;
+>  	struct reset_control	*apps_reset;
+> +	struct reset_control	*turnoff_reset;
+>  	enum imx6_pcie_variants variant;
+>  	u32			tx_deemph_gen1;
+>  	u32			tx_deemph_gen2_3p5db;
+>  	u32			tx_deemph_gen2_6db;
+>  	u32			tx_swing_full;
+> @@ -812,10 +813,16 @@ static void imx6_pcie_ltssm_disable(struct device *dev)
+>  	default:
+>  		dev_err(dev, "ltssm_disable not supported\n");
+>  	}
+>  }
+>  
+> +static void imx6_pcie_pm_turnoff(struct imx6_pcie *imx6_pcie)
+> +{
+> +	reset_control_assert(imx6_pcie->turnoff_reset);
+> +	reset_control_deassert(imx6_pcie->turnoff_reset);
+> +}
+> +
+>  static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+>  {
+>  	clk_disable_unprepare(imx6_pcie->pcie);
+>  	clk_disable_unprepare(imx6_pcie->pcie_phy);
+>  	clk_disable_unprepare(imx6_pcie->pcie_bus);
+> @@ -832,10 +839,11 @@ static int imx6_pcie_suspend_noirq(struct device *dev)
+>  	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+>  
+>  	if (imx6_pcie->variant != IMX7D)
+>  		return 0;
+>  
+> +	imx6_pcie_pm_turnoff(imx6_pcie);
+>  	imx6_pcie_clk_disable(imx6_pcie);
+>  	imx6_pcie_ltssm_disable(dev);
+>  
+>  	return 0;
+>  }
+> @@ -959,10 +967,17 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  		break;
+>  	default:
+>  		break;
+>  	}
+>  
+> +	/* Grab turnoff reset */
+> +	imx6_pcie->turnoff_reset = devm_reset_control_get_optional_exclusive(dev, "turnoff");
+> +	if (IS_ERR(imx6_pcie->turnoff_reset)) {
+> +		dev_err(dev, "Failed to get TURNOFF reset control\n");
+> +		return PTR_ERR(imx6_pcie->turnoff_reset);
+> +	}
+> +
+>  	/* Grab GPR config register range */
+>  	imx6_pcie->iomuxc_gpr =
+>  		 syscon_regmap_lookup_by_compatible("fsl,imx6q-iomuxc-gpr");
+>  	if (IS_ERR(imx6_pcie->iomuxc_gpr)) {
+>  		dev_err(dev, "unable to find iomuxc registers\n");
+> -- 
+> 2.17.1
+> 
