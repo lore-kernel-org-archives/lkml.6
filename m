@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A661AC64EB5
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDAD7C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 772C22089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 772C22089C
+	by mail.kernel.org (Postfix) with ESMTP id 9FDE42089C
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:33:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FDE42089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731895AbeJBUQ7 (ORCPT
+        id S1731908AbeJBURC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:16:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34954 "EHLO
+        Tue, 2 Oct 2018 16:17:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34976 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731866AbeJBUQ6 (ORCPT
+        with ESMTP id S1731866AbeJBURA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:16:58 -0400
+        Tue, 2 Oct 2018 16:17:00 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8AAEB2F;
-        Tue,  2 Oct 2018 13:33:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F1E54B2F;
+        Tue,  2 Oct 2018 13:33:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>,
+        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 075/137] module: exclude SHN_UNDEF symbols from kallsyms api
-Date:   Tue,  2 Oct 2018 06:24:36 -0700
-Message-Id: <20181002132503.810835419@linuxfoundation.org>
+Subject: [PATCH 4.14 077/137] nfsd: fix corrupted reply to badly ordered compound
+Date:   Tue,  2 Oct 2018 06:24:38 -0700
+Message-Id: <20181002132503.944309704@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,54 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jessica Yu <jeyu@kernel.org>
+From: "J. Bruce Fields" <bfields@redhat.com>
 
-[ Upstream commit 9f2d1e68cf4d641def734adaccfc3823d3575e6c ]
+[ Upstream commit 5b7b15aee641904ae269be9846610a3950cbd64c ]
 
-Livepatch modules are special in that we preserve their entire symbol
-tables in order to be able to apply relocations after module load. The
-unwanted side effect of this is that undefined (SHN_UNDEF) symbols of
-livepatch modules are accessible via the kallsyms api and this can
-confuse symbol resolution in livepatch (klp_find_object_symbol()) and
-cause subtle bugs in livepatch.
+We're encoding a single op in the reply but leaving the number of ops
+zero, so the reply makes no sense.
 
-Have the module kallsyms api skip over SHN_UNDEF symbols. These symbols
-are usually not available for normal modules anyway as we cut down their
-symbol tables to just the core (non-undefined) symbols, so this should
-really just affect livepatch modules. Note that this patch doesn't
-affect the display of undefined symbols in /proc/kallsyms.
+Somewhat academic as this isn't a case any real client will hit, though
+in theory perhaps that could change in a future protocol extension.
 
-Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Tested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/module.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/nfsd/nfs4proc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -4058,7 +4058,7 @@ static unsigned long mod_find_symname(st
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -1725,6 +1725,7 @@ nfsd4_proc_compound(struct svc_rqst *rqs
+ 	if (status) {
+ 		op = &args->ops[0];
+ 		op->status = status;
++		resp->opcnt = 1;
+ 		goto encode_op;
+ 	}
  
- 	for (i = 0; i < kallsyms->num_symtab; i++)
- 		if (strcmp(name, symname(kallsyms, i)) == 0 &&
--		    kallsyms->symtab[i].st_info != 'U')
-+		    kallsyms->symtab[i].st_shndx != SHN_UNDEF)
- 			return kallsyms->symtab[i].st_value;
- 	return 0;
- }
-@@ -4104,6 +4104,10 @@ int module_kallsyms_on_each_symbol(int (
- 		if (mod->state == MODULE_STATE_UNFORMED)
- 			continue;
- 		for (i = 0; i < kallsyms->num_symtab; i++) {
-+
-+			if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
-+				continue;
-+
- 			ret = fn(data, symname(kallsyms, i),
- 				 mod, kallsyms->symtab[i].st_value);
- 			if (ret != 0)
 
 
