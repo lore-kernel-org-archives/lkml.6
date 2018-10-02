@@ -2,134 +2,171 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D080EC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E09B3C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 834F0206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:10:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MfUe7O/o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 834F0206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id B0039206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:10:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0039206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbeJBRxE (ORCPT
+        id S1727526AbeJBRxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 13:53:04 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:40918 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727244AbeJBRxE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 13:53:04 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1371FB7F;
-        Tue,  2 Oct 2018 13:10:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1538478617;
-        bh=qfENirQdex8moT0jHhtyaBqkZ60FYletjMkQYxhNQdY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MfUe7O/od0s4mqE2GkC1CDwN8/OzTROqf5vWNR5DZigGhbYbIyj/4XSujTKhiHDLj
-         +gj/Mjzkanfhem2RYWxPq9g7xYR9timMZD4LechFLjfE5ZwuFUjXLgHDubjcVRS/GB
-         66sWZMi5lMz21XnEv6I4w5ke++kJGBRcrjpl22fU=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/6] [media] ad5820: DT new optional field enable-gpios
-Date:   Tue, 02 Oct 2018 14:10:33 +0300
-Message-ID: <13152589.2v2DAIKa7y@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <CAPybu_1xmsuQVx94Lx+5UyX_+aerPdGVsgVkoNy=XkS98nmAmw@mail.gmail.com>
-References: <20181002073222.11368-1-ricardo.ribalda@gmail.com> <2128166.ZAkUExjJHM@avalon> <CAPybu_1xmsuQVx94Lx+5UyX_+aerPdGVsgVkoNy=XkS98nmAmw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 2 Oct 2018 13:53:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37450 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727244AbeJBRxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 13:53:33 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2BE25C059B86;
+        Tue,  2 Oct 2018 11:10:48 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-29.ams2.redhat.com [10.36.116.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 29FAB60CD3;
+        Tue,  2 Oct 2018 11:10:43 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id DDFA5982BC; Tue,  2 Oct 2018 13:10:41 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 2/2] drm/bochs: add edid support.
+Date:   Tue,  2 Oct 2018 13:10:41 +0200
+Message-Id: <20181002111041.17053-3-kraxel@redhat.com>
+In-Reply-To: <20181002111041.17053-1-kraxel@redhat.com>
+References: <20181002111041.17053-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 02 Oct 2018 11:10:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
+Recent qemu (latest master branch, upcoming 3.1 release) got support
+for EDID data.  This patch adds guest driver support.
 
-On Tuesday, 2 October 2018 13:57:22 EEST Ricardo Ribalda Delgado wrote:
-> On Tue, Oct 2, 2018 at 12:35 PM Laurent Pinchart wrote:
-> > On Tuesday, 2 October 2018 10:32:18 EEST Ricardo Ribalda Delgado wrote:
-> > > Document new enable-gpio field. It can be used to disable the part
-> > > without turning down its regulator.
-> > > 
-> > > Cc: devicetree@vger.kernel.org
-> > > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> > > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > > ---
-> > > 
-> > >  Documentation/devicetree/bindings/media/i2c/ad5820.txt | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> > > b/Documentation/devicetree/bindings/media/i2c/ad5820.txt index
-> > > 5940ca11c021..9ccd96d3d5f0 100644
-> > > --- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> > > +++ b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> > > 
-> > > @@ -8,6 +8,12 @@ Required Properties:
-> > >    - VANA-supply: supply of voltage for VANA pin
-> > > 
-> > > +Optional properties:
-> > > +
-> > > +   - enable-gpios : GPIO spec for the XSHUTDOWN pin. Note that the
-> > > polarity of +the enable GPIO is the opposite of the XSHUTDOWN pin
-> > > (asserting the enable +GPIO deasserts the XSHUTDOWN signal and vice
-> > > versa).
-> > 
-> > After reading this one more time, I think the text is at the very least
-> > confusing. The logic level of the enable GPIO is the same as the logic
-> > level of the XSHUTDOWN pin. The latter being active low, asserting
-> > "enable" will deassert "shutdown", but talking about "desserting
-> > XSHUTDOWN" is confusing.
-> 
-> what about:
-> 
-> - enable-gpios : GPIO spec for the XSHUTDOWN pin. When the XSHUTDOWN pin
-> is asserted the device is enabled.
+EDID support in qemu is not (yet) enabled by default, so please use
+'qemu -device VGA,edid=on' for testing.
 
-For some reason "asserting a pin" doesn't seem right to me. How about
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/bochs/bochs.h     |  1 +
+ drivers/gpu/drm/bochs/bochs_hw.c  | 38 ++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/bochs/bochs_kms.c | 18 +++++++++++++++---
+ 3 files changed, 54 insertions(+), 3 deletions(-)
 
-- enable-gpios: GPIO spec for the XSHUTDOWN pin. The XSHUTDOWN signal is 
-active low, a high level on the pin enables the device.
-
-> > > of +the enable GPIO is the opposite of the XSHUTDOWN pin (asserting the
-> > > enable +GPIO deasserts the XSHUTDOWN signal and vice versa).
-> > > 
-> > >  Example:
-> > >         ad5820: coil@c {
-> > > 
-> > > @@ -15,5 +21,6 @@ Example:
-> > >                 reg = <0x0c>;
-> > >                 
-> > >                 VANA-supply = <&vaux4>;
-> > > 
-> > > +               enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
-> > > 
-> > >         };
-> > 
-> > --
-> > Regards,
-> > 
-> > Laurent Pinchart
-
-
+diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+index 375bf92cd0..055d7b437a 100644
+--- a/drivers/gpu/drm/bochs/bochs.h
++++ b/drivers/gpu/drm/bochs/bochs.h
+@@ -70,6 +70,7 @@ struct bochs_device {
+ 	u16 yres_virtual;
+ 	u32 stride;
+ 	u32 bpp;
++	struct edid *edid;
+ 
+ 	/* drm */
+ 	struct drm_device  *dev;
+diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
+index a39b0343c1..21a769e48c 100644
+--- a/drivers/gpu/drm/bochs/bochs_hw.c
++++ b/drivers/gpu/drm/bochs/bochs_hw.c
+@@ -47,6 +47,41 @@ static void bochs_dispi_write(struct bochs_device *bochs, u16 reg, u16 val)
+ 	}
+ }
+ 
++static int bochs_load_edid(struct bochs_device *bochs)
++{
++	uint8_t *blob;
++	size_t i, len;
++	uint8_t num_exts;
++
++	if (!bochs->mmio)
++		return -1;
++
++	if ((readb(bochs->mmio+0) != 0x00 ||
++	     readb(bochs->mmio+1) != 0xff))
++		return -1;
++
++	num_exts = readb(bochs->mmio + 126);
++	len = EDID_LENGTH * (1 + num_exts);
++	if (len > 0x400 /* vga register offset */)
++		return -1;
++
++	kfree(bochs->edid);
++	bochs->edid = kmalloc(len, GFP_KERNEL);
++	blob = (void *)bochs->edid;
++	for (i = 0; i < len; i++) {
++		blob[i] = readb(bochs->mmio+i);
++	}
++
++	if (!drm_edid_is_valid(bochs->edid)) {
++		DRM_ERROR("EDID is not valid, ignoring.\n");
++		kfree(bochs->edid);
++		bochs->edid = NULL;
++		return -1;
++	}
++
++	return 0;
++}
++
+ int bochs_hw_init(struct drm_device *dev, uint32_t flags)
+ {
+ 	struct bochs_device *bochs = dev->dev_private;
+@@ -133,6 +168,9 @@ int bochs_hw_init(struct drm_device *dev, uint32_t flags)
+ 	}
+ 
+ noext:
++	if (bochs_load_edid(bochs) == 0)
++		DRM_INFO("Found EDID data blob.\n");
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index ca5a9afdd5..5b3afe9364 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -181,10 +181,17 @@ static void bochs_encoder_init(struct drm_device *dev)
+ 
+ static int bochs_connector_get_modes(struct drm_connector *connector)
+ {
+-	int count;
++	struct bochs_device *bochs =
++		container_of(connector, struct bochs_device, connector);
++	int count = 0;
+ 
+-	count = drm_add_modes_noedid(connector, 8192, 8192);
+-	drm_set_preferred_mode(connector, defx, defy);
++	if (bochs->edid)
++		count = drm_add_edid_modes(connector, bochs->edid);
++
++	if (!count) {
++		count = drm_add_modes_noedid(connector, 8192, 8192);
++		drm_set_preferred_mode(connector, defx, defy);
++	}
+ 	return count;
+ }
+ 
+@@ -239,6 +246,11 @@ static void bochs_connector_init(struct drm_device *dev)
+ 	drm_connector_helper_add(connector,
+ 				 &bochs_connector_connector_helper_funcs);
+ 	drm_connector_register(connector);
++
++	if (bochs->edid) {
++		drm_connector_attach_edid_property(connector);
++		drm_connector_update_edid_property(connector, bochs->edid);
++	}
+ }
+ 
+ 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
+2.9.3
 
