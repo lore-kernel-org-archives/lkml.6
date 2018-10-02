@@ -2,117 +2,136 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A4EC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8720AC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40DFF2064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:41:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knyJoQ90"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40DFF2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4A1422064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 17:43:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A1422064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbeJCAZu (ORCPT
+        id S1727740AbeJCA1q convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 20:25:50 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:35751 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbeJCAZu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 20:25:50 -0400
-Received: by mail-yb1-f196.google.com with SMTP id o63-v6so1155967yba.2;
-        Tue, 02 Oct 2018 10:41:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JTz8Pnu5QddGR+QW5mlaibn08hKcnxthEyujDX3ldkE=;
-        b=knyJoQ909kKZHX8kJmzxwv0GoKSeFKCdRgxKYZW1GSEV5+HXcVUYCkJKtwBD5n6ddw
-         mXdJcNI0gQohuyxR3mQDTxNDAuhhQSmyBkggiZtfWFXxcQOOJFNfiiBhM9QuYY8Ad7vd
-         61ua8b/ZNvibTpLrhiVmKG7cNUSbbNI+87QMRbmS5VksjUhuUt7qh8BRl/JpyYH+adMG
-         1UdQFI8WOpBvcezKVuAwlh5WUQQtBh2zN9ov3+eITqBOjdEoLlq9sLgWLLmdsnPieJ+a
-         LzaBMrmFMYDhUo0tYCUMvWkIdpsVu/KOeOkc6O1V4b1k1i1X3yKhc7U9J7kla7u+CReH
-         Ig3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JTz8Pnu5QddGR+QW5mlaibn08hKcnxthEyujDX3ldkE=;
-        b=M77+efvIMbUxjziRO9WxN8BPQi9E5utzas3AluwbntaYyWckLivh9DWztYXYTqT42c
-         1UjB5Y24X1UnXyveVRIVBbgqKrDpTEVJESXqOufbchu6pHwuMfskbtYKMFW5NNJ237mK
-         7sc8/rtRIU/sFCFljMK6UierSD5VdCdRIFM5desOfmd4/jWYeq4NAyXeuhB0aESvrLiY
-         YmKnwn8xdFiBDGpkCb+upyhYWXh5Vr04kCXyAs3gUQLstM7wwOspCRAzZrWq/tasRSGT
-         VlXO+V6GaWlq3N/e7W3xPmfFG9M2iP3PTNIccVysWuRnUV6+gEPBNh3RyvxTpk3O56MY
-         Tt3A==
-X-Gm-Message-State: ABuFfojZUQEBExywl5VCOjL0Owx2x1FrQ2rgHzSfVmfosT/Q7LUvGskc
-        9puXjZacmc21D3qaDJyIPj0=
-X-Google-Smtp-Source: ACcGV63EuqI+MV4SNeknZjjk0nmQGxu19meYhrc+ruyeOqJZXJ4Flf5m8x14a/qfBFT455IhovmO0Q==
-X-Received: by 2002:a25:d90b:: with SMTP id q11-v6mr9536910ybg.447.1538502079125;
-        Tue, 02 Oct 2018 10:41:19 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::6:ee3])
-        by smtp.gmail.com with ESMTPSA id r12-v6sm6555367ywg.67.2018.10.02.10.41.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 10:41:18 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 10:41:16 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     linux-nvdimm@lists.01.org, gregkh@linuxfoundation.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, len.brown@intel.com,
-        dave.jiang@intel.com, rafael@kernel.org, vishal.l.verma@intel.com,
-        jiangshanlai@gmail.com, pavel@ucw.cz, zwisler@kernel.org,
-        dan.j.williams@intel.com
-Subject: Re: [RFC workqueue/driver-core PATCH 1/5] workqueue: Provide
- queue_work_near to queue work near a given NUMA node
-Message-ID: <20181002174116.GG270328@devbig004.ftw2.facebook.com>
-References: <20180926214433.13512.30289.stgit@localhost.localdomain>
- <20180926215138.13512.33146.stgit@localhost.localdomain>
- <20180926215307.GA270328@devbig004.ftw2.facebook.com>
- <9b002bbb-3e6d-9e99-d8f9-36df4306093e@linux.intel.com>
- <20180926220957.GB270328@devbig004.ftw2.facebook.com>
- <ba72f007-84e2-6fe0-b128-d876dadef5f5@linux.intel.com>
- <20181001160142.GE270328@devbig004.ftw2.facebook.com>
- <4eebc017-23a2-a26e-095c-66433061a141@linux.intel.com>
+        Tue, 2 Oct 2018 20:27:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34106 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727449AbeJCA1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 20:27:46 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 155F78764F;
+        Tue,  2 Oct 2018 17:43:15 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 94FB59D80A;
+        Tue,  2 Oct 2018 17:43:13 +0000 (UTC)
+Subject: Re: [PATCH v8 3/5] ipc: Allow boot time extension of IPCMNI from 32k
+ to 2M
+To:     Manfred Spraul <manfred@colorfullife.com>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Takashi Iwai <tiwai@suse.de>, Davidlohr Bueso <dbueso@suse.de>
+References: <1529317698-16575-1-git-send-email-longman@redhat.com>
+ <1529317698-16575-4-git-send-email-longman@redhat.com>
+ <20180817164548.GA32382@linux-r8p5>
+ <5ddb67bb-872b-c8c1-7838-2622195ae1fc@redhat.com>
+ <02ebafee-a295-58cf-044e-e2df0e878e0d@colorfullife.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <8c9dda74-c9fb-cc18-5af4-c081dbb8b154@redhat.com>
+Date:   Tue, 2 Oct 2018 13:43:13 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4eebc017-23a2-a26e-095c-66433061a141@linux.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <02ebafee-a295-58cf-044e-e2df0e878e0d@colorfullife.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 02 Oct 2018 17:43:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 10/02/2018 12:32 PM, Manfred Spraul wrote:
+> Hello together,
+>
+> On 8/18/18 3:15 AM, Waiman Long wrote:
+>> On 08/17/2018 12:45 PM, Davidlohr Bueso wrote:
+>>> Cc'ing Manfred.
+>>>
+>>> On Mon, 18 Jun 2018, Waiman Long wrote:
+>>>
+>>>> The maximum number of unique System V IPC identifiers was limited to
+>>>> 32k.  That limit should be big enough for most use cases.
+>>>>
+>>>> However, there are some users out there requesting for more. To
+>>>> satisfy
+>>>> the need of those users, a new boot time kernel option "ipcmni_extend"
+>>>> is added to extend the IPCMNI value to 2M. This is a 64X increase
+>>>> which
+>>>> hopefully is big enough for them.
+>>> Could you please provide more info on the need of these users and how
+>>> you came up with this new value (which just seems quite arbitrary)?
+>>>
+>>> Thanks,
+>>> Davidlohr
+>> Red Hat has a customer that is migrating from Solaris to Linux. Some of
+>> their applications just happen to use more than 32k of shared memory
+>> segments. I think Solaris allows up to 16M unique ID.
+>>
+>> Yes, the amount of increase is a bit arbitrary. I was trying to balance
+>> how many bits should be left for sequence number. Maybe I should just
+>> take 8 more bits for ID and leave 8 bits for sequence number to match
+>> Solaris.
+>
+> - I think we should use the same numbers as Solaris.
+> Otherwise we later have to touch it again.
 
-On Mon, Oct 01, 2018 at 02:54:39PM -0700, Alexander Duyck wrote:
-> >It might be better to leave queue_work_on() to be used for per-cpu
-> >workqueues and introduce queue_work_near() as you suggseted.  I just
-> >don't want it to duplicate the node selection code in it.  Would that
-> >work?
-> 
-> So if I understand what you are saying correctly we default to
-> round-robin on a given node has no CPUs attached to it. I could
-> probably work with that if that is the default behavior instead of
-> adding much of the complexity I already have.
+As said in my patch, it is a trade-off between # of uniq identifiers
+versus the chance of id reuse. I don't have an objection to increase it
+further, but I don't see the customers to really need such a large value.
 
-Yeah, it's all in wq_select_unbound_cpu().  Right now, if the
-requested cpu isn't in wq_unbound_cpumask, it falls back to dumb
-round-robin.  We can probably do better there and find the nearest
-node considering topology.
+>
+> - What is the performance when using shmget() with already 10M
+> segments present?
 
-> The question I have then is what should I do about workqueues that
-> aren't WQ_UNBOUND if they attempt to use queue_work_near? In that
+I am not sure the performance impact as I had not measure it myself. The
+shmget() function is considered in slowpath. We are generally less
+concern about its performance than other code paths that are in a
+performance critical path.
 
-Hmm... yeah, let's just use queue_work_on() for now.  We can sort it
-out later and users could already do that anyway.
+>
+> - I like the new logic for updating the sequence counter.
+>
+> Is there a reason why you only enable it for extended mode?
 
-Thanks.
+I tried not to disturb the existing logic for backward compatibility
+concern. I don't mind switching it all over to use the new "deleted"
+approach if other people have no objection.
 
--- 
-tejun
+Cheers,
+Longman
+
+> You create a rarely used codepath, and I don't understand what speaks
+> against switching to the 'deleted' approach for all systems.
+>
+>
+> -- 
+>
+>     Manfred
+>
+
+
