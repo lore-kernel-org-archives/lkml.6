@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 615A9C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545D3C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 324892064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 324892064D
+	by mail.kernel.org (Postfix) with ESMTP id 1F2EB2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2EB2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732643AbeJBUSm (ORCPT
+        id S1732653AbeJBUSo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:18:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35610 "EHLO
+        Tue, 2 Oct 2018 16:18:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35622 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732607AbeJBUSk (ORCPT
+        with ESMTP id S1732607AbeJBUSn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:40 -0400
+        Tue, 2 Oct 2018 16:18:43 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BF873C2B;
-        Tue,  2 Oct 2018 13:35:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 505AB5AA;
+        Tue,  2 Oct 2018 13:35:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.14 100/137] USB: usbdevfs: restore warning for nonsensical flags
-Date:   Tue,  2 Oct 2018 06:25:01 -0700
-Message-Id: <20181002132505.506641127@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.14 102/137] USB: remove LPM management from usb_driver_claim_interface()
+Date:   Tue,  2 Oct 2018 06:25:03 -0700
+Message-Id: <20181002132505.646643160@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -50,35 +50,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 81e0403b26d94360abd1f6a57311337973bc82cd upstream.
+commit c183813fcee44a249339b7c46e1ad271ca1870aa upstream.
 
-If we filter flags before they reach the core we need to generate our
-own warnings.
+usb_driver_claim_interface() disables and re-enables Link Power
+Management, but it shouldn't do either one, for the reasons listed
+below.  This patch removes the two LPM-related function calls from the
+routine.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Fixes: 0cb54a3e47cb ("USB: debugging code shouldn't alter control flow")
-Cc: stable <stable@vger.kernel.org>
+The reason for disabling LPM in the analogous function
+usb_probe_interface() is so that drivers won't have to deal with
+unwanted LPM transitions in their probe routine.  But
+usb_driver_claim_interface() doesn't call the driver's probe routine
+(or any other callbacks), so that reason doesn't apply here.
+
+Furthermore, no driver other than usbfs will ever call
+usb_driver_claim_interface() unless it is already bound to another
+interface in the same device, which means disabling LPM here would be
+redundant.  usbfs doesn't interact with LPM at all.
+
+Lastly, the error return from usb_unlocked_disable_lpm() isn't handled
+properly; the code doesn't clean up its earlier actions before
+returning.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Fixes: 8306095fd2c1 ("USB: Disable USB 3.0 LPM in critical sections.")
+CC: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/devio.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/usb/core/driver.c |   15 ---------------
+ 1 file changed, 15 deletions(-)
 
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -1715,6 +1715,11 @@ static int proc_do_submiturb(struct usb_
- 		u |= URB_NO_INTERRUPT;
- 	as->urb->transfer_flags = u;
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -512,7 +512,6 @@ int usb_driver_claim_interface(struct us
+ 	struct device *dev;
+ 	struct usb_device *udev;
+ 	int retval = 0;
+-	int lpm_disable_error = -ENODEV;
  
-+	if (!allow_short && uurb->flags & USBDEVFS_URB_SHORT_NOT_OK)
-+		dev_warn(&ps->dev->dev, "Requested nonsensical USBDEVFS_URB_SHORT_NOT_OK.\n");
-+	if (!allow_zero && uurb->flags & USBDEVFS_URB_ZERO_PACKET)
-+		dev_warn(&ps->dev->dev, "Requested nonsensical USBDEVFS_URB_ZERO_PACKET.\n");
-+
- 	as->urb->transfer_buffer_length = uurb->buffer_length;
- 	as->urb->setup_packet = (unsigned char *)dr;
- 	dr = NULL;
+ 	if (!iface)
+ 		return -ENODEV;
+@@ -533,16 +532,6 @@ int usb_driver_claim_interface(struct us
+ 
+ 	iface->condition = USB_INTERFACE_BOUND;
+ 
+-	/* See the comment about disabling LPM in usb_probe_interface(). */
+-	if (driver->disable_hub_initiated_lpm) {
+-		lpm_disable_error = usb_unlocked_disable_lpm(udev);
+-		if (lpm_disable_error) {
+-			dev_err(&iface->dev, "%s Failed to disable LPM for driver %s\n.",
+-					__func__, driver->name);
+-			return -ENOMEM;
+-		}
+-	}
+-
+ 	/* Claimed interfaces are initially inactive (suspended) and
+ 	 * runtime-PM-enabled, but only if the driver has autosuspend
+ 	 * support.  Otherwise they are marked active, to prevent the
+@@ -561,10 +550,6 @@ int usb_driver_claim_interface(struct us
+ 	if (device_is_registered(dev))
+ 		retval = device_bind_driver(dev);
+ 
+-	/* Attempt to re-enable USB3 LPM, if the disable was successful. */
+-	if (!lpm_disable_error)
+-		usb_unlocked_enable_lpm(udev);
+-
+ 	if (retval) {
+ 		dev->driver = NULL;
+ 		usb_set_intfdata(iface, NULL);
 
 
