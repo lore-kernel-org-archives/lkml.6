@@ -2,88 +2,68 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA59C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC53C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5348F205C9
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:56:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5348F205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E0B0205C9
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:56:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E0B0205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbeJBRiq (ORCPT
+        id S1727478AbeJBRjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 13:38:46 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:35832 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726244AbeJBRiq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 13:38:46 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w92Au3m1007749;
-        Tue, 2 Oct 2018 05:56:04 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2mugjdhmm4-1;
-        Tue, 02 Oct 2018 05:56:03 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id D7699611C8BE;
-        Tue,  2 Oct 2018 05:58:37 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 2 Oct 2018
- 11:56:02 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w92Au21e023514; Tue,
- 2 Oct 2018 11:56:02 +0100
-Date:   Tue, 2 Oct 2018 11:56:02 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>
-CC:     <lee.jones@linaro.org>, <patches@opensource.cirrus.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] mfd: madera: Wait for BOOT_DONE before reading
- device ID
-Message-ID: <20181002105602.GS1653@imbe.wolfsonmicro.main>
-References: <20181002104134.29003-1-rf@opensource.cirrus.com>
- <20181002104134.29003-2-rf@opensource.cirrus.com>
+        Tue, 2 Oct 2018 13:39:25 -0400
+Received: from mga07.intel.com ([134.134.136.100]:62480 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726244AbeJBRjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 13:39:25 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 03:56:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,331,1534834800"; 
+   d="scan'208";a="78036682"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga008.jf.intel.com with ESMTP; 02 Oct 2018 03:56:42 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 8358F1FF; Tue,  2 Oct 2018 13:56:41 +0300 (EEST)
+Date:   Tue, 2 Oct 2018 13:56:41 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCHv3 2/6] mm/gup_benchmark: Add additional pinning methods
+Message-ID: <20181002105641.7ab4io5fwnquu6lo@black.fi.intel.com>
+References: <20180921223956.3485-1-keith.busch@intel.com>
+ <20180921223956.3485-3-keith.busch@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181002104134.29003-2-rf@opensource.cirrus.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=941 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1810020109
+In-Reply-To: <20180921223956.3485-3-keith.busch@intel.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 11:41:34AM +0100, Richard Fitzgerald wrote:
-> It isn't safe to read the device ID in the SOFTWARE_RESET
-> register until the silicon boot sequence has completed. This
-> patch rearranges the code to wait until BOOT_DONE is set.
+On Fri, Sep 21, 2018 at 10:39:52PM +0000, Keith Busch wrote:
+> This patch provides new gup benchmark ioctl commands to run different
+> user page pinning methods, get_user_pages_longterm and get_user_pages,
+> in addition to the existing get_user_pages_fast.
 > 
-> If we don't have a hard reset line we want to defer writing a
-> soft reset command until we have identified the silicon as
-> something we recognize. As the BOOT_DONE bit is sticky it is
-> safe to wait for it without issuing a soft reset first, because
-> the most recent power-up will have caused a boot sequence and
-> set the bit. Note that the boot sequence is not the same as a
-> reset so we still have to soft reset to get the codec into a
-> known state.
-> 
-> Signed-off-by: Stuart Henderson <stuarth@opensource.cirrus.com>
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> ---
+> Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Thanks,
-Charles
+-- 
+ Kirill A. Shutemov
