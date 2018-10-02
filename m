@@ -2,63 +2,63 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D84C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF590C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0A62206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B59D206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:13:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nNXdbbDg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0A62206B2
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J3rqMQ+O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B59D206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728204AbeJBT41 (ORCPT
+        id S1728074AbeJBT4p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 15:56:27 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35721 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728109AbeJBT4P (ORCPT
+        Tue, 2 Oct 2018 15:56:45 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43295 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727975AbeJBT4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 15:56:15 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w5-v6so2183356wrt.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 06:12:57 -0700 (PDT)
+        Tue, 2 Oct 2018 15:56:12 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n1-v6so2160599wrt.10
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 06:12:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hNEOFJA3qECaqXrpJm2EBhk28wiALQ2kw33CEUTdhdg=;
-        b=nNXdbbDg2VNy5SHxXbN+Ptyr1KLwmnSsBGGhJxCoeFHxmaR8fTh5dfCJuPuP2R7XcN
-         027ftARciHcerS2ELQQ0Z978f0Ec52kSHFCKqN2p00S/HUmL+4/+FNQ+Ee04V1jiecR8
-         HhckI+hYniaDUvRkL6ovrPKMPRzVpN0yqJRFIQYoJAbvkk98v1trRnIA9bACjz2T0htl
-         sjhh3se+0ylvvlL4j4oFlIEkdCL/ALFEN07VsuQFmvaytb4hkV7XgiiEkG2pDFVbjLFm
-         LQf987ZWYE7Z3lM2zVMpcuPdTXS7FNh6OcL7SSEDcP9l9TyEXua3IFp0e1iBvQrZGJ4M
-         iEJw==
+        bh=NvErLiPb7Dhi68E8otsA18THd2lbB+9b3/NhcG854Xk=;
+        b=J3rqMQ+OwoWESxRlNUNZvjq3C/i5394uPASFBYI9muB/L1ZiyOZBCro1+FKtx6blgw
+         Zf3QR0zbR9aBLw8k94HJn2BihJomkAwGXZ6D3IccQan79jH4+JXMjrtrO30iOwbiwlL7
+         ZXwh97DJrxJryJEPEhuLlgAGLLAKtiHeczVtcczOfqs5HYQ7W2vG5CxdrOSeUx2uSvN5
+         GAAUamfcPXwAaP0TYFJuhfKsE1NhlhzkhRgg8V0uSoEfQtqHCiPnIouALNbppfaPkHjL
+         VYO3WaSNSHcsFRl7xSVGvwVKBnyNE6GtDLcbcOxwj/EAXF0Z2usZxGp1Hq2AoDKtY0gx
+         DxAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hNEOFJA3qECaqXrpJm2EBhk28wiALQ2kw33CEUTdhdg=;
-        b=BU7ookjCaTt+2QFUNYNrirthO/qSJBPRpGhGc0BEjhMKCQQz8YuAYjrguGlDk+GoB5
-         6ZUO0xGKGjBGarPbVcJj3IQjEhfCtN99RkjyufVAZli9yvBZTWQfQHbJ1WjJIlDBRCS+
-         UnV0Q5YRJOcR44m8jut6W/8HjH1htW0GAYIGXePKrG7fmvwGXYxOR+Q2hvTeEEUJ9DT4
-         91+8HrLK9Vru9wm+RxF3NdG9YARmKY3oPJ8hxdFxSH9dmc3JgaO0kqrIDQbC00hs/FF7
-         86pfFQ3/ggfFWzuta/pFlSvOOaEJgVg3yLwQAfZdffw66nw01XNTaY+hY11zaWy4+L/d
-         jHWA==
-X-Gm-Message-State: ABuFfoig2LREefn9WRB8hXmNY38vOkKgkpPaBgyusid4EWorAmKEfOzI
-        JK/+SqtRvkBdcOkH7FK99J7m7Q==
-X-Google-Smtp-Source: ACcGV62jbjfhc53LoCFPGDSIPFzkIzlh2/mWrosWETT93RgqVUF8Im7cl/cWkkH9GjoPBnJtS3XIfQ==
-X-Received: by 2002:adf:9792:: with SMTP id s18-v6mr11253044wrb.283.1538485976256;
-        Tue, 02 Oct 2018 06:12:56 -0700 (PDT)
+        bh=NvErLiPb7Dhi68E8otsA18THd2lbB+9b3/NhcG854Xk=;
+        b=CaIm3DqY65P/iQMcxfkLBlWenRLXVd4MVzm2HhzqROwvumxDCcf6Q2Ms1yEQAAgc8G
+         nUqj/MrNK4B1KRDzmSaeO2P/aB5HI1/5kEIMmcJ9hlELsV2qpnkiTl2N/rX2u3+ggbR4
+         +VObYVAu5M3aCptROXEHoZX+lcOHrmkl5Bgxmbu3xDoU3GPV3tnTggkfFKe3VO9bAbwc
+         56t03XffuJomJhn0ZJv0gY5nrw4Go9FLxDwPvG27E/kjw/HpEX4gGZ+31iHOdmJuLFn7
+         I5YaEd4A/yxjeRP5V1xxqr1AuabKAmnB48mMDYGGEUaXfKXtiQbN8+gRkZkj8xoGgcQ9
+         iXTQ==
+X-Gm-Message-State: ABuFfojt4kqIakYuEDd4zytXBIM+dPsqk0bgtU1D24VARCwEFjibyY8T
+        Med/QMzTogat8QfifsatomNtMQ==
+X-Google-Smtp-Source: ACcGV63nabJtbVmhZN2ucFxis2mJLsrnliWxzagWfRZDa1M/aDSkXCme9Zu5EuIB9WfhAKLrjz02yA==
+X-Received: by 2002:a5d:4101:: with SMTP id l1-v6mr6433311wrp.45.1538485973338;
+        Tue, 02 Oct 2018 06:12:53 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id v10-v6sm17458681wrp.0.2018.10.02.06.12.54
+        by smtp.gmail.com with ESMTPSA id v10-v6sm17458681wrp.0.2018.10.02.06.12.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 06:12:55 -0700 (PDT)
+        Tue, 02 Oct 2018 06:12:52 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -84,9 +84,9 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v7 7/8] arm64: update Documentation/arm64/tagged-pointers.txt
-Date:   Tue,  2 Oct 2018 15:12:42 +0200
-Message-Id: <47a464307d4df3c0cb65f88d1fe83f9a741dd74b.1538485901.git.andreyknvl@google.com>
+Subject: [PATCH v7 5/8] lib, arm64: untag addrs passed to strncpy_from_user and strnlen_user
+Date:   Tue,  2 Oct 2018 15:12:40 +0200
+Message-Id: <978d6bcda7f6cc9420d77b1155d54300e73a634d.1538485901.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 In-Reply-To: <cover.1538485901.git.andreyknvl@google.com>
 References: <cover.1538485901.git.andreyknvl@google.com>
@@ -97,57 +97,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the changes in Documentation/arm64/tagged-pointers.txt.
+strncpy_from_user and strnlen_user accept user addresses as arguments, and
+do not go through the same path as copy_from_user and others, so here we
+need to handle the case of tagged user addresses separately.
+
+Untag user pointers passed to these functions.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- Documentation/arm64/tagged-pointers.txt | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ lib/strncpy_from_user.c | 2 ++
+ lib/strnlen_user.c      | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/Documentation/arm64/tagged-pointers.txt b/Documentation/arm64/tagged-pointers.txt
-index a25a99e82bb1..ae877d185fdb 100644
---- a/Documentation/arm64/tagged-pointers.txt
-+++ b/Documentation/arm64/tagged-pointers.txt
-@@ -17,13 +17,21 @@ this byte for application use.
- Passing tagged addresses to the kernel
- --------------------------------------
+diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
+index b53e1b5d80f4..97467cd2bc59 100644
+--- a/lib/strncpy_from_user.c
++++ b/lib/strncpy_from_user.c
+@@ -106,6 +106,8 @@ long strncpy_from_user(char *dst, const char __user *src, long count)
+ 	if (unlikely(count <= 0))
+ 		return 0;
  
--All interpretation of userspace memory addresses by the kernel assumes
--an address tag of 0x00.
-+Some initial work for supporting non-zero address tags passed to the
-+kernel has been done. As of now, the kernel supports tags in:
- 
--This includes, but is not limited to, addresses found in:
-+  - user fault addresses
- 
-- - pointer arguments to system calls, including pointers in structures
--   passed to system calls,
-+  - pointer arguments (including pointers in structures), which don't
-+    describe virtual memory ranges, passed to system calls
++	src = untagged_addr(src);
 +
-+All other interpretations of userspace memory addresses by the kernel
-+assume an address tag of 0x00. This includes, but is not limited to,
-+addresses found in:
+ 	max_addr = user_addr_max();
+ 	src_addr = (unsigned long)src;
+ 	if (likely(src_addr < max_addr)) {
+diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
+index 60d0bbda8f5e..8b5f56466e00 100644
+--- a/lib/strnlen_user.c
++++ b/lib/strnlen_user.c
+@@ -108,6 +108,8 @@ long strnlen_user(const char __user *str, long count)
+ 	if (unlikely(count <= 0))
+ 		return 0;
+ 
++	str = untagged_addr(str);
 +
-+ - pointer arguments (including pointers in structures), which describe
-+   virtual memory ranges, passed to memory system calls (mmap, mprotect,
-+   etc.)
- 
-  - the stack pointer (sp), e.g. when interpreting it to deliver a
-    signal,
-@@ -33,11 +41,7 @@ This includes, but is not limited to, addresses found in:
- 
- Using non-zero address tags in any of these locations may result in an
- error code being returned, a (fatal) signal being raised, or other modes
--of failure.
--
--For these reasons, passing non-zero address tags to the kernel via
--system calls is forbidden, and using a non-zero address tag for sp is
--strongly discouraged.
-+of failure. Using a non-zero address tag for sp is strongly discouraged.
- 
- Programs maintaining a frame pointer and frame records that use non-zero
- address tags may suffer impaired or inaccurate debug and profiling
+ 	max_addr = user_addr_max();
+ 	src_addr = (unsigned long)str;
+ 	if (likely(src_addr < max_addr)) {
 -- 
 2.19.0.605.g01d371f741-goog
 
