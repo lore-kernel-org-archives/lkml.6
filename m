@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB2CC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE11DC64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4F35206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F35206B2
+	by mail.kernel.org (Postfix) with ESMTP id A420C206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:27:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A420C206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbeJBULF (ORCPT
+        id S1728784AbeJBULG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:11:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60478 "EHLO
+        Tue, 2 Oct 2018 16:11:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60486 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728723AbeJBULE (ORCPT
+        with ESMTP id S1728744AbeJBULG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:11:04 -0400
+        Tue, 2 Oct 2018 16:11:06 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB304B2F;
-        Tue,  2 Oct 2018 13:27:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05FF2C2B;
+        Tue,  2 Oct 2018 13:27:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Todd Kjos <tkjos@android.com>,
+        devel@driverdev.osuosl.org, kernel-team@android.com,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Alistair Strachan <astrachan@google.com>,
+        Martijn Coenen <maco@android.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 071/228] media: ov772x: add checks for register read errors
-Date:   Tue,  2 Oct 2018 06:22:48 -0700
-Message-Id: <20181002132504.114038206@linuxfoundation.org>
+Subject: [PATCH 4.18 072/228] staging: android: ashmem: Fix mmap size validation
+Date:   Tue,  2 Oct 2018 06:22:49 -0700
+Message-Id: <20181002132504.166593345@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -57,70 +55,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Akinobu Mita <akinobu.mita@gmail.com>
+From: Alistair Strachan <astrachan@google.com>
 
-[ Upstream commit 30f3b17eaf4913e9e56be15915ce57aae69db701 ]
+[ Upstream commit 8632c614565d0c5fdde527889601c018e97b6384 ]
 
-This change adds checks for register read errors and returns correct
-error code.
+The ashmem driver did not check that the size/offset of the vma passed
+to its .mmap() function was not larger than the ashmem object being
+mapped. This could cause mmap() to succeed, even though accessing parts
+of the mapping would later fail with a segmentation fault.
 
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Ensure an error is returned by the ashmem_mmap() function if the vma
+size is larger than the ashmem object size. This enables safer handling
+of the problem in userspace.
+
+Cc: Todd Kjos <tkjos@android.com>
+Cc: devel@driverdev.osuosl.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Signed-off-by: Alistair Strachan <astrachan@google.com>
+Acked-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Reviewed-by: Martijn Coenen <maco@android.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/i2c/ov772x.c |   20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ drivers/staging/android/ashmem.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/media/i2c/ov772x.c
-+++ b/drivers/media/i2c/ov772x.c
-@@ -1136,7 +1136,7 @@ static int ov772x_set_fmt(struct v4l2_su
- static int ov772x_video_probe(struct ov772x_priv *priv)
- {
- 	struct i2c_client  *client = v4l2_get_subdevdata(&priv->subdev);
--	u8                  pid, ver;
-+	int		    pid, ver, midh, midl;
- 	const char         *devname;
- 	int		    ret;
- 
-@@ -1146,7 +1146,11 @@ static int ov772x_video_probe(struct ov7
- 
- 	/* Check and show product ID and manufacturer ID. */
- 	pid = ov772x_read(client, PID);
-+	if (pid < 0)
-+		return pid;
- 	ver = ov772x_read(client, VER);
-+	if (ver < 0)
-+		return ver;
- 
- 	switch (VERSION(pid, ver)) {
- 	case OV7720:
-@@ -1162,13 +1166,17 @@ static int ov772x_video_probe(struct ov7
- 		goto done;
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -366,6 +366,12 @@ static int ashmem_mmap(struct file *file
+ 		goto out;
  	}
  
-+	midh = ov772x_read(client, MIDH);
-+	if (midh < 0)
-+		return midh;
-+	midl = ov772x_read(client, MIDL);
-+	if (midl < 0)
-+		return midl;
++	/* requested mapping size larger than object size */
++	if (vma->vm_end - vma->vm_start > PAGE_ALIGN(asma->size)) {
++		ret = -EINVAL;
++		goto out;
++	}
 +
- 	dev_info(&client->dev,
- 		 "%s Product ID %0x:%0x Manufacturer ID %x:%x\n",
--		 devname,
--		 pid,
--		 ver,
--		 ov772x_read(client, MIDH),
--		 ov772x_read(client, MIDL));
-+		 devname, pid, ver, midh, midl);
-+
- 	ret = v4l2_ctrl_handler_setup(&priv->hdl);
- 
- done:
+ 	/* requested protection bits must match our allowed protection mask */
+ 	if (unlikely((vma->vm_flags & ~calc_vm_prot_bits(asma->prot_mask, 0)) &
+ 		     calc_vm_prot_bits(PROT_MASK, 0))) {
 
 
