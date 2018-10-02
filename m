@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B98C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38321C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2298E2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2298E2083F
+	by mail.kernel.org (Postfix) with ESMTP id EC18C2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC18C2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730393AbeJBUNl (ORCPT
+        id S1730403AbeJBUNr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:13:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33444 "EHLO
+        Tue, 2 Oct 2018 16:13:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33460 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730338AbeJBUNj (ORCPT
+        with ESMTP id S1729154AbeJBUNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:13:39 -0400
+        Tue, 2 Oct 2018 16:13:46 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 77BE2C2B;
-        Tue,  2 Oct 2018 13:30:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C24EBBF0;
+        Tue,  2 Oct 2018 13:30:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Lukasz Odzioba <lukasz.odzioba@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.18 164/228] IB/hfi1: Fix context recovery when PBC has an UnsupportedVL
-Date:   Tue,  2 Oct 2018 06:24:21 -0700
-Message-Id: <20181002132509.877079831@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Song Liu <songliubraving@fb.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 182/228] bpf, sockmap: fix sock_hash_alloc and reject zero-sized keys
+Date:   Tue,  2 Oct 2018 06:24:39 -0700
+Message-Id: <20181002132510.714283699@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -55,65 +53,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael J. Ruhl <michael.j.ruhl@intel.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit d623500b3c4efd8d4e945ac9003c6b87b469a9ab upstream.
+[ Upstream commit b845c898b2f1ea458d5453f0fa1da6e2dfce3bb4 ]
 
-If a packet stream uses an UnsupportedVL (virtual lane), the send
-engine will not send the packet, and it will not indicate that an
-error has occurred.  This will cause the packet stream to block.
+Currently, it is possible to create a sock hash map with key size
+of 0 and have the kernel return a fd back to user space. This is
+invalid for hash maps (and kernel also hasn't been tested for zero
+key size support in general at this point). Thus, reject such
+configuration.
 
-HFI has 8 virtual lanes available for packet streams.  Each lane can
-be enabled or disabled using the UnsupportedVL mask.  If a lane is
-disabled, adding a packet to the send context must be disallowed.
-
-The current mask for determining unsupported VLs defaults to 0 (allow
-all).  This is incorrect.  Only the VLs that are defined should be
-allowed.
-
-Determine which VLs are disabled (mtu == 0), and set the appropriate
-unsupported bit in the mask.  The correct mask will allow the send
-engine to error on the invalid VL, and error recovery will work
-correctly.
-
-Cc: <stable@vger.kernel.org> # 4.9.x+
-Fixes: 7724105686e7 ("IB/hfi1: add driver files")
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Reviewed-by: Lukasz Odzioba <lukasz.odzioba@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 81110384441a ("bpf: sockmap, add hash map support")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/infiniband/hw/hfi1/pio.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ kernel/bpf/sockmap.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/hfi1/pio.c
-+++ b/drivers/infiniband/hw/hfi1/pio.c
-@@ -86,6 +86,7 @@ void pio_send_control(struct hfi1_devdat
- 	unsigned long flags;
- 	int write = 1;	/* write sendctrl back */
- 	int flush = 0;	/* re-read sendctrl to make sure it is flushed */
-+	int i;
+--- a/kernel/bpf/sockmap.c
++++ b/kernel/bpf/sockmap.c
+@@ -2143,7 +2143,9 @@ static struct bpf_map *sock_hash_alloc(u
+ 		return ERR_PTR(-EPERM);
  
- 	spin_lock_irqsave(&dd->sendctrl_lock, flags);
+ 	/* check sanity of attributes */
+-	if (attr->max_entries == 0 || attr->value_size != 4 ||
++	if (attr->max_entries == 0 ||
++	    attr->key_size == 0 ||
++	    attr->value_size != 4 ||
+ 	    attr->map_flags & ~SOCK_CREATE_FLAG_MASK)
+ 		return ERR_PTR(-EINVAL);
  
-@@ -95,9 +96,13 @@ void pio_send_control(struct hfi1_devdat
- 		reg |= SEND_CTRL_SEND_ENABLE_SMASK;
- 	/* Fall through */
- 	case PSC_DATA_VL_ENABLE:
-+		mask = 0;
-+		for (i = 0; i < ARRAY_SIZE(dd->vld); i++)
-+			if (!dd->vld[i].mtu)
-+				mask |= BIT_ULL(i);
- 		/* Disallow sending on VLs not enabled */
--		mask = (((~0ull) << num_vls) & SEND_CTRL_UNSUPPORTED_VL_MASK) <<
--				SEND_CTRL_UNSUPPORTED_VL_SHIFT;
-+		mask = (mask & SEND_CTRL_UNSUPPORTED_VL_MASK) <<
-+			SEND_CTRL_UNSUPPORTED_VL_SHIFT;
- 		reg = (reg & ~SEND_CTRL_UNSUPPORTED_VL_SMASK) | mask;
- 		break;
- 	case PSC_GLOBAL_DISABLE:
 
 
