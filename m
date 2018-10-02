@@ -2,141 +2,131 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B3AC64EBC
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C906CC64EBC
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52B982089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:00:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="yW/0Fuy/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B982089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 9343B20878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:01:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9343B20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbeJCFqa (ORCPT
+        id S1727942AbeJCFrB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 01:46:30 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:29590 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbeJCFqa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 01:46:30 -0400
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id w92N00jd014310;
-        Wed, 3 Oct 2018 08:00:01 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w92N00jd014310
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538521202;
-        bh=/uUAllClpFBg8ySGkr2z93ad3NIJtZ2VLjZ7KrQ2hB4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yW/0Fuy/gCf12qVIszVTxdrVeTypHrX9cVqe1MXU22k/OT0Qlw/dfitKOE8KwiBhu
-         AGsOWIq8G3xGM7kbINynymYI2a+vpyhUzNrCqPazna76L6zz5scHAFlpmv3QUWqpda
-         QmyfeUcNVe+R1xoAHLVRVr0omiB+Y80Tp6tMYe/Rl4yhEFswaZs9xdUIMwCQfbsemX
-         Bp7z9j7Z/A39QZHwa+0C4Ut2vKPg7/vin0Xe86Dt75iX5dMwLViGo44CXUES7bhUTQ
-         atAfelyoSTg76JWjVf+vPr2LbFz0dABAa7vFcBP1Jb2SnZVOAkvqr9zaNgfSQl5cpS
-         26LRsbjtBgXIA==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 2/2] arm64: dts: uniphier: add SD controller nodes
-Date:   Wed,  3 Oct 2018 07:59:51 +0900
-Message-Id: <1538521191-16333-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1538521191-16333-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1538521191-16333-1-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 3 Oct 2018 01:47:01 -0400
+Received: from sauhun.de ([88.99.104.3]:49838 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727221AbeJCFrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 01:47:01 -0400
+Received: from localhost (p54B330B2.dip0.t-ipconnect.de [84.179.48.178])
+        by pokefinder.org (Postfix) with ESMTPSA id A2DEA2C7D2D;
+        Wed,  3 Oct 2018 01:01:15 +0200 (CEST)
+Date:   Wed, 3 Oct 2018 01:01:15 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mmc: tmio: move MFD variant reset to a platform hook
+Message-ID: <20181002230115.GB812@kunai>
+References: <1538397062-19162-1-git-send-email-yamada.masahiro@socionext.com>
+ <1538397062-19162-2-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="NMuMz9nt05w80d4+"
+Content-Disposition: inline
+In-Reply-To: <1538397062-19162-2-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add SD controller nodes for LD20 and PXs3.
-LD20 does not support the UHS mode, while PXs3 supports it.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+--NMuMz9nt05w80d4+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi    | 14 ++++++++++++++
- arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts |  4 ++++
- arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi    | 18 ++++++++++++++++++
- 3 files changed, 36 insertions(+)
+Hi Yamada-san,
 
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
-index 6932cef..ee92605 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
-@@ -528,6 +528,20 @@
- 			cdns,phy-dll-delay-sdclk-hsmmc = <21>;
- 		};
- 
-+		sd: sdhc@5a400000 {
-+			compatible = "socionext,uniphier-sd-v3.1.1";
-+			status = "disabled";
-+			reg = <0x5a400000 0x800>;
-+			interrupts = <0 76 4>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_sd>;
-+			clocks = <&sd_clk 0>;
-+			reset-names = "host";
-+			resets = <&sd_rst 0>;
-+			bus-width = <4>;
-+			cap-sd-highspeed;
-+		};
-+
- 		soc_glue: soc-glue@5f800000 {
- 			compatible = "socionext,uniphier-ld20-soc-glue",
- 				     "simple-mfd", "syscon";
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts b/arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts
-index c1bb607..1ad149c 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts
-+++ b/arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts
-@@ -75,6 +75,10 @@
- 	status = "okay";
- };
- 
-+&sd {
-+	status = "okay";
-+};
-+
- &eth0 {
- 	status = "okay";
- 	phy-handle = <&ethphy0>;
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi b/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
-index fd2bcd4..f3f19f5 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
-@@ -341,6 +341,24 @@
- 			cdns,phy-dll-delay-sdclk-hsmmc = <21>;
- 		};
- 
-+		sd: sdhc@5a400000 {
-+			compatible = "socionext,uniphier-sd-v3.1.1";
-+			status = "disabled";
-+			reg = <0x5a400000 0x800>;
-+			interrupts = <0 76 4>;
-+			pinctrl-names = "default", "uhs";
-+			pinctrl-0 = <&pinctrl_sd>;
-+			pinctrl-1 = <&pinctrl_sd_uhs>;
-+			clocks = <&sd_clk 0>;
-+			reset-names = "host";
-+			resets = <&sd_rst 0>;
-+			bus-width = <4>;
-+			cap-sd-highspeed;
-+			sd-uhs-sdr12;
-+			sd-uhs-sdr25;
-+			sd-uhs-sdr50;
-+		};
-+
- 		soc_glue: soc-glue@5f800000 {
- 			compatible = "socionext,uniphier-pxs3-soc-glue",
- 				     "simple-mfd", "syscon";
--- 
-2.7.4
+On Mon, Oct 01, 2018 at 09:31:01PM +0900, Masahiro Yamada wrote:
+> CTL_RESET_SDIO register is specific to the TMIO MFD (tmio_mmc.c).
+>=20
+> Add a new hook host->reset for performing a platform-specific reset
+> sequence, and move CTL_RESET_SDIO over there.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
+I like it in general.
+
+> +static void tmio_mmc_reset(struct tmio_mmc_host *host)
+> +{
+> +	sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
+> +	usleep_range(10000, 11000);
+> +	sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
+> +	usleep_range(10000, 11000);
+> +}
+> +
+
+Are you sure resetting SDIO works independently of resetting SD? Maybe
+we should add resetting SD here, too, to keep the pattern...
+
+> --- a/drivers/mmc/host/tmio_mmc_core.c
+> +++ b/drivers/mmc/host/tmio_mmc_core.c
+> @@ -164,14 +164,13 @@ static void tmio_mmc_reset(struct tmio_mmc_host *ho=
+st)
+>  {
+>  	/* FIXME - should we set stop clock reg here */
+>  	sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
+> -	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
+> -		sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
+>  	usleep_range(10000, 11000);
+>  	sd_ctrl_write16(host, CTL_RESET_SD, 0x0001);
+> -	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
+> -		sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
+>  	usleep_range(10000, 11000);
+
+=2E.. and have this simplified reset pattern either also in a seperate
+function, or doing...
+
+> =20
+> +	if (host->reset)
+> +		host->reset(host);
+	else
+		simplified_reset_pattern
+
+?
+
+What's your opinion?
+
+Regards,
+
+   Wolfram
+
+
+--NMuMz9nt05w80d4+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluz+LsACgkQFA3kzBSg
+KbZjpg//SLluqM1Huz74ZSqUTGeIfpin4OLgALKBMIcZCrX51riSpKsHhuLyYWqs
+AgZGDET8Ye5AlC5E3bPvY4rWXG2c3t55VbNt5hGcqvU78xekqGwSMjUBGrD0grs5
+eYUvReRihz4oGOqDIp2cu9Jjy4nM78FYTVMV6RjVMXWGaeuob9UWxip1S7L8acNd
++bsWcaApoqfDh6Rt4HhighW94OxGTx38Io+LcbwUFOV4gMlGo0GzPvcelNvS3CJ0
+TeQwuscF5txjLfyVbz+pcPARKyDun1xjYekOGKr97Kp+8dQbQwPlSiqSq9oPrf/S
+N4bDNGREifbY50FU2mtQbEfrF48NJ3F6x1pLUDXICMTrp260K5XFEiPNjXScZLch
+zT2OUyf8QuCjsl1PsaM/DJFjiPcy1v9R2PYYLls3dS4PiVT8w07jV6xCbOX3pw+n
+zECu9zPBJE2X/tSrZQqtCl7MNjem+AIbUrAtGotBPlGXjoOzzlPKlu9LxRMzEx8h
+5sqC5dQh36zX/ShkKllHiuhB0aIs+dNLzcT/gZbJJidONHOd6fpmIKegLJJEA7kF
+2cA2zqSSTS3uI3fpwCuWU+BACiMrBBAwYPRNdCAtwWqdcdZyby/KATPCQG/HLW39
+yW9WfRLACN5HhwUTFWvRiLuV+cM7aN4EfbPHcBsW8XUCz0WOUv0=
+=fc5y
+-----END PGP SIGNATURE-----
+
+--NMuMz9nt05w80d4+--
