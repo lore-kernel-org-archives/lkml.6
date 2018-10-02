@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55EC3C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9AEC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27A5B206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A5B206B2
+	by mail.kernel.org (Postfix) with ESMTP id 41111206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41111206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732191AbeJBURb (ORCPT
+        id S1732204AbeJBURh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:17:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35206 "EHLO
+        Tue, 2 Oct 2018 16:17:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35218 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732152AbeJBURa (ORCPT
+        with ESMTP id S1732083AbeJBURb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:30 -0400
+        Tue, 2 Oct 2018 16:17:31 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 736D5BF0;
-        Tue,  2 Oct 2018 13:34:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78BC7C3F;
+        Tue,  2 Oct 2018 13:34:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 061/137] ath10k: transmit queued frames after processing rx packets
-Date:   Tue,  2 Oct 2018 06:24:22 -0700
-Message-Id: <20181002132502.809024666@linuxfoundation.org>
+Subject: [PATCH 4.14 062/137] rndis_wlan: potential buffer overflow in rndis_wlan_auth_indication()
+Date:   Tue,  2 Oct 2018 06:24:23 -0700
+Message-Id: <20181002132502.917146669@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -52,89 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Niklas Cassel <niklas.cassel@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 3f04950f32d5d592ab4fcaecac2178558a6f7437 ]
+[ Upstream commit ae636fb1554833ee5133ca47bf4b2791b6739c52 ]
 
-When running iperf on ath10k SDIO, TX can stop working:
+This is a static checker fix, not something I have tested.  The issue
+is that on the second iteration through the loop, we jump forward by
+le32_to_cpu(auth_req->length) bytes.  The problem is that if the length
+is more than "buflen" then we end up with a negative "buflen".  A
+negative buflen is type promoted to a high positive value and the loop
+continues but it's accessing beyond the end of the buffer.
 
-iperf -c 192.168.1.1 -i 1 -t 20 -w 10K
-[  3]  0.0- 1.0 sec  2.00 MBytes  16.8 Mbits/sec
-[  3]  1.0- 2.0 sec  3.12 MBytes  26.2 Mbits/sec
-[  3]  2.0- 3.0 sec  3.25 MBytes  27.3 Mbits/sec
-[  3]  3.0- 4.0 sec   655 KBytes  5.36 Mbits/sec
-[  3]  4.0- 5.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  5.0- 6.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  6.0- 7.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  7.0- 8.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  8.0- 9.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  9.0-10.0 sec  0.00 Bytes  0.00 bits/sec
-[  3]  0.0-10.3 sec  9.01 MBytes  7.32 Mbits/sec
+I believe the "auth_req->length" comes from the firmware and if the
+firmware is malicious or buggy, you're already toasted so the impact of
+this bug is probably not very severe.
 
-There are frames in the ieee80211_txq and there are frames that have
-been removed from from this queue, but haven't yet been sent on the wire
-(num_pending_tx).
-
-When num_pending_tx reaches max_num_pending_tx, we will stop the queues
-by calling ieee80211_stop_queues().
-
-As frames that have previously been sent for transmission
-(num_pending_tx) are completed, we will decrease num_pending_tx and wake
-the queues by calling ieee80211_wake_queue(). ieee80211_wake_queue()
-does not call wake_tx_queue, so we might still have frames in the
-queue at this point.
-
-While the queues were stopped, the socket buffer might have filled up,
-and in order for user space to write more, we need to free the frames
-in the queue, since they are accounted to the socket. In order to free
-them, we first need to transmit them.
-
-This problem cannot be reproduced on low-latency devices, e.g. pci,
-since they call ath10k_mac_tx_push_pending() from
-ath10k_htt_txrx_compl_task(). ath10k_htt_txrx_compl_task() is not called
-on high-latency devices.
-Fix the problem by calling ath10k_mac_tx_push_pending(), after
-processing rx packets, just like for low-latency devices, also in the
-SDIO case. Since we are calling ath10k_mac_tx_push_pending() directly,
-we also need to export it.
-
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Fixes: 030645aceb3d ("rndis_wlan: handle 802.11 indications from device")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c  |    1 +
- drivers/net/wireless/ath/ath10k/sdio.c |    3 +++
- 2 files changed, 4 insertions(+)
+ drivers/net/wireless/rndis_wlan.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -4015,6 +4015,7 @@ void ath10k_mac_tx_push_pending(struct a
- 	rcu_read_unlock();
- 	spin_unlock_bh(&ar->txqs_lock);
- }
-+EXPORT_SYMBOL(ath10k_mac_tx_push_pending);
+--- a/drivers/net/wireless/rndis_wlan.c
++++ b/drivers/net/wireless/rndis_wlan.c
+@@ -2928,6 +2928,8 @@ static void rndis_wlan_auth_indication(s
  
- /************/
- /* Scanning */
---- a/drivers/net/wireless/ath/ath10k/sdio.c
-+++ b/drivers/net/wireless/ath/ath10k/sdio.c
-@@ -30,6 +30,7 @@
- #include "debug.h"
- #include "hif.h"
- #include "htc.h"
-+#include "mac.h"
- #include "targaddrs.h"
- #include "trace.h"
- #include "sdio.h"
-@@ -1346,6 +1347,8 @@ static void ath10k_sdio_irq_handler(stru
- 			break;
- 	} while (time_before(jiffies, timeout) && !done);
- 
-+	ath10k_mac_tx_push_pending(ar);
-+
- 	sdio_claim_host(ar_sdio->func);
- 
- 	if (ret && ret != -ECANCELED)
+ 	while (buflen >= sizeof(*auth_req)) {
+ 		auth_req = (void *)buf;
++		if (buflen < le32_to_cpu(auth_req->length))
++			return;
+ 		type = "unknown";
+ 		flags = le32_to_cpu(auth_req->flags);
+ 		pairwise_error = false;
 
 
