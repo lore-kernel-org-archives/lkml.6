@@ -6,48 +6,50 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0978C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 412C2C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF0AA204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:41:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF0AA204FD
+	by mail.kernel.org (Postfix) with ESMTP id 11D92204FD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:41:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D92204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbeJBRYP (ORCPT
+        id S1727421AbeJBRYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 13:24:15 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:34818 "EHLO
+        Tue, 2 Oct 2018 13:24:16 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:34820 "EHLO
         mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726935AbeJBRYP (ORCPT
+        by vger.kernel.org with ESMTP id S1727007AbeJBRYP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 2 Oct 2018 13:24:15 -0400
 Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w92AdZDl029613;
-        Tue, 2 Oct 2018 05:41:35 -0500
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w92Aee4C030652;
+        Tue, 2 Oct 2018 05:41:36 -0500
 Authentication-Results: ppops.net;
         spf=none smtp.mailfrom=rf@opensource.cirrus.com
 Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2mugjdhm6p-1;
-        Tue, 02 Oct 2018 05:41:35 -0500
+        by mx0a-001ae601.pphosted.com with ESMTP id 2mugjdhm6q-1;
+        Tue, 02 Oct 2018 05:41:36 -0500
 Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 393BA611C8BA;
+        by mail1.cirrus.com (Postfix) with ESMTP id 91BD2611C8C1;
         Tue,  2 Oct 2018 05:41:35 -0500 (CDT)
 Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
  (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 2 Oct 2018
  11:41:34 +0100
 Received: from edi-sw-dsktp006.ad.cirrus.com (edi-sw-dsktp006.ad.cirrus.com
  [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- w92AfYlF022871;        Tue, 2 Oct 2018 11:41:34 +0100
+ w92AfYlG022871;        Tue, 2 Oct 2018 11:41:34 +0100
 From:   Richard Fitzgerald <rf@opensource.cirrus.com>
 To:     <lee.jones@linaro.org>
 CC:     <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
         "Richard Fitzgerald" <rf@opensource.cirrus.com>
-Subject: [PATCH v2 1/2] mfd: madera: Increase wait time for silicon reset
-Date:   Tue, 2 Oct 2018 11:41:33 +0100
-Message-ID: <20181002104134.29003-1-rf@opensource.cirrus.com>
+Subject: [PATCH v2 2/2] mfd: madera: Wait for BOOT_DONE before reading device ID
+Date:   Tue, 2 Oct 2018 11:41:34 +0100
+Message-ID: <20181002104134.29003-2-rf@opensource.cirrus.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181002104134.29003-1-rf@opensource.cirrus.com>
+References: <20181002104134.29003-1-rf@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
@@ -60,67 +62,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Based on latest silicon validation, we should allow at least
-2 milliseconds after DCVDD enable or hard reset before trying
-to communicate with the silicon.
+It isn't safe to read the device ID in the SOFTWARE_RESET
+register until the silicon boot sequence has completed. This
+patch rearranges the code to wait until BOOT_DONE is set.
 
-Previously the delay was done as a side-effect of
-madera_disable_hard_reset(). As we also need this delay when
-enabling DCVDD (with or without hard reset) it is better for it
-to be obvious where it happens in every power-up sequence rather
-than hidden within another call in some cases. So it has been
-moved out into a separate function call.
+If we don't have a hard reset line we want to defer writing a
+soft reset command until we have identified the silicon as
+something we recognize. As the BOOT_DONE bit is sticky it is
+safe to wait for it without issuing a soft reset first, because
+the most recent power-up will have caused a boot sequence and
+set the bit. Note that the boot sequence is not the same as a
+reset so we still have to soft reset to get the codec into a
+known state.
 
+Signed-off-by: Stuart Henderson <stuarth@opensource.cirrus.com>
 Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 ---
- drivers/mfd/madera-core.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/mfd/madera-core.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
-index 440030cecbbd..1dedfe68a3dc 100644
+index 1dedfe68a3dc..e114ca5e6c3f 100644
 --- a/drivers/mfd/madera-core.c
 +++ b/drivers/mfd/madera-core.c
-@@ -135,6 +135,15 @@ EXPORT_SYMBOL_GPL(madera_name_from_type);
- #define MADERA_BOOT_POLL_INTERVAL_USEC		5000
- #define MADERA_BOOT_POLL_TIMEOUT_USEC		25000
- 
-+static void madera_por_delay(void)
-+{
-+	/*
-+	 * Delay after DCVDD enable or hard reset to allow for silicon POR
-+	 * (power-on reset).
-+	 */
-+	usleep_range(2000, 3000);
-+}
-+
- static int madera_wait_for_boot(struct madera *madera)
- {
- 	ktime_t timeout;
-@@ -209,7 +218,6 @@ static void madera_disable_hard_reset(struct madera *madera)
- 		return;
- 
- 	gpiod_set_raw_value_cansleep(madera->pdata.reset, 1);
--	usleep_range(1000, 2000);
- }
- 
- static int __maybe_unused madera_runtime_resume(struct device *dev)
-@@ -225,6 +233,8 @@ static int __maybe_unused madera_runtime_resume(struct device *dev)
- 		return ret;
- 	}
- 
-+	madera_por_delay();
-+
+@@ -455,10 +455,13 @@ int madera_dev_init(struct madera *madera)
  	regcache_cache_only(madera->regmap, false);
  	regcache_cache_only(madera->regmap_32bit, false);
  
-@@ -440,6 +450,7 @@ int madera_dev_init(struct madera *madera)
+-	/*
+-	 * Now we can power up and verify that this is a chip we know about
+-	 * before we start doing any writes to its registers.
+-	 */
++	/* BOOT_DONE must be set before we can read the device ID */
++	ret = madera_wait_for_boot(madera);
++	if (ret) {
++		dev_err(madera->dev, "Device failed initial boot: %d\n", ret);
++		goto err_reset;
++	}
++
+ 	ret = regmap_read(madera->regmap, MADERA_SOFTWARE_RESET, &hwid);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to read ID register: %d\n", ret);
+@@ -528,12 +531,13 @@ int madera_dev_init(struct madera *madera)
+ 		ret = madera_soft_reset(madera);
+ 		if (ret)
+ 			goto err_reset;
+-	}
+ 
+-	ret = madera_wait_for_boot(madera);
+-	if (ret) {
+-		dev_err(madera->dev, "Device failed initial boot: %d\n", ret);
+-		goto err_reset;
++		ret = madera_wait_for_boot(madera);
++		if (ret) {
++			dev_err(madera->dev, "Device failed initial soft reboot: %d\n",
++				ret);
++			goto err_reset;
++		}
  	}
  
- 	madera_disable_hard_reset(madera);
-+	madera_por_delay();
- 
- 	regcache_cache_only(madera->regmap, false);
- 	regcache_cache_only(madera->regmap_32bit, false);
+ 	ret = regmap_read(madera->regmap, MADERA_HARDWARE_REVISION,
 -- 
 2.11.0
 
