@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FE8C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46EAC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57F3D206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:38:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57F3D206B2
+	by mail.kernel.org (Postfix) with ESMTP id 794E32064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:38:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 794E32064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733256AbeJBUVx (ORCPT
+        id S1732465AbeJBUWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:21:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36558 "EHLO
+        Tue, 2 Oct 2018 16:22:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36520 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732311AbeJBUU3 (ORCPT
+        with ESMTP id S1731241AbeJBUUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:29 -0400
+        Tue, 2 Oct 2018 16:20:23 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 34D40B2F;
-        Tue,  2 Oct 2018 13:37:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CBAB99D9;
+        Tue,  2 Oct 2018 13:36:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bo Chen <chenbo@pdx.edu>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 87/94] e1000: ensure to free old tx/rx rings in set_ringparam()
-Date:   Tue,  2 Oct 2018 06:25:41 -0700
-Message-Id: <20181002132506.580398210@linuxfoundation.org>
+Subject: [PATCH 4.9 83/94] thermal: of-thermal: disable passive polling when thermal zone is disabled
+Date:   Tue,  2 Oct 2018 06:25:37 -0700
+Message-Id: <20181002132506.271668546@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -54,46 +52,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bo Chen <chenbo@pdx.edu>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-[ Upstream commit ee400a3f1bfe7004a3e14b81c38ccc5583c26295 ]
+[ Upstream commit 152395fd03d4ce1e535a75cdbf58105e50587611 ]
 
-In 'e1000_set_ringparam()', the tx_ring and rx_ring are updated with new value
-and the old tx/rx rings are freed only when the device is up. There are resource
-leaks on old tx/rx rings when the device is not up. This bug is reported by COD,
-a tool for testing kernel module binaries I am building.
+When thermal zone is in passive mode, disabling its mode from
+sysfs is NOT taking effect at all, it is still polling the
+temperature of the disabled thermal zone and handling all thermal
+trips, it makes user confused. The disabling operation should
+disable the thermal zone behavior completely, for both active and
+passive mode, this patch clears the passive_delay when thermal
+zone is disabled and restores it when it is enabled.
 
-This patch fixes the bug by always calling 'kfree()' on old tx/rx rings in
-'e1000_set_ringparam()'.
-
-Signed-off-by: Bo Chen <chenbo@pdx.edu>
-Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000/e1000_ethtool.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/thermal/of-thermal.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-@@ -645,14 +645,14 @@ static int e1000_set_ringparam(struct ne
- 		adapter->tx_ring = tx_old;
- 		e1000_free_all_rx_resources(adapter);
- 		e1000_free_all_tx_resources(adapter);
--		kfree(tx_old);
--		kfree(rx_old);
- 		adapter->rx_ring = rxdr;
- 		adapter->tx_ring = txdr;
- 		err = e1000_up(adapter);
- 		if (err)
- 			goto err_setup;
- 	}
-+	kfree(tx_old);
-+	kfree(rx_old);
+--- a/drivers/thermal/of-thermal.c
++++ b/drivers/thermal/of-thermal.c
+@@ -278,10 +278,13 @@ static int of_thermal_set_mode(struct th
  
- 	clear_bit(__E1000_RESETTING, &adapter->flags);
- 	return 0;
+ 	mutex_lock(&tz->lock);
+ 
+-	if (mode == THERMAL_DEVICE_ENABLED)
++	if (mode == THERMAL_DEVICE_ENABLED) {
+ 		tz->polling_delay = data->polling_delay;
+-	else
++		tz->passive_delay = data->passive_delay;
++	} else {
+ 		tz->polling_delay = 0;
++		tz->passive_delay = 0;
++	}
+ 
+ 	mutex_unlock(&tz->lock);
+ 
 
 
