@@ -6,49 +6,47 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C97C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 364A5C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB45320645
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:07:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB45320645
+	by mail.kernel.org (Postfix) with ESMTP id E55E820878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:07:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E55E820878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbeJBQt2 (ORCPT
+        id S1727551AbeJBQtp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 12:49:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54749 "EHLO
+        Tue, 2 Oct 2018 12:49:45 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50621 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbeJBQt2 (ORCPT
+        with ESMTP id S1726178AbeJBQto (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 12:49:28 -0400
+        Tue, 2 Oct 2018 12:49:44 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w92A6KEK1915644
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w92A6q7K1915690
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 2 Oct 2018 03:06:20 -0700
+        Tue, 2 Oct 2018 03:06:52 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w92A6Kwb1915641;
-        Tue, 2 Oct 2018 03:06:20 -0700
-Date:   Tue, 2 Oct 2018 03:06:20 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w92A6qG21915687;
+        Tue, 2 Oct 2018 03:06:52 -0700
+Date:   Tue, 2 Oct 2018 03:06:52 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vincent Guittot <tipbot@zytor.com>
-Message-ID: <tip-11d4afd4ff667f9b6178ee8c142c36cb78bd84db@git.kernel.org>
-Cc:     mingo@kernel.org, miguel.ojeda.sandonis@gmail.com,
-        peterz@infradead.org, hpa@zytor.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, mingo@redhat.com, vincent.guittot@linaro.org,
-        douly.fnst@cn.fujitsu.com, linux-kernel@vger.kernel.org
-Reply-To: douly.fnst@cn.fujitsu.com, torvalds@linux-foundation.org,
-          hpa@zytor.com, vincent.guittot@linaro.org, mingo@redhat.com,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, peterz@infradead.org,
-          miguel.ojeda.sandonis@gmail.com
-In-Reply-To: <1537867062-27285-1-git-send-email-vincent.guittot@linaro.org>
-References: <1537867062-27285-1-git-send-email-vincent.guittot@linaro.org>
+From:   tip-bot for Dietmar Eggemann <tipbot@zytor.com>
+Message-ID: <tip-fdf5f315d5cfaefb7bb8a62ec4bf37b9891837aa@git.kernel.org>
+Cc:     dietmar.eggemann@arm.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        hpa@zytor.com, mingo@kernel.org, zhijianx.li@intel.com,
+        peterz@infradead.org, fengguang.wu@intel.com
+Reply-To: hpa@zytor.com, fengguang.wu@intel.com, mingo@kernel.org,
+          zhijianx.li@intel.com, peterz@infradead.org, tglx@linutronix.de,
+          dietmar.eggemann@arm.com, linux-kernel@vger.kernel.org,
+          torvalds@linux-foundation.org
+In-Reply-To: <20180809135753.21077-1-dietmar.eggemann@arm.com>
+References: <20180809135753.21077-1-dietmar.eggemann@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/pelt: Fix warning and clean up IRQ PELT
- config
-Git-Commit-ID: 11d4afd4ff667f9b6178ee8c142c36cb78bd84db
+Subject: [tip:sched/core] sched/fair: Disable LB_BIAS by default
+Git-Commit-ID: fdf5f315d5cfaefb7bb8a62ec4bf37b9891837aa
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,146 +60,245 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  11d4afd4ff667f9b6178ee8c142c36cb78bd84db
-Gitweb:     https://git.kernel.org/tip/11d4afd4ff667f9b6178ee8c142c36cb78bd84db
-Author:     Vincent Guittot <vincent.guittot@linaro.org>
-AuthorDate: Tue, 25 Sep 2018 11:17:42 +0200
+Commit-ID:  fdf5f315d5cfaefb7bb8a62ec4bf37b9891837aa
+Gitweb:     https://git.kernel.org/tip/fdf5f315d5cfaefb7bb8a62ec4bf37b9891837aa
+Author:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+AuthorDate: Thu, 9 Aug 2018 14:57:53 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 2 Oct 2018 09:45:00 +0200
+CommitDate: Tue, 2 Oct 2018 09:45:01 +0200
 
-sched/pelt: Fix warning and clean up IRQ PELT config
+sched/fair: Disable LB_BIAS by default
 
-Create a config for enabling irq load tracking in the scheduler.
-irq load tracking is useful only when irq or paravirtual time is
-accounted but it's only possible with SMP for now.
+LB_BIAS allows the adjustment on how conservative load should be
+balanced.
 
-Also use __maybe_unused to remove the compilation warning in
-update_rq_clock_task() that has been introduced by:
+The rq->cpu_load[idx] array is used for this functionality. It contains
+weighted CPU load decayed average values over different intervals
+(idx = 1..4). Idx = 0 is the weighted CPU load itself.
 
-  2e62c4743adc ("sched/fair: Remove #ifdefs from scale_rt_capacity()")
+The values are updated during scheduler_tick, before idle balance and at
+nohz exit.
 
-Suggested-by: Ingo Molnar <mingo@redhat.com>
-Reported-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Reported-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+There are 5 different types of idx's per sched domain (sd). Each of them
+is used to index into the rq->cpu_load[idx] array in a specific scenario
+(busy, idle and newidle for load balancing, forkexec for wake-up
+slow-path load balancing and wake for affine wakeup based on weight).
+Only the sd idx's for busy and idle load balancing are set to 2,3 or 1,2
+respectively. All the other sd idx's are set to 0.
+
+Conservative load balancing is achieved for sd idx's >= 1 by using the
+min/max (source_load()/target_load()) value between the current weighted
+CPU load and the rq->cpu_load[sd idx -1] for the busiest(idlest)/local
+CPU load in load balancing or vice versa in the wake-up slow-path load
+balancing.
+There is no conservative balancing for sd idx = 0 since only current
+weighted CPU load is used in this case.
+
+It is very likely that LB_BIAS' influence on load balancing can be
+neglected (see test results below). This is further supported by:
+
+(1) Weighted CPU load today is by itself a decayed average value (PELT)
+    (cfs_rq->avg->runnable_load_avg) and not the instantaneous load
+    (rq->load.weight) it was when LB_BIAS was introduced.
+
+(2) Sd imbalance_pct is used for CPU_NEWLY_IDLE and CPU_NOT_IDLE (relate
+    to sd's newidle and busy idx) in find_busiest_group() when comparing
+    busiest and local avg load to make load balancing even more
+    conservative.
+
+(3) The sd forkexec and newidle idx are always set to 0 so there is no
+    adjustment on how conservatively load balancing is done here.
+
+(4) Affine wakeup based on weight (wake_affine_weight()) will not be
+    impacted since the sd wake idx is always set to 0.
+
+Let's disable LB_BIAS by default for a few kernel releases to make sure
+that no workload and no scheduler topology is affected. The benefit of
+being able to remove the LB_BIAS dependency from source_load() and
+target_load() is that the entire rq->cpu_load[idx] code could be removed
+in this case.
+
+It is really hard to say if there is no regression w/o testing this with
+a lot of different workloads on a lot of different platforms, especially
+NUMA machines.
+The following 104 LKP (Linux Kernel Performance) tests were run by the
+0-Day guys mostly on multi-socket hosts with a larger number of logical
+cpus (88, 192).
+The base for the test was commit b3dae109fa89 ("sched/swait: Rename to
+exclusive") (tip/sched/core v4.18-rc1).
+Only 2 out of the 104 tests had a significant change in one of the
+metrics (fsmark/1x-1t-1HDD-btrfs-nfsv4-4M-60G-NoSync-performance +7%
+files_per_sec, unixbench/300s-100%-syscall-performance -11% score).
+Tests which showed a change in one of the metrics are marked with a '*'
+and this change is listed as well.
+
+(a) lkp-bdw-ep3:
+      88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz 64G
+
+    dd-write/10m-1HDD-cfq-btrfs-100dd-performance
+    fsmark/1x-1t-1HDD-xfs-nfsv4-4M-60G-NoSync-performance
+  * fsmark/1x-1t-1HDD-btrfs-nfsv4-4M-60G-NoSync-performance
+      7.50  7%  8.00  ±  6%  fsmark.files_per_sec
+    fsmark/1x-1t-1HDD-btrfs-nfsv4-4M-60G-fsyncBeforeClose-performance
+    fsmark/1x-1t-1HDD-btrfs-4M-60G-NoSync-performance
+    fsmark/1x-1t-1HDD-btrfs-4M-60G-fsyncBeforeClose-performance
+    kbuild/300s-50%-vmlinux_prereq-performance
+    kbuild/300s-200%-vmlinux_prereq-performance
+    kbuild/300s-50%-vmlinux_prereq-performance-1HDD-ext4
+    kbuild/300s-200%-vmlinux_prereq-performance-1HDD-ext4
+
+(b) lkp-skl-4sp1:
+      192 threads Intel(R) Xeon(R) Platinum 8160 768G
+
+    dbench/100%-performance
+    ebizzy/200%-100x-10s-performance
+    hackbench/1600%-process-pipe-performance
+    iperf/300s-cs-localhost-tcp-performance
+    iperf/300s-cs-localhost-udp-performance
+    perf-bench-numa-mem/2t-300M-performance
+    perf-bench-sched-pipe/10000000ops-process-performance
+    perf-bench-sched-pipe/10000000ops-threads-performance
+    schbench/2-16-300-30000-30000-performance
+    tbench/100%-cs-localhost-performance
+
+(c) lkp-bdw-ep6:
+      88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz 128G
+
+    stress-ng/100%-60s-pipe-performance
+    unixbench/300s-1-whetstone-double-performance
+    unixbench/300s-1-shell1-performance
+    unixbench/300s-1-shell8-performance
+    unixbench/300s-1-pipe-performance
+  * unixbench/300s-1-context1-performance
+      312  315  unixbench.score
+    unixbench/300s-1-spawn-performance
+    unixbench/300s-1-syscall-performance
+    unixbench/300s-1-dhry2reg-performance
+    unixbench/300s-1-fstime-performance
+    unixbench/300s-1-fsbuffer-performance
+    unixbench/300s-1-fsdisk-performance
+    unixbench/300s-100%-whetstone-double-performance
+    unixbench/300s-100%-shell1-performance
+    unixbench/300s-100%-shell8-performance
+    unixbench/300s-100%-pipe-performance
+    unixbench/300s-100%-context1-performance
+    unixbench/300s-100%-spawn-performance
+  * unixbench/300s-100%-syscall-performance
+      3571  ±  3%  -11%  3183  ±  4%  unixbench.score
+    unixbench/300s-100%-dhry2reg-performance
+    unixbench/300s-100%-fstime-performance
+    unixbench/300s-100%-fsbuffer-performance
+    unixbench/300s-100%-fsdisk-performance
+    unixbench/300s-1-execl-performance
+    unixbench/300s-100%-execl-performance
+  * will-it-scale/brk1-performance
+      365004  360387  will-it-scale.per_thread_ops
+  * will-it-scale/dup1-performance
+      432401  437596  will-it-scale.per_thread_ops
+    will-it-scale/eventfd1-performance
+    will-it-scale/futex1-performance
+    will-it-scale/futex2-performance
+    will-it-scale/futex3-performance
+    will-it-scale/futex4-performance
+    will-it-scale/getppid1-performance
+    will-it-scale/lock1-performance
+    will-it-scale/lseek1-performance
+    will-it-scale/lseek2-performance
+  * will-it-scale/malloc1-performance
+      47025  45817  will-it-scale.per_thread_ops
+      77499  76529  will-it-scale.per_process_ops
+    will-it-scale/malloc2-performance
+  * will-it-scale/mmap1-performance
+      123399  120815  will-it-scale.per_thread_ops
+      152219  149833  will-it-scale.per_process_ops
+  * will-it-scale/mmap2-performance
+      107327  104714  will-it-scale.per_thread_ops
+      136405  133765  will-it-scale.per_process_ops
+    will-it-scale/open1-performance
+  * will-it-scale/open2-performance
+      171570  168805  will-it-scale.per_thread_ops
+      532644  526202  will-it-scale.per_process_ops
+    will-it-scale/page_fault1-performance
+    will-it-scale/page_fault2-performance
+    will-it-scale/page_fault3-performance
+    will-it-scale/pipe1-performance
+    will-it-scale/poll1-performance
+  * will-it-scale/poll2-performance
+      176134  172848  will-it-scale.per_thread_ops
+      281361  275053  will-it-scale.per_process_ops
+    will-it-scale/posix_semaphore1-performance
+    will-it-scale/pread1-performance
+    will-it-scale/pread2-performance
+    will-it-scale/pread3-performance
+    will-it-scale/pthread_mutex1-performance
+    will-it-scale/pthread_mutex2-performance
+    will-it-scale/pwrite1-performance
+    will-it-scale/pwrite2-performance
+    will-it-scale/pwrite3-performance
+  * will-it-scale/read1-performance
+      1190563  1174833  will-it-scale.per_thread_ops
+  * will-it-scale/read2-performance
+      1105369  1080427  will-it-scale.per_thread_ops
+    will-it-scale/readseek1-performance
+  * will-it-scale/readseek2-performance
+      261818  259040  will-it-scale.per_thread_ops
+    will-it-scale/readseek3-performance
+  * will-it-scale/sched_yield-performance
+      2408059  2382034  will-it-scale.per_thread_ops
+    will-it-scale/signal1-performance
+    will-it-scale/unix1-performance
+    will-it-scale/unlink1-performance
+    will-it-scale/unlink2-performance
+  * will-it-scale/write1-performance
+      976701  961588  will-it-scale.per_thread_ops
+  * will-it-scale/writeseek1-performance
+      831898  822448  will-it-scale.per_thread_ops
+  * will-it-scale/writeseek2-performance
+      228248  225065  will-it-scale.per_thread_ops
+  * will-it-scale/writeseek3-performance
+      226670  224058  will-it-scale.per_thread_ops
+    will-it-scale/context_switch1-performance
+    aim7/performance-fork_test-2000
+  * aim7/performance-brk_test-3000
+      74869  76676  aim7.jobs-per-min
+    aim7/performance-disk_cp-3000
+    aim7/performance-disk_rd-3000
+    aim7/performance-sieve-3000
+    aim7/performance-page_test-3000
+    aim7/performance-creat-clo-3000
+    aim7/performance-mem_rtns_1-8000
+    aim7/performance-disk_wrt-8000
+    aim7/performance-pipe_cpy-8000
+    aim7/performance-ram_copy-8000
+
+(d) lkp-avoton3:
+      8 threads Intel(R) Atom(TM) CPU C2750 @ 2.40GHz 16G
+
+    netperf/ipv4-900s-200%-cs-localhost-TCP_STREAM-performance
+
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Li Zhijian <zhijianx.li@intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: dou_liyang@163.com
-Fixes: 2e62c4743adc ("sched/fair: Remove #ifdefs from scale_rt_capacity()")
-Link: http://lkml.kernel.org/r/1537867062-27285-1-git-send-email-vincent.guittot@linaro.org
+Link: http://lkml.kernel.org/r/20180809135753.21077-1-dietmar.eggemann@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- init/Kconfig         | 5 +++++
- kernel/sched/core.c  | 7 +++----
- kernel/sched/fair.c  | 2 +-
- kernel/sched/pelt.c  | 2 +-
- kernel/sched/pelt.h  | 2 +-
- kernel/sched/sched.h | 5 ++---
- 6 files changed, 13 insertions(+), 10 deletions(-)
+ kernel/sched/features.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 1e234e2f1cba..317d5ccb5191 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -415,6 +415,11 @@ config IRQ_TIME_ACCOUNTING
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index 85ae8488039c..858589b83377 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -39,7 +39,7 @@ SCHED_FEAT(WAKEUP_PREEMPTION, true)
  
- 	  If in doubt, say N here.
+ SCHED_FEAT(HRTICK, false)
+ SCHED_FEAT(DOUBLE_TICK, false)
+-SCHED_FEAT(LB_BIAS, true)
++SCHED_FEAT(LB_BIAS, false)
  
-+config HAVE_SCHED_AVG_IRQ
-+	def_bool y
-+	depends on IRQ_TIME_ACCOUNTING || PARAVIRT_TIME_ACCOUNTING
-+	depends on SMP
-+
- config BSD_PROCESS_ACCT
- 	bool "BSD Process Accounting"
- 	depends on MULTIUSER
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ad97f3ba5ec5..f2caf1bae4a3 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -135,9 +135,8 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
-  * In theory, the compile should just see 0 here, and optimize out the call
-  * to sched_rt_avg_update. But I don't trust it...
-  */
--#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
--	s64 steal = 0, irq_delta = 0;
--#endif
-+	s64 __maybe_unused steal = 0, irq_delta = 0;
-+
- #ifdef CONFIG_IRQ_TIME_ACCOUNTING
- 	irq_delta = irq_time_read(cpu_of(rq)) - rq->prev_irq_time;
- 
-@@ -177,7 +176,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- 
- 	rq->clock_task += delta;
- 
--#ifdef HAVE_SCHED_AVG_IRQ
-+#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
- 	if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
- 		update_irq_load_avg(rq, irq_delta + steal);
- #endif
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1d92ed2eca8b..d59307ecd67d 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7317,7 +7317,7 @@ static inline bool others_have_blocked(struct rq *rq)
- 	if (READ_ONCE(rq->avg_dl.util_avg))
- 		return true;
- 
--#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-+#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
- 	if (READ_ONCE(rq->avg_irq.util_avg))
- 		return true;
- #endif
-diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index 35475c0c5419..48a126486435 100644
---- a/kernel/sched/pelt.c
-+++ b/kernel/sched/pelt.c
-@@ -358,7 +358,7 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
- 	return 0;
- }
- 
--#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-+#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
  /*
-  * irq:
-  *
-diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
-index d2894db28955..7e56b489ff32 100644
---- a/kernel/sched/pelt.h
-+++ b/kernel/sched/pelt.h
-@@ -6,7 +6,7 @@ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
- int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
- int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
- 
--#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-+#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
- int update_irq_load_avg(struct rq *rq, u64 running);
- #else
- static inline int
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 632804fa0b12..798b1afd5092 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -862,8 +862,7 @@ struct rq {
- 
- 	struct sched_avg	avg_rt;
- 	struct sched_avg	avg_dl;
--#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
--#define HAVE_SCHED_AVG_IRQ
-+#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
- 	struct sched_avg	avg_irq;
- #endif
- 	u64			idle_stamp;
-@@ -2223,7 +2222,7 @@ static inline unsigned long cpu_util_rt(struct rq *rq)
- }
- #endif
- 
--#ifdef HAVE_SCHED_AVG_IRQ
-+#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
- static inline unsigned long cpu_util_irq(struct rq *rq)
- {
- 	return rq->avg_irq.util_avg;
+  * Decrement CPU capacity based on time not spent running tasks
