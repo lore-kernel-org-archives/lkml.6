@@ -2,177 +2,109 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0B2C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F96C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7B0F20878
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:32:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEF6620878
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T9WbiKYH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PVRuajPa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7B0F20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqzenBJs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF6620878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbeJBOOh (ORCPT
+        id S1727439AbeJBOOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:14:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33270 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbeJBOOg (ORCPT
+        Tue, 2 Oct 2018 10:14:43 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41846 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726814AbeJBOOZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:14:36 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 24D9A60397; Tue,  2 Oct 2018 07:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538465565;
-        bh=tUlfmW5aV9ZtLXvsrD+JrK/a6+a3QMyifa3gApfVOZ0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=T9WbiKYHWjlS9QFrwdUX8+94otxW45bUDYBXkJnLhN4fFHqBhVmfhGJGGI5T+F4jO
-         fLdKm4cPOKbj4ZTXfeVtNx3xJnqvQlSYAZZpDFmOttxv4p9LFcNeXlcySBbz1PiW6d
-         aAqGdvG25Ozpo+336mGpm+DeG9w26EYDpsrN1y/A=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 39A1760866;
-        Tue,  2 Oct 2018 07:32:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538465564;
-        bh=tUlfmW5aV9ZtLXvsrD+JrK/a6+a3QMyifa3gApfVOZ0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PVRuajPaB2+Y8370LNeLoWelLLsFGM7xbhzwbkSbWZ5YsYKCGJmMu2BKHHgd5PBZZ
-         VdRo9hc7e7ls6T7l5slYMc8tq67gZpd24jlKbIJQ5IX5OCtnFvPZIBAjIhYlqiUIzb
-         NUBhlN+keC7xMW4jF0dtXBT3Zxgkoed5c47QFzmk=
+        Tue, 2 Oct 2018 10:14:25 -0400
+Received: by mail-lf1-f65.google.com with SMTP id q39-v6so659059lfi.8;
+        Tue, 02 Oct 2018 00:32:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=y6P9OV16u273ERMZhfXC/W1SWJA4ZlFPo/FqG3IUDd0=;
+        b=LqzenBJsz/apfQwMh7oswDXJ8Df/89aOitLdhaQW2rg9RxVx05zoDMXyK+RNLUEXG2
+         Yb7SBE0tPwCBUZ3+A8BOKDYU6FvlPH66k/GxT4XbX5w6kvbmvbMxsss185y+R6sr21pV
+         ONebSgnw5xM9oD3gkKYsX0qMGPe+O/tiZQRfb5sQvIkjvaLojtzWGiwBc1jV3RK7je5i
+         lVaDNQp4KYAYuU8sHwNuXlUZ3iO6rdyRqxayR/9lxLGc9Iw7beFvCqa9cmGV3nvLlUHl
+         lySJo6eremN1BKhI7FgIIrm9w7bysWqmqJVAhdd38zgpHXPTiiVJqoVsSu1et/KuIhZK
+         9Ilg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=y6P9OV16u273ERMZhfXC/W1SWJA4ZlFPo/FqG3IUDd0=;
+        b=lEOmEVUZn4jy+NW96b72aYnegAv6dM2ffq6nj39dr0WTl2s1liaHUjHfmMTqCHzum/
+         dxxTX06/mthyTsI42LvwEDsaK8pcdBQm567qEHqz9vOeURUhNY7k9OnfhxeMMbtub0XJ
+         DeFYGiWEJNy1ZuwTxzkY18A319Dh7YWH6BbsBoUYY+OuS1KwbrJbmkcB9hrvaFpvBpKj
+         4tXNPgx2bTeQK74zYU5zucfxuWDOpdr3Xs/QExewANVG7JqgBh2EKEvuQAW818np+l8v
+         r273bTmR3M+toCL0fYwvMAvF5bEhl5rnTf3czMPNYrB64b72hAReQ0mwZTc7rG69h9L5
+         v9mw==
+X-Gm-Message-State: ABuFfojlXw8KQm09yfK+7wkZSCYwJ4XQqKIk0hpfKT4zaBWU1RoPj3GX
+        jGSCklMjPNsgbyyR5sV4Nx4=
+X-Google-Smtp-Source: ACcGV62BM2cUdAevimPMiig87M3Py4xwiNUEHjkolGnhz65FILKO0FYL9r8mYbtUOG+FQLNO5nGP7A==
+X-Received: by 2002:a19:6381:: with SMTP id v1-v6mr7401300lfi.136.1538465551979;
+        Tue, 02 Oct 2018 00:32:31 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id d17-v6sm1242246lfj.9.2018.10.02.00.32.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 00:32:30 -0700 (PDT)
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v5 5/6] [media] ad5820: DT new compatible devices
+Date:   Tue,  2 Oct 2018 09:32:21 +0200
+Message-Id: <20181002073222.11368-5-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181002073222.11368-1-ricardo.ribalda@gmail.com>
+References: <20181002073222.11368-1-ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 02 Oct 2018 13:02:44 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Harish Bandi <c-hbandi@codeaurora.org>
-Subject: Re: [PATCH v1] Bluetooth: hci_qca: Add support for controller debug
- logs.
-In-Reply-To: <20181001194821.GH22824@google.com>
-References: <20181001135102.17453-1-bgodavar@codeaurora.org>
- <20181001194821.GH22824@google.com>
-Message-ID: <3eb67181ab722c9cc1af76d80bde9e76@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+Document new compatible devices.
 
-On 2018-10-02 01:18, Matthias Kaehlcke wrote:
-> Hi Balakrishna,
-> 
-> On Mon, Oct 01, 2018 at 07:21:02PM +0530, Balakrishna Godavarthi wrote:
->> This patch will prevent error messages splashing on console.
->> 
->> [   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL 
->> packet for unknown connection handle 3804
->> [   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL 
->> packet for unknown connection handle 3804
->> [   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL 
->> packet for unknown connection handle 3804
->> [   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL 
->> packet for unknown connection handle 3804
->> 
->> QCA wcn3990 will send the debug logs in the form of ACL packets.
->> While decoding packet in qca_recv(), marking the received debug log
->> packet as diagnostic packet.
->> 
->> Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
->> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->> ---
->>  drivers/bluetooth/hci_qca.c | 27 ++++++++++++++++++++++++++-
->>  1 file changed, 26 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> index d98ed0442201..a00910aaed54 100644
->> --- a/drivers/bluetooth/hci_qca.c
->> +++ b/drivers/bluetooth/hci_qca.c
->> @@ -63,6 +63,10 @@
->>  /* susclk rate */
->>  #define SUSCLK_RATE_32KHZ	32768
->> 
->> +/* Controller debug log header */
->> +#define QCA_DEBUG_HDR_MSB	0xDC
->> +#define QCA_DEBUG_HDR_LSB	0x2E
->> +
->>  /* HCI_IBS transmit side sleep protocol states */
->>  enum tx_ibs_states {
->>  	HCI_IBS_TX_ASLEEP,
->> @@ -849,6 +853,20 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, 
->> struct sk_buff *skb)
->>  	return 0;
->>  }
->> 
->> +static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff 
->> *skb)
->> +{
->> +	/* We receive debug logs from chip as an ACL packets.
->> +	 * Instead of sending the data to ACL to decode the
->> +	 * received data, we are pushing them to the above layers
->> +	 * as a diagnostic packet.
->> +	 */
->> +	if ((skb->len > 2) && (skb->data[0] == QCA_DEBUG_HDR_MSB) &&
->> +	    (skb->data[1] == QCA_DEBUG_HDR_LSB))
->> +		return hci_recv_diag(hdev, skb);
->> +	else
->> +		return hci_recv_frame(hdev, skb);
-> 
-> nit: you could just do hci_recv_frame() after the if branch, instead
-> of doing it in 'else'. That would make it clearer at first sight that
-> the QCA debug packets are a special case and other packets normal
-> operation.
-> 
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/media/i2c/ad5820.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-[Bala]: will update.
-
->> +}
->> +
->>  #define QCA_IBS_SLEEP_IND_EVENT \
->>  	.type = HCI_IBS_SLEEP_IND, \
->>  	.hlen = 0, \
->> @@ -870,13 +888,20 @@ static int qca_ibs_wake_ack(struct hci_dev 
->> *hdev, struct sk_buff *skb)
->>  	.lsize = 0, \
->>  	.maxlen = HCI_MAX_IBS_SIZE
->> 
->> +#define QCA_RECV_ACL_DATA \
->> +	.type = HCI_ACLDATA_PKT, \
->> +	.hlen = HCI_ACL_HDR_SIZE, \
->> +	.loff = 2, \
->> +	.lsize = 2, \
->> +	.maxlen = HCI_MAX_FRAME_SIZE
-> 
-> Is there any actual advantage of adding this 'macro' instead of just
-> using H4_RECV_ACL, which is exactly the same?
-> 
-
-[Bala]: yes we can use same macro, will update.
-
->>  static const struct h4_recv_pkt qca_recv_pkts[] = {
->> -	{ H4_RECV_ACL,             .recv = hci_recv_frame    },
->>  	{ H4_RECV_SCO,             .recv = hci_recv_frame    },
->>  	{ H4_RECV_EVENT,           .recv = hci_recv_frame    },
->>  	{ QCA_IBS_WAKE_IND_EVENT,  .recv = qca_ibs_wake_ind  },
->>  	{ QCA_IBS_WAKE_ACK_EVENT,  .recv = qca_ibs_wake_ack  },
->>  	{ QCA_IBS_SLEEP_IND_EVENT, .recv = qca_ibs_sleep_ind },
->> +	{ QCA_RECV_ACL_DATA,       .recv = qca_recv_acl_data },
->>  };
->> 
->>  static int qca_recv(struct hci_uart *hu, const void *data, int count)
-
+diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+index 9ccd96d3d5f0..cc7b10fe0368 100644
+--- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
++++ b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+@@ -2,7 +2,10 @@
+ 
+ Required Properties:
+ 
+-  - compatible: Must contain "adi,ad5820"
++  - compatible: Must contain one of:
++		- "adi,ad5820"
++		- "adi,ad5821"
++		- "adi,ad5823"
+ 
+   - reg: I2C slave address
+ 
 -- 
-Regards
-Balakrishna.
+2.19.0
+
