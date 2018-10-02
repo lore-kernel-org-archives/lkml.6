@@ -3,37 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 440FCC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAB6C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09A0C2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09A0C2083F
+	by mail.kernel.org (Postfix) with ESMTP id 82D8C2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:26:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D8C2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeJBUKA (ORCPT
+        id S1727469AbeJBUKB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59882 "EHLO
+        Tue, 2 Oct 2018 16:10:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59890 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbeJBUJ7 (ORCPT
+        with ESMTP id S1726304AbeJBUKB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:09:59 -0400
+        Tue, 2 Oct 2018 16:10:01 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68ADBB2F;
-        Tue,  2 Oct 2018 13:26:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 784CA266;
+        Tue,  2 Oct 2018 13:26:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        stable@vger.kernel.org,
+        Michael Scott <michael@opensourcefoundries.com>,
+        Alexander Aring <aring@mojatatu.com>,
+        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 020/228] USB: serial: kobil_sct: fix modem-status error handling
-Date:   Tue,  2 Oct 2018 06:21:57 -0700
-Message-Id: <20181002132500.431463254@linuxfoundation.org>
+Subject: [PATCH 4.18 021/228] 6lowpan: iphc: reset mac_header after decompress to fix panic
+Date:   Tue,  2 Oct 2018 06:21:58 -0700
+Message-Id: <20181002132500.513675570@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,47 +55,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Michael Scott <michael@opensourcefoundries.com>
 
-[ Upstream commit a420b5d939ee58f1d950f0ea782834056520aeaa ]
+[ Upstream commit 03bc05e1a4972f73b4eb8907aa373369e825c252 ]
 
-Make sure to return -EIO in case of a short modem-status read request.
+After decompression of 6lowpan socket data, an IPv6 header is inserted
+before the existing socket payload.  After this, we reset the
+network_header value of the skb to account for the difference in payload
+size from prior to decompression + the addition of the IPv6 header.
 
-While at it, split the debug message to not include the (zeroed)
-transfer-buffer content in case of errors.
+However, we fail to reset the mac_header value.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Leaving the mac_header value untouched here, can cause a calculation
+error in net/packet/af_packet.c packet_rcv() function when an
+AF_PACKET socket is opened in SOCK_RAW mode for use on a 6lowpan
+interface.
+
+On line 2088, the data pointer is moved backward by the value returned
+from skb_mac_header().  If skb->data is adjusted so that it is before
+the skb->head pointer (which can happen when an old value of mac_header
+is left in place) the kernel generates a panic in net/core/skbuff.c
+line 1717.
+
+This panic can be generated by BLE 6lowpan interfaces (such as bt0) and
+802.15.4 interfaces (such as lowpan0) as they both use the same 6lowpan
+sources for compression and decompression.
+
+Signed-off-by: Michael Scott <michael@opensourcefoundries.com>
+Acked-by: Alexander Aring <aring@mojatatu.com>
+Acked-by: Jukka Rissanen <jukka.rissanen@linux.intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/serial/kobil_sct.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ net/6lowpan/iphc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/serial/kobil_sct.c
-+++ b/drivers/usb/serial/kobil_sct.c
-@@ -393,12 +393,20 @@ static int kobil_tiocmget(struct tty_str
- 			  transfer_buffer_length,
- 			  KOBIL_TIMEOUT);
+--- a/net/6lowpan/iphc.c
++++ b/net/6lowpan/iphc.c
+@@ -770,6 +770,7 @@ int lowpan_header_decompress(struct sk_b
+ 		hdr.hop_limit, &hdr.daddr);
  
--	dev_dbg(&port->dev, "%s - Send get_status_line_state URB returns: %i. Statusline: %02x\n",
--		__func__, result, transfer_buffer[0]);
-+	dev_dbg(&port->dev, "Send get_status_line_state URB returns: %i\n",
-+			result);
-+	if (result < 1) {
-+		if (result >= 0)
-+			result = -EIO;
-+		goto out_free;
-+	}
-+
-+	dev_dbg(&port->dev, "Statusline: %02x\n", transfer_buffer[0]);
+ 	skb_push(skb, sizeof(hdr));
++	skb_reset_mac_header(skb);
+ 	skb_reset_network_header(skb);
+ 	skb_copy_to_linear_data(skb, &hdr, sizeof(hdr));
  
- 	result = 0;
- 	if ((transfer_buffer[0] & SUSBCR_GSL_DSR) != 0)
- 		result = TIOCM_DSR;
-+out_free:
- 	kfree(transfer_buffer);
- 	return result;
- }
 
 
