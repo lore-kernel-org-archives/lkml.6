@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF36C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F287C64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74DF3208AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74DF3208AE
+	by mail.kernel.org (Postfix) with ESMTP id 5040A206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5040A206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729793AbeJBUMc (ORCPT
+        id S1729808AbeJBUMc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 2 Oct 2018 16:12:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33034 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33040 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726625AbeJBUMa (ORCPT
+        with ESMTP id S1729215AbeJBUMc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:30 -0400
+        Tue, 2 Oct 2018 16:12:32 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 880D7BF0;
-        Tue,  2 Oct 2018 13:29:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB55EC11;
+        Tue,  2 Oct 2018 13:29:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.18 139/228] intel_th: Fix device removal logic
-Date:   Tue,  2 Oct 2018 06:23:56 -0700
-Message-Id: <20181002132508.723641662@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 122/228] ath10k: snoc: use correct bus-specific pointer in RX retry
+Date:   Tue,  2 Oct 2018 06:23:39 -0700
+Message-Id: <20181002132507.688752185@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,38 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Brian Norris <briannorris@chromium.org>
 
-commit 8801922cd94c918e4dc3a108ecaa500c4d40583f upstream.
+[ Upstream commit 426a0f0b5a2fe1df3496ba299ee3521159dba302 ]
 
-Commit a753bfcfdb1f ("intel_th: Make the switch allocate its subdevices")
-brings in new subdevice addition/removal logic that's broken for "host
-mode": the SWITCH device has no children to begin with, which is not
-handled in the code. This results in a null dereference bug later down
-the path.
+We're 'ath10k_snoc', not 'ath10k_pci'. This probably means we're
+accessing junk data in ath10k_snoc_rx_replenish_retry(), unless
+'ath10k_snoc' and 'ath10k_pci' happen to have very similar struct
+layouts.
 
-This patch fixes the subdevice removal code to handle host mode correctly.
+Noticed by inspection.
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: a753bfcfdb1f ("intel_th: Make the switch allocate its subdevices")
-CC: stable@vger.kernel.org # v4.14+
+Fixes: d915105231ca ("ath10k: add hif rx methods for wcn3990")
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hwtracing/intel_th/core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/snoc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hwtracing/intel_th/core.c
-+++ b/drivers/hwtracing/intel_th/core.c
-@@ -139,7 +139,8 @@ static int intel_th_remove(struct device
- 			th->thdev[i] = NULL;
- 		}
+--- a/drivers/net/wireless/ath/ath10k/snoc.c
++++ b/drivers/net/wireless/ath/ath10k/snoc.c
+@@ -449,7 +449,7 @@ static void ath10k_snoc_htt_rx_cb(struct
  
--		th->num_thdevs = lowest;
-+		if (lowest >= 0)
-+			th->num_thdevs = lowest;
- 	}
+ static void ath10k_snoc_rx_replenish_retry(struct timer_list *t)
+ {
+-	struct ath10k_pci *ar_snoc = from_timer(ar_snoc, t, rx_post_retry);
++	struct ath10k_snoc *ar_snoc = from_timer(ar_snoc, t, rx_post_retry);
+ 	struct ath10k *ar = ar_snoc->ar;
  
- 	if (thdrv->attr_group)
+ 	ath10k_snoc_rx_post(ar);
 
 
