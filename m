@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99371C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E14DAC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67FF5208AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67FF5208AE
+	by mail.kernel.org (Postfix) with ESMTP id A78982083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:29:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78982083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbeJBUM5 (ORCPT
+        id S1730035AbeJBUM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:12:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33156 "EHLO
+        Tue, 2 Oct 2018 16:12:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33176 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729972AbeJBUMy (ORCPT
+        with ESMTP id S1729972AbeJBUM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:12:54 -0400
+        Tue, 2 Oct 2018 16:12:58 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CE6BC11;
-        Tue,  2 Oct 2018 13:29:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5733BC11;
+        Tue,  2 Oct 2018 13:29:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harry Pan <harry.pan@intel.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 4.18 151/228] usb: core: safely deal with the dynamic quirk lists
-Date:   Tue,  2 Oct 2018 06:24:08 -0700
-Message-Id: <20181002132509.315095917@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.18 154/228] USB: usbdevfs: restore warning for nonsensical flags
+Date:   Tue,  2 Oct 2018 06:24:11 -0700
+Message-Id: <20181002132509.447731332@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -51,60 +50,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Harry Pan <harry.pan@intel.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 16c4cb19fa85c648a803752eb63cac0ef69231c2 upstream.
+commit 81e0403b26d94360abd1f6a57311337973bc82cd upstream.
 
-Applying dynamic usbcore quirks in early booting when the slab is
-not yet ready would cause kernel panic of null pointer dereference
-because the quirk_count has been counted as 1 while the quirk_list
-was failed to allocate.
+If we filter flags before they reach the core we need to generate our
+own warnings.
 
-i.e.,
-[    1.044970] BUG: unable to handle kernel NULL pointer dereference at           (null)
-[    1.044995] IP: [<ffffffffb0953ec7>] usb_detect_quirks+0x88/0xd1
-[    1.045016] PGD 0
-[    1.045026] Oops: 0000 [#1] PREEMPT SMP
-[    1.046986] gsmi: Log Shutdown Reason 0x03
-[    1.046995] Modules linked in:
-[    1.047008] CPU: 0 PID: 81 Comm: kworker/0:3 Not tainted 4.4.154 #28
-[    1.047016] Hardware name: Google Coral/Coral, BIOS Google_Coral.10068.27.0 12/04/2017
-[    1.047028] Workqueue: usb_hub_wq hub_event
-[    1.047037] task: ffff88017a321c80 task.stack: ffff88017a384000
-[    1.047044] RIP: 0010:[<ffffffffb0953ec7>]  [<ffffffffb0953ec7>] usb_detect_quirks+0x88/0xd1
-
-To tackle this odd, let's balance the quirk_count to 0 when the kcalloc
-call fails, and defer the quirk setting into a lower level callback
-which ensures that the kernel memory management has been initialized.
-
-Fixes: 027bd6cafd9a ("usb: core: Add "quirks" parameter for usbcore")
-Signed-off-by: Harry Pan <harry.pan@intel.com>
-Acked-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Fixes: 0cb54a3e47cb ("USB: debugging code shouldn't alter control flow")
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/core/devio.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -58,6 +58,7 @@ static int quirks_param_set(const char *
- 	quirk_list = kcalloc(quirk_count, sizeof(struct quirk_entry),
- 			     GFP_KERNEL);
- 	if (!quirk_list) {
-+		quirk_count = 0;
- 		mutex_unlock(&quirk_mutex);
- 		return -ENOMEM;
- 	}
-@@ -154,7 +155,7 @@ static struct kparam_string quirks_param
- 	.string = quirks_param,
- };
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -1696,6 +1696,11 @@ static int proc_do_submiturb(struct usb_
+ 		u |= URB_NO_INTERRUPT;
+ 	as->urb->transfer_flags = u;
  
--module_param_cb(quirks, &quirks_param_ops, &quirks_param_string, 0644);
-+device_param_cb(quirks, &quirks_param_ops, &quirks_param_string, 0644);
- MODULE_PARM_DESC(quirks, "Add/modify USB quirks by specifying quirks=vendorID:productID:quirks");
- 
- /* Lists of quirky USB devices, split in device quirks and interface quirks.
++	if (!allow_short && uurb->flags & USBDEVFS_URB_SHORT_NOT_OK)
++		dev_warn(&ps->dev->dev, "Requested nonsensical USBDEVFS_URB_SHORT_NOT_OK.\n");
++	if (!allow_zero && uurb->flags & USBDEVFS_URB_ZERO_PACKET)
++		dev_warn(&ps->dev->dev, "Requested nonsensical USBDEVFS_URB_ZERO_PACKET.\n");
++
+ 	as->urb->transfer_buffer_length = uurb->buffer_length;
+ 	as->urb->setup_packet = (unsigned char *)dr;
+ 	dr = NULL;
 
 
