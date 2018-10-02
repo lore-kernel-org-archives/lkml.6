@@ -2,181 +2,136 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CC4C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 815E4C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3FCD20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:58:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LiMPmHXf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3FCD20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 519A220645
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 07:58:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519A220645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbeJBOkL (ORCPT
+        id S1727385AbeJBOk3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:40:11 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46250 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726870AbeJBOkL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:40:11 -0400
-Received: by mail-pl1-f195.google.com with SMTP id v5-v6so450036plz.13
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 00:58:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5LjATinbNFYaw4O40ri70vmxBtULhEUAFg57yGeBSQo=;
-        b=LiMPmHXfUCw+OIIQb2q3IbBOBxpP/pSkFG42ilMNWtTyphgnLpAKyWFl/ig0W1bf5v
-         wYq1EVo3yFLGUI4Up98Nl+wKbr8W4KxEav7aB3VkbxkZy+7ZXE5WeHSQQck2LTCDlQqb
-         p+MxsB59KVggB2ig+DXEF6Xs0Xu0KVg18qOHw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=5LjATinbNFYaw4O40ri70vmxBtULhEUAFg57yGeBSQo=;
-        b=Q8NndvoKSO0yK5I+67Fg0Y/l3qcyqMr2SEzXX9DRMgsNjNNhVgIAzA68SFgOFnV3jl
-         INDCkscnlMHWPdL4X1YzfwmNZybkdwRFhePaobhhftJ2fl9UvrUKUIwrCDxL6yHXgVb4
-         qL2+jrxoLZNQHdldHVW2eh6lT21efi5MuAVkB60Pa8Iq8Q4ySaekZDLVjXJwNrY0ALaN
-         QhdHEkkvyDsQ3usSx7lVVu9pSzFgjzhrqzX3gzXpUGFSWSKGRPPHa+zOHjoLnEhrkd29
-         ocpMuQ/3E/4Fl4AZdjoAPvqmPhNyd9WySqFHL8plmqxmzGACm+JRPoOOSv8kQAe9xu5k
-         ObEw==
-X-Gm-Message-State: ABuFfogOXeQN2rlYY6cZAtEGL53p7MNlQ7Ys9eo2L+quWl5BCEeiiich
-        OFSB03nWHtnEXalg0WAbGQ0kyg==
-X-Google-Smtp-Source: ACcGV62WsKIlb78I0C6/t9Mru47vTVFc0Ld1pLfVrPrC1a/nQRYqts0+PBIkx7/5Za/HxITGOrdhgQ==
-X-Received: by 2002:a65:498b:: with SMTP id r11-v6mr13758070pgs.153.1538467094180;
-        Tue, 02 Oct 2018 00:58:14 -0700 (PDT)
-Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id f1-v6sm22242864pgc.4.2018.10.02.00.58.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 00:58:13 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 16:59:40 +0900
-From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
-        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
-        james.morse@arm.com, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        Tue, 2 Oct 2018 10:40:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44728 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727181AbeJBOk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 10:40:28 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2080E356D4;
+        Tue,  2 Oct 2018 07:58:31 +0000 (UTC)
+Received: from [10.36.116.105] (ovpn-116-105.ams2.redhat.com [10.36.116.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6BFA917A72;
+        Tue,  2 Oct 2018 07:58:28 +0000 (UTC)
+Subject: Re: [PATCH v6 13/18] kvm: arm64: Switch to per VM IPA limit
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        marc.zyngier@arm.com, cdall@kernel.org, will.deacon@arm.com,
+        dave.martin@arm.com, peter.maydell@linaro.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, julien.grall@arm.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v15 07/16] arm64: add image head flag definitions
-Message-ID: <20181002075939.GG32578@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
-        bhe@redhat.com, arnd@arndb.de, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, prudo@linux.ibm.com,
-        ard.biesheuvel@linaro.org, james.morse@arm.com, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20180928064841.14117-1-takahiro.akashi@linaro.org>
- <20180928064841.14117-8-takahiro.akashi@linaro.org>
- <20181001125225.7tlfzt5n25sckhyy@lakrids.cambridge.arm.com>
+References: <20180926163258.20218-1-suzuki.poulose@arm.com>
+ <20180926163258.20218-14-suzuki.poulose@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <ecaafbc4-ea70-d0e6-ced0-8ab90f445e4b@redhat.com>
+Date:   Tue, 2 Oct 2018 09:58:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181001125225.7tlfzt5n25sckhyy@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180926163258.20218-14-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 02 Oct 2018 07:58:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
-
-On Mon, Oct 01, 2018 at 01:52:26PM +0100, Mark Rutland wrote:
-> On Fri, Sep 28, 2018 at 03:48:32PM +0900, AKASHI Takahiro wrote:
-> > Those image head's flags will be used later by kexec_file loader.
-> > 
-> > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Acked-by: James Morse <james.morse@arm.com>
-> > ---
-> >  arch/arm64/include/asm/boot.h | 15 +++++++++++++++
-> >  arch/arm64/kernel/head.S      |  2 +-
-> >  2 files changed, 16 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm64/include/asm/boot.h b/arch/arm64/include/asm/boot.h
-> > index 355e552a9175..0bab7eed3012 100644
-> > --- a/arch/arm64/include/asm/boot.h
-> > +++ b/arch/arm64/include/asm/boot.h
-> > @@ -5,6 +5,21 @@
-> >  
-> >  #include <asm/sizes.h>
-> >  
-> > +#define ARM64_MAGIC		"ARM\x64"
-> > +
-> > +#define HEAD_FLAG_BE_SHIFT		0
-> > +#define HEAD_FLAG_PAGE_SIZE_SHIFT	1
-> > +#define HEAD_FLAG_BE_MASK		0x1
-> > +#define HEAD_FLAG_PAGE_SIZE_MASK	0x3
-> > +
-> > +#define HEAD_FLAG_BE			1
+Hi Suzuki,
+On 9/26/18 6:32 PM, Suzuki K Poulose wrote:
+> Now that we can manage the stage2 page table per VM, switch the
+> configuration details to per VM instance. The VTCR is updated
+> with the values specific to the VM based on the configuration.
+> We store the IPA size and the number of stage2 page table levels
+> for the guest already in VTCR. Decode it back from the vtcr
+> field wherever we need it.
 > 
-> These already exist in some form in arch/arm64/kernel/image.h; can we
-> please factor those out rather than duplicating them?
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Sure.
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-> I'd be happy if you'd update image.h to use the new HEAD_FLAG_* names,
-> and removed the old definitions.
+Thanks
 
-I want to make sure two things;
-
-1. Do you assume all the existing __HEAD_FLAG_xyz's NOT be renamed
-   (say, to HEAD_FLAG_xyz)?
-
-2. Do you mind removing this check in image.h?
-   (we also need to manage 'CONFIG_EFI' part of image.h.)
-
->       #ifndef LINKER_SCRIPT
->       #error This file should only be included in vmlinux.lds.S
->       #endif
-
-
-Thanks,
--Takahiro Akashi
-
-> > +#define HEAD_FLAG_PAGE_SIZE_4K		1
-> > +#define HEAD_FLAG_PAGE_SIZE_16K		2
-> > +#define HEAD_FLAG_PAGE_SIZE_64K		3
+Eric
+> ---
+>  arch/arm64/include/asm/kvm_arm.h        | 2 ++
+>  arch/arm64/include/asm/kvm_mmu.h        | 2 +-
+>  arch/arm64/include/asm/stage2_pgtable.h | 2 +-
+>  arch/arm64/kvm/reset.c                  | 2 +-
+>  4 files changed, 5 insertions(+), 3 deletions(-)
 > 
-> I appreciate these are new, since we didn't previously need definitions.
+> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+> index f913adb44f93..e4240568cc18 100644
+> --- a/arch/arm64/include/asm/kvm_arm.h
+> +++ b/arch/arm64/include/asm/kvm_arm.h
+> @@ -197,6 +197,8 @@
+>  	VTCR_EL2_SL0_TO_LVLS(((vtcr) & VTCR_EL2_SL0_MASK) >> VTCR_EL2_SL0_SHIFT)
+>  
+>  #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN)
+> +#define VTCR_EL2_IPA(vtcr)		(64 - ((vtcr) & VTCR_EL2_T0SZ_MASK))
+> +
+>  /*
+>   * ARM VMSAv8-64 defines an algorithm for finding the translation table
+>   * descriptors in section D4.2.8 in ARM DDI 0487C.a.
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index ac3ca9690bad..77b1af9e64db 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -142,7 +142,7 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
+>   */
+>  #define KVM_PHYS_SHIFT	(40)
+>  
+> -#define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
+> +#define kvm_phys_shift(kvm)		VTCR_EL2_IPA(kvm->arch.vtcr)
+>  #define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
+>  #define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
+>  
+> diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
+> index 36a0a1165003..c62fe118a898 100644
+> --- a/arch/arm64/include/asm/stage2_pgtable.h
+> +++ b/arch/arm64/include/asm/stage2_pgtable.h
+> @@ -43,7 +43,7 @@
+>   */
+>  #define stage2_pgtable_levels(ipa)	ARM64_HW_PGTABLE_LEVELS((ipa) - 4)
+>  #define STAGE2_PGTABLE_LEVELS		stage2_pgtable_levels(KVM_PHYS_SHIFT)
+> -#define kvm_stage2_levels(kvm)		stage2_pgtable_levels(kvm_phys_shift(kvm))
+> +#define kvm_stage2_levels(kvm)		VTCR_EL2_LVLS(kvm->arch.vtcr)
+>  
+>  /*
+>   * With all the supported VA_BITs and 40bit guest IPA, the following condition
+> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+> index 1ced1e37374e..2bf41e007390 100644
+> --- a/arch/arm64/kvm/reset.c
+> +++ b/arch/arm64/kvm/reset.c
+> @@ -160,7 +160,7 @@ int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
+>  	if (phys_shift > KVM_PHYS_SHIFT)
+>  		phys_shift = KVM_PHYS_SHIFT;
+>  	vtcr |= VTCR_EL2_T0SZ(phys_shift);
+> -	vtcr |= VTCR_EL2_LVLS_TO_SL0(kvm_stage2_levels(kvm));
+> +	vtcr |= VTCR_EL2_LVLS_TO_SL0(stage2_pgtable_levels(phys_shift));
+>  
+>  	/*
+>  	 * Enable the Hardware Access Flag management, unconditionally
 > 
-> Thanks,
-> Mark.
-> 
-> > +
-> > +#define head_flag_field(flags, field) \
-> > +		(((flags) >> field##_SHIFT) & field##_MASK)
-> > +
-> >  /*
-> >   * arm64 requires the DTB to be 8 byte aligned and
-> >   * not exceed 2MB in size.
-> > diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-> > index b0853069702f..8cbac6232ed1 100644
-> > --- a/arch/arm64/kernel/head.S
-> > +++ b/arch/arm64/kernel/head.S
-> > @@ -91,7 +91,7 @@ _head:
-> >  	.quad	0				// reserved
-> >  	.quad	0				// reserved
-> >  	.quad	0				// reserved
-> > -	.ascii	"ARM\x64"			// Magic number
-> > +	.ascii	ARM64_MAGIC			// Magic number
-> >  #ifdef CONFIG_EFI
-> >  	.long	pe_header - _head		// Offset to the PE header.
-> >  
-> > -- 
-> > 2.19.0
-> > 
