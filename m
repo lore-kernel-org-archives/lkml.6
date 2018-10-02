@@ -4,93 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFDDC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E910BC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:05:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09BD7206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:05:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09BD7206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B9840206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:05:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9840206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbeJBRsL (ORCPT
+        id S1727661AbeJBRsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 13:48:11 -0400
-Received: from mga09.intel.com ([134.134.136.24]:64730 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727281AbeJBRsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 13:48:11 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2018 04:05:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,331,1534834800"; 
-   d="scan'208";a="85051782"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 02 Oct 2018 04:05:25 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 82A3C1F5; Tue,  2 Oct 2018 14:05:24 +0300 (EEST)
-Date:   Tue, 2 Oct 2018 14:05:24 +0300
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCHv3 5/6] tools/gup_benchmark: Add parameter for hugetlb
-Message-ID: <20181002110524.ckgrlmx5k54rvawt@black.fi.intel.com>
-References: <20180921223956.3485-1-keith.busch@intel.com>
- <20180921223956.3485-6-keith.busch@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921223956.3485-6-keith.busch@intel.com>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+        Tue, 2 Oct 2018 13:48:24 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34686 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727546AbeJBRsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 13:48:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9ABFF15BF;
+        Tue,  2 Oct 2018 04:05:40 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6BBD53F7F4;
+        Tue,  2 Oct 2018 04:05:40 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 5D9771AE3E55; Tue,  2 Oct 2018 12:06:04 +0100 (BST)
+From:   Will Deacon <will.deacon@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     cpandya@codeaurora.org, toshi.kani@hpe.com, tglx@linutronix.de,
+        mhocko@suse.com, akpm@linux-foundation.org,
+        sean.j.christopherson@intel.com, Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v2 2/5] arm64: mmu: Drop pXd_present() checks from pXd_free_pYd_table()
+Date:   Tue,  2 Oct 2018 12:06:00 +0100
+Message-Id: <1538478363-16255-3-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1538478363-16255-1-git-send-email-will.deacon@arm.com>
+References: <1538478363-16255-1-git-send-email-will.deacon@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 10:39:55PM +0000, Keith Busch wrote:
+Now that the core code checks this for us, we don't need to do it in the
+backend.
 
--ENOMSG
+Cc: Chintan Pandya <cpandya@codeaurora.org>
+Cc: Toshi Kani <toshi.kani@hpe.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm64/mm/mmu.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-> Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Keith Busch <keith.busch@intel.com>
-> ---
->  tools/testing/selftests/vm/gup_benchmark.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/vm/gup_benchmark.c b/tools/testing/selftests/vm/gup_benchmark.c
-> index f2c99e2436f8..5d96e2b3d2f1 100644
-> --- a/tools/testing/selftests/vm/gup_benchmark.c
-> +++ b/tools/testing/selftests/vm/gup_benchmark.c
-> @@ -38,7 +38,7 @@ int main(int argc, char **argv)
->  	char *file = NULL;
->  	char *p;
->  
-> -	while ((opt = getopt(argc, argv, "m:r:n:f:tTLU")) != -1) {
-> +	while ((opt = getopt(argc, argv, "m:r:n:f:tTLUH")) != -1) {
->  		switch (opt) {
->  		case 'm':
->  			size = atoi(optarg) * MB;
-> @@ -64,6 +64,9 @@ int main(int argc, char **argv)
->  		case 'w':
->  			write = 1;
->  			break;
-> +		case 'H':
-> +			flags |= MAP_HUGETLB;
-> +			break;
->  		case 'f':
->  			file = optarg;
->  			flags &= ~(MAP_PRIVATE | MAP_ANONYMOUS);
-> -- 
-> 2.14.4
-> 
-
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 8080c9f489c3..0dcb3354d6dd 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -985,10 +985,8 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+ 
+ 	pmd = READ_ONCE(*pmdp);
+ 
+-	if (!pmd_present(pmd))
+-		return 1;
+ 	if (!pmd_table(pmd)) {
+-		VM_WARN_ON(!pmd_table(pmd));
++		VM_WARN_ON(1);
+ 		return 1;
+ 	}
+ 
+@@ -1008,10 +1006,8 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+ 
+ 	pud = READ_ONCE(*pudp);
+ 
+-	if (!pud_present(pud))
+-		return 1;
+ 	if (!pud_table(pud)) {
+-		VM_WARN_ON(!pud_table(pud));
++		VM_WARN_ON(1);
+ 		return 1;
+ 	}
+ 
 -- 
- Kirill A. Shutemov
+2.1.4
+
