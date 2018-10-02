@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBDEC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4397C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A12B32064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:11:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A12B32064A
+	by mail.kernel.org (Postfix) with ESMTP id A55EF2064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:11:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A55EF2064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728646AbeJBUK5 (ORCPT
+        id S1728664AbeJBUzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:10:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60380 "EHLO
+        Tue, 2 Oct 2018 16:55:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60356 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728109AbeJBUK4 (ORCPT
+        with ESMTP id S1727973AbeJBUKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:10:56 -0400
+        Tue, 2 Oct 2018 16:10:54 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6E0B6B2F;
-        Tue,  2 Oct 2018 13:27:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E621DC2A;
+        Tue,  2 Oct 2018 13:27:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Team OWL337 <icytxw@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 065/228] ALSA: snd-aoa: add of_node_put() in error path
-Date:   Tue,  2 Oct 2018 06:22:42 -0700
-Message-Id: <20181002132503.681051901@linuxfoundation.org>
+Subject: [PATCH 4.18 063/228] posix-timers: Make forward callback return s64
+Date:   Tue,  2 Oct 2018 06:22:40 -0700
+Message-Id: <20181002132503.537165554@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,40 +55,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit 222bce5eb88d1af656419db04bcd84b2419fb900 ]
+[ Upstream commit 6fec64e1c92d5c715c6d0f50786daa7708266bde ]
 
- Both calls to of_find_node_by_name() and of_get_next_child() return a
-node pointer with refcount incremented thus it must be explicidly
-decremented here after the last usage. As we are assured to have a
-refcounted  np  either from the initial
-of_find_node_by_name(NULL, name); or from the of_get_next_child(gpio, np)
-in the while loop if we reached the error code path below, an
-x of_node_put(np) is needed.
+The posix timer ti_overrun handling is broken because the forwarding
+functions can return a huge number of overruns which does not fit in an
+int. As a consequence timer_getoverrun(2) and siginfo::si_overrun can turn
+into random number generators.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: commit f3d9478b2ce4 ("[ALSA] snd-aoa: add snd-aoa")
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+As a first step to address that let the timer_forward() callbacks return
+the full 64 bit value.
+
+Cast it to (int) temporarily until k_itimer::ti_overrun is converted to
+64bit and the conversion to user space visible values is sanitized.
+
+Reported-by: Team OWL337 <icytxw@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: John Stultz <john.stultz@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Link: https://lkml.kernel.org/r/20180626132704.922098090@linutronix.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/aoa/core/gpio-feature.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/time/alarmtimer.c   |    4 ++--
+ kernel/time/posix-timers.c |    6 +++---
+ kernel/time/posix-timers.h |    2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/sound/aoa/core/gpio-feature.c
-+++ b/sound/aoa/core/gpio-feature.c
-@@ -88,8 +88,10 @@ static struct device_node *get_gpio(char
- 	}
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -581,11 +581,11 @@ static void alarm_timer_rearm(struct k_i
+  * @timr:	Pointer to the posixtimer data struct
+  * @now:	Current time to forward the timer against
+  */
+-static int alarm_timer_forward(struct k_itimer *timr, ktime_t now)
++static s64 alarm_timer_forward(struct k_itimer *timr, ktime_t now)
+ {
+ 	struct alarm *alarm = &timr->it.alarm.alarmtimer;
  
- 	reg = of_get_property(np, "reg", NULL);
--	if (!reg)
-+	if (!reg) {
-+		of_node_put(np);
- 		return NULL;
-+	}
+-	return (int) alarm_forward(alarm, timr->it_interval, now);
++	return alarm_forward(alarm, timr->it_interval, now);
+ }
  
- 	*gpioptr = *reg;
+ /**
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -645,11 +645,11 @@ static ktime_t common_hrtimer_remaining(
+ 	return __hrtimer_expires_remaining_adjusted(timer, now);
+ }
  
+-static int common_hrtimer_forward(struct k_itimer *timr, ktime_t now)
++static s64 common_hrtimer_forward(struct k_itimer *timr, ktime_t now)
+ {
+ 	struct hrtimer *timer = &timr->it.real.timer;
+ 
+-	return (int)hrtimer_forward(timer, now, timr->it_interval);
++	return hrtimer_forward(timer, now, timr->it_interval);
+ }
+ 
+ /*
+@@ -702,7 +702,7 @@ void common_timer_get(struct k_itimer *t
+ 	 * expiry time forward by intervals, so expiry is > now.
+ 	 */
+ 	if (iv && (timr->it_requeue_pending & REQUEUE_PENDING || sig_none))
+-		timr->it_overrun += kc->timer_forward(timr, now);
++		timr->it_overrun += (int)kc->timer_forward(timr, now);
+ 
+ 	remaining = kc->timer_remaining(timr, now);
+ 	/* Return 0 only, when the timer is expired and not pending */
+--- a/kernel/time/posix-timers.h
++++ b/kernel/time/posix-timers.h
+@@ -19,7 +19,7 @@ struct k_clock {
+ 	void	(*timer_get)(struct k_itimer *timr,
+ 			     struct itimerspec64 *cur_setting);
+ 	void	(*timer_rearm)(struct k_itimer *timr);
+-	int	(*timer_forward)(struct k_itimer *timr, ktime_t now);
++	s64	(*timer_forward)(struct k_itimer *timr, ktime_t now);
+ 	ktime_t	(*timer_remaining)(struct k_itimer *timr, ktime_t now);
+ 	int	(*timer_try_to_cancel)(struct k_itimer *timr);
+ 	void	(*timer_arm)(struct k_itimer *timr, ktime_t expires,
 
 
