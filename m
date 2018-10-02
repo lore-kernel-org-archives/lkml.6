@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38932C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1761C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 092712064A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092712064A
+	by mail.kernel.org (Postfix) with ESMTP id A3EB82064A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:56:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EB82064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731377AbeJBUkB (ORCPT
+        id S1731428AbeJBUkU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:40:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34160 "EHLO
+        Tue, 2 Oct 2018 16:40:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34116 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731010AbeJBUOx (ORCPT
+        with ESMTP id S1729981AbeJBUOs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:53 -0400
+        Tue, 2 Oct 2018 16:14:48 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA9D8C47;
-        Tue,  2 Oct 2018 13:31:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 29509C2B;
+        Tue,  2 Oct 2018 13:31:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Stafford Horne <shorne@gmail.com>,
+        stable@vger.kernel.org,
+        Srikanth Jampala <Jampala.Srikanth@cavium.com>,
+        Gadam Sreerama <sgadam@cavium.com>,
+        "Jha, Chandan" <Chandan.Jha@cavium.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 001/137] crypto: skcipher - Fix -Wstringop-truncation warnings
-Date:   Tue,  2 Oct 2018 06:23:22 -0700
-Message-Id: <20181002132458.526593446@linuxfoundation.org>
+Subject: [PATCH 4.18 210/228] crypto: cavium/nitrox - fix for command corruption in queue full case with backlog submissions.
+Date:   Tue,  2 Oct 2018 06:25:07 -0700
+Message-Id: <20181002132511.929448857@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
-References: <20181002132458.446916963@linuxfoundation.org>
+In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
+References: <20181002132459.032960735@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -51,67 +51,186 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Stafford Horne <shorne@gmail.com>
+From: Srikanth Jampala <Jampala.Srikanth@cavium.com>
 
-[ Upstream commit cefd769fd0192c84d638f66da202459ed8ad63ba ]
+[ Upstream commit 3d7c82060d1fe65bde4023aac41a0b1bd7718e07 ]
 
-As of GCC 9.0.0 the build is reporting warnings like:
+Earlier used to post the current command without checking queue full
+     after backlog submissions. So, post the current command only after
+     confirming the space in queue after backlog submissions.
 
-    crypto/ablkcipher.c: In function ‘crypto_ablkcipher_report’:
-    crypto/ablkcipher.c:374:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
-      strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       sizeof(rblkcipher.geniv));
-       ~~~~~~~~~~~~~~~~~~~~~~~~~
+     Maintain host write index instead of reading device registers
+     to get the next free slot to post the command.
 
-This means the strnycpy might create a non null terminated string.  Fix this by
-explicitly performing '\0' termination.
+     Return -ENOSPC in queue full case.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Eric Biggers <ebiggers3@gmail.com>
-Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
-Signed-off-by: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Srikanth Jampala <Jampala.Srikanth@cavium.com>
+Reviewed-by: Gadam Sreerama <sgadam@cavium.com>
+Tested-by: Jha, Chandan <Chandan.Jha@cavium.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- crypto/ablkcipher.c |    2 ++
- crypto/blkcipher.c  |    1 +
- 2 files changed, 3 insertions(+)
+ drivers/crypto/cavium/nitrox/nitrox_dev.h    |    3 -
+ drivers/crypto/cavium/nitrox/nitrox_lib.c    |    1 
+ drivers/crypto/cavium/nitrox/nitrox_reqmgr.c |   57 +++++++++++++++------------
+ 3 files changed, 35 insertions(+), 26 deletions(-)
 
---- a/crypto/ablkcipher.c
-+++ b/crypto/ablkcipher.c
-@@ -368,6 +368,7 @@ static int crypto_ablkcipher_report(stru
- 	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
- 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
- 		sizeof(rblkcipher.geniv));
-+	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+--- a/drivers/crypto/cavium/nitrox/nitrox_dev.h
++++ b/drivers/crypto/cavium/nitrox/nitrox_dev.h
+@@ -35,6 +35,7 @@ struct nitrox_cmdq {
+ 	/* requests in backlog queues */
+ 	atomic_t backlog_count;
  
- 	rblkcipher.blocksize = alg->cra_blocksize;
- 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
-@@ -442,6 +443,7 @@ static int crypto_givcipher_report(struc
- 	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
- 	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
- 		sizeof(rblkcipher.geniv));
-+	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
++	int write_idx;
+ 	/* command size 32B/64B */
+ 	u8 instr_size;
+ 	u8 qno;
+@@ -87,7 +88,7 @@ struct nitrox_bh {
+ 	struct bh_data *slc;
+ };
  
- 	rblkcipher.blocksize = alg->cra_blocksize;
- 	rblkcipher.min_keysize = alg->cra_ablkcipher.min_keysize;
---- a/crypto/blkcipher.c
-+++ b/crypto/blkcipher.c
-@@ -511,6 +511,7 @@ static int crypto_blkcipher_report(struc
- 	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
- 	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
- 		sizeof(rblkcipher.geniv));
-+	rblkcipher.geniv[sizeof(rblkcipher.geniv) - 1] = '\0';
+-/* NITROX-5 driver state */
++/* NITROX-V driver state */
+ #define NITROX_UCODE_LOADED	0
+ #define NITROX_READY		1
  
- 	rblkcipher.blocksize = alg->cra_blocksize;
- 	rblkcipher.min_keysize = alg->cra_blkcipher.min_keysize;
+--- a/drivers/crypto/cavium/nitrox/nitrox_lib.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_lib.c
+@@ -36,6 +36,7 @@ static int cmdq_common_init(struct nitro
+ 	cmdq->head = PTR_ALIGN(cmdq->head_unaligned, PKT_IN_ALIGN);
+ 	cmdq->dma = PTR_ALIGN(cmdq->dma_unaligned, PKT_IN_ALIGN);
+ 	cmdq->qsize = (qsize + PKT_IN_ALIGN);
++	cmdq->write_idx = 0;
+ 
+ 	spin_lock_init(&cmdq->response_lock);
+ 	spin_lock_init(&cmdq->cmdq_lock);
+--- a/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
+@@ -42,6 +42,16 @@
+  *   Invalid flag options in AES-CCM IV.
+  */
+ 
++static inline int incr_index(int index, int count, int max)
++{
++	if ((index + count) >= max)
++		index = index + count - max;
++	else
++		index += count;
++
++	return index;
++}
++
+ /**
+  * dma_free_sglist - unmap and free the sg lists.
+  * @ndev: N5 device
+@@ -426,30 +436,29 @@ static void post_se_instr(struct nitrox_
+ 			  struct nitrox_cmdq *cmdq)
+ {
+ 	struct nitrox_device *ndev = sr->ndev;
+-	union nps_pkt_in_instr_baoff_dbell pkt_in_baoff_dbell;
+-	u64 offset;
++	int idx;
+ 	u8 *ent;
+ 
+ 	spin_lock_bh(&cmdq->cmdq_lock);
+ 
+-	/* get the next write offset */
+-	offset = NPS_PKT_IN_INSTR_BAOFF_DBELLX(cmdq->qno);
+-	pkt_in_baoff_dbell.value = nitrox_read_csr(ndev, offset);
++	idx = cmdq->write_idx;
+ 	/* copy the instruction */
+-	ent = cmdq->head + pkt_in_baoff_dbell.s.aoff;
++	ent = cmdq->head + (idx * cmdq->instr_size);
+ 	memcpy(ent, &sr->instr, cmdq->instr_size);
+-	/* flush the command queue updates */
+-	dma_wmb();
+ 
+-	sr->tstamp = jiffies;
+ 	atomic_set(&sr->status, REQ_POSTED);
+ 	response_list_add(sr, cmdq);
++	sr->tstamp = jiffies;
++	/* flush the command queue updates */
++	dma_wmb();
+ 
+ 	/* Ring doorbell with count 1 */
+ 	writeq(1, cmdq->dbell_csr_addr);
+ 	/* orders the doorbell rings */
+ 	mmiowb();
+ 
++	cmdq->write_idx = incr_index(idx, 1, ndev->qlen);
++
+ 	spin_unlock_bh(&cmdq->cmdq_lock);
+ }
+ 
+@@ -459,6 +468,9 @@ static int post_backlog_cmds(struct nitr
+ 	struct nitrox_softreq *sr, *tmp;
+ 	int ret = 0;
+ 
++	if (!atomic_read(&cmdq->backlog_count))
++		return 0;
++
+ 	spin_lock_bh(&cmdq->backlog_lock);
+ 
+ 	list_for_each_entry_safe(sr, tmp, &cmdq->backlog_head, backlog) {
+@@ -466,7 +478,7 @@ static int post_backlog_cmds(struct nitr
+ 
+ 		/* submit until space available */
+ 		if (unlikely(cmdq_full(cmdq, ndev->qlen))) {
+-			ret = -EBUSY;
++			ret = -ENOSPC;
+ 			break;
+ 		}
+ 		/* delete from backlog list */
+@@ -491,23 +503,20 @@ static int nitrox_enqueue_request(struct
+ {
+ 	struct nitrox_cmdq *cmdq = sr->cmdq;
+ 	struct nitrox_device *ndev = sr->ndev;
+-	int ret = -EBUSY;
++
++	/* try to post backlog requests */
++	post_backlog_cmds(cmdq);
+ 
+ 	if (unlikely(cmdq_full(cmdq, ndev->qlen))) {
+ 		if (!(sr->flags & CRYPTO_TFM_REQ_MAY_BACKLOG))
+-			return -EAGAIN;
+-
++			return -ENOSPC;
++		/* add to backlog list */
+ 		backlog_list_add(sr, cmdq);
+-	} else {
+-		ret = post_backlog_cmds(cmdq);
+-		if (ret) {
+-			backlog_list_add(sr, cmdq);
+-			return ret;
+-		}
+-		post_se_instr(sr, cmdq);
+-		ret = -EINPROGRESS;
++		return -EBUSY;
+ 	}
+-	return ret;
++	post_se_instr(sr, cmdq);
++
++	return -EINPROGRESS;
+ }
+ 
+ /**
+@@ -624,11 +633,9 @@ int nitrox_process_se_request(struct nit
+ 	 */
+ 	sr->instr.fdata[0] = *((u64 *)&req->gph);
+ 	sr->instr.fdata[1] = 0;
+-	/* flush the soft_req changes before posting the cmd */
+-	wmb();
+ 
+ 	ret = nitrox_enqueue_request(sr);
+-	if (ret == -EAGAIN)
++	if (ret == -ENOSPC)
+ 		goto send_fail;
+ 
+ 	return ret;
 
 
