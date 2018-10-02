@@ -2,98 +2,154 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1016C64EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF31C64EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62A402082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:58:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A402082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id D88B02083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 20:59:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VrlUApMo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D88B02083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbeJCDoH (ORCPT
+        id S1727986AbeJCDoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 23:44:07 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:51749 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbeJCDoH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 23:44:07 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N2Ujn-1fjLJR1xXD-013rDP; Tue, 02 Oct 2018 22:58:38 +0200
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N2Ujn-1fjLJR1xXD-013rDP; Tue, 02 Oct 2018 22:58:38 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/imx: move 'legacyfb_depth' definition out of #ifdef
-Date:   Tue,  2 Oct 2018 22:58:26 +0200
-Message-Id: <20181002205836.2323084-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:CAhRBA/In5ku2tFknwpua/SmjexO2s8uUXbcJNLzC5PYgbuZd5t
- WRNkhHlf8jY5YLZnOm6HVS0TMfrLgJyvuBDb/y8uic7D04WHnwuQQ5r2IlKyLnzF+7ASjSl
- u7TumGjPiHnbjFjnQvcOolCJAlhcvLEtgqZa+moT4oYVH+pFwDDXHTXUE1kFqx3RAGHOn+o
- PbOQ+5fXwzHYBHjjDOa/A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:UfBjkdJEm2g=:bcbIVwfp/wZQlW9EZzKwFs
- p9alzm+/XArwe90s56diugEo5nbHDbGZ+GDgHtK6UXLJ6AHrfqHNeLb436FH7moJJ6ZFhVlkB
- muJkYBLFPIAVGRUSwgjgJUoitva06skA9vCSxU6nc2zR99ytiEEdslI4YthuPVrX6QE5QElx6
- pJF0Y74Sc/5KCcsXOCUpxwMN0v2nWxjORM3y9SvKqzjT9dgTaNM2uYoFpcZqDlF0Mns1oKy3r
- T+1FkO0h1QOQxaokTTTIq8oSi17ydYiwaNrqytQFINRwm0E3S8TpeiJropT38o/B/bodADzie
- MHxe5z1CC8ra7eMmEGTKwTT8jkosXeWO8B9IQTUlTqtDPZgY+0ql2ZVw3juDTF7V9244OSZPZ
- p1/7tTMXWiU65pxr62uLo7P/Z/7Z2DDqph4H/sEWybTe6PNPj1WWe0BRrIeTQ51QJdXRaP6d0
- q8jEwtWsQk4C/WVdt5oBV/Y3Fe06XwOpcuWkVpyPVqO0QHfJIO9f8p3g5le3KT4NnOfqfyyhU
- GA8DNmEUBnxY4vYVkIt+IRsD+jL6TLJzyOhNdQc19nNk7/5z959qfjRyUGJ0IOFsW5dTvnzue
- a4GVSVN0JOBZ7dGD3DmQ6myEE0lhztVyTcJev7mDY9ft+kM6NwdIoUzWl9Vvk4LSONENOrGz3
- vH68bJGkl65Vu3CPAi+3tB9MaB3ou5d/HiEGkuFWtYU0KoVtsC75/1sywDiYn30WpQOA=
+        Tue, 2 Oct 2018 23:44:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726572AbeJCDoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 23:44:20 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 430B12082A;
+        Tue,  2 Oct 2018 20:59:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538513945;
+        bh=NhShGRlF3tvA3wPqMetEvDsa+MXMBWRWcegxI0YNFUQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VrlUApMoHYMLzjumPIlCSSIgIIKQ8IBo3cly3bPbZ6rMCxrrSFR2Qen2Ljvvn6rsg
+         uu3M9ERNwPR7ZWRZlriqVlR4pDu0NLzS8SU13jwcn27jfCIzyQIzfdHDaE+OM4mF/W
+         hsSmQFg18TrNMExTlRVbce97ivlHjiB7qe60yz0Q=
+Date:   Tue, 2 Oct 2018 15:59:03 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org
+Subject: Re: [RFC 00/15] PCI: turn some __weak functions into callbacks
+Message-ID: <20181002205903.GD120535@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180817102645.3839621-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180817102645.3839621-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The variable is now referenced unconditionally, but still
-declared in an #ifdef:
+On Fri, Aug 17, 2018 at 12:26:30PM +0200, Arnd Bergmann wrote:
+> Hi Bjorn and others,
+> 
+> Triggered by Christoph's patches, I had another go at converting
+> all of the remaining pci host bridge implementations to be based
+> on pci_alloc_host_bridge and a separate registration function.
+> 
+> This is made possible through work from Lorenzo and others to
+> convert many of the existing drivers, as well as the removal
+> of some of the older architectures that nobody used.
+> 
+> I'm adding a bit of duplication into the less maintained code
+> here, but it makes everything more consistent, and gives an
+> easy place to hook up callback functions etc.
+> 
+> The three parts of this series are:
+> 
+> a) push up the registration into the callers (this is where
+>    code gets added)
+> b) clean up some of the more common host bridge
+>    implementations again to integrate that code better.
+>    This could be done for the rest as well, or we could just
+>    leave them alone.
+> c) start moving the __weak functions into callbacks in
+>    pci_host_bridge. This is intentionally incomplete, since
+>    it is a lot of work to do it for all those functions,
+>    and I want to get consensus on the approach first, as well
+>    as maybe get other developers to help out with the rest.
+> 
+> Please have a look.
+> 
+>        Arnd
+> 
+> [1] https://lore.kernel.org/lkml/4288331.jNpl6KXlNO@wuerfel/
+> [2] https://patchwork.kernel.org/patch/10555657/
+> 
+> Arnd Bergmann (15):
+>   PCI: clean up legacy host bridge scan functions
+>   PCI: move pci_scan_bus into callers
+>   PCI: move pci_scan_root_bus into callers
+>   PCI: export pci_register_host_bridge
+>   PCI: move pci_create_root_bus into callers
+>   powerpc/pci: fold pci_create_root_bus into pcibios_scan_phb
+>   PCI/ACPI: clean up acpi_pci_root_create()
+>   x86: PCI: clean up pcibios_scan_root()
+>   PCI: xenfront: clean up pcifront_scan_root()
+>   sparc/PCI: simplify pci_scan_one_pbm
+>   PCI: hyperv: convert to pci_scan_root_bus_bridge
+>   PCI: make pcibios_bus_add_device() a callback function
+>   PCI: turn pcibios_alloc_irq into a callback
+>   PCI: make pcibios_root_bridge_prepare a callback
+>   PCI: make pcibios_add_bus/remove_bus callbacks
+> 
+>  arch/arm64/kernel/pci.c               |  40 ++-----
+>  arch/ia64/pci/pci.c                   |  25 +----
+>  arch/ia64/sn/kernel/io_init.c         |  27 +++++
+>  arch/microblaze/pci/pci-common.c      |  27 +++++
+>  arch/powerpc/include/asm/pci-bridge.h |   3 +
+>  arch/powerpc/kernel/pci-common.c      |  60 +++++------
+>  arch/s390/pci/pci.c                   |  30 +++++-
+>  arch/sh/drivers/pci/pci.c             |   1 +
+>  arch/sh/drivers/pci/pcie-sh7786.c     |   3 +-
+>  arch/sh/include/asm/pci.h             |   2 +
+>  arch/sparc/kernel/pci.c               |  40 ++++---
+>  arch/sparc/kernel/pcic.c              |  35 ++++++
+>  arch/x86/pci/acpi.c                   |  15 +--
+>  arch/x86/pci/common.c                 |  42 ++++----
+>  arch/xtensa/kernel/pci.c              |  27 +++++
+>  drivers/acpi/pci_root.c               |  43 +++++---
+>  drivers/parisc/dino.c                 |  28 +++++
+>  drivers/parisc/lba_pci.c              |  28 +++++
+>  drivers/pci/bus.c                     |   8 +-
+>  drivers/pci/controller/pci-hyperv.c   |  47 ++++----
+>  drivers/pci/controller/vmd.c          |  30 +++++-
+>  drivers/pci/hotplug/ibmphp_core.c     |  35 ++++++
+>  drivers/pci/pci-driver.c              |  13 ++-
+>  drivers/pci/probe.c                   | 150 +++++++++-----------------
+>  drivers/pci/xen-pcifront.c            |  40 +++----
+>  include/linux/acpi.h                  |   2 +
+>  include/linux/pci.h                   |  17 ++-
+>  27 files changed, 514 insertions(+), 304 deletions(-)
 
-drivers/gpu/drm/imx/imx-drm-core.c: In function 'imx_drm_bind':
-drivers/gpu/drm/imx/imx-drm-core.c:264:6: error: 'legacyfb_depth' undeclared (first use in this function); did you mean 'lockdep_depth'?
+Sorry for the late response to this.
 
-Remove the #ifdef so it can always be accessed.
+I think I'm generally on-board with this.  I admit I'm a little
+hesitant about adding 200 lines of code when this is really more
+"cleanup" than new functionality, but I think a lot of that is because
+this series contains costs (e.g., duplicating code) for everybody but
+only has the corresponding benefits for a few (ACPI, x86, xenfront).
+Those cases are much closer to parity in terms of lines added/removed.
 
-Fixes: f53705fd9803 ("drm/imx: Use drm_fbdev_generic_setup()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/imx/imx-drm-core.c | 2 --
- 1 file changed, 2 deletions(-)
+I saw some minor comments that suggested you had some updates, so I'll
+watch for an updated posting.
 
-diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
-index a70f3131a377..0e6942f21a4e 100644
---- a/drivers/gpu/drm/imx/imx-drm-core.c
-+++ b/drivers/gpu/drm/imx/imx-drm-core.c
-@@ -35,10 +35,8 @@
- 
- #define MAX_CRTC	4
- 
--#if IS_ENABLED(CONFIG_DRM_FBDEV_EMULATION)
- static int legacyfb_depth = 16;
- module_param(legacyfb_depth, int, 0444);
--#endif
- 
- DEFINE_DRM_GEM_CMA_FOPS(imx_drm_driver_fops);
- 
--- 
-2.18.0
-
+Bjorn
