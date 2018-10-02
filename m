@@ -3,170 +3,118 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E09B3C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B27C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0039206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:10:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0039206B2
+	by mail.kernel.org (Postfix) with ESMTP id DAAB6206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:10:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAAB6206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeJBRxd (ORCPT
+        id S1727580AbeJBRxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 13:53:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37450 "EHLO mx1.redhat.com"
+        Tue, 2 Oct 2018 13:53:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50080 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727244AbeJBRxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 13:53:33 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1727244AbeJBRxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 13:53:39 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2BE25C059B86;
-        Tue,  2 Oct 2018 11:10:48 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B5CA01F566;
+        Tue,  2 Oct 2018 11:10:54 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-29.ams2.redhat.com [10.36.116.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 29FAB60CD3;
-        Tue,  2 Oct 2018 11:10:43 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CE66F19743;
+        Tue,  2 Oct 2018 11:10:45 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id DDFA5982BC; Tue,  2 Oct 2018 13:10:41 +0200 (CEST)
+        id B16954F284; Tue,  2 Oct 2018 13:10:41 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 2/2] drm/bochs: add edid support.
-Date:   Tue,  2 Oct 2018 13:10:41 +0200
-Message-Id: <20181002111041.17053-3-kraxel@redhat.com>
+Cc:     Gerd Hoffmann <kraxel@redhat.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/2] drm: add drm_connector_attach_edid_property()
+Date:   Tue,  2 Oct 2018 13:10:40 +0200
+Message-Id: <20181002111041.17053-2-kraxel@redhat.com>
 In-Reply-To: <20181002111041.17053-1-kraxel@redhat.com>
 References: <20181002111041.17053-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 02 Oct 2018 11:10:48 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 02 Oct 2018 11:10:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recent qemu (latest master branch, upcoming 3.1 release) got support
-for EDID data.  This patch adds guest driver support.
-
-EDID support in qemu is not (yet) enabled by default, so please use
-'qemu -device VGA,edid=on' for testing.
+drm_connector_init doesn't attach the edid property for some connector
+types, drm_connector_attach_edid_property() can be used to enable the
+edid property in these cases.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/bochs/bochs.h     |  1 +
- drivers/gpu/drm/bochs/bochs_hw.c  | 38 ++++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/bochs/bochs_kms.c | 18 +++++++++++++++---
- 3 files changed, 54 insertions(+), 3 deletions(-)
+ include/drm/drm_connector.h     |  1 +
+ drivers/gpu/drm/drm_connector.c | 23 ++++++++++++++++++++---
+ 2 files changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
-index 375bf92cd0..055d7b437a 100644
---- a/drivers/gpu/drm/bochs/bochs.h
-+++ b/drivers/gpu/drm/bochs/bochs.h
-@@ -70,6 +70,7 @@ struct bochs_device {
- 	u16 yres_virtual;
- 	u32 stride;
- 	u32 bpp;
-+	struct edid *edid;
+diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+index 97ea41dc67..4d58966b54 100644
+--- a/include/drm/drm_connector.h
++++ b/include/drm/drm_connector.h
+@@ -1083,6 +1083,7 @@ int drm_connector_init(struct drm_device *dev,
+ 		       struct drm_connector *connector,
+ 		       const struct drm_connector_funcs *funcs,
+ 		       int connector_type);
++void drm_connector_attach_edid_property(struct drm_connector *connector);
+ int drm_connector_register(struct drm_connector *connector);
+ void drm_connector_unregister(struct drm_connector *connector);
+ int drm_connector_attach_encoder(struct drm_connector *connector,
+diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+index 6011d769d5..486b784e4d 100644
+--- a/drivers/gpu/drm/drm_connector.c
++++ b/drivers/gpu/drm/drm_connector.c
+@@ -256,9 +256,7 @@ int drm_connector_init(struct drm_device *dev,
  
- 	/* drm */
- 	struct drm_device  *dev;
-diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
-index a39b0343c1..21a769e48c 100644
---- a/drivers/gpu/drm/bochs/bochs_hw.c
-+++ b/drivers/gpu/drm/bochs/bochs_hw.c
-@@ -47,6 +47,41 @@ static void bochs_dispi_write(struct bochs_device *bochs, u16 reg, u16 val)
- 	}
- }
- 
-+static int bochs_load_edid(struct bochs_device *bochs)
-+{
-+	uint8_t *blob;
-+	size_t i, len;
-+	uint8_t num_exts;
-+
-+	if (!bochs->mmio)
-+		return -1;
-+
-+	if ((readb(bochs->mmio+0) != 0x00 ||
-+	     readb(bochs->mmio+1) != 0xff))
-+		return -1;
-+
-+	num_exts = readb(bochs->mmio + 126);
-+	len = EDID_LENGTH * (1 + num_exts);
-+	if (len > 0x400 /* vga register offset */)
-+		return -1;
-+
-+	kfree(bochs->edid);
-+	bochs->edid = kmalloc(len, GFP_KERNEL);
-+	blob = (void *)bochs->edid;
-+	for (i = 0; i < len; i++) {
-+		blob[i] = readb(bochs->mmio+i);
-+	}
-+
-+	if (!drm_edid_is_valid(bochs->edid)) {
-+		DRM_ERROR("EDID is not valid, ignoring.\n");
-+		kfree(bochs->edid);
-+		bochs->edid = NULL;
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
- int bochs_hw_init(struct drm_device *dev, uint32_t flags)
- {
- 	struct bochs_device *bochs = dev->dev_private;
-@@ -133,6 +168,9 @@ int bochs_hw_init(struct drm_device *dev, uint32_t flags)
- 	}
- 
- noext:
-+	if (bochs_load_edid(bochs) == 0)
-+		DRM_INFO("Found EDID data blob.\n");
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index ca5a9afdd5..5b3afe9364 100644
---- a/drivers/gpu/drm/bochs/bochs_kms.c
-+++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -181,10 +181,17 @@ static void bochs_encoder_init(struct drm_device *dev)
- 
- static int bochs_connector_get_modes(struct drm_connector *connector)
- {
--	int count;
-+	struct bochs_device *bochs =
-+		container_of(connector, struct bochs_device, connector);
-+	int count = 0;
- 
--	count = drm_add_modes_noedid(connector, 8192, 8192);
--	drm_set_preferred_mode(connector, defx, defy);
-+	if (bochs->edid)
-+		count = drm_add_edid_modes(connector, bochs->edid);
-+
-+	if (!count) {
-+		count = drm_add_modes_noedid(connector, 8192, 8192);
-+		drm_set_preferred_mode(connector, defx, defy);
-+	}
- 	return count;
- }
- 
-@@ -239,6 +246,11 @@ static void bochs_connector_init(struct drm_device *dev)
- 	drm_connector_helper_add(connector,
- 				 &bochs_connector_connector_helper_funcs);
- 	drm_connector_register(connector);
-+
-+	if (bochs->edid) {
+ 	if (connector_type != DRM_MODE_CONNECTOR_VIRTUAL &&
+ 	    connector_type != DRM_MODE_CONNECTOR_WRITEBACK)
+-		drm_object_attach_property(&connector->base,
+-					      config->edid_property,
+-					      0);
 +		drm_connector_attach_edid_property(connector);
-+		drm_connector_update_edid_property(connector, bochs->edid);
-+	}
- }
  
+ 	drm_object_attach_property(&connector->base,
+ 				      config->dpms_property, 0);
+@@ -291,6 +289,25 @@ int drm_connector_init(struct drm_device *dev,
+ EXPORT_SYMBOL(drm_connector_init);
  
+ /**
++ * drm_connector_attach_edid_property - attach edid property.
++ * @dev: DRM device
++ * @connector: the connector
++ *
++ * Some connector types like DRM_MODE_CONNECTOR_VIRTUAL do not get a
++ * edid property attached by default.  This function can be used to
++ * explicitly enable the edid property in these cases.
++ */
++void drm_connector_attach_edid_property(struct drm_connector *connector)
++{
++	struct drm_mode_config *config = &connector->dev->mode_config;
++
++	drm_object_attach_property(&connector->base,
++				   config->edid_property,
++				   0);
++}
++EXPORT_SYMBOL(drm_connector_attach_edid_property);
++
++/**
+  * drm_connector_attach_encoder - attach a connector to an encoder
+  * @connector: connector to attach
+  * @encoder: encoder to attach @connector to
 -- 
 2.9.3
 
