@@ -2,104 +2,94 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B622EC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8ABC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8394B204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:42:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8394B204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id DB48B206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 10:44:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB48B206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbeJBRYu (ORCPT
+        id S1727315AbeJBR13 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 13:24:50 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:53460 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726989AbeJBRYu (ORCPT
+        Tue, 2 Oct 2018 13:27:29 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59632 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726981AbeJBR13 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 13:24:50 -0400
-Received: from [148.252.241.226] (helo=rainbowdash)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1g7I82-0005XN-DR; Tue, 02 Oct 2018 11:42:10 +0100
-Received: from ben by rainbowdash with local (Exim 4.91)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1g7I82-0002ld-2q; Tue, 02 Oct 2018 11:42:10 +0100
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-To:     broonie@kernel.org
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        linux-kernel@vger.kernel.org, linux-kernel@lists.codethink.co.uk,
-        Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH] regmap: use less #ifdef for LOG_DEVICE
-Date:   Tue,  2 Oct 2018 11:42:05 +0100
-Message-Id: <20181002104205.10595-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.19.0
+        Tue, 2 Oct 2018 13:27:29 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g7IAP-0007yb-Fn; Tue, 02 Oct 2018 12:44:37 +0200
+Date:   Tue, 2 Oct 2018 12:44:36 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Feng Tang <feng.tang@intel.com>
+cc:     Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        H Peter Anvin <hpa@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Stuart R . Anderson" <stuart.r.anderson@intel.com>,
+        alan@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/earlyprintk: Add a force option for pciserial
+ device
+In-Reply-To: <20181002094852.3bw2loje4zjriqe7@shbuild888>
+Message-ID: <alpine.DEB.2.21.1810021241000.32062@nanos.tec.linutronix.de>
+References: <20180928094008.23138-1-feng.tang@intel.com> <20180929163458.GA25608@zn.tnic> <20180930131619.jecqh4umrkmifavb@shbuild888> <20181001123916.GC7269@zn.tnic> <20181001141810.fbo3amfqnr5243mc@shbuild888> <20181001203004.GG7269@zn.tnic>
+ <20181002091627.3vm6ow4y7me2uju3@shbuild888> <alpine.DEB.2.21.1810021112100.32062@nanos.tec.linutronix.de> <20181002094852.3bw2loje4zjriqe7@shbuild888>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the checking of the LOG_DEVICE into a function to reduce the
-number of #ifdefs and  ensure more of the code gets compiled/checked,
-and make it easier to change this for internal debugging purposes
-(such as checking >1 device).
+On Tue, 2 Oct 2018, Feng Tang wrote:
+> On Tue, Oct 02, 2018 at 11:17:57AM +0200, Thomas Gleixner wrote:
+> > On Tue, 2 Oct 2018, Feng Tang wrote:
+> > 
+> > > Hi Boris,
+> > > 
+> > > On Mon, Oct 01, 2018 at 10:30:04PM +0200, Borislav Petkov wrote:
+> > > > On Mon, Oct 01, 2018 at 10:18:10PM +0800, Feng Tang wrote:
+> > > > > As I rechecked, the baud rate for pciserial is optional, so there may
+> > > > > be no ",baudrate" following the "force". So this 2 strncmp is to
+> > > > > cover conditions for with and without baudrate.
+> > > > 
+> > > > And what guarantees you have a space after the "force"?
+> > > > 
+> > > > 	!strncmp(s, "force ", 6)
+> > > > 			  ^
+> > > 
+> > > You are right, it can't be guranteed. Can we still use strncmp(s, "force", 5)
+> > > and rely on developer to set it right? any suggestions? thanks,
+> > 
+> > I don't know why you want strncmp() in the first place. "force" is null
+> > terminated already.
+> 
+> Current code uses: 
+> 	earlyprintk=pciserial,bus:device.function[,baudrate]
+> with the patch, it will be:
+> 	earlyprintk=pciserial,bus:device.function[,force][,baudrate]
+> 
+> So the force could be followed by ",baudrate".
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
- drivers/base/regmap/regmap.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+Sure, but that has nothing to do with strncmp(). The earlyprintk argument
+string is tokenized by commata. It really does not matter where the 'force'
+string is, but it matters that you check whether it is 'force' and not
+'force$RANDOMCHARACTERS'. That's why strncmp() is the wrong thing to do,
+because it only compares the first 5 characters and ignores anything
+beyond, unless you make sure that the command line part is exactly 5
+characters long.
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 0360a90ad6b6..0d9ad7c07d51 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -35,6 +35,16 @@
-  */
- #undef LOG_DEVICE
- 
-+#ifdef LOG_DEVICE
-+static inline bool regmap_should_log(struct regmap *map)
-+{
-+	return (map->dev && strcmp(dev_name(map->dev), LOG_DEVICE) == 0);
-+}
-+#else
-+static inline bool regmap_should_log(struct regmap *map) { return false; }
-+#endif
-+
-+
- static int _regmap_update_bits(struct regmap *map, unsigned int reg,
- 			       unsigned int mask, unsigned int val,
- 			       bool *change, bool force_write);
-@@ -1755,10 +1765,8 @@ int _regmap_write(struct regmap *map, unsigned int reg,
- 		}
- 	}
- 
--#ifdef LOG_DEVICE
--	if (map->dev && strcmp(dev_name(map->dev), LOG_DEVICE) == 0)
-+	if (regmap_should_log(map))
- 		dev_info(map->dev, "%x <= %x\n", reg, val);
--#endif
- 
- 	trace_regmap_reg_write(map, reg, val);
- 
-@@ -2450,10 +2458,8 @@ static int _regmap_read(struct regmap *map, unsigned int reg,
- 
- 	ret = map->reg_read(context, reg, val);
- 	if (ret == 0) {
--#ifdef LOG_DEVICE
--		if (map->dev && strcmp(dev_name(map->dev), LOG_DEVICE) == 0)
-+		if (regmap_should_log(map))
- 			dev_info(map->dev, "%x => %x\n", reg, *val);
--#endif
- 
- 		trace_regmap_reg_read(map, reg, *val);
- 
--- 
-2.19.0
+Thanks,
 
+	tglx
