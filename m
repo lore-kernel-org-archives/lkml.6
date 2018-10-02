@@ -2,196 +2,177 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E09C64EBD
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 557F5C64EBD
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F33CC20652
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:20:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ev3/BYfj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F33CC20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DC0E21471
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 21:20:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DC0E21471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbeJCEFs (ORCPT
+        id S1728543AbeJCEFy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 00:05:48 -0400
-Received: from mail-qt1-f170.google.com ([209.85.160.170]:40785 "EHLO
-        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbeJCEFs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 00:05:48 -0400
-Received: by mail-qt1-f170.google.com with SMTP id e9-v6so3677559qtp.7;
-        Tue, 02 Oct 2018 14:20:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0alpmmHz6ZTguZZiITBs+sXBvYpmgUBHdxQc24Ep7ZY=;
-        b=ev3/BYfjfgUvow7Mewboan8kywxdK7Eae1av3bRh6/mMaYc/6TzpytxsD6asYgDG6w
-         Okdui2QW7XZykQqJ860jBKHDQ+nCtmsi4cWIiRvew/2lxNQ9rJxFhSFkKP0xxkXys3lG
-         8rgOYqkhJGcRF71Vw4zdg5QnQ0xjVO8+H/FmUqaxY3ZrD/jqdvsG+cedFj5rvCqNjH9H
-         Kh1JbyQzNlJNThhVYGx/W6s2BKBtLzql36LmrRDq1oxri88JHZolDCep1SoL5tGYTsy+
-         jwPfv5YyU8wSh6rZCbkVi8AW8RGHQSn6fJAIkPyqvzmKN5Qjr2EZV5sBGVv+7wtqRrE7
-         KRMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0alpmmHz6ZTguZZiITBs+sXBvYpmgUBHdxQc24Ep7ZY=;
-        b=SIQzB5UAXDR+I55J2fRdcNY5MRpWd09rdh6T2DuoQtBGUK+yk+LoxqdpQYkHnVkuuQ
-         FEVY0PGdiTEXA4t/m5iSpGAHYFPtjo7ej2sBdH/1XSsHaFX/YMnAMFEmtEKMwYbO/y60
-         Vjtq/bw+9Y1rc0Kxr9jbEF75WsOLGAqMeyAXiSUyouGpuUjxZLhq+na7AhnBubXVI4T8
-         KCQeKj0qWH6a7ykA0Az5eDgziV0vjih6QdVROqS7Gq0cVbe7b/u2NMy0SarPSpbyqvLG
-         +1FLzytcsQndVlYdUTnPtcEC/tXQwt45rYLtE8FW8O3+C7YvEfs+tSypnF0CtR0e6ofN
-         jObA==
-X-Gm-Message-State: ABuFfogcXlX8/rOsw14OwMi0NzPQiHOQVJQwW8aGUnheprhVVxHEPume
-        iLxqnk0yeJejdQmnKjdJxsw/x3QG
-X-Google-Smtp-Source: ACcGV625me3clzLtHLdSUMGz6asFsLJ8Ah7i5d409+TLX02CoCcghGWzzWritvAw41TtIgHdjXbrFQ==
-X-Received: by 2002:a0c:8662:: with SMTP id p89-v6mr874780qva.192.1538515226627;
-        Tue, 02 Oct 2018 14:20:26 -0700 (PDT)
-Received: from [192.168.1.10] (pool-96-255-154-210.washdc.fios.verizon.net. [96.255.154.210])
-        by smtp.gmail.com with ESMTPSA id n67-v6sm10743432qkh.66.2018.10.02.14.20.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 14:20:25 -0700 (PDT)
-Subject: Re: [PATCH] team: set IFF_SLAVE on team ports
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        Jan Blunck <jblunck@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
-References: <1436435914-8903-1-git-send-email-jblunck@infradead.org>
- <20150709100727.GE2270@nanopsycho.orion>
- <CALe+Z03R_MPcgUSa8xoMeT5Sv3z8KwFhrtoYYzON=prfR-7hxQ@mail.gmail.com>
- <20150710064147.GA2204@nanopsycho.orion>
- <c674e681-9f7f-85c2-a578-a246d1ec9f45@gmail.com>
- <20180930071414.GF2209@nanopsycho.orion>
- <20180930113805.3b8e62a1@shemminger-XPS-13-9360>
- <20180930093452.GG2209@nanopsycho.orion>
- <b3cf1799-7ee2-47b3-e9ed-98e41ae56853@gmail.com>
- <20181002111215.GA2222@nanopsycho>
-From:   Chas Williams <3chas3@gmail.com>
-Message-ID: <d87d05cd-bd35-4551-4c6c-44409b92dd5b@gmail.com>
-Date:   Tue, 2 Oct 2018 17:20:25 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 3 Oct 2018 00:05:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43298 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727040AbeJCEFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 00:05:54 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9071AC02E618;
+        Tue,  2 Oct 2018 21:20:34 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7D4BC611D7;
+        Tue,  2 Oct 2018 21:20:34 +0000 (UTC)
+Received: from zmail19.collab.prod.int.phx2.redhat.com (zmail19.collab.prod.int.phx2.redhat.com [10.5.83.22])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 6D7B21809546;
+        Tue,  2 Oct 2018 21:20:34 +0000 (UTC)
+Date:   Tue, 2 Oct 2018 17:20:34 -0400 (EDT)
+From:   Rodrigo Freire <rfreire@redhat.com>
+To:     Steve French <smfrench@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Pavel Shilovsky <piastryyy@gmail.com>
+Message-ID: <697659653.32427271.1538515234390.JavaMail.zimbra@redhat.com>
+In-Reply-To: <CAH2r5ms814MUNWVZNfCTuSO2LQZsmCs5N1nwgdVuhxtMctRE3Q@mail.gmail.com>
+References: <ad6b338c900a17c4ecb1655a42b954221f242be2.1538480816.git.rfreire@redhat.com> <CAH2r5mtu9XbQfR=QevDqu36ZRYah1hrRGSQyynCfr82PRyunwQ@mail.gmail.com> <194690850.32402710.1538508513975.JavaMail.zimbra@redhat.com> <CAH2r5ms814MUNWVZNfCTuSO2LQZsmCs5N1nwgdVuhxtMctRE3Q@mail.gmail.com>
+Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
 MIME-Version: 1.0
-In-Reply-To: <20181002111215.GA2222@nanopsycho>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.122.13, 10.4.195.28]
+Thread-Topic: CIFS: Print message when attempting a mount
+Thread-Index: vT5l2hbRmXbxUpiZj0RtYL1C8uaHZw==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 02 Oct 2018 21:20:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Steve o/
 
+I personally like more a pr_info() instead of a cifs_dbg (which wraps to a
+pr_warn). But in order to keep in line with the general CIFS coding style
+I stuck to cifs_dbg
 
-On 10/02/18 07:12, Jiri Pirko wrote:
-> Mon, Oct 01, 2018 at 04:06:16PM CEST, 3chas3@gmail.com wrote:
->>
->>
->> On 09/30/18 05:34, Jiri Pirko wrote:
->>> Sun, Sep 30, 2018 at 11:38:05AM CEST, stephen@networkplumber.org wrote:
->>>> On Sun, 30 Sep 2018 09:14:14 +0200
->>>> Jiri Pirko <jiri@resnulli.us> wrote:
->>>>
->>>>> Thu, Sep 27, 2018 at 04:04:26PM CEST, 3chas3@gmail.com wrote:
->>>>>>
->>>>>>
->>>>>> On 07/10/15 02:41, Jiri Pirko wrote:
->>>>>>> Thu, Jul 09, 2015 at 05:36:55PM CEST, jblunck@infradead.org wrote:
->>>>>>>> On Thu, Jul 9, 2015 at 12:07 PM, Jiri Pirko <jiri@resnulli.us> wrote:
->>>>>>>>> Thu, Jul 09, 2015 at 11:58:34AM CEST, jblunck@infradead.org wrote:
->>>>>>>>>> The code in net/ipv6/addrconf.c:addrconf_notify() tests for IFF_SLAVE to
->>>>>>>>>> decide if it should start the address configuration. Since team ports
->>>>>>>>>> shouldn't get link-local addresses assigned lets set IFF_SLAVE when linking
->>>>>>>>>> a port to the team master.
->>>>>>>>>
->>>>>>>>> I don't want to use IFF_SLAVE in team. Other master-slave devices are
->>>>>>>>> not using that as well, for example bridge, ovs, etc.
->>>>>>>>
->>>>>>>> Maybe they need to get fixed too. I've used that flag because it is
->>>>>>>> documented as
->>>>>>>> a "slave of a load balancer" which describes what a team port is.
->>>>>>>>
->>>>>>>>> I think that this should be fixed in addrconf_notify. It should lookup
->>>>>>>>> if there is a master on top and bail out in that case.
->>>>>>>>
->>>>>>>> There are other virtual interfaces that have a master assigned and want to
->>>>>>>> participate in IPv6 address configuration.
->>>>>>>
->>>>>>> Can you give me an example?
->>>>>>
->>>>>> I would like to revisit this patch (yes, I know it has been a while).  I
->>>>>> believe the VRF implementation uses master to group the interfaces under
->>>>>> a single interface.
->>>>>>
->>>>>> I don't see a reason not to use IFF_SLAVE since team and bonding are fairly
->>>>>> similar.
->>>>>
->>>>> Again, why do you need team port to have IFF_SLAVE flag? What do you
->>>>> want to achieve
->>>>
->>>> Without setting this flag IPv6 will try and make a link specific address.
-> 
-> You are talking about addrconf_notify() right? Easy to fix to check
-> something more convenient. Like netif_is_lag_port() if you want to avoid
-> it for bond/team. netif_is_ovs_port(), netif_is_bridge_port() etc. Lot's
-> of helpers to cover this.
+But I would happily rewrite the cifs_dbg to pr_info a v3: That would be
+good enough too.
 
-OK, IPv6 should probably be using this.
+Ah for what is worth my test/target systems are CentOS/Red Hat Enterprise
+Linux.
 
-> 
-> 
-> 
->>>
->>> Why is it not an issue with bridge, ovs, and other master-slave devices?
->>>
->>
->> It very well might be an issue for bridge and ovs.  Other master-slave
->> devices include the existing VRF implementation in the kernel and those slave
->> interfaces will certainly want to use IPv6.
->>
->> However, IFF_SLAVE has a specific meaning:
->>
->> ./include/uapi/linux/if.h: * @IFF_SLAVE: slave of a load balancer. Volatile.
-> 
-> I know that some userspace apps are using this flag to determine a
-> "bonding slave". I don't think that they care much about eql...
-> 
-> 
->>
->> The bonding driver is not the only user:
->>
->> ./drivers/net/eql.c:#define eql_is_slave(dev)	((dev->flags & IFF_SLAVE) ==
->> IFF_SLAVE)
->> ./drivers/net/eql.c:	slave->dev->flags &= ~IFF_SLAVE;
->> ./drivers/net/eql.c:		slave->dev->flags |= IFF_SLAVE;
->>
->> The team driver would like to use this same flag since it is a load balancer
->> as well.  The side effect of not assigning IPv6 is a bonus. The fact that
-> 
-> No, please leave IFF_SLAVE as it is. Both kernel and userspace have
-> their clear indications right now about the master/slave relationships.
+Thoughts?
 
-The team driver does create a master/slave relationship.  The team 
-slaves are literally slaves of the master device.  It's not clear to me
-why you we can't mark the slaves of the team master as actually being
-slave interfaces?
+Thanks!
 
-> 
-> 
->> bridges and ovs are also likely broken is a different issue.  Should there be
->> a another flag that says "layer 2 only"?  Very possibly, but that is
->> something all these interfaces should be using to include bonding, team, eql,
->> obs, bridge etc.  That's not a reasonable objection to labeling the team
->> slave as slaves since they are literally slaves of a load balancer.
->>
->>
->>
+- RF.
+
+----- Original Message ----- 
+> From: "Steve French" <smfrench@gmail.com>
+> To: rfreire@redhat.com
+> Cc: "LKML" <linux-kernel@vger.kernel.org>, "Steve French"
+> <sfrench@samba.org>, "CIFS" <linux-cifs@vger.kernel.org>, "Pavel Shilovsky"
+> <piastryyy@gmail.com>
+> Sent: Tuesday, October 2, 2018 5:35:49 PM
+> Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
+
+> I noticed that on at least the first system I looked at (Ubuntu 18.04)
+> it defaults to KERN_WARNING (ie 4) so wouldn't have shown a KERN_INFO
+> which is level 6 (as the mount example from ext4) by default
+> or the xfs_notice (which is level 5)
+
+> https://elinux.org/Debugging_by_printing
+
+> On Tue, Oct 2, 2018 at 2:28 PM Rodrigo Freire <rfreire@redhat.com> wrote:
+> >
+> > Hi Steve,
+> >
+> > ----- Original Message -----
+> > > From: "Steve French" <smfrench@gmail.com>
+> > > To: rfreire@redhat.com
+> > > Cc: "LKML" <linux-kernel@vger.kernel.org>, "Steve French"
+> > > <sfrench@samba.org>, "CIFS" <linux-cifs@vger.kernel.org>, "Pavel
+> > > Shilovsky"
+> > > <piastryyy@gmail.com>
+> > > Sent: Tuesday, October 2, 2018 4:17:02 PM
+> > > Subject: Re: [PATCH v2] CIFS: Print message when attempting a mount
+> > >
+> > > Are you sure that these aren't logged by the automounter (for ext4,
+> > > xfs etc.). When I looked in my dmesg logs I didn't find matching log
+> > > entries in the file systems themselves. Do you have an example?
+> >
+> > I'm positive about it. Check it out:
+> >
+> > [rfreire@rf ~]$ cd git/upstream/fs/ext4/
+> > [rfreire@rf ext4]$
+> > [rfreire@rf ext4]$
+> > [rfreire@rf ext4]$ grep -r "mounted filesystem with"
+> > super.c: ext4_msg(sb, KERN_INFO, "mounted filesystem with%s. "
+> >
+> >
+> > [rfreire@rf ext4]$ dmesg | grep mount
+> > [ 21.550897] EXT4-fs (dm-1): mounted filesystem with ordered data mode.
+> > Opts: (null)
+> > [ 22.216213] EXT4-fs (dm-1): re-mounted. Opts: discard
+> > [ 22.598267] EXT4-fs (sda1): mounted filesystem with ordered data mode.
+> > Opts: (null)
+> > [ 22.605225] EXT4-fs (sdc): mounted filesystem without journal. Opts:
+> > discard
+> > [ 24.029161] EXT4-fs (dm-2): mounted filesystem with ordered data mode.
+> > Opts: (null)
+> > [ 24.047777] EXT4-fs (dm-4): mounted filesystem without journal. Opts:
+> > (null)
+> >
+> > XFS sample dmesg (from
+> > https://www.reddit.com/r/archlinux/comments/40b9r9/xfs_partition_is_mounted_during_boot_and_then/):
+> >
+> > [ 2.764491] XFS (sdb1): Mounting V5 Filesystem
+> > [ 3.200886] XFS (sdb1): Ending clean mount
+> > [ 5.384218] XFS (sdb1): Unmounting Filesystem
+> >
+> > Relevant code:
+> >
+> > [rfreire@rf ~]$ cd ../xfs
+> >
+> > [rfreire@rf xfs]$ grep "Mounting V" *.c
+> > xfs_log.c: xfs_notice(mp, "Mounting V%d Filesystem",
+> >
+> >
+> > > On the idea of adding cifsFYI logging here - I slightly prefer using
+> > > ftrace (trace-cmd, ie dynamic tracing) so there is less overhead and
+> > > easier to turn on/off following the example of xfs, f2fs, nfs, nfsd
+> > > etc.
+> >
+> > Remember that cifsFYI already exists; I just moved it inside a if clause
+> > to print it only when running under debug. (they way it is originally).
+> >
+> > > On Tue, Oct 2, 2018 at 6:57 AM Rodrigo Freire <rfreire@redhat.com> wrote:
+> > > >
+> > > > Currently, no messages are printed when mounting a CIFS filesystem and
+> > > > no debug configuration is enabled.
+> > > >
+> > > > However, a CIFS mount information is valuable when troubleshooting
+> > > > and/or forensic analyzing a system and finding out if was a CIFS
+> > > > endpoint mount attempted.
+> > > >
+> > > > Other filesystems such as XFS, EXT* does issue a printk() when mounting
+> > > > their filesystems.
+> >
+> >
+> > > --
+> > > Thanks,
+> >
+> > Thank You! o/
+
+> --
+> Thanks,
+
+> Steve
