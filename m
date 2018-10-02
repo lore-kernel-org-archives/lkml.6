@@ -2,122 +2,113 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3082C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A90C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABFFF2082A
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:49:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47B502082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 14:49:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="PizaOKqW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABFFF2082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jnMARkSm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47B502082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728595AbeJBVdY (ORCPT
+        id S1728643AbeJBVd0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 17:33:24 -0400
-Received: from imap.thunk.org ([74.207.234.97]:37134 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726552AbeJBVdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 17:33:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=Z2QEvOcbezwAtkSyUuoeYTZeTpztA4GoiWRdMbJKK24=; b=PizaOKqWG5PCT5HwCfF4cCNFs4
-        6/Ei2w5HJj/YbBrr6U9db7KfpQUFb/0HsQteJnmCR4/h7fzV125DfLv9QUAbQZ9HHPnfBl+vyfnqY
-        OVBgmH8jjExmyayS4XsLEcIceCJSMAhyrN7JvmADAnV1+6f5JrN5yC2PH/ipkZdslbqw=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1g7LzT-0005Zh-Tt; Tue, 02 Oct 2018 14:49:35 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id D61E17A55B3; Tue,  2 Oct 2018 10:49:33 -0400 (EDT)
-Date:   Tue, 2 Oct 2018 10:49:33 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     syzbot <syzbot+a2872d6feea6918008a9@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        linux-ext4@vger.kernel.org
-Subject: Re: KASAN: use-after-free Read in seq_escape
-Message-ID: <20181002144933.GC17537@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        syzbot <syzbot+a2872d6feea6918008a9@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        linux-ext4@vger.kernel.org
-References: <000000000000902cb10577255369@google.com>
+        Tue, 2 Oct 2018 17:33:26 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:35675 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726552AbeJBVdZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 17:33:25 -0400
+Received: by mail-yw1-f68.google.com with SMTP id y76-v6so853058ywd.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 07:49:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HWvAH8hkjtkAuohQgK1B9p5lEx209J/nEFP5Wps4HGo=;
+        b=jnMARkSmW5Jq8DtqgwtNs5Vfz5jOzrmnd7gCSmlioGy1xv73VBO1N+7ytQqhFWviu3
+         /0s5mpq7gehr2OasARhKNO8IMJr9Sk4GqXkQ6gahCJyWX/vKW1C8ixGInci3xC/WFDsJ
+         ZY6th2soLsYl7ERTGxLHb/gJ2vWapAFywaIIuUSEn2C67kCyR2A8DGrPZgYk41By6CFQ
+         9Ezr3ZL17tibVJB6EzQ/yDzVdOGtSAtgrUSZVdJEg/IhHuGpY/rGgIVA7bdy0dGTXJjx
+         fkEuxv7MDWZeGy9aak/zfHkp4h7U3rJMeXn3Kz4GG9Ps6OpCqZe+tV76BW2kdQTIKure
+         CqHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HWvAH8hkjtkAuohQgK1B9p5lEx209J/nEFP5Wps4HGo=;
+        b=ShHcghc8jd47XPe5c0s23t+GdvFkUMrucDE+BnBSe4K4PJxrr5nhI8pWLcdWfXt3z7
+         a2Z2ikLIGoxaVZS/2xLHOkCQDNYFSyNlH6EtR3ONR6GnGzX8xK2tu3cbFfr4vt9fzhYc
+         H6/pgZQ3bq9rDBgHXO9IFj0nMWjsx6EIKURcO1kHbhVZWUMTU9gseDieYzHTZsD1+AYW
+         PMwPOZ6W8DJqyvK0yRoj+WQkIAGu7llA0DJ3lOdIyO4w2J1mkQI6FbDBdrQcgTbsQdrZ
+         DU5JQjgHdeWkWaFZSQQ0pt3MDZPdMKciAK919PfcJxAX9pKNtWwkUlfjoL4UaYSOc36m
+         9DFw==
+X-Gm-Message-State: ABuFfojl8gHLaEavaaczVuK6DYapNIKJ9LaC7wPWFKBukfSxQ4TYz41v
+        Dww5kuAo0hHEaB6kNhSHqyD3pUaOrJa6yaqpKPJj3w==
+X-Google-Smtp-Source: ACcGV63Yw8UTvJLuEotPz+Qr2fa0qCapkWNDtzfoQGMU4BzcVWyS75kjC9AwwdtllP5WEctmho2LeexbGeRiMtlSLgc=
+X-Received: by 2002:a81:ae4e:: with SMTP id g14-v6mr8566571ywk.248.1538491778910;
+ Tue, 02 Oct 2018 07:49:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000902cb10577255369@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+References: <20180930065100.GL15893@shao2-debian> <CAOQ4uxiHkufAtt87bMs9n-0sFxJSHsBxDX6jn8v28vkvy=a_qQ@mail.gmail.com>
+ <20181001093249.GD3913@quack2.suse.cz> <CAOQ4uxiY=-=F6v4enQkcw4VjhP6gp4E31fdRxM=_ShutbT2QXw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiY=-=F6v4enQkcw4VjhP6gp4E31fdRxM=_ShutbT2QXw@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 2 Oct 2018 17:49:27 +0300
+Message-ID: <CAOQ4uxij6LuL6t3Y2ezbb=6sk-Q1Rqu6py3beY84jTGOmWH=+Q@mail.gmail.com>
+Subject: Re: [LKP] [fsnotify] 60f7ed8c7c: will-it-scale.per_thread_ops -5.9% regression
+To:     Jan Kara <jack@suse.cz>
+Cc:     rong.a.chen@intel.com, linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, LKP <lkp@01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 11:58:02PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    17b57b1883c1 Linux 4.19-rc6
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1672d711400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c0af03fe452b65fb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a2872d6feea6918008a9
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+On Mon, Oct 1, 2018 at 12:52 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Mon, Oct 1, 2018 at 12:32 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Sun 30-09-18 12:00:46, Amir Goldstein wrote:
+> [...]
+> > > > commit:
+> > > >   1e6cb72399 ("fsnotify: add super block object type")
+> > > >   60f7ed8c7c ("fsnotify: send path type events to group with super block marks")
+> > > >
+> > >
+> > > I have to admit this looks strange.
+> > > All this commit does is dereference mnt->mnt.mnt_sb and then
+> > > sb->s_fsnotify_mask/sb->s_fsnotify_marks to find that they are zero.
+> > > AFAICT there should be no extra contention added by this commit and it's
+> > > hard to believe that parallel unlink workload would suffer from this change.
+> >
+> > Well, it could be those additional fetches of
+> > sb->s_fsnotify_mask/sb->s_fsnotify_marks if they happen to be cache cold.
+> > Or it could be just code layout differences (i.e., compiler is not able to
+> > optimize resulting code as good or the code layout just happens to align
+> > with cache lines in a wrong way or something like that). Anyway, without
+> > being able to reproduce this and do detailed comparison of perf profiles I
+> > don't think we'll be able to tell.
+> >
+>
 
-This should be fixed with the following patch.
+On my test machine, I couldn't measure a difference in results between the
+two commits, but it may be because my test machine is not strong enough to
+drive the test. It only has 4 cores and so I could only reach ~1/4 of
+the workload
+reported by 0day robot.
 
-     	       	     	      		- Ted
+I tested both 16-thread and 4-thread jobs. In both cases the measured difference
+between the two commits was less than 0.5% and within the stddev margins.
 
-From 89cc85e761c5b905b1a61cb85440bf9b5e841c80 Mon Sep 17 00:00:00 2001
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Tue, 2 Oct 2018 10:40:57 -0400
-Subject: [PATCH] ext4: fix use-after-free race in ext4_remount()'s error path
+I will see if I can get my hands on a stronger test machine.
 
-It's possible for ext4_show_quota_options() to try reading
-s_qf_names[i] while it is being modified by ext4_remount() --- most
-notably, in ext4_remount's error path when the original values of the
-quota file name gets restored.
-
-Reported-by: syzbot+a2872d6feea6918008a9@syzkaller.appspotmail.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
----
- fs/ext4/super.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index faf293ed8060..11a1bfae0937 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2048,11 +2048,13 @@ static inline void ext4_show_quota_options(struct seq_file *seq,
- 		seq_printf(seq, ",jqfmt=%s", fmtname);
- 	}
- 
-+	down_read(&sb->s_umount);
- 	if (sbi->s_qf_names[USRQUOTA])
- 		seq_show_option(seq, "usrjquota", sbi->s_qf_names[USRQUOTA]);
- 
- 	if (sbi->s_qf_names[GRPQUOTA])
- 		seq_show_option(seq, "grpjquota", sbi->s_qf_names[GRPQUOTA]);
-+	up_read(&sb->s_umount);
- #endif
- }
- 
--- 
-2.18.0.rc0
-
+Thanks,
+Amir.
