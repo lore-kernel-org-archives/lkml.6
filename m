@@ -2,72 +2,86 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE14C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F05ACC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0DC221471
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:58:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0DC221471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BC2F121471
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 00:59:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2F121471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbeJBHjN (ORCPT
+        id S1726741AbeJBHjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:39:13 -0400
-Received: from mga01.intel.com ([192.55.52.88]:28276 "EHLO mga01.intel.com"
+        Tue, 2 Oct 2018 03:39:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45934 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbeJBHjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 03:39:12 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 17:58:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,329,1534834800"; 
-   d="scan'208";a="267604488"
-Received: from hubermic-mobl.ger.corp.intel.com (HELO localhost) ([10.252.54.31])
-  by fmsmga005.fm.intel.com with ESMTP; 01 Oct 2018 17:58:38 -0700
-Date:   Tue, 2 Oct 2018 03:58:37 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tomas Winkler <tomas.winkler@intel.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 21/21] tpm: use u32 instead of int for PCR index
-Message-ID: <20181002005837.GJ23753@linux.intel.com>
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-22-tomas.winkler@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928223035.14471-22-tomas.winkler@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1726332AbeJBHjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 03:39:32 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 30913307D844;
+        Tue,  2 Oct 2018 00:59:03 +0000 (UTC)
+Received: from rf.usersys.redhat.com (ovpn-116-170.phx2.redhat.com [10.3.116.170])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 47CDD10016DC;
+        Tue,  2 Oct 2018 00:59:02 +0000 (UTC)
+From:   Rodrigo Freire <rfreire@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     sfrench@samba.org, linux-cifs@vger.kernel.org
+Subject: [PATCH] CIFS: Print message when attempting mount
+Date:   Mon,  1 Oct 2018 21:58:46 -0300
+Message-Id: <463f424e3d4724a4ab7b84c395e7b0cf3068e31f.1538441538.git.rfreire@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 02 Oct 2018 00:59:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 01:30:35AM +0300, Tomas Winkler wrote:
-> The TPM specs defines PCR index as a positive number, and there is
-> no reason to use a signed number. It is also a possible security
-> issue as currently no functions check for a negative index,
-> which may become a large number when converted to u32.
-> 
-> Adjust the API to use u32 instead of int in all PCR related
-> functions.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+By default, no messages are printed when mounting a CIFS filesystem.
+This information is valuable when troubleshooting and/or forensic
+analyzing a system and finding out if was a CIFS endpoint mount
+attempted.
+Other filesystems such as XFS, EXT* does issue a printk() when mounting
+their filesystems.
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Sample output:
 
-/Jarkko
+[root@ll-rhel7 ~]# mount -o user=administrator //172.25.250.18/c$ /mnt
+(non-existent system)
+
+[root@ll-rhel7 ~]# mount -o user=administrator //172.25.250.19/c$ /mnt
+(Valid system)
+
+Kernel message log:
+
+[  450.464543] CIFS VFS: Attempting to mount //172.25.250.18/c$
+[  456.478186] CIFS VFS: Error connecting to socket. Aborting operation.
+[  456.478381] CIFS VFS: cifs_mount failed w/return code = -113
+[  467.688866] CIFS VFS: Attempting to mount //172.25.250.19/c$
+
+Signed-off-by: Rodrigo Freire <rfreire@redhat.com>
+---
+ fs/cifs/cifsfs.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index 7065426..3f5a31e 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -707,6 +707,7 @@ static int cifs_set_super(struct super_block *sb, void *data)
+ 	struct cifs_mnt_data mnt_data;
+ 	struct dentry *root;
+ 
++	cifs_dbg(VFS, "Attempting to mount %s\n", dev_name);
+ 	cifs_dbg(FYI, "Devname: %s flags: %d\n", dev_name, flags);
+ 
+ 	volume_info = cifs_get_volume_info((char *)data, dev_name, is_smb3);
+-- 
+1.8.3.1
+
