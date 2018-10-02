@@ -2,108 +2,177 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED9CC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7882FC004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:29:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 438B820652
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:28:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="deBS9lm6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 438B820652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 38CC22082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 11:29:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CC22082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeJBSLf (ORCPT
+        id S1727684AbeJBSLr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 14:11:35 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41126 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727443AbeJBSLf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 14:11:35 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 78AC2B7F;
-        Tue,  2 Oct 2018 13:28:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1538479724;
-        bh=wuj6Nk8NNwxAN45cqnjPXlVW6qEV9jnt5CBHbbmmwys=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=deBS9lm6SLhPNQWsk7PLA/2pwHaziBJe358Bdod+uUtSdnMWp7f5svB2Kwo0EpRTx
-         SV4KxIzdEN4VCmeNb4hV5vsLyfC9TmqTgrbtfepMhDtm4ut4+7w5OCOZFUWfKu244W
-         OITkWFiLlJQivxrgjCinXzA8u9ZFEEarw8NeQlOs=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/6] [media] ad5820: DT new optional field enable-gpios
-Date:   Tue, 02 Oct 2018 14:29:01 +0300
-Message-ID: <3235299.fxFho4aFbc@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20181002111356.32298-1-ricardo.ribalda@gmail.com>
-References: <20181002111356.32298-1-ricardo.ribalda@gmail.com>
+        Tue, 2 Oct 2018 14:11:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51200 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727443AbeJBSLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 14:11:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 18E8CAFC1;
+        Tue,  2 Oct 2018 11:28:56 +0000 (UTC)
+Date:   Tue, 2 Oct 2018 13:28:51 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: [RFC PATCH] mm, proc: report PR_SET_THP_DISABLE in proc
+Message-ID: <20181002112851.GP18290@dhcp22.suse.cz>
+References: <alpine.DEB.2.21.1809241215170.239142@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1809241227370.241621@chino.kir.corp.google.com>
+ <20180924195603.GJ18685@dhcp22.suse.cz>
+ <20180924200258.GK18685@dhcp22.suse.cz>
+ <0aa3eb55-82c0-eba3-b12c-2ba22e052a8e@suse.cz>
+ <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com>
+ <20180925202959.GY18685@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1809251440001.94921@chino.kir.corp.google.com>
+ <20180925150406.872aab9f4f945193e5915d69@linux-foundation.org>
+ <20180926060624.GA18685@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926060624.GA18685@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
+On Wed 26-09-18 08:06:24, Michal Hocko wrote:
+> On Tue 25-09-18 15:04:06, Andrew Morton wrote:
+> > On Tue, 25 Sep 2018 14:45:19 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
+> > 
+> > > > > It is also used in 
+> > > > > automated testing to ensure that vmas get disabled for thp appropriately 
+> > > > > and we used "nh" since that is how PR_SET_THP_DISABLE previously enforced 
+> > > > > this, and those tests now break.
+> > > > 
+> > > > This sounds like a bit of an abuse to me. It shows how an internal
+> > > > implementation detail leaks out to the userspace which is something we
+> > > > should try to avoid.
+> > > > 
+> > > 
+> > > Well, it's already how this has worked for years before commit 
+> > > 1860033237d4 broke it.  Changing the implementation in the kernel is fine 
+> > > as long as you don't break userspace who relies on what is exported to it 
+> > > and is the only way to determine if MADV_NOHUGEPAGE is preventing it from 
+> > > being backed by hugepages.
+> > 
+> > 1860033237d4 was over a year ago so perhaps we don't need to be
+> > too worried about restoring the old interface.  In which case
+> > we have an opportunity to make improvements such as that suggested
+> > by Michal?
+> 
+> Yeah, can we add a way to export PR_SET_THP_DISABLE to userspace
+> somehow? E.g. /proc/<pid>/status. It is a process wide thing so
+> reporting it per VMA sounds strange at best.
 
-Thank you for the patch.
+So how about this? (not tested yet but it should be pretty
+straightforward)
+--- 
+From 048b29102de326900b54cce78b614345cd77a230 Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Tue, 2 Oct 2018 10:53:48 +0200
+Subject: [PATCH] mm, proc: report PR_SET_THP_DISABLE in proc
 
-On Tuesday, 2 October 2018 14:13:56 EEST Ricardo Ribalda Delgado wrote:
-> Document new enable-gpio field. It can be used to disable the part
-> without turning down its regulator.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+David Rientjes has reported that 1860033237d4 ("mm: make
+PR_SET_THP_DISABLE immediately active") has changed the way how
+we report THPable VMAs to the userspace. Their monitoring tool is
+triggering false alarms on PR_SET_THP_DISABLE tasks because it considers
+an insufficient THP usage as a memory fragmentation resp. memory
+pressure issue.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Before the said commit each newly created VMA inherited VM_NOHUGEPAGE
+flag and that got exposed to the userspace via /proc/<pid>/smaps file.
+This implementation had its downsides as explained in the commit message
+but it is true that the userspace doesn't have any means to query for
+the process wide THP enabled/disabled status.
 
-> ---
->  Documentation/devicetree/bindings/media/i2c/ad5820.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> b/Documentation/devicetree/bindings/media/i2c/ad5820.txt index
-> 5940ca11c021..db596e8eb0ba 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> +++ b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> @@ -8,6 +8,11 @@ Required Properties:
-> 
->    - VANA-supply: supply of voltage for VANA pin
-> 
-> +Optional properties:
-> +
-> +   - enable-gpios : GPIO spec for the XSHUTDOWN pin. The XSHUTDOWN signal
-> is +active low, a high level on the pin enables the device.
-> +
->  Example:
-> 
->         ad5820: coil@c {
-> @@ -15,5 +20,6 @@ Example:
->                 reg = <0x0c>;
-> 
->                 VANA-supply = <&vaux4>;
-> +               enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
->         };
+PR_SET_THP_DISABLE is a process wide flag so it makes a lot of sense
+to export in the process wide context rather than per-vma. Introduce
+a new field to /proc/<pid>/status which export this status.  If
+PR_SET_THP_DISABLE is used the it reports false same as when the THP is
+not compiled in. It doesn't consider the global THP status because we
+already export that information via sysfs
 
+Fixes: 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ Documentation/filesystems/proc.txt |  3 +++
+ fs/proc/array.c                    | 10 ++++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 22b4b00dee31..bafa5cb1685a 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -182,6 +182,7 @@ For example, to get the status information of a process, all you have to do is
+   VmSwap:        0 kB
+   HugetlbPages:          0 kB
+   CoreDumping:    0
++  THP_enabled:	  1
+   Threads:        1
+   SigQ:   0/28578
+   SigPnd: 0000000000000000
+@@ -256,6 +257,8 @@ Table 1-2: Contents of the status files (as of 4.8)
+  HugetlbPages                size of hugetlb memory portions
+  CoreDumping                 process's memory is currently being dumped
+                              (killing the process may lead to a corrupted core)
++ THP_enabled		     process is allowed to use THP (returns 0 when
++			     PR_SET_THP_DISABLE is set on the process
+  Threads                     number of threads
+  SigQ                        number of signals queued/max. number for queue
+  SigPnd                      bitmap of pending signals for the thread
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 0ceb3b6b37e7..9d428d5a0ac8 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -392,6 +392,15 @@ static inline void task_core_dumping(struct seq_file *m, struct mm_struct *mm)
+ 	seq_putc(m, '\n');
+ }
+ 
++static inline void task_thp_status(struct seq_file *m, struct mm_struct *mm)
++{
++	bool thp_enabled = IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE);
++
++	if (thp_enabled)
++		thp_enabled = !test_bit(MMF_DISABLE_THP, &mm->flags);
++	seq_printf(m, "THP_enabled:\t%d\n", thp_enabled);
++}
++
+ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
+ 			struct pid *pid, struct task_struct *task)
+ {
+@@ -406,6 +415,7 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
+ 	if (mm) {
+ 		task_mem(m, mm);
+ 		task_core_dumping(m, mm);
++		task_thp_status(m, mm);
+ 		mmput(mm);
+ 	}
+ 	task_sig(m, task);
+-- 
+2.19.0
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Michal Hocko
+SUSE Labs
