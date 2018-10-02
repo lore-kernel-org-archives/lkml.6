@@ -2,110 +2,106 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5FEC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40353C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B4F82064E
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:31:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04F322064E
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 08:32:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="laXdewcm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B4F82064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UE2B6mFQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F322064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeJBPNK (ORCPT
+        id S1727519AbeJBPOD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 11:13:10 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36808 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbeJBPNJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 11:13:09 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y16so1147088wrw.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 01:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7wdiTWCVAzgYBoRGLBTvE3F5jIePHK5Te2cSzVql9zY=;
-        b=laXdewcmJ+RyqzumSN4yHw/aiTlhCXIKFZnLPxo4y7LOhZdGHRlH5UoxlH1mGVZl9r
-         DgQGD82kM8oVhic8hxTnDrENSgZhNRuMUf1hP0A7TN8ZjjrPUV/PNdh9jzjoJ5Ak1+er
-         Br0t/d2vb6GADpXR2EK05q4X4Vp13zI7/V0W+QA/OKBWYlQ5erog7zSzyY/yVcyz9lST
-         cPOegAFqWmOhOZ80QECJhPY4xW1sa1OXJDLK1VH1bLjYtFLd0ChjneMAyEaolGR+H0ck
-         SbTUXPxLLo0/UVE8dWa9B/4bgNyh/eVAW7Yqv4LGD/5pvAkGho0Ik6toRZvhhQgZRQqy
-         7urw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7wdiTWCVAzgYBoRGLBTvE3F5jIePHK5Te2cSzVql9zY=;
-        b=L4MWleudUy/tzrEm0D+fLhy1XPHEB5PfzPNuHCMseyBb0agxJ2re9UOuUaaoZkG3+q
-         LDW83xANHkxvbqmuRw/8t2d3yLZrO/W6WMbbnQlY1xK7aBih1gYALrknHwHVFWlUMXwv
-         esCsuAQLL7zp/t6dZyz2YYZIf/aG7iLoOowsdr8MKgYGCW+lGrjG+kvGFuNqZiNvKBwj
-         Ha+Im19qh1FA809S0Af0tG3XVhXk9bv0TWegcEGTpSdP4pDXAIsEVE36I746xeZFiMcb
-         jhqgUWEeT2mGe3gsUakfj4b4Q0A+6MWVki2Zgxzgs4fLU5toHBctbttHwC1tgu94Tv+k
-         kWNA==
-X-Gm-Message-State: ABuFfohLmTnEEkJrt7D9yPg9J/ATN4g+a1CzRIoH4DBjPObubU5CwHY+
-        dbNjLBe4R8faSEa/bnHkt9g5LrX51iA=
-X-Google-Smtp-Source: ACcGV633PRpn/QKpcri0tT3thy9mpgNqp+ykadyoqSjFjgzqDR/pFXihq3uTjt1D6qhSM0Md+B9wog==
-X-Received: by 2002:adf:aa90:: with SMTP id h16-v6mr9253834wrc.216.1538469062682;
-        Tue, 02 Oct 2018 01:31:02 -0700 (PDT)
-Received: from pathfinder (host-78-148-28-244.as13285.net. [78.148.28.244])
-        by smtp.gmail.com with ESMTPSA id e142-v6sm2737514wmf.20.2018.10.02.01.31.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Oct 2018 01:31:01 -0700 (PDT)
-Date:   Tue, 2 Oct 2018 09:31:00 +0100
-From:   Phillip Potter <phil@philpotter.co.uk>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     dushistov@mail.ru, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: ufs: Convert ufs_set_de_type to use lookup table
-Message-ID: <20181002083100.GB4263@pathfinder>
-References: <20181001153310.GA13006@pathfinder>
- <20181002022814.GN32577@ZenIV.linux.org.uk>
+        Tue, 2 Oct 2018 11:14:03 -0400
+Received: from ozlabs.org ([203.11.71.1]:49241 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727315AbeJBPOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Oct 2018 11:14:03 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42PXSW53MZz9sj6;
+        Tue,  2 Oct 2018 18:31:55 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538469115;
+        bh=aGg4GPFd0Fz4fKBvHNFeqIL2eDv30ygTS9v5j45kqfU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=UE2B6mFQ1Ngp/CDweRNUSMVZN8wIa2udZkMpQ/QCxrYy/ZMQOgQHqNaNqj3ATgpV9
+         8A4rbfctpyIInhbuLROJtv5jEbwAxQlrmNJsQSuIBM3Z7GKz/PAd1CWx/ebuB90Lqw
+         ecQ5gKMZTqY7f0xYwc7BvooBFwaXQlviEwVnJcF0BFcuON9D9cWMIyXSDK8OZDRV4x
+         S7sv4nZqmOl0ghXcX5v9oAPpxSIh5wg8OL9ugmGhZDXYdSk6dDc7pT/Z0Ko7p+OLvV
+         DyGOUSs4dDFbhq+4QdsXwsFerammeGzEcNk/Vb9pBzYn1GAujWDyqBW9E+4y8d1A7+
+         A4Te3ZS96lMbA==
+Date:   Tue, 2 Oct 2018 18:31:39 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: linux-next: manual merge of the akpm tree with the dma-mapping tree
+Message-ID: <20181002183139.64a85845@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002022814.GN32577@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/68h347dOdn6RQ5pEgHEID3R"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 03:28:14AM +0100, Al Viro wrote:
-> On Mon, Oct 01, 2018 at 04:33:10PM +0100, Phillip Potter wrote:
-> > Modify ufs_set_de_type function in fs/ufs/util.h to use a lookup
-> > table rather than a switch statement, as per the TODO comment.
-> 
-> Brittle, that...   Something like fs/ext2/dir.c approach (that is,
-> #define S_SHIFT 12
-> static unsigned char ext2_type_by_mode[S_IFMT >> S_SHIFT] = {
->         [S_IFREG >> S_SHIFT]    = EXT2_FT_REG_FILE,
->         [S_IFDIR >> S_SHIFT]    = EXT2_FT_DIR,
->         [S_IFCHR >> S_SHIFT]    = EXT2_FT_CHRDEV,
->         [S_IFBLK >> S_SHIFT]    = EXT2_FT_BLKDEV,
->         [S_IFIFO >> S_SHIFT]    = EXT2_FT_FIFO,
->         [S_IFSOCK >> S_SHIFT]   = EXT2_FT_SOCK,
->         [S_IFLNK >> S_SHIFT]    = EXT2_FT_SYMLINK,
-> };
-> in there) would be saner, IMO.  Note that DT_UNKNOWN is zero, so the
-> array elements lacking an explicit initializer will end up with that.
-> 
-> What's more, the values are ->i_mode >> 12 or 0, depending upon the
-> value being valid.  And since the upper layers do validate the type,
-> I'd consider simply using (inode->i_mode & S_IFMT) >> 12 there.
-> Unlike ext2, ufs stores straight bits 12..15 there (ext2 uses an
-> enum with sequential values instead; e.g. regular files are encoded
-> as 1 there, not 8 as on ufs)...
+--Sig_/68h347dOdn6RQ5pEgHEID3R
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Dear Al,
+Hi all,
 
-Thank you for taking time to offer your feedback, I really appreciate
-it. I will rework this patch this evening and resubmit.
+Today's linux-next merge of the akpm tree got a conflict in:
 
-Regards,
-Phil
+  arch/unicore32/Kconfig
+
+between commit:
+
+  b733116feab5 ("unicore32: remove swiotlb support")
+
+from the dma-mapping tree and patch:
+
+  "mm: remove CONFIG_HAVE_MEMBLOCK"
+
+from the akpm tree.
+
+I fixed it up (I forgot to generate the patch, sorry) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/68h347dOdn6RQ5pEgHEID3R
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluzLOsACgkQAVBC80lX
+0GwzvQf/bzykubWZHEGoY2ho8RPwnlb/pWY4iM4niVbRlfvcQTRvSx7yPs/aCvOR
+BC8835RkHkeA4ddnGM3hUaf24I4QZltSkJX+1S1VKByPKjEzXAL2DxnxEBSUVBzh
++54G6UbzDl7YhgemiTdSCtmToVuMUr4dg5+ypmnuxEgAZmvSpi3Tf7Bkfejl+au9
+5S89h/ejbbORXCEXhphA2uDZRFZirYkGuC2P5Ia7B75JdCR5Ipy2wzo9MjCJbOrq
+3/TYzQuZRC2wuN3/lKMp0a7LuYqwbR7gP4ny1HukndCuY4cfA8q+UmmuKnji9LrV
+t0chM6WgkuF7qT6E/mxxOybbRLL6AA==
+=c1ND
+-----END PGP SIGNATURE-----
+
+--Sig_/68h347dOdn6RQ5pEgHEID3R--
