@@ -3,38 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 972F7C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC154C64EB5
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68FAA2083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:30:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FAA2083F
+	by mail.kernel.org (Postfix) with ESMTP id 7D37E2083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D37E2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730735AbeJBUOT (ORCPT
+        id S1730748AbeJBUOU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33872 "EHLO
+        Tue, 2 Oct 2018 16:14:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33880 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730696AbeJBUOS (ORCPT
+        with ESMTP id S1730732AbeJBUOU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:18 -0400
+        Tue, 2 Oct 2018 16:14:20 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67E0BC3F;
-        Tue,  2 Oct 2018 13:30:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8D3AC2A;
+        Tue,  2 Oct 2018 13:30:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.18 162/228] IB/hfi1: Fix SL array bounds check
-Date:   Tue,  2 Oct 2018 06:24:19 -0700
-Message-Id: <20181002132509.780189704@linuxfoundation.org>
+        stable@vger.kernel.org, Bo Chen <chenbo@pdx.edu>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 204/228] e1000: check on netif_running() before calling e1000_up()
+Date:   Tue,  2 Oct 2018 06:25:01 -0700
+Message-Id: <20181002132511.616539296@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -52,50 +54,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ira Weiny <ira.weiny@intel.com>
+From: Bo Chen <chenbo@pdx.edu>
 
-commit 0dbfaa9f2813787679e296eb5476e40938ab48c8 upstream.
+[ Upstream commit cf1acec008f8d7761aa3fd7c4bca7e17b2d2512d ]
 
-The SL specified by a user needs to be a valid SL.
+When the device is not up, the call to 'e1000_up()' from the error handling path
+of 'e1000_set_ringparam()' causes a kernel oops with a null-pointer
+dereference. The null-pointer dereference is triggered in function
+'e1000_alloc_rx_buffers()' at line 'buffer_info = &rx_ring->buffer_info[i]'.
 
-Add a range check to the user specified SL value which protects from
-running off the end of the SL to SC table.
+This bug was reported by COD, a tool for testing kernel module binaries I am
+building. This bug was also detected by KFI from Dr. Kai Cong.
 
-CC: stable@vger.kernel.org
-Fixes: 7724105686e7 ("IB/hfi1: add driver files")
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+This patch fixes the bug by checking on 'netif_running()' before calling
+'e1000_up()' in 'e1000_set_ringparam()'.
+
+Signed-off-by: Bo Chen <chenbo@pdx.edu>
+Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/infiniband/hw/hfi1/verbs.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/hfi1/verbs.c
-+++ b/drivers/infiniband/hw/hfi1/verbs.c
-@@ -1590,6 +1590,7 @@ static int hfi1_check_ah(struct ib_devic
- 	struct hfi1_pportdata *ppd;
- 	struct hfi1_devdata *dd;
- 	u8 sc5;
-+	u8 sl;
- 
- 	if (hfi1_check_mcast(rdma_ah_get_dlid(ah_attr)) &&
- 	    !(rdma_ah_get_ah_flags(ah_attr) & IB_AH_GRH))
-@@ -1598,8 +1599,13 @@ static int hfi1_check_ah(struct ib_devic
- 	/* test the mapping for validity */
- 	ibp = to_iport(ibdev, rdma_ah_get_port_num(ah_attr));
- 	ppd = ppd_from_ibp(ibp);
--	sc5 = ibp->sl_to_sc[rdma_ah_get_sl(ah_attr)];
- 	dd = dd_from_ppd(ppd);
-+
-+	sl = rdma_ah_get_sl(ah_attr);
-+	if (sl >= ARRAY_SIZE(ibp->sl_to_sc))
-+		return -EINVAL;
-+
-+	sc5 = ibp->sl_to_sc[sl];
- 	if (sc_to_vlt(dd, sc5) > num_vls && sc_to_vlt(dd, sc5) != 0xf)
- 		return -EINVAL;
- 	return 0;
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -644,7 +644,8 @@ err_setup_rx:
+ err_alloc_rx:
+ 	kfree(txdr);
+ err_alloc_tx:
+-	e1000_up(adapter);
++	if (netif_running(adapter->netdev))
++		e1000_up(adapter);
+ err_setup:
+ 	clear_bit(__E1000_RESETTING, &adapter->flags);
+ 	return err;
 
 
