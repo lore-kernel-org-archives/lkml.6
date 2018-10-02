@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802F5C43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF06C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E29206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E29206B2
+	by mail.kernel.org (Postfix) with ESMTP id 3DF172083F
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:37:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DF172083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387659AbeJBUUd (ORCPT
+        id S2387690AbeJBUUh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:20:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36590 "EHLO
+        Tue, 2 Oct 2018 16:20:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36614 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387634AbeJBUUc (ORCPT
+        with ESMTP id S2387667AbeJBUUg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:20:32 -0400
+        Tue, 2 Oct 2018 16:20:36 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4753CB4A;
-        Tue,  2 Oct 2018 13:37:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4B6BC5AA;
+        Tue,  2 Oct 2018 13:37:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        Hang Zhou <hang.zhou@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 90/94] drm/amdgpu: Enable/disable gfx PG feature in rlc safe mode
-Date:   Tue,  2 Oct 2018 06:25:44 -0700
-Message-Id: <20181002132506.759978896@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH 4.9 57/94] serial: cpm_uart: return immediately from console poll
+Date:   Tue,  2 Oct 2018 06:25:11 -0700
+Message-Id: <20181002132504.443114333@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
 References: <20181002132500.494838053@linuxfoundation.org>
@@ -52,49 +51,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rex Zhu <Rex.Zhu@amd.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit 8ef23364b654d44244400d79988e677e504b21ba ]
+commit be28c1e3ca29887e207f0cbcd294cefe5074bab6 upstream.
 
-This is required by gfx hw and can fix the rlc hang when
-do s3 stree test on Cz/St.
+kgdb expects poll function to return immediately and
+returning NO_POLL_CHAR when no character is available.
 
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Hang Zhou <hang.zhou@amd.com>
-Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: f5316b4aea024 ("kgdb,8250,pl011: Return immediately from console poll")
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-@@ -5551,6 +5551,11 @@ static int gfx_v8_0_set_powergating_stat
- 	if (!(adev->pg_flags & AMD_PG_SUPPORT_GFX_PG))
- 		return 0;
+---
+ drivers/tty/serial/cpm_uart/cpm_uart_core.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+--- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
++++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+@@ -1068,8 +1068,8 @@ static int poll_wait_key(char *obuf, str
+ 	/* Get the address of the host memory buffer.
+ 	 */
+ 	bdp = pinfo->rx_cur;
+-	while (bdp->cbd_sc & BD_SC_EMPTY)
+-		;
++	if (bdp->cbd_sc & BD_SC_EMPTY)
++		return NO_POLL_CHAR;
  
-+	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
-+				AMD_PG_SUPPORT_RLC_SMU_HS |
-+				AMD_PG_SUPPORT_CP |
-+				AMD_PG_SUPPORT_GFX_DMG))
-+		adev->gfx.rlc.funcs->enter_safe_mode(adev);
- 	switch (adev->asic_type) {
- 	case CHIP_CARRIZO:
- 	case CHIP_STONEY:
-@@ -5586,7 +5591,11 @@ static int gfx_v8_0_set_powergating_stat
- 	default:
- 		break;
+ 	/* If the buffer address is in the CPM DPRAM, don't
+ 	 * convert it.
+@@ -1104,7 +1104,11 @@ static int cpm_get_poll_char(struct uart
+ 		poll_chars = 0;
  	}
--
-+	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
-+				AMD_PG_SUPPORT_RLC_SMU_HS |
-+				AMD_PG_SUPPORT_CP |
-+				AMD_PG_SUPPORT_GFX_DMG))
-+		adev->gfx.rlc.funcs->exit_safe_mode(adev);
- 	return 0;
- }
- 
+ 	if (poll_chars <= 0) {
+-		poll_chars = poll_wait_key(poll_buf, pinfo);
++		int ret = poll_wait_key(poll_buf, pinfo);
++
++		if (ret == NO_POLL_CHAR)
++			return ret;
++		poll_chars = ret;
+ 		pollp = poll_buf;
+ 	}
+ 	poll_chars--;
 
 
