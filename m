@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB43C004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8CCC43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D7842089C
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D7842089C
+	by mail.kernel.org (Postfix) with ESMTP id 902FD206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 902FD206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732508AbeJBUS0 (ORCPT
+        id S1732534AbeJBUS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:18:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35496 "EHLO
+        Tue, 2 Oct 2018 16:18:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35518 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732482AbeJBUSZ (ORCPT
+        with ESMTP id S1730350AbeJBUS2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:18:25 -0400
+        Tue, 2 Oct 2018 16:18:28 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71BCEC47;
-        Tue,  2 Oct 2018 13:35:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 609B9C4D;
+        Tue,  2 Oct 2018 13:35:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+        Hang Zhou <hang.zhou@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 127/137] hwmon: (adt7475) Make adt7475_read_word() return errors
-Date:   Tue,  2 Oct 2018 06:25:28 -0700
-Message-Id: <20181002132507.407561737@linuxfoundation.org>
+Subject: [PATCH 4.14 129/137] drm/amdgpu: Enable/disable gfx PG feature in rlc safe mode
+Date:   Tue,  2 Oct 2018 06:25:30 -0700
+Message-Id: <20181002132507.553838088@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -53,47 +52,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Rex Zhu <Rex.Zhu@amd.com>
 
-[ Upstream commit f196dec6d50abb2e65fb54a0621b2f1b4d922995 ]
+[ Upstream commit 8ef23364b654d44244400d79988e677e504b21ba ]
 
-The adt7475_read_word() function was meant to return negative error
-codes on failure.
+This is required by gfx hw and can fix the rlc hang when
+do s3 stree test on Cz/St.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Hang Zhou <hang.zhou@amd.com>
+Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/adt7475.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/hwmon/adt7475.c
-+++ b/drivers/hwmon/adt7475.c
-@@ -303,14 +303,18 @@ static inline u16 volt2reg(int channel,
- 	return clamp_val(reg, 0, 1023) & (0xff << 2);
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+@@ -5479,6 +5479,11 @@ static int gfx_v8_0_set_powergating_stat
+ 	if (amdgpu_sriov_vf(adev))
+ 		return 0;
+ 
++	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
++				AMD_PG_SUPPORT_RLC_SMU_HS |
++				AMD_PG_SUPPORT_CP |
++				AMD_PG_SUPPORT_GFX_DMG))
++		adev->gfx.rlc.funcs->enter_safe_mode(adev);
+ 	switch (adev->asic_type) {
+ 	case CHIP_CARRIZO:
+ 	case CHIP_STONEY:
+@@ -5527,7 +5532,11 @@ static int gfx_v8_0_set_powergating_stat
+ 	default:
+ 		break;
+ 	}
+-
++	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
++				AMD_PG_SUPPORT_RLC_SMU_HS |
++				AMD_PG_SUPPORT_CP |
++				AMD_PG_SUPPORT_GFX_DMG))
++		adev->gfx.rlc.funcs->exit_safe_mode(adev);
+ 	return 0;
  }
  
--static u16 adt7475_read_word(struct i2c_client *client, int reg)
-+static int adt7475_read_word(struct i2c_client *client, int reg)
- {
--	u16 val;
-+	int val1, val2;
- 
--	val = i2c_smbus_read_byte_data(client, reg);
--	val |= (i2c_smbus_read_byte_data(client, reg + 1) << 8);
-+	val1 = i2c_smbus_read_byte_data(client, reg);
-+	if (val1 < 0)
-+		return val1;
-+	val2 = i2c_smbus_read_byte_data(client, reg + 1);
-+	if (val2 < 0)
-+		return val2;
- 
--	return val;
-+	return val1 | (val2 << 8);
- }
- 
- static void adt7475_write_word(struct i2c_client *client, int reg, u16 val)
 
 
