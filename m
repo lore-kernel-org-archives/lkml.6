@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9298DC43143
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2867C004D2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 522A9206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 522A9206B2
+	by mail.kernel.org (Postfix) with ESMTP id B25DF206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:31:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B25DF206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731001AbeJBUOt (ORCPT
+        id S1731016AbeJBUOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:14:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34110 "EHLO
+        Tue, 2 Oct 2018 16:14:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34128 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730036AbeJBUOr (ORCPT
+        with ESMTP id S1730036AbeJBUOu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:14:47 -0400
+        Tue, 2 Oct 2018 16:14:50 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 02C0CBF0;
-        Tue,  2 Oct 2018 13:31:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3495EC3F;
+        Tue,  2 Oct 2018 13:31:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ganesh Goudar <ganeshgr@chelsio.com>,
-        Atul Gupta <atul.gupta@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Lothar Felten <lothar.felten@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 209/228] crypto: chtls - fix null dereference chtls_free_uld()
-Date:   Tue,  2 Oct 2018 06:25:06 -0700
-Message-Id: <20181002132511.892106140@linuxfoundation.org>
+Subject: [PATCH 4.18 211/228] hwmon: (ina2xx) fix sysfs shunt resistor read access
+Date:   Tue,  2 Oct 2018 06:25:08 -0700
+Message-Id: <20181002132511.971050411@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
 References: <20181002132459.032960735@linuxfoundation.org>
@@ -53,66 +52,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ganesh Goudar <ganeshgr@chelsio.com>
+From: Lothar Felten <lothar.felten@gmail.com>
 
-[ Upstream commit 65b2c12dcdb883fc015c0ec65d6c2f857e0456ac ]
+[ Upstream commit 3ad867001c91657c46dcf6656d52eb6080286fd5 ]
 
-call chtls_free_uld() only for the initialized cdev,
-this fixes NULL dereference in chtls_free_uld()
+fix the sysfs shunt resistor read access: return the shunt resistor
+value, not the calibration register contents.
 
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: Atul Gupta <atul.gupta@chelsio.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+update email address
+
+Signed-off-by: Lothar Felten <lothar.felten@gmail.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/chelsio/chtls/chtls.h      |    5 +++++
- drivers/crypto/chelsio/chtls/chtls_main.c |    7 +++++--
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ Documentation/hwmon/ina2xx           |    2 +-
+ drivers/hwmon/ina2xx.c               |   13 +++++++++++--
+ include/linux/platform_data/ina2xx.h |    2 +-
+ 3 files changed, 13 insertions(+), 4 deletions(-)
 
---- a/drivers/crypto/chelsio/chtls/chtls.h
-+++ b/drivers/crypto/chelsio/chtls/chtls.h
-@@ -96,6 +96,10 @@ enum csk_flags {
- 	CSK_CONN_INLINE,	/* Connection on HW */
- };
+--- a/Documentation/hwmon/ina2xx
++++ b/Documentation/hwmon/ina2xx
+@@ -32,7 +32,7 @@ Supported chips:
+     Datasheet: Publicly available at the Texas Instruments website
+                http://www.ti.com/
  
-+enum chtls_cdev_state {
-+	CHTLS_CDEV_STATE_UP = 1
-+};
+-Author: Lothar Felten <l-felten@ti.com>
++Author: Lothar Felten <lothar.felten@gmail.com>
+ 
+ Description
+ -----------
+--- a/drivers/hwmon/ina2xx.c
++++ b/drivers/hwmon/ina2xx.c
+@@ -17,7 +17,7 @@
+  * Bi-directional Current/Power Monitor with I2C Interface
+  * Datasheet: http://www.ti.com/product/ina230
+  *
+- * Copyright (C) 2012 Lothar Felten <l-felten@ti.com>
++ * Copyright (C) 2012 Lothar Felten <lothar.felten@gmail.com>
+  * Thanks to Jan Volkering
+  *
+  * This program is free software; you can redistribute it and/or modify
+@@ -329,6 +329,15 @@ static int ina2xx_set_shunt(struct ina2x
+ 	return 0;
+ }
+ 
++static ssize_t ina2xx_show_shunt(struct device *dev,
++			      struct device_attribute *da,
++			      char *buf)
++{
++	struct ina2xx_data *data = dev_get_drvdata(dev);
 +
- struct listen_ctx {
- 	struct sock *lsk;
- 	struct chtls_dev *cdev;
-@@ -146,6 +150,7 @@ struct chtls_dev {
- 	unsigned int send_page_order;
- 	int max_host_sndbuf;
- 	struct key_map kmap;
-+	unsigned int cdev_state;
- };
++	return snprintf(buf, PAGE_SIZE, "%li\n", data->rshunt);
++}
++
+ static ssize_t ina2xx_store_shunt(struct device *dev,
+ 				  struct device_attribute *da,
+ 				  const char *buf, size_t count)
+@@ -403,7 +412,7 @@ static SENSOR_DEVICE_ATTR(power1_input,
  
- struct chtls_hws {
---- a/drivers/crypto/chelsio/chtls/chtls_main.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_main.c
-@@ -160,6 +160,7 @@ static void chtls_register_dev(struct ch
- 	tlsdev->hash = chtls_create_hash;
- 	tlsdev->unhash = chtls_destroy_hash;
- 	tls_register_device(&cdev->tlsdev);
-+	cdev->cdev_state = CHTLS_CDEV_STATE_UP;
- }
+ /* shunt resistance */
+ static SENSOR_DEVICE_ATTR(shunt_resistor, S_IRUGO | S_IWUSR,
+-			  ina2xx_show_value, ina2xx_store_shunt,
++			  ina2xx_show_shunt, ina2xx_store_shunt,
+ 			  INA2XX_CALIBRATION);
  
- static void chtls_unregister_dev(struct chtls_dev *cdev)
-@@ -281,8 +282,10 @@ static void chtls_free_all_uld(void)
- 	struct chtls_dev *cdev, *tmp;
- 
- 	mutex_lock(&cdev_mutex);
--	list_for_each_entry_safe(cdev, tmp, &cdev_list, list)
--		chtls_free_uld(cdev);
-+	list_for_each_entry_safe(cdev, tmp, &cdev_list, list) {
-+		if (cdev->cdev_state == CHTLS_CDEV_STATE_UP)
-+			chtls_free_uld(cdev);
-+	}
- 	mutex_unlock(&cdev_mutex);
- }
- 
+ /* update interval (ina226 only) */
+--- a/include/linux/platform_data/ina2xx.h
++++ b/include/linux/platform_data/ina2xx.h
+@@ -1,7 +1,7 @@
+ /*
+  * Driver for Texas Instruments INA219, INA226 power monitor chips
+  *
+- * Copyright (C) 2012 Lothar Felten <l-felten@ti.com>
++ * Copyright (C) 2012 Lothar Felten <lothar.felten@gmail.com>
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
 
 
