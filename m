@@ -2,137 +2,225 @@ Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 220D7C64EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A95C64EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E148B206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:35:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E148B206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FCD62082A
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 19:36:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WxhhxR+u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FCD62082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbeJCCTz (ORCPT
+        id S1727427AbeJCCVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 22:19:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49691 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbeJCCTy (ORCPT
+        Tue, 2 Oct 2018 22:21:32 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39089 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbeJCCVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 22:19:54 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w92JYQEA2076649
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 2 Oct 2018 12:34:26 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w92JYQUO2076646;
-        Tue, 2 Oct 2018 12:34:26 -0700
-Date:   Tue, 2 Oct 2018 12:34:26 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Mike Travis <tipbot@zytor.com>
-Message-ID: <tip-2647c43c7f3ba4b752bfce261d53b16e2f5bc9e3@git.kernel.org>
-Cc:     mingo@kernel.org, peterz@infradead.org, rajvi.jingar@intel.com,
-        douly.fnst@cn.fujitsu.com, mike.travis@hpe.com,
-        len.brown@intel.com, gxm.linux.kernel@gmail.com,
-        pasha.tatashin@oracle.com, linux-kernel@vger.kernel.org,
-        kstewart@linuxfoundation.org, sivanich@hpe.com,
-        russ.anderson@hpe.com, dimitri.sivanich@hpe.com,
-        tglx@linutronix.de, hpa@zytor.com, pombredanne@nexb.com,
-        bp@alien8.de, hedi.berriche@hpe.com, gregkh@linuxfoundation.org,
-        rja@hpe.com
-Reply-To: kstewart@linuxfoundation.org, pasha.tatashin@oracle.com,
-          linux-kernel@vger.kernel.org, len.brown@intel.com,
-          gxm.linux.kernel@gmail.com, mike.travis@hpe.com,
-          rajvi.jingar@intel.com, douly.fnst@cn.fujitsu.com,
-          peterz@infradead.org, mingo@kernel.org, sivanich@hpe.com,
-          hpa@zytor.com, dimitri.sivanich@hpe.com, tglx@linutronix.de,
-          russ.anderson@hpe.com, rja@hpe.com, gregkh@linuxfoundation.org,
-          hedi.berriche@hpe.com, bp@alien8.de, pombredanne@nexb.com
-In-Reply-To: <20181002180144.923579706@stormcage.americas.sgi.com>
-References: <20181002180144.923579706@stormcage.americas.sgi.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/tsc: Fix UV TSC initialization
-Git-Commit-ID: 2647c43c7f3ba4b752bfce261d53b16e2f5bc9e3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 2 Oct 2018 22:21:31 -0400
+Received: by mail-oi1-f193.google.com with SMTP id y81-v6so2527425oia.6
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 12:36:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o5T+w/12tl2l++Goj1a/6fe16yySVy4EwZwfLXKIyns=;
+        b=WxhhxR+uRjDd6o5x++ofOx0bsi1nm31Aopda9QjQm7SQfQL8vv+Jp70E1U+Wt8PsB1
+         hk4DDoE9ahDSNqrHtljyVHT3aNjdmfIqnPLBa3mP1Ibevv8CU96J3U9t90dJtUusUZOE
+         qbC8oVyqoQlJS/Nbs2mK0Vza3kLf9BSFtymy6uKYjONAbk1LPK1Svp4t5zgYSp0iXaNG
+         20Djj4PtziVCqfk+2sc8/oplIgPhyR7WDc4vPcOMZl9rcEpQCP/5IWyVmAeJrb6DJZZi
+         siswrzoKX7l+S6cc3Ihaic0glmyEOyQApgz3ux3JE8zZyxIuXJ45IQLkzZbFPFR3pj3M
+         y4qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o5T+w/12tl2l++Goj1a/6fe16yySVy4EwZwfLXKIyns=;
+        b=m9uUVNT7WFbMoroK7KhU0ZNczjwxASoWlCYj1IDG8sq5PTe8e1IDxHIdLmo4jKmMYC
+         ftWnlx8L8DutTQvgK0Ntnei2q9MT+cdQ2ATZgoZYKumARQiigjrammxHOsZ/9XfX9CMM
+         20Ts/lrwqehzo8ajysjKaLJFifTu+UPTp8sGTjwc9AKbQ+FzJoZ4Aq8MRCFuYDLJBJkd
+         YPHJ8B7qBmGhXWxKgoqZK18Y4rFkoMUW8kUOlByvxHeGqVYJSJ8ZPSNTL0NT8HoVHiY+
+         27Z1AueDSVSFuEMeI+szZ54qI3JMDYCELe+XFC5AKCP1Ujv8TNckz1nkQ1nD+R4dX+OT
+         Njsg==
+X-Gm-Message-State: ABuFfohff4RDbn43T+as+Q26YUfMSOl/kwcGoRdYK5k7DJ07wEhiEFOL
+        tAYibS7to1rzRl5NlXKhNzbFkSEggQzG5q11IQEMRg==
+X-Google-Smtp-Source: ACcGV63Ux3jbkFCVrU96TXATLaz/vDyQVfmH3MP1/net+UBouGAwk5inp9FjQmy8bivzj2SO9LRRszAOiF2fdmQUi+o=
+X-Received: by 2002:aca:4d51:: with SMTP id a78-v6mr6881638oib.205.1538508992914;
+ Tue, 02 Oct 2018 12:36:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20180912142337.21955-1-jlee@suse.com> <20180912142337.21955-2-jlee@suse.com>
+ <CAG48ez2pRwpv0V0MNbeBN26isW2peebf+S3cqLxUgdUfARfhiw@mail.gmail.com> <20181002075243.GB6040@linux-l9pv.suse>
+In-Reply-To: <20181002075243.GB6040@linux-l9pv.suse>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 2 Oct 2018 21:36:05 +0200
+Message-ID: <CAG48ez3=mpJu8gaAZ4-N3pnB-E7d0WkKG8iyD1J=QL4eLwftSQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] PM / hibernate: Create snapshot keys handler
+To:     joeyli <jlee@suse.com>, Andy Lutomirski <luto@kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Cc:     joeyli.kernel@gmail.com, rjw@rjwysocki.net,
+        Pavel Machek <pavel@ucw.cz>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com,
+        yu.c.chen@intel.com, oneukum@suse.com,
+        Yu Chen <yu.chen.surf@gmail.com>, ggherdovich@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2647c43c7f3ba4b752bfce261d53b16e2f5bc9e3
-Gitweb:     https://git.kernel.org/tip/2647c43c7f3ba4b752bfce261d53b16e2f5bc9e3
-Author:     Mike Travis <mike.travis@hpe.com>
-AuthorDate: Tue, 2 Oct 2018 13:01:46 -0500
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 2 Oct 2018 21:29:16 +0200
++Andy for opinions on things in write handlers
++Mimi Zohar as EVM maintainer
 
-x86/tsc: Fix UV TSC initialization
+On Tue, Oct 2, 2018 at 9:55 AM joeyli <jlee@suse.com> wrote:
+> On Thu, Sep 13, 2018 at 04:31:18PM +0200, Jann Horn wrote:
+> > On Thu, Sep 13, 2018 at 4:08 PM Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
+> > > This patch adds a snapshot keys handler for using the key retention
+> > > service api to create keys for snapshot image encryption and
+> > > authentication.
+> [...snip]
+> > > +static ssize_t disk_kmk_store(struct kobject *kobj, struct kobj_attribute *attr,
+> > > +                             const char *buf, size_t n)
+> > > +{
+> > > +       int error = 0;
+> > > +       char *p;
+> > > +       int len;
+> > > +
+> > > +       if (!capable(CAP_SYS_ADMIN))
+> > > +               return -EPERM;
+> >
+> > This is wrong, you can't use capable() in a write handler. You'd have
+> > to use file_ns_capable(), and I think sysfs currently doesn't give you
+> > a pointer to the struct file.
+> > If you want to do this in a write handler, you'll have to either get
+> > rid of this check or plumb through the cred struct pointer.
+> > Alternatively, you could use some interface that doesn't go through a
+> > write handler.
+> >
+>
+> Thank you for point out this problem.
+>
+> Actually the evm_write_key() is the example for my code. The
+> difference is that evm creates interface file on securityfs, but my
+> implementation is on sysfs:
+>
+> security/integrity/evm/evm_secfs.c
+>
+> static ssize_t evm_write_key(struct file *file, const char __user *buf,
+>                              size_t count, loff_t *ppos)
+> {
+>         int i, ret;
+>
+>         if (!capable(CAP_SYS_ADMIN) || (evm_initialized & EVM_SETUP))
+>                 return -EPERM;
+> ...
+>
+> On the other hand, the writing handler of /sys/power/wake_lock also
+> uses capable() to check the CAP_BLOCK_SUSPEND capability:
+>
+> kernel/power/main.c
+> static ssize_t wake_lock_store(struct kobject *kobj,
+>                                struct kobj_attribute *attr,
+>                                const char *buf, size_t n)
+> {
+>         int error = pm_wake_lock(buf);
+>         return error ? error : n;
+> }
+> power_attr(wake_lock);
+>
+> kernel/power/wakelock.c
+> int pm_wake_lock(const char *buf)
+> {
+> ...
+>         if (!capable(CAP_BLOCK_SUSPEND))
+>                 return -EPERM;
+> ...
+>
+>
+> So I confused for when can capable() be used in sysfs interface? Is
+> capable() only allowed in reading handler? Why the writing handler
+> of securityfs can use capable()?
 
-The recent rework of the TSC calibration code introduced a regression on UV
-systems as it added a call to tsc_early_init() which initializes the TSC
-ADJUST values before acpi_boot_table_init().  In the case of UV systems,
-that is a necessary step that calls uv_system_init().  This informs
-tsc_sanitize_first_cpu() that the kernel runs on a platform with async TSC
-resets as documented in commit 341102c3ef29 ("x86/tsc: Add option that TSC
-on Socket 0 being non-zero is valid")
+They can't, they're all wrong. :P All of these capable() checks in
+write handlers have to be assumed to be ineffective. But it's not a
+big deal because you still need UID 0 to access these files.
 
-Fix it by skipping the early tsc initialization on UV systems and let TSC
-init tests take place later in tsc_init().
+> > > +static int user_key_init(void)
+> > > +{
+> > > +       struct user_key_payload *ukp;
+> > > +       struct key *key;
+> > > +       int err = 0;
+> > > +
+> > > +       pr_debug("%s\n", __func__);
+> > > +
+> > > +       /* find out swsusp-key */
+> > > +       key = request_key(&key_type_user, skey.key_name, NULL);
+> >
+> > request_key() looks at current's keyring. That shouldn't happen in a
+> > write handler.
+> >
+>
+> The evm_write_key() also uses request_key() but it's on securityfs. Should
+> I move my sysfs interface to securityfs?
 
-Fixes: cf7a63ef4e02 ("x86/tsc: Calibrate tsc only once")
-Suggested-by: Hedi Berriche <hedi.berriche@hpe.com>
-Signed-off-by: Mike Travis <mike.travis@hpe.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Russ Anderson <rja@hpe.com>
-Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Russ Anderson <russ.anderson@hpe.com>
-Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Cc: Xiaoming Gao <gxm.linux.kernel@gmail.com>
-Cc: Rajvi Jingar <rajvi.jingar@intel.com>
-Link: https://lkml.kernel.org/r/20181002180144.923579706@stormcage.americas.sgi.com
+I don't think you should be doing this in the context of any
+filesystem. If EVM does that, EVM is doing it wrong.
 
----
- arch/x86/kernel/tsc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> > > +       if (IS_ERR(key)) {
+> > > +               pr_err("Request key error: %ld\n", PTR_ERR(key));
+> > > +               err = PTR_ERR(key);
+> > > +               return err;
+> > > +       }
+> > > +
+> > > +       down_write(&key->sem);
+> > > +       ukp = user_key_payload_locked(key);
+> > > +       if (!ukp) {
+> > > +               /* key was revoked before we acquired its semaphore */
+> > > +               err = -EKEYREVOKED;
+> > > +               goto key_invalid;
+> > > +       }
+> > > +       if (invalid_key(ukp->data, ukp->datalen)) {
+> > > +               err = -EINVAL;
+> > > +               goto key_invalid;
+> > > +       }
+> > > +       skey.key_len = ukp->datalen;
+> > > +       memcpy(skey.key, ukp->data, ukp->datalen);
+> > > +       /* burn the original key contents */
+> > > +       memzero_explicit(ukp->data, ukp->datalen);
+> >
+> > You just zero out the contents of the supplied key? That seems very
+> > unidiomatic for the keys subsystem, and makes me wonder why you're
+> > using the keys subsystem for this in the first place. It doesn't look
+> > like normal use of the keys subsystem.
+> >
+>
+> Because I want that only one decrypted key in kernel memory. Then hibernation
+> can handle the key more easy. In evm_init_key(), it also burned the key
+> contents after evm key be initialled:
+>
+> security/integrity/evm/evm_crypto.c
+> int evm_init_key(void)
+> {
+> [...snip]
+>         /* burn the original key contents */
+>         memset(ekp->decrypted_data, 0, ekp->decrypted_datalen);
+>         up_read(&evm_key->sem);
+>         key_put(evm_key);
+>         return rc;
+> }
+>
+> The keys subsystem already handles the interactive with userland and TPM.
+> That's the reason for using keys subsystem in hibernation.
 
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 6490f618e096..b52bd2b6cdb4 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -26,6 +26,7 @@
- #include <asm/apic.h>
- #include <asm/intel-family.h>
- #include <asm/i8259.h>
-+#include <asm/uv/uv.h>
- 
- unsigned int __read_mostly cpu_khz;	/* TSC clocks / usec, not used here */
- EXPORT_SYMBOL(cpu_khz);
-@@ -1433,6 +1434,9 @@ void __init tsc_early_init(void)
- {
- 	if (!boot_cpu_has(X86_FEATURE_TSC))
- 		return;
-+	/* Don't change UV TSC multi-chassis synchronization */
-+	if (is_early_uv_system())
-+		return;
- 	if (!determine_cpu_tsc_frequencies(true))
- 		return;
- 	loops_per_jiffy = get_loops_per_jiffy();
+How do you guarantee that the user is allowed to overwrite that key? I
+don't understand the keys subsystem very well - could this be a key on
+the trusted keyring, or something like that?
