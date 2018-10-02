@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AECFC004D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F82C43143
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C71E206B2
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C71E206B2
+	by mail.kernel.org (Postfix) with ESMTP id 9BC33206B2
+	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 13:34:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BC33206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732216AbeJBURj (ORCPT
+        id S1732229AbeJBURl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:17:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35238 "EHLO
+        Tue, 2 Oct 2018 16:17:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35244 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732083AbeJBURi (ORCPT
+        with ESMTP id S1732083AbeJBURk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:17:38 -0400
+        Tue, 2 Oct 2018 16:17:40 -0400
 Received: from localhost (24-104-73-23-ip-static.hfc.comcastbusiness.net [24.104.73.23])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 257FAB2F;
-        Tue,  2 Oct 2018 13:34:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E6B5B2F;
+        Tue,  2 Oct 2018 13:34:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.14 096/137] usb: musb: dsps: do not disable CPPI41 irq in driver teardown
-Date:   Tue,  2 Oct 2018 06:24:57 -0700
-Message-Id: <20181002132505.213201823@linuxfoundation.org>
+        stable@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 105/137] IB/hfi1: Fix SL array bounds check
+Date:   Tue,  2 Oct 2018 06:25:06 -0700
+Message-Id: <20181002132505.839767214@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
 References: <20181002132458.446916963@linuxfoundation.org>
@@ -50,54 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bin Liu <b-liu@ti.com>
+From: Ira Weiny <ira.weiny@intel.com>
 
-commit 783f3b4e9ec50491c21746e7e05ec6c39c21f563 upstream.
+commit 0dbfaa9f2813787679e296eb5476e40938ab48c8 upstream.
 
-TI AM335x CPPI 4.1 module uses a single register bit for CPPI interrupts
-in both musb controllers. So disabling the CPPI irq in one musb driver
-breaks the other musb module.
+The SL specified by a user needs to be a valid SL.
 
-Since musb is already disabled before tearing down dma controller in
-musb_remove(), it is safe to not disable CPPI irq in
-musb_dma_controller_destroy().
+Add a range check to the user specified SL value which protects from
+running off the end of the SL to SC table.
 
-Fixes: 255348289f71 ("usb: musb: dsps: Manage CPPI 4.1 DMA interrupt in DSPS")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bin Liu <b-liu@ti.com>
+CC: stable@vger.kernel.org
+Fixes: 7724105686e7 ("IB/hfi1: add driver files")
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musb_dsps.c |   12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/infiniband/hw/hfi1/verbs.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/musb/musb_dsps.c
-+++ b/drivers/usb/musb/musb_dsps.c
-@@ -684,16 +684,6 @@ dsps_dma_controller_create(struct musb *
- 	return controller;
- }
+--- a/drivers/infiniband/hw/hfi1/verbs.c
++++ b/drivers/infiniband/hw/hfi1/verbs.c
+@@ -1573,6 +1573,7 @@ static int hfi1_check_ah(struct ib_devic
+ 	struct hfi1_pportdata *ppd;
+ 	struct hfi1_devdata *dd;
+ 	u8 sc5;
++	u8 sl;
  
--static void dsps_dma_controller_destroy(struct dma_controller *c)
--{
--	struct musb *musb = c->musb;
--	struct dsps_glue *glue = dev_get_drvdata(musb->controller->parent);
--	void __iomem *usbss_base = glue->usbss_base;
--
--	musb_writel(usbss_base, USBSS_IRQ_CLEARR, USBSS_IRQ_PD_COMP);
--	cppi41_dma_controller_destroy(c);
--}
--
- #ifdef CONFIG_PM_SLEEP
- static void dsps_dma_controller_suspend(struct dsps_glue *glue)
- {
-@@ -723,7 +713,7 @@ static struct musb_platform_ops dsps_ops
- 
- #ifdef CONFIG_USB_TI_CPPI41_DMA
- 	.dma_init	= dsps_dma_controller_create,
--	.dma_exit	= dsps_dma_controller_destroy,
-+	.dma_exit	= cppi41_dma_controller_destroy,
- #endif
- 	.enable		= dsps_musb_enable,
- 	.disable	= dsps_musb_disable,
+ 	if (hfi1_check_mcast(rdma_ah_get_dlid(ah_attr)) &&
+ 	    !(rdma_ah_get_ah_flags(ah_attr) & IB_AH_GRH))
+@@ -1581,8 +1582,13 @@ static int hfi1_check_ah(struct ib_devic
+ 	/* test the mapping for validity */
+ 	ibp = to_iport(ibdev, rdma_ah_get_port_num(ah_attr));
+ 	ppd = ppd_from_ibp(ibp);
+-	sc5 = ibp->sl_to_sc[rdma_ah_get_sl(ah_attr)];
+ 	dd = dd_from_ppd(ppd);
++
++	sl = rdma_ah_get_sl(ah_attr);
++	if (sl >= ARRAY_SIZE(ibp->sl_to_sc))
++		return -EINVAL;
++
++	sc5 = ibp->sl_to_sc[sl];
+ 	if (sc_to_vlt(dd, sc5) > num_vls && sc_to_vlt(dd, sc5) != 0xf)
+ 		return -EINVAL;
+ 	return 0;
 
 
