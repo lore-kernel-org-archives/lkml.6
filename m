@@ -1,172 +1,499 @@
-Return-Path: <SRS0=iNRz=MO=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC726C64EBC
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 029CEC64EBD
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 00:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C57D20666
-	for <linux-kernel@archiver.kernel.org>; Tue,  2 Oct 2018 23:54:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86C8320835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 00:04:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hhqQxB9z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C57D20666
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="jto0/9hQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TdyaP2pi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86C8320835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=who-t.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbeJCGkt (ORCPT
+        id S1726612AbeJCGuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 02:40:49 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:37833 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726543AbeJCGks (ORCPT
+        Wed, 3 Oct 2018 02:50:22 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:54041 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725863AbeJCGuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 02:40:48 -0400
-Received: by mail-qk1-f193.google.com with SMTP id x8-v6so2367282qka.4;
-        Tue, 02 Oct 2018 16:54:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7W+fynjKrnTeSdB+hRvIBvBA1YTPZIJJ4Hhu/WF9Xks=;
-        b=hhqQxB9zlrjdja/4jhQxSuFxWiEdAHOI/U5iAiGJ6Rz1OpetkiTcf3mvtgitzer9dW
-         GGB4dG8xxzL7IbV/nzI7QRBjJSXW70c81DNooEXIsN7eJKRSiAwWTcrAruR+8PUbn8MU
-         WhMbYHnmXrwPDPNKNQCPMNuxT9JMqEmqXcNqkOaXQ3AVw++JwJWCZnIR1FLIaxjg/cHO
-         lh0E6yRSPU7lUX4R/a+Iu3hCbaOMqcizorXXkhxlCWtvygnQ/kSqNK6Yabitl0gfQFlD
-         VsWSPvl4SQBx3Zp1GdPjbG8ZsNztjO34SIxA5S0vo1FruWP+ZbLicZaAp14o+8/rSqVm
-         /yJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7W+fynjKrnTeSdB+hRvIBvBA1YTPZIJJ4Hhu/WF9Xks=;
-        b=mVk/Nyra1qBZGNAOT6kHbQKoRgFb5Z9fIdFsEByLQeJAHMJOq4viTX/wX1WRaojUTh
-         zFQqzSKnK5K+eFlpuh9S0QhEjv741pRrjrNUT5h745j4vtPmmHuZ/Ev0cxd/F0U8XQ+9
-         wxo1k99DCv1M+r+l1OWTZmfmamLMpUKUc3z0KtQ8yVhGOAZEuaD8NMkXY66TUoyA+DcC
-         Ukje68MG4Jv2l/U9atWvTdJuRM+yvDyz1erc5LqX7iAGZpELyzN1AmlabljOxKh0v5dU
-         t9BIVIqsc2gbh60KZo31XgurOG+ANBRE32ePkGltb1+x4jQXu2TTJLSU6NSuuqvUtTtx
-         evhA==
-X-Gm-Message-State: ABuFfojSAWYkzSmjxhk5syXtlBZOgX5tzRYJQfoxiBN46f+WqfvpgZXF
-        VVXkRnzYyMS392kGTbyPNfM7e+7y
-X-Google-Smtp-Source: ACcGV60vqBVhB+RA1vKbc3l0Gy3+tsyyJ5OuGApXm+RSSKJbOuVyqKqVBo4VRW2kc9+PkIChOJuKPw==
-X-Received: by 2002:a37:14d4:: with SMTP id 81-v6mr13554689qku.201.1538524495431;
-        Tue, 02 Oct 2018 16:54:55 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id g34-v6sm7522382qta.79.2018.10.02.16.54.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 16:54:54 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] net: systemport: Fix wake-up interrupt race during resume
-Date:   Tue,  2 Oct 2018 16:52:03 -0700
-Message-Id: <20181002235204.26135-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 3 Oct 2018 02:50:22 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 9C8FE23CF;
+        Tue,  2 Oct 2018 20:04:26 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Tue, 02 Oct 2018 20:04:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; bh=9xZcb7DVHNB+FUHeA/KZfMH4RZlS2HSzzx8CrGMZtK0=; b=jto0/9hQ
+        6dOeRhlM0NQ6RV/SiqIKRYbL1MnQlVTYJTMsmENUwAPHaCRnnoEgPiZvNPwK5XXt
+        nJTzDHnJrjyQEK/ngDFo3ZjALZX+H4Yj/ItwGO3L2baP80oRImDnItPvXzmIPQ5y
+        fRU6aGO/4gq8C1YXYxJ1NSPHnlidqoGMgx5LhAQrCL9kBZ2g9pjzMf4HX1sKzn8x
+        bk+mIyo8uOxwdI916g4STnyyTpBeLlOYaUvf/i7x9Cddls9KYqZ+s8dTF1l21AFJ
+        Du5UAuWOa59z21jnxicoOfFmepO0PRhxie237DBQw2XL+37DzsAl3UDO1zHZJLIj
+        RWrYY3MvIH1qVQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=9xZcb7DVHNB+FUHeA/KZfMH4RZlS2
+        HSzzx8CrGMZtK0=; b=TdyaP2piaxCgUDaISWdcKEdpetdYHX17JDdMl/S5ISTUV
+        B4LudzH1UG7pmt2qAXNzorYKihMFp33B4oZppH7IH/J6BoWqimKvJldeOSinGPXk
+        xnYWeuTSMARgqfZnvsnjkxh+fq5ojPpjqsvbXEJKxPfSmN8Ks5O53v98U+Kov1/q
+        i+FdKgaZWPas1uabYs+dizmfvlK+T561p1YKALqckgBOUcMVEhZqjwObHCzXTb0K
+        Rhb/lClmmgGkg74JCIpJtCTTkpZeJtJ63BYAhr4YGt7SpIjs14iu8hH1L9XG8PpJ
+        6I9lL2+vXPSNaVS3R+28/IA2ne8cb+eMA4SthfwKw==
+X-ME-Sender: <xms:iAe0WxSNK_ke2BFbh5k6FyldzT8RIvwfoLdCGO4JDx9CvbagaApw4Q>
+X-ME-Proxy: <xmx:iAe0W9SQgS9GMtRk_luhpadbzbUiZgamYAA2LqkDZRi2_pVzQIKXsA>
+    <xmx:iAe0W0trkyX0hvlQqkZEUVLteu7Z6A-4QuBgaXwentYbsIclKjI1Cg>
+    <xmx:iAe0W6aOFE_8t9ZHaEm5T3ThSk4VmqIaNiNw3VG7ApfMkfYvqtTuwQ>
+    <xmx:iAe0WxvMiTYSxc33qLpcIOqBf0BYXgBFBMeoYHSYTpd49-DMIuTrqQ>
+    <xmx:iAe0W0HchHQNoA96Gozj_6Udt4oYAquhQP0oFmKkCjhXASZzmtOYIg>
+    <xmx:iQe0W8q2MFhnLl3OzPgx6240vCJR-fETHw9y5RcU1OiemZFVObC_3A>
+Received: from jelly (167-179-166-29.a7b3a6.bne.nbn.aussiebb.net [167.179.166.29])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 55B78E47C2;
+        Tue,  2 Oct 2018 20:04:21 -0400 (EDT)
+Date:   Wed, 3 Oct 2018 10:04:11 +1000
+From:   Peter Hutterer <peter.hutterer@who-t.net>
+To:     Sean O'Brien <seobrien@chromium.org>
+Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        peter.hutterer@redhat.com, marek.wyborski@emwesoft.com,
+        linux-kernel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, rydberg@bitmath.org,
+        Jiri Kosina <jikos@kernel.org>, claudio@ponyfleisch.ch
+Subject: Re: [PATCH] [v3] HID: add support for Apple Magic Trackpad 2
+Message-ID: <20181003000411.GA20975@jelly>
+References: <20180920231308.237277-1-seobrien@chromium.org>
+ <CAO-hwJJL7XsNR4iVAdxYUrmB+01aJiZ=2s1b_JemU-=YNDehMQ@mail.gmail.com>
+ <CAOOzhkp6ChopAXxDFcbz1sT17EKTGysF5hdkMkM50LGdXcnyaQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOOzhkp6ChopAXxDFcbz1sT17EKTGysF5hdkMkM50LGdXcnyaQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AON_PM_L2 is normally used to trigger and identify the source of a
-wake-up event. Since the RX_SYS clock is no longer turned off, we also
-have an interrupt being sent to the SYSTEMPORT INTRL_2_0 controller, and
-that interrupt remains active up until the magic packet detector is
-disabled which happens much later during the driver resumption.
+On Tue, Oct 02, 2018 at 03:39:31PM -0700, Sean O'Brien wrote:
+> On Mon, Oct 1, 2018 at 1:43 AM Benjamin Tissoires
+> <benjamin.tissoires@redhat.com> wrote:
+> >
+> > [adding Peter, for the libinput question]
+> >
+> > On Fri, Sep 21, 2018 at 1:13 AM Sean O'Brien <seobrien@chromium.org> wrote:
+> > >
+> > > USB device
+> > >         Vendor 05ac (Apple)
+> > >         Device 0265 (Magic Trackpad 2)
+> > > Bluetooth device
+> > >         Vendor 004c (Apple)
+> > >         Device 0265 (Magic Trackpad 2)
+> > >
+> > > Add support for Apple Magic Trackpad 2 over USB and bluetooth, putting
+> > > the device in multi-touch mode.
+> > >
+> > > Signed-off-by: Claudio Mettler <claudio@ponyfleisch.ch>
+> > > Signed-off-by: Marek Wyborski <marek.wyborski@emwesoft.com>
+> > > Signed-off-by: Sean O'Brien <seobrien@chromium.org>
+> > > ---
+> > >
+> >
+> > a few nitpcks:
+> >
+> > >  drivers/hid/hid-ids.h        |   1 +
+> > >  drivers/hid/hid-magicmouse.c | 149 +++++++++++++++++++++++++++++++----
+> > >  2 files changed, 134 insertions(+), 16 deletions(-)
+> > >
+> > > diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> > > index 5146ee029db4..bb0cd212c7cc 100644
+> > > --- a/drivers/hid/hid-ids.h
+> > > +++ b/drivers/hid/hid-ids.h
+> > > @@ -92,6 +92,7 @@
+> > >  #define USB_DEVICE_ID_APPLE_MIGHTYMOUSE        0x0304
+> > >  #define USB_DEVICE_ID_APPLE_MAGICMOUSE 0x030d
+> > >  #define USB_DEVICE_ID_APPLE_MAGICTRACKPAD      0x030e
+> > > +#define USB_DEVICE_ID_APPLE_MAGICTRACKPAD2     0x0265
+> > >  #define USB_DEVICE_ID_APPLE_FOUNTAIN_ANSI      0x020e
+> > >  #define USB_DEVICE_ID_APPLE_FOUNTAIN_ISO       0x020f
+> > >  #define USB_DEVICE_ID_APPLE_GEYSER_ANSI        0x0214
+> > > diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
+> > > index b454c4386157..6a3a6c83e509 100644
+> > > --- a/drivers/hid/hid-magicmouse.c
+> > > +++ b/drivers/hid/hid-magicmouse.c
+> > > @@ -54,6 +54,8 @@ module_param(report_undeciphered, bool, 0644);
+> > >  MODULE_PARM_DESC(report_undeciphered, "Report undeciphered multi-touch state field using a MSC_RAW event");
+> > >
+> > >  #define TRACKPAD_REPORT_ID 0x28
+> > > +#define TRACKPAD2_USB_REPORT_ID 0x02
+> > > +#define TRACKPAD2_BT_REPORT_ID 0x31
+> > >  #define MOUSE_REPORT_ID    0x29
+> > >  #define DOUBLE_REPORT_ID   0xf7
+> > >  /* These definitions are not precise, but they're close enough.  (Bits
+> > > @@ -91,6 +93,17 @@ MODULE_PARM_DESC(report_undeciphered, "Report undeciphered multi-touch state fie
+> > >  #define TRACKPAD_RES_Y \
+> > >         ((TRACKPAD_MAX_Y - TRACKPAD_MIN_Y) / (TRACKPAD_DIMENSION_Y / 100))
+> > >
+> > > +#define TRACKPAD2_DIMENSION_X (float)16000
+> > > +#define TRACKPAD2_MIN_X -3678
+> > > +#define TRACKPAD2_MAX_X 3934
+> > > +#define TRACKPAD2_RES_X \
+> > > +       ((TRACKPAD2_MAX_X - TRACKPAD2_MIN_X) / (TRACKPAD2_DIMENSION_X / 100))
+> > > +#define TRACKPAD2_DIMENSION_Y (float)11490
+> > > +#define TRACKPAD2_MIN_Y -2478
+> > > +#define TRACKPAD2_MAX_Y 2587
+> > > +#define TRACKPAD2_RES_Y \
+> > > +       ((TRACKPAD2_MAX_Y - TRACKPAD2_MIN_Y) / (TRACKPAD2_DIMENSION_Y / 100))
+> > > +
+> > >  /**
+> > >   * struct magicmouse_sc - Tracks Magic Mouse-specific data.
+> > >   * @input: Input device through which we report events.
+> > > @@ -183,6 +196,7 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
+> > >  {
+> > >         struct input_dev *input = msc->input;
+> > >         int id, x, y, size, orientation, touch_major, touch_minor, state, down;
+> > > +       int pressure = 0;
+> > >
+> > >         if (input->id.product == USB_DEVICE_ID_APPLE_MAGICMOUSE) {
+> > >                 id = (tdata[6] << 2 | tdata[5] >> 6) & 0xf;
+> > > @@ -194,6 +208,20 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
+> > >                 touch_minor = tdata[4];
+> > >                 state = tdata[7] & TOUCH_STATE_MASK;
+> > >                 down = state != TOUCH_STATE_NONE;
+> > > +       } else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
+> > > +               id = tdata[8] & 0xf;
+> > > +               x = (tdata[1] << 27 | tdata[0] << 19) >> 19;
+> > > +               y = -((tdata[3] << 30 | tdata[2] << 22 | tdata[1] << 14) >> 19);
+> > > +               size = tdata[6];
+> > > +               orientation = (tdata[8] >> 5) - 4;
+> > > +               touch_major = tdata[4];
+> > > +               touch_minor = tdata[5];
+> > > +               /* Add to pressure to prevent libraries such as libinput
+> > > +                * from ignoring low pressure touches
+> > > +                */
+> > > +               pressure = tdata[7] + 30;
+> >
+> > Peter, can you have a look?
+> >
+> > To me, while adding this threshold, you are basically fooling
+> > userspace, and we might want to come back to the raw values at some
+> > point.
+> > If there is a userspace problem, it has to be solved in userspace.
+> >
+> 
+> I'm fine with removing the offset.  I haven't personally tested using
+> libinput, but the chromium OS gesture detector I've been using can
+> handle pressure values of 0.
 
-The race happens if we have a CPU that is entering the SYSTEMPORT
-INTRL2_0 handler during resume, and another CPU has managed to clear the
-wake-up interrupt during bcm_sysport_resume_from_wol(). In that case, we
-have the first CPU stuck in the interrupt handler with an interrupt
-cause that has been cleared under its feet, and so we keep returning
-IRQ_NONE and we never make any progress.
+libinput uses touch major/minor but only if a threshold is defined for
+that device in the quirks files (matches on VID/PID/name/...).
+https://gitlab.freedesktop.org/libinput/libinput/quirks/
 
-This was not a problem before because we would always turn off the
-RX_SYS clock during WoL, so the SYSTEMPORT INTRL2_0 would also be turned
-off as well, thus not latching the interrupt.
+No existing quirk will match for this device so libinput falls back to using
+pressure instead. That too can be defined per-device in the quirks but for
+this VID/PID it isn't so we fall back to the default thresholds guessed
+based on the pressure range (12% of the range, that's where the 30 comes
+from).
 
-The fix is to make sure we do not enable either the MPD or
-BRCM_TAG_MATCH interrupts since those are redundant with what the
-AON_PM_L2 interrupt controller already processes and they would cause
-such a race to occur.
+Adding a quirk for this device with the required major/minor threshold (or
+pressure if that's more reliable) should be enough to make it work, it
+definitely doesn't require a kernel workaround.
 
-Fixes: bb9051a2b230 ("net: systemport: Add support for WAKE_FILTER")
-Fixes: 83e82f4c706b ("net: systemport: add Wake-on-LAN support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/ethernet/broadcom/bcmsysport.c | 28 +++++++++-------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
+fwiw, testing against libinput is as simple as building the git repo with
+meson and running:
+    sudo ./builddir/libinput-debug-events 
+or if you want some graphical debugging (requires gtk3-devel)
+    sudo ./builddir/libinput-debug-gui 
 
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
-index 147045757b10..c57238fce863 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -1069,9 +1069,6 @@ static void bcm_sysport_resume_from_wol(struct bcm_sysport_priv *priv)
- {
- 	u32 reg;
- 
--	/* Stop monitoring MPD interrupt */
--	intrl2_0_mask_set(priv, INTRL2_0_MPD | INTRL2_0_BRCM_MATCH_TAG);
--
- 	/* Disable RXCHK, active filters and Broadcom tag matching */
- 	reg = rxchk_readl(priv, RXCHK_CONTROL);
- 	reg &= ~(RXCHK_BRCM_TAG_MATCH_MASK <<
-@@ -1081,6 +1078,17 @@ static void bcm_sysport_resume_from_wol(struct bcm_sysport_priv *priv)
- 	/* Clear the MagicPacket detection logic */
- 	mpd_enable_set(priv, false);
- 
-+	reg = intrl2_0_readl(priv, INTRL2_CPU_STATUS);
-+	if (reg & INTRL2_0_MPD)
-+		netdev_info(priv->netdev, "Wake-on-LAN (MPD) interrupt!\n");
-+
-+	if (reg & INTRL2_0_BRCM_MATCH_TAG) {
-+		reg = rxchk_readl(priv, RXCHK_BRCM_TAG_MATCH_STATUS) &
-+				  RXCHK_BRCM_TAG_MATCH_MASK;
-+		netdev_info(priv->netdev,
-+			    "Wake-on-LAN (filters 0x%02x) interrupt!\n", reg);
-+	}
-+
- 	netif_dbg(priv, wol, priv->netdev, "resumed from WOL\n");
- }
- 
-@@ -1105,7 +1113,6 @@ static irqreturn_t bcm_sysport_rx_isr(int irq, void *dev_id)
- 	struct bcm_sysport_priv *priv = netdev_priv(dev);
- 	struct bcm_sysport_tx_ring *txr;
- 	unsigned int ring, ring_bit;
--	u32 reg;
- 
- 	priv->irq0_stat = intrl2_0_readl(priv, INTRL2_CPU_STATUS) &
- 			  ~intrl2_0_readl(priv, INTRL2_CPU_MASK_STATUS);
-@@ -1131,16 +1138,6 @@ static irqreturn_t bcm_sysport_rx_isr(int irq, void *dev_id)
- 	if (priv->irq0_stat & INTRL2_0_TX_RING_FULL)
- 		bcm_sysport_tx_reclaim_all(priv);
- 
--	if (priv->irq0_stat & INTRL2_0_MPD)
--		netdev_info(priv->netdev, "Wake-on-LAN (MPD) interrupt!\n");
--
--	if (priv->irq0_stat & INTRL2_0_BRCM_MATCH_TAG) {
--		reg = rxchk_readl(priv, RXCHK_BRCM_TAG_MATCH_STATUS) &
--				  RXCHK_BRCM_TAG_MATCH_MASK;
--		netdev_info(priv->netdev,
--			    "Wake-on-LAN (filters 0x%02x) interrupt!\n", reg);
--	}
--
- 	if (!priv->is_lite)
- 		goto out;
- 
-@@ -2641,9 +2638,6 @@ static int bcm_sysport_suspend_to_wol(struct bcm_sysport_priv *priv)
- 	/* UniMAC receive needs to be turned on */
- 	umac_enable_set(priv, CMD_RX_EN, 1);
- 
--	/* Enable the interrupt wake-up source */
--	intrl2_0_mask_clear(priv, INTRL2_0_MPD | INTRL2_0_BRCM_MATCH_TAG);
--
- 	netif_dbg(priv, wol, ndev, "entered WOL mode\n");
- 
- 	return 0;
--- 
-2.17.1
+Cheers,
+   Peter
 
+
+> 
+> > > +               state = tdata[3] & 0xC0;
+> > > +               down = state == 0x80;
+> > >         } else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
+> > >                 id = (tdata[7] << 2 | tdata[6] >> 6) & 0xf;
+> > >                 x = (tdata[1] << 27 | tdata[0] << 19) >> 19;
+> > > @@ -215,7 +243,8 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
+> > >         /* If requested, emulate a scroll wheel by detecting small
+> > >          * vertical touch motions.
+> > >          */
+> > > -       if (emulate_scroll_wheel) {
+> > > +       if (emulate_scroll_wheel && (input->id.product !=
+> > > +                       USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)) {
+> > >                 unsigned long now = jiffies;
+> > >                 int step_x = msc->touches[id].scroll_x - x;
+> > >                 int step_y = msc->touches[id].scroll_y - y;
+> > > @@ -269,10 +298,14 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
+> > >                 input_report_abs(input, ABS_MT_POSITION_X, x);
+> > >                 input_report_abs(input, ABS_MT_POSITION_Y, y);
+> > >
+> > > +               if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)
+> > > +                       input_report_abs(input, ABS_MT_PRESSURE, pressure);
+> > > +
+> > >                 if (report_undeciphered) {
+> > >                         if (input->id.product == USB_DEVICE_ID_APPLE_MAGICMOUSE)
+> > >                                 input_event(input, EV_MSC, MSC_RAW, tdata[7]);
+> > > -                       else /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
+> > > +                       else if (input->id.product !=
+> > > +                                       USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)
+> > >                                 input_event(input, EV_MSC, MSC_RAW, tdata[8]);
+> > >                 }
+> > >         }
+> > > @@ -287,6 +320,7 @@ static int magicmouse_raw_event(struct hid_device *hdev,
+> > >
+> > >         switch (data[0]) {
+> > >         case TRACKPAD_REPORT_ID:
+> > > +       case TRACKPAD2_BT_REPORT_ID:
+> > >                 /* Expect four bytes of prefix, and N*9 bytes of touch data. */
+> > >                 if (size < 4 || ((size - 4) % 9) != 0)
+> > >                         return 0;
+> > > @@ -301,12 +335,22 @@ static int magicmouse_raw_event(struct hid_device *hdev,
+> > >                         magicmouse_emit_touch(msc, ii, data + ii * 9 + 4);
+> > >
+> > >                 clicks = data[1];
+> > > +               break;
+> > > +       case TRACKPAD2_USB_REPORT_ID:
+> > > +               /* Expect twelve bytes of prefix and N*9 bytes of touch data. */
+> > > +               if (size < 12 || ((size - 12) % 9) != 0)
+> > > +                       return 0;
+> > > +               npoints = (size - 12) / 9;
+> > > +               if (npoints > 15) {
+> > > +                       hid_warn(hdev, "invalid size value (%d) for TRACKPAD2_USB_REPORT_ID\n",
+> > > +                                       size);
+> > > +                       return 0;
+> > > +               }
+> > > +               msc->ntouches = 0;
+> > > +               for (ii = 0; ii < npoints; ii++)
+> > > +                       magicmouse_emit_touch(msc, ii, data + ii * 9 + 12);
+> > >
+> > > -               /* The following bits provide a device specific timestamp. They
+> > > -                * are unused here.
+> > > -                *
+> > > -                * ts = data[1] >> 6 | data[2] << 2 | data[3] << 10;
+> > > -                */
+> >
+> > Can you keep this comment from the original version? If your touchpad
+> > doesn't have the timestamp bit, the old ones still have them, and
+> > having the decoded information might help in the future.
+> >
+> 
+> Will do.
+> 
+> > Cheers,
+> > Benjamin
+> >
+> > > +               clicks = data[1];
+> > >                 break;
+> > >         case MOUSE_REPORT_ID:
+> > >                 /* Expect six bytes of prefix, and N*8 bytes of touch data. */
+> > > @@ -352,6 +396,9 @@ static int magicmouse_raw_event(struct hid_device *hdev,
+> > >                 magicmouse_emit_buttons(msc, clicks & 3);
+> > >                 input_report_rel(input, REL_X, x);
+> > >                 input_report_rel(input, REL_Y, y);
+> > > +       } else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
+> > > +               input_mt_sync_frame(input);
+> > > +               input_report_key(input, BTN_MOUSE, clicks & 1);
+> > >         } else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
+> > >                 input_report_key(input, BTN_MOUSE, clicks & 1);
+> > >                 input_mt_report_pointer_emulation(input, true);
+> > > @@ -364,6 +411,7 @@ static int magicmouse_raw_event(struct hid_device *hdev,
+> > >  static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hdev)
+> > >  {
+> > >         int error;
+> > > +       int mt_flags = 0;
+> > >
+> > >         __set_bit(EV_KEY, input->evbit);
+> > >
+> > > @@ -380,6 +428,22 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
+> > >                         __set_bit(REL_WHEEL, input->relbit);
+> > >                         __set_bit(REL_HWHEEL, input->relbit);
+> > >                 }
+> > > +       } else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
+> > > +               /* setting the device name to ensure the same driver settings
+> > > +                * get loaded, whether connected through bluetooth or USB
+> > > +                */
+> > > +               input->name = "Apple Inc. Magic Trackpad 2";
+> > > +
+> > > +               __clear_bit(EV_MSC, input->evbit);
+> > > +               __clear_bit(BTN_0, input->keybit);
+> > > +               __clear_bit(BTN_RIGHT, input->keybit);
+> > > +               __clear_bit(BTN_MIDDLE, input->keybit);
+> > > +               __set_bit(BTN_MOUSE, input->keybit);
+> > > +               __set_bit(INPUT_PROP_BUTTONPAD, input->propbit);
+> > > +               __set_bit(BTN_TOOL_FINGER, input->keybit);
+> > > +
+> > > +               mt_flags = INPUT_MT_POINTER | INPUT_MT_DROP_UNUSED |
+> > > +                               INPUT_MT_TRACK;
+> > >         } else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
+> > >                 /* input->keybit is initialized with incorrect button info
+> > >                  * for Magic Trackpad. There really is only one physical
+> > > @@ -402,14 +466,13 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
+> > >
+> > >         __set_bit(EV_ABS, input->evbit);
+> > >
+> > > -       error = input_mt_init_slots(input, 16, 0);
+> > > +       error = input_mt_init_slots(input, 16, mt_flags);
+> > >         if (error)
+> > >                 return error;
+> > >         input_set_abs_params(input, ABS_MT_TOUCH_MAJOR, 0, 255 << 2,
+> > >                              4, 0);
+> > >         input_set_abs_params(input, ABS_MT_TOUCH_MINOR, 0, 255 << 2,
+> > >                              4, 0);
+> > > -       input_set_abs_params(input, ABS_MT_ORIENTATION, -31, 32, 1, 0);
+> > >
+> > >         /* Note: Touch Y position from the device is inverted relative
+> > >          * to how pointer motion is reported (and relative to how USB
+> > > @@ -418,6 +481,7 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
+> > >          * inverse of the reported Y.
+> > >          */
+> > >         if (input->id.product == USB_DEVICE_ID_APPLE_MAGICMOUSE) {
+> > > +               input_set_abs_params(input, ABS_MT_ORIENTATION, -31, 32, 1, 0);
+> > >                 input_set_abs_params(input, ABS_MT_POSITION_X,
+> > >                                      MOUSE_MIN_X, MOUSE_MAX_X, 4, 0);
+> > >                 input_set_abs_params(input, ABS_MT_POSITION_Y,
+> > > @@ -427,7 +491,25 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
+> > >                                   MOUSE_RES_X);
+> > >                 input_abs_set_res(input, ABS_MT_POSITION_Y,
+> > >                                   MOUSE_RES_Y);
+> > > +       } else if (input->id.product ==  USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
+> > > +               input_set_abs_params(input, ABS_MT_PRESSURE, 0, 283, 0, 0);
+> > > +               input_set_abs_params(input, ABS_PRESSURE, 0, 283, 0, 0);
+> > > +               input_set_abs_params(input, ABS_MT_ORIENTATION, -3, 4, 0, 0);
+> > > +               input_set_abs_params(input, ABS_X, TRACKPAD2_MIN_X,
+> > > +                                    TRACKPAD2_MAX_X, 0, 0);
+> > > +               input_set_abs_params(input, ABS_Y, TRACKPAD2_MIN_Y,
+> > > +                                    TRACKPAD2_MAX_Y, 0, 0);
+> > > +               input_set_abs_params(input, ABS_MT_POSITION_X,
+> > > +                                    TRACKPAD2_MIN_X, TRACKPAD2_MAX_X, 0, 0);
+> > > +               input_set_abs_params(input, ABS_MT_POSITION_Y,
+> > > +                                    TRACKPAD2_MIN_Y, TRACKPAD2_MAX_Y, 0, 0);
+> > > +
+> > > +               input_abs_set_res(input, ABS_X, TRACKPAD2_RES_X);
+> > > +               input_abs_set_res(input, ABS_Y, TRACKPAD2_RES_Y);
+> > > +               input_abs_set_res(input, ABS_MT_POSITION_X, TRACKPAD2_RES_X);
+> > > +               input_abs_set_res(input, ABS_MT_POSITION_Y, TRACKPAD2_RES_Y);
+> > >         } else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
+> > > +               input_set_abs_params(input, ABS_MT_ORIENTATION, -31, 32, 1, 0);
+> > >                 input_set_abs_params(input, ABS_X, TRACKPAD_MIN_X,
+> > >                                      TRACKPAD_MAX_X, 4, 0);
+> > >                 input_set_abs_params(input, ABS_Y, TRACKPAD_MIN_Y,
+> > > @@ -447,7 +529,8 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
+> > >
+> > >         input_set_events_per_packet(input, 60);
+> > >
+> > > -       if (report_undeciphered) {
+> > > +       if (report_undeciphered &&
+> > > +           input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
+> > >                 __set_bit(EV_MSC, input->evbit);
+> > >                 __set_bit(MSC_RAW, input->mscbit);
+> > >         }
+> > > @@ -465,7 +548,8 @@ static int magicmouse_input_mapping(struct hid_device *hdev,
+> > >                 msc->input = hi->input;
+> > >
+> > >         /* Magic Trackpad does not give relative data after switching to MT */
+> > > -       if (hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD &&
+> > > +       if ((hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD ||
+> > > +            hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) &&
+> > >             field->flags & HID_MAIN_ITEM_RELATIVE)
+> > >                 return -1;
+> > >
+> > > @@ -494,11 +578,20 @@ static int magicmouse_input_configured(struct hid_device *hdev,
+> > >  static int magicmouse_probe(struct hid_device *hdev,
+> > >         const struct hid_device_id *id)
+> > >  {
+> > > -       const u8 feature[] = { 0xd7, 0x01 };
+> > > +       const u8 *feature;
+> > > +       const u8 feature_mt[] = { 0xD7, 0x01 };
+> > > +       const u8 feature_mt_trackpad2_usb[] = { 0x02, 0x01 };
+> > > +       const u8 feature_mt_trackpad2_bt[] = { 0xF1, 0x02, 0x01 };
+> > >         u8 *buf;
+> > >         struct magicmouse_sc *msc;
+> > >         struct hid_report *report;
+> > >         int ret;
+> > > +       int feature_size;
+> > > +
+> > > +       if (id->vendor == USB_VENDOR_ID_APPLE &&
+> > > +           id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 &&
+> > > +           hdev->type != HID_TYPE_USBMOUSE)
+> > > +               return 0;
+> > >
+> > >         msc = devm_kzalloc(&hdev->dev, sizeof(*msc), GFP_KERNEL);
+> > >         if (msc == NULL) {
+> > > @@ -532,7 +625,14 @@ static int magicmouse_probe(struct hid_device *hdev,
+> > >         if (id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE)
+> > >                 report = hid_register_report(hdev, HID_INPUT_REPORT,
+> > >                         MOUSE_REPORT_ID, 0);
+> > > -       else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
+> > > +       else if (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
+> > > +               if (id->vendor == BT_VENDOR_ID_APPLE)
+> > > +                       report = hid_register_report(hdev, HID_INPUT_REPORT,
+> > > +                               TRACKPAD2_BT_REPORT_ID, 0);
+> > > +               else /* USB_VENDOR_ID_APPLE */
+> > > +                       report = hid_register_report(hdev, HID_INPUT_REPORT,
+> > > +                               TRACKPAD2_USB_REPORT_ID, 0);
+> > > +       } else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
+> > >                 report = hid_register_report(hdev, HID_INPUT_REPORT,
+> > >                         TRACKPAD_REPORT_ID, 0);
+> > >                 report = hid_register_report(hdev, HID_INPUT_REPORT,
+> > > @@ -546,7 +646,20 @@ static int magicmouse_probe(struct hid_device *hdev,
+> > >         }
+> > >         report->size = 6;
+> > >
+> > > -       buf = kmemdup(feature, sizeof(feature), GFP_KERNEL);
+> > > +       if (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
+> > > +               if (id->vendor == BT_VENDOR_ID_APPLE) {
+> > > +                       feature_size = sizeof(feature_mt_trackpad2_bt);
+> > > +                       feature = feature_mt_trackpad2_bt;
+> > > +               } else { /* USB_VENDOR_ID_APPLE */
+> > > +                       feature_size = sizeof(feature_mt_trackpad2_usb);
+> > > +                       feature = feature_mt_trackpad2_usb;
+> > > +               }
+> > > +       } else {
+> > > +               feature_size = sizeof(feature_mt);
+> > > +               feature = feature_mt;
+> > > +       }
+> > > +
+> > > +       buf = kmemdup(feature, feature_size, GFP_KERNEL);
+> > >         if (!buf) {
+> > >                 ret = -ENOMEM;
+> > >                 goto err_stop_hw;
+> > > @@ -560,10 +673,10 @@ static int magicmouse_probe(struct hid_device *hdev,
+> > >          * but there seems to be no other way of switching the mode.
+> > >          * Thus the super-ugly hacky success check below.
+> > >          */
+> > > -       ret = hid_hw_raw_request(hdev, buf[0], buf, sizeof(feature),
+> > > +       ret = hid_hw_raw_request(hdev, buf[0], buf, feature_size,
+> > >                                 HID_FEATURE_REPORT, HID_REQ_SET_REPORT);
+> > >         kfree(buf);
+> > > -       if (ret != -EIO && ret != sizeof(feature)) {
+> > > +       if (ret != -EIO && ret != feature_size) {
+> > >                 hid_err(hdev, "unable to request touch data (%d)\n", ret);
+> > >                 goto err_stop_hw;
+> > >         }
+> > > @@ -579,6 +692,10 @@ static const struct hid_device_id magic_mice[] = {
+> > >                 USB_DEVICE_ID_APPLE_MAGICMOUSE), .driver_data = 0 },
+> > >         { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_APPLE,
+> > >                 USB_DEVICE_ID_APPLE_MAGICTRACKPAD), .driver_data = 0 },
+> > > +       { HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE,
+> > > +               USB_DEVICE_ID_APPLE_MAGICTRACKPAD2), .driver_data = 0 },
+> > > +       { HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
+> > > +               USB_DEVICE_ID_APPLE_MAGICTRACKPAD2), .driver_data = 0 },
+> > >         { }
+> > >  };
+> > >  MODULE_DEVICE_TABLE(hid, magic_mice);
+> > > --
+> > > 2.19.0.444.g18242da7ef-goog
+> > >
