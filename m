@@ -2,124 +2,97 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CEFC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF1BC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDE312089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:21:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDE312089F
+	by mail.kernel.org (Postfix) with ESMTP id 1690F2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:23:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1690F2089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbeJCRJJ (ORCPT
+        id S1726746AbeJCRKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 13:09:09 -0400
-Received: from foss.arm.com ([217.140.101.70]:49028 "EHLO foss.arm.com"
+        Wed, 3 Oct 2018 13:10:48 -0400
+Received: from foss.arm.com ([217.140.101.70]:49062 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725976AbeJCRJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 13:09:09 -0400
+        id S1725976AbeJCRKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 13:10:47 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1447118A;
-        Wed,  3 Oct 2018 03:21:24 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 27D033F5A0;
-        Wed,  3 Oct 2018 03:21:21 -0700 (PDT)
-Subject: Re: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
-        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>,
-        "pabba@codeaurora.org" <pabba@codeaurora.org>,
-        John Garry <john.garry@huawei.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
- <20180921150803.25444-3-shameerali.kolothum.thodi@huawei.com>
- <ecc2877c-146c-d70f-efd7-306fe704d55f@arm.com>
- <5FC3163CFD30C246ABAA99954A238FA838793F4E@FRAEML521-MBX.china.huawei.com>
- <6d51a825-325f-5f78-20da-bf27f208fe37@arm.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <80f5ad85-c31b-a1b8-ab9c-3a559838f6f2@arm.com>
-Date:   Wed, 3 Oct 2018 11:21:19 +0100
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDB7618A;
+        Wed,  3 Oct 2018 03:23:02 -0700 (PDT)
+Received: from [10.4.13.23] (en101.emea.arm.com [10.4.13.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E2A493F5A0;
+        Wed,  3 Oct 2018 03:23:00 -0700 (PDT)
+Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
+To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        catalin.marinas@arm.com, mhocko@kernel.org,
+        mike.kravetz@oracle.com, n-horiguchi@ah.jp.nec.com
+References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
+ <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
+ <835085a2-79c2-4eb5-2c10-13bb2893f611@arm.com>
+ <c0689b0c-4810-e0e8-354e-55c45d59b6d0@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <a6b96126-5571-2aa2-6deb-09a457afd781@arm.com>
+Date:   Wed, 3 Oct 2018 11:22:59 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <6d51a825-325f-5f78-20da-bf27f208fe37@arm.com>
+In-Reply-To: <c0689b0c-4810-e0e8-354e-55c45d59b6d0@arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/10/18 10:46, Jean-Philippe Brucker wrote:
-> On 03/10/2018 09:46, Shameerali Kolothum Thodi wrote:
-> [...]
->>>> +	/* Verify specified event is supported on this PMU */
->>>> +	event_id = get_event(event);
->>>> +	if (((event_id < SMMU_ARCH_MAX_EVENT_ID) &&
->>>> +	    (!test_bit(event_id, smmu_pmu->supported_events))) ||
->>>> +	    (event_id > SMMU_IMPDEF_MAX_EVENT_ID)) {
->>>
->>>> = ?
->>
->> I was slightly confused by the spec here as it says,
->>
->> Performance events are indicated by a numeric ID, in the following ranges:
->> • 0x0000 to 0x007F: Architected events
->> • 0x0080 to 0xFFFF: IMPLEMENTATION DEFINED events
->>
->> It looks to me the ids are valid including those limits.
+
+
+On 02/10/18 13:56, Anshuman Khandual wrote:
 > 
-> Yes my mistake, I mixed up IMPDEF_MAX_EVENT_ID which is inclusive with
-> ARCH_MAX_EVENT_ID which isn't, sorry about that
-
-Well, really that's a clear sign that this could be improved - having 
-"max" mean both "maximum" and "maximum plus one" in the same context is 
-needlessly overcomplicated.
-
-> [...]
->>>> +		dev_err(dev, "Setup irq failed, PMU @%pa\n", &res_0->start);
->>>
->>> You can probably remove "PMU @%pa" from error and info messages, since
->>> the device name already uniquely identifies it:
->>> "[    6.168200] arm-smmu-v3-pmu 2b442000.smmu-pmcg: Registered SMMU
->>> PMU
->>> @ 0x000000002b442000 using 4 counters"
->>
->> Interesting. What I have is,
->>
->> [   25.669636] arm-smmu-v3-pmu arm-smmu-v3-pmu.6.auto: Registered SMMU
->> PMU @ 0x0000000148001000 using 8 counters
->>
->> Are you using the same patches and is booting using ACPI? IIRC, in the iort
->> code  it uses the name "arm-smmu-v3-pmu" and AUTO id to register/add the platform
->> dev. So not sure, how it is printing the address in your case.
->>
->> Please check and let me know.
 > 
-> Right, I've been using device tree for my tests, not ACPI. I thought it
-> was the core platform code that was creating the names. I guess we could
-> add nicer names to IORT but that's probably for a different series, so
-> nevermind.
+> On 10/02/2018 06:08 PM, Suzuki K Poulose wrote:
+>> Hi Anshuman
+>>
+>> On 02/10/18 13:15, Anshuman Khandual wrote:
+>>> Architectures like arm64 have PUD level HugeTLB pages for certain configs
+>>> (1GB huge page is PUD based on ARM64_4K_PAGES base page size) that can be
+>>> enabled for migration. It can be achieved through checking for PUD_SHIFT
+>>> order based HugeTLB pages during migration.
+>>>
+>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>>> ---
+>>>    include/linux/hugetlb.h | 3 ++-
+>>>    1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+>>> index 6b68e34..9c1b77f 100644
+>>> --- a/include/linux/hugetlb.h
+>>> +++ b/include/linux/hugetlb.h
+>>> @@ -483,7 +483,8 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+>>>    {
+>>>    #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
+>>>        if ((huge_page_shift(h) == PMD_SHIFT) ||
+>>> -        (huge_page_shift(h) == PGDIR_SHIFT))
+>>> +        (huge_page_shift(h) == PUD_SHIFT) ||
+>>
+>>
+>>> +            (huge_page_shift(h) == PGDIR_SHIFT))
+>>
+>> nit: Extra Tab ^^.
+> 
+> The tab is in there when you apply this patch and all three checks are tab separated
+> in a newline.
 
-TBH, I can't see anyone caring much about the platform device itself, 
-since it's the perf pmu device that users actually want to interact 
-with. As long as the latter is easily identifiable, the name of the 
-former is mostly only relevant to us sanity-checking sysfs and 
-/proc/{interrupts,iomem} for development.
+Well, with the patch applied, at least I can see 2 tabs for the
+PUD_SHIFT check and 3 tabs for PGDIR_SHIFT check. Which seems
+inconsistent. Is it just me (my mail client) ?
 
-Robin.
+Suzuki
