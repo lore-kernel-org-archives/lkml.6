@@ -2,158 +2,151 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 911D5C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F20AAC64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38CB421470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B957E21470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:11:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="Dq5Bjxit"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CB421470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XPda/oH/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B957E21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbeJDC7a (ORCPT
+        id S1727204AbeJDDAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 22:59:30 -0400
-Received: from mail-by2nam03on0041.outbound.protection.outlook.com ([104.47.42.41]:13841
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726941AbeJDC73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 22:59:29 -0400
+        Wed, 3 Oct 2018 23:00:51 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:40803 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726950AbeJDDAv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 23:00:51 -0400
+Received: by mail-yw1-f67.google.com with SMTP id l79-v6so2829860ywc.7
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 13:10:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Ms91qf1iC/o/uoKAQSuI+LxZZJ5npQt9tHfjhYdLy4=;
- b=Dq5BjxitCZEQvnEF4sCYxHT9FHigVep3bUOyaPpA+MZCrXsEx8DXIll7jmPQNBNgkXt5W055iJH6MP+Q/hjHz1z2QsIx14As3zxzkm8j1jhNtyJavs7P18O1D7RyYr0b6ELwMS2Awov3wYOtRdulCh9BTVlr7l/zuEFkeZaerxg=
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1660.namprd12.prod.outlook.com (10.172.40.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.20; Wed, 3 Oct 2018 20:09:16 +0000
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::bd60:9d30:b818:b828]) by DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::bd60:9d30:b818:b828%2]) with mapi id 15.20.1207.021; Wed, 3 Oct 2018
- 20:09:16 +0000
-From:   "Moger, Babu" <Babu.Moger@amd.com>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "jannh@google.com" <jannh@google.com>,
-        "dima@arista.com" <dima@arista.com>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>
-Subject: Re: [RFC PATCH 00/10] arch/x86: AMD QoS support
-Thread-Topic: [RFC PATCH 00/10] arch/x86: AMD QoS support
-Thread-Index: AQHUVDtunpE+5D/HD063flof44uaLaUMPC4AgAAI7GCAABLSAP//tJaAgAHfZoCAABWHAA==
-Date:   Wed, 3 Oct 2018 20:09:16 +0000
-Message-ID: <874cdcfb-26fa-2bdb-095d-b1b5a88250b9@amd.com>
-References: <20180924191841.29111-1-babu.moger@amd.com>
- <20181002170655.GA92941@romley-ivt3.sc.intel.com>
- <BL0PR12MB2468F1F6EA31332657802C7595E80@BL0PR12MB2468.namprd12.prod.outlook.com>
- <20181002184614.GC92941@romley-ivt3.sc.intel.com>
- <2549597a-440c-ab77-2c35-01a648703b9f@amd.com>
- <20181003185209.GA98542@romley-ivt3.sc.intel.com>
-In-Reply-To: <20181003185209.GA98542@romley-ivt3.sc.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CY4PR1201CA0010.namprd12.prod.outlook.com
- (2603:10b6:910:16::20) To DM5PR12MB2471.namprd12.prod.outlook.com
- (2603:10b6:4:b5::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1660;20:ksV9PDW3res1sHx5rM4egHc+fokURJGOu2EmCsu7vLMB6iT1xuiWICWm/Vz2/xowyqolQ3wwV4b7JfJVzh9D1UuwIb1WAnHU8oDtxb7ozcO3JKOUUrXIwPH2FRkXP2toFtaS8eL3TQYLZ1fK3/qXIUOKkQVz8+EIzhPZJ46fgqbr6chx85otp+9F+YwBPEVwVmB31gw8yvcr8fr5qnDZy7A9DQL2Buu95PlMi1Nf4ODsVSmNFEt1M+xrQocnlrYJ
-x-ms-office365-filtering-correlation-id: edc1847a-1a57-4280-c725-08d6296c1824
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1660;
-x-ms-traffictypediagnostic: DM5PR12MB1660:
-x-microsoft-antispam-prvs: <DM5PR12MB16609B941B5DA3B9FB4E26CE95E90@DM5PR12MB1660.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(767451399110)(788757137089)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:DM5PR12MB1660;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1660;
-x-forefront-prvs: 0814A2C7A3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(136003)(396003)(376002)(39860400002)(13464003)(189003)(199004)(2900100001)(186003)(31686004)(11346002)(446003)(7736002)(36756003)(81166006)(316002)(81156014)(486006)(8676002)(305945005)(66066001)(105586002)(7416002)(93886005)(8936002)(106356001)(478600001)(25786009)(966005)(2616005)(72206003)(14454004)(68736007)(102836004)(71190400001)(6916009)(31696002)(54906003)(71200400001)(229853002)(6506007)(256004)(386003)(2906002)(76176011)(26005)(6486002)(52116002)(97736004)(86362001)(217873002)(4326008)(53546011)(5660300001)(6512007)(6436002)(6306002)(476003)(99286004)(53936002)(5250100002)(6116002)(6246003)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1660;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: CBC964DodGhhkRGBJj48c+dH8FZ+SIK+GNZsix7EM3dEhJ6YXrILGaTeePQcsDJtJhgmSSgFBYqdMoaxTd5BqzX/pPqZ2LbIGA1/c5wlCSt5ClQ0pVktQ/x4G6jj8Lb86g1Y+uQLprbROm0u41jvODDkps2V8LVeL5RrPI5Gr5ZXTicUQ4ixSF5aMmMSsjbFEENgWt5+y9BrmaMncgpRHnnCuIPCTfb8D0v6iwZP427xc+GMpMQTmmUGCoiXV1kXhTLNZre/Z9+rJfMX6x04kBFDWsTHnApQ5IN1koz3fqXJe9uaXloMXiCvvwoTyjzi00EtPI15gvNSuPgQ8H+Qn/LdqHBkMQo5H7WcJXls1cQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5D95CF76A143984897849DD7250F455A@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=2ltOwQ63QbGaIFq6R/SviRcoBgF6s6Isx0gKdU2+eh4=;
+        b=XPda/oH/q9itpDkmQRKeH9ujvUdiUnzH6UMG3fUN1ETKnM2I5z5t2kM6l4KmpYER+g
+         KpYQxsFTsVEdMQLDSVbBHLTY2cY5felkFLqd+8ZHGAfWyS/MU2mJgi1/Q/I88AtSLEmj
+         uZlwpyrbwRnSCwR9ft+EWCry46D1M2+Z14BUY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=2ltOwQ63QbGaIFq6R/SviRcoBgF6s6Isx0gKdU2+eh4=;
+        b=GuRkcBRXoCz00tIgKvJqMbb1qfPrmrZbDcCgUsbgd5+t1rjBIAFJTUW37FaDj5XiKq
+         kumPBOjIcRh+pzboH7JQ2aqBMwa12Cr44LNatxAquTd16vIFi4rRrrdTXbq6L1m9PGW9
+         e17aZdaoRKfw/Yr+8RmreyrBPTznSKJ/DLZVUlLEBhBf3laxg7kshNVo0VH5IXG0W/0O
+         qf8shZ/7+dpGafSBaBQUBno+TDiroCBt8AoLZpEJ/X3Ku/p7yMuxyee20vaebcIrJmlK
+         0NCPbxY0rH6axBg28HTiAY8Vo05Yt2kaxTA4xnfoN6yvAnyRHDYC0Tx4yaoQYgi632Zg
+         2sDw==
+X-Gm-Message-State: ABuFfohcw3I8MXcf5VJMRYbdwaIMYW1KUvdQRiqcKrOnfUIgtYOW4qh7
+        Vg+j/c31lf/YKaqXvCSUv/X5PSK2Juk=
+X-Google-Smtp-Source: ACcGV62NHCgvIXD0Y4bva3y/smU99h19G/T4MOQfZ2+Zyb63WubfmxedUd1pGeDrb2KRWn32irlamg==
+X-Received: by 2002:a81:6d85:: with SMTP id i127-v6mr1846543ywc.322.1538597457664;
+        Wed, 03 Oct 2018 13:10:57 -0700 (PDT)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id r5-v6sm2225422ywr.80.2018.10.03.13.10.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 13:10:54 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id c4-v6so2940068ybl.6
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 13:10:53 -0700 (PDT)
+X-Received: by 2002:a25:8091:: with SMTP id n17-v6mr1888958ybk.209.1538597452740;
+ Wed, 03 Oct 2018 13:10:52 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: edc1847a-1a57-4280-c725-08d6296c1824
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2018 20:09:16.4336
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1660
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Wed, 3 Oct 2018 13:10:51 -0700 (PDT)
+In-Reply-To: <alpine.LRH.2.21.1810040427550.13517@namei.org>
+References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-24-keescook@chromium.org>
+ <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
+ <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
+ <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+ <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
+ <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
+ <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
+ <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <alpine.LRH.2.21.1810040416500.13517@namei.org>
+ <CAGXu5j+oPR58oJ06-n7e96-Rmu+ywTW0hud5LhOZ_3UXG5s12w@mail.gmail.com> <alpine.LRH.2.21.1810040427550.13517@namei.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 3 Oct 2018 13:10:51 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com>
+Message-ID: <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com>
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+To:     James Morris <jmorris@namei.org>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDEwLzAzLzIwMTggMDE6NTIgUE0sIEZlbmdodWEgWXUgd3JvdGU6DQo+IE9uIFR1ZSwg
-T2N0IDAyLCAyMDE4IGF0IDA3OjE2OjIzUE0gKzAwMDAsIE1vZ2VyLCBCYWJ1IHdyb3RlOg0KPj4N
-Cj4+DQo+PiBPbiAxMC8wMi8yMDE4IDAxOjQ2IFBNLCBGZW5naHVhIFl1IHdyb3RlOg0KPj4+IE9u
-IFR1ZSwgT2N0IDAyLCAyMDE4IGF0IDA1OjQ0OjQ3UE0gKzAwMDAsIE1vZ2VyLCBCYWJ1IHdyb3Rl
-Og0KPj4+PiBIaSBGZW5naHVhLA0KPj4+Pg0KPj4+Pj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
-LS0NCj4+Pj4+IEZyb206IEZlbmdodWEgWXUgPGZlbmdodWEueXVAaW50ZWwuY29tPg0KPj4+Pj4g
-U2VudDogVHVlc2RheSwgT2N0b2JlciAyLCAyMDE4IDEyOjA3IFBNDQo+Pj4+PiBPbiBNb24sIFNl
-cCAyNCwgMjAxOCBhdCAwNzoxODo1NFBNICswMDAwLCBNb2dlciwgQmFidSB3cm90ZToNCj4+Pj4+
-PiBUaGUgcHVibGljIHNwZWNpZmljYXRpb24gaXMgc3RpbGwgaW4gd29ya3MuIFdpbGwgYWRkIHRo
-ZSBsaW5rIHdoZW4gaXQgaXMNCj4+Pj4+PiBhdmFpbGFibGUuDQo+Pj4+Pg0KPj4+Pj4gSXMgdGhp
-cyB0aGUgcHVibGljIEFNRCBRb1Mgc3BlYz8NCj4+Pj4+IGh0dHBzOi8vc3VwcG9ydC5hbWQuY29t
-L1RlY2hEb2NzLzU2Mzc1X1F1YWxpdHlfb2ZfU2VydmljZV9FeHRlbnNpb25zLg0KPj4+Pj4gcGRm
-DQo+Pj4+Pg0KPj4+Pg0KPj4+PiBZZXMuIFRoYXQgaXMgdGhlIG9uZS4gDQo+Pj4+IEkgd2FzIGdv
-aW5nIHRvIHNlbmQgdGhlIGxpbmsgYWZ0ZXIgcmVmcmVzaGluZyB0aGUgcGF0Y2hlcyBvbiA0LTE5
-LXJjNS4gIFlvdSBhbHJlYWR5IGdvdCBpdC4gUGxlYXNlIGxldCBrbm93IGlmIHlvdSBoYXZlIGFu
-eSBmZWVkYmFjayBvbiB0aGUgcGF0Y2hlcy4gDQo+Pj4NCj4+PiBJIGRvbid0IHNlZSB0aGUgbmFt
-ZSAnUkRUJyAoUmVzb3VyY2UgRGlyZWN0b3IgVGVjaG5vbG9neSkgaW4gdGhlDQo+Pj4gc3BlYyAi
-QU1ENjQgVGVjaG5vbG9neSBQbGF0Zm9ybSBRdWFsaXR5IG9mIFNlcnZpY2UgRXh0ZW5zaW9ucyIu
-DQo+Pj4gRG9lcyBBTUQgdXNlIHRoZSBzYW1lIG5hbWUgJ1JEVCcgYXMgSW50ZWw/DQo+Pg0KPj4g
-Tm8uIEFNRCB1c2VzIHRoZSB3b3JkICJQbGF0Zm9ybSBRdWFsaXR5IG9mIFNlcnZpY2UiKG9yIGlu
-IHNob3J0IFFvUykgdG8NCj4+IHJlZmVyIHRoaXMgZmVhdHVyZS4NCj4gDQo+IEhpLCBUaG9tYXMs
-IEJhYnUsIGFuZCBKYW1lcywNCj4gDQo+IENhbiB3ZSB1c2UgInJlc2N0cmwiIHRvIHJlcGxhY2Ug
-ImludGVsX3JkdCIgYW5kICJyZHQiIGluIGtlcm5lbD8gInJlc2N0cmwiDQo+IGlzIGEgbmV1dHJh
-bCBuYW1lIGFuZCBoYXMgYmVlbiB1c2VkIGluIHVzZXIgaW50ZXJmYWNlIGFscmVhZHkuIEhvcGVm
-dWxseQ0KPiAicmVzY3RybCIgY2FuIGJlIGFjY2VwdGFibGUgYnkgQVJNLCBBTUQsIGFuZCBJbnRl
-bC4gV2Ugb25seSB1c2UgImludGVsX3JkdCIsDQo+ICJhbWRfcW9zIiwgb3IgImFybSBtcGFtIiBm
-b3IgdmVuZG9yIHNwZWNpZmljIGNvZGUuDQoNClllcy4gcmVzY3RybCBzZWVtcyBsaWtlIGEgcmVh
-c29uYWJsZSBuYW1lLiA+DQo+IENhbiB3ZSBtb3ZlIGFsbCBvZiBJbnRlbCBSRFQsIEFNRCBRb1Ms
-IGFuZCBBUk0gTVBBTSBjb2RlIGludG8gYSBnZW5lcmljDQo+IHBsYWNlIGZzL3Jlc2N0cmwgd2hl
-cmUgYm90aCBBUk0gYW5kIFg4NiBjb2RlIGNhbiBzdGF5Pw0KDQpMb29raW5nIGF0IHRoZSBKYW1l
-cyBwYXRjaGVzLCBJIHRob3VnaHQgaGUgaXMgZ29pbmcgaW4gdGhlIHNhbWUob3INCnNpbWlsYXIp
-IGRpcmVjdGlvbiBldmVudHVhbGx5Lg0KDQoNCj4gIA0KPiBUaGFua3MuDQo+IA0KPiAtRmVuZ2h1
-YQ0KPiANCg==
+On Wed, Oct 3, 2018 at 11:28 AM, James Morris <jmorris@namei.org> wrote:
+> On Wed, 3 Oct 2018, Kees Cook wrote:
+>
+>> On Wed, Oct 3, 2018 at 11:17 AM, James Morris <jmorris@namei.org> wrote:
+>> > On Tue, 2 Oct 2018, John Johansen wrote:
+>> >> To me a list like
+>> >>   lsm.enable=X,Y,Z
+>> >
+>> > What about even simpler:
+>> >
+>> > lsm=selinux,!apparmor,yama
+>>
+>> We're going to have lsm.order=, so I'd like to keep it with a dot
+>> separator (this makes it more like module parameters, too). You want
+>> to mix enable/disable in the same string? That implies you'd want
+>> implicit enabling (i.e. it complements the builtin enabling), which is
+>> opposite from what John wanted.
+>>
+>
+> Why can't this be the order as well?
+
+That was covered extensively in the earlier threads. It boils down to
+making sure we do not create a pattern of leaving LSMs disabled by
+default when they are added to the kernel. The v1 series used
+security= like this:
+
++       security=       [SECURITY] An ordered comma-separated list of
++                       security modules to attempt to enable at boot. If
++                       this boot parameter is not specified, only the
++                       security modules asking for initialization will be
++                       enabled (see CONFIG_DEFAULT_SECURITY). Duplicate
++                       or invalid security modules will be ignored. The
++                       capability module is always loaded first, without
++                       regard to this parameter.
+
+This meant booting "security=apparmor" would disable all the other
+LSMs, which wasn't friendly at all. So "security=" was left alone (to
+leave it to only select the "major" LSM: all major LSMs not matching
+"security=" would be disabled). So I proposed "lsm.order=" to specify
+the order things were going to be initialized in, but to avoid kernels
+booting with newly added LSMs forced-off due to not being listed in
+"lsm.order=", it had to have implicit fall-back for unlisted LSMs.
+(i.e. anything missing from lsm.order would then follow their order in
+CONFIG_LSM_ORDER, and anything missing there would fall back to
+link-time ordering.) However, then the objection was raised that this
+didn't provide a way to explicitly disable an LSM. So I proposed
+lsm.enable/disable, and John argued for CONFIG_LSM_ENABLE over
+CONFIG_LSM_DISABLE.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
