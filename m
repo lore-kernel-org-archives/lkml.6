@@ -6,79 +6,104 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF31C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59392C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3887020835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:26:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3887020835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D3DC213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:27:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D3DC213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbeJCQNh (ORCPT
+        id S1727624AbeJCQPY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 12:13:37 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48324 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbeJCQNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 12:13:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C31DE7A9;
-        Wed,  3 Oct 2018 02:26:03 -0700 (PDT)
-Received: from [10.4.13.99] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC3443F5B7;
-        Wed,  3 Oct 2018 02:26:01 -0700 (PDT)
-Subject: Re: [PATCH v5 19/27] irqchip/gic-v3: Remove acknowledge loop
-To:     Julien Thierry <julien.thierry@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, mark.rutland@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
- <1535471497-38854-20-git-send-email-julien.thierry@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <ee78b536-6a87-52c7-16c4-292f7ecbe61a@arm.com>
-Date:   Wed, 3 Oct 2018 10:26:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1535471497-38854-20-git-send-email-julien.thierry@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Wed, 3 Oct 2018 12:15:24 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57949 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726807AbeJCQPY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 12:15:24 -0400
+Received: from mail-pg1-f199.google.com ([209.85.215.199])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1g7dRc-0006II-IO
+        for linux-kernel@vger.kernel.org; Wed, 03 Oct 2018 09:27:48 +0000
+Received: by mail-pg1-f199.google.com with SMTP id 11-v6so1813403pgd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 02:27:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=tpPdh9ymhW8iJ3OfqQ/rs1B/QW0LKc+XaWgjFG6bRR0=;
+        b=GWZkF/Fn3ddSqrxl66zeHzsEbN77xGu/mAUDodmGYO+HjwXHtaSPvOexov1X3g+Ur6
+         xbESIhhI1f6zz/0t5ECL9JYN/JoZbsnCzNQwZrV4o3r7R4/4AfrurIg3FssOHPt3MxwH
+         7gjuR9pfI1M5z67DoZwehBxUMwbwYQZyZR89NZax5ZHl6YaOMO4MfArbB2DChXRjezWX
+         YmAk2W0LqqTFlFIEtVuUNudDgbz4OMyQPOqpUEahD3SR4H8kWKosEukg+Gz7+jrwSs5U
+         Lx32h5yfPEHWwEjQ6bRrI5PH+AzKE455apuJGZeUtIJg8mwpjGMhxst/2DMoPH/3kxaa
+         BjkQ==
+X-Gm-Message-State: ABuFfoj3QxijUtowJ9l/ZacxZJuDc5Q75BrEFzFJ2ZjV+H//PHvECc9F
+        N0tEmAJgePU9w909wqNMc7v5HKC1L8xzfcSEjzhI+Cl8ZASTAyXA/XvtyuVnl+z2pRjOKepCZS6
+        8ZxB/cnsjkzEUgYXVk1+1v5v8QPX4PYNSuIJlJU/vrA==
+X-Received: by 2002:a63:ce14:: with SMTP id y20-v6mr585597pgf.248.1538558867214;
+        Wed, 03 Oct 2018 02:27:47 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV63JZICns5VLK6ijq9VCJNR0WSzXkr+mi0TDCUK6fn1s7P5yaFtvwzZJEK3CxkXJ+UXLLN0vhg==
+X-Received: by 2002:a63:ce14:: with SMTP id y20-v6mr585584pgf.248.1538558866976;
+        Wed, 03 Oct 2018 02:27:46 -0700 (PDT)
+Received: from [10.101.46.95] (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
+        by smtp.gmail.com with ESMTPSA id s23-v6sm1264065pgg.67.2018.10.03.02.27.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 02:27:46 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: [RESEND] [PATCH 3/3] iwlwifi: Load firmware exclusively for Intel
+ WiFi
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <87y3bfiees.fsf@kamboji.qca.qualcomm.com>
+Date:   Wed, 3 Oct 2018 17:27:41 +0800
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <265BAF93-4BFF-4850-92F7-80AC39496473@canonical.com>
+References: <20181003073556.28154-1-kai.heng.feng@canonical.com>
+ <20181003073556.28154-3-kai.heng.feng@canonical.com>
+ <87y3bfiees.fsf@kamboji.qca.qualcomm.com>
+To:     Kalle Valo <kvalo@codeaurora.org>
+X-Mailer: Apple Mail (2.3445.100.39)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/08/18 16:51, Julien Thierry wrote:
-> Multiple interrupts pending for a CPU is actually rare. Doing an
-> acknowledge loop does not give much better performance or even can
-> deteriorate them.
+
+
+> On Oct 3, 2018, at 5:10 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
 > 
-> Do not loop when an interrupt has been acknowledged, just return
-> from interrupt and wait for another one to be raised.
+> Kai-Heng Feng <kai.heng.feng@canonical.com> writes:
 > 
-> Tested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->   drivers/irqchip/irq-gic-v3.c | 65 +++++++++++++++++++++-----------------------
->   1 file changed, 31 insertions(+), 34 deletions(-)
+>> To avoid the firmware loading race between Bluetooth and WiFi on Intel
+>> 8260, load firmware exclusively when BT_INTEL is enabled.
+>> 
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> 
+> Still the commit log tells nothing about the actual problem which makes
+> review impossible.
 
-It would probably be valuable to do the same thing for GICv1/v2, where 
-the MMIO access can be even more costly.
+Sorry for that. The first two patches [1] only sends to linux-bluetooth and LMKL.
 
-In the meantime, I've queued this for 4.20.
+I don’t know what really happened at hardware/firmware level, but making btusb and iwlwifi load firmware sequentially can workaround the issue.
 
-Thanks,
+Matt Chen may be able to explain this issue with more detail.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+[1] https://lkml.org/lkml/2018/10/3/322
+
+> 
+> -- 
+> Kalle Valo
+
