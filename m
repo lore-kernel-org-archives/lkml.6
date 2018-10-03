@@ -2,124 +2,93 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A84FC64EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C444C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AFF82089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:56:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AFF82089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by mail.kernel.org (Postfix) with ESMTP id 03DED2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:57:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RXW/ro75"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03DED2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeJCXqB convert rfc822-to-8bit (ORCPT
+        id S1727151AbeJCXqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 19:46:01 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:47029 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbeJCXqB (ORCPT
+        Wed, 3 Oct 2018 19:46:22 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:58730 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726842AbeJCXqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 19:46:01 -0400
-Received: from marcel-macbook.fritz.box (p4FEFC9BB.dip0.t-ipconnect.de [79.239.201.187])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 47D0CCF358;
-        Wed,  3 Oct 2018 19:04:05 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: [PATCH v2] Bluetooth: hci_qca: Add support for controller debug
- logs.
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20181003151144.10537-1-bgodavar@codeaurora.org>
-Date:   Wed, 3 Oct 2018 18:56:45 +0200
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Harish Bandi <c-hbandi@codeaurora.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <2206464E-FA01-4A5A-8BC4-5CF70A0B9765@holtmann.org>
-References: <20181003151144.10537-1-bgodavar@codeaurora.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-X-Mailer: Apple Mail (2.3445.100.39)
+        Wed, 3 Oct 2018 19:46:22 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w93GudO1023821;
+        Wed, 3 Oct 2018 11:56:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1538585799;
+        bh=qScEYM5zHfqp+nd18kabQ7OmGSMnoLM0iLZW25e/4IA=;
+        h=From:To:CC:Subject:Date;
+        b=RXW/ro75udz3BwjysqkegU6xosUeScnlH0mccx06OcvhS4qrhYP1XSw8dVkELVmaq
+         owh3YsgryG+AWPRRRDAsDY5/NptPonWXzBUoHFuA/MzdS8na1RDYQ5YTfea5vE6ovz
+         EKzikkTmpHqrP02ewQiaf+wdcRH/JgWWaPXTTFOg=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w93Gudsv010195;
+        Wed, 3 Oct 2018 11:56:39 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 3 Oct
+ 2018 11:56:39 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 3 Oct 2018 11:56:38 -0500
+Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w93GuZMH030968;
+        Wed, 3 Oct 2018 11:56:36 -0500
+From:   Vignesh R <vigneshr@ti.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Brian Norris <computersforpeace@gmail.com>,
+        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vignesh R <vigneshr@ti.com>
+Subject: [PATCH 0/3] spi-nor: Add Octal SPI support
+Date:   Wed, 3 Oct 2018 22:26:00 +0530
+Message-ID: <20181003165603.2579-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.19.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balakrishna,
+This series adds support for octal mode of mt35x flash. Also, adds
+support for OSPI version of Cadence QSPI controller.
 
-> This patch will prevent error messages splashing on console.
-> 
-> [   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
-> [   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
-> [   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
-> [   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
-> 
-> QCA wcn3990 will send the debug logs in the form of ACL packets.
-> While decoding packet in qca_recv(), marking the received debug log
-> packet as diagnostic packet.
-> 
-> Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> ---
-> v2: 
->  * Addressed reviewer comments.
-> v1: 
->  * initial patch
-> ---
-> drivers/bluetooth/hci_qca.c | 20 +++++++++++++++++++-
-> 1 file changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index d98ed0442201..63ac3c6b4149 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -63,6 +63,10 @@
-> /* susclk rate */
-> #define SUSCLK_RATE_32KHZ	32768
-> 
-> +/* Controller debug log header */
-> +#define QCA_DEBUG_HDR_MSB	0xDC
-> +#define QCA_DEBUG_HDR_LSB	0x2E
-> +
+Based on top of patches adding basic support for mt35xu512aba here:
+https://patchwork.ozlabs.org/cover/971437/
 
-since this is actually the ACL handle, why not call it QCA_DEBUG_HANDLE.
+Vignesh R (3):
+  mtd: spi-nor: Add Octal mode support for mt35xu512aba
+  dt-bindings: cadence-quadspi: Add new compatible for AM654 SoC
+  mtd: spi-nor: cadence-quadspi: Add support for Octal SPI controller
 
-> /* HCI_IBS transmit side sleep protocol states */
-> enum tx_ibs_states {
-> 	HCI_IBS_TX_ASLEEP,
-> @@ -849,6 +853,20 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, struct sk_buff *skb)
-> 	return 0;
-> }
-> 
-> +static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff *skb)
-> +{
-> +	/* We receive debug logs from chip as an ACL packets.
-> +	 * Instead of sending the data to ACL to decode the
-> +	 * received data, we are pushing them to the above layers
-> +	 * as a diagnostic packet.
-> +	 */
-> +	if ((skb->len > 2) && (skb->data[0] == QCA_DEBUG_HDR_MSB) &&
-> +	    (skb->data[1] == QCA_DEBUG_HDR_LSB))
+ .../devicetree/bindings/mtd/cadence-quadspi.txt       |  1 +
+ drivers/mtd/spi-nor/cadence-quadspi.c                 |  9 +++++++++
+ drivers/mtd/spi-nor/spi-nor.c                         | 11 ++++++++++-
+ include/linux/mtd/spi-nor.h                           |  2 ++
+ 4 files changed, 22 insertions(+), 1 deletion(-)
 
-Skip the individual () since they are not needed. Also the skb->len check is not needed since the H4_RECV_ACL already ensures the proper length of the header.
-
-And just use get_unaligned_le16(skb->data) here (or be16 if that is the byte order).
-
-> +		return hci_recv_diag(hdev, skb);
-
-Is there any reason to keep the 4 octets hci_acl_hdr with this SKB? Or would it be better to be stripped off. Mainly asking are they any other magic handles that we might want to feed through the diag channel?
-
-> +
-> +	return hci_recv_frame(hdev, skb);
-> +}
-> +
-
-Regards
-
-Marcel
+-- 
+2.19.0
 
