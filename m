@@ -2,96 +2,76 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 664BEC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8F6C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16C302098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:49:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16C302098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tronnes.org
+	by mail.kernel.org (Postfix) with ESMTP id D0CD8213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:49:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0CD8213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbeJCWid (ORCPT
+        id S1727395AbeJCWil (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:38:33 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:49556 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbeJCWid (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:38:33 -0400
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:52691 helo=[192.168.10.175])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1g7jP5-0008I2-9g; Wed, 03 Oct 2018 17:49:35 +0200
-Subject: Re: [PATCH] drm/imx: move 'legacyfb_depth' definition out of #ifdef
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20181002205836.2323084-1-arnd@arndb.de>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <123f7e1c-8f2b-5797-de16-650ec01d0b24@tronnes.org>
-Date:   Wed, 3 Oct 2018 17:49:32 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 3 Oct 2018 18:38:41 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:56296 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726748AbeJCWik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 18:38:40 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id QS_8ezZQeZ0h; Wed,  3 Oct 2018 17:49:43 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BC64F00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:4f00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8E14C1EC0293;
+        Wed,  3 Oct 2018 17:49:43 +0200 (CEST)
+Date:   Wed, 3 Oct 2018 17:49:37 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Kan Liang <kan.liang@linux.intel.com>, mingo@redhat.com,
+        acme@kernel.org, linux-kernel@vger.kernel.org, eranian@google.com,
+        ak@linux.intel.com, alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH] perf/x86/intel: Add counter freezing quirk for Goldmont
+Message-ID: <20181003154937.GA22726@zn.tnic>
+References: <1538515812-8808-1-git-send-email-kan.liang@linux.intel.com>
+ <alpine.DEB.2.21.1810030803260.1435@nanos.tec.linutronix.de>
+ <20181003154132.GA19272@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20181002205836.2323084-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181003154132.GA19272@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 03, 2018 at 05:41:32PM +0200, Peter Zijlstra wrote:
+> On Wed, Oct 03, 2018 at 08:10:31AM +0200, Thomas Gleixner wrote:
+> > On Tue, 2 Oct 2018, kan.liang@linux.intel.com wrote:
+> > 
+> > There is another variant of model/stepping micro code verification code in
+> > intel_snb_pebs_broken(). Can we please make this table based and use a
+> > common function? That's certainly not the last quirk we're going to have.
+> > 
+> > We already have a table based variant of ucode checking in
+> > bad_spectre_microcode(). It's trivial enough to generalize that.
+> 
+> apic_check_deadline_errata() is another one. That one already uses the
+> x86_cpu_id thing, but still plays silly games for steppings. So if we're
+> going to build a new microcode table matcher...
 
+intel_snb_pebs_broken() looks like a potential candidate too...
 
-Den 02.10.2018 22.58, skrev Arnd Bergmann:
-> The variable is now referenced unconditionally, but still
-> declared in an #ifdef:
->
-> drivers/gpu/drm/imx/imx-drm-core.c: In function 'imx_drm_bind':
-> drivers/gpu/drm/imx/imx-drm-core.c:264:6: error: 'legacyfb_depth' undeclared (first use in this function); did you mean 'lockdep_depth'?
->
-> Remove the #ifdef so it can always be accessed.
->
-> Fixes: f53705fd9803 ("drm/imx: Use drm_fbdev_generic_setup()")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+-- 
+Regards/Gruss,
+    Boris.
 
-I've already applied the previous one you sent:
-https://cgit.freedesktop.org/drm/drm-misc/commit/?id=064b06bbf117f8b5e64a5143e970d5a1cf602fd6
-
-Not sure when it reaches linux-next now that we are past rc6.
-
-Noralf.
-
->   drivers/gpu/drm/imx/imx-drm-core.c | 2 --
->   1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
-> index a70f3131a377..0e6942f21a4e 100644
-> --- a/drivers/gpu/drm/imx/imx-drm-core.c
-> +++ b/drivers/gpu/drm/imx/imx-drm-core.c
-> @@ -35,10 +35,8 @@
->   
->   #define MAX_CRTC	4
->   
-> -#if IS_ENABLED(CONFIG_DRM_FBDEV_EMULATION)
->   static int legacyfb_depth = 16;
->   module_param(legacyfb_depth, int, 0444);
-> -#endif
->   
->   DEFINE_DRM_GEM_CMA_FOPS(imx_drm_driver_fops);
->   
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
