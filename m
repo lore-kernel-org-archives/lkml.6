@@ -2,181 +2,169 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DF5C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C52F7C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2EB9213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:06:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2EB9213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7ECFB21470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:07:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ECFB21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbeJDBz4 (ORCPT
+        id S1727336AbeJDB5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 21:55:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47668 "EHLO mail.bootlin.com"
+        Wed, 3 Oct 2018 21:57:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55250 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726964AbeJDBz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 21:55:56 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 51961207C3; Wed,  3 Oct 2018 21:06:13 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7E79420719;
-        Wed,  3 Oct 2018 21:06:12 +0200 (CEST)
-Date:   Wed, 3 Oct 2018 21:06:13 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Joe Perches <joe@perches.com>, Rob Herring <robh+dt@kernel.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v8 05/10] dt-bindings: i3c: Add macros to help fill
- I3C/I2C device's reg property
-Message-ID: <20181003210613.27d180c7@bbrezillon>
-In-Reply-To: <20181003205953.426021bb@bbrezillon>
-References: <20181003132212.12619-1-boris.brezillon@bootlin.com>
-        <20181003132212.12619-6-boris.brezillon@bootlin.com>
-        <c7b929a8c8ebaec7ce0f0e09f803e414e74f986b.camel@perches.com>
-        <20181003205953.426021bb@bbrezillon>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1726884AbeJDB5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 21:57:22 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9BE9E87624;
+        Wed,  3 Oct 2018 19:07:41 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-2.gru2.redhat.com [10.97.112.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B2A7ABA06;
+        Wed,  3 Oct 2018 19:07:40 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id 7555910514A;
+        Wed,  3 Oct 2018 16:06:24 -0300 (BRT)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id w93J6KYF023802;
+        Wed, 3 Oct 2018 16:06:20 -0300
+Date:   Wed, 3 Oct 2018 16:06:20 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        devel@linuxdriverproject.org,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
+Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI
+ support
+Message-ID: <20181003190617.GC21381@amt.cnet>
+References: <20180914125006.349747096@linutronix.de>
+ <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com>
+ <87sh1ne64t.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sh1ne64t.fsf@vitty.brq.redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 03 Oct 2018 19:07:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Oct 2018 20:59:53 +0200
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+On Wed, Oct 03, 2018 at 11:22:58AM +0200, Vitaly Kuznetsov wrote:
+> Andy Lutomirski <luto@kernel.org> writes:
+> 
+> > Hi Vitaly, Paolo, Radim, etc.,
+> >
+> > On Fri, Sep 14, 2018 at 5:52 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> >>
+> >> Matt attempted to add CLOCK_TAI support to the VDSO clock_gettime()
+> >> implementation, which extended the clockid switch case and added yet
+> >> another slightly different copy of the same code.
+> >>
+> >> Especially the extended switch case is problematic as the compiler tends to
+> >> generate a jump table which then requires to use retpolines. If jump tables
+> >> are disabled it adds yet another conditional to the existing maze.
+> >>
+> >> This series takes a different approach by consolidating the almost
+> >> identical functions into one implementation for high resolution clocks and
+> >> one for the coarse grained clock ids by storing the base data for each
+> >> clock id in an array which is indexed by the clock id.
+> >>
+> >
+> > I was trying to understand more of the implications of this patch
+> > series, and I was again reminded that there is an entire extra copy of
+> > the vclock reading code in arch/x86/kvm/x86.c.  And the purpose of
+> > that code is very, very opaque.
+> >
+> > Can one of you explain what the code is even doing?  From a couple of
+> > attempts to read through it, it's a whole bunch of
+> > probably-extremely-buggy code that, drumroll please, tries to
+> > atomically read the TSC value and the time.  And decide whether the
+> > result is "based on the TSC".  And then synthesizes a TSC-to-ns
+> > multiplier and shift, based on *something other than the actual
+> > multiply and shift used*.
+> >
+> > IOW, unless I'm totally misunderstanding it, the code digs into the
+> > private arch clocksource data intended for the vDSO, uses a poorly
+> > maintained copy of the vDSO code to read the time (instead of doing
+> > the sane thing and using the kernel interfaces for this), and
+> > propagates a totally made up copy to the guest.  And gets it entirely
+> > wrong when doing nested virt, since, unless there's some secret in
+> > this maze, it doesn't acutlaly use the scaling factor from the host
+> > when it tells the guest what to do.
+> >
+> > I am really, seriously tempted to send a patch to simply delete all
+> > this code.  The correct way to do it is to hook
+> 
+> "I have discovered a truly marvelous proof of this, which this margin is
+> too narrow to contain" :-)
+> 
+> There is a very long history of different (hardware) issues Marcelo was
+> fighting with and the current code is the survived Frankenstein.
 
-> On Wed, 03 Oct 2018 11:37:17 -0700
-> Joe Perches <joe@perches.com> wrote:
-> 
-> > On Wed, 2018-10-03 at 15:22 +0200, Boris Brezillon wrote:  
-> > > The reg property of devices connected to an I3C bus have 3 cells, and
-> > > filling them manually is not trivial. Provides macros to help doing
-> > > that.    
-> > 
-> > This patch logic seems excessively fragile.  
-> 
-> Keep in mind that this header is meant to be include by .dts(i) files,
-> not regular .c files.
-> 
-> >   
-> > > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > ---
-> > > Changes in v8:
-> > > - None
-> > > 
-> > > Changes in v5:
-> > > - none
-> > > ---
-> > >  include/dt-bindings/i3c/i3c.h | 28 ++++++++++++++++++++++++++++
-> > >  1 file changed, 28 insertions(+)
-> > >  create mode 100644 include/dt-bindings/i3c/i3c.h
-> > > 
-> > > diff --git a/include/dt-bindings/i3c/i3c.h b/include/dt-bindings/i3c/i3c.h
-> > > new file mode 100644
-> > > index 000000000000..97448c546649
-> > > --- /dev/null
-> > > +++ b/include/dt-bindings/i3c/i3c.h
-> > > @@ -0,0 +1,28 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +/*
-> > > + * Copyright (C) 2017 Cadence Design Systems Inc.
-> > > + *
-> > > + * Author: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > + */
-> > > +
-> > > +#ifndef _DT_BINDINGS_I3C_I3C_H
-> > > +#define _DT_BINDINGS_I3C_I3C_H
-> > > +
-> > > +#define IS_I2C_DEV		0x80000000
-> > > +
-> > > +#define I2C_DEV(addr, lvr)					\
-> > > +	(addr) (IS_I2C_DEV | (lvr)) 0x0    
-> > 
-> > This looks to be missing surrounding parentheses.  
-> 
-> Actually it's not. The macro is supposed to declare 3 u32 integers each
-> of them separated by a space:
-> 
-> 	reg = <I2C_DEV(0x34, 0x1)>;
-> 
-> is translated into
-> 
-> 	reg = <0x34 0x80000001 0x0>;
-> 
-> >   
-> > > +
-> > > +#define I3C_PID(manufid, partid, instid, extrainfo)		\
-> > > +	((manufid) << 1)					\
-> > > +	(((partid) << 16) | ((instid) << 12) | (extrainfo))    
-> > 
-> > This macro doesn't make any sense.  Missing a shift and an or?  
-> 
-> Same here, the PID is taking 2 32-bit entries.
-> 
-> Now, I agree that this is far from obvious, and if Rob is okay, I'd
-> like to propose a different binding to avoid having to define these
-> macros:
-> 
-> 	reg = <i2c_addr_or_i3c_static_addr pid_msb pid_lsb>;
-> 
-> If pid_msb and pid_lsb are 0, then the node is defining an I2C device
+Right, the code has to handle different TSC modes.
 
-Actually, I meant pid_msb == 0. This part of the PID is encoding the
-manufacturer, and I don't think 0 is a valid manufacturer (I hope it's
-not). So, we'd have something like:
+>  E.g. it
+> is very, very unclear what "catchup", "always catchup" and
+> masterclock-less mode in general are and if we still need them.
 
-	reg = <i2c_addr_or_i3c_static_addr pid_msb pid_lsb_or_i2c_lvr>;
+Catchup means handling exposed (to guest) TSC frequency smaller than
+HW TSC frequency.
 
-> (AFAICT, 0 is not a valid PID), otherwise it's an I3C device. This way
-> we get rid of the IS_I2C_DEV flag, and we can get rid of those macros
-> without making I3C dev node definition too painful (the only part
-> developers will have to get right is the PID) 
+That is "frankenstein" code, could be removed.
+
+> That said I'm all for simplification. I'm not sure if we still need to
+> care about buggy hardware though.
+
+What simplification is that again? 
+
+
+> >
+> > And I don't see how it's even possible to pass kvmclock correctly to
+> > the L2 guest when L0 is hyperv.  KVM could pass *hyperv's* clock, but
+> > L1 isn't notified when the data structure changes, so how the heck is
+> > it supposed to update the kvmclock structure?
 > 
-> >   
-> > > +
-> > > +#define I3C_DEV_WITH_STATIC_ADDR(addr, manufid, partid,		\
-> > > +				 instid, extrainfo)		\
-> > > +	(addr) I3C_PID(manufid, partid, instid, extrainfo)
-> > > +
-> > > +#define I3C_DEV(manufid, partid, instid, extrainfo)		\
-> > > +	I3C_DEV_WITH_STATIC_ADDR(0x0, manufid, partid,		\
-> > > +				 instid, extrainfo)
-> > > +
-> > > +#endif    
-> >   
+> Well, this kind of works in the the followin way:
+> L1's clocksource is 'tsc_page' which is, basically, a compliment to TSC:
+> two numbers provided by L0: offset and scale and KVM was tought to treat
+> this clocksource as a good one (see b0c39dc68e3b "x86/kvm: Pass stable
+> clocksource to guests when running nested on Hyper-V").
 > 
-
+> The notification you're talking about exists, it is called
+> Reenligntenment, see 0092e4346f49 "x86/kvm: Support Hyper-V
+> reenlightenment"). When TSC page changes (and this only happens when L1
+> is migrated to a different host with a different TSC frequency and TSC
+> scaling is not supported by the CPU) we receive an interrupt in L1 (at
+> this moment all TSC accesses are emulated which guarantees the
+> correctness of the readings), pause all L2 guests, update their kvmclock
+> structures with new data (we already know the new TSC frequency) and
+> then tell L0 that we're done and it can stop emulating TSC accesses.
+> 
+> (Nothing like this exists for KVM-on-KVM, by the way, when L1's
+> clocksource is 'kvmclock' L2s won't get a stable kvmclock clocksource.)
+> 
+> -- 
+> Vitaly
