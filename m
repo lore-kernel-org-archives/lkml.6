@@ -2,200 +2,218 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E53C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF58AC64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47E0E20835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:37:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="noDXX3At"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47E0E20835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F3C620835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:37:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F3C620835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbeJCSZO (ORCPT
+        id S1727395AbeJCSZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:25:14 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39318 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeJCSZN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:25:13 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q8-v6so5275497wmq.4
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 04:37:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=TmHEJNdlA5uuxQkPzMDBjKmdyHB2o61sZKH6oMEGAbg=;
-        b=noDXX3At0sKSLBK7WcWorXygH57BKKiR0ivzHBU/mCZFS2mlp1POlQh2X2ztm1yq09
-         PhBBxfjaSMUU5QxBlLA224gLbD+tC3jmTKblckImqrl6Y4u/TnXuN9sNUUdQZcDho8ef
-         /vspxFgzvwqR7XK6VZUa/EdSEDiiaFfJuYxqpEWRC7jsdfpaRitPfAQ5vG7ifWzfhnOd
-         TXHhROcYS3GbiNTdckZNVYmTSZDZFFopeHxl8qSIu8I2HvF2ZWqVt3tThOtFN2vlSDl3
-         hBzY9B+QkJdHljeRXgfWruVY6oQmF0DuV0QlR9GGOzB7NVsH3CJ+UwoUjWQzAmqD3/V3
-         9DtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=TmHEJNdlA5uuxQkPzMDBjKmdyHB2o61sZKH6oMEGAbg=;
-        b=Vo4OyoUYRx5srmBIESDjpRJTer2F+kGIYTxzmV4ArLdpRCJfa1QkoAUoMM7jw9TzzM
-         z/G0kJWLkqXHAIYxv/s2CtlqcdL4HSL5qYVh5392+dL40ZgcJw5wQZ1yMOG2nfhUPEVW
-         uVigFdGx7fJiUNlDK/8oTffLMzD9tQ6VJEhEMgxVSXDQXOrtIgloIHoroRQOXPWODgO4
-         d6At5DKvbbdzz/gu3lmlHe9gt4qDEZpRlmNHNwV5UqG0PgDdn7j+H8oil3VRp22GY8yU
-         j9MdB25ryViOjyPK9O4gdi4RF1lABLBsT2vgeOXg1nqedS0flFilgsZwvWoPseeGtkVz
-         g4Nw==
-X-Gm-Message-State: ABuFfog6zY6683zy74HxuolyHVUYC4iwHcQmAAD6x13ApiT151a75Uor
-        mJEQ0mcpaCM7m/AiAyXz6+PFUA==
-X-Google-Smtp-Source: ACcGV62Tlxa0z6aVSCA8fxYd45moaO2VzMmMXVBTliVw+lDMA+BOsXN0Emf3eaApfROYAwCBazbKwg==
-X-Received: by 2002:a1c:aacd:: with SMTP id t196-v6mr1122586wme.121.1538566630282;
-        Wed, 03 Oct 2018 04:37:10 -0700 (PDT)
-Received: from localhost.localdomain (p200300D993C8CD00D84A1C283583219C.dip0.t-ipconnect.de. [2003:d9:93c8:cd00:d84a:1c28:3583:219c])
-        by smtp.googlemail.com with ESMTPSA id o7-v6sm1380371wma.17.2018.10.03.04.37.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 04:37:08 -0700 (PDT)
-Subject: Re: [RFC, PATCH] ipc/util.c: use idr_alloc_cyclic() for ipc
- allocations
-To:     Waiman Long <longman@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>
-Cc:     1vier1@web.de, Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20181002161942.1037-1-manfred@colorfullife.com>
- <1b8bcd5c-1264-08da-0b91-ebb4c02f6035@redhat.com>
-From:   Manfred Spraul <manfred@colorfullife.com>
-Message-ID: <268a5f08-c2d7-aeba-80f6-70daa093c548@colorfullife.com>
-Date:   Wed, 3 Oct 2018 13:37:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 3 Oct 2018 14:25:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50084 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726617AbeJCSZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 14:25:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC80C18A;
+        Wed,  3 Oct 2018 04:37:18 -0700 (PDT)
+Received: from [10.162.0.72] (p8cg001049571a15.blr.arm.com [10.162.0.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B2EA83F5A0;
+        Wed,  3 Oct 2018 04:37:15 -0700 (PDT)
+Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        catalin.marinas@arm.com, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com
+References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
+ <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
+ <20181002123909.GS18290@dhcp22.suse.cz>
+ <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
+ <20181003065833.GD18290@dhcp22.suse.cz>
+ <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
+ <20181003105926.GA4714@dhcp22.suse.cz>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <34b25855-fcef-61ed-312d-2011f80bdec4@arm.com>
+Date:   Wed, 3 Oct 2018 17:07:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1b8bcd5c-1264-08da-0b91-ebb4c02f6035@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181003105926.GA4714@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/2/18 8:27 PM, Waiman Long wrote:
-> On 10/02/2018 12:19 PM, Manfred Spraul wrote:
->> A bit related to the patch series that increases IPC_MNI:
+
+
+On 10/03/2018 04:29 PM, Michal Hocko wrote:
+> On Wed 03-10-18 15:28:23, Anshuman Khandual wrote:
 >>
->> (User space) id reuse create the risk of data corruption:
 >>
->> Process A: calls ipc function
->> Process A: sleeps just at the beginning of the syscall
->> Process B: Frees the ipc object (i.e.: calls ...ctl(IPC_RMID)
->> Process B: Creates a new ipc object (i.e.: calls ...get())
->> 	<If new object and old object have the same id>
->> Process A: is woken up, and accesses the new object
+>> On 10/03/2018 12:28 PM, Michal Hocko wrote:
+>>> On Wed 03-10-18 07:46:27, Anshuman Khandual wrote:
+>>>>
+>>>>
+>>>> On 10/02/2018 06:09 PM, Michal Hocko wrote:
+>>>>> On Tue 02-10-18 17:45:28, Anshuman Khandual wrote:
+>>>>>> Architectures like arm64 have PUD level HugeTLB pages for certain configs
+>>>>>> (1GB huge page is PUD based on ARM64_4K_PAGES base page size) that can be
+>>>>>> enabled for migration. It can be achieved through checking for PUD_SHIFT
+>>>>>> order based HugeTLB pages during migration.
+>>>>>
+>>>>> Well a long term problem with hugepage_migration_supported is that it is
+>>>>> used in two different context 1) to bail out from the migration early
+>>>>> because the arch doesn't support migration at all and 2) to use movable
+>>>>> zone for hugetlb pages allocation. I am especially concerned about the
+>>>>> later because the mere support for migration is not really good enough.
+>>>>> Are you really able to find a different giga page during the runtime to
+>>>>> move an existing giga page out of the movable zone?
+>>>>
+>>>> I pre-allocate them before trying to initiate the migration (soft offline
+>>>> in my experiments). Hence it should come from the pre-allocated HugeTLB
+>>>> pool instead from the buddy. I might be missing something here but do we
+>>>> ever allocate HugeTLB on the go when trying to migrate ? IIUC it always
+>>>> came from the pool (unless its something related to ovecommit/surplus).
+>>>> Could you please kindly explain regarding how migration target HugeTLB
+>>>> pages are allocated on the fly from movable zone.
+>>>
+>>> Hotplug comes to mind. You usually do not pre-allocate to cover full
+>>> node going offline. And people would like to do that. Another example is
+>>> CMA. You would really like to move pages out of the way.
 >>
->> To reduce the probability that the new and the old object
->> have the same id, the current implementation adds a
->> sequence number to the index of the object in the idr tree.
+>> You are right.
 >>
->> To further reduce the probability for a reuse, switch from
->> idr_alloc to idr_alloc_cyclic.
+>> Hotplug migration:
 >>
->> The patch cycles over at least RADIX_TREE_MAP_SIZE, i.e.
->> if there is only a small number of objects, the accesses
->> continue to be direct.
+>> __offline_pages
+>>    do_migrate_range
+>> 	migrate_pages(...new_node_page...)
 >>
->> As an option, this could be made dependent on the extended
->> mode: In extended mode, cycle over e.g. at least 16k ids.
+>> new_node_page
+>>    new_page_nodemask
+>> 	alloc_huge_page_nodemask
+>> 	   dequeue_huge_page_nodemask (Getting from pool)
+>> 	or
+>> 	   alloc_migrate_huge_page    (Getting from buddy - non-gigantic)
+>> 		alloc_fresh_huge_page
+>> 		    alloc_buddy_huge_page
+>> 			__alloc_pages_nodemask ----> goes into buddy
 >>
->> Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
->> ---
+>> CMA allocation:
 >>
->> Open questions:
->> - Is there a significant performance advantage, especially
->>    there are many ipc ids?
->> - Over how many ids should the code cycle always?
->> - Further review remarks?
+>> cma_alloc
+>>    alloc_contig_range
+>> 	__alloc_contig_migrate_range
+>> 		migrate_pages(...alloc_migrate_target...)
 >>
->>   ipc/util.c | 22 +++++++++++++++++++++-
->>   1 file changed, 21 insertions(+), 1 deletion(-)
+>> alloc_migrate_target
+>>    new_page_nodemask -> __alloc_pages_nodemask ---> goes into buddy
 >>
->> diff --git a/ipc/util.c b/ipc/util.c
->> index 0af05752969f..6f83841f6761 100644
->> --- a/ipc/util.c
->> +++ b/ipc/util.c
->> @@ -216,10 +216,30 @@ static inline int ipc_idr_alloc(struct ipc_ids *ids, struct kern_ipc_perm *new)
->>   	 */
->>   
->>   	if (next_id < 0) { /* !CHECKPOINT_RESTORE or next_id is unset */
->> +		int idr_max;
->> +
->>   		new->seq = ids->seq++;
->>   		if (ids->seq > IPCID_SEQ_MAX)
->>   			ids->seq = 0;
->> -		idx = idr_alloc(&ids->ipcs_idr, new, 0, 0, GFP_NOWAIT);
->> +
->> +		/*
->> +		 * If a user space visible id is reused, then this creates a
->> +		 * risk for data corruption. To reduce the probability that
->> +		 * a number is reduced, two approaches are used:
->    reduced -> reused?
-Of course.
->
->> +		 * 1) the idr index is allocated cyclically.
->> +		 * 2) the use space id is build by concatenating the
->> +		 *    internal idr index with a sequence number
->> +		 * To avoid that both numbers have the same cycle time, try
->> +		 * to set the size for the cyclic alloc to an odd number.
->> +		 */
->> +		idr_max = ids->in_use*2+1;
->> +		if (idr_max < RADIX_TREE_MAP_SIZE-1)
->> +			idr_max = RADIX_TREE_MAP_SIZE-1;
->> +		if (idr_max > IPCMNI)
->> +			idr_max = IPCMNI;
->> +
->> +		idx = idr_alloc_cyclic(&ids->ipcs_idr, new, 0, idr_max,
->> +					GFP_NOWAIT);
->>   	} else {
->>   		new->seq = ipcid_to_seqx(next_id);
->>   		idx = idr_alloc(&ids->ipcs_idr, new, ipcid_to_idx(next_id),
->
-> Each of IPC components have their own sysctl parameters limiting the max
-> number of objects that can be allocated. With cyclic allocation, you
-> will have to make sure that idr_max is not larger than the corresponding
-> IPC sysctl parameters. That may require moving the limits to the
-> corresponding ipc_ids structure so that it can be used in ipc_idr_alloc().
+>> But this is not applicable for gigantic pages for which it backs off way
+>> before going into buddy.
+> 
+> This is an implementation detail - mostly a missing or an incomplete
+> hugetlb overcommit implementation IIRC. The primary point remains the
+> same. Being able to migrate in principle and feasible enough to migrate
+> to be placed in zone movable are two distinct things.
 
-First, I would disagree:
+I agree. They are two distinct things.
 
-the sysctl limits specify how many objects can exist.
+> [...]
+>>>> But even if there are some chances of run time allocation failure from
+>>>> movable zone (as in point 2) that should not block the very initiation
+>>>> of migration itself. IIUC thats not the semantics for either THP or
+>>>> normal pages. Why should it be different here. If the allocation fails
+>>>> we should report and abort as always. Its the caller of migration taking
+>>>> the chances. why should we prevent that.
+>>>
+>>> Yes I agree, hence the distinction between the arch support for
+>>> migrateability and the criterion on the movable zone placement.
+>> movable zone placement sounds very tricky here. How can the platform
+>> (through the hook huge_movable) before hand say whether destination
+>> page could be allocated from the ZONE_MOVABLE without looking into the
+>> state of buddy at migration (any sort attempt to do this is going to
+>> be expensive) or it merely indicates the desire to live with possible
+>> consequence (unable to hot unplug/CMA going forward) for a migration
+>> which might end up in an unmovable area.
+> 
+> I do not follow. The whole point of zone_movable is to provide a
+> physical memory range which is more or less movable. That means that
+> pages allocated from this zone can be migrated away should there be a
+> reason for that.
 
-idr_max is the maximum index in the radix tree that can exist. There is 
-a hard limit of IPCMNI, but that's it.
+I understand this.
 
+> 
+>>>>> So I guess we want to split this into two functions
+>>>>> arch_hugepage_migration_supported and hugepage_movable. The later would
+>>>>
+>>>> So the set difference between arch_hugepage_migration_supported and 
+>>>> hugepage_movable still remains un-migratable ? Then what is the purpose
+>>>> for arch_hugepage_migration_supported page size set in the first place.
+>>>> Does it mean we allow the migration at the beginning and the abort later
+>>>> when the page size does not fall within the subset for hugepage_movable.
+>>>> Could you please kindly explain this in more detail.
+>>>
+>>> The purpose of arch_hugepage_migration_supported is to tell whether it
+>>> makes any sense to even try to migration. The allocation placement is
+>>
+>> Which kind of matches what we have right now and being continued with this
+>> proposal in the series.
+> 
+> Except you only go half way there. Because you still consider "able to
+> migrate" and "feasible to migrate" as the same thing.
 
-But:
+Okay.
 
-The name is wrong, I will rename the variable to idx_max
+> 
+>>
+>>> completely independent on this choice. The later just says whether it is
+>>> feasible to place a hugepage to the zone movable. Sure regular 2MB pages
+>>
+>> What do you exactly mean by feasible ? Wont it depend on the state of the
+>> buddy allocator (ZONE_MOVABLE in particular) and it's ability to accommodate
+>> a given huge page. How can the platform decide on it ?
+> 
+> It is not the platform that decides. That is the whole point of the
+> distinction. It is us to say what is feasible and what we want to
+> support. Do we want to support giga pages in zone_movable? Under which
+> conditions? See my point?
 
-> What is the point of comparing idr_max against RADIX_TREE_MAP_SIZE-1? Is
-> it for performance reason.
+So huge_movable() is going to be a generic MM function deciding on the
+feasibility for allocating a huge page of 'size' from movable zone during
+migration. If the feasibility turns out to be negative, then migration
+process is aborted there.
 
-Let's assume you have only 1 ipc object, and you alloc/release that object.
+huge_movable() will do something like these:
 
-At alloc time, ids->in_use is 0 -> idr_max 1 -> every object will end up 
-with idx=0.
+- Return positive right away on smaller size huge pages
+- Measure movable allocation feasibility for bigger huge pages
+	- Look out for free_pages in the huge page order in movable areas
+	- if (order > (MAX_ORDER - 1))
+		- Scan the PFN ranges in movable zone for possible allocation
+	- etc
+	- etc
 
-This would defeat the whole purpose of using a cyclic alloc.
+Did I get this right ?
 
-Thus: cycle over at least 63 ids -> 5 additional bits to avoid collisions.
-
-
---
-
-     Manfred
-
+> 
+>> Or as I mentioned
+>> before it's platform's willingness to live with unmovable huge pages (of
+>> certain sizes) as a consequence of migration.
+> 
+> No, the platform has no saying in that. The platform only says that it
+> supports migrating those pages in principle.
+I understand this now.
