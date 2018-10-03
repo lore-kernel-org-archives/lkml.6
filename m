@@ -2,130 +2,166 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCB0C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C887DC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFF1020835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:36:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="PD6VGsRu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF1020835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 8C2BF213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:36:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C2BF213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727375AbeJCSYN (ORCPT
+        id S1726997AbeJCSYs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:24:13 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:39340 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeJCSYM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:24:12 -0400
-Received: by mail-it1-f196.google.com with SMTP id w200-v6so8283726itc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 04:36:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VCtsNBqlFCtOCynnTHy7XnGpqUdbKfVPRfEtIdgE9Xs=;
-        b=PD6VGsRu8Adj7+8swQQDg0neBFGntX37EVUY7AmdKKROGO/ZM4trkaMUiMhpKlIh3c
-         l8B3tXktW2EY9jpSXw66N2vkwcjYaPml3FA1yTMuCn3nz9Gyv+fXxodH8pkc4MA4eBBQ
-         dWXrbzwIhtVR4zMlgE1AZE7QZsz0WpIwtPwM8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VCtsNBqlFCtOCynnTHy7XnGpqUdbKfVPRfEtIdgE9Xs=;
-        b=q9NIAYBUFsWN8lhELFy6U8fX3N3eZU0FFzc/j1bzzyWP5ndObVNnPfDPLe2jZtn3g8
-         S9kZAkrJij7AVjbdc3U3wjXIHD7UdM3AvWJ6qWY6KtFaP/3P9LD6RtyAE4JEaUkQPSj1
-         GrmFNaAQGoelCYWrrJD+cV85oiGXCvgCKruv7I6LVnAFShpU5tEviQojQ5+gNflzmwc/
-         hJCBp0sa5UaeGwceK4Ab6uKhEYHqj7FIvFbjQEif5A++MP2kBbL9GyRvqwcqRv+ph+YX
-         /LuwgmUMI86zNuVXGjcH2GUdALY1dw94adwb4IIqlgVnCi4T+y7y5hPlA3fP1I+BRudh
-         49jg==
-X-Gm-Message-State: ABuFfoh8GyoudB2EWtsJBUBnfMXLaZdVJzkzUo//lBJl+qjm/sg++CiG
-        tkzO1VzKTyR/+ftn2CQxqG1PrtpcjiPNxv0HcyPCrg==
-X-Google-Smtp-Source: ACcGV63/ykds09ZwA3n0z1jzYrBOGP2bR2Tqin1q7h0T0ufVOd0MizqQgmySyKTqYW08B8bJlc7+V4YN9ywvNkM00uU=
-X-Received: by 2002:a24:d857:: with SMTP id b84-v6mr985264itg.77.1538566571601;
- Wed, 03 Oct 2018 04:36:11 -0700 (PDT)
+        Wed, 3 Oct 2018 14:24:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47958 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726617AbeJCSYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 14:24:48 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0C0C13082A26;
+        Wed,  3 Oct 2018 11:36:47 +0000 (UTC)
+Received: from krava (unknown [10.40.205.180])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 241CB63F85;
+        Wed,  3 Oct 2018 11:36:43 +0000 (UTC)
+Date:   Wed, 3 Oct 2018 13:36:43 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] perf tools: Allocate id array in
+ perf_event__synthesize_event_update_cpus
+Message-ID: <20181003113643.GA31725@krava>
+References: <712b7c31-f681-7737-71e7-c028b8d2bba5@huawei.com>
+ <20180927160210.GF6916@krava>
+ <4ac88076-60fa-4509-7fa0-2f99d73174d2@huawei.com>
+ <20181002111621.GA6357@krava>
 MIME-Version: 1.0
-References: <20181003110457.9318-1-Eugeniy.Paltsev@synopsys.com>
-In-Reply-To: <20181003110457.9318-1-Eugeniy.Paltsev@synopsys.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 3 Oct 2018 13:36:00 +0200
-Message-ID: <CAKMK7uFP3bMcNSY2L9ZmvFPz6KB51_gMnZ-b7FPCz3NEOafi=w@mail.gmail.com>
-Subject: Re: [PATCH] drm: fb-helper: Validate requested pixel format against bpp
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        linux-snps-arc@lists.infradead.org, Sean Paul <sean@poorly.run>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181002111621.GA6357@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 03 Oct 2018 11:36:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 1:05 PM Eugeniy Paltsev
-<Eugeniy.Paltsev@synopsys.com> wrote:
->
-> Validate requested pixel format against bits_per_pixel to reject
-> invalid formats with subcomponents length sum is greater than requested
-> bits_per_pixel.
->
-> weston 5.0.0 with fbdev backend tries to set up an ARGB x8r8g8b8 pixel
-> format without bits_per_pixel updating. So it can request
-> x8r8g8b8 with 16 bpp which is obviously incorrect and should be
-> rejected.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+On Tue, Oct 02, 2018 at 01:16:21PM +0200, Jiri Olsa wrote:
+> On Tue, Oct 02, 2018 at 11:41:36AM +0100, John Garry wrote:
+> 
+> SNIP
+> 
+> > > 
+> > > 
+> > > ---
+> > > diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> > > index 1ec1d9bc2d63..fb2a0dab3978 100644
+> > > --- a/tools/perf/util/header.c
+> > > +++ b/tools/perf/util/header.c
+> > > @@ -29,6 +29,7 @@
+> > >  #include "symbol.h"
+> > >  #include "debug.h"
+> > >  #include "cpumap.h"
+> > > +#include "thread_map.h"
+> > >  #include "pmu.h"
+> > >  #include "vdso.h"
+> > >  #include "strbuf.h"
+> > > @@ -3579,6 +3580,11 @@ perf_event__synthesize_event_update_cpus(struct perf_tool *tool,
+> > > 	if (!evsel->own_cpus)
+> > > 		return 0;
+> > > 
+> > > +	if (!evsel->id ||
+> > 
+> > for my test, evsel->id is NULL
+> > 
+> > > +	    perf_evsel__alloc_id(evsel, cpu_map__nr(evsel->cpus),
+> > > +				 thread_map__nr(evsel->threads)))
+> > 
+> > and then this function is not called as we return immediately. So did you
+> > really want this:
+> > 
+> > if (!evsel->id && perf_evsel__alloc_id(...))
+> > 	return -ENOMEM;
+> 
+> ugh.. yes ;-) thanks for the fix.. I'll double
+> check the logic and post the patch this week
 
-drm fbdev emulation doesn't support changing the pixel format at all.
-I think we should reject all such request, not just the invalid ones.
-Can you pls respin?
+actualy, we also need to populate those ids ;-)
+so calling perf_evsel__store_ids instead..
+attaching the full patch
 
-Thanks, Daniel
-
-> ---
->  drivers/gpu/drm/drm_fb_helper.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> index 16ec93b75dbf..4f39da07f053 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -1610,6 +1610,13 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
->                 return -EINVAL;
->         }
->
-> +       if ((var->green.length + var->blue.length + var->red.length +
-> +           var->transp.length) > var->bits_per_pixel) {
-> +               DRM_DEBUG("fb requested pixel format can't fit in %d bpp\n",
-> +                         var->bits_per_pixel);
-> +               return -EINVAL;
-> +       }
-> +
->         switch (var->bits_per_pixel) {
->         case 16:
->                 depth = (var->green.length == 6) ? 16 : 15;
-> --
-> 2.14.4
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+thanks,
+jirka
 
 
+---
+John reported crash when recording on an event under
+pmu with cpumask defined:
 
+  root@localhost:~# ./perf_debug_ record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
+  perf: Segmentation fault
+  Obtained 9 stack frames.
+  ./perf_debug_() [0x4c5ef8]
+  [0xffff82ba267c]
+  ./perf_debug_() [0x4bc5a8]
+  ./perf_debug_() [0x419550]
+  ./perf_debug_() [0x41a928]
+  ./perf_debug_() [0x472f58]
+  ./perf_debug_() [0x473210]
+  ./perf_debug_() [0x4070f4]
+  /lib/aarch64-linux-gnu/libc.so.6(__libc_start_main+0xe0) [0xffff8294c8a0]
+  Segmentation fault (core dumped)
+
+We synthesize an update event that needs to touch the evsel
+id array, which is not defined at that time. Fixing this
+by allocating the array and getting IDs before it's used.
+
+Reported-by: John Garry <john.garry@huawei.com>
+Link: http://lkml.kernel.org/n/tip-8x4n7o34yheigoxm1jibflm6@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/util/header.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 1ec1d9bc2d63..14ca27f79d4a 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -29,6 +29,7 @@
+ #include "symbol.h"
+ #include "debug.h"
+ #include "cpumap.h"
++#include "thread_map.h"
+ #include "pmu.h"
+ #include "vdso.h"
+ #include "strbuf.h"
+@@ -3579,6 +3580,9 @@ perf_event__synthesize_event_update_cpus(struct perf_tool *tool,
+ 	if (!evsel->own_cpus)
+ 		return 0;
+ 
++	if (!evsel->id && perf_evsel__store_ids(evsel, evsel->evlist))
++		return -ENOMEM;
++
+ 	ev = cpu_map_data__alloc(evsel->own_cpus, &size, &type, &max);
+ 	if (!ev)
+ 		return -ENOMEM;
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+2.17.1
+
