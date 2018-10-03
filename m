@@ -7,66 +7,68 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F9DC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A318C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:44:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D16BE213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20ABD213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:44:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIEVLzFD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16BE213A2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeTVVCHK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20ABD213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbeJDDeG (ORCPT
+        id S1727504AbeJDDeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 23:34:06 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34779 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727143AbeJDDeG (ORCPT
+        Wed, 3 Oct 2018 23:34:07 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33196 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727268AbeJDDeH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 23:34:06 -0400
-Received: by mail-wm1-f65.google.com with SMTP id z25-v6so97911wmf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 13:44:06 -0700 (PDT)
+        Wed, 3 Oct 2018 23:34:07 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y140-v6so101061wmd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 13:44:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9d03DAjZEiRbR3EO/AqAjeNz6X6Q4J6q+tx+ixFvMIM=;
-        b=IIEVLzFDdO38pyfhiWyvePeV9Z8ND7T85e93HbSIkRiEhEh/U2QfyEjoFyvKb4W9eF
-         PlU/Sa7FUWt5+h4gWQFn8YYFeWEwTCfh4k7yG5CPWPxsTJIo5YKm6oEtDFGTwMBvwbPO
-         YIRTKW+ItcYzfxE+tXvw4qbrx3DpW2EM56NMydpQLL01/ertHACzy4USCJwxJV4qS/os
-         4XY5PkT/xGzbnLJj1K9dbXte67X/hBFjnZCUuoRcnVO4CjQqoWjGVHfV+N087Tbrluhy
-         zGmbHCc1hDq9h9sclvAmRPVl3sReEQmk4KBIkVbTk5FoGhxle2RsLJgCuAb2ZtFH1ipT
-         5hig==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=yWsu3wGCchnsXwPoM2PaJi+kcx2k5ZbbN46Fqi1SzwA=;
+        b=jeTVVCHKGgCQf00fVxlyYqdlY/03+gNxGdqEv/NhIh6+p6naWe1Kh/KjNMdXkctJte
+         6UOfuU2xdIORiOsiAE0Fg4epXt0vsUQIdu9mm6CxMC3MIZ3KUrjMDwSqu+GwCLpMDmYL
+         MYEQ6KHNjDMVTymYC0KV/NmdaxxS5otuWL1QMaoIN1Jmz3OI1C0JQlEHNPp6zpjXc7ft
+         H/eTJ+CgQPUr6I88dfGA27HlWxDl/sDEa1Ls6UqQk+SOO5mZy3OHmxobuW6jtW9TiBzH
+         eAh9er8Fi69expNvGoufQnJnqSXJMLdAJrOcBmOX2v9Q48IH2Y7r1ChFzDPd2AfQUbS9
+         8cBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9d03DAjZEiRbR3EO/AqAjeNz6X6Q4J6q+tx+ixFvMIM=;
-        b=twBSEmmoIGSno2T5YpnalQL4z6uRsOeiBRwsJukF3zZXpAUfjVdDj1TcMsEVSBASfV
-         EIto9Hc0khH4WRLdNE19GYu1cW98r5bfs6B8S998CeNsw/qpR5oFSSAHiQk9v3VAtOwf
-         Yi5Kcvme2Br1CTP7CnNmBr565q1O6KO3M4xGqDGcJalewYmuofUON9yrvnXL/HFEkBNk
-         nhXXc+S8QjWdBV6PFotojMi/ttVa+ocLtUgtu4Q3LdSudTG4rYKUpl+7r+mvTMeWao6X
-         cxh0qhDpOaUf2dyjagqi/4B2VlMogvu6wJg8kb+zhpM0KfQzTKBh5oqk6eRyzBZLtTRB
-         +5+Q==
-X-Gm-Message-State: ABuFfogQpOV2QGbyljNcYmAEdyOSYH2Y+iof20DH4pDZWY4FPjGWNwyQ
-        Rdn5RYHOjcZ+wfPK33Y6UuE=
-X-Google-Smtp-Source: ACcGV63CYk2hN+BoLnb36D5FJSHDCh1z/U14bmgCC0aYnaWhgTvBltrn8Eym6dPVszD097hS/SXZKg==
-X-Received: by 2002:a1c:8181:: with SMTP id c123-v6mr2489833wmd.3.1538599445770;
-        Wed, 03 Oct 2018 13:44:05 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=yWsu3wGCchnsXwPoM2PaJi+kcx2k5ZbbN46Fqi1SzwA=;
+        b=aZman2IzQY8csdYk8T1yzQvFioOBrw7YHRtlDSuV2wGDMY14UXDR32TZRo6z5GNeHK
+         FYXeZolIYfngdeUgbR/Skl+DTThA7GQgnri0gqjHc78qGc8f/OnJiZB524VQTo4LnDnK
+         5rsukWJ5OPH20b1Pu6Tohm9qRfQPzonkzaFS94JRvAloGDQYkAtmUONYwU9nfLTNjWpl
+         BXcGQOepYWxTWFjiuzW3SrGaLY8PGIfl48unRm2zkwMAw5EGKBFAiVHmHCN4Ith0S402
+         mzu1CI8/RYFRix4ru2tBS9AvzjusardyTa45a5P18yTx5h/ia/Yir9MRYsXReCFrtJ1I
+         9ehQ==
+X-Gm-Message-State: ABuFfogzIPf3LugTRuM2h4SGkP6UI+BWA9E6T3YvEBIj30tYLTGeYfN3
+        rd9IehzwyYj0fDpyZtaN5fQ=
+X-Google-Smtp-Source: ACcGV618sEQ6yofaXBZuuwvk/tb4rkaqV8PM+3DICX+0t3pneOgI/P6lF/S8sgNg+8T4puCTWwxdOA==
+X-Received: by 2002:a1c:a9d4:: with SMTP id s203-v6mr2519073wme.58.1538599446833;
+        Wed, 03 Oct 2018 13:44:06 -0700 (PDT)
 Received: from localhost.localdomain (ip1f12fd55.dynamic.kabel-deutschland.de. [31.18.253.85])
-        by smtp.gmail.com with ESMTPSA id h18-v6sm2242235wrb.82.2018.10.03.13.44.04
+        by smtp.gmail.com with ESMTPSA id h18-v6sm2242235wrb.82.2018.10.03.13.44.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 13:44:05 -0700 (PDT)
+        Wed, 03 Oct 2018 13:44:06 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 1/3] staging: rtl8188eu: fix line over 80 characters - style
-Date:   Wed,  3 Oct 2018 22:43:57 +0200
-Message-Id: <20181003204359.30676-1-straube.linux@gmail.com>
+Subject: [PATCH 2/3] staging: rtl8188eu: cleanup array declaration - style
+Date:   Wed,  3 Oct 2018 22:43:58 +0200
+Message-Id: <20181003204359.30676-2-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181003204359.30676-1-straube.linux@gmail.com>
+References: <20181003204359.30676-1-straube.linux@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,30 +76,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Line break array declaration to clear a 'line over 80 characters'
-checkpatch warning. For consistency replace 0x0 with 0x00.
+Cleanup array declaration to clear two 'line over 80 characters'
+checkpatch warnings and improve readability.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 32 ++++++++-----------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-index 4d55bbdf8fb7..f6171f07599d 100644
+index f6171f07599d..f03ac89736de 100644
 --- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
 +++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-@@ -39,7 +39,10 @@ extern unsigned char REALTEK_96B_IE[];
- /********************************************************
- MCS rate definitions
- *********************************************************/
--unsigned char	MCS_rate_1R[16] = {0xff, 0x00, 0x0, 0x0, 0x01, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
-+unsigned char MCS_rate_1R[16] = {
-+	0xff, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+};
+@@ -3836,24 +3836,20 @@ Following are the initialization functions for WiFi MLME
+ *****************************************************************************/
  
- /********************************************************
- ChannelPlan definitions
+ static struct mlme_handler mlme_sta_tbl[] = {
+-	{WIFI_ASSOCREQ,		"OnAssocReq",	&OnAssocReq},
+-	{WIFI_ASSOCRSP,		"OnAssocRsp",	&OnAssocRsp},
+-	{WIFI_REASSOCREQ,	"OnReAssocReq",	&OnAssocReq},
+-	{WIFI_REASSOCRSP,	"OnReAssocRsp",	&OnAssocRsp},
+-	{WIFI_PROBEREQ,		"OnProbeReq",	&OnProbeReq},
+-	{WIFI_PROBERSP,		"OnProbeRsp",		&OnProbeRsp},
+-
+-	/*----------------------------------------------------------
+-					below 2 are reserved
+-	-----------------------------------------------------------*/
+-	{0,					"DoReserved",		&DoReserved},
+-	{0,					"DoReserved",		&DoReserved},
+-	{WIFI_BEACON,		"OnBeacon",		&OnBeacon},
+-	{WIFI_ATIM,			"OnATIM",		&OnAtim},
+-	{WIFI_DISASSOC,		"OnDisassoc",		&OnDisassoc},
+-	{WIFI_AUTH,			"OnAuth",		&OnAuthClient},
+-	{WIFI_DEAUTH,		"OnDeAuth",		&OnDeAuth},
+-	{WIFI_ACTION,		"OnAction",		&OnAction},
++	{WIFI_ASSOCREQ,	  "OnAssocReq",	  &OnAssocReq},
++	{WIFI_ASSOCRSP,	  "OnAssocRsp",	  &OnAssocRsp},
++	{WIFI_REASSOCREQ, "OnReAssocReq", &OnAssocReq},
++	{WIFI_REASSOCRSP, "OnReAssocRsp", &OnAssocRsp},
++	{WIFI_PROBEREQ,	  "OnProbeReq",	  &OnProbeReq},
++	{WIFI_PROBERSP,	  "OnProbeRsp",	  &OnProbeRsp},
++	{0,		  "DoReserved",	  &DoReserved},
++	{0,		  "DoReserved",	  &DoReserved},
++	{WIFI_BEACON,	  "OnBeacon",	  &OnBeacon},
++	{WIFI_ATIM,	  "OnATIM",	  &OnAtim},
++	{WIFI_DISASSOC,	  "OnDisassoc",	  &OnDisassoc},
++	{WIFI_AUTH,	  "OnAuth",	  &OnAuthClient},
++	{WIFI_DEAUTH,	  "OnDeAuth",	  &OnDeAuth},
++	{WIFI_ACTION,	  "OnAction",	  &OnAction},
+ };
+ 
+ int init_hw_mlme_ext(struct adapter *padapter)
 -- 
 2.19.0
 
