@@ -2,272 +2,135 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF534C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CC2C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:26:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 716DF213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:26:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 716DF213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 38F3B213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:26:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38F3B213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeJDFRJ (ORCPT
+        id S1727417AbeJDFRO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 01:17:09 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50556 "EHLO mail.bootlin.com"
+        Thu, 4 Oct 2018 01:17:14 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4900 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725723AbeJDFRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 01:17:09 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0F6FD20802; Thu,  4 Oct 2018 00:26:48 +0200 (CEST)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D2E872071E;
-        Thu,  4 Oct 2018 00:26:47 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 00:26:48 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexander Dahl <ada@thorsis.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/7] clocksource/drivers: Add a new driver for the
- Atmel ARM TC blocks
-Message-ID: <20181003222648.GM4088@piout.net>
-References: <20180913113024.3571-1-alexandre.belloni@bootlin.com>
- <20180913113024.3571-3-alexandre.belloni@bootlin.com>
- <3ff4d71d-6a63-58ca-bdfd-79b9867fa477@linaro.org>
- <20180925211629.GE3112@piout.net>
- <7988ce42-fba9-db31-c1df-b78900192598@linaro.org>
+        id S1725723AbeJDFRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 01:17:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 15:26:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,337,1534834800"; 
+   d="scan'208";a="75207171"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by fmsmga007.fm.intel.com with ESMTP; 03 Oct 2018 15:24:12 -0700
+Received: from FMSMSX109.amr.corp.intel.com (10.18.116.9) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 3 Oct 2018 15:24:12 -0700
+Received: from hasmsx108.ger.corp.intel.com (10.184.198.18) by
+ fmsmsx109.amr.corp.intel.com (10.18.116.9) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 3 Oct 2018 15:24:11 -0700
+Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
+ hasmsx108.ger.corp.intel.com ([169.254.9.136]) with mapi id 14.03.0319.002;
+ Thu, 4 Oct 2018 01:24:09 +0300
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
+Subject: RE: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+Thread-Topic: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+Thread-Index: AQHUWeozFz0QOr+BiUiSikU4mA0ywaULXotQgAHdBoCAAN6dYA==
+Date:   Wed, 3 Oct 2018 22:24:09 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
+References: <20180928223035.14471-1-tomas.winkler@intel.com>
+ <20180928223035.14471-13-tomas.winkler@intel.com>
+ <20181002005208.GH23753@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
+ <20181003120141.GA7969@linux.intel.com>
+In-Reply-To: <20181003120141.GA7969@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTJhN2FjNzctYTcwOC00ZmQ0LTkyNWEtMTkxNGEzZDg4NmU3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicmRHcG4zRmh1UFhZZXpPS2VGek00ZzJ4WGhMXC9cL3pDMDl1aTZ0bWVCTzhVZWYwMFRlTGxiemdqU3Y2MkU4d0ZDIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.12.116.191]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7988ce42-fba9-db31-c1df-b78900192598@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/10/2018 23:24:11+0200, Daniel Lezcano wrote:
-> On 25/09/2018 23:16, Alexandre Belloni wrote:
-> > On 24/09/2018 03:59:55+0200, Daniel Lezcano wrote:
-> >> On 13/09/2018 13:30, Alexandre Belloni wrote:
-> >>> Add a driver for the Atmel Timer Counter Blocks. This driver provides a
-> >>> clocksource and two clockevent devices.
-> >>>
-> >>> One of the clockevent device is linked to the clocksource counter and so it
-> >>> will run at the same frequency. This will be used when there is only on TCB
-> >>> channel available for timers.
-> >>>
-> >>> The other clockevent device runs on a separate TCB channel when available.
-> >>>
-> >>> This driver uses regmap and syscon to be able to probe early in the boot
-> >>> and avoid having to switch on the TCB clocksource later. 
-> >>
-> >> Sorry, I don't get it. Can you elaborate?
-> >>
-> > 
-> > The current existing way of sharing TCB channels is getting probed to
-> > late in the boot process to be used as the clocksource so currently, the
-> > PIT is necessary to act as the clocksource until the TCB clocksource can
-> > be probed.
-> > 
-> > This is a big issue for SoCs without a PIT, they simply can't boot.
-> 
-> I'm still missing the point. The timer (clocksource + clocksource) is
-> probed very early with TIMER_OF_DECLARE.
-> 
 
-No, tcb_clksrc is probed very latebecause it needs tclib to be probed
-first and this happens at arch_initcall.
-> 
-> > This also solves:
-> > 33d8c15559df Revert "clocksource/drivers/tcb_clksrc: Use 32 bit tcb as sched_clock"
-> > 7b9f1d16e6d1 clocksource/drivers/tcb_clksrc: Use 32 bit tcb as sched_clock
-> > 
-> > 
-> >>> Using regmap also
-> >>> means that unused TCB channels may be used by other drivers (PWM for
-> >>> example). read/writel are still used to access channel specific registers
-> >>> to avoid the performance impact of regmap (mainly locking).
-> >>
-> >> I don't get the regmap reasoning here.
-> > 
-> > Because there are 3 channels per TCB, some TCB can have channels handled
-> > by different drivers (say channel 0 for clocksource, channel 1 for
-> > clockevent and channel 2 for PWM). There are configuration registers that
-> > are shared for all the channels and so the access needs to be handled
-> > properly. But as we discussed on a previous version of the patch, we
-> > don't want to lock/unlock each time we read the clocksource so for the
-> > channel specific registers, readl/writel is used directly.
-> 
-> Can you point me to the code where we have racy access to the
-> ATMEL_TC_BMR register ?
-> 
 
-There is non currently.
+> -----Original Message-----
+> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> Sent: Wednesday, October 03, 2018 15:02
+> To: Winkler, Tomas <tomas.winkler@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
+> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
+> <alexander.usyskin@intel.com>; Struk, Tadeusz <tadeusz.struk@intel.com>;
+> linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
+> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
+> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+> 
+> On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
+> >
+> >
+> > >
+> > > On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
+> > > > Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
+> > > > required by tpm-interface.c. It wraps the original open code
+> implementation.
+> > > > The original original tpm2_pcr_extend() function is renamed to
+> > > > __tpm2_pcr_extend() and made static, it is called only from new
+> > > > tpm2_pcr_extend().
+> > > >
+> > > > Fix warnings in __tpm2_pcr_extend()
+> > > > tpm2-cmd.c:251:16: warning: comparison between signed and unsigned
+> > > > integer expressions [-Wsign-compare]
+> > > > tpm2-cmd.c:252:17: warning: comparison between signed and unsigned
+> > > > integer expressions [-Wsign-compare]
+> > > >
+> > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > >
+> > > We do not want the signature change, especially because as we are
+> > > working on getting Roberto's changes in and also because it has
+> > > absolutely a zero gain. Who cares if those functions take different
+> parameters? I don't.
+> >
+> > Yes, we do care this series tries to have a clean cut between 1.x  and 2.x
+> specs. Please, let's finish one transformation and then move to another.
+> > I understand that Roberto will have to rebase anyhow, if this series goes in
+> first, if this is hard I can do it myself, it's trivial.
+> >
+> > Tomas
+> 
+> I'm happy to tune this minor stuff.
+What minor stuff?  This patch is just okay, let's change the API in next round.
 
-> 
-> >> My main concern with this driver is the 16bits chained support. See
-> >> below in the comments.
-> >>
-> >>
-> >>> +struct atmel_tcb_clksrc {
-> >>> +	struct clocksource clksrc;
-> >>> +	struct clock_event_device clkevt;
-> >>> +	struct regmap *regmap;
-> >>> +	void __iomem *base;
-> >>> +	struct clk *clk[2];
-> >>> +	char name[20];
-> >>
-> >> You can reasonably remove this field and use directly the ones in the
-> >> clocksrc/evt.
-> >>
-> > 
-> > name in struct clocksource is a pointer to a string, we still need a
-> > place to store that string.
-> 
-> Come on!
-> 
-> char *name = kasprintf(...);
-> 
-> tc.clkevt.name = name;
-> tc.clksrc.name = name;
-> 
-> no need to add a specific field for this.
-> 
+ I'll wait for Nayna to test the one patch
+> and make those adjustments :-) Would not make sense to roll another series
+> for these changes.
+I agree 
+Tomas
 
-And how is unconditionally dynamically allocating memory better than
-having a field in the struct?
-
-> >> Can you explain why returning "t0_clk" is better than returning an error?
-> >>
-> > 
-> > This is the current tclib behavior and doing otherwise would break the
-> > DT ABI.
-> > The reason for this behavior is that some TCB may have a clock
-> > per channel while others have one clock for the whole block.
-> 
-> What are the DT ABI? Can you point the snippets ?
-> 
-
-It is documented in Documentation/devicetree/bindings/mfd/atmel-tcb.txt
-
-> >> Using two channels to emulate a 32bits timer has a significant cost,
-> >> especially in the sched_clock function which is part of the hot kernel
-> >> path. In addition it makes the code less maintainable and readable.
-> >>
-> >> Why don't you just stick to a specific rate with the prescalar value and
-> >> reduce the rating of the timer ? (example in the stm32 timer,
-> >> stm32_timer_set_prescaler and init function).
-> >>
-> >> It will be less precise (thus the lower rating) but will make the system
-> >> faster by preventing multiple register reads in the sched_clock.
-> >>
-> >> Is it an acceptable trade-off ?
-> >>
-> > 
-> > Not at this point, the goal is to not change the current behaviour.
-> > Some customer rely on the fast timer (they are bitbanging some RF
-> > protocols) and counting at more that 5MHz using a 16 bit timer is
-> > definitively too fast.
-> 
-> Not if you use the prescalar.
-> 
-
-I'm not sure what you mean. 16bits at 5MHz (and it is actually faster than that)
-wraps up every 13ms.
-
-> > This is something that could be changed once we implement timer rate
-> > selection (but I doubt it will make the code more readable).
-> > 
-> > I'm not saying we shouldn't question what was done 10 years ago but I'd
-> > rather not change it is this series.
-> > 
-> > Also, the goal is to get rid of the tcb_clksrc driver now that avr32 is
-> > gone. This will be done once the pwm driver is converted (I did that in
-> > v1).
-> 
-> You want to get rid of the tcb_clksrc by adding a new driver which is
-> very similar without taking into consideration to do a move to something
-> cleaner and putting in question what was already done.
-> 
-> 
-> 
-> >>> +	tcb_base = of_iomap(node->parent, 0);
-> >>> +	if (!tcb_base) {
-> >>> +		pr_err("%s +%d %s\n", __FILE__, __LINE__, __func__);
-> >>
-> >> Remove those debug information and replace them by a proper error message.
-> >>
-> > 
-> > My mistake, this will be simply removed.
-> > 
-> >>> +		return -ENXIO;
-> >>> +	}
-> >>> +
-> >>> +	match = of_match_node(atmel_tcb_dt_ids, node->parent);
-> >>> +	bits = (uintptr_t)match->data;
-> >>> +
-> >>> +	err = of_property_read_u32_index(node, "reg", 0, &channel);
-> >>> +	if (err)
-> >>> +		return err;
-> >>> +
-> >>> +	irq = of_irq_get(node->parent, channel);
-> >>> +	if (irq < 0) {
-> >>
-> >> if (irq <= 0) {
-> >>
-> >>> +		irq = of_irq_get(node->parent, 0);
-> >>
-> >> Why ?
-> >>
-> > 
-> > See the binding, 
-> 
-> Ok, can you point me to the code ?
-> 
-> > the timer is a child of the TCB and the TCB node has
-> > the irq info. So, the TCB is defined in the dtsi and the child nodes are
-> > in the board dts.
-> > 
-> >>> +		if (irq < 0)
-> >>
-> >> if (irq <= 0) {
-> >>
-> >>> +			return irq;
-> >>> +	}
-> >>> +
-> >>> +	if (bits == 16) {
-> >>> +		of_property_read_u32_index(node, "reg", 1, &chan1);
-> >>> +		if (chan1 == -1) {
-> >>> +			pr_err("%s: clocksource needs two channels\n",
-> >>> +			       node->parent->full_name);
-> >>
-> >> Think about it. The code is giving up at this point in the boot process.
-> >> So of two things, you consider there is an alternate clocksource /
-> >> clockevent or the system hangs:
-> >>
-> >>  - If there is an alternate clocksource why support 32bits by chaining
-> >> the channels with the cost it introduces instead of using the alternate
-> >> one ?
-> >>
-> > 
-> > The PIT is almost always the worse clocksource as it is very slow.
-> 
-> What is slow here ?
-> 
-
-Well, my wording was very poor. The main issue with the pit is the
-resolution of the clockevent (95 to 160 ms). Also, it wrap every 10
-seconds or so.
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
