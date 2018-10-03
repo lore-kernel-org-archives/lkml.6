@@ -2,186 +2,108 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB73C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEB6C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6089120835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:59:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6089120835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 80ACC2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:00:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jOje09TE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80ACC2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbeJCRrX (ORCPT
+        id S1726818AbeJCRsm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 13:47:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41998 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726617AbeJCRrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 13:47:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BA5BEB022;
-        Wed,  3 Oct 2018 10:59:27 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 12:59:26 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
-        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
-        catalin.marinas@arm.com, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com
-Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
-Message-ID: <20181003105926.GA4714@dhcp22.suse.cz>
-References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
- <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
- <20181002123909.GS18290@dhcp22.suse.cz>
- <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
- <20181003065833.GD18290@dhcp22.suse.cz>
- <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
+        Wed, 3 Oct 2018 13:48:42 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:46652 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeJCRsm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 13:48:42 -0400
+Received: by mail-yw1-f66.google.com with SMTP id j202-v6so2065952ywa.13
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 04:00:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8z87P4HtDiOXCFZtuVfdZIeyCnzQ45X44de/aMR3EUE=;
+        b=jOje09TEXv1XenN6nhi4R2oIQXuHoo1M2j68thmLwgFTyUJIQLBodTF0hV1eKgdwsk
+         QUj49IMw76B2lQQjB11Ra5awzG9l8umYBEn0eOtJmdhapij0xmw1tsbdJmKoOQrmEUxF
+         q3rwRyoChM5Y4CBeH8ohVF7qKH9N4sm/AU6q63Tpulle37i1OMAWOhBpwDa2LZXmZ1e/
+         BAB13gFSuk8Sfds6rdjMDwz95LBN5FTl2ljXNgd8odH6KdEtHbBOesKybWelP8RfLK8y
+         j05HiCtnN301EktCU1h5p6TK87AkjqZJdbAiNDYHjNKVo1TpW8/SVIIxnJUF3Ehp/kuE
+         6WWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8z87P4HtDiOXCFZtuVfdZIeyCnzQ45X44de/aMR3EUE=;
+        b=sDItDZGVENf3sHOqZAU3H27NuD012USgYPLrxF4DO3NAHCuYe/Yzqj8ijiv69C2dlG
+         Bt/xxvyetWjSvS0eJYAS9xQJtwHl6cEiVIAoN12ihhoYNPigKKZziNAvgaOJXmd3FDv7
+         vKCzqvvM5obtRt7cY1JLYEywlp+gGNKTc0Og7qUpH8AHgt52HlVe9NSCkKC8kGRkqGU/
+         Ir1H6ZEznuXYsDmZq5kLIafJYpYkvid3Sy1op1aVmGO4Kksw/KAiLIeLgZVkwfaZJZai
+         yJnpLgjZUfsD+pzcL4JZMpAd1K2WyTL+AJqSj4B+3/RWQ0Vez3Nj9I4lNyP6Iopz3MHx
+         A0vA==
+X-Gm-Message-State: ABuFfohMEUzu9E+Syw/vIKh+7Tph+Q6+iOJspck6rJYbpNuSmYnSh7YB
+        r5pE9+PDpWtWLSFeq/qk1w==
+X-Google-Smtp-Source: ACcGV61CGhVNs1ktFBfAWv2tA0NtAydY7fE4RQf2MpfrUkuBbDOlfj3haa6To9aTN3BcPl+Wk+4C/A==
+X-Received: by 2002:a81:4316:: with SMTP id q22-v6mr436031ywa.298.1538564448939;
+        Wed, 03 Oct 2018 04:00:48 -0700 (PDT)
+Received: from gabell (c-98-229-178-29.hsd1.ma.comcast.net. [98.229.178.29])
+        by smtp.gmail.com with ESMTPSA id w6-v6sm377479ywg.3.2018.10.03.04.00.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 04:00:48 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 07:00:46 -0400
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Baoquan He <bhe@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] Add a kernel parameter to change the padding size
+ for KASLR
+Message-ID: <20181003110045.naxl3r6dhi3vkbk4@gabell>
+References: <20181003013323.4162-1-msys.mizuma@gmail.com>
+ <20181003065219.GA28386@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181003065219.GA28386@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 03-10-18 15:28:23, Anshuman Khandual wrote:
+On Wed, Oct 03, 2018 at 08:52:19AM +0200, Ingo Molnar wrote:
 > 
+> * Masayoshi Mizuma <msys.mizuma@gmail.com> wrote:
 > 
-> On 10/03/2018 12:28 PM, Michal Hocko wrote:
-> > On Wed 03-10-18 07:46:27, Anshuman Khandual wrote:
-> >>
-> >>
-> >> On 10/02/2018 06:09 PM, Michal Hocko wrote:
-> >>> On Tue 02-10-18 17:45:28, Anshuman Khandual wrote:
-> >>>> Architectures like arm64 have PUD level HugeTLB pages for certain configs
-> >>>> (1GB huge page is PUD based on ARM64_4K_PAGES base page size) that can be
-> >>>> enabled for migration. It can be achieved through checking for PUD_SHIFT
-> >>>> order based HugeTLB pages during migration.
-> >>>
-> >>> Well a long term problem with hugepage_migration_supported is that it is
-> >>> used in two different context 1) to bail out from the migration early
-> >>> because the arch doesn't support migration at all and 2) to use movable
-> >>> zone for hugetlb pages allocation. I am especially concerned about the
-> >>> later because the mere support for migration is not really good enough.
-> >>> Are you really able to find a different giga page during the runtime to
-> >>> move an existing giga page out of the movable zone?
-> >>
-> >> I pre-allocate them before trying to initiate the migration (soft offline
-> >> in my experiments). Hence it should come from the pre-allocated HugeTLB
-> >> pool instead from the buddy. I might be missing something here but do we
-> >> ever allocate HugeTLB on the go when trying to migrate ? IIUC it always
-> >> came from the pool (unless its something related to ovecommit/surplus).
-> >> Could you please kindly explain regarding how migration target HugeTLB
-> >> pages are allocated on the fly from movable zone.
+> > This patch series are adding an kernel parameter to change
+> > the padding size used for KASLR. It is useful for memory hotplug
+> > capable system. User can adjust the padding size to use it.
 > > 
-> > Hotplug comes to mind. You usually do not pre-allocate to cover full
-> > node going offline. And people would like to do that. Another example is
-> > CMA. You would really like to move pages out of the way.
-> 
-> You are right.
-> 
-> Hotplug migration:
-> 
-> __offline_pages
->    do_migrate_range
-> 	migrate_pages(...new_node_page...)
-> 
-> new_node_page
->    new_page_nodemask
-> 	alloc_huge_page_nodemask
-> 	   dequeue_huge_page_nodemask (Getting from pool)
-> 	or
-> 	   alloc_migrate_huge_page    (Getting from buddy - non-gigantic)
-> 		alloc_fresh_huge_page
-> 		    alloc_buddy_huge_page
-> 			__alloc_pages_nodemask ----> goes into buddy
-> 
-> CMA allocation:
-> 
-> cma_alloc
->    alloc_contig_range
-> 	__alloc_contig_migrate_range
-> 		migrate_pages(...alloc_migrate_target...)
-> 
-> alloc_migrate_target
->    new_page_nodemask -> __alloc_pages_nodemask ---> goes into buddy
-> 
-> But this is not applicable for gigantic pages for which it backs off way
-> before going into buddy.
-
-This is an implementation detail - mostly a missing or an incomplete
-hugetlb overcommit implementation IIRC. The primary point remains the
-same. Being able to migrate in principle and feasible enough to migrate
-to be placed in zone movable are two distinct things.
-[...]
-> >> But even if there are some chances of run time allocation failure from
-> >> movable zone (as in point 2) that should not block the very initiation
-> >> of migration itself. IIUC thats not the semantics for either THP or
-> >> normal pages. Why should it be different here. If the allocation fails
-> >> we should report and abort as always. Its the caller of migration taking
-> >> the chances. why should we prevent that.
+> > It is better if the padding size is calculated automatically,
+> > however, ACPI SRAT is not available at the KASLR initialization
+> > time. So, I add a message for user to tell the suitable padding
+> > size. User can set it on next reboot.
 > > 
-> > Yes I agree, hence the distinction between the arch support for
-> > migrateability and the criterion on the movable zone placement.
-> movable zone placement sounds very tricky here. How can the platform
-> (through the hook huge_movable) before hand say whether destination
-> page could be allocated from the ZONE_MOVABLE without looking into the
-> state of buddy at migration (any sort attempt to do this is going to
-> be expensive) or it merely indicates the desire to live with possible
-> consequence (unable to hot unplug/CMA going forward) for a migration
-> which might end up in an unmovable area.
-
-I do not follow. The whole point of zone_movable is to provide a
-physical memory range which is more or less movable. That means that
-pages allocated from this zone can be migrated away should there be a
-reason for that.
-
-> >>> So I guess we want to split this into two functions
-> >>> arch_hugepage_migration_supported and hugepage_movable. The later would
-> >>
-> >> So the set difference between arch_hugepage_migration_supported and 
-> >> hugepage_movable still remains un-migratable ? Then what is the purpose
-> >> for arch_hugepage_migration_supported page size set in the first place.
-> >> Does it mean we allow the migration at the beginning and the abort later
-> >> when the page size does not fall within the subset for hugepage_movable.
-> >> Could you please kindly explain this in more detail.
+> > This patch series don't change the current default padding size.
 > > 
-> > The purpose of arch_hugepage_migration_supported is to tell whether it
-> > makes any sense to even try to migration. The allocation placement is
+> > Change log from v5:
+> >  - Fix build error if CONFIG_RANDOMIZE_MEMORY is not defined.
 > 
-> Which kind of matches what we have right now and being continued with this
-> proposal in the series.
+> Please send a delta patch on top of tip:x86/boot with the get_rand_mem_physical_padding() fix, 
+> when doing that you'll see that I did some minor cleanups when applying the patches which your 
+> v6 series undoes.
 
-Except you only go half way there. Because you still consider "able to
-migrate" and "feasible to migrate" as the same thing.
+I have sent the delta patch. Thanks!
 
-> 
-> > completely independent on this choice. The later just says whether it is
-> > feasible to place a hugepage to the zone movable. Sure regular 2MB pages
-> 
-> What do you exactly mean by feasible ? Wont it depend on the state of the
-> buddy allocator (ZONE_MOVABLE in particular) and it's ability to accommodate
-> a given huge page. How can the platform decide on it ?
-
-It is not the platform that decides. That is the whole point of the
-distinction. It is us to say what is feasible and what we want to
-support. Do we want to support giga pages in zone_movable? Under which
-conditions? See my point?
-
-> Or as I mentioned
-> before it's platform's willingness to live with unmovable huge pages (of
-> certain sizes) as a consequence of migration.
-
-No, the platform has no saying in that. The platform only says that it
-supports migrating those pages in principle.
- 
--- 
-Michal Hocko
-SUSE Labs
+- Masa
