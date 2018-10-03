@@ -2,92 +2,208 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CDCC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79889C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E5502098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:26:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPPf/o1s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E5502098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 41DDC2098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:27:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41DDC2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbeJCUOp (ORCPT
+        id S1726871AbeJCUPj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 16:14:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48062 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726694AbeJCUOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 16:14:45 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1D582082A;
-        Wed,  3 Oct 2018 13:26:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538573180;
-        bh=N8H9X78cVynQtrAkNhzDOts6ouhHfUVPUAHaJU15eDo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nPPf/o1s69CZBE4jS3DgIG7XzvR1WVOy0VgVGEFnpnt8ZVRRk83/zoglcyUKx4doD
-         64mRBd4O2aIri7hHiOLnvgZjM1FLA1UQzcNOFkjYqjhHtdNRhwCJ6kzrjl0j4dOyR8
-         d7s8lIo5v1gUypAfy00gd/uDFqm2DBHMuc8cr80Q=
-Date:   Wed, 3 Oct 2018 22:26:17 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [ftrace/kprobes PATCH 0/3] tracing: probeevent: Fix module
- symbol probing
-Message-Id: <20181003222617.b4906d8b7156ebf6aec2c1c1@kernel.org>
-In-Reply-To: <20181002224714.009682f0@vmware.local.home>
-References: <153547303754.26502.5265242979168613920.stgit@devbox>
-        <20180927194858.7419c4ee4821f3985d3b0918@kernel.org>
-        <20181001114855.75603699@gandalf.local.home>
-        <20181002224714.009682f0@vmware.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 3 Oct 2018 16:15:39 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39456 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726679AbeJCUPj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 16:15:39 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w93DPrFl083447
+        for <linux-kernel@vger.kernel.org>; Wed, 3 Oct 2018 09:27:14 -0400
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mvvpj5n3k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 09:27:13 -0400
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
+        Wed, 3 Oct 2018 07:27:12 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 3 Oct 2018 07:27:09 -0600
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w93DR8ti51118240
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 3 Oct 2018 06:27:08 -0700
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0562C78067;
+        Wed,  3 Oct 2018 07:27:08 -0600 (MDT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D0A867805E;
+        Wed,  3 Oct 2018 07:27:04 -0600 (MDT)
+Received: from oc5000245537.ibm.com (unknown [9.80.203.154])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed,  3 Oct 2018 07:27:04 -0600 (MDT)
+Subject: Re: [PATCH] migration/mm: Add WARN_ON to try_offline_node
+To:     Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Juliet Kim <minkim@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Oscar Salvador <osalvador@suse.de>
+References: <20181001185616.11427.35521.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
+ <20181001202724.GL18290@dhcp22.suse.cz>
+ <bdbca329-7d35-0535-1737-94a06a19ae28@linux.vnet.ibm.com>
+ <df95f828-1963-d8b9-ab58-6d29d2d152d2@linux.vnet.ibm.com>
+ <20181002145922.GZ18290@dhcp22.suse.cz>
+ <d338b385-626b-0e79-9944-708178fe245d@linux.vnet.ibm.com>
+ <20181002160446.GA18290@dhcp22.suse.cz>
+ <e7dd66c1-d196-3a14-0115-acdaf538ebfd@linux.vnet.ibm.com>
+ <bbc5f219-614f-b024-0888-8ad216c5eaf8@linux.vnet.ibm.com>
+From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
+ xsBNBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
+ lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
+ DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
+ t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
+ AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
+ AAHNLU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPsLAeAQT
+ AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
+ CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
+ 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
+ QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
+ AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
+ oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/Us7ATQRXGOxnAQgAmJ5Y
+ ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
+ DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
+ 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
+ 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
+ qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABwsBfBBgBAgAJBQJX
+ GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
+ efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
+ ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
+ yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
+ IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
+ 53/hcWvxHVs=
+Organization: IBM Linux Technology Center
+Date:   Wed, 3 Oct 2018 08:27:03 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <bbc5f219-614f-b024-0888-8ad216c5eaf8@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18100313-0004-0000-0000-000014966E18
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009814; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01097278; UDB=6.00567452; IPR=6.00877321;
+ MB=3.00023600; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-03 13:27:11
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100313-0005-0000-0000-0000890644B6
+Message-Id: <17781f9e-abfb-8c1e-eb18-39571d1b5cd6@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810030131
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2 Oct 2018 22:47:14 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Mon, 1 Oct 2018 11:48:55 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On 10/02/2018 02:45 PM, Tyrel Datwyler wrote:
+> On 10/02/2018 11:13 AM, Michael Bringmann wrote:
+>>
+>>
+>> On 10/02/2018 11:04 AM, Michal Hocko wrote:
+>>> On Tue 02-10-18 10:14:49, Michael Bringmann wrote:
+>>>> On 10/02/2018 09:59 AM, Michal Hocko wrote:
+>>>>> On Tue 02-10-18 09:51:40, Michael Bringmann wrote:
+>>>>> [...]
+>>>>>> When the device-tree affinity attributes have changed for memory,
+>>>>>> the 'nid' affinity calculated points to a different node for the
+>>>>>> memory block than the one used to install it, previously on the
+>>>>>> source system.  The newly calculated 'nid' affinity may not yet
+>>>>>> be initialized on the target system.  The current memory tracking
+>>>>>> mechanisms do not record the node to which a memory block was
+>>>>>> associated when it was added.  Nathan is looking at adding this
+>>>>>> feature to the new implementation of LMBs, but it is not there
+>>>>>> yet, and won't be present in earlier kernels without backporting a
+>>>>>> significant number of changes.
+>>>>>
+>>>>> Then the patch you have proposed here just papers over a real issue, no?
+>>>>> IIUC then you simply do not remove the memory if you lose the race.
+>>>>
+>>>> The problem occurs when removing memory after an affinity change
+>>>> references a node that was previously unreferenced.  Other code
+>>>> in 'kernel/mm/memory_hotplug.c' deals with initializing an empty
+>>>> node when adding memory to a system.  The 'removing memory' case is
+>>>> specific to systems that perform LPM and allow device-tree changes.
+>>>> The powerpc kernel does not have the option of accepting some PRRN
+>>>> requests and accepting others.  It must perform them all.
+>>>
+>>> I am sorry, but you are still too cryptic for me. Either there is a
+>>> correctness issue and the the patch doesn't really fix anything or the
+>>> final race doesn't make any difference and then the ppc code should be
+>>> explicit about that. Checking the node inside the hotplug core code just
+>>> looks as a wrong layer to mitigate an arch specific problem. I am not
+>>> saying the patch is a no-go but if anything we want a big fat comment
+>>> explaining how this is possible because right now it just points to an
+>>> incorrect API usage.
+>>>
+>>> That being said, this sounds pretty much ppc specific problem and I
+>>> would _prefer_ it to be handled there (along with a big fat comment of
+>>> course).
+>>
+>> Let me try again.  Regardless of the path to which we get to this condition,
+>> we currently crash the kernel.  This patch changes that to a WARN_ON notice
+>> and continues executing the kernel without shutting down the system.  I saw
+>> the problem during powerpc testing, because that is the focus of my work.
+>> There are other paths to this function besides powerpc.  I feel that the
+>> kernel should keep running instead of halting.
 > 
-> > On Thu, 27 Sep 2018 19:48:58 +0900
-> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > 
-> > > Hello Steve,
-> > > 
-> > > Could you also include this series to the branch?
-> > >   
-> > 
-> > Hi Masami, 
-> > 
-> > I just came back from Embedded / Kernel Recipes, I'll look at these
-> > today.
-> > 
-> 
-> Unfortunately, I've been pulled off to other tasks :-(
-> 
-> I'll make it a priority tomorrow (Wednesday).
+> This is still basically a hack to get around a known race. In itself this patch is still worth while in that we shouldn't crash the kernel on a null pointer dereference. However, I think the actual problem still needs to be addressed. We shouldn't run any PRRN events for the source system on the target after a migration. The device tree update should have taken care of telling us about new affinities and what not. Can we just throw out any queued PRRN events when we wake up on the target?
 
-No problem, thank you for reviewing :)
-
+We are not talking about queued events provided on the source system, but about
+new PRRN events sent by phyp to the kernel on the target system to update the
+kernel state after migration.  No way to predict the content.
 
 > 
-> -- Steve
+> -Tyrel
+>>
+>> Regards,
+>>
 
+Michael
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Michael W. Bringmann
+Linux Technology Center
+IBM Corporation
+Tie-Line  363-5196
+External: (512) 286-5196
+Cell:       (512) 466-0650
+mwb@linux.vnet.ibm.com
+
