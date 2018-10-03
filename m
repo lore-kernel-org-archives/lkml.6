@@ -2,189 +2,124 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C91C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CEFC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A465F2089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:20:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="zV4FCjcH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A465F2089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id BDE312089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:21:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDE312089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726679AbeJCRIS (ORCPT
+        id S1726727AbeJCRJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 13:08:18 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40231 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbeJCRIS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 13:08:18 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 1-v6so3247422plv.7
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 03:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=50/1nEMp/+VNzJUmAvCVjL2S2aSdQU/3D0ak/4PbgCE=;
-        b=zV4FCjcH6NfT2FbRNAM5L/WX1LuAdNcybIy0azAp7pXJQP4MYbBMV2rwkZihDEurm8
-         hyQvVu+DgfUvheJZhg6wEE1hUfhwzcrM0IAwJz4552DGQ02S+Ad3qMgLDcEIBrBpY2/z
-         QK6Y40RRuAscmRi9RQArTADxh46AaWFktKCJjmoUUuL4Gvhk/BkfADgm5zbBKwO/2SBT
-         aVtYEF9VzXmvUecx7ZAYraL5TSzLyFh39zUBr+iD6QS6fIS/A2jS0PKaoC6ZFQ1wWHCW
-         7a4z1FinzL7GsuLIUPOqHe5T8v5rS8LT/5BRY5zI+M6iJwiDqR1ZqdU8umCBwCGQU7W0
-         izhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=50/1nEMp/+VNzJUmAvCVjL2S2aSdQU/3D0ak/4PbgCE=;
-        b=uhmbRWLB+jO+mhybfn+//zQHjmuaTq5IhVKSu0eprSQJplw/STam0Y7mi/m1CRfymR
-         2jqlUcBoUSPDYsl6FjdGrR2PTOgrIqpr/FxMzCjwLPJvPwUR0DFixcahOc+IzBPvazxI
-         Ne9ezCWDNGdx6M8W7KSykBU/uszVJxuuDS4NvQ+b5xqSHz32v344SmvE5lH3ziCsikjS
-         4polyqcB6mDpmIHEtUCiHCTUw1yqzHPIwFoNAkx5M5nwpJ4rSHD2MHnQV+GLOazRHcnQ
-         /h4OB5zV2ldFeIOcj79FOwqJtX+sCaYCPTQCp1Q335uJYdZsHCbszG2BthARlN6jBXzH
-         4PIg==
-X-Gm-Message-State: ABuFfojDrzygFDYpvNN+gA9cvkjsBdp+7EwyJCSbmD9PDR/ErFyKCUbF
-        iLIcLlF5VFyVr7FqoXrsnmgExw==
-X-Google-Smtp-Source: ACcGV61V5C3OxTUwh5odPyvF7kccgr5Rwou5tqUJF8UseWXrSYQ3SOjcNfHagTuZpLJFEkkIb7AfGQ==
-X-Received: by 2002:a17:902:2de4:: with SMTP id p91-v6mr891725plb.148.1538562033532;
-        Wed, 03 Oct 2018 03:20:33 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:7429:4492:ec6e:54db:bcc9? ([2601:646:c200:7429:4492:ec6e:54db:bcc9])
-        by smtp.gmail.com with ESMTPSA id t26-v6sm2057609pfa.158.2018.10.03.03.20.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 03:20:32 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI support
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A366)
-In-Reply-To: <87sh1ne64t.fsf@vitty.brq.redhat.com>
-Date:   Wed, 3 Oct 2018 03:20:31 -0700
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4B6A97E1-17E6-40F2-A7A0-87731668A07C@amacapital.net>
-References: <20180914125006.349747096@linutronix.de> <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com> <87sh1ne64t.fsf@vitty.brq.redhat.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+        Wed, 3 Oct 2018 13:09:09 -0400
+Received: from foss.arm.com ([217.140.101.70]:49028 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725976AbeJCRJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 13:09:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1447118A;
+        Wed,  3 Oct 2018 03:21:24 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 27D033F5A0;
+        Wed,  3 Oct 2018 03:21:21 -0700 (PDT)
+Subject: Re: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
+        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>,
+        "pabba@codeaurora.org" <pabba@codeaurora.org>,
+        John Garry <john.garry@huawei.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
+ <20180921150803.25444-3-shameerali.kolothum.thodi@huawei.com>
+ <ecc2877c-146c-d70f-efd7-306fe704d55f@arm.com>
+ <5FC3163CFD30C246ABAA99954A238FA838793F4E@FRAEML521-MBX.china.huawei.com>
+ <6d51a825-325f-5f78-20da-bf27f208fe37@arm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <80f5ad85-c31b-a1b8-ab9c-3a559838f6f2@arm.com>
+Date:   Wed, 3 Oct 2018 11:21:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <6d51a825-325f-5f78-20da-bf27f208fe37@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/10/18 10:46, Jean-Philippe Brucker wrote:
+> On 03/10/2018 09:46, Shameerali Kolothum Thodi wrote:
+> [...]
+>>>> +	/* Verify specified event is supported on this PMU */
+>>>> +	event_id = get_event(event);
+>>>> +	if (((event_id < SMMU_ARCH_MAX_EVENT_ID) &&
+>>>> +	    (!test_bit(event_id, smmu_pmu->supported_events))) ||
+>>>> +	    (event_id > SMMU_IMPDEF_MAX_EVENT_ID)) {
+>>>
+>>>> = ?
+>>
+>> I was slightly confused by the spec here as it says,
+>>
+>> Performance events are indicated by a numeric ID, in the following ranges:
+>> • 0x0000 to 0x007F: Architected events
+>> • 0x0080 to 0xFFFF: IMPLEMENTATION DEFINED events
+>>
+>> It looks to me the ids are valid including those limits.
+> 
+> Yes my mistake, I mixed up IMPDEF_MAX_EVENT_ID which is inclusive with
+> ARCH_MAX_EVENT_ID which isn't, sorry about that
 
+Well, really that's a clear sign that this could be improved - having 
+"max" mean both "maximum" and "maximum plus one" in the same context is 
+needlessly overcomplicated.
 
-> On Oct 3, 2018, at 2:22 AM, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->=20
-> Andy Lutomirski <luto@kernel.org> writes:
->=20
->> Hi Vitaly, Paolo, Radim, etc.,
->>=20
->>> On Fri, Sep 14, 2018 at 5:52 AM Thomas Gleixner <tglx@linutronix.de> wro=
-te:
->>>=20
->>> Matt attempted to add CLOCK_TAI support to the VDSO clock_gettime()
->>> implementation, which extended the clockid switch case and added yet
->>> another slightly different copy of the same code.
->>>=20
->>> Especially the extended switch case is problematic as the compiler tends=
- to
->>> generate a jump table which then requires to use retpolines. If jump tab=
-les
->>> are disabled it adds yet another conditional to the existing maze.
->>>=20
->>> This series takes a different approach by consolidating the almost
->>> identical functions into one implementation for high resolution clocks a=
-nd
->>> one for the coarse grained clock ids by storing the base data for each
->>> clock id in an array which is indexed by the clock id.
->>>=20
->>=20
->> I was trying to understand more of the implications of this patch
->> series, and I was again reminded that there is an entire extra copy of
->> the vclock reading code in arch/x86/kvm/x86.c.  And the purpose of
->> that code is very, very opaque.
->>=20
->> Can one of you explain what the code is even doing?  =46rom a couple of
->> attempts to read through it, it's a whole bunch of
->> probably-extremely-buggy code that, drumroll please, tries to
->> atomically read the TSC value and the time.  And decide whether the
->> result is "based on the TSC".  And then synthesizes a TSC-to-ns
->> multiplier and shift, based on *something other than the actual
->> multiply and shift used*.
->>=20
->> IOW, unless I'm totally misunderstanding it, the code digs into the
->> private arch clocksource data intended for the vDSO, uses a poorly
->> maintained copy of the vDSO code to read the time (instead of doing
->> the sane thing and using the kernel interfaces for this), and
->> propagates a totally made up copy to the guest.  And gets it entirely
->> wrong when doing nested virt, since, unless there's some secret in
->> this maze, it doesn't acutlaly use the scaling factor from the host
->> when it tells the guest what to do.
->>=20
->> I am really, seriously tempted to send a patch to simply delete all
->> this code.  The correct way to do it is to hook
->=20
-> "I have discovered a truly marvelous proof of this, which this margin is
-> too narrow to contain" :-)
->=20
-> There is a very long history of different (hardware) issues Marcelo was
-> fighting with and the current code is the survived Frankenstein. E.g. it
-> is very, very unclear what "catchup", "always catchup" and
-> masterclock-less mode in general are and if we still need them.
->=20
-> That said I'm all for simplification. I'm not sure if we still need to
-> care about buggy hardware though.
->=20
->>=20
->> And I don't see how it's even possible to pass kvmclock correctly to
->> the L2 guest when L0 is hyperv.  KVM could pass *hyperv's* clock, but
->> L1 isn't notified when the data structure changes, so how the heck is
->> it supposed to update the kvmclock structure?
->=20
-> Well, this kind of works in the the followin way:
-> L1's clocksource is 'tsc_page' which is, basically, a compliment to TSC:
-> two numbers provided by L0: offset and scale and KVM was tought to treat
-> this clocksource as a good one (see b0c39dc68e3b "x86/kvm: Pass stable
-> clocksource to guests when running nested on Hyper-V").
->=20
-> The notification you're talking about exists, it is called
-> Reenligntenment, see 0092e4346f49 "x86/kvm: Support Hyper-V
-> reenlightenment"). When TSC page changes (and this only happens when L1
-> is migrated to a different host with a different TSC frequency and TSC
-> scaling is not supported by the CPU) we receive an interrupt in L1 (at
-> this moment all TSC accesses are emulated which guarantees the
-> correctness of the readings), pause all L2 guests, update their kvmclock
-> structures with new data (we already know the new TSC frequency) and
-> then tell L0 that we're done and it can stop emulating TSC accesses.
+> [...]
+>>>> +		dev_err(dev, "Setup irq failed, PMU @%pa\n", &res_0->start);
+>>>
+>>> You can probably remove "PMU @%pa" from error and info messages, since
+>>> the device name already uniquely identifies it:
+>>> "[    6.168200] arm-smmu-v3-pmu 2b442000.smmu-pmcg: Registered SMMU
+>>> PMU
+>>> @ 0x000000002b442000 using 4 counters"
+>>
+>> Interesting. What I have is,
+>>
+>> [   25.669636] arm-smmu-v3-pmu arm-smmu-v3-pmu.6.auto: Registered SMMU
+>> PMU @ 0x0000000148001000 using 8 counters
+>>
+>> Are you using the same patches and is booting using ACPI? IIRC, in the iort
+>> code  it uses the name "arm-smmu-v3-pmu" and AUTO id to register/add the platform
+>> dev. So not sure, how it is printing the address in your case.
+>>
+>> Please check and let me know.
+> 
+> Right, I've been using device tree for my tests, not ACPI. I thought it
+> was the core platform code that was creating the names. I guess we could
+> add nicer names to IORT but that's probably for a different series, so
+> nevermind.
 
-That=E2=80=99s delightful!  Does the emulation magic also work for L1 user m=
-ode?  If so, couldn=E2=80=99t we drop the HyperV vclock entirely and just fo=
-ld the adjustment into the core timekeeping data?  (Preferably the actual co=
-re data, which would require core changes, but it could plausibly be done in=
- arch code, too.)
+TBH, I can't see anyone caring much about the platform device itself, 
+since it's the perf pmu device that users actually want to interact 
+with. As long as the latter is easily identifiable, the name of the 
+former is mostly only relevant to us sanity-checking sysfs and 
+/proc/{interrupts,iomem} for development.
 
->=20
-> (Nothing like this exists for KVM-on-KVM, by the way, when L1's
-> clocksource is 'kvmclock' L2s won't get a stable kvmclock clocksource.)
->=20
->=20
+Robin.
