@@ -1,124 +1,84 @@
 Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3789AC64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B045C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F070620684
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D4A920684
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:56:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLQpGnXo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F070620684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bXMfRATk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D4A920684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727439AbeJCOmH (ORCPT
+        id S1727357AbeJCOnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 10:42:07 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53753 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726941AbeJCOmG (ORCPT
+        Wed, 3 Oct 2018 10:43:23 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:35461 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726941AbeJCOnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:42:06 -0400
-Received: by mail-wm1-f68.google.com with SMTP id b19-v6so4693717wme.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 00:54:50 -0700 (PDT)
+        Wed, 3 Oct 2018 10:43:23 -0400
+Received: by mail-it1-f193.google.com with SMTP id p64-v6so7559897itp.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 00:56:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YAypkEgm5GQsmJ+5zgrtsoROOcpTePzTilkMddpKUg8=;
-        b=hLQpGnXoTiazdriq1EP7rQsFd9/YLq1is43R+gMTGZYGGgiT5PKsNvFfQjL58y48gq
-         i3uTZFhlHMU2MTNyXrvUYQUzKsJ/EhQ69KI0wPvmL/0nwGmWtaUkUubKPREag+XcbYz3
-         CtNDCvw21WfW3mMunrd4XkBdMTQTd1Sn+i44rXMmk0bnwEq2vCUck97iRiS+L7IeH/dV
-         VGg+3/nOjXAhQ47sf++HM7ceO6cmaxbUnWLSEO3giO0xjjygdga0JC7cgdzlD+K8VR8C
-         3cHDeBH2fTLoGuQjkLAMwFR369wzj2qFqUn304/5RjzHbZAAvLtCMCMwK+qzDwb8qimi
-         v6ZQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8tvpBZNyw/JuR1q1O2m8w4fF397cf5hzEAXu/4yC83s=;
+        b=bXMfRATk3StiWfZ8U2ORCNs+IMg2q/2GwRjMUcwLul729lxkbJEr5h7xqAxqNiRG7P
+         haSYGSmyXjNndzleiHklmSCkcZOIh5ep7PfMEBJuFwwT7EX5YE4NrhA5ljZgvOtF++g+
+         kD5JTDAB8LdFirv9wIjY5OdrHPDeWjXSEDPvM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YAypkEgm5GQsmJ+5zgrtsoROOcpTePzTilkMddpKUg8=;
-        b=ln9Xv2F7u5f2BLSNendc0UV298EjBIktfv6bwCs117X9biHEiDXmQKYO5vZLWurxJC
-         AuwpwN2fmc7HpKcCTGts7b01oaU1FsWsILh7tGEY0wTabFhLrPyuYqld+9UwIaa2skw2
-         gw7RCaYySOYkaIPFpqLpV329HOlcvK7th3xdBD15o8f9RMa4+6qQu9L22InrgH2XsBH2
-         ged5fOxALPW1662fKk9aSYvoFcl2tfummJEdX1QAANmk0JWeMOuDFyb8vgS7/aAujt62
-         e67d1QUtooCmAv8wEB0z1Tz5MxybUyIHMK00BPgq8XAlQnaSoK+316oj30fLlO5xlWJb
-         lGYw==
-X-Gm-Message-State: ABuFfoiUICLJisV6ZgmQdIceNEWwhDzLp4xAJq7uX8ogSSR6z4S7HSND
-        q1g14Cuez/+Np0/Y0zyIi0E=
-X-Google-Smtp-Source: ACcGV6159NKfHjfg4hhzJ0ugu5WJhApRBJ6hGUENNlTJDJAw+wdKDWYaYdlqiw+aPzEFyCsGrPqT7A==
-X-Received: by 2002:a1c:f312:: with SMTP id q18-v6mr566000wmq.14.1538553289350;
-        Wed, 03 Oct 2018 00:54:49 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id b83-v6sm619207wmh.16.2018.10.03.00.54.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Oct 2018 00:54:48 -0700 (PDT)
-Date:   Wed, 3 Oct 2018 09:54:46 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] locking/lockdep: Make class->ops a percpu counter
-Message-ID: <20181003075446.GA3183@gmail.com>
-References: <1538511560-10090-1-git-send-email-longman@redhat.com>
- <1538511560-10090-5-git-send-email-longman@redhat.com>
- <20181003074809.GJ26858@hirez.programming.kicks-ass.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8tvpBZNyw/JuR1q1O2m8w4fF397cf5hzEAXu/4yC83s=;
+        b=uhRU53qQDDhZaevwOOMJ/fviPi0/uprdC+EdzWZfRZXx05f7FYz1ddcockaqcfp02Q
+         YMe58VvbToU1V4zM58Suq4AHQdrsk3BEeg4pwXGlv57AB0k9hD5DTGEn5qU0+EXKUctF
+         pj0fBM7djYryWSPa2PEThsdvRqKrLN7DK8RJ7DcuXSklaA32+S5SY9/wmgW61lPzvc1m
+         44X7RePlzIWoNt3qYIyXFY/lp6cASlLefdS1X2S2gW5n3dSwHw4uvntzPN8Uim6JNNl+
+         agenGml4oZX3+W06urbFyuNCylRnWMPdLBs9p+iP9KpCWDuQNPmeZESGjzjBCUCCHKEF
+         kqOQ==
+X-Gm-Message-State: ABuFfoh2g4UNOFmkA9HnqG5NeZF6Euq1R/WvlhU4rN5fRbAJvDwYQapY
+        EVS4TWKOMVQxUwUhzYgxJV3Uz1nzwPycmtaaAtnjlg==
+X-Google-Smtp-Source: ACcGV629x2+cXnmh8opt9UbXE7/8e+6q3Zo7H+8/bWuoQPewm4sm1xcQVuqkGgir/YAkghLhSGVt1BYMTYNpX/wDyxI=
+X-Received: by 2002:a02:9643:: with SMTP id c61-v6mr194646jai.37.1538553367221;
+ Wed, 03 Oct 2018 00:56:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181003074809.GJ26858@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180926132434.3071168-1-arnd@arndb.de>
+In-Reply-To: <20180926132434.3071168-1-arnd@arndb.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 3 Oct 2018 09:55:56 +0200
+Message-ID: <CACRpkdZG5myxEiOoHP1rnag+yJWWqrMJ=ODRB5ET=oAAn1+T-Q@mail.gmail.com>
+Subject: Re: [PATCH] ARM: u300: regulator: add MODULE_LICENSE()
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 26, 2018 at 3:24 PM Arnd Bergmann <arnd@arndb.de> wrote:
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
+> The missing license showed up as a randconfig warning now, no idea
+> why we never saw that earlier.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> On Tue, Oct 02, 2018 at 04:19:19PM -0400, Waiman Long wrote:
-> > +DEFINE_PER_CPU(unsigned long [MAX_LOCKDEP_KEYS], lock_class_ops);
-> 
-> > @@ -179,9 +181,30 @@ DECLARE_PER_CPU(struct lockdep_stats, lockdep_stats);
-> >  	}								\
-> >  	__total;							\
-> >  })
-> > +
-> > +static inline void debug_class_ops_inc(struct lock_class *class)
-> > +{
-> > +	int idx;
-> > +
-> > +	idx = class - lock_classes;
-> > +	__this_cpu_inc(lock_class_ops[idx]);
-> > +}
-> > +
-> > +static inline unsigned long debug_class_ops_read(struct lock_class *class)
-> > +{
-> > +	int idx, cpu;
-> > +	unsigned long ops = 0;
-> > +
-> > +	idx = class - lock_classes;
-> > +	for_each_possible_cpu(cpu)
-> > +		ops += per_cpu(lock_class_ops[idx], cpu);
-> > +	return ops;
-> > +}
-> 
-> Would it make sense to stick that in struct lockdep_stats ?
-> 
-> A little something like:
-> 
-> struct lockdep_stats {
-> 	/* ... */
-> 	int	lock_class_ops[MAX_LOCKDEP_KEYS];
-> };
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Did you shrink the 'long' to 'int' intentionally?
+Will you take this into ARM SoC directly (I have no other U300
+changes this merge window), or shall I queue it and send
+a pull request to ARM SoC?
 
-Thanks,
-
-	Ingo
+Yours,
+Linus Walleij
