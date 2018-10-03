@@ -3,195 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBB2C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D310C64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73FE521476
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:16:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73FE521476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E45DF2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:17:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45DF2089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbeJDBGT (ORCPT
+        id S1727432AbeJDBHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 21:06:19 -0400
-Received: from mga14.intel.com ([192.55.52.115]:16211 "EHLO mga14.intel.com"
+        Wed, 3 Oct 2018 21:07:20 -0400
+Received: from namei.org ([65.99.196.166]:35422 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726851AbeJDBGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 21:06:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 11:16:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
-   d="scan'208";a="94355446"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.135]) ([10.24.14.135])
-  by fmsmga004.fm.intel.com with ESMTP; 03 Oct 2018 11:16:42 -0700
-Subject: Re: [PATCH 2/3] x86/intel_rdt: CBM overlap should also check for
- overlap with CDP peer
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     fenghua.yu@intel.com, tony.luck@intel.com, jithu.joseph@intel.com,
-        gavin.hindman@intel.com, dave.hansen@intel.com, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1537987801.git.reinette.chatre@intel.com>
- <262e12b66c238517c4766190dd493d937825f563.1537987801.git.reinette.chatre@intel.com>
- <alpine.DEB.2.21.1810030848580.1435@nanos.tec.linutronix.de>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <6fc60e52-8f93-6135-78c0-254676c0c375@intel.com>
-Date:   Wed, 3 Oct 2018 11:16:40 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726851AbeJDBHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 21:07:20 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id w93IHJ2b015270;
+        Wed, 3 Oct 2018 18:17:19 GMT
+Date:   Thu, 4 Oct 2018 04:17:19 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     John Johansen <john.johansen@canonical.com>
+cc:     Kees Cook <keescook@chromium.org>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+In-Reply-To: <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com>
+Message-ID: <alpine.LRH.2.21.1810040416500.13517@namei.org>
+References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-24-keescook@chromium.org> <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com> <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov>
+ <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com> <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+ <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com> <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com> <alpine.LRH.2.21.1810030758460.23596@namei.org>
+ <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com> <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1810030848580.1435@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Tue, 2 Oct 2018, John Johansen wrote:
 
-On 10/3/2018 12:02 AM, Thomas Gleixner wrote:
-> On Wed, 26 Sep 2018, Reinette Chatre wrote:
->>  /**
->> - * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
->> + * _rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
->>   * @r: Resource to which domain instance @d belongs.
->>   * @d: The domain instance for which @closid is being tested.
->>   * @cbm: Capacity bitmask being tested.
->> @@ -1049,8 +1048,8 @@ static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
->>   *
->>   * Return: false if CBM does not overlap, true if it does.
->>   */
->> -bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
->> -			   u32 _cbm, int closid, bool exclusive)
->> +static bool _rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
->> +				   u32 _cbm, int closid, bool exclusive)
-> 
-> Existing issue. The documentation uses @cbm, but the argument is _cbm.
+> To me a list like
+>   lsm.enable=X,Y,Z
 
-Thanks for spotting this.
+What about even simpler:
+
+lsm=selinux,!apparmor,yama
 
 > 
-> Also please make this __rdtgroup_cbm_overlaps(). Double underscores are
-> standing more out.
-
-Will do.
-
+> is best as a single explicit enable list, and it would be best to avoid
+> lsm.disable as it just introduces confusion.
 > 
->>  {
->>  	unsigned long *cbm = (unsigned long *)&_cbm;
->>  	unsigned long *ctrl_b;
->> @@ -1087,6 +1086,44 @@ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
->>  	return false;
->>  }
->>  
->> +/**
->> + * rdtgroup_cbm_overlaps - Does CBM overlap with other use of hardware
->> + * @r: Resource to which domain instance @d belongs.
->> + * @d: The domain instance for which @closid is being tested.
->> + * @cbm: Capacity bitmask being tested.
->> + * @closid: Intended closid for @cbm.
->> + * @exclusive: Only check if overlaps with exclusive resource groups
->> + *
->> + * Resources that can be allocated using a CBM can use the CBM to control
->> + * the overlap of these allocations. rdtgroup_cmb_overlaps() is the test
->> + * for overlap. Overlap test is not limited to the specific resource for
->> + * which the CBM is intended though - when dealing with CDP resources that
->> + * share the underlying hardware the overlap check should be performed on
->> + * the CDP resource sharing the hardware also.
->> + *
->> + * Refer to description of _rdtgroup_cbm_overlaps() for the details of the
->> + * overlap test.
->> + *
->> + * Return: true if CBM overlap detected, false if there is no overlap
->> + */
->> +bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
->> +			   u32 _cbm, int closid, bool exclusive)
+> I do think per-LSM bootparams looses the advantages of centralization,
+> and still requires the user to know some Kconfig info but it also gets
+> rid of the lsm.disable confusion.
 > 
-> Ditto. And here is no reason for using _cbm.
-
-Thanks for spotting this also, will do.
-
+> With ordering separated out from being enabled there is a certain
+> cleanness to it. And perhaps most users are looking to enable/disable
+> a single lsm, instead of specifying exactly what security they want
+> on their system.
 > 
->> +{
->> +	struct rdt_resource *r_cdp;
->> +	struct rdt_domain *d_cdp;
->> +	bool ret;
->> +
->> +	ret = _rdtgroup_cbm_overlaps(r, d, _cbm, closid, exclusive);
->> +	if (ret)
->> +		return ret;
+> If we were to go this route I would rather drop the lsm. prefix
 > 
->   	if (__rdtgroup_cbm_overlaps(r, d, _cbm, closid, exclusive))
-> 		return true;
 > 
->> +
->> +	if (rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp) == 0)
->> +		return _rdtgroup_cbm_overlaps(r_cdp, d_cdp, _cbm,
->> +					      closid, exclusive);
+> > I think the current proposal (in the other thread) is likely the
+> > sanest approach:
+> > 
+> > - Drop CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE
+> > - Drop CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE
+> > - All enabled LSMs are listed at build-time in CONFIG_LSM_ENABLE
 > 
-> 	if (rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp) < 0)
-> 		return false;
+> Hrrmmm isn't this a Kconfig selectable list, with each built-in LSM
+> available to be enabled by default at boot.
 > 
-> 	return __rdtgroup_cbm_overlaps(r_cpd, d_cdp, _cbm, closid, exclusive);
+> > - Boot time enabling for selinux= and apparmor= remain
+> > - lsm.enable= is explicit: overrides above and omissions are disabled
+> wfm
 > 
-> Makes the whole thing more obvious.
+> > - maybe include lsm.disable= to disable anything
+> 
 
-I think a different change is needed to support the request from your
-review of the first patch to propagate that unthinkable error where only
-one of the CDP peers could have an rdt_domain associated with it.
+-- 
+James Morris
+<jmorris@namei.org>
 
-In the above that error in question from rdt_cdp_peer_get() will be lost.
-
-I could do the following in support of propagating that error (note that
-in support of the code below __rdtgroup_cbm_overlaps() also changes to
-return int instead of bool):
-
-int rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
-                          u32 cbm, int closid, bool exclusive)
-{
-        struct rdt_resource *r_cdp;
-        struct rdt_domain *d_cdp;
-        int ret;
-
-        if (__rdtgroup_cbm_overlaps(r, d, cbm, closid, exclusive))
-                return 1;
-
-        ret = rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp);
-        if (ret == -ENOENT) {
-                return 0;
-        } else if (ret == -EINVAL) {
-                rdt_last_cmd_puts("Error finding CDP peer\n");
-                return ret;
-        } else {
-                return  __rdtgroup_cbm_overlaps(r_cdp, d_cdp, cbm,
-                                                closid, exclusive);
-        }
-
-        return -EINVAL;
-}
-
-With the above change in rdtgroup_cbm_overlaps() the call sites then
-change to for example:
-
-        ret = rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, true);
-        if (ret < 0) {
-                /* last_cmd_status already populated with error */
-                return -EINVAL;
-        } else if (ret == 1) {
-                rdt_last_cmd_puts("overlaps with exclusive group\n");
-                return -EINVAL;
-        }
-        /* fall through when no overlap detected */
-
-Would this be acceptable?
-
-Thank you very much
-
-Reinette
