@@ -2,122 +2,92 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C471CC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CDCC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97C46213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:25:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97C46213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 7E5502098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:26:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPPf/o1s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E5502098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbeJCUOV (ORCPT
+        id S1727085AbeJCUOp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 16:14:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34416 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726694AbeJCUOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 16:14:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EF226AFB5;
-        Wed,  3 Oct 2018 13:25:54 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 431121E3613; Wed,  3 Oct 2018 15:25:54 +0200 (CEST)
-Date:   Wed, 3 Oct 2018 15:25:54 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Paolo Valente <paolo.valente@linaro.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>, aherrmann@suse.com,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, mgorman@suse.com,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-Message-ID: <20181003132554.GC21043@quack2.suse.cz>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
- <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <CACRpkdaeYU+Crr75T49WftyOHqCrsyBLBPDBBsJF-RCjmAQEdw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaeYU+Crr75T49WftyOHqCrsyBLBPDBBsJF-RCjmAQEdw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 3 Oct 2018 16:14:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48062 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726694AbeJCUOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 16:14:45 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1D582082A;
+        Wed,  3 Oct 2018 13:26:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538573180;
+        bh=N8H9X78cVynQtrAkNhzDOts6ouhHfUVPUAHaJU15eDo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nPPf/o1s69CZBE4jS3DgIG7XzvR1WVOy0VgVGEFnpnt8ZVRRk83/zoglcyUKx4doD
+         64mRBd4O2aIri7hHiOLnvgZjM1FLA1UQzcNOFkjYqjhHtdNRhwCJ6kzrjl0j4dOyR8
+         d7s8lIo5v1gUypAfy00gd/uDFqm2DBHMuc8cr80Q=
+Date:   Wed, 3 Oct 2018 22:26:17 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [ftrace/kprobes PATCH 0/3] tracing: probeevent: Fix module
+ symbol probing
+Message-Id: <20181003222617.b4906d8b7156ebf6aec2c1c1@kernel.org>
+In-Reply-To: <20181002224714.009682f0@vmware.local.home>
+References: <153547303754.26502.5265242979168613920.stgit@devbox>
+        <20180927194858.7419c4ee4821f3985d3b0918@kernel.org>
+        <20181001114855.75603699@gandalf.local.home>
+        <20181002224714.009682f0@vmware.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 03-10-18 08:53:37, Linus Walleij wrote:
-> On Wed, Oct 3, 2018 at 8:29 AM Paolo Valente <paolo.valente@linaro.org> wrote:
-> 
-> > So, I do understand your need for conservativeness, but, after so much
-> > evidence on single-queue devices, and so many years! :), what's the
-> > point in keeping Linux worse for virtually everybody, by default?
-> 
-> I understand if we need to ease things in as well, I don't intend this
-> change for the current merge window or anything, since v4.19
-> will notably have this patch:
-> 
-> commit d5038a13eca72fb216c07eb717169092e92284f1
-> Author: Johannes Thumshirn <jthumshirn@suse.de>
-> Date:   Wed Jul 4 10:53:56 2018 +0200
-> 
->     scsi: core: switch to scsi-mq by default
-> 
->     It has been more than one year since we tried to change the default from
->     legacy to multi queue in SCSI with commit c279bd9e406 ("scsi: default to
->     scsi-mq"). But due to issues with suspend/resume and performance problems
->     it had been reverted again with commit cbe7dfa26eee ("Revert "scsi: default
->     to scsi-mq"").
-> 
->     In the meantime there have been a substantial amount of performance
->     improvements and suspend/resume got fixed as well, thus we can re-enable
->     scsi-mq without a significant performance penalty.
-> 
->     Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
->     Reviewed-by: Hannes Reinecke <hare@suse.com>
->     Reviewed-by: Ming Lei <ming.lei@redhat.com>
->     Acked-by: John Garry <john.garry@huawei.com>
->     Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-> 
-> I guess that patch can be a bit scary by itself. But IIUC it all went
-> fine this time!
-> 
-> But hey, if that works, that means $SUBJECT patch will enable BFQ on all
-> libata devices and any SCSI that is single queue as well, not just
-> "obscure" stuff like MMC/SD and UBI, and that is
-> indeed a massive crowd of legacy devices. But we're talking
-> v4.21 here.
-> 
-> Johannes, you might be interested in $SUBJECT patch.
-> It'd be nice to hear what SUSE people have to add, since they
-> are pretty proactive in this area.
+On Tue, 2 Oct 2018 22:47:14 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-So we do have a udev rules in our distro which sets the IO scheduler based
-on device parameters (rotational at least, with blk-mq we might start
-considering number of queues as well, plus we have some exceptions like
-virtio, loop, etc.). So the kernel default doesn't concern us too much as a
-distro.
+> On Mon, 1 Oct 2018 11:48:55 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > On Thu, 27 Sep 2018 19:48:58 +0900
+> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > 
+> > > Hello Steve,
+> > > 
+> > > Could you also include this series to the branch?
+> > >   
+> > 
+> > Hi Masami, 
+> > 
+> > I just came back from Embedded / Kernel Recipes, I'll look at these
+> > today.
+> > 
+> 
+> Unfortunately, I've been pulled off to other tasks :-(
+> 
+> I'll make it a priority tomorrow (Wednesday).
 
-I personally would consider bfq a safer default for single-queue devices
-(loop probably needs exception) but I don't feel too strongly about it.
+No problem, thank you for reviewing :)
 
-								Honza
+
+> 
+> -- Steve
+
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Masami Hiramatsu <mhiramat@kernel.org>
