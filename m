@@ -2,139 +2,116 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE89C64EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86140C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:29:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADFA021470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:27:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADFA021470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 3313521470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:29:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="mMLIAyuD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3313521470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeJDERM (ORCPT
+        id S1726438AbeJDETF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 00:17:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49958 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726182AbeJDERM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 00:17:12 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 929362072B; Wed,  3 Oct 2018 23:27:02 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4952C2072B;
-        Wed,  3 Oct 2018 23:27:02 +0200 (CEST)
-Date:   Wed, 3 Oct 2018 23:27:02 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Zhouyang Jia <jiazhouyang09@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        open list <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 7/8] dt-binding: mtd: Document gpio-addr-flash
-Message-ID: <20181003232702.4c18e725@bbrezillon>
-In-Reply-To: <20181003193859.23928-7-ricardo.ribalda@gmail.com>
-References: <20181003193859.23928-1-ricardo.ribalda@gmail.com>
-        <20181003193859.23928-7-ricardo.ribalda@gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 4 Oct 2018 00:19:05 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:44874 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725799AbeJDETF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 00:19:05 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w93LSeA7009158
+        for <linux-kernel@vger.kernel.org>; Wed, 3 Oct 2018 14:28:57 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=XRMPap2lyTW7EN6rZerwBT5wzpP6n26wqMhRMT/JvUg=;
+ b=mMLIAyuDGD2Ogx1VbqZX+wRKSHhbeFtxmgft0CoLrUFk4i9E1Cx16YX0DQStbYmP/PQd
+ 3l1QxbT4x/FvL6vUAlnPrgq3Lp3+qURir863dmj1GD8Go+9mr2TrsT8wxWAe2RHeqX4N
+ Zt9oPKOpYblRkG1KOpBlB93LUFE5lJcgixc= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2mw3p3rehf-4
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 14:28:57 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.23) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 3 Oct
+ 2018 14:28:54 -0700
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)    id
+ 590AF62E13C5; Wed,  3 Oct 2018 14:28:51 -0700 (PDT)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>
+CC:     <kernel-team@fb.com>, <ravi.bangoria@linux.ibm.com>,
+        <naveen.n.rao@linux.vnet.ibm.com>, <maddy@linux.vnet.ibm.com>,
+        Song Liu <songliubraving@fb.com>, Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@kernel.org>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH/RFC v4 0/2] perf: Sharing PMU counters across compatible events
+Date:   Wed, 3 Oct 2018 14:28:46 -0700
+Message-ID: <20181003212848.412256-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-03_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  3 Oct 2018 21:38:58 +0200
-Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
+Changes v3 -> v4:
+  1. In __perf_install_in_context() always reprogram ctx for cpu and cgroup
+     events to make sure event duplications set up properly.
+  2. Add a prototype (2/2) to show potential solution of sharing PMU among
+     CPU events and task events.
 
-> Add documentation for gpio-addr-flash. This binding allow creating
-> flash devices that are paged using GPIOs.
-> 
-> Cc: devicetree@vger.kernel.org
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
->  .../bindings/mtd/gpio-addr-flash.txt          | 54 +++++++++++++++++++
->  1 file changed, 54 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt b/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
-> new file mode 100644
-> index 000000000000..5006a26e1753
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
-> @@ -0,0 +1,54 @@
-> +Memory Mapped flash with some address lines addressed using GPIOs
-> +
-> +Handle the case where a flash device is mostly addressed using physical
-> +line and supplemented by GPIOs.  This way you can hook up say a 8MiB flash
-> +to a 2MiB memory range and use the GPIOs to select a particular range.
-> +
-> + - compatible : "cfi-gpio-addr-flash"
-> + - reg : Address range of the mtd chip that is memory mapped, this is,
-> +   on the previous example 2MiB.
-> + - bank-width : Width (in bytes) of the bank.  Equal to the
-> +   device width times the number of interleaved chips.
-> + - gpios: List of GPIO specifiers that will be used to address the MSBs address
-> +   lines. The order goes from LSB to MSB.
-> + - probe-type : (optional) "cfi_probe", "jedec_probe". How the mtd chip
-> +   is going to be probed. If omitted, assumed to be equal to "cfi_probe".
+Changes v2 -> v3:
+  1. Simplified event_pmu_add() as Jiri Olsa suggested
 
-Looks like other bindings are encoding the probe type in the
-compatible [1][2], and we should probably follow what's been done by
-others.
+Changes v1 -> v2:
+  1. Fixed a bug reported by 0day kernel testing robot
 
-> + - #address-cells, #size-cells : Must be present if the device has
-> +   sub-nodes representing partitions (see below).  In this case
-> +   both #address-cells and #size-cells must be equal to 1.
-> +
-> +The device tree may optionally contain sub-nodes describing partitions of the
-> +address space. Check partition.txt for more details.
-> +
-> +Example:
-> +
-> +	flash@300000 {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
+This is to follow up earlier discussion on sharing hardware PMU counters
+across compatible events:
 
-You should not have the #address-cells and #size-cells props defined at
-this level, it's done in the partitions node already.
+  https://marc.info/?t=151213803600016
+  https://marc.info/?t=152547569200001
 
-> +		compatible = "cfi-gpio-addr-flash";
-> +		bank-width = <2>;
-> +		reg = < 0x00300000 0x00200000 >;
-> +		gpios = <&gpio_0 3 0>, <&gpio_0 4 0>;
-> +		partitions {
-> +			compatible = "fixed-partitions";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +
-> +			partition@0 {
-> +				reg = < 0x0 0x200000 >;
-> +				label = "Golden Bitstream";
-> +			};
-> +			partition@200000 {
-> +				reg = < 0x200000 0x200000 >;
-> +				label = "User Bitstream";
-> +			};
-> +			partition@400000 {
-> +				reg = < 0x400000 0x200000 >;
-> +				label = "V4L Controls";
-> +			};
-> +			partition@600000 {
-> +				reg = < 0x600000 0x200000 >;
-> +				label = "Production Data";
-> +			};
-> +		}
-> +	} ;
+This version limits PMU sharing to events within same ctx. As a result,
+compatible events are not evaluated during task schedule. This vesion also
+limits PMU sharing to hardware counting events. From our discussion with
+internal users, this is sufficient for most cases.
 
-[1]https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/mtd/cortina,gemini-flash.txt
-[2]https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/mtd/arm-versatile.txt
+This version introduces virtual master event. The virtual master event
+does require careful handling. But it is makes the logic of event add/del
+cleaner.
+
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+
+Song Liu (2):
+  perf: Sharing PMU counters across compatible events
+  perf tools: monitoring per task counter with per cgroup event
+
+ include/linux/perf_event.h |  61 ++++++++
+ kernel/events/core.c       | 294 ++++++++++++++++++++++++++++++++++---
+ tools/perf/builtin-stat.c  |  26 ++++
+ tools/perf/util/cgroup.c   |  76 ++++++++++
+ tools/perf/util/cgroup.h   |   5 +
+ tools/perf/util/target.h   |   1 +
+ 6 files changed, 440 insertions(+), 23 deletions(-)
+
+--
+2.17.1
