@@ -2,124 +2,124 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E074C64EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A84FC64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5545621470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:53:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KwTNb3H7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5545621470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AFF82089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:56:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AFF82089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbeJCXmT (ORCPT
+        id S1727044AbeJCXqB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 19:42:19 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:42671 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726884AbeJCXmT (ORCPT
+        Wed, 3 Oct 2018 19:46:01 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:47029 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726842AbeJCXqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 19:42:19 -0400
-Received: by mail-oi1-f196.google.com with SMTP id w81-v6so5087272oiw.9
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 09:53:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nOMoFA3pt/QNOFKVsymAykXxw42vbOxgzwDRgQONvqg=;
-        b=KwTNb3H7GJ22hmUX3//uimOh8uaXG4prsMS3Q1oIb/u8ig/iSyMkdORLercP6AudDx
-         GypyylYCdQ8U6AS4mxmQZyqMqpjVOnaKZ5LMriU1RBuzrm9SX8SaUIHVYTpuuGVqUOAW
-         QrNTYZSKZ3VQR6g+Z6G1h7U4XtLkU64BpJUhsNwbQSuWNlLA+iJhzozoBtiaqP9zp/g3
-         iPWX/E1ehxsMuAwOpIfO9k70VOge5RkoCRjVdEYPUOtATM1lFv2oagfBdCmBbcVS1c3I
-         AoGG3ywH5uziYCeHth3pZac/8sYfgwB/L9raS44ZDWXELXErApSGVy/X+mGSDs+HAzmm
-         Offw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nOMoFA3pt/QNOFKVsymAykXxw42vbOxgzwDRgQONvqg=;
-        b=n5GiEWERHp4+h2pIpOOEOnbH6z4ITC0aTnwpYPEq+QjK/qir3nxdMxX0+IjWnPgGsz
-         aH+0FPZRfd/IVIhambcC0tMMw7Hvdl7VDNv6jcZCaZcInoM7m2e3inYWLvokFLafBpGg
-         u/A2D6TFDMdEyIXiV2dJdrAkx/xLQw2cNfE8HZCe4nK+DqqGQLxoodxL1r7MTLWOVZL1
-         B9F7ZXk82W6seGkdhAE0pd6uhQGbuHgtNG4tM/xtc1FO4WzkRTIfwD0rXW4Gxv79yrer
-         mZ2kb9ykKhm5/2Fu42QWzI1ql/SgUM6OZ2/VcOb68FOAflQFZWxzvu/ic2iLBhiDuFxG
-         snNw==
-X-Gm-Message-State: ABuFfoiR71jJOie5grCUUS57iehEX6PyzQ+hGnrj0iLgShW+RmXH+MeE
-        i4OCbq4P/Jk0ebl7GfGenypYK/2bM23tORhd/BYPEA==
-X-Google-Smtp-Source: ACcGV63JI8IiOqsmHcLUF1uEUpbHHkcIc7xNmypxFvwN+flAdjV/Q3n9pQxCYQbKPcpL0fku7RjAo1YAcXTY4PAPF3c=
-X-Received: by 2002:aca:d513:: with SMTP id m19-v6mr1205223oig.82.1538585586555;
- Wed, 03 Oct 2018 09:53:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180921150351.20898-1-yu-cheng.yu@intel.com> <20180921150351.20898-25-yu-cheng.yu@intel.com>
- <20181003045611.GB22724@asgard.redhat.com> <CALCETrU-Ny-uC1NqRedQwNKe2MMhsFEqZ08TtHJwbLfCACMmLw@mail.gmail.com>
- <5ddb0ad33298d1858e530fce9c9ea2788b2fac81.camel@intel.com> <20181003163226.GC9449@asgard.redhat.com>
-In-Reply-To: <20181003163226.GC9449@asgard.redhat.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 3 Oct 2018 18:52:40 +0200
-Message-ID: <CAG48ez0KZYv9BECMm0-BNypJ232jrdkFp6_4VYTA=WoB-8w89w@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 24/27] mm/mmap: Create a guard area between VMAs
-To:     Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     yu-cheng.yu@intel.com, Andy Lutomirski <luto@amacapital.net>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>, rdunlap@infradead.org,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 3 Oct 2018 19:46:01 -0400
+Received: from marcel-macbook.fritz.box (p4FEFC9BB.dip0.t-ipconnect.de [79.239.201.187])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 47D0CCF358;
+        Wed,  3 Oct 2018 19:04:05 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: [PATCH v2] Bluetooth: hci_qca: Add support for controller debug
+ logs.
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20181003151144.10537-1-bgodavar@codeaurora.org>
+Date:   Wed, 3 Oct 2018 18:56:45 +0200
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Harish Bandi <c-hbandi@codeaurora.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <2206464E-FA01-4A5A-8BC4-5CF70A0B9765@holtmann.org>
+References: <20181003151144.10537-1-bgodavar@codeaurora.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+X-Mailer: Apple Mail (2.3445.100.39)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 6:32 PM Eugene Syromiatnikov <esyr@redhat.com> wrote:
-> On Wed, Oct 03, 2018 at 09:00:04AM -0700, Yu-cheng Yu wrote:
-> > On Tue, 2018-10-02 at 22:36 -0700, Andy Lutomirski wrote:
-> > > On Tue, Oct 2, 2018 at 9:55 PM Eugene Syromiatnikov <esyr@redhat.com> wrote:
-> > > >
-> > > > On Fri, Sep 21, 2018 at 08:03:48AM -0700, Yu-cheng Yu wrote:
-> > > > > Create a guard area between VMAs, to detect memory corruption.
-> > > >
-> > > > Do I understand correctly that with this patch a user space program
-> > > > no longer be able to place two mappings back to back? If it is so,
-> > > > it will likely break a lot of things; for example, it's a common ring
-> > > > buffer implementations technique, to map buffer memory twice back
-> > > > to back in order to avoid special handling of items wrapping its end.
-> > >
-> > > I haven't checked what the patch actually does, but it shouldn't have
-> > > any affect on MAP_FIXED or the new no-replace MAP_FIXED variant.
-> > >
-> > > --Andy
-> >
-> > I did some mmap tests with/without MAP_FIXED, and it works as intended.
-> > In addition to the ring buffer, are there other test cases?
->
-> Right, after some more code reading I figured out that it indeed
-> shouldn't affect MAP_FIXED, thank you for confirmation.
->
-> I'm not sure, however, whether such a change that provides no ability
-> to configure or affect it will go well with all the supported
-> architectures.
+Hi Balakrishna,
 
-Is there a concrete reason why you think an architecture might not
-like this? As far as I can tell, the virtual address space overhead
-should be insignificant even for 32-bit systems.
+> This patch will prevent error messages splashing on console.
+> 
+> [   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+> [   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+> [   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+> [   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() hci0: ACL packet for unknown connection handle 3804
+> 
+> QCA wcn3990 will send the debug logs in the form of ACL packets.
+> While decoding packet in qca_recv(), marking the received debug log
+> packet as diagnostic packet.
+> 
+> Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> ---
+> v2: 
+>  * Addressed reviewer comments.
+> v1: 
+>  * initial patch
+> ---
+> drivers/bluetooth/hci_qca.c | 20 +++++++++++++++++++-
+> 1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index d98ed0442201..63ac3c6b4149 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -63,6 +63,10 @@
+> /* susclk rate */
+> #define SUSCLK_RATE_32KHZ	32768
+> 
+> +/* Controller debug log header */
+> +#define QCA_DEBUG_HDR_MSB	0xDC
+> +#define QCA_DEBUG_HDR_LSB	0x2E
+> +
+
+since this is actually the ACL handle, why not call it QCA_DEBUG_HANDLE.
+
+> /* HCI_IBS transmit side sleep protocol states */
+> enum tx_ibs_states {
+> 	HCI_IBS_TX_ASLEEP,
+> @@ -849,6 +853,20 @@ static int qca_ibs_wake_ack(struct hci_dev *hdev, struct sk_buff *skb)
+> 	return 0;
+> }
+> 
+> +static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff *skb)
+> +{
+> +	/* We receive debug logs from chip as an ACL packets.
+> +	 * Instead of sending the data to ACL to decode the
+> +	 * received data, we are pushing them to the above layers
+> +	 * as a diagnostic packet.
+> +	 */
+> +	if ((skb->len > 2) && (skb->data[0] == QCA_DEBUG_HDR_MSB) &&
+> +	    (skb->data[1] == QCA_DEBUG_HDR_LSB))
+
+Skip the individual () since they are not needed. Also the skb->len check is not needed since the H4_RECV_ACL already ensures the proper length of the header.
+
+And just use get_unaligned_le16(skb->data) here (or be16 if that is the byte order).
+
+> +		return hci_recv_diag(hdev, skb);
+
+Is there any reason to keep the 4 octets hci_acl_hdr with this SKB? Or would it be better to be stripped off. Mainly asking are they any other magic handles that we might want to feed through the diag channel?
+
+> +
+> +	return hci_recv_frame(hdev, skb);
+> +}
+> +
+
+Regards
+
+Marcel
+
