@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7C6C64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A1AC64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E0F82098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:42:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E0F82098A
+	by mail.kernel.org (Postfix) with ESMTP id A799A20644
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:43:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A799A20644
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbeJCK3W (ORCPT
+        id S1727197AbeJCK3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 06:29:22 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:51858 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726630AbeJCK2l (ORCPT
+        Wed, 3 Oct 2018 06:29:32 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:9998 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726510AbeJCK2i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 06:28:41 -0400
-X-UUID: e05e6aa3dc244825b163888b12243c0b-20181003
-X-UUID: e05e6aa3dc244825b163888b12243c0b-20181003
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        Wed, 3 Oct 2018 06:28:38 -0400
+X-UUID: 4e0f69e2a9ca48d28dae565fef4957d9-20181003
+X-UUID: 4e0f69e2a9ca48d28dae565fef4957d9-20181003
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2120972480; Wed, 03 Oct 2018 11:41:57 +0800
+        with ESMTP id 1497943663; Wed, 03 Oct 2018 11:41:55 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Wed, 3 Oct 2018 11:41:54 +0800
 Received: from mtkslt209.mediatek.inc (10.21.15.96) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -52,71 +52,43 @@ CC:     Yingjoe Chen <yingjoe.chen@mediatek.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>
-Subject: [PATCH v5 10/11] drm/mediatek: implement connection from BLS to DPI0
-Date:   Wed, 3 Oct 2018 11:41:50 +0800
-Message-ID: <20181003034151.31452-11-bibby.hsieh@mediatek.com>
+Subject: [PATCH v5 11/11] drm/mediatek: add a error return value when clock driver has been prepared
+Date:   Wed, 3 Oct 2018 11:41:51 +0800
+Message-ID: <20181003034151.31452-12-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.12.5.2.gbdf23ab
 In-Reply-To: <20181003034151.31452-1-bibby.hsieh@mediatek.com>
 References: <20181003034151.31452-1-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 223F076053F4BE437492655E8F83F2887E09951A2E60EB87186535074B4AC3F22000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify display driver to support connection from BLS to DPI.
+DRM driver get the comp->clk by of_clk_get(), we only
+assign NULL to comp->clk when error happened, but do
+not return the error number.
 
 Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 87e4191c250e..f3068c62ed48 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -39,6 +39,7 @@
- #define DISP_REG_CONFIG_DISP_OVL_MOUT_EN	0x030
- #define DISP_REG_CONFIG_OUT_SEL			0x04c
- #define DISP_REG_CONFIG_DSI_SEL			0x050
-+#define DISP_REG_CONFIG_DPI_SEL			0x064
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+index ff974d82a4a6..54ca794db3e9 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+@@ -294,7 +294,7 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
+ 	comp->irq = of_irq_get(node, 0);
+ 	comp->clk = of_clk_get(node, 0);
+ 	if (IS_ERR(comp->clk))
+-		comp->clk = NULL;
++		return PTR_ERR(comp->clk);
  
- #define DISP_REG_MUTEX_EN(n)	(0x20 + 0x20 * (n))
- #define DISP_REG_MUTEX(n)	(0x24 + 0x20 * (n))
-@@ -132,7 +133,10 @@
- 
- #define OVL_MOUT_EN_RDMA		0x1
- #define BLS_TO_DSI_RDMA1_TO_DPI1	0x8
-+#define BLS_TO_DPI_RDMA1_TO_DSI		0x2
- #define DSI_SEL_IN_BLS			0x0
-+#define DPI_SEL_IN_BLS			0x0
-+#define DSI_SEL_IN_RDMA			0x1
- 
- struct mtk_disp_mutex {
- 	int id;
-@@ -323,9 +327,17 @@ static void mtk_ddp_sout_sel(void __iomem *config_regs,
- 			     enum mtk_ddp_comp_id cur,
- 			     enum mtk_ddp_comp_id next)
- {
--	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0)
-+	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0) {
- 		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
- 			       config_regs + DISP_REG_CONFIG_OUT_SEL);
-+	} else if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DPI0) {
-+		writel_relaxed(BLS_TO_DPI_RDMA1_TO_DSI,
-+			       config_regs + DISP_REG_CONFIG_OUT_SEL);
-+		writel_relaxed(DSI_SEL_IN_RDMA,
-+			       config_regs + DISP_REG_CONFIG_DSI_SEL);
-+		writel_relaxed(DPI_SEL_IN_BLS,
-+			       config_regs + DISP_REG_CONFIG_DPI_SEL);
-+	}
- }
- 
- void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
+ 	/* Only DMA capable components need the LARB property */
+ 	comp->larb_dev = NULL;
 -- 
 2.12.5.2.gbdf23ab
 
