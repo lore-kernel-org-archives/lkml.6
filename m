@@ -2,135 +2,146 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CC2C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCF2C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38F3B213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:26:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38F3B213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6031221473
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:27:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6031221473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbeJDFRO convert rfc822-to-8bit (ORCPT
+        id S1727504AbeJDFRh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 01:17:14 -0400
-Received: from mga18.intel.com ([134.134.136.126]:4900 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725723AbeJDFRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 01:17:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 15:26:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,337,1534834800"; 
-   d="scan'208";a="75207171"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by fmsmga007.fm.intel.com with ESMTP; 03 Oct 2018 15:24:12 -0700
-Received: from FMSMSX109.amr.corp.intel.com (10.18.116.9) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 3 Oct 2018 15:24:12 -0700
-Received: from hasmsx108.ger.corp.intel.com (10.184.198.18) by
- fmsmsx109.amr.corp.intel.com (10.18.116.9) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 3 Oct 2018 15:24:11 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- hasmsx108.ger.corp.intel.com ([169.254.9.136]) with mapi id 14.03.0319.002;
- Thu, 4 Oct 2018 01:24:09 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
-Subject: RE: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-Thread-Topic: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-Thread-Index: AQHUWeozFz0QOr+BiUiSikU4mA0ywaULXotQgAHdBoCAAN6dYA==
-Date:   Wed, 3 Oct 2018 22:24:09 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-13-tomas.winkler@intel.com>
- <20181002005208.GH23753@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
- <20181003120141.GA7969@linux.intel.com>
-In-Reply-To: <20181003120141.GA7969@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTJhN2FjNzctYTcwOC00ZmQ0LTkyNWEtMTkxNGEzZDg4NmU3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicmRHcG4zRmh1UFhZZXpPS2VGek00ZzJ4WGhMXC9cL3pDMDl1aTZ0bWVCTzhVZWYwMFRlTGxiemdqU3Y2MkU4d0ZDIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.191]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        Thu, 4 Oct 2018 01:17:37 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35532 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727458AbeJDFRg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 01:17:36 -0400
+Received: by mail-oi1-f196.google.com with SMTP id 22-v6so4911308oiz.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 15:27:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yhDr8GpTPG9SCVPhbs7VxthD0v0Nqb319Et9tn5oaRs=;
+        b=hu7Fyge4u5iYLzZtn3f9FM8c7NuO9ge210a8f4rN0+Byai2B9Kg3akq5KhlWx7smfP
+         vQz79c+1qiy+vn9JmQhBGt6ehRgbz1T8w700YaYPs7aYhovYZUM7bYzhGSwuPc8YE84O
+         SlyOjWlCnZb6w1m38BqOBhgz3+KmOV32cIJHcy1Ji2EosFUwi8KB+bpfAzec6uMayCgM
+         fv6XXrgahsVm/L0y9SHSn1evjobgNJWhfJpL4i8wFsHLcY3VDkAAKeBFEokKeU8W7IoQ
+         PIft4cVkkki5/F+i5VuwOJ+MNjeRhFb1JlhgZ4tB63fNIVWykW304z00XzfHwtNm1fbF
+         7OEA==
+X-Gm-Message-State: ABuFfog8TxpVY1R5tmi4o7CBfMKP41DF187jEnzPo98oGLEEz8PU0sBc
+        RovMrvu51MWoVao+JqqLMYuYkxQduQ==
+X-Google-Smtp-Source: ACcGV60NOmcyKC/cSxoUx8s/Sg4K4S2dzUyoHEGcQv4zlRCeKmb7ftl9NMFi/yy6TGvCgyCCzd1prQ==
+X-Received: by 2002:aca:5053:: with SMTP id e80-v6mr1632052oib.352.1538605637282;
+        Wed, 03 Oct 2018 15:27:17 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id j79-v6sm1542469oiy.13.2018.10.03.15.27.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 15:27:16 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH] Add a skeleton Travis-CI config
+Date:   Wed,  3 Oct 2018 17:27:15 -0500
+Message-Id: <20181003222715.28667-1-robh@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It's convenient to use Travis-CI for doing kernel builds. Doing so
+requires a github repo, Travis-CI enabled for that repo, and a
+.travis.yml file in the repository. This commit addresses the last part.
+Each repository branch must have a .travis.yml file in order to run
+Travis-CI jobs.
 
+Obviously, we can't create a single configuration that works for
+everyone as every developer will want to run different configs and
+build targets. Therefore, this only adds a skeleton .travis.yml file.
+With this a user can either set $CONFIG and $TARGET in their Travis-CI
+environment or customized builds can be triggered remotely.
 
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> Sent: Wednesday, October 03, 2018 15:02
-> To: Winkler, Tomas <tomas.winkler@intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
-> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
-> <alexander.usyskin@intel.com>; Struk, Tadeusz <tadeusz.struk@intel.com>;
-> linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
-> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
-> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-> 
-> On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
-> >
-> >
-> > >
-> > > On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
-> > > > Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
-> > > > required by tpm-interface.c. It wraps the original open code
-> implementation.
-> > > > The original original tpm2_pcr_extend() function is renamed to
-> > > > __tpm2_pcr_extend() and made static, it is called only from new
-> > > > tpm2_pcr_extend().
-> > > >
-> > > > Fix warnings in __tpm2_pcr_extend()
-> > > > tpm2-cmd.c:251:16: warning: comparison between signed and unsigned
-> > > > integer expressions [-Wsign-compare]
-> > > > tpm2-cmd.c:252:17: warning: comparison between signed and unsigned
-> > > > integer expressions [-Wsign-compare]
-> > > >
-> > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > >
-> > > We do not want the signature change, especially because as we are
-> > > working on getting Roberto's changes in and also because it has
-> > > absolutely a zero gain. Who cares if those functions take different
-> parameters? I don't.
-> >
-> > Yes, we do care this series tries to have a clean cut between 1.x  and 2.x
-> specs. Please, let's finish one transformation and then move to another.
-> > I understand that Roberto will have to rebase anyhow, if this series goes in
-> first, if this is hard I can do it myself, it's trivial.
-> >
-> > Tomas
-> 
-> I'm happy to tune this minor stuff.
-What minor stuff?  This patch is just okay, let's change the API in next round.
+Here's an example of setting up a matrix build of different
+architectures:
 
- I'll wait for Nayna to test the one patch
-> and make those adjustments :-) Would not make sense to roll another series
-> for these changes.
-I agree 
-Tomas
+body='{
+  "request": {
+    "branch": "master",
+    "config" : {
+      "env": {
+        "global": "CONFIG=defconfig TARGET=all",
+        "matrix": [
+          "ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-",
+          "ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-",
+          "ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu-"
+        ]
+      }
+    }
+  }
+}'
+
+curl -s -X POST \
+   -H "Content-Type: application/json" \
+   -H "Accept: application/json" \
+   -H "Travis-API-Version: 3" \
+   -H "Authorization: token $TOKEN" \
+   -d "$body" \
+   https://api.travis-ci.org/repo/robherring%2Flinux/requests
+
+Additionally, it is possible to override 'scripts' or any other part of
+the config as well.
+
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+I'm wondering if there's other interest in this. If so, please chime in.
+
+Maybe I should be looking at Gitlab CI instead, but Travis I know 
+already and Gitlab just seems to be the shiniest new thing. In any case, 
+both could coexist.
+
+Rob
+
+ .travis.yml | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 .travis.yml
+
+diff --git a/.travis.yml b/.travis.yml
+new file mode 100644
+index 000000000000..ba1e59dd44f6
+--- /dev/null
++++ b/.travis.yml
+@@ -0,0 +1,23 @@
++language: c
++
++sudo: false
++dist: trusty
++
++cache:
++  apt: true
++
++env:
++  - CONFIG=allnoconfig TARGET=all
++
++addons:
++  apt:
++    packages:
++      - build-essential
++      - bc
++      - gcc-arm-linux-gnueabihf
++      - gcc-aarch64-linux-gnu
++      - gcc-powerpc-linux-gnu
++
++script:
++  - make $CONFIG
++  - make $TARGET
+-- 
+2.17.1
 
