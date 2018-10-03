@@ -2,100 +2,98 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB44C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD0CC65BA7
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 709E021473
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:40:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709E021473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 13F942098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:41:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13F942098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbeJCR2Y (ORCPT
+        id S1726842AbeJCR3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 13:28:24 -0400
-Received: from mga02.intel.com ([134.134.136.20]:27608 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726517AbeJCR2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 13:28:24 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 03:40:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,335,1534834800"; 
-   d="scan'208";a="269109480"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga006.fm.intel.com with ESMTP; 03 Oct 2018 03:40:33 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id CFD7120804; Wed,  3 Oct 2018 13:40:32 +0300 (EEST)
-Date:   Wed, 3 Oct 2018 13:40:32 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-media <linux-media@vger.kernel.org>, jacopo@jmondi.org
-Subject: Re: [PATCH v3 2/2] [media] imx214: Add imx214 camera sensor driver
-Message-ID: <20181003104032.gesivjmiwf364ot3@paasikivi.fi.intel.com>
-References: <20181002133058.12942-1-ricardo.ribalda@gmail.com>
- <20181002133058.12942-2-ricardo.ribalda@gmail.com>
- <20181002162438.zia2pwztd6vuqme2@paasikivi.fi.intel.com>
- <CAPybu_1B+zAasFuiRrhByXaVGz6KfuBxXJYWRwBM-CL8Bh6C=g@mail.gmail.com>
+        Wed, 3 Oct 2018 13:29:16 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49286 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726693AbeJCR3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 13:29:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 057C118A;
+        Wed,  3 Oct 2018 03:41:28 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA8F13F5A0;
+        Wed,  3 Oct 2018 03:41:26 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 11:41:21 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc:     bhelgaas@google.com, kishon@ti.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools/pci: Fix compilation warnings
+Message-ID: <20181003104121.GA13827@e107981-ln.cambridge.arm.com>
+References: <b2433aaac6ace7b1b9843b520242d9e9185d3685.1535024080.git.gustavo.pimentel@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPybu_1B+zAasFuiRrhByXaVGz6KfuBxXJYWRwBM-CL8Bh6C=g@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <b2433aaac6ace7b1b9843b520242d9e9185d3685.1535024080.git.gustavo.pimentel@synopsys.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
-
-On Wed, Oct 03, 2018 at 09:17:56AM +0200, Ricardo Ribalda Delgado wrote:
-> HI Sakari
+On Thu, Aug 23, 2018 at 01:34:53PM +0200, Gustavo Pimentel wrote:
+> Fix compilation warnings:
+>  - remove unused variables
+>  - change function return from int to void, since it's not used
 > 
-> Thanks a lot for your review!
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> ---
+>  tools/pci/pcitest.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+
+Applied to pci/tools for v4.20, however, I reformatted the subject
+to make it in line with previous commits and added the warnings that
+you are fixing in the commit log.
+
+Lorenzo
+
+> diff --git a/tools/pci/pcitest.c b/tools/pci/pcitest.c
+> index 9074b47..8ca1c62 100644
+> --- a/tools/pci/pcitest.c
+> +++ b/tools/pci/pcitest.c
+> @@ -23,7 +23,6 @@
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <sys/ioctl.h>
+> -#include <time.h>
+>  #include <unistd.h>
+>  
+>  #include <linux/pcitest.h>
+> @@ -43,17 +42,15 @@ struct pci_test {
+>  	unsigned long	size;
+>  };
+>  
+> -static int run_test(struct pci_test *test)
+> +static void run_test(struct pci_test *test)
+>  {
+>  	long ret;
+>  	int fd;
+> -	struct timespec start, end;
+> -	double time;
+>  
+>  	fd = open(test->device, O_RDWR);
+>  	if (fd < 0) {
+>  		perror("can't open PCI Endpoint Test device");
+> -		return fd;
+> +		return;
+>  	}
+>  
+>  	if (test->barnum >= 0 && test->barnum <= 5) {
+> -- 
+> 2.7.4
 > 
-> On Tue, Oct 2, 2018 at 6:27 PM Sakari Ailus
-> <sakari.ailus@linux.intel.com> wrote:
-> > > +static int imx214_s_power(struct v4l2_subdev *sd, int on)
-> > > +{
-> > > +     struct imx214 *imx214 = to_imx214(sd);
-> > > +     int ret = 0;
-> > > +
-> > > +     on = !!on;
-> > > +
-> > > +     if (imx214->power_on == on)
-> > > +             return 0;
-> > > +
-> > > +     if (on)
-> > > +             ret = imx214_set_power_on(imx214);
-> > > +     else
-> > > +             imx214_set_power_off(imx214);
-> > > +
-> > > +     imx214->power_on = on;
-> > > +
-> > > +     return 0;
-> >
-> > Using runtime PM would relieve you of this function.
-> 
-> Tried using runtime PM, but did not manage to get it working with the
-> qcom i2c driver. Will try again when this is merged on a separated
-> patch.
-
-Interesting. With runtime PM, also the parent device will be powered on
-automatically. Usually that's what's needed after all.
-
-Could you post the changes you made?
-
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
