@@ -2,103 +2,172 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EB5C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A42C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57404213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:46:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57404213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 5820E20835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:47:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5820E20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbeJCRem (ORCPT
+        id S1726842AbeJCRfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 13:34:42 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59183 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbeJCRem (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 13:34:42 -0400
-Received: from mail-wr1-f72.google.com ([209.85.221.72])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <guilherme.piccoli@canonical.com>)
-        id 1g7eg7-0002LF-ME
-        for linux-kernel@vger.kernel.org; Wed, 03 Oct 2018 10:46:51 +0000
-Received: by mail-wr1-f72.google.com with SMTP id v30-v6so262351wra.19
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 03:46:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZEcH9bK4V8Z1xS23RxMjsKT/xRkkcAazXgIp4vJ2x9I=;
-        b=AZBd8fNCsvRSdkjmQ5jXiupMV48utNMlVq5pYKadJAKeqvrKghjW3G6iIXIZxnZN8F
-         pQO95nDLxvHC6yUMQ4XFpvP0p6ZDQU3nzwAwc8OVOAcjX0oFF98XoI8JaEd8bXHAhElI
-         jFFFr7ZbB1YJHI1Zb1t1Gl55QHS30sdHx8qPmgHuZczEOI02K48uW+bt3qql9TUroizW
-         7hRt0tQC7hkPv6aqXU1z5WzswF/kxcrJmE7EN20TGTijIarRoctkjcEKwv2mjTPAGU2c
-         xl0ht3zI4KAlVsCuVzGcwqCBVSQQlhIxW5twHi7Km1Qy2CQvDrrjLysAl3/REX8vPczh
-         4jIw==
-X-Gm-Message-State: ABuFfojZRsDjiKsOGzrwigKX5McUVJOaZxN3PGONw8gl3svzj3Rt1lyP
-        qv2Jf77YsoqteUoErvPEzfwb4RhwyjA7kokU4pcAJR6K1HyAZcwTlyt+E1E8C97PiHAwKjqUGbK
-        rOGaA7e398sLSoVXmJdQXsibOEzwf346SedYT4g84XF/f/qGw1Hy6kRdZ0g==
-X-Received: by 2002:adf:b3d7:: with SMTP id x23-v6mr803683wrd.253.1538563611379;
-        Wed, 03 Oct 2018 03:46:51 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV63lqDKF6UnoPVV0a2ZcbBrzJ9ILUGuVieQ4m55nnNJDUT5BwZxWXqhcfC9+jE9LD68KIkiUaIqSyil8giTOAF8=
-X-Received: by 2002:adf:b3d7:: with SMTP id x23-v6mr803665wrd.253.1538563611080;
- Wed, 03 Oct 2018 03:46:51 -0700 (PDT)
+        Wed, 3 Oct 2018 13:35:18 -0400
+Received: from mga11.intel.com ([192.55.52.93]:37555 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726547AbeJCRfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 13:35:18 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 03:47:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,335,1534834800"; 
+   d="scan'208";a="94236109"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga004.fm.intel.com with ESMTP; 03 Oct 2018 03:47:25 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 259A820804; Wed,  3 Oct 2018 13:47:25 +0300 (EEST)
+Date:   Wed, 3 Oct 2018 13:47:25 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-media <linux-media@vger.kernel.org>, jacopo@jmondi.org,
+        phdm@macq.eu, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] [media] imx214: device tree binding
+Message-ID: <20181003104724.rgguu2gmoegnqspe@paasikivi.fi.intel.com>
+References: <20181002140515.16299-1-ricardo.ribalda@gmail.com>
+ <4555006.y1GbRfQLCO@avalon>
+ <CAPybu_02_hMAVWO2r1-t+S60HPaqEtnQzgF-Moxg7Zx+-PGj6A@mail.gmail.com>
+ <20181003104251.ly3uusi4lqbeqize@paasikivi.fi.intel.com>
 MIME-Version: 1.0
-References: <8c61fd04-969a-cb09-6595-7ee23d214ab1@canonical.com>
- <99f1353a-e1a0-5ade-4aad-3eb62ea42a66@canonical.com> <1538515983.4348.93.camel@arista.com>
-In-Reply-To: <1538515983.4348.93.camel@arista.com>
-From:   Guilherme Piccoli <gpiccoli@canonical.com>
-Date:   Wed, 3 Oct 2018 07:46:14 -0300
-Message-ID: <CAHD1Q_xv4PSsJ3AcKd5i+QZ8On9jqPZsa+p46bCiKubhzVJerQ@mail.gmail.com>
-Subject: Re: [PATCHv5 3/7] tty: Hold tty_ldisc_lock() during tty_reopen()
-To:     dima@arista.com
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181003104251.ly3uusi4lqbeqize@paasikivi.fi.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 6:33 PM Dmitry Safonov <dima@arista.com> wrote:
-> [...]
-> Well, v5 passes 0day, so all previous reports are fixed.
-> But there is a new one about reboot on parisc platform which takes ~3
-> mins after the patch with ldisc locked on tty_reopen().
->
-> I believe it's related to holding read side for too long..
-> So, the patches still need another fix, heh.
->
-> Unfortunately, I was a bit busy with other bugs hitting more in Arista.
-
-Hi Dmitry, thank you! Yeah, I saw that reading the whole thread after
-sending this email heheh
-That's a bummer =/
-
-Unfortunately, I don't have a reproducer to exercise your patch. Do you
-have some recipe on how to reproduce it easily?
-I'll try more, in order I can validate the reboot behavior here.
-
-
-> > > I'd like to ask you if you did respin the patch with Greg's
-> > > suggestion
-> > > for the tag - I couldn't find it in LKML heheh
+On Wed, Oct 03, 2018 at 01:42:51PM +0300, Sakari Ailus wrote:
+> On Wed, Oct 03, 2018 at 08:23:43AM +0200, Ricardo Ribalda Delgado wrote:
+> > Hi Laurent
+> > On Tue, Oct 2, 2018 at 10:06 PM Laurent Pinchart
+> > <laurent.pinchart@ideasonboard.com> wrote:
 > > >
-> > > Oh, if you can CC me in future spins of this patch (in case there
-> > > any),
-> > > I'd really be glad.
->
-> Sure, will enlarge Cc list ;)
->
+> > > Hi Ricardo,
+> > >
+> > > Thank you for the patch.
+> > >
+> > > On Tuesday, 2 October 2018 17:05:15 EEST Ricardo Ribalda Delgado wrote:
+> > > > Document bindings for imx214 camera sensor
+> > > >
+> > > > Cc: devicetree@vger.kernel.org
+> > > > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> > > > ---
+> > > > Changelog from v3:
+> > > >
+> > > > Sakari Ailus:
+> > > > -s/should/shall/
+> > > > -remove clock-lanes
+> > > >
+> > > > Philippe De Muyter:
+> > > > -s/imx274/imx214/
+> > > >
+> > > > Laurent Pinchart:
+> > > > -s/to to/to/
+> > > > -Better description of lanes
+> > > > -clock-names: Shall be "xclk"
+> > > > -Drop clock-freq
+> > > >
+> > > >  .../devicetree/bindings/media/i2c/imx214.txt  | 53 +++++++++++++++++++
+> > > >  1 file changed, 53 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx214.txt
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/media/i2c/imx214.txt
+> > > > b/Documentation/devicetree/bindings/media/i2c/imx214.txt new file mode
+> > > > 100644
+> > > > index 000000000000..421a019ab7f9
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/media/i2c/imx214.txt
+> > > > @@ -0,0 +1,53 @@
+> > > > +* Sony 1/3.06-Inch 13.13Mp CMOS Digital Image Sensor
+> > > > +
+> > > > +The Sony imx214 is a 1/3.06-inch CMOS active pixel digital image sensor
+> > > > with +an active array size of 4224H x 3200V. It is programmable through an
+> > > > I2C +interface. The I2C address can be configured to 0x1a or 0x10,
+> > > > depending on +how the hardware is wired.
+> > > > +Image data is sent through MIPI CSI-2, through 2 or 4 lanes at a maximum
+> > > > +throughput of 1.2Gbps/lane.
+> > > > +
+> > > > +
+> > > > +Required Properties:
+> > > > +- compatible: value should be "sony,imx214" for imx214 sensor
+> > > > +- reg: I2C bus address of the device
+> > > > +- enable-gpios: GPIO descriptor for the enable pin.
+> > > > +- vdddo-supply: Chip digital IO regulator (1.8V).
+> > > > +- vdda-supply: Chip analog regulator (2.7V).
+> > > > +- vddd-supply: Chip digital core regulator (1.12V).
+> > > > +- clocks: Reference to the xclk clock.
+> > > > +- clock-names:  Shall be "xclk".
+> > > > +
+> > > > +Optional Properties:
+> > > > +- flash-leds: See ../video-interfaces.txt
+> > > > +- lens-focus: See ../video-interfaces.txt
+> > > > +
+> > > > +The imx214 device node shall contain one 'port' child node with
+> > > > +an 'endpoint' subnode. For further reading on port node refer to
+> > > > +Documentation/devicetree/bindings/media/video-interfaces.txt.
+> > > > +
+> > > > +Required Properties on endpoint:
+> > > > +- data-lanes: check ../video-interfaces.txt
+> > >
+> > > As I suppose you got access to the datasheet which doesn't appear to be
+> > > public, I'll take this as an opportunity to fish for information :-) Does the
+> > > sensor support remapping data lanes ? Could you please document that here ?
+> > >
+> > > You should also state that only the 2 lanes and 4 lanes options are valid, and
+> > > what lanes can be used in those cases. I assume that would be <1 2> and <1 2 3
+> > > 4>, but if other options are possible, it would be useful to document that.
+> > 
+> > I wish I had. This is the best documentation that I got access to,
+> > after a lot of googling:
+> > http://www.ahdsensor.com/downloadRepository/3acdda8d-b531-4a76-a27d-9dd09be980ee.pdf
+> > 
+> > I never understood this secrecy around datasheets. How the f*&& are we
+> > going to buy chips and make desings around them if we cannot get
+> > information?! Sorry that was my daily vent
+> > 
+> > The 2 and 4 lane option was obtained from the functional description
+> > of the chip (page 1). The obvious order would be <1 2>, but I have
+> > also seen <1 3> in other chips, so I rather not mention it on the
+> > devicetree doc.
+> 
+> <1 3> makes sense if lane remapping is supported by the hardware. If it's
+> not, you should use a monotonically incrementing sequence.
 
-Thanks again!
-Cheers,
+The DT binding documentation states that if lane reordering is not
+supported, monotonically incremented values shall be used. So no need to
+put that here.
 
+The reader would probably need some hardware documentation for creating a
+board to begin with, and could obtain the information on lane remapping
+support from the datasheet. I think more elaborate documentation in this
+area makes sense for CSI-2 receiver drivers, especially those with multiple
+receivers that can share lanes.
 
-Guilherme
+-- 
+Kind regards,
+
+Sakari Ailus
+sakari.ailus@linux.intel.com
