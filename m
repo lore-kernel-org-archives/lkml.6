@@ -2,105 +2,130 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4E3C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A944C64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5591213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:31:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5591213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CC5F2082A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:31:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CC5F2082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbeJCTTS (ORCPT
+        id S1727091AbeJCTTY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 15:19:18 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36122 "EHLO mail.bootlin.com"
+        Wed, 3 Oct 2018 15:19:24 -0400
+Received: from mga03.intel.com ([134.134.136.65]:56665 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726619AbeJCTTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 15:19:18 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5390C207CC; Wed,  3 Oct 2018 14:31:04 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-24-95.w90-88.abo.wanadoo.fr [90.88.144.95])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 08B28207C3;
-        Wed,  3 Oct 2018 14:30:54 +0200 (CEST)
-Date:   Wed, 3 Oct 2018 14:30:54 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] mtd: rawnand: ams-delta: use ->exec_op()
-Message-ID: <20181003143054.597b3a9e@bbrezillon>
-In-Reply-To: <20181003120028.9257-1-jmkrzyszt@gmail.com>
-References: <20180719081508.5dafebde@bbrezillon>
-        <20181003120028.9257-1-jmkrzyszt@gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1726619AbeJCTTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 15:19:23 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 05:31:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
+   d="scan'208";a="91801167"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by fmsmga002.fm.intel.com with SMTP; 03 Oct 2018 05:30:47 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 03 Oct 2018 15:30:47 +0300
+Date:   Wed, 3 Oct 2018 15:30:47 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-snps-arc@lists.infradead.org, Sean Paul <sean@poorly.run>
+Subject: Re: [PATCH] drm: fb-helper: Validate requested pixel format against
+ bpp
+Message-ID: <20181003123047.GK9144@intel.com>
+References: <20181003110457.9318-1-Eugeniy.Paltsev@synopsys.com>
+ <CAKMK7uFP3bMcNSY2L9ZmvFPz6KB51_gMnZ-b7FPCz3NEOafi=w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKMK7uFP3bMcNSY2L9ZmvFPz6KB51_gMnZ-b7FPCz3NEOafi=w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Janusz,
+On Wed, Oct 03, 2018 at 01:36:00PM +0200, Daniel Vetter wrote:
+> On Wed, Oct 3, 2018 at 1:05 PM Eugeniy Paltsev
+> <Eugeniy.Paltsev@synopsys.com> wrote:
+> >
+> > Validate requested pixel format against bits_per_pixel to reject
+> > invalid formats with subcomponents length sum is greater than requested
+> > bits_per_pixel.
+> >
+> > weston 5.0.0 with fbdev backend tries to set up an ARGB x8r8g8b8 pixel
+> > format without bits_per_pixel updating. So it can request
+> > x8r8g8b8 with 16 bpp which is obviously incorrect and should be
+> > rejected.
+> >
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> 
+> drm fbdev emulation doesn't support changing the pixel format at all.
+> I think we should reject all such request, not just the invalid ones.
+> Can you pls respin?
 
-On Wed,  3 Oct 2018 14:00:28 +0200
-Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-
-> Replace legacy callbacks with ->select_chip() and ->exec_op().
-
-Thanks for working on that, that's really appreciated.
+FYI I once posted a patch to tighten up the fb-helper pixel format
+stuff:
+https://patchwork.freedesktop.org/patch/203189/
 
 > 
-> Implementation of NAND_OP_WAITRDY_INSTR has been based on legacy
-> nand_wait_ready(),
-
-I don't remember what the ams-delta ->dev_ready()/->waitfunc() hooks
-are doing, but is shouldn't be too hard to replace them by an
-ams_delta_wait_ready() func.
-
-> otherwise that function would probabaly have to be
-
-				^ probably
-
-
-> reimplemented inside the driver.  Hence, legacy callback ->dev_ready()
-> is still used.
+> Thanks, Daniel
 > 
-> Use of IO_ADDR_R and IO_ADDR_W legacy structure members will be dropped
-> later, as soon as the driver is converted to use GPIO API for data I/O.
-
-In the meantime, can you move the iomem pointer to the ams_delta
-private struct so that this driver no longer uses the ->IO_ADDR_R/W
-fields?
-
+> > ---
+> >  drivers/gpu/drm/drm_fb_helper.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> > index 16ec93b75dbf..4f39da07f053 100644
+> > --- a/drivers/gpu/drm/drm_fb_helper.c
+> > +++ b/drivers/gpu/drm/drm_fb_helper.c
+> > @@ -1610,6 +1610,13 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
+> >                 return -EINVAL;
+> >         }
+> >
+> > +       if ((var->green.length + var->blue.length + var->red.length +
+> > +           var->transp.length) > var->bits_per_pixel) {
+> > +               DRM_DEBUG("fb requested pixel format can't fit in %d bpp\n",
+> > +                         var->bits_per_pixel);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> >         switch (var->bits_per_pixel) {
+> >         case 16:
+> >                 depth = (var->green.length == 6) ? 16 : 15;
+> > --
+> > 2.14.4
+> >
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
 > 
-> Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> ---
-> Hi,
 > 
-> I've not tested the change on hardware yet as I'm not sure if:
-> - handling of NCE limited to that inside ->select_chip() is
->   sufficient,
+> 
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-I think it is.
-
-> - releasing ALE / CLE immediately after ams_delta_write_buf() is
->   correct.
-
-Well, you should probably consider waiting for instr->ctx.delay_ns
-nanoseconds after each instruction, but, if it was working before the
-conversion to ->exec_op(), it should work just fine now.
-
-Regards,
-
-Boris
+-- 
+Ville Syrjälä
+Intel
