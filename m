@@ -2,135 +2,209 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07947C64EBD
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 00:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 048D2C64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 00:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C178E2082A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 00:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96BDF2082A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 00:15:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D4CQvmW2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C178E2082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TIDPavU2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96BDF2082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbeJCG66 (ORCPT
+        id S1726548AbeJCHB0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 02:58:58 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:33409 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725754AbeJCG66 (ORCPT
+        Wed, 3 Oct 2018 03:01:26 -0400
+Received: from mail-it1-f172.google.com ([209.85.166.172]:52714 "EHLO
+        mail-it1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbeJCHB0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 02:58:58 -0400
-Received: by mail-yw1-f66.google.com with SMTP id m127-v6so1586464ywb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 17:13:02 -0700 (PDT)
+        Wed, 3 Oct 2018 03:01:26 -0400
+Received: by mail-it1-f172.google.com with SMTP id 134-v6so6072575itz.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 17:15:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=X5BnuAGhgfj4DUNsWuwoN0sZkV1YAJwtcmx3txcghz0=;
-        b=D4CQvmW2TA1WvT7TeKvuETP4MpHuHFm4D7Fj859S51UPV57DvMYXoVD+/kPXRx9ZTS
-         Wk++7esffUgh551V568wm99Of6FhfuGptyi6suZbHU2VacHbQfrPw/9lZOwIQo8uRqvX
-         Nl7r5ZNpcOGQHiX0hN55oKhsDd4e0hLtJLIAM=
+        bh=jKZXhPCiJGRHSHVYUXEiAzpUgYvEO41vGGRUtxEQ8KQ=;
+        b=TIDPavU2GEanTlKQcQr39o/pXJJtR6z0R10waFJv4iQTSMHWnj0jGX2xX6JljSB1QQ
+         w3Y66s5wfkzFu4KxqtUBBvuIQ6a9x5x6yIsJyE+nnYx13u/FS2QYwkMhqw87/5WeKzhy
+         LDDSonAnIt0P4mwc5Toa8wyLyFjgN+elN6wA1cqVEXhhyHyR/t17FaiIYFP2mUc63Sod
+         VV+AAK5AC2Ukdvl2cRSpx+oOeGA6hC7xAwgpJFaNlJFPLL/uMzLFCXlozli6P5dxWt50
+         THw8BgLOrFCyLpXJNm9vIw+UASGw7HSaN2itZCL9QpI3ZFPj81vQ/u1HhoyOlEHwNa7R
+         wZXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=X5BnuAGhgfj4DUNsWuwoN0sZkV1YAJwtcmx3txcghz0=;
-        b=QvsUL8kVvI/2REa4sCPHkWyG95PePIR+R5XwJxXTlXqE77rqvECo+nFdyHcqqRmDHw
-         Jp7glHsxSQX4TA4fffW1KIIhqGa0gmB/HwbBTOwWJq7/6Fp1gcox9XLliIwtxSKW2ksl
-         sRzIMhwTU2/6aYEdezSuUZbbqvehYeJtORGBeu0Dyv2Ep4GxFEIf/nKB2z2NI1PKp1R7
-         ivavR6AGiYoFsYS4iLuodQKElMqXpt3B2yUrmUwZxd6BbhEoVg9hC941s73czIkQ9cBF
-         BDaJ2arFuVTZpgr4jmSD6QETFQxphQ0HrygdgG3wX2t7gU/FBQzJ74asLLLs2Ew6qcNW
-         hl6w==
-X-Gm-Message-State: ABuFfogzhj5UYp8+Vm3/hJhm+Buvwf21Rx6jSX8cNBJRhLS6uKIBLNEl
-        lsG8hnP4i18x6wHeMj46QQaAcEsvClE=
-X-Google-Smtp-Source: ACcGV61wN8Uej/mabcjEqWmzzsHX9SfC8luAEWGznn+WZYs0gxKOv1FsM0mkIVr/PTnN/dVggaE7ng==
-X-Received: by 2002:a81:1b58:: with SMTP id b85-v6mr9728803ywb.63.1538525581226;
-        Tue, 02 Oct 2018 17:13:01 -0700 (PDT)
-Received: from mail-yw1-f41.google.com (mail-yw1-f41.google.com. [209.85.161.41])
-        by smtp.gmail.com with ESMTPSA id f194-v6sm9361459ywb.53.2018.10.02.17.12.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 17:12:59 -0700 (PDT)
-Received: by mail-yw1-f41.google.com with SMTP id m127-v6so1586398ywb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 17:12:59 -0700 (PDT)
-X-Received: by 2002:a0d:d302:: with SMTP id v2-v6mr10168177ywd.124.1538525579097;
- Tue, 02 Oct 2018 17:12:59 -0700 (PDT)
+        bh=jKZXhPCiJGRHSHVYUXEiAzpUgYvEO41vGGRUtxEQ8KQ=;
+        b=lP5o141CfPZiLJI/Vah/xaWiIkpSAK+z63srP0m5FSdPg481jrkQhqx9GZ/MW9lOif
+         hS1aApLApk84QroI/z+RGxkDHdl+vG06H3QO3fZNarQw6U7PTwe1Cq0RQvK3NDqqG34z
+         6iVoGpRBPnXlkAPjgw2tSftNI8Od1YRlM8zQfSsVjebhl8HPRcpX6sp+164idVIEW816
+         q1Pt03o0NHfzWQx6GNinTMQoXSrJvTW4fRYVv4KWnboN4AQFT3+F8XoEaNEDBRk6N+4F
+         AnajoqauLkhKr/0gqW8cly4tVBWoOdepSyKTtSbfh6CrYjNEpfH8X2Zkkz2jMDhgXpkh
+         2HGg==
+X-Gm-Message-State: ABuFfogNJ7cz6Il/L+1QnWXE6Km2FWCvw1fFmL4vDnWc9D7i16E1lMlT
+        1BZTorV2DjbPbni6VkeInzt7V5k3JeF/SRBZk3ZjUw==
+X-Google-Smtp-Source: ACcGV63ZA4Y4nizcyZjh0yhLVr3Rv1oNohhG4JWiAbRIlfUU3BnO2VU2SCx/d+v0A479D7MHXIGQHls5Xae1nRfje6U=
+X-Received: by 2002:a24:2744:: with SMTP id g65-v6mr3979663ita.47.1538525729438;
+ Tue, 02 Oct 2018 17:15:29 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Tue, 2 Oct 2018 17:12:58 -0700 (PDT)
-In-Reply-To: <3b539d37-136f-b868-3155-f2982eb63890@canonical.com>
-References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-24-keescook@chromium.org>
- <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
- <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
- <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
- <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
- <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
- <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
- <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <CAGXu5jKqSZ5LhQ_HwbA9-_DAg3efNzWfLjpxO_rurBgUZ-nnAA@mail.gmail.com>
- <3b539d37-136f-b868-3155-f2982eb63890@canonical.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 2 Oct 2018 17:12:58 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJ-2V5ch-Qer_O0mg1J5-9SUmyJXsGYicZEMyg5KkqHaw@mail.gmail.com>
-Message-ID: <CAGXu5jJ-2V5ch-Qer_O0mg1J5-9SUmyJXsGYicZEMyg5KkqHaw@mail.gmail.com>
-Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     James Morris <jmorris@namei.org>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20180927194601.207765-1-wonderfly@google.com> <20181001152324.72a20bea@gandalf.local.home>
+ <CAJmjG29Jwn_1E5zexcm8eXTG=cTWyEr1gjSfSAS2fueB_V0tfg@mail.gmail.com> <20181002084225.6z2b74qem3mywukx@pathway.suse.cz>
+In-Reply-To: <20181002084225.6z2b74qem3mywukx@pathway.suse.cz>
+From:   Daniel Wang <wonderfly@google.com>
+Date:   Tue, 2 Oct 2018 17:15:17 -0700
+Message-ID: <CAJmjG2-RrG5XKeW1-+rN3C=F6bZ-L3=YKhCiQ_muENDTzm_Ofg@mail.gmail.com>
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     rostedt@goodmis.org, stable@vger.kernel.org,
+        Alexander.Levin@microsoft.com, akpm@linux-foundation.org,
+        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
+        penguin-kernel@i-love.sakura.ne.jp, peterz@infradead.org,
+        tj@kernel.org, torvalds@linux-foundation.org, vbabka@suse.cz,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Peter Feiner <pfeiner@google.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="0000000000009ab1e5057747efa2"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 5:05 PM, John Johansen
-<john.johansen@canonical.com> wrote:
-> On 10/02/2018 04:54 PM, Kees Cook wrote:
->> That's not how I have it currently. It's a comma-separated a string,
->> including the reserved name "all". The default would just be
->> "CONFIG_LSM_ENABLE=all". Casey and I wanted this to have a way to
->> capture new LSMs by default at build-time.
->>
+--0000000000009ab1e5057747efa2
+Content-Type: text/plain; charset="UTF-8"
+
+On Tue, Oct 2, 2018 at 1:42 AM Petr Mladek <pmladek@suse.com> wrote:
 >
-> I understand where you are coming from, but speaking with my distro
-> hat on, that is not going to work. As a distro Ubuntu very much wants
-> to be able to offer all the LSMs built in to the kernel so the user
-> can select them. But very much wants to be able to specify a default
-> supported subset that is enabled at boot.
+> Well, I still wonder why it helped and why you do not see it with 4.4.
+> I have a feeling that the console owner switch helped only by chance.
+> In fact, you might be affected by a race in
+> printk_safe_flush_on_panic() that was fixed by the commit:
 >
-> I expect RH and Suse will feel similarily. Speaking for Ubuntu if this
-> isn't available as part of lsm stacking it will get distro patched in.
+> 554755be08fba31c7 printk: drop in_nmi check from printk_safe_flush_on_panic()
+>
+> The above one commit might be enough. Well, there was one more
+> NMI-related race that was fixed by:
+>
+> ba552399954dde1b printk: Split the code for storing a message into the log buffer
+> a338f84dc196f44b printk: Create helper function to queue deferred console handling
+> 03fc7f9c99c1e7ae printk/nmi: Prevent deadlock when accessing the main log buffer in NMI
 
-Right. Ubuntu would do something like:
+All of these commits already exist in 4.14 stable, since 4.14.68. The deadlock
+still exists even when built from 4.14.73 (latest tag) though. And cherrypicking
+dbdda842fe96 fixes it.
 
-CONFIG_LSM_ENABLE=yama,apparmor,integrity
+>
+> Best Regards,
+> Petr
 
-And that's why I wanted non-explicit lsm.enable, so that an end user
-could just do:
 
-lsm.enable=loadpin
-
-to add loadpin.
-
-Perhaps we could have both? "lsm.enable=+loadpin" (add loadpin to
-build default list) vs "lsm.enable=loadpin" (override build default
-list with ONLY loadpin).
-
--Kees
 
 -- 
-Kees Cook
-Pixel Security
+Best,
+Daniel
+
+--0000000000009ab1e5057747efa2
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIS7QYJKoZIhvcNAQcCoIIS3jCCEtoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghBTMIIEXDCCA0SgAwIBAgIOSBtqDm4P/739RPqw/wcwDQYJKoZIhvcNAQELBQAwZDELMAkGA1UE
+BhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExOjA4BgNVBAMTMUdsb2JhbFNpZ24gUGVy
+c29uYWxTaWduIFBhcnRuZXJzIENBIC0gU0hBMjU2IC0gRzIwHhcNMTYwNjE1MDAwMDAwWhcNMjEw
+NjE1MDAwMDAwWjBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEiMCAG
+A1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+AQoCggEBALR23lKtjlZW/17kthzYcMHHKFgywfc4vLIjfq42NmMWbXkNUabIgS8KX4PnIFsTlD6F
+GO2fqnsTygvYPFBSMX4OCFtJXoikP2CQlEvO7WooyE94tqmqD+w0YtyP2IB5j4KvOIeNv1Gbnnes
+BIUWLFxs1ERvYDhmk+OrvW7Vd8ZfpRJj71Rb+QQsUpkyTySaqALXnyztTDp1L5d1bABJN/bJbEU3
+Hf5FLrANmognIu+Npty6GrA6p3yKELzTsilOFmYNWg7L838NS2JbFOndl+ce89gM36CW7vyhszi6
+6LqqzJL8MsmkP53GGhf11YMP9EkmawYouMDP/PwQYhIiUO0CAwEAAaOCASIwggEeMA4GA1UdDwEB
+/wQEAwIBBjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwEgYDVR0TAQH/BAgwBgEB/wIB
+ADAdBgNVHQ4EFgQUyzgSsMeZwHiSjLMhleb0JmLA4D8wHwYDVR0jBBgwFoAUJiSSix/TRK+xsBtt
+r+500ox4AAMwSwYDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9ncy9n
+c3BlcnNvbmFsc2lnbnB0bnJzc2hhMmcyLmNybDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBKDA0MDIG
+CCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG
+9w0BAQsFAAOCAQEACskdySGYIOi63wgeTmljjA5BHHN9uLuAMHotXgbYeGVrz7+DkFNgWRQ/dNse
+Qa4e+FeHWq2fu73SamhAQyLigNKZF7ZzHPUkSpSTjQqVzbyDaFHtRBAwuACuymaOWOWPePZXOH9x
+t4HPwRQuur57RKiEm1F6/YJVQ5UTkzAyPoeND/y1GzXS4kjhVuoOQX3GfXDZdwoN8jMYBZTO0H5h
+isymlIl6aot0E5KIKqosW6mhupdkS1ZZPp4WXR4frybSkLejjmkTYCTUmh9DuvKEQ1Ge7siwsWgA
+NS1Ln+uvIuObpbNaeAyMZY0U5R/OyIDaq+m9KXPYvrCZ0TCLbcKuRzCCBB4wggMGoAMCAQICCwQA
+AAAAATGJxkCyMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9vdCBDQSAt
+IFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTExMDgwMjEw
+MDAwMFoXDTI5MDMyOTEwMDAwMFowZDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24g
+bnYtc2ExOjA4BgNVBAMTMUdsb2JhbFNpZ24gUGVyc29uYWxTaWduIFBhcnRuZXJzIENBIC0gU0hB
+MjU2IC0gRzIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCg/hRKosYAGP+P7mIdq5NB
+Kr3J0tg+8lPATlgp+F6W9CeIvnXRGUvdniO+BQnKxnX6RsC3AnE0hUUKRaM9/RDDWldYw35K+sge
+C8fWXvIbcYLXxWkXz+Hbxh0GXG61Evqux6i2sKeKvMr4s9BaN09cqJ/wF6KuP9jSyWcyY+IgL6u2
+52my5UzYhnbf7D7IcC372bfhwM92n6r5hJx3r++rQEMHXlp/G9J3fftgsD1bzS7J/uHMFpr4MXua
+eoiMLV5gdmo0sQg23j4pihyFlAkkHHn4usPJ3EePw7ewQT6BUTFyvmEB+KDoi7T4RCAZDstgfpzD
+rR/TNwrK8/FXoqnFAgMBAAGjgegwgeUwDgYDVR0PAQH/BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8C
+AQEwHQYDVR0OBBYEFCYkkosf00SvsbAbba/udNKMeAADMEcGA1UdIARAMD4wPAYEVR0gADA0MDIG
+CCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzA2BgNVHR8E
+LzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24ubmV0L3Jvb3QtcjMuY3JsMB8GA1UdIwQY
+MBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MA0GCSqGSIb3DQEBCwUAA4IBAQACAFVjHihZCV/IqJYt
+7Nig/xek+9g0dmv1oQNGYI1WWeqHcMAV1h7cheKNr4EOANNvJWtAkoQz+076Sqnq0Puxwymj0/+e
+oQJ8GRODG9pxlSn3kysh7f+kotX7pYX5moUa0xq3TCjjYsF3G17E27qvn8SJwDsgEImnhXVT5vb7
+qBYKadFizPzKPmwsJQDPKX58XmPxMcZ1tG77xCQEXrtABhYC3NBhu8+c5UoinLpBQC1iBnNpNwXT
+Lmd4nQdf9HCijG1e8myt78VP+QSwsaDT7LVcLT2oDPVggjhVcwljw3ePDwfGP9kNrR+lc8XrfClk
+WbrdhC2o4Ui28dtIVHd3MIIDXzCCAkegAwIBAgILBAAAAAABIVhTCKIwDQYJKoZIhvcNAQELBQAw
+TDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24x
+EzARBgNVBAMTCkdsb2JhbFNpZ24wHhcNMDkwMzE4MTAwMDAwWhcNMjkwMzE4MTAwMDAwWjBMMSAw
+HgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEG
+A1UEAxMKR2xvYmFsU2lnbjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMwldpB5Bngi
+FvXAg7aEyiie/QV2EcWtiHL8RgJDx7KKnQRfJMsuS+FggkbhUqsMgUdwbN1k0ev1LKMPgj0MK66X
+17YUhhB5uzsTgHeMCOFJ0mpiLx9e+pZo34knlTifBtc+ycsmWQ1z3rDI6SYOgxXG71uL0gRgykmm
+KPZpO/bLyCiR5Z2KYVc3rHQU3HTgOu5yLy6c+9C7v/U9AOEGM+iCK65TpjoWc4zdQQ4gOsC0p6Hp
+sk+QLjJg6VfLuQSSaGjlOCZgdbKfd/+RFO+uIEn8rUAVSNECMWEZXriX7613t2Saer9fwRPvm2L7
+DWzgVGkWqQPabumDk3F2xmmFghcCAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQF
+MAMBAf8wHQYDVR0OBBYEFI/wS3+oLkUkrk1Q+mOai97i3Ru8MA0GCSqGSIb3DQEBCwUAA4IBAQBL
+QNvAUKr+yAzv95ZURUm7lgAJQayzE4aGKAczymvmdLm6AC2upArT9fHxD4q/c2dKg8dEe3jgr25s
+bwMpjjM5RcOO5LlXbKr8EpbsU8Yt5CRsuZRj+9xTaGdWPoO4zzUhw8lo/s7awlOqzJCK6fBdRoyV
+3XpYKBovHd7NADdBj+1EbddTKJd+82cEHhXXipa0095MJ6RMG3NzdvQXmcIfeg7jLQitChws/zyr
+VQ4PkX4268NXSb7hLi18YIvDQVETI53O9zJrlAGomecsMx86OyXShkDOOyyGeMlhLxS67ttVb9+E
+7gUJTb0o2HLO02JQZR7rkpeDMdmztcpHWD9fMIIEajCCA1KgAwIBAgIMTmnftMpllv264rvDMA0G
+CSqGSIb3DQEBCwUAMEwxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSIw
+IAYDVQQDExlHbG9iYWxTaWduIEhWIFMvTUlNRSBDQSAxMB4XDTE4MDYyNzE2NTUyN1oXDTE4MTIy
+NDE2NTUyN1owJTEjMCEGCSqGSIb3DQEJAQwUd29uZGVyZmx5QGdvb2dsZS5jb20wggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvqTn5fjMyxd2JmEjHMdHZc/D9hSkUVivZIYkBNkexkbC6
+v4DDP8HCdjKkGNNKLJWJQCHLyGTJv2uwnQHTThlEJYrvATCkg2y1SSapaXqMlgSYSskrQM/D2mfY
+TnDa0NzJ/Vy1jqzvmLBpacy3D/RqV2seky2k3x3nVC4bzGaJ+IPxKTRjIccixTxvWU+S64NK3jek
+VaUPAqG9D59xbHOEbEsu/F0rpqhvVfl733hzS37eBlUmTdDTpgDox/kApF1hI7WMyijIp77fuLbr
+Q9C6hetDKotdJX1jmZg9TifwJaDf1HFyrzHzl3jkxELVqvLS3n3nKvNf1PWlDVB5H9zrAgMBAAGj
+ggFxMIIBbTAfBgNVHREEGDAWgRR3b25kZXJmbHlAZ29vZ2xlLmNvbTBQBggrBgEFBQcBAQREMEIw
+QAYIKwYBBQUHMAKGNGh0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzaHZzbWlt
+ZWNhMS5jcnQwHQYDVR0OBBYEFHswV6b+EY77vBWQKD6Dmp9n2Jp7MB8GA1UdIwQYMBaAFMs4ErDH
+mcB4koyzIZXm9CZiwOA/MEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
+dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMDsGA1UdHwQ0MDIwMKAuoCyGKmh0
+dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NodnNtaW1lY2ExLmNybDAOBgNVHQ8BAf8EBAMCBaAw
+HQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4IBAQCKdekZm8Fn
+LFr+VBrtMVdmg4uKT25UuNxBxtgYJNqP/hYvkbGxHZnbTeQs63W5u+DW++SIfXI0aP1Lp34TFidR
+bIL+4+xzfrlWGFcPb1IBl0fdNr5mnUdluXE78N0zwUiv3qa66dwP8oVooeDmRHOHO0A20C5/24q7
+GIWfW2K2CeBWRj0OI1P6XUm+unjVNzVz6fE9J91Xf13NxK9Pc647cBIP4eiHNVa7ErprHQoDevx+
+OHFHle2OOiJZoAqFNvKbQSuWBg+Obv3CjPLZ7lwdB9VBg3F5qEaD+BsyHwj+kMinP7wCI+mIc1nU
+PcdI0z7gBtGEit9qr9qcJrdKjDlTMYICXjCCAloCAQEwXDBMMQswCQYDVQQGEwJCRTEZMBcGA1UE
+ChMQR2xvYmFsU2lnbiBudi1zYTEiMCAGA1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMQIM
+TmnftMpllv264rvDMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCAciGL731kkxY9v
++bu7mfVDXjMXx5sNwN5GyKdvzrr0WzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3
+DQEJBTEPFw0xODEwMDMwMDE1MjlaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCG
+SAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEB
+BzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAEnwLdC02U6xmK2SeO3gcwXgkQkTFYMbI
+xsRCJ3/TtWFRKnK09ELpYiVjMtrua5O1Icxsf/6N622V6fVuB4N3s9YhGsqdXd2M4JUyhkN4hLNP
+PiYcNl77oywu3j0us/cD8bL9qkj2PDTDnSJ9vuYftsSSveBYDvjAQD3e0E3RuWbCjINdWk2NbnkM
+uKMVL6QISRIcGarskrVAwwtYDWS7s44HQsJJIIGaUrD2hnlTnFUo6l0B7fozvZEuFh9c+N9mp6gv
+0ivLWC2ugUr4AxzNWynim9GNc+5bkMh81jj6mQZK4MKzRjIUbdvtSi/XIlKBofT7L2tgEtu6S/Ad
+X/FfEQ==
+--0000000000009ab1e5057747efa2--
