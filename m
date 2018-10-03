@@ -2,265 +2,65 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFEA7C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C93CC64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 750BE2098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:59:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 750BE2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0937A2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:59:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0937A2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeJCPqk (ORCPT
+        id S1727675AbeJCPqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 11:46:40 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:57478 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727356AbeJCPqj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 11:46:39 -0400
-Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1g7czu-00028D-H4 from Jiada_Wang@mentor.com ; Wed, 03 Oct 2018 01:59:10 -0700
-Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Wed, 3 Oct 2018 01:59:07 -0700
-From:   <jiada_wang@mentor.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH linux-next v2 2/9] arm64: r8a7796: add dma request number for busif0 ~ busif7
-Date:   Wed, 3 Oct 2018 17:58:48 +0900
-Message-ID: <20181003085855.4305-3-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20181003085855.4305-1-jiada_wang@mentor.com>
-References: <20181003085855.4305-1-jiada_wang@mentor.com>
+        Wed, 3 Oct 2018 11:46:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49060 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727648AbeJCPqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 11:46:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B8272AD7D;
+        Wed,  3 Oct 2018 08:59:13 +0000 (UTC)
+Date:   Wed, 3 Oct 2018 10:59:12 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Sean O'Brien <seobrien@chromium.org>
+cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Marek Wyborski <marek.wyborski@emwesoft.com>,
+        linux-kernel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Henrik Rydberg <rydberg@bitmath.org>,
+        Claudio Mettler <claudio@ponyfleisch.ch>
+Subject: Re: [PATCH] [v4] HID: add support for Apple Magic Trackpad 2
+In-Reply-To: <20181002225337.7349-1-seobrien@chromium.org>
+Message-ID: <nycvar.YFH.7.76.1810031059000.14430@cbobk.fhfr.pm>
+References: <20181002225337.7349-1-seobrien@chromium.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiada Wang <jiada_wang@mentor.com>
+On Tue, 2 Oct 2018, Sean O'Brien wrote:
 
-This patch adds dma request number for busif0 ~ busif7
-to be used by GEN3 series. GEN2 continues to use rxu/txu
-for busif data transfer.
+> USB device
+>         Vendor 05ac (Apple)
+>         Device 0265 (Magic Trackpad 2)
+> Bluetooth device
+>         Vendor 004c (Apple)
+>         Device 0265 (Magic Trackpad 2)
+> 
+> Add support for Apple Magic Trackpad 2 over USB and bluetooth, putting
+> the device in multi-touch mode.
 
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 164 ++++++++++++++++++++---
- 1 file changed, 144 insertions(+), 20 deletions(-)
+Applied, thanks.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 1ec6aaa520c1..53b361c5b16d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1797,53 +1797,177 @@
- 			rcar_sound,ssi {
- 				ssi0: ssi-0 {
- 					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x01>, <&audma1 0x02>,
-+					       <&audma0 0x15>, <&audma1 0x16>,
-+					       <&audma0 0x15>, <&audma1 0x16>,
-+					       <&audma0 0x35>, <&audma1 0x36>,
-+					       <&audma0 0x37>, <&audma1 0x38>,
-+					       <&audma0 0x47>, <&audma1 0x48>,
-+					       <&audma0 0x3f>, <&audma1 0x40>,
-+					       <&audma0 0x43>, <&audma1 0x44>,
-+					       <&audma0 0x4f>, <&audma1 0x50>,
-+					       <&audma0 0x53>, <&audma1 0x54>;
-+					dma-names = "rx", "tx",
-+						    "rxu", "txu",
-+						    "rxu0", "txu0",
-+						    "rxu1", "txu1",
-+						    "rxu2", "txu2",
-+						    "rxu3", "txu3",
-+						    "rxu4", "txu4",
-+						    "rxu5", "txu5",
-+						    "rxu6", "txu6",
-+						    "rxu7", "txu7";
- 				};
- 				ssi1: ssi-1 {
- 					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x03>, <&audma1 0x04>,
-+					       <&audma0 0x49>, <&audma1 0x4a>,
-+					       <&audma0 0x49>, <&audma1 0x4a>,
-+					       <&audma0 0x4b>, <&audma1 0x4c>,
-+					       <&audma0 0x57>, <&audma1 0x58>,
-+					       <&audma0 0x59>, <&audma1 0x5a>,
-+					       <&audma0 0x5f>, <&audma1 0x60>,
-+					       <&audma0 0xc3>, <&audma1 0xc4>,
-+					       <&audma0 0xc7>, <&audma1 0xc8>,
-+					       <&audma0 0xcb>, <&audma1 0xcc>;
-+					dma-names = "rx", "tx",
-+						    "rxu", "txu",
-+						    "rxu0", "txu0",
-+						    "rxu1", "txu1",
-+						    "rxu2", "txu2",
-+						    "rxu3", "txu3",
-+						    "rxu4", "txu4",
-+						    "rxu5", "txu5",
-+						    "rxu6", "txu6",
-+						    "rxu7", "txu7";
- 				};
- 				ssi2: ssi-2 {
- 					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x05>, <&audma1 0x06>,
-+					       <&audma0 0x63>, <&audma1 0x64>,
-+					       <&audma0 0x63>, <&audma1 0x64>,
-+					       <&audma0 0x67>, <&audma1 0x68>,
-+					       <&audma0 0x6b>, <&audma1 0x6c>,
-+					       <&audma0 0x6d>, <&audma1 0x6e>,
-+					       <&audma0 0xcf>, <&audma1 0xce>,
-+					       <&audma0 0xeb>, <&audma1 0xec>,
-+					       <&audma0 0xed>, <&audma1 0xee>,
-+					       <&audma0 0xef>, <&audma1 0xf0>;
-+					dma-names = "rx", "tx",
-+						    "rxu", "txu",
-+						    "rxu0", "txu0",
-+						    "rxu1", "txu1",
-+						    "rxu2", "txu2",
-+						    "rxu3", "txu3",
-+						    "rxu4", "txu4",
-+						    "rxu5", "txu5",
-+						    "rxu6", "txu6",
-+						    "rxu7", "txu7";
- 				};
- 				ssi3: ssi-3 {
- 					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x07>, <&audma1 0x08>,
-+					       <&audma0 0x6f>, <&audma1 0x70>,
-+					       <&audma0 0x6f>, <&audma1 0x70>,
-+					       <&audma0 0x21>, <&audma1 0x22>,
-+					       <&audma0 0x23>, <&audma1 0x24>,
-+					       <&audma0 0x25>, <&audma1 0x26>,
-+					       <&audma0 0x27>, <&audma1 0x28>,
-+					       <&audma0 0x29>, <&audma1 0x2a>,
-+					       <&audma0 0x2b>, <&audma1 0x2c>,
-+					       <&audma0 0x2d>, <&audma1 0x2e>;
-+					dma-names = "rx", "tx",
-+						    "rxu", "txu",
-+						    "rxu0", "txu0",
-+						    "rxu1", "txu1",
-+						    "rxu2", "txu2",
-+						    "rxu3", "txu3",
-+						    "rxu4", "txu4",
-+						    "rxu5", "txu5",
-+						    "rxu6", "txu6",
-+						    "rxu7", "txu7";
- 				};
- 				ssi4: ssi-4 {
- 					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x09>, <&audma1 0x0a>,
-+					       <&audma0 0x71>, <&audma1 0x72>,
-+					       <&audma0 0x71>, <&audma1 0x72>,
-+					       <&audma0 0x17>, <&audma1 0x18>,
-+					       <&audma0 0x19>, <&audma1 0x1a>,
-+					       <&audma0 0x1b>, <&audma1 0x1c>,
-+					       <&audma0 0x1d>, <&audma1 0x1e>,
-+					       <&audma0 0x1f>, <&audma1 0x20>,
-+					       <&audma0 0x31>, <&audma1 0x32>,
-+					       <&audma0 0x33>, <&audma1 0x34>;
-+					dma-names = "rx", "tx",
-+						    "rxu", "txu",
-+						    "rxu0", "txu0",
-+						    "rxu1", "txu1",
-+						    "rxu2", "txu2",
-+						    "rxu3", "txu3",
-+						    "rxu4", "txu4",
-+						    "rxu5", "txu5",
-+						    "rxu6", "txu6",
-+						    "rxu7", "txu7";
- 				};
- 				ssi5: ssi-5 {
- 					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x0b>, <&audma1 0x0c>,
-+					       <&audma0 0x73>, <&audma1 0x74>,
-+					       <&audma0 0x73>, <&audma1 0x74>;
-+					dma-names = "rx", "tx",
-+						    "rxu", "txu",
-+						    "rxu0", "txu0";
- 				};
- 				ssi6: ssi-6 {
- 					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x0d>, <&audma1 0x0e>,
-+					       <&audma0 0x75>, <&audma1 0x76>,
-+					       <&audma0 0x75>, <&audma1 0x76>;
-+					dma-names = "rx", "tx",
-+						    "rxu", "txu",
-+						    "rxu0", "txu0";
- 				};
- 				ssi7: ssi-7 {
- 					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x0f>, <&audma1 0x10>,
-+					       <&audma0 0x79>, <&audma1 0x7a>,
-+					       <&audma0 0x79>, <&audma1 0x7a>;
-+					dma-names = "rx", "tx",
-+						    "rxu", "txu",
-+						    "rxu0", "txu0";
- 				};
- 				ssi8: ssi-8 {
- 					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x11>, <&audma1 0x12>,
-+					       <&audma0 0x7b>, <&audma1 0x7c>,
-+					       <&audma0 0x7b>, <&audma1 0x7c>;
-+					dma-names = "rx", "tx",
-+						    "rxu", "txu",
-+						    "rxu0", "txu0";
- 				};
- 				ssi9: ssi-9 {
- 					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x13>, <&audma1 0x14>,
-+					       <&audma0 0x7d>, <&audma1 0x7e>,
-+					       <&audma0 0x7d>, <&audma1 0x7e>,
-+					       <&audma0 0x7f>, <&audma1 0x80>,
-+					       <&audma0 0x81>, <&audma1 0x82>,
-+					       <&audma0 0x83>, <&audma1 0x84>,
-+					       <&audma0 0xa3>, <&audma1 0xa4>,
-+					       <&audma0 0xa5>, <&audma1 0xa6>,
-+					       <&audma0 0xa7>, <&audma1 0xa8>,
-+					       <&audma0 0xa9>, <&audma1 0xaa>;
-+					dma-names = "rx", "tx",
-+						    "rxu", "txu",
-+						    "rxu0", "txu0",
-+						    "rxu1", "txu1",
-+						    "rxu2", "txu2",
-+						    "rxu3", "txu3",
-+						    "rxu4", "txu4",
-+						    "rxu5", "txu5",
-+						    "rxu6", "txu6",
-+						    "rxu7", "txu7";
- 				};
- 			};
- 
 -- 
-2.17.0
+Jiri Kosina
+SUSE Labs
 
