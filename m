@@ -2,143 +2,100 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7B1C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B23C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 717F42089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:20:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 717F42089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id AB9982089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:23:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="hmSAio8z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB9982089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbeJCWJc (ORCPT
+        id S1727044AbeJCWMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:09:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52898 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbeJCWJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:09:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD15F7A9;
-        Wed,  3 Oct 2018 08:20:41 -0700 (PDT)
-Received: from [10.4.13.99] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8570B3F5A0;
-        Wed,  3 Oct 2018 08:20:40 -0700 (PDT)
-Subject: Re: [PATCH v8 2/9] KVM: arm/arm64: Share common code in
- user_mem_abort()
-To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
-Cc:     will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
-        Christoffer Dall <christoffer.dall@arm.com>
-References: <20181001155443.23032-1-punit.agrawal@arm.com>
- <20181001155443.23032-3-punit.agrawal@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <1eb4df93-4610-ac83-fec3-6a7efeddfc4f@arm.com>
-Date:   Wed, 3 Oct 2018 16:20:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 3 Oct 2018 18:12:00 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42584 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbeJCWMA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 18:12:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ukh4h2pcN2v/h7FlsGd54FCFK4BEd7uhwbvVoO1B4nA=; b=hmSAio8zQR6NNC/EeFj6QONDW
+        IZuDbS7Md6Qz1voZZ3zMXhoBBoiG9usHbEb+/cGKmo37PHYSlMgcWG0jcczADjlbnaxpKkDzjRiWA
+        TP88/MOfmT3dZ8o1FcBRIZPCNAFKp0FZ3usGgQ/F8CQtKtHEwTY8NQT5m77Wt/4OFDZvo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g7izH-00065w-Hx; Wed, 03 Oct 2018 15:22:55 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 1E65C1122286; Wed,  3 Oct 2018 16:22:55 +0100 (BST)
+Date:   Wed, 3 Oct 2018 16:22:55 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: pxa2xx: Mark expected switch fall-through
+Message-ID: <20181003152255.GE7132@sirena.org.uk>
+References: <20181003121211.GA28108@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20181001155443.23032-3-punit.agrawal@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pY3vCvL1qV+PayAL"
+Content-Disposition: inline
+In-Reply-To: <20181003121211.GA28108@embeddedor.com>
+X-Cookie: The time is right to make new friends.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Punit,
 
-On 01/10/18 16:54, Punit Agrawal wrote:
-> The code for operations such as marking the pfn as dirty, and
-> dcache/icache maintenance during stage 2 fault handling is duplicated
-> between normal pages and PMD hugepages.
-> 
-> Instead of creating another copy of the operations when we introduce
-> PUD hugepages, let's share them across the different pagesizes.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->   virt/kvm/arm/mmu.c | 45 +++++++++++++++++++++++++++++----------------
->   1 file changed, 29 insertions(+), 16 deletions(-)
-> 
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index c23a1b323aad..5b76ee204000 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -1490,7 +1490,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->   	kvm_pfn_t pfn;
->   	pgprot_t mem_type = PAGE_S2;
->   	bool logging_active = memslot_is_logging(memslot);
-> -	unsigned long flags = 0;
-> +	unsigned long vma_pagesize, flags = 0;
->   
->   	write_fault = kvm_is_write_fault(vcpu);
->   	exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
-> @@ -1510,10 +1510,17 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->   		return -EFAULT;
->   	}
->   
-> -	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
-> +	vma_pagesize = vma_kernel_pagesize(vma);
-> +	if (vma_pagesize == PMD_SIZE && !logging_active) {
->   		hugetlb = true;
->   		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
->   	} else {
-> +		/*
-> +		 * Fallback to PTE if it's not one of the Stage 2
-> +		 * supported hugepage sizes
-> +		 */
-> +		vma_pagesize = PAGE_SIZE;
-> +
->   		/*
->   		 * Pages belonging to memslots that don't have the same
->   		 * alignment for userspace and IPA cannot be mapped using
-> @@ -1579,23 +1586,34 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->   	if (mmu_notifier_retry(kvm, mmu_seq))
->   		goto out_unlock;
->   
-> -	if (!hugetlb && !force_pte)
-> +	if (!hugetlb && !force_pte) {
-> +		/*
-> +		 * Only PMD_SIZE transparent hugepages(THP) are
-> +		 * currently supported. This code will need to be
-> +		 * updated to support other THP sizes.
-> +		 */
->   		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
-> +		if (hugetlb)
-> +			vma_pagesize = PMD_SIZE;
-> +	}
-> +
-> +	if (writable)
-> +		kvm_set_pfn_dirty(pfn);
->   
-> -	if (hugetlb) {
-> +	if (fault_status != FSC_PERM)
-> +		clean_dcache_guest_page(pfn, vma_pagesize);
-> +
-> +	if (exec_fault)
-> +		invalidate_icache_guest_page(pfn, vma_pagesize);
-> +
-> +	if (hugetlb && vma_pagesize == PMD_SIZE) {
+--pY3vCvL1qV+PayAL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Can you end-up in a situation where hugetlb==false and vma_pagesize == 
-PMD_SIZE? If that's the case, then the above CMOs are not done on the 
-same granularity as they were done before this patch. If that cannot 
-happen, then the above condition can be simplified.
+On Wed, Oct 03, 2018 at 02:12:11PM +0200, Gustavo A. R. Silva wrote:
 
-Which one is it?
+>  			switch (drv_data->n_bytes) {
+>  			case 4:
+>  				bytes_left >>= 1;
+> +				/* Fall through */
+>  			case 2:
+>  				bytes_left >>= 1;
+>  			}
 
-Thanks,
+I think this code is just being too cute and it'd be better to just
+rewrite it to directly do the expected number of shifts directly in each
+case and have break statements; your fix is good but still not ideal for
+readability I think.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+--pY3vCvL1qV+PayAL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu03s4ACgkQJNaLcl1U
+h9BzTAf9GdSvoAIZoKPwAu9TkxBbtZF9kfEGoENWDZsf6o/QUHVRh6cDaCm08nO3
+HAqK9wt7fN2SPSNxAXPRN2/XS020aV4Vvlbq6UvMK9zGfhjMEMtkTNTTOd9D4q0x
+eHQrUGANKN0h8wPn/MISL1DxROeUmOjl5bl2sp28LJ40RadQQoHi9ICrKkXRR69k
+k+8+lQOliYMTP6C68YpJcFR6uo8lslvcA0XoGazLaYZkTbH+YE+Hq5Jfneng+ZRQ
+HdkOdIB7QoNB4y3hnP69D8DCZKuQUSKvmx+3lTLbqRLidDerScZy1iHJlfY3QTAl
+fl+f6NHqsI20KHJ8eI5IKkC2b207oQ==
+=BYK9
+-----END PGP SIGNATURE-----
+
+--pY3vCvL1qV+PayAL--
