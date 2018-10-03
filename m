@@ -2,82 +2,100 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C65C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B4AC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C96A2089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:57:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C96A2089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 476EC2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:57:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 476EC2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbeJCUpi (ORCPT
+        id S1727085AbeJCUp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 16:45:38 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:48678 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726769AbeJCUpi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 16:45:38 -0400
-Received: (qmail 1563 invoked by uid 2102); 3 Oct 2018 09:57:06 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 3 Oct 2018 09:57:06 -0400
-Date:   Wed, 3 Oct 2018 09:57:06 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-cc:     gregkh@linuxfoundation.org, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: core: Check portchange C_PORT_RESET after resetting
-In-Reply-To: <20181003051822.4011-1-kai.heng.feng@canonical.com>
-Message-ID: <Pine.LNX.4.44L0.1810030956270.1413-100000@iolanthe.rowland.org>
+        Wed, 3 Oct 2018 16:45:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57002 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726769AbeJCUp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 16:45:56 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6F6103082A33;
+        Wed,  3 Oct 2018 13:57:25 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E72A62016350;
+        Wed,  3 Oct 2018 13:57:24 +0000 (UTC)
+Subject: Re: [PATCH v2 4/5] locking/lockdep: Make class->ops a percpu counter
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org
+References: <1538511560-10090-1-git-send-email-longman@redhat.com>
+ <1538511560-10090-5-git-send-email-longman@redhat.com>
+ <20181003074809.GJ26858@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <62801eb9-16f2-606f-d3a2-61fef5b0a704@redhat.com>
+Date:   Wed, 3 Oct 2018 09:57:24 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20181003074809.GJ26858@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 03 Oct 2018 13:57:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Oct 2018, Kai-Heng Feng wrote:
+On 10/03/2018 03:48 AM, Peter Zijlstra wrote:
+> On Tue, Oct 02, 2018 at 04:19:19PM -0400, Waiman Long wrote:
+>> +DEFINE_PER_CPU(unsigned long [MAX_LOCKDEP_KEYS], lock_class_ops);
+>> @@ -179,9 +181,30 @@ DECLARE_PER_CPU(struct lockdep_stats, lockdep_stats);
+>>  	}								\
+>>  	__total;							\
+>>  })
+>> +
+>> +static inline void debug_class_ops_inc(struct lock_class *class)
+>> +{
+>> +	int idx;
+>> +
+>> +	idx = class - lock_classes;
+>> +	__this_cpu_inc(lock_class_ops[idx]);
+>> +}
+>> +
+>> +static inline unsigned long debug_class_ops_read(struct lock_class *class)
+>> +{
+>> +	int idx, cpu;
+>> +	unsigned long ops = 0;
+>> +
+>> +	idx = class - lock_classes;
+>> +	for_each_possible_cpu(cpu)
+>> +		ops += per_cpu(lock_class_ops[idx], cpu);
+>> +	return ops;
+>> +}
+> Would it make sense to stick that in struct lockdep_stats ?
+>
+> A little something like:
+>
+> struct lockdep_stats {
+> 	/* ... */
+> 	int	lock_class_ops[MAX_LOCKDEP_KEYS];
+> };
+>
+> and then use:
+>
+> 	debug_atomic_inc(lock_class_ops[idx]);
+>
+Yes, I can certainly do that. Thanks for pointing this out. Will post an
+updated patch just for this one.
 
-> Based on USB2.0 Spec Section 11.24.2.7.2.5:
-> 
->   "This bit is set when the port transitions from the Resetting state (or,
->   if present, the Speed_eval state) to the Enabled state."
-> 
-> Also Section 11.24.2.13:
-> 
->   "Setting the reset feature PORT_RESET causes the hub to signal reset on
->   that port. When the reset signaling is complete, the hub sets the
->   C_PORT_RESET status change and immediately enables the port."
-> 
-> So let's also check C_PORT_RESET for reset completion.
-> 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->  drivers/usb/core/hub.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index 7801bb30bdba..d96058372280 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -2721,7 +2721,8 @@ static int hub_port_wait_reset(struct usb_hub *hub, int port1,
->  		 * so also wait for the connection to be re-established.
->  		 */
->  		if (!(portstatus & USB_PORT_STAT_RESET) &&
-> -		    (portstatus & USB_PORT_STAT_CONNECTION))
-> +		    (portstatus & USB_PORT_STAT_CONNECTION) &&
-> +		    (portchange & USB_PORT_STAT_C_RESET))
->  			break;
->  
->  		/* switch to the long delay after two short delay failures */
-
-What is the purpose of this patch?  Does it fix a problem?
-
-Alan Stern
+Cheers,
+Longman
 
