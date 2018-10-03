@@ -6,217 +6,184 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF58C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FD7C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C7C20835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:19:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69C7C20835
+	by mail.kernel.org (Postfix) with ESMTP id AF3BA20835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:20:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF3BA20835
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeJDAJN (ORCPT
+        id S1727562AbeJDAJR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 20:09:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45838 "EHLO mx1.redhat.com"
+        Wed, 3 Oct 2018 20:09:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41184 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726851AbeJDAJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 20:09:13 -0400
+        id S1726851AbeJDAJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 20:09:16 -0400
 Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 43F54811AC;
-        Wed,  3 Oct 2018 17:19:55 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 283F6C04BD5C;
+        Wed,  3 Oct 2018 17:19:58 +0000 (UTC)
 Received: from rules.brq.redhat.com (ovpn-200-24.brq.redhat.com [10.40.200.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B53BE309136D;
-        Wed,  3 Oct 2018 17:19:52 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E9380309136D;
+        Wed,  3 Oct 2018 17:19:55 +0000 (UTC)
 From:   Vladis Dronov <vdronov@redhat.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Vladis Dronov <vdronov@redhat.com>
-Subject: [PATCH 1/3] HID: debug: avoid infinite loop and corrupting data
-Date:   Wed,  3 Oct 2018 19:19:34 +0200
-Message-Id: <20181003171936.11271-2-vdronov@redhat.com>
+Subject: [PATCH 2/3] HID: debug: provide reader-writer locking for the ring buffer
+Date:   Wed,  3 Oct 2018 19:19:35 +0200
+Message-Id: <20181003171936.11271-3-vdronov@redhat.com>
 In-Reply-To: <20181003171936.11271-1-vdronov@redhat.com>
 References: <20181003171936.11271-1-vdronov@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 03 Oct 2018 17:19:55 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 03 Oct 2018 17:19:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hid_debug_events_read() does not properly handle the case when tail < head
-and count < HID_DEBUG_BUFSIZE - head and returns corrupted data. Also,
-after commit 717adfdaf147 ("HID: debug: check length before
-copy_to_user()") it can enter an infinite loop if called with count == 0.
-Fix this by properly handling this case and adding a check.
-
-Also, the function has "while (ret == 0)" loop which is not needed, remove
-it.
+hdev->debug_list->hid_debug_buf is not protected from concurrent updates
+from the writer, hid_debug_event() and reads by the reader,
+hid_debug_events_read(). Fix this by adding per-list-element spinlock.
+Also introduce a temporary buffer tempbuf so copy_to_user() is not called
+from under a spinlock.
 
 Signed-off-by: Vladis Dronov <vdronov@redhat.com>
 ---
- drivers/hid/hid-debug.c | 109 ++++++++++++++++++++++++----------------
- 1 file changed, 65 insertions(+), 44 deletions(-)
+ drivers/hid/hid-debug.c   | 47 +++++++++++++++++++++++----------------
+ include/linux/hid-debug.h |  1 +
+ 2 files changed, 29 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index b48100236df8..20580871b0ec 100644
+index 20580871b0ec..e827784baf1a 100644
 --- a/drivers/hid/hid-debug.c
 +++ b/drivers/hid/hid-debug.c
-@@ -722,7 +722,7 @@ void hid_dump_input(struct hid_device *hdev, struct hid_usage *usage, __s32 valu
- 	hid_debug_event(hdev, buf);
+@@ -663,15 +663,17 @@ void hid_debug_event(struct hid_device *hdev, char *buf)
+ {
+ 	unsigned i;
+ 	struct hid_debug_list *list;
+-	unsigned long flags;
++	unsigned long flags, flags2;
  
- 	kfree(buf);
--        wake_up_interruptible(&hdev->debug_wait);
-+	wake_up_interruptible(&hdev->debug_wait);
+ 	spin_lock_irqsave(&hdev->debug_list_lock, flags);
+ 	list_for_each_entry(list, &hdev->debug_list, node) {
++		spin_lock_irqsave(&list->list_lock, flags2);
+ 		for (i = 0; buf[i]; i++)
+ 			list->hid_debug_buf[(list->tail + i) % HID_DEBUG_BUFSIZE] =
+ 				buf[i];
+ 		list->tail = (list->tail + i) % HID_DEBUG_BUFSIZE;
+-        }
++		spin_unlock_irqrestore(&list->list_lock, flags2);
++	}
+ 	spin_unlock_irqrestore(&hdev->debug_list_lock, flags);
  
- }
- EXPORT_SYMBOL_GPL(hid_dump_input);
-@@ -1112,73 +1112,95 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
+ 	wake_up_interruptible(&hdev->debug_wait);
+@@ -1095,6 +1097,7 @@ static int hid_debug_events_open(struct inode *inode, struct file *file)
+ 	}
+ 	list->hdev = (struct hid_device *) inode->i_private;
+ 	file->private_data = list;
++	spin_lock_init(&list->list_lock);
+ 	mutex_init(&list->read_mutex);
+ 
+ 	spin_lock_irqsave(&list->hdev->debug_list_lock, flags);
+@@ -1109,6 +1112,8 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
+ 		size_t count, loff_t *ppos)
+ {
+ 	struct hid_debug_list *list = file->private_data;
++	char *tmpbuf;
++	unsigned long flags;
  	int ret = 0, len;
  	DECLARE_WAITQUEUE(wait, current);
  
--	mutex_lock(&list->read_mutex);
--	while (ret == 0) {
--		if (list->head == list->tail) {
--			add_wait_queue(&list->hdev->debug_wait, &wait);
--			set_current_state(TASK_INTERRUPTIBLE);
-+	if (!count)
-+		return 0;
+@@ -1151,10 +1156,18 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
+ 	if (ret)
+ 		goto out;
  
--			while (list->head == list->tail) {
--				if (file->f_flags & O_NONBLOCK) {
--					ret = -EAGAIN;
--					break;
--				}
--				if (signal_pending(current)) {
--					ret = -ERESTARTSYS;
--					break;
--				}
-+	mutex_lock(&list->read_mutex);
-+	if (list->head == list->tail) {
-+		add_wait_queue(&list->hdev->debug_wait, &wait);
-+		set_current_state(TASK_INTERRUPTIBLE);
-+
-+		while (list->head == list->tail) {
-+			if (file->f_flags & O_NONBLOCK) {
-+				ret = -EAGAIN;
-+				break;
-+			}
- 
--				if (!list->hdev || !list->hdev->debug) {
--					ret = -EIO;
--					set_current_state(TASK_RUNNING);
--					goto out;
--				}
-+			if (signal_pending(current)) {
-+				ret = -ERESTARTSYS;
-+				break;
-+			}
- 
--				/* allow O_NONBLOCK from other threads */
--				mutex_unlock(&list->read_mutex);
--				schedule();
--				mutex_lock(&list->read_mutex);
--				set_current_state(TASK_INTERRUPTIBLE);
-+			if (!list->hdev || !list->hdev->debug) {
-+				ret = -EIO;
-+				set_current_state(TASK_RUNNING);
-+				goto out;
- 			}
- 
--			set_current_state(TASK_RUNNING);
--			remove_wait_queue(&list->hdev->debug_wait, &wait);
-+			/* allow O_NONBLOCK from other threads */
-+			mutex_unlock(&list->read_mutex);
-+			schedule();
-+			mutex_lock(&list->read_mutex);
-+			set_current_state(TASK_INTERRUPTIBLE);
- 		}
- 
--		if (ret)
--			goto out;
-+		set_current_state(TASK_RUNNING);
-+		remove_wait_queue(&list->hdev->debug_wait, &wait);
+-	/* pass the ringbuffer content to userspace */
++	tmpbuf = kmalloc(min_t(size_t, count, HID_DEBUG_BUFSIZE),
++			 GFP_KERNEL|__GFP_NOWARN);
++	if (!tmpbuf) {
++		ret = -ENOMEM;
++		goto out;
 +	}
 +
-+	if (ret)
-+		goto out;
- 
--		/* pass the ringbuffer contents to userspace */
-+	/* pass the ringbuffer content to userspace */
++	/* lock and copy the ringbuffer content to tmpbuf */
++	spin_lock_irqsave(&list->list_lock, flags);
  copy_rest:
--		if (list->tail == list->head)
--			goto out;
--		if (list->tail > list->head) {
--			len = list->tail - list->head;
--			if (len > count)
--				len = count;
-+	if (list->tail == list->head)
-+		goto out;
-+
-+	/* the data from the head to the tail in the buffer is linear */
-+	if (list->tail > list->head) {
-+		len = list->tail - list->head;
-+		if (len > count)
-+			len = count;
+ 	if (list->tail == list->head)
+-		goto out;
++		goto out_unlock;
  
--			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
-+		if (copy_to_user(buffer + ret,
-+		      &list->hid_debug_buf[list->head], len)) {
-+			ret = -EFAULT;
-+			goto out;
-+		}
-+		ret += len;
-+		list->head += len;
-+	} else {
-+		len = HID_DEBUG_BUFSIZE - list->head;
-+
-+		/* the data is split in 2 pieces: from the head to the end of
-+		 * the ring buffer and from the start of the ring buffer to the
-+		 *  tail. check if we need to copy out only the part between the
-+		 * head and the end.
-+		 */
-+		if (len > count) {
-+			len = count;
-+
-+			if (copy_to_user(buffer,
-+			      &list->hid_debug_buf[list->head], len)) {
- 				ret = -EFAULT;
- 				goto out;
- 			}
+ 	/* the data from the head to the tail in the buffer is linear */
+ 	if (list->tail > list->head) {
+@@ -1162,11 +1174,7 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
+ 		if (len > count)
+ 			len = count;
+ 
+-		if (copy_to_user(buffer + ret,
+-		      &list->hid_debug_buf[list->head], len)) {
+-			ret = -EFAULT;
+-			goto out;
+-		}
++		memcpy(tmpbuf + ret, &list->hid_debug_buf[list->head], len);
+ 		ret += len;
+ 		list->head += len;
+ 	} else {
+@@ -1180,19 +1188,11 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
+ 		if (len > count) {
+ 			len = count;
+ 
+-			if (copy_to_user(buffer,
+-			      &list->hid_debug_buf[list->head], len)) {
+-				ret = -EFAULT;
+-				goto out;
+-			}
++			memcpy(tmpbuf, &list->hid_debug_buf[list->head], len);
  			ret += len;
  			list->head += len;
  		} else {
--			len = HID_DEBUG_BUFSIZE - list->head;
--			if (len > count)
--				len = count;
--
--			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
-+			if (copy_to_user(buffer,
-+			      &list->hid_debug_buf[list->head], len)) {
- 				ret = -EFAULT;
- 				goto out;
- 			}
+-			if (copy_to_user(buffer,
+-			      &list->hid_debug_buf[list->head], len)) {
+-				ret = -EFAULT;
+-				goto out;
+-			}
++			memcpy(tmpbuf, &list->hid_debug_buf[list->head], len);
  			list->head = 0;
  			ret += len;
  			count -= len;
-+
-+			/* check for a corner case when len == count */
- 			if (count > 0)
+@@ -1202,6 +1202,15 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
  				goto copy_rest;
  		}
--
  	}
++
++out_unlock:
++	spin_unlock_irqrestore(&list->list_lock, flags);
++
++	/* copy out tmpbuf content to userspace */
++	if (ret && copy_to_user(buffer, tmpbuf, ret))
++		ret = -EFAULT;
++	kfree(tmpbuf);
++
  out:
  	mutex_unlock(&list->read_mutex);
-@@ -1256,4 +1278,3 @@ void hid_debug_exit(void)
- {
- 	debugfs_remove_recursive(hid_debug_root);
- }
--
+ 	return ret;
+diff --git a/include/linux/hid-debug.h b/include/linux/hid-debug.h
+index 8663f216c563..f58665651cb5 100644
+--- a/include/linux/hid-debug.h
++++ b/include/linux/hid-debug.h
+@@ -45,6 +45,7 @@ struct hid_debug_list {
+ 	struct fasync_struct *fasync;
+ 	struct hid_device *hdev;
+ 	struct list_head node;
++	spinlock_t list_lock;
+ 	struct mutex read_mutex;
+ };
+ 
 -- 
 2.19.0
 
