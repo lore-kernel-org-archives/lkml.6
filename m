@@ -2,152 +2,157 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7630CC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F01DEC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:23:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D4002089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:21:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QsvrAnlE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D4002089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A37942089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:23:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37942089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeJDBLC (ORCPT
+        id S1727415AbeJDBM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 21:11:02 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40433 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726851AbeJDBLC (ORCPT
+        Wed, 3 Oct 2018 21:12:57 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.196]:20866 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726851AbeJDBM5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 21:11:02 -0400
-Received: by mail-wr1-f65.google.com with SMTP id d2-v6so2768245wro.7
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 11:21:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Kk6pF6vcdMqM3FfRiqhJiIfyAADPhETGUP1KO+Kfo+o=;
-        b=QsvrAnlEGimipSS5uc807shIQVdB4gLTLpVVhcvPJl/DkC3mphRMA7/RjoWxQtJ8t2
-         bEyyP9P0nBZkUpRybi5AAOP9xxtTpZM1wmvsMtuJdKVstMqAxCbqH2PPGiV/VpEmGlXy
-         ykELLPwvCiX0bV4WG7hzZ88WzpkIMW0Fk+/Fu6o3HxW0rt1XoyKAHnxmNvJal2p4B8zB
-         e3tO39hM9tY1h1VLQSl1V911loDzuQNU5K5pjIud9OTTJitVbI6J3Z05woxTUdZNs0FS
-         nduROiIwoelIqDAs1Sl6kWF2zCQvlllDA7C03c0gc3ND6c8gpLKAQwb7vcz8IigQqUz6
-         7Q7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kk6pF6vcdMqM3FfRiqhJiIfyAADPhETGUP1KO+Kfo+o=;
-        b=naMJqU/0ncW0+1fqVtL1y0zOeSF21JNQPzzOe1SzCiqih9XziWqTmIfLksl9kIi603
-         wjxeVIw8pNQgqo4wmBcVjowCpZ5bPBCByAYJlrHSMRLcYpmzXkEdB2M33ZWXHizQ6By3
-         lZG1EyaQ95Hi1HGF54RcIIhHsc3eiSGDCY8nAWEPStRJFazs/7K7+OxF1/rKBSTLK8W+
-         ZAmb/VFVcSuYSdepHQkw5YTJdb0AoOifZ9cfrh3N3s3Z7p90zdqQ8Yj/nS0HDmAZ6VWM
-         XNPZSkcT1t7pz/GTptBXJu0o0Rp449SddSlw15V4qOMlycg4/lY06BDE2RmdMixn7RW8
-         9jeg==
-X-Gm-Message-State: ABuFfohz2C74WJRbGW880kzqASKgqpE7ceeDNJ5j6no3wUaS1blLKRNK
-        XolJXGrMWmyNhFBXrqFcfMHUyl3Z4e1bi98T34kzKiuz
-X-Google-Smtp-Source: ACcGV635G1cVxPdTu9x75QBA4aDaxjWJ39Es+1lrpjbMZ1od2rbLBZEOFxqzZkiqTYNCBKzBatEVXeLQNGUyUSg4IxY=
-X-Received: by 2002:a5d:4c90:: with SMTP id z16-v6mr2066941wrs.239.1538590889747;
- Wed, 03 Oct 2018 11:21:29 -0700 (PDT)
+        Wed, 3 Oct 2018 21:12:57 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 94D163A4277C
+        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 13:23:25 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 7lmzg5GKdkBj67lnagCJQ9; Wed, 03 Oct 2018 13:23:24 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:33490 helo=[192.168.43.69])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g7lmw-001Hpm-LC; Wed, 03 Oct 2018 13:22:25 -0500
+Subject: Re: [PATCH] spi: slave: Fix missing break in switch
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181003123328.GA29471@embeddedor.com>
+ <CAMuHMdX2YL2PG390ej0WMct7DciAbzO=66z7TJ-VnS8_phjdaQ@mail.gmail.com>
+ <20181003150111.GD7132@sirena.org.uk>
+ <37edd7c9-c93f-49a1-6621-880d8f88f345@embeddedor.com>
+ <CAMuHMdXyn6MYETdCAueXSKDeZXGxN2JJWX7bsE8QiUZNveeDfg@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <8fe04496-4e01-9ac2-248d-28bcbe3752d1@embeddedor.com>
+Date:   Wed, 3 Oct 2018 20:22:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <CAPhKKr9vWJ4d8yV7N4=XqaEyKEjC_ZiPX_2RJSR9ZiR9k6yS1w@mail.gmail.com>
- <20181002202256.vchh4j5k2wfjqdry@oracle.com> <CA+1xoqc+aZkQ01oYwby9pvOv3rVh+Qm7t5iJZ1+iT+t19QY6oA@mail.gmail.com>
-In-Reply-To: <CA+1xoqc+aZkQ01oYwby9pvOv3rVh+Qm7t5iJZ1+iT+t19QY6oA@mail.gmail.com>
-From:   Dhaval Giani <dhaval.giani@gmail.com>
-Date:   Wed, 3 Oct 2018 11:21:17 -0700
-Message-ID: <CAPhKKr-qsWL55EbMd4BWnrf86cuhyt=t_onsHYekeN+iADpY3A@mail.gmail.com>
-Subject: Re: [Announce] LPC 2018: Testing and Fuzzing Microconference
-To:     levinsasha928@gmail.com, "Howlett,Liam" <liam.howlett@oracle.com>
-Cc:     alexander.levin@microsoft.com, LKML <linux-kernel@vger.kernel.org>,
-        gregkh@linuxfoundation.org,
-        Alice Ferrazzi <alice.ferrazzi@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Tim Bird <tbird20d@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        gustavo.padovan@collabora.co.uk,
-        "Carpenter,Dan" <dan.carpenter@oracle.com>, willy@infradead.org,
-        knut.omang@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMuHMdXyn6MYETdCAueXSKDeZXGxN2JJWX7bsE8QiUZNveeDfg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g7lmw-001Hpm-LC
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net ([192.168.43.69]) [92.93.206.174]:33490
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 2:03 PM Sasha Levin <levinsasha928@gmail.com> wrote:
->
-> On Tue, Oct 2, 2018 at 4:44 PM Liam R. Howlett <Liam.Howlett@oracle.com> wrote:
-> >
-> > * Dhaval Giani <dhaval.giani@gmail.com> [180919 13:15]:
-> > > Hi folks,
-> > >
-> > > Sasha and I are pleased to announce the Testing and Fuzzing track at
-> > > LPC [ 1 ]. We are planning to continue the discussions from last
-> > > year's microconference [2]. Many discussions from the Automated
-> > > Testing Summit [3] will also continue, and a final agenda will come up
-> > > only soon after that.
-> > >
-> > > Suggested Topics
-> > >
-> > > - Syzbot/syzkaller
-> > > - ATS
-> > > - Distro/stable testing
-> > > - kernelci
-> > > - kernelci auto bisection
-> > > - Unit testing framework
-> > >
-> > > We look forward to other interesting topics for this microconference
-> > > as a reply to this email.
-> > >
-> > > Thanks!
-> > > Dhaval and Sasha
-> > >
-> > > [1] https://blog.linuxplumbersconf.org/2018/testing-and-fuzzing-mc/
-> > > [2] https://lwn.net/Articles/735034/
-> > > [3] https://elinux.org/Automated_Testing_Summit
-> >
-> >
-> > Hello,
-> >
-> > I have a new way to analyze binaries to detect specific calls without
-> > the need for source.  I would like to discuss Machine Code Trace
-> > (MCTrace) at the Testing and Fuzzing LPC track.  MCTrace intercepts the
-> > application prior to execution and does not rely on a specific user
-> > input. It then decodes the machine instructions to follow all control
-> > flows to their natural conclusions.  This includes control flows that go
-> > beyond the boundaries of the static executable code into shared
-> > libraries. This new technique avoids false positives which could be
-> > produced by static analysis and includes paths that could be missed by
-> > dynamic tracing.  This type of analysis could be useful in both testing
-> > and fuzzing by providing a call graph to a given function.
-> >
-> > MCTrace was initially designed to help generate the seccomp() filter
-> > list, which is a whitelist/blacklist of system calls for a specific
-> > application. Seccomp filters easily become outdated when the application
-> > or shared library is updated. This can cause failures or security
-> > issues [ 1 ].  Other potential uses including examining binary blobs,
-> > vulnerability analysis, and debugging.
->
-> Hi Liam,
->
-> Is MCTrace available anywhere?
->
 
-Sasha,
 
-McTrace is an early prototype, really needing a lot of feedback. I
-will let Liam send more details (some how he got dropped from the cc)
+On 10/3/18 5:10 PM, Geert Uytterhoeven wrote:
+> Hi Gustavo,
+> 
+> On Wed, Oct 3, 2018 at 5:05 PM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>> On 10/3/18 5:01 PM, Mark Brown wrote:
+>>> On Wed, Oct 03, 2018 at 04:46:45PM +0200, Geert Uytterhoeven wrote:
+>>>> On Wed, Oct 3, 2018 at 2:57 PM Gustavo A. R. Silva
+>>>
+>>>>>         case CMD_REBOOT:
+>>>>>                 dev_info(&priv->spi->dev, "Rebooting system...\n");
+>>>>>                 kernel_restart(NULL);
+>>>>> +               break;
+>>>
+>>>> Alternatively, kernel_restart() and friends could be marked __noreturn.
+>>>
+>>> Yes, that seems more sensible though there's no harm in this patch even
+>>> with that.  It'd definitely avoid other issues in future.
+>>
+>> I'll include the __noreturn in addition to the break statement.
+>> I'll send v2 shortly.
+> 
+> Please note that adding __noreturn is not a trivial task, due to the complex
+> call chains, and the different implementations on the various architectures
+> and platforms.  So that will be a big patch series.
+> 
 
-Dhavla
+I see. In that case, it might be an interesting side project.
 
->
-> --
-> Thanks,
-> Sasha
+I appreciate the feedback, Geert.
+--
+Gustavo
+
