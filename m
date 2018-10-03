@@ -2,150 +2,202 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E2FC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E00C64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CCC921473
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:13:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D9CF20645
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:15:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="q8DXnavL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CCC921473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="1D2XUkmI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9CF20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbeJDDDH (ORCPT
+        id S1727091AbeJDDF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 23:03:07 -0400
-Received: from mail-cys01nam02on0087.outbound.protection.outlook.com ([104.47.37.87]:30854
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726941AbeJDDDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 23:03:07 -0400
+        Wed, 3 Oct 2018 23:05:29 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:36846 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbeJDDF3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 23:05:29 -0400
+Received: by mail-it1-f193.google.com with SMTP id c85-v6so10855719itd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 13:15:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UAUGrNya9fg7im11XQgoQeU9pdvQ/Qs1vqHwJLzRtTA=;
- b=q8DXnavL6NMYrLVIpP7QdQl7osz+hrEq3gzbj2BzDbd+jYgBrIHXYK5/RDC7eEj1pjh6Tfw/PC/i/7BifKL4tDWM33e+6se/J353SJHYmrj2lVyQiw+xsQK1nB66F8PWrEGgnlcZ/0l9JfEh2csgT60mV9Q8fOQOjwqOtWG1v4U=
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1692.namprd12.prod.outlook.com (10.172.40.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.24; Wed, 3 Oct 2018 20:12:32 +0000
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::bd60:9d30:b818:b828]) by DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::bd60:9d30:b818:b828%2]) with mapi id 15.20.1207.021; Wed, 3 Oct 2018
- 20:12:32 +0000
-From:   "Moger, Babu" <Babu.Moger@amd.com>
-To:     Reinette Chatre <reinette.chatre@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>
-CC:     "x86@kernel.org" <x86@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "jannh@google.com" <jannh@google.com>,
-        "dima@arista.com" <dima@arista.com>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 03/10] arch/x86: Re-arrange RDT init code
-Thread-Topic: [RFC PATCH 03/10] arch/x86: Re-arrange RDT init code
-Thread-Index: AQHUVDtyokQlIS2+10uA6u2YvHhBgaUMYa6A///02QCAAZYggIAAFbAA
-Date:   Wed, 3 Oct 2018 20:12:31 +0000
-Message-ID: <7a7fb59a-eeca-47d1-49eb-c78fa289aef3@amd.com>
-References: <20180924191841.29111-1-babu.moger@amd.com>
- <20180924191841.29111-4-babu.moger@amd.com>
- <09e1f4dc-7882-9bb4-f5a7-e9e7caafee84@intel.com>
- <ec7ea236-adca-246c-2d2a-56dc68a146f8@amd.com>
- <7c971383-1695-7905-603e-99ff5916f691@intel.com>
-In-Reply-To: <7c971383-1695-7905-603e-99ff5916f691@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR22CA0058.namprd22.prod.outlook.com
- (2603:10b6:300:12a::20) To DM5PR12MB2471.namprd12.prod.outlook.com
- (2603:10b6:4:b5::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1692;20:0TyQG6+c+I0nlp3KasgsMOyAufKw9Cr0SfXYXKYhFrgDowWv8q/+TtG9MjJieRNPeGX06q3419JJm6dE4J+ocmtpvUyKK6Q+KBlDew1t4+2cTOlmRFz6V5bCMgY4aTrANcRuOgoJ5+RnAvgIc8qOgcMK56dTKRqWF9XnYwGQfBVPvBZ867RxO2pkeRo4a962tktKH7o91/pByc8jcA7sN+r9W6JWhogjSHMzvLBAwbgf0K9wCIgF9tlso+b7E10M
-x-ms-office365-filtering-correlation-id: 1a6c2c70-c312-4884-7b41-08d6296c8ce0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1692;
-x-ms-traffictypediagnostic: DM5PR12MB1692:
-x-microsoft-antispam-prvs: <DM5PR12MB1692A1849945779D9A07714095E90@DM5PR12MB1692.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(72170088055959);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051);SRVR:DM5PR12MB1692;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1692;
-x-forefront-prvs: 0814A2C7A3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(396003)(136003)(376002)(346002)(39860400002)(366004)(189003)(199004)(68736007)(6436002)(6246003)(6486002)(97736004)(53936002)(31686004)(7736002)(6512007)(3846002)(6116002)(105586002)(106356001)(71200400001)(5660300001)(305945005)(110136005)(71190400001)(54906003)(316002)(53546011)(2906002)(6506007)(386003)(25786009)(4326008)(229853002)(7416002)(66066001)(52116002)(8676002)(81156014)(99286004)(81166006)(8936002)(76176011)(11346002)(446003)(93886005)(14454004)(26005)(72206003)(486006)(476003)(2616005)(36756003)(478600001)(102836004)(5250100002)(2501003)(256004)(86362001)(186003)(31696002)(2900100001)(217873002)(2201001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1692;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: E2LsPKQMRHpzhFilu+5DKYjHOEvpoQ0ZQnZ8otDyehfrrrWQeG4BXoW1Fsx+GRtJm8r2zClWL3RTmfQ0LM/btlZd4+mDc98nYVbcqVWUEwcn7cncdKvvEV9uu0wrzDeYUanuMRfN/Ht4PazBWLkRHGlm86UErymd9CZHjDUR0ZgsUUo31GGsfBx1qTDzeRWq5KX9p41VnnQYrgCh3BwZN1O8hLYF27Pgr8tKH6Kq+8sPVOPE3ZTxAmEHT9IYAe3eAGvDVWLcqi9uwxGDa9n3k4TE9JD7U99ra4PgW/GyIXiWFjWIB1TQQ0JgX36/1tDk6nNm+WGrkJx2+SF++0eL05dzIuDXGOrcYJoQEYPXLl8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <872B53ADDB0FB8469ECF7EC2929632C6@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+6VgtKoQRQClLuY3hlq3MEk2cdknUIKuog99zX/kvXM=;
+        b=1D2XUkmI4JFMfKs3DWFN0y1fkAzR4c9ORyfoXaGCLNHvK+a5lDIhH2leErJz5RxDEK
+         45SY3nGDvW8S1uWuAaoo0XDy3yvgBfi8RTjDd6QKzi9HeFP6rADVWreTOXmZjwzK7h7c
+         IahvjH32ZxANxts22IcVxaIOt+62D+mvoBVrWiC1caMlcvoBITsXOlVWXhtz3kfFENyw
+         e+i/i1XxtP+Q0mCwyO/sHgry3o0mnXuRGbWL55WwRHNK109IDHzHn0cgmneoboE/8nth
+         wwzIzfxDATGmf98ygzseWxnjPljsB8sT4OMxqql7naKJizcReOLGf5J3nusrt4+Ot3nC
+         tWkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+6VgtKoQRQClLuY3hlq3MEk2cdknUIKuog99zX/kvXM=;
+        b=pxdOn2JMSszB8sRgeQv3Tg47vVrUfmOcIPaUyeg7Z8i3JmuWinvi+EftM0gpWuvvKJ
+         RhsHr8YVhx3W8l97ac72y0rA3ApZg6PPDPvHlkOIQ31Yz2BHjRE0yr8ADM11UfDOEHRr
+         mqAPZb/iLInEgoc4HH7GoDVoNQvKk4vhsbcXGM4aubx1ssv6+JRVRP7srvPuv6pQoOiW
+         eGTxk70HxbXdBF8gHClD7PJCOa0jtZDydhqJ1s+QF6w8iKiYCzvhIrJSg8RB03MyBDIZ
+         JDEHyG6c5IVCFkiZUquYb8hPT7du2zr8vtdgVoWlpbpYHPIIyh3Dv89idRSXl+CRIYHm
+         nPWw==
+X-Gm-Message-State: ABuFfogEaFGD+fiev/hcOsXQBvE5/mgBPInFz0r4umxgS208fdnp85UC
+        fwUW/PDpV6ksLYAm0cY57fAhhbpSt8suqtdK2jX9yA==
+X-Google-Smtp-Source: ACcGV62MPxaE1h2pZ3p7zMCx7zIiDtlLRA5uOmjdNUm5il2OlaCPgUGksjNSSk1CbVO0n3761GjTTr0BOUja6hUBN3M=
+X-Received: by 2002:a24:6f05:: with SMTP id x5-v6mr2698446itb.111.1538597734624;
+ Wed, 03 Oct 2018 13:15:34 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a6c2c70-c312-4884-7b41-08d6296c8ce0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2018 20:12:31.9982
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1692
+References: <20180810080526.27207-1-brgl@bgdev.pl> <20180831194643.GA62862@ban.mtv.corp.google.com>
+In-Reply-To: <20180831194643.GA62862@ban.mtv.corp.google.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 3 Oct 2018 22:15:23 +0200
+Message-ID: <CAMRc=MejZLV1EQ7uAddsxLY0MTUF8WyiBn=F0ZhkWQJpET0EDQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/29] at24: remove at24_platform_data
+To:     Brian Norris <computersforpeace@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Naren <naren.kernel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
+        Rob Herring <robh@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDEwLzAzLzIwMTggMDE6NTQgUE0sIFJlaW5ldHRlIENoYXRyZSB3cm90ZToNCj4gSGkg
-QmFidSwNCj4gDQo+IE9uIDEwLzIvMjAxOCA0OjQxIFBNLCBNb2dlciwgQmFidSB3cm90ZToNCj4+
-IE9uIDEwLzAyLzIwMTggMDI6MjEgUE0sIFJlaW5ldHRlIENoYXRyZSB3cm90ZToNCj4+PiBPbiA5
-LzI0LzIwMTggMTI6MTkgUE0sIE1vZ2VyLCBCYWJ1IHdyb3RlOg0KPj4+PiAgc3RhdGljIGVudW0g
-Y3B1aHBfc3RhdGUgcmR0X29ubGluZTsNCj4+Pj4gQEAgLTg2Niw4ICs4NzIsMjIgQEAgc3RhdGlj
-IGludCBfX2luaXQgcmR0X2xhdGVfaW5pdCh2b2lkKQ0KPj4+PiAgCXN0cnVjdCByZHRfcmVzb3Vy
-Y2UgKnI7DQo+Pj4+ICAJaW50IHN0YXRlLCByZXQ7DQo+Pj4+ICANCj4+Pj4gLQlpZiAoIWdldF9y
-ZHRfcmVzb3VyY2VzKCkpDQo+Pj4+ICsJLyogUnVuIHF1aXJrcyBmaXJzdCAqLw0KPj4+PiArCXJk
-dF9xdWlya3MoKTsNCj4+Pj4gKw0KPj4+PiArCXJkdF9hbGxvY19jYXBhYmxlID0gZ2V0X3JkdF9h
-bGxvY19yZXNvdXJjZXMoKTsNCj4+Pj4gKwlyZHRfbW9uX2NhcGFibGUgPSBnZXRfcmR0X21vbl9y
-ZXNvdXJjZXMoKTsNCj4+Pj4gKw0KPj4+PiArCWlmICghKHJkdF9hbGxvY19jYXBhYmxlIHx8IHJk
-dF9tb25fY2FwYWJsZSkpIHsNCj4+Pj4gKwkJcHJfaW5mbygiUkRUIGFsbG9jYXRpb24gb3IgbW9u
-aXRvcmluZyBub3QgZGV0ZWN0ZWRcbiIpOw0KPj4+DQo+Pj4gVGhpcyBmdW5jdGlvbiBlbmRzIHdp
-dGggYSBsb2cgZW50cnkgZm9yIGV2ZXJ5IHJlc291cmNlIGRpc2NvdmVyZWQuIElzDQo+Pj4gdGhp
-cyBuZXcgbG9nIGVudHJ5IG5lZWRlZCB0byBpbmRpY2F0ZSB0aGF0IHN1Y2ggcmVzb3VyY2VzIGhh
-dmUgbm90IGJlZW4NCj4+PiBmb3VuZD8gQ291bGQgaXQgbm90IGp1c3QgYmUgdGhlIGFic2VuY2Ug
-b2YgdGhlIG90aGVyIG1lc3NhZ2U/DQo+Pg0KPj4gQXMgdGhpcyBpcyByZWxhdGl2ZWx5IG5ldyBm
-ZWF0dXJlLCBzbyBJIGFkZGVkIHRoaXMgaW5mbyBtZXNzYWdlLiBJdCBoZWxwZWQNCj4+IG1lIGRl
-YnVnIHdoYXQgd2VudCB3cm9uZy4gT3RoZXJ3aXNlLCBJIGRvbid0IHNlZSBhbnl0aGluZy4gSSBj
-YW4gcmVtb3ZlIGl0DQo+PiBpZiB0aGUgbWVzc2FnZSBpcyB0b28gYW5ub3lpbmcgdG8gdGhlIHVz
-ZXIuDQo+IA0KPiBUaGlzIGxvZyBlbnRyeSBpcyBtYWRlIGFmdGVyIGRldGVjdGlvbiBvZiByZXNv
-dXJjZXMvZmVhdHVyZXMgc3VwcG9ydGVkDQo+IGJ5IHRoZSBzeXN0ZW0uIEEgdXNlciB3b3VsZCBm
-aW5kIG1vcmUgaW5mb3JtYXRpb24gaW4gdGhlDQo+IHByZXNlbmNlL2Fic2VuY2Ugb2YgdGhlIHJl
-bGV2YW50IENQVSBmZWF0dXJlIGZsYWdzIGluIC9wcm9jL2NwdWluZm8uDQoNCk9rLiBVbmRlcnN0
-b29kLiBJIGhhdmUgZHJvcHBlZCB0aGlzIGxvZyBlbnRyeS4NCg0KPiANCj4gUmVpbmV0dGUNCj4g
-DQo=
+pt., 31 sie 2018 o 21:46 Brian Norris <computersforpeace@gmail.com> napisa=
+=C5=82(a):
+>
+> Hi,
+>
+> On Fri, Aug 10, 2018 at 10:04:57AM +0200, Bartosz Golaszewski wrote:
+> > Most boards use the EEPROM to store the MAC address. This series adds
+> > support for cell lookups to the nvmem framework, registers relevant
+> > cells for all users, adds nvmem support to eth_platform_get_mac_address=
+(),
+> > converts davinci_emac driver to using it and replaces at24_platform_dat=
+a
+> > with device properties.
+>
+> We already have:
+>
+> of_get_nvmem_mac_address() (which does exactly what you're adding,
+> except it's DT specific)
+> of_get_mac_address()
+> fwnode_get_mac_address()
+> device_get_mac_address()
+>
+> and now you've taught me that this exists too:
+>
+> eth_platform_get_mac_address()
+>
+> These mostly don't share code, and with your series, they'll start to
+> diverge even more as to what they support. Can you please help rectify
+> that, instead of widening the gap?
+>
+> For instance, you can delete most of eth_platform_get_mac_address() and
+> replace it with device_get_mac_address() [1]. And you could add your new
+> stuff to fwnode_get_mac_address().
+>
+> And important part to note here is that you code isn't just useful for
+> ethernet -- it could be useful for Wifi devices too. So IMO, sticking it
+> only in an "eth" function is the wrong move.
+>
+> Brian
+>
+> [1] arch_get_platform_mac_address() is the only part I wouldn't want to
+> replicate into a truly generic helper. The following should be a no-op
+> refactor, AIUI:
+>
+
+The only user of arch_get_platform_mac_address() is sparc. It returns
+an address that seems to be read from some kind of EEPROM. I'm not
+familiar with this arch though. I'm wondering if we could somehow
+seamlessly remove this call and then convert all users of
+eth_platform_get_mac_address() to using device_get_mac_address()?
+
+David: I couldn't find a place in sparc code where any ethernet device
+would be registered, so is there a chance that nobody is using it?
+
+Best regards,
+Bartosz Golaszewski
+
+> diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
+> index ee28440f57c5..b738651f71e1 100644
+> --- a/net/ethernet/eth.c
+> +++ b/net/ethernet/eth.c
+> @@ -47,12 +47,12 @@
+>  #include <linux/inet.h>
+>  #include <linux/ip.h>
+>  #include <linux/netdevice.h>
+> +#include <linux/property.h>
+>  #include <linux/etherdevice.h>
+>  #include <linux/skbuff.h>
+>  #include <linux/errno.h>
+>  #include <linux/init.h>
+>  #include <linux/if_ether.h>
+> -#include <linux/of_net.h>
+>  #include <linux/pci.h>
+>  #include <net/dst.h>
+>  #include <net/arp.h>
+> @@ -528,19 +528,11 @@ unsigned char * __weak arch_get_platform_mac_addres=
+s(void)
+>  int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
+>  {
+>         const unsigned char *addr;
+> -       struct device_node *dp;
+>
+> -       if (dev_is_pci(dev))
+> -               dp =3D pci_device_to_OF_node(to_pci_dev(dev));
+> -       else
+> -               dp =3D dev->of_node;
+> -
+> -       addr =3D NULL;
+> -       if (dp)
+> -               addr =3D of_get_mac_address(dp);
+> -       if (!addr)
+> -               addr =3D arch_get_platform_mac_address();
+> +       if (device_get_mac_address(dev, mac_addr, ETH_ALEN))
+> +               return 0;
+>
+> +       addr =3D arch_get_platform_mac_address();
+>         if (!addr)
+>                 return -ENODEV;
+>
