@@ -3,94 +3,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F14FAC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A37C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:11:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE4F9213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:11:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE4F9213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id E495C2098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:11:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E495C2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbeJCV7q (ORCPT
+        id S1727287AbeJCWAD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 17:59:46 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:35237 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbeJCV7q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 17:59:46 -0400
-Received: by mail-vk1-f196.google.com with SMTP id n71-v6so408910vke.2;
-        Wed, 03 Oct 2018 08:10:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0+ne1PmWCrm7erGpj0LfBgkY9ySsW4PbAvFGc4rv/pw=;
-        b=WWUCNXLmg15LxSx0dNQgQwoP1TOdlGA/wGoAu4VpZS8cKGnzzT3g1chPv0h6TsGzlQ
-         oV0+3yYzBD1ZzRxJs+BKv6jo3376SJDUAM7g3+EAJDJrtdLgeDb9HDFUekVPfK7x5YCJ
-         D0yZBTY58/b7m24TH8grBxztWhjvvGSJjfO5j9KoD+CYVVC7fouu9DePIGgOZjB+L1+A
-         aIWDMpzSFrLIH7dFH2VFuDqF4U4A77MgZV6OzA588keePhE2NMUfNeQjZnJInRrsv0kw
-         NSscHPuEPsNRLoPiUWwts0JE/3D/gizwgZkQPdO9+GZku4kT5OlgnZIIBXRXu6ngZjWK
-         2J4w==
-X-Gm-Message-State: ABuFfoguXsVsXIlG8lz6l+q1HbmeT9CGx2A2+qYgOrDpiXzmOJJgniT8
-        OsZAq63Qkrim9RxyOgOofZYuKC0oIWJjv4KS1yCbHg==
-X-Google-Smtp-Source: ACcGV62VpiYSVBiX5vqyYA8kYzbR4dHY79kkc1+cx+bm4YiKsBKK0ZC7Otmw8Jy802zxejWjX61ynuG2iktTawpbLoo=
-X-Received: by 2002:a1f:d507:: with SMTP id m7-v6mr765761vkg.40.1538579457852;
- Wed, 03 Oct 2018 08:10:57 -0700 (PDT)
+        Wed, 3 Oct 2018 18:00:03 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42176 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726801AbeJCWAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 18:00:03 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id EF2EC207BB; Wed,  3 Oct 2018 17:11:13 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-24-95.w90-88.abo.wanadoo.fr [90.88.144.95])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B16B6206A1;
+        Wed,  3 Oct 2018 17:11:13 +0200 (CEST)
+Date:   Wed, 3 Oct 2018 17:11:14 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 6/8] mtd: maps: gpio-addr-flash: Convert to gpiod
+Message-ID: <20181003171114.51ab47b8@bbrezillon>
+In-Reply-To: <20181001124351.31615-6-ricardo.ribalda@gmail.com>
+References: <20181001124351.31615-1-ricardo.ribalda@gmail.com>
+        <20181001124351.31615-6-ricardo.ribalda@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181003123328.GA29471@embeddedor.com> <CAMuHMdX2YL2PG390ej0WMct7DciAbzO=66z7TJ-VnS8_phjdaQ@mail.gmail.com>
- <20181003150111.GD7132@sirena.org.uk> <37edd7c9-c93f-49a1-6621-880d8f88f345@embeddedor.com>
-In-Reply-To: <37edd7c9-c93f-49a1-6621-880d8f88f345@embeddedor.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 3 Oct 2018 17:10:45 +0200
-Message-ID: <CAMuHMdXyn6MYETdCAueXSKDeZXGxN2JJWX7bsE8QiUZNveeDfg@mail.gmail.com>
-Subject: Re: [PATCH] spi: slave: Fix missing break in switch
-To:     gustavo@embeddedor.com
-Cc:     Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+Hi Ricardo,
 
-On Wed, Oct 3, 2018 at 5:05 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> On 10/3/18 5:01 PM, Mark Brown wrote:
-> > On Wed, Oct 03, 2018 at 04:46:45PM +0200, Geert Uytterhoeven wrote:
-> >> On Wed, Oct 3, 2018 at 2:57 PM Gustavo A. R. Silva
-> >
-> >>>         case CMD_REBOOT:
-> >>>                 dev_info(&priv->spi->dev, "Rebooting system...\n");
-> >>>                 kernel_restart(NULL);
-> >>> +               break;
-> >
-> >> Alternatively, kernel_restart() and friends could be marked __noreturn.
-> >
-> > Yes, that seems more sensible though there's no harm in this patch even
-> > with that.  It'd definitely avoid other issues in future.
->
-> I'll include the __noreturn in addition to the break statement.
-> I'll send v2 shortly.
+On Mon,  1 Oct 2018 14:43:49 +0200
+Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
 
-Please note that adding __noreturn is not a trivial task, due to the complex
-call chains, and the different implementations on the various architectures
-and platforms.  So that will be a big patch series.
+> @@ -248,14 +252,19 @@ static int gpio_flash_probe(struct platform_device *pdev)
+>  
+>  	i = 0;
+>  	do {
+> -		if (devm_gpio_request(&pdev->dev, state->gpio_addrs[i],
+> -				      DRIVER_NAME)) {
+> +		unsigned int *gpio_id = (unsigned int *)gpios->start;
+> +
+> +		if (devm_gpio_request_one(&pdev->dev, gpio_id[i], GPIOD_OUT_LOW,
+> +					DRIVER_NAME)) {
+>  			dev_err(&pdev->dev, "failed to request gpio %d\n",
+> -				state->gpio_addrs[i]);
+> +				gpio_id[i]);
+>  			return -EBUSY;
+>  		}
+> -		gpio_direction_output(state->gpio_addrs[i], 0);
+> -	} while (++i < state->gpio_count);
+> +
+> +		state->gpios->desc[i] = gpio_to_desc(gpio_id[i]);
+> +		if (!state->gpios->desc[i])
+> +			return -EINVAL;
+> +	} while (++i < state->gpios->ndescs);
 
-Gr{oetje,eeting}s,
+Actually, I was thinking about using devm_gpiod_get_array() here and
+defining a gpio lookup table in the board file registering the device.
+This way, adding support for DT based parsing is transparent.
 
-                        Geert
+Regards,
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Boris
