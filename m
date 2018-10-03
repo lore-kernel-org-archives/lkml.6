@@ -7,111 +7,126 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DF2C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3998C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E605520835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:26:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D7DB20835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:28:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qn76F6Fo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E605520835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YMUF5xe+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D7DB20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbeJCPNl (ORCPT
+        id S1727455AbeJCPPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 11:13:41 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11132 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbeJCPNl (ORCPT
+        Wed, 3 Oct 2018 11:15:33 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34468 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbeJCPPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 11:13:41 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bb47d150000>; Wed, 03 Oct 2018 01:25:57 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 03 Oct 2018 01:26:20 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 03 Oct 2018 01:26:20 -0700
-Received: from [10.21.132.143] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 3 Oct
- 2018 08:26:18 +0000
-Subject: Re: [PATCH] firmware: tegra-bpmp: mark PM function as __maybe_unused
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Timo Alho <talho@nvidia.com>
-CC:     Mikko Perttunen <mperttunen@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20181002212208.2971433-1-arnd@arndb.de>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <64a99db8-85e4-52ab-d0fa-0faa5bb7187a@nvidia.com>
-Date:   Wed, 3 Oct 2018 09:26:16 +0100
+        Wed, 3 Oct 2018 11:15:33 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z4-v6so5086855wrb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 01:28:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FKmtYQMvatKBOR5toFTor6D2vbYujCN/1CKLlMN8sNY=;
+        b=YMUF5xe+am3zKoBLoC2Js2+M3WQie6phM3ewpXmSxnEavro4NG7sBNrmQrpVZir6CC
+         4FcYYpiZNPvBC/1NtZ31u2tZN9sX3dIVeTB8bC5iIZgQ0Thz2SKBM/T1T6w+3GIKl++u
+         cjnASgwBljAuvK75ndXQAWHp6zPU1eD1/2pMk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FKmtYQMvatKBOR5toFTor6D2vbYujCN/1CKLlMN8sNY=;
+        b=fsSUX8JV9YfMnZ+pyhdCYWJ2kqyoGCL4uzVVHhLtbrBvHStHIz5Q2oGkYxj6WGC8oh
+         10syiXjEmn3s056b2Jm6vAzzZ1t/AyPQA073wm4Bo7S72sGYcGFlpedf9p1g73x3tO0W
+         SjT+NENAVI/1wBWA7u1K8WgSgxkkWDOzDZQFtXLqW2P0HQwE046sxqn6V79b4LHx5QaX
+         5tSHBjVVhKKs9ipJDBaSV7rph4vgGBpZtPEOfr8gdRpJwpk8S0DuiYJ+X5IxaIMUMqHT
+         2MjZdoGFc3v1VYQw80Yu5Uw9XfK3BuDppuEy3F8LmJgYGewDumVhSxcIfA6RpGabP9dr
+         IkzA==
+X-Gm-Message-State: ABuFfojfbxt5VTSSKUH3gv+6nLseB5RgRE0shU4we5UVYSxbAODQ25K+
+        jJM045aPxj3UU9Bgesq22OkG2vanZVw=
+X-Google-Smtp-Source: ACcGV61mfJ4rXnuzca834+PWPmujrtQc+6bpChbzNVg/r4v6svlkMMs49ubh5HB8Iz7Ghho/pGx4Hw==
+X-Received: by 2002:adf:dd4c:: with SMTP id u12-v6mr387191wrm.2.1538555290780;
+        Wed, 03 Oct 2018 01:28:10 -0700 (PDT)
+Received: from [192.168.0.19] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id e67-v6sm1249294wmd.41.2018.10.03.01.28.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 01:28:09 -0700 (PDT)
+Subject: Re: [PATCH v3] nvmem: fix nvmem_cell_get_from_lookup()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <greg@kroah.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20181003073111.27212-1-brgl@bgdev.pl>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <16778679-514a-a3f6-edd5-b92e0e23830a@linaro.org>
+Date:   Wed, 3 Oct 2018 09:28:09 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181002212208.2971433-1-arnd@arndb.de>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20181003073111.27212-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1538555157; bh=ZMEWr59Y7Mq8Vp712UNm9Fdc/Y9U+Eu4aQZBqEh4ydg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=qn76F6FoQbUDHfZHzzbscjErPL6Xa45AiKLB42u66bpQjvAxjq9vHuKTX0Aa0zHwS
-         HKRq5Nbsn8vaTxjMZQNHU6PG7DTgt7UmlstPoC8ofoHTcVh6hTyGkSARGGSjXD9Bb1
-         1hm2tg8x0j9kLZtHUvKHupUNXFV7Ygy+aZd9GAW5l7YXRv3vvxUXrBG/GvroQkkeUv
-         QdJ3nGatuaH3dup5ZjZ7r4UuhgvXOTwNvEaTiFI0mKm3mrJIbbhES+f06aS+WGjxWM
-         m0+dCPWeBgkQUwLDYQ6a9CE/KJTgziVJwnh8JLDP4R1YpVJWUtrXYzT/WypaUO4Tpo
-         DYsBWohO71OFw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 02/10/18 22:21, Arnd Bergmann wrote:
-> The newly added tegra_bpmp_resume function is unused when CONFIG_PM
-> is disabled:
+
+On 03/10/18 08:31, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> drivers/firmware/tegra/bpmp.c:847:12: error: 'tegra_bpmp_resume' defined but not used [-Werror=unused-function]
->  static int tegra_bpmp_resume(struct device *dev)
+> We check if the pointer returned by __nvmem_device_get() is not NULL
+> while we should actually check if it is not IS_ERR(nvmem). Fix it.
 > 
-> Mark it as __maybe_unused to avoid the warning and let the compiler
-> drop it silently.
+> While we're at it: fix the next error path where we should assign an
+> error value to cell before returning.
 > 
-> Fixes: cd40f6ff124c ("firmware: tegra: bpmp: Implement suspend/resume support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
 > ---
->  drivers/firmware/tegra/bpmp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> v1 -> v2:
+> - use ERR_CAST() instead of a direct pointer cast
 > 
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index 41448ba78be9..a3d5b518c10e 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
-> @@ -844,7 +844,7 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
->  	return err;
->  }
->  
-> -static int tegra_bpmp_resume(struct device *dev)
-> +static int __maybe_unused tegra_bpmp_resume(struct device *dev)
->  {
->  	struct tegra_bpmp *bpmp = dev_get_drvdata(dev);
->  	unsigned int i;
-
-Arnd, is this seen with 32-bit ARM configs?
-
-Timo, does it make sense to make BPMP dependent on ARCH_TEGRA_186_SOC
-and ARCH_TEGRA_194_SOC instead of just ARCH_TEGRA? For 64-bit Tegra we
-have a dependency on PM so this should not be seen for 64-bit Tegra.
-
-Cheers
-Jon
-
--- 
-nvpublic
+> v2 -> v3:
+> - added the Reported-by tag
+> 
+>   drivers/nvmem/core.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index ad1227df1984..f49474e1ad49 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -952,9 +952,9 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
+>   		    (strcmp(lookup->con_id, con_id) == 0)) {
+>   			/* This is the right entry. */
+>   			nvmem = __nvmem_device_get(NULL, lookup->nvmem_name);
+> -			if (!nvmem) {
+> +			if (IS_ERR(nvmem)) {
+>   				/* Provider may not be registered yet. */
+> -				cell = ERR_PTR(-EPROBE_DEFER);
+> +				cell = ERR_CAST(nvmem);
+>   				goto out;
+>   			}
+>   
+> @@ -962,6 +962,7 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
+>   						       lookup->cell_name);
+>   			if (!cell) {
+>   				__nvmem_device_put(nvmem);
+> +				cell = ERR_PTR(-ENOENT);
+>   				goto out;
+>   			}
+>   		}
+> 
