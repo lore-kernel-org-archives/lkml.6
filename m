@@ -3,150 +3,161 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F418EC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AA9C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA11821470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:53:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA11821470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D3BF21470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:54:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D3BF21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbeJCWmt (ORCPT
+        id S1727478AbeJCWnF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:42:49 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.139]:20927 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726829AbeJCWms (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:42:48 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 9A02B46050
-        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 10:53:50 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7jT6gJsnV8YaU7jT9gmi2n; Wed, 03 Oct 2018 10:53:50 -0500
-X-Authority-Reason: nr=8
-Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:55794 helo=[192.168.43.69])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g7jT5-004Ezh-Gl; Wed, 03 Oct 2018 10:53:43 -0500
-Subject: Re: [PATCH] spi: pxa2xx: Mark expected switch fall-through
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181003121211.GA28108@embeddedor.com>
- <20181003152255.GE7132@sirena.org.uk>
- <22e7d33d-db33-d2e4-30b1-fa87176e4277@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <64472b50-f00d-e22c-5dff-aa290c6559c5@embeddedor.com>
-Date:   Wed, 3 Oct 2018 17:53:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 3 Oct 2018 18:43:05 -0400
+Received: from mga11.intel.com ([192.55.52.93]:12033 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726801AbeJCWnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 18:43:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 08:54:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
+   d="scan'208";a="262552799"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga005.jf.intel.com with ESMTP; 03 Oct 2018 08:54:07 -0700
+Received: from [10.252.30.119] (abudanko-mobl.ccr.corp.intel.com [10.252.30.119])
+        by linux.intel.com (Postfix) with ESMTP id C08A25803C2;
+        Wed,  3 Oct 2018 08:54:04 -0700 (PDT)
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v9 0/3]: perf: reduce data loss when profiling highly parallel
+ CPU bound workloads
+Organization: Intel Corp.
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <ded47c34-9e92-6bd2-9522-a927a7237011@linux.intel.com>
+Date:   Wed, 3 Oct 2018 18:54:03 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <22e7d33d-db33-d2e4-30b1-fa87176e4277@embeddedor.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 92.93.206.174
-X-Source-L: No
-X-Exim-ID: 1g7jT5-004Ezh-Gl
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 174.206.93.92.rev.sfr.net ([192.168.43.69]) [92.93.206.174]:55794
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 29
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Currently in record mode the tool implements trace writing serially. 
+The algorithm loops over mapped per-cpu data buffers and stores 
+ready data chunks into a trace file using write() system call.
 
-On 10/3/18 5:27 PM, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 10/3/18 5:22 PM, Mark Brown wrote:
->> On Wed, Oct 03, 2018 at 02:12:11PM +0200, Gustavo A. R. Silva wrote:
->>
->>>  			switch (drv_data->n_bytes) {
->>>  			case 4:
->>>  				bytes_left >>= 1;
->>> +				/* Fall through */
->>>  			case 2:
->>>  				bytes_left >>= 1;
->>>  			}
->>
->> I think this code is just being too cute and it'd be better to just
->> rewrite it to directly do the expected number of shifts directly in each
->> case and have break statements; your fix is good but still not ideal for
->> readability I think.
->>
-> 
-> Okay. I agree. I'll rewrite and send v2.
-> 
+At some circumstances the kernel may lack free space in a buffer 
+because the other buffer's half is not yet written to disk due to 
+some other buffer's data writing by the tool at the moment.
 
-I'll actually send a completely new patch for this.
+Thus serial trace writing implementation may cause the kernel 
+to loose profiling data and that is what observed when profiling 
+highly parallel CPU bound workloads on machines with big number 
+of cores.
 
-Thanks
---
-Gustavo
+Experiment with profiling matrix multiplication code executing 128 
+threads on Intel Xeon Phi (KNM) with 272 cores, like below,
+demonstrates data loss metrics value of 98%:
+
+/usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
+    --call-graph dwarf,1024 --user-regs=IP,SP,BP --switch-events \
+    -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
+    matrix.gcc
+
+Data loss metrics is the ratio lost_time/elapsed_time where 
+lost_time is the sum of time intervals containing PERF_RECORD_LOST 
+records and elapsed_time is the elapsed application run time 
+under profiling.
+
+Applying asynchronous trace streaming thru Posix AIO API [1] lowers 
+data loss metrics value providing 2x improvement (from 98% to ~1%)
+
+Asynchronous trace streaming currently limited to glibc linkage
+because there may be other libc libraries linked by Perf tool 
+that currently lack Posix AIO API support [2], [3], [4]. 
+NO_AIO define may be used to limit Perf tool binary to 
+serial streaming only.
+
+---
+ Alexey Budankov (3):
+        perf util: map data buffer for preserving collected data
+	perf record: enable asynchronous trace writing
+        perf record: extend trace writing to multi AIO
+
+ tools/perf/Makefile.config  |   5 ++
+ tools/perf/Makefile.perf    |   7 +-
+ tools/perf/builtin-record.c | 197 +++++++++++++++++++++++++++++++++++++++++++-
+ tools/perf/perf.h           |   3 +
+ tools/perf/util/evlist.c    |   9 +-
+ tools/perf/util/evlist.h    |   3 +-
+ tools/perf/util/mmap.c      | 137 ++++++++++++++++++++++++++++++
+ tools/perf/util/mmap.h      |  16 ++++
+ 8 files changed, 369 insertions(+), 8 deletions(-)
+
+---
+ Changes in v9:
+ - enable AIO streaming only when --aio-cblocks option is specified explicitly
+ - enable AIO based implementation when linking with glibc only
+ - define NO_AIO to limit Perf binary to serial implementation
+ Changes in v8:
+ - run the whole thing thru checkpatch.pl and corrected found issues except
+   lines longer than 80 symbols
+ - corrected comments alignment and formatting
+ - moved multi AIO implementation into 3rd patch in the series
+ - implemented explicit cblocks array allocation
+ - split AIO completion check into separate record__aio_complete()
+ - set nr_cblocks default to 1 and max allowed value to 4
+ Changes in v7:
+ - implemented handling record.aio setting from perfconfig file
+ Changes in v6:
+ - adjusted setting of priorities for cblocks;
+ - handled errno == EAGAIN case from aio_write() return;
+ Changes in v5:
+ - resolved livelock on perf record -e intel_pt// -- dd if=/dev/zero of=/dev/null count=100000
+ - data loss metrics decreased from 25% to 2x in trialed configuration;
+ - reshaped layout of data structures;
+ - implemented --aio option;
+ - avoided nanosleep() prior calling aio_suspend();
+ - switched to per-cpu aio multi buffer record__aio_sync();
+ - record_mmap_read_sync() now does global sync just before 
+   switching trace file or collection stop;
+ Changes in v4:
+ - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management
+ - converted void *bf to struct perf_mmap *md in signatures
+ - written comment in perf_mmap__push() just before perf_mmap__get();
+ - written comment in record__mmap_read_sync() on possible restarting 
+   of aio_write() operation and releasing perf_mmap object after all;
+ - added perf_mmap__put() for the cases of failed aio_write();
+ Changes in v3:
+ - written comments about nanosleep(0.5ms) call prior aio_suspend()
+   to cope with intrusiveness of its implementation in glibc;
+ - written comments about rationale behind coping profiling data 
+   into mmap->data buffer;
+ Changes in v2:
+ - converted zalloc() to calloc() for allocation of mmap_aio array,
+ - cleared typo and adjusted fallback branch code;
+
+---
+
+[1] http://man7.org/linux/man-pages/man7/aio.7.html
+[2] https://android.googlesource.com/platform/bionic/+/master/docs/status.md
+[3] https://www.uclibc.org/
+[4] https://uclibc-ng.org/
