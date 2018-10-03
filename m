@@ -2,134 +2,163 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 600F3C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 04:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE8FC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 04:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E61A5206B2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 04:42:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DZLopK7m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E61A5206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3818D21471
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 04:51:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3818D21471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbeJCL2f (ORCPT
+        id S1726672AbeJCLiD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 07:28:35 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33015 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbeJCL2f (ORCPT
+        Wed, 3 Oct 2018 07:38:03 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:47386 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbeJCLiD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 07:28:35 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d4-v6so1060259pfn.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 21:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mZ9hKOIb6sedp+U/NYBKdQqU+QZ7Xeb6W7xS8YMPzj0=;
-        b=DZLopK7mCQOekvBGvr8Z/WaNGOiswXw5jHu9dRhYqUehJpmvQYJocOtJE6jl+C8fFr
-         hXL/YV64Jb1fVWqtb4yskpkwEIFekUCDhW6XZIE12wpt5BnB2lbOBlsLmV8rQhE0ZkxA
-         Gj4I/Aa8e1+GyEB0I+tXMV9yHOdZOf/OnMmH0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mZ9hKOIb6sedp+U/NYBKdQqU+QZ7Xeb6W7xS8YMPzj0=;
-        b=alr9QJvOximRVDw8meYLM8khqZa63s9FFi7/MbTIKK8rFirRcWbDVFGEt95pZquspf
-         jJAEQq3kIS0Aqb0T/WVIdDValT7EvWOYb7fkhlULQjngoCbgpRaVHLBOekVJamEex4n+
-         cNix8QP82I5Dky7eoAS+CsoTE4YX+KCk4lU6pVom3cTOKFoHB6aX7fm1XBaHzwOeLSs6
-         4jhXpNGhHWn9e+ISPspcq2UVjmAr9RzuOkTfTfC4F7WqsdR6fHNUCNdYYIy189QsLkmm
-         KZrnigAGrlCLFNLFZydfMSJeEYrJW5+ovrXCZITtj80jQqt9xT6PSGBqiuwlYBo96+sh
-         Tanw==
-X-Gm-Message-State: ABuFfojY0RQTKYB6iud7JJXqTWWu2Vczjud/YeKteAoYgVtIZZheT7SR
-        Hzj0JqUMJ4Oa5/YwA3r8XymDdQ==
-X-Google-Smtp-Source: ACcGV62hTFwzIrGHUxoazUjc+9MPCRhxpwO/9pARNXOqsU6vWS/XI2FPd7WY/1ooxmx09Bq5Cgxscg==
-X-Received: by 2002:a62:f610:: with SMTP id x16-v6mr19201171pfh.169.1538541712998;
-        Tue, 02 Oct 2018 21:41:52 -0700 (PDT)
-Received: from localhost ([122.167.25.174])
-        by smtp.gmail.com with ESMTPSA id u184-v6sm327380pgd.27.2018.10.02.21.41.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Oct 2018 21:41:52 -0700 (PDT)
-Date:   Wed, 3 Oct 2018 10:11:50 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Derek Basehore <dbasehore@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: dt-platdev: mark RK3399 as having separate
- policies per cluster
-Message-ID: <20181003044150.i46eaoyco3w47nid@vireshk-i7>
-References: <20181001202153.GA240123@dtor-ws>
+        Wed, 3 Oct 2018 07:38:03 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g7Z7y-0000PW-Cy; Tue, 02 Oct 2018 22:51:14 -0600
+Received: from [105.184.227.67] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g7Z7i-00067m-BM; Tue, 02 Oct 2018 22:51:14 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>, avagin@virtuozzo.com,
+        dima@arista.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        0x7f454c46@gmail.com, adrian@lisas.de,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        gorcunov@openvz.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>, xemul@virtuozzo.com,
+        Shuah Khan <shuah@kernel.org>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        Linux API <linux-api@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-kselftest@vger.kernel.org
+References: <20180919205037.9574-1-dima@arista.com>
+        <874lej6nny.fsf@xmission.com>
+        <20180924205119.GA14833@outlook.office365.com>
+        <874leezh8n.fsf@xmission.com>
+        <20180925014150.GA6302@outlook.office365.com>
+        <87zhw4rwiq.fsf@xmission.com>
+        <alpine.DEB.2.21.1809272247270.8118@nanos.tec.linutronix.de>
+        <87mus1ftb9.fsf@xmission.com>
+        <alpine.DEB.2.21.1809282023350.1432@nanos.tec.linutronix.de>
+        <877ej2xc23.fsf_-_@xmission.com>
+        <alpine.DEB.2.21.1810012047520.32062@nanos.tec.linutronix.de>
+        <CAK8P3a2zTqrCGURE3XVpn3_w6C4R5O+cq8TdtbyKCMGyRk9_jw@mail.gmail.com>
+        <alpine.DEB.2.21.1810022205080.1435@nanos.tec.linutronix.de>
+Date:   Wed, 03 Oct 2018 06:50:47 +0200
+In-Reply-To: <alpine.DEB.2.21.1810022205080.1435@nanos.tec.linutronix.de>
+        (Thomas Gleixner's message of "Tue, 2 Oct 2018 22:06:28 +0200 (CEST)")
+Message-ID: <87in2jskew.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181001202153.GA240123@dtor-ws>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain
+X-XM-SPF: eid=1g7Z7i-00067m-BM;;;mid=<87in2jskew.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+mS1JiCwgOdrpjqu0CL+pXRPwZtQcbesw=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: Setting monotonic time?
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01-10-18, 13:21, Dmitry Torokhov wrote:
-> RK3399 has one cluster with 4 small cores, and another one with 2 big
-> cores, with cores in different clusters having different OPPs and thus
-> different policies. Let's enable this via "have_governor_per_policy"
-> platform data.
+Thomas Gleixner <tglx@linutronix.de> writes:
 
-The policies are always different in such cases, with or without this flag. What
-this flag rather enables is for us to have separate set of tunables for the
-governor for individual policies.
+> On Tue, 2 Oct 2018, Arnd Bergmann wrote:
+>> On Mon, Oct 1, 2018 at 8:53 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>> >
+>> > On Mon, 1 Oct 2018, Eric W. Biederman wrote:
+>> > > In the context of process migration there is a simpler subproblem that I
+>> > > think it is worth exploring if we can do something about.
+>> > >
+>> > > For a cluster of machines all running with synchronized
+>> > > clocks. CLOCK_REALTIME matches. CLOCK_MONOTNIC does not match between
+>> > > machines.   Not having a matching CLOCK_MONOTONIC prevents successful
+>> > > process migration between nodes in that cluster.
+>> > >
+>> > > Would it be possible to allow setting CLOCK_MONOTONIC at the very
+>> > > beginning of time?  So that all of the nodes in a cluster can be in
+>> > > sync?
+>> > >
+>> > > No change in skew just in offset for CLOCK_MONOTONIC.
+>> > >
+>> > > There are also dragons involved in coordinating things so that
+>> > > CLOCK_MONOTONIC gets set before CLOCK_MONOTONIC gets used.  So I don't
+>> > > know if allowing CLOCK_MONOTONIC to be set would be practical but it
+>> > > seems work exploring all on it's own.
+>> >
+>> > It's used very early on in the kernel, so that would be a major surprise
+>> > for many things including user space which has expectations on clock
+>> > monotonic.
+>> >
+>> > It would be reasonably easy to add CLOCK_MONONOTIC_SYNC which can be set in
+>> > the way you described and then in name spaces make it possible to magically
+>> > map CLOCK_MONOTONIC to CLOCK_MONOTONIC_SYNC.
+>> >
+>> > It still wouldn't allow to have different NTP/PTP time domains, but might
+>> > be a good start to address the main migration headaches.
+>> 
+>> If we make CLOCK_MONOTONIC settable this way in a namespace,
+>> do you think that should include device drivers that report timestamps
+>> in CLOCK_MONOTONIC base, or only the timekeeping clock and timer
+>> interfaces?
+>
+> Uurgh. That gets messy very fast.
+>
+>> Examples for drivers that can report timestamps are input, sound, v4l,
+>> and drm. I think most of these can report stamps in either monotonic
+>> or realtime base, while socket timestamps notably are always in
+>> realtime.
+>> 
+>> We can probably get away with not setting the timebase for those
+>> device drivers as long as the checkpoint/restart and migration features
+>> are not expected to restore the state of an open character device
+>> in that way. I don't know if that is a reasonable assumption to make
+>> for the examples I listed.
+>
+> No idea. I'm not a container migration wizard.
 
-For example, without this flag there will be a single governor directory:
+Direct access to hardware/drivers and not through an abstraction like
+the vfs (an abstraction over block devices) can legitimately be handled
+by hotplug events.  I unplug one keyboard I plug in another.
 
-/sys/devices/system/cpu/cpufreq/schedutil/
+I don't know if the input layer is more of a general abstraction
+or more of a hardware device.  I have not dug into it but my guess
+is abstraction from what I have heard.
 
-and the value of tunables in that directory will be used for all cpufreq
-policies.
+The scary difficulty here is if after restart input is reporting times
+in CLOCK_MONOTONIC and the applications in the namespace are talking
+about times in CLOCK_MONOTONIC_SYNC.  Then there is an issue.  As even
+with a fixed offset the times don't match up.
 
-With this flag you wouldn't have the governor directory there, but rather in:
+So a time namespace absolutely needs to do is figure out how to deal
+with all of the kernel interfaces reporting times and figure out how to
+report them in the current time namespace.
 
-/sys/devices/system/cpu/cpufreq/policy*/schedutil/
+Eric
 
-i.e. tunables per policy and that's why the name of the flag is:
-have_governor_per_policy.
 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
-> 
-> Not tested, but we had a patch unconditionally enabling
-> CPUFREQ_HAVE_GOVERNOR_PER_POLICY flag in tree we used to ship devices
-> based on RK3399 platform. 
 
-Sure, that sounds good. Just that you need to update the commit log a bit.
 
->  drivers/cpufreq/cpufreq-dt-platdev.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index fe14c57de6ca..040ec0f711f9 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -78,7 +78,10 @@ static const struct of_device_id whitelist[] __initconst = {
->  	{ .compatible = "rockchip,rk3328", },
->  	{ .compatible = "rockchip,rk3366", },
->  	{ .compatible = "rockchip,rk3368", },
-> -	{ .compatible = "rockchip,rk3399", },
-> +	{ .compatible = "rockchip,rk3399",
-> +	  .data = &(struct cpufreq_dt_platform_data)
 
-data is void *. No need to provide typecast information. This shouldn't throw
-any build warnings I believe.
 
-> +		{ .have_governor_per_policy = true, },
-
--- 
-viresh
