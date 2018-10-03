@@ -2,80 +2,114 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FREEMAIL_REPLYTO_END_DIGIT,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E43C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C22EC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9021B213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:05:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9021B213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E1BFD21476
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:07:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QVa16tsq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1BFD21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbeJCNwf (ORCPT
+        id S1727188AbeJCNyL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 09:52:35 -0400
-Received: from mga04.intel.com ([192.55.52.120]:3810 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbeJCNwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 09:52:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 00:05:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,334,1534834800"; 
-   d="scan'208";a="262431002"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 03 Oct 2018 00:05:30 -0700
-Received: from abityuts-desk.fi.intel.com (abityuts-desk.fi.intel.com [10.237.68.39])
-        by linux.intel.com (Postfix) with ESMTP id 7F350580268;
-        Wed,  3 Oct 2018 00:05:26 -0700 (PDT)
-Message-ID: <1538550325.14984.108.camel@gmail.com>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-From:   Artem Bityutskiy <dedekind1@gmail.com>
-Reply-To: dedekind1@gmail.com
-To:     Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, Andreas Herrmann <aherrmann@suse.com>,
-        Mel Gorman <mgorman@suse.com>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        'Paolo Valente' via bfq-iosched 
-        <bfq-iosched@googlegroups.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Mark Brown <broonie@kernel.org>
-Date:   Wed, 03 Oct 2018 10:05:25 +0300
-In-Reply-To: <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
-         <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
-         <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 3 Oct 2018 09:54:11 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43265 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbeJCNyL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 09:54:11 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 80-v6so1113627pgh.10
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 00:07:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L4Qc0CALP1RkFVbalnzq2/EzAfTuUelm706tDhlpe7o=;
+        b=QVa16tsqX6UunwOzQdSAithVgVfbGsz57QzaFQ/qao8UWNctYlvni8jGH1WzAsCFJZ
+         q4tdKwuXcd+Ye+A3w6AtpEJV7KclhvH1C5JWeso8ytdjOmQREfSUIq6CYsA5TpJ0cM93
+         aHlufnqpnrz470xdSaW4OVG3WIZF2Hyke8bBU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L4Qc0CALP1RkFVbalnzq2/EzAfTuUelm706tDhlpe7o=;
+        b=cKjuHXWWXF+/ePFWAh1yJb0am+LgnsD5lvoK3Ln+klAJx2lGQ4aNrObDAIrMykOx9l
+         eo/jv6Iw+LgnMG/+yrP/B59o8DpS6rjYqlQEvSQgy9KIARks0G2cfLAHSofps+RGEWVd
+         P8BrdW8+jl8fPCYMeXR4SB1CI35SGxkfEx8hBt6CmVRFTf9+NNcPmPZ7U1bWjcAasDQd
+         4a5Kf0HR9CPazAJcqaLbvWBoi5FW4ZGVnTNhpn7xjolPXi/PKMmzvaiOGRLCU19NDT2G
+         FVwqas505jlTRjFjnXkF2CO0m4fvmab6pECv8p+dm7j5GbyeOKkt2AoOErUeNsKY5VzO
+         WTBg==
+X-Gm-Message-State: ABuFfoiWVmt207wiFIIiYzKvehA0m5otQKNwPKAEXzHSjTDCULVG5mec
+        RFSv7FhJSjcuHqX9xoEH5/XZCA==
+X-Google-Smtp-Source: ACcGV63npfxk8jti2pKZnkMyLAPmvu6v6CpVlNiXJWmio4a4SnsBtuqIsb86WlQ8b+xrwxsK0c9i6Q==
+X-Received: by 2002:a62:8c93:: with SMTP id m141-v6mr177186pfd.16.1538550425774;
+        Wed, 03 Oct 2018 00:07:05 -0700 (PDT)
+Received: from keiichiw1.tok.corp.google.com ([2401:fa00:4:4:968c:de0d:27a3:4bef])
+        by smtp.gmail.com with ESMTPSA id y1-v6sm992520pfy.89.2018.10.03.00.07.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 00:07:04 -0700 (PDT)
+From:   Keiichi Watanabe <keiichiw@chromium.org>
+To:     linux-media@vger.kernel.org
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, tfiga@chromium.org,
+        jcliang@chromium.org, shik@chromium.org, keiichiw@chromium.org
+Subject: [PATCH] media: vivid: Support 480p for webcam capture
+Date:   Wed,  3 Oct 2018 16:06:56 +0900
+Message-Id: <20181003070656.193854-1-keiichiw@chromium.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-03 at 08:29 +0200, Paolo Valente wrote:
-> So, I do understand your need for conservativeness, but, after so much
-> evidence on single-queue devices, and so many years! :), what's the
-> point in keeping Linux worse for virtually everybody, by default?
+Support 640x480 as a frame size for video input devices of vivid.
 
-Sounds like what we just need a mechanism for the device (ubi block in
-this case) to select the I/O scheduler. I doubt enhancing the default
-scheduler selection logic in 'elevator.c' is the right answer. Just
-give the driver authority to override the defaults.
+Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
+---
+ drivers/media/platform/vivid/vivid-vid-cap.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/vivid/vivid-vid-cap.c b/drivers/media/platform/vivid/vivid-vid-cap.c
+index 58e14dd1dcd3..da80bf4bc365 100644
+--- a/drivers/media/platform/vivid/vivid-vid-cap.c
++++ b/drivers/media/platform/vivid/vivid-vid-cap.c
+@@ -51,7 +51,7 @@ static const struct vivid_fmt formats_ovl[] = {
+ };
+ 
+ /* The number of discrete webcam framesizes */
+-#define VIVID_WEBCAM_SIZES 5
++#define VIVID_WEBCAM_SIZES 6
+ /* The number of discrete webcam frameintervals */
+ #define VIVID_WEBCAM_IVALS (VIVID_WEBCAM_SIZES * 2)
+ 
+@@ -59,6 +59,7 @@ static const struct vivid_fmt formats_ovl[] = {
+ static const struct v4l2_frmsize_discrete webcam_sizes[VIVID_WEBCAM_SIZES] = {
+ 	{  320, 180 },
+ 	{  640, 360 },
++	{  640, 480 },
+ 	{ 1280, 720 },
+ 	{ 1920, 1080 },
+ 	{ 3840, 2160 },
+@@ -75,6 +76,8 @@ static const struct v4l2_fract webcam_intervals[VIVID_WEBCAM_IVALS] = {
+ 	{  1, 5 },
+ 	{  1, 10 },
+ 	{  1, 15 },
++	{  1, 15 },
++	{  1, 25 },
+ 	{  1, 25 },
+ 	{  1, 30 },
+ 	{  1, 50 },
+-- 
+2.19.0.605.g01d371f741-goog
+
