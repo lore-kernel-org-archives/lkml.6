@@ -2,99 +2,94 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DC3C64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8D5C64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 519B720645
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:01:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519B720645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5909220645
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:02:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5909220645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeJCStv (ORCPT
+        id S1727395AbeJCSuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:49:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:3223 "EHLO mx1.redhat.com"
+        Wed, 3 Oct 2018 14:50:11 -0400
+Received: from mga07.intel.com ([134.134.136.100]:43142 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726943AbeJCStv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:49:51 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8CFEEC049E3A;
-        Wed,  3 Oct 2018 12:01:44 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BCEE420155E0;
-        Wed,  3 Oct 2018 12:01:40 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI support
-In-Reply-To: <4B6A97E1-17E6-40F2-A7A0-87731668A07C@amacapital.net>
-References: <20180914125006.349747096@linutronix.de> <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com> <87sh1ne64t.fsf@vitty.brq.redhat.com> <4B6A97E1-17E6-40F2-A7A0-87731668A07C@amacapital.net>
-Date:   Wed, 03 Oct 2018 14:01:38 +0200
-Message-ID: <87murvdysd.fsf@vitty.brq.redhat.com>
+        id S1726847AbeJCSuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 14:50:11 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 05:02:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
+   d="scan'208";a="85399694"
+Received: from hoffmann-mobl.ger.corp.intel.com (HELO localhost) ([10.249.38.250])
+  by FMSMGA003.fm.intel.com with ESMTP; 03 Oct 2018 05:01:44 -0700
+Date:   Wed, 3 Oct 2018 15:01:41 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+Message-ID: <20181003120141.GA7969@linux.intel.com>
+References: <20180928223035.14471-1-tomas.winkler@intel.com>
+ <20180928223035.14471-13-tomas.winkler@intel.com>
+ <20181002005208.GH23753@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 03 Oct 2018 12:01:45 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy Lutomirski <luto@amacapital.net> writes:
+On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
+> 
+> 
+> > 
+> > On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
+> > > Add tpm2_pcr_extend() function to tpm2-cmd.c with signature required
+> > > by tpm-interface.c. It wraps the original open code implementation.
+> > > The original original tpm2_pcr_extend() function is renamed to
+> > > __tpm2_pcr_extend() and made static, it is called only from new
+> > > tpm2_pcr_extend().
+> > >
+> > > Fix warnings in __tpm2_pcr_extend()
+> > > tpm2-cmd.c:251:16: warning: comparison between signed and unsigned
+> > > integer expressions [-Wsign-compare]
+> > > tpm2-cmd.c:252:17: warning: comparison between signed and unsigned
+> > > integer expressions [-Wsign-compare]
+> > >
+> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > 
+> > We do not want the signature change, especially because as we are working
+> > on getting Roberto's changes in and also because it has absolutely a zero
+> > gain. Who cares if those functions take different parameters? I don't.
+> 
+> Yes, we do care this series tries to have a clean cut between 1.x  and 2.x specs. Please, let's finish one transformation and then move to another.
+> I understand that Roberto will have to rebase anyhow, if this series goes in first, if this is hard I can do it myself, it's trivial.
+> 
+> Tomas
 
->> On Oct 3, 2018, at 2:22 AM, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->> 
->> Andy Lutomirski <luto@kernel.org> writes:
->> 
->>> Hi Vitaly, Paolo, Radim, etc.,
->>> 
->> The notification you're talking about exists, it is called
->> Reenligntenment, see 0092e4346f49 "x86/kvm: Support Hyper-V
->> reenlightenment"). When TSC page changes (and this only happens when L1
->> is migrated to a different host with a different TSC frequency and TSC
->> scaling is not supported by the CPU) we receive an interrupt in L1 (at
->> this moment all TSC accesses are emulated which guarantees the
->> correctness of the readings), pause all L2 guests, update their kvmclock
->> structures with new data (we already know the new TSC frequency) and
->> then tell L0 that we're done and it can stop emulating TSC accesses.
->
-> That’s delightful!  Does the emulation magic also work for L1 user
-> mode?
+I'm happy to tune this minor stuff. I'll wait for Nayna to test
+the one patch and make those adjustments :-) Would not make sense
+to roll another series for these changes.
 
-As far as I understand - yes, all rdtsc* calls will trap into L0.
-
->  If so, couldn’t we drop the HyperV vclock entirely and just
-> fold the adjustment into the core timekeeping data?  (Preferably the
-> actual core data, which would require core changes, but it could
-> plausibly be done in arch code, too.)
-
-Not all Hyper-V hosts support reenlightenment notifications (and, if I'm
-not mistaken, you need to enable nesting for the VM to get the feature -
-and most VMs don't have this) so I think we'll have to keep Hyper-V
-vclock for the time being.
-
--- 
-Vitaly
+/Jarkko
