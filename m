@@ -2,129 +2,115 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3598EC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A7BC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F053E2098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:16:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nQ15V0o5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F053E2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 718C32098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:17:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718C32098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbeJCSEd (ORCPT
+        id S1726781AbeJCSFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:04:33 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36766 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbeJCSEd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:04:33 -0400
-Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5E36CB7F;
-        Wed,  3 Oct 2018 13:16:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1538565395;
-        bh=JN/vAjcjDiWYekPpLxHUxKgNJFPOEcGKlXCh/HrnE8c=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nQ15V0o5bZErBajawprgiltVPAFFjoYJHB+IJsgx0ompzK3JuDaTe7Xlol/5H96Tg
-         WOxEDI+bbxrUWUm/wWPMM4hjvKO7YUhd2bVoF0X7ExJbRsn6EuTqehDXQYc2NZE1hw
-         +7KNGBOYzA41dnonaNR7b/S+LcBEA51NAIulk8a0=
-Subject: Re: [PATCH] media: vivid: Support 480p for webcam capture
-To:     Keiichi Watanabe <keiichiw@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Ricky Liang <jcliang@chromium.org>,
-        Shik Chen <shik@chromium.org>
-References: <20181003070656.193854-1-keiichiw@chromium.org>
- <CAD90VcbBUcpwLsY0sHim+mML6esSjZA2ocX0Ff-YiZxBsLTZ+w@mail.gmail.com>
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <ff25134a-6d61-6dd4-f157-8acd53722ad9@ideasonboard.com>
-Date:   Wed, 3 Oct 2018 12:16:32 +0100
+        Wed, 3 Oct 2018 14:05:52 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49854 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726617AbeJCSFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 14:05:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5186018A;
+        Wed,  3 Oct 2018 04:17:56 -0700 (PDT)
+Received: from [10.4.13.23] (en101.emea.arm.com [10.4.13.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6834B3F5A0;
+        Wed,  3 Oct 2018 04:17:54 -0700 (PDT)
+Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
+To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        catalin.marinas@arm.com, mhocko@kernel.org,
+        mike.kravetz@oracle.com, n-horiguchi@ah.jp.nec.com
+References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
+ <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
+ <835085a2-79c2-4eb5-2c10-13bb2893f611@arm.com>
+ <c0689b0c-4810-e0e8-354e-55c45d59b6d0@arm.com>
+ <a6b96126-5571-2aa2-6deb-09a457afd781@arm.com>
+ <bad51030-5f02-4fc9-741c-0fffbd690aca@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <789784ee-4830-753b-5d14-f5c7d90622c4@arm.com>
+Date:   Wed, 3 Oct 2018 12:17:52 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAD90VcbBUcpwLsY0sHim+mML6esSjZA2ocX0Ff-YiZxBsLTZ+w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <bad51030-5f02-4fc9-741c-0fffbd690aca@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kei,
-
-On 03/10/18 08:08, Keiichi Watanabe wrote:
-> I think 480p is a common frame size and it's worth supporting in vivid.
-> But, my patch might be ad-hoc. Actually, I'm not sure which values are
-> suitable for the intervals.
-
-Aha - yes I did think the duplicates were a bit odd. Anyway, replied
-inline there :)
-
-> We might want to add a more flexible/extensible way to specify frame sizes.
-> e.g. passing frame sizes and intervals as module parameters
-
-I agree here, having recently extended this table my self with some
-local patches it would be great to be able to request some more
-arbitrary sizes and rates from VIVID in a more flexible manner.
-
-Regards
-
-Kieran
 
 
+On 03/10/18 12:10, Anshuman Khandual wrote:
 > 
-> Kei
 > 
-> On Wed, Oct 3, 2018 at 4:06 PM, Keiichi Watanabe <keiichiw@chromium.org> wrote:
->> Support 640x480 as a frame size for video input devices of vivid.
+> On 10/03/2018 03:52 PM, Suzuki K Poulose wrote:
 >>
->> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
->> ---
->>  drivers/media/platform/vivid/vivid-vid-cap.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
 >>
->> diff --git a/drivers/media/platform/vivid/vivid-vid-cap.c b/drivers/media/platform/vivid/vivid-vid-cap.c
->> index 58e14dd1dcd3..da80bf4bc365 100644
->> --- a/drivers/media/platform/vivid/vivid-vid-cap.c
->> +++ b/drivers/media/platform/vivid/vivid-vid-cap.c
->> @@ -51,7 +51,7 @@ static const struct vivid_fmt formats_ovl[] = {
->>  };
+>> On 02/10/18 13:56, Anshuman Khandual wrote:
+>>>
+>>>
+>>> On 10/02/2018 06:08 PM, Suzuki K Poulose wrote:
+>>>> Hi Anshuman
+>>>>
+>>>> On 02/10/18 13:15, Anshuman Khandual wrote:
+>>>>> Architectures like arm64 have PUD level HugeTLB pages for certain configs
+>>>>> (1GB huge page is PUD based on ARM64_4K_PAGES base page size) that can be
+>>>>> enabled for migration. It can be achieved through checking for PUD_SHIFT
+>>>>> order based HugeTLB pages during migration.
+>>>>>
+>>>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>>>>> ---
+>>>>>     include/linux/hugetlb.h | 3 ++-
+>>>>>     1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+>>>>> index 6b68e34..9c1b77f 100644
+>>>>> --- a/include/linux/hugetlb.h
+>>>>> +++ b/include/linux/hugetlb.h
+>>>>> @@ -483,7 +483,8 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+>>>>>     {
+>>>>>     #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
+>>>>>         if ((huge_page_shift(h) == PMD_SHIFT) ||
+>>>>> -        (huge_page_shift(h) == PGDIR_SHIFT))
+>>>>> +        (huge_page_shift(h) == PUD_SHIFT) ||
+>>>>
+>>>>
+>>>>> +            (huge_page_shift(h) == PGDIR_SHIFT))
+>>>>
+>>>> nit: Extra Tab ^^.
+>>>
+>>> The tab is in there when you apply this patch and all three checks are tab separated
+>>> in a newline.
 >>
->>  /* The number of discrete webcam framesizes */
->> -#define VIVID_WEBCAM_SIZES 5
->> +#define VIVID_WEBCAM_SIZES 6
->>  /* The number of discrete webcam frameintervals */
->>  #define VIVID_WEBCAM_IVALS (VIVID_WEBCAM_SIZES * 2)
->>
->> @@ -59,6 +59,7 @@ static const struct vivid_fmt formats_ovl[] = {
->>  static const struct v4l2_frmsize_discrete webcam_sizes[VIVID_WEBCAM_SIZES] = {
->>         {  320, 180 },
->>         {  640, 360 },
->> +       {  640, 480 },
->>         { 1280, 720 },
->>         { 1920, 1080 },
->>         { 3840, 2160 },
->> @@ -75,6 +76,8 @@ static const struct v4l2_fract webcam_intervals[VIVID_WEBCAM_IVALS] = {
->>         {  1, 5 },
->>         {  1, 10 },
->>         {  1, 15 },
->> +       {  1, 15 },
->> +       {  1, 25 },
->>         {  1, 25 },
->>         {  1, 30 },
->>         {  1, 50 },
->> --
->> 2.19.0.605.g01d371f741-goog
->>
+>> Well, with the patch applied, at least I can see 2 tabs for the
+>> PUD_SHIFT check and 3 tabs for PGDIR_SHIFT check. Which seems
+>> inconsistent. Is it just me (my mail client) ?
+> 
+> I am sorry, you are right. Did not understand your point earlier. Yeah there is
+> increasing number of tabs for each new line with a conditional check. Is there
+> a problem with this style of indentation ? Though I will be happy to change.
 
+I have been under the idea that all the checks at the same level could
+have the same indentation. (i.e, 2 tabs in this case for each). Looks
+like there is no rule about it. How about replacing it with a
+switch..case  ?
+
+Cheers
+Suzuki
