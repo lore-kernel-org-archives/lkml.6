@@ -2,193 +2,239 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA34C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74E5C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273A82082A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:29:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 549F521470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:31:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="axRPMGtJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273A82082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="LJTiabtj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 549F521470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ingics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbeJCWSj (ORCPT
+        id S1726998AbeJCWUe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:18:39 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:34575 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbeJCWSj (ORCPT
+        Wed, 3 Oct 2018 18:20:34 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35554 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbeJCWUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:18:39 -0400
-Received: by mail-it1-f193.google.com with SMTP id l127-v6so10080272ith.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 08:29:46 -0700 (PDT)
+        Wed, 3 Oct 2018 18:20:33 -0400
+Received: by mail-pf1-f194.google.com with SMTP id p12-v6so1875264pfh.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 08:31:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Z4PJHKEwmLIt4+uHeuUGyaq6idRQbatKGZl4eAqUpQY=;
-        b=axRPMGtJ1BebstQf6vtaI3oDyVGKVbt13pyYKBks+hcbouLSTbtcdX0SogtVsqMQSJ
-         bn7TLrVmjcglqgTnAMpLM/BO6GQWYfGk4jvUJX33fGoDG8YBa8UIk1NOggVAW3KSufvX
-         QBhvEUsGQAoXv2midbYGfwD1v0t+AnzfjwkIQ=
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=pJcKHPqlWX3FfqIN9ctD3dmLHE4pwzLyTXFWYI++KPU=;
+        b=LJTiabtjXJ8ZouSr1C6Mk/fDtgbucRo6wANuDDQefUzo3v8hhHYGUIj5rzVilvrFM1
+         T5DgIlI1VOoJdGujrXUIp8C/GVDsKzteOl8as8mKXW8atVDXcC57QsqoMf85ppQLZ1VX
+         jnle/wLj0Emy+1RVZXknFV+wC8QWrJkvCijpe5Q5KTCSPufZLSGGYGGby7TUyoFbA1bY
+         HI34tvURoDxIwQMWRXj2ynGG9J4/Pn5ahfKolOV3+HjjHSSE8cbDFwZsFrehn4ZnNOKD
+         pUq9KYct7CDZ6Hpc59bNpcarclv6pjAwincGG7Tn3Ab10ylDndeVauXvX0kSRFpzmIY1
+         p7lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Z4PJHKEwmLIt4+uHeuUGyaq6idRQbatKGZl4eAqUpQY=;
-        b=tmmQc700ULXfYPjq1H8icNgAz+YaCAiq7bSyDrr9t6wEOgMRqm9tv8/3k0HcJHQP1q
-         q6WCAFtfQ7NrD+HW0m0dNooZOjyjucFelsE++wtmhRdlu7bRNdpWhGAYD7dlNbr+BsR9
-         i7Pi7ivUs/7JHpvikBdxLYvId+HCa5+U6nHWn4Thrxxwc2olijTro+257THz0JfNMqHL
-         S3GEzgEFIXs7kILuHZqV/F6Pxwy5fy3sD7aC+qBIN3mA0ZgnQaF4B1DWoylqrrMfNJUW
-         nTfL+TOKHEx2uUgq1djctZmmOk8uRnRYrkGsFMk7k/Na/c/oQUTu8cOkmaf9wjwj/KCb
-         AvlA==
-X-Gm-Message-State: ABuFfohQFgsMNXiKrP5GHnHWLTNl/TWdk8PDujzYwsRwpkDQNtMHkDfL
-        irsFuJApNiBGXtrv+biLS9+DAOAJYybi7ThPIug/lw==
-X-Google-Smtp-Source: ACcGV60PIE+jhaR1pRJOci3ppmTFz9xcIynFSIRYFTeS3fxNXCBkeg3CWbpI5oia/TgALBfE2GSGNEgC6OnNVu0ZnXM=
-X-Received: by 2002:a24:d857:: with SMTP id b84-v6mr1857489itg.77.1538580586125;
- Wed, 03 Oct 2018 08:29:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181003110457.9318-1-Eugeniy.Paltsev@synopsys.com>
- <CAKMK7uFP3bMcNSY2L9ZmvFPz6KB51_gMnZ-b7FPCz3NEOafi=w@mail.gmail.com>
- <20181003123047.GK9144@intel.com> <1538577004.11140.5.camel@synopsys.com>
-In-Reply-To: <1538577004.11140.5.camel@synopsys.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 3 Oct 2018 17:29:34 +0200
-Message-ID: <CAKMK7uGEGQbg=Us3_C25JXvKR084fP0qLif1hHttMYq=xNAZ7g@mail.gmail.com>
-Subject: Re: [PATCH] drm: fb-helper: Validate requested pixel format against bpp
-To:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-Cc:     "Syrjala, Ville" <ville.syrjala@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        stable <stable@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Sean Paul <sean@poorly.run>, Dave Airlie <airlied@linux.ie>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pJcKHPqlWX3FfqIN9ctD3dmLHE4pwzLyTXFWYI++KPU=;
+        b=OjyBBdU99JRv4ZAoaj5VNUFCHSDGJWKX6uuJdkbLXcUYEEl1018cUh/LdkN7XtRxIW
+         18SfoShVD+Awbw/zg5HDnPG0uSRXHiWI1b7YseykkfePrKrCeqwFBMmTfeDwTRio0keH
+         et29KS/RS3GPIDo7PIKZMNQ32GU+gIwOl3kErkBfhjY4RcjJ9M45zqgjsrOMKscJQRVm
+         Ot6cOhB1LXKDzo/4OTMNKoRn6J11Y9ZFUk99qDMbwjvtGd2CVuBw+go2lq8ujyd6aBx6
+         PluKKbIOQHcBkh3WBZ8RmTsIsxtzcq/rAJZZDsZIn1BO/KTbCFxD8wpHN8IsHnwwqxg3
+         QiTA==
+X-Gm-Message-State: ABuFfojTMpy8i235QLR8zzoZWzfw+41UOZcVaB/rhu/Y2dsaF3PZs5Wx
+        nqGhC3ytR/gFdMl+dAjqghSvpQ==
+X-Google-Smtp-Source: ACcGV61UcJjXr0GFBgziPeQoUyizg02daQD6ho2fn69MrNaFOx5RM73LsLtbYDUgVvdC9ttJbBMzAg==
+X-Received: by 2002:a62:444f:: with SMTP id r76-v6mr2203504pfa.111.1538580699901;
+        Wed, 03 Oct 2018 08:31:39 -0700 (PDT)
+Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
+        by smtp.gmail.com with ESMTPSA id b29-v6sm4921257pfj.183.2018.10.03.08.31.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 08:31:38 -0700 (PDT)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: bd718x7: struct bd718xx_pmic
+Date:   Wed,  3 Oct 2018 23:31:29 +0800
+Message-Id: <20181003153129.26588-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 4:30 PM Eugeniy Paltsev
-<eugeniy.paltsev@synopsys.com> wrote:
->
-> On Wed, 2018-10-03 at 15:30 +0300, Ville Syrj=C3=A4l=C3=A4 wrote:
-> > On Wed, Oct 03, 2018 at 01:36:00PM +0200, Daniel Vetter wrote:
-> > > On Wed, Oct 3, 2018 at 1:05 PM Eugeniy Paltsev
-> > > <Eugeniy.Paltsev@synopsys.com> wrote:
-> > > >
-> > > > Validate requested pixel format against bits_per_pixel to reject
-> > > > invalid formats with subcomponents length sum is greater than reque=
-sted
-> > > > bits_per_pixel.
-> > > >
-> > > > weston 5.0.0 with fbdev backend tries to set up an ARGB x8r8g8b8 pi=
-xel
-> > > > format without bits_per_pixel updating. So it can request
-> > > > x8r8g8b8 with 16 bpp which is obviously incorrect and should be
-> > > > rejected.
-> > > >
-> > > > Cc: stable@vger.kernel.org
-> > > > Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> > >
-> > > drm fbdev emulation doesn't support changing the pixel format at all.
-> > > I think we should reject all such request, not just the invalid ones.
-> > > Can you pls respin?
-> >
-> > FYI I once posted a patch to tighten up the fb-helper pixel format
-> > stuff:
-> > https://patchwork.freedesktop.org/patch/203189/
->
->
-> Hi Daniel,
->
-> will you take Ville's patch or should I create the new one which is only =
-related
-> to new pixel format validation in drm_fb_helper_check_var() ?
+All the fields in struct bd718xx_pmic are not really necessary.
+Remove struct bd718xx_pmic to simplify the code.
 
-Ville's patch isn't the bugfix we're looking for, but a draft version
-of what adding proper format support in drm's fbdev emulation could
-look like. With lots&lots of open questions. Not anywhere near ready
-for merging, and definitely not stable backport material.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/bd718x7-regulator.c | 59 +++++++++------------------
+ 1 file changed, 20 insertions(+), 39 deletions(-)
 
-So yes, still want the minimal bugfix.
--Daniel
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index d2522d4e1505..3a47e0372e77 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -15,13 +15,6 @@
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/slab.h>
+ 
+-struct bd718xx_pmic {
+-	struct bd718xx_regulator_data *rdata;
+-	struct bd718xx *mfd;
+-	struct platform_device *pdev;
+-	struct regulator_dev *rdev[BD718XX_REGULATOR_AMOUNT];
+-};
+-
+ /*
+  * BUCK1/2/3/4
+  * BUCK1RAMPRATE[1:0] BUCK1 DVS ramp rate setting
+@@ -33,12 +26,10 @@ struct bd718xx_pmic {
+ static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 					   int ramp_delay)
+ {
+-	struct bd718xx_pmic *pmic = rdev_get_drvdata(rdev);
+-	struct bd718xx *mfd = pmic->mfd;
+ 	int id = rdev->desc->id;
+ 	unsigned int ramp_value = BUCK_RAMPRATE_10P00MV;
+ 
+-	dev_dbg(&pmic->pdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
++	dev_dbg(&rdev->dev, "Buck[%d] Set Ramp = %d\n", id + 1,
+ 		ramp_delay);
+ 	switch (ramp_delay) {
+ 	case 1 ... 1250:
+@@ -55,12 +46,12 @@ static int bd718xx_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 		break;
+ 	default:
+ 		ramp_value = BUCK_RAMPRATE_10P00MV;
+-		dev_err(&pmic->pdev->dev,
++		dev_err(&rdev->dev,
+ 			"%s: ramp_delay: %d not supported, setting 10000mV//us\n",
+ 			rdev->desc->name, ramp_delay);
+ 	}
+ 
+-	return regmap_update_bits(mfd->regmap, BD718XX_REG_BUCK1_CTRL + id,
++	return regmap_update_bits(rdev->regmap, BD718XX_REG_BUCK1_CTRL + id,
+ 				  BUCK_RAMPRATE_MASK, ramp_value << 6);
+ }
+ 
+@@ -1022,7 +1013,7 @@ struct bd718xx_pmic_inits {
+ 
+ static int bd718xx_probe(struct platform_device *pdev)
+ {
+-	struct bd718xx_pmic *pmic;
++	struct bd718xx *mfd;
+ 	struct regulator_config config = { 0 };
+ 	struct bd718xx_pmic_inits pmic_regulators[] = {
+ 		[BD718XX_TYPE_BD71837] = {
+@@ -1037,54 +1028,46 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 
+ 	int i, j, err;
+ 
+-	pmic = devm_kzalloc(&pdev->dev, sizeof(*pmic), GFP_KERNEL);
+-	if (!pmic)
+-		return -ENOMEM;
+-
+-	pmic->pdev = pdev;
+-	pmic->mfd = dev_get_drvdata(pdev->dev.parent);
+-
+-	if (!pmic->mfd) {
++	mfd = dev_get_drvdata(pdev->dev.parent);
++	if (!mfd) {
+ 		dev_err(&pdev->dev, "No MFD driver data\n");
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
+-	if (pmic->mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
+-	    !pmic_regulators[pmic->mfd->chip_type].r_datas) {
++
++	if (mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
++	    !pmic_regulators[mfd->chip_type].r_datas) {
+ 		dev_err(&pdev->dev, "Unsupported chip type\n");
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
+ 
+-	platform_set_drvdata(pdev, pmic);
+-
+ 	/* Register LOCK release */
+-	err = regmap_update_bits(pmic->mfd->regmap, BD718XX_REG_REGLOCK,
++	err = regmap_update_bits(mfd->regmap, BD718XX_REG_REGLOCK,
+ 				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
+ 	if (err) {
+-		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
++		dev_err(&pdev->dev, "Failed to unlock PMIC (%d)\n", err);
+ 		goto err;
+ 	} else {
+-		dev_dbg(&pmic->pdev->dev, "Unlocked lock register 0x%x\n",
++		dev_dbg(&pdev->dev, "Unlocked lock register 0x%x\n",
+ 			BD718XX_REG_REGLOCK);
+ 	}
+ 
+-	for (i = 0; i < pmic_regulators[pmic->mfd->chip_type].r_amount; i++) {
++	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
+ 
+ 		const struct regulator_desc *desc;
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
+ 
+-		r = &(*pmic_regulators[pmic->mfd->chip_type].r_datas)[i];
++		r = &(*pmic_regulators[mfd->chip_type].r_datas)[i];
+ 		desc = &r->desc;
+ 
+ 		config.dev = pdev->dev.parent;
+-		config.driver_data = pmic;
+-		config.regmap = pmic->mfd->regmap;
++		config.regmap = mfd->regmap;
+ 
+ 		rdev = devm_regulator_register(&pdev->dev, desc, &config);
+ 		if (IS_ERR(rdev)) {
+-			dev_err(pmic->mfd->dev,
++			dev_err(&pdev->dev,
+ 				"failed to register %s regulator\n",
+ 				desc->name);
+ 			err = PTR_ERR(rdev);
+@@ -1096,28 +1079,26 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		 * can now switch the control from PMIC state machine to the
+ 		 * register interface
+ 		 */
+-		err = regmap_update_bits(pmic->mfd->regmap, r->init.reg,
++		err = regmap_update_bits(mfd->regmap, r->init.reg,
+ 					 r->init.mask, r->init.val);
+ 		if (err) {
+-			dev_err(&pmic->pdev->dev,
++			dev_err(&pdev->dev,
+ 				"Failed to write BUCK/LDO SEL bit for (%s)\n",
+ 				desc->name);
+ 			goto err;
+ 		}
+ 		for (j = 0; j < r->additional_init_amnt; j++) {
+-			err = regmap_update_bits(pmic->mfd->regmap,
++			err = regmap_update_bits(mfd->regmap,
+ 						 r->additional_inits[j].reg,
+ 						 r->additional_inits[j].mask,
+ 						 r->additional_inits[j].val);
+ 			if (err) {
+-				dev_err(&pmic->pdev->dev,
++				dev_err(&pdev->dev,
+ 					"Buck (%s) initialization failed\n",
+ 					desc->name);
+ 				goto err;
+ 			}
+ 		}
+-
+-		pmic->rdev[i] = rdev;
+ 	}
+ 
+ err:
+-- 
+2.17.1
 
->
->
-> > > Thanks, Daniel
-> > >
-> > > > ---
-> > > >  drivers/gpu/drm/drm_fb_helper.c | 7 +++++++
-> > > >  1 file changed, 7 insertions(+)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_=
-fb_helper.c
-> > > > index 16ec93b75dbf..4f39da07f053 100644
-> > > > --- a/drivers/gpu/drm/drm_fb_helper.c
-> > > > +++ b/drivers/gpu/drm/drm_fb_helper.c
-> > > > @@ -1610,6 +1610,13 @@ int drm_fb_helper_check_var(struct fb_var_sc=
-reeninfo *var,
-> > > >                 return -EINVAL;
-> > > >         }
-> > > >
-> > > > +       if ((var->green.length + var->blue.length + var->red.length=
- +
-> > > > +           var->transp.length) > var->bits_per_pixel) {
-> > > > +               DRM_DEBUG("fb requested pixel format can't fit in %=
-d bpp\n",
-> > > > +                         var->bits_per_pixel);
-> > > > +               return -EINVAL;
-> > > > +       }
-> > > > +
-> > > >         switch (var->bits_per_pixel) {
-> > > >         case 16:
-> > > >                 depth =3D (var->green.length =3D=3D 6) ? 16 : 15;
-> > > > --
-> > > > 2.14.4
-> > > >
-> > > > _______________________________________________
-> > > > dri-devel mailing list
-> > > > dri-devel@lists.freedesktop.org
-> > > > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.freede=
-sktop.org_mailman_listinfo_dri-2Ddevel&d=3DDwIDAw&c=3DDPL6_X_6JkXFx7AXWqB0t=
-g&r=3DZlJN
-> > > > 1MriPUTkBKCrPSx67GmaplEUGcAEk9yPtCLdUXI&m=3Df12ZyEESIeavtqCUKutiZ9F=
-6xtRFC2UUvdqnM4ywBx8&s=3DCPS8taMiYbIgXo-fxhqErOJXvO6PMTzmr-BNnGJIoy0&e=3D
-> > >
-> > >
-> > >
-> > > --
-> > > Daniel Vetter
-> > > Software Engineer, Intel Corporation
-> > > +41 (0) 79 365 57 48 - https://urldefense.proofpoint.com/v2/url?u=3Dh=
-ttp-3A__blog.ffwll.ch&d=3DDwIDAw&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3DZlJN1MriPUT=
-kBKCrPSx67
-> > > GmaplEUGcAEk9yPtCLdUXI&m=3Df12ZyEESIeavtqCUKutiZ9F6xtRFC2UUvdqnM4ywBx=
-8&s=3DVt8OX9s9ljSK6GDgbnwsF-Yd35fbBUfe8SBV2jPnVaQ&e=3D
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.freedesk=
-top.org_mailman_listinfo_dri-2Ddevel&d=3DDwIDAw&c=3DDPL6_X_6JkXFx7AXWqB0tg&=
-r=3DZlJN1M
-> > > riPUTkBKCrPSx67GmaplEUGcAEk9yPtCLdUXI&m=3Df12ZyEESIeavtqCUKutiZ9F6xtR=
-FC2UUvdqnM4ywBx8&s=3DCPS8taMiYbIgXo-fxhqErOJXvO6PMTzmr-BNnGJIoy0&e=3D
-> >
-> >
-> --
->  Eugeniy Paltsev
-
-
-
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
