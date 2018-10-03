@@ -2,124 +2,153 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73461C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E3BC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25BEA2098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B967B2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:52:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ljZXcLs6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ljZXcLs6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25BEA2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NUpTuqTc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B967B2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbeJCUgJ (ORCPT
+        id S1726943AbeJCUku (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 16:36:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59804 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbeJCUgI (ORCPT
+        Wed, 3 Oct 2018 16:40:50 -0400
+Received: from mail-pl1-f175.google.com ([209.85.214.175]:46622 "EHLO
+        mail-pl1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726801AbeJCUkt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 16:36:08 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D656B607DC; Wed,  3 Oct 2018 13:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538574458;
-        bh=4yteKoHmPv1Uu2fR7kcXEbFALqTvJRaOsZUxpzjpYsA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ljZXcLs6ozw8X2UzmCDQXEPtYmrUOMq/T7NWQJ3+gVvriX1aGAKE13gaHyjc75HAB
-         qw4eq/+nkFYzjFQpGkKSNUWnllv8YBvBDhMnnSpP7NShRL5Gf0X1RxnmKU5WuRVUck
-         0BUeQHOd9sJkaLcu3CPAOTjaKQGgH8w/lhE2TjAU=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00308601D4;
-        Wed,  3 Oct 2018 13:47:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538574458;
-        bh=4yteKoHmPv1Uu2fR7kcXEbFALqTvJRaOsZUxpzjpYsA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ljZXcLs6ozw8X2UzmCDQXEPtYmrUOMq/T7NWQJ3+gVvriX1aGAKE13gaHyjc75HAB
-         qw4eq/+nkFYzjFQpGkKSNUWnllv8YBvBDhMnnSpP7NShRL5Gf0X1RxnmKU5WuRVUck
-         0BUeQHOd9sJkaLcu3CPAOTjaKQGgH8w/lhE2TjAU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00308601D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v3 1/2] drivers: base: cacheinfo: Do not populate sysfs
- for unknown cache types
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     sudeep.holla@arm.com, gregkh@linuxfoundation.org,
-        linux-acpi@vger.kernel.org, jeremy.linton@arm.com,
-        linux-kernel@vger.kernel.org, vkilari@codeaurora.org
-References: <1538103477-15513-1-git-send-email-jhugo@codeaurora.org>
- <1538103477-15513-2-git-send-email-jhugo@codeaurora.org>
- <256435083.TFCBfdESsY@aspire.rjw.lan>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <6f773f89-326f-1b27-455d-9cb4bf0892e4@codeaurora.org>
-Date:   Wed, 3 Oct 2018 07:47:37 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 3 Oct 2018 16:40:49 -0400
+Received: by mail-pl1-f175.google.com with SMTP id v5-v6so3517924plz.13;
+        Wed, 03 Oct 2018 06:52:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=xf1diMsDU7S5RDV2E4iPoPvrscEAvyH+XqECqIiN0KE=;
+        b=NUpTuqTc9rAn3OMYgX/EB290/NXeZyxVZFu69OLmVmLj20VARZXtPotcFnevpfJRQr
+         4GHJw5YcL/2KQuCSTKV/RRT2Y7dZv0m4QXVgSU9F705YGDfFqw8OaxMdiqUwwoouWYzI
+         6DylNRhYRq2VBQ1Ko8mYJoC995+gLnxg/U1Z0Nh5mUD6wlvURe5Q0wDE+BT2TypzeLig
+         r6drEvEi4hvYN9BpkRmcHdnL6ShEI7Jwpg7E7qv+nlVFywKfS/Ch6ermFToVDDHMPbAq
+         LhifSvrpivmO+E1CyaJXFujR0iBcu0KGM7MxmwcmPlXBNKqxCNKBS0i9Gmc5XbWeYo/n
+         LDDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=xf1diMsDU7S5RDV2E4iPoPvrscEAvyH+XqECqIiN0KE=;
+        b=WZoZs1bIKPPrmgOJa0LGgxy6jamlh4SK17L2xIjqyvkRtcxCHAI8j5IMJRrCOlNrrv
+         fq1wbyhJYHwBcmoZ5YHPDt9/1hm1yeq4ORCGReBl+8kY2hcq5xMmSqNu488IOeRCgIrC
+         gtnIPdmdhsNJwghEkMQ3QsyxGTkI9F/qQsMxyOQy0w/xdxDMqEFpVtGaP6IGKgLLWINz
+         1r0j8FJgKmLZzB313HnZlwcfSZikNmcGIHVvTTkae8lniD5iXDcUzP/TdvDzETWVjoDT
+         mWXgHRkpLpxzouDttW7DCRKQxKpXBAtfwTkcO+HXnM+V6N8swwT7ig2JTijVmLwxsmSI
+         fihA==
+X-Gm-Message-State: ABuFfogvaZjjNIDRCXbS2f7XREQkxqncvDyUEB+eQEjGdmr62fUnmeLh
+        jjN6twxRPepRYlUs/rM7cZm2ghyl
+X-Google-Smtp-Source: ACcGV61csnOpUCL7MaNKNca3yuTo1BBulWJZ3VqyK++ToKRAFexczcSI3slJk05FHe1g+wocTI/dxQ==
+X-Received: by 2002:a17:902:bd4b:: with SMTP id b11-v6mr1818445plx.0.1538574739482;
+        Wed, 03 Oct 2018 06:52:19 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.3? ([2402:f000:1:1501:200:5efe:a66f:4703])
+        by smtp.gmail.com with ESMTPSA id h130-v6sm2350103pgc.88.2018.10.03.06.52.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 06:52:18 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [REPORT] net: 3com: 3c59x: Possible data races
+To:     klassert@kernel.org, davem@davemloft.net, anna-maria@linutronix.de,
+        bigeasy@linutronix.de, nhorman@tuxdriver.com, keescook@chromium.org
+Cc:     netdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <412162cd-8fab-104b-ce73-6f70f108218f@gmail.com>
+Date:   Wed, 3 Oct 2018 21:52:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <256435083.TFCBfdESsY@aspire.rjw.lan>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/3/2018 3:35 AM, Rafael J. Wysocki wrote:
-> On Friday, September 28, 2018 4:57:56 AM CEST Jeffrey Hugo wrote:
->> If a cache has an unknown type because neither the hardware nor the
->> firmware told us, an entry in the sysfs tree will be made, but the type
->> file will not be present.  lscpu depends on the type file being present
->> for every entry, and will error out without printing system information
->> if lscpu cannot open the type file.
->>
->> Presenting information about a cache without indicating its type is not
->> useful, therefore if we hit a cache with an unknown type, stop populating
->> sysfs so that userspace has the maximum amount of useful information.
->>
->> This addresses the following lscpu error, which prevents any output.
->> lscpu: cannot open /sys/devices/system/cpu/cpu0/cache/index3/type: No such
->> file or directory
->>
->> Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
->> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->> Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
->> ---
->>   drivers/base/cacheinfo.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
->> index 5d5b598..cf78fa6 100644
->> --- a/drivers/base/cacheinfo.c
->> +++ b/drivers/base/cacheinfo.c
->> @@ -615,6 +615,8 @@ static int cache_add_dev(unsigned int cpu)
->>   		this_leaf = this_cpu_ci->info_list + i;
->>   		if (this_leaf->disable_sysfs)
->>   			continue;
->> +		if (this_leaf->type == CACHE_TYPE_NOCACHE)
->> +			break;
->>   		cache_groups = cache_get_attribute_groups(this_leaf);
->>   		ci_dev = cpu_device_create(parent, this_leaf, cache_groups,
->>   					   "index%1u", i);
->>
-> 
-> Can you please resend this patch with all tags collected so far?
+****** Possible race0 ******
+CPU0:
+vortex_boomerang_interrupt
+     line 2510: spin_lock_irqsave()
+     _boomerang_interrupt
+         line 2432: vp->tx_skbuff[entry] [READ]
+         line 2433: vp->tx_skbuff[entry] [READ]
+         line 2453: vp->tx_skbuff[entry] = NULL [WRITE]
 
-Will do.
+CPU1:
+boomerang_start_xmit
+     line 2145: vp->tx_skbuff[entry] = skb [WRITE]
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+As for vp->tx_skbuff[entry], the WRITE and READ operations in CPU0
+are performed with holding a spinlock, but the WRITE operation in CPU1
+is performed without holding this spinlock, so there may exist data races.
+
+****** Possible race1 ******
+CPU0:
+vortex_boomerang_interrupt
+     line 2510: spin_lock_irqsave()
+     _boomerang_interrupt
+         line 2421: vp->dirty_tx = dirty_tx [WRITE]
+
+CPU1:
+boomerang_start_xmit
+     line 2137: vp->dirty_tx [READ]
+
+As for vp->dirty_tx, the WRITE operation in CPU0 is performed
+with holding a spinlock, but the READ operation in CPU1 is performed
+without holding this spinlock, so there may exist a data race.
+
+****** Possible race2 ******
+CPU0:
+vortex_boomerang_interrupt
+     line 2510: spin_lock_irqsave()
+     _boomerang_interrupt
+         line 2381: vp->handling_irq = 1 [WRITE]
+         line 2498: vp->handling_irq = 0 [WRITE]
+
+CPU1:
+boomerang_start_xmit
+     line 2134: vp->handling_irq [READ]
+
+As for vp->handling_irq, the WRITE operations in CPU0 are performed
+with holding a spinlock, but the READ operation in CPU1 is performed
+without holding this spinlock, so there may exist data races.
+
+****** Possible race3 ******
+CPU0:
+vortex_boomerang_interrupt
+     line 2510: spin_lock_irqsave()
+     _boomerang_interrupt
+         boomerang_rx
+             line 2669: skb->ip_summed = ... [WRITE]
+
+CPU1:
+boomerang_start_xmit
+     line 2149: skb->ip_summed [READ]
+
+As for skb->ip_summed, the WRITE operation in CPU0 is performed
+with holding a spinlock, but the READ operation in CPU1 is performed
+without holding this spinlock, so there may exist data races.
+
+
+These possible races are detected by a runtime testing.
+A possible fix of these races is protecting the code in 
+boomerang_start_xmit()
+using the spinlock in vortex_boomerang_interrupt().
+But I am not sure whether this fix is correct, so I only report these races.
+
+
+Best wishes,
+Jia-Ju Bai
