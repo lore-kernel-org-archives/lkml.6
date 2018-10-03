@@ -2,82 +2,97 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7350AC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 460C7C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 354D821473
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:29:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 354D821473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F1AD220835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:30:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="o2k91CjD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VuKB8p0C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1AD220835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbeJCSRa (ORCPT
+        id S1727009AbeJCSSh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:17:30 -0400
-Received: from mga07.intel.com ([134.134.136.100]:39447 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726725AbeJCSRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:17:30 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 04:29:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,335,1534834800"; 
-   d="scan'208";a="94245715"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga004.fm.intel.com with ESMTP; 03 Oct 2018 04:29:27 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id DCA1A20804; Wed,  3 Oct 2018 14:29:26 +0300 (EEST)
-Date:   Wed, 3 Oct 2018 14:29:26 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        jacopo@jmondi.org
-Subject: Re: [PATCH v4 2/2] [media] imx214: Add imx214 camera sensor driver
-Message-ID: <20181003112926.oxfqykqrazisjwab@paasikivi.fi.intel.com>
-References: <20181003072905.21786-1-ricardo.ribalda@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181003072905.21786-1-ricardo.ribalda@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Wed, 3 Oct 2018 14:18:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53114 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbeJCSSh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 14:18:37 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0670F607BD; Wed,  3 Oct 2018 11:30:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538566238;
+        bh=kcINhkcUfuzC1LCmMOCUFvDVNU6dzcolKIXuKvfbxi8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=o2k91CjD0ojgejpAsuacmNCmPDZV/Mp/OHzs3UeqlsX3S4Gp8yxnKcHTBL3CsXDRa
+         kcFXcR5WXaGgqQNKlIUWK26RqH0drLpmEG6vSjstSFSN0QFGDX2Ie9fTKGq1nC/vjQ
+         4FlsalgRNQidtusuWX9FIshLkKgFQnknHCnQY0i8=
+Received: from vgarodia-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vgarodia@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A627460B26;
+        Wed,  3 Oct 2018 11:30:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538566237;
+        bh=kcINhkcUfuzC1LCmMOCUFvDVNU6dzcolKIXuKvfbxi8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VuKB8p0CEu7WZjpdEYYkDV7k80Ych0pKouFycCyU3UFlaXDPcWKkhIlhzwpNdr35X
+         +mQKTQBYPao8ZZNRZduLAY4jQACAqpjiLiU3Sq2kByHqxmd4APNHLC4jv6e/rqcKb+
+         HMaWMzxCtG6g5dUGUppX32CKARWgTTEiOu2vpc9A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A627460B26
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
+From:   Vikash Garodia <vgarodia@codeaurora.org>
+To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org
+Subject: [PATCH] venus: vdec: fix decoded data size
+Date:   Wed,  3 Oct 2018 17:00:21 +0530
+Message-Id: <1538566221-21369-1-git-send-email-vgarodia@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
+Exisiting code returns the max of the decoded size and buffer size.
+It turns out that buffer size is always greater due to hardware
+alignment requirement. As a result, payload size given to client
+is incorrect. This change ensures that the bytesused is assigned
+to actual payload size, when available.
 
-On Wed, Oct 03, 2018 at 09:29:05AM +0200, Ricardo Ribalda Delgado wrote:
-> Add a V4L2 sub-device driver for the Sony IMX214 image sensor.
-> This is a camera sensor using the I2C bus for control and the
-> CSI-2 bus for data.
-> 
-> Tested on a DB820c alike board with Intrinsyc Open-Q 13MP camera.
-> 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+---
+ drivers/media/platform/qcom/venus/vdec.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-How about adding that exposure control? And perhaps analogue and digital
-gain as well.
-
-I'd like to see the exposure control there because
-
-	1. it's needed for the driver to be actually usable and
-
-	2. it requires other non-trivial changes to the driver (runtime PM
-	   or other arrangements to avoid accessing registers when the
-	   power is off).
-
+diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+index 991e158..189ec97 100644
+--- a/drivers/media/platform/qcom/venus/vdec.c
++++ b/drivers/media/platform/qcom/venus/vdec.c
+@@ -888,8 +888,7 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
+ 		unsigned int opb_sz = venus_helper_get_opb_size(inst);
+ 
+ 		vb = &vbuf->vb2_buf;
+-		vb->planes[0].bytesused =
+-			max_t(unsigned int, opb_sz, bytesused);
++		vb2_set_plane_payload(vb, 0, bytesused ? : opb_sz);
+ 		vb->planes[0].data_offset = data_offset;
+ 		vb->timestamp = timestamp_us * NSEC_PER_USEC;
+ 		vbuf->sequence = inst->sequence_cap++;
 -- 
-Regards,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
