@@ -2,90 +2,119 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9513C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F418EC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B063821470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:53:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MsydNpzf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B063821470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id BA11821470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:53:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA11821470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbeJCWmZ (ORCPT
+        id S1727474AbeJCWmt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:42:25 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34899 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726851AbeJCWmZ (ORCPT
+        Wed, 3 Oct 2018 18:42:49 -0400
+Received: from gateway24.websitewelcome.com ([192.185.51.139]:20927 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726829AbeJCWms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:42:25 -0400
-Received: by mail-wm1-f66.google.com with SMTP id o18-v6so6184457wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 08:53:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=0lO4lKHVXv2iU6Wm0hyJ9PiGrCjLBEbkUrLpHCqOiqs=;
-        b=MsydNpzfQG73Uz+s9qBOg2k6PJPKHJ12tphrHJUGqpR51HaM9SZLg7rzQufAs3atnr
-         ah02Q39n/NWwG+fJ3Rs3DaD+sZQSy8a47BIiLhhabxnqZxtdBrxQhdWRpCd1Q5LLqavi
-         mcM+kDpbZYKPQzRYTXrs27hvOIh1KawzSJ+jY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=0lO4lKHVXv2iU6Wm0hyJ9PiGrCjLBEbkUrLpHCqOiqs=;
-        b=Mr1EroQzvHD29qbYS0rirr5VZwyY97UxcSNC5chsw1H/ujoy+IcmY04XNmfkYvldUo
-         tBTO/f9XeAMmZ8+HHDtZ5WdWp51/wWW1mxnYIaeaLm06z8t6OrajlOhF2DSudmaD8mxv
-         hKlPxAeOCJEUgdNIDD14DenbnXzHUYQAWRevg/7Lq+7NIk2MlzKQRGY3OuwUYCftlisy
-         gWQZb2zfClgsAE8zwrUhMM0w6Cmrp/AUTp8u3b2WrnWmtMjHwYTHK2321QbLXcDnhXMI
-         dqV7hTdGAvyCIb8AqH04Ry39kziF5gxixEQ440wzXA3CdHvN8a2tJvJw/RQlUpNNOg6e
-         84AQ==
-X-Gm-Message-State: ABuFfojngqDexFmR8fUlF2d2MNXWH7Xhg/ihaaUApnHf8YFw18+SXTxr
-        uTQcaXkxiNB+XnA6X1oWpT6ZJA==
-X-Google-Smtp-Source: ACcGV61EGFcPemY0+/Pr8C4oQ+AnVLatCpfHG+MeCFXsSeWQrrtpHQMm/jpUlD+Z8r9SEhj5wErp7g==
-X-Received: by 2002:a1c:890:: with SMTP id 138-v6mr1846594wmi.128.1538582006299;
-        Wed, 03 Oct 2018 08:53:26 -0700 (PDT)
-Received: from [192.168.43.112] ([31.157.182.99])
-        by smtp.gmail.com with ESMTPSA id w11-v6sm2368521wrn.65.2018.10.03.08.53.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 08:53:25 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <CACRpkdbHiq9bstRzyg-fJfXKnXr8wD1YzAooLAwQKM0OzP=HVA@mail.gmail.com>
-Date:   Wed, 3 Oct 2018 17:53:23 +0200
-Cc:     Damien.LeMoal@wdc.com, Artem Bityutskiy <dedekind1@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, aherrmann@suse.com, mgorman@suse.com,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        Mark Brown <broonie@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1E24731C-13E1-41CC-A96A-ABDAA6175849@linaro.org>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
- <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <1538550325.14984.108.camel@gmail.com>
- <CACRpkdaLZXGKMQGJPH02p2QPkxUDA03Y=cu_wBR_+rFaLWTw7g@mail.gmail.com>
- <BN3PR0401MB164003C967C45F2681F503A7E7E90@BN3PR0401MB1640.namprd04.prod.outlook.com>
- <CACRpkdbHiq9bstRzyg-fJfXKnXr8wD1YzAooLAwQKM0OzP=HVA@mail.gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Wed, 3 Oct 2018 18:42:48 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 9A02B46050
+        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 10:53:50 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 7jT6gJsnV8YaU7jT9gmi2n; Wed, 03 Oct 2018 10:53:50 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:55794 helo=[192.168.43.69])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g7jT5-004Ezh-Gl; Wed, 03 Oct 2018 10:53:43 -0500
+Subject: Re: [PATCH] spi: pxa2xx: Mark expected switch fall-through
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181003121211.GA28108@embeddedor.com>
+ <20181003152255.GE7132@sirena.org.uk>
+ <22e7d33d-db33-d2e4-30b1-fa87176e4277@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <64472b50-f00d-e22c-5dff-aa290c6559c5@embeddedor.com>
+Date:   Wed, 3 Oct 2018 17:53:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <22e7d33d-db33-d2e4-30b1-fa87176e4277@embeddedor.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g7jT5-004Ezh-Gl
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net ([192.168.43.69]) [92.93.206.174]:55794
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 29
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -93,63 +122,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-> Il giorno 03 ott 2018, alle ore 10:28, Linus Walleij =
-<linus.walleij@linaro.org> ha scritto:
->=20
-> On Wed, Oct 3, 2018 at 9:42 AM Damien Le Moal <Damien.LeMoal@wdc.com> =
-wrote:
->=20
->> There is another class of outliers: host-managed SMR disks (SATA and =
-SCSI,
->> definitely single hw queue). For these, using mq-deadline is =
-mandatory in many
->> cases in order to guarantee sequential write command delivery to the =
-device
->> driver. Having the default changed to bfq, which as far as I know is =
-not SMR
->> friendly (can sequential writes within a single zone be reordered ?) =
-is asking
->> for troubles (unaligned write errors showing up).
->=20
-> Ah, that is interesting.
->=20
-> Which device driver files are we talking about here, specifically?
-> I'd like to take a look.
->=20
-> I guess what you say is not that you are looking for the deadline
-> scheduling per se (as in deadline scheduling is nice), what you want =
-is
-> the zone locking semantics in that scheduler, is that right?
->=20
-> I.e. this business:
-> blk_queue_is_zoned(q)
-> blk_req_zone_write_lock(rq);
-> blk_req_zone_write_unlock(rq);
-> and mq-deadline solves this with a spinlock.
->=20
-> I will augment the patch to enforce mq-deadline
-> if blk_queue_is_zoned(q) is true, as it is clear that
-> any device with that characteristic must use mq-deadline.
->=20
-> Paoly might be interested in looking into whether BFQ could
-> also handle zoned devices in the future, I have no idea of how
-> hard that would be.
->=20
+On 10/3/18 5:27 PM, Gustavo A. R. Silva wrote:
+> 
+> 
+> On 10/3/18 5:22 PM, Mark Brown wrote:
+>> On Wed, Oct 03, 2018 at 02:12:11PM +0200, Gustavo A. R. Silva wrote:
+>>
+>>>  			switch (drv_data->n_bytes) {
+>>>  			case 4:
+>>>  				bytes_left >>= 1;
+>>> +				/* Fall through */
+>>>  			case 2:
+>>>  				bytes_left >>= 1;
+>>>  			}
+>>
+>> I think this code is just being too cute and it'd be better to just
+>> rewrite it to directly do the expected number of shifts directly in each
+>> case and have break statements; your fix is good but still not ideal for
+>> readability I think.
+>>
+> 
+> Okay. I agree. I'll rewrite and send v2.
+> 
 
-Absolutely, as I already wrote in my reply to Damien.
+I'll actually send a completely new patch for this.
 
-In the meantime, Linus, augmenting your patch as you propose seems
-a clean and effective solution to me.
-
-Thanks,
-Paolo
-
-> The zoned business seems a bit fragile. Should it even be
-> allowed to select any other scheduler than deadline on these
-> devices? Presenting all compiled in schedulers in
-> /sysblock/device/queue/scheduler sounds like just giving
-> sysadmins too much rope.
->=20
-> Yours,
-> Linus Walleij
-
+Thanks
+--
+Gustavo
