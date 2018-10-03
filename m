@@ -2,106 +2,158 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 946C8C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62021C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63C8520684
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:22:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C8520684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch
+	by mail.kernel.org (Postfix) with ESMTP id 2570221476
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:22:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Amd20iNK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2570221476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbeJDDL4 (ORCPT
+        id S1727483AbeJDDMT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 23:11:56 -0400
-Received: from bues.ch ([80.190.117.144]:33006 "EHLO bues.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727144AbeJDDLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 23:11:55 -0400
-X-Greylist: delayed 996 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Oct 2018 23:11:53 EDT
-Received: by bues.ch with esmtpsa (Exim 4.89)
-        (envelope-from <m@bues.ch>)
-        id 1g7nOe-00041w-DF; Wed, 03 Oct 2018 22:05:24 +0200
-Date:   Wed, 3 Oct 2018 22:04:35 +0200
-From:   Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ssb: chipcommon: fix fall-through annotation
-Message-ID: <20181003220435.6f7c27b4@wiggum>
-In-Reply-To: <20181003120102.GA22824@embeddedor.com>
-References: <20181003120102.GA22824@embeddedor.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 3 Oct 2018 23:12:19 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:40014 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727450AbeJDDMS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 23:12:18 -0400
+Received: by mail-it1-f193.google.com with SMTP id i191-v6so10841246iti.5
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 13:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2s0UJSx8twLzRh+MaxgchQARfs6JE8qjeGSSzSX8Blk=;
+        b=Amd20iNK6D9+Qkj56nISppQT4+vCxxA5/yFSki1VzafUMYJiKQ1U/vAZTJ66+2Dds6
+         RVAJicLLve1RaGJZIw/rIr2rz3WuQpgM2VunfAMTLzBdxSUF0b2vh3JsLPR9rfJaGW67
+         dfPRdROtkCNofgvBPG+qcqc6jCPIaBd0gMaWI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=2s0UJSx8twLzRh+MaxgchQARfs6JE8qjeGSSzSX8Blk=;
+        b=uLRmap4y9pFHbNLWG6nyFoZJiIS1SNo8FKnDr53RazwflghnQ6GGXE2mln6OlSIGlR
+         NxpKyvQEBPx20olu9YH5X/mDIwG6UBUFudLXfGvQXk0qy6O723oVfvi/6+/BcQddXyEK
+         lxPOb4WI0nhcyR8tpWNCs0uy3iKqoOQxUnzhw3aOHR+AValZ8CJcyZcuQBJVHeTgPtw+
+         hn/NMdv1MnUmbQ6q5VobSSFKJAThnjdBNasgh4/S7Ts7lVvYQ+F6482A/gHGqQv8dBfr
+         VXZp+TBfp/6FpqoKmHjSceA3qowCottzIPe48VI4WkmpQLTyozc2atzgaM3o+VKn98qw
+         FWxw==
+X-Gm-Message-State: ABuFfojyPSFIcVVI/8IZzUabf1xY0htFbHUg95LvaTb5wkPnwi5g6snP
+        /Z9xDhqfEulmCtdgHHJd8kE3rg==
+X-Google-Smtp-Source: ACcGV62V/+IlB1wdup20UEk3uMUwGw9rVLykwm0dcagzbFWh9qjoni7derFCbaHKIEz7Owpqk1UTHQ==
+X-Received: by 2002:a02:38c:: with SMTP id e12-v6mr2513113jae.71.1538598143390;
+        Wed, 03 Oct 2018 13:22:23 -0700 (PDT)
+Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
+        by smtp.gmail.com with ESMTPSA id p78-v6sm1087581itp.32.2018.10.03.13.22.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 13:22:22 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 15:22:21 -0500
+From:   Dan Rue <dan.rue@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org,
+        patches@kernelci.org, lkft-triage@lists.linaro.org,
+        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        linux@roeck-us.net
+Subject: Re: [PATCH 4.14 000/137] 4.14.74-stable review
+Message-ID: <20181003202221.7aftyyonvnnacsow@xps.therub.org>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, shuah@kernel.org,
+        patches@kernelci.org, lkft-triage@lists.linaro.org,
+        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        linux@roeck-us.net
+References: <20181002132458.446916963@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/PfFJg7Ygci4F8ZR17VKQECj"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181002132458.446916963@linuxfoundation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/PfFJg7Ygci4F8ZR17VKQECj
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 02, 2018 at 06:23:21AM -0700, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.74 release.
+> There are 137 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Oct  4 13:24:18 UTC 2018.
+> Anything received after that time might be too late.
 
-On Wed, 3 Oct 2018 14:01:02 +0200
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+Results from Linaro’s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-> Replace "Fallthough" with a proper "fall through" annotation.
->=20
-> This fix is part of the ongoing efforts to enabling
-> -Wimplicit-fallthrough
->=20
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/ssb/driver_chipcommon.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/ssb/driver_chipcommon.c b/drivers/ssb/driver_chipcom=
-mon.c
-> index 99a4656..3861cb6 100644
-> --- a/drivers/ssb/driver_chipcommon.c
-> +++ b/drivers/ssb/driver_chipcommon.c
-> @@ -425,7 +425,7 @@ void ssb_chipco_get_clockcontrol(struct ssb_chipcommo=
-n *cc,
->  			*m =3D chipco_read32(cc, SSB_CHIPCO_CLOCK_M2);
->  			break;
->  		}
-> -		/* Fallthough */
-> +		/* Fall through */
->  	default:
->  		*m =3D chipco_read32(cc, SSB_CHIPCO_CLOCK_SB);
->  	}
+Summary
+------------------------------------------------------------------------
 
-Acked-by: Michael B=C3=BCsch <m@bues.ch>
+kernel: 4.14.74-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.14.y
+git commit: 34a960c72ac4156519f59391bcab9b0677e46bc9
+git describe: v4.14.73-139-g34a960c72ac4
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/build/v4.14.73-139-g34a960c72ac4
 
+No regressions (compared to build v4.14.73)
+------------------------------------------------------------------------
 
---=20
-Michael
+Ran 21220 total tests in the following environments and test suites.
 
---Sig_/PfFJg7Ygci4F8ZR17VKQECj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
 
------BEGIN PGP SIGNATURE-----
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
 
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlu1INMACgkQ9TK+HZCN
-iw7Q1Q//QwsYOThlhR3DB4BrrCQ9NkS+STG/k+i+aQp61yUMcILepSaXvHsGvEx3
-rTMScS6I98q2FnwD3IwfKsdGKxvtjacMRTfEiiuaqNaX9ikOpYnAHdAiNf16/4d4
-uY0+D6Vb2z6e2wgVMWlKVaZKukFjGpNcK66Gt3EYfIw+QoMe0N/fZd0wwHkvkUDT
-vMIU01pxNWXZ3DA/A1c4UKY8QkCwN1Fx9f9RqPqw+zTiyBV7BjRSaiZC2YUNxeCF
-L4sRLSTQbxDH8DZukv0xGzyZhXsmhZl1n8/FqGI56IHJ7urLt3OqwH07OelwE9vT
-bObJkwe7pFIzay66TWnC4tMmGvio4C995brrsyuEyUSlG7+MmuouHRQ5hK1KuoWr
-+2gdSncJgPzZ026pSh2LTtAZvvrmI11wz1auKLdGmerm69+AJnpRTxF93WzOj95j
-mvc0dvE96fnFewNSisC4adQwEl/leRAFpKhm+AvAB0AlXA9azSNb4KUR8vBS3Kc8
-DgJL5HSEekVapySvkl7Dvb7NOj9kjnSY5JL+aN3oaJpJXXhtNxsViy5KE7lGrFXm
-CLbuAhvsM8178u8gzOHknqHQjfASJvFTmapkQMJ7RQoSkR6NdXbjvBEEXTTZG9nV
-/aLGKwc7tfyVDQxsgeoKxEVxPZSEUVWjx+NKBZXEEyNXJYDJ6AE=
-=zgWz
------END PGP SIGNATURE-----
-
---Sig_/PfFJg7Ygci4F8ZR17VKQECj--
+-- 
+Linaro LKFT
+https://lkft.linaro.org
