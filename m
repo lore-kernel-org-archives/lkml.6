@@ -2,43 +2,46 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB67C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E5CC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 701EA21470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:54:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 701EA21470
+	by mail.kernel.org (Postfix) with ESMTP id E3CCE20644
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:55:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3CCE20644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbeJDBo2 (ORCPT
+        id S1727369AbeJDBoy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 21:44:28 -0400
-Received: from mga11.intel.com ([192.55.52.93]:38216 "EHLO mga11.intel.com"
+        Wed, 3 Oct 2018 21:44:54 -0400
+Received: from mga14.intel.com ([192.55.52.115]:21280 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727077AbeJDBo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 21:44:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1727077AbeJDBoy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 21:44:54 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 11:54:50 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 11:55:16 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
-   d="scan'208";a="94363999"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.135]) ([10.24.14.135])
-  by fmsmga004.fm.intel.com with ESMTP; 03 Oct 2018 11:54:49 -0700
-Subject: Re: [RFC PATCH 03/10] arch/x86: Re-arrange RDT init code
-To:     "Moger, Babu" <Babu.Moger@amd.com>,
+   d="scan'208";a="262602694"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga005.jf.intel.com with ESMTP; 03 Oct 2018 11:55:15 -0700
+Date:   Wed, 3 Oct 2018 11:52:09 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
         "mingo@redhat.com" <mingo@redhat.com>,
         "hpa@zytor.com" <hpa@zytor.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>
-Cc:     "x86@kernel.org" <x86@kernel.org>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
         "peterz@infradead.org" <peterz@infradead.org>,
         "pombredanne@nexb.com" <pombredanne@nexb.com>,
         "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
@@ -59,56 +62,64 @@ Cc:     "x86@kernel.org" <x86@kernel.org>,
         "dima@arista.com" <dima@arista.com>,
         "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
         "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        James Morse <james.morse@arm.com>
+Subject: Re: [RFC PATCH 00/10] arch/x86: AMD QoS support
+Message-ID: <20181003185209.GA98542@romley-ivt3.sc.intel.com>
 References: <20180924191841.29111-1-babu.moger@amd.com>
- <20180924191841.29111-4-babu.moger@amd.com>
- <09e1f4dc-7882-9bb4-f5a7-e9e7caafee84@intel.com>
- <ec7ea236-adca-246c-2d2a-56dc68a146f8@amd.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <7c971383-1695-7905-603e-99ff5916f691@intel.com>
-Date:   Wed, 3 Oct 2018 11:54:49 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ <20181002170655.GA92941@romley-ivt3.sc.intel.com>
+ <BL0PR12MB2468F1F6EA31332657802C7595E80@BL0PR12MB2468.namprd12.prod.outlook.com>
+ <20181002184614.GC92941@romley-ivt3.sc.intel.com>
+ <2549597a-440c-ab77-2c35-01a648703b9f@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <ec7ea236-adca-246c-2d2a-56dc68a146f8@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2549597a-440c-ab77-2c35-01a648703b9f@amd.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Babu,
-
-On 10/2/2018 4:41 PM, Moger, Babu wrote:
-> On 10/02/2018 02:21 PM, Reinette Chatre wrote:
->> On 9/24/2018 12:19 PM, Moger, Babu wrote:
->>>  static enum cpuhp_state rdt_online;
->>> @@ -866,8 +872,22 @@ static int __init rdt_late_init(void)
->>>  	struct rdt_resource *r;
->>>  	int state, ret;
->>>  
->>> -	if (!get_rdt_resources())
->>> +	/* Run quirks first */
->>> +	rdt_quirks();
->>> +
->>> +	rdt_alloc_capable = get_rdt_alloc_resources();
->>> +	rdt_mon_capable = get_rdt_mon_resources();
->>> +
->>> +	if (!(rdt_alloc_capable || rdt_mon_capable)) {
->>> +		pr_info("RDT allocation or monitoring not detected\n");
->>
->> This function ends with a log entry for every resource discovered. Is
->> this new log entry needed to indicate that such resources have not been
->> found? Could it not just be the absence of the other message?
+On Tue, Oct 02, 2018 at 07:16:23PM +0000, Moger, Babu wrote:
 > 
-> As this is relatively new feature, so I added this info message. It helped
-> me debug what went wrong. Otherwise, I don't see anything. I can remove it
-> if the message is too annoying to the user.
+> 
+> On 10/02/2018 01:46 PM, Fenghua Yu wrote:
+> > On Tue, Oct 02, 2018 at 05:44:47PM +0000, Moger, Babu wrote:
+> >> Hi Fenghua,
+> >>
+> >>> -----Original Message-----
+> >>> From: Fenghua Yu <fenghua.yu@intel.com>
+> >>> Sent: Tuesday, October 2, 2018 12:07 PM
+> >>> On Mon, Sep 24, 2018 at 07:18:54PM +0000, Moger, Babu wrote:
+> >>>> The public specification is still in works. Will add the link when it is
+> >>>> available.
+> >>>
+> >>> Is this the public AMD QoS spec?
+> >>> https://support.amd.com/TechDocs/56375_Quality_of_Service_Extensions.
+> >>> pdf
+> >>>
+> >>
+> >> Yes. That is the one. 
+> >> I was going to send the link after refreshing the patches on 4-19-rc5.  You already got it. Please let know if you have any feedback on the patches. 
+> > 
+> > I don't see the name 'RDT' (Resource Director Technology) in the
+> > spec "AMD64 Technology Platform Quality of Service Extensions".
+> > Does AMD use the same name 'RDT' as Intel?
+> 
+> No. AMD uses the word "Platform Quality of Service"(or in short QoS) to
+> refer this feature.
 
-This log entry is made after detection of resources/features supported
-by the system. A user would find more information in the
-presence/absence of the relevant CPU feature flags in /proc/cpuinfo.
+Hi, Thomas, Babu, and James,
 
-Reinette
+Can we use "resctrl" to replace "intel_rdt" and "rdt" in kernel? "resctrl"
+is a neutral name and has been used in user interface already. Hopefully
+"resctrl" can be acceptable by ARM, AMD, and Intel. We only use "intel_rdt",
+"amd_qos", or "arm mpam" for vendor specific code.
+
+Can we move all of Intel RDT, AMD QoS, and ARM MPAM code into a generic
+place fs/resctrl where both ARM and X86 code can stay?
+ 
+Thanks.
+
+-Fenghua
