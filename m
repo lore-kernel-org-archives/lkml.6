@@ -2,126 +2,99 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37014C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4890C64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0634520835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:36:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0634520835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 956F221470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:36:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 956F221470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbeJCOXY (ORCPT
+        id S1727374AbeJCOXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 10:23:24 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56146 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbeJCOXY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:23:24 -0400
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1g7bha-00089U-E2; Wed, 03 Oct 2018 07:36:11 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [RESEND] [PATCH 3/3] iwlwifi: Load firmware exclusively for Intel WiFi
-Date:   Wed,  3 Oct 2018 15:35:56 +0800
-Message-Id: <20181003073556.28154-3-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181003073556.28154-1-kai.heng.feng@canonical.com>
-References: <20181003073556.28154-1-kai.heng.feng@canonical.com>
+        Wed, 3 Oct 2018 10:23:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60912 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726672AbeJCOXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 10:23:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CF780ACC2;
+        Wed,  3 Oct 2018 07:36:41 +0000 (UTC)
+Date:   Wed, 3 Oct 2018 09:36:40 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: Re: [RFC PATCH] mm, proc: report PR_SET_THP_DISABLE in proc
+Message-ID: <20181003073640.GF18290@dhcp22.suse.cz>
+References: <20180924195603.GJ18685@dhcp22.suse.cz>
+ <20180924200258.GK18685@dhcp22.suse.cz>
+ <0aa3eb55-82c0-eba3-b12c-2ba22e052a8e@suse.cz>
+ <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com>
+ <20180925202959.GY18685@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1809251440001.94921@chino.kir.corp.google.com>
+ <20180925150406.872aab9f4f945193e5915d69@linux-foundation.org>
+ <20180926060624.GA18685@dhcp22.suse.cz>
+ <20181002112851.GP18290@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1810021329260.87409@chino.kir.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1810021329260.87409@chino.kir.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid the firmware loading race between Bluetooth and WiFi on Intel
-8260, load firmware exclusively when BT_INTEL is enabled.
+On Tue 02-10-18 13:29:42, David Rientjes wrote:
+> On Tue, 2 Oct 2018, Michal Hocko wrote:
+> 
+> > On Wed 26-09-18 08:06:24, Michal Hocko wrote:
+> > > On Tue 25-09-18 15:04:06, Andrew Morton wrote:
+> > > > On Tue, 25 Sep 2018 14:45:19 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
+> > > > 
+> > > > > > > It is also used in 
+> > > > > > > automated testing to ensure that vmas get disabled for thp appropriately 
+> > > > > > > and we used "nh" since that is how PR_SET_THP_DISABLE previously enforced 
+> > > > > > > this, and those tests now break.
+> > > > > > 
+> > > > > > This sounds like a bit of an abuse to me. It shows how an internal
+> > > > > > implementation detail leaks out to the userspace which is something we
+> > > > > > should try to avoid.
+> > > > > > 
+> > > > > 
+> > > > > Well, it's already how this has worked for years before commit 
+> > > > > 1860033237d4 broke it.  Changing the implementation in the kernel is fine 
+> > > > > as long as you don't break userspace who relies on what is exported to it 
+> > > > > and is the only way to determine if MADV_NOHUGEPAGE is preventing it from 
+> > > > > being backed by hugepages.
+> > > > 
+> > > > 1860033237d4 was over a year ago so perhaps we don't need to be
+> > > > too worried about restoring the old interface.  In which case
+> > > > we have an opportunity to make improvements such as that suggested
+> > > > by Michal?
+> > > 
+> > > Yeah, can we add a way to export PR_SET_THP_DISABLE to userspace
+> > > somehow? E.g. /proc/<pid>/status. It is a process wide thing so
+> > > reporting it per VMA sounds strange at best.
+> > 
+> > So how about this? (not tested yet but it should be pretty
+> > straightforward)
+> 
+> Umm, prctl(PR_GET_THP_DISABLE)?
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- .../net/wireless/intel/iwlwifi/pcie/trans.c   | 39 ++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-index cc8c53dc0ab6..bbd7e199e968 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -72,6 +72,10 @@
- #include <linux/pm_runtime.h>
- #include <linux/module.h>
- 
-+#if IS_ENABLED(CONFIG_BT_INTEL)
-+#include <linux/intel-wifi-bt.h>
-+#endif
-+
- #include "iwl-drv.h"
- #include "iwl-trans.h"
- #include "iwl-csr.h"
-@@ -1335,6 +1339,10 @@ static int iwl_trans_pcie_start_fw(struct iwl_trans *trans,
- 	bool hw_rfkill;
- 	int ret;
- 
-+#if IS_ENABLED(CONFIG_BT_INTEL)
-+	void (*firmware_lock_func)(void);
-+	void (*firmware_unlock_func)(void);
-+#endif
- 	/* This may fail if AMT took ownership of the device */
- 	if (iwl_pcie_prepare_card_hw(trans)) {
- 		IWL_WARN(trans, "Exit HW not ready\n");
-@@ -1401,8 +1409,37 @@ static int iwl_trans_pcie_start_fw(struct iwl_trans *trans,
- 	iwl_write32(trans, CSR_UCODE_DRV_GP1_CLR, CSR_UCODE_SW_BIT_RFKILL);
- 
- 	/* Load the given image to the HW */
--	if (trans->cfg->device_family >= IWL_DEVICE_FAMILY_8000)
-+	if (trans->cfg->device_family >= IWL_DEVICE_FAMILY_8000) {
-+#if IS_ENABLED(CONFIG_BT_INTEL)
-+		firmware_lock_func = symbol_request(btintel_firmware_lock);
-+		firmware_unlock_func = symbol_request(btintel_firmware_unlock);
-+		if (!firmware_lock_func || !firmware_unlock_func) {
-+			if (firmware_lock_func) {
-+				symbol_put(btintel_firmware_lock);
-+				firmware_lock_func = NULL;
-+			}
-+
-+			if (firmware_unlock_func) {
-+				symbol_put(btintel_firmware_unlock);
-+				firmware_unlock_func = NULL;
-+			}
-+		}
-+
-+		if (firmware_lock_func)
-+			firmware_lock_func();
-+#endif
- 		ret = iwl_pcie_load_given_ucode_8000(trans, fw);
-+
-+#if IS_ENABLED(CONFIG_BT_INTEL)
-+		if (firmware_unlock_func) {
-+			firmware_unlock_func();
-+			symbol_put(btintel_firmware_lock);
-+			firmware_lock_func = NULL;
-+			symbol_put(btintel_firmware_unlock);
-+			firmware_unlock_func = NULL;
-+		}
-+#endif
-+	}
- 	else
- 		ret = iwl_pcie_load_given_ucode(trans, fw);
- 
+/me confused. I thought you want to query for the flag on a
+_different_ process. 
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
