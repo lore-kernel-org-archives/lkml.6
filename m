@@ -5,61 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B8CC65BAA
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F7FC65BAC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5CFB21470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A86B21479
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:39:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WF7AzKxA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5CFB21470
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qSWWASSe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A86B21479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbeJDC26 (ORCPT
+        id S1727523AbeJDC3C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 22:28:58 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33452 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727180AbeJDC24 (ORCPT
+        Wed, 3 Oct 2018 22:29:02 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42675 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbeJDC3B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 22:28:56 -0400
-Received: by mail-ed1-f68.google.com with SMTP id g26-v6so6463922edp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 12:39:09 -0700 (PDT)
+        Wed, 3 Oct 2018 22:29:01 -0400
+Received: by mail-ed1-f66.google.com with SMTP id n2-v6so6415265edo.9;
+        Wed, 03 Oct 2018 12:39:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zPXLWgPAM9TKQD8PmLyfoPaLlJmlL7ExTK2t4PzAkrc=;
-        b=WF7AzKxAHmVg15NjPolfwQE6JFnpO4j0FXA1sBmAriTLE5SHA+HLC0KSB8wl8wl2jg
-         15Ewc7v9sxanVs3vuc8/iz64MbP2rYzjwkOZXgR9FLOX5itNo//pMI8gS0mu6Ww4hjQk
-         cQLBmv95XznI3VlXM7pkVni96JpiAt6H/qTBIvoHbNt5CxyplWxoi0XyU0yKY+1IpyP0
-         uJyFliagf2xtDdvjEjTfb2BrrsfVnyIu9aL3V6dkHlSDVmFikhBtcchmpVS/HqFjBBmS
-         uTXFvWDVYUtOrZz1Ks1e/M+Mhqwn1FPIbTpieAdp1dH8aPlLn3ibS5NP0MLDmduYeLeZ
-         6+gg==
+        bh=EUdiv3GxcKIGRchs0tikWhabjt2xJ5EVou+ayt6rXzE=;
+        b=qSWWASSedwNTvf4cXruRNmwqRV5s9Pos2P66j+SdUqiqAjtfA0OWX9/tzuCumUDe0w
+         ro03gJzfo3bAAdhBt2d9OaI6AX3eMl9lRbHr73oWwRDV2JE1M/q5ymohBIromZFuGkm5
+         CAYLo/rA0usRaBrn/3Nm9Ecgv6CCv3TIjjiKkPtfZ3xDAnnJ5WOX52Xw3sNC08eOmSEW
+         NNKOcVRfVu09Tr7tuRmNtFNyxw4qS1DI0cIpZMdgAwFXUP20nIRYpMCO2W+fhWoBsIld
+         HV5JDJH6JehWdTz7SOt48ok9ETZRx1IOoVO7sgdaaZg6vDLEt/N9Lmr7bzaKmbbBE5/1
+         z+mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zPXLWgPAM9TKQD8PmLyfoPaLlJmlL7ExTK2t4PzAkrc=;
-        b=X2e7Wm3Js7spu+ZwCqRxnKOk5RYebbUwTo8/aZ8U8Dxu0CigKACw/jprdC5wKdf/dg
-         qFgWzFyBw2ddTN2PH96B0cTSVmmc7LvwEnzxeXD5wf5gukMA4qSTjhQCwJUlKyUl+9FB
-         zXubRohs6dR+ozB1CGJgw9ejRyyGF4yDCMvwccbAoTbdJHMkMse3QUD0PBugIX9H73qZ
-         3ekJ3LxIfmLMKY42PlfroN/QSi7sY3MFMWDE89BE1kKWtG+qNFK1AkcJIxnx3UM94y8+
-         yGYekPbk51mQf065ZFmsVbK82ElKLYSBCXMf1tC5XE1wsFd9S7v5Vq+3urd46HHbCHmm
-         pyhw==
-X-Gm-Message-State: ABuFfojAA8uJdQ9wAnmB7Gcjm2qQUDWVeAJy2tdT2RnD+s7VaJcwCCDe
-        2Efz+sibdZObnHKh4HhGKt4=
-X-Google-Smtp-Source: ACcGV63mIaLRnWLzFzN7ZdLVqEIp7IZj6dG1qVQgRdbkYx947rO/v8gZXpjcWpwpu4GGAaY1q/XZYA==
-X-Received: by 2002:aa7:d4c7:: with SMTP id t7-v6mr4213737edr.256.1538595549107;
-        Wed, 03 Oct 2018 12:39:09 -0700 (PDT)
+        bh=EUdiv3GxcKIGRchs0tikWhabjt2xJ5EVou+ayt6rXzE=;
+        b=RwRHQCReM7s1UUvvvcKWDyUBfe9u8QSI9inn3EMrs1Jpgsn0y0yyb1hbX0pljUX435
+         Ny9kJkcXIMHA1Kv/8TL5relkXMjHf64lCG7wwHYFRr6jdFLy9Ct0eVqjg/fMBjQZ0JYr
+         PonSDoaEJ23x+mZN/W0ELfrbZPqUe9xucF+PiZ3iQkLkaHJkBNLsScztJrsaydfgW8Tl
+         ejcn+u239REUlwyf1JJByqv5h3H/HwzRh2rUmcHoxZLT5wNWtRlEMZwUc9qcz2CzYEHD
+         yjMtwKB9lHk0uNcJZKYLzDRZjU6R0ABHrgMkje9dDtRoE+Nfp08hRT4v4AOsiDDfeMZY
+         CqpQ==
+X-Gm-Message-State: ABuFfoi33jvwBz+hxMXZb4j0XadR2azcVWJqiRolLn2MD26V6OBJ5IlK
+        HxTWVOZ+Pmc5LhJItA3FKr8=
+X-Google-Smtp-Source: ACcGV6125Uz8ifFRRuu+yBVLw3QDZH8ZrmLMErmL1j9qxy14pBPquBD4vc8gcsNixbGxPLK7iSylpQ==
+X-Received: by 2002:a17:906:b01:: with SMTP id u1-v6mr3428970ejg.124.1538595553273;
+        Wed, 03 Oct 2018 12:39:13 -0700 (PDT)
 Received: from piling.lan (80-71-134-83.u.parknet.dk. [80.71.134.83])
-        by smtp.gmail.com with ESMTPSA id b49-v6sm765263eda.70.2018.10.03.12.39.07
+        by smtp.gmail.com with ESMTPSA id b49-v6sm765263eda.70.2018.10.03.12.39.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 12:39:07 -0700 (PDT)
+        Wed, 03 Oct 2018 12:39:11 -0700 (PDT)
 From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 To:     David Woodhouse <dwmw2@infradead.org>,
         Brian Norris <computersforpeace@gmail.com>,
@@ -69,10 +68,11 @@ To:     David Woodhouse <dwmw2@infradead.org>,
         Zhouyang Jia <jiazhouyang09@gmail.com>,
         linux-mtd@lists.infradead.org,
         open list <linux-kernel@vger.kernel.org>
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 5/8] mtd: maps: gpio-addr-flash: Replace array with an integer
-Date:   Wed,  3 Oct 2018 21:38:56 +0200
-Message-Id: <20181003193859.23928-5-ricardo.ribalda@gmail.com>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v5 7/8] dt-binding: mtd: Document gpio-addr-flash
+Date:   Wed,  3 Oct 2018 21:38:58 +0200
+Message-Id: <20181003193859.23928-7-ricardo.ribalda@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181003193859.23928-1-ricardo.ribalda@gmail.com>
 References: <20181003193859.23928-1-ricardo.ribalda@gmail.com>
@@ -83,94 +83,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By replacing the array with an integer we can avoid completely
-the bit comparison loop if the value has not changed (by far
-the most common case).
+Add documentation for gpio-addr-flash. This binding allow creating
+flash devices that are paged using GPIOs.
 
+Cc: devicetree@vger.kernel.org
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/mtd/maps/gpio-addr-flash.c | 34 +++++++++++++++---------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ .../bindings/mtd/gpio-addr-flash.txt          | 54 +++++++++++++++++++
+ 1 file changed, 54 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
 
-diff --git a/drivers/mtd/maps/gpio-addr-flash.c b/drivers/mtd/maps/gpio-addr-flash.c
-index 89cc8cce161b..47b12a6fead4 100644
---- a/drivers/mtd/maps/gpio-addr-flash.c
-+++ b/drivers/mtd/maps/gpio-addr-flash.c
-@@ -43,7 +43,7 @@ struct async_state {
- 	struct map_info map;
- 	size_t gpio_count;
- 	unsigned *gpio_addrs;
--	int *gpio_values;
-+	unsigned int gpio_values;
- 	unsigned int win_order;
- };
- #define gf_map_info_to_state(mi) ((struct async_state *)(mi)->map_priv_1)
-@@ -55,22 +55,25 @@ struct async_state {
-  *
-  * Rather than call the GPIO framework every time, cache the last-programmed
-  * value.  This speeds up sequential accesses (which are by far the most common
-- * type).  We rely on the GPIO framework to treat non-zero value as high so
-- * that we don't have to normalize the bits.
-+ * type).
-  */
- static void gf_set_gpios(struct async_state *state, unsigned long ofs)
- {
--	size_t i = 0;
--	int value;
-+	int i;
- 
- 	ofs >>= state->win_order;
--	do {
--		value = ofs & (1 << i);
--		if (state->gpio_values[i] != value) {
--			gpio_set_value(state->gpio_addrs[i], value);
--			state->gpio_values[i] = value;
--		}
--	} while (++i < state->gpio_count);
+diff --git a/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt b/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
+new file mode 100644
+index 000000000000..5006a26e1753
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
+@@ -0,0 +1,54 @@
++Memory Mapped flash with some address lines addressed using GPIOs
 +
-+	if (ofs == state->gpio_values)
-+		return;
++Handle the case where a flash device is mostly addressed using physical
++line and supplemented by GPIOs.  This way you can hook up say a 8MiB flash
++to a 2MiB memory range and use the GPIOs to select a particular range.
 +
-+	for (i = 0; i < state->gpio_count; i++) {
-+		if ((ofs & BIT(i)) == (state->gpio_values & BIT(i)))
-+			continue;
++ - compatible : "cfi-gpio-addr-flash"
++ - reg : Address range of the mtd chip that is memory mapped, this is,
++   on the previous example 2MiB.
++ - bank-width : Width (in bytes) of the bank.  Equal to the
++   device width times the number of interleaved chips.
++ - gpios: List of GPIO specifiers that will be used to address the MSBs address
++   lines. The order goes from LSB to MSB.
++ - probe-type : (optional) "cfi_probe", "jedec_probe". How the mtd chip
++   is going to be probed. If omitted, assumed to be equal to "cfi_probe".
++ - #address-cells, #size-cells : Must be present if the device has
++   sub-nodes representing partitions (see below).  In this case
++   both #address-cells and #size-cells must be equal to 1.
 +
-+		gpio_set_value(state->gpio_addrs[i], !!(ofs & BIT(i)));
-+	}
++The device tree may optionally contain sub-nodes describing partitions of the
++address space. Check partition.txt for more details.
 +
-+	state->gpio_values = ofs;
- }
- 
- /**
-@@ -202,7 +205,7 @@ static const char * const part_probe_types[] = {
-  */
- static int gpio_flash_probe(struct platform_device *pdev)
- {
--	size_t i, arr_size;
-+	size_t i;
- 	struct physmap_flash_data *pdata;
- 	struct resource *memory;
- 	struct resource *gpios;
-@@ -215,8 +218,7 @@ static int gpio_flash_probe(struct platform_device *pdev)
- 	if (!memory || !gpios || !gpios->end)
- 		return -EINVAL;
- 
--	arr_size = sizeof(int) * gpios->end;
--	state = devm_kzalloc(&pdev->dev, sizeof(*state) + arr_size, GFP_KERNEL);
-+	state = devm_kzalloc(&pdev->dev, sizeof(*state), GFP_KERNEL);
- 	if (!state)
- 		return -ENOMEM;
- 
-@@ -226,9 +228,7 @@ static int gpio_flash_probe(struct platform_device *pdev)
- 	 */
- 	state->gpio_count     = gpios->end;
- 	state->gpio_addrs     = (void *)(unsigned long)gpios->start;
--	state->gpio_values    = (void *)(state + 1);
- 	state->win_order      = get_bitmask_order(resource_size(memory)) - 1;
--	memset(state->gpio_values, 0xff, arr_size);
- 
- 	state->map.name       = DRIVER_NAME;
- 	state->map.read       = gf_read;
++Example:
++
++	flash@300000 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "cfi-gpio-addr-flash";
++		bank-width = <2>;
++		reg = < 0x00300000 0x00200000 >;
++		gpios = <&gpio_0 3 0>, <&gpio_0 4 0>;
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				reg = < 0x0 0x200000 >;
++				label = "Golden Bitstream";
++			};
++			partition@200000 {
++				reg = < 0x200000 0x200000 >;
++				label = "User Bitstream";
++			};
++			partition@400000 {
++				reg = < 0x400000 0x200000 >;
++				label = "V4L Controls";
++			};
++			partition@600000 {
++				reg = < 0x600000 0x200000 >;
++				label = "Production Data";
++			};
++		}
++	} ;
 -- 
 2.19.0
 
