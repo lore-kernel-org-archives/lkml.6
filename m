@@ -2,158 +2,102 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6E7C64EBD
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 02:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D147C64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 02:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2E16208AE
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 02:06:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="z4VBtKyh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2E16208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id E67BB20878
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 02:18:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E67BB20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbeJCIwY (ORCPT
+        id S1726666AbeJCJCt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 04:52:24 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:29067 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeJCIwY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 04:52:24 -0400
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w93261em030138
-        for <linux-kernel@vger.kernel.org>; Wed, 3 Oct 2018 11:06:02 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w93261em030138
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538532362;
-        bh=UpT730c8SSUSABSDIj6+fGeKx+1gOx6Hv3x4s+jCH9A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=z4VBtKyhKaENWBEK6PdEjNCADmAaChhLdEOeaWG7Sh2XiBLEZjBMXjdfg2xdPP1+x
-         gCnKozSX0CwP+zH937pd7a5LXEXsmRpXI5/pYEZjgw6inGv3tJthFlMY9fOiCVVIY8
-         9/uc6KdPueO6BFlttOrEjcw+vtK9+YGFM/jJ1/yaMWp1u1yR2cQFzZDmR/ZwYqS8Dw
-         B4/IGYydBGSnZzmikKmLjwHgQfz02Yz5MiSUaMoEhik9WducB7r62DiW1XcJjm87G5
-         QCiRa87jw5a9vbMA+BjzxPQLkqPPxUU4oO2C26ZS/2bHfYBIR9A/3M28J94VPsQvq/
-         /ZYKLeC+r+Qwg==
-X-Nifty-SrcIP: [209.85.217.54]
-Received: by mail-vs1-f54.google.com with SMTP id z19-v6so2318941vso.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 19:06:02 -0700 (PDT)
-X-Gm-Message-State: ABuFfoiAGCgwjTDpLxlkj/fFvF8BUYuldGJwxE5Ny3Q0AJGTm/jST6kp
-        ourx0U3BAi+dS9rimAWcTJMmQ1QigIW2gPBagDE=
-X-Google-Smtp-Source: ACcGV60MYLVK2hzbQNNVbzjCw5iv9wyhsCvQDf/Yvi2fJqzZM7zXtEYG3IHD17CGOkanVqpao5Rrm8EOhKN/BTmOlTQ=
-X-Received: by 2002:a67:5e05:: with SMTP id s5-v6mr5255477vsb.215.1538532361274;
- Tue, 02 Oct 2018 19:06:01 -0700 (PDT)
+        Wed, 3 Oct 2018 05:02:49 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45444 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726407AbeJCJCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 05:02:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA7347A9;
+        Tue,  2 Oct 2018 19:16:32 -0700 (PDT)
+Received: from [10.162.0.72] (p8cg001049571a15.blr.arm.com [10.162.0.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A389D3F5D3;
+        Tue,  2 Oct 2018 19:16:29 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        catalin.marinas@arm.com, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com
+References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
+ <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
+ <20181002123909.GS18290@dhcp22.suse.cz>
+Message-ID: <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
+Date:   Wed, 3 Oct 2018 07:46:27 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <CAK7LNAQnPeNwmmKL_BWSnzEsUCq+MW+5c2TXWnuszOBi32iybg@mail.gmail.com>
-In-Reply-To: <CAK7LNAQnPeNwmmKL_BWSnzEsUCq+MW+5c2TXWnuszOBi32iybg@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 3 Oct 2018 11:05:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATVRmQ5n6F5zdCD53kkiaK110Rx734Tm=YLihFQBEwbLg@mail.gmail.com>
-Message-ID: <CAK7LNATVRmQ5n6F5zdCD53kkiaK110Rx734Tm=YLihFQBEwbLg@mail.gmail.com>
-Subject: Re: [GIT PULL] ARM: dts: uniphier: UniPhier DT updates for v4.20
-To:     Arnd Bergmann <arnd@arndb.de>, arm-soc <arm@kernel.org>,
-        Olof Johansson <olof@lixom.net>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181002123909.GS18290@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd, Olof,
 
 
-Please hold on.
+On 10/02/2018 06:09 PM, Michal Hocko wrote:
+> On Tue 02-10-18 17:45:28, Anshuman Khandual wrote:
+>> Architectures like arm64 have PUD level HugeTLB pages for certain configs
+>> (1GB huge page is PUD based on ARM64_4K_PAGES base page size) that can be
+>> enabled for migration. It can be achieved through checking for PUD_SHIFT
+>> order based HugeTLB pages during migration.
+> 
+> Well a long term problem with hugepage_migration_supported is that it is
+> used in two different context 1) to bail out from the migration early
+> because the arch doesn't support migration at all and 2) to use movable
+> zone for hugetlb pages allocation. I am especially concerned about the
+> later because the mere support for migration is not really good enough.
+> Are you really able to find a different giga page during the runtime to
+> move an existing giga page out of the movable zone?
 
-I've received a little more patches.
+I pre-allocate them before trying to initiate the migration (soft offline
+in my experiments). Hence it should come from the pre-allocated HugeTLB
+pool instead from the buddy. I might be missing something here but do we
+ever allocate HugeTLB on the go when trying to migrate ? IIUC it always
+came from the pool (unless its something related to ovecommit/surplus).
+Could you please kindly explain regarding how migration target HugeTLB
+pages are allocated on the fly from movable zone.
 
-I will queue up them, and send a respin later on.
+But even if there are some chances of run time allocation failure from
+movable zone (as in point 2) that should not block the very initiation
+of migration itself. IIUC thats not the semantics for either THP or
+normal pages. Why should it be different here. If the allocation fails
+we should report and abort as always. Its the caller of migration taking
+the chances. why should we prevent that.
 
-Thanks.
+> 
+> So I guess we want to split this into two functions
+> arch_hugepage_migration_supported and hugepage_movable. The later would
 
+So the set difference between arch_hugepage_migration_supported and 
+hugepage_movable still remains un-migratable ? Then what is the purpose
+for arch_hugepage_migration_supported page size set in the first place.
+Does it mean we allow the migration at the beginning and the abort later
+when the page size does not fall within the subset for hugepage_movable.
+Could you please kindly explain this in more detail.
 
-On Wed, Oct 3, 2018 at 8:47 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Hi Arnd, Olof,
->
-> Please pull UniPhier DT updates for the v4.20 MW.
->
-> In this cycle, I queued up all arm/arm64 changes
-> into a single branch to avoid build errors.
->
-> Thanks!
->
->
->
->
->
-> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
->
->   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
-> tags/uniphier-dt-v4.20
->
-> for you to fetch changes up to 84a9c4d55907feece68c6012d3c030cf5c841ceb:
->
->   arm64: dts: uniphier: add SD controller nodes (2018-10-03 08:21:27 +0900)
->
-> ----------------------------------------------------------------
-> UniPhier ARM SoC DT updates for v4.20
->
-> - Add more clocks to NAND controller nodes
->
-> - Add SPI controller nodes
->
-> - Add SD controller nodes
->
-> ----------------------------------------------------------------
-> Kunihiko Hayashi (3):
->       ARM: dts: uniphier: add SPI pin-mux node
->       ARM: dts: uniphier: add SPI node for UniPhier 32bit SoCs
->       arm64: dts: uniphier: add SPI node for LD20, LD11 and PXs3
->
-> Masahiro Yamada (4):
->       ARM: uniphier: dts: add more clocks to Denali NAND controller node
->       arm64: uniphier: dts: add more clocks to Denali NAND controller node
->       ARM: dts: uniphier: add SD/eMMC controller nodes
->       arm64: dts: uniphier: add SD controller nodes
->
->  arch/arm/boot/dts/uniphier-ld4-ref.dts            |  4 ++
->  arch/arm/boot/dts/uniphier-ld4.dtsi               | 48 ++++++++++++++-
->  arch/arm/boot/dts/uniphier-ld6b-ref.dts           |  4 ++
->  arch/arm/boot/dts/uniphier-pinctrl.dtsi           | 25 ++++++++
->  arch/arm/boot/dts/uniphier-pro4-ace.dts           |  4 ++
->  arch/arm/boot/dts/uniphier-pro4-ref.dts           |  4 ++
->  arch/arm/boot/dts/uniphier-pro4-sanji.dts         |  4 ++
->  arch/arm/boot/dts/uniphier-pro4.dtsi              | 62 +++++++++++++++++++-
->  arch/arm/boot/dts/uniphier-pro5.dtsi              | 59 ++++++++++++++++++-
->  arch/arm/boot/dts/uniphier-pxs2-gentil.dts        |  4 ++
->  arch/arm/boot/dts/uniphier-pxs2-vodka.dts         |  4 ++
->  arch/arm/boot/dts/uniphier-pxs2.dtsi              | 59 ++++++++++++++++++-
->  arch/arm/boot/dts/uniphier-sld8-ref.dts           |  4 ++
->  arch/arm/boot/dts/uniphier-sld8.dtsi              | 48 ++++++++++++++-
->  arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi  | 25 +++++++-
->  arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi  | 61 ++++++++++++++++++-
->  .../boot/dts/socionext/uniphier-pxs3-ref.dts      |  4 ++
->  arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi  | 43 +++++++++++++-
->  18 files changed, 458 insertions(+), 8 deletions(-)
->
->
-> --
-> Best Regards
-> Masahiro Yamada
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+> be a reasonably migrateable subset of the former. Without that this
+> patch migth introduce subtle regressions when somebody relies on movable
+> zone to be really movable.
+PUD based HugeTLB pages were never migratable, then how can there be any
+regression here ? At present we even support PGD based HugeTLB pages for
+migration. Wondering how PUD based ones are going to be any different.
