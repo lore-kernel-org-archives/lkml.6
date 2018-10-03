@@ -2,131 +2,132 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A754DC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AFF5C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7582420652
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:02:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7582420652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 005BA213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:03:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 005BA213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbeJCNtr (ORCPT
+        id S1727318AbeJCNu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 09:49:47 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:33149 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726596AbeJCNtr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 09:49:47 -0400
-Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g7bAy-00080a-FZ; Wed, 03 Oct 2018 09:02:28 +0200
-Date:   Wed, 3 Oct 2018 09:02:27 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-cc:     fenghua.yu@intel.com, tony.luck@intel.com, jithu.joseph@intel.com,
-        gavin.hindman@intel.com, dave.hansen@intel.com, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] x86/intel_rdt: CBM overlap should also check for
- overlap with CDP peer
-In-Reply-To: <262e12b66c238517c4766190dd493d937825f563.1537987801.git.reinette.chatre@intel.com>
-Message-ID: <alpine.DEB.2.21.1810030848580.1435@nanos.tec.linutronix.de>
-References: <cover.1537987801.git.reinette.chatre@intel.com> <262e12b66c238517c4766190dd493d937825f563.1537987801.git.reinette.chatre@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 3 Oct 2018 09:50:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54516 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726596AbeJCNu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 09:50:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6735FAFF6;
+        Wed,  3 Oct 2018 07:03:23 +0000 (UTC)
+Date:   Wed, 3 Oct 2018 09:03:20 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc:     Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Juliet Kim <minkim@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH] migration/mm: Add WARN_ON to try_offline_node
+Message-ID: <20181003070320.GE18290@dhcp22.suse.cz>
+References: <20181001185616.11427.35521.stgit@ltcalpine2-lp9.aus.stglabs.ibm.com>
+ <20181001202724.GL18290@dhcp22.suse.cz>
+ <bdbca329-7d35-0535-1737-94a06a19ae28@linux.vnet.ibm.com>
+ <df95f828-1963-d8b9-ab58-6d29d2d152d2@linux.vnet.ibm.com>
+ <20181002145922.GZ18290@dhcp22.suse.cz>
+ <d338b385-626b-0e79-9944-708178fe245d@linux.vnet.ibm.com>
+ <20181002160446.GA18290@dhcp22.suse.cz>
+ <e7dd66c1-d196-3a14-0115-acdaf538ebfd@linux.vnet.ibm.com>
+ <bbc5f219-614f-b024-0888-8ad216c5eaf8@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bbc5f219-614f-b024-0888-8ad216c5eaf8@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Sep 2018, Reinette Chatre wrote:
->  /**
-> - * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
-> + * _rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
->   * @r: Resource to which domain instance @d belongs.
->   * @d: The domain instance for which @closid is being tested.
->   * @cbm: Capacity bitmask being tested.
-> @@ -1049,8 +1048,8 @@ static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
->   *
->   * Return: false if CBM does not overlap, true if it does.
->   */
-> -bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
-> -			   u32 _cbm, int closid, bool exclusive)
-> +static bool _rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
-> +				   u32 _cbm, int closid, bool exclusive)
+On Tue 02-10-18 12:45:50, Tyrel Datwyler wrote:
+> On 10/02/2018 11:13 AM, Michael Bringmann wrote:
+> > 
+> > 
+> > On 10/02/2018 11:04 AM, Michal Hocko wrote:
+> >> On Tue 02-10-18 10:14:49, Michael Bringmann wrote:
+> >>> On 10/02/2018 09:59 AM, Michal Hocko wrote:
+> >>>> On Tue 02-10-18 09:51:40, Michael Bringmann wrote:
+> >>>> [...]
+> >>>>> When the device-tree affinity attributes have changed for memory,
+> >>>>> the 'nid' affinity calculated points to a different node for the
+> >>>>> memory block than the one used to install it, previously on the
+> >>>>> source system.  The newly calculated 'nid' affinity may not yet
+> >>>>> be initialized on the target system.  The current memory tracking
+> >>>>> mechanisms do not record the node to which a memory block was
+> >>>>> associated when it was added.  Nathan is looking at adding this
+> >>>>> feature to the new implementation of LMBs, but it is not there
+> >>>>> yet, and won't be present in earlier kernels without backporting a
+> >>>>> significant number of changes.
+> >>>>
+> >>>> Then the patch you have proposed here just papers over a real issue, no?
+> >>>> IIUC then you simply do not remove the memory if you lose the race.
+> >>>
+> >>> The problem occurs when removing memory after an affinity change
+> >>> references a node that was previously unreferenced.  Other code
+> >>> in 'kernel/mm/memory_hotplug.c' deals with initializing an empty
+> >>> node when adding memory to a system.  The 'removing memory' case is
+> >>> specific to systems that perform LPM and allow device-tree changes.
+> >>> The powerpc kernel does not have the option of accepting some PRRN
+> >>> requests and accepting others.  It must perform them all.
+> >>
+> >> I am sorry, but you are still too cryptic for me. Either there is a
+> >> correctness issue and the the patch doesn't really fix anything or the
+> >> final race doesn't make any difference and then the ppc code should be
+> >> explicit about that. Checking the node inside the hotplug core code just
+> >> looks as a wrong layer to mitigate an arch specific problem. I am not
+> >> saying the patch is a no-go but if anything we want a big fat comment
+> >> explaining how this is possible because right now it just points to an
+> >> incorrect API usage.
+> >>
+> >> That being said, this sounds pretty much ppc specific problem and I
+> >> would _prefer_ it to be handled there (along with a big fat comment of
+> >> course).
+> > 
+> > Let me try again.  Regardless of the path to which we get to this condition,
+> > we currently crash the kernel.  This patch changes that to a WARN_ON notice
+> > and continues executing the kernel without shutting down the system.  I saw
+> > the problem during powerpc testing, because that is the focus of my work.
+> > There are other paths to this function besides powerpc.  I feel that the
+> > kernel should keep running instead of halting.
+> 
+> This is still basically a hack to get around a known race. In itself
+> this patch is still worth while in that we shouldn't crash the kernel
+> on a null pointer dereference. However, I think the actual problem
+> still needs to be addressed. We shouldn't run any PRRN events for the
+> source system on the target after a migration. The device tree update
+> should have taken care of telling us about new affinities and what
+> not. Can we just throw out any queued PRRN events when we wake up on
+> the target?
 
-Existing issue. The documentation uses @cbm, but the argument is _cbm.
-
-Also please make this __rdtgroup_cbm_overlaps(). Double underscores are
-standing more out.
-
->  {
->  	unsigned long *cbm = (unsigned long *)&_cbm;
->  	unsigned long *ctrl_b;
-> @@ -1087,6 +1086,44 @@ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
->  	return false;
->  }
->  
-> +/**
-> + * rdtgroup_cbm_overlaps - Does CBM overlap with other use of hardware
-> + * @r: Resource to which domain instance @d belongs.
-> + * @d: The domain instance for which @closid is being tested.
-> + * @cbm: Capacity bitmask being tested.
-> + * @closid: Intended closid for @cbm.
-> + * @exclusive: Only check if overlaps with exclusive resource groups
-> + *
-> + * Resources that can be allocated using a CBM can use the CBM to control
-> + * the overlap of these allocations. rdtgroup_cmb_overlaps() is the test
-> + * for overlap. Overlap test is not limited to the specific resource for
-> + * which the CBM is intended though - when dealing with CDP resources that
-> + * share the underlying hardware the overlap check should be performed on
-> + * the CDP resource sharing the hardware also.
-> + *
-> + * Refer to description of _rdtgroup_cbm_overlaps() for the details of the
-> + * overlap test.
-> + *
-> + * Return: true if CBM overlap detected, false if there is no overlap
-> + */
-> +bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
-> +			   u32 _cbm, int closid, bool exclusive)
-
-Ditto. And here is no reason for using _cbm.
-
-> +{
-> +	struct rdt_resource *r_cdp;
-> +	struct rdt_domain *d_cdp;
-> +	bool ret;
-> +
-> +	ret = _rdtgroup_cbm_overlaps(r, d, _cbm, closid, exclusive);
-> +	if (ret)
-> +		return ret;
-
-  	if (__rdtgroup_cbm_overlaps(r, d, _cbm, closid, exclusive))
-		return true;
-
-> +
-> +	if (rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp) == 0)
-> +		return _rdtgroup_cbm_overlaps(r_cdp, d_cdp, _cbm,
-> +					      closid, exclusive);
-
-	if (rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp) < 0)
-		return false;
-
-	return __rdtgroup_cbm_overlaps(r_cpd, d_cdp, _cbm, closid, exclusive);
-
-Makes the whole thing more obvious.
-
-Thanks,
-
-	tglx
-
+And until a proper fix is developed can we have NODE_DATA test in the
+affected code rather than pollute the generic code with something that
+is essentially a wrong usage of the API? With a big fat warning
+explaining what is going on here?
+-- 
+Michal Hocko
+SUSE Labs
