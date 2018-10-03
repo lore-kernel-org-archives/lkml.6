@@ -2,115 +2,139 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A7BC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B74C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 718C32098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:17:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718C32098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B37D32098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:19:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B37D32098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbeJCSFw (ORCPT
+        id S1726806AbeJCSHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:05:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49854 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726617AbeJCSFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:05:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5186018A;
-        Wed,  3 Oct 2018 04:17:56 -0700 (PDT)
-Received: from [10.4.13.23] (en101.emea.arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6834B3F5A0;
-        Wed,  3 Oct 2018 04:17:54 -0700 (PDT)
-Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
-To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
-        catalin.marinas@arm.com, mhocko@kernel.org,
-        mike.kravetz@oracle.com, n-horiguchi@ah.jp.nec.com
-References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
- <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
- <835085a2-79c2-4eb5-2c10-13bb2893f611@arm.com>
- <c0689b0c-4810-e0e8-354e-55c45d59b6d0@arm.com>
- <a6b96126-5571-2aa2-6deb-09a457afd781@arm.com>
- <bad51030-5f02-4fc9-741c-0fffbd690aca@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <789784ee-4830-753b-5d14-f5c7d90622c4@arm.com>
-Date:   Wed, 3 Oct 2018 12:17:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 3 Oct 2018 14:07:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57952 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726617AbeJCSHU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 14:07:20 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w93BAnJJ100223
+        for <linux-kernel@vger.kernel.org>; Wed, 3 Oct 2018 07:19:22 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mvvnvr9y7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 07:19:22 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Wed, 3 Oct 2018 05:19:22 -0600
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 3 Oct 2018 05:19:18 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w93BJHDD66322522
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 3 Oct 2018 04:19:17 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 463D213604F;
+        Wed,  3 Oct 2018 05:19:17 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC75C136059;
+        Wed,  3 Oct 2018 05:19:16 -0600 (MDT)
+Received: from sofia.ibm.com (unknown [9.124.35.51])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed,  3 Oct 2018 05:19:16 -0600 (MDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 5C3BB2E4C72; Wed,  3 Oct 2018 16:49:13 +0530 (IST)
+Date:   Wed, 3 Oct 2018 16:49:13 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Anton Blanchard <anton@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 0/3] powerpc: Detection and scheduler optimization for
+ POWER9 bigcore
+Reply-To: ego@linux.vnet.ibm.com
+References: <1538399802-23582-1-git-send-email-ego@linux.vnet.ibm.com>
+ <994106db-7f79-7d22-0d4e-f458bd85bb64@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <bad51030-5f02-4fc9-741c-0fffbd690aca@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <994106db-7f79-7d22-0d4e-f458bd85bb64@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18100311-0016-0000-0000-0000093A538C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009814; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01097236; UDB=6.00567426; IPR=6.00877278;
+ MB=3.00023598; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-03 11:19:20
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100311-0017-0000-0000-00004091F6F9
+Message-Id: <20181003111913.GA9055@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810030112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Dave,
 
-
-On 03/10/18 12:10, Anshuman Khandual wrote:
+On Mon, Oct 01, 2018 at 07:05:11AM -0700, Dave Hansen wrote:
+> On 10/01/2018 06:16 AM, Gautham R. Shenoy wrote:
+> > 
+> > Patch 3: Creates a pair of sysfs attributes named
+> > 	  /sys/devices/system/cpu/cpuN/topology/smallcore_thread_siblings
+> > 	  and
+> > 	  /sys/devices/system/cpu/cpuN/topology/smallcore_thread_siblings_list
+> > 	  exposing the small-core siblings that share the L1 cache
+> > 	  to the userspace.
 > 
+> I really don't think you've justified the existence of a new user/kernel
+> interface here.  We already have information about threads share L1
+> caches in here:
 > 
-> On 10/03/2018 03:52 PM, Suzuki K Poulose wrote:
->>
->>
->> On 02/10/18 13:56, Anshuman Khandual wrote:
->>>
->>>
->>> On 10/02/2018 06:08 PM, Suzuki K Poulose wrote:
->>>> Hi Anshuman
->>>>
->>>> On 02/10/18 13:15, Anshuman Khandual wrote:
->>>>> Architectures like arm64 have PUD level HugeTLB pages for certain configs
->>>>> (1GB huge page is PUD based on ARM64_4K_PAGES base page size) that can be
->>>>> enabled for migration. It can be achieved through checking for PUD_SHIFT
->>>>> order based HugeTLB pages during migration.
->>>>>
->>>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>>>> ---
->>>>>     include/linux/hugetlb.h | 3 ++-
->>>>>     1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
->>>>> index 6b68e34..9c1b77f 100644
->>>>> --- a/include/linux/hugetlb.h
->>>>> +++ b/include/linux/hugetlb.h
->>>>> @@ -483,7 +483,8 @@ static inline bool hugepage_migration_supported(struct hstate *h)
->>>>>     {
->>>>>     #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
->>>>>         if ((huge_page_shift(h) == PMD_SHIFT) ||
->>>>> -        (huge_page_shift(h) == PGDIR_SHIFT))
->>>>> +        (huge_page_shift(h) == PUD_SHIFT) ||
->>>>
->>>>
->>>>> +            (huge_page_shift(h) == PGDIR_SHIFT))
->>>>
->>>> nit: Extra Tab ^^.
->>>
->>> The tab is in there when you apply this patch and all three checks are tab separated
->>> in a newline.
->>
->> Well, with the patch applied, at least I can see 2 tabs for the
->> PUD_SHIFT check and 3 tabs for PGDIR_SHIFT check. Which seems
->> inconsistent. Is it just me (my mail client) ?
+> 	/sys/devices/system/cpu/cpu0/cache/index0/shared_cpu_list
+
+
+Hmmm. My bad, I wasn't aware of this sysfs interface. We can use this
+to share information about L1 cache. And currently on the upstream
+kernel we report incorrect value on POWER9 SMT8 core. I will fix
+this. Thanks for calling this out.
+
 > 
-> I am sorry, you are right. Did not understand your point earlier. Yeah there is
-> increasing number of tabs for each new line with a conditional check. Is there
-> a problem with this style of indentation ? Though I will be happy to change.
+> The only question would be if anything would break because it assumes
+> that all SMT siblings share all caches.  But, it breaks if your new
+> interface is there or not; it's old software that we care about.
+>
 
-I have been under the idea that all the checks at the same level could
-have the same indentation. (i.e, 2 tabs in this case for each). Looks
-like there is no rule about it. How about replacing it with a
-switch..case  ?
+Up until POWER9 SMT8 cores, this assumption was true that all SMT
+siblings share all caches. POWER9 SMT8 cores are the only exception. 
 
-Cheers
-Suzuki
+--
+Thanks and Regards
+gautham.
+
