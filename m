@@ -5,60 +5,61 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60043C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3523C65BA9
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:39:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 256592064D
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:39:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E9A22064D
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:39:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfvOGDgV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 256592064D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WHcKmzmD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E9A22064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbeJDC2z (ORCPT
+        id S1727422AbeJDC24 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 22:28:55 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44734 "EHLO
+        Wed, 3 Oct 2018 22:28:56 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33447 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727180AbeJDC2x (ORCPT
+        with ESMTP id S1726964AbeJDC2z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 22:28:53 -0400
-Received: by mail-ed1-f66.google.com with SMTP id z21-v6so2011158edb.11
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 12:39:06 -0700 (PDT)
+        Wed, 3 Oct 2018 22:28:55 -0400
+Received: by mail-ed1-f66.google.com with SMTP id g26-v6so6463854edp.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 12:39:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hZUbn50UsHuR5ct+6gyJtPRAN067Ky0FADOBnmfRKwk=;
-        b=XfvOGDgVDnLcs/IOZQoaIjspO/jdgu0VXcHCSb/NfZyJ6gUALMY21KoSfkSKfLP87y
-         TZTHfLzMKYwq70iB4pcbufv2tXbjsieshc31Je/enNmfxUwJLcU4/6r7TFRgUbwAtFo6
-         xfClP5QflIjCmvwa2N0FwXlkW+1MGd4KJmTzlT5dioChjzBgjouctW5KFvMbe/sFlAZz
-         GeNqxfc+fytHL9BCRtDbQY8wqf0YjJ31cYO9wfJoUvACMQEStVh63GzaEagCQsaWawUX
-         S98CaGXyy28obSY2z5owgOwU1XxhONBm/xNzVGKBfHPqcOJ015jlkNJ80pjYx4C48KXh
-         iUXg==
+        bh=ls+XcqdmHnBV0GS3bS8NGlkMVyhd9AxDVYAww4RmSug=;
+        b=WHcKmzmDc1eR3RjHo6WRbNx1WahwoWFYxfdR/EAPsjAvZdgQK30Jn2K6iYwm8/ZwUu
+         Ysjc6p/M9vtJZPEMu6m7fae1L2ZjSr+63ZqyylwfKxJuEmvWjlvrRbtIoIQsLxlvUYr6
+         mrrmsMv7w5FYbBYA8o9SaMkZiTK+urlxxJasdJIZUrPrk9TdM2BsqDKJ8w8EMIfPzuGp
+         UENODJIf9Tq3Onw1ZPGGsKvs8g8RpfI3Me266/xolz8LWut1a+z89Yna8Lvn25VKmnkw
+         dqhfjDJNxB8QSdZpFOAnEGCkqsgnmWIvTl357e8bd9kCuEmflEfxMhjULXopfOj66W2/
+         clmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hZUbn50UsHuR5ct+6gyJtPRAN067Ky0FADOBnmfRKwk=;
-        b=IuBS3VBbRgZAMx1SsiMvHNkw8ZZWLZvDEpPJdszfyBwPcsXv999XNJZq8EB5G3EdeL
-         2FiAb/vhKxJt+l3+bPzAhCc+3ZLaBhdNNRXi6JBC4ABevVdRkibFM/B818SDT0RYQHDa
-         jR0pGg0DqsjGk9+iv54odrfw8BcXJkUAFmoMt0U72YXvdGQLJ4EQ/rZWMiTDysLcKUuA
-         zZtqHWwm1CHJgy4SlI+TrEZjVSd8n1a218SW0Avc043UroQIUNapRpXsQohEkpOu+I1S
-         y9BbbKcPXJYhEbMZ/xWboix0Tp9vmFRsr5FxOzJ2CW9hKh7HIndsaZtS2TLCLuPVxF0G
-         KXWw==
-X-Gm-Message-State: ABuFfoj0IxXQz/FuLRZs7gycJTfzPQEEhMIRJ6I7fLweYUtKBO8iul2n
-        BYcFSCgXSDBtb7ejkIXB1eJ9VLfY
-X-Google-Smtp-Source: ACcGV605BhK38pwwP7PTKy74FZNewQxPiUagHNwacKxE7pu7dJedW2iJKh/f2zXpGC9KevpkzuCpeg==
-X-Received: by 2002:a17:906:e0d5:: with SMTP id gl21-v6mr3364691ejb.92.1538595545425;
-        Wed, 03 Oct 2018 12:39:05 -0700 (PDT)
+        bh=ls+XcqdmHnBV0GS3bS8NGlkMVyhd9AxDVYAww4RmSug=;
+        b=gMKagpFr1QiZfoObAlftn/kgYsnT+17tcKE9XJZgamh/EteSAxvCYkpCtp8WI4qmny
+         9agYA0EcxqT7SiR5TdwtF7K1dOFidIVV7qhzqnOlPAqvSMkYyMPT8j5JOGsGkEaU1+mU
+         w9s+hK0FygkwneZ48kV2UCn/2NMjS69QIYKkZ+js0SwkE40rqDyenjouRW4p4q0mKPnD
+         fZ1iTkhyvQMj2w8h/PvEz8G2sr+nUtWMDgJp4P3mUA/bYoOxZatMcAla2jVJjFlkk0/7
+         sKtHpOAyogxw1uwgIzIHN9nNvrDQamwhXHIW7AJEsCIKKNiBL9NBz65u6gwZI9NbnoAV
+         iRmw==
+X-Gm-Message-State: ABuFfoiprDtR2RFzq0W48BpUznTrxdNeBtVHrMMSS1s6bUrTL4dWC8c8
+        4EWZDO3lYVMKg9yVmYpEDWU=
+X-Google-Smtp-Source: ACcGV60qLuMeQd0jrz3dwBeC7nnCqWdbPynRwlfpRr90F4M/84UhsI8upFvo/4iiTF5AV16WGkzgiQ==
+X-Received: by 2002:a17:906:95da:: with SMTP id n26-v6mr3239995ejy.205.1538595547282;
+        Wed, 03 Oct 2018 12:39:07 -0700 (PDT)
 Received: from piling.lan (80-71-134-83.u.parknet.dk. [80.71.134.83])
-        by smtp.gmail.com with ESMTPSA id b49-v6sm765263eda.70.2018.10.03.12.39.03
+        by smtp.gmail.com with ESMTPSA id b49-v6sm765263eda.70.2018.10.03.12.39.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 12:39:03 -0700 (PDT)
+        Wed, 03 Oct 2018 12:39:05 -0700 (PDT)
 From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 To:     David Woodhouse <dwmw2@infradead.org>,
         Brian Norris <computersforpeace@gmail.com>,
@@ -69,9 +70,9 @@ To:     David Woodhouse <dwmw2@infradead.org>,
         linux-mtd@lists.infradead.org,
         open list <linux-kernel@vger.kernel.org>
 Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v5 3/8] mtd: maps: gpio-addr-flash: Use devm_* functions
-Date:   Wed,  3 Oct 2018 21:38:54 +0200
-Message-Id: <20181003193859.23928-3-ricardo.ribalda@gmail.com>
+Subject: [PATCH v5 4/8] mtd: maps: gpio-addr-flash: Use order insted of size
+Date:   Wed,  3 Oct 2018 21:38:55 +0200
+Message-Id: <20181003193859.23928-4-ricardo.ribalda@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181003193859.23928-1-ricardo.ribalda@gmail.com>
 References: <20181003193859.23928-1-ricardo.ribalda@gmail.com>
@@ -82,83 +83,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By using devm functions we can make the code cleaner.
+By using the order of the window instead of the size, we can replace a
+lot of expensive division and modulus on the code with simple bit
+operations.
 
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/mtd/maps/gpio-addr-flash.c | 26 ++++++++------------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
+ drivers/mtd/maps/gpio-addr-flash.c | 39 ++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/mtd/maps/gpio-addr-flash.c b/drivers/mtd/maps/gpio-addr-flash.c
-index 6de16e81994c..84404dcc7824 100644
+index 84404dcc7824..89cc8cce161b 100644
 --- a/drivers/mtd/maps/gpio-addr-flash.c
 +++ b/drivers/mtd/maps/gpio-addr-flash.c
-@@ -213,7 +213,7 @@ static int gpio_flash_probe(struct platform_device *pdev)
- 		return -EINVAL;
+@@ -25,6 +25,8 @@
+ #include <linux/slab.h>
+ #include <linux/types.h>
  
- 	arr_size = sizeof(int) * gpios->end;
--	state = kzalloc(sizeof(*state) + arr_size, GFP_KERNEL);
-+	state = devm_kzalloc(&pdev->dev, sizeof(*state) + arr_size, GFP_KERNEL);
- 	if (!state)
- 		return -ENOMEM;
- 
-@@ -234,9 +234,9 @@ static int gpio_flash_probe(struct platform_device *pdev)
- 	state->map.copy_to    = gf_copy_to;
- 	state->map.bankwidth  = pdata->width;
- 	state->map.size       = state->win_size * (1 << state->gpio_count);
--	state->map.virt       = ioremap_nocache(memory->start, state->win_size);
--	if (!state->map.virt)
--		return -ENOMEM;
-+	state->map.virt	      = devm_ioremap_resource(&pdev->dev, memory);
-+	if (IS_ERR(state->map.virt))
-+		return PTR_ERR(state->map.virt);
- 
- 	state->map.phys       = NO_XIP;
- 	state->map.map_priv_1 = (unsigned long)state;
-@@ -245,12 +245,10 @@ static int gpio_flash_probe(struct platform_device *pdev)
- 
- 	i = 0;
- 	do {
--		if (gpio_request(state->gpio_addrs[i], DRIVER_NAME)) {
-+		if (devm_gpio_request(&pdev->dev, state->gpio_addrs[i],
-+				      DRIVER_NAME)) {
- 			dev_err(&pdev->dev, "failed to request gpio %d\n",
- 				state->gpio_addrs[i]);
--			while (i--)
--				gpio_free(state->gpio_addrs[i]);
--			kfree(state);
- 			return -EBUSY;
- 		}
- 		gpio_direction_output(state->gpio_addrs[i], 0);
-@@ -259,12 +257,8 @@ static int gpio_flash_probe(struct platform_device *pdev)
- 	dev_notice(&pdev->dev, "probing %d-bit flash bus\n",
- 		   state->map.bankwidth * 8);
- 	state->mtd = do_map_probe(memory->name, &state->map);
--	if (!state->mtd) {
--		for (i = 0; i < state->gpio_count; ++i)
--			gpio_free(state->gpio_addrs[i]);
--		kfree(state);
-+	if (!state->mtd)
- 		return -ENXIO;
--	}
- 	state->mtd->dev.parent = &pdev->dev;
- 
- 	mtd_device_parse_register(state->mtd, part_probe_types, NULL,
-@@ -276,13 +270,9 @@ static int gpio_flash_probe(struct platform_device *pdev)
- static int gpio_flash_remove(struct platform_device *pdev)
- {
- 	struct async_state *state = platform_get_drvdata(pdev);
--	size_t i = 0;
--	do {
--		gpio_free(state->gpio_addrs[i]);
--	} while (++i < state->gpio_count);
++#define win_mask(x) ((BIT(x)) - 1)
 +
- 	mtd_device_unregister(state->mtd);
- 	map_destroy(state->mtd);
--	kfree(state);
- 	return 0;
+ #define DRIVER_NAME "gpio-addr-flash"
+ 
+ /**
+@@ -34,7 +36,7 @@
+  *	@gpio_count:  number of GPIOs used to address
+  *	@gpio_addrs:  array of GPIOs to twiddle
+  *	@gpio_values: cached GPIO values
+- *	@win_size:    dedicated memory size (if no GPIOs)
++ *	@win_order:   dedicated memory size (if no GPIOs)
+  */
+ struct async_state {
+ 	struct mtd_info *mtd;
+@@ -42,7 +44,7 @@ struct async_state {
+ 	size_t gpio_count;
+ 	unsigned *gpio_addrs;
+ 	int *gpio_values;
+-	unsigned long win_size;
++	unsigned int win_order;
+ };
+ #define gf_map_info_to_state(mi) ((struct async_state *)(mi)->map_priv_1)
+ 
+@@ -60,7 +62,8 @@ static void gf_set_gpios(struct async_state *state, unsigned long ofs)
+ {
+ 	size_t i = 0;
+ 	int value;
+-	ofs /= state->win_size;
++
++	ofs >>= state->win_order;
+ 	do {
+ 		value = ofs & (1 << i);
+ 		if (state->gpio_values[i] != value) {
+@@ -83,7 +86,7 @@ static map_word gf_read(struct map_info *map, unsigned long ofs)
+ 
+ 	gf_set_gpios(state, ofs);
+ 
+-	word = readw(map->virt + (ofs % state->win_size));
++	word = readw(map->virt + (ofs & win_mask(state->win_order)));
+ 	test.x[0] = word;
+ 	return test;
+ }
+@@ -105,14 +108,14 @@ static void gf_copy_from(struct map_info *map, void *to, unsigned long from, ssi
+ 	int this_len;
+ 
+ 	while (len) {
+-		if ((from % state->win_size) + len > state->win_size)
+-			this_len = state->win_size - (from % state->win_size);
+-		else
+-			this_len = len;
++		this_len = from & win_mask(state->win_order);
++		this_len = BIT(state->win_order) - this_len;
++		this_len = min_t(int, len, this_len);
+ 
+ 		gf_set_gpios(state, from);
+-		memcpy_fromio(to, map->virt + (from % state->win_size),
+-			 this_len);
++		memcpy_fromio(to,
++			      map->virt + (from & win_mask(state->win_order)),
++			      this_len);
+ 		len -= this_len;
+ 		from += this_len;
+ 		to += this_len;
+@@ -132,7 +135,7 @@ static void gf_write(struct map_info *map, map_word d1, unsigned long ofs)
+ 	gf_set_gpios(state, ofs);
+ 
+ 	d = d1.x[0];
+-	writew(d, map->virt + (ofs % state->win_size));
++	writew(d, map->virt + (ofs & win_mask(state->win_order)));
  }
  
+ /**
+@@ -152,13 +155,13 @@ static void gf_copy_to(struct map_info *map, unsigned long to,
+ 	int this_len;
+ 
+ 	while (len) {
+-		if ((to % state->win_size) + len > state->win_size)
+-			this_len = state->win_size - (to % state->win_size);
+-		else
+-			this_len = len;
++		this_len = to & win_mask(state->win_order);
++		this_len = BIT(state->win_order) - this_len;
++		this_len = min_t(int, len, this_len);
+ 
+ 		gf_set_gpios(state, to);
+-		memcpy_toio(map->virt + (to % state->win_size), from, len);
++		memcpy_toio(map->virt + (to & win_mask(state->win_order)),
++			    from, len);
+ 
+ 		len -= this_len;
+ 		to += this_len;
+@@ -224,7 +227,7 @@ static int gpio_flash_probe(struct platform_device *pdev)
+ 	state->gpio_count     = gpios->end;
+ 	state->gpio_addrs     = (void *)(unsigned long)gpios->start;
+ 	state->gpio_values    = (void *)(state + 1);
+-	state->win_size       = resource_size(memory);
++	state->win_order      = get_bitmask_order(resource_size(memory)) - 1;
+ 	memset(state->gpio_values, 0xff, arr_size);
+ 
+ 	state->map.name       = DRIVER_NAME;
+@@ -233,7 +236,7 @@ static int gpio_flash_probe(struct platform_device *pdev)
+ 	state->map.write      = gf_write;
+ 	state->map.copy_to    = gf_copy_to;
+ 	state->map.bankwidth  = pdata->width;
+-	state->map.size       = state->win_size * (1 << state->gpio_count);
++	state->map.size       = BIT(state->win_order + state->gpio_count);
+ 	state->map.virt	      = devm_ioremap_resource(&pdev->dev, memory);
+ 	if (IS_ERR(state->map.virt))
+ 		return PTR_ERR(state->map.virt);
 -- 
 2.19.0
 
