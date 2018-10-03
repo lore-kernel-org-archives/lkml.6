@@ -2,163 +2,114 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60285C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3881C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 092AC2082A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:34:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 714862082A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:36:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NzD2jr13"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092AC2082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I6WaKX95"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714862082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbeJCTWx (ORCPT
+        id S1726833AbeJCTYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 15:22:53 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40184 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbeJCTWx (ORCPT
+        Wed, 3 Oct 2018 15:24:55 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37254 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeJCTYy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 15:22:53 -0400
-Received: by mail-qt1-f196.google.com with SMTP id e9-v6so5636515qtp.7;
-        Wed, 03 Oct 2018 05:34:40 -0700 (PDT)
+        Wed, 3 Oct 2018 15:24:54 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 185-v6so5496821wmt.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 05:36:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O1thCiDnhAjauNlqszuhXYPw0fCWRhuLQh4x+pM2oMI=;
-        b=NzD2jr13ZmIhh3a5WDHycXBljwN4Ipu4dEsRpKz44NZwBg5iKXsdejpUyGEeEwABan
-         iNIWgV9l8SKIp23gMkW12EkmiVna0R+SdielDYttyGAQVUL+IdiPOwKQn2QjGFbnrBKQ
-         3kp9O2c05T5vBxYQBVdKI0dQNBNOSvJBQjJWOBcYFyiGgauFZ02uCDK018RZYFoaICTM
-         GusYTT9FGMnJQr49aBKexa3sYqp6RYDST5rtv1ijKlRJBzv3fXic1FPcsB8Sr7Luj4Rg
-         xS64/EA7IDod/wv750oG2OHOtJ1OFsSGISNVe9FcnJJtfu63SRxKtZaDKjhq3UcmJGWc
-         oJUA==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bilsBF32UJf49Wo7eYBNsxtSGvXWT7lDnqlmAQ3nyPY=;
+        b=I6WaKX95Q0AqkPSb7/170HcKWeIaEDYhXQl0s5hzGIn+cQomhbl+DVvNaGRCp4VhGF
+         kuzAgvlI5IO+pANtv9X/oCxlOYLfKMajdDNMlVhv1/D+whuYIXtgxxKq3IGL7X/jowsc
+         ECeXinJXTPY0dZa09cbyMd5q4DOATjGGFNK5M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O1thCiDnhAjauNlqszuhXYPw0fCWRhuLQh4x+pM2oMI=;
-        b=f5+B6DIOUm8BFHN/1fYAxXa4W30oDxYT5QtC8F34F5cVvEoRJoeai4d76HUX1lHuc9
-         HuJ8VmIZPMiIVdwqDfppjwPCe6/8sgqjebZjNzdyWqNbmWOVhpHfiz8J/MEJ8QG5nk8U
-         qvREd+OR48rPu8/iZ0mWdtAlDa/E1ZM3dRF6Mfr8bEW2SN6LkkbWv5B89g0arLag0E1r
-         9olHUMtCPHXMfnorjECWWPcrc9f9WnVYBSp10I4kUsV5o/9XF1jGpe6llhQdOqu6a+HJ
-         avYVwDgmNG9yPdw4/KuXPxZjCUC0CpPnO7D85LVqj0/3+Fefn2gg2CsnPeRG/g4L2Yit
-         RQ3Q==
-X-Gm-Message-State: ABuFfohh96UNS+B9/hO/GKARIRLZ5yXY0CRl9MB9clKr7dInsD/XDs7S
-        jKYRCooEVshi61fVb1QmK9UXZT8rPbIO6oElqTF04h+3gCo=
-X-Google-Smtp-Source: ACcGV633FiC9gxokPjDtkGa7mJwOqrl2bHf8HKCy478WChhI9u+NXDlw4KybzgVJeXQjXLmSEKpTp0MEQWspZhsa2EA=
-X-Received: by 2002:ac8:3509:: with SMTP id y9-v6mr976590qtb.241.1538570079612;
- Wed, 03 Oct 2018 05:34:39 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bilsBF32UJf49Wo7eYBNsxtSGvXWT7lDnqlmAQ3nyPY=;
+        b=ZeHWBdBkWa6zp8d/HWpIu3PhJCeigPQ6L5ay+3zrsGu/FM83CL3M/omR3pBmQQFQdt
+         36IYQZ53MZp0mQLSKcwfjjpcDf81vHanDOw3JH1IGBO9ECRRYIwXzaqy+c2158+d0CC0
+         qqyq7mtG+dWFwPZDtB9l2lG+eT7qWHpooiefeSnmQ8azZbykndKUIlfMUUQAqwTisHmg
+         DlbPlbuW1otxNZGr+rvaCd2HPW6fpigbnu6MEucVRTHx3WTdfvAh7IKkhiiPmI+ZkmGM
+         GENe6IZiWNWIrZaeH/0SLNpzWMBJOPGZ92xzlqSf8v7aw6C9P9ppPG8h7VMjCS8De4RG
+         wehw==
+X-Gm-Message-State: ABuFfoiU6QIDtar2ZjFqhga0LQ4G36eHpR/8LwhpjyVYgvXg4p4XlIuW
+        JFjkIQHfWZUvrlHhIueAbkWx/U0ZzWU=
+X-Google-Smtp-Source: ACcGV62+4/9GFKJTkVsWMP3zkp/B861FE3ro2pbxb2/6DiQwMzhUaTkvbv98UUk8VkkZfxBeEYsOww==
+X-Received: by 2002:a1c:2846:: with SMTP id o67-v6mr1339731wmo.60.1538570199790;
+        Wed, 03 Oct 2018 05:36:39 -0700 (PDT)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id e142-v6sm4454720wmf.20.2018.10.03.05.36.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 05:36:38 -0700 (PDT)
+Subject: Re: [PATCH] venus: vdec: fix decoded data size
+To:     Vikash Garodia <vgarodia@codeaurora.org>, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org
+References: <1538566221-21369-1-git-send-email-vgarodia@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <ccce4e75-e800-1d10-2350-463d4a72d481@linaro.org>
+Date:   Wed, 3 Oct 2018 15:36:37 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <CANiq72=rgT9cPWH64Tf_8gAU09EiH5FvGqFUdOjV=spVbM5m8Q@mail.gmail.com>
- <20181003071059.02b3fd6f@canb.auug.org.au> <CAKwvOdmt4-jFv6d-ZVUH5OOvXSz38jpuNvQy-jtoSS3xEoh78A@mail.gmail.com>
- <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com>
- <20181002223652.GA4290@nautica> <20181003090010.5150f914@canb.auug.org.au>
-In-Reply-To: <20181003090010.5150f914@canb.auug.org.au>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 3 Oct 2018 14:34:28 +0200
-Message-ID: <CANiq72nLLhTf3AsXqLkPmK6TV_g7E3tML9XaM_zE45dM7XPn-A@mail.gmail.com>
-Subject: Re: [GIT PULL linux-next] Add Compiler Attributes tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>, "Ted Ts'o" <tytso@mit.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1538566221-21369-1-git-send-email-vgarodia@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Hi Vikash,
 
-On Wed, Oct 3, 2018 at 1:00 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Miguel,
->
-> On Wed, 3 Oct 2018 00:36:52 +0200 Dominique Martinet <asmadeus@codewreck.org> wrote:
-> >
-> > Miguel Ojeda wrote on Wed, Oct 03, 2018:
-> > > As I have read, -next is supposed to be a vision of what the merge
-> > > window will look like after merging everything, i.e. ideally -rc1. For
-> > > that to work for files out-of-tree (like these ones, which are not
-> > > maintained by a single tree), changes should be allowed to be stacked
-> > > on each other; otherwise, we cannot handle conflicts :-(
-> >
-> > The rule is the same as with a regular mainline pull; I don't have the
-> > reference at hand but in some recent-ish pull request Linus said he
-> > prefers the stable version with the conflict, and optionally you can
-> > provide a second branch with the conflict resolved for reference, but
-> > the pull request should be based on something stable even if it has
-> > conflicts
-> >
-> > If there is a conflict Stefen will resolve it like Linus/Greg would, and
-> > the resolved bit will be carried over everyday so it's not much more
-> > work -- exactly like a regular pull request for inclusion in the main
-> > tree :)
->
-> Exactly what Dominique said.  I will fix up the conflict (unless it is
-> a very complex conflict, in which case the author(s) should help) and
-> the Linus (or Greg) will do the same.  If you do depend on a patch in
-> Andrew's series, what happens if that patch does not get sent to Linus
-> during the merge window or Linus rejects it?
+On 10/03/2018 02:30 PM, Vikash Garodia wrote:
+> Exisiting code returns the max of the decoded size and buffer size.
+> It turns out that buffer size is always greater due to hardware
+> alignment requirement. As a result, payload size given to client
+> is incorrect. This change ensures that the bytesused is assigned
+> to actual payload size, when available.
+> 
+> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/vdec.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index 991e158..189ec97 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -888,8 +888,7 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
+>  		unsigned int opb_sz = venus_helper_get_opb_size(inst);
+>  
+>  		vb = &vbuf->vb2_buf;
+> -		vb->planes[0].bytesused =
+> -			max_t(unsigned int, opb_sz, bytesused);
+> +		vb2_set_plane_payload(vb, 0, bytesused ? : opb_sz);
+>  		vb->planes[0].data_offset = data_offset;
+>  		vb->timestamp = timestamp_us * NSEC_PER_USEC;
+>  		vbuf->sequence = inst->sequence_cap++;
+> 
 
-This doesn't depend on anything. Not sure what is all the fuss about
--- people got confused into thinking we had to drop a patch for some
-reason. As explained in the first email, I simply rebased v5 (which is
-based on top of rcX) to resolve the conflict myself (i.e. it does
-*not* depend on changes in -next). If you are the one solving
-conflicts yourself (which is what I asked in my second email), there
-is no problem to begin with; I will simply send v6 to you and we are
-done.
+Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 
-When I sent the first email, I assumed that changes in -next were
-supposed to be clean -- my mistake, but please document somewhere how
--next works! Specially that you are rerere'ing conflicts and
-re-resolving them every day.
-
-Then the discussion shifted to what to do with changes that actually
-depend on other changes.
-
-Cheers,
-Miguel
+-- 
+regards,
+Stan
