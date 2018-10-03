@@ -2,148 +2,514 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 672D3C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49949C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17BD72147C
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:25:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JA1XSa12"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17BD72147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id CDADB2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:27:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDADB2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbeJDGQF (ORCPT
+        id S1727209AbeJDGRt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 02:16:05 -0400
-Received: from ozlabs.org ([203.11.71.1]:35365 "EHLO ozlabs.org"
+        Thu, 4 Oct 2018 02:17:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:20328 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726182AbeJDGQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 02:16:05 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726182AbeJDGRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 02:17:48 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42QXF83G82z9s7W;
-        Thu,  4 Oct 2018 09:25:32 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538609132;
-        bh=Gofh3JhTAnjEAyrA7kvxaQ3jIeXiBH3WHc2CJxzf5Pc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=JA1XSa12IE1W+gm4gysgqhas1w381iGyofDRC9ivVWh22BpqN/DzZNn1edUcbUCDx
-         L7vl2VK5sM0k+PXABoi7gZRuvbp5I/RQbLDk/Pu7g93PGz0s+KqBEeNXplk1qb5Zgx
-         TnIe/tQ+ScoarYDQijlGWs4c+0CihBv8sYkVYas688PQhut6QSi6KSK259QHwj13HF
-         s6xYbf1+6ZAINaqqRA1zzKQ9M9x/PACgC3YKbBP7Lm/4/HNXzGwSH434EKNYw4x6En
-         U3FGM6VWC21erSHY/vDWkvqn1GPbuNuynUIaATDOgVxR7LnG8TH09nUGnEE/bJnr1Z
-         +W5BYEA1In3pg==
-Date:   Thu, 4 Oct 2018 09:25:16 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the drm-msm tree
-Message-ID: <20181004092516.26cec1d0@canb.auug.org.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id 82A7C3082AF3;
+        Wed,  3 Oct 2018 23:27:17 +0000 (UTC)
+Received: from asgard.redhat.com (ovpn-200-17.brq.redhat.com [10.40.200.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 18AE79D8D0;
+        Wed,  3 Oct 2018 23:27:07 +0000 (UTC)
+Date:   Thu, 4 Oct 2018 01:27:36 +0200
+From:   Eugene Syromiatnikov <esyr@redhat.com>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v4 21/27] x86/cet/shstk: ELF header parsing of Shadow
+ Stack
+Message-ID: <20181003232736.GI32759@asgard.redhat.com>
+References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+ <20180921150351.20898-22-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Iy6JZCzjlE_esM9f2AHtbXk"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180921150351.20898-22-yu-cheng.yu@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 03 Oct 2018 23:27:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Iy6JZCzjlE_esM9f2AHtbXk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Sep 21, 2018 at 08:03:45AM -0700, Yu-cheng Yu wrote:
+> Look in .note.gnu.property of an ELF file and check if Shadow Stack needs
+> to be enabled for the task.
+> 
+> Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> ---
+>  arch/x86/Kconfig                         |   4 +
+>  arch/x86/include/asm/elf.h               |   5 +
+>  arch/x86/include/uapi/asm/elf_property.h |  15 +
+>  arch/x86/kernel/Makefile                 |   2 +
+>  arch/x86/kernel/elf.c                    | 340 +++++++++++++++++++++++
+>  fs/binfmt_elf.c                          |  15 +
+>  include/uapi/linux/elf.h                 |   1 +
+>  7 files changed, 382 insertions(+)
+>  create mode 100644 arch/x86/include/uapi/asm/elf_property.h
+>  create mode 100644 arch/x86/kernel/elf.c
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 808aa3aecf3c..6377125543cc 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -1919,12 +1919,16 @@ config X86_INTEL_CET
+>  config ARCH_HAS_SHSTK
+>  	def_bool n
+>  
+> +config ARCH_HAS_PROGRAM_PROPERTIES
+> +	def_bool n
+> +
+>  config X86_INTEL_SHADOW_STACK_USER
+>  	prompt "Intel Shadow Stack for user-mode"
+>  	def_bool n
+>  	depends on CPU_SUP_INTEL && X86_64
+>  	select X86_INTEL_CET
+>  	select ARCH_HAS_SHSTK
+> +	select ARCH_HAS_PROGRAM_PROPERTIES
+>  	---help---
+>  	  Shadow stack provides hardware protection against program stack
+>  	  corruption.  Only when all the following are true will an application
+> diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
+> index 0d157d2a1e2a..5b5f169c5c07 100644
+> --- a/arch/x86/include/asm/elf.h
+> +++ b/arch/x86/include/asm/elf.h
+> @@ -382,4 +382,9 @@ struct va_alignment {
+>  
+>  extern struct va_alignment va_align;
+>  extern unsigned long align_vdso_addr(unsigned long);
+> +
+> +#ifdef CONFIG_ARCH_HAS_PROGRAM_PROPERTIES
+> +extern int arch_setup_features(void *ehdr, void *phdr, struct file *file,
+> +			       bool interp);
+> +#endif
+>  #endif /* _ASM_X86_ELF_H */
+> diff --git a/arch/x86/include/uapi/asm/elf_property.h b/arch/x86/include/uapi/asm/elf_property.h
+> new file mode 100644
+> index 000000000000..af361207718c
+> --- /dev/null
+> +++ b/arch/x86/include/uapi/asm/elf_property.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _UAPI_ASM_X86_ELF_PROPERTY_H
+> +#define _UAPI_ASM_X86_ELF_PROPERTY_H
+> +
+> +/*
+> + * pr_type
+> + */
+> +#define GNU_PROPERTY_X86_FEATURE_1_AND (0xc0000002)
+> +
+> +/*
+> + * Bits for GNU_PROPERTY_X86_FEATURE_1_AND
+> + */
+> +#define GNU_PROPERTY_X86_FEATURE_1_SHSTK	(0x00000002)
 
-Hi Rob,
+Hm, these defeinitions aren't much different comparing to NT_*
+definitions in include/uapi/linux/elf.h, is it expected that those
+properties have to be parsed individually for each architecture?
 
-Commits
+> +
+> +#endif /* _UAPI_ASM_X86_ELF_PROPERTY_H */
+> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+> index fbb2d91fb756..36b14ef410c8 100644
+> --- a/arch/x86/kernel/Makefile
+> +++ b/arch/x86/kernel/Makefile
+> @@ -141,6 +141,8 @@ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
+>  
+>  obj-$(CONFIG_X86_INTEL_CET)		+= cet.o
+>  
+> +obj-$(CONFIG_ARCH_HAS_PROGRAM_PROPERTIES) += elf.o
 
-  ef02ae3a2f88 ("drm/msm: dpu: Don't reset dpu_enc->cur_master on .disable(=
-)")
-  9875f4b6da02 ("drm/msm/dpu: Revise _dpu_plane_get_aspace")
-  99e1ced69212 ("drm/msm/dpu: Make dpu_plane_danger_signal_ctrl void")
-  8fb336bd301e ("drm/msm/dpu: Change _dpu_crtc_vblank_enable_no_lock to voi=
-d")
-  0bacddff8ed8 ("drm/msm/dpu: Remove _dpu_crtc_power_enable")
-  ac8b29aba68f ("drm/msm/dpu: Remove unneeded checks in dpu_crtc.c")
-  e015a6e97a02 ("drm/msm/dpu: Clean up plane atomic disable/update")
-  3a6bf2a3dc52 ("drm/msm/dpu: Remove unneeded checks in dpu_plane.c")
-  9eb37b95bfd6 ("drm/msm: dpu: Don't store/deref pointers in trace ringbuff=
-er")
-  2626c1cdfa49 ("drm/msm: dpu: Add extra_flush_bits to trigger_flush trace")
-  f5a342cb8682 ("drm/msm: dpu: Clear frame_busy_mask bit after trace")
-  8dce281b6126 ("drm/msm: dpu: Don't continue after error in atomic_check")
-  0dafdcb87483 ("drm/msm: dpu: Make dpu_plane_sspp_atomic_update() void")
-  659d33c4c63a ("drm/msm: dpu: Remove dpu_plane_enabled()")
-  9f7583b89d7a ("drm/msm: dpu: Remove dpu_plane_sspp_enabled()")
-  976a4564ecdb ("drm/msm: dpu: Consolidate atomic_check functions()")
-  46439c6c78f5 ("drm/msm: dpu: Move atomic_check_plane_state() call to atom=
-ic_check")
-  b52a9f40d7cf ("drm/msm: dpu: Remove impossible checks")
-  b34cfea1a6ed ("drm/msm/dpu: Remove an unused enum")
-  b9c621e8dff1 ("drm/msm/dpu: remove RM topology definition")
-  82891245fbe2 ("drm/msm/dpu: relax parameter validation in encoders")
-  fe5f47bad04b ("drm/msm/dpu: remove RM dependency on connector state")
-  e515ad4369ae ("drm/msm/dpu: remove display H_TILE from encoder")
-  63090272ac43 ("drm/msm/dpu: remove LOCK/CLEAR support in RM")
-  c9159537711a ("drm/msm/dpu: remove cdm block support from resource manage=
-r")
-  8b8b91fd3576 ("drm/msm/dpu: clean up destination scaler residue")
-  f76a527a0a2b ("drm/msm/dpu: rename hw_ctl to lm_ctl")
-  caf53d6ea3f0 ("drm/msm/dpu: move hw resource tracking to crtc state")
-  26496d7f55cf ("drm/msm/dpu: make crtc get_mixer_width helper static")
-  116a0ac329c5 ("drm/msm/dpu: avoid querying for hw intf before assignment")
-  a87b3b4f0918 ("drm/msm/dpu: iterate for assigned hw ctl in virtual encode=
-r")
-  efd334265679 ("drm/msm/dpu: use kms stored hw mdp block")
-  46fc79c15e1f ("drm/msm/dpu: enable master-slave encoders explicitly")
-  3c0c8c2540cc ("drm/msm/dpu: remove ping pong split topology variables")
-  d1087d10ca8e ("drm/msm/dpu: remove resource pool manager")
-  9650e04c19a1 ("drm/msm/dpu: remove scalar config definitions")
-  1fe0d3a930c6 ("drm/msm/dpu: squash power handle event types")
-  46f69a1b9533 ("drm/msm/dpu: remove debugfs support for misr")
-  ab9cd436139b ("drm/msm/dpu: Remove dpu_mdss_isr when dpu_mdss_destroy is =
-called")
-  3d80625e00aa ("drm/msm: dpu: Allow planes to extend past active display")
-  463f3aea2323 ("drm/msm/dpu: use encoder type to identify display type")
-  774cb941cf3c ("drm/msm/dpu: remove unwanted encoder type mapping")
-  766b821ebb1b ("drm/msm/dpu: remove stale display port programming")
-  a1195d221097 ("drm/msm/dpu: fix for cursor blend issue")
-  ab3e67ffd5cd ("drm/msm/dpu: enable cursor plane on dpu")
-  32ce4e8c1d94 ("drm/msm/disp/dpu: Use proper define for drm_encoder_init()=
- 'encoder_type'")
-  450bf8df3d37 ("drm/msm: Don't fail bind if nothing connected to dsi")
-  8073c1a86310 ("drm/msm: dsi: Return errors whan dt parsing fails")
-  a0ce66f844ce ("drm/msm: dsi: Initialize msm_dsi->id to -1")
+Same thing here, enablement of program properties per se seems rather generic.
 
-are missing a Signed-off-by from their committer.
-(I didn't check all of them by hand, but I did some.)
+> diff --git a/arch/x86/kernel/elf.c b/arch/x86/kernel/elf.c
+> new file mode 100644
+> index 000000000000..2fddd0bc545b
+> --- /dev/null
+> +++ b/arch/x86/kernel/elf.c
+> @@ -0,0 +1,340 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Look at an ELF file's .note.gnu.property and determine if the file
+> + * supports shadow stack and/or indirect branch tracking.
+> + * The path from the ELF header to the note section is the following:
+> + * elfhdr->elf_phdr->elf_note->property[].
+> + */
+> +
+> +#include <asm/cet.h>
+> +#include <asm/elf_property.h>
+> +#include <asm/prctl.h>
+> +#include <asm/processor.h>
+> +#include <uapi/linux/elf-em.h>
+> +#include <uapi/linux/prctl.h>
+> +#include <linux/binfmts.h>
+> +#include <linux/elf.h>
+> +#include <linux/slab.h>
+> +#include <linux/fs.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/string.h>
+> +#include <linux/compat.h>
+> +
+> +/*
+> + * The .note.gnu.property layout:
+> + *
+> + *	struct elf_note {
+> + *		u32 n_namesz; --> sizeof(n_name[]); always (4)
+> + *		u32 n_ndescsz;--> sizeof(property[])
+> + *		u32 n_type;   --> always NT_GNU_PROPERTY_TYPE_0
+> + *	};
+> + *	char n_name[4]; --> always 'GNU\0'
+> + *
+> + *	struct {
+> + *		struct property_x86 {
+> + *			u32 pr_type;
+> + *			u32 pr_datasz;
+> + *		};
+> + *		u8 pr_data[pr_datasz];
+> + *	}[];
+> + */
+> +
+> +#define BUF_SIZE (PAGE_SIZE / 4)
+> +
+> +struct property_x86 {
+> +	u32 pr_type;
+> +	u32 pr_datasz;
+> +};
+> +
+> +typedef bool (test_fn)(void *buf, u32 *arg);
+> +typedef void *(next_fn)(void *buf, u32 *arg);
+> +
+> +static inline bool test_note_type_0(void *buf, u32 *arg)
+> +{
+> +	struct elf_note *n = buf;
+> +
+> +	return ((n->n_namesz == 4) && (memcmp(n + 1, "GNU", 4) == 0) &&
+> +		(n->n_type == NT_GNU_PROPERTY_TYPE_0));
+> +}
+> +
+> +static inline void *next_note(void *buf, u32 *arg)
+> +{
+> +	struct elf_note *n = buf;
+> +	u32 align = *arg;
+> +	int size;
+> +
+> +	size = round_up(sizeof(*n) + n->n_namesz, align);
+> +	size = round_up(size + n->n_descsz, align);
+> +
+> +	if (buf + size < buf)
+> +		return NULL;
+> +	else
+> +		return (buf + size);
+> +}
+> +
+> +static inline bool test_property_x86(void *buf, u32 *arg)
+> +{
+> +	struct property_x86 *pr = buf;
+> +	u32 max_type = *arg;
+> +
+> +	if (pr->pr_type > max_type)
+> +		*arg = pr->pr_type;
+> +
+> +	return (pr->pr_type == GNU_PROPERTY_X86_FEATURE_1_AND);
+> +}
+> +
+> +static inline void *next_property(void *buf, u32 *arg)
+> +{
+> +	struct property_x86 *pr = buf;
+> +	u32 max_type = *arg;
+> +
+> +	if ((buf + sizeof(*pr) +  pr->pr_datasz < buf) ||
+> +	    (pr->pr_type > GNU_PROPERTY_X86_FEATURE_1_AND) ||
+> +	    (pr->pr_type > max_type))
+> +		return NULL;
+> +	else
+> +		return (buf + sizeof(*pr) + pr->pr_datasz);
+> +}
+> +
+> +/*
+> + * Scan 'buf' for a pattern; return true if found.
+> + * *pos is the distance from the beginning of buf to where
+> + * the searched item or the next item is located.
+> + */
+> +static int scan(u8 *buf, u32 buf_size, int item_size,
+> +		 test_fn test, next_fn next, u32 *arg, u32 *pos)
+> +{
+> +	int found = 0;
+> +	u8 *p, *max;
+> +
+> +	max = buf + buf_size;
+> +	if (max < buf)
+> +		return 0;
+> +
+> +	p = buf;
+> +
+> +	while ((p + item_size < max) && (p + item_size > buf)) {
+> +		if (test(p, arg)) {
+> +			found = 1;
+> +			break;
+> +		}
+> +
+> +		p = next(p, arg);
+> +	}
+> +
+> +	*pos = (p + item_size <= buf) ? 0 : (u32)(p - buf);
+> +	return found;
+> +}
+> +
+> +/*
+> + * Search a NT_GNU_PROPERTY_TYPE_0 for GNU_PROPERTY_X86_FEATURE_1_AND.
+> + */
+> +static int find_feature_x86(struct file *file, unsigned long desc_size,
+> +			    loff_t file_offset, u8 *buf, u32 *feature)
+> +{
+> +	u32 buf_pos;
+> +	unsigned long read_size;
+> +	unsigned long done;
+> +	int found = 0;
+> +	int ret = 0;
+> +	u32 last_pr = 0;
+> +
+> +	*feature = 0;
+> +	buf_pos = 0;
+> +
+> +	for (done = 0; done < desc_size; done += buf_pos) {
+> +		read_size = desc_size - done;
+> +		if (read_size > BUF_SIZE)
+> +			read_size = BUF_SIZE;
+> +
+> +		ret = kernel_read(file, buf, read_size, &file_offset);
+> +
+> +		if (ret != read_size)
+> +			return (ret < 0) ? ret : -EIO;
+> +
+> +		ret = 0;
+> +		found = scan(buf, read_size, sizeof(struct property_x86),
+> +			     test_property_x86, next_property,
+> +			     &last_pr, &buf_pos);
+> +
+> +		if ((!buf_pos) || found)
+> +			break;
+> +
+> +		file_offset += buf_pos - read_size;
+> +	}
+> +
+> +	if (found) {
+> +		struct property_x86 *pr =
+> +			(struct property_x86 *)(buf + buf_pos);
+> +
+> +		if (pr->pr_datasz == 4) {
+> +			u32 *max =  (u32 *)(buf + read_size);
+> +			u32 *data = (u32 *)((u8 *)pr + sizeof(*pr));
+> +
+> +			if (data + 1 <= max) {
+> +				*feature = *data;
+> +			} else {
+> +				file_offset += buf_pos - read_size;
+> +				file_offset += sizeof(*pr);
+> +				ret = kernel_read(file, feature, 4,
+> +						  &file_offset);
+> +			}
+> +		}
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +/*
+> + * Search a PT_NOTE segment for the first NT_GNU_PROPERTY_TYPE_0.
+> + */
+> +static int find_note_type_0(struct file *file, unsigned long note_size,
+> +			    loff_t file_offset, u32 align, u32 *feature)
+> +{
+> +	u8 *buf;
+> +	u32 buf_pos;
+> +	unsigned long read_size;
+> +	unsigned long done;
+> +	int found = 0;
+> +	int ret = 0;
+> +
+> +	buf = kmalloc(BUF_SIZE, GFP_KERNEL);
+> +	if (!buf)
+> +		return -ENOMEM;
+> +
+> +	*feature = 0;
+> +	buf_pos = 0;
+> +
+> +	for (done = 0; done < note_size; done += buf_pos) {
+> +		read_size = note_size - done;
+> +		if (read_size > BUF_SIZE)
+> +			read_size = BUF_SIZE;
+> +
+> +		ret = kernel_read(file, buf, read_size, &file_offset);
+> +
+> +		if (ret != read_size) {
+> +			ret = (ret < 0) ? ret : -EIO;
+> +			kfree(buf);
+> +			return ret;
+> +		}
+> +
+> +		/*
+> +		 * item_size = sizeof(struct elf_note) + elf_note.n_namesz.
+> +		 * n_namesz is 4 for the note type we look for.
+> +		 */
+> +		ret = 0;
+> +		found += scan(buf, read_size, sizeof(struct elf_note) + 4,
+> +			      test_note_type_0, next_note,
+> +			      &align, &buf_pos);
+> +
+> +		file_offset += buf_pos - read_size;
+> +
+> +		if (found == 1) {
+> +			struct elf_note *n =
+> +				(struct elf_note *)(buf + buf_pos);
+> +			u32 start = round_up(sizeof(*n) + n->n_namesz, align);
+> +			u32 total = round_up(start + n->n_descsz, align);
+> +
+> +			ret = find_feature_x86(file, n->n_descsz,
+> +					       file_offset + start,
+> +					       buf, feature);
+> +			file_offset += total;
+> +			buf_pos += total;
+> +		} else if (!buf_pos) {
+> +			*feature = 0;
+> +			break;
+> +		}
+> +	}
+> +
+> +	kfree(buf);
+> +	return ret;
+> +}
+> +
+> +#ifdef CONFIG_COMPAT
+> +static int check_notes_32(struct file *file, struct elf32_phdr *phdr,
+> +			  int phnum, u32 *feature)
+> +{
+> +	int i;
+> +	int err = 0;
+> +
+> +	for (i = 0; i < phnum; i++, phdr++) {
+> +		if ((phdr->p_type != PT_NOTE) || (phdr->p_align != 4))
+> +			continue;
+> +
+> +		err = find_note_type_0(file, phdr->p_filesz, phdr->p_offset,
+> +				       phdr->p_align, feature);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +#ifdef CONFIG_X86_64
+> +static int check_notes_64(struct file *file, struct elf64_phdr *phdr,
+> +			  int phnum, u32 *feature)
+> +{
+> +	int i;
+> +	int err = 0;
+> +
+> +	for (i = 0; i < phnum; i++, phdr++) {
+> +		if ((phdr->p_type != PT_NOTE) || (phdr->p_align != 8))
+> +			continue;
+> +
+> +		err = find_note_type_0(file, phdr->p_filesz, phdr->p_offset,
+> +				       phdr->p_align, feature);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +int arch_setup_features(void *ehdr_p, void *phdr_p,
+> +			struct file *file, bool interp)
+> +{
+> +	int err = 0;
+> +	u32 feature = 0;
+> +
+> +	struct elf64_hdr *ehdr64 = ehdr_p;
+> +
+> +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
+> +		return 0;
+> +
+> +	if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64) {
+> +		struct elf64_phdr *phdr64 = phdr_p;
+> +
+> +		err = check_notes_64(file, phdr64, ehdr64->e_phnum,
+> +				     &feature);
+> +		if (err < 0)
+> +			goto out;
+> +	} else {
+> +#ifdef CONFIG_COMPAT
+> +		struct elf32_hdr *ehdr32 = ehdr_p;
+> +
+> +		if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32) {
+> +			struct elf32_phdr *phdr32 = phdr_p;
+> +
+> +			err = check_notes_32(file, phdr32, ehdr32->e_phnum,
+> +					     &feature);
+> +			if (err < 0)
+> +				goto out;
+> +		}
+> +#endif
+> +	}
+> +
+> +	memset(&current->thread.cet, 0, sizeof(struct cet_status));
+> +
+> +	if (cpu_feature_enabled(X86_FEATURE_SHSTK)) {
+> +		if (feature & GNU_PROPERTY_X86_FEATURE_1_SHSTK) {
+> +			err = cet_setup_shstk();
+> +			if (err < 0)
+> +				goto out;
+> +		}
+> +	}
+> +
+> +out:
+> +	return err;
+> +}
 
-Presumably caused by rebasing?
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Iy6JZCzjlE_esM9f2AHtbXk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu1T9wACgkQAVBC80lX
-0GybZgf/ZyDT0AxgNgJ6+QTHXCeK66B+cTRchPM9IKskfGkpjZkp8bL1TAWenirI
-maLlKwLXg8DWkuc43YzerEA/mg/xw1GG/7fq7B/Awq17UOL56LK7sUMFIKbRpdxs
-QhEvuEi9BxKFDefmJw6/6XC9a20CFowraxKuw07Kr98dNu3Jy6BQGuPeceFquoGO
-ch4tDFaOr3G1TR+UcyrZTqjZ2zCSWTl/Yv4u2QzByYLSDWi6u7WcAfvbuvyEX6yf
-QTjOakTbcaO/+cPMX+vrbEkCjiwYNK+S/BikD9mpefQQTfBtQ0tC0fCgKWaYTwK+
-g1v2NEanM8dA0MB0M8T/DClM49PiFg==
-=waia
------END PGP SIGNATURE-----
-
---Sig_/Iy6JZCzjlE_esM9f2AHtbXk--
+There's a lot of similar code with bpf stackmap .build-id code (commit
+v4.17-rc1~148^2~156^2~3^2~1), it might be worthy generalising some ELF
+traversal routines, since there's general need of parsing ELF property
+segments.
