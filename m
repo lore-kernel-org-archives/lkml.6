@@ -2,213 +2,145 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFBCC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C55A6C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78FAA20835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E9C921473
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:14:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E0826G05"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78FAA20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="LCATvn00"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E9C921473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbeJCRB3 (ORCPT
+        id S1726762AbeJCRCG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 13:01:29 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:40360 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbeJCRB2 (ORCPT
+        Wed, 3 Oct 2018 13:02:06 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:46070 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725976AbeJCRCG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 13:01:28 -0400
-Received: by mail-yb1-f194.google.com with SMTP id w7-v6so2110560ybm.7
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 03:13:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+qxPeRh1ArtubcOopo+z6mn3QQCBDj0xcThv6iI3I/U=;
-        b=E0826G05tIGJA+Ptva7lgdfQ0TxsJ/ii8MMeXASaSWWe7hyrSkec9s+SOTxReEH6AE
-         Z7z9P7Nt+tZ/WQwcoh5AHzn//MXyJjSUYYgWrc8IJdiUQw8fwZR1WYBS+WI0QX9L29CJ
-         MKkc84d/StnXIWahylqX/QTdfuQEneadF9Z3Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+qxPeRh1ArtubcOopo+z6mn3QQCBDj0xcThv6iI3I/U=;
-        b=g+va5gmudfN4BnN78NngvonloxngjbY9tlhkcpo6dMyfaPhMOjKNsoJ+chw5fLq2ES
-         JB8MRua3x8IppMe0ZOkKBfVcry0oWxXne1dO3dyLdAvTOLVxGnzqnNB7Y6HAysbQ3fth
-         neRCM/H+gPUJ70PWdT90vSM6naVLqzH9rwaEDuHdomlSeJ4+JIUNvT4BC1vyt2QuadTl
-         QhYzyE72XMwKuftqxDosijxRzv3/AcNWNgupZp2rE+7013dFVXa8hUQxEml7j+X2gGpy
-         Mc6qmyXM5voOf0qfS5XMXcgQGygfDlBgxFtispTxEqS9+Ecw9DaZTtPr9YKzaFaOR7c3
-         YaZQ==
-X-Gm-Message-State: ABuFfojHgs83JXUxqqfD3tjFRdCtaGp+CKx2QwlZDuzwzzk+xPGrk6aL
-        tfNiupVBbgw0gTwyQulAQkWgBkd1PyGm6A==
-X-Google-Smtp-Source: ACcGV62Udrh2boDhgZUqM0qVBNvWzigUlEyB9plXY8UI8zdT9Myw1FJVCfKeZYAhZmjUiCHzPqRNMA==
-X-Received: by 2002:a25:ec0e:: with SMTP id j14-v6mr336896ybh.450.1538561624627;
-        Wed, 03 Oct 2018 03:13:44 -0700 (PDT)
-Received: from mail-yw1-f51.google.com (mail-yw1-f51.google.com. [209.85.161.51])
-        by smtp.gmail.com with ESMTPSA id c6-v6sm326200ywc.66.2018.10.03.03.13.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 03:13:42 -0700 (PDT)
-Received: by mail-yw1-f51.google.com with SMTP id m127-v6so2050961ywb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 03:13:42 -0700 (PDT)
-X-Received: by 2002:a81:470a:: with SMTP id u10-v6mr360918ywa.164.1538561622316;
- Wed, 03 Oct 2018 03:13:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180831074743.235010-1-acourbot@chromium.org>
- <b8a80df8-fd07-6820-3021-670c360ff306@xs4all.nl> <38b32d24-6957-4bee-9168-b3afbfcae083@xs4all.nl>
- <a5c47693-4d66-1afc-9053-45bbbbef9d7c@xs4all.nl> <CAPBb6MXrEPz7Z60zUp-m4pWUB7t9p1iFSqqp9s4Gjqj9i3v4sA@mail.gmail.com>
- <01f1723c-8fd0-8f34-0862-624d2bbf51e3@xs4all.nl> <CAPBb6MV_m9X6d2Jefk+CU+bxOq8Jnz6XcE++_qDfgQ8Jdd1FYQ@mail.gmail.com>
-In-Reply-To: <CAPBb6MV_m9X6d2Jefk+CU+bxOq8Jnz6XcE++_qDfgQ8Jdd1FYQ@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 3 Oct 2018 19:13:30 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5D7OGfMJks=mP-f3jEXCzwN6MVYNN5a8JFVJZvkF_wH+Q@mail.gmail.com>
-Message-ID: <CAAFQd5D7OGfMJks=mP-f3jEXCzwN6MVYNN5a8JFVJZvkF_wH+Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] media: docs-rst: Document m2m stateless video decoder interface
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Wed, 3 Oct 2018 13:02:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id A4F4D8EE23D;
+        Wed,  3 Oct 2018 03:14:20 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id s4rnvWXcFXsh; Wed,  3 Oct 2018 03:14:11 -0700 (PDT)
+Received: from [172.16.135.230] (unknown [217.16.13.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7460B8EE0E9;
+        Wed,  3 Oct 2018 03:13:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1538561637;
+        bh=pCGXyBme1H1lJ7eg8YSUxt6SBr3Nw32p6JI/La9s9Ow=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=LCATvn00xn4sfbLbjdyRfPnZUaJveKGsMlEJK65tH6E/+Nz19UdbszxVTc4Ofm1yR
+         pkxPUZRAaREmMoB5IYP2KayNPC2fa6IcacAIRMQqkk4STfZi3p+/0lnUx1DCZ77AgV
+         km+h+aaUvTawQGKZsfHKGn/1gnwi1ocPLZheuJs8=
+Message-ID: <1538561623.7448.5.camel@HansenPartnership.com>
+Subject: Re: [RFC v2 v2 0/1] ns: introduce binfmt_misc namespace
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Laurent Vivier <laurent@vivier.eu>, linux-kernel@vger.kernel.org
+Cc:     Andrei Vagin <avagin@openvz.org>, Dmitry Safonov <dima@arista.com>,
+        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Date:   Wed, 03 Oct 2018 12:13:43 +0200
+In-Reply-To: <a9997ce3-d63d-44b4-6a2a-09fd207a1550@vivier.eu>
+References: <20181002102054.13245-1-laurent@vivier.eu>
+         <1538496810.14607.5.camel@HansenPartnership.com>
+         <a9997ce3-d63d-44b4-6a2a-09fd207a1550@vivier.eu>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 5:02 PM Alexandre Courbot <acourbot@chromium.org> wrote:
->
-> Hi Hans, sorry for the late reply.
->
-> On Tue, Sep 11, 2018 at 6:09 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> >
-> > On 09/11/18 10:40, Alexandre Courbot wrote:
-> > > On Mon, Sep 10, 2018 at 9:49 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> > >>
-> > >> On 09/10/2018 01:57 PM, Hans Verkuil wrote:
-> > >>> On 09/10/2018 01:25 PM, Hans Verkuil wrote:
-> > >>>>> +
-> > >>>>> +Decoding
-> > >>>>> +========
-> > >>>>> +
-> > >>>>> +For each frame, the client is responsible for submitting a request to which the
-> > >>>>> +following is attached:
-> > >>>>> +
-> > >>>>> +* Exactly one frame worth of encoded data in a buffer submitted to the
-> > >>>>> +  ``OUTPUT`` queue,
-> > >>>>> +* All the controls relevant to the format being decoded (see below for details).
-> > >>>>> +
-> > >>>>> +``CAPTURE`` buffers must not be part of the request, but must be queued
-> > >>>>> +independently. The driver will pick one of the queued ``CAPTURE`` buffers and
-> > >>>>> +decode the frame into it. Although the client has no control over which
-> > >>>>> +``CAPTURE`` buffer will be used with a given ``OUTPUT`` buffer, it is guaranteed
-> > >>>>> +that ``CAPTURE`` buffers will be returned in decode order (i.e. the same order
-> > >>>>> +as ``OUTPUT`` buffers were submitted), so it is trivial to associate a dequeued
-> > >>>>> +``CAPTURE`` buffer to its originating request and ``OUTPUT`` buffer.
-> > >>>>> +
-> > >>>>> +If the request is submitted without an ``OUTPUT`` buffer or if one of the
-> > >>>>> +required controls are missing, then :c:func:`MEDIA_REQUEST_IOC_QUEUE` will return
-> > >>>>> +``-EINVAL``.
-> > >>>>
-> > >>>> Not entirely true: if buffers are missing, then ENOENT is returned. Missing required
-> > >>>> controls or more than one OUTPUT buffer will result in EINVAL. This per the latest
-> > >>>> Request API changes.
-> > >>>>
-> > >>>>  Decoding errors are signaled by the ``CAPTURE`` buffers being
-> > >>>>> +dequeued carrying the ``V4L2_BUF_FLAG_ERROR`` flag.
-> > >>>>
-> > >>>> Add here that if the reference frame had an error, then all other frames that refer
-> > >>>> to it should also set the ERROR flag. It is up to userspace to decide whether or
-> > >>>> not to drop them (part of the frame might still be valid).
-> > >>>>
-> > >>>> I am not sure whether this should be documented, but there are some additional
-> > >>>> restrictions w.r.t. reference frames:
-> > >>>>
-> > >>>> Since decoders need access to the decoded reference frames there are some corner
-> > >>>> cases that need to be checked:
-> > >>>>
-> > >>>> 1) V4L2_MEMORY_USERPTR cannot be used for the capture queue: the driver does not
-> > >>>>    know when a malloced but dequeued buffer is freed, so the reference frame
-> > >>>>    could suddenly be gone.
-> > >>>>
-> > >>>> 2) V4L2_MEMORY_DMABUF can be used, but drivers should check that the dma buffer is
-> > >>>>    still available AND increase the dmabuf refcount while it is used by the HW.
-> > >>>>
-> > >>>> 3) What to do if userspace has requeued a buffer containing a reference frame,
-> > >>>>    and you want to decode a B/P-frame that refers to that buffer? We need to
-> > >>>>    check against that: I think that when you queue a capture buffer whose index
-> > >>>>    is used in a pending request as a reference frame, than that should fail with
-> > >>>>    an error. And trying to queue a request referring to a buffer that has been
-> > >>>>    requeued should also fail.
-> > >>>>
-> > >>>> We might need to add some support for this in v4l2-mem2mem.c or vb2.
-> > >>>>
-> > >>>> We will have similar (but not quite identical) issues with stateless encoders.
-> > >>>
-> > >>> Related to this is the question whether buffer indices that are used to refer
-> > >>> to reference frames should refer to the capture or output queue.
-> > >>>
-> > >>> Using capture indices works if you never queue more than one request at a time:
-> > >>> you know exactly what the capture buffer index is of the decoded I-frame, and
-> > >>> you can use that in the following requests.
-> > >>>
-> > >>> But if multiple requests are queued, then you don't necessarily know to which
-> > >>> capture buffer an I-frame will be decoded, so then you can't provide this index
-> > >>> to following B/P-frames. This puts restrictions on userspace: you can only
-> > >>> queue B/P-frames once you have decoded the I-frame. This might be perfectly
-> > >>> acceptable, though.
-> > >
-> > > IIUC at the moment we are indeed using CAPTURE buffer indexes, e.g:
-> > >
-> > > .. flat-table:: struct v4l2_ctrl_mpeg2_slice_params
-> > >   ..
-> > >       - ``backward_ref_index``
-> > >       - Index for the V4L2 buffer to use as backward reference, used
-> > > with
-> > >        B-coded and P-coded frames.
-> > >
-> > > So I wonder how is the user-space currently exercising Cedrus doing
-> > > here? Waiting for each frame used as a reference to be dequeued?
-> >
-> > No, the assumption is (if I understand correctly) that userspace won't
-> > touch the memory of the dequeued reference buffer so HW can just point
-> > to it.
-> >
-> > Paul, please correct me if I am wrong.
-> >
-> > What does chromeOS do?
->
-> At the moment Chrome OS (using the config store) queues the OUTPUT and
-> CAPTURE buffers together, i.e. in the same request. The CAPTURE buffer
-> is not tied to the request in any way, but what seems to matter here
-> is the queue order. If drivers process CAPTURE drivers sequentially,
-> then you can know which CAPTURE buffer will be used for the request.
->
-> The corollary of that is that CAPTURE buffers cannot be re-queued
-> until they are not referenced anymore, something the Chrome OS
-> userspace also takes care of. Would it be a problem to make this the
-> default expectation instead of having the kernel check and reorder
-> CAPTURE buffers? The worst that can happen AFAICT is is frame
-> corruption, and processing queued CAPTURE buffers sequentially would
-> allow us to use the V4L2 buffer ID to reference frames. That's still
-> the most intuitive way to do, using relative frame indexes (i.e. X
-> frames ago) adds complexity and the potential for misuse and bugs.
+On Tue, 2018-10-02 at 18:47 +0200, Laurent Vivier wrote:
+> Le 02/10/2018 à 18:13, James Bottomley a écrit :
+> > On Tue, 2018-10-02 at 12:20 +0200, Laurent Vivier wrote:
+> > > v2: no new namespace, binfmt_misc data are now part of
+> > >     the mount namespace
+> > >     I put this in mount namespace instead of user namespace
+> > >     because the mount namespace is already needed and
+> > >     I don't want to force to have the user namespace for that.
+> > >     As this is a filesystem, it seems logic to have it here.
+> > > 
+> > > This allows to define a new interpreter for each new container.
+> > > 
+> > > But the main goal is to be able to chroot to a directory
+> > > using a binfmt_misc interpreter without being root.
+> > 
+> > Reading all this, I don't quite understand why this works for me
+> > and
+> > not for you (I think I get from your explanation that it doesn't
+> > work
+> > for you, but I might have missed something):
+> > 
+> > jejb@jarvis:~> uname -m
+> > x86_64
+> > jejb@jarvis:~> unshare -r -m
+> > root@jarvis:~# chroot /home/jejb/containers/aarch64
+> > jarvis:/ # uname -m
+> > aarch64
+> > 
+> > Of course to get that to work I have an 'F' entry in
+> > /etc/binfmt.d/qemu-aarch64.conf
+> > 
+> 
+> I'd like to configure the interpreter without being root.
+> 
+> As a simple user can run a VM and a full system inside, I'd like to
+> be
+> able to start a container/chroot without having to configure
+> something
+> at the host level.
+> 
+> For instance, I'd like to provide to "someone" (with no admin rights)
+> a tar file with inside an OS environment for a given target and the
+> interpreter, and allow him to run the binaries inside just by running
+> a simple command (like qemu-system-XXX -hda my.img)
 
-+1
+OK, since trying to persuade the distros to add the 'F' flag has been
+challenging, I certainly buy this use case.
 
-The stateless API delegates the reference frame management to the
-client and I don't see why we should be protecting the client from
-itself. In particular, as I suggested in another email, there can be
-valid cases where requeuing CAPTURE buffers while still on the
-reference list is okay.
+There is a security risk to allowing an unprivileged user to supply an
+arbitrary interpreter (suid and sgid binaries), but as long as
+whatever's agreed requires root in the user namespace, I'm happy we
+have the security issue confined.
 
-Best regards,
-Tomasz
+James
+
+
+> It's also interesting for a test purpose: I can test concurrently
+> different interpreters for the same target without modifying the
+> target root filesystem (with the 'F' flag but on a per directory
+> basis) or the host configuration.
+> 
+> Another case is we can't configure qemu-mips/qemu-mipsel (old kernel
+> API) and qemu-mipsn32/qemu-mipsne32el (new kernel API) interpreters
+> on the same system because they share the same ELF signature (to be
+> honest qemu should have only one binary for the old and the new
+> interface and dynamically change it according to the ELF binary that
+> is loaded, as it is done for ARM).
+> 
+> But if no one thinks it's useful, I don't want to push this more than
+> that...
+> 
+> Thanks,
+> Laurent
+> _______________________________________________
+> Containers mailing list
+> Containers@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/containers
+
