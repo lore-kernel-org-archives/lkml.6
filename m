@@ -2,129 +2,137 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B78C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33A8C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6485B213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:01:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="SGQ6leoM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6485B213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id 98294213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:02:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98294213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbeJDFvd (ORCPT
+        id S1727007AbeJDFwz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 01:51:33 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53213 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbeJDFvc (ORCPT
+        Thu, 4 Oct 2018 01:52:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49068 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbeJDFwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 01:51:32 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 189-v6so7229579wmw.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 16:01:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=D64BKrUDvTlVRvbo8SVJ9ZtVo81e+rMqar1KzbqDu9w=;
-        b=SGQ6leoMyvlxlvyIfqM9wqfjoNZpwLQqCQ4I7t4zctJeK3d9PBhHcw82VR14n2GLlw
-         yBtM80tKlXabpkDUjPmoLf56dH/oEzBUN8IYWWDA86zEDKJbEYzBj1FRq2IRudSZDbV5
-         byHgDAmX8lEkOinYyQD9tleDtGnxGBZz2XbMQAfFqiBDF2lrXsRBgGZNchsBevywBJCU
-         qePiX1zBrT+nvmg+tiRjmszgK693co4sDZu7Q0xCEYGV/PkdcvQkdGh3VIqj1uPfnyyo
-         1CII+6Sl1pPmhsVKXKi378JZluBJ+6FzwfsPmb3+zOnPWXRj6Yu2HIpF3bdHqitFUYDf
-         grUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D64BKrUDvTlVRvbo8SVJ9ZtVo81e+rMqar1KzbqDu9w=;
-        b=oEmtU94uNaMwWpF4+Cr9DjWxH6+mIcdZak4tYzvD605FIbO1wnez95ceZb6ziaoyJ/
-         vFaeHyFwpKq1Axwwcl6RJqwcDwiUgmNBdQUqSmme39T1cVj7gmRabbnHHDaoxsmb/uNS
-         FahBz/a+VPNo9BVD4HMPN55icv22Dmf5B+wuZlLy56DCPbi17UMv8MSsQD5N7Hmt6RAq
-         UD//3WRAq3En7cnsn8qvTejLNPJ+NNK7b/V3NZT8kKFCvj6yrmICg+noNrrwCMptRCcV
-         QD4O0MoqdtSxb788pmblWLMuGtPOBYMdw33BdZwdcvlYZHC9OrpUBXk6E9ewLWd8HkTR
-         Iafg==
-X-Gm-Message-State: ABuFfojg4x14hHb/o+HetLz0oux00hb76HdyBFbDYGo49PmkDslLmRIa
-        tsLOxXgehsivhkLPyEkUgWmaNg==
-X-Google-Smtp-Source: ACcGV618/1xQGN6yePlU9fm6rh1NudnVq5gFMSnpRqFkAcbF2/nAMRim4/hgfTxOcamk9QgVuWg8BA==
-X-Received: by 2002:a1c:f516:: with SMTP id t22-v6mr2735067wmh.103.1538607664963;
-        Wed, 03 Oct 2018 16:01:04 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id q16-v6sm2594739wrn.41.2018.10.03.16.01.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Oct 2018 16:01:04 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g7q8b-0004TD-30; Wed, 03 Oct 2018 17:01:01 -0600
-Date:   Wed, 3 Oct 2018 17:01:01 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>, dledford@redhat.com,
-        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
-Message-ID: <20181003230101.GC3466@ziepe.ca>
-References: <20180924195716.30848-1-natechancellor@gmail.com>
- <20181003223518.GA8700@ziepe.ca>
- <CAKwvOdnvXDtBAw_6_MSOEst3DBjbr8w6Pv6b4i=pC50s=gcq3Q@mail.gmail.com>
+        Thu, 4 Oct 2018 01:52:54 -0400
+Received: from localhost (unknown [64.124.202.226])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E9CAD131B;
+        Wed,  3 Oct 2018 23:02:27 +0000 (UTC)
+Date:   Wed, 3 Oct 2018 16:02:26 -0700
+From:   gregkh <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Helge Deller <deller@gmx.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        James.Bottomley@hansenpartnership.com,
+        John David Anglin <dave.anglin@bell.net>
+Subject: Re: [GIT PULL] parisc fixes for kernel v4.19
+Message-ID: <20181003230226.GB27729@kroah.com>
+References: <20181002210213.GA17826@ls3530.fritz.box>
+ <20181002211645.GA6454@kroah.com>
+ <ad45f249-e064-d5a4-c658-eaa03bb3a04a@gmx.de>
+ <20181002222452.GB11788@kroah.com>
+ <dbfa0162-8ed1-b16e-a418-da3b92c76230@gmx.de>
+ <20181003181612.GB28575@kroah.com>
+ <CAK8P3a2ntPX4+LbYWJbDG1k-8NwkhyY0nYk-mfZU2FBF_h23Yw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdnvXDtBAw_6_MSOEst3DBjbr8w6Pv6b4i=pC50s=gcq3Q@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAK8P3a2ntPX4+LbYWJbDG1k-8NwkhyY0nYk-mfZU2FBF_h23Yw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 03:53:58PM -0700, Nick Desaulniers wrote:
-> On Wed, Oct 3, 2018 at 3:35 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+On Wed, Oct 03, 2018 at 09:49:08PM +0200, Arnd Bergmann wrote:
+> On Wed, Oct 3, 2018 at 8:16 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Wed, Oct 03, 2018 at 04:47:30PM +0200, Helge Deller wrote:
+> > > On 03.10.2018 00:24, Greg Kroah-Hartman wrote:
+> > > > On Tue, Oct 02, 2018 at 11:46:11PM +0200, Helge Deller wrote:
+> > > >>
+> > > >> I've tagged it for stable release.
+> > > >> So, it can go in now, or just wait until -rc1 and go in later.
+> > > >
+> > > > Why is a major API change a viable stable change?
+> > >
+> > > Of course it's not.
+> > > Esp. not if an API has been used already.
+> > > IMHO, this case is really different though...
+> > >
+> > > > What bugfix does it provide?
+> > >
+> > > It fixes that code in stable kernels which would return wrong
+> > > time values *if* someone would create a libc for 64-bit parisc
+> > > and would run it with those "stable" kernels.
+> > > Fixing it now has no side-effects, the change is a trivial
+> > > 2-line-removal patch, would bring the code in sync with
+> > > newer kernel source code, and it really fixes existing code.
+> > >
+> > > I still believe that this justifies for a backport.
+> > >
+> > > Nevertheless, if you really disagree, I'm fine dropping the
+> > > backport to stable and will only push it in the next
+> > > merge window for v4.20.
 > >
-> > On Mon, Sep 24, 2018 at 12:57:16PM -0700, Nathan Chancellor wrote:
-> > > Clang warns when one enumerated type is implicitly converted to another.
-> > >
-> > > drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
-> > > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
-> > > type 'enum ib_qp_create_flags' [-Wenum-conversion]
-> > >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
-> > >                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
-> > >
-> > > drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
-> > > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
-> > > type 'enum ib_qp_create_flags' [-Wenum-conversion]
-> > >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
-> > >                                                     ~ ^~~~~~~~~~~~~~~~~
-> > >
-> > > The type mlx4_ib_qp_flags explicitly provides supplemental values to the
-> > > type ib_qp_create_flags. Make that clear to Clang by changing the
-> > > create_flags type to u32.
-> > >
-> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > >  include/rdma/ib_verbs.h | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > To clarify, you have no users of this api anywhere (hopefully), and so
+> > the patch in question prevents anyone from using the api in the future.
+> > This makes the suseconds_t handling easier for some reason because only
+> > sparc32 is a "problem" now, right?
 > >
-> > Applied to for-next, thanks
+> > So I don't see the "bug" that is being fixed here.  I would have pushed
+> > back on the submission for this for the stable trees as well, this isn't
+> > anything that anyone is using, so there's nothing to "fix" that I can
+> > tell.
 > >
-> > BTW, how are you compiling with clang?
+> > Yes, doing it in the "future" is fine, to prevent anyone from making
+> > this mistake (are new machines even being made for this arch?)  But I
+> > don't see how this is a -stable issue.
 > 
-> https://github.com/ClangBuiltLinux/linux/wiki/Steps-for-compiling-the-kernel-with-Clang
-> try it out, let us know bugs you find here:
-> https://github.com/ClangBuiltLinux/linux/issues
+> The issue here is that glibc has in theory supported 64-bit parisc
+> user space for a long time, but it has never worked because of the
+> mismatch. It is very likely that there other problems like it that
+> /also/ prevent it from working.
+> 
+> Between changing kernel or glibc, I think it's clear that the glibc
+> has made the better choice of being compatible with all other
+> architectures (except sparc64), so changing the kernel is better
+> here.
+> 
+> Between fixing it this late, or doing it for the next merge window,
+> I don't care. There clearly are no users that are affected by it
+> today, and if there were, this would fix an important bug, both
+> security (kernel stack information leak) and functionality
+> (improving accuracy of gettimeofday() from seconds to
+> microseconds).
+> 
+> Between backporting it to stable or not, I'd be in favor of the
+> backport: If we ever want to support 64-bit user space on parisc,
+> then it's better to have stable kernels get the same working
+> ABI that new kernels have after the fix (and any other fixes we
+> may require on top). Or to put it another way: If the argument is
+> that there won't ever be a 64-bit user space for parisc and we don't
+> care about it, then we'd be better of removing all native 64-bit
+> syscalls from arch/parisc/kernel/syscall_table.S.
 
-Oh I see, you are doing ARM64!
+Ok, then let's treat this like any other arch/driver/subsystem that we
+remove.  Drop the file(s) in a -rc1 merge window and then if anyone
+object to it later on because they really were using it, you can easily
+revert that change.
 
-> Still looking into the case you pointed out earlier.  I suspect the
-> signedness of enums was undefined in c90, then defined as
-> implementation specific in c99 (though I'm still researching that
-> book report).  Thanks for your insights!
+We do not backport removals of drivers/subsystems/arches to stable
+kernels, so this shouldn't happen here either.
 
-C enums details are a topic that seems more confusing every time it
-gets brought up :(
+thanks,
 
-Jason
+greg k-h
