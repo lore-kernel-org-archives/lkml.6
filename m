@@ -2,108 +2,81 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F789C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 062CAC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB412098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:38:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWKRAflw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB412098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
+	by mail.kernel.org (Postfix) with ESMTP id B8620213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 23:48:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8620213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbeJDG3S (ORCPT
+        id S1727135AbeJDGio (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 02:29:18 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:45545 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbeJDG3S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 02:29:18 -0400
-Received: by mail-oi1-f195.google.com with SMTP id e17-v6so5981063oig.12
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 16:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IbVO4B4SQgX0IzO+hEPWVJtbotEAQcoJCXNDKqnEZ+4=;
-        b=jWKRAflwzhfmAuagxdiFdssiRLqWjChdgTTGO2R42BxkoJRGFcs9K6NLBLyMQTUFm5
-         A+yqt+m/yixjLnREPrzP+p57XBfMouulcYUuwrGhw2qfuZILMlj8Rim6B1siYz6/5wSW
-         WuGvT4q20u3uz3tITmJKwPzaHE63zTeyHKg8YT3QsVAW3fDy3aF8gkuH4Ind2JIvHIsF
-         zTq2OiRNPAJZjLsJNwcEKfWiDoDKjGau0vNRL+NdE0Av7eTVPjCfn4ATViOUi1bpCOcc
-         7Lo4PtviHqGKOFwO9ap6epCWjts6m0ukiV4o/qjEP0+Sd9/N3mvGOA47XANs5SB6FAwY
-         D5Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IbVO4B4SQgX0IzO+hEPWVJtbotEAQcoJCXNDKqnEZ+4=;
-        b=hWM8Gp3NU6hsMp2ls7EMApkY1c7dB11SuNlYtapioI9fM68zWXJAi46zrnttE3zYN3
-         US+mWs8WUAkdyGkm/QRDkRwmK+HiehQuesT5rXXg44eMPF1KaKvTHoeXxAZlvgPXqX3Z
-         rO3UtwpHTgTMZWySZ+jJNILMfXyNAMiDUr5qfe83uQdTM79r1ODiBx6N0M5tQol9ZT0Y
-         yiMVQy+YOXjEZlKGRe2jpsxu7s/tqAqva0Gh4IVWEP0yXNFnMYmE5fMveXqrO90/FQLE
-         4qKsK13gQ4p+B9668TWzpDV6U6RLFNTPRv0JG0XQ2SVlq9I2wuMsKEY4RtNtqIiohIFa
-         UWDA==
-X-Gm-Message-State: ABuFfoiJQuK9h0p7gWFqp9tnQqi9i4HOUHIJNh2HdQdYFienkBelGAt3
-        z0DQmlm95hEi1SM42H08Au4=
-X-Google-Smtp-Source: ACcGV61P3rnr/EhfmBpB5ADuc5JNR3tCiA/pCI+AHxZ0LdrPELZJWz/1nFhV44u5iEe1hSw76+sphg==
-X-Received: by 2002:a54:4809:: with SMTP id j9-v6mr1910405oij.360.1538609924953;
-        Wed, 03 Oct 2018 16:38:44 -0700 (PDT)
-Received: from [192.168.1.107] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id e198-v6sm939271oic.5.2018.10.03.16.38.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 16:38:44 -0700 (PDT)
-Subject: Re: Sparse warnings from calls to max3() and max
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-References: <3afaa0ad-33a1-33d1-f306-8e0e467936dd@lwfinger.net>
- <20181003222951.5vp47nf5x7ipyyi2@ltop.local>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <16718fb5-b354-edb2-9a2b-26041954bd7d@lwfinger.net>
-Date:   Wed, 3 Oct 2018 18:38:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 4 Oct 2018 02:38:44 -0400
+Received: from mga02.intel.com ([134.134.136.20]:23160 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725799AbeJDGin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 02:38:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 16:48:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,338,1534834800"; 
+   d="scan'208";a="97224389"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.152])
+  by orsmga002.jf.intel.com with ESMTP; 03 Oct 2018 16:48:08 -0700
+Subject: [PATCH] dma-direct: Fix return value of dma_direct_supported
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     iommu@lists.linux-foundation.org
+Cc:     benh@kernel.crashing.org, robin.murphy@arm.com,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        linuxppc-dev@lists.ozlabs.org, linux@roeck-us.net
+Date:   Wed, 03 Oct 2018 16:48:07 -0700
+Message-ID: <20181003234746.3586.42014.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20181003222951.5vp47nf5x7ipyyi2@ltop.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/3/18 5:29 PM, Luc Van Oostenryck wrote:
-> On Tue, Oct 02, 2018 at 06:44:39PM -0500, Larry Finger wrote:
->> Hi,
->>
->> Sparse has suddenly started issuing as many as 11 warnings of
->> "expression using sizeof(void)" for each call to max3(). There are
->> similar warnings for calls to max(), thus I think this is the origin
->> of the problem. My sparse version is 20180324-1.3-x86_64 installed
->> in openSUSE Tumbleweed. My kernel is 4.19.0-rc6.
-> 
-> Hi,
-> 
-> This problem is resolved in a more recent version of sparse,
-> the one you can find at:
->    git://github.com/lucvoo/sparse-dev
-> 
-> See Linus' email about it:
->    https://lore.kernel.org/lkml/CA+55aFzYEnZR2GZLR-DwpONjMNYGYoDy+6AWLCVNayWiaZuqoA@mail.gmail.com/T/#u
-> 
-> NB. The official version hosted on kernel.org is not uptodate but
->      I hope this will solved in a few weeks.
+It appears that in commit 9d7a224b463e ("dma-direct: always allow dma mask
+<= physiscal memory size") the logic of the test was changed from a "<" to
+a ">=" however I don't see any reason for that change. I am assuming that
+there was some additional change planned, specifically I suspect the logic
+was intended to be reversed and possibly used for a return. Since that is
+the case I have gone ahead and done that.
 
-Thanks. I'll ignore those warnings for now.
+This addresses issues I had on my system that prevented me from booting
+with the above mentioned commit applied on an x86_64 system w/ Intel IOMMU.
 
-Larry
+Fixes: 9d7a224b463e ("dma-direct: always allow dma mask <= physiscal memory size")
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+---
+ kernel/dma/direct.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+index 5a0806b5351b..65872f6c2e93 100644
+--- a/kernel/dma/direct.c
++++ b/kernel/dma/direct.c
+@@ -301,9 +301,7 @@ int dma_direct_supported(struct device *dev, u64 mask)
+ 
+ 	min_mask = min_t(u64, min_mask, (max_pfn - 1) << PAGE_SHIFT);
+ 
+-	if (mask >= phys_to_dma(dev, min_mask))
+-		return 0;
+-	return 1;
++	return mask >= phys_to_dma(dev, min_mask);
+ }
+ 
+ int dma_direct_mapping_error(struct device *dev, dma_addr_t dma_addr)
 
