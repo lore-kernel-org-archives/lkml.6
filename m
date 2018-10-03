@@ -2,218 +2,142 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF58AC64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8862C64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3C620835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:37:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F3C620835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F1AA213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:37:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Z0d7JSRo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F1AA213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbeJCSZU (ORCPT
+        id S1727432AbeJCSZX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:25:20 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50084 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726617AbeJCSZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:25:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC80C18A;
-        Wed,  3 Oct 2018 04:37:18 -0700 (PDT)
-Received: from [10.162.0.72] (p8cg001049571a15.blr.arm.com [10.162.0.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B2EA83F5A0;
-        Wed,  3 Oct 2018 04:37:15 -0700 (PDT)
-Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
-        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
-        catalin.marinas@arm.com, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com
-References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
- <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
- <20181002123909.GS18290@dhcp22.suse.cz>
- <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
- <20181003065833.GD18290@dhcp22.suse.cz>
- <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
- <20181003105926.GA4714@dhcp22.suse.cz>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <34b25855-fcef-61ed-312d-2011f80bdec4@arm.com>
-Date:   Wed, 3 Oct 2018 17:07:13 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181003105926.GA4714@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 3 Oct 2018 14:25:23 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:27413 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeJCSZW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 14:25:22 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id w93BaXuS004652;
+        Wed, 3 Oct 2018 20:36:36 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w93BaXuS004652
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1538566596;
+        bh=RjHmEivsPVKnzPq6lcVwiYyNrUvc9S3vSUp+3Yy3BOc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Z0d7JSRoj1kLbCZ3/+HZdOTmqPp1EyMZV6/DFUb8Ca8x/TGOHX8mjz4Vo6FwgNzRe
+         BOdzqErmz7sYbrv9PGjkq4TdyrsMYU3jDGg0nbRfZLeAsdtNxagRwRFf4oC2cQ0MVg
+         bUtr+5Nr4EFNDZ8/Dj/ME6t0+LXBaX8oVQ9JCK0haJF6KExjFy3ntCVOvEwP4GFhyd
+         qrIS3QjFy7USQIc24aeADd1IMoDdVRPmjRgVrlUA+26IioPOrVZmS5onLpu9V8JjTQ
+         MvqC0EZWIhfV0DRbca/vh8Ep1loBIf8YmwsunyYj0yT3nLfiOyuPEGN5kOOtcaYOxP
+         zxm/lvd7WcOSA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] mmc: tmio: remove TMIO_MMC_HAVE_HIGH_REG flag
+Date:   Wed,  3 Oct 2018 20:36:27 +0900
+Message-Id: <1538566587-29452-3-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1538566587-29452-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1538566587-29452-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+TMIO_MMC_HAVE_HIGH_REG is confusing due to its counter-intuitive name.
 
+All the TMIO MMC variants (TMIO MMC, Renesas SDHI, UniPhier SD) actually
+have high registers.  It is just that each of them implements its own
+registers there.  The original IP from Panasonic only defines registers
+0x00-0xff in the bus_shift=1 review.  The register area above them is
+platform-dependent.
 
-On 10/03/2018 04:29 PM, Michal Hocko wrote:
-> On Wed 03-10-18 15:28:23, Anshuman Khandual wrote:
->>
->>
->> On 10/03/2018 12:28 PM, Michal Hocko wrote:
->>> On Wed 03-10-18 07:46:27, Anshuman Khandual wrote:
->>>>
->>>>
->>>> On 10/02/2018 06:09 PM, Michal Hocko wrote:
->>>>> On Tue 02-10-18 17:45:28, Anshuman Khandual wrote:
->>>>>> Architectures like arm64 have PUD level HugeTLB pages for certain configs
->>>>>> (1GB huge page is PUD based on ARM64_4K_PAGES base page size) that can be
->>>>>> enabled for migration. It can be achieved through checking for PUD_SHIFT
->>>>>> order based HugeTLB pages during migration.
->>>>>
->>>>> Well a long term problem with hugepage_migration_supported is that it is
->>>>> used in two different context 1) to bail out from the migration early
->>>>> because the arch doesn't support migration at all and 2) to use movable
->>>>> zone for hugetlb pages allocation. I am especially concerned about the
->>>>> later because the mere support for migration is not really good enough.
->>>>> Are you really able to find a different giga page during the runtime to
->>>>> move an existing giga page out of the movable zone?
->>>>
->>>> I pre-allocate them before trying to initiate the migration (soft offline
->>>> in my experiments). Hence it should come from the pre-allocated HugeTLB
->>>> pool instead from the buddy. I might be missing something here but do we
->>>> ever allocate HugeTLB on the go when trying to migrate ? IIUC it always
->>>> came from the pool (unless its something related to ovecommit/surplus).
->>>> Could you please kindly explain regarding how migration target HugeTLB
->>>> pages are allocated on the fly from movable zone.
->>>
->>> Hotplug comes to mind. You usually do not pre-allocate to cover full
->>> node going offline. And people would like to do that. Another example is
->>> CMA. You would really like to move pages out of the way.
->>
->> You are right.
->>
->> Hotplug migration:
->>
->> __offline_pages
->>    do_migrate_range
->> 	migrate_pages(...new_node_page...)
->>
->> new_node_page
->>    new_page_nodemask
->> 	alloc_huge_page_nodemask
->> 	   dequeue_huge_page_nodemask (Getting from pool)
->> 	or
->> 	   alloc_migrate_huge_page    (Getting from buddy - non-gigantic)
->> 		alloc_fresh_huge_page
->> 		    alloc_buddy_huge_page
->> 			__alloc_pages_nodemask ----> goes into buddy
->>
->> CMA allocation:
->>
->> cma_alloc
->>    alloc_contig_range
->> 	__alloc_contig_migrate_range
->> 		migrate_pages(...alloc_migrate_target...)
->>
->> alloc_migrate_target
->>    new_page_nodemask -> __alloc_pages_nodemask ---> goes into buddy
->>
->> But this is not applicable for gigantic pages for which it backs off way
->> before going into buddy.
-> 
-> This is an implementation detail - mostly a missing or an incomplete
-> hugetlb overcommit implementation IIRC. The primary point remains the
-> same. Being able to migrate in principle and feasible enough to migrate
-> to be placed in zone movable are two distinct things.
+In fact, TMIO_MMC_HAVE_HIGH_REG is set only by tmio-mmc.c and used to
+test the accessibility of CTL_SDIO_REGS.  Because it is specific to
+the TMIO MFD variant, the right thing to do is to move such registers
+to tmio_mmc.c and delete the TMIO_MMC_HAVE_HIGH_REG flag.
 
-I agree. They are two distinct things.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> [...]
->>>> But even if there are some chances of run time allocation failure from
->>>> movable zone (as in point 2) that should not block the very initiation
->>>> of migration itself. IIUC thats not the semantics for either THP or
->>>> normal pages. Why should it be different here. If the allocation fails
->>>> we should report and abort as always. Its the caller of migration taking
->>>> the chances. why should we prevent that.
->>>
->>> Yes I agree, hence the distinction between the arch support for
->>> migrateability and the criterion on the movable zone placement.
->> movable zone placement sounds very tricky here. How can the platform
->> (through the hook huge_movable) before hand say whether destination
->> page could be allocated from the ZONE_MOVABLE without looking into the
->> state of buddy at migration (any sort attempt to do this is going to
->> be expensive) or it merely indicates the desire to live with possible
->> consequence (unable to hot unplug/CMA going forward) for a migration
->> which might end up in an unmovable area.
-> 
-> I do not follow. The whole point of zone_movable is to provide a
-> physical memory range which is more or less movable. That means that
-> pages allocated from this zone can be migrated away should there be a
-> reason for that.
+Changes in v2: None
 
-I understand this.
+ drivers/mmc/host/tmio_mmc.c | 7 +++++--
+ drivers/mmc/host/tmio_mmc.h | 3 ---
+ include/linux/mfd/tmio.h    | 7 -------
+ 3 files changed, 5 insertions(+), 12 deletions(-)
 
-> 
->>>>> So I guess we want to split this into two functions
->>>>> arch_hugepage_migration_supported and hugepage_movable. The later would
->>>>
->>>> So the set difference between arch_hugepage_migration_supported and 
->>>> hugepage_movable still remains un-migratable ? Then what is the purpose
->>>> for arch_hugepage_migration_supported page size set in the first place.
->>>> Does it mean we allow the migration at the beginning and the abort later
->>>> when the page size does not fall within the subset for hugepage_movable.
->>>> Could you please kindly explain this in more detail.
->>>
->>> The purpose of arch_hugepage_migration_supported is to tell whether it
->>> makes any sense to even try to migration. The allocation placement is
->>
->> Which kind of matches what we have right now and being continued with this
->> proposal in the series.
-> 
-> Except you only go half way there. Because you still consider "able to
-> migrate" and "feasible to migrate" as the same thing.
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index 00d291c..4e91020 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -24,6 +24,11 @@
+ 
+ #include "tmio_mmc.h"
+ 
++/* Registers specific to this variant */
++#define CTL_SDIO_REGS		0x100
++#define CTL_CLK_AND_WAIT_CTL	0x138
++#define CTL_RESET_SDIO		0x1e0
++
+ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
+ {
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+@@ -161,8 +166,6 @@ static int tmio_mmc_probe(struct platform_device *pdev)
+ 		goto cell_disable;
+ 	}
+ 
+-	pdata->flags |= TMIO_MMC_HAVE_HIGH_REG;
+-
+ 	host = tmio_mmc_host_alloc(pdev, pdata);
+ 	if (IS_ERR(host)) {
+ 		ret = PTR_ERR(host);
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index a1a661b..18b4308 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -47,9 +47,6 @@
+ #define CTL_RESET_SD 0xe0
+ #define CTL_VERSION 0xe2
+ #define CTL_SDIF_MODE 0xe6
+-#define CTL_SDIO_REGS 0x100
+-#define CTL_CLK_AND_WAIT_CTL 0x138
+-#define CTL_RESET_SDIO 0x1e0
+ 
+ /* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
+ #define TMIO_STOP_STP		BIT(0)
+diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
+index 7786621..1e70060 100644
+--- a/include/linux/mfd/tmio.h
++++ b/include/linux/mfd/tmio.h
+@@ -62,13 +62,6 @@
+ #define TMIO_MMC_USE_GPIO_CD		BIT(5)
+ 
+ /*
+- * Some controllers doesn't have over 0x100 register.
+- * it is used to checking accessibility of
+- * CTL_SD_CARD_CLK_CTL / CTL_CLK_AND_WAIT_CTL
+- */
+-#define TMIO_MMC_HAVE_HIGH_REG		BIT(6)
+-
+-/*
+  * Some controllers have CMD12 automatically
+  * issue/non-issue register
+  */
+-- 
+2.7.4
 
-Okay.
-
-> 
->>
->>> completely independent on this choice. The later just says whether it is
->>> feasible to place a hugepage to the zone movable. Sure regular 2MB pages
->>
->> What do you exactly mean by feasible ? Wont it depend on the state of the
->> buddy allocator (ZONE_MOVABLE in particular) and it's ability to accommodate
->> a given huge page. How can the platform decide on it ?
-> 
-> It is not the platform that decides. That is the whole point of the
-> distinction. It is us to say what is feasible and what we want to
-> support. Do we want to support giga pages in zone_movable? Under which
-> conditions? See my point?
-
-So huge_movable() is going to be a generic MM function deciding on the
-feasibility for allocating a huge page of 'size' from movable zone during
-migration. If the feasibility turns out to be negative, then migration
-process is aborted there.
-
-huge_movable() will do something like these:
-
-- Return positive right away on smaller size huge pages
-- Measure movable allocation feasibility for bigger huge pages
-	- Look out for free_pages in the huge page order in movable areas
-	- if (order > (MAX_ORDER - 1))
-		- Scan the PFN ranges in movable zone for possible allocation
-	- etc
-	- etc
-
-Did I get this right ?
-
-> 
->> Or as I mentioned
->> before it's platform's willingness to live with unmovable huge pages (of
->> certain sizes) as a consequence of migration.
-> 
-> No, the platform has no saying in that. The platform only says that it
-> supports migrating those pages in principle.
-I understand this now.
