@@ -2,138 +2,130 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC91C64EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 406F2C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C385A2089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:13:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Co4aRI5e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C385A2089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id D82C92082A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:16:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82C92082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbeJCUCK (ORCPT
+        id S1726871AbeJCUEW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 16:02:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36440 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbeJCUBy (ORCPT
+        Wed, 3 Oct 2018 16:04:22 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47218 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726630AbeJCUEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 16:01:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Q2Sc6aaA7TCELZm9kJnGTjWB4ZtntpX64apnEsbw1u4=; b=Co4aRI5eogLI/FnRfe68IyU8gy
-        NryUqbqiFb0bwxjaKyyUegrV/GIwKWpkrgkcCcuqym6SUFzWNxSEK7cQZw1ocdf7CWxaYVhHJa34V
-        GB5fiTE+cms47zSQmBmWtLQgbMkrbWV3EmObhipUW5ZF9tq2MPXPoBDXII+C79UK9JS1PEYNDGxCX
-        m8ZB+OS1fKcrnmFZISKt0ItDjgbhT9ao9H6IpUQYMC4xiMxsxDtx70aMrQo5NvgQ4bHm7AymQ0HiD
-        AQonfhRz+AQfSXo/UH5AKLd71IHy+d5yih5JNoHSHw2qxh0m7zv3D7iMJW57l7z48Q9+AUzyNledY
-        sbw5+AYQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g7gxu-0003Ar-IE; Wed, 03 Oct 2018 13:13:23 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 1A8742025A339; Wed,  3 Oct 2018 15:13:15 +0200 (CEST)
-Message-ID: <20181003130957.031086404@infradead.org>
-User-Agent: quilt/0.65
-Date:   Wed, 03 Oct 2018 15:02:59 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     will.deacon@arm.com, mingo@kernel.org
-Cc:     linux-kernel@vger.kernel.org, longman@redhat.com,
-        andrea.parri@amarulasolutions.com, tglx@linutronix.de,
-        bigeasy@linutronix.de, Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH v2 2/4] locking/qspinlock: Rework some comments
-References: <20181003130257.156322446@infradead.org>
+        Wed, 3 Oct 2018 16:04:22 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w93DDsYm096310
+        for <linux-kernel@vger.kernel.org>; Wed, 3 Oct 2018 09:15:59 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mvwcc3eac-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 09:15:59 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Wed, 3 Oct 2018 14:15:57 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 3 Oct 2018 14:15:53 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w93DFqTG63045744
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 3 Oct 2018 13:15:52 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D2A8E4C059;
+        Wed,  3 Oct 2018 16:15:32 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1DD2E4C046;
+        Wed,  3 Oct 2018 16:15:31 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.199.54.87])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Wed,  3 Oct 2018 16:15:30 +0100 (BST)
+Date:   Wed, 3 Oct 2018 18:45:49 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jirka Hladky <jhladky@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: [PATCH 2/2] mm, numa: Migrate pages to local nodes quicker early
+ in the lifetime of a task
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20181001100525.29789-1-mgorman@techsingularity.net>
+ <20181001100525.29789-3-mgorman@techsingularity.net>
+ <20181002124149.GB4593@linux.vnet.ibm.com>
+ <20181002135459.GA7003@techsingularity.net>
+ <20181002173005.GD4593@linux.vnet.ibm.com>
+ <20181002182248.GB7003@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20181002182248.GB7003@techsingularity.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18100313-0028-0000-0000-00000301FE16
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100313-0029-0000-0000-000023BC34D7
+Message-Id: <20181003131549.GB4488@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=996 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810030129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While working my way through the code again; I felt the comments could
-use help.
+> > if we want to prioritize STREAM like workloads (i.e private faults) one simpler
+> > fix could be to change the quadtraic equation
+> > 
+> > from:
+> > 	if (!cpupid_pid_unset(last_cpupid) &&
+> > 				cpupid_to_nid(last_cpupid) != dst_nid)
+> > 		return false;
+> > to:
+> > 	if (!cpupid_pid_unset(last_cpupid) &&
+> > 				cpupid_to_nid(last_cpupid) == dst_nid)
+> > 		return true;
+> > 
+> > i.e to say if the group tasks likely consolidated to a node or the task was
+> > moved to a different node but access were private, just move the memory.
+> > 
+> > The drawback though is we keep pulling memory everytime the task moves
+> > across nodes. (which is probably restricted for long running tasks to some
+> > extent by your fix)
+> > 
+> 
+> This has way more consequences as it changes the behaviour for the entire
+> lifetime of the workload. It could cause excessive migrations in the case
+> where a machine is almost fully utilised and getting load balanced or in
+> cases where tasks are pulled frequently cross-node (e.g. worker thread
+> model or a pipelined computation).
+> 
+> I'm only looking to address the case where the load balancer spreads a
+> workload early and the memory should move to the new node quickly. If it
+> turns out there are cases where that decision is wrong, it gets remedied
+> quickly but if your proposal is ever wrong, the system doesn't recover.
+> 
 
-Cc: mingo@kernel.org
-Cc: will.deacon@arm.com
-Cc: tglx@linutronix.de
-Cc: longman@redhat.com
-Cc: andrea.parri@amarulasolutions.com
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/locking/qspinlock.c |   38 +++++++++++++++++++++++++++-----------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+Agree.
 
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -326,16 +326,23 @@ void queued_spin_lock_slowpath(struct qs
- 	/*
- 	 * trylock || pending
- 	 *
--	 * 0,0,0 -> 0,0,1 ; trylock
--	 * 0,0,1 -> 0,1,1 ; pending
-+	 * 0,0,* -> 0,1,* -> 0,0,1 pending, trylock
- 	 */
- 	val = atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
-+
- 	/*
--	 * If we observe any contention; undo and queue.
-+	 * If we observe contention, there is a concurrent locker.
-+	 *
-+	 * Undo and queue; our setting of PENDING might have made the
-+	 * n,0,0 -> 0,0,0 transition fail and it will now be waiting
-+	 * on @next to become !NULL.
- 	 */
- 	if (unlikely(val & ~_Q_LOCKED_MASK)) {
-+
-+		/* Undo PENDING if we set it. */
- 		if (!(val & _Q_PENDING_MASK))
- 			clear_pending(lock);
-+
- 		goto queue;
- 	}
- 
-@@ -474,16 +481,25 @@ void queued_spin_lock_slowpath(struct qs
- 	 */
- 
- 	/*
--	 * In the PV case we might already have _Q_LOCKED_VAL set.
-+	 * In the PV case we might already have _Q_LOCKED_VAL set, because
-+	 * of lock stealing; therefore we must also allow:
- 	 *
--	 * The atomic_cond_read_acquire() call above has provided the
--	 * necessary acquire semantics required for locking.
--	 */
--	if (((val & _Q_TAIL_MASK) == tail) &&
--	    atomic_try_cmpxchg_relaxed(&lock->val, &val, _Q_LOCKED_VAL))
--		goto release; /* No contention */
-+	 * n,0,1 -> 0,0,1
-+	 *
-+	 * Note: at this point: (val & _Q_PENDING_MASK) == 0, because of the
-+	 *       above wait condition, therefore any concurrent setting of
-+	 *       PENDING will make the uncontended transition fail.
-+	 */
-+	if ((val & _Q_TAIL_MASK) == tail) {
-+		if (atomic_try_cmpxchg_relaxed(&lock->val, &val, _Q_LOCKED_VAL))
-+			goto release; /* No contention */
-+	}
- 
--	/* Either somebody is queued behind us or _Q_PENDING_VAL is set */
-+	/*
-+	 * Either somebody is queued behind us or _Q_PENDING_VAL got set
-+	 * which will then detect the remaining tail and queue behind us
-+	 * ensuring we'll see a @next.
-+	 */
- 	set_locked(lock);
- 
- 	/*
-
+-- 
+Thanks and Regards
+Srikar Dronamraju
 
