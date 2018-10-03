@@ -2,85 +2,128 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DAFC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D10CC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2E162082A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:22:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2E162082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id DD9A92098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:22:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD9A92098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbeJCUKV (ORCPT
+        id S1726998AbeJCUK2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 16:10:21 -0400
-Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:40101 "EHLO
-        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726720AbeJCUKV (ORCPT
+        Wed, 3 Oct 2018 16:10:28 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:26207 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726892AbeJCUK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 16:10:21 -0400
-Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
-        by outbound-smtp25.blacknight.com (Postfix) with ESMTPS id 4A16CB8813
-        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 14:21:57 +0100 (IST)
-Received: (qmail 7280 invoked from network); 3 Oct 2018 13:21:57 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.88])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 3 Oct 2018 13:21:57 -0000
-Date:   Wed, 3 Oct 2018 14:21:55 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jirka Hladky <jhladky@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH 2/2] mm, numa: Migrate pages to local nodes quicker early
- in the lifetime of a task
-Message-ID: <20181003132155.GD7003@techsingularity.net>
-References: <20181001100525.29789-1-mgorman@techsingularity.net>
- <20181001100525.29789-3-mgorman@techsingularity.net>
- <20181002124149.GB4593@linux.vnet.ibm.com>
- <20181002135459.GA7003@techsingularity.net>
- <20181002173005.GD4593@linux.vnet.ibm.com>
- <20181003130741.GA4488@linux.vnet.ibm.com>
+        Wed, 3 Oct 2018 16:10:26 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-120-QlLK1ZM2OOarbzJTma5vXA-1; Wed, 03 Oct 2018 14:22:00 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 3 Oct 2018 14:22:00 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 3 Oct 2018 14:22:00 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Aleksa Sarai' <cyphar@cyphar.com>
+CC:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        "Tycho Andersen" <tycho@tycho.ws>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "dev@opencontainers.org" <dev@opencontainers.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>
+Subject: RE: [PATCH 0/3] namei: implement various scoping AT_* flags
+Thread-Topic: [PATCH 0/3] namei: implement various scoping AT_* flags
+Thread-Index: AQHUV+AfgFSHvxd/OEe4NbXBVB2oHaUKX0QAgAAkL4CAAu0OMA==
+Date:   Wed, 3 Oct 2018 13:21:59 +0000
+Message-ID: <71b13208253f4b3fa82640ec96bf9301@AcuMS.aculab.com>
+References: <20180929103453.12025-1-cyphar@cyphar.com>
+ <1f1d699b1c8d472495a5b07199c31a6e@AcuMS.aculab.com>
+ <20181001161535.3zslyuk6vmnpioy6@ryuk>
+In-Reply-To: <20181001161535.3zslyuk6vmnpioy6@ryuk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20181003130741.GA4488@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: QlLK1ZM2OOarbzJTma5vXA-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 06:37:41PM +0530, Srikar Dronamraju wrote:
-> * Srikar Dronamraju <srikar@linux.vnet.ibm.com> [2018-10-02 23:00:05]:
+From: Aleksa Sarai
+> Sent: 01 October 2018 17:16
 > 
-> > I will try to get a DayTrader run in a day or two. There JVM and db threads
-> > act on the same memory, I presume it might show some insights.
+> On 2018-10-01, David Laight <David.Laight@ACULAB.COM> wrote:
+...
+> > >   * Mountpoint crossings are blocked by AT_XDEV.
+> >
+> > You might want a mountpoint flag that allows crossing into the mounted
+> > filesystem (you may need to get out in order to do pwd()).
 > 
-> I ran 2 runs of daytrader 7 with and without patch on a 2 node power9
-> PowerNv box.
-> https://github.com/WASdev/sample.daytrader7
-> In each run, has 8 JVMs.
-> 
-> Throughputs (Higher are better)
-> Without patch 19216.8 18900.7 Average: 19058.75
-> With patch    18644.5 18480.9 Average: 18562.70
-> 
-> Difference being -2.6% regression
-> 
+> Like a mount flag? I'm not sure how I feel about that. The intention is
+> to allow for a process to have control over how path lookups are
+> handled, and tying it to a mount flag means that it's no longer entirely
+> up to the process.
 
-That's unfortunate.
+Right, but you may have some mount points that you don't want to cross
+and others that it is perfectly fine to cross.
+For example you might want to be able to cross into a 'tmp' filesystem.
 
-How much does this workload normally vary between runs? If you monitor
-migrations over time, is there an increase spike in migration early in
-the lifetime of the workload?
+...
+> > If you make the flags a property of the directory vnode (perhaps as
+> > well as any syscall flags), and make it inherited by vnode lookup then
+> > it can be used to stop library functions (or entire binaries) using
+> > blocked paths.
+> > You'd then only need to add an fcntl() call to set the flags (but never
+> > clear them) to get the restriction applied to every lookup.
+> 
+> This seems like it might be useful, but it could always be done as a
+> follow-up patch by just setting LOOKUP_BLAH if the dirfd has the flag
+> set. I'm also a little bit concerned that (because fd flags are set on
+> the 'struct file') if you start sharing fds then you can no longer use
+> the lookup scoping for security (a racing process could remove the
+> flags while the management process resolves through it).
 
--- 
-Mel Gorman
-SUSE Labs
+I was thinking that the flags would never be removable.
+A management process might have to flip its cwd back and forth
+in order to clear the flags (opendir(".") should give a different
+struct file).
+
+This all gets tied up with the slight requirement for per-thread cwd.
+
+I had another thought that the crudentials structure used for a file
+lookup could also be taken from the cwd (not sure how it would
+get there - especially if you need the correct group list).
+That would allow a 'management' process to open a file in the context
+of the target user process.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
