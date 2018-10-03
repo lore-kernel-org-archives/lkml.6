@@ -2,103 +2,151 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EB3C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE4FC64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE44821473
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:30:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE44821473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id D825C21473
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:30:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yEhrCgo/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D825C21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbeJDEU5 (ORCPT
+        id S1727137AbeJDEVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 00:20:57 -0400
-Received: from smtprelay0157.hostedemail.com ([216.40.44.157]:56032 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725747AbeJDEU5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 00:20:57 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 759E818076612;
-        Wed,  3 Oct 2018 21:30:48 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: spoon07_2407b30815303
-X-Filterd-Recvd-Size: 3017
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  3 Oct 2018 21:30:47 +0000 (UTC)
-Message-ID: <223920513380c40710a833be02d86d8d6258cdab.camel@perches.com>
-Subject: Re: [PATCH 2/3] staging: rtl8188eu: cleanup array declaration -
- style
-From:   Joe Perches <joe@perches.com>
-To:     Michael Straube <straube.linux@gmail.com>,
-        gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Date:   Wed, 03 Oct 2018 14:30:46 -0700
-In-Reply-To: <20181003204359.30676-2-straube.linux@gmail.com>
-References: <20181003204359.30676-1-straube.linux@gmail.com>
-         <20181003204359.30676-2-straube.linux@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 4 Oct 2018 00:21:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50184 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725747AbeJDEVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 00:21:04 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86203213A2;
+        Wed,  3 Oct 2018 21:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538602255;
+        bh=6HpzLxzbkVtKkb9brhi7cmOCRuIPCL1eMHcPK0rKmq4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yEhrCgo/2uTmq7TMESGa7DtjW2Zr/kM+SVn08seG0RReNQcYFUctRVlsj9xrbQjAQ
+         4NLSdjkaIauCkI9MAimZSOQeX/fPoKlEr10aI4CRjBJrrHfrPg2E+13UgdUxcQ32rQ
+         e/5LCUvAiGJyPO609l8wtPz1vONsomqk+pKopH10=
+Date:   Wed, 3 Oct 2018 16:30:54 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc:     linux-pci@vger.kernel.org, bhelgaas@google.com,
+        keith.busch@intel.com, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        Ariel Elior <ariel.elior@cavium.com>,
+        everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+        oss-drivers@netronome.com,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Martin Mares <mj@ucw.cz>
+Subject: Re: [PATCH 1/9] PCI: sysfs: Export available PCIe bandwidth
+Message-ID: <20181003213054.GH120535@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180903180242.14504-1-mr.nuke.me@gmail.com>
+ <20180903180242.14504-2-mr.nuke.me@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903180242.14504-2-mr.nuke.me@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-03 at 22:43 +0200, Michael Straube wrote:
-> Cleanup array declaration to clear two 'line over 80 characters'
-> checkpatch warnings and improve readability.
-[]
-> diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-[]
-> @@ -3836,24 +3836,20 @@ Following are the initialization functions for WiFi MLME
->  *****************************************************************************/
+[+cc Stephen, Martin (for possible lspci changes)]
+
+Hi Alexandru,
+
+On Mon, Sep 03, 2018 at 01:02:28PM -0500, Alexandru Gagniuc wrote:
+> For certain bandwidth-critical devices (e.g. multi-port network cards)
+> it is useful to know the available bandwidth to the root complex. This
+> information is only available via the system log, which doesn't
+> account for link degradation after probing.
+> 
+> With a sysfs attribute, we can computes the bandwidth on-demand, and
+> will detect degraded links.
+> 
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> ---
+>  drivers/pci/pci-sysfs.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index 9ecfe13157c0..6658e927b1f5 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -218,6 +218,18 @@ static ssize_t current_link_width_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(current_link_width);
 >  
->  static struct mlme_handler mlme_sta_tbl[] = {
-> -	{WIFI_ASSOCREQ,		"OnAssocReq",	&OnAssocReq},
-> -	{WIFI_ASSOCRSP,		"OnAssocRsp",	&OnAssocRsp},
-> -	{WIFI_REASSOCREQ,	"OnReAssocReq",	&OnAssocReq},
-> -	{WIFI_REASSOCRSP,	"OnReAssocRsp",	&OnAssocRsp},
-> -	{WIFI_PROBEREQ,		"OnProbeReq",	&OnProbeReq},
-> -	{WIFI_PROBERSP,		"OnProbeRsp",		&OnProbeRsp},
-> -
-> -	/*----------------------------------------------------------
-> -					below 2 are reserved
-> -	-----------------------------------------------------------*/
-> -	{0,					"DoReserved",		&DoReserved},
-> -	{0,					"DoReserved",		&DoReserved},
-> -	{WIFI_BEACON,		"OnBeacon",		&OnBeacon},
-> -	{WIFI_ATIM,			"OnATIM",		&OnAtim},
-> -	{WIFI_DISASSOC,		"OnDisassoc",		&OnDisassoc},
-> -	{WIFI_AUTH,			"OnAuth",		&OnAuthClient},
-> -	{WIFI_DEAUTH,		"OnDeAuth",		&OnDeAuth},
-> -	{WIFI_ACTION,		"OnAction",		&OnAction},
-> +	{WIFI_ASSOCREQ,	  "OnAssocReq",	  &OnAssocReq},
-> +	{WIFI_ASSOCRSP,	  "OnAssocRsp",	  &OnAssocRsp},
-> +	{WIFI_REASSOCREQ, "OnReAssocReq", &OnAssocReq},
-> +	{WIFI_REASSOCRSP, "OnReAssocRsp", &OnAssocRsp},
-> +	{WIFI_PROBEREQ,	  "OnProbeReq",	  &OnProbeReq},
-> +	{WIFI_PROBERSP,	  "OnProbeRsp",	  &OnProbeRsp},
-> +	{0,		  "DoReserved",	  &DoReserved},
-> +	{0,		  "DoReserved",	  &DoReserved},
-> +	{WIFI_BEACON,	  "OnBeacon",	  &OnBeacon},
-> +	{WIFI_ATIM,	  "OnATIM",	  &OnAtim},
-> +	{WIFI_DISASSOC,	  "OnDisassoc",	  &OnDisassoc},
-> +	{WIFI_AUTH,	  "OnAuth",	  &OnAuthClient},
-> +	{WIFI_DEAUTH,	  "OnDeAuth",	  &OnDeAuth},
-> +	{WIFI_ACTION,	  "OnAction",	  &OnAction},
+> +static ssize_t available_bandwidth_show(struct device *dev,
+> +				       struct device_attribute *attr, char *buf)
+> +{
+> +	struct pci_dev *pci_dev = to_pci_dev(dev);
+> +	u32 bw_avail;
+> +
+> +	bw_avail = pcie_bandwidth_available(pci_dev, NULL, NULL, NULL);
+> +
+> +	return sprintf(buf, "%u.%03u Gb/s\n", bw_avail / 1000, bw_avail % 1000);
+> +}
+> +static DEVICE_ATTR_RO(available_bandwidth);
+
+Help me understand this.  We already have these sysfs attributes:
+
+  max_link_speed          # eg, 16 GT/s
+  max_link_width          # eg, 8
+  current_link_speed      # eg, 16 GT/s
+  current_link_width      # eg, 8
+
+so I think the raw materials are already exposed.
+
+The benefits I see for this new file are that
+
+  - pcie_bandwidth_available() does the work of traversing up the
+    tree, doing the computations (link width * speed, reduced by
+    encoding overhead), and finding the minimum, and
+
+  - it re-traverses the path every time we look at it, while the
+    boot-time check is a one-time event.
+
+In principle this could all be done in user space with the attributes
+that are already exported.  There's some precedent for things like
+this in lspci, e.g., "NUMA node" [1], and lspci might even be a more
+user-friendly place for users to look for this, as opposed to
+searching through sysfs.
+
+[1] https://git.kernel.org/pub/scm/utils/pciutils/pciutils.git/commit/?id=90ec4a6d0ae8
+
+>  static ssize_t secondary_bus_number_show(struct device *dev,
+>  					 struct device_attribute *attr,
+>  					 char *buf)
+> @@ -786,6 +798,7 @@ static struct attribute *pcie_dev_attrs[] = {
+>  	&dev_attr_current_link_width.attr,
+>  	&dev_attr_max_link_width.attr,
+>  	&dev_attr_max_link_speed.attr,
+> +	&dev_attr_available_bandwidth.attr,
+>  	NULL,
 >  };
-
-Perhaps const here too, and as well, the struct
-declaration could use const char * instead of char *
-
-
-
+>  
+> -- 
+> 2.17.1
+> 
