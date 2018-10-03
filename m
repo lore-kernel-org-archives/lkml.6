@@ -2,108 +2,70 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59392C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3374C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D3DC213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:27:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D3DC213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 8060221470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:28:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8060221470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbeJCQPY convert rfc822-to-8bit (ORCPT
+        id S1727711AbeJCQQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 12:15:24 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:57949 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbeJCQPY (ORCPT
+        Wed, 3 Oct 2018 12:16:17 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:62756 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726712AbeJCQQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 12:15:24 -0400
-Received: from mail-pg1-f199.google.com ([209.85.215.199])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1g7dRc-0006II-IO
-        for linux-kernel@vger.kernel.org; Wed, 03 Oct 2018 09:27:48 +0000
-Received: by mail-pg1-f199.google.com with SMTP id 11-v6so1813403pgd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 02:27:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=tpPdh9ymhW8iJ3OfqQ/rs1B/QW0LKc+XaWgjFG6bRR0=;
-        b=GWZkF/Fn3ddSqrxl66zeHzsEbN77xGu/mAUDodmGYO+HjwXHtaSPvOexov1X3g+Ur6
-         xbESIhhI1f6zz/0t5ECL9JYN/JoZbsnCzNQwZrV4o3r7R4/4AfrurIg3FssOHPt3MxwH
-         7gjuR9pfI1M5z67DoZwehBxUMwbwYQZyZR89NZax5ZHl6YaOMO4MfArbB2DChXRjezWX
-         YmAk2W0LqqTFlFIEtVuUNudDgbz4OMyQPOqpUEahD3SR4H8kWKosEukg+Gz7+jrwSs5U
-         Lx32h5yfPEHWwEjQ6bRrI5PH+AzKE455apuJGZeUtIJg8mwpjGMhxst/2DMoPH/3kxaa
-         BjkQ==
-X-Gm-Message-State: ABuFfoj3QxijUtowJ9l/ZacxZJuDc5Q75BrEFzFJ2ZjV+H//PHvECc9F
-        N0tEmAJgePU9w909wqNMc7v5HKC1L8xzfcSEjzhI+Cl8ZASTAyXA/XvtyuVnl+z2pRjOKepCZS6
-        8ZxB/cnsjkzEUgYXVk1+1v5v8QPX4PYNSuIJlJU/vrA==
-X-Received: by 2002:a63:ce14:: with SMTP id y20-v6mr585597pgf.248.1538558867214;
-        Wed, 03 Oct 2018 02:27:47 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV63JZICns5VLK6ijq9VCJNR0WSzXkr+mi0TDCUK6fn1s7P5yaFtvwzZJEK3CxkXJ+UXLLN0vhg==
-X-Received: by 2002:a63:ce14:: with SMTP id y20-v6mr585584pgf.248.1538558866976;
-        Wed, 03 Oct 2018 02:27:46 -0700 (PDT)
-Received: from [10.101.46.95] (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
-        by smtp.gmail.com with ESMTPSA id s23-v6sm1264065pgg.67.2018.10.03.02.27.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 02:27:46 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: [RESEND] [PATCH 3/3] iwlwifi: Load firmware exclusively for Intel
- WiFi
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <87y3bfiees.fsf@kamboji.qca.qualcomm.com>
-Date:   Wed, 3 Oct 2018 17:27:41 +0800
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <265BAF93-4BFF-4850-92F7-80AC39496473@canonical.com>
-References: <20181003073556.28154-1-kai.heng.feng@canonical.com>
- <20181003073556.28154-3-kai.heng.feng@canonical.com>
- <87y3bfiees.fsf@kamboji.qca.qualcomm.com>
-To:     Kalle Valo <kvalo@codeaurora.org>
-X-Mailer: Apple Mail (2.3445.100.39)
+        Wed, 3 Oct 2018 12:16:17 -0400
+Received: from 79.184.253.194.ipv4.supernova.orange.pl (79.184.253.194) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id efea987198ef30d2; Wed, 3 Oct 2018 11:28:41 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Jason Baron <jbaron@akamai.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        netdev@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-btrfs@vger.kernel.org, linux-acpi@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [PATCH 00/22] various dynamic_debug patches
+Date:   Wed, 03 Oct 2018 11:25:40 +0200
+Message-ID: <2308315.5DVx2N1Pa0@aspire.rjw.lan>
+In-Reply-To: <4563778.42gAD4asSf@aspire.rjw.lan>
+References: <20180919220444.23190-1-linux@rasmusvillemoes.dk> <4563778.42gAD4asSf@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> On Oct 3, 2018, at 5:10 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
+On Thursday, September 20, 2018 10:05:00 AM CEST Rafael J. Wysocki wrote:
+> On Thursday, September 20, 2018 12:04:22 AM CEST Rasmus Villemoes wrote:
+> > This started as an experiment to see how hard it would be to change
+> > the four pointers in struct _ddebug into relative offsets, a la
+> > CONFIG_GENERIC_BUG_RELATIVE_POINTERS, thus saving 16 bytes per
+> > pr_debug site (and thus exactly making up for the extra space used by
+> > the introduction of jump labels in 9049fc74). I stumbled on a few
+> > things that are probably worth fixing regardless of whether the latter
+> > half of this series is deemed worthwhile.
+> > 
+> > Patch relationships: 1-2, 3-4, 5-6 and 15-16 can be applied
+> > individually, though 2, 4 and 6 probably makes most sense in the
+> > context of the final goal of the series.
 > 
-> Kai-Heng Feng <kai.heng.feng@canonical.com> writes:
-> 
->> To avoid the firmware loading race between Bluetooth and WiFi on Intel
->> 8260, load firmware exclusively when BT_INTEL is enabled.
->> 
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> 
-> Still the commit log tells nothing about the actual problem which makes
-> review impossible.
+> OK, I can take the [15-16/22] separately.
 
-Sorry for that. The first two patches [1] only sends to linux-bluetooth and LMKL.
+And they have been applied now.
 
-I don’t know what really happened at hardware/firmware level, but making btusb and iwlwifi load firmware sequentially can workaround the issue.
-
-Matt Chen may be able to explain this issue with more detail.
-
-[1] https://lkml.org/lkml/2018/10/3/322
-
-> 
-> -- 
-> Kalle Valo
+Thanks,
+Rafael
 
