@@ -2,148 +2,75 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3EDC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E73C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1E122089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:53:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s/Em79Pe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E122089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 07B182089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:55:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07B182089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbeJCUmZ (ORCPT
+        id S1726950AbeJCUoH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 16:42:25 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46327 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbeJCUmZ (ORCPT
+        Wed, 3 Oct 2018 16:44:07 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:33856 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeJCUoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 16:42:25 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 203-v6so5156493ljj.13
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 06:53:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+goval1GFa+ta5e/NLQBZnBg+kRZJXT3Unlgtxg2OGU=;
-        b=s/Em79PefXEvLhGU6UbUzb4JhjO0jPFJn9rMaFA6fPhG2eXVqVNx5PePj5WVPDhCrK
-         7x7AzHmbIg8FbKxVFwwHIl0CqQUylphzaBQ79z9nO7utPykMG8dhwkQva5xr++RbDcuc
-         ZQBYHBcxjCgA9JBOW7yy4P3PSY0hfuvCeRkbWKOYjbVDJUMtzO8UpJrF6V66oNuYlxuc
-         Rt6dQY8E82+IXhcVowwRiNqP8MqdiWu4i/UbfRsaon7De0zTYN2ElOyaZNe95OeuydAg
-         IxQ/XkKhJa/zXnBYiULeEyT6kOFOJQTKG8j1jh8WxwnqsVvZDDMn4Cr0R/wD6GNEzfPZ
-         jPZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+goval1GFa+ta5e/NLQBZnBg+kRZJXT3Unlgtxg2OGU=;
-        b=SGYJOeqIKVOtUMB2Viw4fINuBYPflTDaDzccRCaN9NfBtkn3wb6rO1aGffngHBolKo
-         UYUWon1Q36/hRbxwiwLTeERijtW3HszRrGiA0JQJrbSPvk/Eajvw8WzIkUgSKKOQclXg
-         +ESxbqF2HT3Ug5gkhFvGB6pY76PAIda5zUxdQmT49h7cQovX1IyB3/PbO5ABiKbxnYdU
-         tCl6Q1t8nqYufMovv7d0MZ1a8WEUYxCvndUPayDToAAKjqwR2S41gqw7GEth5/E1+VIF
-         rnzVBk9vb7D+r5boPH42fruhtXlNSP9uPnK3BTI787CeUPz11TMDb1MKBRgsln9jzzmI
-         eDlw==
-X-Gm-Message-State: ABuFfojfygWzWRnpkVcWLgMoYySgGtu5dSoXKIhPk/sdmUGdkWsBcqQ5
-        CUS17GdNehoeM3giS6NrXnA=
-X-Google-Smtp-Source: ACcGV62QkrQJVqOIQPu1Jgy8zJ1quHovu3UZ9tDpUDOBD0+oE9e1LqkZLxZt6zKN5pWEsD41xAzjYg==
-X-Received: by 2002:a2e:92ca:: with SMTP id k10-v6mr1216124ljh.103.1538574832879;
-        Wed, 03 Oct 2018 06:53:52 -0700 (PDT)
-Received: from z50.localnet (78-10-164-223.static.ip.netia.com.pl. [78.10.164.223])
-        by smtp.gmail.com with ESMTPSA id e6-v6sm334285lfc.49.2018.10.03.06.53.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 06:53:51 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [RFC PATCH] mtd: rawnand: ams-delta: use ->exec_op()
-Date:   Wed, 03 Oct 2018 15:55:25 +0200
-Message-ID: <4278198.vlhjLe5TOR@z50>
-In-Reply-To: <20181003143054.597b3a9e@bbrezillon>
-References: <20180719081508.5dafebde@bbrezillon> <20181003120028.9257-1-jmkrzyszt@gmail.com> <20181003143054.597b3a9e@bbrezillon>
+        Wed, 3 Oct 2018 16:44:07 -0400
+Received: from tmo-096-48.customers.d1-online.com ([80.187.96.48] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g7hch-0004k1-0J; Wed, 03 Oct 2018 15:55:31 +0200
+Date:   Wed, 3 Oct 2018 15:55:29 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        acme@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        eranian@google.com, ak@linux.intel.com,
+        alexander.shishkin@linux.intel.com, x86@kernel.org
+Subject: Re: [PATCH] perf/x86/intel: Add counter freezing quirk for
+ Goldmont
+In-Reply-To: <b3834054-cb2c-2074-7b7d-ad9eb4961a07@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1810031550550.23677@nanos.tec.linutronix.de>
+References: <1538515812-8808-1-git-send-email-kan.liang@linux.intel.com> <alpine.DEB.2.21.1810030803260.1435@nanos.tec.linutronix.de> <b3834054-cb2c-2074-7b7d-ad9eb4961a07@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, October 3, 2018 2:30:54 PM CEST Boris Brezillon wrote:
-> Hi Janusz,
-> 
-> On Wed,  3 Oct 2018 14:00:28 +0200
-> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> 
-> > Replace legacy callbacks with ->select_chip() and ->exec_op().
-> 
-> Thanks for working on that, that's really appreciated.
-> 
+On Wed, 3 Oct 2018, Liang, Kan wrote:
+> On 10/3/2018 2:10 AM, Thomas Gleixner wrote:
+> > There is another variant of model/stepping micro code verification code in
+> > intel_snb_pebs_broken(). Can we please make this table based and use a
+> > common function? That's certainly not the last quirk we're going to have.
 > > 
-> > Implementation of NAND_OP_WAITRDY_INSTR has been based on legacy
-> > nand_wait_ready(),
-> 
-> I don't remember what the ams-delta ->dev_ready()/->waitfunc() hooks
-> are doing, but is shouldn't be too hard to replace them by an
-> ams_delta_wait_ready() func.
-
-Default nand_wait() is used as ->waitfunc(), and ->dev_ready() returns R/B 
-GPIO pin status.
-
-> > otherwise that function would probabaly have to be
-> 
-> 				^ probably
-
-Do you think other drivers which now provide ->dev_ready() won't require 
-reimplementation of nand_wait_ready()?
-
-> > reimplemented inside the driver.  Hence, legacy callback ->dev_ready()
-> > is still used.
+> > We already have a table based variant of ucode checking in
+> > bad_spectre_microcode(). It's trivial enough to generalize that.
 > > 
-> > Use of IO_ADDR_R and IO_ADDR_W legacy structure members will be dropped
-> > later, as soon as the driver is converted to use GPIO API for data I/O.
 > 
-> In the meantime, can you move the iomem pointer to the ams_delta
-> private struct so that this driver no longer uses the ->IO_ADDR_R/W
-> fields?
+> Sure, I will generalize the bad_spectre_microcode(), rename it to
+> is_bad_intel_microcode(), and move it to
+> arch\x86\kernel\cpu\microcode\intel.c.
 
-OK
+I suggest: is_bad_microcode() and have it in cpu/microcode/core.c unless
+you are claiming that bad microcode() is an intel only feature.
 
-> > 
-> > Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> > ---
-> > Hi,
-> > 
-> > I've not tested the change on hardware yet as I'm not sure if:
-> > - handling of NCE limited to that inside ->select_chip() is
-> >   sufficient,
-> 
-> I think it is.
-> 
-> > - releasing ALE / CLE immediately after ams_delta_write_buf() is
-> >   correct.
-> 
-> Well, you should probably consider waiting for instr->ctx.delay_ns
-> nanoseconds after each instruction, but, if it was working before the
-> conversion to ->exec_op(), it should work just fine now.
+> The spectre code and perf code will share the generalized function.
 
-OK, I'll give it a try.
+Right. The tables stay in the calling code of course.
 
 Thanks,
-Janusz
 
-
-
+	tglx
