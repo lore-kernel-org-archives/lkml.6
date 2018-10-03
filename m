@@ -2,212 +2,170 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 286A7C64EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC10C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3C4D21470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:00:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CB9F21470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:02:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="vZaT5252"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C4D21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pR4+wdSB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CB9F21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbeJDEuh (ORCPT
+        id S1727058AbeJDEwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 00:50:37 -0400
-Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:2296 "EHLO
-        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725723AbeJDEuh (ORCPT
+        Thu, 4 Oct 2018 00:52:11 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:40483 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725723AbeJDEwL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 00:50:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
-  t=1538604017; x=1570140017;
-  h=cc:from:to:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=PtpaPfwaIK9dzSY+IUD7+Xr18VxCJDTjx2HWC5N4iEA=;
-  b=vZaT52521hkD84cet01YqBs7sCgScE1x/Fnvk5Az4UoVkJss6AnYPq2b
-   LdJ1GiLGhv0agDF+P00Qigb9irsEgBwi7rEaLA9snQFcjAPGuTwuhD/de
-   zNea7aJRAZDBn7UIjkOU1p6VDr5dcpOrWkAsm9l5eDPQeeReDMYK4JBgy
-   4=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EJAABKO7VbhyeV50NcGgEBAQEBAgE?=
- =?us-ascii?q?BAQEHAgEBAQGBUoFjgRB/KAqMXo1HiGKNehSBZgslCYQ+hCMhNRcBAwEBAgE?=
- =?us-ascii?q?BAgEBAhABAQEVCQgpIwxCDgGBZCIRS2sBAQEBAQEjAg1kAQEBAxIoPxACAQg?=
- =?us-ascii?q?YFQkQITYCBAESCBqCNEsBgWkDFQ+adolXAQEBghuHNw2CTAWLIYIXgRKDEoJ?=
- =?us-ascii?q?WLBkEGIECEgESAQ0SLBOFGQKIMZRwLAkFhkSGWIMVH4FKhGKJNowXcYgiAgQ?=
- =?us-ascii?q?CBAUCFIFEAjNmcXCDPIIzh1iBC4U+bwGBZolwgR+BHwEB?=
-X-IPAS-Result: =?us-ascii?q?A2EJAABKO7VbhyeV50NcGgEBAQEBAgEBAQEHAgEBAQGBU?=
- =?us-ascii?q?oFjgRB/KAqMXo1HiGKNehSBZgslCYQ+hCMhNRcBAwEBAgEBAgEBAhABAQEVC?=
- =?us-ascii?q?QgpIwxCDgGBZCIRS2sBAQEBAQEjAg1kAQEBAxIoPxACAQgYFQkQITYCBAESC?=
- =?us-ascii?q?BqCNEsBgWkDFQ+adolXAQEBghuHNw2CTAWLIYIXgRKDEoJWLBkEGIECEgESA?=
- =?us-ascii?q?Q0SLBOFGQKIMZRwLAkFhkSGWIMVH4FKhGKJNowXcYgiAgQCBAUCFIFEAjNmc?=
- =?us-ascii?q?XCDPIIzh1iBC4U+bwGBZolwgR+BHwEB?=
-Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
-  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 03 Oct 2018 17:00:16 -0500
-Received: from pps.filterd (m0134746.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w93LrNRq017484;
-        Wed, 3 Oct 2018 18:00:22 -0400
-Received: from esa5.dell-outbound2.iphmx.com (esa5.dell-outbound2.iphmx.com [68.232.153.203])
-        by mx0a-00154901.pphosted.com with ESMTP id 2mw0smht2k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 03 Oct 2018 18:00:22 -0400
-Cc:     <linux-pci@vger.kernel.org>, <bhelgaas@google.com>,
-        <keith.busch@intel.com>, <Austin.Bolen@dell.com>,
-        <Shyam.Iyer@dell.com>, <ariel.elior@cavium.com>,
-        <everest-linux-l2@cavium.com>, <davem@davemloft.net>,
-        <michael.chan@broadcom.com>, <ganeshgr@chelsio.com>,
-        <jeffrey.t.kirsher@intel.com>, <tariqt@mellanox.com>,
-        <saeedm@mellanox.com>, <leon@kernel.org>,
-        <jakub.kicinski@netronome.com>, <dirk.vandermerwe@netronome.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <intel-wired-lan@lists.osuosl.org>, <linux-rdma@vger.kernel.org>,
-        <oss-drivers@netronome.com>, <stephen@networkplumber.org>,
-        <mj@ucw.cz>
-Received: from ausxippc110.us.dell.com ([143.166.85.200])
-  by esa5.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 04 Oct 2018 03:59:57 +0600
-X-LoopCount0: from 10.166.134.84
-X-IronPort-AV: E=Sophos;i="5.54,337,1534827600"; 
-   d="scan'208";a="710724416"
-From:   <Alex_Gagniuc@Dellteam.com>
-To:     <helgaas@kernel.org>, <mr.nuke.me@gmail.com>
-Subject: Re: [PATCH 1/9] PCI: sysfs: Export available PCIe bandwidth
-Thread-Topic: [PATCH 1/9] PCI: sysfs: Export available PCIe bandwidth
-Thread-Index: AQHUQ7BfSa0aPLhtZE62OuK+W8HsxQ==
-Date:   Wed, 3 Oct 2018 22:00:19 +0000
-Message-ID: <f9fbc8babbb344eca593a3f8b0d096d9@ausx13mps321.AMER.DELL.COM>
-References: <20180903180242.14504-1-mr.nuke.me@gmail.com>
- <20180903180242.14504-2-mr.nuke.me@gmail.com>
- <20181003213054.GH120535@bhelgaas-glaptop.roam.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.177.90.70]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 4 Oct 2018 00:52:11 -0400
+Received: by mail-qt1-f196.google.com with SMTP id e9-v6so7733553qtp.7
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 15:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xEEPCFf52nRFBMVWAXi5MbnjwSQJGXQbdy342ERi9/E=;
+        b=pR4+wdSB8ntoerDl2g3VBFybYm4f6dhbQp/XqeFBysmrzyAEGMoDH+DlSDLs64T0f6
+         0UDU9p9ow4Ch9pdYIrDpH4FWt72+ZGAfiD6fUZoyJTAp2sn8HLpsv/7ZjrrhvU65dhAx
+         jLTqKo0On6L22OSpIhjFYEvOfnEYSmcwMjVuXD6vb1164qe+cLRcHvYFWhlXMvkB9nx+
+         vRocGC0rrGVUWdpYN0GvQ0rQJ5crqHfvsshK3SHvPP2EYRo5RhjgBtL0rb5pt18RGPMP
+         2tWs+jrvD8Ve+fyI2f238RYNAZtXRHlA1RQ7n9UbvPhbI3LElTFOR8b4DNsJ2QuPE7bA
+         DC2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xEEPCFf52nRFBMVWAXi5MbnjwSQJGXQbdy342ERi9/E=;
+        b=evnQ077SsiWbuVUXnJevM+oE0/ebAek1M3/JCAj5Z6ObXrbD7cmOkJP4/eyxV7tVje
+         GZolZwWNB5aoN74jJcAlzXW5Ppb7+IdFKEGzJURH8CGCq+YZwELQ44Sp0hcc+4PdnoNJ
+         4oFX0Bqup2Z06V0fBATaPq4jZFI4rxMNlHUjS68H0C1nSGSHWnce7OWvxyGpAL+va2LW
+         VLZlADuenDtDsEsU3xgUOJ8hQfsogFWEPmjobUk0/K2damie1UODwL4UhZdWehBdbo+d
+         7K9d6b/oXQdvumSNfq2FxEEnnMZ5povQ0GuqkCZzKT4Lp7ba/aJw2QchPNmtdzNvezl/
+         OIuA==
+X-Gm-Message-State: ABuFfohilVqxfIoaUf0BhHsnLY3ODLNGRpE7+xXVO2GfMA8RlENuI3vT
+        iwe5EoIzXVXx4YCuchSe0ZBgvbz6PQPk8/HhIK8=
+X-Google-Smtp-Source: ACcGV62jfh7Nf6P5T4BYKlpLfoClRmUGdWaOYEyBvkURe9KUgaJOO484/HEpgQoBDYxSXiReRjV6QUqgbvN4153Bd8g=
+X-Received: by 2002:ac8:23ed:: with SMTP id r42-v6mr3063193qtr.89.1538604116927;
+ Wed, 03 Oct 2018 15:01:56 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-03_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810030199
+References: <CAPhKKr9vWJ4d8yV7N4=XqaEyKEjC_ZiPX_2RJSR9ZiR9k6yS1w@mail.gmail.com>
+ <20181002202256.vchh4j5k2wfjqdry@oracle.com> <CA+1xoqc+aZkQ01oYwby9pvOv3rVh+Qm7t5iJZ1+iT+t19QY6oA@mail.gmail.com>
+ <20181003191600.ocbplbxdtikltavo@oracle.com>
+In-Reply-To: <20181003191600.ocbplbxdtikltavo@oracle.com>
+From:   Sasha Levin <levinsasha928@gmail.com>
+Date:   Wed, 3 Oct 2018 18:01:45 -0400
+Message-ID: <CA+1xoqf67X54baE7VpXrB_oTqj5JP3gZaq0VRGa8bhQaR7v2Yg@mail.gmail.com>
+Subject: Re: [Announce] LPC 2018: Testing and Fuzzing Microconference
+To:     Dhaval Giani <dhaval.giani@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Alice Ferrazzi <alice.ferrazzi@gmail.com>,
+        khilman@baylibre.com, Tim Bird <tbird20d@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>, labbott@redhat.com,
+        Steven Rostedt <rostedt@goodmis.org>,
+        gustavo.padovan@collabora.co.uk, dan.carpenter@oracle.com,
+        willy@infradead.org, knut.omang@oracle.com
+Cc:     Liam.Howlett@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/03/2018 04:31 PM, Bjorn Helgaas wrote:=0A=
-> =0A=
-> [EXTERNAL EMAIL]=0A=
-> Please report any suspicious attachments, links, or requests for sensitiv=
-e information.=0A=
-> =0A=
-> =0A=
-> [+cc Stephen, Martin (for possible lspci changes)]=0A=
-> =0A=
-> Hi Alexandru,=0A=
-> =0A=
-> On Mon, Sep 03, 2018 at 01:02:28PM -0500, Alexandru Gagniuc wrote:=0A=
->> For certain bandwidth-critical devices (e.g. multi-port network cards)=
-=0A=
->> it is useful to know the available bandwidth to the root complex. This=
-=0A=
->> information is only available via the system log, which doesn't=0A=
->> account for link degradation after probing.=0A=
->>=0A=
->> With a sysfs attribute, we can computes the bandwidth on-demand, and=0A=
->> will detect degraded links.=0A=
->>=0A=
->> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>=0A=
->> ---=0A=
->>   drivers/pci/pci-sysfs.c | 13 +++++++++++++=0A=
->>   1 file changed, 13 insertions(+)=0A=
->>=0A=
->> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c=0A=
->> index 9ecfe13157c0..6658e927b1f5 100644=0A=
->> --- a/drivers/pci/pci-sysfs.c=0A=
->> +++ b/drivers/pci/pci-sysfs.c=0A=
->> @@ -218,6 +218,18 @@ static ssize_t current_link_width_show(struct devic=
-e *dev,=0A=
->>   }=0A=
->>   static DEVICE_ATTR_RO(current_link_width);=0A=
->>   =0A=
->> +static ssize_t available_bandwidth_show(struct device *dev,=0A=
->> +				       struct device_attribute *attr, char *buf)=0A=
->> +{=0A=
->> +	struct pci_dev *pci_dev =3D to_pci_dev(dev);=0A=
->> +	u32 bw_avail;=0A=
->> +=0A=
->> +	bw_avail =3D pcie_bandwidth_available(pci_dev, NULL, NULL, NULL);=0A=
->> +=0A=
->> +	return sprintf(buf, "%u.%03u Gb/s\n", bw_avail / 1000, bw_avail % 1000=
-);=0A=
->> +}=0A=
->> +static DEVICE_ATTR_RO(available_bandwidth);=0A=
-> =0A=
-> Help me understand this.  We already have these sysfs attributes:=0A=
-> =0A=
->    max_link_speed          # eg, 16 GT/s=0A=
->    max_link_width          # eg, 8=0A=
->    current_link_speed      # eg, 16 GT/s=0A=
->    current_link_width      # eg, 8=0A=
-> =0A=
-> so I think the raw materials are already exposed.=0A=
-> > The benefits I see for this new file are that=0A=
-> =0A=
->    - pcie_bandwidth_available() does the work of traversing up the=0A=
->      tree, doing the computations (link width * speed, reduced by=0A=
->      encoding overhead), and finding the minimum, and=0A=
-> =0A=
->    - it re-traverses the path every time we look at it, while the=0A=
->      boot-time check is a one-time event.=0A=
-> =0A=
-> In principle this could all be done in user space with the attributes=0A=
-> that are already exported.  There's some precedent for things like=0A=
-> this in lspci, e.g., "NUMA node" [1], and lspci might even be a more=0A=
-> user-friendly place for users to look for this, as opposed to=0A=
-> searching through sysfs.=0A=
-=0A=
-Parsing the endpoint to root port bandwidth is, in principle, possible =0A=
-from userspace. It's just that in practice it's very clumsy to do, and, =0A=
-as you pointed out, not that reliable.=0A=
-=0A=
-I understand it's not information that all users would jump in the air =0A=
-to know. However, it was important enough for certain use cases, that =0A=
-the kernel already has a very reliable way to calculate it.=0A=
-=0A=
-It seems to me that the most elegant way is to let the kernel tell us, =0A=
-since the kernel already has this facility. To quote one of the texts =0A=
-under Documentation/, it is an elegant way to "avoid reinventing kernel =0A=
-wheels in userspace".=0A=
-=0A=
-Alex=0A=
-=0A=
-> [1] https://git.kernel.org/pub/scm/utils/pciutils/pciutils.git/commit/?id=
-=3D90ec4a6d0ae8=0A=
-> =0A=
->>   static ssize_t secondary_bus_number_show(struct device *dev,=0A=
->>   					 struct device_attribute *attr,=0A=
->>   					 char *buf)=0A=
->> @@ -786,6 +798,7 @@ static struct attribute *pcie_dev_attrs[] =3D {=0A=
->>   	&dev_attr_current_link_width.attr,=0A=
->>   	&dev_attr_max_link_width.attr,=0A=
->>   	&dev_attr_max_link_speed.attr,=0A=
->> +	&dev_attr_available_bandwidth.attr,=0A=
->>   	NULL,=0A=
->>   };=0A=
->>   =0A=
->> -- =0A=
->> 2.17.1=0A=
->>=0A=
-> =0A=
-=0A=
+On Wed, Oct 3, 2018 at 3:16 PM Liam R. Howlett <Liam.Howlett@oracle.com> wrote:
+>
+> * Sasha Levin <levinsasha928@gmail.com> [181002 17:03]:
+> > On Tue, Oct 2, 2018 at 4:44 PM Liam R. Howlett <Liam.Howlett@oracle.com> wrote:
+> > >
+> > > * Dhaval Giani <dhaval.giani@gmail.com> [180919 13:15]:
+> > > > Hi folks,
+> > > >
+> > > > Sasha and I are pleased to announce the Testing and Fuzzing track at
+> > > > LPC [ 1 ]. We are planning to continue the discussions from last
+> > > > year's microconference [2]. Many discussions from the Automated
+> > > > Testing Summit [3] will also continue, and a final agenda will come up
+> > > > only soon after that.
+> > > >
+> > > > Suggested Topics
+> > > >
+> > > > - Syzbot/syzkaller
+> > > > - ATS
+> > > > - Distro/stable testing
+> > > > - kernelci
+> > > > - kernelci auto bisection
+> > > > - Unit testing framework
+> > > >
+> > > > We look forward to other interesting topics for this microconference
+> > > > as a reply to this email.
+> > > >
+> > > > Thanks!
+> > > > Dhaval and Sasha
+> > > >
+> > > > [1] https://blog.linuxplumbersconf.org/2018/testing-and-fuzzing-mc/
+> > > > [2] https://lwn.net/Articles/735034/
+> > > > [3] https://elinux.org/Automated_Testing_Summit
+> > >
+> > >
+> > > Hello,
+> > >
+> > > I have a new way to analyze binaries to detect specific calls without
+> > > the need for source.  I would like to discuss Machine Code Trace
+> > > (MCTrace) at the Testing and Fuzzing LPC track.  MCTrace intercepts the
+> > > application prior to execution and does not rely on a specific user
+> > > input. It then decodes the machine instructions to follow all control
+> > > flows to their natural conclusions.  This includes control flows that go
+> > > beyond the boundaries of the static executable code into shared
+> > > libraries. This new technique avoids false positives which could be
+> > > produced by static analysis and includes paths that could be missed by
+> > > dynamic tracing.  This type of analysis could be useful in both testing
+> > > and fuzzing by providing a call graph to a given function.
+> > >
+> > > MCTrace was initially designed to help generate the seccomp() filter
+> > > list, which is a whitelist/blacklist of system calls for a specific
+> > > application. Seccomp filters easily become outdated when the application
+> > > or shared library is updated. This can cause failures or security
+> > > issues [ 1 ].  Other potential uses including examining binary blobs,
+> > > vulnerability analysis, and debugging.
+> >
+> > Hi Liam,
+> >
+> > Is MCTrace available anywhere?
+>
+> Hello Sasha,
+>
+> I missed this email as I was not CC'ed.
+
+Sorry about that, I must have messed something up.
+
+> MCTrace is currently a proof-of-concept and the source is not available.
+
+What is the reason behind it not being available?
+
+> There are a number of instructions that need additional work, but I have
+> some test applications that can be analyzed.  I'd like to explain the
+> concept, why it is useful, and debate other potential uses.
+
+I have 2 concerns here:
+
+1. This is an interesting new field to explore but since no one is
+familiar with how this works, nor anyone can actually play and tinker
+with it, I suspect that the ~30 min you'll have to discuss it will be
+spent on describing how it works and answering basic questions. This
+seems like a better fit for a refereed track session rather than MC.
+
+2. In general, I don't think we can or should discuss a closed source
+project. Sure, we can discuss the concept itself, but in that case I
+don't see how it will benefit the community.
+
+--
+Thanks,
+Sasha
