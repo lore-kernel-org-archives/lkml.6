@@ -2,179 +2,189 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE22C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CA4C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB07D213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:51:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB07D213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E5E2D2098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:53:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nu8gNVfw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E2D2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbeJCWka (ORCPT
+        id S1727444AbeJCWl7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:40:30 -0400
-Received: from mga09.intel.com ([134.134.136.24]:14596 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbeJCWka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:40:30 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 08:51:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
-   d="scan'208";a="91856341"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga002.fm.intel.com with SMTP; 03 Oct 2018 08:51:24 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Wed, 03 Oct 2018 18:51:23 +0300
-Date:   Wed, 3 Oct 2018 18:51:23 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        stable <stable@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Sean Paul <sean@poorly.run>, Dave Airlie <airlied@linux.ie>
-Subject: Re: [PATCH] drm: fb-helper: Validate requested pixel format against
- bpp
-Message-ID: <20181003155123.GJ9144@intel.com>
-References: <20181003110457.9318-1-Eugeniy.Paltsev@synopsys.com>
- <CAKMK7uFP3bMcNSY2L9ZmvFPz6KB51_gMnZ-b7FPCz3NEOafi=w@mail.gmail.com>
- <20181003123047.GK9144@intel.com>
- <1538577004.11140.5.camel@synopsys.com>
- <CAKMK7uGEGQbg=Us3_C25JXvKR084fP0qLif1hHttMYq=xNAZ7g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKMK7uGEGQbg=Us3_C25JXvKR084fP0qLif1hHttMYq=xNAZ7g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 3 Oct 2018 18:41:59 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34731 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727221AbeJCWl7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 18:41:59 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z4-v6so6722813wrb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 08:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vGd85nOuYerT55AxFzZUXNAAK6duCOFyRC4cb8TBE2o=;
+        b=Nu8gNVfwiacV/OVh6zh2skiV2k76a8YZSYKnLPcRvIccyR+q/96av2Nd7eXWEqbDYt
+         9q40tFZ2fth+j7bA8bm7G9ja25y846HvKoI8HbETHWJWhEUArg0DXaS+aQmrYQ4i8XHv
+         pSLRLVI3klkcNP7bmBf8IIRjKC11gR0C+UpWQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vGd85nOuYerT55AxFzZUXNAAK6duCOFyRC4cb8TBE2o=;
+        b=NikRS/6nj8m/M7cIobuz4LTo3YJkr9jD/7mMEfYZQqYS411MrBzoxBAKWxcxWP2QAs
+         /oKHpF1/VtCV3yrjz5falXpSqQjYPylUbmxH1bQYlfGcZLW4J8TgxK5q/iiIFgFw93+b
+         c3UxbB8HMIQv9Bmqkkg9UzqvgUMdo8I79FDn3oZyY6FazwYdMJtyy+26GhXkWhseIKzu
+         m1udw4CTVLKAbenAIjoQ6EW8y+uwYYG3nCS2HL23cieikYUzfatK066aqN4sJM4aWh7+
+         NjAGSv5eqLET3ONtbnGF3jO+iOfknWZpvO2GWJHrHDLOtoW+Jzo3vOKCX2YkrwjsFaYh
+         FVXQ==
+X-Gm-Message-State: ABuFfoiw9Dv/wupZucNsLKO1c6Y4PSkzBfurvf0CQVbM9qfFfJB4P6kg
+        wYyEWGRAkOSPwkLfRks5hkAv8Q==
+X-Google-Smtp-Source: ACcGV63F/jJ3loqz5JnvxaMmQ7z/Kt9k8nYt1OAAuqCJB3MR16yTqgiXjtsR+NjQF7NWcInBuHH4zw==
+X-Received: by 2002:adf:9a38:: with SMTP id z53-v6mr1847992wrb.75.1538581979966;
+        Wed, 03 Oct 2018 08:52:59 -0700 (PDT)
+Received: from [192.168.43.112] ([31.157.182.99])
+        by smtp.gmail.com with ESMTPSA id w11-v6sm2368521wrn.65.2018.10.03.08.52.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 08:52:59 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH] block: BFQ default for single queue devices
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <BN3PR0401MB164003C967C45F2681F503A7E7E90@BN3PR0401MB1640.namprd04.prod.outlook.com>
+Date:   Wed, 3 Oct 2018 17:52:57 +0200
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jan Kara <jack@suse.cz>,
+        "aherrmann@suse.com" <aherrmann@suse.com>,
+        "mgorman@suse.com" <mgorman@suse.com>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bfq-iosched@googlegroups.com" <bfq-iosched@googlegroups.com>,
+        "oleksandr@natalenko.name" <oleksandr@natalenko.name>,
+        Mark Brown <broonie@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <44614924-FF19-4C99-B04F-93C032B74395@linaro.org>
+References: <20181002124329.21248-1-linus.walleij@linaro.org>
+ <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
+ <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
+ <1538550325.14984.108.camel@gmail.com>
+ <CACRpkdaLZXGKMQGJPH02p2QPkxUDA03Y=cu_wBR_+rFaLWTw7g@mail.gmail.com>
+ <BN3PR0401MB164003C967C45F2681F503A7E7E90@BN3PR0401MB1640.namprd04.prod.outlook.com>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 05:29:34PM +0200, Daniel Vetter wrote:
-> On Wed, Oct 3, 2018 at 4:30 PM Eugeniy Paltsev
-> <eugeniy.paltsev@synopsys.com> wrote:
-> >
-> > On Wed, 2018-10-03 at 15:30 +0300, Ville Syrjälä wrote:
-> > > On Wed, Oct 03, 2018 at 01:36:00PM +0200, Daniel Vetter wrote:
-> > > > On Wed, Oct 3, 2018 at 1:05 PM Eugeniy Paltsev
-> > > > <Eugeniy.Paltsev@synopsys.com> wrote:
-> > > > >
-> > > > > Validate requested pixel format against bits_per_pixel to reject
-> > > > > invalid formats with subcomponents length sum is greater than requested
-> > > > > bits_per_pixel.
-> > > > >
-> > > > > weston 5.0.0 with fbdev backend tries to set up an ARGB x8r8g8b8 pixel
-> > > > > format without bits_per_pixel updating. So it can request
-> > > > > x8r8g8b8 with 16 bpp which is obviously incorrect and should be
-> > > > > rejected.
-> > > > >
-> > > > > Cc: stable@vger.kernel.org
-> > > > > Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> > > >
-> > > > drm fbdev emulation doesn't support changing the pixel format at all.
-> > > > I think we should reject all such request, not just the invalid ones.
-> > > > Can you pls respin?
-> > >
-> > > FYI I once posted a patch to tighten up the fb-helper pixel format
-> > > stuff:
-> > > https://patchwork.freedesktop.org/patch/203189/
-> >
-> >
-> > Hi Daniel,
-> >
-> > will you take Ville's patch or should I create the new one which is only related
-> > to new pixel format validation in drm_fb_helper_check_var() ?
-> 
-> Ville's patch isn't the bugfix we're looking for, but a draft version
-> of what adding proper format support in drm's fbdev emulation could
-> look like. With lots&lots of open questions.
 
-Actually it does pretty much what you seem to be asking for.
-Ie. reject any attempt to change the pixel format. Not really
-sure how to do it much more minimally.
 
-Hmm. Oh there is a more minimal way actually. I mistakenly remembered
-that fbdev clobbers info->var already before check_var(), but actually
-it only does that before set_par(). So I guess all we really need is
-to compare the fb_bitfields/bits_per_pixel/etc. between info->var
-and the passed in var.
+> Il giorno 03 ott 2018, alle ore 09:42, Damien Le Moal =
+<damien.lemoal@wdc.com> ha scritto:
+>=20
+> On 2018/10/03 16:18, Linus Walleij wrote:
+>> On Wed, Oct 3, 2018 at 9:05 AM Artem Bityutskiy <dedekind1@gmail.com> =
+wrote:
+>>> On Wed, 2018-10-03 at 08:29 +0200, Paolo Valente wrote:
+>>>> So, I do understand your need for conservativeness, but, after so =
+much
+>>>> evidence on single-queue devices, and so many years! :), what's the
+>>>> point in keeping Linux worse for virtually everybody, by default?
+>>>=20
+>>> Sounds like what we just need a mechanism for the device (ubi block =
+in
+>>> this case) to select the I/O scheduler. I doubt enhancing the =
+default
+>>> scheduler selection logic in 'elevator.c' is the right answer. Just
+>>> give the driver authority to override the defaults.
+>>=20
+>> This might be true in the wider sense (like for what scheduler to
+>> select for an NVME device with N channels) but $SUBJECT is just
+>> trying to select BFQ (if available) for devices with one and only one
+>> hardware queue.
+>>=20
+>> That is AFAICT the only reasonable choice for anything with just
+>> one hardware queue as things stand right now.
+>>=20
+>> I have a slight reservation for the weird outliers like loopdev, =
+which
+>> has "one hardware queue" (.nr_hw_queues =3D=3D 1) though this
+>> makes no sense at all. So I would like to know what people think
+>> about that. Maybe we should have .nr_queues and .nr_hw_queues
+>> where the former is the number of logical queues and the latter
+>> the actual number of hardware queues.
+>=20
+> There is another class of outliers: host-managed SMR disks (SATA and =
+SCSI,
+> definitely single hw queue). For these, using mq-deadline is mandatory =
+in many
+> cases in order to guarantee sequential write command delivery to the =
+device
+> driver. Having the default changed to bfq, which as far as I know is =
+not SMR
+> friendly (can sequential writes within a single zone be reordered ?) =
+is asking
+> for troubles (unaligned write errors showing up).
+>=20
 
-> Not anywhere near ready
-> for merging, and definitely not stable backport material.
-> 
-> So yes, still want the minimal bugfix.
-> -Daniel
-> 
-> >
-> >
-> > > > Thanks, Daniel
-> > > >
-> > > > > ---
-> > > > >  drivers/gpu/drm/drm_fb_helper.c | 7 +++++++
-> > > > >  1 file changed, 7 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> > > > > index 16ec93b75dbf..4f39da07f053 100644
-> > > > > --- a/drivers/gpu/drm/drm_fb_helper.c
-> > > > > +++ b/drivers/gpu/drm/drm_fb_helper.c
-> > > > > @@ -1610,6 +1610,13 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
-> > > > >                 return -EINVAL;
-> > > > >         }
-> > > > >
-> > > > > +       if ((var->green.length + var->blue.length + var->red.length +
-> > > > > +           var->transp.length) > var->bits_per_pixel) {
-> > > > > +               DRM_DEBUG("fb requested pixel format can't fit in %d bpp\n",
-> > > > > +                         var->bits_per_pixel);
-> > > > > +               return -EINVAL;
-> > > > > +       }
-> > > > > +
-> > > > >         switch (var->bits_per_pixel) {
-> > > > >         case 16:
-> > > > >                 depth = (var->green.length == 6) ? 16 : 15;
-> > > > > --
-> > > > > 2.14.4
-> > > > >
-> > > > > _______________________________________________
-> > > > > dri-devel mailing list
-> > > > > dri-devel@lists.freedesktop.org
-> > > > > https://urldefense.proofpoint.com/v2/url?u=https-3A__lists.freedesktop.org_mailman_listinfo_dri-2Ddevel&d=DwIDAw&c=DPL6_X_6JkXFx7AXWqB0tg&r=ZlJN
-> > > > > 1MriPUTkBKCrPSx67GmaplEUGcAEk9yPtCLdUXI&m=f12ZyEESIeavtqCUKutiZ9F6xtRFC2UUvdqnM4ywBx8&s=CPS8taMiYbIgXo-fxhqErOJXvO6PMTzmr-BNnGJIoy0&e=
-> > > >
-> > > >
-> > > >
-> > > > --
-> > > > Daniel Vetter
-> > > > Software Engineer, Intel Corporation
-> > > > +41 (0) 79 365 57 48 - https://urldefense.proofpoint.com/v2/url?u=http-3A__blog.ffwll.ch&d=DwIDAw&c=DPL6_X_6JkXFx7AXWqB0tg&r=ZlJN1MriPUTkBKCrPSx67
-> > > > GmaplEUGcAEk9yPtCLdUXI&m=f12ZyEESIeavtqCUKutiZ9F6xtRFC2UUvdqnM4ywBx8&s=Vt8OX9s9ljSK6GDgbnwsF-Yd35fbBUfe8SBV2jPnVaQ&e=
-> > > > _______________________________________________
-> > > > dri-devel mailing list
-> > > > dri-devel@lists.freedesktop.org
-> > > > https://urldefense.proofpoint.com/v2/url?u=https-3A__lists.freedesktop.org_mailman_listinfo_dri-2Ddevel&d=DwIDAw&c=DPL6_X_6JkXFx7AXWqB0tg&r=ZlJN1M
-> > > > riPUTkBKCrPSx67GmaplEUGcAEk9yPtCLdUXI&m=f12ZyEESIeavtqCUKutiZ9F6xtRFC2UUvdqnM4ywBx8&s=CPS8taMiYbIgXo-fxhqErOJXvO6PMTzmr-BNnGJIoy0&e=
-> > >
-> > >
-> > --
-> >  Eugeniy Paltsev
-> 
-> 
-> 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Hi Damien,
+actually I have followed threads on SMR device, and have already looked
+into this.  I'm sorry for not having mentioned it in my first reply.
 
--- 
-Ville Syrjälä
-Intel
+My plan is to simply port this feature from mq-deadline to bfq.  It
+should be really straightforward, especially after the testing you did
+through mq-deadline.  Even if I'm missing some less trivial hidden
+issue, I guess it won't be impossible to address.
+
+If it may be useful for the outcome of this thread, I'm willing to
+raise the priority of this change to bfq.
+
+> A while back, we already had this discussion with Jens and Christoph =
+on the list
+> to allow device drivers to set a sensible default I/O scheduler for =
+devices with
+> "special needs" (e.g. host-managed SMR). At the time, the conclusion =
+was that
+> udev (or something alike in userland) is better suited to set a =
+correct scheduler.
+>=20
+> Of note also is that host-managed like sequential zone devices are =
+also likely
+> to show up soon with the work being done in the NVMe standard on the =
+new "Zoned
+> namespace" feature proposal. These devices will also require a =
+scheduler like
+> mq-deadline guaranteeing per-zone in-order delivery of sequential =
+write
+> requests. Looking only at the number of queues of the device is not =
+enough to
+> choose the best (most reasonnable/appropriate) scheduler.
+>=20
+
+Until bfq simply handles SMR devices too.
+
+Thanks,
+Paolo
+
+> --=20
+> Damien Le Moal
+> Western Digital Research
+
