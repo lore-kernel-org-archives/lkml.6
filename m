@@ -2,120 +2,196 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C4EC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBB2C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A69A12089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:16:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A69A12089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 73FE521476
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:16:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73FE521476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbeJDBFn (ORCPT
+        id S1727374AbeJDBGT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 21:05:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40208 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726851AbeJDBFn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 21:05:43 -0400
-Received: from localhost (unknown [104.132.0.111])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00CA2AB2;
-        Wed,  3 Oct 2018 18:16:12 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 11:16:12 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Helge Deller <deller@gmx.de>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        John David Anglin <dave.anglin@bell.net>
-Subject: Re: [GIT PULL] parisc fixes for kernel v4.19
-Message-ID: <20181003181612.GB28575@kroah.com>
-References: <20181002210213.GA17826@ls3530.fritz.box>
- <20181002211645.GA6454@kroah.com>
- <ad45f249-e064-d5a4-c658-eaa03bb3a04a@gmx.de>
- <20181002222452.GB11788@kroah.com>
- <dbfa0162-8ed1-b16e-a418-da3b92c76230@gmx.de>
+        Wed, 3 Oct 2018 21:06:19 -0400
+Received: from mga14.intel.com ([192.55.52.115]:16211 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726851AbeJDBGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 21:06:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 11:16:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
+   d="scan'208";a="94355446"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.135]) ([10.24.14.135])
+  by fmsmga004.fm.intel.com with ESMTP; 03 Oct 2018 11:16:42 -0700
+Subject: Re: [PATCH 2/3] x86/intel_rdt: CBM overlap should also check for
+ overlap with CDP peer
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     fenghua.yu@intel.com, tony.luck@intel.com, jithu.joseph@intel.com,
+        gavin.hindman@intel.com, dave.hansen@intel.com, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1537987801.git.reinette.chatre@intel.com>
+ <262e12b66c238517c4766190dd493d937825f563.1537987801.git.reinette.chatre@intel.com>
+ <alpine.DEB.2.21.1810030848580.1435@nanos.tec.linutronix.de>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <6fc60e52-8f93-6135-78c0-254676c0c375@intel.com>
+Date:   Wed, 3 Oct 2018 11:16:40 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dbfa0162-8ed1-b16e-a418-da3b92c76230@gmx.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <alpine.DEB.2.21.1810030848580.1435@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Arnd as he wrote the patch in question here...
+Hi Thomas,
 
-On Wed, Oct 03, 2018 at 04:47:30PM +0200, Helge Deller wrote:
-> On 03.10.2018 00:24, Greg Kroah-Hartman wrote:
-> > On Tue, Oct 02, 2018 at 11:46:11PM +0200, Helge Deller wrote:
-> >> Hi Greg,
-> >>
-> >> On 02.10.2018 23:16, Greg Kroah-Hartman wrote:
-> >>> On Tue, Oct 02, 2018 at 11:02:13PM +0200, Helge Deller wrote:
-> >>>> please pull a last set of fixes for the parisc architecture for kernel 4.19 from:
-> >>>>
-> >>>>   git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-4.19-3
-> >>>>
-> >>>> The major change is for parisc64 to use a 64-bit suseconds_t type to
-> >>>> match what glibc expects for 64-bit userspace. It's an ABI change, but
-> >>>> since we don't have a 64-bit userspace on parisc yet, it won't introduce
-> >>>> a breakage.
-> >>>
-> >>> Isn't it a bit "late" in the release cycle for such a change?  Why not
-> >>> do this on the -rc1 release?
-> >>
-> >> I've tagged it for stable release.
-> >> So, it can go in now, or just wait until -rc1 and go in later.
-> > 
-> > Why is a major API change a viable stable change?
+On 10/3/2018 12:02 AM, Thomas Gleixner wrote:
+> On Wed, 26 Sep 2018, Reinette Chatre wrote:
+>>  /**
+>> - * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
+>> + * _rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
+>>   * @r: Resource to which domain instance @d belongs.
+>>   * @d: The domain instance for which @closid is being tested.
+>>   * @cbm: Capacity bitmask being tested.
+>> @@ -1049,8 +1048,8 @@ static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
+>>   *
+>>   * Return: false if CBM does not overlap, true if it does.
+>>   */
+>> -bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+>> -			   u32 _cbm, int closid, bool exclusive)
+>> +static bool _rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+>> +				   u32 _cbm, int closid, bool exclusive)
 > 
-> Of course it's not.
-> Esp. not if an API has been used already.
-> IMHO, this case is really different though... 
+> Existing issue. The documentation uses @cbm, but the argument is _cbm.
+
+Thanks for spotting this.
+
 > 
-> > What bugfix does it provide?
+> Also please make this __rdtgroup_cbm_overlaps(). Double underscores are
+> standing more out.
+
+Will do.
+
 > 
-> It fixes that code in stable kernels which would return wrong
-> time values *if* someone would create a libc for 64-bit parisc
-> and would run it with those "stable" kernels.
-> Fixing it now has no side-effects, the change is a trivial
-> 2-line-removal patch, would bring the code in sync with
-> newer kernel source code, and it really fixes existing code. 
+>>  {
+>>  	unsigned long *cbm = (unsigned long *)&_cbm;
+>>  	unsigned long *ctrl_b;
+>> @@ -1087,6 +1086,44 @@ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+>>  	return false;
+>>  }
+>>  
+>> +/**
+>> + * rdtgroup_cbm_overlaps - Does CBM overlap with other use of hardware
+>> + * @r: Resource to which domain instance @d belongs.
+>> + * @d: The domain instance for which @closid is being tested.
+>> + * @cbm: Capacity bitmask being tested.
+>> + * @closid: Intended closid for @cbm.
+>> + * @exclusive: Only check if overlaps with exclusive resource groups
+>> + *
+>> + * Resources that can be allocated using a CBM can use the CBM to control
+>> + * the overlap of these allocations. rdtgroup_cmb_overlaps() is the test
+>> + * for overlap. Overlap test is not limited to the specific resource for
+>> + * which the CBM is intended though - when dealing with CDP resources that
+>> + * share the underlying hardware the overlap check should be performed on
+>> + * the CDP resource sharing the hardware also.
+>> + *
+>> + * Refer to description of _rdtgroup_cbm_overlaps() for the details of the
+>> + * overlap test.
+>> + *
+>> + * Return: true if CBM overlap detected, false if there is no overlap
+>> + */
+>> +bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+>> +			   u32 _cbm, int closid, bool exclusive)
 > 
-> I still believe that this justifies for a backport.
+> Ditto. And here is no reason for using _cbm.
+
+Thanks for spotting this also, will do.
+
 > 
-> Nevertheless, if you really disagree, I'm fine dropping the 
-> backport to stable and will only push it in the next
-> merge window for v4.20.
+>> +{
+>> +	struct rdt_resource *r_cdp;
+>> +	struct rdt_domain *d_cdp;
+>> +	bool ret;
+>> +
+>> +	ret = _rdtgroup_cbm_overlaps(r, d, _cbm, closid, exclusive);
+>> +	if (ret)
+>> +		return ret;
+> 
+>   	if (__rdtgroup_cbm_overlaps(r, d, _cbm, closid, exclusive))
+> 		return true;
+> 
+>> +
+>> +	if (rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp) == 0)
+>> +		return _rdtgroup_cbm_overlaps(r_cdp, d_cdp, _cbm,
+>> +					      closid, exclusive);
+> 
+> 	if (rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp) < 0)
+> 		return false;
+> 
+> 	return __rdtgroup_cbm_overlaps(r_cpd, d_cdp, _cbm, closid, exclusive);
+> 
+> Makes the whole thing more obvious.
 
-To clarify, you have no users of this api anywhere (hopefully), and so
-the patch in question prevents anyone from using the api in the future.
-This makes the suseconds_t handling easier for some reason because only
-sparc32 is a "problem" now, right?
+I think a different change is needed to support the request from your
+review of the first patch to propagate that unthinkable error where only
+one of the CDP peers could have an rdt_domain associated with it.
 
-So I don't see the "bug" that is being fixed here.  I would have pushed
-back on the submission for this for the stable trees as well, this isn't
-anything that anyone is using, so there's nothing to "fix" that I can
-tell.
+In the above that error in question from rdt_cdp_peer_get() will be lost.
 
-Yes, doing it in the "future" is fine, to prevent anyone from making
-this mistake (are new machines even being made for this arch?)  But I
-don't see how this is a -stable issue.
+I could do the following in support of propagating that error (note that
+in support of the code below __rdtgroup_cbm_overlaps() also changes to
+return int instead of bool):
 
-In this series, only the first patch, would seem to be a real fix, but
-even that one isn't.  You are just using a #define for a magic number,
-one that will never change either way (the define will never change.) So
-that too isn't really a fix, just a code cleanup.
+int rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+                          u32 cbm, int closid, bool exclusive)
+{
+        struct rdt_resource *r_cdp;
+        struct rdt_domain *d_cdp;
+        int ret;
 
-So I am strongly inclined to just not take any of these right now.
+        if (__rdtgroup_cbm_overlaps(r, d, cbm, closid, exclusive))
+                return 1;
 
-thanks,
+        ret = rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp);
+        if (ret == -ENOENT) {
+                return 0;
+        } else if (ret == -EINVAL) {
+                rdt_last_cmd_puts("Error finding CDP peer\n");
+                return ret;
+        } else {
+                return  __rdtgroup_cbm_overlaps(r_cdp, d_cdp, cbm,
+                                                closid, exclusive);
+        }
 
-greg k-h
+        return -EINVAL;
+}
+
+With the above change in rdtgroup_cbm_overlaps() the call sites then
+change to for example:
+
+        ret = rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, true);
+        if (ret < 0) {
+                /* last_cmd_status already populated with error */
+                return -EINVAL;
+        } else if (ret == 1) {
+                rdt_last_cmd_puts("overlaps with exclusive group\n");
+                return -EINVAL;
+        }
+        /* fall through when no overlap detected */
+
+Would this be acceptable?
+
+Thank you very much
+
+Reinette
