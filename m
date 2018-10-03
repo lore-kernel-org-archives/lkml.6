@@ -2,112 +2,183 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE14C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70730C65BA7
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 168D72098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:52:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 168D72098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3778E213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:53:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="en0Tx24b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3778E213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbeJCQkS (ORCPT
+        id S1727606AbeJCQke (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 12:40:18 -0400
-Received: from mga12.intel.com ([192.55.52.136]:60810 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725976AbeJCQkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 12:40:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 02:52:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,335,1534834800"; 
-   d="scan'208";a="268060754"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by fmsmga005.fm.intel.com with ESMTP; 03 Oct 2018 02:52:18 -0700
-Received: from fmsmsx158.amr.corp.intel.com (10.18.116.75) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 3 Oct 2018 02:52:18 -0700
-Received: from HASMSX109.ger.corp.intel.com (10.184.198.21) by
- fmsmsx158.amr.corp.intel.com (10.18.116.75) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 3 Oct 2018 02:52:18 -0700
-Received: from hasmsx111.ger.corp.intel.com ([169.254.5.194]) by
- hasmsx109.ger.corp.intel.com ([169.254.3.74]) with mapi id 14.03.0319.002;
- Wed, 3 Oct 2018 12:50:58 +0300
-From:   "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-To:     Kai Heng Feng <kai.heng.feng@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        "Berg, Johannes" <johannes.berg@intel.com>,
-        "Coelho, Luciano" <luciano.coelho@intel.com>,
-        linuxwifi <linuxwifi@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [RESEND] [PATCH 3/3] iwlwifi: Load firmware exclusively for
- Intel WiFi
-Thread-Topic: [RESEND] [PATCH 3/3] iwlwifi: Load firmware exclusively for
- Intel WiFi
-Thread-Index: AQHUWvtvTLUUJbuyfESwvLxugqx0LqUNRppQ
-Date:   Wed, 3 Oct 2018 09:50:58 +0000
-Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB301336D868D@HASMSX111.ger.corp.intel.com>
-References: <20181003073556.28154-1-kai.heng.feng@canonical.com>
- <20181003073556.28154-3-kai.heng.feng@canonical.com>
- <87y3bfiees.fsf@kamboji.qca.qualcomm.com>
- <265BAF93-4BFF-4850-92F7-80AC39496473@canonical.com>
-In-Reply-To: <265BAF93-4BFF-4850-92F7-80AC39496473@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTA2NDljYjYtOWUyNC00ZTRjLTk2YTctM2Y0NGUzN2FhN2M4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibEViM2N2RHY2ODA2bEgySjZHSURPbUNyZXJITW9nYTNZazhEUkxZWnhvXC9CbExlUm1EMXhyQzN0T0lMcGxEdysifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.124.193]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 3 Oct 2018 12:40:34 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35921 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbeJCQkd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 12:40:33 -0400
+Received: by mail-it1-f194.google.com with SMTP id c85-v6so7954001itd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 02:52:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=pYZFWZVRPNy0vp6foMV7AM9BjVP/w+VZBx1zARZrPSc=;
+        b=en0Tx24b/cqrcWa5BTJkOdP8M0pqhQwCsUDfZh6ia6AwPicSqp/e7K8Z3pAWshsutw
+         9fqSOpgSQB59umWiOsmmEh8KgmyBubf9FX3oZRDyNid9YQ7aCJiQ5qK9Mi3kqj522qGe
+         HxiKQ1wtj7LHEOLu0elrJD/TWOFydHLBvES+M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=pYZFWZVRPNy0vp6foMV7AM9BjVP/w+VZBx1zARZrPSc=;
+        b=dhUa9CCFIeKLr/sPWYbfC9TSmHjBqQkY/CnsIPwTsNQ7ZdAWSF1hD0NWCSUQWguP90
+         ihf6GRqToYMqWkbLsczetTA5GPnsLd0iQlHAP5/b5vv1f9JDNExtNWoEtX5fNva0TdCD
+         CjyMGlV32cGpye/EXlOcTkE78SzT4c6lC48v7KpRCUirhOacYOJC27flgZkddVRS2YAz
+         8t8qgXQWPN4Acdw/FAC1RIpl7V45P8Tu1FiYVtKl5ZMPQdbJYez9gDHsnhG9yU3nTIdc
+         xn2hAwjF5oAPeCiuDXpyqpfsvnPoCLOqfUEg8rjLFfR7RkMFWxPmMbxEDO/euXM5PmpM
+         yWkg==
+X-Gm-Message-State: ABuFfoiwBJ/2QvGKAscMDO2SdMkyyZLdEcYfEgnQRkMW+sFaV3OBJFCP
+        4+8KUppNNRTBnRzRgN9tVmFkTCGgOt/x3o7PUidWSQ==
+X-Google-Smtp-Source: ACcGV6375l1FSVAd8rPqgg9krzvrUTWKe+lz2WpeLfu/TzEpzFOiUoFtbYPgDv7f1coZAGSIc1mEglyA7mX0PjQkvUk=
+X-Received: by 2002:a05:660c:243:: with SMTP id t3mr650250itk.146.1538560373885;
+ Wed, 03 Oct 2018 02:52:53 -0700 (PDT)
 MIME-Version: 1.0
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Wed, 3 Oct 2018 02:52:13 -0700 (PDT)
+In-Reply-To: <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
+References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com> <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 3 Oct 2018 11:52:13 +0200
+Message-ID: <CAPDyKFrfcQX0-QrMKy=E=rif9-SjSfxc+LTMBUn5oqOquRdqRg@mail.gmail.com>
+Subject: Re: [PATCH V2 3/5] usb: xhci: tegra: Add genpd support
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiANCj4gPiBPbiBPY3QgMywgMjAxOCwgYXQgNToxMCBQTSwgS2FsbGUgVmFsbyA8a3ZhbG9AY29k
-ZWF1cm9yYS5vcmc+IHdyb3RlOg0KPiA+DQo+ID4gS2FpLUhlbmcgRmVuZyA8a2FpLmhlbmcuZmVu
-Z0BjYW5vbmljYWwuY29tPiB3cml0ZXM6DQo+ID4NCj4gPj4gVG8gYXZvaWQgdGhlIGZpcm13YXJl
-IGxvYWRpbmcgcmFjZSBiZXR3ZWVuIEJsdWV0b290aCBhbmQgV2lGaSBvbg0KPiA+PiBJbnRlbCA4
-MjYwLCBsb2FkIGZpcm13YXJlIGV4Y2x1c2l2ZWx5IHdoZW4gQlRfSU5URUwgaXMgZW5hYmxlZC4N
-Cj4gPj4NCj4gPj4gU2lnbmVkLW9mZi1ieTogS2FpLUhlbmcgRmVuZyA8a2FpLmhlbmcuZmVuZ0Bj
-YW5vbmljYWwuY29tPg0KPiA+DQo+ID4gU3RpbGwgdGhlIGNvbW1pdCBsb2cgdGVsbHMgbm90aGlu
-ZyBhYm91dCB0aGUgYWN0dWFsIHByb2JsZW0gd2hpY2gNCj4gPiBtYWtlcyByZXZpZXcgaW1wb3Nz
-aWJsZS4NCj4gDQo+IFNvcnJ5IGZvciB0aGF0LiBUaGUgZmlyc3QgdHdvIHBhdGNoZXMgWzFdIG9u
-bHkgc2VuZHMgdG8gbGludXgtYmx1ZXRvb3RoIGFuZA0KPiBMTUtMLg0KPiANCj4gSSBkb27igJl0
-IGtub3cgd2hhdCByZWFsbHkgaGFwcGVuZWQgYXQgaGFyZHdhcmUvZmlybXdhcmUgbGV2ZWwsIGJ1
-dCBtYWtpbmcNCj4gYnR1c2IgYW5kIGl3bHdpZmkgbG9hZCBmaXJtd2FyZSBzZXF1ZW50aWFsbHkg
-Y2FuIHdvcmthcm91bmQgdGhlIGlzc3VlLg0KPiANCj4gTWF0dCBDaGVuIG1heSBiZSBhYmxlIHRv
-IGV4cGxhaW4gdGhpcyBpc3N1ZSB3aXRoIG1vcmUgZGV0YWlsLg0KPiANCj4gWzFdIGh0dHBzOi8v
-bGttbC5vcmcvbGttbC8yMDE4LzEwLzMvMzIyDQo+DQoNCkkganVzdCByZWFkIHRoZSBjb2RlIG9m
-IHRoaXMgcGF0Y2ggYW5kIEkgZG9uJ3QgcXVpdGUgdW5kZXJzdGFuZC4NCllvdSBoYXZlIGEgZnVu
-Y3Rpb24gdGhhdCBpcyBkZWNsYXJlZCBhcyBhIG5vbi1pbmxpbmUgZnVuY3Rpb24gaW4gdHdvIGRp
-ZmZlcmVudCBoZWFkZXIgZmlsZXM/DQpidGludGVsX2Zpcm13YXJlX2xvY2sgaXMgZGVjbGFyZWQg
-aGVyZToNCg0KLS0tIC9kZXYvbnVsbA0KKysrIGIvaW5jbHVkZS9saW51eC9pbnRlbC13aWZpLWJ0
-LmgNCkBAIC0wLDAgKzEsOCBAQA0KKy8qIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4w
-ICovDQorI2lmbmRlZiBfX0lOVEVMX1dJRklfQlRfSF9fDQorI2RlZmluZSBfX0lOVEVMX1dJRklf
-QlRfSF9fDQorDQordm9pZCBidGludGVsX2Zpcm13YXJlX2xvY2sodm9pZCk7DQoNCkFuZCAuLi4N
-Cg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvYmx1ZXRvb3RoL2J0aW50ZWwuaCBiL2RyaXZlcnMvYmx1
-ZXRvb3RoL2J0aW50ZWwuaA0KaW5kZXggNDFjNjQyY2M1MjNmLi4xMzczZmZjMmI1NzUgMTAwNjQ0
-DQotLS0gYS9kcml2ZXJzL2JsdWV0b290aC9idGludGVsLmgNCisrKyBiL2RyaXZlcnMvYmx1ZXRv
-b3RoL2J0aW50ZWwuaA0KQEAgLTEwMiw2ICsxMDIsOCBAQCBpbnQgYnRpbnRlbF9yZWFkX2Jvb3Rf
-cGFyYW1zKHN0cnVjdCBoY2lfZGV2ICpoZGV2LA0KIAkJCSAgICAgc3RydWN0IGludGVsX2Jvb3Rf
-cGFyYW1zICpwYXJhbXMpOw0KIGludCBidGludGVsX2Rvd25sb2FkX2Zpcm13YXJlKHN0cnVjdCBo
-Y2lfZGV2ICpkZXYsIGNvbnN0IHN0cnVjdCBmaXJtd2FyZSAqZncsDQogCQkJICAgICAgdTMyICpi
-b290X3BhcmFtKTsNCit2b2lkIGJ0aW50ZWxfZmlybXdhcmVfbG9jayh2b2lkKTsNCg0KDQpUaGlz
-IGNhbid0IGJlIHJpZ2h0Lg0K
+[...]
+
+>  static int tegra_xusb_probe(struct platform_device *pdev)
+>  {
+>         struct tegra_xusb_mbox_msg msg;
+> @@ -1038,7 +1095,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                 goto put_padctl;
+>         }
+>
+> -       if (!pdev->dev.pm_domain) {
+> +       if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
+
+I am assuming the original check was because allowing the two
+power-domains to be (wrongly) modeled as one (or as a
+master+subdomain)?
+
+I was thinking that, perhaps we should add a new OF helper function,
+where one can get the number of specifiers being listed in the
+power-domains property. Would that help to easier distinguish what to
+do when dealing with backwards compatibility?
+
+>                 tegra->host_rst = devm_reset_control_get(&pdev->dev,
+>                                                          "xusb_host");
+>                 if (IS_ERR(tegra->host_rst)) {
+> @@ -1069,17 +1126,22 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                                                         tegra->host_clk,
+>                                                         tegra->host_rst);
+>                 if (err) {
+> +                       tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+>                         dev_err(&pdev->dev,
+>                                 "failed to enable XUSBC domain: %d\n", err);
+> -                       goto disable_xusba;
+> +                       goto put_padctl;
+>                 }
+> +       } else {
+> +               err = tegra_xusb_powerdomain_init(&pdev->dev, tegra);
+> +               if (err)
+> +                       goto put_powerdomains;
+>         }
+>
+>         tegra->supplies = devm_kcalloc(&pdev->dev, tegra->soc->num_supplies,
+>                                        sizeof(*tegra->supplies), GFP_KERNEL);
+>         if (!tegra->supplies) {
+>                 err = -ENOMEM;
+> -               goto disable_xusbc;
+> +               goto put_powerdomains;
+>         }
+>
+>         for (i = 0; i < tegra->soc->num_supplies; i++)
+> @@ -1089,7 +1151,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                                       tegra->supplies);
+>         if (err) {
+>                 dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
+> -               goto disable_xusbc;
+> +               goto put_powerdomains;
+>         }
+>
+>         for (i = 0; i < tegra->soc->num_types; i++)
+> @@ -1099,7 +1161,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                                    sizeof(*tegra->phys), GFP_KERNEL);
+>         if (!tegra->phys) {
+>                 err = -ENOMEM;
+> -               goto disable_xusbc;
+> +               goto put_powerdomains;
+>         }
+>
+>         for (i = 0, k = 0; i < tegra->soc->num_types; i++) {
+> @@ -1115,7 +1177,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                                         "failed to get PHY %s: %ld\n", prop,
+>                                         PTR_ERR(phy));
+>                                 err = PTR_ERR(phy);
+> -                               goto disable_xusbc;
+> +                               goto put_powerdomains;
+>                         }
+>
+>                         tegra->phys[k++] = phy;
+> @@ -1126,7 +1188,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>                                     dev_name(&pdev->dev));
+>         if (!tegra->hcd) {
+>                 err = -ENOMEM;
+> -               goto disable_xusbc;
+> +               goto put_powerdomains;
+>         }
+>
+>         /*
+> @@ -1222,12 +1284,13 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>  disable_rpm:
+>         pm_runtime_disable(&pdev->dev);
+>         usb_put_hcd(tegra->hcd);
+> -disable_xusbc:
+> -       if (!pdev->dev.pm_domain)
+> +put_powerdomains:
+> +       if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
+>                 tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
+> -disable_xusba:
+> -       if (!pdev->dev.pm_domain)
+>                 tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+> +       } else {
+> +               tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
+> +       }
+>  put_padctl:
+>         tegra_xusb_padctl_put(tegra->padctl);
+>         return err;
+
+[...]
+
+Kind regards
+Uffe
