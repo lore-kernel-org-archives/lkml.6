@@ -2,94 +2,175 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA472C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7758FC64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89B7C21476
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:30:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B7C21476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 32D9C213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:36:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MOg30Bv7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32D9C213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbeJDDUp (ORCPT
+        id S1727245AbeJDD0N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 23:20:45 -0400
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:51487 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbeJDDUo (ORCPT
+        Wed, 3 Oct 2018 23:26:13 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:32808 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727092AbeJDD0M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 23:20:44 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 337F83000088B;
-        Wed,  3 Oct 2018 22:30:45 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 0CF17AEBA; Wed,  3 Oct 2018 22:30:45 +0200 (CEST)
-Date:   Wed, 3 Oct 2018 22:30:44 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Brian Norris <computersforpeace@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
-        Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v2 00/29] at24: remove at24_platform_data
-Message-ID: <20181003203044.md7767we6nnjv4vh@wunner.de>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
- <20180831194643.GA62862@ban.mtv.corp.google.com>
- <CAMRc=MejZLV1EQ7uAddsxLY0MTUF8WyiBn=F0ZhkWQJpET0EDQ@mail.gmail.com>
+        Wed, 3 Oct 2018 23:26:12 -0400
+Received: by mail-yw1-f68.google.com with SMTP id m127-v6so2881053ywb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 13:36:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=wpFr+Hx2NbVy/3EKUYPoL01zFPb1EwjCpAZhF1GQotc=;
+        b=MOg30Bv7tHPEVqfq4sdyfblhl/GzBPRza0X1/0VWWk5u1jUcBPuObp9VPmc0024Jx2
+         QQgmIFYAlJp4wO4HZV8dPKR+qTVyAK1gpTZg1ascP4mJtCxCBW9bcoWDqIxfOvE8Y/3i
+         YU4A3i/+iWIXQMce0nD1g4RP2hC+AbCnF/k2U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=wpFr+Hx2NbVy/3EKUYPoL01zFPb1EwjCpAZhF1GQotc=;
+        b=cMb9/qx6tMql0Ey+/E5ffCqyiqORuGDPk8dnyzktmJP9GULvhWbvUR7ZHYW4Pei4uQ
+         yJ5xwZnrIa/oZvVu/TOp8nCjP0giqYyVA7ZlzM4+KJsZ+1Wdfi1Uoy6fLXpuM5td+7Xo
+         VQioYbl4fQ+IrouFVkYGjsL9Y6RMji4/C36CZfdt0BhN6Zc2htugW1DJyLH4eyfcHFY7
+         4sBkwnSf87J1/I1/p8a7VzyRv6wnrksINjkKWnLhq4ALIa5ugU0iusIMUU3R3QE5AaKi
+         kIOreYLcrEVx9RkzlXrvYEV8Auq8WuxW2WHUpcd06vhM5XZ/bcdmUu7tZM7Yxl6QbTQT
+         jmzQ==
+X-Gm-Message-State: ABuFfohGmhyzZ8cdkMYJEyPW4TIRubT3U0Qm5iYI06ZIeiPJRdIIHgQg
+        6y6StDzXA/BKul62/+E3QA11WNj/THs=
+X-Google-Smtp-Source: ACcGV60gdpX56X9UpeJQWFt+9nHznX0GNS20u6Lc0if5OL8W6UrH0TEZ8pnP6OxXrRJp5DboKnwj1A==
+X-Received: by 2002:a81:4686:: with SMTP id t128-v6mr1944036ywa.52.1538598973581;
+        Wed, 03 Oct 2018 13:36:13 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id s200-v6sm943276ywg.61.2018.10.03.13.36.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 13:36:11 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id u88-v6so2987778ybi.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 13:36:10 -0700 (PDT)
+X-Received: by 2002:a25:2395:: with SMTP id j143-v6mr1934723ybj.137.1538598970262;
+ Wed, 03 Oct 2018 13:36:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MejZLV1EQ7uAddsxLY0MTUF8WyiBn=F0ZhkWQJpET0EDQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Wed, 3 Oct 2018 13:36:09 -0700 (PDT)
+In-Reply-To: <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com>
+References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-24-keescook@chromium.org>
+ <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
+ <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
+ <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+ <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
+ <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
+ <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
+ <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <alpine.LRH.2.21.1810040416500.13517@namei.org>
+ <CAGXu5j+oPR58oJ06-n7e96-Rmu+ywTW0hud5LhOZ_3UXG5s12w@mail.gmail.com>
+ <alpine.LRH.2.21.1810040427550.13517@namei.org> <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 3 Oct 2018 13:36:09 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLBHN=YSs3Uh49bBJ1SRA1Km2UUD4j37GJJXiKhQq+KPA@mail.gmail.com>
+Message-ID: <CAGXu5jLBHN=YSs3Uh49bBJ1SRA1Km2UUD4j37GJJXiKhQq+KPA@mail.gmail.com>
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+To:     James Morris <jmorris@namei.org>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 10:15:23PM +0200, Bartosz Golaszewski wrote:
-> The only user of arch_get_platform_mac_address() is sparc. It returns
-> an address that seems to be read from some kind of EEPROM. I'm not
-> familiar with this arch though. I'm wondering if we could somehow
-> seamlessly remove this call and then convert all users of
-> eth_platform_get_mac_address() to using device_get_mac_address()?
+On Wed, Oct 3, 2018 at 1:10 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Wed, Oct 3, 2018 at 11:28 AM, James Morris <jmorris@namei.org> wrote:
+>> On Wed, 3 Oct 2018, Kees Cook wrote:
+>>
+>>> On Wed, Oct 3, 2018 at 11:17 AM, James Morris <jmorris@namei.org> wrote:
+>>> > On Tue, 2 Oct 2018, John Johansen wrote:
+>>> >> To me a list like
+>>> >>   lsm.enable=X,Y,Z
+>>> >
+>>> > What about even simpler:
+>>> >
+>>> > lsm=selinux,!apparmor,yama
+>>>
+>>> We're going to have lsm.order=, so I'd like to keep it with a dot
+>>> separator (this makes it more like module parameters, too). You want
+>>> to mix enable/disable in the same string? That implies you'd want
+>>> implicit enabling (i.e. it complements the builtin enabling), which is
+>>> opposite from what John wanted.
+>>>
+>>
+>> Why can't this be the order as well?
+>
+> That was covered extensively in the earlier threads. It boils down to
+> making sure we do not create a pattern of leaving LSMs disabled by
+> default when they are added to the kernel. The v1 series used
+> security= like this:
+>
+> +       security=       [SECURITY] An ordered comma-separated list of
+> +                       security modules to attempt to enable at boot. If
+> +                       this boot parameter is not specified, only the
+> +                       security modules asking for initialization will be
+> +                       enabled (see CONFIG_DEFAULT_SECURITY). Duplicate
+> +                       or invalid security modules will be ignored. The
+> +                       capability module is always loaded first, without
+> +                       regard to this parameter.
+>
+> This meant booting "security=apparmor" would disable all the other
+> LSMs, which wasn't friendly at all. So "security=" was left alone (to
+> leave it to only select the "major" LSM: all major LSMs not matching
+> "security=" would be disabled). So I proposed "lsm.order=" to specify
+> the order things were going to be initialized in, but to avoid kernels
+> booting with newly added LSMs forced-off due to not being listed in
+> "lsm.order=", it had to have implicit fall-back for unlisted LSMs.
+> (i.e. anything missing from lsm.order would then follow their order in
+> CONFIG_LSM_ORDER, and anything missing there would fall back to
+> link-time ordering.) However, then the objection was raised that this
+> didn't provide a way to explicitly disable an LSM. So I proposed
+> lsm.enable/disable, and John argued for CONFIG_LSM_ENABLE over
+> CONFIG_LSM_DISABLE.
 
-My recollection is that '90s SparcStations had a battery-backed memory
-containing the MAC address.  When the battery wore out, the machine
-would fail to boot because the address was either all ones or all zeros.
-I recall setting the MAC address in that memory using Forth from the
-boot prompt.  Ah, the good old days!
+I still think we should have all built LSMs enabled by default, with
+CONFIG_LSM_DISABLE available to turn stuff off. CONFIG_LSM_ORDER
+declares their order, "lsm.order=" works as mentioned, and
+"lsm.enable/disable=" make changes to what's enabled.
+
+(This would be most like the v3 series, swapping CONFIG_LSM_ENABLE for
+CONFIG_LSM_DISABLE.)
+
+It gives us centralized ordering and centralized disabling. Distros
+wanting specific LSMs are already building them, so _also_ adding them
+to CONFIG_LSM_ENABLE seems redundant to me. Distros wanting all the
+LSMs just want to declare the order of initialization, and maybe add
+some to CONFIG_LSM_DISABLE some day, so they use CONFIG_LSM_ORDER.
+
+I should also note that I don't want to leave CONFIG_DEFAULT_SECURITY
+in, since it's just a way to disable all the other majors. I don't
+like this because it will force LSMs to be disabled that don't need to
+be once blob-sharing lands. The whole point of this series is to get
+us away from fixed ordering and thinking about "major" vs "minor" and
+towards "exclusive" or not, where we can continue to slowly chip away
+at exclusivity without breaking anything.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
