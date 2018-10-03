@@ -2,87 +2,294 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDF4C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68017C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C18B20835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:00:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C18B20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 11BAE20835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:00:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JLs8R/Y7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11BAE20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbeJCQrl (ORCPT
+        id S1726762AbeJCQs2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 12:47:41 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58482 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725746AbeJCQrk (ORCPT
+        Wed, 3 Oct 2018 12:48:28 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:38622 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726543AbeJCQs2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 12:47:40 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1g7dwj-0007zV-EW; Wed, 03 Oct 2018 09:59:57 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Jon Flatley <jflat@chromium.org>, linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][usb-next] usb: core: fix memory leak on port_dev_path allocation
-Date:   Wed,  3 Oct 2018 10:59:57 +0100
-Message-Id: <20181003095957.3395-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 3 Oct 2018 12:48:28 -0400
+Received: by mail-yb1-f195.google.com with SMTP id e190-v6so2100331ybb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 03:00:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sj0/Vfa8e42wAjnDEW/Ig6qDQ8K0cd42fUgwkAeCmhQ=;
+        b=JLs8R/Y7uZSWDySr4BQOdVVnCZNWUk5OaV379Er1RYxP3SlEWoKHjlkI84JhVFn/Gw
+         jppw5CQIAKSPLgG/cS/EokbXs6QhVKi9FIxqx+fmn+fPk/Tq+j48i4sq9PNQTtmw8MDh
+         oqK9j857CuA9Zon1OgJIvKzbfjWrKfNfk0V0A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sj0/Vfa8e42wAjnDEW/Ig6qDQ8K0cd42fUgwkAeCmhQ=;
+        b=FmCD23HB8XcCmAJ4e59NZrTdZtq/DcSPljd5AX4Ick8b+ytnjEYvuRv7I2A3lJAG3s
+         0VUslA5o4Mi5RUiMEDM61UnzrRh9+fbRLVwJOvLDntELaMzPz15hguc9N57JtCrE4GyJ
+         gU6hLMrbqk9FPRVEY26IrbcxbThhdASjRg7/GxKC0LhkN7G0WkuVoLyYOqm9S8t7t7S6
+         ed/L5ccP7Opj7wTn1z+vN50h2yu7GFksOSIgnwGyjVZaPYCWPZGdtt5puJby5TLEXLN6
+         wApNUT2NAux3EeS+xPGsufiTqUkR0NUr0R+Ai33drgYTU3ZfmgxVDgxjPt+iQw19/UE1
+         yAAQ==
+X-Gm-Message-State: ABuFfoiwBRbzn6soVazRDx0s2bYeW9Bowz8C4ICSJo7DiIP0rit4Q8GO
+        NwxxIt+CyJ1HJOjKvUaA3vpynPTPDi5WlQ==
+X-Google-Smtp-Source: ACcGV62IXdufnaOFpigPnHl01Hx/fbLGOnfTsNDsWWzdPzk7iR7riLMef5LSBvlDUe/18n9aRJbxnA==
+X-Received: by 2002:a25:b225:: with SMTP id i37-v6mr329684ybj.142.1538560845748;
+        Wed, 03 Oct 2018 03:00:45 -0700 (PDT)
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
+        by smtp.gmail.com with ESMTPSA id 203-v6sm317758ywv.34.2018.10.03.03.00.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 03:00:44 -0700 (PDT)
+Received: by mail-yw1-f48.google.com with SMTP id l79-v6so2022102ywc.7
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 03:00:44 -0700 (PDT)
+X-Received: by 2002:a81:470a:: with SMTP id u10-v6mr330744ywa.164.1538560844012;
+ Wed, 03 Oct 2018 03:00:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20180831074743.235010-1-acourbot@chromium.org>
+ <CAAFQd5ALyeeru36zVYjG6P2U_JWMgxiv0WPnF2DD2OHHd+nHbQ@mail.gmail.com> <CAPBb6MXjsY-JypvyW+m=GbAri9qMg21xpyMXzDbUTG4=eFhavw@mail.gmail.com>
+In-Reply-To: <CAPBb6MXjsY-JypvyW+m=GbAri9qMg21xpyMXzDbUTG4=eFhavw@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Wed, 3 Oct 2018 19:00:32 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5CyC5N05SRZNYj5RJE5HPaC2AecsMvspoiP_a4yZ8P+XA@mail.gmail.com>
+Message-ID: <CAAFQd5CyC5N05SRZNYj5RJE5HPaC2AecsMvspoiP_a4yZ8P+XA@mail.gmail.com>
+Subject: Re: [RFC PATCH] media: docs-rst: Document m2m stateless video decoder interface
+To:     Alexandre Courbot <acourbot@chromium.org>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Sep 11, 2018 at 3:09 PM Alexandre Courbot <acourbot@chromium.org> wrote:
+> On Mon, Sep 10, 2018 at 4:17 PM Tomasz Figa <tfiga@chromium.org> wrote:
+> > On Fri, Aug 31, 2018 at 4:48 PM Alexandre Courbot <acourbot@chromium.org> wrote:
+[snip]
+> > > +Querying capabilities
+> > > +=====================
+> > > +
+> > > +1. To enumerate the set of coded formats supported by the driver, the client
+> > > +   calls :c:func:`VIDIOC_ENUM_FMT` on the ``OUTPUT`` queue.
+> > > +
+> > > +   * The driver must always return the full set of supported formats for the
+> > > +     currently set ``OUTPUT`` format, irrespective of the format currently set
+> > > +     on the ``CAPTURE`` queue.
+> > > +
+> > > +2. To enumerate the set of supported raw formats, the client calls
+> > > +   :c:func:`VIDIOC_ENUM_FMT` on the ``CAPTURE`` queue.
+> > > +
+> > > +   * The driver must return only the formats supported for the format currently
+> > > +     active on the ``OUTPUT`` queue.
+> > > +
+> > > +   * In order to enumerate raw formats supported by a given coded format, the
+> > > +     client must thus set that coded format on the ``OUTPUT`` queue first, and
+> > > +     then enumerate the ``CAPTURE`` queue.
+> >
+> > One thing that we might want to note here is that available CAPTURE
+> > formats may depend on more factors than just current OUTPUT format.
+> > Depending on encoding options of the stream being decoded (e.g. VP9
+> > profile), the list of supported format might be limited to one of YUV
+> > 4:2:0, 4:2:2 or 4:4:4 family of formats, but might be any of them, if
+> > the hardware supports conversion.
+> >
+> > I was wondering whether we shouldn't require the client to set all the
+> > necessary initial codec-specific controls before querying CAPTURE
+> > formats, but since we don't have any compatibility constraints here,
+> > as opposed to the stateful API, perhaps we could just make CAPTURE
+> > queue completely independent and have a source change event raised if
+> > the controls set later make existing format invalid.
+> >
+> > I'd like to ask the userspace folks here (Nicolas?), whether:
+> > 1) we need to know the exact list of formats that are guaranteed to be
+> > supported for playing back the whole video, or
+> > 2) we're okay with some rough approximation here, or
+> > 3) maybe we don't even need to enumerate formats on CAPTURE beforehand?
+>
+> Since user-space will need to parse all the profile and other
+> information and submit it to the kernel anyway, it seems to me that
+> requiring it to submit that information before setting the CAPTURE
+> format makes the most sense. Otherwise all clients should listen for
+> events and be capable of renegotiating the format, which would
+> complicate them some more.
 
-Currently the allocation of port_dev_path from the call to
-kobject_get_path is not being kfree'd, causing a memory leak. Fix
-this by kfree'ing this at the end of the function. Add an extra
-error exit path to fix one of the early leaks when envp[0] fails
-to be allocated.
+I would indeed lean towards just setting the relevant controls here at
+initialization and be done without any source change events.
 
-Detected by CoverityScan, CID#1473771 ("Resource Leak")
+>
+> >
+> > To be honest, I'm not sure 1) is even possible, since the resolution
+> > (or some other stream parameters) could change mid-stream.
+>
+> Even in that case, the client is supposed to handle that change, so I
+> don't think this makes a big difference compared to initial
+> negotiation?
 
-Fixes: 201af55da8a3 ("usb: core: added uevent for over-current")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/core/hub.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Indeed.
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 7801bb30bdba..8ae781ce1a80 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -5168,7 +5168,7 @@ static void port_over_current_notify(struct usb_port *port_dev)
- 
- 	envp[0] = kasprintf(GFP_KERNEL, "OVER_CURRENT_PORT=%s", port_dev_path);
- 	if (!envp[0])
--		return;
-+		goto exit_path;
- 
- 	envp[1] = kasprintf(GFP_KERNEL, "OVER_CURRENT_COUNT=%u",
- 			port_dev->over_current_count);
-@@ -5180,6 +5180,8 @@ static void port_over_current_notify(struct usb_port *port_dev)
- 	kfree(envp[1]);
- exit:
- 	kfree(envp[0]);
-+exit_path:
-+	kfree(port_dev_path);
- }
- 
- static void port_event(struct usb_hub *hub, int port1)
--- 
-2.17.1
+[snip]
+> > > +6. *[optional]* Choose a different ``CAPTURE`` format than suggested via
+> > > +   :c:func:`VIDIOC_S_FMT` on ``CAPTURE`` queue. It is possible for the client to
+> > > +   choose a different format than selected/suggested by the driver in
+> > > +   :c:func:`VIDIOC_G_FMT`.
+> > > +
+> > > +    * **Required fields:**
+> > > +
+> > > +      ``type``
+> > > +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``
+> > > +
+> > > +      ``pixelformat``
+> > > +          a raw pixel format
+> > > +
+> > > +    .. note::
+> > > +
+> > > +       Calling :c:func:`VIDIOC_ENUM_FMT` to discover currently available
+> > > +       formats after receiving ``V4L2_EVENT_SOURCE_CHANGE`` is useful to find
+> > > +       out a set of allowed formats for given configuration, but not required,
+> > > +       if the client can accept the defaults.
+> >
+> > V4L2_EVENT_SOURCE_CHANGE was not mentioned in earlier steps. I suppose
+> > it's a leftover from the stateful API? :)
+>
+> Correct. :)
+>
+> >
+> > Still, I think we may eventually need source change events, because of
+> > the reasons I mentioned above.
+>
+> I'd personally prefer to do without, but if they become a requirement
+> (which I am not convinced of yet) we will indeed have no choice.
+>
 
+Agreed.
+
+[snip]
+> > > +Decoding
+> > > +========
+> > > +
+> > > +For each frame, the client is responsible for submitting a request to which the
+> > > +following is attached:
+> > > +
+> > > +* Exactly one frame worth of encoded data in a buffer submitted to the
+> > > +  ``OUTPUT`` queue,
+> >
+> > Just to make sure, in case of H.264, that would include all the slices
+> > of the frame in one buffer, right?
+>
+> Yes. I thought "one frame worth of encoded data" already carried that
+> meaning, but do you think this should be said more explicitly?
+
+No strong opinion. Perhaps we could further specify this in the
+description of each format.
+
+[snip]
+> > > Decoding errors are signaled by the ``CAPTURE`` buffers being
+> > > +dequeued carrying the ``V4L2_BUF_FLAG_ERROR`` flag.
+> > > +
+> > > +The contents of source ``OUTPUT`` buffers, as well as the controls that must be
+> > > +set on the request, depend on active coded pixel format and might be affected by
+> > > +codec-specific extended controls, as stated in documentation of each format
+> > > +individually.
+> > > +
+> > > +MPEG-2 buffer content and controls
+> > > +----------------------------------
+> > > +The following information is valid when the ``OUTPUT`` queue is set to the
+> > > +``V4L2_PIX_FMT_MPEG2_SLICE`` format.
+> >
+> > Perhaps we should document the controls there instead? I think that
+> > was the conclusion from the discussions over the stateful API.
+>
+> Do you mean, on the format page? Sounds reasonable.
+>
+
+Yep.
+
+[snip]
+> > > +Dynamic resolution change
+> > > +=========================
+> > > +
+> > > +If the client detects a resolution change in the stream, it may need to
+> > > +reallocate the ``CAPTURE`` buffers to fit the new size.
+> > > +
+> > > +1. Wait until all submitted requests have completed and dequeue the
+> > > +   corresponding output buffers.
+> > > +
+> > > +2. Call :c:func:`VIDIOC_STREAMOFF` on the ``CAPTURE`` queue.
+> > > +
+> > > +3. Free all ``CAPTURE`` buffers by calling :c:func:`VIDIOC_REQBUFS` on the
+> > > +   ``CAPTURE`` queue with a buffer count of zero.
+> > > +
+> > > +4. Set the new format and resolution on the ``CAPTURE`` queue.
+> > > +
+> > > +5. Allocate new ``CAPTURE`` buffers for the new resolution.
+> > > +
+> > > +6. Call :c:func:`VIDIOC_STREAMON` on the ``CAPTURE`` queue to resume the stream.
+> > > +
+> > > +The client can then start queueing new ``CAPTURE`` buffers and submit requests
+> > > +to decode the next buffers at the new resolution.
+> >
+> > There is some inconsistency here. In initialization sequence, we set
+> > OUTPUT format to coded width and height and had the driver set a sane
+> > default CAPTURE format. What happens to OUTPUT format? It definitely
+> > wouldn't make sense if it stayed at the initial coded size.
+>
+> You're right. We need to set the resolution on OUTPUT first, and maybe
+> reallocate input buffers as well since a resolution increase may mean
+> they are now too small to contain one encoded frame.
+>
+> Actually, in the case of stateless codecs a resolution change may mean
+> re-doing initialization from step #2. I suppose a resolution change
+> can only happen on an IDR frame, so all the user-maintained state
+> could be dropped anyway.
+>
+
+One could reinitialize, which would work, but could be costly.
+Technically one could just use bigger frame buffers from the start,
+which would make a resolution change just a no-op . The only thing
+that would change would be visible size, but that's fully handled by
+the user and nothing a stateless driver should be concerned with.
+
+> >
+> > > +
+> > > +Drain
+> > > +=====
+> > > +
+> > > +In order to drain the stream on a stateless decoder, the client just needs to
+> > > +wait until all the submitted requests are completed. There is no need to send a
+> > > +``V4L2_DEC_CMD_STOP`` command since requests are processed sequentially by the
+> > > +driver.
+> >
+> > Is there a need to include this section? I feel like it basically says
+> > "Drain sequence: There is no drain sequence." ;)
+>
+> This is mostly to match what we have in the stateful doc. Not saying
+> anything may make it look like this has not been thoroughly tought. :)
+>
+
+I guess we can keep it indeed. Leaving to other to comment.
+
+Best regards,
+Tomasz
