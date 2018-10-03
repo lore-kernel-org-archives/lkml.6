@@ -2,224 +2,144 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C11C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E07C0C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD1002064A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:59:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B68E20645
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:01:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q41sJ55Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1002064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SbzsC7GQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B68E20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbeJCSrO (ORCPT
+        id S1727148AbeJCStF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:47:14 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39859 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbeJCSrO (ORCPT
+        Wed, 3 Oct 2018 14:49:05 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33408 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbeJCStF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:47:14 -0400
-Received: by mail-lf1-f65.google.com with SMTP id w21-v6so3917148lff.6
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 04:59:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FlZqKwjVoeFu/nEuPnA5WnfWrBB8OUWnxD8mhm28kUQ=;
-        b=Q41sJ55ZIFpVmf6K5XSH0egwojzvcE6ZsZ3PIBQmODsuDnashWlNFjt4g8x9dsL3HT
-         VunYEtbc/Z2Wo2piS0jjD212n1ttuDwfprb1bmYAmV6gcX6zGJkcFgVQHclN9Ea/C5Xv
-         rNRkgYviNsOKdgzoE+ZhPuovUzRBzRMn8BorxieQKXJ+Ph961kjgIyeHSWl5NkDEToPX
-         sMR26S4+6Blw6uoMQFHeBIJuvXSKDjBMYTFp5aYXHXkANNn8hm/3cNG63FjbwUz9S+VX
-         foEwefumt3m5qkK3Q/drwEKHkAtk/Q/+OwqoSqdLaDfOZfBTZQTCk1afUn/HNGc2wEOk
-         qzWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=FlZqKwjVoeFu/nEuPnA5WnfWrBB8OUWnxD8mhm28kUQ=;
-        b=BV2wnI5Sx1RJYPeCOJrQa7PrwahI3Sf8zvgrHG+vQoWTGjHseb6VsKNx7J9tOneGK5
-         SpmmsjAjI5UHg2EbYc9K6mc+xCU8Xw4o1r/9tZ0F+elNZIlyZD9hmfPthp/Puy1kWxgg
-         UUWNFbF0aQP4kyZV0jPDTe9tAQxlLnK0+u3kFNZYcc/t/VmScZFww3XszuPHrXjtO3H8
-         4kxgzC8PIT+ViWIGD8T0ehNG52dSITu+/ZhLz6k/N7nnXIyQs23Qzq9mXkn0mlEtPOF7
-         Svyr59rRKN/OhrHHaZIaXxer9P8JH8gfLCEI2UcO8ahWIkGRCV+HIInGe/+pILVDwrYv
-         CXDg==
-X-Gm-Message-State: ABuFfojwaOQJlzuhlfO2pgw2G13PO5l8/aIkEhJ+H71QJD7R1ApQ5v62
-        I3oDt6WfSvh8AkgqYjjK9rdv8y5W
-X-Google-Smtp-Source: ACcGV624WJm+QgZ0BY/GVDAaYUajHyTSVJZoznrMfi2DpdvwMZlJ4d0R3tNlcwY7c3DtSFOW2rrmyg==
-X-Received: by 2002:a19:5118:: with SMTP id f24-v6mr873303lfb.104.1538567946426;
-        Wed, 03 Oct 2018 04:59:06 -0700 (PDT)
-Received: from z50.intranet (78-10-164-223.static.ip.netia.com.pl. [78.10.164.223])
-        by smtp.gmail.com with ESMTPSA id j5-v6sm286654lfb.62.2018.10.03.04.59.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 04:59:05 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [RFC PATCH] mtd: rawnand: ams-delta: use ->exec_op()
-Date:   Wed,  3 Oct 2018 14:00:28 +0200
-Message-Id: <20181003120028.9257-1-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180719081508.5dafebde@bbrezillon>
-References: <20180719081508.5dafebde@bbrezillon>
+        Wed, 3 Oct 2018 14:49:05 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w93C0pSH010552;
+        Wed, 3 Oct 2018 07:00:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1538568051;
+        bh=ye2XyGfY17A4A3VADPys3W4aiEpWYEcRD6tBsYvGDQI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=SbzsC7GQD7N1A1Cnk/2bBqLGf9DKj8OuOtS/laWtuK3B25KU8szkmY8olpmLyo5T1
+         bvBvrPrtE09iZ+E7eRd/kglbASnVfumZiIjTML1IMVNf7zxhlbc36tRuhxZcQgMI/B
+         ey0KwFauoWc72RvlME1/PZdQu+iUq2blVoB5ck78=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w93C0pKC010116;
+        Wed, 3 Oct 2018 07:00:51 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 3 Oct
+ 2018 07:00:51 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 3 Oct 2018 07:00:51 -0500
+Received: from [172.22.137.207] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w93C0pGh008562;
+        Wed, 3 Oct 2018 07:00:51 -0500
+Subject: Re: [RFC PATCH v2 1/9] leds: add TI LMU backlight driver
+To:     Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+CC:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lee.jones@linaro.org>,
+        <linux-omap@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+References: <20180928182954.25446-1-dmurphy@ti.com>
+ <20180928182954.25446-2-dmurphy@ti.com> <20181002075629.GB19677@amd>
+ <23dd6b46-cd16-ee67-3006-76a8dc67a7cb@ti.com>
+ <0be423a9-174c-60ce-0c67-7193c6af3063@gmail.com> <20181002220754.GA20413@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <6f96a5bd-27df-7906-73bf-67bdf848308a@ti.com>
+Date:   Wed, 3 Oct 2018 07:00:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181002220754.GA20413@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace legacy callbacks with ->select_chip() and ->exec_op().
+Hello
 
-Implementation of NAND_OP_WAITRDY_INSTR has been based on legacy
-nand_wait_ready(), otherwise that function would probabaly have to be
-reimplemented inside the driver.  Hence, legacy callback ->dev_ready()
-is still used.
+On 10/02/2018 05:07 PM, Pavel Machek wrote:
+> Hi!
+> 
+>>> We have debated this over and over and now we have 3 different implementations
+>>> available we need to collude on which one we want to support.
+>>>
+>>> Jacek I defer to you and Pavel since you are both LED maintainers.
+>>>
+>>> I can support the dedicated LED drivers but I cannot support the TI LMU only implementation.
+>>
+>> I uphold my previous opinion - please go ahead with moving the support
+>> for non-MFD devices from MFD subsystem to the LED subsystem. And yes -
+>> along with the bindings. This is semantically correct, and yet we don't
+>> have mainline users.
+>>
+>> Pavel - you will have to engage more people for your crusade to prevail.
+>> For now, to speed up the things, I am forced to ignore your NAK.
+>> So NAK to your NAK. Sorry.
+> 
+> No need to be sorry :-).
+> 
+> Lets ignore the code for now, as code can be changed easily.
+> 
+> Bindings are not something you or I maintain, so we don't have final
+> word there, and I have feeling this is not going to go past device
+> tree maintainers. [AFAICT: you can move binding in Documentation/ to
+> different place, that's not a problem; but creating a new binding when
+> old one exists is.]
+> 
+> If you and Dan feel that is okay, you are welcome to try to get the
+> patches past Rob, just please retain the NAK so that he remembers the
+> discussion, and so that it is clear that I don't like the changes.
+> 
+> I believe smart thing to do is to try to do that before working
+> further on the code, but of course, its all up to you :-).
 
-Use of IO_ADDR_R and IO_ADDR_W legacy structure members will be dropped
-later, as soon as the driver is converted to use GPIO API for data I/O.
+I was looking for the review for the ti-lmu.txt binding on patchworks to see what
+the comments were on the review or any explanation from reviewers to
+why this implementation was done in the MFD.
 
-Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
-Hi,
+Maybe there is some historical context that needs to be learned from here from
+1.5 years ago.
 
-I've not tested the change on hardware yet as I'm not sure if:
-- handling of NCE limited to that inside ->select_chip() is
-  sufficient,
-- releasing ALE / CLE immediately after ams_delta_write_buf() is
-  correct.
-Please advise before I break my test hardware :-).
+I cannot seem to find any review posted in the patchworks archive.
+I see reviews posted for the ti-lmu-backlight binding but none from
+the ti-lmu.txt base binding.
 
-Thanks,
-Janusz
+Does anyone have a reference to the review?
 
- drivers/mtd/nand/raw/ams-delta.c | 83 +++++++++++++++++++++++++---------------
- 1 file changed, 52 insertions(+), 31 deletions(-)
+If there is no review then I am wondering how this binding was accepted.
+If there is no review and no current users then I would think that binding
+ modification should be allowed.  But thats just my opinion.
 
-diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
-index 5ba180a291eb..90c283a2c1b7 100644
---- a/drivers/mtd/nand/raw/ams-delta.c
-+++ b/drivers/mtd/nand/raw/ams-delta.c
-@@ -124,46 +124,69 @@ static void ams_delta_read_buf(struct nand_chip *this, u_char *buf, int len)
- 		buf[i] = ams_delta_io_read(priv);
- }
- 
--static u_char ams_delta_read_byte(struct nand_chip *this)
-+static int ams_delta_nand_ready(struct nand_chip *this)
- {
--	u_char res;
--
--	ams_delta_read_buf(this, &res, 1);
-+	struct ams_delta_nand *priv = nand_get_controller_data(this);
- 
--	return res;
-+	return gpiod_get_value(priv->gpiod_rdy);
- }
- 
--/*
-- * Command control function
-- *
-- * ctrl:
-- * NAND_NCE: bit 0 -> bit 2
-- * NAND_CLE: bit 1 -> bit 7
-- * NAND_ALE: bit 2 -> bit 6
-- */
--static void ams_delta_hwcontrol(struct nand_chip *this, int cmd,
--				unsigned int ctrl)
-+static void ams_delta_select_chip(struct nand_chip *this, int n)
- {
- 	struct ams_delta_nand *priv = nand_get_controller_data(this);
- 
--	if (ctrl & NAND_CTRL_CHANGE) {
--		gpiod_set_value(priv->gpiod_nce, !(ctrl & NAND_NCE));
--		gpiod_set_value(priv->gpiod_cle, !!(ctrl & NAND_CLE));
--		gpiod_set_value(priv->gpiod_ale, !!(ctrl & NAND_ALE));
--	}
--
--	if (cmd != NAND_CMD_NONE) {
--		u_char byte = cmd;
-+	if (n > 0)
-+		return;
- 
--		ams_delta_write_buf(this, &byte, 1);
--	}
-+	gpiod_set_value(priv->gpiod_nce, n < 0);
- }
- 
--static int ams_delta_nand_ready(struct nand_chip *this)
-+static int ams_delta_exec_op(struct nand_chip *this,
-+			     const struct nand_operation *op, bool check_only)
- {
- 	struct ams_delta_nand *priv = nand_get_controller_data(this);
-+	const struct nand_op_instr *instr;
-+	int i;
- 
--	return gpiod_get_value(priv->gpiod_rdy);
-+	for (i = 0; i < op->ninstrs; i++) {
-+		instr = &op->instrs[i];
-+
-+		switch (instr->type) {
-+		case NAND_OP_CMD_INSTR:
-+			gpiod_set_value(priv->gpiod_cle, 1);
-+			ams_delta_write_buf(this, &instr->ctx.cmd.opcode, 1);
-+			gpiod_set_value(priv->gpiod_cle, 0);
-+			break;
-+
-+		case NAND_OP_ADDR_INSTR:
-+			gpiod_set_value(priv->gpiod_ale, 1);
-+			ams_delta_write_buf(this, instr->ctx.addr.addrs,
-+					    instr->ctx.addr.naddrs);
-+			gpiod_set_value(priv->gpiod_ale, 0);
-+			break;
-+
-+		case NAND_OP_DATA_IN_INSTR:
-+			ams_delta_read_buf(this, instr->ctx.data.buf.in,
-+					   instr->ctx.data.len);
-+			break;
-+
-+		case NAND_OP_DATA_OUT_INSTR:
-+			ams_delta_write_buf(this, instr->ctx.data.buf.out,
-+					    instr->ctx.data.len);
-+			break;
-+
-+		case NAND_OP_WAITRDY_INSTR:
-+			if (this->legacy.dev_ready) {
-+				nand_wait_ready(this);
-+				break;
-+			}
-+
-+			return nand_soft_waitrdy(this,
-+						 instr->ctx.waitrdy.timeout_ms);
-+		}
-+	}
-+
-+	return 0;
- }
- 
- 
-@@ -213,10 +236,8 @@ static int ams_delta_init(struct platform_device *pdev)
- 	/* Set address of NAND IO lines */
- 	this->legacy.IO_ADDR_R = io_base + OMAP_MPUIO_INPUT_LATCH;
- 	this->legacy.IO_ADDR_W = io_base + OMAP_MPUIO_OUTPUT;
--	this->legacy.read_byte = ams_delta_read_byte;
--	this->legacy.write_buf = ams_delta_write_buf;
--	this->legacy.read_buf = ams_delta_read_buf;
--	this->legacy.cmd_ctrl = ams_delta_hwcontrol;
-+	this->select_chip = ams_delta_select_chip;
-+	this->exec_op = ams_delta_exec_op;
- 
- 	priv->gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
- 	if (IS_ERR(priv->gpiod_rdy)) {
+Dan
+
+
+> 
+> Friends,
+> 									Pavel
+> 
+
+
 -- 
-2.16.4
-
+------------------
+Dan Murphy
