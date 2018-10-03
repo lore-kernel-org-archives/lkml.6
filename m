@@ -2,126 +2,116 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF30C64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BFEC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B54213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:14:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 173A120684
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:15:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="NYdw5n5c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B54213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (1024-bit key) header.d=linuxbox.cz header.i=@linuxbox.cz header.b="O1kS7ZnZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 173A120684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxbox.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbeJCQBq (ORCPT
+        id S1727617AbeJCQDJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 12:01:46 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41957 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbeJCQBp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 12:01:45 -0400
-Received: by mail-ed1-f68.google.com with SMTP id f38-v6so4647312edd.8
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 02:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=U/v++O4Fp8FMAXDS06EdJEZBug3Y5Dw8P2Zp1+Tq25o=;
-        b=NYdw5n5cXMTIAUoAeZu4rQDXHFIs/CdBNQxs/7TFaHpVQB9JQxEFT8VJQ91gwUCT+/
-         vsNvNqR+E1rJpgT/Hgbyr4/aSt/4x41de9jEbu3i07zvYE5k6/gEfs8ZLifbLz6VackA
-         5pgV1zNms9oN1w4ef7UfpTRNMVPTPup5sBlB8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=U/v++O4Fp8FMAXDS06EdJEZBug3Y5Dw8P2Zp1+Tq25o=;
-        b=Gx0aFMFREijtvWymFkoe8kInlAkQtLnCNjIZdLn2K0boY5Z12+qzfKUdrZLtQUeChj
-         nqDdlroTUSg3D13DZaaiJzK0Q6rKf6hdyHAHhkgBtKuE2FcYJ3DiuqxBJCVi0aqCoFXI
-         uPV2rqTQg6Pinl9K/5oSfYagKdDfdIOBtJixn+f0neSBhKd0WXbdHhYROAnjltgb4eGv
-         Fd2hnWmFbM0IpDdJot1PGDqKNrqeXHkv2DyDcN4X7L+Y7/l+iSVBxf399ftMISWG9MJm
-         yC2oC37TMr/htc+gMYrm+IgF+q9WNFGwmrnrouVVYCQw9pksKubuNCr2w04l/J4Xpdim
-         Nakw==
-X-Gm-Message-State: ABuFfohjCtIqQdpncaOdG/yEavTcm5wVHSIKr4JeRNFBSfNkShWxsAQh
-        qhSXjjcOu8ipAe4nj3uHNLp9+A==
-X-Google-Smtp-Source: ACcGV63b4kbM6JRvozMsYVsmGa3+SuobJt9f4s8aGhfjqwvv525E2PLfwS5x+O9N7QxK8iCrv9Knkw==
-X-Received: by 2002:a50:eb42:: with SMTP id z2-v6mr1222307edp.126.1538558053339;
-        Wed, 03 Oct 2018 02:14:13 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id l12-v6sm320479edn.77.2018.10.03.02.14.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Oct 2018 02:14:12 -0700 (PDT)
-Date:   Wed, 3 Oct 2018 11:14:10 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        sean@poorly.run, airlied@linux.ie, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/edid: Add 6 bpc quirk for BOE panel in HP Pavilion
- 15-n233sl
-Message-ID: <20181003091410.GE23685@phenom.ffwll.local>
-Mail-Followup-To: Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        sean@poorly.run, airlied@linux.ie, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20181002152911.4370-1-kai.heng.feng@canonical.com>
+        Wed, 3 Oct 2018 12:03:09 -0400
+Received: from gwu.lbox.cz ([62.245.111.132]:35488 "EHLO gwu.lbox.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727188AbeJCQDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 12:03:09 -0400
+Received: from linuxbox.linuxbox.cz (linuxbox.linuxbox.cz [10.76.66.10])
+        by gwu.lbox.cz (Sendmail) with ESMTPS id w939Emwi025806
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 3 Oct 2018 11:14:48 +0200
+DKIM-Filter: OpenDKIM Filter v2.11.0 gwu.lbox.cz w939Emwi025806
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxbox.cz;
+        s=default; t=1538558090;
+        bh=OJGtlu4YJA72QRgbkRsDEf+Z5Ejz9Z/B9haxFMQHxqI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O1kS7ZnZbK1aDoaI3CR9vVgKEbWZ0ACVqDhiia/ijWS/0wfgun3dO6mEZ49NtdHGF
+         4R/DYdxHuTv1LU1456fNvrreicYQe88RH22dmHdDqNTgdixjlCmsmBt9EHbENVfT/n
+         R3vYlud+rrl6PwXpQS/NThWEC6vYcMX2Kyh7wTIE=
+Received: from pcnci.linuxbox.cz (pcnci.linuxbox.cz [10.76.3.14])
+        by linuxbox.linuxbox.cz (Sendmail) with ESMTPS id w939EmMg017051
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 3 Oct 2018 11:14:48 +0200
+Received: from pcnci.linuxbox.cz (localhost [127.0.0.1])
+        by pcnci.linuxbox.cz (8.15.2/8.15.2) with SMTP id w939EkPP008799;
+        Wed, 3 Oct 2018 11:14:46 +0200
+Date:   Wed, 3 Oct 2018 11:14:46 +0200
+From:   Nikola Ciprich <nikola.ciprich@linuxbox.cz>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matt Rickard <matt@softrans.com.au>,
+        Borislav Petkov <bp@alien8.de>, jason.vas.dias@gmail.com,
+        David Woodhouse <dwmw2@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Nikola Ciprich <nikola.ciprich@linuxbox.cz>
+Subject: Re: [PATCH 4.14 114/165] x86/vdso: Fix vDSO build if a retpoline is
+ emitted
+Message-ID: <20181003091446.GD31855@pcnci.linuxbox.cz>
+References: <20180903165655.003605184@linuxfoundation.org>
+ <20180903165701.245301231@linuxfoundation.org>
+ <20181002080655.GV31855@pcnci.linuxbox.cz>
+ <CALCETrXcJCNFJ3fbFnxvijk4ts_yoxHnqM7xbZTir0MrhnvceA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181002152911.4370-1-kai.heng.feng@canonical.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALCETrXcJCNFJ3fbFnxvijk4ts_yoxHnqM7xbZTir0MrhnvceA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Antivirus: on proxybox by F-Secure antivirus, database version 2018-10-03_04
+X-Scanned-By: MIMEDefang v2.74/SpamAssassin v3.004001 on proxybox (nik)
+X-Milter-Copy-Status: O
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 11:29:11PM +0800, Kai-Heng Feng wrote:
-> There's another panel that reports "DFP 1.x compliant TMDS" but it
-> supports 6bpc instead of 8 bpc.
-> 
-> Apply 6 bpc quirk for the panel to fix it.
-> 
-> BugLink: https://bugs.launchpad.net/bugs/1794387
-> Cc: <stable@vger.kernel.org> # v4.8+
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Hi Andy,
 
-Applied to drm-misc-fixes, thanks for your patch.
--Daniel
+yes, it indeed does fix the problem.
 
-> ---
->  drivers/gpu/drm/drm_edid.c | 3 +++
->  1 file changed, 3 insertions(+)
+Thanks!
+
+nik
+
+
+On Tue, Oct 02, 2018 at 09:27:21PM -0700, Andy Lutomirski wrote:
+> On Tue, Oct 2, 2018 at 1:21 AM Nikola Ciprich
+> <nikola.ciprich@linuxbox.cz> wrote:
+> >
+> > Hi Greg and others,
+> >
+> > sorry for reporting this so late, but still...
+> >
+> > this breaks build on older compilers, since it requires
+> > -mindirect-branch=thunk-inline -mindirect-branch-register even though
+> > retpoline support is disabled in kernel config.. is this expected?
+> >
 > 
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index 3c9fc99648b7..1e2b9407c8d0 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -113,6 +113,9 @@ static const struct edid_quirk {
->  	/* AEO model 0 reports 8 bpc, but is a 6 bpc panel */
->  	{ "AEO", 0, EDID_QUIRK_FORCE_6BPC },
->  
-> +	/* BOE model on HP Pavilion 15-n233sl reports 8 bpc, but is a 6 bpc panel */
-> +	{ "BOE", 0x78b, EDID_QUIRK_FORCE_6BPC },
-> +
->  	/* CPT panel of Asus UX303LA reports 8 bpc, but is a 6 bpc panel */
->  	{ "CPT", 0x17df, EDID_QUIRK_FORCE_6BPC },
->  
-> -- 
-> 2.17.1
+> Nope, my patch was buggy.  Can you test the fix I just sent?
 > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+-------------------------------------
+Ing. Nikola CIPRICH
+LinuxBox.cz, s.r.o.
+28.rijna 168, 709 00 Ostrava
+
+tel.:   +420 591 166 214
+fax:    +420 596 621 273
+mobil:  +420 777 093 799
+www.linuxbox.cz
+
+mobil servis: +420 737 238 656
+email servis: servis@linuxbox.cz
+-------------------------------------
