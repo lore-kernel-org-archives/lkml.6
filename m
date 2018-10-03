@@ -2,101 +2,110 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 278A0C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60240C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF9B921470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:00:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF9B921470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 2ED5620835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:01:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ED5620835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbeJCTtL (ORCPT
+        id S1726943AbeJCTuQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 15:49:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726630AbeJCTtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 15:49:11 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D057020835;
-        Wed,  3 Oct 2018 13:00:48 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 09:00:47 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>, "Ted Ts'o" <tytso@mit.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL linux-next] Add Compiler Attributes tree
-Message-ID: <20181003090047.5aa88fc4@gandalf.local.home>
-In-Reply-To: <CANiq72nLLhTf3AsXqLkPmK6TV_g7E3tML9XaM_zE45dM7XPn-A@mail.gmail.com>
-References: <CANiq72=rgT9cPWH64Tf_8gAU09EiH5FvGqFUdOjV=spVbM5m8Q@mail.gmail.com>
-        <20181003071059.02b3fd6f@canb.auug.org.au>
-        <CAKwvOdmt4-jFv6d-ZVUH5OOvXSz38jpuNvQy-jtoSS3xEoh78A@mail.gmail.com>
-        <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com>
-        <20181002223652.GA4290@nautica>
-        <20181003090010.5150f914@canb.auug.org.au>
-        <CANiq72nLLhTf3AsXqLkPmK6TV_g7E3tML9XaM_zE45dM7XPn-A@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 3 Oct 2018 15:50:16 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59599 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726630AbeJCTuP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 15:50:15 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 7219C807F5; Wed,  3 Oct 2018 15:01:55 +0200 (CEST)
+Date:   Wed, 3 Oct 2018 15:01:54 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lee.jones@linaro.org, linux-omap@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [RFC PATCH v2 2/9] dt-bindings: ti-lmu: Remove LM3697
+Message-ID: <20181003130154.GA20418@amd>
+References: <20180928182954.25446-1-dmurphy@ti.com>
+ <20180928182954.25446-3-dmurphy@ti.com>
+ <20181002072827.GA19677@amd>
+ <fef2c612-ac35-126e-669e-335fb3075f64@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
+Content-Disposition: inline
+In-Reply-To: <fef2c612-ac35-126e-669e-335fb3075f64@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Oct 2018 14:34:28 +0200
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
 
-> When I sent the first email, I assumed that changes in -next were
-> supposed to be clean -- my mistake, but please document somewhere how
-> -next works! Specially that you are rerere'ing conflicts and
-> re-resolving them every day.
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, a document in the Documentation directory on how to work with
-linux-next may be a good idea. Something we can point people to when
-they start using linux-next. I know there was something in the initial
-email, but I've lost that.
+On Wed 2018-10-03 07:24:23, Dan Murphy wrote:
+> Hello
+>=20
+> On 10/02/2018 02:28 AM, Pavel Machek wrote:
+> > On Fri 2018-09-28 13:29:47, Dan Murphy wrote:
+> >> Remove support for the LM3697 LED device
+> >> from the ti-lmu.  The LM3697 will be supported
+> >> via a stand alone LED driver.
+> >>
+> >> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> >=20
+> > NAK, for reasons I explained before. Please add it to the patch so
+> > that it does not get applied by mistake. Ouch and AFAICT Rob was not
+> > happy with this either.
+> >=20
+> > Yes, you are creating new drivers, ok; but that does _not_ mean you
+> > should create new binding.
+>=20
+> I am copying my comment here on the review of this original binding for
+> records
+>=20
+> I found the review or at least the reference for the ti-lmu.txt binding.
+>=20
+> https://lore.kernel.org/patchwork/patch/764180/
+>=20
+> Does not appear that the binding was sent to the device tree mail list.
+> (Maybe that email list did not exist in Feb 2017).
 
--- Steve
+Quick google shows:
+
+https://lwn.net/Articles/666023/
+
+Now can we stop this nonsense? If there is a problem with the binding,
+submit patches to fix the problem.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlu0vcIACgkQMOfwapXb+vIm0gCfZRhz/H99fwqzddIrtxEKxoiG
+7HsAniIXwUKKaLfbQD7nCAE2yZtfsSmH
+=MZOx
+-----END PGP SIGNATURE-----
+
+--lrZ03NoBR/3+SXJZ--
