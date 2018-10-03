@@ -2,148 +2,88 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A152C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB6AC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D1E82098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:33:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D1E82098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 720C72098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:34:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 720C72098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeJCOUX (ORCPT
+        id S1727068AbeJCOVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 10:20:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47859 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbeJCOUX (ORCPT
+        Wed, 3 Oct 2018 10:21:37 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42724 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbeJCOVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:20:23 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w937WX5c2264524
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 3 Oct 2018 00:32:33 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w937WWDJ2264521;
-        Wed, 3 Oct 2018 00:32:32 -0700
-Date:   Wed, 3 Oct 2018 00:32:32 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Guenter Roeck <tipbot@zytor.com>
-Message-ID: <tip-e4a02ed2aaf447fa849e3254bfdb3b9b01e1e520@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, linux@roeck-us.net,
-        torvalds@linux-foundation.org, chris@chris-wilson.co.uk,
-        peterz@infradead.org, hpa@zytor.com, tglx@linutronix.de
-Reply-To: chris@chris-wilson.co.uk, peterz@infradead.org,
-          torvalds@linux-foundation.org, tglx@linutronix.de, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          linux@roeck-us.net, will.deacon@arm.com
-In-Reply-To: <1538516929-9734-1-git-send-email-linux@roeck-us.net>
-References: <1538516929-9734-1-git-send-email-linux@roeck-us.net>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/urgent] locking/ww_mutex: Fix runtime warning in the
- WW mutex selftest
-Git-Commit-ID: e4a02ed2aaf447fa849e3254bfdb3b9b01e1e520
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 3 Oct 2018 10:21:37 -0400
+Received: by mail-ed1-f66.google.com with SMTP id n2-v6so4374060edo.9
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 00:34:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=43ifib7ypSd2V53d9a28LJVezvVvL18XUDyY9WlTsjA=;
+        b=UhxWt2dd3kusk+2k5/3lshnJJjTSZ1iMpfSIk1oUgjpTB0ljPMczXkZiF51GxI+24D
+         g1bt1LNAStfr7Q4u+TPAd4smALP08nrWphriQ19p0C3WT/X1gHy4spkr1TnuDKjFPqic
+         l1mwcigapxnsDJt4va1pUqZbdDjjXKCKCwpUHu/v6/wB88W1T16UAfteVc8JJBYdMeMg
+         kJ/5Wh1Lw2usQaV7wGRRTCXtwj2Pal39Xs7h8NBrp5PlisnkQ3mItiEZTHaptk+WkdcU
+         f7GqYA1DGmJoMp/7TDBO0BkpWL86n+KZTOnh85KGWLF9uttgu/WgyEBRGikkmEPIzYGN
+         zGfQ==
+X-Gm-Message-State: ABuFfohcYHViTeJGimxMcsEupvVQ96We8lVhQaci0vfQTekKJAmKtzA6
+        VP2BpW7sZGzeN6Td1jTFTR+4z//N
+X-Google-Smtp-Source: ACcGV61ghkuhek+MYqK+mSAUtFBz9WK3QrA4p07GmTI7XXGuyc7WTrcJA5wkmNx1Z5otDbO2Y9FFEQ==
+X-Received: by 2002:a50:9386:: with SMTP id o6-v6mr843264eda.248.1538552064623;
+        Wed, 03 Oct 2018 00:34:24 -0700 (PDT)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com. [209.85.128.45])
+        by smtp.gmail.com with ESMTPSA id c18-v6sm135191ejz.68.2018.10.03.00.34.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 00:34:24 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 143-v6so4616910wmf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 00:34:23 -0700 (PDT)
+X-Received: by 2002:a1c:8dd1:: with SMTP id p200-v6mr497362wmd.145.1538552063478;
+ Wed, 03 Oct 2018 00:34:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20181001093612.GA13672@mwanda> <20181002215917.1849-1-giulio.benetti@micronovasrl.com>
+ <20181002215917.1849-2-giulio.benetti@micronovasrl.com>
+In-Reply-To: <20181002215917.1849-2-giulio.benetti@micronovasrl.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 3 Oct 2018 15:34:09 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66mEqBYfeX_j_pj1Uu4OUfeESBQwXmQeqoqfEHP-CW3dQ@mail.gmail.com>
+Message-ID: <CAGb2v66mEqBYfeX_j_pj1Uu4OUfeESBQwXmQeqoqfEHP-CW3dQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/sun4i: tcon: prevent tcon->panel dereference if null
+To:     Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e4a02ed2aaf447fa849e3254bfdb3b9b01e1e520
-Gitweb:     https://git.kernel.org/tip/e4a02ed2aaf447fa849e3254bfdb3b9b01e1e520
-Author:     Guenter Roeck <linux@roeck-us.net>
-AuthorDate: Tue, 2 Oct 2018 14:48:49 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 3 Oct 2018 08:56:31 +0200
+On Wed, Oct 3, 2018 at 5:59 AM Giulio Benetti
+<giulio.benetti@micronovasrl.com> wrote:
+>
+> If using tcon with VGA, tcon->panel will be null(0), this will cause
+> segmentation fault when trying to dereference tcon->panel->connector.
+>
+> Add tcon->panel null check before calling
+> sun4i_tcon0_mode_set_dithering().
+>
+> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 
-locking/ww_mutex: Fix runtime warning in the WW mutex selftest
+Fixes: f11adcecbd5f ("drm/sun4i: tcon: Add dithering support for
+                      RGB565/RGB666 LCD panels")
 
-If CONFIG_WW_MUTEX_SELFTEST=y is enabled, booting an image
-in an arm64 virtual machine results in the following
-traceback if 8 CPUs are enabled:
-
-  DEBUG_LOCKS_WARN_ON(__owner_task(owner) != current)
-  WARNING: CPU: 2 PID: 537 at kernel/locking/mutex.c:1033 __mutex_unlock_slowpath+0x1a8/0x2e0
-  ...
-  Call trace:
-   __mutex_unlock_slowpath()
-   ww_mutex_unlock()
-   test_cycle_work()
-   process_one_work()
-   worker_thread()
-   kthread()
-   ret_from_fork()
-
-If requesting b_mutex fails with -EDEADLK, the error variable
-is reassigned to the return value from calling ww_mutex_lock
-on a_mutex again. If this call fails, a_mutex is not locked.
-It is, however, unconditionally unlocked subsequently, causing
-the reported warning. Fix the problem by using two error variables.
-
-With this change, the selftest still fails as follows:
-
-  cyclic deadlock not resolved, ret[7/8] = -35
-
-However, the traceback is gone.
-
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Fixes: d1b42b800e5d0 ("locking/ww_mutex: Add kselftests for resolving ww_mutex cyclic deadlocks")
-Link: http://lkml.kernel.org/r/1538516929-9734-1-git-send-email-linux@roeck-us.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/locking/test-ww_mutex.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 0be047dbd897..65a3b7e55b9f 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -260,7 +260,7 @@ static void test_cycle_work(struct work_struct *work)
- {
- 	struct test_cycle *cycle = container_of(work, typeof(*cycle), work);
- 	struct ww_acquire_ctx ctx;
--	int err;
-+	int err, erra = 0;
- 
- 	ww_acquire_init(&ctx, &ww_class);
- 	ww_mutex_lock(&cycle->a_mutex, &ctx);
-@@ -270,17 +270,19 @@ static void test_cycle_work(struct work_struct *work)
- 
- 	err = ww_mutex_lock(cycle->b_mutex, &ctx);
- 	if (err == -EDEADLK) {
-+		err = 0;
- 		ww_mutex_unlock(&cycle->a_mutex);
- 		ww_mutex_lock_slow(cycle->b_mutex, &ctx);
--		err = ww_mutex_lock(&cycle->a_mutex, &ctx);
-+		erra = ww_mutex_lock(&cycle->a_mutex, &ctx);
- 	}
- 
- 	if (!err)
- 		ww_mutex_unlock(cycle->b_mutex);
--	ww_mutex_unlock(&cycle->a_mutex);
-+	if (!erra)
-+		ww_mutex_unlock(&cycle->a_mutex);
- 	ww_acquire_fini(&ctx);
- 
--	cycle->result = err;
-+	cycle->result = err ?: erra;
- }
- 
- static int __test_cycle(unsigned int nthreads)
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
