@@ -2,224 +2,190 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B712C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E543CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB77B20835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B1BE20835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:02:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HWXAI+e7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB77B20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hUibl2zs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B1BE20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbeJCTur (ORCPT
+        id S1727077AbeJCTvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 15:50:47 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40258 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeJCTur (ORCPT
+        Wed, 3 Oct 2018 15:51:05 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51543 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbeJCTvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 15:50:47 -0400
-Received: by mail-lf1-f65.google.com with SMTP id t22-v6so4060853lfb.7;
-        Wed, 03 Oct 2018 06:02:26 -0700 (PDT)
+        Wed, 3 Oct 2018 15:51:05 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 143-v6so5622719wmf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 06:02:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=18WF22CnRg5vBmmVnaEShERpPi6A2+ap9KztaTaVPN4=;
-        b=HWXAI+e7ap7fAx4cJPi7hpN2MZRoHj23BA7KrmV8L60nhlACVHKPCy4pdjJM7m1QMF
-         ez5sUzPYc1tKltmTKWe8SzxbJwTxgxeMwo2mRsSiRXCb4OQ9p9er+GHTHWUdZD0S4tLw
-         /mFDg9EC6XYmQylnVJ5a/kOOFDPIqdxxAEn2jzgOnSxmAnyO0KFM5z4jQZIGslOM9nAO
-         DiHFHJhArP9HaX8QJ1Zld64JZLkicxMrpVh1Um1DzsBcCtWg1slz01qJMHHYhDKsRlZu
-         ZekWXlROpOOJ19CF2zIU3yqvcfunzSuhyI7hCNyxzR1rYuG24dA6KnAkBnjWbJwdtBBG
-         iOGw==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=A+aivF/32R1ktzeou5fE9ytY0sBoviKtCVouuPwcBio=;
+        b=hUibl2zs39ZWGRNCDzgezwncyk2K6+SmPP5qussWgvUhtTj/4eymODGSZpVRTmBEvB
+         vgBsNpOzgZeAQJk0zEaH4h8Zq/lNbBkPXMgsCDYCREtFRvAQCxjTrqq5ftAJUkPX4ROS
+         tu8kkDM56XoKwkFwsvmFcHG89B0U0z1hzd1YU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=18WF22CnRg5vBmmVnaEShERpPi6A2+ap9KztaTaVPN4=;
-        b=ZdHw0IK3/UX5C1j8uLQ1k8UFhAKU7TzjcBpY19K3YSA4NU6Jz0BHAvSVz/7spbXO5E
-         woUBmjOR0DJie3wunA6fZKBE7zHJT/fpqVSTIaMZow0Dsv0CqtdHb903vucViMKTFrh2
-         NHJ0jqAobLL//dSVOia3q+kWUbMsTy71l7cylKwgUi0nrtzA4pf0FvlQLUm4QhX1SuJG
-         72DJZVNCbJb3eTJKM5arO6zUOWY6+NxIu9u8aj3DiNiV9cIdA3N8ucjItsQwN3TRh7ar
-         szVGPvp+Caf79LIgUy2rAfS64kmUH5ejNZbyeQZDKEffUqSY2dnHxMjSLMowauJoUVIY
-         f4EA==
-X-Gm-Message-State: ABuFfojWQW2Po+u2BR4G3+x9oSOJ7MphP6KfdnyQU+9e9qIXtEQSZa0i
-        8GW+4UPDURGLydOzY6tbIpk=
-X-Google-Smtp-Source: ACcGV61fV/X3bgUMhrk5x02lfXZcwysU0k+7t+4b2QWlnDfzjf6SIG8aQaLuem2MACFp2/LN6Ga3Pg==
-X-Received: by 2002:a19:990c:: with SMTP id b12-v6mr982811lfe.18.1538571745847;
-        Wed, 03 Oct 2018 06:02:25 -0700 (PDT)
-Received: from z50.intranet (78-10-164-223.static.ip.netia.com.pl. [78.10.164.223])
-        by smtp.gmail.com with ESMTPSA id v19-v6sm352266lji.10.2018.10.03.06.02.24
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A+aivF/32R1ktzeou5fE9ytY0sBoviKtCVouuPwcBio=;
+        b=Ohf/SZB/iY5yGlq3wRwdkFMgh6sMlkH3qV/ZT0rZjvzF2UvyecPj34AOk4YLlN7Vd6
+         lIX0c17bzLqrHn+B78RzPY0i96knZCWbQpgzCvXJ4lalqt0/ceETFKxGua/QVxp50BoH
+         H8oAI8kDQZYD79tYRVmO1u3ebctq98p6LOz2u9ovQyqrvpSc6FhzO0jlvCtlluGL/3f9
+         XrGcHhiFnT8TLErrBJ3mr/VOTmBj3Tmje3i9iuySbrz4sNyJCCAzLB55f0Z7J+qTpKfE
+         NS1CvacMGaNxobxYXzO9GXMcIWASrG4kx10PLqlikimPAHjzNxr1STWtRU/lYiV7FpJ7
+         qILA==
+X-Gm-Message-State: ABuFfojfDZzvOwPRGW/iDa22ZHCFHHNaIfsg2uOYlpP2tT3Q/qMhhy87
+        gDPrB7EcjRuzzXTpvckulZSFzw==
+X-Google-Smtp-Source: ACcGV63ogankSLUvImdLvYTQBlnfKCox3HBy5wg15/BEutwYe4tgE3TLg8IqIDvMApIxBg5z3wzrxA==
+X-Received: by 2002:a1c:e4c6:: with SMTP id b189-v6mr1432893wmh.114.1538571763766;
+        Wed, 03 Oct 2018 06:02:43 -0700 (PDT)
+Received: from [192.168.0.41] (84.152.136.77.rev.sfr.net. [77.136.152.84])
+        by smtp.googlemail.com with ESMTPSA id a105-v6sm2949592wrc.23.2018.10.03.06.02.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 06:02:24 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-fbdev@lists.infradead.org, linux-omap@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH v4] video: fbdev: omapfb: lcd_ams_delta: use GPIO lookup table
-Date:   Wed,  3 Oct 2018 15:03:26 +0200
-Message-Id: <20181003130326.10283-1-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180909225605.16463-2-jmkrzyszt@gmail.com>
-References: <20180909225605.16463-2-jmkrzyszt@gmail.com>
+        Wed, 03 Oct 2018 06:02:42 -0700 (PDT)
+Subject: Re: [PATCH v5 04/21] dt-bindings: Add doc for the Ingenic TCU drivers
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Guenter Roeck <linux@roeck-us.net>, linux-doc@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-watchdog@vger.kernel.org, robh@kernel.org,
+        linux-mips@linux-mips.org, Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org
+References: <5bb4bb5d.1c69fb81.ed9a6.adc6SMTPIN_ADDED_MISSING@mx.google.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <fa8dd794-3077-eb5c-5657-f62d1a6521b5@linaro.org>
+Date:   Wed, 3 Oct 2018 15:02:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <5bb4bb5d.1c69fb81.ed9a6.adc6SMTPIN_ADDED_MISSING@mx.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now as Amstrad Delta board - the only user of this driver - provides
-GPIO lookup tables, switch from GPIO numbers to GPIO descriptors and
-use the table to locate required GPIO pins.
+On 03/10/2018 14:51, Paul Cercueil wrote:
+> 
+> Le 3 oct. 2018 2:47 PM, Daniel Lezcano <daniel.lezcano@linaro.org> a
+> écrit :
+>> 
+>> On 03/10/2018 12:32, Paul Cercueil wrote:
+>>> 
+>>> Le 1 oct. 2018 10:48, Daniel Lezcano <daniel.lezcano@linaro.org>
+>>> a écrit :
+>>>> 
+>>>> On 31/07/2018 00:01, Paul Cercueil wrote:
+>>>> 
+>>>> [ ... ]
+>>>> 
+>>>>>>> +- ingenic,timer-channel: Specifies the TCU channel that
+>>>>>>>  should be used as +  system timer. If not provided, the
+>>>>>>> TCU channel 0 is used for the system timer. + +- 
+>>>>>>> ingenic,clocksource-channel: Specifies the TCU channel
+>>>>>>> that should be used +  as clocksource and sched_clock. It
+>>>>>>> must be a different channel than the one +  used as
+>>>>>>> system timer. If not provided, neither a clocksource nor
+>>>>>>> a +  sched_clock is instantiated.
+>>>>>> 
+>>>>>> clocksource and sched_clock are Linux specific and don't
+>>>>>> belong in DT. You should define properties of the hardware
+>>>>>> or use existing properties like interrupts or clocks to
+>>>>>> figure out which channel to use. For example, if some
+>>>>>> channels don't have an interrupt, then use them for
+>>>>>> clocksource and not a clockevent. Or you could have timers
+>>>>>> that run in low-power modes or not. If all the channels are
+>>>>>> identical, then it shouldn't matter which ones the OS
+>>>>>> picks.
+>>>> 
+>>>> It can't work in this case because the pmw and the timer driver
+>>>> are not communicating and the first one can stole a channel to
+>>>> the last one.
+>>> 
+>>> In that particular case the timer driver will always request its
+>>>  channels first; with no timer set the system hangs before 
+>>> subsys_initcall, and the PWM driver is a subnode of the timer
+>>> node, so is probed only after the timer probed.
+>>> 
+>>>>> We already talked about that. All the TCU channels can be
+>>>>> used for PWM. The problem is I cannot know from the driver's
+>>>>> scope which channels will be free and which channels will be
+>>>>> requested for PWM. You suggested that I parse the devicetree
+>>>>> for clients, and I did that in the V3/V4 patchset. But it
+>>>>> only works for clients requesting through devicetree, not
+>>>>> from platform code or even sysfs.
+>>>>> 
+>>>>> One thing I can try is to dynamically change the channels the
+>>>>>  system timer and clocksource are using when the current ones
+>>>>> are requested for PWM. But that sounds hardcore...
+>>>> 
+>>>> Yes, it is :/
+>>>> 
+>>>> Sorry for letting you wasting time and effort to write an
+>>>> overkill code not suitable for upstream.
+>>>> 
+>>>> A very gross thought, wouldn't be possible to "register" a
+>>>> channel from the timer driver code in a shared data area (but
+>>>> well self-encapsulated) and the pwm code will check such
+>>>> channel isn't in use ?
+>>> 
+>>> Probably, but it's the contrary I need to do. The timer driver
+>>> code can use any channel, and probes first. The PWM driver code
+>>> must use specific channels, and probes last. So either the timer
+>>> driver knows what channels it can't use, thanks to a device
+>>> property, or it adapts itself when a channel in use is requested
+>>> for PWM, which is what I tried in v7.
+>> 
+>> When you say "must use specific channels", where is coming this 
+>> information ?
+> 
+> If the backlight for the LCD is connected to the pin that corresponds
+> to PWM1, then you must use the TCU channel 1. It's that simple.
 
-Declare static variables for storing GPIO descriptors and replace
-gpio_ function calls with their gpiod_ equivalents. Move GPIO lookup
-to the driver probe function so device initialization can be deferred
-instead of aborted if a GPIO pin is not yet available.
+Is it a runtime detection or is it hardcoded somewhere ?
 
-Pin naming used by the driver should be followed while respective GPIO
-lookup table is initialized by a board init code.
+(just trying to understand the whole picture)
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
-Changelog:
-v4:
-- added Reviewed-by: Linus Walleij
-- resubmitted as a standalone patch for inclusion via fbdev tree again
+>>> I think we could find a way to use a devicetree property that
+>>> doesn't trigger Rob. That would still be the easiest and cleanest
+>>> solution.
+>>> 
+>>> Maybe "ingenic,reserved-channels-mask", which would contain a
+>>> mask of channels that can only be used by the timer driver. And
+>>> what the timer driver does with these channels, would be specific
+>>> to the implementation and would not appear in the bindings. I
+>>> hope Rob can work with that.
+>>> 
+>>> -Paul
 
-v3:
-- rebased on top of v4.19-rc1 with all dependencies mentioned in v2
-  changelog satisfied
 
-v2/v2:
-- resubmitted in a series as [PATCH v2 1/3 v2] for inclusion via omap
-  tree
-
-v2:
-- removed problematic error code conversion no longer needed if used on
-  top of commit d08605a64e67 ("ARM: OMAP1: ams-delta: move late devices
-  back to init_machine") and commit 8853daf3b4ac ("gpiolib: Defer on
-  non-DT find_chip_by_name() failure") already in linux-next
-- resubmitted as a standalone patch for inclusion via fbdev tree
-
-Ininally submitted in a series as [PATCH 4/6] 
-
- drivers/video/fbdev/omap/lcd_ams_delta.c | 55 +++++++++++++-------------------
- 1 file changed, 22 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/video/fbdev/omap/lcd_ams_delta.c b/drivers/video/fbdev/omap/lcd_ams_delta.c
-index e8c748a0dfe2..cddbd00cbf9f 100644
---- a/drivers/video/fbdev/omap/lcd_ams_delta.c
-+++ b/drivers/video/fbdev/omap/lcd_ams_delta.c
-@@ -24,11 +24,10 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/lcd.h>
--#include <linux/gpio.h>
- 
- #include <mach/hardware.h>
--#include <mach/board-ams-delta.h>
- 
- #include "omapfb.h"
- 
-@@ -41,6 +40,8 @@
- /* LCD class device section */
- 
- static int ams_delta_lcd;
-+static struct gpio_desc *gpiod_vblen;
-+static struct gpio_desc *gpiod_ndisp;
- 
- static int ams_delta_lcd_set_power(struct lcd_device *dev, int power)
- {
-@@ -99,41 +100,17 @@ static struct lcd_ops ams_delta_lcd_ops = {
- 
- /* omapfb panel section */
- 
--static const struct gpio _gpios[] = {
--	{
--		.gpio	= AMS_DELTA_GPIO_PIN_LCD_VBLEN,
--		.flags	= GPIOF_OUT_INIT_LOW,
--		.label	= "lcd_vblen",
--	},
--	{
--		.gpio	= AMS_DELTA_GPIO_PIN_LCD_NDISP,
--		.flags	= GPIOF_OUT_INIT_LOW,
--		.label	= "lcd_ndisp",
--	},
--};
--
--static int ams_delta_panel_init(struct lcd_panel *panel,
--		struct omapfb_device *fbdev)
--{
--	return gpio_request_array(_gpios, ARRAY_SIZE(_gpios));
--}
--
--static void ams_delta_panel_cleanup(struct lcd_panel *panel)
--{
--	gpio_free_array(_gpios, ARRAY_SIZE(_gpios));
--}
--
- static int ams_delta_panel_enable(struct lcd_panel *panel)
- {
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 1);
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 1);
-+	gpiod_set_value(gpiod_ndisp, 1);
-+	gpiod_set_value(gpiod_vblen, 1);
- 	return 0;
- }
- 
- static void ams_delta_panel_disable(struct lcd_panel *panel)
- {
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 0);
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 0);
-+	gpiod_set_value(gpiod_vblen, 0);
-+	gpiod_set_value(gpiod_ndisp, 0);
- }
- 
- static struct lcd_panel ams_delta_panel = {
-@@ -154,8 +131,6 @@ static struct lcd_panel ams_delta_panel = {
- 	.pcd		= 0,
- 	.acb		= 37,
- 
--	.init		= ams_delta_panel_init,
--	.cleanup	= ams_delta_panel_cleanup,
- 	.enable		= ams_delta_panel_enable,
- 	.disable	= ams_delta_panel_disable,
- };
-@@ -166,9 +141,23 @@ static struct lcd_panel ams_delta_panel = {
- static int ams_delta_panel_probe(struct platform_device *pdev)
- {
- 	struct lcd_device *lcd_device = NULL;
--#ifdef CONFIG_LCD_CLASS_DEVICE
- 	int ret;
- 
-+	gpiod_vblen = devm_gpiod_get(&pdev->dev, "vblen", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_vblen)) {
-+		ret = PTR_ERR(gpiod_vblen);
-+		dev_err(&pdev->dev, "VBLEN GPIO request failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	gpiod_ndisp = devm_gpiod_get(&pdev->dev, "ndisp", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_ndisp)) {
-+		ret = PTR_ERR(gpiod_ndisp);
-+		dev_err(&pdev->dev, "NDISP GPIO request failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+#ifdef CONFIG_LCD_CLASS_DEVICE
- 	lcd_device = lcd_device_register("omapfb", &pdev->dev, NULL,
- 						&ams_delta_lcd_ops);
- 
 -- 
-2.16.4
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
