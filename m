@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00410C64EB8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7DAC00449
 	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B824D214C1
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:32:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B824D214C1
+	by mail.kernel.org (Postfix) with ESMTP id 9B37E214C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:32:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B37E214C2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbeJDEWr (ORCPT
+        id S1727519AbeJDEWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 00:22:47 -0400
+        Thu, 4 Oct 2018 00:22:49 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:14656 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727356AbeJDEWq (ORCPT
+        by vger.kernel.org with ESMTP id S1727234AbeJDEWr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 00:22:46 -0400
+        Thu, 4 Oct 2018 00:22:47 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Wed, 3 Oct 2018 14:32:27 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 9866D407CF;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id BAC94407D2;
         Wed,  3 Oct 2018 14:32:32 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
 CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Nadav Amit <namit@vmware.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v9 06/10] x86: bug: prevent gcc distortions
-Date:   Wed, 3 Oct 2018 14:30:56 -0700
-Message-ID: <20181003213100.189959-7-namit@vmware.com>
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH v9 09/10] x86: cpufeature: use macros instead of inline assembly
+Date:   Wed, 3 Oct 2018 14:30:59 -0700
+Message-ID: <20181003213100.189959-10-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181003213100.189959-1-namit@vmware.com>
 References: <20181003213100.189959-1-namit@vmware.com>
@@ -51,206 +50,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
+Use assembly macros for static_cpu_has() and call them from inline
+assembly.  This not only makes the code more readable, but also improves
+compilation decision, specifically inline decisions which GCC base on
+the number of new lines in inline assembly.
 
-The solution is to set an assembly macro and call it from the inlinedv
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
-
-This patch increases the kernel size:
+The patch slightly increases the kernel size:
 
    text	   data	    bss	    dec	    hex	filename
-18146889 10225380 2957312 31329581 1de0d2d ./vmlinux before
-18147336 10226688 2957312 31331336 1de1408 ./vmlinux after (+1755)
+18162879 10226256 2957312 31346447 1de4f0f ./vmlinux before
+18163528 10226300 2957312 31347140 1de51c4 ./vmlinux after (+693)
 
-But enables more aggressive inlining (and probably branch decisions).
-The number of static text symbols in vmlinux is lower.
-
-Static text symbols:
-Before:	40218
-After:	40053	(-165)
+And enables the inlining of function such as free_ldt_pgtables().
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Tested-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/bug.h | 98 ++++++++++++++++++++++----------------
- arch/x86/kernel/macros.S   |  1 +
- include/asm-generic/bug.h  |  8 ++--
- 3 files changed, 61 insertions(+), 46 deletions(-)
+ arch/x86/include/asm/cpufeature.h | 82 ++++++++++++++++++-------------
+ arch/x86/kernel/macros.S          |  1 +
+ 2 files changed, 48 insertions(+), 35 deletions(-)
 
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index 6804d6642767..5090035e6d16 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -4,6 +4,8 @@
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index aced6c9290d6..7d442722ef24 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -2,10 +2,10 @@
+ #ifndef _ASM_X86_CPUFEATURE_H
+ #define _ASM_X86_CPUFEATURE_H
  
- #include <linux/stringify.h>
- 
+-#include <asm/processor.h>
+-
+-#if defined(__KERNEL__) && !defined(__ASSEMBLY__)
++#ifdef __KERNEL__
 +#ifndef __ASSEMBLY__
-+
- /*
-  * Despite that some emulators terminate on UD2, we use it for WARN().
-  *
-@@ -20,53 +22,15 @@
  
- #define LEN_UD2		2
++#include <asm/processor.h>
+ #include <asm/asm.h>
+ #include <linux/bitops.h>
  
--#ifdef CONFIG_GENERIC_BUG
--
--#ifdef CONFIG_X86_32
--# define __BUG_REL(val)	".long " __stringify(val)
--#else
--# define __BUG_REL(val)	".long " __stringify(val) " - 2b"
--#endif
--
--#ifdef CONFIG_DEBUG_BUGVERBOSE
--
--#define _BUG_FLAGS(ins, flags)						\
--do {									\
--	asm volatile("1:\t" ins "\n"					\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
--		     "\t.word %c1"        "\t# bug_entry::line\n"	\
--		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c3\n"					\
--		     ".popsection"					\
--		     : : "i" (__FILE__), "i" (__LINE__),		\
--			 "i" (flags),					\
--			 "i" (sizeof(struct bug_entry)));		\
--} while (0)
--
--#else /* !CONFIG_DEBUG_BUGVERBOSE */
--
- #define _BUG_FLAGS(ins, flags)						\
- do {									\
--	asm volatile("1:\t" ins "\n"					\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c1\n"					\
--		     ".popsection"					\
--		     : : "i" (flags),					\
-+	asm volatile("ASM_BUG ins=\"" ins "\" file=%c0 line=%c1 "	\
-+		     "flags=%c2 size=%c3"				\
-+		     : : "i" (__FILE__), "i" (__LINE__),                \
-+			 "i" (flags),                                   \
- 			 "i" (sizeof(struct bug_entry)));		\
- } while (0)
+@@ -161,37 +161,10 @@ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
+  */
+ static __always_inline __pure bool _static_cpu_has(u16 bit)
+ {
+-	asm_volatile_goto("1: jmp 6f\n"
+-		 "2:\n"
+-		 ".skip -(((5f-4f) - (2b-1b)) > 0) * "
+-			 "((5f-4f) - (2b-1b)),0x90\n"
+-		 "3:\n"
+-		 ".section .altinstructions,\"a\"\n"
+-		 " .long 1b - .\n"		/* src offset */
+-		 " .long 4f - .\n"		/* repl offset */
+-		 " .word %P[always]\n"		/* always replace */
+-		 " .byte 3b - 1b\n"		/* src len */
+-		 " .byte 5f - 4f\n"		/* repl len */
+-		 " .byte 3b - 2b\n"		/* pad len */
+-		 ".previous\n"
+-		 ".section .altinstr_replacement,\"ax\"\n"
+-		 "4: jmp %l[t_no]\n"
+-		 "5:\n"
+-		 ".previous\n"
+-		 ".section .altinstructions,\"a\"\n"
+-		 " .long 1b - .\n"		/* src offset */
+-		 " .long 0\n"			/* no replacement */
+-		 " .word %P[feature]\n"		/* feature bit */
+-		 " .byte 3b - 1b\n"		/* src len */
+-		 " .byte 0\n"			/* repl len */
+-		 " .byte 0\n"			/* pad len */
+-		 ".previous\n"
+-		 ".section .altinstr_aux,\"ax\"\n"
+-		 "6:\n"
+-		 " testb %[bitnum],%[cap_byte]\n"
+-		 " jnz %l[t_yes]\n"
+-		 " jmp %l[t_no]\n"
+-		 ".previous\n"
++	asm_volatile_goto("STATIC_CPU_HAS bitnum=%[bitnum] "
++			  "cap_byte=\"%[cap_byte]\" "
++			  "feature=%P[feature] t_yes=%l[t_yes] "
++			  "t_no=%l[t_no] always=%P[always]"
+ 		 : : [feature]  "i" (bit),
+ 		     [always]   "i" (X86_FEATURE_ALWAYS),
+ 		     [bitnum]   "i" (1 << (bit & 7)),
+@@ -226,5 +199,44 @@ static __always_inline __pure bool _static_cpu_has(u16 bit)
+ #define CPU_FEATURE_TYPEVAL		boot_cpu_data.x86_vendor, boot_cpu_data.x86, \
+ 					boot_cpu_data.x86_model
  
--#endif /* CONFIG_DEBUG_BUGVERBOSE */
--
--#else
--
--#define _BUG_FLAGS(ins, flags)  asm volatile(ins)
--
--#endif /* CONFIG_GENERIC_BUG */
--
- #define HAVE_ARCH_BUG
- #define BUG()							\
- do {								\
-@@ -82,4 +46,54 @@ do {								\
- 
- #include <asm-generic/bug.h>
- 
+-#endif /* defined(__KERNEL__) && !defined(__ASSEMBLY__) */
 +#else /* __ASSEMBLY__ */
 +
-+#ifdef CONFIG_GENERIC_BUG
-+
-+#ifdef CONFIG_X86_32
-+.macro __BUG_REL val:req
-+	.long \val
++.macro STATIC_CPU_HAS bitnum:req cap_byte:req feature:req t_yes:req t_no:req always:req
++1:
++	jmp 6f
++2:
++	.skip -(((5f-4f) - (2b-1b)) > 0) * ((5f-4f) - (2b-1b)),0x90
++3:
++	.section .altinstructions,"a"
++	.long 1b - .		/* src offset */
++	.long 4f - .		/* repl offset */
++	.word \always		/* always replace */
++	.byte 3b - 1b		/* src len */
++	.byte 5f - 4f		/* repl len */
++	.byte 3b - 2b		/* pad len */
++	.previous
++	.section .altinstr_replacement,"ax"
++4:
++	jmp \t_no
++5:
++	.previous
++	.section .altinstructions,"a"
++	.long 1b - .		/* src offset */
++	.long 0			/* no replacement */
++	.word \feature		/* feature bit */
++	.byte 3b - 1b		/* src len */
++	.byte 0			/* repl len */
++	.byte 0			/* pad len */
++	.previous
++	.section .altinstr_aux,"ax"
++6:
++	testb \bitnum,\cap_byte
++	jnz \t_yes
++	jmp \t_no
++	.previous
 +.endm
-+#else
-+.macro __BUG_REL val:req
-+	.long \val - 2b
-+.endm
-+#endif
-+
-+#ifdef CONFIG_DEBUG_BUGVERBOSE
-+
-+.macro ASM_BUG ins:req file:req line:req flags:req size:req
-+1:	\ins
-+	.pushsection __bug_table,"aw"
-+2:	__BUG_REL val=1b	# bug_entry::bug_addr
-+	__BUG_REL val=\file	# bug_entry::file
-+	.word \line		# bug_entry::line
-+	.word \flags		# bug_entry::flags
-+	.org 2b+\size
-+	.popsection
-+.endm
-+
-+#else /* !CONFIG_DEBUG_BUGVERBOSE */
-+
-+.macro ASM_BUG ins:req file:req line:req flags:req size:req
-+1:	\ins
-+	.pushsection __bug_table,"aw"
-+2:	__BUG_REL val=1b	# bug_entry::bug_addr
-+	.word \flags		# bug_entry::flags
-+	.org 2b+\size
-+	.popsection
-+.endm
-+
-+#endif /* CONFIG_DEBUG_BUGVERBOSE */
-+
-+#else /* CONFIG_GENERIC_BUG */
-+
-+.macro ASM_BUG ins:req file:req line:req flags:req size:req
-+	\ins
-+.endm
-+
-+#endif /* CONFIG_GENERIC_BUG */
 +
 +#endif /* __ASSEMBLY__ */
 +
- #endif /* _ASM_X86_BUG_H */
++#endif /* __KERNEL__ */
+ #endif /* _ASM_X86_CPUFEATURE_H */
 diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index 852487a9fc56..66ccb8e823b1 100644
+index 7baa40d5bf16..bf8b9c93e255 100644
 --- a/arch/x86/kernel/macros.S
 +++ b/arch/x86/kernel/macros.S
-@@ -9,3 +9,4 @@
- #include <linux/compiler.h>
- #include <asm/refcount.h>
- #include <asm/alternative-asm.h>
-+#include <asm/bug.h>
-diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
-index 20561a60db9c..cdafa5edea49 100644
---- a/include/asm-generic/bug.h
-+++ b/include/asm-generic/bug.h
-@@ -17,10 +17,8 @@
- #ifndef __ASSEMBLY__
- #include <linux/kernel.h>
- 
--#ifdef CONFIG_BUG
--
--#ifdef CONFIG_GENERIC_BUG
- struct bug_entry {
-+#ifdef CONFIG_GENERIC_BUG
- #ifndef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
- 	unsigned long	bug_addr;
- #else
-@@ -35,8 +33,10 @@ struct bug_entry {
- 	unsigned short	line;
- #endif
- 	unsigned short	flags;
--};
- #endif	/* CONFIG_GENERIC_BUG */
-+};
-+
-+#ifdef CONFIG_BUG
- 
- /*
-  * Don't use BUG() or BUG_ON() unless there's really no way out; one
+@@ -12,3 +12,4 @@
+ #include <asm/bug.h>
+ #include <asm/paravirt.h>
+ #include <asm/asm.h>
++#include <asm/cpufeature.h>
 -- 
 2.17.1
 
