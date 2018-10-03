@@ -2,160 +2,141 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AEFC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FBEC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CFC320835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9547213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:52:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JEOPJovF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CFC320835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tXZ0NKdg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9547213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbeJCOjo (ORCPT
+        id S1727406AbeJCOjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 10:39:44 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50546 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727164AbeJCOjn (ORCPT
+        Wed, 3 Oct 2018 10:39:48 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54764 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727203AbeJCOjp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:39:43 -0400
-Received: by mail-it1-f194.google.com with SMTP id j81-v6so7132714ite.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 00:52:28 -0700 (PDT)
+        Wed, 3 Oct 2018 10:39:45 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r63-v6so4684455wma.4;
+        Wed, 03 Oct 2018 00:52:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Wc5fZIa98HMRT4qXqLJFJZdeUCYRVhMGnHUiGtpHK6E=;
-        b=JEOPJovFXYFD8p/kXSq6fSS/KkoiLhCzG70OrIsWTSIr//bB+F2JLu2l/tkslOhiIl
-         hEYGtDLifsuGDSVhX0KPNlO3VDULY0e/JA6sOCgeCxGZnb9c3WmORIcVIzsQCtSNbwU+
-         M1UN4QTPnDBEFUolbsk+HB8f0hP3+uZXnYQWs=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0BXvJoixoQPY3vUjrygvnNB0S4N2O8vQDKpOru/C0ts=;
+        b=tXZ0NKdg8JIkKf2I26Gl7q/l1PUkjtUvnhorh0j1WeizJH56oXJKem9GHZxx3UuHDz
+         l9Nl9n7qUAy1zjNtIUgL0NBZV5zF5e00WfzX/UOZhFT9PVLVYQgVYigu/oTJPZDPpaTG
+         upXdc0hG6vSKs86351ZsOFJoJFP/pZMhsvU85k3/ZYh1LCkzEqTsDsHlSYkhd2exs2mf
+         JVvvSBhl7kgHa9IMNYbMR3bBHfkLTBFPvJXHQIef+aVT4uiGEbeyyCUhlFOrenFZ/pNu
+         kgtHnZ3L+piEEYYiSotyPdj/w6T2+3mwdHx8fWm43slvhTwJk1/53NIc3HAiwVBqs3Cb
+         xfFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Wc5fZIa98HMRT4qXqLJFJZdeUCYRVhMGnHUiGtpHK6E=;
-        b=Y0WGD55uzgIZQJ8p6V7JPOfn6PhcYvdH+SzqdP3sRLaFsCSsBjCzhsHPZuQVBfN5Jx
-         oKPG3TynheSd/zY8yw7zvAbfVbK3ZbHvltTF1NsT19lXRUOceE8xNTrIiy4akevk7p01
-         VZmwhx6aNliMqPXXRtGSxfWITc5pvtWrDpPPBvyZnEvYVpts7fErJs9YhfcBZbIvsidP
-         WfC0blVPae5jwqpVS1bM6y3JwrIXoBAuRgHRSc30IGR3uVj/z/fmHb54Yr5ieTIzok17
-         G/mGyiWOMy760fL5ir0uZGwA7mvREReblueDIJZ9KN33/6QLB0Q/NXb821yUTEqqIbsQ
-         XxKQ==
-X-Gm-Message-State: ABuFfoiGfoc0rjU8FHhMJRGgXmWEVjDp1mFriYbnKGtIe2HOznBVygyz
-        +nv3Sco38YMIxnPGYjEu0HLW3vc1box3xthuOehBRA==
-X-Google-Smtp-Source: ACcGV603ikW5Md9iDZOJrT0P6VTz0su6Axw9t2pF7eZSKqZDmLN+Lf/MVPFYpHUr9SWKwVvlMMM1wsXtJtFPEPhtjsY=
-X-Received: by 2002:a24:83c1:: with SMTP id d184-v6mr478311ite.16.1538553148110;
- Wed, 03 Oct 2018 00:52:28 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0BXvJoixoQPY3vUjrygvnNB0S4N2O8vQDKpOru/C0ts=;
+        b=uZj5vsfFW+n+Rm6NI1vnMvd65QQSIAUM7xtUZ3/VrFLAkvUVkZSivVeOJl3dXUOkBe
+         gUlzih4g52QsisEWD3CEMCq8YbiotsIrUEm7CxM/Kx1TWuARTQIm0CqEW66CAMej66Dn
+         E87n/d3yHKgALYkavao8Hs7F9McqVl2xjFayP/6hlVyblNhDS11AYbPTiUte05/lkbTw
+         XU6Q7+QO2MqpfdYV8rDB4p+RY2PrwYVkq+Cir/GT3f1kVggd0L8vzUDvj+yyeJYeM/3e
+         gd2KI0m22QSAlc0F3eJbkmLuY+xydmcSWxfoz8EmRhk7tSsp0qYc9UhUpn3VtxXCzcae
+         0sDg==
+X-Gm-Message-State: ABuFfojnxsPW8+4diPvjHCWe0f2j0FA7nKlyOBY1eiJKqtyIrcjt8Dn6
+        i2J4uOjEpjUKY0ishX+x+Lk=
+X-Google-Smtp-Source: ACcGV629TAmvFRADUHzqyfrgiQOxEsRJDRZIu/pLBlPV2k85r/D89rl0ewZCSYU4wUtcj7e1789vHA==
+X-Received: by 2002:a1c:ee15:: with SMTP id m21-v6mr552784wmh.124.1538553148395;
+        Wed, 03 Oct 2018 00:52:28 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id e67-v6sm1111722wmd.41.2018.10.03.00.52.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 00:52:25 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 09:52:23 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-doc@vger.kernel.org, tglx@linutronix.de,
+        kirill.shutemov@linux.intel.com, thgarnie@google.com,
+        corbet@lwn.net
+Subject: Re: [PATCH v2 1/3] x86/KASLR: Update document about KERNEL_IMAGE_SIZE
+Message-ID: <20181003075223.GA3029@gmail.com>
+References: <20180926235823.3567-1-bhe@redhat.com>
+ <20180926235823.3567-2-bhe@redhat.com>
 MIME-Version: 1.0
-References: <20180921102546.12745-1-thierry.reding@gmail.com>
- <20180921102546.12745-7-thierry.reding@gmail.com> <CACRpkdYnrf7FknvnZyFSgfT5aCrcWT4hxSnQo0UqxYfR6Fkqwg@mail.gmail.com>
- <20180925093315.GB7097@ulmo> <CACRpkdbOpVPB5MqgCyF5x_ENzLscz5oYEstYqwVceqeKZq2w5g@mail.gmail.com>
- <20180925111716.GA7925@ulmo>
-In-Reply-To: <20180925111716.GA7925@ulmo>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 3 Oct 2018 09:52:16 +0200
-Message-ID: <CACRpkdY8PnfrfPcD8Gusk-HeiCmVxdyB0GAsb9nvg3JYY3vpLQ@mail.gmail.com>
-Subject: Re: [PATCH 6/9] gpio: Add support for hierarchical IRQ domains
-To:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926235823.3567-2-bhe@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 1:17 PM Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Tue, Sep 25, 2018 at 12:33:54PM +0200, Linus Walleij wrote:
-> > On Tue, Sep 25, 2018 at 11:33 AM Thierry Reding
-> > <thierry.reding@gmail.com> wrote:
-> > > On Tue, Sep 25, 2018 at 10:11:06AM +0200, Linus Walleij wrote:
 
-> > As I see it there are some ways to go about this:
-> >
-> > 1. Create one gpiochip per bank and just register the number of
-> > GPIOs actually accessible per bank offset from 0. This works
-> > if one does not insist on having one gpiochip covering all pins,
-> > and as long as all usable pins are stacked from offset 0..n.
-> > (Tegra186 doesn't do this, it is registering one chip for all.)
-> >
-> > 2. If the above cannot be met, register enough pins to cover all
-> > (e.g. 32 pins for a 32bit GPIO register) then mask off the
-> > unused pins in .valid_mask in the gpio_chip. This was fairly
-> > recently introduced to add ACPI support for Qualcomm, as
-> > there were valid, but unusable GPIO offsets, but it can be
-> > used to cut arbitrary holes in any range of offsets.
-> >
-> > 3. Some driver-specific way. Which seems to be what Tegra186
-> > is doing.
-> >
-> > Would you consider to move over to using method (2) to
-> > get a more linear numberspace? I.e. register 8 GPIOs/IRQs
-> > per port/bank and then just mask off the invalid ones?
-> > .valid_mask in gpio_chip can be used for the GPIOs and
-> > .valid_mask in the gpio_irq_chip can be used for IRQs.
-> >
-> > Or do you think it is nonelegant?
->
-> This is all pretty much the same discussion that I remember we had
-> earlier this year. Nothing's changed so far.
->
-> Back at the time I had pointed out that we'd be wasting a lot of memory
-> by registering 8 GPIOs/IRQs per bank, because on average only about 60-
-> 75% of the GPIOs are actually used. In addition we waste processing
-> resources by having to check the GPIO offset against the valid mask
-> every time we want to access a GPIO.
->
-> I think that's inelegant, but from the rest of what you're saying you
-> don't see it that way.
+* Baoquan He <bhe@redhat.com> wrote:
 
-(...)
+> Currently CONFIG_RANDOMIZE_BASE=y is default set, update the relevant
+> document about KERNEL_IMAGE_SIZE.
 
-> > Sorry for being a pest, I just have a feeling we are reinventing
-> > wheels here, I really want to pull as many fringe cases as
-> > possible into gpiolib if I can so the maintenance gets
-> > simpler.
->
-> Like I said, we had this very discussion a couple of months ago, and I
-> don't think I want to go through all of it again. I think, yes, I could
-> make Tegra186 work with .valid_mask, even if I consider it wasteful. So
-> if that's what you want, I'll go rewrite the driver so we'll never have
-> to repeat this again.
+Suggested wording:
 
-Well, IMO rolling custom code into every driver that needs a
-hierarchical interrupt is pretty inelegant too, so I guess it is one
-of those choose the lesser evil situations for me as a maintainer.
+  x86/KASLR: Update KERNEL_IMAGE_SIZE description
+  
+  Currently CONFIG_RANDOMIZE_BASE=y is set by default, which makes some of the
+  old comments above the KERNEL_IMAGE_SIZE definition out of date. Update them
+  to the current state of affairs.
 
-I am very happy if this hairy hierarchical irqdomain handling can
-be standardized and pushed into the core, and as it seems this
-memory optimization stops that and forces a local solution with
-some necessarilily different code, also for xlate since a while
-back and now for the hierarchical irqdomain.
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> ---
+>  arch/x86/include/asm/page_64_types.h | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
+> index 6afac386a434..2288ceabdb9c 100644
+> --- a/arch/x86/include/asm/page_64_types.h
+> +++ b/arch/x86/include/asm/page_64_types.h
+> @@ -61,9 +61,10 @@
+>  /*
+>   * Kernel image size is limited to 1GiB due to the fixmap living in the
+>   * next 1GiB (see level2_kernel_pgt in arch/x86/kernel/head_64.S). Use
+> - * 512MiB by default, leaving 1.5GiB for modules once the page tables
+> - * are fully set up. If kernel ASLR is configured, it can extend the
+> - * kernel page table mapping, reducing the size of the modules area.
+> + * 1 GiB by default, leaving 1 GiB for modules once the page tables are
+> + * fully set up. If kernel ASLR is not configured, it can shrink the
+> + * kernel page table mapping to decrease the size of kernel area to 512
+> + * MiB, increase the size of the modules area to 1.5 GiB.
+>   */
 
-So if I let this pass then I will just be grumpy again the next
-time another local kludge needs to be added.
+I've prettified that comment some more:
 
-I am worried that there will be more and more of this special
-code just to account for the nonlinear blocks of GPIOs.
+ /*
+  * Maximum kernel image size is limited to 1 GiB, due to the fixmap living
+  * in the next 1 GiB (see level2_kernel_pgt in arch/x86/kernel/head_64.S).
+  *
+  * On KASLR use 1 GiB by default, leaving 1 GiB for modules once the
+  * page tables are fully set up.
+  *
+  * If KASLR is disabled we can shrink it to 0.5 GiB and increase the size
+  * of the modules area to 1.5 GiB.
+  */
 
-I agree memory footprint matters, as does performance,
-as does maintainability and reuse. So it's not like there is
-a hard factor determining this.
+>  #if defined(CONFIG_RANDOMIZE_BASE)
+>  #define KERNEL_IMAGE_SIZE	(1024 * 1024 * 1024)
 
-How much memory are we talking about for a tegra186, and
-how much is that in proportion to how much memory a
-typical tegra186 system has connected to it? If it is significant
-and hurting the kernel and/or applications on that platform
-I would agree we need to look into memory optimizations.
+BTW., while at it, shouldn't we make that:
 
-Yours,
-Linus Walleij
+   #ifdef CONFIG_RANDOMIZE_BASE
+
+?
+
+Thanks,
+
+	Ingo
