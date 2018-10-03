@@ -2,95 +2,60 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB66C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A184C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAADF2089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:06:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAADF2089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4018F2098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:08:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4018F2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbeJCWzr (ORCPT
+        id S1727148AbeJCW5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:55:47 -0400
-Received: from mga09.intel.com ([134.134.136.24]:16572 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726811AbeJCWzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:55:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 09:06:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
-   d="scan'208";a="75122244"
-Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by fmsmga007.fm.intel.com with ESMTP; 03 Oct 2018 09:04:44 -0700
-Message-ID: <5ddb0ad33298d1858e530fce9c9ea2788b2fac81.camel@intel.com>
-Subject: Re: [RFC PATCH v4 24/27] mm/mmap: Create a guard area between VMAs
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
-Date:   Wed, 03 Oct 2018 09:00:04 -0700
-In-Reply-To: <CALCETrU-Ny-uC1NqRedQwNKe2MMhsFEqZ08TtHJwbLfCACMmLw@mail.gmail.com>
-References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
-         <20180921150351.20898-25-yu-cheng.yu@intel.com>
-         <20181003045611.GB22724@asgard.redhat.com>
-         <CALCETrU-Ny-uC1NqRedQwNKe2MMhsFEqZ08TtHJwbLfCACMmLw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 3 Oct 2018 18:57:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58718 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726811AbeJCW5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 18:57:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 56D20AD4A;
+        Wed,  3 Oct 2018 16:08:07 +0000 (UTC)
+Date:   Wed, 03 Oct 2018 18:08:07 +0200
+Message-ID: <s5hftxnovx4.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     " Gustavo A. R. Silva " <gustavo@embeddedor.com>
+Cc:     "Jaroslav Kysela" <perex@perex.cz>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ALSA: intel8x0: Fix fall-through annotations
+In-Reply-To: <20181003103836.GA21649@embeddedor.com>
+References: <20181003103836.GA21649@embeddedor.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-02 at 22:36 -0700, Andy Lutomirski wrote:
-> On Tue, Oct 2, 2018 at 9:55 PM Eugene Syromiatnikov <esyr@redhat.com> wrote:
-> > 
-> > On Fri, Sep 21, 2018 at 08:03:48AM -0700, Yu-cheng Yu wrote:
-> > > Create a guard area between VMAs, to detect memory corruption.
-> > 
-> > Do I understand correctly that with this patch a user space program
-> > no longer be able to place two mappings back to back? If it is so,
-> > it will likely break a lot of things; for example, it's a common ring
-> > buffer implementations technique, to map buffer memory twice back
-> > to back in order to avoid special handling of items wrapping its end.
+On Wed, 03 Oct 2018 12:38:36 +0200,
+ Gustavo A. R. Silva  wrote:
 > 
-> I haven't checked what the patch actually does, but it shouldn't have
-> any affect on MAP_FIXED or the new no-replace MAP_FIXED variant.
+> Replace "fallthru" with a proper "fall through" annotation.
 > 
-> --Andy
+> This fix is part of the ongoing efforts to enabling
+> -Wimplicit-fallthrough
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-I did some mmap tests with/without MAP_FIXED, and it works as intended.
-In addition to the ring buffer, are there other test cases?
+Thanks, applied.
 
-Yu-cheng
 
+Takashi
