@@ -2,498 +2,212 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF38EC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 286A7C64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A2A0206B2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:58:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A2A0206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id D3C4D21470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:00:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="vZaT5252"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C4D21470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbeJDEsK convert rfc822-to-8bit (ORCPT
+        id S1727120AbeJDEuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 00:48:10 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:39388 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725723AbeJDEsK (ORCPT
+        Thu, 4 Oct 2018 00:50:37 -0400
+Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:2296 "EHLO
+        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725723AbeJDEuh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 00:48:10 -0400
-Received: from localhost (unknown [24.18.143.0])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8D53B140FF641;
-        Wed,  3 Oct 2018 14:57:57 -0700 (PDT)
-Date:   Wed, 03 Oct 2018 14:57:56 -0700 (PDT)
-Message-Id: <20181003.145756.2159165162231604122.davem@davemloft.net>
-To:     gregkh@linux-foundation.org
-CC:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT] Networking
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-2
-Content-Transfer-Encoding: 8BIT
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 03 Oct 2018 14:57:57 -0700 (PDT)
+        Thu, 4 Oct 2018 00:50:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1538604017; x=1570140017;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=PtpaPfwaIK9dzSY+IUD7+Xr18VxCJDTjx2HWC5N4iEA=;
+  b=vZaT52521hkD84cet01YqBs7sCgScE1x/Fnvk5Az4UoVkJss6AnYPq2b
+   LdJ1GiLGhv0agDF+P00Qigb9irsEgBwi7rEaLA9snQFcjAPGuTwuhD/de
+   zNea7aJRAZDBn7UIjkOU1p6VDr5dcpOrWkAsm9l5eDPQeeReDMYK4JBgy
+   4=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EJAABKO7VbhyeV50NcGgEBAQEBAgE?=
+ =?us-ascii?q?BAQEHAgEBAQGBUoFjgRB/KAqMXo1HiGKNehSBZgslCYQ+hCMhNRcBAwEBAgE?=
+ =?us-ascii?q?BAgEBAhABAQEVCQgpIwxCDgGBZCIRS2sBAQEBAQEjAg1kAQEBAxIoPxACAQg?=
+ =?us-ascii?q?YFQkQITYCBAESCBqCNEsBgWkDFQ+adolXAQEBghuHNw2CTAWLIYIXgRKDEoJ?=
+ =?us-ascii?q?WLBkEGIECEgESAQ0SLBOFGQKIMZRwLAkFhkSGWIMVH4FKhGKJNowXcYgiAgQ?=
+ =?us-ascii?q?CBAUCFIFEAjNmcXCDPIIzh1iBC4U+bwGBZolwgR+BHwEB?=
+X-IPAS-Result: =?us-ascii?q?A2EJAABKO7VbhyeV50NcGgEBAQEBAgEBAQEHAgEBAQGBU?=
+ =?us-ascii?q?oFjgRB/KAqMXo1HiGKNehSBZgslCYQ+hCMhNRcBAwEBAgEBAgEBAhABAQEVC?=
+ =?us-ascii?q?QgpIwxCDgGBZCIRS2sBAQEBAQEjAg1kAQEBAxIoPxACAQgYFQkQITYCBAESC?=
+ =?us-ascii?q?BqCNEsBgWkDFQ+adolXAQEBghuHNw2CTAWLIYIXgRKDEoJWLBkEGIECEgESA?=
+ =?us-ascii?q?Q0SLBOFGQKIMZRwLAkFhkSGWIMVH4FKhGKJNowXcYgiAgQCBAUCFIFEAjNmc?=
+ =?us-ascii?q?XCDPIIzh1iBC4U+bwGBZolwgR+BHwEB?=
+Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
+  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 03 Oct 2018 17:00:16 -0500
+Received: from pps.filterd (m0134746.ppops.net [127.0.0.1])
+        by mx0a-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w93LrNRq017484;
+        Wed, 3 Oct 2018 18:00:22 -0400
+Received: from esa5.dell-outbound2.iphmx.com (esa5.dell-outbound2.iphmx.com [68.232.153.203])
+        by mx0a-00154901.pphosted.com with ESMTP id 2mw0smht2k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 03 Oct 2018 18:00:22 -0400
+Cc:     <linux-pci@vger.kernel.org>, <bhelgaas@google.com>,
+        <keith.busch@intel.com>, <Austin.Bolen@dell.com>,
+        <Shyam.Iyer@dell.com>, <ariel.elior@cavium.com>,
+        <everest-linux-l2@cavium.com>, <davem@davemloft.net>,
+        <michael.chan@broadcom.com>, <ganeshgr@chelsio.com>,
+        <jeffrey.t.kirsher@intel.com>, <tariqt@mellanox.com>,
+        <saeedm@mellanox.com>, <leon@kernel.org>,
+        <jakub.kicinski@netronome.com>, <dirk.vandermerwe@netronome.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <intel-wired-lan@lists.osuosl.org>, <linux-rdma@vger.kernel.org>,
+        <oss-drivers@netronome.com>, <stephen@networkplumber.org>,
+        <mj@ucw.cz>
+Received: from ausxippc110.us.dell.com ([143.166.85.200])
+  by esa5.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 04 Oct 2018 03:59:57 +0600
+X-LoopCount0: from 10.166.134.84
+X-IronPort-AV: E=Sophos;i="5.54,337,1534827600"; 
+   d="scan'208";a="710724416"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <helgaas@kernel.org>, <mr.nuke.me@gmail.com>
+Subject: Re: [PATCH 1/9] PCI: sysfs: Export available PCIe bandwidth
+Thread-Topic: [PATCH 1/9] PCI: sysfs: Export available PCIe bandwidth
+Thread-Index: AQHUQ7BfSa0aPLhtZE62OuK+W8HsxQ==
+Date:   Wed, 3 Oct 2018 22:00:19 +0000
+Message-ID: <f9fbc8babbb344eca593a3f8b0d096d9@ausx13mps321.AMER.DELL.COM>
+References: <20180903180242.14504-1-mr.nuke.me@gmail.com>
+ <20180903180242.14504-2-mr.nuke.me@gmail.com>
+ <20181003213054.GH120535@bhelgaas-glaptop.roam.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.177.90.70]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-03_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810030199
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Sorry, a bunch of stuff got queued up while I was moving last week, so
-this is larger than I would like this late in the game.
-
-Nothing super dangerous or scary though, just lots of simpler fixes:
-
-1) Prefix length validation in xfrm layer, from Steffen Klassert.
-
-2) TX status reporting fix in mac80211, from Andrei Otcheretianski.
-
-3) Fix hangs due to TX_DROP in mac80211, from Bob Copeland.
-
-4) Fix DMA error regression in b43, from Larry Finger.
-
-5) Add input validation to xenvif_set_hash_mapping(), from Jan Beulich.
-
-6) SMMU unmapping fix in hns driver, from Yunsheng Lin.
-
-7) Bluetooh crash in unpairing on SMP, from Matias Karhumaa.
-
-8) WoL handling fixes in the phy layer, from Heiner Kallweit.
-
-9) Fix deadlock in bonding, from Mahesh Bandewar.
-
-10) Fill ttl inherit infor in vxlan driver, from Hangbin Liu.
-
-11) Fix TX timeouts during netpoll, from Michael Chan.
-
-12) RXRPC layer fixes from David Howells.
-
-13) Another batch of ndo_poll_controller() removals to deal with
-    excessive resource consumption during load.  From Eric Dumazet.
-
-14) Fix a specific TIPC failure secnario, from LUU Duc Canh.
-
-15) Really disable clocks in r8169 during suspend so that low
-    power states can actually be reached.
-
-16) Fix SYN backlog lockdep issue in tcp and dccp, from Eric Dumazet.
-
-17) Fix RCU locking in netpoll SKB send, which shows up in bonding,
-    from Dave Jones.
-
-18) Fix TX stalls in r8169, from Heiner Kallweit.
-
-19) Fix locksup in nfp due to control message storms, from Jakub
-    Kicinski.
-
-20) Various rmnet bug fixes from Subash Abhinov Kasiviswanathan and
-    Sean Tranchetti.
-
-21) Fix use after free in ip_cmsg_recv_dstaddr(), from Eric Dumazet.
-
-Please pull, thanks a lot!
-
-The following changes since commit 846e8dd47c264e0b359afed28ea88e0acdee6818:
-
-  Merge tag 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi (2018-09-25 18:14:14 +0200)
-
-are available in the Git repository at:
-
-  gitolite@ra.kernel.org:/pub/scm/linux/kernel/git/davem/net.git 
-
-for you to fetch changes up to 4233cfe6ec4683497d7318f55ce7617e97f2e610:
-
-  ixgbe: check return value of napi_complete_done() (2018-10-03 14:40:32 -0700)
-
-----------------------------------------------------------------
-Alaa Hleihel (1):
-      net/mlx5e: Avoid unbounded peer devices when unpairing TC hairpin rules
-
-Alex Xu (Hello71) (1):
-      r8169: always autoneg on resume
-
-Andrei Otcheretianski (3):
-      mac80211: Always report TX status
-      mac80211: Don't wake up from PS for offchannel TX
-      cfg80211: reg: Init wiphy_idx in regulatory_hint_core()
-
-Andrew Lunn (1):
-      net: phy: sfp: Fix unregistering of HWMON SFP device
-
-Bob Copeland (1):
-      mac80211: fix pending queue hang due to TX_DROP
-
-Colin Ian King (2):
-      qed: fix spelling mistake "toogle" -> "toggle"
-      wimax/i2400m: fix spelling mistake "not unitialized" -> "uninitialized"
-
-Dan Carpenter (1):
-      net: sched: act_ipt: check for underflow in __tcf_ipt_init()
-
-Dave Jones (1):
-      bond: take rcu lock in netpoll_send_skb_on_dev
-
-David Ahern (3):
-      netfilter: bridge: Don't sabotage nf_hook calls from an l3mdev
-      net/ipv6: Remove extra call to ip6_convert_metrics for multipath case
-      rtnetlink: Fail dump if target netnsid is invalid
-
-David Howells (8):
-      rxrpc: Remove dup code from rxrpc_find_connection_rcu()
-      rxrpc: Fix checks as to whether we should set up a new call
-      rxrpc: Fix RTT gathering
-      rxrpc: Emit BUSY packets when supposed to rather than ABORTs
-      rxrpc: Improve up-front incoming packet checking
-      rxrpc: Make service call handling more robust
-      rxrpc: Fix transport sockopts to get IPv4 errors on an IPv6 socket
-      rxrpc: Fix error distribution
-
-David S. Miller (16):
-      Merge branch 'xen-netback-hash'
-      Revert "net: phy: fix WoL handling when suspending the PHY"
-      Merge branch 'net-phy-fix-WoL-handling-when-suspending-the-PHY'
-      Merge branch 's390-qeth-fixes'
-      Merge tag 'mac80211-for-davem-2018-09-27' of git://git.kernel.org/.../jberg/mac80211
-      Merge branch 'netpoll-second-round-of-fixes'
-      Merge tag 'rxrpc-fixes-20180928' of git://git.kernel.org/.../dhowells/linux-fs
-      Merge branch 'ieee802154-for-davem-2018-09-28' of git://git.kernel.org/.../sschmidt/wpan
-      Merge branch 'net-usb-Check-for-Wake-on-LAN-modes'
-      Merge git://git.kernel.org/.../pablo/nf
-      Merge branch 'master' of git://git.kernel.org/.../klassert/ipsec
-      Merge branch 'for-upstream' of git://git.kernel.org/.../bluetooth/bluetooth
-      Merge branch 'tun-races'
-      Merge tag 'wireless-drivers-for-davem-2018-10-01' of git://git.kernel.org/.../kvalo/wireless-drivers
-      Merge branch 'rmnet-fixes'
-      Merge tag 'mlx5-fixes-2018-10-01' of git://git.kernel.org/.../saeed/linux
-
-Eran Ben Elisha (1):
-      net/mlx5: E-Switch, Fix out of bound access when setting vport rate
-
-Eric Dumazet (18):
-      netpoll: do not test NAPI_STATE_SCHED in poll_one_napi()
-      hinic: remove ndo_poll_controller
-      ehea: remove ndo_poll_controller
-      net: hns: remove ndo_poll_controller
-      virtio_net: remove ndo_poll_controller
-      qlcnic: remove ndo_poll_controller
-      qlogic: netxen: remove ndo_poll_controller
-      net: ena: remove ndo_poll_controller
-      sfc: remove ndo_poll_controller
-      sfc-falcon: remove ndo_poll_controller
-      ibmvnic: remove ndo_poll_controller
-      tcp/dccp: fix lockdep issue when SYN is backlogged
-      tun: remove unused parameters
-      tun: initialize napi_mutex unconditionally
-      tun: napi flags belong to tfile
-      inet: make sure to grab rcu_read_lock before using ireq->ireq_opt
-      rtnl: limit IFLA_NUM_TX_QUEUES and IFLA_NUM_RX_QUEUES to 4096
-      ipv4: fix use-after-free in ip_cmsg_recv_dstaddr()
-
-Felix Fietkau (1):
-      mac80211: allocate TXQs for active monitor interfaces
-
-Flavio Leitner (2):
-      netfilter: xt_socket: check sk before checking for netns.
-      Revert "openvswitch: Fix template leak in error cases."
-
-Florian Fainelli (8):
-      asix: Check for supported Wake-on-LAN modes
-      ax88179_178a: Check for supported Wake-on-LAN modes
-      lan78xx: Check for supported Wake-on-LAN modes
-      sr9800: Check for supported Wake-on-LAN modes
-      r8152: Check for supported Wake-on-LAN Modes
-      smsc75xx: Check for Wake-on-LAN modes
-      smsc95xx: Check for Wake-on-LAN modes
-      net: systemport: Fix wake-up interrupt race during resume
-
-Florian Westphal (1):
-      netfilter: avoid erronous array bounds warning
-
-Gustavo A. R. Silva (1):
-      sctp: fix fall-through annotation
-
-Hangbin Liu (1):
-      vxlan: fill ttl inherit info
-
-Hans de Goede (1):
-      r8169: Disable clk during suspend / resume
-
-Heiner Kallweit (4):
-      net: phy: fix WoL handling when suspending the PHY
-      net: core: add member wol_enabled to struct net_device
-      net: phy: fix WoL handling when suspending the PHY
-      r8169: fix network stalls due to missing bit TXCFG_AUTO_FIFO
-
-Jakub Kicinski (1):
-      nfp: avoid soft lockups under control message storm
-
-Jan Beulich (3):
-      xen-netback: fix input validation in xenvif_set_hash_mapping()
-      xen-netback: validate queue numbers in xenvif_set_hash_mapping()
-      xen-netback: handle page straddling in xenvif_set_hash_mapping()
-
-Jean Delvare (1):
-      s390: qeth: Fix potential array overrun in cmd/rc lookup
-
-Jianbo Liu (1):
-      net/mlx5e: Set vlan masks for all offloaded TC rules
-
-Johannes Berg (2):
-      mac80211: TDLS: fix skb queue/priority assignment
-      netlink: fix typo in nla_parse_nested() comment
-
-Jouni Malinen (1):
-      cfg80211: Address some corner cases in scan result channel updating
-
-LUU Duc Canh (2):
-      tipc: fix failover problem
-      tipc: ignore STATE_MSG on wrong link session
-
-Larry Finger (1):
-      b43: fix DMA error related regression with proprietary firmware
-
-Maciej W. Rozycki (1):
-      declance: Fix continuation with the adapter identification message
-
-Maciej ¯enczykowski (1):
-      net-tcp: /proc/sys/net/ipv4/tcp_probe_interval is a u32 not int
-
-Mahesh Bandewar (3):
-      bonding: pass link-local packets to bonding master also.
-      bonding: avoid possible dead-lock
-      bonding: fix warning message
-
-Martin Willi (3):
-      mac80211_hwsim: fix locking when iterating radios during ns exit
-      mac80211_hwsim: fix race in radio destruction from netlink notifier
-      mac80211_hwsim: do not omit multicast announce of first added radio
-
-Masashi Honma (2):
-      nl80211: Fix possible Spectre-v1 for NL80211_TXRATE_HT
-      nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds
-
-Matias Karhumaa (1):
-      Bluetooth: SMP: fix crash in unpairing
-
-Michael Chan (1):
-      bnxt_en: Fix TX timeout during netpoll.
-
-Michal Simek (1):
-      net: macb: Clean 64b dma addresses if they are not detected
-
-Nathan Chancellor (5):
-      qed: Avoid implicit enum conversion in qed_set_tunn_cls_info
-      qed: Fix mask parameter in qed_vf_prep_tunn_req_tlv
-      qed: Avoid implicit enum conversion in qed_roce_mode_to_flavor
-      qed: Avoid constant logical operation warning in qed_vf_pf_acquire
-      qed: Avoid implicit enum conversion in qed_iwarp_parse_rx_pkt
-
-Parthasarathy Bhuvaragan (3):
-      tipc: fix flow control accounting for implicit connect
-      tipc: reset bearer if device carrier not ok
-      tipc: lock wakeup & inputq at tipc_link_reset()
-
-Pavel Machek (1):
-      iwlwifi: 1000: set the TFD queue size
-
-Randy Dunlap (1):
-      cfg80211: fix reg_query_regdb_wmm kernel-doc
-
-Rickard x Andersson (1):
-      net: fec: fix rare tx timeout
-
-Sean Tranchetti (2):
-      xfrm: validate template mode
-      net: qualcomm: rmnet: Skip processing loopback packets
-
-Shahed Shaikh (1):
-      qlcnic: fix Tx descriptor corruption on 82xx devices
-
-Song Liu (1):
-      ixgbe: check return value of napi_complete_done()
-
-Sowmini Varadhan (2):
-      xfrm: reset transport header back to network header after all input transforms ahave been applied
-      xfrm: reset crypto_done when iterating over multiple input xfrms
-
-Stanislaw Gruszka (1):
-      mt76x0: fix remove_interface
-
-Stefan Agner (1):
-      netfilter: nft_osf: use enum nft_data_types for nft_validate_register_store
-
-Steffen Klassert (2):
-      xfrm: Validate address prefix lengths in the xfrm selector.
-      xfrm: Fix NULL pointer dereference when skb_dst_force clears the dst_entry.
-
-Stephen Hemminger (1):
-      MAINTAINERS: change bridge maintainers
-
-Subash Abhinov Kasiviswanathan (2):
-      net: qualcomm: rmnet: Fix incorrect allocation flag in transmit
-      net: qualcomm: rmnet: Fix incorrect allocation flag in receive path
-
-Sudarsana Reddy Kalluru (2):
-      Update maintainers for bnx2/bnx2x/qlge/qlcnic drivers.
-      qed: Fix shmem structure inconsistency between driver and the mfw.
-
-Taehee Yoo (1):
-      netfilter: nft_set_rbtree: add missing rb_erase() in GC routine
-
-Thadeu Lima de Souza Cascardo (1):
-      xfrm6: call kfree_skb when skb is toobig
-
-Xue Liu (1):
-      ieee802154: mcr20a: Replace magic number with constants
-
-Yuan-Chi Pang (1):
-      mac80211: fix TX status reporting for ieee80211s
-
-YueHaibing (1):
-      ieee802154: Use kmemdup instead of duplicating it in ca8210_test_int_driver_write
-
-Yunsheng Lin (1):
-      net: hns: fix for unmapping problem when SMMU is on
-
-zhong jiang (4):
-      netfilter: conntrack: get rid of double sizeof
-      ieee802154: remove unecessary condition check before debugfs_remove_recursive
-      ieee802154: ca8210: remove redundant condition check before debugfs_remove
-      s390: qeth_core_mpc: Use ARRAY_SIZE instead of reimplementing its function
-
- Documentation/networking/ip-sysctl.txt               |  2 +-
- MAINTAINERS                                          |  8 ++++----
- drivers/net/bonding/bond_main.c                      | 65 +++++++++++++++++++++++++++++++++++++----------------------------
- drivers/net/ethernet/amazon/ena/ena_netdev.c         | 22 ----------------------
- drivers/net/ethernet/amd/declance.c                  | 10 ++++++----
- drivers/net/ethernet/broadcom/bcmsysport.c           | 28 +++++++++++-----------------
- drivers/net/ethernet/broadcom/bnxt/bnxt.c            | 13 ++++++++++---
- drivers/net/ethernet/cadence/macb_main.c             |  1 +
- drivers/net/ethernet/freescale/fec_main.c            |  8 ++++----
- drivers/net/ethernet/hisilicon/hns/hnae.c            |  2 +-
- drivers/net/ethernet/hisilicon/hns/hns_enet.c        | 48 +++++++++++++++++++-----------------------------
- drivers/net/ethernet/huawei/hinic/hinic_main.c       | 20 --------------------
- drivers/net/ethernet/ibm/ehea/ehea_main.c            | 14 --------------
- drivers/net/ethernet/ibm/ibmvnic.c                   | 16 ----------------
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c        | 12 +++++++-----
- drivers/net/ethernet/mellanox/mlx5/core/en.h         |  1 +
- drivers/net/ethernet/mellanox/mlx5/core/en/fs.h      |  2 ++
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c    |  2 +-
- drivers/net/ethernet/mellanox/mlx5/core/en_tc.c      | 65 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c    |  4 ++--
- drivers/net/ethernet/mellanox/mlx5/core/transobj.c   |  5 ++++-
- drivers/net/ethernet/netronome/nfp/nfp_net_common.c  | 17 ++++++++++++-----
- drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c | 23 -----------------------
- drivers/net/ethernet/qlogic/qed/qed_hsi.h            |  1 +
- drivers/net/ethernet/qlogic/qed/qed_iwarp.c          |  4 ++--
- drivers/net/ethernet/qlogic/qed/qed_rdma.c           |  2 +-
- drivers/net/ethernet/qlogic/qed/qed_roce.c           | 15 ++++-----------
- drivers/net/ethernet/qlogic/qed/qed_sp_commands.c    |  2 +-
- drivers/net/ethernet/qlogic/qed/qed_vf.c             |  5 ++---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic.h          |  8 +++++---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c  |  3 ++-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h  |  3 ++-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h       |  3 ++-
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c       | 12 ++++++------
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c     | 45 ---------------------------------------------
- drivers/net/ethernet/qualcomm/rmnet/rmnet_handlers.c |  7 +++++--
- drivers/net/ethernet/realtek/r8169.c                 | 32 ++++++++++++++++----------------
- drivers/net/ethernet/sfc/efx.c                       | 26 --------------------------
- drivers/net/ethernet/sfc/falcon/efx.c                | 26 --------------------------
- drivers/net/ieee802154/adf7242.c                     |  3 +--
- drivers/net/ieee802154/ca8210.c                      |  6 ++----
- drivers/net/ieee802154/mcr20a.c                      |  8 ++++----
- drivers/net/phy/phy_device.c                         | 12 +++++++++---
- drivers/net/phy/sfp.c                                |  7 +++++--
- drivers/net/tun.c                                    | 37 +++++++++++++++++++++----------------
- drivers/net/usb/asix_common.c                        |  3 +++
- drivers/net/usb/ax88179_178a.c                       |  3 +++
- drivers/net/usb/lan78xx.c                            | 17 ++++-------------
- drivers/net/usb/r8152.c                              |  3 +++
- drivers/net/usb/smsc75xx.c                           |  3 +++
- drivers/net/usb/smsc95xx.c                           |  3 +++
- drivers/net/usb/sr9800.c                             |  3 +++
- drivers/net/virtio_net.c                             | 14 --------------
- drivers/net/vxlan.c                                  |  3 +++
- drivers/net/wimax/i2400m/control.c                   |  2 +-
- drivers/net/wireless/broadcom/b43/dma.c              |  6 ++++--
- drivers/net/wireless/intel/iwlwifi/cfg/1000.c        |  1 +
- drivers/net/wireless/mac80211_hwsim.c                | 36 +++++++++++++++++-------------------
- drivers/net/wireless/mediatek/mt76/mt76x0/main.c     |  3 +--
- drivers/net/xen-netback/common.h                     |  3 ++-
- drivers/net/xen-netback/hash.c                       | 51 ++++++++++++++++++++++++++++++++++++---------------
- drivers/net/xen-netback/interface.c                  |  3 ++-
- drivers/s390/net/qeth_core_main.c                    |  2 +-
- drivers/s390/net/qeth_core_mpc.c                     | 33 ++++++++++++++++-----------------
- drivers/s390/net/qeth_core_mpc.h                     |  4 ++--
- include/linux/mlx5/transobj.h                        |  2 ++
- include/linux/netdevice.h                            |  3 +++
- include/linux/netfilter.h                            |  2 ++
- include/net/bonding.h                                |  7 +------
- include/net/cfg80211.h                               |  2 --
- include/net/inet_sock.h                              |  6 ------
- include/net/netlink.h                                |  2 +-
- include/trace/events/rxrpc.h                         |  4 +---
- net/bluetooth/mgmt.c                                 |  7 ++-----
- net/bluetooth/smp.c                                  | 29 +++++++++++++++++++++++++----
- net/bluetooth/smp.h                                  |  3 ++-
- net/bridge/br_netfilter_hooks.c                      |  3 ++-
- net/core/ethtool.c                                   |  9 ++++++++-
- net/core/netpoll.c                                   | 22 +++-------------------
- net/core/rtnetlink.c                                 | 12 ++++++++----
- net/dccp/input.c                                     |  4 +++-
- net/dccp/ipv4.c                                      |  4 +++-
- net/ipv4/inet_connection_sock.c                      |  5 ++++-
- net/ipv4/ip_sockglue.c                               |  3 +--
- net/ipv4/sysctl_net_ipv4.c                           |  6 ++++--
- net/ipv4/tcp_input.c                                 |  4 +++-
- net/ipv4/tcp_ipv4.c                                  |  4 +++-
- net/ipv4/xfrm4_input.c                               |  1 +
- net/ipv4/xfrm4_mode_transport.c                      |  4 +---
- net/ipv6/route.c                                     |  5 -----
- net/ipv6/xfrm6_input.c                               |  1 +
- net/ipv6/xfrm6_mode_transport.c                      |  4 +---
- net/ipv6/xfrm6_output.c                              |  2 ++
- net/mac80211/iface.c                                 |  3 ++-
- net/mac80211/mesh.h                                  |  3 ++-
- net/mac80211/mesh_hwmp.c                             |  9 +++------
- net/mac80211/status.c                                | 11 +++++------
- net/mac80211/tdls.c                                  |  8 ++++----
- net/mac80211/tx.c                                    |  6 +++++-
- net/netfilter/nf_conntrack_proto_tcp.c               |  4 ++--
- net/netfilter/nft_osf.c                              |  2 +-
- net/netfilter/nft_set_rbtree.c                       | 28 ++++++++++++++--------------
- net/netfilter/xt_socket.c                            |  4 ++--
- net/openvswitch/conntrack.c                          |  6 ++----
- net/rxrpc/ar-internal.h                              | 36 +++++++++++++++++++-----------------
- net/rxrpc/call_accept.c                              | 45 ++++++++++++++-------------------------------
- net/rxrpc/call_object.c                              |  2 +-
- net/rxrpc/conn_client.c                              |  4 ++--
- net/rxrpc/conn_object.c                              | 14 ++++++++------
- net/rxrpc/input.c                                    | 90 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------------
- net/rxrpc/local_object.c                             | 32 ++++++++++++++++++++++----------
- net/rxrpc/output.c                                   | 54 ++++++++++++++++++++++++++++++++++++------------------
- net/rxrpc/peer_event.c                               | 46 +++++++++++-----------------------------------
- net/rxrpc/peer_object.c                              | 52 +++++++++++-----------------------------------------
- net/rxrpc/protocol.h                                 | 15 ---------------
- net/sched/act_ipt.c                                  |  2 +-
- net/sctp/outqueue.c                                  |  2 +-
- net/tipc/bearer.c                                    | 12 +++++++-----
- net/tipc/link.c                                      | 45 ++++++++++++++++++++++++++++++++++++++++++++-
- net/tipc/link.h                                      |  3 +++
- net/tipc/node.c                                      | 14 +++++++++++++-
- net/tipc/socket.c                                    |  4 +++-
- net/wireless/nl80211.c                               | 20 +++++++++++++++-----
- net/wireless/reg.c                                   |  1 +
- net/wireless/scan.c                                  | 58 +++++++++++++++++++++++++++++++++++++++++++++++++---------
- net/xfrm/xfrm_input.c                                |  1 +
- net/xfrm/xfrm_output.c                               |  4 ++++
- net/xfrm/xfrm_policy.c                               |  4 ++++
- net/xfrm/xfrm_user.c                                 | 15 +++++++++++++++
- 129 files changed, 864 insertions(+), 806 deletions(-)
+On 10/03/2018 04:31 PM, Bjorn Helgaas wrote:=0A=
+> =0A=
+> [EXTERNAL EMAIL]=0A=
+> Please report any suspicious attachments, links, or requests for sensitiv=
+e information.=0A=
+> =0A=
+> =0A=
+> [+cc Stephen, Martin (for possible lspci changes)]=0A=
+> =0A=
+> Hi Alexandru,=0A=
+> =0A=
+> On Mon, Sep 03, 2018 at 01:02:28PM -0500, Alexandru Gagniuc wrote:=0A=
+>> For certain bandwidth-critical devices (e.g. multi-port network cards)=
+=0A=
+>> it is useful to know the available bandwidth to the root complex. This=
+=0A=
+>> information is only available via the system log, which doesn't=0A=
+>> account for link degradation after probing.=0A=
+>>=0A=
+>> With a sysfs attribute, we can computes the bandwidth on-demand, and=0A=
+>> will detect degraded links.=0A=
+>>=0A=
+>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>=0A=
+>> ---=0A=
+>>   drivers/pci/pci-sysfs.c | 13 +++++++++++++=0A=
+>>   1 file changed, 13 insertions(+)=0A=
+>>=0A=
+>> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c=0A=
+>> index 9ecfe13157c0..6658e927b1f5 100644=0A=
+>> --- a/drivers/pci/pci-sysfs.c=0A=
+>> +++ b/drivers/pci/pci-sysfs.c=0A=
+>> @@ -218,6 +218,18 @@ static ssize_t current_link_width_show(struct devic=
+e *dev,=0A=
+>>   }=0A=
+>>   static DEVICE_ATTR_RO(current_link_width);=0A=
+>>   =0A=
+>> +static ssize_t available_bandwidth_show(struct device *dev,=0A=
+>> +				       struct device_attribute *attr, char *buf)=0A=
+>> +{=0A=
+>> +	struct pci_dev *pci_dev =3D to_pci_dev(dev);=0A=
+>> +	u32 bw_avail;=0A=
+>> +=0A=
+>> +	bw_avail =3D pcie_bandwidth_available(pci_dev, NULL, NULL, NULL);=0A=
+>> +=0A=
+>> +	return sprintf(buf, "%u.%03u Gb/s\n", bw_avail / 1000, bw_avail % 1000=
+);=0A=
+>> +}=0A=
+>> +static DEVICE_ATTR_RO(available_bandwidth);=0A=
+> =0A=
+> Help me understand this.  We already have these sysfs attributes:=0A=
+> =0A=
+>    max_link_speed          # eg, 16 GT/s=0A=
+>    max_link_width          # eg, 8=0A=
+>    current_link_speed      # eg, 16 GT/s=0A=
+>    current_link_width      # eg, 8=0A=
+> =0A=
+> so I think the raw materials are already exposed.=0A=
+> > The benefits I see for this new file are that=0A=
+> =0A=
+>    - pcie_bandwidth_available() does the work of traversing up the=0A=
+>      tree, doing the computations (link width * speed, reduced by=0A=
+>      encoding overhead), and finding the minimum, and=0A=
+> =0A=
+>    - it re-traverses the path every time we look at it, while the=0A=
+>      boot-time check is a one-time event.=0A=
+> =0A=
+> In principle this could all be done in user space with the attributes=0A=
+> that are already exported.  There's some precedent for things like=0A=
+> this in lspci, e.g., "NUMA node" [1], and lspci might even be a more=0A=
+> user-friendly place for users to look for this, as opposed to=0A=
+> searching through sysfs.=0A=
+=0A=
+Parsing the endpoint to root port bandwidth is, in principle, possible =0A=
+from userspace. It's just that in practice it's very clumsy to do, and, =0A=
+as you pointed out, not that reliable.=0A=
+=0A=
+I understand it's not information that all users would jump in the air =0A=
+to know. However, it was important enough for certain use cases, that =0A=
+the kernel already has a very reliable way to calculate it.=0A=
+=0A=
+It seems to me that the most elegant way is to let the kernel tell us, =0A=
+since the kernel already has this facility. To quote one of the texts =0A=
+under Documentation/, it is an elegant way to "avoid reinventing kernel =0A=
+wheels in userspace".=0A=
+=0A=
+Alex=0A=
+=0A=
+> [1] https://git.kernel.org/pub/scm/utils/pciutils/pciutils.git/commit/?id=
+=3D90ec4a6d0ae8=0A=
+> =0A=
+>>   static ssize_t secondary_bus_number_show(struct device *dev,=0A=
+>>   					 struct device_attribute *attr,=0A=
+>>   					 char *buf)=0A=
+>> @@ -786,6 +798,7 @@ static struct attribute *pcie_dev_attrs[] =3D {=0A=
+>>   	&dev_attr_current_link_width.attr,=0A=
+>>   	&dev_attr_max_link_width.attr,=0A=
+>>   	&dev_attr_max_link_speed.attr,=0A=
+>> +	&dev_attr_available_bandwidth.attr,=0A=
+>>   	NULL,=0A=
+>>   };=0A=
+>>   =0A=
+>> -- =0A=
+>> 2.17.1=0A=
+>>=0A=
+> =0A=
+=0A=
