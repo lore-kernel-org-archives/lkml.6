@@ -2,102 +2,111 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8FBC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB570C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31225213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:48:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lj9Pob4F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31225213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 8E26920684
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:48:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E26920684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbeJCOf2 (ORCPT
+        id S1727222AbeJCOfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 10:35:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56788 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbeJCOf2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:35:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=57NPXWOngNkItbi7pPOdWWET8BR/KWdKFxnZXXTNw2Q=; b=Lj9Pob4FuwNv2hcKbfigrnFve
-        PCa2y1TeRETbtr5nAjwn/VaRsXuHiXMTby4uQoHv1nDn/58g8wDwQomaMNoaSJWLMju1RlnrNuStf
-        6lQrtLF5PuFdKHB79FnlNEOJe9f6WXBY4iYeDG8f22JcuQGSGQNrxYiu4zulOKG6HUKeahZdbIkKo
-        gOSJProwv9HyJ0xrbwauEGIk9qk9BQ0TtwKE/QMYtcSNhE+4/Ta7aG6k7AyIJH/4npM4LoRixm7ib
-        nDdEY4yBgy2/9hfHIyAYxuP5ONcHeraclShCxmqCjJlzMW4nY11mADtGqHcOHncB53l9t6keSYhzV
-        Mww0XqUow==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g7btE-0001j3-DY; Wed, 03 Oct 2018 07:48:12 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8F9A0202B9CBE; Wed,  3 Oct 2018 09:48:09 +0200 (CEST)
-Date:   Wed, 3 Oct 2018 09:48:09 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] locking/lockdep: Make class->ops a percpu counter
-Message-ID: <20181003074809.GJ26858@hirez.programming.kicks-ass.net>
-References: <1538511560-10090-1-git-send-email-longman@redhat.com>
- <1538511560-10090-5-git-send-email-longman@redhat.com>
+        Wed, 3 Oct 2018 10:35:44 -0400
+Received: from foss.arm.com ([217.140.101.70]:47274 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726835AbeJCOfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 10:35:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BA337A9;
+        Wed,  3 Oct 2018 00:48:30 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C73AB3F5A0;
+        Wed,  3 Oct 2018 00:48:24 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 08:48:23 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [PATCH v7 03/14] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20181003074822.bwlhiowr4upjwunm@queper01-lin>
+References: <20180912091309.7551-1-quentin.perret@arm.com>
+ <20180912091309.7551-4-quentin.perret@arm.com>
+ <20181002123031.GZ3439@hirez.programming.kicks-ass.net>
+ <20181002125115.245r3ocusvyiexno@queper01-lin>
+ <20181002134857.GE26858@hirez.programming.kicks-ass.net>
+ <20181002140430.fpeiqzblbcaewg6n@queper01-lin>
+ <20181002142924.GI26858@hirez.programming.kicks-ass.net>
+ <20181002144025.wnanxibhdcnl23sf@queper01-lin>
+ <20181002191217.GA4160@andrea>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1538511560-10090-5-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181002191217.GA4160@andrea>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 04:19:19PM -0400, Waiman Long wrote:
-> +DEFINE_PER_CPU(unsigned long [MAX_LOCKDEP_KEYS], lock_class_ops);
+Hi Andrea,
 
-> @@ -179,9 +181,30 @@ DECLARE_PER_CPU(struct lockdep_stats, lockdep_stats);
->  	}								\
->  	__total;							\
->  })
-> +
-> +static inline void debug_class_ops_inc(struct lock_class *class)
-> +{
-> +	int idx;
-> +
-> +	idx = class - lock_classes;
-> +	__this_cpu_inc(lock_class_ops[idx]);
-> +}
-> +
-> +static inline unsigned long debug_class_ops_read(struct lock_class *class)
-> +{
-> +	int idx, cpu;
-> +	unsigned long ops = 0;
-> +
-> +	idx = class - lock_classes;
-> +	for_each_possible_cpu(cpu)
-> +		ops += per_cpu(lock_class_ops[idx], cpu);
-> +	return ops;
-> +}
+On Tuesday 02 Oct 2018 at 21:12:17 (+0200), Andrea Parri wrote:
+> An example might help clarify this: here is a scenario I can _imagine,
+> based on your description.
+> 
+> CPU0 (em_register_perf_domain())	CPU1 (reader)
+> 
+> [...]					my_pd = READ_ONCE(per_cpu(em_data, 1)); /* em_cpu_get() */
+> pd->table = table			if (my_pd)
+> WRITE_ONCE(per_cpu(em_data, 1), pd);		my_table = my_pd->table; /* process, dereference, ... my_table */
+> 
+> In this scenario, we'd like CPU1 to see CPU0's store to ->table (as well
+> as the stores to table[]) _if CPU1 sees CPU0's store to em_data (that is,
+> if my_pd != NULL).
+> 
+> This guarantee does not hold with the WRITE_ONCE(), because CPU0 could
+> propagate the store to ->table and the store to em_data out-of-order.
 
-Would it make sense to stick that in struct lockdep_stats ?
+Ah, this is a very good point ... It's fine if a reader sees em_data
+half way through being updated, but it is NOT fine at all if a reader
+gets a pointer onto a half-baked em_perf_domain.
 
-A little something like:
+So I agree, there is a problem here.
 
-struct lockdep_stats {
-	/* ... */
-	int	lock_class_ops[MAX_LOCKDEP_KEYS];
-};
+(I also realize now that I totally misunderstood Peter's messages before
+which were basically pointing out this issue :/ ...)
 
-and then use:
+> The smp_store_release(), together with the address dependency headed by
+> the READ_ONCE(), provides this guarantee (and more...).
+> 
+> (Enclosing the reader into an em_pd_mutex critical section would also
+> provide this guarantee, but I can imagine a few arguments for not using
+> a mutex... ;-) ).
 
-	debug_atomic_inc(lock_class_ops[idx]);
+Right, using the mutex in em_cpu_get() could work too, although we
+probably don't want to do that. We might very well end up using it in a
+RCU critical section for example (although that's not the case with this
+series, I'm just looking forward a bit).
 
+So using smp_store_release() is the best choice here. I'll fix that up
+for v8.
+
+Thank you very much,
+Quentin
