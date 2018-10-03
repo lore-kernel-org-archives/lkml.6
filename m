@@ -2,132 +2,134 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B402FC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27409C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FAAF21470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:14:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FAAF21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id CCADB213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:17:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="mjEXRqO0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCADB213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbeJDFEg (ORCPT
+        id S1727046AbeJDFIO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 01:04:36 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50306 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725723AbeJDFEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 01:04:35 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 85A0C207CC; Thu,  4 Oct 2018 00:14:15 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 43E0E2071E;
-        Thu,  4 Oct 2018 00:14:15 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 00:14:15 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Zhouyang Jia <jiazhouyang09@gmail.com>,
-        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 7/8] dt-binding: mtd: Document gpio-addr-flash
-Message-ID: <20181004001415.224d53fe@bbrezillon>
-In-Reply-To: <CAPybu_3M75E9c+JmR7MVKsyv3vYPOrZ6qBABtvEF317KA+roBg@mail.gmail.com>
-References: <20181003193859.23928-1-ricardo.ribalda@gmail.com>
-        <20181003193859.23928-7-ricardo.ribalda@gmail.com>
-        <20181003232702.4c18e725@bbrezillon>
-        <CAPybu_3M75E9c+JmR7MVKsyv3vYPOrZ6qBABtvEF317KA+roBg@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 4 Oct 2018 01:08:14 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:55680 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbeJDFIO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 01:08:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sGu0u82Lw+zJRWbWiiG1m9J/ZfzMgwo0L4WjqTl8JKw=; b=mjEXRqO0McIQgv3qT3NWqXf2F
+        kBfCOGM8TdYFDSr5TKaNUC69XjWY3U1am30lx3IuVeobW6XQizPxz3xiMCmTattRuxUaexRN44d8N
+        Q2oYVbFgdQcD/dqMYm8KZDKGtYwTmWj0no3BEpbTFnxbASvbF1fLjWfBVkv/UU2sEwAR4=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:49770)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1g7pPu-0003DW-29; Wed, 03 Oct 2018 23:14:50 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1g7pPq-00043u-Vl; Wed, 03 Oct 2018 23:14:47 +0100
+Date:   Wed, 3 Oct 2018 23:14:45 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
+        miguel.ojeda.sandonis@gmail.com, robin@protonic.nl,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com, heiko@sntech.de,
+        airlied@linux.ie, robin.murphy@arm.com, iamjoonsoo.kim@lge.com,
+        akpm@linux-foundation.org, m.szyprowski@samsung.com,
+        keescook@chromium.org, treding@nvidia.com, mhocko@suse.com,
+        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com,
+        mark.rutland@arm.com, aryabinin@virtuozzo.com, dvyukov@google.com,
+        kstewart@linuxfoundation.org, tchibo@google.com, riel@redhat.com,
+        minchan@kernel.org, peterz@infradead.org, ying.huang@intel.com,
+        ak@linux.intel.com, rppt@linux.vnet.ibm.com,
+        linux@dominikbrodowski.net, arnd@arndb.de, cpandya@codeaurora.org,
+        hannes@cmpxchg.org, joe@perches.com, mcgrof@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
+Message-ID: <20181003221444.GZ30658@n2100.armlinux.org.uk>
+References: <20181003185854.GA1174@jordon-HP-15-Notebook-PC>
+ <20181003200003.GA9965@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181003200003.GA9965@bombadil.infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Oct 2018 23:53:27 +0200
-Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
-
-> Hi Boris
-> On Wed, Oct 3, 2018 at 11:27 PM Boris Brezillon
-> <boris.brezillon@bootlin.com> wrote:
-> >
-> > On Wed,  3 Oct 2018 21:38:58 +0200
-> > Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
-> >  
-> > > Add documentation for gpio-addr-flash. This binding allow creating
-> > > flash devices that are paged using GPIOs.
-> > >
-> > > Cc: devicetree@vger.kernel.org
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> > > ---
-> > >  .../bindings/mtd/gpio-addr-flash.txt          | 54 +++++++++++++++++++
-> > >  1 file changed, 54 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt b/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
-> > > new file mode 100644
-> > > index 000000000000..5006a26e1753
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
-> > > @@ -0,0 +1,54 @@
-> > > +Memory Mapped flash with some address lines addressed using GPIOs
-> > > +
-> > > +Handle the case where a flash device is mostly addressed using physical
-> > > +line and supplemented by GPIOs.  This way you can hook up say a 8MiB flash
-> > > +to a 2MiB memory range and use the GPIOs to select a particular range.
-> > > +
-> > > + - compatible : "cfi-gpio-addr-flash"
-> > > + - reg : Address range of the mtd chip that is memory mapped, this is,
-> > > +   on the previous example 2MiB.
-> > > + - bank-width : Width (in bytes) of the bank.  Equal to the
-> > > +   device width times the number of interleaved chips.
-> > > + - gpios: List of GPIO specifiers that will be used to address the MSBs address
-> > > +   lines. The order goes from LSB to MSB.
-> > > + - probe-type : (optional) "cfi_probe", "jedec_probe". How the mtd chip
-> > > +   is going to be probed. If omitted, assumed to be equal to "cfi_probe".  
-> >
-> > Looks like other bindings are encoding the probe type in the
-> > compatible [1][2], and we should probably follow what's been done by
-> > others.  
+On Wed, Oct 03, 2018 at 01:00:03PM -0700, Matthew Wilcox wrote:
+> On Thu, Oct 04, 2018 at 12:28:54AM +0530, Souptick Joarder wrote:
+> > These are the approaches which could have been taken to handle
+> > this scenario -
+> > 
+> > *  Replace vm_insert_page with vmf_insert_page and then write few
+> >    extra lines of code to convert VM_FAULT_CODE to errno which
+> >    makes driver users more complex ( also the reverse mapping errno to
+> >    VM_FAULT_CODE have been cleaned up as part of vm_fault_t migration ,
+> >    not preferred to introduce anything similar again)
+> > 
+> > *  Maintain both vm_insert_page and vmf_insert_page and use it in
+> >    respective places. But it won't gurantee that vm_insert_page will
+> >    never be used in #PF context.
+> > 
+> > *  Introduce a similar API like vm_insert_page, convert all non #PF
+> >    consumer to use it and finally remove vm_insert_page by converting
+> >    it to vmf_insert_page.
+> > 
+> > And the 3rd approach was taken by introducing vm_insert_kmem_page().
+> > 
+> > In short, vmf_insert_page will be used in page fault handlers
+> > context and vm_insert_kmem_page will be used to map kernel
+> > memory to user vma outside page fault handlers context.
 > 
-> If I understood it right, they are special cases of physmap_of_core.c
-> https://elixir.bootlin.com/linux/v4.18.11/source/drivers/mtd/maps/physmap_of_core.c#L242
+> As far as I can tell, vm_insert_kmem_page() is line-for-line identical
+> with vm_insert_page().  Seriously, here's a diff I just did:
 > 
-> The driver that handles the compatible is physmap_of_core.c, and afaik
-> multiple drivers with the same
-> compatible string is a very bad idea.
-
-Yes, I know.
-
+> -static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+> -                       struct page *page, pgprot_t prot)
+> +static int insert_kmem_page(struct vm_area_struct *vma, unsigned long addr,
+> +               struct page *page, pgprot_t prot)
+> -       /* Ok, finally just insert the thing.. */
+> -int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
+> +int vm_insert_kmem_page(struct vm_area_struct *vma, unsigned long addr,
+> -       return insert_page(vma, addr, page, vma->vm_page_prot);
+> +       return insert_kmem_page(vma, addr, page, vma->vm_page_prot);
+> -EXPORT_SYMBOL(vm_insert_page);
+> +EXPORT_SYMBOL(vm_insert_kmem_page);
 > 
-> We can convert the driver to something like Versatile or gemini, but
-> then we will not support platform devices
-> 
-> btw, the binding that I am used is used by:
-> https://elixir.bootlin.com/linux/v4.18.11/source/drivers/mtd/maps/physmap_of_core.c#L91
+> What on earth are you trying to do?
 
-Actually, the more I think about it the more I realize this should
-somehow be integrated to the physmap core logic. I mean, there's nothing
-controller/platform specific in what the gpio-physmap driver does.
+Reading the commit log, it seems that the intention is to split out
+vm_insert_page() used outside of page-fault handling with the use
+within page-fault handling, so that different return codes can be
+used.
 
-We could basically add the msb_addr_gpios related fields to map_info,
-let physmap.c and physmap_of_core.c call
-devm_gpiod_get_array_optional() and, based on the returned value,
-call simple_map_init() (when the pointer is NULL) or
-gpio_addr_map_init() (when the pointer is valid).
+I don't see that justifies the code duplication - can't
+vm_insert_page() and vm_insert_kmem_page() use the same mechanics
+to do their job, and just translate the error code from the most-
+specific to the least-specific error code?  Do we really need two
+copies of the same code just to return different error codes.
 
-gpio_addr_map_init() would still be implemented in gpio-addr-flash.c so
-that we can still enable/disable support for this feature (providing
-dummy wrappers when it's disabled). By doing that, we also keep a single
-driver which matches a generic compatible string. We also stay
-compatible with .c based board files.
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
