@@ -2,78 +2,95 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E863EC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD1BC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6B1920645
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:50:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6B1920645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E74A520835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:51:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E74A520835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbeJCRic (ORCPT
+        id S1726856AbeJCRjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 13:38:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49430 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726642AbeJCRic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 13:38:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DB6318A;
-        Wed,  3 Oct 2018 03:50:41 -0700 (PDT)
-Received: from [10.4.13.99] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B6423F5A0;
-        Wed,  3 Oct 2018 03:50:40 -0700 (PDT)
-Subject: Re: [PATCH v8 1/9] KVM: arm/arm64: Ensure only THP is candidate for
- adjustment
-To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
-Cc:     will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        stable@vger.kernel.org
-References: <20181001155443.23032-1-punit.agrawal@arm.com>
- <20181001155443.23032-2-punit.agrawal@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <0809a9d0-d256-c23a-c3cc-0b2be33aecff@arm.com>
-Date:   Wed, 3 Oct 2018 11:50:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 3 Oct 2018 13:39:07 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.31]:39676 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726619AbeJCRjH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 13:39:07 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 87E51253AF
+        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 05:51:16 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 7ekOgNP6wRPoj7ekOggqKU; Wed, 03 Oct 2018 05:51:16 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:35114 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g7ekN-001Ane-SA; Wed, 03 Oct 2018 05:51:16 -0500
+Date:   Wed, 3 Oct 2018 12:51:14 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] zsmalloc: fix fall-through annotation
+Message-ID: <20181003105114.GA24423@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20181001155443.23032-2-punit.agrawal@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g7ekN-001Ane-SA
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:35114
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/10/18 16:54, Punit Agrawal wrote:
-> PageTransCompoundMap() returns true for hugetlbfs and THP
-> hugepages. This behaviour incorrectly leads to stage 2 faults for
-> unsupported hugepage sizes (e.g., 64K hugepage with 4K pages) to be
-> treated as THP faults.
-> 
-> Tighten the check to filter out hugetlbfs pages. This also leads to
-> consistently mapping all unsupported hugepage sizes as PTE level
-> entries at stage 2.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: stable@vger.kernel.org # v4.13+
+Replace "fallthru" with a proper "fall through" annotation.
 
-FWIW, I've cherry-picked that single patch from the series and queued it 
-for 4.20.
+This fix is part of the ongoing efforts to enabling
+-Wimplicit-fallthrough
 
-Thanks,
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ mm/zsmalloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	M.
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 58886d4..fd4b3a9 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -418,7 +418,7 @@ static void *zs_zpool_map(void *pool, unsigned long handle,
+ 	case ZPOOL_MM_WO:
+ 		zs_mm = ZS_MM_WO;
+ 		break;
+-	case ZPOOL_MM_RW: /* fallthru */
++	case ZPOOL_MM_RW: /* fall through */
+ 	default:
+ 		zs_mm = ZS_MM_RW;
+ 		break;
 -- 
-Jazz is not dead. It just smells funny...
+2.7.4
+
