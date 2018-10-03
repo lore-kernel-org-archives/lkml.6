@@ -2,123 +2,85 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DDDDC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BEBC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE773213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DEE1213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:28:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eWZLQ02F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE773213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bshuiK0y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DEE1213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbeJCPPh (ORCPT
+        id S1727523AbeJCPQM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 11:15:37 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42916 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727461AbeJCPPh (ORCPT
+        Wed, 3 Oct 2018 11:16:12 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35478 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbeJCPQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 11:15:37 -0400
-Received: by mail-io1-f67.google.com with SMTP id n18-v6so4321189ioa.9
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 01:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ObwC7a46g9Ry41+lSvCg0g83+v1bUn/Gdbe+Tq2ZyxE=;
-        b=eWZLQ02FRIHlPd20BFtykatz4VA7Sla552XaQECgBaAchCZLVtJ3c/u3Tr08DbUy/2
-         VNu1UATgZb4AHtUCEuaj+7xGLAuGWhQsskcfxsH2lmWMiZhLPwVYXUM0zA3pAAGWxt7P
-         0bEGCOMQRKUbs2WsrbfXTUdWWu2LBGreOaOhI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ObwC7a46g9Ry41+lSvCg0g83+v1bUn/Gdbe+Tq2ZyxE=;
-        b=CEk0OVt4DoTSa/WwIdOvYHNhISOu4nRot9exfgC0RU3WYEY08bY737Z+rLyWx23XDL
-         GRPwfeCtBudXyhBy1k2HGDIClQEelWNvNcOUYzxPpHWYbuBEa5hIiIjQkI/zWG8R7omZ
-         IsQXRhWOf30IslSl9R7Bs0OlEEMHa2TIiFvtLZcpdhm9DTU0+RcSo3nK3s7N1KUqu/fs
-         2kAmpxGgRAnfD0O6pfFULYbqIJKZ1JEfveo4MxLRSY9zoqKZvq86r7Zb6Hu9dvJ+KNKD
-         oPWYjCNfnwrZQnXEjpsqNUu4RQpJlEIg2B7N7NHLEGvqrfXA1r3eWKSbomt0vd+cWH/B
-         zdFQ==
-X-Gm-Message-State: ABuFfogjqguJs4e13BzmrKOyTm2ZOTy6CdOIURnmJevW4pg+QOrjjDv9
-        NwycyXlbhKreXsd2BQQXBChLwbhEVb0KWJE5Jh76Ag==
-X-Google-Smtp-Source: ACcGV61owGuEnO4vVz4tcAZ/N3ZW0FJX0KAEI76C/uefI2rru4omOTNuRU6PObIOv64uQlH0tmEQixx5aOLE+s0pQpY=
-X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr208029ioa.277.1538555295351;
- Wed, 03 Oct 2018 01:28:15 -0700 (PDT)
+        Wed, 3 Oct 2018 11:16:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Arb13BCu4zbBM0jaVVYdVsl7FbIlqiVlm3Jtq4sWiCM=; b=bshuiK0ysySobW380CeCMr1ER
+        +6T7ppljlnbjb99adAGqJFGhZMcP5PTqoM9v/YlMGM9CPutUGLS0cOt3yiPkB7kPf6Ihj7O6Fmbiy
+        RR05WF4Bo9XMRuVF235I/5qdvpFz/jxmIhQ7ALRXVDrY/Pi0rtk5edkXkZxnJPIDmYbLqbH58Hq9y
+        qdT3coMCEQp64yvdUKJElEwvCx7FN8CBXShDD1ymAlVZiven+BgltUxhwMq3gipLqC+cr1Tk95Hru
+        na8k1XGX3EAqoJlLYX/P5eyMrxneEwkN82ZUjX6tljuHzuKx/eMUyFMM3jkphpZBknbhNjzEbfvjG
+        j5OsIfPHw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g7cWS-0003br-6u; Wed, 03 Oct 2018 08:28:44 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4EB54202C1A1E; Wed,  3 Oct 2018 10:28:42 +0200 (CEST)
+Date:   Wed, 3 Oct 2018 10:28:42 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>, bigeasy@linutronix.de,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        daniel.wagner@siemens.com, Will Deacon <will.deacon@arm.com>,
+        x86@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, boqun.feng@gmail.com,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>
+Subject: Re: [Problem] Cache line starvation
+Message-ID: <20181003082842.GN26858@hirez.programming.kicks-ass.net>
+References: <20180921120226.6xjgr4oiho22ex75@linutronix.de>
+ <20180921122058.GB24124@hirez.programming.kicks-ass.net>
+ <CAHkRjk4Vvv5rc+habecu2xPiFGZ37onRzy1kCnFcBH2115U8jQ@mail.gmail.com>
+ <alpine.DEB.2.21.1810031005210.1435@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk> <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <1538550325.14984.108.camel@gmail.com> <CACRpkdaLZXGKMQGJPH02p2QPkxUDA03Y=cu_wBR_+rFaLWTw7g@mail.gmail.com>
- <BN3PR0401MB164003C967C45F2681F503A7E7E90@BN3PR0401MB1640.namprd04.prod.outlook.com>
-In-Reply-To: <BN3PR0401MB164003C967C45F2681F503A7E7E90@BN3PR0401MB1640.namprd04.prod.outlook.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 3 Oct 2018 10:28:03 +0200
-Message-ID: <CACRpkdbHiq9bstRzyg-fJfXKnXr8wD1YzAooLAwQKM0OzP=HVA@mail.gmail.com>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-To:     Damien.LeMoal@wdc.com
-Cc:     Artem Bityutskiy <dedekind1@gmail.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, aherrmann@suse.com, mgorman@suse.com,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1810031005210.1435@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 9:42 AM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
+On Wed, Oct 03, 2018 at 10:07:05AM +0200, Thomas Gleixner wrote:
+> On Wed, 3 Oct 2018, Catalin Marinas wrote:
+> 
+> > On Fri, 21 Sep 2018 at 13:22, Peter Zijlstra <peterz@infradead.org> wrote:
+> > > On Fri, Sep 21, 2018 at 02:02:26PM +0200, Sebastian Andrzej Siewior wrote:
+> > > > We reproducibly observe cache line starvation on a Core2Duo E6850 (2
+> > > > cores), a i5-6400 SKL (4 cores) and on a NXP LS2044A ARM Cortex-A72 (4
+> > > > cores).
 
-> There is another class of outliers: host-managed SMR disks (SATA and SCSI,
-> definitely single hw queue). For these, using mq-deadline is mandatory in many
-> cases in order to guarantee sequential write command delivery to the device
-> driver. Having the default changed to bfq, which as far as I know is not SMR
-> friendly (can sequential writes within a single zone be reordered ?) is asking
-> for troubles (unaligned write errors showing up).
+> Except that the ARM64 ticket locks are not preventing the starvation
+> issue. Neither do the qrlocks on ARM64 on later kernels.
 
-Ah, that is interesting.
+That A72 is ARMv8-A afaict, that doesn't have the fancy LSE bits (which
+are new in ARMv8.1) on and thus ends up using LL/SC. And LL/SC has
+similar issues as cmpxchg loops.
 
-Which device driver files are we talking about here, specifically?
-I'd like to take a look.
-
-I guess what you say is not that you are looking for the deadline
-scheduling per se (as in deadline scheduling is nice), what you want is
-the zone locking semantics in that scheduler, is that right?
-
-I.e. this business:
-blk_queue_is_zoned(q)
-blk_req_zone_write_lock(rq);
-blk_req_zone_write_unlock(rq);
-and mq-deadline solves this with a spinlock.
-
-I will augment the patch to enforce mq-deadline
-if blk_queue_is_zoned(q) is true, as it is clear that
-any device with that characteristic must use mq-deadline.
-
-Paoly might be interested in looking into whether BFQ could
-also handle zoned devices in the future, I have no idea of how
-hard that would be.
-
-The zoned business seems a bit fragile. Should it even be
-allowed to select any other scheduler than deadline on these
-devices? Presenting all compiled in schedulers in
-/sysblock/device/queue/scheduler sounds like just giving
-sysadmins too much rope.
-
-Yours,
-Linus Walleij
+AFAICT Cortex-A75 is the first that has LSE on (that's an ARMv8.2-A).
