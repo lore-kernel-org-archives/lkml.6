@@ -2,314 +2,792 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 831E0C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9581C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DBD42089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:46:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DBD42089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C044D2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:48:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tf77GP5K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C044D2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbeJCPdm (ORCPT
+        id S1727505AbeJCPfX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 11:33:42 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2092 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727001AbeJCPdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 11:33:42 -0400
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id CF53643A8B8AA;
-        Wed,  3 Oct 2018 09:46:13 +0100 (IST)
-Received: from FRAEML704-CAH.china.huawei.com (10.206.14.35) by
- LHREML713-CAH.china.huawei.com (10.201.108.36) with Microsoft SMTP Server
- (TLS) id 14.3.399.0; Wed, 3 Oct 2018 09:46:15 +0100
-Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.206]) by
- FRAEML704-CAH.china.huawei.com ([10.206.14.35]) with mapi id 14.03.0399.000;
- Wed, 3 Oct 2018 10:46:09 +0200
-From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>
-CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
-        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>,
-        "pabba@codeaurora.org" <pabba@codeaurora.org>,
-        John Garry <john.garry@huawei.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
-Thread-Topic: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
-Thread-Index: AQHUUb0pQn5upG3YtUCPh5BgR8Q9BqUL7psAgAFLw3A=
-Date:   Wed, 3 Oct 2018 08:46:08 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA838793F4E@FRAEML521-MBX.china.huawei.com>
-References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
- <20180921150803.25444-3-shameerali.kolothum.thodi@huawei.com>
- <ecc2877c-146c-d70f-efd7-306fe704d55f@arm.com>
-In-Reply-To: <ecc2877c-146c-d70f-efd7-306fe704d55f@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 3 Oct 2018 11:35:23 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:40761 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbeJCPfW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 11:35:22 -0400
+Received: by mail-yw1-f66.google.com with SMTP id l79-v6so1956634ywc.7
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 01:47:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LdUgIfLDBcT8pjtlWN5iXQ++tsfksi1+lN2erOe1kzM=;
+        b=Tf77GP5Kn1T45nkVeBo4+RpVoxkFb6kC6//KERNFpRpqOXAEkLtBcxNiK0LA8s7a20
+         Knb461tyulKVgZfxY0d7teSCp/z9cuFDgFxuA9JkRc83J4Zt8pDmLyr8cnwLNFcdKolG
+         pyh6UskCS2czBu5QMD8wEqdLeTJpR0ysDh2jY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LdUgIfLDBcT8pjtlWN5iXQ++tsfksi1+lN2erOe1kzM=;
+        b=PIkvBISjEqneI/jZ6ZgncDV2/bgq3tSuk729rDNJjrUSESkxUmUh9mD4oVGuOhmjtv
+         90Gg/nm8DfC5ZICS02DRXSKSjtyZppaLB14nTTKEMnP44PlJ60tJnA3xsEKWFUgdyoox
+         qxnm4zOCfBZUAexmp0z5VxP9ye3qdVmVoLtxnWGRZCC4uZtD9U/9mN9odVqKAGsL37sS
+         p+b4TqdZrMGetTEf2BBQExq7NhNeLHZfzq8XQHXKTECdbYJRSNRD72zrkbIsk4JA0NZR
+         sWvrH2gkGtKk1HQwdpqt7YlzK8hbePV6EsIcXWah9cl7mK+ajlIPyfiYPcwPhz552tVH
+         ePig==
+X-Gm-Message-State: ABuFfogovs4H32JOD8cSK6YTqJrQsWxJwFTb6uT76Mb/eWCtiAPHc43N
+        5s1bH3BUAJqzRpKC1D4oC2IbHjKdpPnNH7iKS+ddcNRGGuc=
+X-Google-Smtp-Source: ACcGV60Qi8UiW4fPg6NSH9gpuOrm7a7GpdDbltrlMX2RU+cZ4NTj7tJwpWFDAb1ci81aHeM2jJCPwDg4Y3e3kQ/ntRA=
+X-Received: by 2002:a0d:d801:: with SMTP id a1-v6mr197466ywe.399.1538556475373;
+ Wed, 03 Oct 2018 01:47:55 -0700 (PDT)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <1538058267-3765-1-git-send-email-firoz.khan@linaro.org> <1538058267-3765-4-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1538058267-3765-4-git-send-email-firoz.khan@linaro.org>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Wed, 3 Oct 2018 14:17:44 +0530
+Message-ID: <CALxhOnjraUBvJh0x-Sd9dPEm0UQg4a+6rUjrRHUt5+NhHL5WpQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] parisc: add system call table generation support
+To:     linux-parisc@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgSmVhbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKZWFuLVBo
-aWxpcHBlIEJydWNrZXIgW21haWx0bzpqZWFuLXBoaWxpcHBlLmJydWNrZXJAYXJtLmNvbV0NCj4g
-U2VudDogMDIgT2N0b2JlciAyMDE4IDE1OjExDQo+IFRvOiBTaGFtZWVyYWxpIEtvbG90aHVtIFRo
-b2RpIDxzaGFtZWVyYWxpLmtvbG90aHVtLnRob2RpQGh1YXdlaS5jb20+Ow0KPiBsb3JlbnpvLnBp
-ZXJhbGlzaUBhcm0uY29tOyByb2Jpbi5tdXJwaHlAYXJtLmNvbQ0KPiBDYzogbWFyay5ydXRsYW5k
-QGFybS5jb207IHZraWxhcmlAY29kZWF1cm9yYS5vcmc7DQo+IG5laWwubS5sZWVkZXJAZ21haWwu
-Y29tOyBwYWJiYUBjb2RlYXVyb3JhLm9yZzsgSm9obiBHYXJyeQ0KPiA8am9obi5nYXJyeUBodWF3
-ZWkuY29tPjsgd2lsbC5kZWFjb25AYXJtLmNvbTsgcnJ1aWdyb2tAY29kZWF1cm9yYS5vcmc7DQo+
-IExpbnV4YXJtIDxsaW51eGFybUBodWF3ZWkuY29tPjsgbGludXgta2VybmVsQHZnZXIua2VybmVs
-Lm9yZzsgbGludXgtDQo+IGFjcGlAdmdlci5rZXJuZWwub3JnOyBHdW9oYW5qdW4gKEhhbmp1biBH
-dW8pIDxndW9oYW5qdW5AaHVhd2VpLmNvbT47DQo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5m
-cmFkZWFkLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYzIDIvM10gcGVyZjogYWRkIGFybTY0
-IHNtbXV2MyBwbXUgZHJpdmVyDQo+IA0KPiBIaSBTaGFtZWVyLA0KPiANCj4gSSBoYXZlIGEgZmV3
-IGNvbW1lbnRzIGJlbG93LCBtb3N0bHkgbmFpdmUgc2luY2UgSSBkb24ndCBrbm93IGFueXRoaW5n
-DQo+IGFib3V0IHBlcmYgZHJpdmVycy4NCg0KVGhhbmtzIGZvciB0YWtpbmcgYSBsb29rIGF0IHRo
-aXMuDQoNCj4gT24gMjEvMDkvMjAxOCAxNjowOCwgU2hhbWVlciBLb2xvdGh1bSB3cm90ZToNCj4g
-PiBGcm9tOiBOZWlsIExlZWRlciA8bmxlZWRlckBjb2RlYXVyb3JhLm9yZz4NCj4gPg0KPiA+IEFk
-ZHMgYSBuZXcgZHJpdmVyIHRvIHN1cHBvcnQgdGhlIFNNTVV2MyBQTVUgYW5kIGFkZCBpdCBpbnRv
-IHRoZQ0KPiA+IHBlcmYgZXZlbnRzIGZyYW1ld29yay4NCj4gPg0KPiA+IEVhY2ggU01NVSBub2Rl
-IG1heSBoYXZlIG11bHRpcGxlIFBNVXMgYXNzb2NpYXRlZCB3aXRoIGl0LCBlYWNoIG9mDQo+ID4g
-d2hpY2ggbWF5IHN1cHBvcnQgZGlmZmVyZW50IGV2ZW50cy4NCj4gPg0KPiA+IFNNTVV2MyBQTUNH
-IGRldmljZXMgYXJlIG5hbWVkIGFzIHNtbXV2M19wbWNnXzxwaHlzX2FkZHJfcGFnZT4NCj4gd2hl
-cmUNCj4gPiA8cGh5c19hZGRyX3BhZ2U+IGlzIHRoZSBwaHlzaWNhbCBwYWdlIGFkZHJlc3Mgb2Yg
-dGhlIFNNTVUgUE1DRy4NCj4gPiBGb3IgZXhhbXBsZSwgdGhlIFBNQ0cgYXQgMHhmZjg4ODQwMDAw
-IGlzIG5hbWVkIHNtbXV2M19wbWNnX2ZmODg4NDANCj4gPg0KPiA+IEZpbHRlcmluZyBieSBzdHJl
-YW0gaWQgaXMgZG9uZSBieSBzcGVjaWZ5aW5nIGZpbHRlcmluZyBwYXJhbWV0ZXJzDQo+ID4gd2l0
-aCB0aGUgZXZlbnQuIG9wdGlvbnMgYXJlOg0KPiA+ICAgIGZpbHRlcl9lbmFibGUgICAgLSAwID0g
-bm8gZmlsdGVyaW5nLCAxID0gZmlsdGVyaW5nIGVuYWJsZWQNCj4gPiAgICBmaWx0ZXJfc3BhbiAg
-ICAgIC0gMCA9IGV4YWN0IG1hdGNoLCAxID0gcGF0dGVybiBtYXRjaA0KPiA+ICAgIGZpbHRlcl9z
-dHJlYW1faWQgLSBwYXR0ZXJuIHRvIGZpbHRlciBhZ2FpbnN0DQo+ID4gRnVydGhlciBmaWx0ZXJp
-bmcgaW5mb3JtYXRpb24gaXMgYXZhaWxhYmxlIGluIHRoZSBTTU1VIGRvY3VtZW50YXRpb24uDQo+
-ID4NCj4gPiBFeGFtcGxlOiBwZXJmIHN0YXQgLWUgc21tdXYzX3BtY2dfZmY4ODg0MC90cmFuc2Fj
-dGlvbixmaWx0ZXJfZW5hYmxlPTEsDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICBmaWx0ZXJf
-c3Bhbj0xLGZpbHRlcl9zdHJlYW1faWQ9MHg0Mi8gLWEgcHdkDQo+ID4gQXBwbGllcyBmaWx0ZXIg
-cGF0dGVybiAweDQyIHRvIHRyYW5zYWN0aW9uIGV2ZW50cy4NCj4gPg0KPiA+IFNNTVUgZXZlbnRz
-IGFyZSBub3QgYXR0cmlidXRhYmxlIHRvIGEgQ1BVLCBzbyB0YXNrIG1vZGUgYW5kIHNhbXBsaW5n
-DQo+ID4gYXJlIG5vdCBzdXBwb3J0ZWQuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBOZWlsIExl
-ZWRlciA8bmxlZWRlckBjb2RlYXVyb3JhLm9yZz4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBTaGFtZWVy
-IEtvbG90aHVtIDxzaGFtZWVyYWxpLmtvbG90aHVtLnRob2RpQGh1YXdlaS5jb20+DQo+ID4gLS0t
-DQo+ID4gIGRyaXZlcnMvcGVyZi9LY29uZmlnICAgICAgICAgIHwgICA5ICsNCj4gPiAgZHJpdmVy
-cy9wZXJmL01ha2VmaWxlICAgICAgICAgfCAgIDEgKw0KPiA+ICBkcml2ZXJzL3BlcmYvYXJtX3Nt
-bXV2M19wbXUuYyB8IDczNg0KPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysNCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCA3NDYgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVh
-dGUgbW9kZSAxMDA2NDQgZHJpdmVycy9wZXJmL2FybV9zbW11djNfcG11LmMNCj4gPg0KPiA+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL3BlcmYvS2NvbmZpZyBiL2RyaXZlcnMvcGVyZi9LY29uZmlnDQo+
-ID4gaW5kZXggMDhlYmFmNy4uMzQ5NjlkZCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3BlcmYv
-S2NvbmZpZw0KPiA+ICsrKyBiL2RyaXZlcnMvcGVyZi9LY29uZmlnDQo+ID4gQEAgLTUyLDYgKzUy
-LDE1IEBAIGNvbmZpZyBBUk1fUE1VX0FDUEkNCj4gPiAgCWRlcGVuZHMgb24gQVJNX1BNVSAmJiBB
-Q1BJDQo+ID4gIAlkZWZfYm9vbCB5DQo+ID4NCj4gPiArY29uZmlnIEFSTV9TTU1VX1YzX1BNVQ0K
-PiA+ICsJIGJvb2wgIkFSTSBTTU1VdjMgUGVyZm9ybWFuY2UgTW9uaXRvcnMge0V4dGVuc2lvbn0i
-DQo+IA0KPiBXaHkgdGhlIGN1cmx5IGJyYWNlcz8gSSBkaWRuJ3QgZmluZCB0aGF0IG5vdGF0aW9u
-IGluIG90aGVyIEtjb25maWcgZmlsZXMNCg0KSG1tLi5UaGF0J3MgcHJvYmFibHkgYmVjYXVzZSBJ
-IGp1c3QgY29waWVkIGEgc3VnZ2VzdGlvbiBmcm9tIHByZXZpb3VzDQpyZXZpZXcuIEkgd2lsbCBk
-b3VibGUgY2hlY2sgYW5kIGNvcnJlY3QgaXQuDQoNCj4gPiArCSBkZXBlbmRzIG9uIEFSTTY0ICYm
-IEFDUEkgJiYgQVJNX1NNTVVfVjMNCj4gPiArCSAgIGhlbHANCj4gPiArCSAgIFByb3ZpZGVzIHN1
-cHBvcnQgZm9yIHRoZSBTTU1VIHZlcnNpb24gMyBwZXJmb3JtYW5jZSBtb25pdG9yIHVuaXQNCj4g
-KFBNVSkNCj4gPiArCSAgIG9uIEFSTS1iYXNlZCBzeXN0ZW1zLg0KPiA+ICsJICAgQWRkcyB0aGUg
-U01NVSBQTVUgaW50byB0aGUgcGVyZiBldmVudHMgc3Vic3lzdGVtIGZvcg0KPiA+ICsJICAgbW9u
-aXRvcmluZyBTTU1VIHBlcmZvcm1hbmNlIGV2ZW50cy4NCj4gPiArDQo+ID4gIGNvbmZpZyBBUk1f
-RFNVX1BNVQ0KPiA+ICAJdHJpc3RhdGUgIkFSTSBEeW5hbUlRIFNoYXJlZCBVbml0IChEU1UpIFBN
-VSINCj4gPiAgCWRlcGVuZHMgb24gQVJNNjQNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9wZXJm
-L01ha2VmaWxlIGIvZHJpdmVycy9wZXJmL01ha2VmaWxlDQo+ID4gaW5kZXggYjM5MDJiZC4uZjEw
-YTkzMiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3BlcmYvTWFrZWZpbGUNCj4gPiArKysgYi9k
-cml2ZXJzL3BlcmYvTWFrZWZpbGUNCj4gWy4uLl0NCj4gPiArLyoNCj4gPiArICogVGhpcyBkcml2
-ZXIgYWRkcyBzdXBwb3J0IGZvciBwZXJmIGV2ZW50cyB0byB1c2UgdGhlIFBlcmZvcm1hbmNlDQo+
-ID4gKyAqIE1vbml0b3IgQ291bnRlciBHcm91cHMgKFBNQ0cpIGFzc29jaWF0ZWQgd2l0aCBhbiBT
-TU1VdjMgbm9kZQ0KPiA+ICsgKiB0byBtb25pdG9yIHRoYXQgbm9kZS4NCj4gPiArICoNCj4gPiAr
-ICogU01NVXYzIFBNQ0cgZGV2aWNlcyBhcmUgbmFtZWQgYXMNCj4gc21tdXYzX3BtY2dfPHBoeXNf
-YWRkcl9wYWdlPiB3aGVyZQ0KPiA+ICsgKiA8cGh5c19hZGRyX3BhZ2U+IGlzIHRoZSBwaHlzaWNh
-bCBwYWdlIGFkZHJlc3Mgb2YgdGhlIFNNTVUgUE1DRy4NCj4gPiArICogRm9yIGV4YW1wbGUsIHRo
-ZSBQTUNHIGF0IDB4ZmY4ODg0MDAwMCBpcyBuYW1lZA0KPiBzbW11djNfcG1jZ19mZjg4ODQwDQo+
-ID4gKw0KPiA+ICsgKiBGaWx0ZXJpbmcgYnkgc3RyZWFtIGlkIGlzIGRvbmUgYnkgc3BlY2lmeWlu
-ZyBmaWx0ZXJpbmcgcGFyYW1ldGVycw0KPiA+ICsgKiB3aXRoIHRoZSBldmVudC4gb3B0aW9ucyBh
-cmU6DQo+ID4gKyAqICAgZmlsdGVyX2VuYWJsZSAgICAtIDAgPSBubyBmaWx0ZXJpbmcsIDEgPSBm
-aWx0ZXJpbmcgZW5hYmxlZA0KPiA+ICsgKiAgIGZpbHRlcl9zcGFuICAgICAgLSAwID0gZXhhY3Qg
-bWF0Y2gsIDEgPSBwYXR0ZXJuIG1hdGNoDQo+ID4gKyAqICAgZmlsdGVyX3N0cmVhbV9pZCAtIHBh
-dHRlcm4gdG8gZmlsdGVyIGFnYWluc3QNCj4gPiArICogRnVydGhlciBmaWx0ZXJpbmcgaW5mb3Jt
-YXRpb24gaXMgYXZhaWxhYmxlIGluIHRoZSBTTU1VIGRvY3VtZW50YXRpb24uDQo+ID4gKyAqDQo+
-ID4gKyAqIEV4YW1wbGU6IHBlcmYgc3RhdCAtZQ0KPiBzbW11djNfcG1jZ19mZjg4ODQwL3RyYW5z
-YWN0aW9uLGZpbHRlcl9lbmFibGU9MSwNCj4gPiArICogICAgICAgICAgICAgICAgICAgICAgIGZp
-bHRlcl9zcGFuPTEsZmlsdGVyX3N0cmVhbV9pZD0weDQyLyAtYSBwd2QNCj4gDQo+IEknbSBjdXJp
-b3VzLCB3aHkgaXMgcHdkIHVzZWQgYXMgZXhhbXBsZT8gV291bGRuJ3Qgc29tZXRoaW5nIGxpa2Ug
-bmV0cGVyZg0KPiBiZSBhIG1vcmUgcmVhbGlzdGljIHdvcmtsb2FkPw0KDQpBZ3JlZS4gVGhhdOKA
-mXMgYSBtb3JlIHJlbGV2YW50IHdvcmtsb2FkIGV4YW1wbGUuDQoNCj4gPiArICogQXBwbGllcyBm
-aWx0ZXIgcGF0dGVybiAweDQyIHRvIHRyYW5zYWN0aW9uIGV2ZW50cy4NCj4gDQo+IEFkZGluZyB0
-aGF0IHRoaXMgcGF0dGVybiBtYXRjaGVzIFNJRHMgMHg0MiBhbmQgMHg0MyBtaWdodCBiZSBoZWxw
-ZnVsLA0KPiBzaW5jZSBzcGFuIGZpbHRlcmluZyBpcyBhIGJpdCBhd2t3YXJkDQoNCk9rLg0KDQo+
-IFsuLi5dDQo+ID4gKyNkZWZpbmUgU01NVV9QTVVfRVZFTlRfQVRUUl9FWFRSQUNUT1IoX25hbWUs
-IF9jb25maWcsIF9zaXplLA0KPiBfc2hpZnQpICAgIFwNCj4gPiArCXN0YXRpYyBpbmxpbmUgdTMy
-IGdldF8jI19uYW1lKHN0cnVjdCBwZXJmX2V2ZW50ICpldmVudCkgICAgICAgICBcDQo+ID4gKwl7
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgXA0KPiA+ICsJCXJldHVybiAoZXZlbnQtPmF0dHIuX2NvbmZpZyA+PiAoX3NoaWZ0KSkg
-JiAgICAgICAgICAgICAgXA0KPiA+ICsJCQlHRU5NQVNLX1VMTCgoX3NpemUpIC0gMSwgMCk7ICAg
-ICAgICAgICAgICAgICAgICBcDQo+IA0KPiBGSUVMRF9HRVQgY291bGQgbWFrZSB0aGlzIHNsaWdo
-dGx5IG5pY2VyDQoNClN1cmUuDQoNCj4gPiArCX0NCj4gPiArDQo+ID4gK1NNTVVfUE1VX0VWRU5U
-X0FUVFJfRVhUUkFDVE9SKGV2ZW50LCBjb25maWcsIDE2LCAwKTsNCj4gPiArU01NVV9QTVVfRVZF
-TlRfQVRUUl9FWFRSQUNUT1IoZmlsdGVyX3N0cmVhbV9pZCwgY29uZmlnMSwgMzIsIDApOw0KPiA+
-ICtTTU1VX1BNVV9FVkVOVF9BVFRSX0VYVFJBQ1RPUihmaWx0ZXJfc3BhbiwgY29uZmlnMSwgMSwg
-MzIpOw0KPiA+ICtTTU1VX1BNVV9FVkVOVF9BVFRSX0VYVFJBQ1RPUihmaWx0ZXJfZW5hYmxlLCBj
-b25maWcxLCAxLCAzNCk7DQo+IA0KPiBmaWx0ZXJfZW5hYmxlIGlzIGF0IGJpdCAzMywgbm90IDM0
-DQoNClRoYW5rcy4NCiANCj4gWy4uLl0NCj4gPiArc3RhdGljIHZvaWQgc21tdV9wbXVfc2V0X3Bl
-cmlvZChzdHJ1Y3Qgc21tdV9wbXUgKnNtbXVfcG11LA0KPiA+ICsJCQkJc3RydWN0IGh3X3BlcmZf
-ZXZlbnQgKmh3YykNCj4gPiArew0KPiA+ICsJdTMyIGlkeCA9IGh3Yy0+aWR4Ow0KPiA+ICsJdTY0
-IG5ldzsNCj4gPiArDQo+ID4gKwkvKg0KPiA+ICsJICogV2UgbGltaXQgdGhlIG1heCBwZXJpb2Qg
-dG8gaGFsZiB0aGUgbWF4IGNvdW50ZXIgdmFsdWUgb2YgdGhlDQo+IGNvdW50ZXINCj4gPiArCSAq
-IHNpemUsIHNvIHRoYXQgZXZlbiBpbiB0aGUgY2FzZSBvZiBleHRyZW1lIGludGVycnVwdCBsYXRl
-bmN5IHRoZQ0KPiA+ICsJICogY291bnRlciB3aWxsIChob3BlZnVsbHkpIG5vdCB3cmFwIHBhc3Qg
-aXRzIGluaXRpYWwgdmFsdWUuDQo+ID4gKwkgKi8NCj4gPiArCW5ldyA9IHNtbXVfcG11LT5jb3Vu
-dGVyX21hc2sgPj4gMTsNCj4gDQo+IENvb2wgdHJpY2sgOikNCj4gDQo+ID4gKw0KPiA+ICsJbG9j
-YWw2NF9zZXQoJmh3Yy0+cHJldl9jb3VudCwgbmV3KTsNCj4gPiArCXNtbXVfcG11X2NvdW50ZXJf
-c2V0X3ZhbHVlKHNtbXVfcG11LCBpZHgsIG5ldyk7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRp
-YyB1bnNpZ25lZCBpbnQgc21tdV9wbXVfZ2V0X2V2ZW50X2lkeChzdHJ1Y3Qgc21tdV9wbXUNCj4g
-KnNtbXVfcG11KQ0KPiA+ICt7DQo+ID4gKwl1bnNpZ25lZCBpbnQgaWR4Ow0KPiA+ICsJdW5zaWdu
-ZWQgaW50IG51bV9jdHJzID0gc21tdV9wbXUtPm51bV9jb3VudGVyczsNCj4gPiArDQo+ID4gKwlp
-ZHggPSBmaW5kX2ZpcnN0X3plcm9fYml0KHNtbXVfcG11LT51c2VkX2NvdW50ZXJzLCBudW1fY3Ry
-cyk7DQo+ID4gKwlpZiAoaWR4ID09IG51bV9jdHJzKQ0KPiA+ICsJCS8qIFRoZSBjb3VudGVycyBh
-cmUgYWxsIGluIHVzZS4gKi8NCj4gPiArCQlyZXR1cm4gLUVBR0FJTjsNCj4gDQo+IFRoZW4gdGhp
-cyBmdW5jdGlvbidzIHJldHVybiB0eXBlIHByb2JhYmx5IHNob3VsZG4ndCBiZSB1bnNpZ25lZA0K
-DQpPb3BzIQ0KDQo+ID4gKw0KPiA+ICsJc2V0X2JpdChpZHgsIHNtbXVfcG11LT51c2VkX2NvdW50
-ZXJzKTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gaWR4Ow0KPiA+ICt9DQo+ID4gKw0KPiA+ICsvKg0K
-PiA+ICsgKiBJbXBsZW1lbnRhdGlvbiBvZiBhYnN0cmFjdCBwbXUgZnVuY3Rpb25hbGl0eSByZXF1
-aXJlZCBieQ0KPiA+ICsgKiB0aGUgY29yZSBwZXJmIGV2ZW50cyBjb2RlLg0KPiA+ICsgKi8NCj4g
-PiArDQo+ID4gK3N0YXRpYyBpbnQgc21tdV9wbXVfZXZlbnRfaW5pdChzdHJ1Y3QgcGVyZl9ldmVu
-dCAqZXZlbnQpDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBod19wZXJmX2V2ZW50ICpod2MgPSAmZXZl
-bnQtPmh3Ow0KPiA+ICsJc3RydWN0IHNtbXVfcG11ICpzbW11X3BtdSA9IHRvX3NtbXVfcG11KGV2
-ZW50LT5wbXUpOw0KPiA+ICsJc3RydWN0IGRldmljZSAqZGV2ID0gc21tdV9wbXUtPmRldjsNCj4g
-PiArCXN0cnVjdCBwZXJmX2V2ZW50ICpzaWJsaW5nOw0KPiA+ICsJdTMyIGV2ZW50X2lkOw0KPiA+
-ICsNCj4gPiArCWlmIChldmVudC0+YXR0ci50eXBlICE9IGV2ZW50LT5wbXUtPnR5cGUpDQo+ID4g
-KwkJcmV0dXJuIC1FTk9FTlQ7DQo+ID4gKw0KPiA+ICsJaWYgKGh3Yy0+c2FtcGxlX3BlcmlvZCkg
-ew0KPiA+ICsJCWRldl9kYmdfcmF0ZWxpbWl0ZWQoZGV2LCAiU2FtcGxpbmcgbm90IHN1cHBvcnRl
-ZFxuIik7DQo+ID4gKwkJcmV0dXJuIC1FT1BOT1RTVVBQOw0KPiA+ICsJfQ0KPiA+ICsNCj4gPiAr
-CWlmIChldmVudC0+Y3B1IDwgMCkgew0KPiA+ICsJCWRldl9kYmdfcmF0ZWxpbWl0ZWQoZGV2LCAi
-UGVyLXRhc2sgbW9kZSBub3Qgc3VwcG9ydGVkXG4iKTsNCj4gPiArCQlyZXR1cm4gLUVPUE5PVFNV
-UFA7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJLyogV2UgY2Fubm90IGZpbHRlciBhY2N1cmF0ZWx5
-IHNvIHdlIGp1c3QgZG9uJ3QgYWxsb3cgaXQuICovDQo+ID4gKwlpZiAoZXZlbnQtPmF0dHIuZXhj
-bHVkZV91c2VyIHx8IGV2ZW50LT5hdHRyLmV4Y2x1ZGVfa2VybmVsIHx8DQo+ID4gKwkgICAgZXZl
-bnQtPmF0dHIuZXhjbHVkZV9odiB8fCBldmVudC0+YXR0ci5leGNsdWRlX2lkbGUpIHsNCj4gPiAr
-CQlkZXZfZGJnX3JhdGVsaW1pdGVkKGRldiwgIkNhbid0IGV4Y2x1ZGUgZXhlY3V0aW9uIGxldmVs
-c1xuIik7DQo+ID4gKwkJcmV0dXJuIC1FT1BOT1RTVVBQOw0KPiA+ICsJfQ0KPiA+ICsNCj4gPiAr
-CS8qIFZlcmlmeSBzcGVjaWZpZWQgZXZlbnQgaXMgc3VwcG9ydGVkIG9uIHRoaXMgUE1VICovDQo+
-ID4gKwlldmVudF9pZCA9IGdldF9ldmVudChldmVudCk7DQo+ID4gKwlpZiAoKChldmVudF9pZCA8
-IFNNTVVfQVJDSF9NQVhfRVZFTlRfSUQpICYmDQo+ID4gKwkgICAgKCF0ZXN0X2JpdChldmVudF9p
-ZCwgc21tdV9wbXUtPnN1cHBvcnRlZF9ldmVudHMpKSkgfHwNCj4gPiArCSAgICAoZXZlbnRfaWQg
-PiBTTU1VX0lNUERFRl9NQVhfRVZFTlRfSUQpKSB7DQo+IA0KPiA+PSA/DQoNCkkgd2FzIHNsaWdo
-dGx5IGNvbmZ1c2VkIGJ5IHRoZSBzcGVjIGhlcmUgYXMgaXQgc2F5cywNCg0KUGVyZm9ybWFuY2Ug
-ZXZlbnRzIGFyZSBpbmRpY2F0ZWQgYnkgYSBudW1lcmljIElELCBpbiB0aGUgZm9sbG93aW5nIHJh
-bmdlczoNCuKAoiAweDAwMDAgdG8gMHgwMDdGOiBBcmNoaXRlY3RlZCBldmVudHMNCuKAoiAweDAw
-ODAgdG8gMHhGRkZGOiBJTVBMRU1FTlRBVElPTiBERUZJTkVEIGV2ZW50cw0KDQpJdCBsb29rcyB0
-byBtZSB0aGUgaWRzIGFyZSB2YWxpZCBpbmNsdWRpbmcgdGhvc2UgbGltaXRzLg0KDQo+ID4gKwkJ
-ZGV2X2RiZ19yYXRlbGltaXRlZChkZXYsICJJbnZhbGlkIGV2ZW50ICVkIGZvciB0aGlzIFBNVVxu
-IiwNCj4gPiArCQkJCSAgICBldmVudF9pZCk7DQo+ID4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ID4g
-Kwl9DQo+IA0KPiBbLi4uXQ0KPiA+ICtzdGF0aWMgc3RydWN0IGF0dHJpYnV0ZSAqc21tdV9wbXVf
-ZXZlbnRzW10gPSB7DQo+ID4gKwlTTU1VX0VWRU5UX0FUVFIoY3ljbGVzLCAwKSwNCj4gPiArCVNN
-TVVfRVZFTlRfQVRUUih0cmFuc2FjdGlvbiwgMSksDQo+ID4gKwlTTU1VX0VWRU5UX0FUVFIodGxi
-X21pc3MsIDIpLA0KPiA+ICsJU01NVV9FVkVOVF9BVFRSKGNvbmZpZ19jYWNoZV9taXNzLCAzKSwN
-Cj4gPiArCVNNTVVfRVZFTlRfQVRUUih0cmFuc190YWJsZV93YWxrLCA0KSwNCj4gDQo+IFRoaXMg
-bmFtZSBpcyBhIGJpdCBtaXNsZWFkaW5nIC0gYXMgZmFyIGFzIEkgdW5kZXJzdGFuZCB0aGUgZXZl
-bnQgZG9lc24ndA0KPiBjb3VudCB0YWJsZSB3YWxrcywgYnV0IG1lbW9yeSBhY2Nlc3NlcyBwZXJm
-b3JtZWQgZHVyaW5nIGEgd2Fsay4NCg0KT2suIEkgd2lsbCB0YWtlIGEgbG9vayBhdCB0aGlzLg0K
-DQo+ID4gKwlTTU1VX0VWRU5UX0FUVFIoY29uZmlnX3N0cnVjdF9hY2Nlc3MsIDUpLA0KPiA+ICsJ
-U01NVV9FVkVOVF9BVFRSKHBjaWVfYXRzX3RyYW5zX3JxLCA2KSwNCj4gPiArCVNNTVVfRVZFTlRf
-QVRUUihwY2llX2F0c190cmFuc19wYXNzZWQsIDcpLA0KPiA+ICsJTlVMTA0KPiA+ICt9Ow0KPiAN
-Cj4gWy4uLl0NCj4gPiArc3RhdGljIGludCBzbW11X3BtdV9zZXR1cF9pcnEoc3RydWN0IHNtbXVf
-cG11ICpwbXUpDQo+ID4gK3sNCj4gPiArCXVuc2lnbmVkIGxvbmcgZmxhZ3MgPSBJUlFGX05PQkFM
-QU5DSU5HIHwgSVJRRl9TSEFSRUQgfA0KPiBJUlFGX05PX1RIUkVBRDsNCj4gDQo+IFdoeSBkbyB5
-b3UgbmVlZCBTSEFSRUQ/DQoNClRob3VnaCBJIGFtIG5vdCBhd2FyZSBvZiBhbnkgaW1wbGVtZW50
-YXRpb24gdGhhdCBpcyBzaGFyaW5nIHRoaXMNCmludGVycnVwdCwgSSB0aGluayBpdCBpcyBnb29k
-IHRvIGtlZXAgaXQgdGhhdCB3YXkgYXMgd2UgYXJlIGFueXdheQ0KY2hlY2tpbmcgZm9yIHRoZSBP
-VlNTRVQwIHN0YXR1cyByZWdpc3RlciBpbiB0aGUgaW50ZXJydXB0IGhhbmRsZXIuDQoNCj4gPiAr
-CWludCBpcnEsIHJldCA9IC1FTlhJTzsNCj4gPiArDQo+ID4gKwlpcnEgPSBwbXUtPmlycTsNCj4g
-PiArCWlmIChpcnEpDQo+ID4gKwkJcmV0ID0gZGV2bV9yZXF1ZXN0X2lycShwbXUtPmRldiwgaXJx
-LA0KPiBzbW11X3BtdV9oYW5kbGVfaXJxLA0KPiA+ICsJCQkJICAgICAgIGZsYWdzLCAic21tdXYz
-LXBtdSIsIHBtdSk7DQo+ID4gKwlyZXR1cm4gcmV0Ow0KPiA+ICt9DQo+ID4gKw0KPiA+ICtzdGF0
-aWMgdm9pZCBzbW11X3BtdV9yZXNldChzdHJ1Y3Qgc21tdV9wbXUgKnNtbXVfcG11KQ0KPiA+ICt7
-DQo+ID4gKwlzbW11X3BtdV9kaXNhYmxlKCZzbW11X3BtdS0+cG11KTsNCj4gPiArDQo+ID4gKwkv
-KiBEaXNhYmxlIGNvdW50ZXIgYW5kIGludGVycnVwdCAqLw0KPiA+ICsJd3JpdGVxX3JlbGF4ZWQo
-c21tdV9wbXUtPmNvdW50ZXJfcHJlc2VudF9tYXNrLA0KPiA+ICsJCSAgICAgICBzbW11X3BtdS0+
-cmVnX2Jhc2UgKyBTTU1VX1BNQ0dfQ05URU5DTFIwKTsNCj4gPiArCXdyaXRlcV9yZWxheGVkKHNt
-bXVfcG11LT5jb3VudGVyX3ByZXNlbnRfbWFzaywNCj4gPiArCQkgICAgICAgc21tdV9wbXUtPnJl
-Z19iYXNlICsgU01NVV9QTUNHX0lOVEVOQ0xSMCk7DQo+ID4gKwl3cml0ZXFfcmVsYXhlZChzbW11
-X3BtdS0+Y291bnRlcl9wcmVzZW50X21hc2ssDQo+ID4gKwkJICAgICAgIHNtbXVfcG11LT5yZWxv
-Y19iYXNlICsgU01NVV9QTUNHX09WU0NMUjApOw0KPiA+ICsNCj4gPiArCXdyaXRlcV9yZWxheGVk
-KDAsIHNtbXVfcG11LT5yZWdfYmFzZSArIFNNTVVfUE1DR19JUlFfQ0ZHMCk7DQo+IA0KPiBzbW11
-X3BtdV9zZXR1cF9tc2kgY2xlYXJzIENGRzAgYSBzZWNvbmQgdGltZSwgc28gdGhpcyBsaW5lIGNh
-biBiZQ0KPiBkZWxldGVkIGluIHBhdGNoIDMsIG9yIG1vdmVkIHRvIHNtbXVfcG11X3NldHVwX21z
-aSByaWdodCBhd2F5Lg0KDQpPay4gSSB3aWxsIG1vdmUgdGhpcyB0byBzbW11X3BtdV9zZXR1cF9t
-c2kuDQoNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGludCBzbW11X3BtdV9wcm9iZShzdHJ1
-Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+ICt7DQo+ID4gKwlzdHJ1Y3Qgc21tdV9wbXUg
-KnNtbXVfcG11Ow0KPiA+ICsJc3RydWN0IHJlc291cmNlICpyZXNfMCwgKnJlc18xOw0KPiA+ICsJ
-dTMyIGNmZ3IsIHJlZ19zaXplOw0KPiA+ICsJdTY0IGNlaWRfNjRbMl07DQo+ID4gKwlpbnQgaXJx
-LCBlcnI7DQo+ID4gKwljaGFyICpuYW1lOw0KPiA+ICsJc3RydWN0IGRldmljZSAqZGV2ID0gJnBk
-ZXYtPmRldjsNCj4gPiArDQo+ID4gKwlzbW11X3BtdSA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVv
-Zigqc21tdV9wbXUpLCBHRlBfS0VSTkVMKTsNCj4gPiArCWlmICghc21tdV9wbXUpDQo+ID4gKwkJ
-cmV0dXJuIC1FTk9NRU07DQo+ID4gKw0KPiA+ICsJc21tdV9wbXUtPmRldiA9IGRldjsNCj4gPiAr
-DQo+ID4gKwlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCBzbW11X3BtdSk7DQo+ID4gKwlzbW11
-X3BtdS0+cG11ID0gKHN0cnVjdCBwbXUpIHsNCj4gPiArCQkudGFza19jdHhfbnIgICAgPSBwZXJm
-X2ludmFsaWRfY29udGV4dCwNCj4gPiArCQkucG11X2VuYWJsZQk9IHNtbXVfcG11X2VuYWJsZSwN
-Cj4gPiArCQkucG11X2Rpc2FibGUJPSBzbW11X3BtdV9kaXNhYmxlLA0KPiA+ICsJCS5ldmVudF9p
-bml0CT0gc21tdV9wbXVfZXZlbnRfaW5pdCwNCj4gPiArCQkuYWRkCQk9IHNtbXVfcG11X2V2ZW50
-X2FkZCwNCj4gPiArCQkuZGVsCQk9IHNtbXVfcG11X2V2ZW50X2RlbCwNCj4gPiArCQkuc3RhcnQJ
-CT0gc21tdV9wbXVfZXZlbnRfc3RhcnQsDQo+ID4gKwkJLnN0b3AJCT0gc21tdV9wbXVfZXZlbnRf
-c3RvcCwNCj4gPiArCQkucmVhZAkJPSBzbW11X3BtdV9ldmVudF9yZWFkLA0KPiA+ICsJCS5hdHRy
-X2dyb3Vwcwk9IHNtbXVfcG11X2F0dHJfZ3JwcywNCj4gPiArCX07DQo+ID4gKw0KPiA+ICsJcmVz
-XzAgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwgSU9SRVNPVVJDRV9NRU0sIDApOw0KPiA+
-ICsJc21tdV9wbXUtPnJlZ19iYXNlID0gZGV2bV9pb3JlbWFwX3Jlc291cmNlKGRldiwgcmVzXzAp
-Ow0KPiA+ICsJaWYgKElTX0VSUihzbW11X3BtdS0+cmVnX2Jhc2UpKQ0KPiA+ICsJCXJldHVybiBQ
-VFJfRVJSKHNtbXVfcG11LT5yZWdfYmFzZSk7DQo+ID4gKw0KPiA+ICsJY2ZnciA9IHJlYWRsX3Jl
-bGF4ZWQoc21tdV9wbXUtPnJlZ19iYXNlICsgU01NVV9QTUNHX0NGR1IpOw0KPiA+ICsNCj4gPiAr
-CS8qIERldGVybWluZSBpZiBwYWdlIDEgaXMgcHJlc2VudCAqLw0KPiA+ICsJaWYgKGNmZ3IgJiBT
-TU1VX1BNQ0dfQ0ZHUl9SRUxPQ19DVFJTKSB7DQo+ID4gKwkJcmVzXzEgPSBwbGF0Zm9ybV9nZXRf
-cmVzb3VyY2UocGRldiwgSU9SRVNPVVJDRV9NRU0sIDEpOw0KPiA+ICsJCXNtbXVfcG11LT5yZWxv
-Y19iYXNlID0gZGV2bV9pb3JlbWFwX3Jlc291cmNlKGRldiwNCj4gcmVzXzEpOw0KPiA+ICsJCWlm
-IChJU19FUlIoc21tdV9wbXUtPnJlbG9jX2Jhc2UpKQ0KPiA+ICsJCQlyZXR1cm4gUFRSX0VSUihz
-bW11X3BtdS0+cmVsb2NfYmFzZSk7DQo+ID4gKwl9IGVsc2Ugew0KPiA+ICsJCXNtbXVfcG11LT5y
-ZWxvY19iYXNlID0gc21tdV9wbXUtPnJlZ19iYXNlOw0KPiA+ICsJfQ0KPiA+ICsNCj4gPiArCWly
-cSA9IHBsYXRmb3JtX2dldF9pcnEocGRldiwgMCk7DQo+ID4gKwlpZiAoaXJxID4gMCkNCj4gPiAr
-CQlzbW11X3BtdS0+aXJxID0gaXJxOw0KPiA+ICsNCj4gPiArCWNlaWRfNjRbMF0gPSByZWFkcV9y
-ZWxheGVkKHNtbXVfcG11LT5yZWdfYmFzZSArDQo+IFNNTVVfUE1DR19DRUlEMCk7DQo+ID4gKwlj
-ZWlkXzY0WzFdID0gcmVhZHFfcmVsYXhlZChzbW11X3BtdS0+cmVnX2Jhc2UgKw0KPiBTTU1VX1BN
-Q0dfQ0VJRDEpOw0KPiA+ICsJYml0bWFwX2Zyb21fYXJyMzIoc21tdV9wbXUtPnN1cHBvcnRlZF9l
-dmVudHMsICh1MzIgKiljZWlkXzY0LA0KPiA+ICsJCQkgIFNNTVVfQVJDSF9NQVhfRVZFTlRfSUQp
-Ow0KPiA+ICsNCj4gPiArCXNtbXVfcG11LT5udW1fY291bnRlcnMgPQ0KPiBGSUVMRF9HRVQoU01N
-VV9QTUNHX0NGR1JfTkNUUl9NQVNLLCBjZmdyKSArIDE7DQo+ID4gKwlzbW11X3BtdS0+Y291bnRl
-cl9wcmVzZW50X21hc2sgPSBHRU5NQVNLKHNtbXVfcG11LQ0KPiA+bnVtX2NvdW50ZXJzIC0gMSwg
-MCk7DQo+ID4gKw0KPiA+ICsJcmVnX3NpemUgPSBGSUVMRF9HRVQoU01NVV9QTUNHX0NGR1JfU0la
-RV9NQVNLLCBjZmdyKTsNCj4gPiArCXNtbXVfcG11LT5jb3VudGVyX21hc2sgPSBHRU5NQVNLX1VM
-TChyZWdfc2l6ZSwgMCk7DQo+ID4gKw0KPiA+ICsJc21tdV9wbXVfcmVzZXQoc21tdV9wbXUpOw0K
-PiA+ICsNCj4gPiArCWVyciA9IHNtbXVfcG11X3NldHVwX2lycShzbW11X3BtdSk7DQo+ID4gKwlp
-ZiAoZXJyKSB7DQo+ID4gKwkJZGV2X2VycihkZXYsICJTZXR1cCBpcnEgZmFpbGVkLCBQTVUgQCVw
-YVxuIiwgJnJlc18wLT5zdGFydCk7DQo+IA0KPiBZb3UgY2FuIHByb2JhYmx5IHJlbW92ZSAiUE1V
-IEAlcGEiIGZyb20gZXJyb3IgYW5kIGluZm8gbWVzc2FnZXMsIHNpbmNlDQo+IHRoZSBkZXZpY2Ug
-bmFtZSBhbHJlYWR5IHVuaXF1ZWx5IGlkZW50aWZpZXMgaXQ6DQo+ICJbICAgIDYuMTY4MjAwXSBh
-cm0tc21tdS12My1wbXUgMmI0NDIwMDAuc21tdS1wbWNnOiBSZWdpc3RlcmVkIFNNTVUNCj4gUE1V
-DQo+IEAgMHgwMDAwMDAwMDJiNDQyMDAwIHVzaW5nIDQgY291bnRlcnMiDQoNCkludGVyZXN0aW5n
-LiBXaGF0IEkgaGF2ZSBpcywNCg0KWyAgIDI1LjY2OTYzNl0gYXJtLXNtbXUtdjMtcG11IGFybS1z
-bW11LXYzLXBtdS42LmF1dG86IFJlZ2lzdGVyZWQgU01NVQ0KUE1VIEAgMHgwMDAwMDAwMTQ4MDAx
-MDAwIHVzaW5nIDggY291bnRlcnMNCg0KQXJlIHlvdSB1c2luZyB0aGUgc2FtZSBwYXRjaGVzIGFu
-ZCBpcyBib290aW5nIHVzaW5nIEFDUEk/IElJUkMsIGluIHRoZSBpb3J0DQpjb2RlICBpdCB1c2Vz
-IHRoZSBuYW1lICJhcm0tc21tdS12My1wbXUiIGFuZCBBVVRPIGlkIHRvIHJlZ2lzdGVyL2FkZCB0
-aGUgcGxhdGZvcm0NCmRldi4gU28gbm90IHN1cmUsIGhvdyBpdCBpcyBwcmludGluZyB0aGUgYWRk
-cmVzcyBpbiB5b3VyIGNhc2UuIA0KDQpQbGVhc2UgY2hlY2sgYW5kIGxldCBtZSBrbm93Lg0KDQpU
-aGFua3MsDQpTaGFtZWVyDQogDQo+IFRoYW5rcywNCj4gSmVhbg0K
+On Thu, 27 Sep 2018 at 19:55, Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+> The system call tables are in different format in all
+> architecture and it will be difficult to manually add or
+> modify the system calls in the respective files. To make
+> it easy by keeping a script and which'll generate the
+> header file and syscall table file so this change will
+> unify them across all architectures.
+>
+> The system call table generation script is added in
+> syscalls directory which contain the script to generate
+> both uapi header file system call table generation file
+> and syscall_32/64.tbl file which'll be the input for the
+> scripts.
+>
+> syscall_32/64.tbl contains the list of available system calls
+> along with system call number and corresponding entry point.
+> Add a new system call in this architecture will be possible
+> by adding new entry in the syscall_32/64.tbl file.
+>
+> Adding a new table entry consisting of:
+>         - System call number.
+>         - ABI.
+>         - System call name.
+>         - Entry point name.
+>         - Compat entry name, if required.
+>
+> syscallhdr.sh and syscalltbl.sh will generate uapi header-
+> unistd_32/64.h and syscall_table_32/64/c32.h files respect-
+> ively. File syscall_table_32/64/c32.h is included by sys-
+> call.S - the real system call table. Both .sh files will
+> parse the content syscall.tbl to generate the header and
+> table files.
+>
+> ARM, s390 and x86 architecuture does have the similar support.
+> I leverage their implementation to come up with a generic
+> solution.
+>
+> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+> ---
+>  arch/parisc/kernel/syscalls/Makefile       |  55 +++++
+>  arch/parisc/kernel/syscalls/syscall_32.tbl | 342 +++++++++++++++++++++++++++++
+>  arch/parisc/kernel/syscalls/syscall_64.tbl | 342 +++++++++++++++++++++++++++++
+>  arch/parisc/kernel/syscalls/syscallhdr.sh  |  35 +++
+>  arch/parisc/kernel/syscalls/syscalltbl.sh  |  42 ++++
+>  5 files changed, 816 insertions(+)
+>  create mode 100644 arch/parisc/kernel/syscalls/Makefile
+>  create mode 100644 arch/parisc/kernel/syscalls/syscall_32.tbl
+>  create mode 100644 arch/parisc/kernel/syscalls/syscall_64.tbl
+>  create mode 100644 arch/parisc/kernel/syscalls/syscallhdr.sh
+>  create mode 100644 arch/parisc/kernel/syscalls/syscalltbl.sh
+>
+> diff --git a/arch/parisc/kernel/syscalls/Makefile b/arch/parisc/kernel/syscalls/Makefile
+> new file mode 100644
+> index 0000000..e8b80ee
+> --- /dev/null
+> +++ b/arch/parisc/kernel/syscalls/Makefile
+> @@ -0,0 +1,55 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +out := arch/$(SRCARCH)/include/generated/asm
+> +uapi := arch/$(SRCARCH)/include/generated/uapi/asm
+> +
+> +_dummy := $(shell [ -d '$(uapi)' ] || mkdir -p '$(uapi)') \
+> +         $(shell [ -d '$(out)' ] || mkdir -p '$(out)')
+> +
+> +syscall32 := $(srctree)/$(src)/syscall_32.tbl
+> +syscall64 := $(srctree)/$(src)/syscall_64.tbl
+> +
+> +syshdr := $(srctree)/$(src)/syscallhdr.sh
+> +systbl := $(srctree)/$(src)/syscalltbl.sh
+> +
+> +quiet_cmd_syshdr = SYSHDR  $@
+> +      cmd_syshdr = $(CONFIG_SHELL) '$(syshdr)' '$<' '$@'  \
+> +                  '$(syshdr_abi_$(basetarget))'          \
+> +                  '$(syshdr_pfx_$(basetarget))'          \
+> +                  '$(syshdr_offset_$(basetarget))'
+> +
+> +quiet_cmd_systbl = SYSTBL  $@
+> +      cmd_systbl = $(CONFIG_SHELL) '$(systbl)' '$<' '$@'  \
+> +                   '$(systbl_abi_$(basetarget))'          \
+> +                  '$(systbl_offset_$(basetarget))'
+> +
+> +syshdr_offset_unistd_32 := __NR_Linux
+> +$(uapi)/unistd_32.h: $(syscall32) $(syshdr)
+> +       $(call if_changed,syshdr)
+> +
+> +syshdr_offset_unistd_64 := __NR_Linux
+> +$(uapi)/unistd_64.h: $(syscall64) $(syshdr)
+> +       $(call if_changed,syshdr)
+> +
+> +systbl_abi_syscall_table_32 := 32
+> +$(out)/syscall_table_32.h: $(syscall32) $(systbl)
+> +       $(call if_changed,systbl)
+> +
+> +systbl_abi_syscall_table_64 := 64
+> +$(out)/syscall_table_64.h: $(syscall64) $(systbl)
+> +       $(call if_changed,systbl)
+> +
+> +systbl_abi_syscall_table_c32 := c32
+> +$(out)/syscall_table_c32.h: $(syscall32) $(systbl)
+> +       $(call if_changed,systbl)
+> +
+> +uapisyshdr-y                   += unistd_32.h unistd_64.h
+> +syshdr-y                       += syscall_table_32.h     \
+> +                                   syscall_table_64.h     \
+> +                                   syscall_table_c32.h
+
+Appreciate someone can suggest better file name for compat.
+In syscall_table_c32.h, c32 looks not good.
+
+Thanks
+Firoz
+
+> +
+> +targets        += $(uapisyshdr-y) $(syshdr-y)
+> +
+> +PHONY += all
+> +all: $(addprefix $(uapi)/,$(uapisyshdr-y))
+> +all: $(addprefix $(out)/,$(syshdr-y))
+> +       @:
+> diff --git a/arch/parisc/kernel/syscalls/syscall_32.tbl b/arch/parisc/kernel/syscalls/syscall_32.tbl
+> new file mode 100644
+> index 0000000..9d66e64d
+> --- /dev/null
+> +++ b/arch/parisc/kernel/syscalls/syscall_32.tbl
+> @@ -0,0 +1,342 @@
+> +#
+> +# 32-bit system call numbers and entry vectors
+> +#
+> +# The format is:
+> +# <number> <abi> <name> <entry point> <compat entry point>
+> +#
+> +# The abi is always "common" for this file.
+> +#
+> +0       common  restart_syscall                 sys_restart_syscall
+> +1       common  exit                            sys_exit
+> +2       common  fork                            sys_fork_wrapper
+> +3       common  read                            sys_read
+> +4       common  write                           sys_write
+> +5       common  open                            sys_open                        compat_sys_open
+> +6       common  close                           sys_close
+> +7       common  waitpid                         sys_waitpid
+> +8       common  creat                           sys_creat
+> +9       common  link                            sys_link
+> +10      common  unlink                          sys_unlink
+> +11      common  execve                          sys_execve                      compat_sys_execve
+> +12      common  chdir                           sys_chdir
+> +13      common  time                            sys_time                        compat_sys_time
+> +14      common  mknod                           sys_mknod
+> +15      common  chmod                           sys_chmod
+> +16      common  lchown                          sys_lchown
+> +17      common  socket                          sys_socket
+> +18      common  stat                            sys_newstat                     compat_sys_newstat
+> +19      common  lseek                           sys_lseek                       compat_sys_lseek
+> +20      common  getpid                          sys_getpid
+> +21      common  mount                           sys_mount                       compat_sys_mount
+> +22      common  bind                            sys_bind
+> +23      common  setuid                          sys_setuid
+> +24      common  getuid                          sys_getuid
+> +25      common  stime                           sys_stime                       compat_sys_stime
+> +26      common  ptrace                          sys_ptrace                      compat_sys_ptrace
+> +27      common  alarm                           sys_alarm
+> +28      common  fstat                           sys_newfstat                    compat_sys_newfstat
+> +29      common  pause                           sys_pause
+> +30      common  utime                           sys_utime                       compat_sys_utime
+> +31      common  connect                         sys_connect
+> +32      common  listen                          sys_listen
+> +33      common  access                          sys_access
+> +34      common  nice                            sys_nice
+> +35      common  accept                          sys_accept
+> +36      common  sync                            sys_sync
+> +37      common  kill                            sys_kill
+> +38      common  rename                          sys_rename
+> +39      common  mkdir                           sys_mkdir
+> +40      common  rmdir                           sys_rmdir
+> +41      common  dup                             sys_dup
+> +42      common  pipe                            sys_pipe
+> +43      common  times                           sys_times                       compat_sys_times
+> +44      common  getsockname                     sys_getsockname
+> +45      common  brk                             sys_brk
+> +46      common  setgid                          sys_setgid
+> +47      common  getgid                          sys_getgid
+> +48      common  signal                          sys_signal
+> +49      common  geteuid                         sys_geteuid
+> +50      common  getegid                         sys_getegid
+> +51      common  acct                            sys_acct
+> +52      common  umount2                         sys_umount
+> +53      common  getpeername                     sys_getpeername
+> +54      common  ioctl                           sys_ioctl                       compat_sys_ioctl
+> +55      common  fcntl                           sys_fcntl                       compat_sys_fcntl
+> +56      common  socketpair                      sys_socketpair
+> +57      common  setpgid                         sys_setpgid
+> +58      common  send                            sys_send
+> +59      common  uname                           sys_newuname
+> +60      common  umask                           sys_umask
+> +61      common  chroot                          sys_chroot
+> +62      common  ustat                           sys_ustat                       compat_sys_ustat
+> +63      common  dup2                            sys_dup2
+> +64      common  getppid                         sys_getppid
+> +65      common  getpgrp                         sys_getpgrp
+> +66      common  setsid                          sys_setsid
+> +67      common  pivot_root                      sys_pivot_root
+> +68      common  sgetmask                        sys_sgetmask                    sys32_unimplemented
+> +69      common  ssetmask                        sys_ssetmask                    sys32_unimplemented
+> +70      common  setreuid                        sys_setreuid
+> +71      common  setregid                        sys_setregid
+> +72      common  mincore                         sys_mincore
+> +73      common  sigpending                      sys_sigpending                  compat_sys_sigpending
+> +74      common  sethostname                     sys_sethostname
+> +75      common  setrlimit                       sys_setrlimit                   compat_sys_setrlimit
+> +76      common  getrlimit                       sys_getrlimit                   compat_sys_getrlimit
+> +77      common  getrusage                       sys_getrusage                   compat_sys_getrusage
+> +78      common  gettimeofday                    sys_gettimeofday                compat_sys_gettimeofday
+> +79      common  settimeofday                    sys_settimeofday                compat_sys_settimeofday
+> +80      common  getgroups                       sys_getgroups
+> +81      common  setgroups                       sys_setgroups
+> +82      common  sendto                          sys_sendto
+> +83      common  symlink                         sys_symlink
+> +84      common  lstat                           sys_newlstat                    compat_sys_newlstat
+> +85      common  readlink                        sys_readlink
+> +86      common  uselib                          sys_ni_syscall
+> +87      common  swapon                          sys_swapon
+> +88      common  reboot                          sys_reboot
+> +89      common  mmap2                           sys_mmap2
+> +90      common  mmap                            sys_mmap
+> +91      common  munmap                          sys_munmap
+> +92      common  truncate                        sys_truncate                    compat_sys_truncate
+> +93      common  ftruncate                       sys_ftruncate                   compat_sys_ftruncate
+> +94      common  fchmod                          sys_fchmod
+> +95      common  fchown                          sys_fchown
+> +96      common  getpriority                     sys_getpriority
+> +97      common  setpriority                     sys_setpriority
+> +98      common  recv                            sys_recv
+> +99      common  statfs                          sys_statfs                      compat_sys_statfs
+> +100     common  fstatfs                         sys_fstatfs                     compat_sys_fstatfs
+> +101     common  stat64                          sys_stat64
+> +103     common  syslog                          sys_syslog
+> +104     common  setitimer                       sys_setitimer                   compat_sys_setitimer
+> +105     common  getitimer                       sys_getitimer                   compat_sys_getitimer
+> +106     common  capget                          sys_capget
+> +107     common  capset                          sys_capset
+> +108     common  pread64                         sys_pread64                     parisc_pread64
+> +109     common  pwrite64                        sys_pwrite64                    parisc_pwrite64
+> +110     common  getcwd                          sys_getcwd
+> +111     common  vhangup                         sys_vhangup
+> +112     common  fstat64                         sys_fstat64
+> +113     common  vfork                           sys_vfork_wrapper
+> +114     common  wait4                           sys_wait4                       compat_sys_wait4
+> +115     common  swapoff                         sys_swapoff
+> +116     common  sysinfo                         sys_sysinfo                     compat_sys_sysinfo
+> +117     common  shutdown                        sys_shutdown
+> +118     common  fsync                           sys_fsync
+> +119     common  madvise                         sys_madvise
+> +120     common  clone                           sys_clone_wrapper
+> +121     common  setdomainname                   sys_setdomainname
+> +122     common  sendfile                        sys_sendfile                    compat_sys_sendfile
+> +123     common  recvfrom                        sys_recvfrom
+> +124     common  adjtimex                        sys_adjtimex                    compat_sys_adjtimex
+> +125     common  mprotect                        sys_mprotect
+> +126     common  sigprocmask                     sys_sigprocmask                 compat_sys_sigprocmask
+> +128     common  init_module                     sys_init_module
+> +129     common  delete_module                   sys_delete_module
+> +131     common  quotactl                        sys_quotactl
+> +132     common  getpgid                         sys_getpgid
+> +133     common  fchdir                          sys_fchdir
+> +134     common  bdflush                         sys_bdflush
+> +135     common  sysfs                           sys_sysfs
+> +136     common  personality                     sys_personality                 parisc_personality
+> +138     common  setfsuid                        sys_setfsuid
+> +139     common  setfsgid                        sys_setfsgid
+> +140     common  _llseek                         sys_llseek
+> +141     common  getdents                        sys_getdents                    compat_sys_getdents
+> +142     common  _newselect                      sys_select                      compat_sys_select
+> +143     common  flock                           sys_flock
+> +144     common  msync                           sys_msync
+> +145     common  readv                           sys_readv                       compat_sys_readv
+> +146     common  writev                          sys_writev                      compat_sys_writev
+> +147     common  getsid                          sys_getsid
+> +148     common  fdatasync                       sys_fdatasync
+> +149     common  _sysctl                         sys_sysctl                      compat_sys_sysctl
+> +150     common  mlock                           sys_mlock
+> +151     common  munlock                         sys_munlock
+> +152     common  mlockall                        sys_mlockall
+> +153     common  munlockall                      sys_munlockall
+> +154     common  sched_setparam                  sys_sched_setparam
+> +155     common  sched_getparam                  sys_sched_getparam
+> +156     common  sched_setscheduler              sys_sched_setscheduler
+> +157     common  sched_getscheduler              sys_sched_getscheduler
+> +158     common  sched_yield                     sys_sched_yield
+> +159     common  sched_get_priority_max          sys_sched_get_priority_max
+> +160     common  sched_get_priority_min          sys_sched_get_priority_min
+> +161     common  sched_rr_get_interval           sys_sched_rr_get_interval       compat_sys_sched_rr_get_interval
+> +162     common  nanosleep                       sys_nanosleep                   compat_sys_nanosleep
+> +163     common  mremap                          sys_mremap
+> +164     common  setresuid                       sys_setresuid
+> +165     common  getresuid                       sys_getresuid
+> +166     common  sigaltstack                     sys_sigaltstack                 compat_sys_sigaltstack
+> +168     common  poll                            sys_poll
+> +170     common  setresgid                       sys_setresgid
+> +171     common  getresgid                       sys_getresgid
+> +172     common  prctl                           sys_prctl
+> +173     common  rt_sigreturn                    sys_rt_sigreturn
+> +174     common  rt_sigaction                    sys_rt_sigaction                compat_sys_rt_sigaction
+> +175     common  rt_sigprocmask                  sys_rt_sigprocmask              compat_sys_rt_sigprocmask
+> +176     common  rt_sigpending                   sys_rt_sigpending               compat_sys_rt_sigpending
+> +177     common  rt_sigtimedwait                 sys_rt_sigtimedwait             compat_sys_rt_sigtimedwait
+> +178     common  rt_sigqueueinfo                 sys_rt_sigqueueinfo             compat_sys_rt_sigqueueinfo
+> +179     common  rt_sigsuspend                   sys_rt_sigsuspend               compat_sys_rt_sigsuspend
+> +180     common  chown                           sys_chown
+> +181     common  setsockopt                      sys_setsockopt                  compat_sys_setsockopt
+> +182     common  getsockopt                      sys_getsockopt                  compat_sys_getsockopt
+> +183     common  sendmsg                         sys_sendmsg                     compat_sys_sendmsg
+> +184     common  recvmsg                         sys_recvmsg                     compat_sys_recvmsg
+> +185     common  semop                           sys_semop
+> +186     common  semget                          sys_semget
+> +187     common  semctl                          sys_semctl                      compat_sys_semctl
+> +188     common  msgsnd                          sys_msgsnd                      compat_sys_msgsnd
+> +189     common  msgrcv                          sys_msgrcv                      compat_sys_msgrcv
+> +190     common  msgget                          sys_msgget
+> +191     common  msgctl                          sys_msgctl                      compat_sys_msgctl
+> +192     common  shmat                           sys_shmat                       compat_sys_shmat
+> +193     common  shmdt                           sys_shmdt
+> +194     common  shmget                          sys_shmget
+> +195     common  shmctl                          sys_shmctl                      compat_sys_shmctl
+> +198     common  lstat64                         sys_lstat64
+> +199     common  truncate64                      sys_truncate64                  parisc_truncate64
+> +200     common  ftruncate64                     sys_ftruncate64                 parisc_ftruncate64
+> +201     common  getdents64                      sys_getdents64
+> +202     common  fcntl64                         sys_fcntl64                     compat_sys_fcntl64
+> +206     common  gettid                          sys_gettid
+> +207     common  readahead                       sys_readahead                   parisc_readahead
+> +208     common  tkill                           sys_tkill
+> +209     common  sendfile64                      sys_sendfile64                  compat_sys_sendfile64
+> +210     common  futex                           sys_futex                       compat_sys_futex
+> +211     common  sched_setaffinity               sys_sched_setaffinity           compat_sys_sched_setaffinity
+> +212     common  sched_getaffinity               sys_sched_getaffinity           compat_sys_sched_getaffinity
+> +215     common  io_setup                        sys_io_setup                    compat_sys_io_setup
+> +216     common  io_destroy                      sys_io_destroy
+> +217     common  io_getevents                    sys_io_getevents                compat_sys_io_getevents
+> +218     common  io_submit                       sys_io_submit                   compat_sys_io_submit
+> +219     common  io_cancel                       sys_io_cancel
+> +222     common  exit_group                      sys_exit_group
+> +223     common  lookup_dcookie                  sys_lookup_dcookie              compat_sys_lookup_dcookie
+> +224     common  epoll_create                    sys_epoll_create
+> +225     common  epoll_ctl                       sys_epoll_ctl
+> +226     common  epoll_wait                      sys_epoll_wait
+> +227     common  remap_file_pages                sys_remap_file_pages
+> +228     common  semtimedop                      sys_semtimedop                  compat_sys_semtimedop
+> +229     common  mq_open                         sys_mq_open                     compat_sys_mq_open
+> +230     common  mq_unlink                       sys_mq_unlink
+> +231     common  mq_timedsend                    sys_mq_timedsend                compat_sys_mq_timedsend
+> +232     common  mq_timedreceive                 sys_mq_timedreceive             compat_sys_mq_timedreceive
+> +233     common  mq_notify                       sys_mq_notify                   compat_sys_mq_notify
+> +234     common  mq_getsetattr                   sys_mq_getsetattr               compat_sys_mq_getsetattr
+> +235     common  waitid                          sys_waitid                      compat_sys_waitid
+> +236     common  fadvise64_64                    sys_fadvise64_64                parisc_fadvise64_64
+> +237     common  set_tid_address                 sys_set_tid_address
+> +238     common  setxattr                        sys_setxattr
+> +239     common  lsetxattr                       sys_lsetxattr
+> +240     common  fsetxattr                       sys_fsetxattr
+> +241     common  getxattr                        sys_getxattr
+> +242     common  lgetxattr                       sys_lgetxattr
+> +243     common  fgetxattr                       sys_fgetxattr
+> +244     common  listxattr                       sys_listxattr
+> +245     common  llistxattr                      sys_llistxattr
+> +246     common  flistxattr                      sys_flistxattr
+> +247     common  removexattr                     sys_removexattr
+> +248     common  lremovexattr                    sys_lremovexattr
+> +249     common  fremovexattr                    sys_fremovexattr
+> +250     common  timer_create                    sys_timer_create                compat_sys_timer_create
+> +251     common  timer_settime                   sys_timer_settime               compat_sys_timer_settime
+> +252     common  timer_gettime                   sys_timer_gettime               compat_sys_timer_gettime
+> +253     common  timer_getoverrun                sys_timer_getoverrun
+> +254     common  timer_delete                    sys_timer_delete
+> +255     common  clock_settime                   sys_clock_settime               compat_sys_clock_settime
+> +256     common  clock_gettime                   sys_clock_gettime               compat_sys_clock_gettime
+> +257     common  clock_getres                    sys_clock_getres                compat_sys_clock_getres
+> +258     common  clock_nanosleep                 sys_clock_nanosleep             compat_sys_clock_nanosleep
+> +259     common  tgkill                          sys_tgkill
+> +260     common  mbind                           sys_mbind                       compat_sys_mbind
+> +261     common  get_mempolicy                   sys_get_mempolicy               compat_sys_get_mempolicy
+> +262     common  set_mempolicy                   sys_set_mempolicy               compat_sys_set_mempolicy
+> +264     common  add_key                         sys_add_key
+> +265     common  request_key                     sys_request_key
+> +266     common  keyctl                          sys_keyctl                      compat_sys_keyctl
+> +267     common  ioprio_set                      sys_ioprio_set
+> +268     common  ioprio_get                      sys_ioprio_get
+> +269     common  inotify_init                    sys_inotify_init
+> +270     common  inotify_add_watch               sys_inotify_add_watch
+> +271     common  inotify_rm_watch                sys_inotify_rm_watch
+> +272     common  migrate_pages                   sys_migrate_pages
+> +273     common  pselect6                        sys_pselect6                    compat_sys_pselect6
+> +274     common  ppoll                           sys_ppoll                       compat_sys_ppoll
+> +275     common  openat                          sys_openat                      compat_sys_openat
+> +276     common  mkdirat                         sys_mkdirat
+> +277     common  mknodat                         sys_mknodat
+> +278     common  fchownat                        sys_fchownat
+> +279     common  futimesat                       sys_futimesat                   compat_sys_futimesat
+> +280     common  fstatat64                       sys_fstatat64
+> +281     common  unlinkat                        sys_unlinkat
+> +282     common  renameat                        sys_renameat
+> +283     common  linkat                          sys_linkat
+> +284     common  symlinkat                       sys_symlinkat
+> +285     common  readlinkat                      sys_readlinkat
+> +286     common  fchmodat                        sys_fchmodat
+> +287     common  faccessat                       sys_faccessat
+> +288     common  unshare                         sys_unshare
+> +289     common  set_robust_list                 sys_set_robust_list             compat_sys_set_robust_list
+> +290     common  get_robust_list                 sys_get_robust_list             compat_sys_get_robust_list
+> +291     common  splice                          sys_splice
+> +292     common  sync_file_range                 sys_sync_file_range             parisc_sync_file_range
+> +293     common  tee                             sys_tee
+> +294     common  vmsplice                        sys_vmsplice                    compat_sys_vmsplice
+> +295     common  move_pages                      sys_move_pages                  compat_sys_move_pages
+> +296     common  getcpu                          sys_getcpu
+> +297     common  epoll_pwait                     sys_epoll_pwait                 compat_sys_epoll_pwait
+> +298     common  statfs64                        sys_statfs64                    compat_sys_statfs64
+> +299     common  fstatfs64                       sys_fstatfs64                   compat_sys_fstatfs64
+> +300     common  kexec_load                      sys_kexec_load                  compat_sys_kexec_load
+> +301     common  utimensat                       sys_utimensat                   compat_sys_utimensat
+> +302     common  signalfd                        sys_signalfd                    compat_sys_signalfd
+> +304     common  eventfd                         sys_eventfd
+> +305     common  fallocate                       sys_fallocate                   parisc_fallocate
+> +306     common  timerfd_create                  sys_timerfd_create
+> +307     common  timerfd_settime                 sys_timerfd_settime             compat_sys_timerfd_settime
+> +308     common  timerfd_gettime                 sys_timerfd_gettime             compat_sys_timerfd_gettime
+> +309     common  signalfd4                       sys_signalfd4                   compat_sys_signalfd4
+> +310     common  eventfd2                        sys_eventfd2
+> +311     common  epoll_create1                   sys_epoll_create1
+> +312     common  dup3                            sys_dup3
+> +313     common  pipe2                           sys_pipe2
+> +314     common  inotify_init1                   sys_inotify_init1
+> +315     common  preadv                          sys_preadv                      compat_sys_preadv
+> +316     common  pwritev                         sys_pwritev                     compat_sys_pwritev
+> +317     common  rt_tgsigqueueinfo               sys_rt_tgsigqueueinfo           compat_sys_rt_tgsigqueueinfo
+> +318     common  perf_event_open                 sys_perf_event_open
+> +319     common  recvmmsg                        sys_recvmmsg                    compat_sys_recvmmsg
+> +320     common  accept4                         sys_accept4
+> +321     common  prlimit64                       sys_prlimit64
+> +322     common  fanotify_init                   sys_fanotify_init
+> +323     common  fanotify_mark                   sys_fanotify_mark               sys32_fanotify_mark
+> +324     common  clock_adjtime                   sys_clock_adjtime               compat_sys_clock_adjtime
+> +325     common  name_to_handle_at               sys_name_to_handle_at
+> +326     common  open_by_handle_at               sys_open_by_handle_at           compat_sys_open_by_handle_at
+> +327     common  syncfs                          sys_syncfs
+> +328     common  setns                           sys_setns
+> +329     common  sendmmsg                        sys_sendmmsg                    compat_sys_sendmmsg
+> +330     common  process_vm_readv                sys_process_vm_readv            compat_sys_process_vm_readv
+> +331     common  process_vm_writev               sys_process_vm_writev           compat_sys_process_vm_writev
+> +332     common  kcmp                            sys_kcmp
+> +333     common  finit_module                    sys_finit_module
+> +334     common  sched_setattr                   sys_sched_setattr
+> +335     common  sched_getattr                   sys_sched_getattr
+> +336     common  utimes                          sys_utimes                      compat_sys_utimes
+> +337     common  renameat2                       sys_renameat2
+> +338     common  seccomp                         sys_seccomp
+> +339     common  getrandom                       sys_getrandom
+> +340     common  memfd_create                    sys_memfd_create
+> +341     common  bpf                             sys_bpf
+> +342     common  execveat                        sys_execveat                    compat_sys_execveat
+> +343     common  membarrier                      sys_membarrier
+> +344     common  userfaultfd                     sys_userfaultfd
+> +345     common  mlock2                          sys_mlock2
+> +346     common  copy_file_range                 sys_copy_file_range
+> +347     common  preadv2                         sys_preadv2                     compat_sys_preadv2
+> +348     common  pwritev2                        sys_pwritev2                    compat_sys_pwritev2
+> +349     common  statx                           sys_statx
+> +350    common  io_pgetevents                   sys_io_pgetevents               compat_sys_io_pgetevents
+> \ No newline at end of file
+> diff --git a/arch/parisc/kernel/syscalls/syscall_64.tbl b/arch/parisc/kernel/syscalls/syscall_64.tbl
+> new file mode 100644
+> index 0000000..48d6366
+> --- /dev/null
+> +++ b/arch/parisc/kernel/syscalls/syscall_64.tbl
+> @@ -0,0 +1,342 @@
+> +#
+> +# 64-bit system call numbers and entry vectors
+> +#
+> +# The format is:
+> +# <number> <abi> <name> <entry point>
+> +#
+> +# The abi is "common" for this file.
+> +#
+> +0       common  restart_syscall                 sys_restart_syscall
+> +1       common  exit                            sys_exit
+> +2       common  fork                            sys_fork_wrapper
+> +3       common  read                            sys_read
+> +4       common  write                           sys_write
+> +5       common  open                            sys_open
+> +6       common  close                           sys_close
+> +7       common  waitpid                         sys_waitpid
+> +8       common  creat                           sys_creat
+> +9       common  link                            sys_link
+> +10      common  unlink                          sys_unlink
+> +11      common  execve                          sys_execve
+> +12      common  chdir                           sys_chdir
+> +13      common  time                            sys_time
+> +14      common  mknod                           sys_mknod
+> +15      common  chmod                           sys_chmod
+> +16      common  lchown                          sys_lchown
+> +17      common  socket                          sys_socket
+> +18      common  stat                            sys_newstat
+> +19      common  lseek                           sys_lseek
+> +20      common  getpid                          sys_getpid
+> +21      common  mount                           sys_mount
+> +22      common  bind                            sys_bind
+> +23      common  setuid                          sys_setuid
+> +24      common  getuid                          sys_getuid
+> +25      common  stime                           sys_stime
+> +26      common  ptrace                          sys_ptrace
+> +27      common  alarm                           sys_alarm
+> +28      common  fstat                           sys_newfstat
+> +29      common  pause                           sys_pause
+> +30      common  utime                           sys_utime
+> +31      common  connect                         sys_connect
+> +32      common  listen                          sys_listen
+> +33      common  access                          sys_access
+> +34      common  nice                            sys_nice
+> +35      common  accept                          sys_accept
+> +36      common  sync                            sys_sync
+> +37      common  kill                            sys_kill
+> +38      common  rename                          sys_rename
+> +39      common  mkdir                           sys_mkdir
+> +40      common  rmdir                           sys_rmdir
+> +41      common  dup                             sys_dup
+> +42      common  pipe                            sys_pipe
+> +43      common  times                           sys_times
+> +44      common  getsockname                     sys_getsockname
+> +45      common  brk                             sys_brk
+> +46      common  setgid                          sys_setgid
+> +47      common  getgid                          sys_getgid
+> +48      common  signal                          sys_signal
+> +49      common  geteuid                         sys_geteuid
+> +50      common  getegid                         sys_getegid
+> +51      common  acct                            sys_acct
+> +52      common  umount2                         sys_umount
+> +53      common  getpeername                     sys_getpeername
+> +54      common  ioctl                           sys_ioctl
+> +55      common  fcntl                           sys_fcntl
+> +56      common  socketpair                      sys_socketpair
+> +57      common  setpgid                         sys_setpgid
+> +58      common  send                            sys_send
+> +59      common  uname                           sys_newuname
+> +60      common  umask                           sys_umask
+> +61      common  chroot                          sys_chroot
+> +62      common  ustat                           sys_ustat
+> +63      common  dup2                            sys_dup2
+> +64      common  getppid                         sys_getppid
+> +65      common  getpgrp                         sys_getpgrp
+> +66      common  setsid                          sys_setsid
+> +67      common  pivot_root                      sys_pivot_root
+> +68      common  sgetmask                        sys_sgetmask
+> +69      common  ssetmask                        sys_ssetmask
+> +70      common  setreuid                        sys_setreuid
+> +71      common  setregid                        sys_setregid
+> +72      common  mincore                         sys_mincore
+> +73      common  sigpending                      sys_sigpending
+> +74      common  sethostname                     sys_sethostname
+> +75      common  setrlimit                       sys_setrlimit
+> +76      common  getrlimit                       sys_getrlimit
+> +77      common  getrusage                       sys_getrusage
+> +78      common  gettimeofday                    sys_gettimeofday
+> +79      common  settimeofday                    sys_settimeofday
+> +80      common  getgroups                       sys_getgroups
+> +81      common  setgroups                       sys_setgroups
+> +82      common  sendto                          sys_sendto
+> +83      common  symlink                         sys_symlink
+> +84      common  lstat                           sys_newlstat
+> +85      common  readlink                        sys_readlink
+> +86      common  uselib                          sys_ni_syscall
+> +87      common  swapon                          sys_swapon
+> +88      common  reboot                          sys_reboot
+> +89      common  mmap2                           sys_mmap2
+> +90      common  mmap                            sys_mmap
+> +91      common  munmap                          sys_munmap
+> +92      common  truncate                        sys_truncate
+> +93      common  ftruncate                       sys_ftruncate
+> +94      common  fchmod                          sys_fchmod
+> +95      common  fchown                          sys_fchown
+> +96      common  getpriority                     sys_getpriority
+> +97      common  setpriority                     sys_setpriority
+> +98      common  recv                            sys_recv
+> +99      common  statfs                          sys_statfs
+> +100     common  fstatfs                         sys_fstatfs
+> +101     common  stat64                          sys_stat64
+> +103     common  syslog                          sys_syslog
+> +104     common  setitimer                       sys_setitimer
+> +105     common  getitimer                       sys_getitimer
+> +106     common  capget                          sys_capget
+> +107     common  capset                          sys_capset
+> +108     common  pread64                         sys_pread64
+> +109     common  pwrite64                        sys_pwrite64
+> +110     common  getcwd                          sys_getcwd
+> +111     common  vhangup                         sys_vhangup
+> +112     common  fstat64                         sys_fstat64
+> +113     common  vfork                           sys_vfork_wrapper
+> +114     common  wait4                           sys_wait4
+> +115     common  swapoff                         sys_swapoff
+> +116     common  sysinfo                         sys_sysinfo
+> +117     common  shutdown                        sys_shutdown
+> +118     common  fsync                           sys_fsync
+> +119     common  madvise                         sys_madvise
+> +120     common  clone                           sys_clone_wrapper
+> +121     common  setdomainname                   sys_setdomainname
+> +122     common  sendfile                        sys_sendfile
+> +123     common  recvfrom                        sys_recvfrom
+> +124     common  adjtimex                        sys_adjtimex
+> +125     common  mprotect                        sys_mprotect
+> +126     common  sigprocmask                     sys_sigprocmask
+> +128     common  init_module                     sys_init_module
+> +129     common  delete_module                   sys_delete_module
+> +131     common  quotactl                        sys_quotactl
+> +132     common  getpgid                         sys_getpgid
+> +133     common  fchdir                          sys_fchdir
+> +134     common  bdflush                         sys_bdflush
+> +135     common  sysfs                           sys_sysfs
+> +136     common  personality                     sys_personality
+> +138     common  setfsuid                        sys_setfsuid
+> +139     common  setfsgid                        sys_setfsgid
+> +140     common  _llseek                         sys_llseek
+> +141     common  getdents                        sys_getdents
+> +142     common  _newselect                      sys_select
+> +143     common  flock                           sys_flock
+> +144     common  msync                           sys_msync
+> +145     common  readv                           sys_readv
+> +146     common  writev                          sys_writev
+> +147     common  getsid                          sys_getsid
+> +148     common  fdatasync                       sys_fdatasync
+> +149     common  _sysctl                         sys_sysctl
+> +150     common  mlock                           sys_mlock
+> +151     common  munlock                         sys_munlock
+> +152     common  mlockall                        sys_mlockall
+> +153     common  munlockall                      sys_munlockall
+> +154     common  sched_setparam                  sys_sched_setparam
+> +155     common  sched_getparam                  sys_sched_getparam
+> +156     common  sched_setscheduler              sys_sched_setscheduler
+> +157     common  sched_getscheduler              sys_sched_getscheduler
+> +158     common  sched_yield                     sys_sched_yield
+> +159     common  sched_get_priority_max          sys_sched_get_priority_max
+> +160     common  sched_get_priority_min          sys_sched_get_priority_min
+> +161     common  sched_rr_get_interval           sys_sched_rr_get_interval
+> +162     common  nanosleep                       sys_nanosleep
+> +163     common  mremap                          sys_mremap
+> +164     common  setresuid                       sys_setresuid
+> +165     common  getresuid                       sys_getresuid
+> +166     common  sigaltstack                     sys_sigaltstack
+> +168     common  poll                            sys_poll
+> +170     common  setresgid                       sys_setresgid
+> +171     common  getresgid                       sys_getresgid
+> +172     common  prctl                           sys_prctl
+> +173     common  rt_sigreturn                    sys_rt_sigreturn
+> +174     common  rt_sigaction                    sys_rt_sigaction
+> +175     common  rt_sigprocmask                  sys_rt_sigprocmask
+> +176     common  rt_sigpending                   sys_rt_sigpending
+> +177     common  rt_sigtimedwait                 sys_rt_sigtimedwait
+> +178     common  rt_sigqueueinfo                 sys_rt_sigqueueinfo
+> +179     common  rt_sigsuspend                   sys_rt_sigsuspend
+> +180     common  chown                           sys_chown
+> +181     common  setsockopt                      sys_setsockopt
+> +182     common  getsockopt                      sys_getsockopt
+> +183     common  sendmsg                         sys_sendmsg
+> +184     common  recvmsg                         sys_recvmsg
+> +185     common  semop                           sys_semop
+> +186     common  semget                          sys_semget
+> +187     common  semctl                          sys_semctl
+> +188     common  msgsnd                          sys_msgsnd
+> +189     common  msgrcv                          sys_msgrcv
+> +190     common  msgget                          sys_msgget
+> +191     common  msgctl                          sys_msgctl
+> +192     common  shmat                           sys_shmat
+> +193     common  shmdt                           sys_shmdt
+> +194     common  shmget                          sys_shmget
+> +195     common  shmctl                          sys_shmctl
+> +198     common  lstat64                         sys_lstat64
+> +199     common  truncate64                      sys_truncate64
+> +200     common  ftruncate64                     sys_ftruncate64
+> +201     common  getdents64                      sys_getdents64
+> +202     common  fcntl64                         sys_fcntl64
+> +206     common  gettid                          sys_gettid
+> +207     common  readahead                       sys_readahead
+> +208     common  tkill                           sys_tkill
+> +209     common  sendfile64                      sys_sendfile64
+> +210     common  futex                           sys_futex
+> +211     common  sched_setaffinity               sys_sched_setaffinity
+> +212     common  sched_getaffinity               sys_sched_getaffinity
+> +215     common  io_setup                        sys_io_setup
+> +216     common  io_destroy                      sys_io_destroy
+> +217     common  io_getevents                    sys_io_getevents
+> +218     common  io_submit                       sys_io_submit
+> +219     common  io_cancel                       sys_io_cancel
+> +222     common  exit_group                      sys_exit_group
+> +223     common  lookup_dcookie                  sys_lookup_dcookie
+> +224     common  epoll_create                    sys_epoll_create
+> +225     common  epoll_ctl                       sys_epoll_ctl
+> +226     common  epoll_wait                      sys_epoll_wait
+> +227     common  remap_file_pages                sys_remap_file_pages
+> +228     common  semtimedop                      sys_semtimedop
+> +229     common  mq_open                         sys_mq_open
+> +230     common  mq_unlink                       sys_mq_unlink
+> +231     common  mq_timedsend                    sys_mq_timedsend
+> +232     common  mq_timedreceive                 sys_mq_timedreceive
+> +233     common  mq_notify                       sys_mq_notify
+> +234     common  mq_getsetattr                   sys_mq_getsetattr
+> +235     common  waitid                          sys_waitid
+> +236     common  fadvise64_64                    sys_fadvise64_64
+> +237     common  set_tid_address                 sys_set_tid_address
+> +238     common  setxattr                        sys_setxattr
+> +239     common  lsetxattr                       sys_lsetxattr
+> +240     common  fsetxattr                       sys_fsetxattr
+> +241     common  getxattr                        sys_getxattr
+> +242     common  lgetxattr                       sys_lgetxattr
+> +243     common  fgetxattr                       sys_fgetxattr
+> +244     common  listxattr                       sys_listxattr
