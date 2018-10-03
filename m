@@ -6,183 +6,126 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94117C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB434C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DD6221470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:35:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DD6221470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A72D213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:37:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A72D213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbeJDAYU (ORCPT
+        id S1727033AbeJDA0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 20:24:20 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53883 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726884AbeJDAYT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 20:24:19 -0400
-Received: by mail-it1-f196.google.com with SMTP id q70-v6so9447411itb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 10:34:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=I5BnZLPzbXUWdyMCNxcJTEsVfsjPpKhernmBohTxbCA=;
-        b=syxZEytrRE+wLJIen/Mst8afwb/hrJEzwrpiy+oEqWnyOPHn69KBsPoZeasb0fUnte
-         rh88i6aBw+HaF7DNej2/hEXgHGH0b9WpfJ/SlXb6gJmOf6nN5Hn1iZD5wl0IIBHPwVdc
-         6r++D6iK9YhyzQrf4Y7heyzrZAIOV/8Ocp40nCoE9H2RQdFYxDJXrWY/R/F/QQFf3Jas
-         F3MuVhS/o1yrI9D4diG7yyH9cfwhOn6QNFhNPks1cK4ccOr7GsN073VNh//Zbi9m1h1X
-         JG2OGEntBfxoOo/A1Pvnse3yzMLEVorVryrcWgN9t+4LAZ2qAzM9Ua7QRiTHKLkL0WPz
-         i+Nw==
-X-Gm-Message-State: ABuFfojozMiqb9Nkho7CoD6TML8v6XCwJWWPjJz4gXkZLeKxg/tRHp30
-        P98I0BdPtUiTet2fTOgRwdQSPXOpYGCtWZnjc6wBFw==
-X-Google-Smtp-Source: ACcGV62da0d98QmI+MA+BldsPRz1IVMHQnp8+9DofLJLt4CGPCV9fnYbyPvlO8Ut8WlbTCohAzG/j9+Ae4+C5MM+8ho=
-X-Received: by 2002:a24:ac53:: with SMTP id m19-v6mr1974013iti.147.1538588097288;
- Wed, 03 Oct 2018 10:34:57 -0700 (PDT)
+        Wed, 3 Oct 2018 20:26:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34228 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726851AbeJDA0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 20:26:31 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F7A42089F;
+        Wed,  3 Oct 2018 17:37:06 +0000 (UTC)
+Date:   Wed, 3 Oct 2018 13:37:04 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Daniel Wang <wonderfly@google.com>
+Cc:     Petr Mladek <pmladek@suse.com>, stable@vger.kernel.org,
+        Alexander.Levin@microsoft.com, akpm@linux-foundation.org,
+        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
+        penguin-kernel@i-love.sakura.ne.jp, peterz@infradead.org,
+        tj@kernel.org, torvalds@linux-foundation.org, vbabka@suse.cz,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Peter Feiner <pfeiner@google.com>
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+Message-ID: <20181003133704.43a58cf5@gandalf.local.home>
+In-Reply-To: <CAJmjG2_4JFA=qL-d2Pb9umUEcPt9h13w-g40JQMbdKsZTRSZww@mail.gmail.com>
+References: <20180927194601.207765-1-wonderfly@google.com>
+        <20181001152324.72a20bea@gandalf.local.home>
+        <CAJmjG29Jwn_1E5zexcm8eXTG=cTWyEr1gjSfSAS2fueB_V0tfg@mail.gmail.com>
+        <20181002084225.6z2b74qem3mywukx@pathway.suse.cz>
+        <CAJmjG2-RrG5XKeW1-+rN3C=F6bZ-L3=YKhCiQ_muENDTzm_Ofg@mail.gmail.com>
+        <20181002212327.7aab0b79@vmware.local.home>
+        <20181003091400.rgdjpjeaoinnrysx@pathway.suse.cz>
+        <CAJmjG2_4JFA=qL-d2Pb9umUEcPt9h13w-g40JQMbdKsZTRSZww@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a02:998e:0:0:0:0:0 with HTTP; Wed, 3 Oct 2018 10:34:56 -0700 (PDT)
-In-Reply-To: <1E24731C-13E1-41CC-A96A-ABDAA6175849@linaro.org>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk> <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <1538550325.14984.108.camel@gmail.com> <CACRpkdaLZXGKMQGJPH02p2QPkxUDA03Y=cu_wBR_+rFaLWTw7g@mail.gmail.com>
- <BN3PR0401MB164003C967C45F2681F503A7E7E90@BN3PR0401MB1640.namprd04.prod.outlook.com>
- <CACRpkdbHiq9bstRzyg-fJfXKnXr8wD1YzAooLAwQKM0OzP=HVA@mail.gmail.com> <1E24731C-13E1-41CC-A96A-ABDAA6175849@linaro.org>
-From:   Bryan Gurney <bgurney@redhat.com>
-Date:   Wed, 3 Oct 2018 13:34:56 -0400
-Message-ID: <CAHhmqcRbz+UsgDsHzJzKDWqZ_JMNp1UYq3M2rAf1vqfmO+wRyg@mail.gmail.com>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>, Damien.LeMoal@wdc.com,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, aherrmann@suse.com, mgorman@suse.com,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 11:53 AM, Paolo Valente <paolo.valente@linaro.org> wrote:
->
->
->> Il giorno 03 ott 2018, alle ore 10:28, Linus Walleij <linus.walleij@linaro.org> ha scritto:
->>
->> On Wed, Oct 3, 2018 at 9:42 AM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
->>
->>> There is another class of outliers: host-managed SMR disks (SATA and SCSI,
->>> definitely single hw queue). For these, using mq-deadline is mandatory in many
->>> cases in order to guarantee sequential write command delivery to the device
->>> driver. Having the default changed to bfq, which as far as I know is not SMR
->>> friendly (can sequential writes within a single zone be reordered ?) is asking
->>> for troubles (unaligned write errors showing up).
->>
->> Ah, that is interesting.
->>
->> Which device driver files are we talking about here, specifically?
->> I'd like to take a look.
->>
->> I guess what you say is not that you are looking for the deadline
->> scheduling per se (as in deadline scheduling is nice), what you want is
->> the zone locking semantics in that scheduler, is that right?
->>
->> I.e. this business:
->> blk_queue_is_zoned(q)
->> blk_req_zone_write_lock(rq);
->> blk_req_zone_write_unlock(rq);
->> and mq-deadline solves this with a spinlock.
->>
->> I will augment the patch to enforce mq-deadline
->> if blk_queue_is_zoned(q) is true, as it is clear that
->> any device with that characteristic must use mq-deadline.
->>
->> Paoly might be interested in looking into whether BFQ could
->> also handle zoned devices in the future, I have no idea of how
->> hard that would be.
->>
->
-> Absolutely, as I already wrote in my reply to Damien.
->
-> In the meantime, Linus, augmenting your patch as you propose seems
-> a clean and effective solution to me.
->
-> Thanks,
-> Paolo
->
->> The zoned business seems a bit fragile. Should it even be
->> allowed to select any other scheduler than deadline on these
->> devices? Presenting all compiled in schedulers in
->> /sysblock/device/queue/scheduler sounds like just giving
->> sysadmins too much rope.
->>
->> Yours,
->> Linus Walleij
->
+On Wed, 3 Oct 2018 10:16:08 -0700
+Daniel Wang <wonderfly@google.com> wrote:
 
-Right now, users of host-managed SMR drives should be using "deadline"
-or "mq-deadline", to avoid out-of-order writes in sequential-only
-zones.
+> On Wed, Oct 3, 2018 at 2:14 AM Petr Mladek <pmladek@suse.com> wrote:
+> >
+> > On Tue 2018-10-02 21:23:27, Steven Rostedt wrote:  
+> > > I don't see the big deal of backporting this. The biggest complaints
+> > > about backports are from fixes that were added to late -rc releases
+> > > where the fixes didn't get much testing. This commit was added in 4.16,
+> > > and hasn't had any issues due to the design. Although a fix has been
+> > > added:
+> > >
+> > > c14376de3a1 ("printk: Wake klogd when passing console_lock owner")  
+> >
+> > As I said, I am fine with backporting the console_lock owner stuff
+> > into the stable release.
+> >
+> > I just wonder (like Sergey) what the real problem is. The console_lock
+> > owner handshake is not fully reliable. It is might be good enough
 
-I'm running into a situation right now on a test system (Fedora 28,
-4.18.7 kernel) where I copied test data onto an F2FS filesystem, but I
-accidentally forgot to add my "udev rule" file:
+I'm not sure what you mean by 'not fully reliable'
 
-# cat /etc/udev/rules.d/99-zoned-block-devices.rules
-ACTION=="add|change", KERNEL=="sd[a-z]",
-ATTRS{queue/zoned}=="host-managed", ATTR{queue/scheduler}="deadline"
+> > to prevent softlockup. But we should not relay on it to prevent
+> > a deadlock.  
+> 
+> Yes. I myself was curious too. :)
+> 
+> >
+> > My new theory ;-)
+> >
+> > printk_safe_flush() is called in nmi_trigger_cpumask_backtrace().  
+> > => watchdog_timer_fn() is blocked until all backtraces are printed.  
+> >
+> > Now, the original report complained that the system rebooted before
+> > all backtraces were printed. It means that panic() was called
+> > on another CPU. My guess is that it is from the hardlockup detector.
+> > And the panic() was not able to flush the console because it was
+> > not able to take console_lock.
+> >
+> > IMHO, there was not a real deadlock. The console_lock owner
+> > handshake jsut helped to get console_lock in panic() and
+> > flush all messages before reboot => it is reasonable
+> > and acceptable fix.  
 
-...and now, I see these messages when that specific SMR drive is mounted:
-
-kernel: F2FS-fs (sdc): IO Block Size:        4 KB
-kernel: F2FS-fs (sdc): Found nat_bits in checkpoint
-kernel: F2FS-fs (sdc): Mounted with checkpoint version = 212216ab
-kernel: mpt3sas_cm0: log_info(0x31080000): originator(PL), code(0x08),
-sub_code(0x0000)
-kernel: mpt3sas_cm0: log_info(0x31080000): originator(PL), code(0x08),
-sub_code(0x0000)
-kernel: scsi_io_completion: 20 callbacks suppressed
-kernel: sd 7:0:0:0: [sdb] tag#0 FAILED Result: hostbyte=DID_OK
-driverbyte=DRIVER_SENSE
-kernel: sd 7:0:0:0: [sdb] tag#0 Sense Key : Aborted Command [current]
-kernel: sd 7:0:0:0: [sdb] tag#0 Add. Sense: No additional sense information
-kernel: sd 7:0:0:0: [sdb] tag#0 CDB: Write(16) 8a 00 00 00 00 00 3d d4
-ec 99 00 00 00 80 00 00
-
-I was also running into problems with creating new directories on this
-F2FS filesystem.  However, "fsck.f2fs" reports no problems.  So at
-this point, I created a new F2FS filesystem on a second SMR drive, and
-am currently copying the data from the "bad" F2FS filesystem to the
-"good" one.
-
-I wouldn't call zoned block devices "fragile"; they simply have I/O
-rules that didn't previously exist: all writes to sequential-only
-zones must be sequential.  And one of the things that schedulers do is
-reorder writes.  After 4.16, sd stopped being the "gatekeeper" of
-ensuring sequential writes, but the only "zoned-aware" schedulers were
-deadline and mq-deadline.  Since my test system defaulted to "cfq", I
-ran into problems.
-
-So I welcome any changes that make it impossible for the user to
-"accidentally use the wrong scheduler".
-
-At least this time, I didn't "brick" my test system's BIOS, like I did
-back in May of this year [1].
+Agreed.
 
 
-Thanks,
+> 
+> I had the same speculation. Tried to capture a lockdep snippet with
+> CONFIG_PROVE_LOCKING turned on but didn't get anything. But
+> maybe I was doing it wrong.
+> 
+> >
+> > Just to be sure. Daniel, could you please send a log with
+> > the console_lock owner stuff backported? There we would see
+> > who called the panic() and why it rebooted early.  
+> 
+> Sure. Here is one. It's a bit long but complete. I attached another log
+> snippet below it which is what I got when `softlockup_panic` was turned
+> off. The log was from the IRQ task that was flushing the printk buffer. I
+> will be taking a closer look at it too but in case you'll find it helpful.
 
-Bryan
+Just so I understand correctly. Does the panic hit with and without the
+suggested backport patch? The only difference is that you get the full
+output with the patch and limited output without it?
 
+-- Steve
 
-[1] https://www.spinics.net/lists/linux-block/msg26798.html
