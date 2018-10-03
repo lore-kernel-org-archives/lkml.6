@@ -2,216 +2,87 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29ABDC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDF4C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDB132098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:58:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDB132098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C18B20835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:00:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C18B20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbeJCQqJ (ORCPT
+        id S1726725AbeJCQrl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 12:46:09 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48856 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725746AbeJCQqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 12:46:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A214618A;
-        Wed,  3 Oct 2018 02:58:28 -0700 (PDT)
-Received: from [10.162.0.72] (p8cg001049571a15.blr.arm.com [10.162.0.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8FA583F5B7;
-        Wed,  3 Oct 2018 02:58:25 -0700 (PDT)
-Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
-        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
-        catalin.marinas@arm.com, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com
-References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
- <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
- <20181002123909.GS18290@dhcp22.suse.cz>
- <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
- <20181003065833.GD18290@dhcp22.suse.cz>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
-Date:   Wed, 3 Oct 2018 15:28:23 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 3 Oct 2018 12:47:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58482 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725746AbeJCQrk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 12:47:40 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g7dwj-0007zV-EW; Wed, 03 Oct 2018 09:59:57 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jon Flatley <jflat@chromium.org>, linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][usb-next] usb: core: fix memory leak on port_dev_path allocation
+Date:   Wed,  3 Oct 2018 10:59:57 +0100
+Message-Id: <20181003095957.3395-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20181003065833.GD18290@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently the allocation of port_dev_path from the call to
+kobject_get_path is not being kfree'd, causing a memory leak. Fix
+this by kfree'ing this at the end of the function. Add an extra
+error exit path to fix one of the early leaks when envp[0] fails
+to be allocated.
 
-On 10/03/2018 12:28 PM, Michal Hocko wrote:
-> On Wed 03-10-18 07:46:27, Anshuman Khandual wrote:
->>
->>
->> On 10/02/2018 06:09 PM, Michal Hocko wrote:
->>> On Tue 02-10-18 17:45:28, Anshuman Khandual wrote:
->>>> Architectures like arm64 have PUD level HugeTLB pages for certain configs
->>>> (1GB huge page is PUD based on ARM64_4K_PAGES base page size) that can be
->>>> enabled for migration. It can be achieved through checking for PUD_SHIFT
->>>> order based HugeTLB pages during migration.
->>>
->>> Well a long term problem with hugepage_migration_supported is that it is
->>> used in two different context 1) to bail out from the migration early
->>> because the arch doesn't support migration at all and 2) to use movable
->>> zone for hugetlb pages allocation. I am especially concerned about the
->>> later because the mere support for migration is not really good enough.
->>> Are you really able to find a different giga page during the runtime to
->>> move an existing giga page out of the movable zone?
->>
->> I pre-allocate them before trying to initiate the migration (soft offline
->> in my experiments). Hence it should come from the pre-allocated HugeTLB
->> pool instead from the buddy. I might be missing something here but do we
->> ever allocate HugeTLB on the go when trying to migrate ? IIUC it always
->> came from the pool (unless its something related to ovecommit/surplus).
->> Could you please kindly explain regarding how migration target HugeTLB
->> pages are allocated on the fly from movable zone.
-> 
-> Hotplug comes to mind. You usually do not pre-allocate to cover full
-> node going offline. And people would like to do that. Another example is
-> CMA. You would really like to move pages out of the way.
+Detected by CoverityScan, CID#1473771 ("Resource Leak")
 
-You are right.
+Fixes: 201af55da8a3 ("usb: core: added uevent for over-current")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/core/hub.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Hotplug migration:
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 7801bb30bdba..8ae781ce1a80 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -5168,7 +5168,7 @@ static void port_over_current_notify(struct usb_port *port_dev)
+ 
+ 	envp[0] = kasprintf(GFP_KERNEL, "OVER_CURRENT_PORT=%s", port_dev_path);
+ 	if (!envp[0])
+-		return;
++		goto exit_path;
+ 
+ 	envp[1] = kasprintf(GFP_KERNEL, "OVER_CURRENT_COUNT=%u",
+ 			port_dev->over_current_count);
+@@ -5180,6 +5180,8 @@ static void port_over_current_notify(struct usb_port *port_dev)
+ 	kfree(envp[1]);
+ exit:
+ 	kfree(envp[0]);
++exit_path:
++	kfree(port_dev_path);
+ }
+ 
+ static void port_event(struct usb_hub *hub, int port1)
+-- 
+2.17.1
 
-__offline_pages
-   do_migrate_range
-	migrate_pages(...new_node_page...)
-
-new_node_page
-   new_page_nodemask
-	alloc_huge_page_nodemask
-	   dequeue_huge_page_nodemask (Getting from pool)
-	or
-	   alloc_migrate_huge_page    (Getting from buddy - non-gigantic)
-		alloc_fresh_huge_page
-		    alloc_buddy_huge_page
-			__alloc_pages_nodemask ----> goes into buddy
-
-CMA allocation:
-
-cma_alloc
-   alloc_contig_range
-	__alloc_contig_migrate_range
-		migrate_pages(...alloc_migrate_target...)
-
-alloc_migrate_target
-   new_page_nodemask -> __alloc_pages_nodemask ---> goes into buddy
-
-But this is not applicable for gigantic pages for which it backs off way
-before going into buddy. With MAX_ORDER as 11 its anything beyond 64MB
-for 64K pages, 16MB for 16K pages, 4MB for 4K pages etc. So all those
-bigger huge pages like 512MB/1GB/16GB will not be part of the HugeTLB/CMA
-initiated migrations. I will look into migration details during auto NUMA,
-compaction, memory-failure etc to see if gigantic huge page is allocated
-from the buddy with ___alloc_pages_nodemask or with alloc_contig_range().
-
-> 
->> But even if there are some chances of run time allocation failure from
->> movable zone (as in point 2) that should not block the very initiation
->> of migration itself. IIUC thats not the semantics for either THP or
->> normal pages. Why should it be different here. If the allocation fails
->> we should report and abort as always. Its the caller of migration taking
->> the chances. why should we prevent that.
-> 
-> Yes I agree, hence the distinction between the arch support for
-> migrateability and the criterion on the movable zone placement.
-movable zone placement sounds very tricky here. How can the platform
-(through the hook huge_movable) before hand say whether destination
-page could be allocated from the ZONE_MOVABLE without looking into the
-state of buddy at migration (any sort attempt to do this is going to
-be expensive) or it merely indicates the desire to live with possible
-consequence (unable to hot unplug/CMA going forward) for a migration
-which might end up in an unmovable area.
-
->  
->>>
->>> So I guess we want to split this into two functions
->>> arch_hugepage_migration_supported and hugepage_movable. The later would
->>
->> So the set difference between arch_hugepage_migration_supported and 
->> hugepage_movable still remains un-migratable ? Then what is the purpose
->> for arch_hugepage_migration_supported page size set in the first place.
->> Does it mean we allow the migration at the beginning and the abort later
->> when the page size does not fall within the subset for hugepage_movable.
->> Could you please kindly explain this in more detail.
-> 
-> The purpose of arch_hugepage_migration_supported is to tell whether it
-> makes any sense to even try to migration. The allocation placement is
-
-Which kind of matches what we have right now and being continued with this
-proposal in the series.
-
-> completely independent on this choice. The later just says whether it is
-> feasible to place a hugepage to the zone movable. Sure regular 2MB pages
-
-What do you exactly mean by feasible ? Wont it depend on the state of the
-buddy allocator (ZONE_MOVABLE in particular) and it's ability to accommodate
-a given huge page. How can the platform decide on it ? Or as I mentioned
-before it's platform's willingness to live with unmovable huge pages (of
-certain sizes) as a consequence of migration.
-
-> do not guarantee movability as well because of the memory fragmentation.
-> But allocating a 2MB is a completely different storage from 1G or even
-> larger huge pages, isn't it?
-
-Right I understand that. Hotplug/CMA capability goes down more with bigger
-huge pages being unmovable on the system.
-
-> 
->>> be a reasonably migrateable subset of the former. Without that this
->>> patch migth introduce subtle regressions when somebody relies on movable
->>> zone to be really movable.
->> PUD based HugeTLB pages were never migratable, then how can there be any
->> regression here ?
-> 
-> That means that they haven't been allocated from the movable zone
-> before. Which is going to change by this patch.
-
-The source PUD huge page might have been allocated from movable zone.
-The denial for migration is explicit and because we dont check for
-PUD_SHIFT in there and nothing to do with the zone type where the
-source page belongs. But are you referring to regression caused by
-something like this.
-
-Before the patch:
-
-- PUD huge page allocated on ZONE_MOVABLE
-- Huge page is movable (Hotplug/CMA works)
-
-After the patch:
-
-- PUD huge page allocated on ZONE_MOVABLE
-- Migration is successful without checking for destination page's zone
-- PUD huge page (new) is not on ZONE_MOVABLE
-- Huge page is unmovable (Hotplug/CMA does not work anymore) -> Regression!
-
-> 
->> At present we even support PGD based HugeTLB pages for
->> migration.
-> 
-> And that is already wrong but nobody probably cares because those are
-> rarely used.
-> 
->> Wondering how PUD based ones are going to be any different.
-> 
-> It is not different, PGD is dubious already.
->
-Got it.
