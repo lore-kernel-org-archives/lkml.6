@@ -2,119 +2,112 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2854C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B76C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 749DE2098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:46:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 749DE2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id BA6C52098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:47:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA6C52098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727670AbeJCQds (ORCPT
+        id S1727716AbeJCQez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 12:33:48 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:42582 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbeJCQds (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 12:33:48 -0400
-Received: from 79.184.253.194.ipv4.supernova.orange.pl (79.184.253.194) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
- id 40a6ac4bace627b0; Wed, 3 Oct 2018 11:46:08 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Fieah Lim <kw@fieahl.im>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:CPUIDLE DRIVERS" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v2] cpuidle: Remove unnecessary wrapper cpuidle_get_last_residency()
-Date:   Wed, 03 Oct 2018 11:43:08 +0200
-Message-ID: <43967378.Cn3UgLrHJv@aspire.rjw.lan>
-In-Reply-To: <20180910195901.15200-1-kw@fieahl.im>
-References: <20180910195901.15200-1-kw@fieahl.im>
+        Wed, 3 Oct 2018 12:34:55 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48656 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726807AbeJCQez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 12:34:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DFFA18A;
+        Wed,  3 Oct 2018 02:47:17 -0700 (PDT)
+Received: from [10.4.12.111] (ostrya.emea.arm.com [10.4.12.111])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6E473F5B7;
+        Wed,  3 Oct 2018 02:47:14 -0700 (PDT)
+Subject: Re: [PATCH v3 2/3] perf: add arm64 smmuv3 pmu driver
+To:     Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
+        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>,
+        "pabba@codeaurora.org" <pabba@codeaurora.org>,
+        John Garry <john.garry@huawei.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
+ <20180921150803.25444-3-shameerali.kolothum.thodi@huawei.com>
+ <ecc2877c-146c-d70f-efd7-306fe704d55f@arm.com>
+ <5FC3163CFD30C246ABAA99954A238FA838793F4E@FRAEML521-MBX.china.huawei.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <6d51a825-325f-5f78-20da-bf27f208fe37@arm.com>
+Date:   Wed, 3 Oct 2018 10:46:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA838793F4E@FRAEML521-MBX.china.huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, September 10, 2018 9:59:01 PM CEST Fieah Lim wrote:
-> cpuidle_get_last_residency() is just a wrapper for retrieves
-> device's last_residency, it's also weirdly the only
-> wrapper function for accessing cpuidle_* struct member,
-> and my best guess is it could be a leftover from v2.x
+On 03/10/2018 09:46, Shameerali Kolothum Thodi wrote:
+[...]
+>>> +	/* Verify specified event is supported on this PMU */
+>>> +	event_id = get_event(event);
+>>> +	if (((event_id < SMMU_ARCH_MAX_EVENT_ID) &&
+>>> +	    (!test_bit(event_id, smmu_pmu->supported_events))) ||
+>>> +	    (event_id > SMMU_IMPDEF_MAX_EVENT_ID)) {
+>>
+>>> = ?
 > 
-> Anyhow, since the only two users(ladder and menu governor)
-> can access dev->last_residency directly, and it's more intuitive,
-> let's just get rid of it.
+> I was slightly confused by the spec here as it says,
 > 
-> This patch tidies up CPU idle driver a bit without functional changes.
+> Performance events are indicated by a numeric ID, in the following ranges:
+> • 0x0000 to 0x007F: Architected events
+> • 0x0080 to 0xFFFF: IMPLEMENTATION DEFINED events
 > 
-> Signed-off-by: Fieah Lim <kw@fieahl.im>
-> ---
-> Changes from v1:
->  - Rewrite changelog as Rafael J. Wysocki suggested
-> ---
->  drivers/cpuidle/governors/ladder.c |  2 +-
->  drivers/cpuidle/governors/menu.c   |  2 +-
->  include/linux/cpuidle.h            | 10 ----------
->  3 files changed, 2 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/cpuidle/governors/ladder.c b/drivers/cpuidle/governors/ladder.c
-> index 704880a6612a..f0dddc66af26 100644
-> --- a/drivers/cpuidle/governors/ladder.c
-> +++ b/drivers/cpuidle/governors/ladder.c
-> @@ -80,7 +80,7 @@ static int ladder_select_state(struct cpuidle_driver *drv,
->  
->  	last_state = &ldev->states[last_idx];
->  
-> -	last_residency = cpuidle_get_last_residency(dev) - drv->states[last_idx].exit_latency;
-> +	last_residency = dev->last_residency - drv->states[last_idx].exit_latency;
->  
->  	/* consider promotion */
->  	if (last_idx < drv->state_count - 1 &&
-> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-> index 1aef60d160eb..715520e339da 100644
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -492,7 +492,7 @@ static void menu_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
->  		measured_us = 9 * MAX_INTERESTING / 10;
->  	} else {
->  		/* measured value */
-> -		measured_us = cpuidle_get_last_residency(dev);
-> +		measured_us = dev->last_residency;
->  
->  		/* Deduct exit latency */
->  		if (measured_us > 2 * target->exit_latency)
-> diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
-> index 4325d6fdde9b..d262f620890e 100644
-> --- a/include/linux/cpuidle.h
-> +++ b/include/linux/cpuidle.h
-> @@ -99,16 +99,6 @@ struct cpuidle_device {
->  DECLARE_PER_CPU(struct cpuidle_device *, cpuidle_devices);
->  DECLARE_PER_CPU(struct cpuidle_device, cpuidle_dev);
->  
-> -/**
-> - * cpuidle_get_last_residency - retrieves the last state's residency time
-> - * @dev: the target CPU
-> - */
-> -static inline int cpuidle_get_last_residency(struct cpuidle_device *dev)
-> -{
-> -	return dev->last_residency;
-> -}
-> -
-> -
->  /****************************
->   * CPUIDLE DRIVER INTERFACE *
->   ****************************/
-> 
+> It looks to me the ids are valid including those limits.
 
-Applied, thanks!
+Yes my mistake, I mixed up IMPDEF_MAX_EVENT_ID which is inclusive with
+ARCH_MAX_EVENT_ID which isn't, sorry about that
 
+[...]
+>>> +		dev_err(dev, "Setup irq failed, PMU @%pa\n", &res_0->start);
+>>
+>> You can probably remove "PMU @%pa" from error and info messages, since
+>> the device name already uniquely identifies it:
+>> "[    6.168200] arm-smmu-v3-pmu 2b442000.smmu-pmcg: Registered SMMU
+>> PMU
+>> @ 0x000000002b442000 using 4 counters"
+> 
+> Interesting. What I have is,
+> 
+> [   25.669636] arm-smmu-v3-pmu arm-smmu-v3-pmu.6.auto: Registered SMMU
+> PMU @ 0x0000000148001000 using 8 counters
+> 
+> Are you using the same patches and is booting using ACPI? IIRC, in the iort
+> code  it uses the name "arm-smmu-v3-pmu" and AUTO id to register/add the platform
+> dev. So not sure, how it is printing the address in your case. 
+> 
+> Please check and let me know.
 
+Right, I've been using device tree for my tests, not ACPI. I thought it
+was the core platform code that was creating the names. I guess we could
+add nicer names to IORT but that's probably for a different series, so
+nevermind.
+
+Thanks,
+Jean
