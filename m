@@ -2,81 +2,117 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C87E8C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3CEC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BA1820835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:57:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BA1820835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E8ACD20684
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:58:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WRFLq+vR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8ACD20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbeJCOo2 (ORCPT
+        id S1727361AbeJCOpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 10:44:28 -0400
-Received: from mga14.intel.com ([192.55.52.115]:65068 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbeJCOo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:44:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 00:57:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,335,1534834800"; 
-   d="scan'208";a="88749359"
-Received: from um.fi.intel.com (HELO localhost) ([10.237.72.212])
-  by orsmga003.jf.intel.com with ESMTP; 03 Oct 2018 00:56:41 -0700
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Wenwen Wang <wang6495@umn.edu>, Wenwen Wang <wang6495@umn.edu>
-Cc:     Kangjie Lu <kjlu@umn.edu>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] stm class: fix a missing-check bug
-In-Reply-To: <1538542259-11868-1-git-send-email-wang6495@umn.edu>
-References: <1538542259-11868-1-git-send-email-wang6495@umn.edu>
-Date:   Wed, 03 Oct 2018 10:56:40 +0300
-Message-ID: <87h8i379af.fsf@ashishki-desk.ger.corp.intel.com>
+        Wed, 3 Oct 2018 10:45:35 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45395 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbeJCOpf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 10:45:35 -0400
+Received: by mail-io1-f67.google.com with SMTP id e12-v6so4251410iok.12
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 00:58:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=w7U3hKkzXO+tAUJhJY+xjsKPqkh0CTBzgdIvCsl9vKo=;
+        b=WRFLq+vRDxkoRLAqhfYV9BQjHxsK5cMKzIU2jZv6158XqZkpStdvJ6DpD33YlW50Ul
+         OwWv2o9I4I9nRHQDRamLDYQXX6b+OFtLdG2ASt7haXAq6DCpnyqF3OVTJqtsHIx6L5Ae
+         vh0Z62zesvlFITxjvoWMLUHk6T0mQ/KoseiBg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=w7U3hKkzXO+tAUJhJY+xjsKPqkh0CTBzgdIvCsl9vKo=;
+        b=SKrfL8WAkj86pa/Y1MNTFnU5KEv12th+yLr0aN0AwTdzh7AO0PDfteK3afB2PQoHgK
+         c9jqfKlofGoUAIJlnYfVE44Ac7GYbYqWc6cFI2aEWvxpgDcGbprnTrStUZKyRfs8u0yO
+         B4eUw/6YIZtysFm2lJ9Q8RMaVeBBFkrFCTuq54T0RXAPB4OjKedGfSOjbLqJKCE4xcdg
+         Cp4dLkUdV9DZ8cVI1aaEo8cjpJcSubMakVec1EcBequ+P8uNizuPMm39DKJzh6BUWVeY
+         YE1TeHA/pUAdo5xi9CF6RbWutVOK/RlyMk64uxyRtIf2D3eqEtB7sj4GFDKk1c3P6rJU
+         pCfA==
+X-Gm-Message-State: ABuFfojvXLo879pOtyr1KoSojfDLJFn492woUYM0LDWHYAEFXNbyTUaI
+        oCoL7nrexc0HaLDOxYHH4+/UK3bCmoCWHWxUntOXLg==
+X-Google-Smtp-Source: ACcGV63PfcY66X2qRGmWOuVUqsvBK2JJupTtKEVlsJqSV3uIg4lWdwU5ysi/LMfJg9Vh2bbITFeb/Hl5w8I2i+A/EYw=
+X-Received: by 2002:a6b:be83:: with SMTP id o125-v6mr160539iof.173.1538553498584;
+ Wed, 03 Oct 2018 00:58:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Wed, 3 Oct 2018 00:58:18 -0700 (PDT)
+In-Reply-To: <20181003061236.GB745@sol.localdomain>
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-12-Jason@zx2c4.com>
+ <20181003061236.GB745@sol.localdomain>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 3 Oct 2018 09:58:18 +0200
+Message-ID: <CAKv+Gu8-HoAEyYiPYqMOMy9MGduFLQik2YxdJziqxN_cUs0nCA@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 11/23] zinc: import Andy Polyakov's Poly1305
+ ARM and ARM64 implementations
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Andy Polyakov <appro@openssl.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wenwen Wang <wang6495@umn.edu> writes:
+On 3 October 2018 at 08:12, Eric Biggers <ebiggers@kernel.org> wrote:
+> On Tue, Sep 25, 2018 at 04:56:10PM +0200, Jason A. Donenfeld wrote:
+>> These NEON and non-NEON implementations come from Andy Polyakov's
+>> implementation, and are included here in raw form without modification,
+>> so that subsequent commits that fix these up for the kernel can see how
+>> it has changed. This awkward commit splitting has been requested for the
+>> ARM[64] implementations in particular.
+>>
 
-> In stm_char_policy_set_ioctl(), the 'size' field of the struct
-> 'stp_polic_id' is firstly copied from the user space and then checked,
-> because the length of the 'id' field in this struct, which represents an
-> identification string, is not fixed. If the 'size' field cannot pass the
-> check, an error code EINVAL will be returned. However, after the check, the
-> whole struct is copied again from the user space. Given that the user data
-> resides in the user space, a malicious user-space process can race to
-> change the size between the two copies. By doing so, the attacker can
-> bypass the check on the 'size' field and inject malicious data.
+"This awkward commit splitting"
 
-How? The id->size is not used for anything.
+Seriously?!?
 
-And even if there was a problem, this:
+So you really think it is fine to import huge chunks of code like this
+from other projects without keeping track of the local changes?
 
-> -	if (copy_from_user(id, arg, size)) {
-> +	if (copy_from_user(&id->master, (char __user *)arg + sizeof(size),
-> +				size - sizeof(size))) {
+>> While this is CRYPTOGAMS code, the originating code for this happens to
+>> be the same as OpenSSL's commit 5bb1cd2292b388263a0cc05392bb99141212aa53
+>
+> Sorry to ruin the fun, but actually there are no Poly1305 implementations in
+> CRYPTOGAMS (https://github.com/dot-asm/cryptogams).  Nor are there any ChaCha20
+> implementations.
+>
 
-is completely pointless.
+So was this code taken directly from the OpenSSL project then? If so,
+why do the commit messages claim otherwise?
 
->  		ret = -EFAULT;
->  		goto err_free;
->  	}
->  
-> +	id->size = size;
+> Andy P., can you please add your Poly1305 and ChaCha20 implementations to the
+> CRYPTOGAMS repository, so that they have a clear kernel-compatible license?
+>
+> It would be great if you'd include a kernel-compatible license directly in the
+> versions in the OpenSSL tree too...
+>
 
-So, if we did use id->size after the copying, we'd indeed have this line
-in the code. But since we don't, it's also pointless, so it's not there.
-
-Thanks,
---
-Alex
+Yes please.
