@@ -7,72 +7,75 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B11C64EBD
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 02:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 395F1C64EBD
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 02:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5B1820878
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 02:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E50612082A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 02:30:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICCPNvnw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5B1820878
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ui4ebIZj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E50612082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbeJCJLW (ORCPT
+        id S1726703AbeJCJQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 05:11:22 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36869 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeJCJLV (ORCPT
+        Wed, 3 Oct 2018 05:16:31 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43172 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbeJCJQb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 05:11:21 -0400
-Received: by mail-ot1-f65.google.com with SMTP id o13-v6so4038681otl.4;
-        Tue, 02 Oct 2018 19:25:03 -0700 (PDT)
+        Wed, 3 Oct 2018 05:16:31 -0400
+Received: by mail-oi1-f195.google.com with SMTP id s69-v6so3251249oie.10;
+        Tue, 02 Oct 2018 19:30:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vgNth7F8j22jNs/wGFXTYdZWqLqH2OWQ1F7HQIKcbMc=;
-        b=ICCPNvnwclD724Jtbk5TKrcuQZ4DcoxOcG0/7rxY+CaAupaCI+Dn6RLIXTTLcYtyxv
-         KpyxaP2HmIs+YUiKnIat0ndJtbkmfdaOzuBPACSJ1TOTQcCSqmwcoBpVbo1CXpE5kuSZ
-         t2eGCIBCr7PHX0jbE0AcGRfi9gFeVbnIL/QAxyDkevb2tPUwvAHNDoQljp3wNM1Tbqh+
-         hss7HpHJYpfjn0p9Z+0xnyrA3aW49dbp+JHz7Zb5Niu0uE2FACZ8zlTOjIUDrvz/PS13
-         5uZ5Yer6B7VuRuXBZBMakTZ66xhzyk4muJA4BAXjl6AN49+w+f8O8bAmc9bLT1Tf3fKt
-         jmnA==
+        bh=+VlXbAaWQ/vPwU2ZVgZ1WkiLfj/rDoQS4BvbORdJcwg=;
+        b=ui4ebIZjaahQQGCG/jygtNK1OE+HMHjr92rf8h77giGYChQg+u44+sMCqz4OfjlBMr
+         WkhcqW4XjwtjklBfcW7Gvr2KlPqM7lrQlA7kceZjC1Czi9cNsJjEszPKh88wzSpEM+/U
+         WuXzy3P+TSMlE/AM05xfN8kEYon+emone7OfFHViwS788XknQHzQm1b/yfeOiTSMiPUw
+         LmmoPVvVKtLD27rWrldOBUaHhE+TrdG5QLnG4uArQ388Di11kABn4W6JDp85liUR5gDd
+         tCNiey79ezKpXDU/3tHHrBku0uy7IW7Nd8ZqYRSShDmS3OcgTLdQRnhiw0hz5d3Q0vVj
+         bPCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vgNth7F8j22jNs/wGFXTYdZWqLqH2OWQ1F7HQIKcbMc=;
-        b=ubdulcSPNBkwnWjxjRrpjaJJbcYEQ2n5CbdNxQCtfXfzdRw1A58lgmRe3o2/TEUT1d
-         pmPdYsxSGQ4CHEVqPAzFC1wG/fzu9cGrwBG4iwW0wRfkMylLp79VfR9gPoUhBisPc3IQ
-         gArNE7ZQJddUfvspkIclUZfVYN/T4ErB6Le8z1wIRburZJkezgMqZmKwmjf80TgDg2uT
-         YmSNRkBCLHL5bzFuzaGg/ffNYujaSqGcWIZBhUs9nxRNk0fg6B8gK5NPqiRgm/HUk8TH
-         Vq0dy2HTEbeFucRTCuN9Pe70YF2MjdXOnyrSy4syu4fWXGZK7gIcmiCl2vU5+kMJ54jt
-         aSpg==
-X-Gm-Message-State: ABuFfoh7D/yE/SZ6YPeYsnyf+SphXJ/XqGrVirCk2D3o3v3zh865YwM2
-        aWIhPDC+0g3wU7i4iuoCCpA2+kaJoo6nNgauQBg=
-X-Google-Smtp-Source: ACcGV62jNA8SUMREReRK07buIkMMGzk7BcFE2Lj0S3GSwcNHeyIRMqV9lB+lf0deJyt2auC83R+2ceMUh+MV9vsYvT0=
-X-Received: by 2002:a9d:9fc:: with SMTP id 57-v6mr3462915otz.225.1538533503247;
- Tue, 02 Oct 2018 19:25:03 -0700 (PDT)
+        bh=+VlXbAaWQ/vPwU2ZVgZ1WkiLfj/rDoQS4BvbORdJcwg=;
+        b=jMhfye/Dp/9TjjyiUk3Frcf7kik69NKJ0z1ugl+XqN0nc3Z+iY/xYB1qaGar6fQj3r
+         JmTOXtTP5DyIvzLbX0kzsjsfvpq6Lqkxz9wQgXwCgBKLAesycqhYEXyjkVYGTuhz3FVf
+         w4VM/ErnHXwBkGk3cEVWdzofBNl7qkHq1H1qF6D66KdpZtQta2JGTBWMYhFHcJqXjko1
+         c2VR6SqKYvyhXikNcedMi7WFTqp02RPrdFiio+JvbRj+9n2JJxLpZobpxsPyvKJqa1sw
+         +3dgQUJdXwps3g68mnS04fWxSbUhBg8BlfksKddn9QrMpVpMfRyu6MEm6KMgqtfALTF4
+         2MSw==
+X-Gm-Message-State: ABuFfojy0YNXBlQkEJE5tgELeOMBln+8jSRkIpTAztKB242FjQKi31OO
+        9KqoWA/qoT+WB4Bke/IL0i0tmn55bRuVnFW9PQQ=
+X-Google-Smtp-Source: ACcGV62B/XDVUiV8Fs03IAf1+RoX1fkLRYvB4BRVNevDCUL9eVPKhmNtwG2NqA+7rnzh66DaNCTpE42NyGZ/Zk+AkmU=
+X-Received: by 2002:aca:895:: with SMTP id 143-v6mr6754971oii.309.1538533811531;
+ Tue, 02 Oct 2018 19:30:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <1147be600733a1bcde194f7df61866019f34a531.1538504729.git.leonard.crestez@nxp.com>
-In-Reply-To: <1147be600733a1bcde194f7df61866019f34a531.1538504729.git.leonard.crestez@nxp.com>
+References: <cover.1538505573.git.leonard.crestez@nxp.com> <8c75f5c5dab117430313e0cfd4f2af88c9ed3d57.1538505573.git.leonard.crestez@nxp.com>
+In-Reply-To: <8c75f5c5dab117430313e0cfd4f2af88c9ed3d57.1538505573.git.leonard.crestez@nxp.com>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 2 Oct 2018 23:25:22 -0300
-Message-ID: <CAOMZO5BcVXZx5YKoKxCTK5uJMX8q=5uRiZsyX6sL=QcYjKkhNw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx6sx-sdb: Fix enet phy regulator
+Date:   Tue, 2 Oct 2018 23:30:31 -0300
+Message-ID: <CAOMZO5Cr7N9Kg2sDgL7evGiCCoBW+_WjkjMDg_fghwUz0WVmYA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] crypto: mxs-dcp - Implement sha import/export
 To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia Geanta Neag <horia.geanta@nxp.com>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>
+        dan.douglass@freescale.com, Dan Douglass <dan.douglass@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -81,24 +84,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Leonard,
 
-On Tue, Oct 2, 2018 at 3:42 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
+Thanks for working on this series.
 
-> @@ -371,10 +372,12 @@
->                                 MX6SX_PAD_RGMII1_RD1__ENET1_RX_DATA_1   0x3081
->                                 MX6SX_PAD_RGMII1_RD2__ENET1_RX_DATA_2   0x3081
->                                 MX6SX_PAD_RGMII1_RD3__ENET1_RX_DATA_3   0x3081
->                                 MX6SX_PAD_RGMII1_RX_CTL__ENET1_RX_EN    0x3081
->                                 MX6SX_PAD_ENET2_RX_CLK__ENET2_REF_CLK_25M       0x91
-> +                               /* phy reset */
-> +                               MX6SX_PAD_ENET2_CRS__GPIO2_IO_7         0x80000000
+On Tue, Oct 2, 2018 at 4:02 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
+>
+> From: Dan Douglass <dan.douglass@freescale.com>
 
-We should avoid using 0x80000000 as this relies on the bootloader
-setting the IOMUX.
-
-Please do like this insted:
-
-MX6SX_PAD_ENET2_CRS__GPIO2_IO_7         0x10b0
-
-Then you can add:
-
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Please use Dan's nxp address so that it matches the Signed-off-by tag.
