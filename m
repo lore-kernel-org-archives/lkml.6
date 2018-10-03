@@ -2,156 +2,224 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91390C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C11C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 467832064A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:56:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD1002064A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:59:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="EuEHY/cY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 467832064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=natalenko.name
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q41sJ55Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1002064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbeJCSok (ORCPT
+        id S1727009AbeJCSrO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:44:40 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:10932 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbeJCSok (ORCPT
+        Wed, 3 Oct 2018 14:47:14 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39859 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbeJCSrO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:44:40 -0400
-X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Oct 2018 14:44:38 EDT
-Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id C7F2E41EB8D;
-        Wed,  3 Oct 2018 13:49:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1538567366;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CkKmYlWkHHemij050YscC/BErDSwO4FtNfcOIl5gQkc=;
-        b=EuEHY/cYMuOi+aOfJokyZR29b/FGnGeePiyerF5ymgSifzTVc0yO85SwHpSGbQBqcbjiGB
-        hiH/tOJhpMrSF/L1p3snxKUxnx4wh4a8kSxoKkiAdWpisQskToqcmtptncUNvLd4Egue3/
-        36QiZQ6csy4sizWhfLcC9Gzj+coREMw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name C7F2E41EB8D
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 03 Oct 2018 13:49:25 +0200
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, Andreas Herrmann <aherrmann@suse.com>,
-        Mel Gorman <mgorman@suse.com>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        'Paolo Valente' via bfq-iosched 
-        <bfq-iosched@googlegroups.com>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-In-Reply-To: <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
- <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
-Message-ID: <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
-X-Sender: oleksandr@natalenko.name
-User-Agent: Roundcube Webmail/1.3.7
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1538567366;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CkKmYlWkHHemij050YscC/BErDSwO4FtNfcOIl5gQkc=;
-        b=iV+JrVPuRATxL3Lb65vWzCaET42VaHjatxRwHcOUCMUTVOF3aOxEL+XfToQ8TSAjpbfSEC
-        WrCire5al3/9T/vqp40A13ctVvT5cVv4ad/3GNGUYK6OWC9MLUcmvTK3S03REHpO82qrZy
-        Kly+WrHIOg+fQ8BWRfI8ZWzl39+X0dg=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1538567366; a=rsa-sha256;
-        cv=none;
-        b=DdvfF3JSdcwxXnR5u7+paHEE6T688DmWBgcXogiWZbojDdUM4hND8Wqm3F/uOp76Hc0qsh++RcXknZj6Jdks2LZE2mGOBAgjsneMDi6y5/OROFyXWbOJCbwD5BFJOcu/Q0xFOvLk0IJ8giuFh9jXs52lujjIzF9Khe63v2Uekhk=
-ARC-Authentication-Results: i=1;
-        vulcan.natalenko.name;
-        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
+        Wed, 3 Oct 2018 14:47:14 -0400
+Received: by mail-lf1-f65.google.com with SMTP id w21-v6so3917148lff.6
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 04:59:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=FlZqKwjVoeFu/nEuPnA5WnfWrBB8OUWnxD8mhm28kUQ=;
+        b=Q41sJ55ZIFpVmf6K5XSH0egwojzvcE6ZsZ3PIBQmODsuDnashWlNFjt4g8x9dsL3HT
+         VunYEtbc/Z2Wo2piS0jjD212n1ttuDwfprb1bmYAmV6gcX6zGJkcFgVQHclN9Ea/C5Xv
+         rNRkgYviNsOKdgzoE+ZhPuovUzRBzRMn8BorxieQKXJ+Ph961kjgIyeHSWl5NkDEToPX
+         sMR26S4+6Blw6uoMQFHeBIJuvXSKDjBMYTFp5aYXHXkANNn8hm/3cNG63FjbwUz9S+VX
+         foEwefumt3m5qkK3Q/drwEKHkAtk/Q/+OwqoSqdLaDfOZfBTZQTCk1afUn/HNGc2wEOk
+         qzWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=FlZqKwjVoeFu/nEuPnA5WnfWrBB8OUWnxD8mhm28kUQ=;
+        b=BV2wnI5Sx1RJYPeCOJrQa7PrwahI3Sf8zvgrHG+vQoWTGjHseb6VsKNx7J9tOneGK5
+         SpmmsjAjI5UHg2EbYc9K6mc+xCU8Xw4o1r/9tZ0F+elNZIlyZD9hmfPthp/Puy1kWxgg
+         UUWNFbF0aQP4kyZV0jPDTe9tAQxlLnK0+u3kFNZYcc/t/VmScZFww3XszuPHrXjtO3H8
+         4kxgzC8PIT+ViWIGD8T0ehNG52dSITu+/ZhLz6k/N7nnXIyQs23Qzq9mXkn0mlEtPOF7
+         Svyr59rRKN/OhrHHaZIaXxer9P8JH8gfLCEI2UcO8ahWIkGRCV+HIInGe/+pILVDwrYv
+         CXDg==
+X-Gm-Message-State: ABuFfojwaOQJlzuhlfO2pgw2G13PO5l8/aIkEhJ+H71QJD7R1ApQ5v62
+        I3oDt6WfSvh8AkgqYjjK9rdv8y5W
+X-Google-Smtp-Source: ACcGV624WJm+QgZ0BY/GVDAaYUajHyTSVJZoznrMfi2DpdvwMZlJ4d0R3tNlcwY7c3DtSFOW2rrmyg==
+X-Received: by 2002:a19:5118:: with SMTP id f24-v6mr873303lfb.104.1538567946426;
+        Wed, 03 Oct 2018 04:59:06 -0700 (PDT)
+Received: from z50.intranet (78-10-164-223.static.ip.netia.com.pl. [78.10.164.223])
+        by smtp.gmail.com with ESMTPSA id j5-v6sm286654lfb.62.2018.10.03.04.59.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 04:59:05 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [RFC PATCH] mtd: rawnand: ams-delta: use ->exec_op()
+Date:   Wed,  3 Oct 2018 14:00:28 +0200
+Message-Id: <20181003120028.9257-1-jmkrzyszt@gmail.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180719081508.5dafebde@bbrezillon>
+References: <20180719081508.5dafebde@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+Replace legacy callbacks with ->select_chip() and ->exec_op().
 
-On 03.10.2018 08:29, Paolo Valente wrote:
-> As also Linus Torvalds complained [1], people feel lost among
-> I/O-scheduler options.  Actual differences across I/O schedulers are
-> basically obscure to non experts.  In this respect, Linux-kernel
-> 'users' are way more than a few top-level distros that can afford a
-> strong performance team, and that, basing on the input of such a team,
-> might venture light-heartedly to change a critical component like an
-> I/O scheduler.  Plus, as Linus Walleij pointed out, some users simply
-> are not distros that use udev.
+Implementation of NAND_OP_WAITRDY_INSTR has been based on legacy
+nand_wait_ready(), otherwise that function would probabaly have to be
+reimplemented inside the driver.  Hence, legacy callback ->dev_ready()
+is still used.
 
-I feel a contradiction in this counter-argument. On one hand, there are 
-lots of, let's call them, home users, that use major distributions with 
-udev, so the distribution maintainers can reasonably decide which 
-scheduler to use for which type of device based on the udev rule and 
-common sense provided via Documentation/ by linux-block devs. Moreover, 
-most likely, those rules should be similar or the same across all the 
-major distros and available via some (systemd?) upstream.
+Use of IO_ADDR_R and IO_ADDR_W legacy structure members will be dropped
+later, as soon as the driver is converted to use GPIO API for data I/O.
 
-On another hand, the users of embedded devices, mentioned by Linus, 
-should already know what scheduler to choose because dealing with 
-embedded world assumes the person can decide this on their own, or with 
-the help of abovementioned udev scripts and/or Documentation/ as a 
-reference point.
+Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+Hi,
 
-So I see no obstacles here, and the choice to rely on udev by default 
-sounds reasonable.
+I've not tested the change on hardware yet as I'm not sure if:
+- handling of NCE limited to that inside ->select_chip() is
+  sufficient,
+- releasing ALE / CLE immediately after ams_delta_write_buf() is
+  correct.
+Please advise before I break my test hardware :-).
 
-The question that remain is whether it is really important to mount a 
-root partition while already using some specific scheduler? Why it 
-cannot be done with "none", for instance?
+Thanks,
+Janusz
 
-> So, probably 99% of Linux-kernel users will just stick to the default
-> I/O scheduler, mq-deadline, assuming that the algorithm by which that
-> scheduler was chosen was not "pick the scheduler with the longest
-> name", but "pick the best scheduler for most cases".  The problem is
-> that, for single-queue devices with a speed below 400/500 KIOPS, the
-> default scheduler is apparently incomparably worse than bfq in terms
-> of responsiveness and latency for time-sensitive applications [2], and
-> in terms of throughput reached while controlling I/O [3].  And, in all
-> other tests ran so far, by any entity or group I'm aware of, bfq
-> results basically on par with or better than mq-deadline.
+ drivers/mtd/nand/raw/ams-delta.c | 83 +++++++++++++++++++++++++---------------
+ 1 file changed, 52 insertions(+), 31 deletions(-)
 
-And that's why major distributions are likely to default to BFQ via 
-udev. No one argues with BFQ superiority here ☺.
-
-> So, I do understand your need for conservativeness, but, after so much
-> evidence on single-queue devices, and so many years! :), what's the
-> point in keeping Linux worse for virtually everybody, by default?
-
- From my point of view this is not a conservative approach at all. On 
-contrary, offloading decisions to userspace aligns pretty well with 
-recent trends like pressure metrics/userspace OOM killer, eBPF etc. The 
-less unnecessary logic the kernel handles, the more flexibility it 
-affords.
-
+diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+index 5ba180a291eb..90c283a2c1b7 100644
+--- a/drivers/mtd/nand/raw/ams-delta.c
++++ b/drivers/mtd/nand/raw/ams-delta.c
+@@ -124,46 +124,69 @@ static void ams_delta_read_buf(struct nand_chip *this, u_char *buf, int len)
+ 		buf[i] = ams_delta_io_read(priv);
+ }
+ 
+-static u_char ams_delta_read_byte(struct nand_chip *this)
++static int ams_delta_nand_ready(struct nand_chip *this)
+ {
+-	u_char res;
+-
+-	ams_delta_read_buf(this, &res, 1);
++	struct ams_delta_nand *priv = nand_get_controller_data(this);
+ 
+-	return res;
++	return gpiod_get_value(priv->gpiod_rdy);
+ }
+ 
+-/*
+- * Command control function
+- *
+- * ctrl:
+- * NAND_NCE: bit 0 -> bit 2
+- * NAND_CLE: bit 1 -> bit 7
+- * NAND_ALE: bit 2 -> bit 6
+- */
+-static void ams_delta_hwcontrol(struct nand_chip *this, int cmd,
+-				unsigned int ctrl)
++static void ams_delta_select_chip(struct nand_chip *this, int n)
+ {
+ 	struct ams_delta_nand *priv = nand_get_controller_data(this);
+ 
+-	if (ctrl & NAND_CTRL_CHANGE) {
+-		gpiod_set_value(priv->gpiod_nce, !(ctrl & NAND_NCE));
+-		gpiod_set_value(priv->gpiod_cle, !!(ctrl & NAND_CLE));
+-		gpiod_set_value(priv->gpiod_ale, !!(ctrl & NAND_ALE));
+-	}
+-
+-	if (cmd != NAND_CMD_NONE) {
+-		u_char byte = cmd;
++	if (n > 0)
++		return;
+ 
+-		ams_delta_write_buf(this, &byte, 1);
+-	}
++	gpiod_set_value(priv->gpiod_nce, n < 0);
+ }
+ 
+-static int ams_delta_nand_ready(struct nand_chip *this)
++static int ams_delta_exec_op(struct nand_chip *this,
++			     const struct nand_operation *op, bool check_only)
+ {
+ 	struct ams_delta_nand *priv = nand_get_controller_data(this);
++	const struct nand_op_instr *instr;
++	int i;
+ 
+-	return gpiod_get_value(priv->gpiod_rdy);
++	for (i = 0; i < op->ninstrs; i++) {
++		instr = &op->instrs[i];
++
++		switch (instr->type) {
++		case NAND_OP_CMD_INSTR:
++			gpiod_set_value(priv->gpiod_cle, 1);
++			ams_delta_write_buf(this, &instr->ctx.cmd.opcode, 1);
++			gpiod_set_value(priv->gpiod_cle, 0);
++			break;
++
++		case NAND_OP_ADDR_INSTR:
++			gpiod_set_value(priv->gpiod_ale, 1);
++			ams_delta_write_buf(this, instr->ctx.addr.addrs,
++					    instr->ctx.addr.naddrs);
++			gpiod_set_value(priv->gpiod_ale, 0);
++			break;
++
++		case NAND_OP_DATA_IN_INSTR:
++			ams_delta_read_buf(this, instr->ctx.data.buf.in,
++					   instr->ctx.data.len);
++			break;
++
++		case NAND_OP_DATA_OUT_INSTR:
++			ams_delta_write_buf(this, instr->ctx.data.buf.out,
++					    instr->ctx.data.len);
++			break;
++
++		case NAND_OP_WAITRDY_INSTR:
++			if (this->legacy.dev_ready) {
++				nand_wait_ready(this);
++				break;
++			}
++
++			return nand_soft_waitrdy(this,
++						 instr->ctx.waitrdy.timeout_ms);
++		}
++	}
++
++	return 0;
+ }
+ 
+ 
+@@ -213,10 +236,8 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	/* Set address of NAND IO lines */
+ 	this->legacy.IO_ADDR_R = io_base + OMAP_MPUIO_INPUT_LATCH;
+ 	this->legacy.IO_ADDR_W = io_base + OMAP_MPUIO_OUTPUT;
+-	this->legacy.read_byte = ams_delta_read_byte;
+-	this->legacy.write_buf = ams_delta_write_buf;
+-	this->legacy.read_buf = ams_delta_read_buf;
+-	this->legacy.cmd_ctrl = ams_delta_hwcontrol;
++	this->select_chip = ams_delta_select_chip;
++	this->exec_op = ams_delta_exec_op;
+ 
+ 	priv->gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
+ 	if (IS_ERR(priv->gpiod_rdy)) {
 -- 
-   Oleksandr Natalenko (post-factum)
+2.16.4
+
