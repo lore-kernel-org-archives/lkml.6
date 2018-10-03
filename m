@@ -2,98 +2,96 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E81CEC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 664BEC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 973422098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:48:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="0cztzO9z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 973422098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id 16C302098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:49:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16C302098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tronnes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbeJCWhs (ORCPT
+        id S1727221AbeJCWid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:37:48 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41938 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbeJCWhs (ORCPT
+        Wed, 3 Oct 2018 18:38:33 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:49556 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbeJCWid (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:37:48 -0400
-Received: by mail-lj1-f196.google.com with SMTP id u21-v6so5572697lja.8
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 08:48:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MqrEoL9P77W/yDNE/ZMmtbOcSF9/OKoyNNgpORsvIe4=;
-        b=0cztzO9z0QfGYwx3yolFybXrSYzLAlg1F15gLf8BrnikDP8leUl+d9ziIHlAnDzD7f
-         bTtl/88HjGbbar3YcyDplhw6qjnrzRAOUAzdiIHf9DdOgPpLLRicKT7Jt1FIs3eaoKiG
-         0Ni066t/RiE87JMckGAYZ5/LQOPr5hjZDZTdPrGdxQ0xJir3UPANY/4UjmwjqG6JrYtL
-         YsIzG807i/omm/LBVunqS7d0TsJJ6abm04WxdW2ScjRULYMa2tnlRpnxwgSyEZu4nVoj
-         I7phr0MJk4N5hSFj/iPEyopB0QVhcWt+nncx3mYepR98X1YrOotn4rB15AoNLwE90br+
-         tBoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=MqrEoL9P77W/yDNE/ZMmtbOcSF9/OKoyNNgpORsvIe4=;
-        b=bPoU60PByk5sCaNwXc6vhXJW3Uq7lFcOkuwfodWWhP0JCdNUPBuVU4YDuYUd7tMl82
-         HGuK88Oe8wydN9+X9P36BQ29pg4b7mWSdjVj+HYI0y8G7kIGgLlIYO9vjm6DPIroER5s
-         vgTwvvXN9UC78hOBDRXu0gNpWaxAbp89XcbCAIJ3mTPH1w0kMcOaTVpIuflxSDI08+aB
-         rA7jIsOlLvw1liZUcsuLOmBbwy6O/Z1d09IKpgQhz3grw3GCp2uOcMnylCNBL3Bn3bBY
-         hPPiLUePM2IjzQTYkTqOP4TcM4IwJ/Q24Q5tKx8csQHbBILJW78cJT41b1H7dL4RQ0/t
-         TCHA==
-X-Gm-Message-State: ABuFfogF8S0vU0/vATLgEKuFj/CCiCb5mXHhRDbqqO/+8RKj7WCQQ3cO
-        1o35jzkbe0kmYxPFNBWL4sHejIpTEsQ=
-X-Google-Smtp-Source: ACcGV63IBvkbkoEFkvP/ifAyQ+6VeFU1cAqUJvCBC+CXY1hxX+7dSUd9WzF/f81XjWJSBtnOi1k7YA==
-X-Received: by 2002:a2e:884e:: with SMTP id z14-v6mr1519288ljj.98.1538581730674;
-        Wed, 03 Oct 2018 08:48:50 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.83.173])
-        by smtp.gmail.com with ESMTPSA id x19-v6sm388707lfg.61.2018.10.03.08.48.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 08:48:49 -0700 (PDT)
-Subject: Re: [PATCH] mmc: renesas_sdhi: rename DTRAN_MODE_BUS_WID_TH to
- DTRAN_MODE_BUS_WIDTH
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1538566780-30794-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <c45bd9f9-23da-4802-8918-fec5efebc6d6@cogentembedded.com>
-Date:   Wed, 3 Oct 2018 18:48:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 3 Oct 2018 18:38:33 -0400
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:52691 helo=[192.168.10.175])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1g7jP5-0008I2-9g; Wed, 03 Oct 2018 17:49:35 +0200
+Subject: Re: [PATCH] drm/imx: move 'legacyfb_depth' definition out of #ifdef
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20181002205836.2323084-1-arnd@arndb.de>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <123f7e1c-8f2b-5797-de16-650ec01d0b24@tronnes.org>
+Date:   Wed, 3 Oct 2018 17:49:32 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1538566780-30794-1-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+In-Reply-To: <20181002205836.2323084-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/03/2018 02:39 PM, Masahiro Yamada wrote:
 
-> Socionext UniPhier SoCs use the almost the same internal DMAC.
-> My datasheet says 'BUS_WIDTH' instead of 'BUS_WID_TH'.  I suspect
-> this is a typo.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-   Already fixed, see:
+Den 02.10.2018 22.58, skrev Arnd Bergmann:
+> The variable is now referenced unconditionally, but still
+> declared in an #ifdef:
+>
+> drivers/gpu/drm/imx/imx-drm-core.c: In function 'imx_drm_bind':
+> drivers/gpu/drm/imx/imx-drm-core.c:264:6: error: 'legacyfb_depth' undeclared (first use in this function); did you mean 'lockdep_depth'?
+>
+> Remove the #ifdef so it can always be accessed.
+>
+> Fixes: f53705fd9803 ("drm/imx: Use drm_fbdev_generic_setup()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-https://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git/commit/?h=devel&id=652c517c6828a830b71db4b1439a0229c98d9b9e
+I've already applied the previous one you sent:
+https://cgit.freedesktop.org/drm/drm-misc/commit/?id=064b06bbf117f8b5e64a5143e970d5a1cf602fd6
 
-MBR, Sergei
+Not sure when it reaches linux-next now that we are past rc6.
+
+Noralf.
+
+>   drivers/gpu/drm/imx/imx-drm-core.c | 2 --
+>   1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
+> index a70f3131a377..0e6942f21a4e 100644
+> --- a/drivers/gpu/drm/imx/imx-drm-core.c
+> +++ b/drivers/gpu/drm/imx/imx-drm-core.c
+> @@ -35,10 +35,8 @@
+>   
+>   #define MAX_CRTC	4
+>   
+> -#if IS_ENABLED(CONFIG_DRM_FBDEV_EMULATION)
+>   static int legacyfb_depth = 16;
+>   module_param(legacyfb_depth, int, 0444);
+> -#endif
+>   
+>   DEFINE_DRM_GEM_CMA_FOPS(imx_drm_driver_fops);
+>   
+
