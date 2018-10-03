@@ -2,71 +2,218 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AD8C64EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B809DC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1669B2082A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:01:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1669B2082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 24DE92082A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:04:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="NfRPgqog"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24DE92082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbeJCXu6 (ORCPT
+        id S1727152AbeJCXxN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 19:50:58 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45368 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726842AbeJCXu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 19:50:57 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BB34820719; Wed,  3 Oct 2018 19:01:41 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4746F206A1;
-        Wed,  3 Oct 2018 19:01:31 +0200 (CEST)
-Date:   Wed, 3 Oct 2018 19:01:30 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Zhouyang Jia <jiazhouyang09@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 8/8] mtd: maps: gpio-addr-flash: Add support for
- device-tree devices
-Message-ID: <20181003190130.4c9e509f@bbrezillon>
-In-Reply-To: <20181001124351.31615-8-ricardo.ribalda@gmail.com>
-References: <20181001124351.31615-1-ricardo.ribalda@gmail.com>
-        <20181001124351.31615-8-ricardo.ribalda@gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Wed, 3 Oct 2018 19:53:13 -0400
+Received: from smtprelay.synopsys.com ([198.182.47.9]:58598 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbeJCXxM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 19:53:12 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 13EED24E0CC4;
+        Wed,  3 Oct 2018 10:03:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1538586237; bh=oE3TO2OOJOp8QmDg6S7JewGD4wb4TsVX6fnjMJoAiLM=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=NfRPgqogNgcbac0SOlQJzr/D3rF5qeJrxL6pF59fxP7fDC3Dmeyws+2awO7M33QkM
+         OS9UFXPuXiIWqUUqFCtADgCHFRzzq/9ub4e3m8qg+2SKs0LcyXcP14LRFCNU/F5iv6
+         eo9r28TGDT6SuS5Ucaflwwxrd2coiUgBfUdGhDiXqSaL/DcBXw8R375FZMZhFNJlDU
+         DiXm6tBUl77ifdeMImaUHSmLbuLD+aFY/qfyCBw4BQRIk/MZ1T9YXkOEXjMPtmGnDY
+         E7t8KAGdCK7I/LwLvW9XgmKJD/YNU+s/gAvBkaohAOiMvoytU7pc251GBMlaJMvpAh
+         N9GfSnvZ6zMOA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 8665E3A3C;
+        Wed,  3 Oct 2018 10:03:51 -0700 (PDT)
+Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
+ US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed, 3
+ Oct 2018 10:03:51 -0700
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "aneesh.kumar@linux.vnet.ibm.com" <aneesh.kumar@linux.vnet.ibm.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "npiggin@gmail.com" <npiggin@gmail.com>
+CC:     "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "Richard Henderson" <rth@twiddle.net>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        "Mark Salter" <msalter@redhat.com>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Ley Foon Tan <lftan@altera.com>,
+        Jonas Bonn <jonas@southpole.se>, Helge Deller <deller@gmx.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guan Xuetao <gxt@pku.edu.cn>, Max Filippov <jcmvbkbc@gmail.com>
+Subject: Re: [PATCH 12/18] arch/tlb: Clean up simple architectures
+Thread-Topic: [PATCH 12/18] arch/tlb: Clean up simple architectures
+Thread-Index: AQHUVY/nhmqBcI9pS02soNYbpANFuA==
+Date:   Wed, 3 Oct 2018 17:03:50 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B09A59E@us01wembx1.internal.synopsys.com>
+References: <20180926113623.863696043@infradead.org>
+ <20180926114801.146189550@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.106]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  1 Oct 2018 14:43:51 +0200
-Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
-
-> +static int gpio_flash_probe_gpios(struct platform_device *pdev,
-> +				  struct async_state *state)
-> +{
-> +	struct physmap_flash_data *pdata;
-> +	struct device_node *dn;
-> +	struct resource *gpios = NULL;
-> +	int i;
-> +
-> +	dn = pdev->dev.of_node;
-> +	if (dn) {
-> +		state->gpios = devm_gpiod_get_array(&pdev->dev, NULL,
-> +						    GPIOD_OUT_LOW);
-
-Did you consider using gpiod_set_array_value() to update the gpio vals
-instead of having your own update loop (the for loop in the
-gf_set_gpios() func)?
+On 09/26/2018 04:56 AM, Peter Zijlstra wrote:=0A=
+> There are generally two cases:=0A=
+>=0A=
+>  1) either the platform has an efficient flush_tlb_range() and=0A=
+>     asm-generic/tlb.h doesn't need any overrides at all.=0A=
+>=0A=
+>  2) or an architecture lacks an efficient flush_tlb_range() and=0A=
+>     we override tlb_end_vma() and tlb_flush().=0A=
+>=0A=
+> Convert all 'simple' architectures to one of these two forms.=0A=
+>=0A=
+> alpha:	    has no range invalidate -> 2=0A=
+> arc:	    already used flush_tlb_range() -> 1=0A=
+> c6x:	    has no range invalidate -> 2=0A=
+> h8300:	    has no mmu=0A=
+> hexagon:    has an efficient flush_tlb_range() -> 1=0A=
+>             (flush_tlb_mm() is in fact a full range invalidate,=0A=
+> 	     so no need to shoot down everything)=0A=
+> m68k:	    has inefficient flush_tlb_range() -> 2=0A=
+> microblaze: has no flush_tlb_range() -> 2=0A=
+> mips:	    has efficient flush_tlb_range() -> 1=0A=
+> 	    (even though it currently seems to use flush_tlb_mm())=0A=
+> nds32:	    already uses flush_tlb_range() -> 1=0A=
+> nios2:	    has inefficient flush_tlb_range() -> 2=0A=
+> 	    (no limit on range iteration)=0A=
+> openrisc:   has inefficient flush_tlb_range() -> 2=0A=
+> 	    (no limit on range iteration)=0A=
+> parisc:	    already uses flush_tlb_range() -> 1=0A=
+> sparc32:    already uses flush_tlb_range() -> 1=0A=
+> unicore32:  has inefficient flush_tlb_range() -> 2=0A=
+> 	    (no limit on range iteration)=0A=
+> xtensa:	    has efficient flush_tlb_range() -> 1=0A=
+>=0A=
+> Cc: Richard Henderson <rth@twiddle.net>=0A=
+> Cc: Vineet Gupta <vgupta@synopsys.com>=0A=
+> Cc: Mark Salter <msalter@redhat.com>=0A=
+> Cc: Richard Kuo <rkuo@codeaurora.org>=0A=
+> Cc: Michal Simek <monstr@monstr.eu>=0A=
+> Cc: Paul Burton <paul.burton@mips.com>=0A=
+> Cc: Greentime Hu <green.hu@gmail.com>=0A=
+> Cc: Ley Foon Tan <lftan@altera.com>=0A=
+> Cc: Jonas Bonn <jonas@southpole.se>=0A=
+> Cc: Helge Deller <deller@gmx.de>=0A=
+> Cc: "David S. Miller" <davem@davemloft.net>=0A=
+> Cc: Guan Xuetao <gxt@pku.edu.cn>=0A=
+> Cc: Max Filippov <jcmvbkbc@gmail.com>=0A=
+> Cc: Will Deacon <will.deacon@arm.com>=0A=
+> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>=0A=
+> Cc: Andrew Morton <akpm@linux-foundation.org>=0A=
+> Cc: Nick Piggin <npiggin@gmail.com>=0A=
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>=0A=
+> ---=0A=
+>  arch/alpha/include/asm/tlb.h      |    2 --=0A=
+>  arch/arc/include/asm/tlb.h        |   23 -----------------------=0A=
+>  arch/c6x/include/asm/tlb.h        |    1 +=0A=
+>  arch/h8300/include/asm/tlb.h      |    2 --=0A=
+>  arch/hexagon/include/asm/tlb.h    |   12 ------------=0A=
+>  arch/m68k/include/asm/tlb.h       |    1 -=0A=
+>  arch/microblaze/include/asm/tlb.h |    4 +---=0A=
+>  arch/mips/include/asm/tlb.h       |    8 --------=0A=
+>  arch/nds32/include/asm/tlb.h      |   10 ----------=0A=
+>  arch/nios2/include/asm/tlb.h      |    8 +++++---=0A=
+>  arch/openrisc/include/asm/tlb.h   |    6 ++++--=0A=
+>  arch/parisc/include/asm/tlb.h     |   13 -------------=0A=
+>  arch/powerpc/include/asm/tlb.h    |    1 -=0A=
+>  arch/sparc/include/asm/tlb_32.h   |   13 -------------=0A=
+>  arch/unicore32/include/asm/tlb.h  |   10 ++++++----=0A=
+>  arch/xtensa/include/asm/tlb.h     |   17 -----------------=0A=
+>  16 files changed, 17 insertions(+), 114 deletions(-)=0A=
+>=0A=
+> --- a/arch/alpha/include/asm/tlb.h=0A=
+> +++ b/arch/alpha/include/asm/tlb.h=0A=
+> @@ -4,8 +4,6 @@=0A=
+>  =0A=
+>  #define tlb_start_vma(tlb, vma)			do { } while (0)=0A=
+>  #define tlb_end_vma(tlb, vma)			do { } while (0)=0A=
+> -#define __tlb_remove_tlb_entry(tlb, pte, addr)	do { } while (0)=0A=
+> -=0A=
+>  #define tlb_flush(tlb)				flush_tlb_mm((tlb)->mm)=0A=
+>  =0A=
+>  #include <asm-generic/tlb.h>=0A=
+> --- a/arch/arc/include/asm/tlb.h=0A=
+> +++ b/arch/arc/include/asm/tlb.h=0A=
+> @@ -9,29 +9,6 @@=0A=
+>  #ifndef _ASM_ARC_TLB_H=0A=
+>  #define _ASM_ARC_TLB_H=0A=
+>  =0A=
+> -#define tlb_flush(tlb)				\=0A=
+> -do {						\=0A=
+> -	if (tlb->fullmm)			\=0A=
+> -		flush_tlb_mm((tlb)->mm);	\=0A=
+> -} while (0)=0A=
+> -=0A=
+> -/*=0A=
+> - * This pair is called at time of munmap/exit to flush cache and TLB ent=
+ries=0A=
+> - * for mappings being torn down.=0A=
+> - * 1) cache-flush part -implemented via tlb_start_vma( ) for VIPT aliasi=
+ng D$=0A=
+> - * 2) tlb-flush part - implemted via tlb_end_vma( ) flushes the TLB rang=
+e=0A=
+> - *=0A=
+> - * Note, read https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lkml=
+.org_lkml_2004_1_15_6&d=3DDwIBaQ&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3Dc14YS-cH-kd=
+hTOW89KozFhBtBJgs1zXscZojEZQ0THs&m=3D5jiyvgRek4SKK5DUWDBGufVcuLez5G-jJCh3K-=
+ndHsg&s=3D7uAzzw_jdAXMfb07B-vGPh3V1vggbTAsB7xL6Kie47A&e=3D=0A=
+> - */=0A=
+> -=0A=
+> -#define tlb_end_vma(tlb, vma)						\=0A=
+> -do {									\=0A=
+> -	if (!tlb->fullmm)						\=0A=
+> -		flush_tlb_range(vma, vma->vm_start, vma->vm_end);	\=0A=
+> -} while (0)=0A=
+> -=0A=
+> -#define __tlb_remove_tlb_entry(tlb, ptep, address)=0A=
+> -=0A=
+>  #include <linux/pagemap.h>=0A=
+>  #include <asm-generic/tlb.h>=0A=
+=0A=
+LGTM per discussion in an earlier thread. However given that for "simpler" =
+arches=0A=
+the whole series doesn't apply can you please beef up the changelog so I do=
+n't go=0A=
+scratching my head 2 years down the line. It currently describes the hows o=
+f=0A=
+things but not exactly whys: shift_arg_pages missing tlb_start_vma,=0A=
+move_page_tables look dodgy, yady yadda ?=0A=
+=0A=
+Thx,=0A=
+-Vineet=0A=
+=0A=
