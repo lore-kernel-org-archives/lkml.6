@@ -2,146 +2,106 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AC8C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 946C8C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2343120684
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:21:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2343120684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 63C8520684
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:22:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C8520684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbeJDDL0 (ORCPT
+        id S1727370AbeJDDL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 23:11:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46916 "EHLO mx1.redhat.com"
+        Wed, 3 Oct 2018 23:11:56 -0400
+Received: from bues.ch ([80.190.117.144]:33006 "EHLO bues.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726941AbeJDDL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 23:11:26 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F0021308FB8A;
-        Wed,  3 Oct 2018 20:21:30 +0000 (UTC)
-Received: from asgard.redhat.com (ovpn-200-25.brq.redhat.com [10.40.200.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AF20E5D782;
-        Wed,  3 Oct 2018 20:21:17 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 22:21:46 +0200
-From:   Eugene Syromiatnikov <esyr@redhat.com>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v4 4/9] mm/mmap: Add IBT bitmap size to address space
- limit check
-Message-ID: <20181003202146.GG32759@asgard.redhat.com>
-References: <20180921150553.21016-1-yu-cheng.yu@intel.com>
- <20180921150553.21016-5-yu-cheng.yu@intel.com>
+        id S1727144AbeJDDLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 23:11:55 -0400
+X-Greylist: delayed 996 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Oct 2018 23:11:53 EDT
+Received: by bues.ch with esmtpsa (Exim 4.89)
+        (envelope-from <m@bues.ch>)
+        id 1g7nOe-00041w-DF; Wed, 03 Oct 2018 22:05:24 +0200
+Date:   Wed, 3 Oct 2018 22:04:35 +0200
+From:   Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ssb: chipcommon: fix fall-through annotation
+Message-ID: <20181003220435.6f7c27b4@wiggum>
+In-Reply-To: <20181003120102.GA22824@embeddedor.com>
+References: <20181003120102.GA22824@embeddedor.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921150553.21016-5-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 03 Oct 2018 20:21:31 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/PfFJg7Ygci4F8ZR17VKQECj"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 08:05:48AM -0700, Yu-cheng Yu wrote:
-> The indirect branch tracking legacy bitmap takes a large address
-> space.  This causes may_expand_vm() failure on the address limit
-> check.  For a IBT-enabled task, add the bitmap size to the
-> address limit.
-> 
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+--Sig_/PfFJg7Ygci4F8ZR17VKQECj
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 3 Oct 2018 14:01:02 +0200
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+
+> Replace "Fallthough" with a proper "fall through" annotation.
+>=20
+> This fix is part of the ongoing efforts to enabling
+> -Wimplicit-fallthrough
+>=20
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->  arch/x86/include/uapi/asm/resource.h |  5 +++++
->  include/uapi/asm-generic/resource.h  |  3 +++
->  mm/mmap.c                            | 12 +++++++++++-
->  3 files changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/uapi/asm/resource.h b/arch/x86/include/uapi/asm/resource.h
-> index 04bc4db8921b..0741b2a6101a 100644
-> --- a/arch/x86/include/uapi/asm/resource.h
-> +++ b/arch/x86/include/uapi/asm/resource.h
-> @@ -1 +1,6 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
-> +#ifdef CONFIG_X86_INTEL_CET
-> +#define rlimit_as_extra() current->thread.cet.ibt_bitmap_size
-> +#endif
+>  drivers/ssb/driver_chipcommon.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/ssb/driver_chipcommon.c b/drivers/ssb/driver_chipcom=
+mon.c
+> index 99a4656..3861cb6 100644
+> --- a/drivers/ssb/driver_chipcommon.c
+> +++ b/drivers/ssb/driver_chipcommon.c
+> @@ -425,7 +425,7 @@ void ssb_chipco_get_clockcontrol(struct ssb_chipcommo=
+n *cc,
+>  			*m =3D chipco_read32(cc, SSB_CHIPCO_CLOCK_M2);
+>  			break;
+>  		}
+> -		/* Fallthough */
+> +		/* Fall through */
+>  	default:
+>  		*m =3D chipco_read32(cc, SSB_CHIPCO_CLOCK_SB);
+>  	}
 
-Does this really belong to UAPI?
+Acked-by: Michael B=C3=BCsch <m@bues.ch>
 
-> +
->  #include <asm-generic/resource.h>
-> diff --git a/include/uapi/asm-generic/resource.h b/include/uapi/asm-generic/resource.h
-> index f12db7a0da64..8a7608a09700 100644
-> --- a/include/uapi/asm-generic/resource.h
-> +++ b/include/uapi/asm-generic/resource.h
-> @@ -58,5 +58,8 @@
->  # define RLIM_INFINITY		(~0UL)
->  #endif
->  
-> +#ifndef rlimit_as_extra
-> +#define rlimit_as_extra() 0
-> +#endif
 
-And this?
+--=20
+Michael
 
->  #endif /* _UAPI_ASM_GENERIC_RESOURCE_H */
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index fa581ced3f56..397b8cb0b0af 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -3237,7 +3237,17 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
->   */
->  bool may_expand_vm(struct mm_struct *mm, vm_flags_t flags, unsigned long npages)
->  {
-> -	if (mm->total_vm + npages > rlimit(RLIMIT_AS) >> PAGE_SHIFT)
-> +	unsigned long as_limit = rlimit(RLIMIT_AS);
-> +	unsigned long as_limit_plus = as_limit + rlimit_as_extra();
-> +
-> +	/* as_limit_plus overflowed */
-> +	if (as_limit_plus < as_limit)
-> +		as_limit_plus = RLIM_INFINITY;
-> +
-> +	if (as_limit_plus > as_limit)
-> +		as_limit = as_limit_plus;
-> +
-> +	if (mm->total_vm + npages > as_limit >> PAGE_SHIFT)
+--Sig_/PfFJg7Ygci4F8ZR17VKQECj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-I wonder, how realistic a scenario where a userspace application enables IBT,
-configures a huge prefetchable IO memory region (that just ignores bits
-of offset beyond 16, for example), and start repeatedly loading a legacy
-library there at different linear addresses.
+-----BEGIN PGP SIGNATURE-----
 
->  		return false;
->  
->  	if (is_data_mapping(flags) &&
-> -- 
-> 2.17.1
-> 
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlu1INMACgkQ9TK+HZCN
+iw7Q1Q//QwsYOThlhR3DB4BrrCQ9NkS+STG/k+i+aQp61yUMcILepSaXvHsGvEx3
+rTMScS6I98q2FnwD3IwfKsdGKxvtjacMRTfEiiuaqNaX9ikOpYnAHdAiNf16/4d4
+uY0+D6Vb2z6e2wgVMWlKVaZKukFjGpNcK66Gt3EYfIw+QoMe0N/fZd0wwHkvkUDT
+vMIU01pxNWXZ3DA/A1c4UKY8QkCwN1Fx9f9RqPqw+zTiyBV7BjRSaiZC2YUNxeCF
+L4sRLSTQbxDH8DZukv0xGzyZhXsmhZl1n8/FqGI56IHJ7urLt3OqwH07OelwE9vT
+bObJkwe7pFIzay66TWnC4tMmGvio4C995brrsyuEyUSlG7+MmuouHRQ5hK1KuoWr
++2gdSncJgPzZ026pSh2LTtAZvvrmI11wz1auKLdGmerm69+AJnpRTxF93WzOj95j
+mvc0dvE96fnFewNSisC4adQwEl/leRAFpKhm+AvAB0AlXA9azSNb4KUR8vBS3Kc8
+DgJL5HSEekVapySvkl7Dvb7NOj9kjnSY5JL+aN3oaJpJXXhtNxsViy5KE7lGrFXm
+CLbuAhvsM8178u8gzOHknqHQjfASJvFTmapkQMJ7RQoSkR6NdXbjvBEEXTTZG9nV
+/aLGKwc7tfyVDQxsgeoKxEVxPZSEUVWjx+NKBZXEEyNXJYDJ6AE=
+=zgWz
+-----END PGP SIGNATURE-----
+
+--Sig_/PfFJg7Ygci4F8ZR17VKQECj--
