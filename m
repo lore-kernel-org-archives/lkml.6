@@ -2,113 +2,99 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 956FFC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36EF6C64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EDC32082A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:08:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EDC32082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E4E912082A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:09:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="DWnTMSw1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E912082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbeJCU50 (ORCPT
+        id S1727218AbeJCU5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 16:57:26 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39324 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726543AbeJCU50 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 16:57:26 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w93E5c03088127
-        for <linux-kernel@vger.kernel.org>; Wed, 3 Oct 2018 10:08:52 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mvwvj3uvx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 10:08:51 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Wed, 3 Oct 2018 15:08:48 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 3 Oct 2018 15:08:44 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w93E8hvW065980
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 3 Oct 2018 14:08:44 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0CF5552057;
-        Wed,  3 Oct 2018 17:08:21 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.199.54.87])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with SMTP id 4C5D352050;
-        Wed,  3 Oct 2018 17:08:19 +0100 (BST)
-Date:   Wed, 3 Oct 2018 19:38:41 +0530
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jirka Hladky <jhladky@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH 2/2] mm, numa: Migrate pages to local nodes quicker early
- in the lifetime of a task
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20181001100525.29789-1-mgorman@techsingularity.net>
- <20181001100525.29789-3-mgorman@techsingularity.net>
- <20181002124149.GB4593@linux.vnet.ibm.com>
- <20181002135459.GA7003@techsingularity.net>
- <20181002173005.GD4593@linux.vnet.ibm.com>
- <20181003130741.GA4488@linux.vnet.ibm.com>
- <20181003132155.GD7003@techsingularity.net>
+        Wed, 3 Oct 2018 16:57:35 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:58091 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726543AbeJCU5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 16:57:35 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 64b0583c;
+        Wed, 3 Oct 2018 14:08:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=h/T/oC705z8l6OszRxSdgLeOKc0=; b=DWnTMS
+        w1DuxMTxkMzzgeboCIY0dtXiO6Fe7IuxHo31d+652S38uLQK9TEvDGnBiKb/v3tI
+        xeiXCOV8V8tgE7dI3ZDbzxO7WllN/eIm/WpX7fSW4KbN6FwqdKgunBwH5JwukN3B
+        LMR9R0+jB8muRqImAyDZvcYJ/11v8ry9a0otKBsC8xBmDchqivAlWpmt84k2u3TC
+        mnPU3U7LG+BzrzwahZKdmo25SlAY0SCwKcsXLhZhUlev7UNFIevinVlhC1atNeFC
+        klHDmTZ7oA5vdg1XGoKzclRBDxp4uUwRmmn9wEkKs3JHPz9Fr4S+nIAxi74twGLg
+        VE75LqI13UgsEz6Q==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 5ca046fa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Wed, 3 Oct 2018 14:08:49 +0000 (UTC)
+Received: by mail-ot1-f48.google.com with SMTP id j9-v6so5673859otl.2;
+        Wed, 03 Oct 2018 07:08:59 -0700 (PDT)
+X-Gm-Message-State: ABuFfojSka0BjYkYsvqT904QCb6dg1LL4/S0dEq4CdK3jESB1lYXzhfO
+        WUg3cCrPdYSubydQyOMZx5FftZjuyeEbaxUqNtA=
+X-Google-Smtp-Source: ACcGV63VazE0I6mKGHh0m+BSqtRa0gajLvQBNxYzoLFwMBuDGf24SoTc6T2A9JbXwsTLbm8zYAtxYH1JkgmqHJhT31E=
+X-Received: by 2002:a9d:30c2:: with SMTP id r2mr889339otg.143.1538575738813;
+ Wed, 03 Oct 2018 07:08:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20181003132155.GD7003@techsingularity.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18100314-0012-0000-0000-000002B205CC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100314-0013-0000-0000-000020E63C77
-Message-Id: <20181003140841.GC4488@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-03_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=547 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810030137
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-12-Jason@zx2c4.com>
+ <20181003061236.GB745@sol.localdomain> <CAKv+Gu8-HoAEyYiPYqMOMy9MGduFLQik2YxdJziqxN_cUs0nCA@mail.gmail.com>
+In-Reply-To: <CAKv+Gu8-HoAEyYiPYqMOMy9MGduFLQik2YxdJziqxN_cUs0nCA@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Wed, 3 Oct 2018 16:08:47 +0200
+X-Gmail-Original-Message-ID: <CAHmME9oAa+Ezqy639_wSKsUDW4vgSrkbJUVd1O8Jcbo3CN4WKg@mail.gmail.com>
+Message-ID: <CAHmME9oAa+Ezqy639_wSKsUDW4vgSrkbJUVd1O8Jcbo3CN4WKg@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 11/23] zinc: import Andy Polyakov's Poly1305
+ ARM and ARM64 implementations
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Andy Polyakov <appro@openssl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Mel Gorman <mgorman@techsingularity.net> [2018-10-03 14:21:55]:
+Hi Ard,
 
-> On Wed, Oct 03, 2018 at 06:37:41PM +0530, Srikar Dronamraju wrote:
-> > * Srikar Dronamraju <srikar@linux.vnet.ibm.com> [2018-10-02 23:00:05]:
-> > 
-> 
+On Wed, Oct 3, 2018 at 9:58 AM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> >> it has changed. This awkward commit splitting has been requested for the
+> >> ARM[64] implementations in particular.
+> >>
+>
+> "This awkward commit splitting"
 
-> That's unfortunate.
-> 
-> How much does this workload normally vary between runs? If you monitor
-> migrations over time, is there an increase spike in migration early in
-> the lifetime of the workload?
-> 
+Awkward in the sense that only those two commits are doing it, whereas
+the rest of the series is not. Not awkward in any other sense that you
+seemed to have divined based on your oversized punctuation below.
+Fortunately, at your suggestion for v7, I've now done the splitting
+for all of the other places, and so I the comment in the dev tree a
+few days ago, since it's now done consistently across the patchset.
 
-The run to run variation has always been less than 1%.
-I haven't monitored migrations over time. Will try to include it my next
-run. Its a shared setup so I may not get the box immediately.
+>
+> Seriously?!?
+>
+> So you really think it is fine to import huge chunks of code like this
+> from other projects without keeping track of the local changes?
 
+As explained above, that's not what I meant at all.
 
--- 
-Thanks and Regards
-Srikar Dronamraju
-
+Jason
