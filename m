@@ -2,88 +2,134 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D7FC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F35CCC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EEAF2098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:13:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H21Lmc/j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EEAF2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A5C662098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:15:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5C662098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbeJCOAQ (ORCPT
+        id S1726734AbeJCOC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 10:00:16 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:38063 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbeJCOAQ (ORCPT
+        Wed, 3 Oct 2018 10:02:28 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55876 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbeJCOC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:00:16 -0400
-Received: by mail-it1-f196.google.com with SMTP id i76-v6so7400384ita.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 00:13:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zJnCMErbbPQgEG5shh6NRnBZ5h85arAjh6HW68G1UsI=;
-        b=H21Lmc/jMidpB3GqDDYMYB/EbYwvBgxndIUE+lM1/MZvXf9dnXih/F1LVBR0HWODtG
-         9Lc+ErMztAUg4yELLgN99rYAF93xctX5teSqbIZNRr1YioRVwUwbop3YCZ4K/jktff6d
-         dV7nXr5pp2YFJzKYEc0Ap0MeJT+GcQoohVKkU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zJnCMErbbPQgEG5shh6NRnBZ5h85arAjh6HW68G1UsI=;
-        b=c8UcBB2UUYWAxAC9swabhqfoLWXdy6obcAXImg0iJhDizAxLFuNkpfMOUYNxBeFWOv
-         4N/YD2t+rZMBrRyTsc4n8rpOBUWcKORe9SB55Eo9oe6Utu1lr+Ws2hwk9tJW9Flh+UAZ
-         KM8lcPuLSLo3LdjuGK7OPOzEXtLeaMy6etNoBjD5KQLQQOOxnXRDoeKoS07NsFQepxNj
-         ffr4t89Sb1jlT0pvng/G6zIl8fSZ2OWC3ypyOnRvim9GLsEJLbgOmEIUsV5/xgaK9Bdr
-         xARsfF+pYnaZv+owiUygaSair9nCqli8jYBfHJCbp62eecnu2kshZo+GIP/bFu6uRr8U
-         03aA==
-X-Gm-Message-State: ABuFfohkT1xjckLh8t995VWH/11G/vR9sggLPnICNZp0jxAUKkYZQ4lt
-        daY6wmecbXQmp3F0OX4R4xNSvV+vUe3/2TojUmiLpg==
-X-Google-Smtp-Source: ACcGV62fE9zaa+MXaN+BRCFWWCG/Su5krjRNTGv3wK7CUwN691QDuwmdw6YOxffUL+do8lCg+0tECYFomfAe0UIz6ak=
-X-Received: by 2002:a02:3f5d:: with SMTP id c29-v6mr89002jaf.107.1538550790316;
- Wed, 03 Oct 2018 00:13:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181002211555.2779637-1-arnd@arndb.de>
-In-Reply-To: <20181002211555.2779637-1-arnd@arndb.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 3 Oct 2018 09:12:58 +0200
-Message-ID: <CACRpkdZ_+v1rqYP=Z1tdY-YSeLJ3UYbJWJKa_+4PZXKxdLWieQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: fix 'const' pointer handling
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 3 Oct 2018 10:02:28 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1g7bNP-0007C0-Hi; Wed, 03 Oct 2018 07:15:20 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org
+Subject: [PATCH 1/3] Bluetooth: btintel: Add firmware lock function
+Date:   Wed,  3 Oct 2018 15:15:10 +0800
+Message-Id: <20181003071513.13004-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 11:15 PM Arnd Bergmann <arnd@arndb.de> wrote:
+When Intel 8260 starts to load Bluetooth firmware and WiFi firmware, by
+calling btintel_download_firmware() and iwl_pcie_load_given_ucode_8000()
+respectively, the Bluetooth btintel_download_firmware() aborts half way:
+[   11.950216] Bluetooth: hci0: Failed to send firmware data (-38)
 
-> The 'tiles' array is initialized to a constant pointers to constant
-> strings, but the declaration is only half as constant:
->
-> drivers/pinctrl/qcom/pinctrl-qcs404.c:1660:11: error: initialization discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
-> drivers/pinctrl/qcom/pinctrl-sdm660.c:1417:11: error: initialization discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
->
-> Let's make it more constant.
->
-> Fixes: 22eb8301dbc1 ("pinctrl: qcom: Add qcs404 pinctrl driver")
-> Fixes: a46d5e98190d ("pinctrl: qcom: Support dispersed tiles")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Let btusb and iwlwifi load firmwares exclusively can avoid the issue, so
+introduce a lock to use in btusb and iwlwifi.
 
-Patch applied with Bjorn's ACK.
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/bluetooth/btintel.c   | 14 ++++++++++++++
+ drivers/bluetooth/btintel.h   | 10 ++++++++++
+ include/linux/intel-wifi-bt.h |  8 ++++++++
+ 3 files changed, 32 insertions(+)
+ create mode 100644 include/linux/intel-wifi-bt.h
 
-Yours,
-Linus Walleij
+diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
+index 5270d5513201..2d2a983a6641 100644
+--- a/drivers/bluetooth/btintel.c
++++ b/drivers/bluetooth/btintel.c
+@@ -35,6 +35,8 @@
+ 
+ #define BDADDR_INTEL (&(bdaddr_t) {{0x00, 0x8b, 0x9e, 0x19, 0x03, 0x00}})
+ 
++static DEFINE_MUTEX(firmware_lock);
++
+ int btintel_check_bdaddr(struct hci_dev *hdev)
+ {
+ 	struct hci_rp_read_bd_addr *bda;
+@@ -724,6 +726,18 @@ int btintel_download_firmware(struct hci_dev *hdev, const struct firmware *fw,
+ }
+ EXPORT_SYMBOL_GPL(btintel_download_firmware);
+ 
++void btintel_firmware_lock(void)
++{
++	mutex_lock(&firmware_lock);
++}
++EXPORT_SYMBOL_GPL(btintel_firmware_lock);
++
++void btintel_firmware_unlock(void)
++{
++	mutex_unlock(&firmware_lock);
++}
++EXPORT_SYMBOL_GPL(btintel_firmware_unlock);
++
+ MODULE_AUTHOR("Marcel Holtmann <marcel@holtmann.org>");
+ MODULE_DESCRIPTION("Bluetooth support for Intel devices ver " VERSION);
+ MODULE_VERSION(VERSION);
+diff --git a/drivers/bluetooth/btintel.h b/drivers/bluetooth/btintel.h
+index 41c642cc523f..1373ffc2b575 100644
+--- a/drivers/bluetooth/btintel.h
++++ b/drivers/bluetooth/btintel.h
+@@ -102,6 +102,8 @@ int btintel_read_boot_params(struct hci_dev *hdev,
+ 			     struct intel_boot_params *params);
+ int btintel_download_firmware(struct hci_dev *dev, const struct firmware *fw,
+ 			      u32 *boot_param);
++void btintel_firmware_lock(void);
++void btintel_firmware_unlock(void);
+ #else
+ 
+ static inline int btintel_check_bdaddr(struct hci_dev *hdev)
+@@ -196,4 +198,12 @@ static inline int btintel_download_firmware(struct hci_dev *dev,
+ {
+ 	return -EOPNOTSUPP;
+ }
++
++static inline void btintel_firmware_lock(void)
++{
++}
++
++static inline void btintel_firmware_unlock(void)
++{
++}
+ #endif
+diff --git a/include/linux/intel-wifi-bt.h b/include/linux/intel-wifi-bt.h
+new file mode 100644
+index 000000000000..260ed628d19b
+--- /dev/null
++++ b/include/linux/intel-wifi-bt.h
+@@ -0,0 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __INTEL_WIFI_BT_H__
++#define __INTEL_WIFI_BT_H__
++
++void btintel_firmware_lock(void);
++void btintel_firmware_unlock(void);
++
++#endif
+-- 
+2.17.1
+
