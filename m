@@ -2,95 +2,186 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C3CC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12396C64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:41:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62ADA2089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:41:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62ADA2089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CBD3D2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:41:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBD3D2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbeJCV3t (ORCPT
+        id S1727381AbeJCV3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 17:29:49 -0400
-Received: from mga03.intel.com ([134.134.136.65]:8773 "EHLO mga03.intel.com"
+        Wed, 3 Oct 2018 17:29:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58474 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbeJCV3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 17:29:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 07:41:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
-   d="scan'208";a="79553285"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 03 Oct 2018 07:41:07 -0700
-Received: from [10.252.30.119] (abudanko-mobl.ccr.corp.intel.com [10.252.30.119])
-        by linux.intel.com (Postfix) with ESMTP id DE8F85801E6;
-        Wed,  3 Oct 2018 07:41:04 -0700 (PDT)
-Subject: Re: [PATCH v2] perf record: encode -k clockid frequency into Perf
- trace
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <16b2d206-896b-c0ec-5bfd-6179ab05199a@linux.intel.com>
- <20181003133924.GD31725@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <8c76279b-ce27-cfcd-7e58-8d9492e40b60@linux.intel.com>
-Date:   Wed, 3 Oct 2018 17:41:02 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726748AbeJCV3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 17:29:53 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B1F053082A42;
+        Wed,  3 Oct 2018 14:41:11 +0000 (UTC)
+Received: from [10.36.117.154] (ovpn-117-154.ams2.redhat.com [10.36.117.154])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id ED0D54121;
+        Wed,  3 Oct 2018 14:41:09 +0000 (UTC)
+Subject: Re: [PATCH] kvm: nVMX: fix entry with pending interrupt if APICv is
+ enabled
+To:     Nikita Leshenko <nikita.leshchenko@oracle.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1538567267-2343-1-git-send-email-pbonzini@redhat.com>
+ <31248579054378dd2b820682c8ea99c9fb9b62cb.camel@oracle.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2a649203-b4c1-7ad2-6e1f-ed73dd9dbd28@redhat.com>
+Date:   Wed, 3 Oct 2018 16:41:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181003133924.GD31725@krava>
+In-Reply-To: <31248579054378dd2b820682c8ea99c9fb9b62cb.camel@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 03 Oct 2018 14:41:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 03.10.2018 16:39, Jiri Olsa wrote:
-> On Wed, Oct 03, 2018 at 10:01:56AM +0300, Alexey Budankov wrote:
-<SNIP>
->> +	if (rec->opts.use_clockid && rec->opts.clockid_res_ns)
->> +		session->header.env.clockid_res_ns = rec->opts.clockid_res_ns;
->> +	else
->> +		perf_header__clear_feat(&session->header, HEADER_CLOCKID);
->> +
-> 
-> could you please keep only bits setting in record__init_features
-> and move the header.env.clockid_res_ns assignment out of it?
-
-Ok. Accepted.
-
-> 
-<SNIP>
->> +static int get_clockid_res(clockid_t clk_id, size_t *res_ns)
+On 03/10/2018 16:36, Nikita Leshenko wrote:
+> On Wed, 2018-10-03 at 13:47 +0200, Paolo Bonzini wrote:
+>> Commit b5861e5cf2fcf83031ea3e26b0a69d887adf7d21 introduced a check on
+>> the interrupt-window and NMI-window CPU execution controls in order to
+>> inject an external interrupt vmexit before the first guest instruction
+>> executes.  However, when APIC virtualization is enabled the host does not
+>> need a vmexit in order to inject an interrupt at the next interrupt window;
+>> instead, it just places the interrupt vector in RVI and the processor will
+>> inject it as soon as possible.  Therefore, on machines with APICv it is
+>> not enough to check the CPU execution controls: the same scenario can also
+>> happen if RVI>0.
+>>
+>> Fixes: b5861e5cf2fcf83031ea3e26b0a69d887adf7d21
+>> Cc: Nikita Leshchenko <nikita.leshchenko@oracle.com>
+>> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+>> Cc: Liran Alon <liran.alon@oracle.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+>> ---
+>>  arch/x86/kvm/vmx.c | 16 +++++++++++-----
+>>  1 file changed, 11 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+>> index 6ef2d5b139b9..c0c7689f0049 100644
+>> --- a/arch/x86/kvm/vmx.c
+>> +++ b/arch/x86/kvm/vmx.c
+>> @@ -10280,6 +10280,11 @@ static void vmx_hwapic_isr_update(struct kvm_vcpu *vcpu, int max_isr)
+>>  	}
+>>  }
+>>  
+>> +static u8 vmx_get_rvi(void)
 >> +{
->> +	struct timespec res;
+>> +	return vmcs_read16(GUEST_INTR_STATUS) & 0xff;
+>> +}
 >> +
->> +	*res_ns = 0;
->> +	if (!clock_getres(clk_id, &res))
->> +		*res_ns = res.tv_nsec + res.tv_sec * NSEC_PER_SEC;
+>>  static void vmx_set_rvi(int vector)
+>>  {
+>>  	u16 status;
+>> @@ -12593,10 +12598,13 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, u32 *exit_qual)
+>>  	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+>>  	bool from_vmentry = !!exit_qual;
+>>  	u32 dummy_exit_qual;
+>> -	u32 vmcs01_cpu_exec_ctrl;
+>> +	bool evaluate_pending_interrupts;
+>>  	int r = 0;
+>>  
+>> -	vmcs01_cpu_exec_ctrl = vmcs_read32(CPU_BASED_VM_EXEC_CONTROL);
+>> +	evaluate_pending_interrupts = vmcs_read32(CPU_BASED_VM_EXEC_CONTROL) &
+>> +		(CPU_BASED_VIRTUAL_INTR_PENDING | CPU_BASED_VIRTUAL_NMI_PENDING);
+>> +	if (enable_apicv && kvm_vcpu_apicv_active(vcpu))
+>> +		evaluate_pending_interrupts |= vmx_get_rvi() > 0;
 > 
-> hum, if this one fails (which I guess is unlikely) we should tell
-> and probably even quit
+> You should check for RVI > VPPR, similarly to how it is done in
+> vmx_guest_apic_has_interrupt().
 
-Makes sense. Please stay tuned for v3.
+True, however that would only result in a spurious KVM_REQ_EVENT.
+Unlike vmx_guest_apic_has_interrupt, we would have to check the TPR
+shadow and SVI instead of the nested APIC page, so you'd have one more
+VMREAD---and little benefit in the common case.
 
-Thanks,
-Alexey
+What do you think about adding a comment?
+
+> Also, now that you introduced vmx_get_rvi(), it could be nice to use it
+> in vmx_guest_apic_has_interrupt() as well.
+
+True that.
+
+Paolo
+
+> Apart from that, looks good.
+> 
+> Reviewed-by: Nikita Leshenko <nikita.leshchenko@oracle.com>
+> 
+> Thanks,
+> Nikita
+> 
+>>  
+>>  	enter_guest_mode(vcpu);
+>>  
+>> @@ -12650,10 +12658,8 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, u32 *exit_qual)
+>>  	 * instead. Thus, we force L0 to perform pending event
+>>  	 * evaluation by requesting a KVM_REQ_EVENT.
+>>  	 */
+>> -	if (vmcs01_cpu_exec_ctrl &
+>> -		(CPU_BASED_VIRTUAL_INTR_PENDING | CPU_BASED_VIRTUAL_NMI_PENDING)) {
+>> +	if (evaluate_pending_interrupts)
+>>  		kvm_make_request(KVM_REQ_EVENT, vcpu);
+>> -	}
+>>  
+>>  	/*
+>>  	 * Note no nested_vmx_succeed or nested_vmx_fail here. At this point
+> 
+
