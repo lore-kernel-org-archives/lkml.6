@@ -6,56 +6,57 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B23C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D46A0C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB9982089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:23:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8823B2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:24:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="hmSAio8z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB9982089F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ACzLd1nR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8823B2089F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeJCWMA (ORCPT
+        id S1727218AbeJCWMx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:12:00 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42584 "EHLO
+        Wed, 3 Oct 2018 18:12:53 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44106 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbeJCWMA (ORCPT
+        with ESMTP id S1726797AbeJCWMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:12:00 -0400
+        Wed, 3 Oct 2018 18:12:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ukh4h2pcN2v/h7FlsGd54FCFK4BEd7uhwbvVoO1B4nA=; b=hmSAio8zQR6NNC/EeFj6QONDW
-        IZuDbS7Md6Qz1voZZ3zMXhoBBoiG9usHbEb+/cGKmo37PHYSlMgcWG0jcczADjlbnaxpKkDzjRiWA
-        TP88/MOfmT3dZ8o1FcBRIZPCNAFKp0FZ3usGgQ/F8CQtKtHEwTY8NQT5m77Wt/4OFDZvo=;
+         bh=dplS7b6kb0DbiBjH4McUkXWkCMCRs7HsWb0L7ftbrAE=; b=ACzLd1nRMx3C8v23JQ1MVkjg0
+        jrT2VR3Pi7j8FP1A07feVTqw6L/Zoss0wfflHM95A3CwnCNrkm0tZ6UIxLWlOkKOjgv0gV00dSWx6
+        jq0hx7IRZCJ/oglXqeIs9h90Fiy3pnfWUsl8CxNhuvFMrrEeag5ViznBxM5FH9ehD45Ds=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1g7izH-00065w-Hx; Wed, 03 Oct 2018 15:22:55 +0000
+        id 1g7j0K-00066F-Pl; Wed, 03 Oct 2018 15:24:00 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 1E65C1122286; Wed,  3 Oct 2018 16:22:55 +0100 (BST)
-Date:   Wed, 3 Oct 2018 16:22:55 +0100
+        id 88D201122286; Wed,  3 Oct 2018 16:24:00 +0100 (BST)
+Date:   Wed, 3 Oct 2018 16:24:00 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: pxa2xx: Mark expected switch fall-through
-Message-ID: <20181003152255.GE7132@sirena.org.uk>
-References: <20181003121211.GA28108@embeddedor.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] spi: slave: Fix missing break in switch
+Message-ID: <20181003152400.GF7132@sirena.org.uk>
+References: <20181003123328.GA29471@embeddedor.com>
+ <CAMuHMdX2YL2PG390ej0WMct7DciAbzO=66z7TJ-VnS8_phjdaQ@mail.gmail.com>
+ <20181003150111.GD7132@sirena.org.uk>
+ <37edd7c9-c93f-49a1-6621-880d8f88f345@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pY3vCvL1qV+PayAL"
+        protocol="application/pgp-signature"; boundary="NQTVMVnDVuULnIzU"
 Content-Disposition: inline
-In-Reply-To: <20181003121211.GA28108@embeddedor.com>
+In-Reply-To: <37edd7c9-c93f-49a1-6621-880d8f88f345@embeddedor.com>
 X-Cookie: The time is right to make new friends.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,38 +65,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---pY3vCvL1qV+PayAL
+--NQTVMVnDVuULnIzU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Oct 03, 2018 at 02:12:11PM +0200, Gustavo A. R. Silva wrote:
+On Wed, Oct 03, 2018 at 05:05:04PM +0200, Gustavo A. R. Silva wrote:
 
->  			switch (drv_data->n_bytes) {
->  			case 4:
->  				bytes_left >>= 1;
-> +				/* Fall through */
->  			case 2:
->  				bytes_left >>= 1;
->  			}
+> I'll include the __noreturn in addition to the break statement.
+> I'll send v2 shortly.
 
-I think this code is just being too cute and it'd be better to just
-rewrite it to directly do the expected number of shifts directly in each
-case and have break statements; your fix is good but still not ideal for
-readability I think.
+No need for a v2, I already applied this - adding __noreturn seems like
+a separate (although desirable) effort.
 
---pY3vCvL1qV+PayAL
+--NQTVMVnDVuULnIzU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu03s4ACgkQJNaLcl1U
-h9BzTAf9GdSvoAIZoKPwAu9TkxBbtZF9kfEGoENWDZsf6o/QUHVRh6cDaCm08nO3
-HAqK9wt7fN2SPSNxAXPRN2/XS020aV4Vvlbq6UvMK9zGfhjMEMtkTNTTOd9D4q0x
-eHQrUGANKN0h8wPn/MISL1DxROeUmOjl5bl2sp28LJ40RadQQoHi9ICrKkXRR69k
-k+8+lQOliYMTP6C68YpJcFR6uo8lslvcA0XoGazLaYZkTbH+YE+Hq5Jfneng+ZRQ
-HdkOdIB7QoNB4y3hnP69D8DCZKuQUSKvmx+3lTLbqRLidDerScZy1iHJlfY3QTAl
-fl+f6NHqsI20KHJ8eI5IKkC2b207oQ==
-=BYK9
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlu03w8ACgkQJNaLcl1U
+h9AoBgf/XblnzeKCFq8Y+RvmPxZI4aKxu5DCn1XBQbor/kDEzvrfkjV4p06uvFsE
+/VHvfH/IZVJ1sxMqU7GUQ6s/pOEmTRH2jH857dERMItTxB3RwL73g1zYTfDE9QsW
+ifDn93bax2auLHxRCIXzKFo30kutXHR9+u4/N9Lut825Q3QBYQ25K+GbXCE5BwdF
+Qr2KVWFC/8navypKrEIr8UzcTWcLe+WNZNQRhwmNWW/9X8zXUamdWQNpVOR3MHaf
+NBs1iYIzT7NeweRTZnL8Zac9M7ity63AS7bJrKr1f0R8Bnmi+2+ohXf+/RwvHp47
+6Dsm9QswTT763Av49x3CuelovYyrjA==
+=H4K7
 -----END PGP SIGNATURE-----
 
---pY3vCvL1qV+PayAL--
+--NQTVMVnDVuULnIzU--
