@@ -2,119 +2,102 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 326FDC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28806C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDDA621470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEE0D21470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:59:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C8xDXOh2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDDA621470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BsIsyjYL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEE0D21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbeJDFof (ORCPT
+        id S1726656AbeJDFtk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 01:44:35 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:32815 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725723AbeJDFof (ORCPT
+        Thu, 4 Oct 2018 01:49:40 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33093 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbeJDFtk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 01:44:35 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d4-v6so2389635pfn.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 15:54:10 -0700 (PDT)
+        Thu, 4 Oct 2018 01:49:40 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d4-v6so2394455pfn.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 15:59:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4BxD2J15AFeCUnar9QdtFIQnEk+5lu73YcBVDvSmMLs=;
-        b=C8xDXOh2ZZjLAboE7IAvabXrBp4a6XD+lN8fGLk42wKzizRH6V3oWNgu8FnjFGuxef
-         wvmGUm7BnbrTE9UklxKaYRGt+TvWzC31UBq2ndFN/mWJJnX2laOcuvFYN5cb8cato6R5
-         aaB/1S4rZMMgyolY7aKeEb/l1YlSCIl85jmHJXSB5Rr9TQsxU9DI1V9I7D/5XrxEI3Vj
-         DQGnia4xvJsvNXBPgEr1Q+xsBwjpgyIsdvdjNlBApcstfzqafRIm6WW7RVtqMa24Er8M
-         Rnjyfy0YPPAVuKfEJbveVNUwEfkdQZ8oxL/QbfeJOXIHeqnl7mNZKnbi5n2P6TYyoNct
-         vTuw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rChkiNm0DGN9lEZ/1Cxc8ksjfYrvM3uvh3jfueH7fqg=;
+        b=BsIsyjYL7H576qFXiQ2fkZ0KaG3+cABDJLqF0MUoqF5CBAvRxvO08CKz9CgDGEqIcF
+         7+WCwwCerx/nrdNLdi/udeg5D29KUbz4hoL9iuZi7VppPXhWRk3YFfl/9bemvGxwEJx/
+         wJfJ1s08HDMWpY0rXKDKuIvwWxdGXF8auu2NQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4BxD2J15AFeCUnar9QdtFIQnEk+5lu73YcBVDvSmMLs=;
-        b=WF5EOb1JTj7dLfcY/3xxO+3hCHIHxuZMBb/DwNVUP68Dg6IqUUcCP2Eyz+pRdr9Zc4
-         X22mxi+DLU1ko4qVj7flARZQT644FGTwPGRG4vzdz+CJSJgucB2ozz2Tib5Mg/+hjFg8
-         FWZ6EwsmI4MyiNB2PQCsANeI8tV+sg1HavnjU8xKjbXIskE0UW09e7Ue2I9A9hKgKXiO
-         uiFP/ZrtYwlH+Vj6nfpyam5Xe07NwuyJ8z7R3fGZX0w4I78s0Bz/ObDWpkOWwDcdWGGb
-         hCT4jmYWR7OyqdpI3onimBDayFIEO2FmdCo9IUtxo2RrgM0IWyCSI72ransYcIrdHUSJ
-         A9PQ==
-X-Gm-Message-State: ABuFfohN6i7/O35epX149iPid05oqauX3x3Wg+2mnxCJ1cC7PR8YCa0A
-        wXGEynEKeNgRKDCw/dlNSLNhAZCZ/ImWUq5NmAlL8w==
-X-Google-Smtp-Source: ACcGV63AKDdg8vjy4mOenOSX4yS5s86PAZpgQHLYc5lMc0l5vIWCmBMNljKd3Fwv1/fi1ApzN4dpmi61oLzWdzAcuh8=
-X-Received: by 2002:a63:1921:: with SMTP id z33-v6mr3262958pgl.302.1538607250055;
- Wed, 03 Oct 2018 15:54:10 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rChkiNm0DGN9lEZ/1Cxc8ksjfYrvM3uvh3jfueH7fqg=;
+        b=iQ/F7fbvVUywZcw2RDuatMkpRCJiXkcQ4t0E02b5ecURQW55pNl4R6PETws38U5U2o
+         nBu7dEBNvHvkIojlrx0RGGUay4hzTFE1Q4Lchi7JAq8Jyn6eEjnGnsLpaYEu2NaF/WA+
+         pud4Cur6JwbBUdTOuUrflm27qM1EekNQaZ95SSKM3Io+gCiWJbIs7voHGSP7LBtP5NVr
+         1QaAjOQhVwE2on8AdfwLi3GjO7tADHwgEchobiyYTKO38+PFhzh8nHAk2+c91ndKIcZy
+         q6kg1AR3MNHtYza1RPrWYZcGrsE/bO2BDAIZYnL84JxmqVRswxJbeQy7b3iT0JTahRg8
+         7p+g==
+X-Gm-Message-State: ABuFfoihB1uBv/EiOf9E4m6y8QWV7SLnkXL9fp9mBH5oo9dZdWhS+6Yn
+        l25+iz4w+mYiQVz+elrOA3VFyA==
+X-Google-Smtp-Source: ACcGV63UL9uftReAjK1RA4nUnZ1RVcrcvNs7x6lTHEXNDyntmXlFNvYkt28w3yC+g4N8h3LYHdaxPQ==
+X-Received: by 2002:a62:184a:: with SMTP id 71-v6mr3779571pfy.246.1538607554303;
+        Wed, 03 Oct 2018 15:59:14 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id 64-v6sm4319374pgb.74.2018.10.03.15.59.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 15:59:13 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 15:59:13 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Add UART nodes
+Message-ID: <20181003225913.GK22824@google.com>
+References: <20181003211239.41069-1-mka@chromium.org>
+ <CAD=FV=XAqyLqyQQmM8pqPUh-ZvbxXgjSaypqGd4-orpWg3btgA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180924195716.30848-1-natechancellor@gmail.com> <20181003223518.GA8700@ziepe.ca>
-In-Reply-To: <20181003223518.GA8700@ziepe.ca>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 3 Oct 2018 15:53:58 -0700
-Message-ID: <CAKwvOdnvXDtBAw_6_MSOEst3DBjbr8w6Pv6b4i=pC50s=gcq3Q@mail.gmail.com>
-Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
-To:     jgg@ziepe.ca
-Cc:     Nathan Chancellor <natechancellor@gmail.com>, dledford@redhat.com,
-        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=XAqyLqyQQmM8pqPUh-ZvbxXgjSaypqGd4-orpWg3btgA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 3:35 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
->
-> On Mon, Sep 24, 2018 at 12:57:16PM -0700, Nathan Chancellor wrote:
-> > Clang warns when one enumerated type is implicitly converted to another.
-> >
-> > drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
-> > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
-> > type 'enum ib_qp_create_flags' [-Wenum-conversion]
-> >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
-> >                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
-> >
-> > drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
-> > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
-> > type 'enum ib_qp_create_flags' [-Wenum-conversion]
-> >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
-> >                                                     ~ ^~~~~~~~~~~~~~~~~
-> >
-> > The type mlx4_ib_qp_flags explicitly provides supplemental values to the
-> > type ib_qp_create_flags. Make that clear to Clang by changing the
-> > create_flags type to u32.
-> >
-> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >  include/rdma/ib_verbs.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> Applied to for-next, thanks
->
-> BTW, how are you compiling with clang?
+On Wed, Oct 03, 2018 at 03:31:03PM -0700, Doug Anderson wrote:
+> Hi,
+> 
+> On Wed, Oct 3, 2018 at 2:12 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+> > +                       uart8: serial@a80000 {
+> > +                               compatible = "qcom,geni-uart";
+> > +                               reg = <0xa80000 0x4000>;
+> > +                               clock-names = "se";
+> > +                               clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
+> 
+> uart8/10/11/12/13/14/15 are on GCC_QUPV3_WRAP1_S0_CLK, not WRAP0.
+> 
+> Everything else here looks good.  I ran my old hacky script at
+> <http://crosreview.com/1091631> (mentioned in the message of commit
+> 897cf34e7305 ("arm64: dts: qcom: sdm845: Add I2C, SPI, and UART9
+> nodes")) after changing it to generate "qcom,geni-uart" as the
+> compatible string and changing it to generate nodes for all UARTs and
+> the diff looks fine.
+> 
+> ...so once you fix the clock reference feel free to add my Reviewed-by.
 
-https://github.com/ClangBuiltLinux/linux/wiki/Steps-for-compiling-the-kernel-with-Clang
-try it out, let us know bugs you find here:
-https://github.com/ClangBuiltLinux/linux/issues
-
-Still looking into the case you pointed out earlier.  I suspect the
-signedness of enums was undefined in c90, then defined as
-implementation specific in c99 (though I'm still researching that book
-report).  Thanks for your insights!
-
->
-> Jason
-
-
-
--- 
-Thanks,
-~Nick Desaulniers
+Thanks for catching this! I'll send out a fixed version soon.
