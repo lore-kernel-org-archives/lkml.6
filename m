@@ -2,89 +2,65 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1FDC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 06:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FCEC65BA7
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D736A20835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 06:59:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J4s+38/h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D736A20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 9804820652
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:00:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9804820652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbeJCNqQ (ORCPT
+        id S1727144AbeJCNrx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 09:46:16 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:32996 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726882AbeJCNqQ (ORCPT
+        Wed, 3 Oct 2018 09:47:53 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:44716 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726710AbeJCNrw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 09:46:16 -0400
-Received: by mail-io1-f66.google.com with SMTP id l25-v6so4187372ioj.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 23:59:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yovjhIO/3lpIsYBpYiadN3VhJj832oG1O3Tbizh759A=;
-        b=J4s+38/hU+kW7o7gX/MZfGSqh77V/SmwoaXnV1EcslBvkTToEBCc9nHAKKV/Hau4gm
-         SIKUJb4TRkX1K17n4NmqMtsWHTFaGEy2ayHThu0adiBPtRKtcT47j21KcDc8bT2SScj2
-         cSZedR1vjOwRaTwmIOi99+foT4qTnPL1CUZSA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yovjhIO/3lpIsYBpYiadN3VhJj832oG1O3Tbizh759A=;
-        b=puocOQoduOBUz9IAYA/yC7Zws7nBg0XkUTnoLFYBJAFI+ycJWiFZFru9kyBk9UpGFm
-         EHBZUfqyOLDCyRk1iGNVicIP8dSm37jG2cbLwTHGIDVT8MuRCva6SMElZpC2NUcfNGET
-         qzEL/QywlgIdFVLQeN/cHlrrDOwq9xjprbT0hPaXobVUkoumF0VSAbna5SL+XqZgUlhm
-         XITp2OqJTZuw5tevQz8zeOBkGveCp5KmPVeDD4+Up+o3NyQfoiHDypIwNDY7LTgh9bo2
-         PBcFQEcQGpuGRhKjoUQsx+nWdAen/9KqKqxgjqYEBkjr7egEUg7qefTdv+if6ke46s/H
-         Pvnw==
-X-Gm-Message-State: ABuFfohlEc1hzT+8VWJqaPeQgmfHtjexWHz6/ovNEdVq3ALSNSke462s
-        mc2Fo8r5GG0HV/3x7Oy/fg8NnZTbJLTZXbSX8xVdgQ==
-X-Google-Smtp-Source: ACcGV62iLj+KU35fvxA16OqUDGAU0QkIikk5PpzV72v1Sqq8/V7fkOngWqro5CSCljTwiH31gwYEIhxtJn0e2+2JTpw=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr58145iof.304.1538549953460;
- Tue, 02 Oct 2018 23:59:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180925173801.3835-1-ctatlor97@gmail.com> <20180926162644.10039-1-ctatlor97@gmail.com>
- <20180926162644.10039-2-ctatlor97@gmail.com>
-In-Reply-To: <20180926162644.10039-2-ctatlor97@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 3 Oct 2018 08:59:01 +0200
-Message-ID: <CACRpkdaixftABqZc4+MNAteX45GtJiFmE1o29F8ZMscUeaXwtw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] dt-bindings: pinctrl: qcom: Add SDM660 pinctrl binding
-To:     Craig Tatlor <ctatlor97@gmail.com>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 3 Oct 2018 09:47:52 -0400
+Received: from marcel-macbook.fritz.box (p4FEFC9BB.dip0.t-ipconnect.de [79.239.201.187])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 67473CF353;
+        Wed,  3 Oct 2018 09:08:06 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: [PATCH v2] btsdio: Do not bind to non-removable BCM43430
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20181002095704.22472-1-acho@suse.com>
+Date:   Wed, 3 Oct 2018 09:00:48 +0200
+Cc:     Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>, jlee@suse.com
+Content-Transfer-Encoding: 7bit
+Message-Id: <B1BB2FA6-9753-4924-B4E0-8CDE462A802A@holtmann.org>
+References: <DE21BFD5-3A79-4D64-9DB1-4A2DCDBBE359@holtmann.org>
+ <20181002095704.22472-1-acho@suse.com>
+To:     "Cho, Yu-Chen" <acho@suse.com>
+X-Mailer: Apple Mail (2.3445.100.39)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 6:26 PM Craig Tatlor <ctatlor97@gmail.com> wrote:
+Hi Yu-Chen,
 
-> Add the binding for the TLMM pinctrl block found in the SDM660 platform.
->
-> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
+> BCM43430 devices soldered onto the PCB (non-removable)
+> use an UART connection for bluetooth.
+> But also advertise btsdio support on their 3th sdio function.
+> 
+> Signed-off-by: Cho, Yu-Chen <acho@suse.com>
 > ---
-> Changes from v3:
->    Updated for tile structure
->    change irq field
+> drivers/bluetooth/btsdio.c | 12 +++++++++---
+> 1 file changed, 9 insertions(+), 3 deletions(-)
 
-This v3 applied with the ACKs.
+patch (with slight modifications) has been applied to bluetooth-next tree.
 
-Yours,
-Linus Walleij
+Regards
+
+Marcel
+
