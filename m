@@ -2,118 +2,95 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6DCC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB66C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4519821470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:04:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SpuwnjiM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4519821470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AAADF2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:06:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAADF2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727606AbeJCWxH (ORCPT
+        id S1726991AbeJCWzr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:53:07 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38555 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbeJCWxH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:53:07 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 193-v6so6179423wme.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 09:04:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=l/kgTbonsG3ZqXt9huXM0JfpFIu/MAijLq8BOM10KGQ=;
-        b=SpuwnjiMCOo/xmc3hB/LtaTyWJsQjyi0DRE8N1E95n8UoXLUNZLsjlcZmaLm0adBkm
-         hOC428+nrMkn94kD/gbrD7+D4MPQGx58YX88dfedOulA+PjL32uON8KRcc0vJDNxDNN4
-         S0tM+dgbp2Pon9842aUp61GjM+cXj3QqWG6Hw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=l/kgTbonsG3ZqXt9huXM0JfpFIu/MAijLq8BOM10KGQ=;
-        b=jcZ0TLOMvqI/4wmoIwZP/2SbJbeZ8avDs/m6oV9o8MAvS+iotGP2RePFep7zeHGsLp
-         bWhaMohP/NzUL6NE/inm9Cjbe0eWtcUakNoE+IWTUEIGgqMWpiVU6ndzSzNhF94z96+o
-         RL72uT3lVoyi+m2WjYxtjznVk7okdQT+dsQ4S7vOoL4ETglHkVu3DI10YnActoGX35bT
-         jcvA1lLBi9Ikhu5jbVUGyvczBSrZ+uHVX5Op3baGti/q7dSi0DgGB/+46BZ4Ue6h0gQT
-         WOIg0qbZdphSKT2R/Wv2NJZMLJFZfaS213Gno6lVWzPpp0FlaMSvYE3tri/2eNeZozuy
-         KlXQ==
-X-Gm-Message-State: ABuFfohJ7aklpOgY0SegzGln9aWmoGeDgQAC05pxqCaAv3O/Bu7ALyBk
-        aQKAoK1VLtT1NdJkcivWhDp+Vg==
-X-Google-Smtp-Source: ACcGV62Y2BAeDBO1bcBeKMpjPjIdV2/puT9ui2E5ZPAp1CzZp6EVStL32ThvKaQUq4ouhBSUxZ4IYQ==
-X-Received: by 2002:a7b:c216:: with SMTP id x22-v6mr1879862wmi.65.1538582645385;
-        Wed, 03 Oct 2018 09:04:05 -0700 (PDT)
-Received: from [192.168.43.112] ([31.157.182.99])
-        by smtp.gmail.com with ESMTPSA id w4-v6sm3037824wra.83.2018.10.03.09.04.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 09:04:04 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH] block: BFQ default for single queue devices
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <1538582446.205649.22.camel@acm.org>
-Date:   Wed, 3 Oct 2018 18:04:02 +0200
-Cc:     Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jan Kara <jack@suse.cz>, Andreas Herrmann <aherrmann@suse.com>,
-        Mel Gorman <mgorman@suse.com>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        'Paolo Valente' via bfq-iosched 
-        <bfq-iosched@googlegroups.com>, Mark Brown <broonie@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <843B42A9-DDE9-46C4-A3AE-616E8DF3946E@linaro.org>
-References: <20181002124329.21248-1-linus.walleij@linaro.org>
- <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
- <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
- <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
- <6AF8CEDE-2720-4206-900A-1A9B914A8FF0@linaro.org>
- <1538582446.205649.22.camel@acm.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Wed, 3 Oct 2018 18:55:47 -0400
+Received: from mga09.intel.com ([134.134.136.24]:16572 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726811AbeJCWzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 18:55:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 09:06:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
+   d="scan'208";a="75122244"
+Received: from 2b52.sc.intel.com ([143.183.136.147])
+  by fmsmga007.fm.intel.com with ESMTP; 03 Oct 2018 09:04:44 -0700
+Message-ID: <5ddb0ad33298d1858e530fce9c9ea2788b2fac81.camel@intel.com>
+Subject: Re: [RFC PATCH v4 24/27] mm/mmap: Create a guard area between VMAs
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Eugene Syromiatnikov <esyr@redhat.com>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
+Date:   Wed, 03 Oct 2018 09:00:04 -0700
+In-Reply-To: <CALCETrU-Ny-uC1NqRedQwNKe2MMhsFEqZ08TtHJwbLfCACMmLw@mail.gmail.com>
+References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+         <20180921150351.20898-25-yu-cheng.yu@intel.com>
+         <20181003045611.GB22724@asgard.redhat.com>
+         <CALCETrU-Ny-uC1NqRedQwNKe2MMhsFEqZ08TtHJwbLfCACMmLw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2018-10-02 at 22:36 -0700, Andy Lutomirski wrote:
+> On Tue, Oct 2, 2018 at 9:55 PM Eugene Syromiatnikov <esyr@redhat.com> wrote:
+> > 
+> > On Fri, Sep 21, 2018 at 08:03:48AM -0700, Yu-cheng Yu wrote:
+> > > Create a guard area between VMAs, to detect memory corruption.
+> > 
+> > Do I understand correctly that with this patch a user space program
+> > no longer be able to place two mappings back to back? If it is so,
+> > it will likely break a lot of things; for example, it's a common ring
+> > buffer implementations technique, to map buffer memory twice back
+> > to back in order to avoid special handling of items wrapping its end.
+> 
+> I haven't checked what the patch actually does, but it shouldn't have
+> any affect on MAP_FIXED or the new no-replace MAP_FIXED variant.
+> 
+> --Andy
 
+I did some mmap tests with/without MAP_FIXED, and it works as intended.
+In addition to the ring buffer, are there other test cases?
 
-> Il giorno 03 ott 2018, alle ore 18:00, Bart Van Assche =
-<bvanassche@acm.org> ha scritto:
->=20
-> On Wed, 2018-10-03 at 17:55 +0200, Paolo Valente wrote:
->> The problem, in particular, is that bfq is a complex beast, fighting
->> against a jungle of I/O issues.  You have to be really into bfq, even
->> to just know all of its features!
->=20
-> This is a problem by itself. I don't know anyone who wants to have to =
-deal
-> with I/O scheduler tunables.
->=20
-
-In fact, I designed and am constantly improving bfq, exactly so that
-you don't have to touch any tunable.
-
-Thanks,
-Paolo
-
-> Bart.
->=20
+Yu-cheng
 
