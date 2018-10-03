@@ -2,162 +2,256 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1530CC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 633C3C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C433C20835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:53:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20B9920835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:58:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mJE9P/mL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C433C20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrGt+L+u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B9920835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbeJCRld (ORCPT
+        id S1726767AbeJCRq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 13:41:33 -0400
-Received: from mail-db5eur01on0051.outbound.protection.outlook.com ([104.47.2.51]:23104
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726547AbeJCRlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 13:41:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rqdb5m8A8LR0LlacvSmDPiYaNBRXt4xuQhEa0GhU6V8=;
- b=mJE9P/mL0HM3I1Y53B6U3eKoIQWZ42XQiDV8WRXwgdNPeZt4keLCd0wT8jo88Gx8fbEw+wX0AuN7GHJ2ZwszS99uamwnWZRJ5fwM8ygRLjh5p6LyBMks8DlZBTx6nKryD9u7Q0sR3wNqM7aFYvXt/F1gz+cxxZEtWigHDXwIUlU=
-Received: from AM6PR0402MB3864.eurprd04.prod.outlook.com (52.133.29.151) by
- AM6PR0402MB3655.eurprd04.prod.outlook.com (52.133.28.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.22; Wed, 3 Oct 2018 10:50:46 +0000
-Received: from AM6PR0402MB3864.eurprd04.prod.outlook.com
- ([fe80::5892:d48b:ebb8:8991]) by AM6PR0402MB3864.eurprd04.prod.outlook.com
- ([fe80::5892:d48b:ebb8:8991%5]) with mapi id 15.20.1207.021; Wed, 3 Oct 2018
- 10:50:46 +0000
-From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
-To:     Leo Li <leoyang.li@nxp.com>
-CC:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Netdev <netdev@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Roy Pledge <roy.pledge@nxp.com>,
-        Madalin-cristian Bucur <madalin.bucur@nxp.com>,
-        David Miller <davem@davemloft.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        Bharat Bhushan <bharat.bhushan@nxp.com>
-Subject: Re: [PATCH v2 08/22] soc/fsl/qbman_portals: add APIs to retrieve the
- probing status
-Thread-Topic: [PATCH v2 08/22] soc/fsl/qbman_portals: add APIs to retrieve the
- probing status
-Thread-Index: AQHUVZwKH/WwkRKFn0OBDwKlwc/ZM6UEjyMAgAjTf4A=
-Date:   Wed, 3 Oct 2018 10:50:46 +0000
-Message-ID: <c4ff9977-c730-be48-8046-97da663c5a23@nxp.com>
-References: <20180926132247.10971-1-laurentiu.tudor@nxp.com>
- <20180926132247.10971-9-laurentiu.tudor@nxp.com>
- <CADRPPNTD=SNpSqz=zoLyGP1tvh_xDr5E1NDHF_P0bcSPyx9X1A@mail.gmail.com>
-In-Reply-To: <CADRPPNTD=SNpSqz=zoLyGP1tvh_xDr5E1NDHF_P0bcSPyx9X1A@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=laurentiu.tudor@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3655;6:wD1L06EW9OWvog50qRhakoI8jIs0tg+4Gu/25f6/1mFU2etq9JFTue6PS+sc0WMzAi9rZCmQ3OaJuLLl9cBF7FEdt/b0mR5Njvy6Gzy8pW7MWV5vvX9TXdfPGMmJ9mHPulri5s8AcPL4SVqSUbsZFTNTg4FxFt5fSpMIlJ/k7eZF71oIF4tP3N7aW8OnLkEtrsFjGUH30OA6iYP9n+XhN8Wr71ARtgTPkYaQ0ik4Tx7uvO5n4/QEmOlQBzp2DDjxidO8UT8jN5rtUI0NjCpUMIA29ZMac9R1Cp9w4dEBBUZePBwIGA4CtOA5oTMsDhQuU2hr7itbmtabcEHl7CjcXdU03OYsCMIkauBiD4CEWTL9mYxrWnTc0lEBVkBYC3s6SMXqBAZve+Yzk6drTN/wyzFulVrMb2tM0IU/q1CDSq9O46Jw5W5Hx7N3j32ckj2KaBm/34Mg2YaMh19DPoqALw==;5:aLntZePD80TIBsrY83TnEJH5i/pusVEmtfmyuv+f8LrR1xOBsHiXRIFuHx/0SlVoCKrog88II80E94z0HoAslEtj3TPQdBCn7rUX9tWixCtDnFoSbbe9DuiPLOXGNN8vWl7oiFiuyiXzu7EQGzvS3WyboU1mcnoT/HVaHeRzmJc=;7:Pq1y3JKlE0dmBbP3yLi0XfSzxk4R82zJqwzkuFlnl0dlyHSZaneMm5V699R0h1+TbZ99u75vk+RjKiZAYbQmoA44FsKm+gKIttPjbquCeJ4MUNkYSsxp647kiy4vlUZCFZ2KI06he0jLX50qvUEGKrrkpVcP3wC28feXA8kIWqfEj69NgHpZk0O7yxnrUok5pJxlbl58hvJmahifNlejF2VgLLY+4DhOrcp9wIkR4eC54JI4bzBLY9km4/qx/EoJ
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c3981508-2ada-4ef5-8106-08d6291e1303
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3655;
-x-ms-traffictypediagnostic: AM6PR0402MB3655:
-x-microsoft-antispam-prvs: <AM6PR0402MB3655498B60D30FE6EA8C7A5DECE90@AM6PR0402MB3655.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(227817650892897)(275809806118684)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051);SRVR:AM6PR0402MB3655;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3655;
-x-forefront-prvs: 0814A2C7A3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(136003)(396003)(346002)(39860400002)(52314003)(189003)(199004)(86362001)(97736004)(102836004)(6116002)(31696002)(3846002)(316002)(6512007)(256004)(26005)(53936002)(5250100002)(14444005)(37006003)(54906003)(2906002)(6246003)(106356001)(4326008)(6862004)(31686004)(105586002)(476003)(2616005)(8936002)(446003)(11346002)(305945005)(7736002)(5660300001)(44832011)(486006)(66066001)(25786009)(6636002)(68736007)(14454004)(186003)(2900100001)(6486002)(478600001)(229853002)(53546011)(76176011)(81166006)(8676002)(81156014)(99286004)(6506007)(71200400001)(71190400001)(6436002)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3655;H:AM6PR0402MB3864.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: b18t4+KCfn85FDA/xG5GM06EeYRN5siYC4ZtWvl34Xw3llS5AJO2oX0UpzK0NaqJ5df2RCocd7EG0v7ZPwiFBM8Fe/dAwhZCVcbUZ2a3/DmIlvKwg++YPwZ/NCdoa0YVYOESdJJaarTEYk7kk3a200pBWgi3dgu6rf7Owi/X16UCyhfd9CWqIYDDxE6Q+63aByxOSrO6zNjOSh3FCgOhooz18ts23QTa8xx73ELhBs2Dki6j9Lmnb1Kib0T5nd3ITHcjDsAc9Nt3vbOgp0ZfTnxGbB8ckG5IaQUAzTpTWAzmtfC3lnVRbQ4yy/+bheOqXpAGbV+7rkjUfSAZImAATRrQiteurn0PcAM9XGT4qk4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E2E6A1E9E0788343B9DCD71E8D314255@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 3 Oct 2018 13:46:29 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:45532 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeJCRq3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 13:46:29 -0400
+Received: by mail-yw1-f68.google.com with SMTP id v198-v6so2067834ywg.12;
+        Wed, 03 Oct 2018 03:58:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hVgTVLPLQ95zQp3Kzlm2QHcimzI+u+uVxpV2IFZrKQw=;
+        b=jrGt+L+uBcRX2XFxFbK8EtGG4tHnbXBVeV3KOq26dt7Sw0VL9+LmRYb88GQAc+cbKN
+         28PhBunkG9YWYNigEG/O3DkhVdNMH7b2s1TdsGjzZnvT5tohJLD/lBY+YFK8zIGfZQ1M
+         xc3upw0jfHcyXiFAooLnBC8ImAAFu7r0ncCLiXs+EVQM7XsSFtCExgyfwc5y6+t3OPxe
+         /MRz6RE6ly5HwDmMg64x1viOxQ5l3ALGaLMPtKzxm+38NfXijjTydaJFMMX3upFTd+wB
+         ChKo+5EBwzPvJizQOPVG/16BLbNe9Td2vemK5lDkuM/NX4dJ0wE4HzDtc5X4rL5nnPcE
+         2U/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hVgTVLPLQ95zQp3Kzlm2QHcimzI+u+uVxpV2IFZrKQw=;
+        b=kq+uoIhOmZjtoqB4LgX12U87bIYf5sJPZXQqIlEquW8gYqODfilyEx+5KkUNeE0LMA
+         VxIJ2BmtIOFtKUIIzV3HXeIEJ2hEyH/DhkZu27nwlOZOExogXFgn5MWgGNU23+427Uhi
+         MLUpho9HKALO6OMQW9s8gl7OoLaqcJy3kxOk8DOCOTqZInrZO4XZCLXQCL2LtgVqQhnA
+         9C5LZjoBO0S/L+eOSwIoVHpU/Un0cOEOTflQ61ZHAER2tE/sVB/6AHnBLDdoajfx7Co+
+         cd3qLeVv6PYI49Y7mEipA/7Yo6HT30HlmgeEG7QEtKmJZ70t+5nxh6otgFMxb56DJZV2
+         0MBQ==
+X-Gm-Message-State: ABuFfoi02UAsSbm0v9LAB2mzJ/knTNdKTjB8ZUdSKij6+VVgJp8XGe8A
+        sXLuVXVINAdaULoVbkekAg==
+X-Google-Smtp-Source: ACcGV60H7YdrtFdBoeOhW9mfLJdeGZVXqjoY1rpYfRT4b2Z0qgV2JEh9Kng2DezGZ65oz+H3ZFMiew==
+X-Received: by 2002:a81:c85:: with SMTP id 127-v6mr423225ywm.364.1538564315883;
+        Wed, 03 Oct 2018 03:58:35 -0700 (PDT)
+Received: from gabell (c-98-229-178-29.hsd1.ma.comcast.net. [98.229.178.29])
+        by smtp.gmail.com with ESMTPSA id p185-v6sm363653ywc.14.2018.10.03.03.58.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 03:58:35 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 06:58:29 -0400
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     tip-bot for Masayoshi Mizuma <tipbot@zytor.com>
+Cc:     linux-tip-commits@vger.kernel.org, m.mizuma@jp.fujitsu.com,
+        bhe@redhat.com, bp@alien8.de, torvalds@linux-foundation.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, hpa@zytor.com, mingo@kernel.org
+Subject: Re: [tip:x86/boot] ACPI/NUMA: Add warning message if the padding
+ size for KASLR is not enough
+Message-ID: <20181003105828.oh7qirvadsva372b@gabell>
+References: <20181001140843.26137-3-msys.mizuma@gmail.com>
+ <tip-3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41@git.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3981508-2ada-4ef5-8106-08d6291e1303
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2018 10:50:46.3257
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3655
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tip-3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41@git.kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGVvLA0KDQpPbiAyNy4wOS4yMDE4IDIzOjAzLCBMaSBZYW5nIHdyb3RlOg0KPiBPbiBXZWQs
-IFNlcCAyNiwgMjAxOCBhdCA4OjI2IEFNIDxsYXVyZW50aXUudHVkb3JAbnhwLmNvbT4gd3JvdGU6
-DQo+Pg0KPj4gRnJvbTogTGF1cmVudGl1IFR1ZG9yIDxsYXVyZW50aXUudHVkb3JAbnhwLmNvbT4N
-Cj4+DQo+PiBBZGQgYSBjb3VwbGUgb2YgbmV3IEFQSXMgdG8gY2hlY2sgdGhlIHByb2Jpbmcgc3Rh
-dHVzIG9mIHRoZSByZXF1aXJlZA0KPj4gY3B1IGJvdW5kIHFtYW4gYW5kIGJtYW4gcG9ydGFsczoN
-Cj4+ICAgJ2ludCBibWFuX3BvcnRhbHNfcHJvYmVkKCknIGFuZCAnaW50IHFtYW5fcG9ydGFsc19w
-cm9iZWQoKScuDQo+PiBUaGV5IHJldHVybiB0aGUgZm9sbG93aW5nIHZhbHVlcy4NCj4+ICAgKiAg
-MSBpZiBxbWFuL2JtYW4gcG9ydGFscyB3ZXJlIGFsbCBwcm9iZWQgY29ycmVjdGx5DQo+PiAgICog
-IDAgaWYgcW1hbi9ibWFuIHBvcnRhbHMgd2VyZSBub3QgeWV0IHByb2JlZA0KPj4gICAqIC0xIGlm
-IHByb2Jpbmcgb2YgcW1hbi9ibWFuIHBvcnRhbHMgZmFpbGVkDQo+PiBEcml2ZXJzIHRoYXQgdXNl
-IHFtYW4vYm1hbiBwb3J0YWwgZHJpdmVyIHNlcnZpY2VzIGFyZSByZXF1aXJlZCB0byB1c2UNCj4+
-IHRoZXNlIEFQSXMgYmVmb3JlIGNhbGxpbmcgYW55IGZ1bmN0aW9ucyBleHBvcnRlZCBieSB0aGVz
-ZSBkcml2ZXJzIG9yDQo+PiBvdGhlcndpc2UgdGhleSB3aWxsIGNyYXNoIHRoZSBrZXJuZWwuDQo+
-PiBGaXJzdCB1c2VyIHdpbGwgYmUgdGhlIGRwYWExIGV0aGVybmV0IGRyaXZlciwgY29taW5nIGlu
-IGEgc3Vic2VxdWVudA0KPj4gcGF0Y2guDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogTGF1cmVudGl1
-IFR1ZG9yIDxsYXVyZW50aXUudHVkb3JAbnhwLmNvbT4NCj4+IC0tLQ0KPj4gICBkcml2ZXJzL3Nv
-Yy9mc2wvcWJtYW4vYm1hbl9wb3J0YWwuYyB8IDEwICsrKysrKysrKysNCj4+ICAgZHJpdmVycy9z
-b2MvZnNsL3FibWFuL3FtYW5fcG9ydGFsLmMgfCAxMCArKysrKysrKysrDQo+PiAgIGluY2x1ZGUv
-c29jL2ZzbC9ibWFuLmggICAgICAgICAgICAgIHwgIDggKysrKysrKysNCj4+ICAgaW5jbHVkZS9z
-b2MvZnNsL3FtYW4uaCAgICAgICAgICAgICAgfCAgOSArKysrKysrKysNCj4+ICAgNCBmaWxlcyBj
-aGFuZ2VkLCAzNyBpbnNlcnRpb25zKCspDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29j
-L2ZzbC9xYm1hbi9ibWFuX3BvcnRhbC5jIGIvZHJpdmVycy9zb2MvZnNsL3FibWFuL2JtYW5fcG9y
-dGFsLmMNCj4+IGluZGV4IGY5ZWRkMjg4OTRmZC4uODA0OGQzNWRlOGEyIDEwMDY0NA0KPj4gLS0t
-IGEvZHJpdmVycy9zb2MvZnNsL3FibWFuL2JtYW5fcG9ydGFsLmMNCj4+ICsrKyBiL2RyaXZlcnMv
-c29jL2ZzbC9xYm1hbi9ibWFuX3BvcnRhbC5jDQo+PiBAQCAtMzIsNiArMzIsNyBAQA0KPj4NCj4+
-ICAgc3RhdGljIHN0cnVjdCBibWFuX3BvcnRhbCAqYWZmaW5lX2Jwb3J0YWxzW05SX0NQVVNdOw0K
-Pj4gICBzdGF0aWMgc3RydWN0IGNwdW1hc2sgcG9ydGFsX2NwdXM7DQo+PiArc3RhdGljIGludCBf
-X2JtYW5fcG9ydGFsc19wcm9iZWQ7DQo+PiAgIC8qIHByb3RlY3QgYm1hbiBnbG9iYWwgcmVnaXN0
-ZXJzIGFuZCBnbG9iYWwgZGF0YSBzaGFyZWQgYW1vbmcgcG9ydGFscyAqLw0KPj4gICBzdGF0aWMg
-REVGSU5FX1NQSU5MT0NLKGJtYW5fbG9jayk7DQo+Pg0KPj4gQEAgLTg1LDYgKzg2LDEyIEBAIHN0
-YXRpYyBpbnQgYm1hbl9vbmxpbmVfY3B1KHVuc2lnbmVkIGludCBjcHUpDQo+PiAgICAgICAgICBy
-ZXR1cm4gMDsNCj4+ICAgfQ0KPj4NCj4+ICtpbnQgYm1hbl9wb3J0YWxzX3Byb2JlZCh2b2lkKQ0K
-Pj4gK3sNCj4+ICsgICAgICAgcmV0dXJuIF9fYm1hbl9wb3J0YWxzX3Byb2JlZDsNCj4+ICt9DQo+
-PiArRVhQT1JUX1NZTUJPTF9HUEwoYm1hbl9wb3J0YWxzX3Byb2JlZCk7DQo+PiArDQo+PiAgIHN0
-YXRpYyBpbnQgYm1hbl9wb3J0YWxfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikN
-Cj4+ICAgew0KPj4gICAgICAgICAgc3RydWN0IGRldmljZSAqZGV2ID0gJnBkZXYtPmRldjsNCj4+
-IEBAIC0xNDgsNiArMTU1LDcgQEAgc3RhdGljIGludCBibWFuX3BvcnRhbF9wcm9iZShzdHJ1Y3Qg
-cGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPj4gICAgICAgICAgc3Bpbl9sb2NrKCZibWFuX2xvY2sp
-Ow0KPj4gICAgICAgICAgY3B1ID0gY3B1bWFza19uZXh0X3plcm8oLTEsICZwb3J0YWxfY3B1cyk7
-DQo+PiAgICAgICAgICBpZiAoY3B1ID49IG5yX2NwdV9pZHMpIHsNCj4+ICsgICAgICAgICAgICAg
-ICBfX2JtYW5fcG9ydGFsc19wcm9iZWQgPSAxOw0KPiANCj4gV2hhdCBpZiB0aGUgbGFzdCBDUFUg
-aXMgbm90IHVzZWQgZm9yIHBvcnRhbHM/ICBJcyB0aGVyZSBhIGhhcmQNCj4gcmVxdWlyZW1lbnQg
-dGhhdCBhbGwgQ1BVcyBuZWVkIHRvIGJlIHVzZWQgZm9yIHBvcnRhbD8gDQoNCkFzIGZhciBhcyBJ
-IGtub3csIGluIHRoZSBjdXJyZW50IGRyaXZlciBkZXNpZ24gYSBwb3J0YWwgaXMgcmVxdWlyZWQg
-Zm9yIA0KZWFjaCBDUFUuDQoNCj4gV2hhdCBoYXBwZW5zIGlmIHRoZSBsYXN0IENQVSBpcyBvZmZs
-aW5lPw0KDQpDYW4gdGhpcyBoYXBwZW4gYXQgcHJvYmUgdGltZT8NCkFueXdheSwgSSdtIG5vdCBz
-dXJlIHRoYXQgdGhlIGRyaXZlciBpcyBldmVuIGF3YXJlIG9mIGNwdSBob3RwbHVnIGJ1dCANCkkn
-bGwgbGV0IFJveSBjb21tZW50IG9uIHRoaXMgb25lLg0KDQo+IA0KPj4gICAgICAgICAgICAgICAg
-ICAvKiB1bmFzc2lnbmVkIHBvcnRhbCwgc2tpcCBpbml0ICovDQo+PiAgICAgICAgICAgICAgICAg
-IHNwaW5fdW5sb2NrKCZibWFuX2xvY2spOw0KPj4gICAgICAgICAgICAgICAgICByZXR1cm4gMDsN
-Cj4+IEBAIC0xNzMsNiArMTgxLDggQEAgc3RhdGljIGludCBibWFuX3BvcnRhbF9wcm9iZShzdHJ1
-Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPj4gICBlcnJfaW9yZW1hcDI6DQo+PiAgICAgICAg
-ICBtZW11bm1hcChwY2ZnLT5hZGRyX3ZpcnRfY2UpOw0KPj4gICBlcnJfaW9yZW1hcDE6DQo+PiAr
-ICAgICAgICBfX2JtYW5fcG9ydGFsc19wcm9iZWQgPSAxOw0KPj4gKw0KPiANCj4gVGhlcmUgYXJl
-IG90aGVyIGVycm9yIHBhdGhzIHRoYXQgbm90IGNvdmVyZWQuDQoNClJpZ2h0LCB0aGFua3MgZm9y
-IHBvaW50aW5nLiBPbiB0b3Agb2YgdGhhdCwgdGhlIGFzc2lnbmVkIHZhbHVlIGhlcmUgDQpzaG91
-bGQgYmUgLTEgdG8gc2lnbmFsIGVycm9yIChpbnN0ZWFkIG9mIDEgd2hpY2ggc2lnbmFscyBzdWNj
-ZXNzKS4NCg0KLS0tDQpCZXN0IFJlZ2FyZHMsIExhdXJlbnRpdQ==
+From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Subject: [PATCH] Fix for build error if CONFIG_RANDOMIZE_BASE is not defined.
+
+Fix the following build error.
+
+  ld: drivers/acpi/numa.o: in function `acpi_numa_init':
+  drivers/acpi/numa.c:473: undefined reference to `rand_mem_physical_padding'
+  make: *** [Makefile:1030: vmlinux] Error 1
+
+- Add get_rand_mem_physical_padding() which returns
+  rand_mem_physical_padding or 0 if
+  CONFIG_RANDOMIZE_MEMORY is not defined.
+- Make rand_mem_physical_padding static
+
+Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+---
+ arch/x86/include/asm/setup.h | 9 ++++++++-
+ arch/x86/mm/kaslr.c          | 9 +++++++--
+ drivers/acpi/numa.c          | 3 ++-
+ 3 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+index 65a5bf8..1765a15 100644
+--- a/arch/x86/include/asm/setup.h
++++ b/arch/x86/include/asm/setup.h
+@@ -80,7 +80,14 @@ static inline unsigned long kaslr_offset(void)
+ 	return (unsigned long)&_text - __START_KERNEL;
+ }
+
+-extern int rand_mem_physical_padding;
++#ifdef CONFIG_RANDOMIZE_MEMORY
++extern inline int __init get_rand_mem_physical_padding(void);
++#else
++static inline int __init get_rand_mem_physical_padding(void)
++{
++	return 0;
++}
++#endif
+
+ /*
+  * Do NOT EVER look at the BIOS memory size location.
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index 00cf4ca..eb47f05 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -40,7 +40,7 @@
+  */
+ static const unsigned long vaddr_end = CPU_ENTRY_AREA_BASE;
+
+-int __initdata rand_mem_physical_padding = CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
++static int rand_mem_physical_padding __initdata = CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
+ /*
+  * Memory regions randomized by KASLR (except modules that use a separate logic
+  * earlier during boot). The list is ordered based on virtual addresses. This
+@@ -70,6 +70,11 @@ static inline bool kaslr_memory_enabled(void)
+ 	return kaslr_enabled() && !IS_ENABLED(CONFIG_KASAN);
+ }
+
++inline int __init get_rand_mem_physical_padding(void)
++{
++	return rand_mem_physical_padding;
++}
++
+ static int __init rand_mem_physical_padding_setup(char *str)
+ {
+ 	int max_padding = (1 << (MAX_PHYSMEM_BITS - TB_SHIFT)) - 1;
+@@ -117,7 +122,7 @@ void __init kernel_randomize_memory(void)
+ 	 */
+ 	BUG_ON(kaslr_regions[0].base != &page_offset_base);
+ 	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
+-		rand_mem_physical_padding;
++		get_rand_mem_physical_padding();
+
+ 	/* Adapt phyiscal memory region size based on available memory */
+ 	if (memory_tb < kaslr_regions[0].size_tb)
+diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+index 3d69834..303b024 100644
+--- a/drivers/acpi/numa.c
++++ b/drivers/acpi/numa.c
+@@ -470,7 +470,8 @@ int __init acpi_numa_init(void)
+ 		if (parsed_numa_memblks && kaslr_enabled()) {
+ 			max_actual_phys = roundup(PFN_PHYS(max_pfn), 1ULL << 40);
+ 			max_possible_phys = roundup(PFN_PHYS(max_possible_pfn), 1ULL << 40);
+-			threshold = max_actual_phys + ((u64)rand_mem_physical_padding << 40);
++			threshold = max_actual_phys +
++				((u64)get_rand_mem_physical_padding() << 40);
+
+ 			if (max_possible_phys > threshold) {
+ 				pr_warn("Set 'rand_mem_physical_padding=%llu' to avoid memory hotadd failure.\n",
+--
+2.18.0
+
+
+On Tue, Oct 02, 2018 at 03:18:41AM -0700, tip-bot for Masayoshi Mizuma wrote:
+> Commit-ID:  3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41
+> Gitweb:     https://git.kernel.org/tip/3b054ca88c4f4dd5f516a12d4b6d6bd0ae826f41
+> Author:     Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> AuthorDate: Mon, 1 Oct 2018 10:08:42 -0400
+> Committer:  Ingo Molnar <mingo@kernel.org>
+> CommitDate: Tue, 2 Oct 2018 11:47:21 +0200
+> 
+> ACPI/NUMA: Add warning message if the padding size for KASLR is not enough
+> 
+> Add warning message if the padding size for KASLR,
+> rand_mem_physical_padding, is not enough. The message also
+> says the suitable padding size.
+> 
+> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Masayoshi Mizuma <msys.mizuma@gmail.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Link: http://lkml.kernel.org/r/20181001140843.26137-3-msys.mizuma@gmail.com
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> ---
+>  arch/x86/include/asm/setup.h |  2 ++
+>  drivers/acpi/numa.c          | 14 ++++++++++++++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+> index ae13bc974416..65a5bf8f6aba 100644
+> --- a/arch/x86/include/asm/setup.h
+> +++ b/arch/x86/include/asm/setup.h
+> @@ -80,6 +80,8 @@ static inline unsigned long kaslr_offset(void)
+>  	return (unsigned long)&_text - __START_KERNEL;
+>  }
+>  
+> +extern int rand_mem_physical_padding;
+> +
+>  /*
+>   * Do NOT EVER look at the BIOS memory size location.
+>   * It does not work on many machines.
+> diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> index 85167603b9c9..3d69834c692f 100644
+> --- a/drivers/acpi/numa.c
+> +++ b/drivers/acpi/numa.c
+> @@ -32,6 +32,7 @@
+>  #include <linux/numa.h>
+>  #include <linux/nodemask.h>
+>  #include <linux/topology.h>
+> +#include <asm/setup.h>
+>  
+>  static nodemask_t nodes_found_map = NODE_MASK_NONE;
+>  
+> @@ -435,6 +436,7 @@ acpi_table_parse_srat(enum acpi_srat_type id,
+>  int __init acpi_numa_init(void)
+>  {
+>  	int cnt = 0;
+> +	u64 max_possible_phys, max_actual_phys, threshold;
+>  
+>  	if (acpi_disabled)
+>  		return -EINVAL;
+> @@ -463,6 +465,18 @@ int __init acpi_numa_init(void)
+>  
+>  		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+>  					    acpi_parse_memory_affinity, 0);
+> +
+> +		/* check the padding size for KASLR is enough. */
+> +		if (parsed_numa_memblks && kaslr_enabled()) {
+> +			max_actual_phys = roundup(PFN_PHYS(max_pfn), 1ULL << 40);
+> +			max_possible_phys = roundup(PFN_PHYS(max_possible_pfn), 1ULL << 40);
+> +			threshold = max_actual_phys + ((u64)rand_mem_physical_padding << 40);
+> +
+> +			if (max_possible_phys > threshold) {
+> +				pr_warn("Set 'rand_mem_physical_padding=%llu' to avoid memory hotadd failure.\n",
+> +				  (max_possible_phys - max_actual_phys) >> 40);
+> +			}
+> +		}
+>  	}
+>  
+>  	/* SLIT: System Locality Information Table */
