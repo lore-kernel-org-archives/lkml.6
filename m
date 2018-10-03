@@ -2,160 +2,118 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C027C64EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E25C64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C52E20835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:27:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C52E20835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FB4720835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:28:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ab9fIbS7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FB4720835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbeJCTPt (ORCPT
+        id S1727182AbeJCTQZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 15:15:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:50622 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726619AbeJCTPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 15:15:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1C5A18A;
-        Wed,  3 Oct 2018 05:27:36 -0700 (PDT)
-Received: from [10.1.31.205] (desktop-vlo843j.cambridge.arm.com [10.1.31.205])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B1B663F5B7;
-        Wed,  3 Oct 2018 05:27:34 -0700 (PDT)
-Subject: Re: [PATCH v2 08/22] soc/fsl/qbman_portals: add APIs to retrieve the
- probing status
-To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Leo Li <leoyang.li@nxp.com>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Netdev <netdev@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Roy Pledge <roy.pledge@nxp.com>,
-        Madalin-cristian Bucur <madalin.bucur@nxp.com>,
-        David Miller <davem@davemloft.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Bharat Bhushan <bharat.bhushan@nxp.com>
-References: <20180926132247.10971-1-laurentiu.tudor@nxp.com>
- <20180926132247.10971-9-laurentiu.tudor@nxp.com>
- <CADRPPNTD=SNpSqz=zoLyGP1tvh_xDr5E1NDHF_P0bcSPyx9X1A@mail.gmail.com>
- <c4ff9977-c730-be48-8046-97da663c5a23@nxp.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <37ad85d7-6540-60de-6d47-66f57fa3473a@arm.com>
-Date:   Wed, 3 Oct 2018 13:27:34 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:52.0) Gecko/20100101
+        Wed, 3 Oct 2018 15:16:25 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34866 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbeJCTQY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 15:16:24 -0400
+Received: by mail-wm1-f68.google.com with SMTP id o18-v6so5465757wmc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 05:28:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=r+xJeJiTViUaKyUEJIiLdGISDhU3g624RQT6SjXnmOk=;
+        b=Ab9fIbS7Wm0JYNbTzTR+ku9qugi/ZM6tgCkQ5IMniRvPO1XXo+1DnQYK1nXviBtjlN
+         8RTBQARY3u6cboxf25VPhHYCtcMtqjTrPtg/gsUognYqX8lHNWt8uOyqkfigvzMHt+Nr
+         JcCe0kpBTPu3FLTBGDltIRlnD+gMd6AD58VmE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=r+xJeJiTViUaKyUEJIiLdGISDhU3g624RQT6SjXnmOk=;
+        b=A+Ip7Wnps7+U5IdRBv9xhtgXFrVOjr6MRBjObZ6ShshJqeWH40PXgdQReFtgwO8CJo
+         gAuOmSy2JQMHAzMitcBD5IZ9jVLeiPezxyjzG02SJviekLPm6dSmNnnEdSXHx+ubkQx9
+         o5lv6yz23PAQUsOEFPUcrcruhotOUmjUIpBl1fHHJGzIwJsFzx2M/umMP+YDBaFAhCqm
+         Q+H+XOm8+SKG/v+7jssrshj2c1G3xt5p/mH8nsnx3/ZeHKt/swqSYIwrHYb2+75JtcI1
+         kYwVrbDJO79Y+lxc2N1Qdn29PfsXZT3olWcDK9KEg9w51HSAPBgMysHYXIUYAqoCn1+G
+         jipw==
+X-Gm-Message-State: ABuFfohLy7bf3+i/pZEJVXnnZLWmRuctkGJWHuB4u58iQfbsbLiZVF4Y
+        jjStAPWk/h/MIX1DkDd8MxK+uw==
+X-Google-Smtp-Source: ACcGV61CIbOoIy0zVCHEcAiH2MROk3PNgsI4FK1d/UviLcZscycS/6MYduI5aD5En6A3jIQm2jcVTQ==
+X-Received: by 2002:a1c:4d0b:: with SMTP id o11-v6mr1346968wmh.94.1538569692156;
+        Wed, 03 Oct 2018 05:28:12 -0700 (PDT)
+Received: from [192.168.0.41] (84.152.136.77.rev.sfr.net. [77.136.152.84])
+        by smtp.googlemail.com with ESMTPSA id w192-v6sm1943417wmf.33.2018.10.03.05.28.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 05:28:11 -0700 (PDT)
+Subject: Re: [PATCH] clocksource/drivers/fttmr010: fix invalid interrupt
+ register access
+To:     Tao Ren <taoren@fb.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Yu Lei <mine260309@gmail.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
+References: <20181002041437.2493192-1-taoren@fb.com>
+ <CACRpkdY4VaH2Yoob2gWwAk11P1NTDdza262zKGs=gju0NH9skQ@mail.gmail.com>
+ <3a294c92-bcc6-b42e-b3af-72bc5f607fd9@fb.com>
+ <CACRpkdZXum+bQg1FO+EHhKWpxtPYXfeRhoAKkFXeMQh1Jng3Ww@mail.gmail.com>
+ <966C48A9-98F7-4B2B-BCD0-FAF3066C5794@fb.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <6e7703e4-461b-77bf-5c9d-cc9e91c5ef3d@linaro.org>
+Date:   Wed, 3 Oct 2018 14:28:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <c4ff9977-c730-be48-8046-97da663c5a23@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <966C48A9-98F7-4B2B-BCD0-FAF3066C5794@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-03 11:50 AM, Laurentiu Tudor wrote:
-> Hi Leo,
+On 03/10/2018 09:46, Tao Ren wrote:
+> On 10/2/18, 11:57 PM, "Linus Walleij" <linus.walleij@linaro.org>
+> wrote:
 > 
-> On 27.09.2018 23:03, Li Yang wrote:
->> On Wed, Sep 26, 2018 at 8:26 AM <laurentiu.tudor@nxp.com> wrote:
->>>
->>> From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
->>>
->>> Add a couple of new APIs to check the probing status of the required
->>> cpu bound qman and bman portals:
->>>    'int bman_portals_probed()' and 'int qman_portals_probed()'.
->>> They return the following values.
->>>    *  1 if qman/bman portals were all probed correctly
->>>    *  0 if qman/bman portals were not yet probed
->>>    * -1 if probing of qman/bman portals failed
->>> Drivers that use qman/bman portal driver services are required to use
->>> these APIs before calling any functions exported by these drivers or
->>> otherwise they will crash the kernel.
->>> First user will be the dpaa1 ethernet driver, coming in a subsequent
->>> patch.
->>>
->>> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
->>> ---
->>>    drivers/soc/fsl/qbman/bman_portal.c | 10 ++++++++++
->>>    drivers/soc/fsl/qbman/qman_portal.c | 10 ++++++++++
->>>    include/soc/fsl/bman.h              |  8 ++++++++
->>>    include/soc/fsl/qman.h              |  9 +++++++++
->>>    4 files changed, 37 insertions(+)
->>>
->>> diff --git a/drivers/soc/fsl/qbman/bman_portal.c b/drivers/soc/fsl/qbman/bman_portal.c
->>> index f9edd28894fd..8048d35de8a2 100644
->>> --- a/drivers/soc/fsl/qbman/bman_portal.c
->>> +++ b/drivers/soc/fsl/qbman/bman_portal.c
->>> @@ -32,6 +32,7 @@
->>>
->>>    static struct bman_portal *affine_bportals[NR_CPUS];
->>>    static struct cpumask portal_cpus;
->>> +static int __bman_portals_probed;
->>>    /* protect bman global registers and global data shared among portals */
->>>    static DEFINE_SPINLOCK(bman_lock);
->>>
->>> @@ -85,6 +86,12 @@ static int bman_online_cpu(unsigned int cpu)
->>>           return 0;
->>>    }
->>>
->>> +int bman_portals_probed(void)
->>> +{
->>> +       return __bman_portals_probed;
->>> +}
->>> +EXPORT_SYMBOL_GPL(bman_portals_probed);
->>> +
->>>    static int bman_portal_probe(struct platform_device *pdev)
->>>    {
->>>           struct device *dev = &pdev->dev;
->>> @@ -148,6 +155,7 @@ static int bman_portal_probe(struct platform_device *pdev)
->>>           spin_lock(&bman_lock);
->>>           cpu = cpumask_next_zero(-1, &portal_cpus);
->>>           if (cpu >= nr_cpu_ids) {
->>> +               __bman_portals_probed = 1;
->>
->> What if the last CPU is not used for portals?  Is there a hard
->> requirement that all CPUs need to be used for portal?
+>> My thought is go for (2) and do all changes in one patch :)
 > 
-> As far as I know, in the current driver design a portal is required for
-> each CPU.
-> 
->> What happens if the last CPU is offline?
-> 
-> Can this happen at probe time?
+> No problem, Linus. One more question: looks like my first patch
+> 4451d3f59f2a (fix set_next_event handler) is not merged back to
+> "timers/core". Should I generate this patch on top of the first patch
+> or on top of the current "timers/core"? Which one would be easier for
+> you (or Daniel/Thomas)? Sorry I'm pretty new to the community..
 
-As I understand things, yes - if you boot with "maxcpus=1", only the 
-boot CPU will be onlined by the kernel, but the others can still be 
-brought up manually by userspace later.
 
-Robin.
+Hi Tao,
 
-> Anyway, I'm not sure that the driver is even aware of cpu hotplug but
-> I'll let Roy comment on this one.
-> 
->>
->>>                   /* unassigned portal, skip init */
->>>                   spin_unlock(&bman_lock);
->>>                   return 0;
->>> @@ -173,6 +181,8 @@ static int bman_portal_probe(struct platform_device *pdev)
->>>    err_ioremap2:
->>>           memunmap(pcfg->addr_virt_ce);
->>>    err_ioremap1:
->>> +        __bman_portals_probed = 1;
->>> +
->>
->> There are other error paths that not covered.
-> 
-> Right, thanks for pointing. On top of that, the assigned value here
-> should be -1 to signal error (instead of 1 which signals success).
-> 
-> ---
-> Best Regards, Laurentiu
-> 
+the branch tip:timers/urgent will be merged in tip:/timers/core, so the
+fixes will be propagated to the master branch.
+
+Base your change in top of tip:timers/urgent, the merge will happen soon
+and both fixes will end up in tip:timers/core.
+
+  -- Daniel
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
