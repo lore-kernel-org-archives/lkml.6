@@ -2,103 +2,61 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 266FDC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A41F6C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E4A21473
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:32:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E4A21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 670B820644
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:33:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 670B820644
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeJCXVS (ORCPT
+        id S1727033AbeJCXWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 19:21:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51848 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726829AbeJCXVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 19:21:18 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5EC9B3084026;
-        Wed,  3 Oct 2018 16:32:10 +0000 (UTC)
-Received: from asgard.redhat.com (ovpn-200-25.brq.redhat.com [10.40.200.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E1E9B87DB;
-        Wed,  3 Oct 2018 16:31:57 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 18:32:26 +0200
-From:   Eugene Syromiatnikov <esyr@redhat.com>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v4 24/27] mm/mmap: Create a guard area between VMAs
-Message-ID: <20181003163226.GC9449@asgard.redhat.com>
-References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
- <20180921150351.20898-25-yu-cheng.yu@intel.com>
- <20181003045611.GB22724@asgard.redhat.com>
- <CALCETrU-Ny-uC1NqRedQwNKe2MMhsFEqZ08TtHJwbLfCACMmLw@mail.gmail.com>
- <5ddb0ad33298d1858e530fce9c9ea2788b2fac81.camel@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ddb0ad33298d1858e530fce9c9ea2788b2fac81.camel@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 03 Oct 2018 16:32:10 +0000 (UTC)
+        Wed, 3 Oct 2018 19:22:34 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:34424 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbeJCXWe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 19:22:34 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c06::30d2])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1803F1466B4F5;
+        Wed,  3 Oct 2018 09:33:26 -0700 (PDT)
+Date:   Wed, 03 Oct 2018 09:33:25 -0700 (PDT)
+Message-Id: <20181003.093325.94472342025577659.davem@davemloft.net>
+To:     gustavo@embeddedor.com
+Cc:     vyasevich@gmail.com, nhorman@tuxdriver.com,
+        marcelo.leitner@gmail.com, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sctp: fix fall-through annotation
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181003104556.GA23489@embeddedor.com>
+References: <20181003104556.GA23489@embeddedor.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 03 Oct 2018 09:33:26 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 09:00:04AM -0700, Yu-cheng Yu wrote:
-> On Tue, 2018-10-02 at 22:36 -0700, Andy Lutomirski wrote:
-> > On Tue, Oct 2, 2018 at 9:55 PM Eugene Syromiatnikov <esyr@redhat.com> wrote:
-> > > 
-> > > On Fri, Sep 21, 2018 at 08:03:48AM -0700, Yu-cheng Yu wrote:
-> > > > Create a guard area between VMAs, to detect memory corruption.
-> > > 
-> > > Do I understand correctly that with this patch a user space program
-> > > no longer be able to place two mappings back to back? If it is so,
-> > > it will likely break a lot of things; for example, it's a common ring
-> > > buffer implementations technique, to map buffer memory twice back
-> > > to back in order to avoid special handling of items wrapping its end.
-> > 
-> > I haven't checked what the patch actually does, but it shouldn't have
-> > any affect on MAP_FIXED or the new no-replace MAP_FIXED variant.
-> > 
-> > --Andy
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Wed, 3 Oct 2018 12:45:56 +0200
+
+> Replace "fallthru" with a proper "fall through" annotation.
 > 
-> I did some mmap tests with/without MAP_FIXED, and it works as intended.
-> In addition to the ring buffer, are there other test cases?
+> This fix is part of the ongoing efforts to enabling
+> -Wimplicit-fallthrough
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Right, after some more code reading I figured out that it indeed
-shouldn't affect MAP_FIXED, thank you for confirmation.
-
-I'm not sure, however, whether such a change that provides no ability
-to configure or affect it will go well with all the supported
-architectures.
+Applied.
