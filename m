@@ -2,181 +2,82 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DEAC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5699EC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE29F2089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:26:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qvr0zzn0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE29F2089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 245352089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:26:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 245352089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbeJCWPH (ORCPT
+        id S1727353AbeJCWPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:15:07 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54705 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbeJCWPH (ORCPT
+        Wed, 3 Oct 2018 18:15:44 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45534 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbeJCWPo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:15:07 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r63-v6so6147354wma.4;
-        Wed, 03 Oct 2018 08:26:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5svFZIsdXV+syn4g/3GIQxoNUj58v1SSlLrDA1mRdpc=;
-        b=qvr0zzn07ucF8umccglw1q0XINIKYN1rUnnyQTTnsiiSaOJ6O3qEi0eJ6oO9/DlceQ
-         ahI/319qLQIn4BqOw3kGWMAGBKlWCEpSt8nMwhvcjWtlXmE15P/22GvfK9Jp22C0y5Je
-         1hjVdYTl5WLpXrksGcpAxqVMcMpbG7O1U6/IfmXeUVjwEzAHqfPHoqzBv1GFqVR931FL
-         jQIAYRYmDVDyWof74mg2hoq6yPPUC79uR9oIGGYphLUhgufTEGgvj2Yj+dylceormc4x
-         FEgwdtSZW74Tf/jbzYTGeVTP78RLHu5qR7fvue2DG3bekB4wAWQ6kwawnJalN3Pzek/W
-         tpnA==
+        Wed, 3 Oct 2018 18:15:44 -0400
+Received: by mail-pg1-f194.google.com with SMTP id t70-v6so1708623pgd.12
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 08:26:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=5svFZIsdXV+syn4g/3GIQxoNUj58v1SSlLrDA1mRdpc=;
-        b=OVV/W/79Cdk+N4VJJwhpM0ltybsapTG0JjqC5vbK9iG4RbxcIlhXTyBoXjjEHXjXFO
-         8tv5erh22SNew3LSoLoZeW+kjqjfOlvkExH9JJmJGyRvV1cvWG6M54IpRydo85aEEJoZ
-         oGANBr/06pbWJcZZ3vb4QMNFxD8yICoxwjR7DoOl9Ze04uEaiUW7pvuhnW8P72gIUhfU
-         3/VsdRnsfZw9+at2qmEoQPMWb5k82hgO0EyFNoZ1y/psB/8TowUtsnNqJrLyvdvEHdP3
-         nlxZJGiRaZ+RETs8nOIhhW9V2BOZnqHev9xXgO6I3FBDsxFMldQTSo2Sw+m4UzY7GHTm
-         3fzw==
-X-Gm-Message-State: ABuFfohB6rq3KJKZTBsLwJnIXgmDRecQtkXHNntCr/29FtsgwXAJVW4Q
-        BMTPyYymZIFjwtMVnFes+fDFiffd
-X-Google-Smtp-Source: ACcGV63nt5YJP6bAykwpa0PnxjK/6srIIbIWofStTEEgQtckMEmUUF+GJbo3zdwDUZD3qXfAxu46Xg==
-X-Received: by 2002:a1c:681:: with SMTP id 123-v6mr1804208wmg.7.1538580372310;
-        Wed, 03 Oct 2018 08:26:12 -0700 (PDT)
-Received: from 640k.lan (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
-        by smtp.gmail.com with ESMTPSA id e127-v6sm1223991wmg.45.2018.10.03.08.26.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 08:26:11 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Nikita Leshchenko <nikita.leshchenko@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH v2] kvm: nVMX: fix entry with pending interrupt if APICv is enabled
-Date:   Wed,  3 Oct 2018 17:26:10 +0200
-Message-Id: <1538580370-9634-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=9Mok85nzSbErJqtfR5DMucijQ06b1EKccbA5oFfY7fk=;
+        b=Q9YO+KYosGL82MXCvRZx85x6QymUKSzXYN/FjXnSynS/PdLzyvaAARGGv4gP2vLUSQ
+         LoKYbLDMoWTOr2ANtR7Clmd99G5bYQrsKC1pBHt3nx8rMrtWxYcp6MJLzCxweq8BeRuq
+         n0cUQzjgmHb1+tAMWnyZDo3E7TumEV8okIH/zOKTpI86TpY87+1bKl+on+FxtiJ50WTm
+         MSnwZGNIWYNplbIyAXvKpiTSpRDIFjUSgt3oPl6sn1Tl0iOCEneCeq2OBhvdVADTYZqo
+         rnNVwTwgXmtW8cdGmnMdat1ldQNBb4wPgjpwtfKdBxO8v8ySPOQePBhpWe+GqPw03OHK
+         gEPA==
+X-Gm-Message-State: ABuFfog+pZuj1KOr9y6wCILNfBdMlLEHw24PbGiXOrMF7GXLA4E5WysH
+        MCvkIHr9LtLCQK2sBa2UBn8cL0FlhPc7jQ==
+X-Google-Smtp-Source: ACcGV60abuhZ2xJINtd2xaZTohBKGSktNwNV6qX2AhUQqnprQ6swrB95MCW7LYzeL3EoKN9oF8gyTA==
+X-Received: by 2002:a65:614a:: with SMTP id o10-v6mr1832570pgv.387.1538580412193;
+        Wed, 03 Oct 2018 08:26:52 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id 23-v6sm4599345pfy.156.2018.10.03.08.26.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 08:26:51 -0700 (PDT)
+Message-ID: <1538580410.205649.4.camel@acm.org>
+Subject: Re: [PATCH 1/6] lib/scatterlist: Use natural long for
+ sgl_alloc(_order) length parameter
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Tvrtko Ursulin <tursulin@ursulin.net>, linux-kernel@vger.kernel.org
+Cc:     tvrtko.ursulin@linux.intel.com,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Jens Axboe <axboe@kernel.dk>
+Date:   Wed, 03 Oct 2018 08:26:50 -0700
+In-Reply-To: <20180926141625.17727-2-tvrtko.ursulin@linux.intel.com>
+References: <20180926141625.17727-1-tvrtko.ursulin@linux.intel.com>
+         <20180926141625.17727-2-tvrtko.ursulin@linux.intel.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit b5861e5cf2fcf83031ea3e26b0a69d887adf7d21 introduced a check on
-the interrupt-window and NMI-window CPU execution controls in order to
-inject an external interrupt vmexit before the first guest instruction
-executes.  However, when APIC virtualization is enabled the host does not
-need a vmexit in order to inject an interrupt at the next interrupt window;
-instead, it just places the interrupt vector in RVI and the processor will
-inject it as soon as possible.  Therefore, on machines with APICv it is
-not enough to check the CPU execution controls: the same scenario can also
-happen if RVI>0.
+On Wed, 2018-09-26 at 15:16 +-0100, Tvrtko Ursulin wrote:
++AD4 From: Tvrtko Ursulin +ADw-tvrtko.ursulin+AEA-intel.com+AD4
++AD4 
++AD4 None of the callers need unsinged long long (they either pass in an int,
+                           +AF4AXgBeAF4AXgBeAF4AXg
+                           unsigned?
++AD4 u32, or size+AF8-t) so it is not required to burden the 32-bit builds with an
++AD4 overspecified length parameter.
 
-Fixes: b5861e5cf2fcf83031ea3e26b0a69d887adf7d21
-Cc: Nikita Leshchenko <nikita.leshchenko@oracle.com>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Liran Alon <liran.alon@oracle.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/vmx.c | 38 ++++++++++++++++++++++++++------------
- 1 file changed, 26 insertions(+), 12 deletions(-)
+Otherwise,
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 6ef2d5b139b9..c7ae8ea87bc4 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -6162,6 +6162,11 @@ static void vmx_complete_nested_posted_interrupt(struct kvm_vcpu *vcpu)
- 	nested_mark_vmcs12_pages_dirty(vcpu);
- }
- 
-+static u8 vmx_get_rvi(void)
-+{
-+	return vmcs_read16(GUEST_INTR_STATUS) & 0xff;
-+}
-+
- static bool vmx_guest_apic_has_interrupt(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-@@ -6174,7 +6179,7 @@ static bool vmx_guest_apic_has_interrupt(struct kvm_vcpu *vcpu)
- 		WARN_ON_ONCE(!vmx->nested.virtual_apic_page))
- 		return false;
- 
--	rvi = vmcs_read16(GUEST_INTR_STATUS) & 0xff;
-+	rvi = vmx_get_rvi();
- 
- 	vapic_page = kmap(vmx->nested.virtual_apic_page);
- 	vppr = *((u32 *)(vapic_page + APIC_PROCPRI));
-@@ -10349,6 +10354,14 @@ static int vmx_sync_pir_to_irr(struct kvm_vcpu *vcpu)
- 	return max_irr;
- }
- 
-+static u8 vmx_has_apicv_interrupt(struct kvm_vcpu *vcpu)
-+{
-+	u8 rvi = vmx_get_rvi();
-+	u8 vppr = kvm_lapic_get_reg(vcpu->arch.apic, APIC_PROCPRI);
-+
-+	return ((rvi & 0xf0) > (vppr & 0xf0));
-+}
-+
- static void vmx_load_eoi_exitmap(struct kvm_vcpu *vcpu, u64 *eoi_exit_bitmap)
- {
- 	if (!kvm_vcpu_apicv_active(vcpu))
-@@ -12593,10 +12606,13 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, u32 *exit_qual)
- 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
- 	bool from_vmentry = !!exit_qual;
- 	u32 dummy_exit_qual;
--	u32 vmcs01_cpu_exec_ctrl;
-+	bool evaluate_pending_interrupts;
- 	int r = 0;
- 
--	vmcs01_cpu_exec_ctrl = vmcs_read32(CPU_BASED_VM_EXEC_CONTROL);
-+	evaluate_pending_interrupts = vmcs_read32(CPU_BASED_VM_EXEC_CONTROL) &
-+		(CPU_BASED_VIRTUAL_INTR_PENDING | CPU_BASED_VIRTUAL_NMI_PENDING);
-+	if (likely(!evaluate_pending_interrupts) && kvm_vcpu_apicv_active(vcpu))
-+		evaluate_pending_interrupts |= vmx_has_apicv_interrupt(vcpu);
- 
- 	enter_guest_mode(vcpu);
- 
-@@ -12644,16 +12660,14 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, u32 *exit_qual)
- 	 * to L1 or delivered directly to L2 (e.g. In case L1 don't
- 	 * intercept EXTERNAL_INTERRUPT).
- 	 *
--	 * Usually this would be handled by L0 requesting a
--	 * IRQ/NMI window by setting VMCS accordingly. However,
--	 * this setting was done on VMCS01 and now VMCS02 is active
--	 * instead. Thus, we force L0 to perform pending event
--	 * evaluation by requesting a KVM_REQ_EVENT.
--	 */
--	if (vmcs01_cpu_exec_ctrl &
--		(CPU_BASED_VIRTUAL_INTR_PENDING | CPU_BASED_VIRTUAL_NMI_PENDING)) {
-+	 * Usually this would be handled by the processor noticing an
-+	 * IRQ/NMI window request, or checking RVI during evaluation of
-+	 * pending virtual interrupts.  However, this setting was done
-+	 * on VMCS01 and now VMCS02 is active instead. Thus, we force L0
-+	 * to perform pending event evaluation by requesting a KVM_REQ_EVENT.
-+	 */
-+	if (unlikely(evaluate_pending_interrupts))
- 		kvm_make_request(KVM_REQ_EVENT, vcpu);
--	}
- 
- 	/*
- 	 * Note no nested_vmx_succeed or nested_vmx_fail here. At this point
--- 
-1.8.3.1
+Reviewed-by: Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4
 
