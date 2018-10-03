@@ -2,154 +2,111 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F59EC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E485C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC37921473
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:32:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B8562089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:35:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DO/tU0Yz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC37921473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="j8mUx8PQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B8562089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbeJDFWn (ORCPT
+        id S1727264AbeJDFZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 01:22:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43258 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726770AbeJDFWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 01:22:43 -0400
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B03BF214C1
-        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 22:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538605942;
-        bh=44K1dXoUqnnLNzkcFJ9rnt23TL/ivNkgJS3eEc4dMCs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DO/tU0YzoQrkY8tMszsAloZeTUrFvFPT91fTqbFo33ulMPxRTRKI2IvoGpgB4iLdX
-         zFXmcd7lf9Gbp4KsRLtWXAKG5jNAsOI2gsFSIYBTqpip68VYEsVn3HJ/Ai/mLulOqr
-         0C2TnSK12TDAUFScP4oGLU7u1mbF1yOh2RA16Ijs=
-Received: by mail-wr1-f47.google.com with SMTP id 63-v6so7791164wra.11
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 15:32:21 -0700 (PDT)
-X-Gm-Message-State: ABuFfog+/u0XFtiuIKD3P3rGN+lEtRckSZ6dTX1Dwwdm82kkuaLNnaeW
-        85wfHbiT/16QNg65fJJkIp9BV4L4ZGK7wdokve/qLA==
-X-Google-Smtp-Source: ACcGV62TWnDywNWeEiNesSHkod7MW47qvCSuZh0yorxEnXvQR5lv8Bacs3UyrN1+OvL7Cod+XdqVqMX+8Ckaw4OZiXg=
-X-Received: by 2002:adf:9792:: with SMTP id s18-v6mr2824733wrb.283.1538605940010;
- Wed, 03 Oct 2018 15:32:20 -0700 (PDT)
+        Thu, 4 Oct 2018 01:25:45 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46852 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbeJDFZp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 01:25:45 -0400
+Received: by mail-wr1-f68.google.com with SMTP id a2-v6so742220wrc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 15:35:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9gw0VG4SmtfMjoiQrL3PUyqLDohd6eBqw2yb36naa94=;
+        b=j8mUx8PQuFAakoPp/ZlJuLqCaseqWisPuc/eFbUr8qTZizrYbURoqjOfwF0kfGsb/N
+         1ZAoFT3THe1oi09n39yA9MCSfE0owEfZ8Gitj7MVjZp0XdptGCh0njqUy/3ejNFYoiOF
+         GAOiJyfLJn5f7CZG+voS/Hw50pEpdMRvSasm+FJgwBQ6kfzpq1EZn7PwdeMw4ziex8GR
+         lZ9yJBfNt2MoRncRQoUOGTAzFU8LTD4k5GqTPx4BrLf634F1ctZm9DlHwZGn5jCPYg1e
+         4ynzpKWM1AFxNxR5eNbOzoFsllvc89yS3zaRbplS5pC73t17HIl8XXXtW8o+gfmPa659
+         dQ/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9gw0VG4SmtfMjoiQrL3PUyqLDohd6eBqw2yb36naa94=;
+        b=ITnzZ9M4vCoHvJALwsuXIkt3yyQvQXiGx192z6BcMYjyZESxCE/fFAb7/lk3FQzCfV
+         j+LJgJjXWKNbvPKWFL2GAXZsebzW972bu3GQFhMuaYfzol96xgV54KFDpNV9ekxggK63
+         HOhVjHFQJX5s+Lpv9PglXxiCetBgfoWDgAlHSN0vXcxzZ1fyYZaFNSybnY16dZ8qd4hU
+         8blCVSIE9SYXfkYW1aJycNYWyHedXdik5RZmKPttZcJ2JolRh+8Vic4f3AOOi7XqMnPn
+         uVo0uIrsx0HDJ2LLOKlzaAdwyuZMIIVrcmxjywCM6GURTJ7tOnmBLwUVDiZm01BUE1fR
+         ydIw==
+X-Gm-Message-State: ABuFfogzmFkUeVHVwSQRfsuuRS0g08rrlC62xreWiJHYeNUFR16eTNlF
+        vk84OatjE+e7iGVDpfoqnneAAw==
+X-Google-Smtp-Source: ACcGV61v42q3v7vtsr97UmFfvei+DJdzx8RsVI9b7lrO+V5Rhw103uwiFz5Z755PtEX3cstqIjBk9w==
+X-Received: by 2002:a5d:5588:: with SMTP id i8-v6mr2644523wrv.38.1538606122824;
+        Wed, 03 Oct 2018 15:35:22 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id o7-v6sm2825246wma.17.2018.10.03.15.35.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 15:35:21 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1g7pji-0002Gk-5A; Wed, 03 Oct 2018 16:35:18 -0600
+Date:   Wed, 3 Oct 2018 16:35:18 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
+Message-ID: <20181003223518.GA8700@ziepe.ca>
+References: <20180924195716.30848-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-References: <20180914125006.349747096@linutronix.de> <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com>
- <20181003190026.GB21381@amt.cnet>
-In-Reply-To: <20181003190026.GB21381@amt.cnet>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 3 Oct 2018 15:32:08 -0700
-X-Gmail-Original-Message-ID: <CALCETrXwEDGNry=9KKvWyc7Eot3eEDifkJ234igDLrea2mVfuA@mail.gmail.com>
-Message-ID: <CALCETrXwEDGNry=9KKvWyc7Eot3eEDifkJ234igDLrea2mVfuA@mail.gmail.com>
-Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI support
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924195716.30848-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 12:01 PM Marcelo Tosatti <mtosatti@redhat.com> wrote:
->
-> On Tue, Oct 02, 2018 at 10:15:49PM -0700, Andy Lutomirski wrote:
-> > Hi Vitaly, Paolo, Radim, etc.,
-> >
-> > On Fri, Sep 14, 2018 at 5:52 AM Thomas Gleixner <tglx@linutronix.de> wrote:
-> > >
-> > > Matt attempted to add CLOCK_TAI support to the VDSO clock_gettime()
-> > > implementation, which extended the clockid switch case and added yet
-> > > another slightly different copy of the same code.
-> > >
-> > > Especially the extended switch case is problematic as the compiler tends to
-> > > generate a jump table which then requires to use retpolines. If jump tables
-> > > are disabled it adds yet another conditional to the existing maze.
-> > >
-> > > This series takes a different approach by consolidating the almost
-> > > identical functions into one implementation for high resolution clocks and
-> > > one for the coarse grained clock ids by storing the base data for each
-> > > clock id in an array which is indexed by the clock id.
-> > >
-> >
-> > I was trying to understand more of the implications of this patch
-> > series, and I was again reminded that there is an entire extra copy of
-> > the vclock reading code in arch/x86/kvm/x86.c.  And the purpose of
-> > that code is very, very opaque.
-> >
-> > Can one of you explain what the code is even doing?  From a couple of
-> > attempts to read through it, it's a whole bunch of
-> > probably-extremely-buggy code that,
->
-> Yes, probably.
->
-> > drumroll please, tries to atomically read the TSC value and the time.  And decide whether the
-> > result is "based on the TSC".
->
-> I think "based on the TSC" refers to whether TSC clocksource is being
-> used.
->
-> > And then synthesizes a TSC-to-ns
-> > multiplier and shift, based on *something other than the actual
-> > multiply and shift used*.
-> >
-> > IOW, unless I'm totally misunderstanding it, the code digs into the
-> > private arch clocksource data intended for the vDSO, uses a poorly
-> > maintained copy of the vDSO code to read the time (instead of doing
-> > the sane thing and using the kernel interfaces for this), and
-> > propagates a totally made up copy to the guest.
->
-> I posted kernel interfaces for this, and it was suggested to
-> instead write a "in-kernel user of pvclock data".
->
-> If you can get kernel interfaces to replace that, go for it. I prefer
-> kernel interfaces as well.
->
-> >  And gets it entirely
-> > wrong when doing nested virt, since, unless there's some secret in
-> > this maze, it doesn't acutlaly use the scaling factor from the host
-> > when it tells the guest what to do.
-> >
-> > I am really, seriously tempted to send a patch to simply delete all
-> > this code.
->
-> If your patch which deletes the code gets the necessary features right,
-> sure, go for it.
->
-> > The correct way to do it is to hook
->
-> Can you expand on the correct way to do it?
->
-> > And I don't see how it's even possible to pass kvmclock correctly to
-> > the L2 guest when L0 is hyperv.  KVM could pass *hyperv's* clock, but
-> > L1 isn't notified when the data structure changes, so how the heck is
-> > it supposed to update the kvmclock structure?
->
-> I don't parse your question.
+On Mon, Sep 24, 2018 at 12:57:16PM -0700, Nathan Chancellor wrote:
+> Clang warns when one enumerated type is implicitly converted to another.
+> 
+> drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
+> from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> type 'enum ib_qp_create_flags' [-Wenum-conversion]
+>                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
+>                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
+> 
+> drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
+> from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> type 'enum ib_qp_create_flags' [-Wenum-conversion]
+>                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
+>                                                     ~ ^~~~~~~~~~~~~~~~~
+> 
+> The type mlx4_ib_qp_flags explicitly provides supplemental values to the
+> type ib_qp_create_flags. Make that clear to Clang by changing the
+> create_flags type to u32.
+> 
+> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  include/rdma/ib_verbs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Let me ask it more intelligently: when the "reenlightenment" IRQ
-happens, what tells KVM to do its own update for its guests?
+Applied to for-next, thanks
+
+BTW, how are you compiling with clang?
+
+Jason
