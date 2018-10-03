@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91771C64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFEA7C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 570F42089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:59:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 570F42089F
+	by mail.kernel.org (Postfix) with ESMTP id 750BE2098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:59:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 750BE2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbeJCPqj (ORCPT
+        id S1727645AbeJCPqk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 11:46:39 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:57469 "EHLO
+        Wed, 3 Oct 2018 11:46:40 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:57478 "EHLO
         relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727422AbeJCPqj (ORCPT
+        with ESMTP id S1727356AbeJCPqj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 3 Oct 2018 11:46:39 -0400
 Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
         by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1g7czr-00027w-1U from Jiada_Wang@mentor.com ; Wed, 03 Oct 2018 01:59:07 -0700
+        id 1g7czu-00028D-H4 from Jiada_Wang@mentor.com ; Wed, 03 Oct 2018 01:59:10 -0700
 Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
  svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Wed, 3 Oct 2018 01:59:03 -0700
+ (TLS) id 15.0.1320.4; Wed, 3 Oct 2018 01:59:07 -0700
 From:   <jiada_wang@mentor.com>
 To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
         <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
 CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH linux-next v2 1/9] arm64: r8a7795: add dma request number for busif0 ~ busif7
-Date:   Wed, 3 Oct 2018 17:58:47 +0900
-Message-ID: <20181003085855.4305-2-jiada_wang@mentor.com>
+Subject: [PATCH linux-next v2 2/9] arm64: r8a7796: add dma request number for busif0 ~ busif7
+Date:   Wed, 3 Oct 2018 17:58:48 +0900
+Message-ID: <20181003085855.4305-3-jiada_wang@mentor.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20181003085855.4305-1-jiada_wang@mentor.com>
 References: <20181003085855.4305-1-jiada_wang@mentor.com>
@@ -56,14 +56,14 @@ for busif data transfer.
 
 Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 164 ++++++++++++++++++++---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 164 ++++++++++++++++++++---
  1 file changed, 144 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index b5f2273caca4..fc6100eddfed 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1923,53 +1923,177 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 1ec6aaa520c1..53b361c5b16d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1797,53 +1797,177 @@
  			rcar_sound,ssi {
  				ssi0: ssi-0 {
  					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
@@ -91,7 +91,7 @@ index b5f2273caca4..fc6100eddfed 100644
 +						    "rxu7", "txu7";
  				};
  				ssi1: ssi-1 {
- 					 interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
+ 					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
 -					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
 -					dma-names = "rx", "tx", "rxu", "txu";
 +					dmas = <&audma0 0x03>, <&audma1 0x04>,
