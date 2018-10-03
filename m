@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C50C64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00410C64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7701A21477
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:32:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7701A21477
+	by mail.kernel.org (Postfix) with ESMTP id B824D214C1
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:32:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B824D214C1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJDEWq (ORCPT
+        id S1727455AbeJDEWr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 00:22:46 -0400
+        Thu, 4 Oct 2018 00:22:47 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:14656 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727234AbeJDEWo (ORCPT
+        by vger.kernel.org with ESMTP id S1727356AbeJDEWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 00:22:44 -0400
+        Thu, 4 Oct 2018 00:22:46 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Wed, 3 Oct 2018 14:32:27 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 7B820407D5;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 9866D407CF;
         Wed,  3 Oct 2018 14:32:32 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
 CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Nadav Amit <namit@vmware.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v9 04/10] x86: refcount: prevent gcc distortions
-Date:   Wed, 3 Oct 2018 14:30:54 -0700
-Message-ID: <20181003213100.189959-5-namit@vmware.com>
+Subject: [PATCH v9 06/10] x86: bug: prevent gcc distortions
+Date:   Wed, 3 Oct 2018 14:30:56 -0700
+Message-ID: <20181003213100.189959-7-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181003213100.189959-1-namit@vmware.com>
 References: <20181003213100.189959-1-namit@vmware.com>
@@ -57,182 +57,200 @@ the block in time and space. This data is distorted by the kernel code,
 which puts information in alternative sections. As a result, the
 compiler may perform incorrect inlining and branch optimizations.
 
-The solution is to set an assembly macro and call it from the inlined
+The solution is to set an assembly macro and call it from the inlinedv
 assembly block. As a result GCC considers the inline assembly block as
 a single instruction.
 
-This patch allows to inline functions such as __get_seccomp_filter().
-Interestingly, this allows more aggressive inlining while reducing the
-kernel size.
+This patch increases the kernel size:
 
    text	   data	    bss	    dec	    hex	filename
-18140970 10225412 2957312 31323694 1ddf62e ./vmlinux before
-18140140 10225284 2957312 31322736 1ddf270 ./vmlinux after (-958)
+18146889 10225380 2957312 31329581 1de0d2d ./vmlinux before
+18147336 10226688 2957312 31331336 1de1408 ./vmlinux after (+1755)
+
+But enables more aggressive inlining (and probably branch decisions).
+The number of static text symbols in vmlinux is lower.
 
 Static text symbols:
-Before:	40302
-After:	40286	(-16)
-
-Functions such as kref_get(), free_user(), fuse_file_get() now get
-inlined.
+Before:	40218
+After:	40053	(-165)
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: Jan Beulich <JBeulich@suse.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Tested-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/refcount.h | 74 ++++++++++++++++++++-------------
- arch/x86/kernel/macros.S        |  1 +
- 2 files changed, 46 insertions(+), 29 deletions(-)
+ arch/x86/include/asm/bug.h | 98 ++++++++++++++++++++++----------------
+ arch/x86/kernel/macros.S   |  1 +
+ include/asm-generic/bug.h  |  8 ++--
+ 3 files changed, 61 insertions(+), 46 deletions(-)
 
-diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-index 19b90521954c..c92909da0686 100644
---- a/arch/x86/include/asm/refcount.h
-+++ b/arch/x86/include/asm/refcount.h
-@@ -4,6 +4,41 @@
-  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
-  * PaX/grsecurity.
-  */
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index 6804d6642767..5090035e6d16 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -4,6 +4,8 @@
+ 
+ #include <linux/stringify.h>
+ 
++#ifndef __ASSEMBLY__
 +
-+#ifdef __ASSEMBLY__
-+
-+#include <asm/asm.h>
-+#include <asm/bug.h>
-+
-+.macro REFCOUNT_EXCEPTION counter:req
-+	.pushsection .text..refcount
-+111:	lea \counter, %_ASM_CX
-+112:	ud2
-+	ASM_UNREACHABLE
-+	.popsection
-+113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
-+.endm
-+
-+/* Trigger refcount exception if refcount result is negative. */
-+.macro REFCOUNT_CHECK_LT_ZERO counter:req
-+	js 111f
-+	REFCOUNT_EXCEPTION counter="\counter"
-+.endm
-+
-+/* Trigger refcount exception if refcount result is zero or negative. */
-+.macro REFCOUNT_CHECK_LE_ZERO counter:req
-+	jz 111f
-+	REFCOUNT_CHECK_LT_ZERO counter="\counter"
-+.endm
-+
-+/* Trigger refcount exception unconditionally. */
-+.macro REFCOUNT_ERROR counter:req
-+	jmp 111f
-+	REFCOUNT_EXCEPTION counter="\counter"
-+.endm
-+
+ /*
+  * Despite that some emulators terminate on UD2, we use it for WARN().
+  *
+@@ -20,53 +22,15 @@
+ 
+ #define LEN_UD2		2
+ 
+-#ifdef CONFIG_GENERIC_BUG
+-
+-#ifdef CONFIG_X86_32
+-# define __BUG_REL(val)	".long " __stringify(val)
+-#else
+-# define __BUG_REL(val)	".long " __stringify(val) " - 2b"
+-#endif
+-
+-#ifdef CONFIG_DEBUG_BUGVERBOSE
+-
+-#define _BUG_FLAGS(ins, flags)						\
+-do {									\
+-	asm volatile("1:\t" ins "\n"					\
+-		     ".pushsection __bug_table,\"aw\"\n"		\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
+-		     "\t.word %c1"        "\t# bug_entry::line\n"	\
+-		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c3\n"					\
+-		     ".popsection"					\
+-		     : : "i" (__FILE__), "i" (__LINE__),		\
+-			 "i" (flags),					\
+-			 "i" (sizeof(struct bug_entry)));		\
+-} while (0)
+-
+-#else /* !CONFIG_DEBUG_BUGVERBOSE */
+-
+ #define _BUG_FLAGS(ins, flags)						\
+ do {									\
+-	asm volatile("1:\t" ins "\n"					\
+-		     ".pushsection __bug_table,\"aw\"\n"		\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c1\n"					\
+-		     ".popsection"					\
+-		     : : "i" (flags),					\
++	asm volatile("ASM_BUG ins=\"" ins "\" file=%c0 line=%c1 "	\
++		     "flags=%c2 size=%c3"				\
++		     : : "i" (__FILE__), "i" (__LINE__),                \
++			 "i" (flags),                                   \
+ 			 "i" (sizeof(struct bug_entry)));		\
+ } while (0)
+ 
+-#endif /* CONFIG_DEBUG_BUGVERBOSE */
+-
+-#else
+-
+-#define _BUG_FLAGS(ins, flags)  asm volatile(ins)
+-
+-#endif /* CONFIG_GENERIC_BUG */
+-
+ #define HAVE_ARCH_BUG
+ #define BUG()							\
+ do {								\
+@@ -82,4 +46,54 @@ do {								\
+ 
+ #include <asm-generic/bug.h>
+ 
 +#else /* __ASSEMBLY__ */
 +
- #include <linux/refcount.h>
- #include <asm/bug.h>
- 
-@@ -15,34 +50,11 @@
-  * central refcount exception. The fixup address for the exception points
-  * back to the regular execution flow in .text.
-  */
--#define _REFCOUNT_EXCEPTION				\
--	".pushsection .text..refcount\n"		\
--	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
--	"112:\t" ASM_UD2 "\n"				\
--	ASM_UNREACHABLE					\
--	".popsection\n"					\
--	"113:\n"					\
--	_ASM_EXTABLE_REFCOUNT(112b, 113b)
--
--/* Trigger refcount exception if refcount result is negative. */
--#define REFCOUNT_CHECK_LT_ZERO				\
--	"js 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
--
--/* Trigger refcount exception if refcount result is zero or negative. */
--#define REFCOUNT_CHECK_LE_ZERO				\
--	"jz 111f\n\t"					\
--	REFCOUNT_CHECK_LT_ZERO
--
--/* Trigger refcount exception unconditionally. */
--#define REFCOUNT_ERROR					\
--	"jmp 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
- 
- static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: "ir" (i)
- 		: "cc", "cx");
-@@ -51,7 +63,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- static __always_inline void refcount_inc(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "incl %0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -59,7 +71,7 @@ static __always_inline void refcount_inc(refcount_t *r)
- static __always_inline void refcount_dec(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "decl %0\n\t"
--		REFCOUNT_CHECK_LE_ZERO
-+		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -67,13 +79,15 @@ static __always_inline void refcount_dec(refcount_t *r)
- static __always_inline __must_check
- bool refcount_sub_and_test(unsigned int i, refcount_t *r)
- {
--	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
-+				  "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
- 				  r->refs.counter, "er", i, "%0", e, "cx");
- }
- 
- static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
- {
--	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
-+				 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
- 				 r->refs.counter, "%0", e, "cx");
- }
- 
-@@ -91,7 +105,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
- 
- 		/* Did we try to increment from/to an undesirable state? */
- 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
--			asm volatile(REFCOUNT_ERROR
-+			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
- 				     : : [counter] "m" (r->refs.counter)
- 				     : "cc", "cx");
- 			break;
-@@ -107,4 +121,6 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
- 	return refcount_add_not_zero(1, r);
- }
- 
++#ifdef CONFIG_GENERIC_BUG
++
++#ifdef CONFIG_X86_32
++.macro __BUG_REL val:req
++	.long \val
++.endm
++#else
++.macro __BUG_REL val:req
++	.long \val - 2b
++.endm
++#endif
++
++#ifdef CONFIG_DEBUG_BUGVERBOSE
++
++.macro ASM_BUG ins:req file:req line:req flags:req size:req
++1:	\ins
++	.pushsection __bug_table,"aw"
++2:	__BUG_REL val=1b	# bug_entry::bug_addr
++	__BUG_REL val=\file	# bug_entry::file
++	.word \line		# bug_entry::line
++	.word \flags		# bug_entry::flags
++	.org 2b+\size
++	.popsection
++.endm
++
++#else /* !CONFIG_DEBUG_BUGVERBOSE */
++
++.macro ASM_BUG ins:req file:req line:req flags:req size:req
++1:	\ins
++	.pushsection __bug_table,"aw"
++2:	__BUG_REL val=1b	# bug_entry::bug_addr
++	.word \flags		# bug_entry::flags
++	.org 2b+\size
++	.popsection
++.endm
++
++#endif /* CONFIG_DEBUG_BUGVERBOSE */
++
++#else /* CONFIG_GENERIC_BUG */
++
++.macro ASM_BUG ins:req file:req line:req flags:req size:req
++	\ins
++.endm
++
++#endif /* CONFIG_GENERIC_BUG */
++
 +#endif /* __ASSEMBLY__ */
 +
- #endif
+ #endif /* _ASM_X86_BUG_H */
 diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index cee28c3246dc..f1fe1d570365 100644
+index 852487a9fc56..66ccb8e823b1 100644
 --- a/arch/x86/kernel/macros.S
 +++ b/arch/x86/kernel/macros.S
-@@ -7,3 +7,4 @@
-  */
- 
+@@ -9,3 +9,4 @@
  #include <linux/compiler.h>
-+#include <asm/refcount.h>
+ #include <asm/refcount.h>
+ #include <asm/alternative-asm.h>
++#include <asm/bug.h>
+diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
+index 20561a60db9c..cdafa5edea49 100644
+--- a/include/asm-generic/bug.h
++++ b/include/asm-generic/bug.h
+@@ -17,10 +17,8 @@
+ #ifndef __ASSEMBLY__
+ #include <linux/kernel.h>
+ 
+-#ifdef CONFIG_BUG
+-
+-#ifdef CONFIG_GENERIC_BUG
+ struct bug_entry {
++#ifdef CONFIG_GENERIC_BUG
+ #ifndef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
+ 	unsigned long	bug_addr;
+ #else
+@@ -35,8 +33,10 @@ struct bug_entry {
+ 	unsigned short	line;
+ #endif
+ 	unsigned short	flags;
+-};
+ #endif	/* CONFIG_GENERIC_BUG */
++};
++
++#ifdef CONFIG_BUG
+ 
+ /*
+  * Don't use BUG() or BUG_ON() unless there's really no way out; one
 -- 
 2.17.1
 
