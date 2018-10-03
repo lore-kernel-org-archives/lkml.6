@@ -2,120 +2,118 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6448CC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6DCC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E68C21470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:03:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4519821470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:04:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QnSHIbfV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E68C21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SpuwnjiM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4519821470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbeJCWwm (ORCPT
+        id S1727606AbeJCWxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:52:42 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:45007 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726811AbeJCWwm (ORCPT
+        Wed, 3 Oct 2018 18:53:07 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38555 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbeJCWxH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:52:42 -0400
-Received: by mail-yb1-f193.google.com with SMTP id x5-v6so2576857ybl.11
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 09:03:42 -0700 (PDT)
+        Wed, 3 Oct 2018 18:53:07 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 193-v6so6179423wme.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 09:04:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=r5eOxdkRwXJ8BFmkB3arcqaO7pEDM51vZaTZGBjoL44=;
-        b=QnSHIbfVeb5WuqNnwLd7F7n7Jf111QAMZL/3YZrM4/YLYjEz6X6gLg/34W6uMKZHz/
-         roq64QuIVo8PGLLXUC2i1b++isNrl45146ElsNgYM/M5bSSfSLfof6DzYHbH04xfrOI/
-         ChkYPZFaOCRgkXPCV8mRTQW5oM0efAnJrWwtFPkNqKmcBtowiHcFdY2NST4IOYbQdFJG
-         VeojWyItg61Xu5Ljs7IBbXtrSRSZGiiEI1/4QKV+prK/4eXt63n4hjCc4nqnz9kG4Qad
-         uBIBZd1u3fo95nFt6ISXoAe96zejVIVgePo/Sh89EyqhuJ2VRfwrKGkFaUo38iIDcSnN
-         Tzkg==
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=l/kgTbonsG3ZqXt9huXM0JfpFIu/MAijLq8BOM10KGQ=;
+        b=SpuwnjiMCOo/xmc3hB/LtaTyWJsQjyi0DRE8N1E95n8UoXLUNZLsjlcZmaLm0adBkm
+         hOC428+nrMkn94kD/gbrD7+D4MPQGx58YX88dfedOulA+PjL32uON8KRcc0vJDNxDNN4
+         S0tM+dgbp2Pon9842aUp61GjM+cXj3QqWG6Hw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=r5eOxdkRwXJ8BFmkB3arcqaO7pEDM51vZaTZGBjoL44=;
-        b=AsqCSdbSPtOmlMe/OKr5NHpodljtgTrjP4WgAkerHV0U0yquxRhkBy88xQAg8G5QCa
-         mNtSekuuYuG2hhalTIOm12Vb6CnzyRCbPCB2KBq/u06F7vFgQKoIxWq8y/+zBZhwxKGF
-         uQcCw+jksubLOLixWMUdSRwtS0kpcShw0Z47+yAWkY6YERR58GaO/XrCgJPy/gCpxwYA
-         YY2f4VThkoP8BdGtondfWih8+Y30E+vQqOstQjYrET46yhU6O9PP4PCOy+XcqSkxN+2Z
-         BEGP5A9no46PYJzsUHup6+wT8A86M2U1JDH+0OggG+RtlpkgXRuGuLKYoSp7HupwMYb6
-         NPuA==
-X-Gm-Message-State: ABuFfojAMLNOUmI/jY5RK69uwx+VEXzRrSi5+9yaEkk85PG0V8A8A5FU
-        KXLzH6femot2lJXGkVSWPdrmNj0Z2Shr/Q4BUOuQQg6BFlmYLQ==
-X-Google-Smtp-Source: ACcGV6237Qg5FogFlXEN12WTvUX2+yhRquZt/XNJh1mXuI/vWiZ9nHje5t/lqgvb4y7tVpPwjwXIHb1DxciSpwoNkM0=
-X-Received: by 2002:a25:e481:: with SMTP id b123-v6mr1282943ybh.416.1538582620976;
- Wed, 03 Oct 2018 09:03:40 -0700 (PDT)
-MIME-Version: 1.0
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Wed, 3 Oct 2018 18:03:29 +0200
-Message-ID: <CAJiuCcdR5dfN3MtvoqOMEG1hK+EuYgsdAaabW5wQrEDTdAOQdw@mail.gmail.com>
-Subject: SoCFPGA Turn on ARM errata for L2 cache ?
-To:     Dinh Nguyen <dinguyen@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=l/kgTbonsG3ZqXt9huXM0JfpFIu/MAijLq8BOM10KGQ=;
+        b=jcZ0TLOMvqI/4wmoIwZP/2SbJbeZ8avDs/m6oV9o8MAvS+iotGP2RePFep7zeHGsLp
+         bWhaMohP/NzUL6NE/inm9Cjbe0eWtcUakNoE+IWTUEIGgqMWpiVU6ndzSzNhF94z96+o
+         RL72uT3lVoyi+m2WjYxtjznVk7okdQT+dsQ4S7vOoL4ETglHkVu3DI10YnActoGX35bT
+         jcvA1lLBi9Ikhu5jbVUGyvczBSrZ+uHVX5Op3baGti/q7dSi0DgGB/+46BZ4Ue6h0gQT
+         WOIg0qbZdphSKT2R/Wv2NJZMLJFZfaS213Gno6lVWzPpp0FlaMSvYE3tri/2eNeZozuy
+         KlXQ==
+X-Gm-Message-State: ABuFfohJ7aklpOgY0SegzGln9aWmoGeDgQAC05pxqCaAv3O/Bu7ALyBk
+        aQKAoK1VLtT1NdJkcivWhDp+Vg==
+X-Google-Smtp-Source: ACcGV62Y2BAeDBO1bcBeKMpjPjIdV2/puT9ui2E5ZPAp1CzZp6EVStL32ThvKaQUq4ouhBSUxZ4IYQ==
+X-Received: by 2002:a7b:c216:: with SMTP id x22-v6mr1879862wmi.65.1538582645385;
+        Wed, 03 Oct 2018 09:04:05 -0700 (PDT)
+Received: from [192.168.43.112] ([31.157.182.99])
+        by smtp.gmail.com with ESMTPSA id w4-v6sm3037824wra.83.2018.10.03.09.04.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 09:04:04 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH] block: BFQ default for single queue devices
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <1538582446.205649.22.camel@acm.org>
+Date:   Wed, 3 Oct 2018 18:04:02 +0200
+Cc:     Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jan Kara <jack@suse.cz>, Andreas Herrmann <aherrmann@suse.com>,
+        Mel Gorman <mgorman@suse.com>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        'Paolo Valente' via bfq-iosched 
+        <bfq-iosched@googlegroups.com>, Mark Brown <broonie@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <843B42A9-DDE9-46C4-A3AE-616E8DF3946E@linaro.org>
+References: <20181002124329.21248-1-linus.walleij@linaro.org>
+ <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
+ <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
+ <1eca41df95ff660eb247a3de666adeb4@natalenko.name>
+ <6AF8CEDE-2720-4206-900A-1A9B914A8FF0@linaro.org>
+ <1538582446.205649.22.camel@acm.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-Saw this patch on the Altera OpenSource GitHub.
 
-But it's not mainlained can I propose it?
+> Il giorno 03 ott 2018, alle ore 18:00, Bart Van Assche =
+<bvanassche@acm.org> ha scritto:
+>=20
+> On Wed, 2018-10-03 at 17:55 +0200, Paolo Valente wrote:
+>> The problem, in particular, is that bfq is a complex beast, fighting
+>> against a jungle of I/O issues.  You have to be really into bfq, even
+>> to just know all of its features!
+>=20
+> This is a problem by itself. I don't know anyone who wants to have to =
+deal
+> with I/O scheduler tunables.
+>=20
 
-How do you do when the patch is from someone else ? Do you keep the
-sign-off of the original author or do you just mention it? in the
-commit log ?
+In fact, I designed and am constantly improving bfq, exactly so that
+you don't have to touch any tunable.
 
 Thanks,
-Clement
+Paolo
 
-From 6f7559407c1fcdb9b31c9493f0da79d614290e91 Mon Sep 17 00:00:00 2001
-From: Dinh Nguyen <dinguyen@kernel.org>
-Date: Wed, 27 Feb 2013 18:29:14 -0600
-Subject: [PATCH] ARM: socfpga: Turn on ARM errata for L2 cache
+> Bart.
+>=20
 
-Turn on these ARM and PL310 errata for SoCFPGA:
-
-ARM_ERRATA_754322
-ARM_ERRATA_764369
-ARM_ERRATA_775420
-
-PL310_ERRATA_588369
-PL310_ERRATA_727915
-PL310_ERRATA_753970
-PL310_ERRATA_769419
-
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
- arch/arm/mach-socfpga/Kconfig | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm/mach-socfpga/Kconfig b/arch/arm/mach-socfpga/Kconfig
-index 4adb901dd5eb..a04660918d71 100644
---- a/arch/arm/mach-socfpga/Kconfig
-+++ b/arch/arm/mach-socfpga/Kconfig
-@@ -11,6 +11,13 @@ menuconfig ARCH_SOCFPGA
-  select HAVE_ARM_TWD if SMP
-  select MFD_SYSCON
-  select PCI_DOMAINS if PCI
-+ select ARM_ERRATA_754322
-+ select ARM_ERRATA_764369 if SMP
-+ select ARM_ERRATA_775420
-+ select PL310_ERRATA_588369
-+ select PL310_ERRATA_727915
-+ select PL310_ERRATA_753970 if PL310
-+ select PL310_ERRATA_769419
-
- if ARCH_SOCFPGA
- config SOCFPGA_SUSPEND
