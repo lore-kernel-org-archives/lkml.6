@@ -2,415 +2,119 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3ADC64EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 326FDC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1566F21470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:51:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1566F21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
+	by mail.kernel.org (Postfix) with ESMTP id CDDA621470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:54:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C8xDXOh2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDDA621470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbeJDFlb (ORCPT
+        id S1726633AbeJDFof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 01:41:31 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:45233 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbeJDFla (ORCPT
+        Thu, 4 Oct 2018 01:44:35 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:32815 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725723AbeJDFof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 01:41:30 -0400
-Received: from localhost.localdomain ([78.238.229.36]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MTiHd-1gHQlL3mW5-00U4Bh; Thu, 04 Oct 2018 00:50:35 +0200
-Received: from localhost.localdomain ([78.238.229.36]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MTiHd-1gHQlL3mW5-00U4Bh; Thu, 04 Oct 2018 00:50:35 +0200
-From:   Laurent Vivier <laurent@vivier.eu>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <dima@arista.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        containers@lists.linux-foundation.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, Laurent Vivier <laurent@vivier.eu>
-Subject: [RFC v3 1/1] ns: add binfmt_misc to the user namespace
-Date:   Thu,  4 Oct 2018 00:50:22 +0200
-Message-Id: <20181003225022.32033-2-laurent@vivier.eu>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181003225022.32033-1-laurent@vivier.eu>
-References: <20181003225022.32033-1-laurent@vivier.eu>
-X-Provags-ID: V03:K1:74D4MS9TbwUav7cg6YfzWr753Kxb4njxowdt8QfG6jhdwG4u3Dp
- QH04VBtB/3oO/0Zzmq8B38NNp8T1EPg/Dengckg4LV9NqAVUyDJ5zqHYeWcsr4cz1zBuowx
- ZYAcF61U4XHb41V7tVZ2uWzFuJej6cICLoQRzYXN3MyAf7OwsNBfj2iyql3fa5SxoOWkd9S
- g4z794pJbrr4SjT/naijA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:0FKsgVqIkpw=:Ira64avNOoNIuJ8YfGqnmi
- EwcNMrz6ied8V3aFXTIOdfEG+U0rSaL7rJCeO2A9czaYScr1J6/WgPNcvPzUKahbiJ7XSeffY
- LsYKaIU4MV5NkQpaqrtVqiTlm4hUD+E/+OftLjQVEsxiksB0zfADz3AhoK8VlrQRGvl20DAWv
- Gf50Wuj4pILmr9NDs+fN+Y8f/eJmeuFjw/H7UAZaiEXuYj6uTU4FO+Cb0cjdaoS34pXut18ta
- +lq+1VgiCqI2TM9QBwu9boTr21VG9KQ8SvFzoMng5flcVb2gSLWMzXjMUs1+cwTWm9E5Sw3on
- 2o3CThwm2tSNWEslhyDy49tr6lnZ7tZoNYsbXREqqtk60XVYlL6SZSfQNrjyvSUvBhiftLwSn
- FJMbLXyNxqv6W9ZZb/ol0vP2o7IvUUH0NoHKo3hbsT5N1/Do78HKdk/JEToBj5MNOw1DJ2saz
- HXhT/Gy/6sP9g2ms6UnokAPePAKYFBlGWm490f75wPFSfasv1PYJdz1Nep+1+SKwYAXyGunBv
- 9kMQWiJ5BV95/24OYYA3kqrShqsXNcec4D9/rZiAC38bjAR4XAS7ceoZZp5kIXCGklCNNcWJn
- tyPLUA5XJYjyIgYEIxmqipC4uhg2Gn5WFEQIU6eyTQdFdIx72xGjVWgKegE+saMyrWL8SCmqz
- SouIl38dVqosem8amHs1NyHaCVTcdmFN381JqNsTeIz1RkmhIoQE0Ykxug5DSzGj0tbA=
+        Thu, 4 Oct 2018 01:44:35 -0400
+Received: by mail-pf1-f196.google.com with SMTP id d4-v6so2389635pfn.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 15:54:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4BxD2J15AFeCUnar9QdtFIQnEk+5lu73YcBVDvSmMLs=;
+        b=C8xDXOh2ZZjLAboE7IAvabXrBp4a6XD+lN8fGLk42wKzizRH6V3oWNgu8FnjFGuxef
+         wvmGUm7BnbrTE9UklxKaYRGt+TvWzC31UBq2ndFN/mWJJnX2laOcuvFYN5cb8cato6R5
+         aaB/1S4rZMMgyolY7aKeEb/l1YlSCIl85jmHJXSB5Rr9TQsxU9DI1V9I7D/5XrxEI3Vj
+         DQGnia4xvJsvNXBPgEr1Q+xsBwjpgyIsdvdjNlBApcstfzqafRIm6WW7RVtqMa24Er8M
+         Rnjyfy0YPPAVuKfEJbveVNUwEfkdQZ8oxL/QbfeJOXIHeqnl7mNZKnbi5n2P6TYyoNct
+         vTuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4BxD2J15AFeCUnar9QdtFIQnEk+5lu73YcBVDvSmMLs=;
+        b=WF5EOb1JTj7dLfcY/3xxO+3hCHIHxuZMBb/DwNVUP68Dg6IqUUcCP2Eyz+pRdr9Zc4
+         X22mxi+DLU1ko4qVj7flARZQT644FGTwPGRG4vzdz+CJSJgucB2ozz2Tib5Mg/+hjFg8
+         FWZ6EwsmI4MyiNB2PQCsANeI8tV+sg1HavnjU8xKjbXIskE0UW09e7Ue2I9A9hKgKXiO
+         uiFP/ZrtYwlH+Vj6nfpyam5Xe07NwuyJ8z7R3fGZX0w4I78s0Bz/ObDWpkOWwDcdWGGb
+         hCT4jmYWR7OyqdpI3onimBDayFIEO2FmdCo9IUtxo2RrgM0IWyCSI72ransYcIrdHUSJ
+         A9PQ==
+X-Gm-Message-State: ABuFfohN6i7/O35epX149iPid05oqauX3x3Wg+2mnxCJ1cC7PR8YCa0A
+        wXGEynEKeNgRKDCw/dlNSLNhAZCZ/ImWUq5NmAlL8w==
+X-Google-Smtp-Source: ACcGV63AKDdg8vjy4mOenOSX4yS5s86PAZpgQHLYc5lMc0l5vIWCmBMNljKd3Fwv1/fi1ApzN4dpmi61oLzWdzAcuh8=
+X-Received: by 2002:a63:1921:: with SMTP id z33-v6mr3262958pgl.302.1538607250055;
+ Wed, 03 Oct 2018 15:54:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180924195716.30848-1-natechancellor@gmail.com> <20181003223518.GA8700@ziepe.ca>
+In-Reply-To: <20181003223518.GA8700@ziepe.ca>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 3 Oct 2018 15:53:58 -0700
+Message-ID: <CAKwvOdnvXDtBAw_6_MSOEst3DBjbr8w6Pv6b4i=pC50s=gcq3Q@mail.gmail.com>
+Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
+To:     jgg@ziepe.ca
+Cc:     Nathan Chancellor <natechancellor@gmail.com>, dledford@redhat.com,
+        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows to have a different binfmt_misc configuration
-for each new user namespace. By default, the binfmt_misc configuration
-is the one of the host, but if the binfmt_misc filesystem is mounted
-in the new namespace a new empty binfmt instance is created and used
-in this namespace.
+On Wed, Oct 3, 2018 at 3:35 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Mon, Sep 24, 2018 at 12:57:16PM -0700, Nathan Chancellor wrote:
+> > Clang warns when one enumerated type is implicitly converted to another.
+> >
+> > drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
+> > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> > type 'enum ib_qp_create_flags' [-Wenum-conversion]
+> >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
+> >                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
+> >
+> > drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
+> > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> > type 'enum ib_qp_create_flags' [-Wenum-conversion]
+> >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
+> >                                                     ~ ^~~~~~~~~~~~~~~~~
+> >
+> > The type mlx4_ib_qp_flags explicitly provides supplemental values to the
+> > type ib_qp_create_flags. Make that clear to Clang by changing the
+> > create_flags type to u32.
+> >
+> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >  include/rdma/ib_verbs.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Applied to for-next, thanks
+>
+> BTW, how are you compiling with clang?
 
-For instance, using "unshare" we can start a chroot of an another
-architecture and configure the binfmt_misc interpreter without being root
-to run the binaries in this chroot.
+https://github.com/ClangBuiltLinux/linux/wiki/Steps-for-compiling-the-kernel-with-Clang
+try it out, let us know bugs you find here:
+https://github.com/ClangBuiltLinux/linux/issues
 
-Signed-off-by: Laurent Vivier <laurent@vivier.eu>
----
- fs/binfmt_misc.c               | 85 +++++++++++++++++++++++-----------
- include/linux/user_namespace.h | 15 ++++++
- kernel/user.c                  | 14 ++++++
- kernel/user_namespace.c        |  9 ++++
- 4 files changed, 95 insertions(+), 28 deletions(-)
+Still looking into the case you pointed out earlier.  I suspect the
+signedness of enums was undefined in c90, then defined as
+implementation specific in c99 (though I'm still researching that book
+report).  Thanks for your insights!
 
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index aa4a7a23ff99..78780bc87506 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -38,9 +38,6 @@ enum {
- 	VERBOSE_STATUS = 1 /* make it zero to save 400 bytes kernel memory */
- };
- 
--static LIST_HEAD(entries);
--static int enabled = 1;
--
- enum {Enabled, Magic};
- #define MISC_FMT_PRESERVE_ARGV0 (1 << 31)
- #define MISC_FMT_OPEN_BINARY (1 << 30)
-@@ -60,10 +57,7 @@ typedef struct {
- 	struct file *interp_file;
- } Node;
- 
--static DEFINE_RWLOCK(entries_lock);
- static struct file_system_type bm_fs_type;
--static struct vfsmount *bm_mnt;
--static int entry_count;
- 
- /*
-  * Max length of the register string.  Determined by:
-@@ -85,13 +79,13 @@ static int entry_count;
-  * if we do, return the node, else NULL
-  * locking is done in load_misc_binary
-  */
--static Node *check_file(struct linux_binprm *bprm)
-+static Node *check_file(struct user_namespace *ns, struct linux_binprm *bprm)
- {
- 	char *p = strrchr(bprm->interp, '.');
- 	struct list_head *l;
- 
- 	/* Walk all the registered handlers. */
--	list_for_each(l, &entries) {
-+	list_for_each(l, &ns->binfmt_ns->entries) {
- 		Node *e = list_entry(l, Node, list);
- 		char *s;
- 		int j;
-@@ -133,17 +127,18 @@ static int load_misc_binary(struct linux_binprm *bprm)
- 	struct file *interp_file = NULL;
- 	int retval;
- 	int fd_binary = -1;
-+	struct user_namespace *ns = current_user_ns();
- 
- 	retval = -ENOEXEC;
--	if (!enabled)
-+	if (!ns->binfmt_ns->enabled)
- 		return retval;
- 
- 	/* to keep locking time low, we copy the interpreter string */
--	read_lock(&entries_lock);
--	fmt = check_file(bprm);
-+	read_lock(&ns->binfmt_ns->entries_lock);
-+	fmt = check_file(ns ,bprm);
- 	if (fmt)
- 		dget(fmt->dentry);
--	read_unlock(&entries_lock);
-+	read_unlock(&ns->binfmt_ns->entries_lock);
- 	if (!fmt)
- 		return retval;
- 
-@@ -609,19 +604,19 @@ static void bm_evict_inode(struct inode *inode)
- 	kfree(e);
- }
- 
--static void kill_node(Node *e)
-+static void kill_node(struct user_namespace *ns, Node *e)
- {
- 	struct dentry *dentry;
- 
--	write_lock(&entries_lock);
-+	write_lock(&ns->binfmt_ns->entries_lock);
- 	list_del_init(&e->list);
--	write_unlock(&entries_lock);
-+	write_unlock(&ns->binfmt_ns->entries_lock);
- 
- 	dentry = e->dentry;
- 	drop_nlink(d_inode(dentry));
- 	d_drop(dentry);
- 	dput(dentry);
--	simple_release_fs(&bm_mnt, &entry_count);
-+	simple_release_fs(&ns->binfmt_ns->bm_mnt, &ns->binfmt_ns->entry_count);
- }
- 
- /* /<entry> */
-@@ -651,6 +646,7 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
- 	struct dentry *root;
- 	Node *e = file_inode(file)->i_private;
- 	int res = parse_command(buffer, count);
-+	struct user_namespace *ns = file->f_path.dentry->d_sb->s_user_ns;
- 
- 	switch (res) {
- 	case 1:
-@@ -667,7 +663,7 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
- 		inode_lock(d_inode(root));
- 
- 		if (!list_empty(&e->list))
--			kill_node(e);
-+			kill_node(ns, e);
- 
- 		inode_unlock(d_inode(root));
- 		break;
-@@ -693,6 +689,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 	struct inode *inode;
- 	struct super_block *sb = file_inode(file)->i_sb;
- 	struct dentry *root = sb->s_root, *dentry;
-+	struct user_namespace *ns = file->f_path.dentry->d_sb->s_user_ns;
- 	int err = 0;
- 
- 	e = create_entry(buffer, count);
-@@ -716,7 +713,8 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 	if (!inode)
- 		goto out2;
- 
--	err = simple_pin_fs(&bm_fs_type, &bm_mnt, &entry_count);
-+	err = simple_pin_fs(&bm_fs_type, &ns->binfmt_ns->bm_mnt,
-+			    &ns->binfmt_ns->entry_count);
- 	if (err) {
- 		iput(inode);
- 		inode = NULL;
-@@ -725,12 +723,16 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 
- 	if (e->flags & MISC_FMT_OPEN_FILE) {
- 		struct file *f;
-+		const struct cred *old_cred;
- 
-+		old_cred = override_creds(file->f_cred);
- 		f = open_exec(e->interpreter);
-+		revert_creds(old_cred);
- 		if (IS_ERR(f)) {
- 			err = PTR_ERR(f);
- 			pr_notice("register: failed to install interpreter file %s\n", e->interpreter);
--			simple_release_fs(&bm_mnt, &entry_count);
-+			simple_release_fs(&ns->binfmt_ns->bm_mnt,
-+					  &ns->binfmt_ns->entry_count);
- 			iput(inode);
- 			inode = NULL;
- 			goto out2;
-@@ -743,9 +745,9 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 	inode->i_fop = &bm_entry_operations;
- 
- 	d_instantiate(dentry, inode);
--	write_lock(&entries_lock);
--	list_add(&e->list, &entries);
--	write_unlock(&entries_lock);
-+	write_lock(&ns->binfmt_ns->entries_lock);
-+	list_add(&e->list, &ns->binfmt_ns->entries);
-+	write_unlock(&ns->binfmt_ns->entries_lock);
- 
- 	err = 0;
- out2:
-@@ -770,7 +772,8 @@ static const struct file_operations bm_register_operations = {
- static ssize_t
- bm_status_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
- {
--	char *s = enabled ? "enabled\n" : "disabled\n";
-+	struct user_namespace *ns = file->f_path.dentry->d_sb->s_user_ns;
-+	char *s = ns->binfmt_ns->enabled ? "enabled\n" : "disabled\n";
- 
- 	return simple_read_from_buffer(buf, nbytes, ppos, s, strlen(s));
- }
-@@ -778,25 +781,27 @@ bm_status_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
- static ssize_t bm_status_write(struct file *file, const char __user *buffer,
- 		size_t count, loff_t *ppos)
- {
-+	struct user_namespace *ns = file->f_path.dentry->d_sb->s_user_ns;
- 	int res = parse_command(buffer, count);
- 	struct dentry *root;
- 
- 	switch (res) {
- 	case 1:
- 		/* Disable all handlers. */
--		enabled = 0;
-+		ns->binfmt_ns->enabled = 0;
- 		break;
- 	case 2:
- 		/* Enable all handlers. */
--		enabled = 1;
-+		ns->binfmt_ns->enabled = 1;
- 		break;
- 	case 3:
- 		/* Delete all handlers. */
- 		root = file_inode(file)->i_sb->s_root;
- 		inode_lock(d_inode(root));
- 
--		while (!list_empty(&entries))
--			kill_node(list_first_entry(&entries, Node, list));
-+		while (!list_empty(&ns->binfmt_ns->entries))
-+			kill_node(ns, list_first_entry(&ns->binfmt_ns->entries,
-+						       Node, list));
- 
- 		inode_unlock(d_inode(root));
- 		break;
-@@ -838,7 +843,30 @@ static int bm_fill_super(struct super_block *sb, void *data, int silent)
- static struct dentry *bm_mount(struct file_system_type *fs_type,
- 	int flags, const char *dev_name, void *data)
- {
--	return mount_single(fs_type, flags, data, bm_fill_super);
-+	struct user_namespace *ns = current_user_ns();
-+
-+	/* create a new binfmt namespace
-+         * if we are not in the first user namespace
-+         * but the binfmt namespace is the first one
-+         */
-+	if (ns != &init_user_ns && ns->binfmt_ns == &init_binfmt_ns) {
-+		struct binfmt_namespace *binfmt_ns;
-+
-+		binfmt_ns = kmalloc(sizeof(struct binfmt_namespace),
-+                                    GFP_KERNEL);
-+		if (binfmt_ns == NULL) {
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		INIT_LIST_HEAD(&binfmt_ns->entries);
-+		binfmt_ns->enabled = 1;
-+		rwlock_init(&binfmt_ns->entries_lock);
-+		binfmt_ns->bm_mnt = NULL;
-+		binfmt_ns->entry_count = 0;
-+		ns->binfmt_ns = binfmt_ns;
-+	}
-+
-+	return mount_ns(fs_type, flags, data, ns, ns,
-+			bm_fill_super);
- }
- 
- static struct linux_binfmt misc_format = {
-@@ -849,6 +877,7 @@ static struct linux_binfmt misc_format = {
- static struct file_system_type bm_fs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "binfmt_misc",
-+	.fs_flags	= FS_USERNS_MOUNT,
- 	.mount		= bm_mount,
- 	.kill_sb	= kill_litter_super,
- };
-diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index d6b74b91096b..319141da5315 100644
---- a/include/linux/user_namespace.h
-+++ b/include/linux/user_namespace.h
-@@ -52,6 +52,18 @@ enum ucount_type {
- 	UCOUNT_COUNTS,
- };
- 
-+#if IS_ENABLED(CONFIG_BINFMT_MISC)
-+struct binfmt_namespace {
-+	struct list_head entries;
-+	rwlock_t entries_lock;
-+	int enabled;
-+	struct vfsmount *bm_mnt;
-+	int entry_count;
-+} __randomize_layout;
-+
-+extern struct binfmt_namespace init_binfmt_ns;
-+#endif
-+
- struct user_namespace {
- 	struct uid_gid_map	uid_map;
- 	struct uid_gid_map	gid_map;
-@@ -76,6 +88,9 @@ struct user_namespace {
- #endif
- 	struct ucounts		*ucounts;
- 	int ucount_max[UCOUNT_COUNTS];
-+#if IS_ENABLED(CONFIG_BINFMT_MISC)
-+	struct binfmt_namespace *binfmt_ns;
-+#endif
- } __randomize_layout;
- 
- struct ucounts {
-diff --git a/kernel/user.c b/kernel/user.c
-index 0df9b1640b2a..220ab2053d44 100644
---- a/kernel/user.c
-+++ b/kernel/user.c
-@@ -19,6 +19,17 @@
- #include <linux/user_namespace.h>
- #include <linux/proc_ns.h>
- 
-+#if IS_ENABLED(CONFIG_BINFMT_MISC)
-+struct binfmt_namespace init_binfmt_ns = {
-+	.entries = LIST_HEAD_INIT(init_binfmt_ns.entries),
-+	.enabled = 1,
-+	.entries_lock = __RW_LOCK_UNLOCKED(init_binfmt_ns.entries_lock),
-+	.bm_mnt = NULL,
-+	.entry_count = 0,
-+};
-+EXPORT_SYMBOL_GPL(init_binfmt_ns);
-+#endif
-+
- /*
-  * userns count is 1 for root user, 1 for init_uts_ns,
-  * and 1 for... ?
-@@ -66,6 +77,9 @@ struct user_namespace init_user_ns = {
- 	.persistent_keyring_register_sem =
- 	__RWSEM_INITIALIZER(init_user_ns.persistent_keyring_register_sem),
- #endif
-+#if IS_ENABLED(CONFIG_BINFMT_MISC)
-+	.binfmt_ns = &init_binfmt_ns,
-+#endif
- };
- EXPORT_SYMBOL_GPL(init_user_ns);
- 
-diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index e5222b5fb4fe..dec0ab4a729a 100644
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -140,6 +140,10 @@ int create_user_ns(struct cred *new)
- 	if (!setup_userns_sysctls(ns))
- 		goto fail_keyring;
- 
-+#if IS_ENABLED(CONFIG_BINFMT_MISC)
-+	ns->binfmt_ns = &init_binfmt_ns;
-+#endif
-+
- 	set_cred_user_ns(new, ns);
- 	return 0;
- fail_keyring:
-@@ -195,6 +199,11 @@ static void free_user_ns(struct work_struct *work)
- 			kfree(ns->projid_map.forward);
- 			kfree(ns->projid_map.reverse);
- 		}
-+#if IS_ENABLED(CONFIG_BINFMT_MISC)
-+		if (ns->binfmt_ns != &init_binfmt_ns) {
-+			kfree(ns->binfmt_ns);
-+		}
-+#endif
- 		retire_userns_sysctls(ns);
- #ifdef CONFIG_PERSISTENT_KEYRINGS
- 		key_put(ns->persistent_keyring_register);
+>
+> Jason
+
+
+
 -- 
-2.17.1
-
+Thanks,
+~Nick Desaulniers
