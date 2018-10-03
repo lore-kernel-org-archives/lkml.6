@@ -2,88 +2,125 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B411C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C45C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCD992089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:07:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCD992089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 790F621477
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:17:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uvgLNLYR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 790F621477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbeJCOya (ORCPT
+        id S1727380AbeJCPET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 10:54:30 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:33274 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbeJCOy3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:54:29 -0400
-Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g7cBW-0000Go-3W; Wed, 03 Oct 2018 10:07:06 +0200
-Date:   Wed, 3 Oct 2018 10:07:05 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-cc:     Peter Zijlstra <peterz@infradead.org>, bigeasy@linutronix.de,
+        Wed, 3 Oct 2018 11:04:19 -0400
+Received: from ozlabs.org ([203.11.71.1]:46643 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727001AbeJCPET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 11:04:19 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42Q84m3WvSz9sBh;
+        Wed,  3 Oct 2018 18:16:56 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538554617;
+        bh=Q/iMz4BH2INBK0dmZUFMo3l1xkwsjEJxPEfESFMb5mA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=uvgLNLYRwd9kXDCThfr7ecfzJplm8aECkCD6FSqJOmhoDdDEqBiwUraSwplAgnbfv
+         00gREYX88r4EH9N4latSWo7Cljl+BatZaJoAid9Cn5hAC6e7l2yD58tFid84UQx4DS
+         fYiS7pfkIMDwgXQ4F4J9Hb2zz3baUVKbYmxNsLmYi0MV/oXoWVXUujuog7vaXFFtxK
+         RHweH8Ib3m+l1y8enOLAiF/TKkGvLS8yjdgIacMYKhVUtU5W1cEmIul4MHVmO3ARxb
+         +AnjXJlIHLiREMQPHqf339hlm0K22DWtR+cfD//zqIGUcUyJTSF4d+qk5WpwAyG90W
+         /z3bhH4IYwSoQ==
+Date:   Wed, 3 Oct 2018 18:16:50 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        daniel.wagner@siemens.com, Will Deacon <will.deacon@arm.com>,
-        x86@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, boqun.feng@gmail.com,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>
-Subject: Re: [Problem] Cache line starvation
-In-Reply-To: <CAHkRjk4Vvv5rc+habecu2xPiFGZ37onRzy1kCnFcBH2115U8jQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1810031005210.1435@nanos.tec.linutronix.de>
-References: <20180921120226.6xjgr4oiho22ex75@linutronix.de> <20180921122058.GB24124@hirez.programming.kicks-ass.net> <CAHkRjk4Vvv5rc+habecu2xPiFGZ37onRzy1kCnFcBH2115U8jQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Chao Yu <yuchao0@huawei.com>
+Subject: linux-next: manual merge of the xarray tree with the f2fs tree
+Message-ID: <20181003181638.54613336@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/OH7K2l5jMLWmlJ/r.Kys7JU"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Oct 2018, Catalin Marinas wrote:
+--Sig_/OH7K2l5jMLWmlJ/r.Kys7JU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri, 21 Sep 2018 at 13:22, Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Fri, Sep 21, 2018 at 02:02:26PM +0200, Sebastian Andrzej Siewior wrote:
-> > > We reproducibly observe cache line starvation on a Core2Duo E6850 (2
-> > > cores), a i5-6400 SKL (4 cores) and on a NXP LS2044A ARM Cortex-A72 (4
-> > > cores).
-> > >
-> > > The problem can be triggered with a v4.9-RT kernel by starting
-> >
-> > > Daniel reported that disabling ticket locks on 4.4 makes the problem go
-> > > away, but he hasn't run a long time test yet and as we saw with 4.14 it can
-> > > take quite a while.
-> >
-> > On 4.4 and 4.9 ARM64 still uses ticket locks. So I'm very interested to
-> > know if the ticket locks on x86 really fix or just make it harder.
-> >
-> > I've been looking at qspinlock in the light of this and there is indeed
-> > room for improvement. The ticket lock certainly is much simpler.
-> 
-> FWIW, in the qspinlock TLA+ model [1], if I replace the
-> atomic_fetch_or() model with a try_cmpxchg loop, it violates the
-> liveness properties with only 2 CPUs as one keeps locking/unlocking,
-> hence changing the lock value, while the other repeatedly fails the
-> cmpxchg. Your latest qspinlock patches seem to address this (couldn't
-> get it to fail but the model is only sequentially consistent). Not
-> sure that's what Sebastian is seeing but without your proposed
-> qspinlock changes, ticket spinlocks may be a better bet for RT.
+Hi all,
 
-Except that the ARM64 ticket locks are not preventing the starvation
-issue. Neither do the qrlocks on ARM64 on later kernels.
+Today's linux-next merge of the xarray tree got a conflict in:
 
-Thanks,
+  fs/f2fs/data.c
 
-	tglx
+between commit:
+
+  bab475c5414e ("Revert: "f2fs: check last page index in cached bio to deci=
+de submission"")
+
+from the f2fs tree and commit:
+
+  dfe989c12c50 ("pagevec: Use xa_mark_t")
+
+from the xarray tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/f2fs/data.c
+index 9ef6f1f01eda,6962491172a5..000000000000
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@@ -2029,10 -2000,10 +2029,10 @@@ static int f2fs_write_cache_pages(struc
+  	pgoff_t index;
+  	pgoff_t end;		/* Inclusive */
+  	pgoff_t done_index;
+ -	pgoff_t last_idx =3D ULONG_MAX;
+  	int cycled;
+  	int range_whole =3D 0;
+- 	int tag;
++ 	xa_mark_t tag;
+ +	int nwritten =3D 0;
+ =20
+  	pagevec_init(&pvec);
+ =20
+
+--Sig_/OH7K2l5jMLWmlJ/r.Kys7JU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu0evIACgkQAVBC80lX
+0GzCPggAjvc2pN9Bj45/oKQWJhtX9Ox/fN33t8gmsNHtVP+fH4BocR+pxvQ3FF11
+qr5oHK/MRjPajb1D5fkJ1ZN/mVdN1GFQe+/rQodiUkxW5Elv88iozHxF9lTNpewk
+0dwF7eumAhAGuUQJduYcHxR9zFV6ygFZXoo/8mSzgQb/qwPu7fbkcZrmYSwW4AAP
+rkpE9atgAeFnq4O0tyk3lbeczLOwWtRgt14ngNO8m3smGK/Tb76/XdyMrcWavJ1R
+y80HOzmTvhddcjAWISkHUXu7QpoebJ9XNeb9m+OI2pmGgBVlMgA50ntEnlLhXoZa
+scYIXhDI9c6gf0U7TeRehPUNxZbjmA==
+=dkCD
+-----END PGP SIGNATURE-----
+
+--Sig_/OH7K2l5jMLWmlJ/r.Kys7JU--
