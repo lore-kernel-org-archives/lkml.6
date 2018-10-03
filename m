@@ -5,39 +5,42 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF4FC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC72C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D58620652
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:43:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D58620652
+	by mail.kernel.org (Postfix) with ESMTP id 5E3D0213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:45:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3D0213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbeJDCdm (ORCPT
+        id S1727206AbeJDCfJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 22:33:42 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:34627 "EHLO
+        Wed, 3 Oct 2018 22:35:09 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34649 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727283AbeJDCdm (ORCPT
+        with ESMTP id S1726971AbeJDCfJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 22:33:42 -0400
+        Wed, 3 Oct 2018 22:35:09 -0400
 Received: from tmo-108-185.customers.d1-online.com ([80.187.108.185] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1g7n3h-00047x-2w; Wed, 03 Oct 2018 21:43:45 +0200
-Date:   Wed, 3 Oct 2018 21:43:39 +0200 (CEST)
+        id 1g7n4x-0004BX-1I; Wed, 03 Oct 2018 21:45:03 +0200
+Date:   Wed, 3 Oct 2018 21:45:01 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Reinette Chatre <reinette.chatre@intel.com>
-cc:     fenghua.yu@intel.com, tony.luck@intel.com, jithu.joseph@intel.com,
-        gavin.hindman@intel.com, dave.hansen@intel.com, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] x86/intel_rdt: CBM overlap should also check for
- overlap with CDP peer
-In-Reply-To: <6fc60e52-8f93-6135-78c0-254676c0c375@intel.com>
-Message-ID: <alpine.DEB.2.21.1810032138290.27796@nanos.tec.linutronix.de>
-References: <cover.1537987801.git.reinette.chatre@intel.com> <262e12b66c238517c4766190dd493d937825f563.1537987801.git.reinette.chatre@intel.com> <alpine.DEB.2.21.1810030848580.1435@nanos.tec.linutronix.de> <6fc60e52-8f93-6135-78c0-254676c0c375@intel.com>
+cc:     Peter Zijlstra <peterz@infradead.org>, fenghua.yu@intel.com,
+        tony.luck@intel.com, mingo@redhat.com, acme@kernel.org,
+        gavin.hindman@intel.com, jithu.joseph@intel.com,
+        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V5 0/6] perf and x86/intel_rdt: Fix lack of coordination
+ with perf
+In-Reply-To: <0497d8a4-2dc8-3dca-28bd-58c5f6489218@intel.com>
+Message-ID: <alpine.DEB.2.21.1810032144120.27796@nanos.tec.linutronix.de>
+References: <cover.1537377064.git.reinette.chatre@intel.com> <20180920141150.GY24124@hirez.programming.kicks-ass.net> <77383a1e-f343-7529-24cf-874f0999507d@intel.com> <alpine.DEB.2.21.1809272123440.8118@nanos.tec.linutronix.de> <20180928065830.GE3439@hirez.programming.kicks-ass.net>
+ <42c2b375-dbb9-11a3-8e2f-bec744e73b10@intel.com> <alpine.DEB.2.21.1809291954310.1432@nanos.tec.linutronix.de> <0497d8a4-2dc8-3dca-28bd-58c5f6489218@intel.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -49,86 +52,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reinette,
-
 On Wed, 3 Oct 2018, Reinette Chatre wrote:
-> On 10/3/2018 12:02 AM, Thomas Gleixner wrote:
-> >> +{
-> >> +	struct rdt_resource *r_cdp;
-> >> +	struct rdt_domain *d_cdp;
-> >> +	bool ret;
-> >> +
-> >> +	ret = _rdtgroup_cbm_overlaps(r, d, _cbm, closid, exclusive);
-> >> +	if (ret)
-> >> +		return ret;
+> On 9/29/2018 10:56 AM, Thomas Gleixner wrote:
+> > Reinette,
 > > 
-> >   	if (__rdtgroup_cbm_overlaps(r, d, _cbm, closid, exclusive))
-> > 		return true;
+> > On Sat, 29 Sep 2018, Reinette Chatre wrote:
+> >> I interpreted Thomas and Peter's responses to mean that there are no
+> >> objections for this to be included in v4.19 as a fix.
+> >>
+> >> If I understand the tip branches correctly the core patch seems to be
+> >> headed to v4.19 while the rest (excluding the final patch
+> >> "x86/intel_rdt: Re-enable pseudo-lock measurements") are headed to v4.20.
+> >>
+> >> Have you decided against including this into v4.19 or did I
+> >> misunderstand the responses and/or branches?
 > > 
-> >> +
-> >> +	if (rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp) == 0)
-> >> +		return _rdtgroup_cbm_overlaps(r_cdp, d_cdp, _cbm,
-> >> +					      closid, exclusive);
+> > I did not decide anything yet. It's not going into -rc6 as it's not yet
+> > through next and the other standard testing.
 > > 
-> > 	if (rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp) < 0)
-> > 		return false;
+> > I'm also looking at the other set of RDT fixes, which obviously want to go
+> > as well. So not sure how to deal with all of that.
 > > 
-> > 	return __rdtgroup_cbm_overlaps(r_cpd, d_cdp, _cbm, closid, exclusive);
-> > 
-> > Makes the whole thing more obvious.
 > 
-> I think a different change is needed to support the request from your
-> review of the first patch to propagate that unthinkable error where only
-> one of the CDP peers could have an rdt_domain associated with it.
-> 
-> In the above that error in question from rdt_cdp_peer_get() will be lost.
-> 
-> I could do the following in support of propagating that error (note that
-> in support of the code below __rdtgroup_cbm_overlaps() also changes to
-> return int instead of bool):
-> 
-> int rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
->                           u32 cbm, int closid, bool exclusive)
-> {
->         struct rdt_resource *r_cdp;
->         struct rdt_domain *d_cdp;
->         int ret;
-> 
->         if (__rdtgroup_cbm_overlaps(r, d, cbm, closid, exclusive))
->                 return 1;
-> 
->         ret = rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp);
->         if (ret == -ENOENT) {
->                 return 0;
->         } else if (ret == -EINVAL) {
->                 rdt_last_cmd_puts("Error finding CDP peer\n");
->                 return ret;
->         } else {
->                 return  __rdtgroup_cbm_overlaps(r_cdp, d_cdp, cbm,
->                                                 closid, exclusive);
->         }
-> 
->         return -EINVAL;
-> }
-> 
-> With the above change in rdtgroup_cbm_overlaps() the call sites then
-> change to for example:
-> 
->         ret = rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, true);
->         if (ret < 0) {
->                 /* last_cmd_status already populated with error */
->                 return -EINVAL;
->         } else if (ret == 1) {
->                 rdt_last_cmd_puts("overlaps with exclusive group\n");
->                 return -EINVAL;
->         }
->         /* fall through when no overlap detected */
-> 
-> Would this be acceptable?
+> When you do deal with this series could you please also include the
+> final patch ("x86/intel_rdt: Re-enable pseudo-lock measurements")? I
+> noticed that patches 1/6 to 5/6 have been merged into x86/cache in
+> tip.git and then some other work on top of it. It is not clear to me why
+> 6/6 was omitted and this fix does require it.
 
-We really have to think about that whether it's worth it. Looking at the
-resulting code I doubt it. Then I'd rather prefer the warnon and the
-simpler code. But either way works for me.
+Hmm. That was not intentional. /me goes to rumage around.
 
 Thanks,
 
