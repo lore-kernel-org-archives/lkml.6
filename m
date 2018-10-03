@@ -8,70 +8,71 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF762C64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FCCC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8576C2098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 299402098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:40:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VhDoom+T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8576C2098A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p2UnFVCz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 299402098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbeJCM0n (ORCPT
+        id S1727201AbeJCM0s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 08:26:43 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41518 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbeJCM0l (ORCPT
+        Wed, 3 Oct 2018 08:26:48 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38150 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726950AbeJCM0r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 08:26:41 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 23-v6so1016596pgc.8;
-        Tue, 02 Oct 2018 22:39:52 -0700 (PDT)
+        Wed, 3 Oct 2018 08:26:47 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r77-v6so1026692pgr.5;
+        Tue, 02 Oct 2018 22:39:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=5L6Z4aW4+1t2LE/MND/iINCiEdG9eaFMJEfCbvDLBaQ=;
-        b=VhDoom+TY1K77b9/Qh+vlNgbAUyKBqHN74GHpYz7GAFqydYOaKD9cc7x9P2HLvJgVq
-         vHPbLvZCxfNFff+tmizReKcLb+vIE/2LKf6vsRzY/a3SJl26c0+QaCvImgSslRE6kZdc
-         Tgc72eC+38Sojg0tfUa27CwNHqLk9zxRG4uuR3MblN39ogHvq/s0vKSTyvMLQG47+LbV
-         4mzfWukTnRP+eQq52vnoeeD85IDsBnPmVrpgsJWWC8LjyUT8DGtb7qPbTz2bOKUCPVXr
-         1pdeK9VDZKq0f7eKuEHQWgoJEM9iNmZSNqYan2t6PdpV5MJw1h3ax+jhcLk+dI41LWWM
-         Kc+w==
+        bh=DByBoSbdwmE2yss2OueEXXtxDWCriUE65qgmrge67jE=;
+        b=p2UnFVCzbQT2TNU+gMIaZYkWA1b+75YEfWd5x6xV56vwS9fh9ijPJxMFvHjksTcXUX
+         v9M0AYGcKsGGZASFKasVcmxYG7cajrjYkJEU/dbXrFAfCnR0PlII4WZusTIu8ZbibmUq
+         bul/rI3vKZOaxk2BwHRDBiOrqtHOEKJOMyXy+p/jzDzl78hz9hl6QjAgsohvI6Qt+Okd
+         76IJYIPRezW0jhBZGP64iG7bkCCpQbdw7ymO52UAaaF+vyDRmbOL4uOW65huT75SCz8J
+         HAe8+dzsq58sPyZRmX3biERy2vWlTi/jUQhbNFjhMuvKpltCtiho0l2d8ku+34zqxWyv
+         wJCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=5L6Z4aW4+1t2LE/MND/iINCiEdG9eaFMJEfCbvDLBaQ=;
-        b=B6X3LYftFRCd/wsNosyEWpVClcxd3WM46I1c0ueh9vbq260otCXplXYxCTUyaE9m7y
-         H464a/Z5CCU1dYn3o2UJUCre1ek/NasTYUynDsLMqnFnwoNF8+ryr8VHVdMp2kieNghP
-         3i0M47jP0EiHPDbicwmG1VeyfGYNRQEYAnj8xLnzweUN3XHyoAZGbIa1i6buP9jvGlDe
-         YnJaPaC7jId34ZjlDg7nBjXhK5Sm2kK7uTJbY9I1nMFu7tJbQufHRvvdkYHiIoTlUclg
-         ALrH2QFTU6htOkW8kU87SYe15fp2j1hXTeEi8DHceUWkuu7W/m7ToYr2DBUBMjJwU32x
-         xEwQ==
-X-Gm-Message-State: ABuFfogpBydKwkrz4NU7yrlv8DrOgfJlndU2R3CwEG/jmlLxtdraGbyA
-        t22chc1FoSFky6Cx4qiPB+8=
-X-Google-Smtp-Source: ACcGV60WvxLiMsH35V+1rzrINgt5FwS72CIvI4rivm2nYxtxFcPmuEu2cpUg3gQ2PO8XYuwUo4vCOA==
-X-Received: by 2002:aa7:8598:: with SMTP id w24-v6mr3587383pfn.77.1538545192026;
-        Tue, 02 Oct 2018 22:39:52 -0700 (PDT)
+        bh=DByBoSbdwmE2yss2OueEXXtxDWCriUE65qgmrge67jE=;
+        b=Zhxg7lbA1JhCPGy/3z3lyElMwss/E3Cjt8EowlLHqi6uyiSE+SuTjkz7WF+cP+aFRV
+         6lv2f74kVBq05lg+dO2dZ55FmABXSpemunYFVum62Z7mUwJG+Sgcwi4Hc2vAKZOokL/R
+         PcQyKdAEi7W9f3fSaJIXUcJ4KH6cm6+VfsPb60UcFAVbj/Y7+RWxePZ59iaGOCNzURqH
+         2u9rQY9yvdtC6Y2iehbaqERoUmQHxNff1K6SxKqBcXdVOYG95kcmV+BJTeoIXI2DwO5T
+         BplrVFqVk7cquDNt6DTVtCFvuPNu+gtraqGmu3UD5GTiEybYHGshIzVtpuxqbEWnvjbd
+         znRw==
+X-Gm-Message-State: ABuFfoiegRVZkYHoOGxKD4p9CfRlOn4cQ1eT5fwtQ4BdDGcKWDgBgN71
+        TNbH7t8Nve+ooLConnFZrfY=
+X-Google-Smtp-Source: ACcGV62qhWd8CWd2rNe2KOrFqieNvJK/UugJU2tRg5go6hCX1BAuuIw81wMRzwXQakLxFTpaDsNHGA==
+X-Received: by 2002:a63:cc04:: with SMTP id x4-v6mr16962151pgf.33.1538545197507;
+        Tue, 02 Oct 2018 22:39:57 -0700 (PDT)
 Received: from E570.localdomain (c-24-21-68-121.hsd1.or.comcast.net. [24.21.68.121])
-        by smtp.gmail.com with ESMTPSA id w23-v6sm363481pgi.18.2018.10.02.22.39.51
+        by smtp.gmail.com with ESMTPSA id k83-v6sm583290pfj.63.2018.10.02.22.39.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Oct 2018 22:39:51 -0700 (PDT)
+        Tue, 02 Oct 2018 22:39:57 -0700 (PDT)
 Received: by E570.localdomain (Postfix, from userid 1000)
-        id BAF131643D0; Tue,  2 Oct 2018 22:39:50 -0700 (PDT)
+        id 42B8F1643D0; Tue,  2 Oct 2018 22:39:56 -0700 (PDT)
 From:   Lance Roy <ldr709@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Lance Roy <ldr709@gmail.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Subject: [PATCH 04/16] i40e: Replace spin_is_locked() with lockdep
-Date:   Tue,  2 Oct 2018 22:38:50 -0700
-Message-Id: <20181003053902.6910-5-ldr709@gmail.com>
+        Solarflare linux maintainers <linux-net-drivers@solarflare.com>,
+        Edward Cree <ecree@solarflare.com>,
+        Bert Kenward <bkenward@solarflare.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: [PATCH 06/16] sfc: Replace spin_is_locked() with lockdep
+Date:   Tue,  2 Oct 2018 22:38:52 -0700
+Message-Id: <20181003053902.6910-7-ldr709@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181003053902.6910-1-ldr709@gmail.com>
 References: <20181003053902.6910-1-ldr709@gmail.com>
@@ -88,28 +89,28 @@ since it won't get confused when someone else holds the lock. This is
 also a step towards possibly removing spin_is_locked().
 
 Signed-off-by: Lance Roy <ldr709@gmail.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Solarflare linux maintainers <linux-net-drivers@solarflare.com>
+Cc: Edward Cree <ecree@solarflare.com>
+Cc: Bert Kenward <bkenward@solarflare.com>
 Cc: "David S. Miller" <davem@davemloft.net>
-Cc: intel-wired-lan@lists.osuosl.org
 Cc: <netdev@vger.kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ethernet/sfc/efx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index ac685ad4d877..8ce3471723d3 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -1489,8 +1489,7 @@ int i40e_del_mac_filter(struct i40e_vsi *vsi, const u8 *macaddr)
- 	bool found = false;
- 	int bkt;
+diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
+index 330233286e78..f40c3d5ca413 100644
+--- a/drivers/net/ethernet/sfc/efx.c
++++ b/drivers/net/ethernet/sfc/efx.c
+@@ -3193,7 +3193,7 @@ struct hlist_head *efx_rps_hash_bucket(struct efx_nic *efx,
+ {
+ 	u32 hash = efx_filter_spec_hash(spec);
  
--	WARN(!spin_is_locked(&vsi->mac_filter_hash_lock),
--	     "Missing mac_filter_hash_lock\n");
-+	lockdep_assert_held(&vsi->mac_filter_hash_lock);
- 	hash_for_each_safe(vsi->mac_filter_hash, bkt, h, f, hlist) {
- 		if (ether_addr_equal(macaddr, f->macaddr)) {
- 			__i40e_del_filter(vsi, f);
+-	WARN_ON(!spin_is_locked(&efx->rps_hash_lock));
++	lockdep_assert_held(&efx->rps_hash_lock);
+ 	if (!efx->rps_hash_table)
+ 		return NULL;
+ 	return &efx->rps_hash_table[hash % EFX_ARFS_HASH_TABLE_SIZE];
 -- 
 2.19.0
 
