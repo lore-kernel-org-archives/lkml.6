@@ -2,109 +2,103 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45454C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6D9C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0281B2098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 491032098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:53:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSQTRNZ1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0281B2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HuWqAz0N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 491032098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeJDAmt (ORCPT
+        id S1727318AbeJDAnP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 20:42:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726950AbeJDAmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 20:42:49 -0400
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9978121470;
-        Wed,  3 Oct 2018 17:53:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538589203;
-        bh=FEg7ncSz5Ut03a9s8qYXoe6ZsonNc47/KqbRJYnUCY0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oSQTRNZ1fYB3pOLQjcUE3dFylWIoIv8BkA+IpNsJG8+gd/NNiDEC5JbfzwH5fRQ3M
-         cSJmEZM11fUT/QTyhcX1WKeCDqceyB8nl5lwuBY5hWGYXlj6mGsz9xJTOZvgx+4cAr
-         fn14t5k7aNCT9KkNm55fAC3jGjzQWJqomsU4Mi+g=
-Received: by mail-qt1-f173.google.com with SMTP id c56-v6so6889117qtd.11;
-        Wed, 03 Oct 2018 10:53:23 -0700 (PDT)
-X-Gm-Message-State: ABuFfohHHiEOAa2IpLSD33xRL5n7sVcTbcEiLueYTq4MoWMX3vUrI0Hp
-        6Mj/XWXEQ4k6RmO+r9FhgLREbNzGv3iKqVXQwg==
-X-Google-Smtp-Source: ACcGV63FE7J21jkRt6OWPCtnQoUqgjcmejZORIqWeg1JCHG+71KDcOM3Hb/Bj4+H4D46aUGmpex2sr1VBZtvEfdUCJg=
-X-Received: by 2002:ac8:148b:: with SMTP id l11-v6mr2289590qtj.27.1538589202826;
- Wed, 03 Oct 2018 10:53:22 -0700 (PDT)
+        Wed, 3 Oct 2018 20:43:15 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51202 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbeJDAnP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 20:43:15 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 143-v6so6550470wmf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 10:53:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9iNOLio4kSRLlE6Dc0TrcT0mx7y+MdMk4FvEcL5Mj3E=;
+        b=HuWqAz0NbPP52rLjzFKcr//yiFCJ4R/2xbH4mCBx4oVxaPj+3F76KVe1kat0C/olLY
+         dm7WJacfdySFdP6kqktspBovdDWfgZ9Ja7adSCxF4i2YkRGGaRxy+taz5vkv6Udc1ySp
+         TzR35povqS3Rjqa4Kxmm1vFywsYgpjZ9l6LQ4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9iNOLio4kSRLlE6Dc0TrcT0mx7y+MdMk4FvEcL5Mj3E=;
+        b=qtoewJJafoZxC6P6Zrn4UWJc3cTH+0VlURCdIqRul0zVdTbHMajAgKhZNuKRDJAjbr
+         glVcK41nj42pHsRIR2v6C8urMq3dv1DvoWnrVzHneEH+fo7/KVrHrYo+Wn35urWuorx6
+         Oo1sm0QywRmdx3QpCFYceRdG5okxij5SF9h+Jgmud3fHLqzW+RHoNiJY0sdbKcwm5RYu
+         u4nNAGwqDrPKAPLzI7YMdvNhdLhArxQsEZbMdRQFY25scMaaxiTg2i9xRvR30FOBcaAc
+         koRwC10tE7Y6tSOeDfaI3ZQQa8bG5kun2lOCACgbJqwFsbT2C4OshMMbbcGWH2BxPkWq
+         ueLw==
+X-Gm-Message-State: ABuFfohoeoZEbeaK46OSwT4iuSvgdjfs0NVJ5WPxT1bx4Rqsk+iZ3szk
+        f+UEzoZ/yvBWGRQFlVvH7p/uQgGoHB4=
+X-Google-Smtp-Source: ACcGV62MW3f4h/dOcKhUiqz1r3vBqiKcfpYRo7Ntn+zrXFc1tXBkuMCAlimH4V/2QBxs86GKa/zGfw==
+X-Received: by 2002:a7b:c151:: with SMTP id z17-v6mr2382254wmi.39.1538589228390;
+        Wed, 03 Oct 2018 10:53:48 -0700 (PDT)
+Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.gmail.com with ESMTPSA id q17-v6sm507971wrw.19.2018.10.03.10.53.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 03 Oct 2018 10:53:47 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] slimbus: ngd: QCOM_QMI_HELPERS has to be selected
+Date:   Wed,  3 Oct 2018 18:52:36 +0100
+Message-Id: <20181003175236.20039-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-References: <20181002132459.032960735@linuxfoundation.org> <af80bbc1-6753-01d2-1ecb-830720b38f48@roeck-us.net>
- <20181003162539.GA4653@kroah.com> <20181003172440.GA7955@roeck-us.net>
-In-Reply-To: <20181003172440.GA7955@roeck-us.net>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 3 Oct 2018 12:53:11 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+GBDB21tSDTq7p39SvQEGq1R3ZPeH7Yx+9fHttx3v9Ew@mail.gmail.com>
-Message-ID: <CAL_Jsq+GBDB21tSDTq7p39SvQEGq1R3ZPeH7Yx+9fHttx3v9Ew@mail.gmail.com>
-Subject: Re: [PATCH 4.18 000/228] 4.18.12-stable review
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>, shuah@kernel.org,
-        patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 12:24 PM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On Wed, Oct 03, 2018 at 09:25:39AM -0700, Greg Kroah-Hartman wrote:
-> > On Wed, Oct 03, 2018 at 05:59:09AM -0700, Guenter Roeck wrote:
-> > > On 10/02/2018 06:21 AM, Greg Kroah-Hartman wrote:
-> > > > This is the start of the stable review cycle for the 4.18.12 release.
-> > > > There are 228 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > >
-> > > > Responses should be made by Thu Oct  4 13:24:08 UTC 2018.
-> > > > Anything received after that time might be too late.
-> > > >
-> > >
-> > >
-> > >
-> > > Build results:
-> > >     total: 137 pass: 137 fail: 0
-> > > Qemu test results:
-> > >     total: 321 pass: 320 fail: 1
-> > > Failed tests:
-> > >     powerpc:g3beige:ppc_book3s_defconfig:nosmp:ide:rootfs
-> >
-> > What is the status of that powerpc failure fix?  What's the odds it can
-> > get into mainline soon?
-> >
->
-> The fix has been -next for about a week.
->
-> da08d8cb8cfc of: unittest: Disable interrupt node tests for old world MAC systems
->
-> You'll have to ask Rob (copied) if he plans to send a pull request before
-> the next commit window opens.
+From: Niklas Cassel <niklas.cassel@linaro.org>
 
-I wasn't planning to as it's just for the unittest and has been that
-way for how long? Why's the unittest enabled for a defconfig anyways?
+QCOM_QMI_HELPERS is a hidden kconfig, so the proper usage is
+to select it, not depend upon it.
 
-There was another g3beige fix (e54192b48da7 of: fix phandle cache
-creation for DTs with no phandles) which is tagged for stable. Not
-sure if qemu would hit the issue though.
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Reviewed-by: Alex Elder <elder@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/slimbus/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Rob
+diff --git a/drivers/slimbus/Kconfig b/drivers/slimbus/Kconfig
+index 9d73ad806698..9cca2c3559f2 100644
+--- a/drivers/slimbus/Kconfig
++++ b/drivers/slimbus/Kconfig
+@@ -22,8 +22,8 @@ config SLIM_QCOM_CTRL
+ 
+ config SLIM_QCOM_NGD_CTRL
+ 	tristate "Qualcomm SLIMbus Satellite Non-Generic Device Component"
+-	depends on QCOM_QMI_HELPERS
+ 	depends on HAS_IOMEM && DMA_ENGINE
++	select QCOM_QMI_HELPERS
+ 	help
+ 	  Select driver if Qualcomm's SLIMbus Satellite Non-Generic Device
+ 	  Component is programmed using Linux kernel.
+-- 
+2.19.0
+
