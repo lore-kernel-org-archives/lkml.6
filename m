@@ -2,102 +2,132 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D147C64EBC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE8BC64EBD
 	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 02:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E67BB20878
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 02:18:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E67BB20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F36120C0A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 02:18:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LvwSYyNh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F36120C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbeJCJCt (ORCPT
+        id S1726731AbeJCJEo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 05:02:49 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45444 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726407AbeJCJCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 05:02:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA7347A9;
-        Tue,  2 Oct 2018 19:16:32 -0700 (PDT)
-Received: from [10.162.0.72] (p8cg001049571a15.blr.arm.com [10.162.0.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A389D3F5D3;
-        Tue,  2 Oct 2018 19:16:29 -0700 (PDT)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
-        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
-        catalin.marinas@arm.com, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com
-References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
- <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
- <20181002123909.GS18290@dhcp22.suse.cz>
-Message-ID: <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
-Date:   Wed, 3 Oct 2018 07:46:27 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 3 Oct 2018 05:04:44 -0400
+Received: from ozlabs.org ([203.11.71.1]:58749 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726407AbeJCJEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 05:04:44 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42Q0735c1lz9s3T;
+        Wed,  3 Oct 2018 12:18:22 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1538533104;
+        bh=Ov1Pnse9zzCsItJ0q14e5JQBtO9yTxLkixrQHTX6uUg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=LvwSYyNhoN5Qe9E6SljQXIOUO/6DjXnU3cACzflZsFngsyKDdnS46GDqPaI53sfDp
+         XgQGaOLPruarhkhlbFw/FZqnKdzxj+ZXdbvoPysKWcCtLmOZ/er+WJUQJ3qtZ01UA5
+         29v1gH1vVN7oXD1W3RNl8bNBF/lteI2ALvvNeDecyIOdteIoMjTVmuDojE8922wX6z
+         ozIypUJp0A2/daTekmGV2f0dRgzWfn2Up2BorbXzUqsIYq2n92T5GyVd0fHSzAbLT7
+         UyoAoPK1YMFF8frP3bXtJFSYLJUcNkFiO3KVrTVsjaQJWGbrJ2Ba9Rmj6yOYNmolKm
+         tt7OcKmHpLtkw==
+Date:   Wed, 3 Oct 2018 12:18:04 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Christian Brauner <christian@brauner.io>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20181003121804.689fdc08@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20181002123909.GS18290@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/V2B6/bIfgaVfl3eLXzZ7FVW"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/V2B6/bIfgaVfl3eLXzZ7FVW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 10/02/2018 06:09 PM, Michal Hocko wrote:
-> On Tue 02-10-18 17:45:28, Anshuman Khandual wrote:
->> Architectures like arm64 have PUD level HugeTLB pages for certain configs
->> (1GB huge page is PUD based on ARM64_4K_PAGES base page size) that can be
->> enabled for migration. It can be achieved through checking for PUD_SHIFT
->> order based HugeTLB pages during migration.
-> 
-> Well a long term problem with hugepage_migration_supported is that it is
-> used in two different context 1) to bail out from the migration early
-> because the arch doesn't support migration at all and 2) to use movable
-> zone for hugetlb pages allocation. I am especially concerned about the
-> later because the mere support for migration is not really good enough.
-> Are you really able to find a different giga page during the runtime to
-> move an existing giga page out of the movable zone?
+Today's linux-next merge of the net-next tree got a conflict in:
 
-I pre-allocate them before trying to initiate the migration (soft offline
-in my experiments). Hence it should come from the pre-allocated HugeTLB
-pool instead from the buddy. I might be missing something here but do we
-ever allocate HugeTLB on the go when trying to migrate ? IIUC it always
-came from the pool (unless its something related to ovecommit/surplus).
-Could you please kindly explain regarding how migration target HugeTLB
-pages are allocated on the fly from movable zone.
+  net/core/rtnetlink.c
 
-But even if there are some chances of run time allocation failure from
-movable zone (as in point 2) that should not block the very initiation
-of migration itself. IIUC thats not the semantics for either THP or
-normal pages. Why should it be different here. If the allocation fails
-we should report and abort as always. Its the caller of migration taking
-the chances. why should we prevent that.
+between commit:
 
-> 
-> So I guess we want to split this into two functions
-> arch_hugepage_migration_supported and hugepage_movable. The later would
+  893626d6a353 ("rtnetlink: Fail dump if target netnsid is invalid")
 
-So the set difference between arch_hugepage_migration_supported and 
-hugepage_movable still remains un-migratable ? Then what is the purpose
-for arch_hugepage_migration_supported page size set in the first place.
-Does it mean we allow the migration at the beginning and the abort later
-when the page size does not fall within the subset for hugepage_movable.
-Could you please kindly explain this in more detail.
+from the net tree and commits:
 
-> be a reasonably migrateable subset of the former. Without that this
-> patch migth introduce subtle regressions when somebody relies on movable
-> zone to be really movable.
-PUD based HugeTLB pages were never migratable, then how can there be any
-regression here ? At present we even support PGD based HugeTLB pages for
-migration. Wondering how PUD based ones are going to be any different.
+  c383edc42403 ("rtnetlink: add rtnl_get_net_ns_capable()")
+  7e4a8d5a93f6 ("rtnetlink: s/IFLA_IF_NETNSID/IFLA_TARGET_NETNSID/g")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/core/rtnetlink.c
+index 7f37fe9c65a5,35162e1b06ad..000000000000
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@@ -1895,11 -1910,13 +1910,11 @@@ static int rtnl_dump_ifinfo(struct sk_b
+ =20
+  	if (nlmsg_parse(cb->nlh, hdrlen, tb, IFLA_MAX,
+  			ifla_policy, NULL) >=3D 0) {
+- 		if (tb[IFLA_IF_NETNSID]) {
+- 			netnsid =3D nla_get_s32(tb[IFLA_IF_NETNSID]);
+- 			tgt_net =3D get_target_net(skb->sk, netnsid);
++ 		if (tb[IFLA_TARGET_NETNSID]) {
++ 			netnsid =3D nla_get_s32(tb[IFLA_TARGET_NETNSID]);
++ 			tgt_net =3D rtnl_get_net_ns_capable(skb->sk, netnsid);
+ -			if (IS_ERR(tgt_net)) {
+ -				tgt_net =3D net;
+ -				netnsid =3D -1;
+ -			}
+ +			if (IS_ERR(tgt_net))
+ +				return PTR_ERR(tgt_net);
+  		}
+ =20
+  		if (tb[IFLA_EXT_MASK])
+
+--Sig_/V2B6/bIfgaVfl3eLXzZ7FVW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu0JtwACgkQAVBC80lX
+0GzD6wf/e/ZFdNJeRV3wQHxLKUEu9DZcPQL2eSdv26+6HqGK9MZoI93Xx0mIVmLX
+IG9NBCUR1BBbSMbGD2bxmv91T0k3ib+EnU6Lq8sbXDSKhoyGgRsPvA0882L7sJQu
+o+PYJqA1gDap58VdarCpJd+pizLQ8/7GUEz18fbUSnDWy2tt+zqh3S/n6StCYijh
+lt05lWYG0O3lyy5XXONItJH5UfRTLHGpuMfgrzBAyHKfQusEHi38zW3mJDG6SsS4
+QCfQDOUicWdWsbWW3zajUmloeKr5zTYm79w4nqVHwIa+YXZclHvxhzSRrtteEIar
+RL/WfJai7alBVpki9XM+PLZGrZCUGA==
+=JSwx
+-----END PGP SIGNATURE-----
+
+--Sig_/V2B6/bIfgaVfl3eLXzZ7FVW--
