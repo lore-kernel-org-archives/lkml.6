@@ -2,97 +2,103 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B607DC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 266FDC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CCC72098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:28:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1GWNKazE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CCC72098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id D6E4A21473
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:32:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E4A21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeJCXRX (ORCPT
+        id S1726969AbeJCXVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 19:17:23 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42912 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726811AbeJCXRW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 19:17:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kQ1rRl9OuXdMPdG1ow54PfPs+MXmgNyULwmAPnsnDKE=; b=1GWNKazEoWJlaF1t376iBN8Pc
-        1VGpGS+INFRN3WhECbG2pYvU2cw8svjpOnWKFIJropfvJW04Tq1On5XS1WCWsZItm7Wm53za40Jta
-        32uwhi/2NCU1DWM1UIKHM0hMnU/jq69KkGDL3V3tK9HYU17zhvGuy7m1BxEFcJpxZPfO+CkNw4L3z
-        PAV1PBj2TWyKxR5rEa7KpBsjAia4eesy4oPpBAjpJL0hNswjhQyaKVP60WhoHWA5QTXbgCIhRjaCQ
-        XNydPJZbUcR+Q0gZ8nheOoiMMsiYEgvjofyZLyDxPiocGTysNlwVxbB2ksE0SQxkJCRtlTiQ5QKKP
-        tPM/Dh4Qw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g7k0D-0003JM-Ql; Wed, 03 Oct 2018 16:27:58 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4115520289D0C; Wed,  3 Oct 2018 18:27:19 +0200 (CEST)
-Date:   Wed, 3 Oct 2018 18:27:19 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v7 08/14] sched/topology: Disable EAS on inappropriate
- platforms
-Message-ID: <20181003162719.GB19252@hirez.programming.kicks-ass.net>
-References: <20180912091309.7551-1-quentin.perret@arm.com>
- <20180912091309.7551-9-quentin.perret@arm.com>
+        Wed, 3 Oct 2018 19:21:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51848 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726829AbeJCXVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 19:21:18 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5EC9B3084026;
+        Wed,  3 Oct 2018 16:32:10 +0000 (UTC)
+Received: from asgard.redhat.com (ovpn-200-25.brq.redhat.com [10.40.200.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E1E9B87DB;
+        Wed,  3 Oct 2018 16:31:57 +0000 (UTC)
+Date:   Wed, 3 Oct 2018 18:32:26 +0200
+From:   Eugene Syromiatnikov <esyr@redhat.com>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v4 24/27] mm/mmap: Create a guard area between VMAs
+Message-ID: <20181003163226.GC9449@asgard.redhat.com>
+References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+ <20180921150351.20898-25-yu-cheng.yu@intel.com>
+ <20181003045611.GB22724@asgard.redhat.com>
+ <CALCETrU-Ny-uC1NqRedQwNKe2MMhsFEqZ08TtHJwbLfCACMmLw@mail.gmail.com>
+ <5ddb0ad33298d1858e530fce9c9ea2788b2fac81.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180912091309.7551-9-quentin.perret@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5ddb0ad33298d1858e530fce9c9ea2788b2fac81.camel@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 03 Oct 2018 16:32:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 10:13:03AM +0100, Quentin Perret wrote:
-> @@ -288,6 +321,21 @@ static void build_perf_domains(const struct cpumask *cpu_map)
->  			goto free;
->  		tmp->next = pd;
->  		pd = tmp;
-> +
-> +		/*
-> +		 * Count performance domains and capacity states for the
-> +		 * complexity check.
-> +		 */
-> +		nr_pd++;
-> +		nr_cs += em_pd_nr_cap_states(pd->obj);
-> +	}
-> +
-> +	/* Bail out if the Energy Model complexity is too high. */
-> +	if (nr_pd * (nr_cs + nr_cpus) > EM_MAX_COMPLEXITY) {
-> +		if (sched_debug())
-> +			pr_info("rd %*pbl: EM complexity is too high\n ",
-> +						cpumask_pr_args(cpu_map));
-> +		goto free;
->  	}
+On Wed, Oct 03, 2018 at 09:00:04AM -0700, Yu-cheng Yu wrote:
+> On Tue, 2018-10-02 at 22:36 -0700, Andy Lutomirski wrote:
+> > On Tue, Oct 2, 2018 at 9:55 PM Eugene Syromiatnikov <esyr@redhat.com> wrote:
+> > > 
+> > > On Fri, Sep 21, 2018 at 08:03:48AM -0700, Yu-cheng Yu wrote:
+> > > > Create a guard area between VMAs, to detect memory corruption.
+> > > 
+> > > Do I understand correctly that with this patch a user space program
+> > > no longer be able to place two mappings back to back? If it is so,
+> > > it will likely break a lot of things; for example, it's a common ring
+> > > buffer implementations technique, to map buffer memory twice back
+> > > to back in order to avoid special handling of items wrapping its end.
+> > 
+> > I haven't checked what the patch actually does, but it shouldn't have
+> > any affect on MAP_FIXED or the new no-replace MAP_FIXED variant.
+> > 
+> > --Andy
+> 
+> I did some mmap tests with/without MAP_FIXED, and it works as intended.
+> In addition to the ring buffer, are there other test cases?
 
-I would make than an unconditional WARN, we do not really expect that to
-trigger, but then it does, we really don't want to hide it.
+Right, after some more code reading I figured out that it indeed
+shouldn't affect MAP_FIXED, thank you for confirmation.
+
+I'm not sure, however, whether such a change that provides no ability
+to configure or affect it will go well with all the supported
+architectures.
