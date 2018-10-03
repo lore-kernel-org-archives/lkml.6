@@ -2,106 +2,145 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C552BC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE5CC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CBFA213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:50:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aenqPoBQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CBFA213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C81BB2098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:51:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81BB2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeJCWjt (ORCPT
+        id S1727519AbeJCWj6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:39:49 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36659 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbeJCWjt (ORCPT
+        Wed, 3 Oct 2018 18:39:58 -0400
+Received: from gateway20.websitewelcome.com ([192.185.65.13]:40920 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726748AbeJCWj5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:39:49 -0400
-Received: by mail-wr1-f66.google.com with SMTP id y16so6716684wrw.3;
-        Wed, 03 Oct 2018 08:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3HsSq1Q8lmNNHgciic6w0v1D3I0bXYf/WF93oAE/Cu8=;
-        b=aenqPoBQHb8nTYir6GL/YHApul6UpOxQRDgzTbK9wvlEwlbU5mKygiE4ReI1c+4lWY
-         nnq43dRfAKO/C6hmczDmlQKH4FjxpNjPpJR4DzHDlDwwZXNBB7j9pCSVmWE5AIYMuD+M
-         ucmZV+oo6mzGFoVtxFiqkBqfdznDmCYZ4kQrdTmSWmGKpY0gLn8mmQJRJojyXb8K0erJ
-         0mHjktA4TFCFOK3WBtdIt+7BqbWHQ0VrwuDAXup2yjGBTqiIN+S7eOBUaLdiQneQggnO
-         /1Q7rPk7LtGCxQ9K54ecYcMWYqubPIEr1VMI5BWbSeVwsJzynjvv2KsZ3TcF2F4NQKJo
-         0QMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=3HsSq1Q8lmNNHgciic6w0v1D3I0bXYf/WF93oAE/Cu8=;
-        b=ju65Yn71bxJMMWig/pVHrN+BffGYfb8M4bDTFGzVVCiLBUaMgCPAK9rXaSbLCOZ/Rw
-         y+7t1fXUs7keRSLbLTMcFuAReUzdnjgLCkKRCfjZVA3G0kBp9kWnZ+IAyn3+JdQFyWlj
-         g2TBWZHY0mKUDy8LLwp+6makQ7ES5f2WMzj2A0RlZrdhV+pAVDFbqu19l5vRkM1w9B5r
-         qNz1rckwboNQ1UsjlEim0haxjDiOs0T8OTFjJ1YSyon1r4zcAtZ1w+QwVGHaEQM6K/+9
-         vzcZzxqlgiIXPCgYYx2nNXzJPa+Syeqonl8CmJmfW2hojAwOZXF9H+16rgmg3w4L4QWy
-         33Fg==
-X-Gm-Message-State: ABuFfoj/F0aaEq1e/X5LXMSi/V9XZkBWaWZcf9uktss/xqQ3EGgiA0jJ
-        u+nJbjJNlyvkrPMMgYoVMRKEl6EV
-X-Google-Smtp-Source: ACcGV60PphuUV9feKdBuwrHMab2atFYgDyUnDlZhOWG32DmIhDD7UBncPxrwzMJ/xjMxOyEOMIbn3A==
-X-Received: by 2002:a5d:4605:: with SMTP id t5-v6mr1701882wrq.52.1538581850592;
-        Wed, 03 Oct 2018 08:50:50 -0700 (PDT)
-Received: from pc-ceresoli.dev.aim (45.11.168.109.cust.ip.kpnqwest.it. [109.168.11.45])
-        by smtp.gmail.com with ESMTPSA id h18-v6sm1707614wrb.82.2018.10.03.08.50.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 08:50:49 -0700 (PDT)
-From:   Luca Ceresoli <lucaceresoli77@gmail.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Peter Rosin <peda@axentia.se>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        Michael Shych <michaelsh@mellanox.com>,
-        Michael Hennerich <michael.hennerich@analog.com>
-Subject: [PATCH v2 3/3] i2c: mux: mlxcpld: simplify code to reach the adapter
-Date:   Wed,  3 Oct 2018 17:50:24 +0200
-Message-Id: <20181003155024.16024-3-lucaceresoli77@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181003155024.16024-1-lucaceresoli77@gmail.com>
-References: <20181003155024.16024-1-lucaceresoli77@gmail.com>
+        Wed, 3 Oct 2018 18:39:57 -0400
+X-Greylist: delayed 1379 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Oct 2018 18:39:56 EDT
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 60DD94013C83D
+        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 10:28:05 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 7j47gzxiWBcCX7j4DgKW4J; Wed, 03 Oct 2018 10:28:04 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:55146 helo=[192.168.43.69])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g7j47-0040z6-2K; Wed, 03 Oct 2018 10:27:55 -0500
+Subject: Re: [PATCH] spi: pxa2xx: Mark expected switch fall-through
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181003121211.GA28108@embeddedor.com>
+ <20181003152255.GE7132@sirena.org.uk>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <22e7d33d-db33-d2e4-30b1-fa87176e4277@embeddedor.com>
+Date:   Wed, 3 Oct 2018 17:27:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20181003152255.GE7132@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g7j47-0040z6-2K
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net ([192.168.43.69]) [92.93.206.174]:55146
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Ceresoli <luca@lucaceresoli.net>
 
-struct i2c_client has a direct pointer to the adapter, no need to dig
-it out of the struct device tree.
 
-Suggested-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
----
- drivers/i2c/muxes/i2c-mux-mlxcpld.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 10/3/18 5:22 PM, Mark Brown wrote:
+> On Wed, Oct 03, 2018 at 02:12:11PM +0200, Gustavo A. R. Silva wrote:
+> 
+>>  			switch (drv_data->n_bytes) {
+>>  			case 4:
+>>  				bytes_left >>= 1;
+>> +				/* Fall through */
+>>  			case 2:
+>>  				bytes_left >>= 1;
+>>  			}
+> 
+> I think this code is just being too cute and it'd be better to just
+> rewrite it to directly do the expected number of shifts directly in each
+> case and have break statements; your fix is good but still not ideal for
+> readability I think.
+> 
 
-diff --git a/drivers/i2c/muxes/i2c-mux-mlxcpld.c b/drivers/i2c/muxes/i2c-mux-mlxcpld.c
-index f2bf3e57ed67..5ed55ca4fe93 100644
---- a/drivers/i2c/muxes/i2c-mux-mlxcpld.c
-+++ b/drivers/i2c/muxes/i2c-mux-mlxcpld.c
-@@ -132,7 +132,7 @@ static int mlxcpld_mux_deselect(struct i2c_mux_core *muxc, u32 chan)
- static int mlxcpld_mux_probe(struct i2c_client *client,
- 			     const struct i2c_device_id *id)
- {
--	struct i2c_adapter *adap = to_i2c_adapter(client->dev.parent);
-+	struct i2c_adapter *adap = client->adapter;
- 	struct mlxcpld_mux_plat_data *pdata = dev_get_platdata(&client->dev);
- 	struct i2c_mux_core *muxc;
- 	int num, force;
--- 
-2.17.1
+Okay. I agree. I'll rewrite and send v2.
 
+Thanks
+--
+Gustavo
