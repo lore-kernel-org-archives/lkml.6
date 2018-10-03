@@ -2,75 +2,104 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB04EC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED78C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F5EE20684
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:52:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F5EE20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3967520684
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:54:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBfp6Et1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3967520684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbeJCTlJ (ORCPT
+        id S1726842AbeJCTmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 15:41:09 -0400
-Received: from mga02.intel.com ([134.134.136.20]:2863 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726630AbeJCTlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 15:41:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 05:52:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
-   d="scan'208";a="96099048"
-Received: from um.fi.intel.com (HELO localhost) ([10.237.72.212])
-  by orsmga001.jf.intel.com with ESMTP; 03 Oct 2018 05:52:39 -0700
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wed, 3 Oct 2018 15:42:46 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36400 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726630AbeJCTmq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 15:42:46 -0400
+Received: by mail-pl1-f195.google.com with SMTP id y11-v6so302384plt.3;
+        Wed, 03 Oct 2018 05:54:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=K6sjOmiR45l6yElu7rOMOQZ40sxE3ZXxnO54brAkl+8=;
+        b=KBfp6Et1FbUs8DqWaxfBbATy6o4pd++euNU7HsCOx2qP9PYs9G1NJ1ElAkBHM3PMor
+         OEXb+ZWbnENZIItFMQBLAgSSZH3/+n2Kvq6U7YAVmB08G7tfChACEa62nm4BiHUyrLIE
+         YXDkomP8rOAgbh9peSPs2W9BkBK/RwAggX9djyywT5QSkPq0SYCdl+jM8Kt3Zf9oZoyq
+         C9FDy5j282fYuNHd058uMOJYSaEY7nxPPMQenMnutrCGJkxZv4uFOT0EeA73ZAfxO90O
+         nD1tTRGj6TrNLutdWUPhytIw12AnpOLf+0Gi5INA+VQRj3y9Fpf7sXmjHAaOP23zWsA8
+         9DXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K6sjOmiR45l6yElu7rOMOQZ40sxE3ZXxnO54brAkl+8=;
+        b=HC3X8xz72XEEK28WfEWtjwCvDQLuvkoYmn1x9jPl3yaKpmHjLUyAzWc7rWEzXCxF1a
+         PWCjRa89VuAJp06YGtNUlbra14zm854jihjjyj/vSSDB3ignHw8lZ9hEdnR0FMjYRO/0
+         wOePloS73ix7X4UPGQ3R6lXhIwIllDOUa4PSxwVSnyp47bi20/Gr8SLF2haVD0r/Zlla
+         f/Wp9Nz/L71eHPpqCpPKKUW0OocdZzAsw5cNZ8U1u2j25cZznkua5ywRoSKyegHz7sUF
+         wHEidtX//C0FIfLkfBBhs8pEV4akWOC8LazQiqPNTucW6n4LG3HAJMWYZMyl0Q0EV0t3
+         5SnA==
+X-Gm-Message-State: ABuFfojm+Pd+Y+UwRUB6G8G0anV54GII82XxLgMiTuYMWyrHb6q88pl9
+        dlnX9XEoh1E+o1sGXyK7e77mqc6E
+X-Google-Smtp-Source: ACcGV615jqB2y9t/q8/J+066MjmN5AaOVjpL8RaNlgOSDBCwgYjwCaUGHOKsj/WegC5/pyE7W4RzPg==
+X-Received: by 2002:a17:902:ba95:: with SMTP id k21-v6mr1548140pls.38.1538571269072;
+        Wed, 03 Oct 2018 05:54:29 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id l16-v6sm3346763pfj.179.2018.10.03.05.54.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 05:54:27 -0700 (PDT)
+Subject: Re: [PATCH 4.9 00/94] 4.9.131-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [QUEUED v20180920 00/16] stm class/intel_th: Queued updates for v4.20
-In-Reply-To: <20180927171844.GE7481@xps15>
-References: <20180920124553.56978-1-alexander.shishkin@linux.intel.com> <20180927171844.GE7481@xps15>
-Date:   Wed, 03 Oct 2018 15:52:38 +0300
-Message-ID: <87efd76vl5.fsf@ashishki-desk.ger.corp.intel.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20181002132500.494838053@linuxfoundation.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <b1a49884-8992-e88d-4a2a-a94470cb4094@roeck-us.net>
+Date:   Wed, 3 Oct 2018 05:54:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20181002132500.494838053@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mathieu Poirier <mathieu.poirier@linaro.org> writes:
+On 10/02/2018 06:24 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.131 release.
+> There are 94 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Oct  4 13:24:37 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-> On Thu, Sep 20, 2018 at 03:45:37PM +0300, Alexander Shishkin wrote:
->> Hi,
->> 
->> These are patches I have queued so far, that I'm planning to send to
->> Greg for the next merge window. This is mainly support for MIPI SyS-T
->> protocol and all the infrastructure changes to make it possible.
->> 
->> MIPI SyS-T is a public standard [0] for a software-level trace protocol
->> that in this instance we use on top of STM devices (if we choose to) and
->> MIPI STP protocol.
->> 
->> The old "protocol" is preserved for compatibility.
->
-> I have tested this set on my side and things work as advertised.  Since I do not
-> have a MIPI SyS-T decoder I can't validate the output, but the mechanic behind
-> the functionality is simple and trivial to use.  I think you have succeeded in
-> introducing something that could have otherwise been messy. 
->
-> Tested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Thanks a bunch! An update is coming up.
+Build results:
+	total: 151 pass: 151 fail: 0
+Qemu test results:
+	total: 308 pass: 307 fail: 1
+Failed tests:
+	powerpc:g3beige:ppc_book3s_defconfig:nosmp:ide:rootfs
 
-Cheers,
---
-Alex
+Details are available at https://kerneltests.org/builders/.
+
+Guenter
