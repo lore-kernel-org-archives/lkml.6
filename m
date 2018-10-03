@@ -2,142 +2,133 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDF9C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50337C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 579DD21470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:45:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V8dde0FF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 579DD21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 26B3F21470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:45:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B3F21470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbeJDBep (ORCPT
+        id S1727356AbeJDBev (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 21:34:45 -0400
-Received: from mail-vs1-f73.google.com ([209.85.217.73]:41266 "EHLO
-        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726851AbeJDBep (ORCPT
+        Wed, 3 Oct 2018 21:34:51 -0400
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:41893 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbeJDBeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 21:34:45 -0400
-Received: by mail-vs1-f73.google.com with SMTP id d20-v6so2165597vsc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 11:45:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=2jqmZXZcmEO8jDaXajPefPx2WtSyp0rzTCLt0BhvU+o=;
-        b=V8dde0FF/b11+nft1GNybJorR6zUgmoCIs7b3IpkG3YQWbmBGYnftw3KC8LQG+JrNN
-         8nAruSauXuoc6KSrQhA51d7cevB9fYCzZC5fehPUQGDFu4KyPMZw8Fq6bVg3vUs8c+MU
-         n9xhcdXON9Crc8o+N7ShWlpaeHEAWh0yf5jjYyUvmLaMUEEdZ2CIeiHzwrgiVb+O8dzT
-         s7haKaaOXimzDzbbHNHBo/jkEwg7Mv8soIS8AsqNtVdphiRySCnhveqp9hJvyEJQDlhq
-         0p+H4vosQqoD0RoJZY2aWZf4PyfXTLC0faxb0qX28aozbJWzT+Ko9y0rarta7dErJfRY
-         lREA==
+        Wed, 3 Oct 2018 21:34:50 -0400
+Received: by mail-vk1-f196.google.com with SMTP id x21-v6so297149vke.8;
+        Wed, 03 Oct 2018 11:45:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=2jqmZXZcmEO8jDaXajPefPx2WtSyp0rzTCLt0BhvU+o=;
-        b=OEgzZ0rmE/4G2n4EMvYr5YXEXBHH0lpSve7fXJVfkfX4fXGY2qtWV+K5fMTXQiPH99
-         6abjBZyZ7pydYpJnAsLqwPwEpEGiJJzE1mejFCEblACuCsHMjUHby58NO+g7y397IRpt
-         kT0Kj6aPqkW4BGD6kDBhC2X6ghSZ85vOSUrKqZRs+BSiHS+jrww13LIgQyvBwdyTnmDX
-         y663PVqj8FbTzoKylxeWQI3OWpBmjbBVWeVaAsRJy+ocZvr1iq/FRFKe3YP9Gfz+/njl
-         6rpXdZVyF2aWH95SaZBfxBYoovi0weF7asy38Y+9pJqGNm1tRZO3r1H4rWXEFyZ1RKB/
-         +Ueg==
-X-Gm-Message-State: ABuFfoi9apnAPMxzg5EqdlAj7qW/KauA2J/x8qQLA1omBbLdWQLXCdbb
-        a7NVKpXW4e8+HjD4XLc0jQsu6yMlSJeVxg==
-X-Google-Smtp-Source: ACcGV61S7w+cfR2qFuWVo6ZRdADPP3HTbuNREhLWJBRlnom1r7Kk+eyp3LsMsM3ID0gPgHdf/p0OaaLN4ikLaQ==
-X-Received: by 2002:a67:46da:: with SMTP id a87mr198067vsg.3.1538592309254;
- Wed, 03 Oct 2018 11:45:09 -0700 (PDT)
-Date:   Wed,  3 Oct 2018 11:45:06 -0700
-Message-Id: <20181003184506.149579-1-egranata@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-Subject: [PATCH 2/2] platform/chrome: Add a new interrupt path for cros_ec_lpc
-From:   Enrico Granata <egranata@google.com>
-To:     Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org,
-        gwendal@chromium.org
-Cc:     Enrico Granata <egranata@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7H/BHggausBgvhl/2pvWbDrV7w0Drjgjnt6hABz3h5g=;
+        b=UVdBc6BwktM/jY/KNC3R51+0+zXEyRdYYGAcABxkwNfFNOfiF9nu12nTZtjBq5rOFA
+         /kvK2gRuOMH7xtgH+Ovaj7a3jytay8AJmrcOYZH4FcdQAJCWDYOJ++VI3MccApKhsLz0
+         flQ31P+QuyhjMMtNy0H4UdBSylLGj+lBX+Q2aY2nVAvct50qPVdP4b2A2Rb8P+fOgYDG
+         ubQoElRqq7FRnPV6QjtJfGa7GZXOhv86Gb0fDnPwFG09FQR6e8WQWjMh8o3WC/mGAaux
+         31E9N7x5FlrOgxMy8THLAxXxvRaIwnRtAlQsbvcaDJ5DzHqSJl7iwPLSAlqywEfQwj9J
+         xvTA==
+X-Gm-Message-State: ABuFfojTZJxnFC0xVd9LqxhP1KF1wtKs81S74ZmICyq1YBw/nNhcIV9E
+        NyrJ8n6K2VMQ7lrjEjejWIW677LEaChvUeU+SKo=
+X-Google-Smtp-Source: ACcGV61MVV8VCotlXsaFTavxyZbh9si0Pc1tVwcziw+vFsPBgYXLn2J8K4/8U0AocdvsDju4CiyJLkHDuyFxS6Xbp5Y=
+X-Received: by 2002:a1f:2d56:: with SMTP id t83-v6mr1154967vkt.65.1538592314105;
+ Wed, 03 Oct 2018 11:45:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181003132212.12619-1-boris.brezillon@bootlin.com>
+ <20181003132212.12619-6-boris.brezillon@bootlin.com> <c7b929a8c8ebaec7ce0f0e09f803e414e74f986b.camel@perches.com>
+In-Reply-To: <c7b929a8c8ebaec7ce0f0e09f803e414e74f986b.camel@perches.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 3 Oct 2018 20:45:02 +0200
+Message-ID: <CAMuHMdVA7eKD+qfzzCqrXus69NPb3Qd_G0k=TYvrdt=2pRG51A@mail.gmail.com>
+Subject: Re: [PATCH v8 05/10] dt-bindings: i3c: Add macros to help fill
+ I3C/I2C device's reg property
+To:     Joe Perches <joe@perches.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, pgaj@cadence.com,
+        Peter Rosin <peda@axentia.se>, mshettel@codeaurora.org,
+        swboyd@chromium.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Enrico Granata <egranata@chromium.org>
+Hi Joe,
 
-This commit allows cros_ec_lpc to register a direct IRQ instead of relying
-on the ACPI notification chain to receive MKBP events.
+On Wed, Oct 3, 2018 at 8:37 PM Joe Perches <joe@perches.com> wrote:
+> On Wed, 2018-10-03 at 15:22 +0200, Boris Brezillon wrote:
+> > The reg property of devices connected to an I3C bus have 3 cells, and
+> > filling them manually is not trivial. Provides macros to help doing
+> > that.
+>
+> This patch logic seems excessively fragile.
 
-This change is done in the interest of allowing reduced jitter in the
-communication path between the CrOS EC and the host for receiving sensor
-data.
+> > --- /dev/null
+> > +++ b/include/dt-bindings/i3c/i3c.h
 
-Signed-off-by: Enrico Granata <egranata@chromium.org>
----
- drivers/platform/chrome/cros_ec_lpc.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+> > +
+> > +#define I3C_PID(manufid, partid, instid, extrainfo)          \
+> > +     ((manufid) << 1)                                        \
+> > +     (((partid) << 16) | ((instid) << 12) | (extrainfo))
+>
+> This macro doesn't make any sense.  Missing a shift and an or?
 
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index 31c8b8c49e45..07eea608915e 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -25,6 +25,7 @@
- #include <linux/dmi.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/interrupt.h>
- #include <linux/mfd/cros_ec.h>
- #include <linux/mfd/cros_ec_commands.h>
- #include <linux/mfd/cros_ec_lpc_reg.h>
-@@ -248,7 +249,7 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
- 	acpi_status status;
- 	struct cros_ec_device *ec_dev;
- 	u8 buf[2];
--	int ret;
-+	int irq, ret;
- 
- 	if (!devm_request_region(dev, EC_LPC_ADDR_MEMMAP, EC_MEMMAP_SIZE,
- 				 dev_name(dev))) {
-@@ -287,6 +288,18 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
- 			   sizeof(struct ec_response_get_protocol_info);
- 	ec_dev->dout_size = sizeof(struct ec_host_request);
- 
-+	/*
-+	 * Some boards do not have an IRQ allotted for cros_ec_lpc,
-+	 * which makes ENXIO an expected (and safe) scenario.
-+	 */
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq > 0)
-+		ec_dev->irq = irq;
-+	else if (irq != -ENXIO) {
-+		dev_err(dev, "couldn't retrieve IRQ number (%d)\n", irq);
-+		return irq;
-+	}
-+
- 	ret = cros_ec_register(ec_dev);
- 	if (ret) {
- 		dev_err(dev, "couldn't register ec_dev (%d)\n", ret);
-@@ -294,11 +307,11 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
- 	}
- 
- 	/*
--	 * Connect a notify handler to process MKBP messages if we have a
--	 * companion ACPI device.
-+	 * If we have a companion ACPI device and no dedicated IRQ
-+	 * connect a notify handler to process MKBP messages.
- 	 */
- 	adev = ACPI_COMPANION(dev);
--	if (adev) {
-+	if (adev && ec_dev->irq <= 0) {
- 		status = acpi_install_notify_handler(adev->handle,
- 						     ACPI_ALL_NOTIFY,
- 						     cros_ec_lpc_acpi_notify,
+No, it generates two of the three cells.
+
+> > +
+> > +#define I3C_DEV_WITH_STATIC_ADDR(addr, manufid, partid,              \
+> > +                              instid, extrainfo)             \
+> > +     (addr) I3C_PID(manufid, partid, instid, extrainfo)
+> > +
+> > +#define I3C_DEV(manufid, partid, instid, extrainfo)          \
+> > +     I3C_DEV_WITH_STATIC_ADDR(0x0, manufid, partid,          \
+> > +                              instid, extrainfo)
+
+And the above two macros generate all three cells.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.19.0.605.g01d371f741-goog
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
