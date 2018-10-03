@@ -2,255 +2,107 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20E2C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D2DC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:58:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 747BD2082A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:55:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 747BD2082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id E74142082A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:58:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E74142082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbeJCVod (ORCPT
+        id S1726933AbeJCVrl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 17:44:33 -0400
-Received: from gateway33.websitewelcome.com ([192.185.146.68]:47382 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726748AbeJCVod (ORCPT
+        Wed, 3 Oct 2018 17:47:41 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40963 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbeJCVrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 17:44:33 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 0D9291992538
-        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 09:55:46 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7iYsgvEGGkBj67iYxg2INJ; Wed, 03 Oct 2018 09:55:46 -0500
-X-Authority-Reason: nr=8
-Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:38930 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g7iYr-003jDV-2P; Wed, 03 Oct 2018 09:55:37 -0500
-Date:   Wed, 3 Oct 2018 16:55:35 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Don Brace <don.brace@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        Willem Riede <osst@riede.org>,
-        Kai =?iso-8859-1?Q?M=E4kisara?= <Kai.Makisara@kolumbus.fi>
-Cc:     esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, osst-users@lists.sourceforge.net,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] scsi: mark expected switch fall-throughs
-Message-ID: <20181003145535.GA24941@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 92.93.206.174
-X-Source-L: No
-X-Exim-ID: 1g7iYr-003jDV-2P
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:38930
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 3 Oct 2018 17:47:41 -0400
+Received: by mail-pf1-f193.google.com with SMTP id m77-v6so1810384pfi.8;
+        Wed, 03 Oct 2018 07:58:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dTGBLSnh0CRsokaJ9tV8vfG+xryHa8lau6FyTzHJLoo=;
+        b=Cy92NeL3FpTvkcJGYFlSP32uZ0m47hE05zpSTeVCi2khvBFyPZlpQoZBDrsVq8+6RF
+         bBgjJisJdpel15+kQ+79YGjJw1ZTjaA1un2q4wPtwGmf3bxdjbprTmOZ33eID8FimSus
+         uRHydO96mb+pvHSo/LllQnGqG5YyK8t+phxbrNIQwjepqDZ7fwsl72XemirCVbF50ukd
+         Sa0NeYlM2Air0xrcWpaY9vUKpAR+Kr59+T+hX4RuRGGY2Qsx99YFVy3+eGT9v0jPAEQn
+         CNSV8HDpsCyj1aNxmYrUMkpyyV3Hg47ffNZQj7o2AHrj6dNrDmezw25QjVKx3jH8Dc/O
+         k3fg==
+X-Gm-Message-State: ABuFfojAjGuUkH9PXN7XdCLc0PTpqGT5kHhuGZb9y5DyhJU92CyrhspV
+        tLCGiOHA8MJN7rBazrwIh+Q=
+X-Google-Smtp-Source: ACcGV61lpSONFeHu2ZWyL/DWU6q3o12cwSPEsV7iPKSO1bW3JfMlqh5lbod1a46ErUJWJ02Fsnh7Xw==
+X-Received: by 2002:a63:ce56:: with SMTP id r22-v6mr1694494pgi.217.1538578734653;
+        Wed, 03 Oct 2018 07:58:54 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id d65-v6sm3734098pfe.42.2018.10.03.07.58.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 07:58:53 -0700 (PDT)
+Message-ID: <1538578732.205649.0.camel@acm.org>
+Subject: Re: [PATCH] block: BFQ default for single queue devices
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Christoph Hellwig <hch@infradead.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jan Kara <jack@suse.cz>,
+        "aherrmann@suse.com" <aherrmann@suse.com>,
+        "mgorman@suse.com" <mgorman@suse.com>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bfq-iosched@googlegroups.com" <bfq-iosched@googlegroups.com>,
+        "oleksandr@natalenko.name" <oleksandr@natalenko.name>,
+        Mark Brown <broonie@kernel.org>
+Date:   Wed, 03 Oct 2018 07:58:52 -0700
+In-Reply-To: <20181003125146.GA9313@infradead.org>
+References: <20181002124329.21248-1-linus.walleij@linaro.org>
+         <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
+         <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
+         <1538550325.14984.108.camel@gmail.com>
+         <CACRpkdaLZXGKMQGJPH02p2QPkxUDA03Y=cu_wBR_+rFaLWTw7g@mail.gmail.com>
+         <BN3PR0401MB164003C967C45F2681F503A7E7E90@BN3PR0401MB1640.namprd04.prod.outlook.com>
+         <20181003125146.GA9313@infradead.org>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Wed, 2018-10-03 at 05:51 -0700, Christoph Hellwig wrote:
++AD4 On Wed, Oct 03, 2018 at 07:42:15AM +-0000, Damien Le Moal wrote:
++AD4 +AD4 Of note also is that host-managed like sequential zone devices are also likely
++AD4 +AD4 to show up soon with the work being done in the NVMe standard on the new +ACI-Zoned
++AD4 +AD4 namespace+ACI feature proposal. These devices will also require a scheduler like
++AD4 +AD4 mq-deadline guaranteeing per-zone in-order delivery of sequential write
++AD4 +AD4 requests. Looking only at the number of queues of the device is not enough to
++AD4 +AD4 choose the best (most reasonnable/appropriate) scheduler.
++AD4 
++AD4 We actually have a plan to avoid the need for a non-reordering scheduler
++AD4 there (including a Linux prototype for it).  Lets see if it survives the
++AD4 committee.
 
-Addresses-Coverity-ID: 1195463 ("Missing break in switch")
-Addresses-Coverity-ID: 1195464 ("Missing break in switch")
-Addresses-Coverity-ID: 1195465 ("Missing break in switch")
-Addresses-Coverity-ID: 1195466 ("Missing break in switch")
-Addresses-Coverity-ID: 1357338 ("Missing break in switch")
-Addresses-Coverity-ID: 114973 ("Missing break in switch")
-Addresses-Coverity-ID: 114983 ("Missing break in switch")
-Addresses-Coverity-ID: 114984 ("Missing break in switch")
-Addresses-Coverity-ID: 114985 ("Missing break in switch")
-Addresses-Coverity-ID: 114988 ("Missing break in switch")
-Addresses-Coverity-ID: 114994 ("Missing break in switch")
-Addresses-Coverity-ID: 114995 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/scsi/hpsa.c | 5 +++++
- drivers/scsi/ips.c  | 1 +
- drivers/scsi/osst.c | 6 ++++++
- drivers/scsi/ppa.c  | 1 +
- drivers/scsi/st.c   | 4 ++++
- 5 files changed, 17 insertions(+)
+Has the work with the T10 committee to standardize the SCSI equivalent of anonymous
+writes already started?
 
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index f903983..fb6a356 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -4662,6 +4662,7 @@ static int fixup_ioaccel_cdb(u8 *cdb, int *cdb_len)
- 	case WRITE_6:
- 	case WRITE_12:
- 		is_write = 1;
-+		/* fall through */
- 	case READ_6:
- 	case READ_12:
- 		if (*cdb_len == 6) {
-@@ -5092,6 +5093,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
- 	switch (cmd->cmnd[0]) {
- 	case WRITE_6:
- 		is_write = 1;
-+		/* fall through */
- 	case READ_6:
- 		first_block = (((cmd->cmnd[1] & 0x1F) << 16) |
- 				(cmd->cmnd[2] << 8) |
-@@ -5102,6 +5104,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
- 		break;
- 	case WRITE_10:
- 		is_write = 1;
-+		/* fall through */
- 	case READ_10:
- 		first_block =
- 			(((u64) cmd->cmnd[2]) << 24) |
-@@ -5114,6 +5117,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
- 		break;
- 	case WRITE_12:
- 		is_write = 1;
-+		/* fall through */
- 	case READ_12:
- 		first_block =
- 			(((u64) cmd->cmnd[2]) << 24) |
-@@ -5128,6 +5132,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
- 		break;
- 	case WRITE_16:
- 		is_write = 1;
-+		/* fall through */
- 	case READ_16:
- 		first_block =
- 			(((u64) cmd->cmnd[2]) << 56) |
-diff --git a/drivers/scsi/ips.c b/drivers/scsi/ips.c
-index bd6ac6b..8e1c45d 100644
---- a/drivers/scsi/ips.c
-+++ b/drivers/scsi/ips.c
-@@ -3485,6 +3485,7 @@ ips_send_cmd(ips_ha_t * ha, ips_scb_t * scb)
- 
- 		case START_STOP:
- 			scb->scsi_cmd->result = DID_OK << 16;
-+			/* fall through */
- 
- 		case TEST_UNIT_READY:
- 		case INQUIRY:
-diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
-index 7a1a1ed..8af608d 100644
---- a/drivers/scsi/osst.c
-+++ b/drivers/scsi/osst.c
-@@ -216,12 +216,14 @@ static void osst_analyze_sense(struct osst_request *SRpnt, struct st_cmdstatus *
- 		switch (sense[0] & 0x7f) {
- 		case 0x71:
- 			s->deferred = 1;
-+			/* fall through */
- 		case 0x70:
- 			s->fixed_format = 1;
- 			s->flags = sense[2] & 0xe0;
- 			break;
- 		case 0x73:
- 			s->deferred = 1;
-+			/* fall through */
- 		case 0x72:
- 			s->fixed_format = 0;
- 			ucp = scsi_sense_desc_find(sense, SCSI_SENSE_BUFFERSIZE, 4);
-@@ -591,6 +593,7 @@ static void osst_init_aux(struct osst_tape * STp, int frame_type, int frame_seq_
- 		dat->dat_list[0].flags    = frame_type==OS_FRAME_TYPE_MARKER?
- 							OS_DAT_FLAGS_MARK:OS_DAT_FLAGS_DATA;
- 		dat->dat_list[0].reserved = 0;
-+		/* fall through */
- 	  case	OS_FRAME_TYPE_EOD:
- 		aux->update_frame_cntr    = htonl(0);
- 		par->partition_num        = OS_DATA_PARTITION;
-@@ -4086,6 +4089,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
- 	switch (cmd_in) {
- 	 case MTFSFM:
- 		chg_eof = 0; /* Changed from the FSF after this */
-+		/* fall through */
- 	 case MTFSF:
- 		if (STp->raw)
- 		   return (-EIO);
-@@ -4101,6 +4105,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
- 
- 	 case MTBSF:
- 		chg_eof = 0; /* Changed from the FSF after this */
-+		/* fall through */
- 	 case MTBSFM:
- 		if (STp->raw)
- 		   return (-EIO);
-@@ -4312,6 +4317,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
- 					   name, STp->block_size);
- 			 return 0;
- 		 }
-+		/* fall through */
- 	 case MTSETDENSITY:       /* Set tape density */
- 	 case MTSETDRVBUFFER:     /* Set drive buffering */
- 	 case SET_DENS_AND_BLK:   /* Set density and block size */
-diff --git a/drivers/scsi/ppa.c b/drivers/scsi/ppa.c
-index ee86a0c..d29999b 100644
---- a/drivers/scsi/ppa.c
-+++ b/drivers/scsi/ppa.c
-@@ -717,6 +717,7 @@ static int ppa_engine(ppa_struct *dev, struct scsi_cmnd *cmd)
- 			}
- 			cmd->SCp.phase++;
- 		}
-+		/* fall through */
- 
- 	case 2:		/* Phase 2 - We are now talking to the scsi bus */
- 		if (!ppa_select(dev, scmd_id(cmd))) {
-diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
-index 307df2f..f1351ec 100644
---- a/drivers/scsi/st.c
-+++ b/drivers/scsi/st.c
-@@ -337,12 +337,14 @@ static void st_analyze_sense(struct st_request *SRpnt, struct st_cmdstatus *s)
- 		switch (sense[0] & 0x7f) {
- 		case 0x71:
- 			s->deferred = 1;
-+			/* fall through */
- 		case 0x70:
- 			s->fixed_format = 1;
- 			s->flags = sense[2] & 0xe0;
- 			break;
- 		case 0x73:
- 			s->deferred = 1;
-+			/* fall through */
- 		case 0x72:
- 			s->fixed_format = 0;
- 			ucp = scsi_sense_desc_find(sense, SCSI_SENSE_BUFFERSIZE, 4);
-@@ -2721,6 +2723,7 @@ static int st_int_ioctl(struct scsi_tape *STp, unsigned int cmd_in, unsigned lon
- 	switch (cmd_in) {
- 	case MTFSFM:
- 		chg_eof = 0;	/* Changed from the FSF after this */
-+		/* fall through */
- 	case MTFSF:
- 		cmd[0] = SPACE;
- 		cmd[1] = 0x01;	/* Space FileMarks */
-@@ -2735,6 +2738,7 @@ static int st_int_ioctl(struct scsi_tape *STp, unsigned int cmd_in, unsigned lon
- 		break;
- 	case MTBSFM:
- 		chg_eof = 0;	/* Changed from the FSF after this */
-+		/* fall through */
- 	case MTBSF:
- 		cmd[0] = SPACE;
- 		cmd[1] = 0x01;	/* Space FileMarks */
--- 
-2.7.4
+Thanks,
+
+Bart.
 
