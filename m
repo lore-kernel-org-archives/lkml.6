@@ -2,183 +2,106 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70730C65BA7
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD29C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3778E213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:53:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="en0Tx24b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3778E213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0E21D2098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:53:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E21D2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727606AbeJCQke (ORCPT
+        id S1727569AbeJCQlQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 12:40:34 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:35921 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbeJCQkd (ORCPT
+        Wed, 3 Oct 2018 12:41:16 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42205 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725746AbeJCQlQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 12:40:33 -0400
-Received: by mail-it1-f194.google.com with SMTP id c85-v6so7954001itd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 02:52:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=pYZFWZVRPNy0vp6foMV7AM9BjVP/w+VZBx1zARZrPSc=;
-        b=en0Tx24b/cqrcWa5BTJkOdP8M0pqhQwCsUDfZh6ia6AwPicSqp/e7K8Z3pAWshsutw
-         9fqSOpgSQB59umWiOsmmEh8KgmyBubf9FX3oZRDyNid9YQ7aCJiQ5qK9Mi3kqj522qGe
-         HxiKQ1wtj7LHEOLu0elrJD/TWOFydHLBvES+M=
+        Wed, 3 Oct 2018 12:41:16 -0400
+Received: by mail-ed1-f66.google.com with SMTP id n2-v6so4728170edo.9
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 02:53:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pYZFWZVRPNy0vp6foMV7AM9BjVP/w+VZBx1zARZrPSc=;
-        b=dhUa9CCFIeKLr/sPWYbfC9TSmHjBqQkY/CnsIPwTsNQ7ZdAWSF1hD0NWCSUQWguP90
-         ihf6GRqToYMqWkbLsczetTA5GPnsLd0iQlHAP5/b5vv1f9JDNExtNWoEtX5fNva0TdCD
-         CjyMGlV32cGpye/EXlOcTkE78SzT4c6lC48v7KpRCUirhOacYOJC27flgZkddVRS2YAz
-         8t8qgXQWPN4Acdw/FAC1RIpl7V45P8Tu1FiYVtKl5ZMPQdbJYez9gDHsnhG9yU3nTIdc
-         xn2hAwjF5oAPeCiuDXpyqpfsvnPoCLOqfUEg8rjLFfR7RkMFWxPmMbxEDO/euXM5PmpM
-         yWkg==
-X-Gm-Message-State: ABuFfoiwBJ/2QvGKAscMDO2SdMkyyZLdEcYfEgnQRkMW+sFaV3OBJFCP
-        4+8KUppNNRTBnRzRgN9tVmFkTCGgOt/x3o7PUidWSQ==
-X-Google-Smtp-Source: ACcGV6375l1FSVAd8rPqgg9krzvrUTWKe+lz2WpeLfu/TzEpzFOiUoFtbYPgDv7f1coZAGSIc1mEglyA7mX0PjQkvUk=
-X-Received: by 2002:a05:660c:243:: with SMTP id t3mr650250itk.146.1538560373885;
- Wed, 03 Oct 2018 02:52:53 -0700 (PDT)
+        bh=cC8K2jOIoeXn1aH19tNO0E41M/B+EOXgwzwuQbyzFIY=;
+        b=AIsTBr2cg4W2ijTwPlCi2mzkbiv53zOekGiz706cilSdLF2vNwI2NpDrQFAgAK19F9
+         9ze1kVjL3cavv0yZB14Dg4bNphQRbfnk8hXvoWdK/D9+NF0aRah9QQ5OXeIK0JZy/5ca
+         y8iMb3YUOaMnuEMotBcSlr2ZmvBJVhXBKdZrauEVi5/RKYZKD5DqVF6J+nmIMJ56Bd84
+         4HRfoye/zvP+WneFFnwjuaEaDV4yxF+3+m4aw0kQx/MYUMxLbuLsJN3a5RjlMpJ9gDga
+         CuTXotYqMKe409kVyzaW0HbGDW0aQzUnHQu59ubiqclZNXPnBSq46pLS89PA5T6CVCTv
+         r9mw==
+X-Gm-Message-State: ABuFfojs8t+zNawJa8Xe0iI4WoDFOSgh8Iv2BwUv5+0H8xJBtmvmjmTw
+        WCMjCc+WVOZjVXLbjXK/ihO1mGAQMuo=
+X-Google-Smtp-Source: ACcGV610y7DTQ47FY/+kj/OcawIuHDdWNBMduJXdKRA6jeDA6Q6xj2T16UUxVxWcpweuMKN2+kPsSw==
+X-Received: by 2002:a17:906:a884:: with SMTP id ha4-v6mr1056346ejb.143.1538560414974;
+        Wed, 03 Oct 2018 02:53:34 -0700 (PDT)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
+        by smtp.gmail.com with ESMTPSA id w22-v6sm206945eja.17.2018.10.03.02.53.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 02:53:34 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id z204-v6so4135196wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 02:53:33 -0700 (PDT)
+X-Received: by 2002:a1c:8dd1:: with SMTP id p200-v6mr895441wmd.145.1538560413373;
+ Wed, 03 Oct 2018 02:53:33 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Wed, 3 Oct 2018 02:52:13 -0700 (PDT)
-In-Reply-To: <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
-References: <1538143910-24400-1-git-send-email-jonathanh@nvidia.com> <1538143910-24400-4-git-send-email-jonathanh@nvidia.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 3 Oct 2018 11:52:13 +0200
-Message-ID: <CAPDyKFrfcQX0-QrMKy=E=rif9-SjSfxc+LTMBUn5oqOquRdqRg@mail.gmail.com>
-Subject: Re: [PATCH V2 3/5] usb: xhci: tegra: Add genpd support
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra@vger.kernel.org
+References: <20180917122633.31401-1-katsuhiro@katsuster.net>
+In-Reply-To: <20180917122633.31401-1-katsuhiro@katsuster.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 3 Oct 2018 17:53:19 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64gTj7766o+6-BZkqKy=cDv9bqLcKHOzj-BiJOtjQMSyQ@mail.gmail.com>
+Message-ID: <CAGb2v64gTj7766o+6-BZkqKy=cDv9bqLcKHOzj-BiJOtjQMSyQ@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: rockchip: add spdif sound node for rock64
+To:     katsuhiro@katsuster.net
+Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
+Hi,
 
->  static int tegra_xusb_probe(struct platform_device *pdev)
->  {
->         struct tegra_xusb_mbox_msg msg;
-> @@ -1038,7 +1095,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->                 goto put_padctl;
->         }
+On Mon, Sep 17, 2018 at 8:28 PM Katsuhiro Suzuki
+<katsuhiro@katsuster.net> wrote:
 >
-> -       if (!pdev->dev.pm_domain) {
-> +       if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
+> This patch adds sound card node for rock64. Currently we can support
+> S/PDIF only. It seems the lack of codec driver of rk3328 to enable
+> analog audio out.
+>
+> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+> ---
+>  .../arm64/boot/dts/rockchip/rk3328-rock64.dts | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+> index 5852061e497b..9ee4f57557f3 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+> @@ -62,6 +62,23 @@
+>                 regulator-min-microvolt = <5000000>;
+>                 regulator-max-microvolt = <5000000>;
+>         };
+> +
+> +       sound {
+> +               compatible = "audio-graph-card";
+> +               label = "rockchip,rk3328";
 
-I am assuming the original check was because allowing the two
-power-domains to be (wrongly) modeled as one (or as a
-master+subdomain)?
+I understand that this patch has been merged. However, seeing this label
+I wonder how this works when the analog codec and HDMI audio out are added,
+and how userspace is supposed to select an output.
 
-I was thinking that, perhaps we should add a new OF helper function,
-where one can get the number of specifiers being listed in the
-power-domains property. Would that help to easier distinguish what to
-do when dealing with backwards compatibility?
+On the side, it seems that extra codecs, such as the rock64 add-on board,
+are easier dealt with by adding a separate simple-audio-card node to couple
+the codec and i2s nodes.
 
->                 tegra->host_rst = devm_reset_control_get(&pdev->dev,
->                                                          "xusb_host");
->                 if (IS_ERR(tegra->host_rst)) {
-> @@ -1069,17 +1126,22 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->                                                         tegra->host_clk,
->                                                         tegra->host_rst);
->                 if (err) {
-> +                       tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
->                         dev_err(&pdev->dev,
->                                 "failed to enable XUSBC domain: %d\n", err);
-> -                       goto disable_xusba;
-> +                       goto put_padctl;
->                 }
-> +       } else {
-> +               err = tegra_xusb_powerdomain_init(&pdev->dev, tegra);
-> +               if (err)
-> +                       goto put_powerdomains;
->         }
->
->         tegra->supplies = devm_kcalloc(&pdev->dev, tegra->soc->num_supplies,
->                                        sizeof(*tegra->supplies), GFP_KERNEL);
->         if (!tegra->supplies) {
->                 err = -ENOMEM;
-> -               goto disable_xusbc;
-> +               goto put_powerdomains;
->         }
->
->         for (i = 0; i < tegra->soc->num_supplies; i++)
-> @@ -1089,7 +1151,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->                                       tegra->supplies);
->         if (err) {
->                 dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
-> -               goto disable_xusbc;
-> +               goto put_powerdomains;
->         }
->
->         for (i = 0; i < tegra->soc->num_types; i++)
-> @@ -1099,7 +1161,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->                                    sizeof(*tegra->phys), GFP_KERNEL);
->         if (!tegra->phys) {
->                 err = -ENOMEM;
-> -               goto disable_xusbc;
-> +               goto put_powerdomains;
->         }
->
->         for (i = 0, k = 0; i < tegra->soc->num_types; i++) {
-> @@ -1115,7 +1177,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->                                         "failed to get PHY %s: %ld\n", prop,
->                                         PTR_ERR(phy));
->                                 err = PTR_ERR(phy);
-> -                               goto disable_xusbc;
-> +                               goto put_powerdomains;
->                         }
->
->                         tegra->phys[k++] = phy;
-> @@ -1126,7 +1188,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->                                     dev_name(&pdev->dev));
->         if (!tegra->hcd) {
->                 err = -ENOMEM;
-> -               goto disable_xusbc;
-> +               goto put_powerdomains;
->         }
->
->         /*
-> @@ -1222,12 +1284,13 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->  disable_rpm:
->         pm_runtime_disable(&pdev->dev);
->         usb_put_hcd(tegra->hcd);
-> -disable_xusbc:
-> -       if (!pdev->dev.pm_domain)
-> +put_powerdomains:
-> +       if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
->                 tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
-> -disable_xusba:
-> -       if (!pdev->dev.pm_domain)
->                 tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
-> +       } else {
-> +               tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
-> +       }
->  put_padctl:
->         tegra_xusb_padctl_put(tegra->padctl);
->         return err;
-
-[...]
-
-Kind regards
-Uffe
+ChenYu
