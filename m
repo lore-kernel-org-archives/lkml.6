@@ -1,122 +1,150 @@
 Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Level: *
+X-Spam-Status: No, score=1.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 549E5C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D180C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13C862089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:33:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13C862089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FB012089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:33:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IK9y7v1F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB012089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbeJDAWZ (ORCPT
+        id S1727209AbeJDAW7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 20:22:25 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54456 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726851AbeJDAWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 20:22:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 260A180D;
-        Wed,  3 Oct 2018 10:33:04 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.emea.arm.com [10.4.12.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9E193F5B3;
-        Wed,  3 Oct 2018 10:32:59 -0700 (PDT)
-Date:   Wed, 3 Oct 2018 18:32:57 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-Subject: Re: [PATCH v7 7/8] arm64: update
- Documentation/arm64/tagged-pointers.txt
-Message-ID: <20181003173256.GG12998@arrakis.emea.arm.com>
-References: <cover.1538485901.git.andreyknvl@google.com>
- <47a464307d4df3c0cb65f88d1fe83f9a741dd74b.1538485901.git.andreyknvl@google.com>
+        Wed, 3 Oct 2018 20:22:59 -0400
+Received: from mail-wm1-f54.google.com ([209.85.128.54]:55732 "EHLO
+        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbeJDAW7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 20:22:59 -0400
+Received: by mail-wm1-f54.google.com with SMTP id 206-v6so6530080wmb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 10:33:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JZXTv6LA8C+zkzRu8cAc6B3Kv9WiIyS9UxmZRCW1FU0=;
+        b=IK9y7v1FiDSbqyF91icddMXdzdf1i4QYpe1UM2X7GfXdP42+9AbNvmFspG9Y3C2xW4
+         5cGbTgzNPAnN+J12Oe9ifVoQjQ/I3UrzcJ0H1481vYbLDEZptwZwkbyxxFUKOrdUxuBf
+         7bIh1ldDiDHueCOtJt0+wPyS7XHda86UCi+m1eV3pd4WudiBn1c+8NPR65Wi/xm5zH/X
+         9X5FP8Hsl9VuG/zo8VYXaaNgNytS2Ghjll7ZYGe8P5bfTA7llpjHNwXpbfIBaEIAeA4a
+         xMRXlGA4cFLAbDSNihdjplyKPYfnDI5FzHt5DkpNoiosXCCys6Ov+VkgZVkHR3yLZ4m4
+         gBQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JZXTv6LA8C+zkzRu8cAc6B3Kv9WiIyS9UxmZRCW1FU0=;
+        b=Cwg1EcUrQpWd8ejfQngKh3cQmXSnI7pnofM7ovGRgseUwaXwa1u8nGfXw9hmB+KfyQ
+         RHWSlnKIwA3AhjEiejYCUPRtkTcY5aUKU7QWa3gFDoBRNzTguTOToYAFpFmj/IPdTbXV
+         VppSfF2OwYtpLnONWCdogXc4vXFSzjR6AwFL7Kizje1En8CACptYEa1Q0LpjOE6af9i5
+         Z5w6g7NPD9Hx8dQxhulbERGY64KkBSHAWp87k/V8Io+CY/dkLtn3fRU8PJumxhFSxc7E
+         jzoSxYJzmZcfqj8/5lSIA1ILnZ34Kw2iOj1HtVcis/Ur4psZrPHyBEj/kpzAJguJoFsU
+         SB3Q==
+X-Gm-Message-State: ABuFfojzdzSydgeh43wkygS5oFtNSmaXl5Qv26/s2ULc3TD2O7+GnPup
+        kb3QTD6aufXomNZD2Dyypa8=
+X-Google-Smtp-Source: ACcGV60/OsccNanZ5bqKrzL8dZADGFqcRnJnSGkBtTlj+6Ns4f/DSPKpey/czz+HB+4rDXnll+E1OA==
+X-Received: by 2002:a1c:7ed4:: with SMTP id z203-v6mr2167993wmc.62.1538588015419;
+        Wed, 03 Oct 2018 10:33:35 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id v1-v6sm1943951wrd.24.2018.10.03.10.33.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 10:33:34 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 19:33:32 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: X86-64 uses generic string functions (strlen, strchr, memcmp,
+ ...)
+Message-ID: <20181003173332.GA4654@gmail.com>
+References: <CAG48ez30qnKuWHkzkkxxEhBPjVVnsgA1wSarfvx=U=Jb0maO0Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <47a464307d4df3c0cb65f88d1fe83f9a741dd74b.1538485901.git.andreyknvl@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAG48ez30qnKuWHkzkkxxEhBPjVVnsgA1wSarfvx=U=Jb0maO0Q@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 03:12:42PM +0200, Andrey Konovalov wrote:
-> diff --git a/Documentation/arm64/tagged-pointers.txt b/Documentation/arm64/tagged-pointers.txt
-> index a25a99e82bb1..ae877d185fdb 100644
-> --- a/Documentation/arm64/tagged-pointers.txt
-> +++ b/Documentation/arm64/tagged-pointers.txt
-> @@ -17,13 +17,21 @@ this byte for application use.
->  Passing tagged addresses to the kernel
->  --------------------------------------
->  
-> -All interpretation of userspace memory addresses by the kernel assumes
-> -an address tag of 0x00.
-> +Some initial work for supporting non-zero address tags passed to the
-> +kernel has been done. As of now, the kernel supports tags in:
 
-With my maintainer hat on, the above statement leads me to think this
-new ABI is work in progress, so not yet suitable for upstream.
+* Jann Horn <jannh@google.com> wrote:
 
-Also, how is user space supposed to know that it can now pass tagged
-pointers into the kernel? An ABI change (or relaxation), needs to be
-advertised by the kernel, usually via a new HWCAP bit (e.g. HWCAP_TBI).
-Once we have a HWCAP bit in place, we need to be pretty clear about
-which syscalls can and cannot cope with tagged pointers. The "as of now"
-implies potential further relaxation which, again, would need to be
-advertised to user in some (additional) way.
+> Hi!
+> 
+> I noticed that X86-64 is using the generic string functions from
+> lib/string.c for things like strlen(), strchr(), memcmp() and so on.
+> Is that an intentional omission, because they're not considered worth
+> optimizing, or is this an oversight? The kernel doesn't use string
+> functions much, but if you e.g. run readlinkat() in a loop on a
+> symlink with a 1000-byte target, something around 25%-50% of time are
+> spent on strlen(). But that's a microbenchmark that people probably
+> don't care about a lot?
+> 
+> One notable in-kernel user of memcmp() is BPF, which uses it for its
+> hash table implementations when walking the linked list of a hash
+> bucket. But I don't know whether anyone uses BPF hash tables with keys
+> that are sufficiently large to make this noticeable?
 
-> -This includes, but is not limited to, addresses found in:
-> +  - user fault addresses
+One reason we've been resisting this is how hard it is to determine whether a 
+micro-optimization truly helps application workloads.
 
-While the kernel currently supports this in some way (by clearing the
-tag exception entry, el0_da), the above implies (at least to me) that
-sigcontext.fault_address would contain the tagged address. That's not
-the case (unless I missed it in your patches).
+But there's a way:
 
-> - - pointer arguments to system calls, including pointers in structures
-> -   passed to system calls,
-> +  - pointer arguments (including pointers in structures), which don't
-> +    describe virtual memory ranges, passed to system calls
+ - Write a 'perf bench vfs ...' kind of scalability microbenchmark that
+   runs in less than 60 seconds, provides stable numeric output, can
+   meaningfully measured via 'perf', etc., which does multi-threaded
+   or multi-tasked, CPU-bound VFS operations intentionally designed
+   to hit these string ops.
 
-I think we need to be more precise here...
+ - Use this benchmark to demonstrate that the performance of any of the
+   string ops matters.
 
-> +All other interpretations of userspace memory addresses by the kernel
-> +assume an address tag of 0x00. This includes, but is not limited to,
-> +addresses found in:
-> +
-> + - pointer arguments (including pointers in structures), which describe
-> +   virtual memory ranges, passed to memory system calls (mmap, mprotect,
-> +   etc.)
+ - Implement nice assembly speedups.
 
-...and probably a full list here.
+ - If the functions are out of line then add a kernel patching based method
+   to run either the generic string function or the assembly version -
+   a static-key based approach would be fine I think. This makes the two
+   versions runtime switchable.
 
--- 
-Catalin
+ - Use the benchmark again to prove that it indeed helped this particular
+   workload. It can be a small speedup but has to be a larger signal than the
+   "perf stat --null --repeat 10 ..." stddev.
+
+Then that offers a maintainable way to implement such speedups:
+
+ - The 'perf bench vfs ...' testcase and the kernel-patching debug knobs allows other to 
+   replicate and check out other hardware.  Does the assembly function written on contemporary 
+   Intel hardware work equally well on AMD hardware? People can help out by running those 
+   tests.
+
+ - We can go back and check the difference anytime in the future, once new CPUs arrive,
+   or a new variant of the benchmark is written, or a workload is hurting.
+
+If you do it systematically like that then I'd be *very* interested in merging both the tooling 
+(benchmarking) and any eventual assembly speedups.
+
+But it's quite some work - much harder than just writing a random assembly variant and using it 
+instead of the generic version.
+
+Thanks,
+
+	Ingo
