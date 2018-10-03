@@ -7,115 +7,216 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E007C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0B2C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D558A2147D
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:14:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2864C20644
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:15:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dqPfUvvy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D558A2147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XqExQ1Qd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2864C20644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbeJCSCY (ORCPT
+        id S1726793AbeJCSDf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:02:24 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36632 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbeJCSCY (ORCPT
+        Wed, 3 Oct 2018 14:03:35 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38624 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbeJCSDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:02:24 -0400
-Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 69968B7F;
-        Wed,  3 Oct 2018 13:14:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1538565266;
-        bh=W1SkE9CHnzRDFtnMDhNPNV/iR+2OLcp+K5DpdxGbwmA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dqPfUvvyg7vQkgwisLpoO+Q2RFxjTMa4qu9p5bUXBoTEyiih7h0WPaIvw6brrtlwj
-         5kSQgLa1wV7jm2QZiHqFhMhOhS1arMEoHZrLYooX52YeYkCafg+GkFHhyODa9dhh/p
-         sOpDA43iagaucdXly91cek9zuttiEXDjSmtE/BiY=
-Subject: Re: [PATCH] media: vivid: Support 480p for webcam capture
-To:     Keiichi Watanabe <keiichiw@chromium.org>,
-        linux-media@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, tfiga@chromium.org,
-        jcliang@chromium.org, shik@chromium.org
-References: <20181003070656.193854-1-keiichiw@chromium.org>
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <b2dc51d7-fc92-2e7b-3a07-55a076b95d8b@ideasonboard.com>
-Date:   Wed, 3 Oct 2018 12:14:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 3 Oct 2018 14:03:35 -0400
+Received: by mail-it1-f196.google.com with SMTP id i76-v6so8216140ita.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 04:15:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=bLjRDio3bV/7rTJCHky/RMEdZwoNZ7bJA/E3nJqT7qs=;
+        b=XqExQ1Qd1D8AXoRHohHKQLTylyUS4bluGfb72Vfiibr/AyvKUvHefKLSobWbq4svEX
+         G12u7i0sY7jZEE2v4v78sNCq5wxooKiaZEneBHqfF6mKFaidvpqNXbe5Cpo9voAW/EO7
+         7OOK2SbPFp6fv7YK4ritoUNlvgbAhhlI/b2VU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=bLjRDio3bV/7rTJCHky/RMEdZwoNZ7bJA/E3nJqT7qs=;
+        b=YMUlB1aYlSfknhj5Uy3EHb0e1xj8K2Pg//2VFq/MityZKb72Xkonmip0N1gIT0sHhl
+         EhsqTJcO2dxTAU6jCMV95hRl5azZVjCk/wziwHZUugOyLEqUTb+DtHLeXphZ5qcSg/Y3
+         vGp5iWmHk3tA1dlYns7YnW25w3pWy4BP9u3t8PdMz88tBWd72sqMXRvGhLjim5EuQPnt
+         MqmtMYaVnoTMGQfS5Sdq5vQ3B+FIECg1noVL8mUHN5MVm9L4/lQ1+ufOM1JsKS+GE4ZD
+         mfOwwc6AsuRM0roCaSgj5mch9XVf+TU9CuAZP2HAeBNsJfwgH6whgoa4dEfkNRoHBrMZ
+         9VkA==
+X-Gm-Message-State: ABuFfoiSwLT8UyIFmV2OJSrnNfhmyF3xm1FN4pobh3V5TbPsEkK42lOL
+        jXl8/7PIVdbXe4nRwdupywmvDswxs++XmY1LaFGklA==
+X-Google-Smtp-Source: ACcGV61OtLZoxIUVTc/esa7StoVufup/Qkrlj0qqcVCCdkXRddgQ1XGGjaD7/vrngPJOmCWNU1vaU/BbIaK4g5Q0Cmo=
+X-Received: by 2002:a24:57cb:: with SMTP id u194-v6mr864141ita.148.1538565338697;
+ Wed, 03 Oct 2018 04:15:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181003070656.193854-1-keiichiw@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a6b:5910:0:0:0:0:0 with HTTP; Wed, 3 Oct 2018 04:15:38 -0700 (PDT)
+In-Reply-To: <20180925145622.29959-24-Jason@zx2c4.com>
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-24-Jason@zx2c4.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 3 Oct 2018 13:15:38 +0200
+Message-ID: <CAKv+Gu-oCH4D_otvMk+R_6z_p73Le90PkdQUUPnT6q0kWVL4Jw@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 23/23] net: WireGuard secure network tunnel
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Keiichi,
-
-On 03/10/18 08:06, Keiichi Watanabe wrote:
-> Support 640x480 as a frame size for video input devices of vivid.
-> 
-> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
+On 25 September 2018 at 16:56, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> WireGuard is a layer 3 secure networking tunnel made specifically for
+> the kernel, that aims to be much simpler and easier to audit than IPsec.
+...
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> Cc: David Miller <davem@davemloft.net>
+> Cc: Greg KH <gregkh@linuxfoundation.org>
 > ---
->  drivers/media/platform/vivid/vivid-vid-cap.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/vivid/vivid-vid-cap.c b/drivers/media/platform/vivid/vivid-vid-cap.c
-> index 58e14dd1dcd3..da80bf4bc365 100644
-> --- a/drivers/media/platform/vivid/vivid-vid-cap.c
-> +++ b/drivers/media/platform/vivid/vivid-vid-cap.c
-> @@ -51,7 +51,7 @@ static const struct vivid_fmt formats_ovl[] = {
->  };
->  
->  /* The number of discrete webcam framesizes */
-> -#define VIVID_WEBCAM_SIZES 5
-> +#define VIVID_WEBCAM_SIZES 6
->  /* The number of discrete webcam frameintervals */
->  #define VIVID_WEBCAM_IVALS (VIVID_WEBCAM_SIZES * 2)
->  
-> @@ -59,6 +59,7 @@ static const struct vivid_fmt formats_ovl[] = {
->  static const struct v4l2_frmsize_discrete webcam_sizes[VIVID_WEBCAM_SIZES] = {
->  	{  320, 180 },
->  	{  640, 360 },
-> +	{  640, 480 },
+>  MAINTAINERS                                  |   8 +
+>  drivers/net/Kconfig                          |  30 +
+>  drivers/net/Makefile                         |   1 +
+>  drivers/net/wireguard/Makefile               |  18 +
+>  drivers/net/wireguard/allowedips.c           | 404 ++++++++++
+>  drivers/net/wireguard/allowedips.h           |  55 ++
+>  drivers/net/wireguard/cookie.c               | 234 ++++++
+>  drivers/net/wireguard/cookie.h               |  59 ++
+>  drivers/net/wireguard/device.c               | 438 +++++++++++
+>  drivers/net/wireguard/device.h               |  65 ++
+>  drivers/net/wireguard/hashtables.c           | 209 +++++
+>  drivers/net/wireguard/hashtables.h           |  63 ++
+>  drivers/net/wireguard/main.c                 |  65 ++
+>  drivers/net/wireguard/messages.h             | 128 +++
+>  drivers/net/wireguard/netlink.c              | 606 ++++++++++++++
+>  drivers/net/wireguard/netlink.h              |  12 +
+>  drivers/net/wireguard/noise.c                | 784 +++++++++++++++++++
+>  drivers/net/wireguard/noise.h                | 129 +++
+>  drivers/net/wireguard/peer.c                 | 191 +++++
+>  drivers/net/wireguard/peer.h                 |  87 ++
+>  drivers/net/wireguard/queueing.c             |  52 ++
+>  drivers/net/wireguard/queueing.h             | 193 +++++
+>  drivers/net/wireguard/ratelimiter.c          | 220 ++++++
+>  drivers/net/wireguard/ratelimiter.h          |  19 +
+>  drivers/net/wireguard/receive.c              | 595 ++++++++++++++
+>  drivers/net/wireguard/selftest/allowedips.h  | 663 ++++++++++++++++
+>  drivers/net/wireguard/selftest/counter.h     | 103 +++
+>  drivers/net/wireguard/selftest/ratelimiter.h | 178 +++++
+>  drivers/net/wireguard/send.c                 | 420 ++++++++++
+>  drivers/net/wireguard/socket.c               | 432 ++++++++++
+>  drivers/net/wireguard/socket.h               |  44 ++
+>  drivers/net/wireguard/timers.c               | 256 ++++++
+>  drivers/net/wireguard/timers.h               |  30 +
+>  drivers/net/wireguard/version.h              |   1 +
+>  include/uapi/linux/wireguard.h               | 190 +++++
+>  tools/testing/selftests/wireguard/netns.sh   | 499 ++++++++++++
+>  36 files changed, 7481 insertions(+)
+>  create mode 100644 drivers/net/wireguard/Makefile
+>  create mode 100644 drivers/net/wireguard/allowedips.c
+>  create mode 100644 drivers/net/wireguard/allowedips.h
+>  create mode 100644 drivers/net/wireguard/cookie.c
+>  create mode 100644 drivers/net/wireguard/cookie.h
+>  create mode 100644 drivers/net/wireguard/device.c
+>  create mode 100644 drivers/net/wireguard/device.h
+>  create mode 100644 drivers/net/wireguard/hashtables.c
+>  create mode 100644 drivers/net/wireguard/hashtables.h
+>  create mode 100644 drivers/net/wireguard/main.c
+>  create mode 100644 drivers/net/wireguard/messages.h
+>  create mode 100644 drivers/net/wireguard/netlink.c
+>  create mode 100644 drivers/net/wireguard/netlink.h
+>  create mode 100644 drivers/net/wireguard/noise.c
+>  create mode 100644 drivers/net/wireguard/noise.h
+>  create mode 100644 drivers/net/wireguard/peer.c
+>  create mode 100644 drivers/net/wireguard/peer.h
+>  create mode 100644 drivers/net/wireguard/queueing.c
+>  create mode 100644 drivers/net/wireguard/queueing.h
+>  create mode 100644 drivers/net/wireguard/ratelimiter.c
+>  create mode 100644 drivers/net/wireguard/ratelimiter.h
+>  create mode 100644 drivers/net/wireguard/receive.c
+>  create mode 100644 drivers/net/wireguard/selftest/allowedips.h
+>  create mode 100644 drivers/net/wireguard/selftest/counter.h
+>  create mode 100644 drivers/net/wireguard/selftest/ratelimiter.h
+>  create mode 100644 drivers/net/wireguard/send.c
+>  create mode 100644 drivers/net/wireguard/socket.c
+>  create mode 100644 drivers/net/wireguard/socket.h
+>  create mode 100644 drivers/net/wireguard/timers.c
+>  create mode 100644 drivers/net/wireguard/timers.h
+>  create mode 100644 drivers/net/wireguard/version.h
+>  create mode 100644 include/uapi/linux/wireguard.h
+>  create mode 100755 tools/testing/selftests/wireguard/netns.sh
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 5967c737f3ce..32db7ebad86e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15823,6 +15823,14 @@ L:     linux-gpio@vger.kernel.org
+>  S:     Maintained
+>  F:     drivers/gpio/gpio-ws16c48.c
+>
+> +WIREGUARD SECURE NETWORK TUNNEL
+> +M:     Jason A. Donenfeld <Jason@zx2c4.com>
+> +S:     Maintained
+> +F:     drivers/net/wireguard/
+> +F:     tools/testing/selftests/wireguard/
+> +L:     wireguard@lists.zx2c4.com
+> +L:     netdev@vger.kernel.org
+> +
+>  WISTRON LAPTOP BUTTON DRIVER
+>  M:     Miloslav Trmac <mitr@volny.cz>
+>  S:     Maintained
+> diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+> index d03775100f7d..aa631fe3b395 100644
+> --- a/drivers/net/Kconfig
+> +++ b/drivers/net/Kconfig
+> @@ -70,6 +70,36 @@ config DUMMY
+>           To compile this driver as a module, choose M here: the module
+>           will be called dummy.
+>
+> +config WIREGUARD
+> +       tristate "WireGuard secure network tunnel"
+> +       depends on NET && INET
 
-I agree this is a useful frame size to add...
-(having got local patches which also update these tables)
+I think you need to add IPV6 here
 
->  	{ 1280, 720 },
->  	{ 1920, 1080 },
->  	{ 3840, 2160 },
-> @@ -75,6 +76,8 @@ static const struct v4l2_fract webcam_intervals[VIVID_WEBCAM_IVALS] = {
->  	{  1, 5 },
->  	{  1, 10 },
->  	{  1, 15 },
-> +	{  1, 15 },
-> +	{  1, 25 },
+> +       select NET_UDP_TUNNEL
+> +       select DST_CACHE
+> +       select ZINC_CHACHA20POLY1305
+> +       select ZINC_BLAKE2S
+> +       select ZINC_CURVE25519
+> +       default m
 
-But won't this add duplicates of 25 and 15 FPS to all the frame sizes
-smaller than 1280,720 ? Or are they filtered out?
+Please drop this - we usually leave it up to the defconfigs or distro
+configs to enable stuff like this.
 
-
-Now the difficulty is adding smaller frame rates (like 1,1, 1,2) would
-effect/reduce the output rates of the larger frame sizes, so how about
-adding some high rate support (any two from 1/{60,75,90,100,120}) instead?
-
-
-Regards
-
-Kieran Bingham
-
->  	{  1, 25 },
->  	{  1, 30 },
->  	{  1, 50 },
-> 
-
+> +       help
+> +         WireGuard is a secure, fast, and easy to use replacement for IPSec
+> +         that uses modern cryptography and clever networking tricks. It's
+> +         designed to be fairly general purpose and abstract enough to fit most
+> +         use cases, while at the same time remaining extremely simple to
+> +         configure. See www.wireguard.com for more info.
+> +
+> +         It's safe to say Y or M here, as the driver is very lightweight and
+> +         is only in use when an administrator chooses to add an interface.
+> +
+> +config WIREGUARD_DEBUG
+> +       bool "Debugging checks and verbose messages"
+> +       depends on WIREGUARD
+> +       help
+> +         This will write log messages for handshake and other events
+> +         that occur for a WireGuard interface. It will also perform some
+> +         extra validation checks and unit tests at various points. This is
+> +         only useful for debugging.
+> +
+> +         Say N here unless you know what you're doing.
+> +
+>  config EQUALIZER
+>         tristate "EQL (serial line load balancing) support"
+>         ---help---
+...
