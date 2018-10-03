@@ -2,67 +2,139 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1235C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9935CC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 859902098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:28:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 859902098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 690CE2098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:28:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 690CE2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726850AbeJCSP7 (ORCPT
+        id S1726905AbeJCSQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:15:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45562 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726547AbeJCSP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:15:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A6FE7AE83;
-        Wed,  3 Oct 2018 11:27:59 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 13:27:58 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
-        catalin.marinas@arm.com, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com
-Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
-Message-ID: <20181003112758.GC4714@dhcp22.suse.cz>
-References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
- <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
- <835085a2-79c2-4eb5-2c10-13bb2893f611@arm.com>
- <c0689b0c-4810-e0e8-354e-55c45d59b6d0@arm.com>
- <a6b96126-5571-2aa2-6deb-09a457afd781@arm.com>
- <bad51030-5f02-4fc9-741c-0fffbd690aca@arm.com>
- <789784ee-4830-753b-5d14-f5c7d90622c4@arm.com>
+        Wed, 3 Oct 2018 14:16:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49390 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbeJCSQZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 14:16:25 -0400
+Received: from localhost (h126.142.139.40.ip.windstream.net [40.139.142.126])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E49EA84;
+        Wed,  3 Oct 2018 11:28:26 +0000 (UTC)
+Date:   Wed, 3 Oct 2018 04:28:25 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>
+Cc:     Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ka-Cheong Poon <ka-cheong.poon@oracle.com>,
+        netdev@vger.kernel.or,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        Yanjun Zhu <yanjun.zhu@oracle.com>
+Subject: Re: Bug introduced by commit ebeeb1ad9b8a
+Message-ID: <20181003112825.GA28237@kroah.com>
+References: <8EEB4CE2-F6E5-4128-AB04-6326F8315E31@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <789784ee-4830-753b-5d14-f5c7d90622c4@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8EEB4CE2-F6E5-4128-AB04-6326F8315E31@oracle.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 03-10-18 12:17:52, Suzuki K Poulose wrote:
-[...]
-> I have been under the idea that all the checks at the same level could
-> have the same indentation. (i.e, 2 tabs in this case for each). Looks
-> like there is no rule about it. How about replacing it with a
-> switch..case  ?
+On Wed, Oct 03, 2018 at 01:20:44PM +0200, Håkon Bugge wrote:
+> Hi Greg,
+> 
+> 
+> I hope you will find this note appropriate.
+> 
+> The stable cherry-pick of upstream commit ebeeb1ad9b8a ("rds: tcp: use rds_destroy_pending() to synchronize netns/module teardown and rds connection/workq management") provokes the following stack trace when running with debug:
+> 
+> 
+> kernel: BUG: sleeping function called from invalid context at kernel/locking/mutex.c:748
+> kernel: =============================
+> kernel: in_atomic(): 1, irqs_disabled(): 0, pid: 4392, name: rds-stress
+> kernel: 1 lock held by rds-stress/4392:
+> kernel: #0: 00000000df837d5e
+> kernel: WARNING: suspicious RCU usage
+> kernel: 4.18.8 #1 Not tainted
+> kernel: -----------------------------
+> kernel: ./include/linux/rcupdate.h:303 Illegal context switch in RCU read-side critical section!
+> kernel: (
+> kernel: #012other info that might help us debug this:
+> kernel: #012rcu_scheduler_active = 2, debug_locks = 1
+> kernel: rcu_read_lock){....}
+> kernel: 1 lock held by rds-stress/4393:
+> kernel: #0:
+> kernel: , at: __rds_conn_create+0x604/0x960 [rds]
+> kernel: 00000000df837d5e
+> kernel: CPU: 38 PID: 4392 Comm: rds-stress Not tainted 4.18.8 #1
+> kernel: Hardware name: Oracle Corporation ORACLE SERVER X5-2L/ASM,MOBO TRAY,2U, BIOS 31110000 03/03/2017
+> kernel: (rcu_read_lock
+> kernel: Call Trace:
+> kernel: ){....}
+> kernel: dump_stack+0x81/0xb8
+> kernel: , at: __rds_conn_create+0x604/0x960 [rds]
+> kernel: #012stack backtrace:
+> kernel: ___might_sleep+0x239/0x260
+> kernel: __might_sleep+0x4a/0x80
+> kernel: __mutex_lock+0x58/0x9c0
+> kernel: ? __lock_acquire+0x47f/0x7e0
+> kernel: ? pcpu_alloc+0x429/0x860
+> kernel: ? find_held_lock+0x40/0xb0
+> kernel: ? create_object+0x22f/0x320
+> kernel: ? _raw_write_unlock_irqrestore+0x36/0x60
+> kernel: mutex_lock_killable_nested+0x1b/0x20
+> kernel: pcpu_alloc+0x429/0x860
+> kernel: ? create_object+0x22f/0x320
+> kernel: __alloc_percpu+0x15/0x20
+> kernel: rds_ib_recv_alloc_cache+0x1c/0x80 [rds_rdma]
+> kernel: rds_ib_recv_alloc_caches+0x1d/0x60 [rds_rdma]
+> kernel: rds_ib_conn_alloc+0x46/0x170 [rds_rdma]
+> kernel: __rds_conn_create+0x68d/0x960 [rds]
+> kernel: ? __rds_conn_create+0x604/0x960 [rds]
+> kernel: rds_conn_create_outgoing+0x14/0x20 [rds]
+> kernel: rds_sendmsg+0x2e8/0xcd0 [rds]
+> kernel: ? copy_msghdr_from_user+0xdb/0x140
+> kernel: sock_sendmsg+0x38/0x50
+> kernel: ___sys_sendmsg+0x27b/0x290
+> kernel: ? __lock_acquire+0x47f/0x7e0
+> kernel: ? find_held_lock+0x40/0xb0
+> kernel: ? __audit_syscall_entry+0xdf/0x160
+> kernel: ? ktime_get_coarse_real_ts64+0x6e/0xe0
+> kernel: ? trace_hardirqs_on_caller+0x128/0x1b0
+> kernel: ? trace_hardirqs_on+0xd/0x10
+> kernel: ? __audit_syscall_entry+0xdf/0x160
+> kernel: ? __audit_syscall_entry+0xdf/0x160
+> kernel: __sys_sendmsg+0x5d/0xb0
+> kernel: __x64_sys_sendmsg+0x1f/0x30
+> kernel: do_syscall_64+0x5f/0x220
+> kernel: entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> Command line:
+> 
+> $ rds-stress -r <IB port 1 IP>& sleep 1; rds-stress -r <IB port 2 IP> -s <IB port 1 IP> -T 10
+> 
+> Deliberately or accidently, Ka-Cheong's commit f394ad28feff ("rds: rds_ib_recv_alloc_cache() should call alloc_percpu_gfp() instead") fixes the bug introduced by commit ebeeb1ad9b8a. Kudos to Zhu Yanjun who quickly detected this.
+> 
+> But be aware, commit f394ad28feff does not contain the "Fixes:" tag.
+> 
+> Hence, I suggest that in all stable releases containing commit ebeeb1ad9b8a, f394ad28feff must be included as well.
 
-I would simply follow the existing indentation style in that function.
-Is this really worth discussig, anyway? Does the proposed change makes
-the code harder to read?
+Great, thanks for the information.  Can you submit this info to the
+netdev developers who will queue it up for a stable release?  Or, as
+David is already on the cc: list here, he can just tell me to
+cherry-pick it and I can do it on my own :)
 
--- 
-Michal Hocko
-SUSE Labs
+thanks,
+
+greg k-h
