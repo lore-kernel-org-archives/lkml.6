@@ -6,53 +6,52 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8D5C64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BE5C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5909220645
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:02:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5909220645
+	by mail.kernel.org (Postfix) with ESMTP id 310BC20645
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:02:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 310BC20645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbeJCSuL (ORCPT
+        id S1727451AbeJCSuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:50:11 -0400
-Received: from mga07.intel.com ([134.134.136.100]:43142 "EHLO mga07.intel.com"
+        Wed, 3 Oct 2018 14:50:24 -0400
+Received: from mga12.intel.com ([192.55.52.136]:11329 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbeJCSuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:50:11 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1726847AbeJCSuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 14:50:24 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 05:02:04 -0700
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 05:02:18 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
-   d="scan'208";a="85399694"
+   d="scan'208";a="75847297"
 Received: from hoffmann-mobl.ger.corp.intel.com (HELO localhost) ([10.249.38.250])
-  by FMSMGA003.fm.intel.com with ESMTP; 03 Oct 2018 05:01:44 -0700
-Date:   Wed, 3 Oct 2018 15:01:41 +0300
+  by fmsmga008.fm.intel.com with ESMTP; 03 Oct 2018 05:02:15 -0700
+Date:   Wed, 3 Oct 2018 15:02:15 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-Message-ID: <20181003120141.GA7969@linux.intel.com>
+To:     Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc:     Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 06/21] tpm: move tpm1_pcr_extend to tpm1-cmd.c
+Message-ID: <20181003120215.GB7969@linux.intel.com>
 References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-13-tomas.winkler@intel.com>
- <20181002005208.GH23753@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
+ <20180928223035.14471-7-tomas.winkler@intel.com>
+ <20181002004248.GC23753@linux.intel.com>
+ <7e42b9c4-2299-a62d-ac79-0e147cb60573@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7e42b9c4-2299-a62d-ac79-0e147cb60573@linux.vnet.ibm.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,36 +59,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
+On Tue, Oct 02, 2018 at 02:58:00PM +0530, Nayna Jain wrote:
 > 
 > 
-> > 
-> > On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
-> > > Add tpm2_pcr_extend() function to tpm2-cmd.c with signature required
-> > > by tpm-interface.c. It wraps the original open code implementation.
-> > > The original original tpm2_pcr_extend() function is renamed to
-> > > __tpm2_pcr_extend() and made static, it is called only from new
-> > > tpm2_pcr_extend().
-> > >
-> > > Fix warnings in __tpm2_pcr_extend()
-> > > tpm2-cmd.c:251:16: warning: comparison between signed and unsigned
-> > > integer expressions [-Wsign-compare]
-> > > tpm2-cmd.c:252:17: warning: comparison between signed and unsigned
-> > > integer expressions [-Wsign-compare]
-> > >
+> On 10/02/2018 06:12 AM, Jarkko Sakkinen wrote:
+> > On Sat, Sep 29, 2018 at 01:30:20AM +0300, Tomas Winkler wrote:
+> > > Move tpm1_pcr_extend to tpm1-cmd.c and remove
+> > > unused pcrextend_header structure and
+> > > EXTEND_PCR_RESULT_SIZE and EXTEND_PCR_RESULT_BODY_SIZE
+> > > defines.
+> > > 
+> > > Fixes warning:
+> > > drivers/char/tpm/tpm-interface.c:609:38: warning: ‘pcrextend_header’ defined but not used [-Wunused-const-variable=]
+> > >   static const struct tpm_input_header pcrextend_header = {
+> > >                                        ^~~~~~~~~~~~~~~~
+> > > 
 > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > 
-> > We do not want the signature change, especially because as we are working
-> > on getting Roberto's changes in and also because it has absolutely a zero
-> > gain. Who cares if those functions take different parameters? I don't.
+> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Would need help with this from someone with a working IMA setup
+> > on testing.
 > 
-> Yes, we do care this series tries to have a clean cut between 1.x  and 2.x specs. Please, let's finish one transformation and then move to another.
-> I understand that Roberto will have to rebase anyhow, if this series goes in first, if this is hard I can do it myself, it's trivial.
 > 
-> Tomas
+> My test system is down for now.. I think it will be up later in this week. I
+> can test it then.
 
-I'm happy to tune this minor stuff. I'll wait for Nayna to test
-the one patch and make those adjustments :-) Would not make sense
-to roll another series for these changes.
+Thank you.
 
 /Jarkko
