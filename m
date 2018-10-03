@@ -2,158 +2,115 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8C6C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75636C64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94F8521470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:58:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CxSBqWbd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94F8521470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 246D4213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:59:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 246D4213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbeJDCso (ORCPT
+        id S1727450AbeJDCsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 22:48:44 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:39944 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbeJDCso (ORCPT
+        Wed, 3 Oct 2018 22:48:52 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39231 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbeJDCsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 22:48:44 -0400
-Received: by mail-io1-f68.google.com with SMTP id w16-v6so6059212iom.7
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 12:58:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ftBi7uE6RfpTBnDBTIFY8qW3+dgoaovYMFLV/Uj+ztw=;
-        b=CxSBqWbdgcuwgLZAXnt6hAwubB+l41OKm9byEm43Yz+pB+3MsCvGOK8QyMUyAktNRq
-         dnCm0WmVz97OtGKH1XYu+MLXXuVQ8+QPDte4yIeNT7a2BFlsjz42EOR1G8FmmNoNrhT1
-         QYFE1gv+u2b9t5NWdPE47xTACJq+DICQiSQX4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=ftBi7uE6RfpTBnDBTIFY8qW3+dgoaovYMFLV/Uj+ztw=;
-        b=QaiJpr7uyx/stryBNUBiZqqk9uOE9jNUOy/uglODBzEkPxN55pVapW4vcECIVetP0V
-         /TVU9KmL2pOdSfKRIOjsk4vLVXWg2UHH+sAf3mLw5XLBSoxjQnSGZMw0fErcWy8oRzYN
-         KDDZerxtHzbP3HKyBiuHr3YqeJwTXkCP1AIfNm74USHDOhv4kxF/PW3EDDNdjtQWnpHX
-         wUVs0NzSLQav8nOHButJH6kwBLayoycpnzbAZmEEjeebX1hpk+b0GfLnCzwBoMeEIaKL
-         +J/d3vTcPLKDSxgYfBE926/FtSqmeytmsxrd8zCkNNYYy3DDKAczeFK0QkUzegB4np+R
-         pzGg==
-X-Gm-Message-State: ABuFfohn/BO+sJn6YeiweiDV1nBE+kJ6rSgBvk7RpdS3SluwrUSxtHVy
-        6TElRdGznsogrWAad639bQGiYg==
-X-Google-Smtp-Source: ACcGV61zPHC0isxmQQPhKe84T2KV68FlNFqIr8qj5mZqyGcExfWimk8cKXbkz87sk5+zWXpMMwjdJw==
-X-Received: by 2002:a5e:cb48:: with SMTP id h8-v6mr2268346iok.178.1538596732765;
-        Wed, 03 Oct 2018 12:58:52 -0700 (PDT)
-Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
-        by smtp.gmail.com with ESMTPSA id m47-v6sm1014045iti.1.2018.10.03.12.58.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Oct 2018 12:58:51 -0700 (PDT)
-Date:   Wed, 3 Oct 2018 14:58:50 -0500
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org,
-        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net
-Subject: Re: [PATCH 4.18 000/228] 4.18.12-stable review
-Message-ID: <20181003195850.f4x22bgjss4jd4f5@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org,
-        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net
-References: <20181002132459.032960735@linuxfoundation.org>
+        Wed, 3 Oct 2018 22:48:52 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w93JwuIp2469418
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 3 Oct 2018 12:58:56 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w93Jwuap2469415;
+        Wed, 3 Oct 2018 12:58:56 -0700
+Date:   Wed, 3 Oct 2018 12:58:56 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Xiaochen Shen <tipbot@zytor.com>
+Message-ID: <tip-2cc81c6992248ea37d0241bc325977bab310bc3b@git.kernel.org>
+Cc:     tglx@linutronix.de, fenghua.yu@intel.com, xiaochen.shen@intel.com,
+        tony.luck@intel.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        mingo@kernel.org
+Reply-To: hpa@zytor.com, mingo@kernel.org, xiaochen.shen@intel.com,
+          fenghua.yu@intel.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, tony.luck@intel.com
+In-Reply-To: <1536796118-60135-1-git-send-email-fenghua.yu@intel.com>
+References: <1536796118-60135-1-git-send-email-fenghua.yu@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cache] x86/intel_rdt: Show missing resctrl mount options
+Git-Commit-ID: 2cc81c6992248ea37d0241bc325977bab310bc3b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181002132459.032960735@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 02, 2018 at 06:21:37AM -0700, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.18.12 release.
-> There are 228 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Oct  4 13:24:08 UTC 2018.
-> Anything received after that time might be too late.
+Commit-ID:  2cc81c6992248ea37d0241bc325977bab310bc3b
+Gitweb:     https://git.kernel.org/tip/2cc81c6992248ea37d0241bc325977bab310bc3b
+Author:     Xiaochen Shen <xiaochen.shen@intel.com>
+AuthorDate: Wed, 12 Sep 2018 16:48:38 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 3 Oct 2018 21:53:49 +0200
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+x86/intel_rdt: Show missing resctrl mount options
 
-Summary
-------------------------------------------------------------------------
+In resctrl filesystem, mount options exist to enable L3/L2 CDP and MBA
+Software Controller features if the platform supports them:
 
-kernel: 4.18.12-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.18.y
-git commit: e894b754af73d0948e34f61e6070f2d9407a4f98
-git describe: v4.18.11-230-ge894b754af73
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.18-oe/build/v4.18.11-230-ge894b754af73
+ mount -t resctrl resctrl [-o cdp[,cdpl2][,mba_MBps]] /sys/fs/resctrl
 
-No regressions (compared to build v4.18.11)
-------------------------------------------------------------------------
+But currently only "cdp" option is displayed in /proc/mounts. "cdpl2" and
+"mba_MBps" options are not shown even when they are active.
 
-Ran 20361 total tests in the following environments and test suites.
+Before:
+ # mount -t resctrl resctrl -o cdp,mba_MBps /sys/fs/resctrl
+ # grep resctrl /proc/mounts
+ /sys/fs/resctrl /sys/fs/resctrl resctrl rw,relatime,cdp 0 0
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+After:
+ # mount -t resctrl resctrl -o cdp,mba_MBps /sys/fs/resctrl
+ # grep resctrl /proc/mounts
+ /sys/fs/resctrl /sys/fs/resctrl resctrl rw,relatime,cdp,mba_MBps 0 0
 
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-math-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
+Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H Peter Anvin" <hpa@zytor.com>
+Cc: "Tony Luck" <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/1536796118-60135-1-git-send-email-fenghua.yu@intel.com
 
--- 
-Linaro LKFT
-https://lkft.linaro.org
+---
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 1b8e86a5d5e1..82a487840eb2 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -2795,6 +2795,13 @@ static int rdtgroup_show_options(struct seq_file *seq, struct kernfs_root *kf)
+ {
+ 	if (rdt_resources_all[RDT_RESOURCE_L3DATA].alloc_enabled)
+ 		seq_puts(seq, ",cdp");
++
++	if (rdt_resources_all[RDT_RESOURCE_L2DATA].alloc_enabled)
++		seq_puts(seq, ",cdpl2");
++
++	if (is_mba_sc(&rdt_resources_all[RDT_RESOURCE_MBA]))
++		seq_puts(seq, ",mba_MBps");
++
+ 	return 0;
+ }
+ 
