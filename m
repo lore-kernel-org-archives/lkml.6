@@ -2,122 +2,179 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE5EC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BF7C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 848F720652
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 213802098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:21:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cbtbq3si"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848F720652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="uMUJ4FJp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 213802098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbeJCSIK (ORCPT
+        id S1726851AbeJCSI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:08:10 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:38055 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeJCSIK (ORCPT
+        Wed, 3 Oct 2018 14:08:57 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43324 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeJCSI4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:08:10 -0400
-Received: by mail-qt1-f196.google.com with SMTP id l9-v6so5413606qtf.5;
-        Wed, 03 Oct 2018 04:20:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=64RzwtB7e2uj2EjRCEk6rJ3pykZdZ1J0Bh28PpfHk5I=;
-        b=Cbtbq3si4fj/YnVnlb2dcMhvGaUEnx21y0R4DkCh7+SYGTt0jKWgcLSKc94NWFNa3Q
-         SsBMjmbhpaUH7uuiWyOKtHEzKAflNWf09xpFRgb2DlZci8b635gyTVys83YQ0q1fW9oK
-         SCMPTDBAHjseBobG3t1SDvJiyZKQJMh5DocjvhriLXJ1oR6jscE6IA8fKtLIP3fkaZaq
-         x/bHQjSGX1TkWkiEO/vyZugL1f/OWZOyn7JIYfxkhfTaZVJJBfFOoTz2uw0sP+QA6G3e
-         I1ZHH1F/e1TJBmJE2OXntkO0Q+65xAPR8zaJ11Sp5Ha7GCH2/hCq/4TFFFuCXVRtQNU9
-         5opg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=64RzwtB7e2uj2EjRCEk6rJ3pykZdZ1J0Bh28PpfHk5I=;
-        b=R/8BOGkrKi+6j/D9BLNLj1Bx64ndnohpmsBrMZvaGfysCpSH3FrmoJ032y3OkeTvRf
-         BIsodYW6GVoe3mEaqh4dBdOjkucDdJjatSQ5MJ+i6v2i+FsQuVg8Nu907cgsOv7Y++aF
-         3byaC06x4m3U87xXacV/COBRWGAzlZ31xtJYz/fUdDOBZHKW3EY0Rp/GbzFsZQL5Y43b
-         oYn+mP2DrnUnWurIMJF7AmCYdmAbyJyGEs6FaX0/XjFZSn8kaID/jiry6JXBwmWk24TV
-         Ij2FkuN8U6pB9z8QnphiIbL/vIjjX4s6UWjMYEbCInwcMMPdOAonvl6yK5WQbxKiMlHO
-         vz1A==
-X-Gm-Message-State: ABuFfohSrza/CV3fdBq2vIViOao4YPhqgKB/YZ5dh4JA1LJBAqLYfSo0
-        i2sZp0mEu6OJd5BXNthn/1bart97plxobMxyEd8=
-X-Google-Smtp-Source: ACcGV63T9KpbCw9EWazj9kVA2Ro45vEtuH6dKnhrGkhJAO9DMxeJgA9SbbJ1b5ajBe3FQPQvJWvh1zzs7FrGhmP5QgU=
-X-Received: by 2002:a0c:aa06:: with SMTP id d6-v6mr760754qvb.26.1538565612481;
- Wed, 03 Oct 2018 04:20:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181002211651.2804717-1-arnd@arndb.de>
-In-Reply-To: <20181002211651.2804717-1-arnd@arndb.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 3 Oct 2018 14:20:01 +0300
-Message-ID: <CAHp75VfJCZM8Ho3DLB1-xkhJJ=i+BACuvUY-6W-GuFa=iyZzcw@mail.gmail.com>
-Subject: Re: [PATCH] firmware: dcdbas: include linux/io.h
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Stuart Hayes <stuart.w.hayes@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 3 Oct 2018 14:08:56 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w93BIXnS104740;
+        Wed, 3 Oct 2018 11:20:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : content-type :
+ content-transfer-encoding : mime-version : subject : message-id : date :
+ cc : to; s=corp-2018-07-02;
+ bh=TqeilqPwq4z5YIWZUODyPGsRIUPIqVRpjTVQpzOwNs0=;
+ b=uMUJ4FJpy9CjDquiq8cUT/twK3Lij2L9s92dzRR/X1ZtN8/pqmN8DlBc0h/VVhG9afMd
+ j6ex70Maqi7lSl8lidSeLfLTz8vqWQbBnR2OT0/GHqWCx/GgMCUP2Yt80cOm8bWUkQ7w
+ tv3XlkNJYXUtMdtnLDtvqgchU3j9CBJRx4OWIARAChbyIrOBaLK/UvQFsCoKDxENDcUN
+ GGftcumxNF/ZYqIrOtNsSviswzercdcGgx3d1Z5k+ybTgKoAVED60r/zmqZrd7BTMazD
+ 0UPgJVxngv4z6XnBR87SVZmhppe/5d9OBuQYQZRXTFwd0Wuny/l+3hyjDW/e+dQ4IcBG wg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2mt0ttu818-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 03 Oct 2018 11:20:56 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w93BKnFi013607
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 3 Oct 2018 11:20:49 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w93BKm4k020832;
+        Wed, 3 Oct 2018 11:20:48 GMT
+Received: from dhcp-10-172-157-159.no.oracle.com (/10.172.157.159)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 03 Oct 2018 11:20:47 +0000
+From:   =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
+Content-Type: text/plain;
+        charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Bug introduced by commit ebeeb1ad9b8a
+Message-Id: <8EEB4CE2-F6E5-4128-AB04-6326F8315E31@oracle.com>
+Date:   Wed, 3 Oct 2018 13:20:44 +0200
+Cc:     Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ka-Cheong Poon <ka-cheong.poon@oracle.com>,
+        netdev@vger.kernel.or,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        Yanjun Zhu <yanjun.zhu@oracle.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+X-Mailer: Apple Mail (2.3445.9.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9034 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810030113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 12:17 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> memremap() is declared in linux/io.h, not in asm/io.h, so we should
-> include that header to avoid build errors:
->
-> drivers/platform/x86/dcdbas.c: In function 'dcdbas_check_wsmt':
-> drivers/platform/x86/dcdbas.c:572:15: error: implicit declaration of function 'memremap'; did you mean 'ioremap'? [-Werror=implicit-function-declaration]
->   eps_buffer = memremap(eps->smm_comm_buff_addr, remap_size, MEMREMAP_WB);
->                ^~~~~~~~
->                ioremap
-> drivers/platform/x86/dcdbas.c:572:61: error: 'MEMREMAP_WB' undeclared (first use in this function)
->   eps_buffer = memremap(eps->smm_comm_buff_addr, remap_size, MEMREMAP_WB);
->                                                              ^~~~~~~~~~~
-> drivers/platform/x86/dcdbas.c:572:61: note: each undeclared identifier is reported only once for each function it appears in
-> drivers/platform/x86/dcdbas.c: In function 'dcdbas_exit':
-> drivers/platform/x86/dcdbas.c:748:3: error: implicit declaration of function 'memunmap'; did you mean 'vm_munmap'? [-Werror=implicit-function-declaration]
->
-
-Pushed to for-next, sorry for inconveniences and thanks for the quick fix!
-
-> Fixes: 12c956c4f32e ("firmware: dcdbas: Add support for WSMT ACPI table")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/platform/x86/dcdbas.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/platform/x86/dcdbas.c b/drivers/platform/x86/dcdbas.c
-> index ae28e48ff7dc..daa7e3574568 100644
-> --- a/drivers/platform/x86/dcdbas.c
-> +++ b/drivers/platform/x86/dcdbas.c
-> @@ -37,7 +37,7 @@
->  #include <linux/string.h>
->  #include <linux/types.h>
->  #include <linux/mutex.h>
-> -#include <asm/io.h>
-> +#include <linux/io.h>
->
->  #include "dcdbas.h"
->
-> --
-> 2.18.0
->
+Hi Greg,
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+I hope you will find this note appropriate.
+
+The stable cherry-pick of upstream commit ebeeb1ad9b8a ("rds: tcp: use =
+rds_destroy_pending() to synchronize netns/module teardown and rds =
+connection/workq management") provokes the following stack trace when =
+running with debug:
+
+
+kernel: BUG: sleeping function called from invalid context at =
+kernel/locking/mutex.c:748
+kernel: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+kernel: in_atomic(): 1, irqs_disabled(): 0, pid: 4392, name: rds-stress
+kernel: 1 lock held by rds-stress/4392:
+kernel: #0: 00000000df837d5e
+kernel: WARNING: suspicious RCU usage
+kernel: 4.18.8 #1 Not tainted
+kernel: -----------------------------
+kernel: ./include/linux/rcupdate.h:303 Illegal context switch in RCU =
+read-side critical section!
+kernel: (
+kernel: #012other info that might help us debug this:
+kernel: #012rcu_scheduler_active =3D 2, debug_locks =3D 1
+kernel: rcu_read_lock){....}
+kernel: 1 lock held by rds-stress/4393:
+kernel: #0:
+kernel: , at: __rds_conn_create+0x604/0x960 [rds]
+kernel: 00000000df837d5e
+kernel: CPU: 38 PID: 4392 Comm: rds-stress Not tainted 4.18.8 #1
+kernel: Hardware name: Oracle Corporation ORACLE SERVER X5-2L/ASM,MOBO =
+TRAY,2U, BIOS 31110000 03/03/2017
+kernel: (rcu_read_lock
+kernel: Call Trace:
+kernel: ){....}
+kernel: dump_stack+0x81/0xb8
+kernel: , at: __rds_conn_create+0x604/0x960 [rds]
+kernel: #012stack backtrace:
+kernel: ___might_sleep+0x239/0x260
+kernel: __might_sleep+0x4a/0x80
+kernel: __mutex_lock+0x58/0x9c0
+kernel: ? __lock_acquire+0x47f/0x7e0
+kernel: ? pcpu_alloc+0x429/0x860
+kernel: ? find_held_lock+0x40/0xb0
+kernel: ? create_object+0x22f/0x320
+kernel: ? _raw_write_unlock_irqrestore+0x36/0x60
+kernel: mutex_lock_killable_nested+0x1b/0x20
+kernel: pcpu_alloc+0x429/0x860
+kernel: ? create_object+0x22f/0x320
+kernel: __alloc_percpu+0x15/0x20
+kernel: rds_ib_recv_alloc_cache+0x1c/0x80 [rds_rdma]
+kernel: rds_ib_recv_alloc_caches+0x1d/0x60 [rds_rdma]
+kernel: rds_ib_conn_alloc+0x46/0x170 [rds_rdma]
+kernel: __rds_conn_create+0x68d/0x960 [rds]
+kernel: ? __rds_conn_create+0x604/0x960 [rds]
+kernel: rds_conn_create_outgoing+0x14/0x20 [rds]
+kernel: rds_sendmsg+0x2e8/0xcd0 [rds]
+kernel: ? copy_msghdr_from_user+0xdb/0x140
+kernel: sock_sendmsg+0x38/0x50
+kernel: ___sys_sendmsg+0x27b/0x290
+kernel: ? __lock_acquire+0x47f/0x7e0
+kernel: ? find_held_lock+0x40/0xb0
+kernel: ? __audit_syscall_entry+0xdf/0x160
+kernel: ? ktime_get_coarse_real_ts64+0x6e/0xe0
+kernel: ? trace_hardirqs_on_caller+0x128/0x1b0
+kernel: ? trace_hardirqs_on+0xd/0x10
+kernel: ? __audit_syscall_entry+0xdf/0x160
+kernel: ? __audit_syscall_entry+0xdf/0x160
+kernel: __sys_sendmsg+0x5d/0xb0
+kernel: __x64_sys_sendmsg+0x1f/0x30
+kernel: do_syscall_64+0x5f/0x220
+kernel: entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Command line:
+
+$ rds-stress -r <IB port 1 IP>& sleep 1; rds-stress -r <IB port 2 IP> -s =
+<IB port 1 IP> -T 10
+
+Deliberately or accidently, Ka-Cheong's commit f394ad28feff ("rds: =
+rds_ib_recv_alloc_cache() should call alloc_percpu_gfp() instead") fixes =
+the bug introduced by commit ebeeb1ad9b8a. Kudos to Zhu Yanjun who =
+quickly detected this.
+
+But be aware, commit f394ad28feff does not contain the "Fixes:" tag.
+
+Hence, I suggest that in all stable releases containing commit =
+ebeeb1ad9b8a, f394ad28feff must be included as well.
+
+
+Thxs, H=C3=A5kon
+
+
+
+
+
+
+
