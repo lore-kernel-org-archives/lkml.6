@@ -2,73 +2,104 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96CE0C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51884C64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC0E213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:12:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BC0E213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 17A89213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:12:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17A89213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbeJDCCL (ORCPT
+        id S1727203AbeJDCCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 22:02:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51026 "EHLO mail.kernel.org"
+        Wed, 3 Oct 2018 22:02:22 -0400
+Received: from namei.org ([65.99.196.166]:35472 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726884AbeJDCCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 22:02:11 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B2D0213A2;
-        Wed,  3 Oct 2018 19:12:29 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 15:12:27 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [ftrace/kprobes PATCH 3/3] tracing/kprobes: Allow kprobe-events
- to record module symbol
-Message-ID: <20181003151227.4a730dcb@gandalf.local.home>
-In-Reply-To: <153547312336.26502.11432902826345374463.stgit@devbox>
-References: <153547303754.26502.5265242979168613920.stgit@devbox>
-        <153547312336.26502.11432902826345374463.stgit@devbox>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726884AbeJDCCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 22:02:22 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id w93JCeZc017052;
+        Wed, 3 Oct 2018 19:12:40 GMT
+Date:   Thu, 4 Oct 2018 05:12:40 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     David Howells <dhowells@redhat.com>
+cc:     denkenz@gmail.com, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/22] KEYS: Make the X.509 and PKCS7 parsers supply the
+ sig encoding type
+In-Reply-To: <153618448451.7946.79126788153992612.stgit@warthog.procyon.org.uk>
+Message-ID: <alpine.LRH.2.21.1810040511390.16168@namei.org>
+References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk> <153618448451.7946.79126788153992612.stgit@warthog.procyon.org.uk>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018 01:18:43 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Wed, 5 Sep 2018, David Howells wrote:
 
-> Allow kprobe-events to record module symbols.
-> 
-> Since data symbols in a non-loaded module doesn't exist, it fails to
-> define such symbol as an argument of kprobe-event. But if the kprobe
-> event is defined on that module, we can defer to resolve the symbol
-> address.
-> 
-> Note that if given symbol is not found, the event is kept unavailable.
-> User can enable it but the event is not recorded.
-> 
->
+> diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
+> index b6cabac4b62b..991f4d735a4e 100644
+> --- a/crypto/asymmetric_keys/x509_cert_parser.c
+> +++ b/crypto/asymmetric_keys/x509_cert_parser.c
+> @@ -199,35 +199,32 @@ int x509_note_pkey_algo(void *context, size_t hdrlen,
+>  
+>  	case OID_md4WithRSAEncryption:
+>  		ctx->cert->sig->hash_algo = "md4";
+> -		ctx->cert->sig->pkey_algo = "rsa";
+> -		break;
+> +		goto rsa_pkcs1;
+>  
+>  	case OID_sha1WithRSAEncryption:
+>  		ctx->cert->sig->hash_algo = "sha1";
+> -		ctx->cert->sig->pkey_algo = "rsa";
+> -		break;
+> +		goto rsa_pkcs1;
+>  
+>  	case OID_sha256WithRSAEncryption:
+>  		ctx->cert->sig->hash_algo = "sha256";
+> -		ctx->cert->sig->pkey_algo = "rsa";
+> -		break;
+> +		goto rsa_pkcs1;
+>  
+>  	case OID_sha384WithRSAEncryption:
+>  		ctx->cert->sig->hash_algo = "sha384";
+> -		ctx->cert->sig->pkey_algo = "rsa";
+> -		break;
+> +		goto rsa_pkcs1;
+>  
+>  	case OID_sha512WithRSAEncryption:
+>  		ctx->cert->sig->hash_algo = "sha512";
+> -		ctx->cert->sig->pkey_algo = "rsa";
+> -		break;
+> +		goto rsa_pkcs1;
+>  
+>  	case OID_sha224WithRSAEncryption:
+>  		ctx->cert->sig->hash_algo = "sha224";
+> -		ctx->cert->sig->pkey_algo = "rsa";
+> -		break;
+> +		goto rsa_pkcs1;
+>  	}
+>  
+> +rsa_pkcs1:
+> +	ctx->cert->sig->pkey_algo = "rsa";
+> +	ctx->cert->sig->encoding = "pkcs1";
+>  	ctx->algo_oid = ctx->last_oid;
+>  	return 0;
+>  }
 
-Hi Masami,
+Perhaps I'm missing something here but why do you need the gotos vs. just 
+breaking to this code?
 
-The first two patches look like they should be applied now and marked
-for stable, as they are fixes. This patch looks like an added feature,
-and will go into the next merge window.
 
-Is that what you think too?
+-- 
+James Morris
+<jmorris@namei.org>
 
-Thanks!
-
--- Steve
