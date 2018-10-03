@@ -2,72 +2,186 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0888C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB73C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83D4720835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:59:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83D4720835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6089120835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 10:59:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6089120835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbeJCRrF (ORCPT
+        id S1726905AbeJCRrX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 13:47:05 -0400
-Received: from foss.arm.com ([217.140.101.70]:49588 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726617AbeJCRrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 13:47:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 692DA18A;
-        Wed,  3 Oct 2018 03:59:12 -0700 (PDT)
-Received: from localhost (e105922-lin.Emea.Arm.com [10.4.13.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07DC23F5A0;
-        Wed,  3 Oct 2018 03:59:11 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     kvmarm@lists.cs.columbia.edu, will.deacon@arm.com,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 1/9] KVM: arm/arm64: Ensure only THP is candidate for adjustment
-References: <20181001155443.23032-1-punit.agrawal@arm.com>
-        <20181001155443.23032-2-punit.agrawal@arm.com>
-        <0809a9d0-d256-c23a-c3cc-0b2be33aecff@arm.com>
-Date:   Wed, 03 Oct 2018 11:59:10 +0100
-In-Reply-To: <0809a9d0-d256-c23a-c3cc-0b2be33aecff@arm.com> (Marc Zyngier's
-        message of "Wed, 3 Oct 2018 11:50:38 +0100")
-Message-ID: <87tvm3i9dt.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Wed, 3 Oct 2018 13:47:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41998 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726617AbeJCRrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 13:47:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BA5BEB022;
+        Wed,  3 Oct 2018 10:59:27 +0000 (UTC)
+Date:   Wed, 3 Oct 2018 12:59:26 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        catalin.marinas@arm.com, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com
+Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
+Message-ID: <20181003105926.GA4714@dhcp22.suse.cz>
+References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
+ <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
+ <20181002123909.GS18290@dhcp22.suse.cz>
+ <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
+ <20181003065833.GD18290@dhcp22.suse.cz>
+ <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marc Zyngier <marc.zyngier@arm.com> writes:
+On Wed 03-10-18 15:28:23, Anshuman Khandual wrote:
+> 
+> 
+> On 10/03/2018 12:28 PM, Michal Hocko wrote:
+> > On Wed 03-10-18 07:46:27, Anshuman Khandual wrote:
+> >>
+> >>
+> >> On 10/02/2018 06:09 PM, Michal Hocko wrote:
+> >>> On Tue 02-10-18 17:45:28, Anshuman Khandual wrote:
+> >>>> Architectures like arm64 have PUD level HugeTLB pages for certain configs
+> >>>> (1GB huge page is PUD based on ARM64_4K_PAGES base page size) that can be
+> >>>> enabled for migration. It can be achieved through checking for PUD_SHIFT
+> >>>> order based HugeTLB pages during migration.
+> >>>
+> >>> Well a long term problem with hugepage_migration_supported is that it is
+> >>> used in two different context 1) to bail out from the migration early
+> >>> because the arch doesn't support migration at all and 2) to use movable
+> >>> zone for hugetlb pages allocation. I am especially concerned about the
+> >>> later because the mere support for migration is not really good enough.
+> >>> Are you really able to find a different giga page during the runtime to
+> >>> move an existing giga page out of the movable zone?
+> >>
+> >> I pre-allocate them before trying to initiate the migration (soft offline
+> >> in my experiments). Hence it should come from the pre-allocated HugeTLB
+> >> pool instead from the buddy. I might be missing something here but do we
+> >> ever allocate HugeTLB on the go when trying to migrate ? IIUC it always
+> >> came from the pool (unless its something related to ovecommit/surplus).
+> >> Could you please kindly explain regarding how migration target HugeTLB
+> >> pages are allocated on the fly from movable zone.
+> > 
+> > Hotplug comes to mind. You usually do not pre-allocate to cover full
+> > node going offline. And people would like to do that. Another example is
+> > CMA. You would really like to move pages out of the way.
+> 
+> You are right.
+> 
+> Hotplug migration:
+> 
+> __offline_pages
+>    do_migrate_range
+> 	migrate_pages(...new_node_page...)
+> 
+> new_node_page
+>    new_page_nodemask
+> 	alloc_huge_page_nodemask
+> 	   dequeue_huge_page_nodemask (Getting from pool)
+> 	or
+> 	   alloc_migrate_huge_page    (Getting from buddy - non-gigantic)
+> 		alloc_fresh_huge_page
+> 		    alloc_buddy_huge_page
+> 			__alloc_pages_nodemask ----> goes into buddy
+> 
+> CMA allocation:
+> 
+> cma_alloc
+>    alloc_contig_range
+> 	__alloc_contig_migrate_range
+> 		migrate_pages(...alloc_migrate_target...)
+> 
+> alloc_migrate_target
+>    new_page_nodemask -> __alloc_pages_nodemask ---> goes into buddy
+> 
+> But this is not applicable for gigantic pages for which it backs off way
+> before going into buddy.
 
-> On 01/10/18 16:54, Punit Agrawal wrote:
->> PageTransCompoundMap() returns true for hugetlbfs and THP
->> hugepages. This behaviour incorrectly leads to stage 2 faults for
->> unsupported hugepage sizes (e.g., 64K hugepage with 4K pages) to be
->> treated as THP faults.
->>
->> Tighten the check to filter out hugetlbfs pages. This also leads to
->> consistently mapping all unsupported hugepage sizes as PTE level
->> entries at stage 2.
->>
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: stable@vger.kernel.org # v4.13+
->
-> FWIW, I've cherry-picked that single patch from the series and queued
-> it for 4.20.
+This is an implementation detail - mostly a missing or an incomplete
+hugetlb overcommit implementation IIRC. The primary point remains the
+same. Being able to migrate in principle and feasible enough to migrate
+to be placed in zone movable are two distinct things.
+[...]
+> >> But even if there are some chances of run time allocation failure from
+> >> movable zone (as in point 2) that should not block the very initiation
+> >> of migration itself. IIUC thats not the semantics for either THP or
+> >> normal pages. Why should it be different here. If the allocation fails
+> >> we should report and abort as always. Its the caller of migration taking
+> >> the chances. why should we prevent that.
+> > 
+> > Yes I agree, hence the distinction between the arch support for
+> > migrateability and the criterion on the movable zone placement.
+> movable zone placement sounds very tricky here. How can the platform
+> (through the hook huge_movable) before hand say whether destination
+> page could be allocated from the ZONE_MOVABLE without looking into the
+> state of buddy at migration (any sort attempt to do this is going to
+> be expensive) or it merely indicates the desire to live with possible
+> consequence (unable to hot unplug/CMA going forward) for a migration
+> which might end up in an unmovable area.
 
-Thanks for picking up the fix.
+I do not follow. The whole point of zone_movable is to provide a
+physical memory range which is more or less movable. That means that
+pages allocated from this zone can be migrated away should there be a
+reason for that.
+
+> >>> So I guess we want to split this into two functions
+> >>> arch_hugepage_migration_supported and hugepage_movable. The later would
+> >>
+> >> So the set difference between arch_hugepage_migration_supported and 
+> >> hugepage_movable still remains un-migratable ? Then what is the purpose
+> >> for arch_hugepage_migration_supported page size set in the first place.
+> >> Does it mean we allow the migration at the beginning and the abort later
+> >> when the page size does not fall within the subset for hugepage_movable.
+> >> Could you please kindly explain this in more detail.
+> > 
+> > The purpose of arch_hugepage_migration_supported is to tell whether it
+> > makes any sense to even try to migration. The allocation placement is
+> 
+> Which kind of matches what we have right now and being continued with this
+> proposal in the series.
+
+Except you only go half way there. Because you still consider "able to
+migrate" and "feasible to migrate" as the same thing.
+
+> 
+> > completely independent on this choice. The later just says whether it is
+> > feasible to place a hugepage to the zone movable. Sure regular 2MB pages
+> 
+> What do you exactly mean by feasible ? Wont it depend on the state of the
+> buddy allocator (ZONE_MOVABLE in particular) and it's ability to accommodate
+> a given huge page. How can the platform decide on it ?
+
+It is not the platform that decides. That is the whole point of the
+distinction. It is us to say what is feasible and what we want to
+support. Do we want to support giga pages in zone_movable? Under which
+conditions? See my point?
+
+> Or as I mentioned
+> before it's platform's willingness to live with unmovable huge pages (of
+> certain sizes) as a consequence of migration.
+
+No, the platform has no saying in that. The platform only says that it
+supports migrating those pages in principle.
+ 
+-- 
+Michal Hocko
+SUSE Labs
