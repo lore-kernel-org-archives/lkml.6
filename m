@@ -2,157 +2,150 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92076C64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E2FC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A8621476
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:12:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CCC921473
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:13:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oV2UGR3e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A8621476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="q8DXnavL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CCC921473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbeJDDCl (ORCPT
+        id S1727245AbeJDDDH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 23:02:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726950AbeJDDCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 23:02:41 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EC0321470;
-        Wed,  3 Oct 2018 20:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538597567;
-        bh=ZPs0Oa4tqcEP9M41WwrONHaui5nL3bwAw5u1np159FA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oV2UGR3ejbLPCTEssToBX3t8/sktoYvn5g9X78QQuAHdN0iSWPnb6H0NStoedSb3v
-         Du/B4rLzRlFUI3TqbIhsQqU01GE9Fkb+fY9dPngJhY94ZUwex4YtezE0ABCBzyF7eh
-         M1P5OB100U+wpdlHWCN89bXdI/OqL73IqfWYx2dw=
-Date:   Wed, 3 Oct 2018 15:12:44 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Bin Meng <bmeng.cn@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Thomas Jarosch <thomas.jarosch@intra2net.com>,
-        stable <stable@vger.kernel.org>, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pci: Add a few new IDs for Intel GPU "spurious
- interrupt" quirk
-Message-ID: <20181003201244.GG120535@bhelgaas-glaptop.roam.corp.google.com>
-References: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com>
- <20180926165721.GA28024@bhelgaas-glaptop.roam.corp.google.com>
- <CAEUhbmXc--Ph71DGu2b+ijTzB6xvHXzuESBJKp9zARE2gjqV6w@mail.gmail.com>
+        Wed, 3 Oct 2018 23:03:07 -0400
+Received: from mail-cys01nam02on0087.outbound.protection.outlook.com ([104.47.37.87]:30854
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726941AbeJDDDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 23:03:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UAUGrNya9fg7im11XQgoQeU9pdvQ/Qs1vqHwJLzRtTA=;
+ b=q8DXnavL6NMYrLVIpP7QdQl7osz+hrEq3gzbj2BzDbd+jYgBrIHXYK5/RDC7eEj1pjh6Tfw/PC/i/7BifKL4tDWM33e+6se/J353SJHYmrj2lVyQiw+xsQK1nB66F8PWrEGgnlcZ/0l9JfEh2csgT60mV9Q8fOQOjwqOtWG1v4U=
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
+ DM5PR12MB1692.namprd12.prod.outlook.com (10.172.40.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.24; Wed, 3 Oct 2018 20:12:32 +0000
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::bd60:9d30:b818:b828]) by DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::bd60:9d30:b818:b828%2]) with mapi id 15.20.1207.021; Wed, 3 Oct 2018
+ 20:12:32 +0000
+From:   "Moger, Babu" <Babu.Moger@amd.com>
+To:     Reinette Chatre <reinette.chatre@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "vikas.shivappa@linux.intel.com" <vikas.shivappa@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>
+CC:     "x86@kernel.org" <x86@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "jannh@google.com" <jannh@google.com>,
+        "dima@arista.com" <dima@arista.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 03/10] arch/x86: Re-arrange RDT init code
+Thread-Topic: [RFC PATCH 03/10] arch/x86: Re-arrange RDT init code
+Thread-Index: AQHUVDtyokQlIS2+10uA6u2YvHhBgaUMYa6A///02QCAAZYggIAAFbAA
+Date:   Wed, 3 Oct 2018 20:12:31 +0000
+Message-ID: <7a7fb59a-eeca-47d1-49eb-c78fa289aef3@amd.com>
+References: <20180924191841.29111-1-babu.moger@amd.com>
+ <20180924191841.29111-4-babu.moger@amd.com>
+ <09e1f4dc-7882-9bb4-f5a7-e9e7caafee84@intel.com>
+ <ec7ea236-adca-246c-2d2a-56dc68a146f8@amd.com>
+ <7c971383-1695-7905-603e-99ff5916f691@intel.com>
+In-Reply-To: <7c971383-1695-7905-603e-99ff5916f691@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR22CA0058.namprd22.prod.outlook.com
+ (2603:10b6:300:12a::20) To DM5PR12MB2471.namprd12.prod.outlook.com
+ (2603:10b6:4:b5::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Babu.Moger@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1692;20:0TyQG6+c+I0nlp3KasgsMOyAufKw9Cr0SfXYXKYhFrgDowWv8q/+TtG9MjJieRNPeGX06q3419JJm6dE4J+ocmtpvUyKK6Q+KBlDew1t4+2cTOlmRFz6V5bCMgY4aTrANcRuOgoJ5+RnAvgIc8qOgcMK56dTKRqWF9XnYwGQfBVPvBZ867RxO2pkeRo4a962tktKH7o91/pByc8jcA7sN+r9W6JWhogjSHMzvLBAwbgf0K9wCIgF9tlso+b7E10M
+x-ms-office365-filtering-correlation-id: 1a6c2c70-c312-4884-7b41-08d6296c8ce0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1692;
+x-ms-traffictypediagnostic: DM5PR12MB1692:
+x-microsoft-antispam-prvs: <DM5PR12MB1692A1849945779D9A07714095E90@DM5PR12MB1692.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72170088055959);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051);SRVR:DM5PR12MB1692;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1692;
+x-forefront-prvs: 0814A2C7A3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(396003)(136003)(376002)(346002)(39860400002)(366004)(189003)(199004)(68736007)(6436002)(6246003)(6486002)(97736004)(53936002)(31686004)(7736002)(6512007)(3846002)(6116002)(105586002)(106356001)(71200400001)(5660300001)(305945005)(110136005)(71190400001)(54906003)(316002)(53546011)(2906002)(6506007)(386003)(25786009)(4326008)(229853002)(7416002)(66066001)(52116002)(8676002)(81156014)(99286004)(81166006)(8936002)(76176011)(11346002)(446003)(93886005)(14454004)(26005)(72206003)(486006)(476003)(2616005)(36756003)(478600001)(102836004)(5250100002)(2501003)(256004)(86362001)(186003)(31696002)(2900100001)(217873002)(2201001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1692;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: E2LsPKQMRHpzhFilu+5DKYjHOEvpoQ0ZQnZ8otDyehfrrrWQeG4BXoW1Fsx+GRtJm8r2zClWL3RTmfQ0LM/btlZd4+mDc98nYVbcqVWUEwcn7cncdKvvEV9uu0wrzDeYUanuMRfN/Ht4PazBWLkRHGlm86UErymd9CZHjDUR0ZgsUUo31GGsfBx1qTDzeRWq5KX9p41VnnQYrgCh3BwZN1O8hLYF27Pgr8tKH6Kq+8sPVOPE3ZTxAmEHT9IYAe3eAGvDVWLcqi9uwxGDa9n3k4TE9JD7U99ra4PgW/GyIXiWFjWIB1TQQ0JgX36/1tDk6nNm+WGrkJx2+SF++0eL05dzIuDXGOrcYJoQEYPXLl8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <872B53ADDB0FB8469ECF7EC2929632C6@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEUhbmXc--Ph71DGu2b+ijTzB6xvHXzuESBJKp9zARE2gjqV6w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a6c2c70-c312-4884-7b41-08d6296c8ce0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2018 20:12:31.9982
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1692
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 10:10:07AM +0800, Bin Meng wrote:
-> On Thu, Sep 27, 2018 at 12:57 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Wed, Sep 26, 2018 at 08:14:01AM -0700, Bin Meng wrote:
-> > > Add more PCI IDs to the Intel GPU "spurious interrupt" quirk table,
-> > > which are known to break.
-> >
-> > Do you have a reference for this?  Any public bug reports, bugzilla,
-> > Intel spec reference or errata?  "Which are known to break" is pretty
-> > vague.
-> 
-> Sorry I used wrong words and should have been clearer. These devices
-> are validated to be broken. The test I used is very simple, just
-> unplug the VGA cable and plug it again, and "spurious interrupt" will
-> be seen on the interrupt line of the IGD device. I was not aware of
-> any public bugs filed to Intel, nor seen any errata from Intel.
-
-The original commit, f67fd55fa96f ("PCI: Add quirk for still enabled
-interrupts on Intel Sandy Bridge GPUs"), says some systems "crash"
-(not sure if that means an oops or an actual crash that requires a
-reboot) and on other systems, Linux disables the shared interrupt
-line.  I assume disabling the interrupt line keeps devices using that
-line from working, but does not directly cause a crash.
-
-What specific symptom do you see here?  I think it might be useful to
-collect details, e.g., dmesg logs, /proc/interrupts contents, output
-of "sudo lspci -vv", etc., for the systems you're quirking here.  I'm
-hoping we can eventually figure out a solution that doesn't require a
-quirk for every new GPU, and maybe that info will help find it.
-
-> > > See commit f67fd55fa96f ("PCI: Add quirk for still enabled interrupts
-> > > on Intel Sandy Bridge GPUs"), and commit 7c82126a94e6 ("PCI: Add new
-> > > ID for Intel GPU "spurious interrupt" quirk") for some history.
-> > >
-> > > Based on current findings, it is highly possible that all Intel
-> > > 1st/2nd/3rd generation Core processors' IGD has such quirk.
-> >
-> > Can you include a reference to these "current findings"?  I assume you
-> > have bug reports that include the device IDs you're adding?  If not,
-> > how did you build this list of new IDs?
-> 
-> By "current findings" I mean given the IDs we have here, plus previous
-> one added by Thomas, it's highly possible this VGA BIOS bug exists in
-> every 1st/2nd/3rd generation Core processors.
-> 
-> > The function comment added by f67fd55fa96f ("PCI: Add quirk for still
-> > enabled interrupts on Intel Sandy Bridge GPUs") suggests that this is
-> > actually a BIOS issue, not a hardware erratum, i.e., I don't see
-> > anything there that suggests a hardware defect.
-> >
-> > But there must be a hole somewhere -- the kernel can't be expected to
-> > disable interrupts in device-specific ways when there's no driver
-> > loaded.  Maybe it's simply a BIOS defect or maybe there's some
-> > interrupt or _PRT-related setup we're missing.
-> 
-> It's a pure VGA BIOS bug, not the BIOS bug or _PRT etc. The VGA BIOS
-> forgot to turn off the interrupt on these devices.
-
-If this is a VGA BIOS defect, it's not very likely that it will
-magically be fixed for all new Intel GPUs, so in effect it sounds like
-we need to update this list of quirks in Linux every time a new Intel
-GPU comes out.  That prospect is a little daunting.
-
-Do you happen to know if Windows has the same problem?  I.e., if you
-boot an old version of Windows with a new GPU, and unplug the VGA
-cable, does Windows crash?  If Windows can figure out how to handle
-that situation gracefully, Linux should be able to do it, too.
-
-> > > Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
-> > > Cc: <stable@vger.kernel.org> # v3.4+
-> > > ---
-> > >
-> > >  drivers/pci/quirks.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> > > index 6bc27b7..c0673a7 100644
-> > > --- a/drivers/pci/quirks.c
-> > > +++ b/drivers/pci/quirks.c
-> > > @@ -3190,7 +3190,11 @@ static void disable_igfx_irq(struct pci_dev *dev)
-> > >
-> > >       pci_iounmap(dev, regs);
-> > >  }
-> > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
-> > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
-> > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
-> > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
-> > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
-> > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
-> > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
-> > >
-> > > --
-> 
-> Regards,
-> Bin
+DQoNCk9uIDEwLzAzLzIwMTggMDE6NTQgUE0sIFJlaW5ldHRlIENoYXRyZSB3cm90ZToNCj4gSGkg
+QmFidSwNCj4gDQo+IE9uIDEwLzIvMjAxOCA0OjQxIFBNLCBNb2dlciwgQmFidSB3cm90ZToNCj4+
+IE9uIDEwLzAyLzIwMTggMDI6MjEgUE0sIFJlaW5ldHRlIENoYXRyZSB3cm90ZToNCj4+PiBPbiA5
+LzI0LzIwMTggMTI6MTkgUE0sIE1vZ2VyLCBCYWJ1IHdyb3RlOg0KPj4+PiAgc3RhdGljIGVudW0g
+Y3B1aHBfc3RhdGUgcmR0X29ubGluZTsNCj4+Pj4gQEAgLTg2Niw4ICs4NzIsMjIgQEAgc3RhdGlj
+IGludCBfX2luaXQgcmR0X2xhdGVfaW5pdCh2b2lkKQ0KPj4+PiAgCXN0cnVjdCByZHRfcmVzb3Vy
+Y2UgKnI7DQo+Pj4+ICAJaW50IHN0YXRlLCByZXQ7DQo+Pj4+ICANCj4+Pj4gLQlpZiAoIWdldF9y
+ZHRfcmVzb3VyY2VzKCkpDQo+Pj4+ICsJLyogUnVuIHF1aXJrcyBmaXJzdCAqLw0KPj4+PiArCXJk
+dF9xdWlya3MoKTsNCj4+Pj4gKw0KPj4+PiArCXJkdF9hbGxvY19jYXBhYmxlID0gZ2V0X3JkdF9h
+bGxvY19yZXNvdXJjZXMoKTsNCj4+Pj4gKwlyZHRfbW9uX2NhcGFibGUgPSBnZXRfcmR0X21vbl9y
+ZXNvdXJjZXMoKTsNCj4+Pj4gKw0KPj4+PiArCWlmICghKHJkdF9hbGxvY19jYXBhYmxlIHx8IHJk
+dF9tb25fY2FwYWJsZSkpIHsNCj4+Pj4gKwkJcHJfaW5mbygiUkRUIGFsbG9jYXRpb24gb3IgbW9u
+aXRvcmluZyBub3QgZGV0ZWN0ZWRcbiIpOw0KPj4+DQo+Pj4gVGhpcyBmdW5jdGlvbiBlbmRzIHdp
+dGggYSBsb2cgZW50cnkgZm9yIGV2ZXJ5IHJlc291cmNlIGRpc2NvdmVyZWQuIElzDQo+Pj4gdGhp
+cyBuZXcgbG9nIGVudHJ5IG5lZWRlZCB0byBpbmRpY2F0ZSB0aGF0IHN1Y2ggcmVzb3VyY2VzIGhh
+dmUgbm90IGJlZW4NCj4+PiBmb3VuZD8gQ291bGQgaXQgbm90IGp1c3QgYmUgdGhlIGFic2VuY2Ug
+b2YgdGhlIG90aGVyIG1lc3NhZ2U/DQo+Pg0KPj4gQXMgdGhpcyBpcyByZWxhdGl2ZWx5IG5ldyBm
+ZWF0dXJlLCBzbyBJIGFkZGVkIHRoaXMgaW5mbyBtZXNzYWdlLiBJdCBoZWxwZWQNCj4+IG1lIGRl
+YnVnIHdoYXQgd2VudCB3cm9uZy4gT3RoZXJ3aXNlLCBJIGRvbid0IHNlZSBhbnl0aGluZy4gSSBj
+YW4gcmVtb3ZlIGl0DQo+PiBpZiB0aGUgbWVzc2FnZSBpcyB0b28gYW5ub3lpbmcgdG8gdGhlIHVz
+ZXIuDQo+IA0KPiBUaGlzIGxvZyBlbnRyeSBpcyBtYWRlIGFmdGVyIGRldGVjdGlvbiBvZiByZXNv
+dXJjZXMvZmVhdHVyZXMgc3VwcG9ydGVkDQo+IGJ5IHRoZSBzeXN0ZW0uIEEgdXNlciB3b3VsZCBm
+aW5kIG1vcmUgaW5mb3JtYXRpb24gaW4gdGhlDQo+IHByZXNlbmNlL2Fic2VuY2Ugb2YgdGhlIHJl
+bGV2YW50IENQVSBmZWF0dXJlIGZsYWdzIGluIC9wcm9jL2NwdWluZm8uDQoNCk9rLiBVbmRlcnN0
+b29kLiBJIGhhdmUgZHJvcHBlZCB0aGlzIGxvZyBlbnRyeS4NCg0KPiANCj4gUmVpbmV0dGUNCj4g
+DQo=
