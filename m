@@ -2,196 +2,275 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3987C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A8FC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A793206B2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:53:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F049206B2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:54:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fG8FKqVL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A793206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="dsoo9Em/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F049206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbeJDEn7 (ORCPT
+        id S1727030AbeJDEoQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 00:43:59 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37193 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725723AbeJDEn6 (ORCPT
+        Thu, 4 Oct 2018 00:44:16 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:50230 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725723AbeJDEoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 00:43:58 -0400
-Received: by mail-lj1-f194.google.com with SMTP id 63-v6so6542444ljs.4;
-        Wed, 03 Oct 2018 14:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KHXzlX7JqZoWkOs83Z8eqDiRlfjlpaRldWOBCio/AXM=;
-        b=fG8FKqVLyVwGOoFu7qELNquP/FrmauXiipRUhV++NgYkiOpXM4ExTARiimfxRxOv9j
-         alqpbQZzauwgEdCAtyWkBZVG5VxS2nh/Cry2F5i1uT+bKnPdhycrPRj2S+MhCjWcrS8b
-         DLlLq9UcJy+/b9NWRagieKQ1FEg6vEJvRg73G2pbBtt7Gs9yzhO1wehATBeOkPnPzsdy
-         WLTGJ7V5tIn30VNDgItjTJ378G57JmXxIqYk1QFvJ3N/3NlvtsudU6yYDzwq/Jb4kN+3
-         6zVIGnGPfAOiaTPjfbnwd7Ogf2ce8PEWhWRwYwbkfAnHoHo2Y7BhY0m/z19SDswk/nw3
-         S48Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KHXzlX7JqZoWkOs83Z8eqDiRlfjlpaRldWOBCio/AXM=;
-        b=p2o7QVEwXX/S/qpetS+F7OKET9r7Z3HEIVnnlzybXtZOLn1VXQRneo1nlfjd3kGcHi
-         FLpkcrmgOf3BrrUSWkRgtJ7nOKHLoI0kZNb8GPMwe03mmw6af96NU9bKjyHoObIwGJLY
-         2Q9wEoCPVIkcN4h9yWONR68Wtx0EVAfVfAtaPfIK9BcuUTmd39C/OxqlRUbMD2RrZniM
-         u3YbVy+brOqNxkI4IvoSgvGMZqEY9yFz+0ktyRjj9LqSXvdePfSwllGEWWQ0bNkJLcjO
-         kMX3qVCFoHXYty5DZeSTs0BtjB93UGF8gOFWQrOpEpfOSiyhqHSAngJuOKx/GuderLdu
-         jyEg==
-X-Gm-Message-State: ABuFfoiJwRPa7HLKTduTPJL2IGznys9OXfYT7KFnC3GMM6x1OwiSbrpt
-        UI9tqBdozU4r88cltrz4QGJEHXesnGYaG1wcOIY=
-X-Google-Smtp-Source: ACcGV62c1YO7kOREjIZRAtzEHwR8ejAlpe7cXUwHwoKKg9hoesuuUXdvQ8FppW6jgfXRlqtRvnm2voWqgBsu1NzRBgE=
-X-Received: by 2002:a2e:8919:: with SMTP id d25-v6mr2491047lji.69.1538603623912;
- Wed, 03 Oct 2018 14:53:43 -0700 (PDT)
+        Thu, 4 Oct 2018 00:44:16 -0400
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w93LqwjI030903
+        for <linux-kernel@vger.kernel.org>; Wed, 3 Oct 2018 14:54:03 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=8v/OaRfCIq6hjMBXjXMlTdF1MTIrj2kto/3IUQCAfzA=;
+ b=dsoo9Em/nH1Dgb2k68Pjmh+QIksYy292uE2kDM4qskCgMDR02HKnewGgBGgjV3bfbbhI
+ +kjbhf4UxENwZ11oHqeyWjO5xtE+YzGrB3RzDd+y4sXunqNCbaW68Ym4GsgVyTZcma7L
+ laft0HZ+1nlauX3hY3Av0qEvxdTyfQ75UO4= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0b-00082601.pphosted.com with ESMTP id 2mw0mwhafa-11
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 14:54:03 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.20) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 3 Oct
+ 2018 14:53:57 -0700
+Received: by devvm24792.prn1.facebook.com (Postfix, from userid 150176) id
+ 150B2655CD42; Wed,  3 Oct 2018 14:53:53 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Tao Ren <taoren@fb.com>
+Smtp-Origin-Hostname: devvm24792.prn1.facebook.com
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Yu Lei <mine260309@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>
+CC:     Tao Ren <taoren@fb.com>
+Smtp-Origin-Cluster: prn1c35
+Subject: [PATCH v2] clocksource/drivers/fttmr010: fix invalid interrupt register access
+Date:   Wed, 3 Oct 2018 14:53:50 -0700
+Message-ID: <20181003215350.3550926-1-taoren@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-References: <20181003193859.23928-1-ricardo.ribalda@gmail.com>
- <20181003193859.23928-7-ricardo.ribalda@gmail.com> <20181003232702.4c18e725@bbrezillon>
-In-Reply-To: <20181003232702.4c18e725@bbrezillon>
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Wed, 3 Oct 2018 23:53:27 +0200
-Message-ID: <CAPybu_3M75E9c+JmR7MVKsyv3vYPOrZ6qBABtvEF317KA+roBg@mail.gmail.com>
-Subject: Re: [PATCH v5 7/8] dt-binding: mtd: Document gpio-addr-flash
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Zhouyang Jia <jiazhouyang09@gmail.com>,
-        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-03_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris
-On Wed, Oct 3, 2018 at 11:27 PM Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
->
-> On Wed,  3 Oct 2018 21:38:58 +0200
-> Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
->
-> > Add documentation for gpio-addr-flash. This binding allow creating
-> > flash devices that are paged using GPIOs.
-> >
-> > Cc: devicetree@vger.kernel.org
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> > ---
-> >  .../bindings/mtd/gpio-addr-flash.txt          | 54 +++++++++++++++++++
-> >  1 file changed, 54 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt b/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
-> > new file mode 100644
-> > index 000000000000..5006a26e1753
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
-> > @@ -0,0 +1,54 @@
-> > +Memory Mapped flash with some address lines addressed using GPIOs
-> > +
-> > +Handle the case where a flash device is mostly addressed using physical
-> > +line and supplemented by GPIOs.  This way you can hook up say a 8MiB flash
-> > +to a 2MiB memory range and use the GPIOs to select a particular range.
-> > +
-> > + - compatible : "cfi-gpio-addr-flash"
-> > + - reg : Address range of the mtd chip that is memory mapped, this is,
-> > +   on the previous example 2MiB.
-> > + - bank-width : Width (in bytes) of the bank.  Equal to the
-> > +   device width times the number of interleaved chips.
-> > + - gpios: List of GPIO specifiers that will be used to address the MSBs address
-> > +   lines. The order goes from LSB to MSB.
-> > + - probe-type : (optional) "cfi_probe", "jedec_probe". How the mtd chip
-> > +   is going to be probed. If omitted, assumed to be equal to "cfi_probe".
->
-> Looks like other bindings are encoding the probe type in the
-> compatible [1][2], and we should probably follow what's been done by
-> others.
+TIMER_INTR_MASK register (Base Address of Timer + 0x38) is not designed
+for masking interrupts on ast2500 chips, and it's not even listed in
+ast2400 datasheet, so it's not safe to access TIMER_INTR_MASK on aspeed
+chips.
 
-If I understood it right, they are special cases of physmap_of_core.c
-https://elixir.bootlin.com/linux/v4.18.11/source/drivers/mtd/maps/physmap_of_core.c#L242
+Similarly, TIMER_INTR_STATE register (Base Address of Timer + 0x34) is
+not interrupt status register on ast2400 and ast2500 chips. Although
+there is no side effect to reset the register in fttmr010_common_init(),
+it's just misleading to do so.
 
-The driver that handles the compatible is physmap_of_core.c, and afaik
-multiple drivers with the same
-compatible string is a very bad idea.
+Besides, "count_down" is renamed to "is_aspeed" in "fttmr010" structure,
+and more comments are added so the code is more readble.
 
-We can convert the driver to something like Versatile or gemini, but
-then we will not support platform devices
+Signed-off-by: Tao Ren <taoren@fb.com>
+---
+Changes in v2:
+  - "count_down" is renamed to "is_aspeed" in "fttmr010" structure.
+  - more comments are added to make the code more readable.
 
-btw, the binding that I am used is used by:
-https://elixir.bootlin.com/linux/v4.18.11/source/drivers/mtd/maps/physmap_of_core.c#L91
+Tested the patch on:
+  - Facebook Backpack CMM AST2500 BMC.
+  - Facebook Wedge100 AST2400 BMC.
 
-Yes, I know is obsolete
+ drivers/clocksource/timer-fttmr010.c | 73 ++++++++++++++++------------
+ 1 file changed, 42 insertions(+), 31 deletions(-)
 
-Tomorrow morning I will try to address your comments, test in hw and resend
-
-Thanks
-
-
-
-
->
-> > + - #address-cells, #size-cells : Must be present if the device has
-> > +   sub-nodes representing partitions (see below).  In this case
-> > +   both #address-cells and #size-cells must be equal to 1.
-> > +
-> > +The device tree may optionally contain sub-nodes describing partitions of the
-> > +address space. Check partition.txt for more details.
-> > +
-> > +Example:
-> > +
-> > +     flash@300000 {
-> > +             #address-cells = <1>;
-> > +             #size-cells = <1>;
->
-> You should not have the #address-cells and #size-cells props defined at
-> this level, it's done in the partitions node already.
->
-> > +             compatible = "cfi-gpio-addr-flash";
-> > +             bank-width = <2>;
-> > +             reg = < 0x00300000 0x00200000 >;
-> > +             gpios = <&gpio_0 3 0>, <&gpio_0 4 0>;
-> > +             partitions {
-> > +                     compatible = "fixed-partitions";
-> > +                     #address-cells = <1>;
-> > +                     #size-cells = <1>;
-> > +
-> > +                     partition@0 {
-> > +                             reg = < 0x0 0x200000 >;
-> > +                             label = "Golden Bitstream";
-> > +                     };
-> > +                     partition@200000 {
-> > +                             reg = < 0x200000 0x200000 >;
-> > +                             label = "User Bitstream";
-> > +                     };
-> > +                     partition@400000 {
-> > +                             reg = < 0x400000 0x200000 >;
-> > +                             label = "V4L Controls";
-> > +                     };
-> > +                     partition@600000 {
-> > +                             reg = < 0x600000 0x200000 >;
-> > +                             label = "Production Data";
-> > +                     };
-> > +             }
-> > +     } ;
->
-> [1]https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/mtd/cortina,gemini-flash.txt
-> [2]https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/mtd/arm-versatile.txt
-
-
-
+diff --git a/drivers/clocksource/timer-fttmr010.c b/drivers/clocksource/timer-fttmr010.c
+index cf93f6419b51..fadff7915dd9 100644
+--- a/drivers/clocksource/timer-fttmr010.c
++++ b/drivers/clocksource/timer-fttmr010.c
+@@ -21,7 +21,7 @@
+ #include <linux/delay.h>
+ 
+ /*
+- * Register definitions for the timers
++ * Register definitions common for all the timer variants.
+  */
+ #define TIMER1_COUNT		(0x00)
+ #define TIMER1_LOAD		(0x04)
+@@ -36,9 +36,10 @@
+ #define TIMER3_MATCH1		(0x28)
+ #define TIMER3_MATCH2		(0x2c)
+ #define TIMER_CR		(0x30)
+-#define TIMER_INTR_STATE	(0x34)
+-#define TIMER_INTR_MASK		(0x38)
+ 
++/*
++ * Control register (TMC30) bit fields for fttmr010/gemini/moxart timers.
++ */
+ #define TIMER_1_CR_ENABLE	BIT(0)
+ #define TIMER_1_CR_CLOCK	BIT(1)
+ #define TIMER_1_CR_INT		BIT(2)
+@@ -53,8 +54,9 @@
+ #define TIMER_3_CR_UPDOWN	BIT(11)
+ 
+ /*
+- * The Aspeed AST2400 moves bits around in the control register
+- * and lacks bits for setting the timer to count upwards.
++ * Control register (TMC30) bit fields for aspeed ast2400/ast2500 timers.
++ * The aspeed timers move bits around in the control register and lacks
++ * bits for setting the timer to count upwards.
+  */
+ #define TIMER_1_CR_ASPEED_ENABLE	BIT(0)
+ #define TIMER_1_CR_ASPEED_CLOCK		BIT(1)
+@@ -66,6 +68,18 @@
+ #define TIMER_3_CR_ASPEED_CLOCK		BIT(9)
+ #define TIMER_3_CR_ASPEED_INT		BIT(10)
+ 
++/*
++ * Interrupt status/mask register definitions for fttmr010/gemini/moxart
++ * timers.
++ * The registers don't exist and they are not needed on aspeed timers
++ * because:
++ *   - aspeed timer overflow interrupt is controlled by bits in Control
++ *     Register (TMC30).
++ *   - aspeed timers always generate interrupt when either one of the
++ *     Match registers equals to Status register.
++ */
++#define TIMER_INTR_STATE	(0x34)
++#define TIMER_INTR_MASK		(0x38)
+ #define TIMER_1_INT_MATCH1	BIT(0)
+ #define TIMER_1_INT_MATCH2	BIT(1)
+ #define TIMER_1_INT_OVERFLOW	BIT(2)
+@@ -80,7 +94,7 @@
+ struct fttmr010 {
+ 	void __iomem *base;
+ 	unsigned int tick_rate;
+-	bool count_down;
++	bool is_aspeed;
+ 	u32 t1_enable_val;
+ 	struct clock_event_device clkevt;
+ #ifdef CONFIG_ARM
+@@ -130,7 +144,7 @@ static int fttmr010_timer_set_next_event(unsigned long cycles,
+ 	cr &= ~fttmr010->t1_enable_val;
+ 	writel(cr, fttmr010->base + TIMER_CR);
+ 
+-	if (fttmr010->count_down) {
++	if (fttmr010->is_aspeed) {
+ 		/*
+ 		 * ASPEED Timer Controller will load TIMER1_LOAD register
+ 		 * into TIMER1_COUNT register when the timer is re-enabled.
+@@ -175,16 +189,17 @@ static int fttmr010_timer_set_oneshot(struct clock_event_device *evt)
+ 
+ 	/* Setup counter start from 0 or ~0 */
+ 	writel(0, fttmr010->base + TIMER1_COUNT);
+-	if (fttmr010->count_down)
++	if (fttmr010->is_aspeed) {
+ 		writel(~0, fttmr010->base + TIMER1_LOAD);
+-	else
++	} else {
+ 		writel(0, fttmr010->base + TIMER1_LOAD);
+ 
+-	/* Enable interrupt */
+-	cr = readl(fttmr010->base + TIMER_INTR_MASK);
+-	cr &= ~(TIMER_1_INT_OVERFLOW | TIMER_1_INT_MATCH2);
+-	cr |= TIMER_1_INT_MATCH1;
+-	writel(cr, fttmr010->base + TIMER_INTR_MASK);
++		/* Enable interrupt */
++		cr = readl(fttmr010->base + TIMER_INTR_MASK);
++		cr &= ~(TIMER_1_INT_OVERFLOW | TIMER_1_INT_MATCH2);
++		cr |= TIMER_1_INT_MATCH1;
++		writel(cr, fttmr010->base + TIMER_INTR_MASK);
++	}
+ 
+ 	return 0;
+ }
+@@ -201,9 +216,8 @@ static int fttmr010_timer_set_periodic(struct clock_event_device *evt)
+ 	writel(cr, fttmr010->base + TIMER_CR);
+ 
+ 	/* Setup timer to fire at 1/HZ intervals. */
+-	if (fttmr010->count_down) {
++	if (fttmr010->is_aspeed) {
+ 		writel(period, fttmr010->base + TIMER1_LOAD);
+-		writel(0, fttmr010->base + TIMER1_MATCH1);
+ 	} else {
+ 		cr = 0xffffffff - (period - 1);
+ 		writel(cr, fttmr010->base + TIMER1_COUNT);
+@@ -281,23 +295,21 @@ static int __init fttmr010_common_init(struct device_node *np, bool is_aspeed)
+ 	}
+ 
+ 	/*
+-	 * The Aspeed AST2400 moves bits around in the control register,
+-	 * otherwise it works the same.
++	 * The Aspeed timers move bits around in the control register.
+ 	 */
+ 	if (is_aspeed) {
+ 		fttmr010->t1_enable_val = TIMER_1_CR_ASPEED_ENABLE |
+ 			TIMER_1_CR_ASPEED_INT;
+-		/* Downward not available */
+-		fttmr010->count_down = true;
++		fttmr010->is_aspeed = true;
+ 	} else {
+ 		fttmr010->t1_enable_val = TIMER_1_CR_ENABLE | TIMER_1_CR_INT;
+-	}
+ 
+-	/*
+-	 * Reset the interrupt mask and status
+-	 */
+-	writel(TIMER_INT_ALL_MASK, fttmr010->base + TIMER_INTR_MASK);
+-	writel(0, fttmr010->base + TIMER_INTR_STATE);
++		/*
++		 * Reset the interrupt mask and status
++		 */
++		writel(TIMER_INT_ALL_MASK, fttmr010->base + TIMER_INTR_MASK);
++		writel(0, fttmr010->base + TIMER_INTR_STATE);
++	}
+ 
+ 	/*
+ 	 * Enable timer 1 count up, timer 2 count up, except on Aspeed,
+@@ -306,9 +318,8 @@ static int __init fttmr010_common_init(struct device_node *np, bool is_aspeed)
+ 	if (is_aspeed)
+ 		val = TIMER_2_CR_ASPEED_ENABLE;
+ 	else {
+-		val = TIMER_2_CR_ENABLE;
+-		if (!fttmr010->count_down)
+-			val |= TIMER_1_CR_UPDOWN | TIMER_2_CR_UPDOWN;
++		val = TIMER_2_CR_ENABLE | TIMER_1_CR_UPDOWN |
++			TIMER_2_CR_UPDOWN;
+ 	}
+ 	writel(val, fttmr010->base + TIMER_CR);
+ 
+@@ -321,7 +332,7 @@ static int __init fttmr010_common_init(struct device_node *np, bool is_aspeed)
+ 	writel(0, fttmr010->base + TIMER2_MATCH1);
+ 	writel(0, fttmr010->base + TIMER2_MATCH2);
+ 
+-	if (fttmr010->count_down) {
++	if (fttmr010->is_aspeed) {
+ 		writel(~0, fttmr010->base + TIMER2_LOAD);
+ 		clocksource_mmio_init(fttmr010->base + TIMER2_COUNT,
+ 				      "FTTMR010-TIMER2",
+@@ -371,7 +382,7 @@ static int __init fttmr010_common_init(struct device_node *np, bool is_aspeed)
+ 
+ #ifdef CONFIG_ARM
+ 	/* Also use this timer for delays */
+-	if (fttmr010->count_down)
++	if (fttmr010->is_aspeed)
+ 		fttmr010->delay_timer.read_current_timer =
+ 			fttmr010_read_current_timer_down;
+ 	else
 -- 
-Ricardo Ribalda
+2.17.1
+
