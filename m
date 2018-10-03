@@ -2,75 +2,82 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E73C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C65C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07B182089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:55:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07B182089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 1C96A2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:57:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C96A2089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbeJCUoH (ORCPT
+        id S1727006AbeJCUpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 16:44:07 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:33856 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeJCUoH (ORCPT
+        Wed, 3 Oct 2018 16:45:38 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:48678 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726769AbeJCUpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 16:44:07 -0400
-Received: from tmo-096-48.customers.d1-online.com ([80.187.96.48] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g7hch-0004k1-0J; Wed, 03 Oct 2018 15:55:31 +0200
-Date:   Wed, 3 Oct 2018 15:55:29 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Liang, Kan" <kan.liang@linux.intel.com>
-cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        acme@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        eranian@google.com, ak@linux.intel.com,
-        alexander.shishkin@linux.intel.com, x86@kernel.org
-Subject: Re: [PATCH] perf/x86/intel: Add counter freezing quirk for
- Goldmont
-In-Reply-To: <b3834054-cb2c-2074-7b7d-ad9eb4961a07@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1810031550550.23677@nanos.tec.linutronix.de>
-References: <1538515812-8808-1-git-send-email-kan.liang@linux.intel.com> <alpine.DEB.2.21.1810030803260.1435@nanos.tec.linutronix.de> <b3834054-cb2c-2074-7b7d-ad9eb4961a07@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 3 Oct 2018 16:45:38 -0400
+Received: (qmail 1563 invoked by uid 2102); 3 Oct 2018 09:57:06 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 3 Oct 2018 09:57:06 -0400
+Date:   Wed, 3 Oct 2018 09:57:06 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+cc:     gregkh@linuxfoundation.org, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: core: Check portchange C_PORT_RESET after resetting
+In-Reply-To: <20181003051822.4011-1-kai.heng.feng@canonical.com>
+Message-ID: <Pine.LNX.4.44L0.1810030956270.1413-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Oct 2018, Liang, Kan wrote:
-> On 10/3/2018 2:10 AM, Thomas Gleixner wrote:
-> > There is another variant of model/stepping micro code verification code in
-> > intel_snb_pebs_broken(). Can we please make this table based and use a
-> > common function? That's certainly not the last quirk we're going to have.
-> > 
-> > We already have a table based variant of ucode checking in
-> > bad_spectre_microcode(). It's trivial enough to generalize that.
-> > 
+On Wed, 3 Oct 2018, Kai-Heng Feng wrote:
+
+> Based on USB2.0 Spec Section 11.24.2.7.2.5:
 > 
-> Sure, I will generalize the bad_spectre_microcode(), rename it to
-> is_bad_intel_microcode(), and move it to
-> arch\x86\kernel\cpu\microcode\intel.c.
+>   "This bit is set when the port transitions from the Resetting state (or,
+>   if present, the Speed_eval state) to the Enabled state."
+> 
+> Also Section 11.24.2.13:
+> 
+>   "Setting the reset feature PORT_RESET causes the hub to signal reset on
+>   that port. When the reset signaling is complete, the hub sets the
+>   C_PORT_RESET status change and immediately enables the port."
+> 
+> So let's also check C_PORT_RESET for reset completion.
+> 
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+>  drivers/usb/core/hub.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index 7801bb30bdba..d96058372280 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -2721,7 +2721,8 @@ static int hub_port_wait_reset(struct usb_hub *hub, int port1,
+>  		 * so also wait for the connection to be re-established.
+>  		 */
+>  		if (!(portstatus & USB_PORT_STAT_RESET) &&
+> -		    (portstatus & USB_PORT_STAT_CONNECTION))
+> +		    (portstatus & USB_PORT_STAT_CONNECTION) &&
+> +		    (portchange & USB_PORT_STAT_C_RESET))
+>  			break;
+>  
+>  		/* switch to the long delay after two short delay failures */
 
-I suggest: is_bad_microcode() and have it in cpu/microcode/core.c unless
-you are claiming that bad microcode() is an intel only feature.
+What is the purpose of this patch?  Does it fix a problem?
 
-> The spectre code and perf code will share the generalized function.
+Alan Stern
 
-Right. The tables stay in the calling code of course.
-
-Thanks,
-
-	tglx
