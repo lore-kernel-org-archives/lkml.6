@@ -2,134 +2,124 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27409C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3525C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCADB213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:17:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="mjEXRqO0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCADB213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id A0631213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:18:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0631213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbeJDFIO (ORCPT
+        id S1727164AbeJDFI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 01:08:14 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:55680 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbeJDFIO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 01:08:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sGu0u82Lw+zJRWbWiiG1m9J/ZfzMgwo0L4WjqTl8JKw=; b=mjEXRqO0McIQgv3qT3NWqXf2F
-        kBfCOGM8TdYFDSr5TKaNUC69XjWY3U1am30lx3IuVeobW6XQizPxz3xiMCmTattRuxUaexRN44d8N
-        Q2oYVbFgdQcD/dqMYm8KZDKGtYwTmWj0no3BEpbTFnxbASvbF1fLjWfBVkv/UU2sEwAR4=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:49770)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1g7pPu-0003DW-29; Wed, 03 Oct 2018 23:14:50 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1g7pPq-00043u-Vl; Wed, 03 Oct 2018 23:14:47 +0100
-Date:   Wed, 3 Oct 2018 23:14:45 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
-        miguel.ojeda.sandonis@gmail.com, robin@protonic.nl,
-        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com, heiko@sntech.de,
-        airlied@linux.ie, robin.murphy@arm.com, iamjoonsoo.kim@lge.com,
-        akpm@linux-foundation.org, m.szyprowski@samsung.com,
-        keescook@chromium.org, treding@nvidia.com, mhocko@suse.com,
-        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com,
-        mark.rutland@arm.com, aryabinin@virtuozzo.com, dvyukov@google.com,
-        kstewart@linuxfoundation.org, tchibo@google.com, riel@redhat.com,
-        minchan@kernel.org, peterz@infradead.org, ying.huang@intel.com,
-        ak@linux.intel.com, rppt@linux.vnet.ibm.com,
-        linux@dominikbrodowski.net, arnd@arndb.de, cpandya@codeaurora.org,
-        hannes@cmpxchg.org, joe@perches.com, mcgrof@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2] mm: Introduce new function vm_insert_kmem_page
-Message-ID: <20181003221444.GZ30658@n2100.armlinux.org.uk>
-References: <20181003185854.GA1174@jordon-HP-15-Notebook-PC>
- <20181003200003.GA9965@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181003200003.GA9965@bombadil.infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 4 Oct 2018 01:08:57 -0400
+Received: from mga02.intel.com ([134.134.136.20]:62846 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725922AbeJDFI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 01:08:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 15:18:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,337,1534834800"; 
+   d="scan'208";a="91965083"
+Received: from rchatre-s.jf.intel.com ([10.54.70.76])
+  by fmsmga002.fm.intel.com with ESMTP; 03 Oct 2018 15:17:41 -0700
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com
+Cc:     jithu.joseph@intel.com, gavin.hindman@intel.com,
+        dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH V2 0/3] x86/intel_rdt: Fix exclusive mode with CDP resources
+Date:   Wed,  3 Oct 2018 15:17:00 -0700
+Message-Id: <cover.1538603665.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 01:00:03PM -0700, Matthew Wilcox wrote:
-> On Thu, Oct 04, 2018 at 12:28:54AM +0530, Souptick Joarder wrote:
-> > These are the approaches which could have been taken to handle
-> > this scenario -
-> > 
-> > *  Replace vm_insert_page with vmf_insert_page and then write few
-> >    extra lines of code to convert VM_FAULT_CODE to errno which
-> >    makes driver users more complex ( also the reverse mapping errno to
-> >    VM_FAULT_CODE have been cleaned up as part of vm_fault_t migration ,
-> >    not preferred to introduce anything similar again)
-> > 
-> > *  Maintain both vm_insert_page and vmf_insert_page and use it in
-> >    respective places. But it won't gurantee that vm_insert_page will
-> >    never be used in #PF context.
-> > 
-> > *  Introduce a similar API like vm_insert_page, convert all non #PF
-> >    consumer to use it and finally remove vm_insert_page by converting
-> >    it to vmf_insert_page.
-> > 
-> > And the 3rd approach was taken by introducing vm_insert_kmem_page().
-> > 
-> > In short, vmf_insert_page will be used in page fault handlers
-> > context and vm_insert_kmem_page will be used to map kernel
-> > memory to user vma outside page fault handlers context.
-> 
-> As far as I can tell, vm_insert_kmem_page() is line-for-line identical
-> with vm_insert_page().  Seriously, here's a diff I just did:
-> 
-> -static int insert_page(struct vm_area_struct *vma, unsigned long addr,
-> -                       struct page *page, pgprot_t prot)
-> +static int insert_kmem_page(struct vm_area_struct *vma, unsigned long addr,
-> +               struct page *page, pgprot_t prot)
-> -       /* Ok, finally just insert the thing.. */
-> -int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
-> +int vm_insert_kmem_page(struct vm_area_struct *vma, unsigned long addr,
-> -       return insert_page(vma, addr, page, vma->vm_page_prot);
-> +       return insert_kmem_page(vma, addr, page, vma->vm_page_prot);
-> -EXPORT_SYMBOL(vm_insert_page);
-> +EXPORT_SYMBOL(vm_insert_kmem_page);
-> 
-> What on earth are you trying to do?
+Changes in V2:
+- Have the new rdt_cdp_peer_get() return EINVAL instead of ENOENT when
+  only one of the CDP peers have a rdt_domain associated with it.
+- Rename _rdtgroup_cbm_overlaps() to __rdtgroup_cbm_overlaps() to stand out
+  more.
+- Fix kernel-doc to match function parameter name.
+- Rename rdtgroup_cbm_overlaps()'s _cbm function parameter to cbm.
+- Simplify the code in rdtgroup_cbm_overlaps() to make the flow more
+  obvious.
 
-Reading the commit log, it seems that the intention is to split out
-vm_insert_page() used outside of page-fault handling with the use
-within page-fault handling, so that different return codes can be
-used.
+Nothing (apart from diffstat) changed below since original submission.
 
-I don't see that justifies the code duplication - can't
-vm_insert_page() and vm_insert_kmem_page() use the same mechanics
-to do their job, and just translate the error code from the most-
-specific to the least-specific error code?  Do we really need two
-copies of the same code just to return different error codes.
+Dear Maintainers,
+
+CDP resources do not currently behave as expected when there are resource
+groups with mode 'exclusive'.
+
+In the example below it was possible to create two resource groups,
+p1 and p2, that are both in exclusive mode but their usage of the
+underlying L2 cache actually overlaps.
+
+root@glk:/sys/fs/resctrl# ls
+cpus  cpus_list  info  mode  p1  p2  schemata  size  tasks
+root@glk:/sys/fs/resctrl# cat schemata
+L2DATA:0=fff0
+L2CODE:0=fff0
+root@glk:/sys/fs/resctrl# cat mode
+shareable
+
+root@glk:/sys/fs/resctrl# cat p1/schemata
+L2DATA:0=0003
+L2CODE:0=000c
+root@glk:/sys/fs/resctrl# cat p1/mode
+exclusive
+
+root@glk:/sys/fs/resctrl# cat p2/schemata
+L2DATA:0=000c
+L2CODE:0=0003
+root@glk:/sys/fs/resctrl# cat p2/mode
+exclusive
+
+root@glk:/sys/fs/resctrl# cat info/L2CODE/bit_usage
+0=SSSSSSSSSSSSEEEE
+root@glk:/sys/fs/resctrl# cat info/L2DATA/bit_usage
+0=SSSSSSSSSSSSEEEE
+root@glk:/sys/fs/resctrl#
+
+In the above example, the CBM of L2DATA in p1 overlaps with the CBM of
+L2CODE in p2 while they are both in exclusive mode. While it may reflect no
+overlap among the L2DATA resources specifically it does actually imply
+overlap of use of the underlying hardware that is not the intention of
+'exclusive' mode. This happens because the current implementation treats
+L2CODE and L2DATA as totally independent, when it is actually referring to
+the same underlying hardware.
+
+This series fixes the potential for overlap of hardware resource use when
+resource groups are in 'exclusive' mode by ensuring that if there is a CDP
+peer on the same hardware then any overlap test would consider it also.
+
+Allocations of data and code resources within the same exclusive resource
+group are allowed to overlap.
+
+Your feedback will be greatly appreciated.
+
+Reinette
+
+Reinette Chatre (3):
+  x86/intel_rdt: Introduce utility to obtain CDP peer
+  x86/intel_rdt: CBM overlap should also check for overlap with CDP peer
+  x86/intel_rdt: Fix initial allocation to consider CDP
+
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 133 ++++++++++++++++++++++-
+ 1 file changed, 127 insertions(+), 6 deletions(-)
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.17.0
+
