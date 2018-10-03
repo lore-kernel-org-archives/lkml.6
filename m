@@ -2,79 +2,120 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA83C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4977C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C88202089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:42:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C88202089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 963FD213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:43:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 963FD213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbeJCQ3i (ORCPT
+        id S1727661AbeJCQbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 12:29:38 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51722 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbeJCQ3i (ORCPT
+        Wed, 3 Oct 2018 12:31:05 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40861 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726807AbeJCQbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 12:29:38 -0400
-Received: from 79.184.253.194.ipv4.supernova.orange.pl (79.184.253.194) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
- id 6b40d08789310677; Wed, 3 Oct 2018 11:41:59 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Yu Chen <yu.c.chen@intel.com>
-Cc:     Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Rui Zhang <rui.zhang@intel.com>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH][RFC v2] ACPI: acpi_pad: Do not launch acpi_pad threads on idle cpus
-Date:   Wed, 03 Oct 2018 11:38:58 +0200
-Message-ID: <3282057.yGUaGxRyCs@aspire.rjw.lan>
-In-Reply-To: <20180514154523.GA17331@sandybridge-desktop>
-References: <1525521202-32519-1-git-send-email-yu.c.chen@intel.com> <8775668.fKKdjnIWAU@aspire.rjw.lan> <20180514154523.GA17331@sandybridge-desktop>
+        Wed, 3 Oct 2018 12:31:04 -0400
+Received: by mail-ed1-f66.google.com with SMTP id j62-v6so4717515edd.7
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 02:43:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rd4sANpTizAb/5FOdSl0MGyVOfOwV9/0FzJKj4bOhV4=;
+        b=dPdumNiLBlXS7oh+32P7lfmMhQi72GNzJVjrL38Ie7x+cwXI/JfX4tovVObYcFy4AC
+         L1muk/388DLE4gjqCT/sdZQtkKn098UGLMFkpgrB/tFFTNtCRFPCI8P8ujgLTmR1TyEd
+         6COngJmaEWUMOmXnevWvDpMyoZDV93C3Sk6HynOTJZH8YhNTo9a3tXnAYOP6Lx3tk7gT
+         VAnVg1f8E8jB3A0OXcUCyEAzWu0k5n6/7E3ro5qsDMSRTm9jFMLR6cWR76uPI6UxqrxG
+         i8TeR3CscbEwresYGAHgcgFON/RQrmDthFte9wPQc+k8iYHnT1eMJyjxA2mA7F1IDcnj
+         2tzA==
+X-Gm-Message-State: ABuFfojK/UeVyTrEQlg4jN2U4Vh6kUYM/KT32WEyCEWlaAc9JOcu5nAP
+        oX82UK3IN9inShsuaxvVnVXbH4udw20=
+X-Google-Smtp-Source: ACcGV60DuIynhq0KsSvzmCdtCH6d8LRynpyEPURezxwhN+LZeRpy7F8TiIqkBLal7FQ0YfhA2QIbbA==
+X-Received: by 2002:a17:906:2da9:: with SMTP id g9-v6mr1032812eji.67.1538559806052;
+        Wed, 03 Oct 2018 02:43:26 -0700 (PDT)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
+        by smtp.gmail.com with ESMTPSA id p13-v6sm197841ejg.42.2018.10.03.02.43.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 02:43:25 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 143-v6so5016304wmf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 02:43:25 -0700 (PDT)
+X-Received: by 2002:a1c:1d6:: with SMTP id 205-v6mr861846wmb.151.1538559805143;
+ Wed, 03 Oct 2018 02:43:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20181001093612.GA13672@mwanda> <20181002215917.1849-1-giulio.benetti@micronovasrl.com>
+In-Reply-To: <20181002215917.1849-1-giulio.benetti@micronovasrl.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 3 Oct 2018 17:43:09 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64z+j=ywU8n210Zw+97n=Ff4rVdUwNR9nbKO-hMD3nJcQ@mail.gmail.com>
+Message-ID: <CAGb2v64z+j=ywU8n210Zw+97n=Ff4rVdUwNR9nbKO-hMD3nJcQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/sun4i: tcon: fix check of tcon->panel null pointer
+To:     Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, May 14, 2018 5:45:23 PM CEST Yu Chen wrote:
-> On Sun, May 13, 2018 at 11:30:52AM +0200, Rafael J. Wysocki wrote:
-> > On Saturday, May 5, 2018 1:53:22 PM CEST Chen Yu wrote:
-> > > According to current implementation of acpi_pad driver,
-> > > it does not make sense to spawn any power saving threads
-> > > on the cpus which are already idle - it might bring
-> > > unnecessary overhead on these idle cpus and causes power
-> > > waste. So verify the condition that if the number of 'busy'
-> > > cpus exceeds the amount of the 'forced idle' cpus is met.
-> > > This is applicable due to round-robin attribute of the
-> > > power saving threads, otherwise ignore the setting/ACPI
-> > > notification.
-> > 
-> > OK, but CPUs are busy, because they are running tasks.  If acpi_pad
-> > kthreads run on them, the tasks they are running will migrate to the
-> > currently idle CPUs (unless they have specific CPU affinity) and the
-> > throttling will not really be effective.
-> >
-> OK, I think this makes sense, I missed the load balance scenario.
-> > I would think that acpi_pad should ensure that the requested number of
-> > CPUs will not run anything other than throttling kthreads.  Isn't that
-> > the case?
-> > 
-> Do you mean, we should check if the number of 'idle'(rather than the 'busy' one
-> in this patch) cpus is larger than the requested one? Then I think we should also
-> add a patch to use the play_idle() as power_clamp to treat the throttling kthreads
-> as idle threads thus to stop system tick. Such as the patch Jacob proposed:
+On Wed, Oct 3, 2018 at 5:59 AM Giulio Benetti
+<giulio.benetti@micronovasrl.com> wrote:
+>
+> At the moment, the check of tcon->panel to be valid is wrong. IS_ERR()
+> has been used, but that macro doesn't check if tcon->panel pointer is
+> null or not, but check if tcon->panel is between -1 and -4095(MAX_ERRNO).
+>
+> Remove IS_ERR() from tcon->panel checking and let "if (tcon->panel)" as
+> condition to check if it's a pointer not null.
 
-I wonder if that can be switched over to the new idle injection framework
-added recently?
+There's actually more than one occurance of this error:
 
-Thanks,
-Rafael
+drivers/gpu/drm/sun4i/sun4i_lvds.c:     if (!IS_ERR(tcon->panel)) {
+drivers/gpu/drm/sun4i/sun4i_lvds.c:     if (!IS_ERR(tcon->panel)) {
+drivers/gpu/drm/sun4i/sun4i_rgb.c:      if (!IS_ERR(tcon->panel)) {
+drivers/gpu/drm/sun4i/sun4i_rgb.c:      if (!IS_ERR(tcon->panel)) {
 
+These four are responsible for enabling and disabling the panel.
+
+drivers/gpu/drm/sun4i/sun4i_tcon.c:     if (!IS_ERR(tcon->panel)) {
+
+All this looks like it was left over from commit ebc9446135671 ("drm: convert
+drivers to use drm_of_find_panel_or_bridge"). We have checks against tcon->panel
+in several places and not all of them were converted.
+
+ChenYu
+
+> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index c78cd35a1294..e4b3bd0307ef 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -555,7 +555,7 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+>          * Following code is a way to avoid quirks all around TCON
+>          * and DOTCLOCK drivers.
+>          */
+> -       if (!IS_ERR(tcon->panel)) {
+> +       if (tcon->panel) {
+>                 struct drm_panel *panel = tcon->panel;
+>                 struct drm_connector *connector = panel->connector;
+>                 struct drm_display_info display_info = connector->display_info;
+> --
+> 2.17.1
+>
