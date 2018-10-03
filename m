@@ -1,150 +1,143 @@
 Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D180C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34994C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FB012089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:33:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IK9y7v1F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB012089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EB2CD2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:34:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB2CD2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbeJDAW7 (ORCPT
+        id S1727264AbeJDAX0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 20:22:59 -0400
-Received: from mail-wm1-f54.google.com ([209.85.128.54]:55732 "EHLO
-        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726851AbeJDAW7 (ORCPT
+        Wed, 3 Oct 2018 20:23:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4827 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726851AbeJDAXZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 20:22:59 -0400
-Received: by mail-wm1-f54.google.com with SMTP id 206-v6so6530080wmb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 10:33:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JZXTv6LA8C+zkzRu8cAc6B3Kv9WiIyS9UxmZRCW1FU0=;
-        b=IK9y7v1FiDSbqyF91icddMXdzdf1i4QYpe1UM2X7GfXdP42+9AbNvmFspG9Y3C2xW4
-         5cGbTgzNPAnN+J12Oe9ifVoQjQ/I3UrzcJ0H1481vYbLDEZptwZwkbyxxFUKOrdUxuBf
-         7bIh1ldDiDHueCOtJt0+wPyS7XHda86UCi+m1eV3pd4WudiBn1c+8NPR65Wi/xm5zH/X
-         9X5FP8Hsl9VuG/zo8VYXaaNgNytS2Ghjll7ZYGe8P5bfTA7llpjHNwXpbfIBaEIAeA4a
-         xMRXlGA4cFLAbDSNihdjplyKPYfnDI5FzHt5DkpNoiosXCCys6Ov+VkgZVkHR3yLZ4m4
-         gBQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JZXTv6LA8C+zkzRu8cAc6B3Kv9WiIyS9UxmZRCW1FU0=;
-        b=Cwg1EcUrQpWd8ejfQngKh3cQmXSnI7pnofM7ovGRgseUwaXwa1u8nGfXw9hmB+KfyQ
-         RHWSlnKIwA3AhjEiejYCUPRtkTcY5aUKU7QWa3gFDoBRNzTguTOToYAFpFmj/IPdTbXV
-         VppSfF2OwYtpLnONWCdogXc4vXFSzjR6AwFL7Kizje1En8CACptYEa1Q0LpjOE6af9i5
-         Z5w6g7NPD9Hx8dQxhulbERGY64KkBSHAWp87k/V8Io+CY/dkLtn3fRU8PJumxhFSxc7E
-         jzoSxYJzmZcfqj8/5lSIA1ILnZ34Kw2iOj1HtVcis/Ur4psZrPHyBEj/kpzAJguJoFsU
-         SB3Q==
-X-Gm-Message-State: ABuFfojzdzSydgeh43wkygS5oFtNSmaXl5Qv26/s2ULc3TD2O7+GnPup
-        kb3QTD6aufXomNZD2Dyypa8=
-X-Google-Smtp-Source: ACcGV60/OsccNanZ5bqKrzL8dZADGFqcRnJnSGkBtTlj+6Ns4f/DSPKpey/czz+HB+4rDXnll+E1OA==
-X-Received: by 2002:a1c:7ed4:: with SMTP id z203-v6mr2167993wmc.62.1538588015419;
-        Wed, 03 Oct 2018 10:33:35 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id v1-v6sm1943951wrd.24.2018.10.03.10.33.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Oct 2018 10:33:34 -0700 (PDT)
-Date:   Wed, 3 Oct 2018 19:33:32 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: X86-64 uses generic string functions (strlen, strchr, memcmp,
- ...)
-Message-ID: <20181003173332.GA4654@gmail.com>
-References: <CAG48ez30qnKuWHkzkkxxEhBPjVVnsgA1wSarfvx=U=Jb0maO0Q@mail.gmail.com>
+        Wed, 3 Oct 2018 20:23:25 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w93HP7qJ141307
+        for <linux-kernel@vger.kernel.org>; Wed, 3 Oct 2018 13:34:03 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mw00366h0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 13:34:03 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 3 Oct 2018 18:34:00 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 3 Oct 2018 18:33:58 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w93HXvdf62914690
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 3 Oct 2018 17:33:57 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 88470A4055;
+        Wed,  3 Oct 2018 20:33:34 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9DE62A4040;
+        Wed,  3 Oct 2018 20:33:33 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.204.62])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed,  3 Oct 2018 20:33:33 +0100 (BST)
+Date:   Wed, 3 Oct 2018 20:33:54 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: Re: [RFC PATCH] mm, proc: report PR_SET_THP_DISABLE in proc
+References: <20180924195603.GJ18685@dhcp22.suse.cz>
+ <20180924200258.GK18685@dhcp22.suse.cz>
+ <0aa3eb55-82c0-eba3-b12c-2ba22e052a8e@suse.cz>
+ <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com>
+ <20180925202959.GY18685@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1809251440001.94921@chino.kir.corp.google.com>
+ <20180925150406.872aab9f4f945193e5915d69@linux-foundation.org>
+ <20180926060624.GA18685@dhcp22.suse.cz>
+ <20181002112851.GP18290@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1810021329260.87409@chino.kir.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez30qnKuWHkzkkxxEhBPjVVnsgA1wSarfvx=U=Jb0maO0Q@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <alpine.DEB.2.21.1810021329260.87409@chino.kir.corp.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18100317-0016-0000-0000-0000020E16E7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100317-0017-0000-0000-000032655C2E
+Message-Id: <20181003173354.GA17328@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=474 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810030164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Jann Horn <jannh@google.com> wrote:
-
-> Hi!
+On Tue, Oct 02, 2018 at 01:29:42PM -0700, David Rientjes wrote:
+> On Tue, 2 Oct 2018, Michal Hocko wrote:
 > 
-> I noticed that X86-64 is using the generic string functions from
-> lib/string.c for things like strlen(), strchr(), memcmp() and so on.
-> Is that an intentional omission, because they're not considered worth
-> optimizing, or is this an oversight? The kernel doesn't use string
-> functions much, but if you e.g. run readlinkat() in a loop on a
-> symlink with a 1000-byte target, something around 25%-50% of time are
-> spent on strlen(). But that's a microbenchmark that people probably
-> don't care about a lot?
+> > On Wed 26-09-18 08:06:24, Michal Hocko wrote:
+> > > On Tue 25-09-18 15:04:06, Andrew Morton wrote:
+> > > > On Tue, 25 Sep 2018 14:45:19 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
+> > > > 
+> > > > > > > It is also used in 
+> > > > > > > automated testing to ensure that vmas get disabled for thp appropriately 
+> > > > > > > and we used "nh" since that is how PR_SET_THP_DISABLE previously enforced 
+> > > > > > > this, and those tests now break.
+> > > > > > 
+> > > > > > This sounds like a bit of an abuse to me. It shows how an internal
+> > > > > > implementation detail leaks out to the userspace which is something we
+> > > > > > should try to avoid.
+> > > > > > 
+> > > > > 
+> > > > > Well, it's already how this has worked for years before commit 
+> > > > > 1860033237d4 broke it.  Changing the implementation in the kernel is fine 
+> > > > > as long as you don't break userspace who relies on what is exported to it 
+> > > > > and is the only way to determine if MADV_NOHUGEPAGE is preventing it from 
+> > > > > being backed by hugepages.
+> > > > 
+> > > > 1860033237d4 was over a year ago so perhaps we don't need to be
+> > > > too worried about restoring the old interface.  In which case
+> > > > we have an opportunity to make improvements such as that suggested
+> > > > by Michal?
+> > > 
+> > > Yeah, can we add a way to export PR_SET_THP_DISABLE to userspace
+> > > somehow? E.g. /proc/<pid>/status. It is a process wide thing so
+> > > reporting it per VMA sounds strange at best.
+> > 
+> > So how about this? (not tested yet but it should be pretty
+> > straightforward)
 > 
-> One notable in-kernel user of memcmp() is BPF, which uses it for its
-> hash table implementations when walking the linked list of a hash
-> bucket. But I don't know whether anyone uses BPF hash tables with keys
-> that are sufficiently large to make this noticeable?
+> Umm, prctl(PR_GET_THP_DISABLE)?
+> 
 
-One reason we've been resisting this is how hard it is to determine whether a 
-micro-optimization truly helps application workloads.
+~/git/linux$ git grep PR_GET_THP_DISABLE
+include/uapi/linux/prctl.h:#define PR_GET_THP_DISABLE   42
+kernel/sys.c:   case PR_GET_THP_DISABLE:
+tools/include/uapi/linux/prctl.h:#define PR_GET_THP_DISABLE     42
 
-But there's a way:
+-- 
+Sincerely yours,
+Mike.
 
- - Write a 'perf bench vfs ...' kind of scalability microbenchmark that
-   runs in less than 60 seconds, provides stable numeric output, can
-   meaningfully measured via 'perf', etc., which does multi-threaded
-   or multi-tasked, CPU-bound VFS operations intentionally designed
-   to hit these string ops.
-
- - Use this benchmark to demonstrate that the performance of any of the
-   string ops matters.
-
- - Implement nice assembly speedups.
-
- - If the functions are out of line then add a kernel patching based method
-   to run either the generic string function or the assembly version -
-   a static-key based approach would be fine I think. This makes the two
-   versions runtime switchable.
-
- - Use the benchmark again to prove that it indeed helped this particular
-   workload. It can be a small speedup but has to be a larger signal than the
-   "perf stat --null --repeat 10 ..." stddev.
-
-Then that offers a maintainable way to implement such speedups:
-
- - The 'perf bench vfs ...' testcase and the kernel-patching debug knobs allows other to 
-   replicate and check out other hardware.  Does the assembly function written on contemporary 
-   Intel hardware work equally well on AMD hardware? People can help out by running those 
-   tests.
-
- - We can go back and check the difference anytime in the future, once new CPUs arrive,
-   or a new variant of the benchmark is written, or a workload is hurting.
-
-If you do it systematically like that then I'd be *very* interested in merging both the tooling 
-(benchmarking) and any eventual assembly speedups.
-
-But it's quite some work - much harder than just writing a random assembly variant and using it 
-instead of the generic version.
-
-Thanks,
-
-	Ingo
