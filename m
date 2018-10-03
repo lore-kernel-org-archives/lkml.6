@@ -2,351 +2,176 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C0EC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF885C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 531A22098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:57:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 531A22098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 703E120835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 18:02:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A7ZMNbZl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703E120835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbeJDAqc (ORCPT
+        id S1727034AbeJDAwA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 20:46:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58844 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726851AbeJDAqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 20:46:32 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A276583F40;
-        Wed,  3 Oct 2018 17:57:05 +0000 (UTC)
-Received: from asgard.redhat.com (ovpn-200-25.brq.redhat.com [10.40.200.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3F4C7D1C1;
-        Wed,  3 Oct 2018 17:56:56 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 19:57:25 +0200
-From:   Eugene Syromiatnikov <esyr@redhat.com>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v4 26/27] x86/cet/shstk: Add arch_prctl functions for
- Shadow Stack
-Message-ID: <20181003175725.GD32759@asgard.redhat.com>
-References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
- <20180921150351.20898-27-yu-cheng.yu@intel.com>
+        Wed, 3 Oct 2018 20:52:00 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43855 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726950AbeJDAwA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 20:52:00 -0400
+Received: by mail-lf1-f65.google.com with SMTP id p34-v6so4812866lfg.10
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 11:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+UR9bsXhPxvnSq70kZXNy8mfWKI2Nb7hu20VDQ8TJu4=;
+        b=A7ZMNbZlvwVf2gh5Crs81TtMLNh2C1Zu8l3ZWYBJqIM8Ts25tA+d7lhqAkLpUj2FHy
+         pGsW07WdO4eugzIkH8bXTpheyPr5NvlU+85BsY7AN+hCVPy0rNEvD+73bcxTe0urrELG
+         dcJKZ48Cxgkb0xYTbYlFbSj9/74/mOG66jsMk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+UR9bsXhPxvnSq70kZXNy8mfWKI2Nb7hu20VDQ8TJu4=;
+        b=CzGBiCN9b+5rxir42ee7esdfs7PTo2cFB88NY/zvD4n4YIVp7UeOQf+qB09nPJ0QNO
+         K7VZX6D06Zf1wP5/xCZlaYYgxNYEcyc+Cv1GaYNVOXKLHN+Pa+fW0KC5yboMoCzFGhcT
+         1yT4Qy8C/dkWYMgoKZTaJlyzEdmpOuJNzP2nlNvleLnM9pduqUYDQBS2weMkbCtLYqCz
+         LiV6U8DQDHUBNj8WwChczw19FEjLeirjr0CKehNZOUlBAhYWPkYnlUp8se6QLQTCADJI
+         8D44UrujB2e2rRDved4cWCd4KC7ZFIVSr9ldpz6Rg4MA8uNq0oyo3vJxWXre0L68MnKt
+         IkVA==
+X-Gm-Message-State: ABuFfogDgQ7RyFmo1CvBTZp7SGJNJVwtA6NwZrRSU0iRX5QrBonCMjmh
+        fRO7fwucSzZZVBUtmAVmAZqr5F8skN8=
+X-Google-Smtp-Source: ACcGV61iWGalFl/LJotUPj6fRxrJZVjS27Wbc/RYmI/fQnEWTRsH9gqfjD5b7nPhyTzPVscE1hmuAA==
+X-Received: by 2002:a19:d155:: with SMTP id i82-v6mr1650378lfg.127.1538589751547;
+        Wed, 03 Oct 2018 11:02:31 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id k23-v6sm480173ljc.49.2018.10.03.11.02.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 11:02:30 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id y71-v6so5960747lje.9
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 11:02:29 -0700 (PDT)
+X-Received: by 2002:a2e:20da:: with SMTP id g87-v6mr1699291lji.88.1538589748767;
+ Wed, 03 Oct 2018 11:02:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921150351.20898-27-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 03 Oct 2018 17:57:06 +0000 (UTC)
+References: <1537770516-28410-1-git-send-email-sayalil@codeaurora.org> <1537770516-28410-3-git-send-email-sayalil@codeaurora.org>
+In-Reply-To: <1537770516-28410-3-git-send-email-sayalil@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 3 Oct 2018 11:01:52 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6dLW5zzrOg470kS=O8rMgPr02Nb4NL9pEtpymc83ms+w@mail.gmail.com>
+Message-ID: <CAE=gft6dLW5zzrOg470kS=O8rMgPr02Nb4NL9pEtpymc83ms+w@mail.gmail.com>
+Subject: Re: [PATCH V14 2/2] scsi: ufs: Add configfs support for UFS provisioning
+To:     sayali <sayalil@codeaurora.org>
+Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, riteshh@codeaurora.org,
+        stummala@codeaurora.org, adrian.hunter@intel.com,
+        Joel Becker <jlbec@evilplan.org>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 08:03:50AM -0700, Yu-cheng Yu wrote:
-> arch_prctl(ARCH_CET_STATUS, unsigned long *addr)
->     Return CET feature status.
-> 
->     The parameter 'addr' is a pointer to a user buffer.
->     On returning to the caller, the kernel fills the following
->     information:
-> 
->     *addr = SHSTK/IBT status
->     *(addr + 1) = SHSTK base address
->     *(addr + 2) = SHSTK size
-
-The subtle detail here is that x32 binaries will get 64-bit value, which
-is not entirely obvious. I think, it might be better to define
-a structure type for it as a part of UAPI, for example:
-
-struct user_cet_status {
-	__u32 struct_size;
-	__u32 features;
-	__kernel_ulong_t shstk_base;
-	__kernel_ulong_t shstk_size;
-};
-
-Adding "struct_size" field along with appropriate checks will also
-allow for possible extensions, if they ever appear.
-
-> arch_prctl(ARCH_CET_DISABLE, unsigned long features)
->     Disable CET features specified in 'features'.  Return
->     -EPERM if CET is locked.
-
-While x86_64 and x32 will have 64-bit space for feature bits, IA-32 will
-have only 32 bits.
-
-> arch_prctl(ARCH_CET_LOCK)
->     Lock in CET feature.
-> 
-> arch_prctl(ARCH_CET_ALLOC_SHSTK, unsigned long *addr)
->     Allocate a new SHSTK.
-> 
->     The parameter 'addr' is a pointer to a user buffer and indicates
->     the desired SHSTK size to allocate.  On returning to the caller
->     the buffer contains the address of the new SHSTK.
-
-Again, on x32 that will be a pointer to a 64-bit value, which is not
-entirely obvious from this description.
-
-It's not clear whether inability to enable some CET feature in runtime
-is unavailable by design or by omission; same for setting (an allocated)
-shadow stack as task's shadow stack.
-
-> 
-> Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+On Sun, Sep 23, 2018 at 11:29 PM Sayali Lokhande <sayalil@codeaurora.org> wrote:
+>
+> This patch adds configfs support to provision UFS device at
+> runtime. This feature can be primarily useful in factory or
+> assembly line as some devices may be required to be configured
+> multiple times during initial system development phase.
+> Configuration Descriptors can be written multiple times until
+> bConfigDescrLock attribute is zero.
+>
+> Configuration descriptor buffer consists of Device and Unit
+> descriptor configurable parameters which are parsed from vendor
+> specific provisioning file and then passed via configfs node at
+> runtime to provision ufs device.
+> CONFIG_CONFIGFS_FS and CONFIG_SCSI_UFS_PROVISION needs to be enabled
+> for using this feature.
+>
+> Usage:
+> 1) To read current configuration descriptor with index X
+>    (where index X can be 0/1/2/3) :
+>    cat /config/<device_name>/ufs_config_desc_X
+>
+> 2) To write configuration descriptor with index X :
+>    echo <config_desc_buf> > /config/<device_name>/ufs_config_desc_X
+>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 > ---
->  arch/x86/include/asm/cet.h        |  5 ++
->  arch/x86/include/uapi/asm/prctl.h |  5 ++
->  arch/x86/kernel/Makefile          |  2 +-
->  arch/x86/kernel/cet.c             | 27 +++++++++++
->  arch/x86/kernel/cet_prctl.c       | 79 +++++++++++++++++++++++++++++++
->  arch/x86/kernel/process.c         |  5 ++
->  6 files changed, 122 insertions(+), 1 deletion(-)
->  create mode 100644 arch/x86/kernel/cet_prctl.c
-> 
-> diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
-> index b7b33e1026bb..212bd68e31d3 100644
-> --- a/arch/x86/include/asm/cet.h
-> +++ b/arch/x86/include/asm/cet.h
-> @@ -12,19 +12,24 @@ struct task_struct;
->  struct cet_status {
->  	unsigned long	shstk_base;
->  	unsigned long	shstk_size;
-> +	unsigned int	locked:1;
->  	unsigned int	shstk_enabled:1;
->  };
->  
->  #ifdef CONFIG_X86_INTEL_CET
-> +int prctl_cet(int option, unsigned long arg2);
->  int cet_setup_shstk(void);
->  int cet_setup_thread_shstk(struct task_struct *p);
-> +int cet_alloc_shstk(unsigned long *arg);
->  void cet_disable_shstk(void);
->  void cet_disable_free_shstk(struct task_struct *p);
->  int cet_restore_signal(unsigned long ssp);
->  int cet_setup_signal(bool ia32, unsigned long rstor, unsigned long *new_ssp);
->  #else
-> +static inline int prctl_cet(int option, unsigned long arg2) { return 0; }
-
-Why 0 and not -EINVAL?
-
->  static inline int cet_setup_shstk(void) { return 0; }
-
-0 here also looks strange.
-
->  static inline int cet_setup_thread_shstk(struct task_struct *p) { return 0; }
-
-And here.
-
-> +static inline int cet_alloc_shstk(unsigned long *arg) { return -EINVAL; }
->  static inline void cet_disable_shstk(void) {}
->  static inline void cet_disable_free_shstk(struct task_struct *p) {}
->  static inline int cet_restore_signal(unsigned long ssp) { return 0; }
-> diff --git a/arch/x86/include/uapi/asm/prctl.h b/arch/x86/include/uapi/asm/prctl.h
-> index 5a6aac9fa41f..3aec1088e01d 100644
-> --- a/arch/x86/include/uapi/asm/prctl.h
-> +++ b/arch/x86/include/uapi/asm/prctl.h
-> @@ -14,4 +14,9 @@
->  #define ARCH_MAP_VDSO_32	0x2002
->  #define ARCH_MAP_VDSO_64	0x2003
->  
-> +#define ARCH_CET_STATUS		0x3001
-> +#define ARCH_CET_DISABLE	0x3002
-> +#define ARCH_CET_LOCK		0x3003
-> +#define ARCH_CET_ALLOC_SHSTK	0x3004
-> +
->  #endif /* _ASM_X86_PRCTL_H */
-> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-> index 36b14ef410c8..b9e6cdc6b4f7 100644
-> --- a/arch/x86/kernel/Makefile
-> +++ b/arch/x86/kernel/Makefile
-> @@ -139,7 +139,7 @@ obj-$(CONFIG_UNWINDER_ORC)		+= unwind_orc.o
->  obj-$(CONFIG_UNWINDER_FRAME_POINTER)	+= unwind_frame.o
->  obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
->  
-> -obj-$(CONFIG_X86_INTEL_CET)		+= cet.o
-> +obj-$(CONFIG_X86_INTEL_CET)		+= cet.o cet_prctl.o
->  
->  obj-$(CONFIG_ARCH_HAS_PROGRAM_PROPERTIES) += elf.o
->  
-> diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-> index ce0b3b7b1160..1c2689738604 100644
-> --- a/arch/x86/kernel/cet.c
-> +++ b/arch/x86/kernel/cet.c
-> @@ -110,6 +110,33 @@ static int create_rstor_token(bool ia32, unsigned long ssp,
->  	return 0;
->  }
->  
-> +int cet_alloc_shstk(unsigned long *arg)
-> +{
-> +	unsigned long len = *arg;
-> +	unsigned long addr;
-> +	unsigned long token;
-> +	unsigned long ssp;
-> +
-> +	addr = do_mmap_locked(0, len, PROT_READ,
-> +			      MAP_ANONYMOUS | MAP_PRIVATE, VM_SHSTK);
-> +	if (addr >= TASK_SIZE_MAX)
-> +		return -ENOMEM;
-> +
-> +	/* Restore token is 8 bytes and aligned to 8 bytes */
-> +	ssp = addr + len;
-> +	token = ssp;
-> +
-> +	if (!in_ia32_syscall())
-> +		token |= 1;
-
-This pair of check and bit or'ing definitely asks for a macro or a
-wrapper function.
-
-> +	ssp -= 8;
-> +
-> +	if (write_user_shstk_64(ssp, token))
-> +		return -EINVAL;
-
-Shouldn't addr be unmapped on error?
-
-> +	*arg = addr;
-> +	return 0;
-> +}
-> +
->  int cet_setup_shstk(void)
->  {
->  	unsigned long addr, size;
-> diff --git a/arch/x86/kernel/cet_prctl.c b/arch/x86/kernel/cet_prctl.c
+>  Documentation/ABI/testing/configfs-driver-ufs |  12 ++
+>  drivers/scsi/ufs/Kconfig                      |  10 ++
+>  drivers/scsi/ufs/Makefile                     |   1 +
+>  drivers/scsi/ufs/ufs-configfs.c               | 237 ++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.c                     |   3 +-
+>  drivers/scsi/ufs/ufshcd.h                     |  18 ++
+>  6 files changed, 280 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
+>  create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+>
+> diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
 > new file mode 100644
-> index 000000000000..c4b7c19f5040
+> index 0000000..6743ea9
 > --- /dev/null
-> +++ b/arch/x86/kernel/cet_prctl.c
-> @@ -0,0 +1,79 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
+> +++ b/Documentation/ABI/testing/configfs-driver-ufs
+> @@ -0,0 +1,12 @@
+> +What:          /config/*/ufs_config_desc_X
+> +Date:          Jun 2018
+> +KernelVersion: 4.20
+> +Description:
+> +               This file shows bytes of the current ufs configuration descriptor
+> +               with index X (where X = 0/1/2/3) set in device. This can be used to
+> +               provision ufs device if bConfigDescrLock is 0.
+> +               For more details, refer 14.1.6.3 Configuration Descriptor and
+> +               table 14-12 - Unit Descriptor configurable parameters from specs for
+> +               description and format of each configuration descriptor parameter.
+> +               Parameters of Configuration descriptor buffer for respective index
+> +               needs to be passed as bytes in space separated format.
+> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+> index e27b4d4..6e7ff35 100644
+> --- a/drivers/scsi/ufs/Kconfig
+> +++ b/drivers/scsi/ufs/Kconfig
+> @@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
+>
+>           Select this if you have UFS controller on QCOM chipset.
+>           If unsure, say N.
 > +
-> +#include <linux/errno.h>
-> +#include <linux/uaccess.h>
-> +#include <linux/prctl.h>
-> +#include <linux/compat.h>
-> +#include <asm/processor.h>
-> +#include <asm/prctl.h>
-> +#include <asm/elf.h>
-> +#include <asm/elf_property.h>
-> +#include <asm/cet.h>
+> +config SCSI_UFS_PROVISION
+> +       bool "Runtime UFS Provisioning support"
+> +       depends on SCSI_UFSHCD && CONFIGFS_FS
+> +       help
+> +         This enables runtime UFS provisioning support. This can be used
+> +         primarily during assembly line as some devices may be required to
+> +         be configured multiple times during initial development phase.
 > +
-> +/* See Documentation/x86/intel_cet.txt. */
-> +
-> +static int handle_get_status(unsigned long arg2)
-> +{
-> +	unsigned int features = 0;
-> +	unsigned long shstk_base, shstk_size;
-> +	unsigned long buf[3];
-> +
-> +	if (current->thread.cet.shstk_enabled)
-> +		features |= GNU_PROPERTY_X86_FEATURE_1_SHSTK;
-> +
-> +	shstk_base = current->thread.cet.shstk_base;
-> +	shstk_size = current->thread.cet.shstk_size;
-> +
-> +	buf[0] = (unsigned long)features;
-> +	buf[1] = shstk_base;
-> +	buf[2] = shstk_size;
-> +	return copy_to_user((unsigned long __user *)arg2, buf,
-> +			    sizeof(buf));
-> +}
-> +
-> +static int handle_alloc_shstk(unsigned long arg2)
-> +{
-> +	int err = 0;
-> +	unsigned long shstk_size = 0;
-> +
-> +	if (get_user(shstk_size, (unsigned long __user *)arg2))
-> +		return -EFAULT;
-> +
-> +	err = cet_alloc_shstk(&shstk_size);
-> +	if (err)
-> +		return err;
-> +
-> +	if (put_user(shstk_size, (unsigned long __user *)arg2))
+> +         If unsure, say N.
+> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+> index 918f579..09880b9 100644
+> --- a/drivers/scsi/ufs/Makefile
+> +++ b/drivers/scsi/ufs/Makefile
+> @@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
+>  obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
+>  obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
+>  ufshcd-core-objs := ufshcd.o ufs-sysfs.o
+> +obj-$(CONFIG_SCSI_UFS_PROVISION) += ufs-configfs.o
 
-Again, leaking allocated stack.
+Hi Sayali,
+Can you try both of your patches with "make allmodconfig". There seem
+to be a few issues compiling in that configuration. Also, as it stands
+this file is either not compiled in, or baked into the kernel, where
+it really should go into the driver. Check out the patch below for how
+Guenter patched things up in our tree:
 
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +
-> +int prctl_cet(int option, unsigned long arg2)
-> +{
-> +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-> +		return -EINVAL;
-> +
-> +	switch (option) {
-> +	case ARCH_CET_STATUS:
-> +		return handle_get_status(arg2);
-> +
-> +	case ARCH_CET_DISABLE:
-> +		if (current->thread.cet.locked)
-> +			return -EPERM;
-> +		if (arg2 & GNU_PROPERTY_X86_FEATURE_1_SHSTK)
-> +			cet_disable_free_shstk(current);
-
-The rest of bits in arg2 should be 0, otherwise this interface won't be
-possible to extend.
-
-> +		return 0;
-> +
-> +	case ARCH_CET_LOCK:
-> +		current->thread.cet.locked = 1;
-> +		return 0;
-> +
-> +	case ARCH_CET_ALLOC_SHSTK:
-> +		return handle_alloc_shstk(arg2);
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> index 440f012ef925..251b8714f9a3 100644
-> --- a/arch/x86/kernel/process.c
-> +++ b/arch/x86/kernel/process.c
-> @@ -792,6 +792,11 @@ long do_arch_prctl_common(struct task_struct *task, int option,
->  		return get_cpuid_mode();
->  	case ARCH_SET_CPUID:
->  		return set_cpuid_mode(task, cpuid_enabled);
-> +	case ARCH_CET_STATUS:
-> +	case ARCH_CET_DISABLE:
-> +	case ARCH_CET_LOCK:
-> +	case ARCH_CET_ALLOC_SHSTK:
-> +		return prctl_cet(option, cpuid_enabled);
-
-It's probably a good opportunity to change the strange name for an argument
-of a dispatch call.
+https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1255524
