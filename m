@@ -2,203 +2,92 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C45D1C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55848C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 882CA21470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:20:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 882CA21470
+	by mail.kernel.org (Postfix) with ESMTP id 18ED221470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:21:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18ED221470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbeJDELC (ORCPT
+        id S1727109AbeJDELc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 00:11:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52056 "EHLO mx1.redhat.com"
+        Thu, 4 Oct 2018 00:11:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39648 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbeJDELB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 00:11:01 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1725871AbeJDELc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 00:11:32 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 57A188764B;
-        Wed,  3 Oct 2018 21:20:56 +0000 (UTC)
-Received: from krava (ovpn-204-77.brq.redhat.com [10.40.204.77])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 672D86A53B;
-        Wed,  3 Oct 2018 21:20:53 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 23:20:52 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     John Garry <john.garry@huawei.com>
-Cc:     Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH] perf tools: Store ids for events with their own cpus
- perf_event__synthesize_event_update_cpus
-Message-ID: <20181003212052.GA32371@krava>
-References: <712b7c31-f681-7737-71e7-c028b8d2bba5@huawei.com>
- <20180927160210.GF6916@krava>
- <4ac88076-60fa-4509-7fa0-2f99d73174d2@huawei.com>
- <20181002111621.GA6357@krava>
- <20181003113643.GA31725@krava>
- <594506a2-8cb3-3d09-82ab-5cb6d8c31ed0@huawei.com>
- <20181003141627.GA6341@krava>
+        by mx1.redhat.com (Postfix) with ESMTPS id 28AB1308FBA3;
+        Wed,  3 Oct 2018 21:21:27 +0000 (UTC)
+Received: from asgard.redhat.com (ovpn-200-17.brq.redhat.com [10.40.200.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8E5B0589B;
+        Wed,  3 Oct 2018 21:21:16 +0000 (UTC)
+Date:   Wed, 3 Oct 2018 23:21:44 +0200
+From:   Eugene Syromiatnikov <esyr@redhat.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     yu-cheng.yu@intel.com, Andy Lutomirski <luto@amacapital.net>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>, rdunlap@infradead.org,
+        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
+Subject: Re: [RFC PATCH v4 24/27] mm/mmap: Create a guard area between VMAs
+Message-ID: <20181003212029.GH32759@asgard.redhat.com>
+References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+ <20180921150351.20898-25-yu-cheng.yu@intel.com>
+ <20181003045611.GB22724@asgard.redhat.com>
+ <CALCETrU-Ny-uC1NqRedQwNKe2MMhsFEqZ08TtHJwbLfCACMmLw@mail.gmail.com>
+ <5ddb0ad33298d1858e530fce9c9ea2788b2fac81.camel@intel.com>
+ <20181003163226.GC9449@asgard.redhat.com>
+ <CAG48ez0KZYv9BECMm0-BNypJ232jrdkFp6_4VYTA=WoB-8w89w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181003141627.GA6341@krava>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 03 Oct 2018 21:20:56 +0000 (UTC)
+In-Reply-To: <CAG48ez0KZYv9BECMm0-BNypJ232jrdkFp6_4VYTA=WoB-8w89w@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 03 Oct 2018 21:21:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 04:16:27PM +0200, Jiri Olsa wrote:
-> On Wed, Oct 03, 2018 at 03:08:10PM +0100, John Garry wrote:
-> > On 03/10/2018 12:36, Jiri Olsa wrote:
-> > > On Tue, Oct 02, 2018 at 01:16:21PM +0200, Jiri Olsa wrote:
-> > > > On Tue, Oct 02, 2018 at 11:41:36AM +0100, John Garry wrote:
-> > > > 
-> > > > SNIP
-> > > > 
-> > > > > > 
-> > > > > > 
-> > > > > > ---
-> > > > > > diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> > > > > > index 1ec1d9bc2d63..fb2a0dab3978 100644
-> > > > > > --- a/tools/perf/util/header.c
-> > > > > > +++ b/tools/perf/util/header.c
-> > > > > > @@ -29,6 +29,7 @@
-> > > > > >  #include "symbol.h"
-> > > > > >  #include "debug.h"
-> > > > > >  #include "cpumap.h"
-> > > > > > +#include "thread_map.h"
-> > > > > >  #include "pmu.h"
-> > > > > >  #include "vdso.h"
-> > > > > >  #include "strbuf.h"
-> > > > > > @@ -3579,6 +3580,11 @@ perf_event__synthesize_event_update_cpus(struct perf_tool *tool,
-> > > > > > 	if (!evsel->own_cpus)
-> > > > > > 		return 0;
-> > > > > > 
-> > > > > > +	if (!evsel->id ||
-> > > > > 
-> > > > > for my test, evsel->id is NULL
-> > > > > 
-> > > > > > +	    perf_evsel__alloc_id(evsel, cpu_map__nr(evsel->cpus),
-> > > > > > +				 thread_map__nr(evsel->threads)))
-> > > > > 
-> > > > > and then this function is not called as we return immediately. So did you
-> > > > > really want this:
-> > > > > 
-> > > > > if (!evsel->id && perf_evsel__alloc_id(...))
-> > > > > 	return -ENOMEM;
-> > > > 
-> > > > ugh.. yes ;-) thanks for the fix.. I'll double
-> > > > check the logic and post the patch this week
-> > > 
-> > > actualy, we also need to populate those ids ;-)
-> > > so calling perf_evsel__store_ids instead..
-> > > attaching the full patch
-> > > 
-> > > thanks,
-> > > jirka
-> > > 
-> > 
-> > Hi Jirka,
-> > 
-> > Can you please double-check your new patch, as I'm getting this now:
-> > root@localhost:~# ./perf_debug record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
-> > [ perf record: Woken up 1 times to write data ]
-> > [ perf record: Captured and wrote 0.001 MB perf.data (6 samples) ]
-> > root@localhost:~# ./perf_debug report
-> > 0xe8 [0]: failed to process type: 461
-> > Error:
-> > failed to process sample
-> > # To display the perf.data header info, please use --header/--header-only
-> > option
-> > #
-> > root@localhost:~#
+On Wed, Oct 03, 2018 at 06:52:40PM +0200, Jann Horn wrote:
+> On Wed, Oct 3, 2018 at 6:32 PM Eugene Syromiatnikov <esyr@redhat.com> wrote:
+> > I'm not sure, however, whether such a change that provides no ability
+> > to configure or affect it will go well with all the supported
+> > architectures.
 > 
-> ok, I need to get a machine to test this.. but it looks like
-> any sample-able events with cpumask are in arm :-\ will try
-> to get some..
+> Is there a concrete reason why you think an architecture might not
+> like this? As far as I can tell, the virtual address space overhead
+> should be insignificant even for 32-bit systems.
 
-got an arm server and patch below works for me.. could you please test?
+Not really, and not architectures per se, but judging by some past
+experiences with enabling ASLR, I would expect that all kinds of weird
+applications may start to behave in all kinds of strange ways.
 
-thanks,
-jirka
-
-
----
-
-John reported crash when recording on an event under
-pmu with cpumask defined:
-
-  root@localhost:~# ./perf_debug_ record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
-  perf: Segmentation fault
-  Obtained 9 stack frames.
-  ./perf_debug_() [0x4c5ef8]
-  [0xffff82ba267c]
-  ./perf_debug_() [0x4bc5a8]
-  ./perf_debug_() [0x419550]
-  ./perf_debug_() [0x41a928]
-  ./perf_debug_() [0x472f58]
-  ./perf_debug_() [0x473210]
-  ./perf_debug_() [0x4070f4]
-  /lib/aarch64-linux-gnu/libc.so.6(__libc_start_main+0xe0) [0xffff8294c8a0]
-  Segmentation fault (core dumped)
-
-We synthesize an update event that needs to touch the evsel
-id array, which is not defined at that time. Fixing this by
-forcing the id allocation for events with theeir own cpus.
-
-Reported-by: John Garry <john.garry@huawei.com>
-Link: http://lkml.kernel.org/n/tip-8x4n7o34yheigoxm1jibflm6@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/builtin-report.c | 1 +
- tools/perf/util/evsel.c     | 3 +++
- 2 files changed, 4 insertions(+)
-
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index c0703979c51d..257c9c18cb7e 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -980,6 +980,7 @@ int cmd_report(int argc, const char **argv)
- 			.id_index	 = perf_event__process_id_index,
- 			.auxtrace_info	 = perf_event__process_auxtrace_info,
- 			.auxtrace	 = perf_event__process_auxtrace,
-+			.event_update	 = perf_event__process_event_update,
- 			.feature	 = process_feature_event,
- 			.ordered_events	 = true,
- 			.ordering_requires_timestamps = true,
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index ac6cfb8b085e..7a0d5fbaf3c1 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1088,6 +1088,9 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 		attr->exclude_user   = 1;
- 	}
- 
-+	if (evsel->own_cpus)
-+		evsel->attr.read_format |= PERF_FORMAT_ID;
-+
- 	/*
- 	 * Apply event specific term settings,
- 	 * it overloads any global configuration.
--- 
-2.17.1
-
+Not that I have anything more than this doubt, however; but this sort of
+change without any ability to tune or revert it still looks unusual to me.
