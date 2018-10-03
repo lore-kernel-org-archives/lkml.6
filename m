@@ -2,158 +2,124 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABFC8C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B42C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7025C20835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:09:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1946206B2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:16:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E0nlAxgZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7025C20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEvw3Jos"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1946206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbeJCL4i (ORCPT
+        id S1726739AbeJCMCt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 07:56:38 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:47045 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726394AbeJCL4h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 07:56:37 -0400
-Received: by mail-yw1-f68.google.com with SMTP id j202-v6so1776068ywa.13
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 22:09:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=anJ+xPI0MAtYmnpqO3Wk+YZTmvHEdCMXtPWmZZegg1c=;
-        b=E0nlAxgZaGV6Cul+dUBp6paSP2xeEqmtJGak6fTcSXBkPdtVPlsIiyCplctVSebHL6
-         Dr2wV9f6K0dn/g+yfr44vLZjTrGMkhCcYD0zyG62C5kqvUnbeoo1wAK6XcejSqkHKA7j
-         9N4LW5WH2kLp1D/iYCBzvLmyTKgM0OtrZ3lhs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=anJ+xPI0MAtYmnpqO3Wk+YZTmvHEdCMXtPWmZZegg1c=;
-        b=RG9nbvLFSt0NiTeLqMkpEuobWqQugff2l+0fmDQSy2VbXoCGRcOQgcjuMW5F/lG092
-         V3DKXiMIh+AWeHdok7nsg9V4SiXdsD6z/xkOXGnWM696bJ+rNRo3KyPHxa58jSnUEBbX
-         7JryMezrWblItua69jOR7Ijx1mONPQepZeZ1XSsafHqEOhvhqiL6+XB5e1JHevFpwmQF
-         JDRs7wNLEF56iW+TA40bf/PUFwj66W4xOvMA35MY+fq168I5f47nytlCCPkInU6/R7Xe
-         LbLfjOHDyRsLfZxT4prRl1jq6FdOvPiUs1MU9npismBdCmieMeomeIxRFl9Jf6HK0fje
-         SAhA==
-X-Gm-Message-State: ABuFfogo122+0W9/gdRFesS6kJigEkdkdq7CQMqPkayZeCPNucynTi38
-        J66xe52wpMbJMZDrBmTodv2KoJ0kYM4s0FSnvGbI5Q==
-X-Google-Smtp-Source: ACcGV63zORxn34C+nx8omPn7oe+xSy/JzOvrcQd7npWzbBGxtsNgNrNDpoigEOUFPkjwqGj4xiDXbSx6k7sSxuvALLM=
-X-Received: by 2002:a81:9849:: with SMTP id p70-v6mr5390762ywg.175.1538543391738;
- Tue, 02 Oct 2018 22:09:51 -0700 (PDT)
+        Wed, 3 Oct 2018 08:02:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726619AbeJCMCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 08:02:48 -0400
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA1F921470
+        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 05:16:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538543762;
+        bh=mD1CO+IjZXv0CDDY/wEkUp89zH7oIbyw2Bo8Z/BiOTw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YEvw3JosT3LdZOBWn57qhG09yCz9gZFSvZ8sMAnzy8o71JrV7atlFkPbAoQGfUGgP
+         eb2V5qO8yVxPZJNtc2PJB9TwCj7qCJDkH+/QHRupTYk/scUQhT/6k9KPmZsW9iY42g
+         0AZ3gZf6e/J98ZMuywLrT1AUc+EhoSmNKEnMPvMY=
+Received: by mail-wm1-f52.google.com with SMTP id 185-v6so4239773wmt.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 22:16:01 -0700 (PDT)
+X-Gm-Message-State: ABuFfoh1YAVUtVc0atx2M7UUH+Dt3hug9qAmDHVZJCo0F+5rwd67l2kl
+        TU0K0r/GnH0e4o4oqQEdpQhDrJAwtOiok5WWpO1bGg==
+X-Google-Smtp-Source: ACcGV62IubmpW81dweInj7BM+6vkNkUWJK9yPDoXHRcDoT1EupWsFlaoYBIsnMNa/FkiHTms4g0awGWEa66ennaboT0=
+X-Received: by 2002:a1c:f312:: with SMTP id q18-v6mr168502wmq.14.1538543760007;
+ Tue, 02 Oct 2018 22:16:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <1533792466-4227-1-git-send-email-firoz.khan@linaro.org>
- <1533792466-4227-2-git-send-email-firoz.khan@linaro.org> <f1e95c4d-4f02-263d-7f35-cc87bc657fbb@xilinx.com>
- <CALxhOnho6av7nZja_MN4akQuVj1hVq753ZYgRM8fbKkL2rHzQw@mail.gmail.com> <89533601-366f-ebf4-dc31-996bc649bc51@xilinx.com>
-In-Reply-To: <89533601-366f-ebf4-dc31-996bc649bc51@xilinx.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Wed, 3 Oct 2018 10:39:40 +0530
-Message-ID: <CALxhOnj8fRf3WC4t6HRSt=L0aCMszadVbaCdbtLi_Xrf_fh-PQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] microblaze: Replace NR_syscalls macro from asm/unistd.h
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+References: <20180914125006.349747096@linutronix.de>
+In-Reply-To: <20180914125006.349747096@linutronix.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 2 Oct 2018 22:15:49 -0700
+X-Gmail-Original-Message-ID: <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com>
+Message-ID: <CALCETrU+jP2hPLoJWTYJKTvr7-=YLwtk1=cZ_uizHYQZ1z4P-w@mail.gmail.com>
+Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI support
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Wanpeng Li <kernellwp@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        devel@linuxdriverproject.org,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+Hi Vitaly, Paolo, Radim, etc.,
 
-On Tue, 2 Oct 2018 at 12:37, Michal Simek <michal.simek@xilinx.com> wrote:
+On Fri, Sep 14, 2018 at 5:52 AM Thomas Gleixner <tglx@linutronix.de> wrote:
 >
-> On 18.9.2018 08:37, Firoz Khan wrote:
-> > On 9 August 2018 at 12:18, Michal Simek <michal.simek@xilinx.com> wrote:
-> >> On 9.8.2018 07:27, Firoz Khan wrote:
-> >>> __NR_syscalls macro holds the number of system call exist in this
-> >>> architecture. This macro is currently the part of asm/unistd.h file.
-> >>> We have change the value of __NR_syscalls, if we add or delete a
-> >>> system call.
-> >>>
-> >>> One of the patch in this patch series has a script which will
-> >>> generate a uapi header based on syscall.tbl file. The syscall.tbl
-> >>> file contains the number of system call information. So we have
-> >>> two option to update __NR_syscalls value.
-> >>>
-> >>> 1. Update __NR_syscalls in asm/unistd.h manually by counting the
-> >>>    no.of system calls. No need to update __NR_syscalls untill
-> >>>    we either add a new system call or delete an existing system
-> >>>    call.
-> >>>
-> >>> 2. We can keep this feature it above mentioned script, that'll
-> >>>    count the number of syscalls and keep it in a generated file.
-> >>>    In this case we don't need to explicitly update __NR_syscalls
-> >>>    in asm/unistd.h file.
-> >>>
-> >>> The 2nd option will be the recommended one. For that, I moved the
-> >>> NR_syscalls macro from asm/unistd.h to uapi/asm/unistd.h. The macro
-> >>> name also changed form NR_syscalls to __NR_syscalls for making the
-> >>> name convention same across all architecture. While __NR_syscalls
-> >>> isn't strictly part of the uapi, having it as part of the generated
-> >>> header to simplifies the implementation.
-> >>
-> >> This macro was in unistd.h in past but it was moved out because it was
-> >> causing problem with strace.
-> >>
-> >> commit 40c2702a02b755e0183b702778331b351f3be20c
-> >> Author:     Michal Simek <michal.simek@xilinx.com>
-> >> AuthorDate: Mon Jul 8 09:50:24 2013 +0200
-> >> Commit:     Michal Simek <michal.simek@xilinx.com>
-> >> CommitDate: Wed Jul 10 07:32:09 2013 +0200
-> >>
-> >>     microblaze: Move __NR_syscalls from uapi
-> >>
-> >>
-> >> That's why I don't think this is the right thing to do.
-> >> I have grepped strace and glibc and none is using this macro that's why
-> >> I think it shouldn't be exported via uapi.
-> >
-> >
-> > Thanks for you reply :)
-> > Sorry for the delayed response :(
-> >
-> > I would like to keep __NR_syscalls macro to uapi header in order to simplify
-> > the system call table generation script. Otherwise the __NR_syscalls
-> > macro need to update manually. That become a problem.
-> >
-> > Please check the below implementation in uapi file make sense?
-> > It is an easy workaround to leave __NR_syscalls macro in uapi/asm/unistd.h
-> > and enclose it in #ifdef __KERNEL__
-> >
-> > ...
-> > ...
-> > #define __NR_pkey_free  397
-> > #define __NR_statx      398
-> >
-> > #ifdef __KERNEL__
-> > #define __NR_syscalls   399
-> > #endif
-> > ...
-> > ...
+> Matt attempted to add CLOCK_TAI support to the VDSO clock_gettime()
+> implementation, which extended the clockid switch case and added yet
+> another slightly different copy of the same code.
 >
-> This should be fine.
+> Especially the extended switch case is problematic as the compiler tends to
+> generate a jump table which then requires to use retpolines. If jump tables
+> are disabled it adds yet another conditional to the existing maze.
+>
+> This series takes a different approach by consolidating the almost
+> identical functions into one implementation for high resolution clocks and
+> one for the coarse grained clock ids by storing the base data for each
+> clock id in an array which is indexed by the clock id.
+>
 
-Thanks for the confirmation!
+I was trying to understand more of the implications of this patch
+series, and I was again reminded that there is an entire extra copy of
+the vclock reading code in arch/x86/kvm/x86.c.  And the purpose of
+that code is very, very opaque.
 
-- Firoz
->
-> M
+Can one of you explain what the code is even doing?  From a couple of
+attempts to read through it, it's a whole bunch of
+probably-extremely-buggy code that, drumroll please, tries to
+atomically read the TSC value and the time.  And decide whether the
+result is "based on the TSC".  And then synthesizes a TSC-to-ns
+multiplier and shift, based on *something other than the actual
+multiply and shift used*.
+
+IOW, unless I'm totally misunderstanding it, the code digs into the
+private arch clocksource data intended for the vDSO, uses a poorly
+maintained copy of the vDSO code to read the time (instead of doing
+the sane thing and using the kernel interfaces for this), and
+propagates a totally made up copy to the guest.  And gets it entirely
+wrong when doing nested virt, since, unless there's some secret in
+this maze, it doesn't acutlaly use the scaling factor from the host
+when it tells the guest what to do.
+
+I am really, seriously tempted to send a patch to simply delete all
+this code.  The correct way to do it is to hook
+
+And I don't see how it's even possible to pass kvmclock correctly to
+the L2 guest when L0 is hyperv.  KVM could pass *hyperv's* clock, but
+L1 isn't notified when the data structure changes, so how the heck is
+it supposed to update the kvmclock structure?
+
+--Andy
