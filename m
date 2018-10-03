@@ -2,124 +2,104 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7043C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3351CC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 888EF2082A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:21:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 888EF2082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E941D2082A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:22:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYZeGzNU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E941D2082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbeJCXKu (ORCPT
+        id S1727206AbeJCXLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 19:10:50 -0400
-Received: from mga02.intel.com ([134.134.136.20]:9897 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726950AbeJCXKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 19:10:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 09:21:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
-   d="scan'208";a="91865603"
-Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by fmsmga002.fm.intel.com with ESMTP; 03 Oct 2018 09:16:14 -0700
-Message-ID: <9c93e864e5996862cb5fdb66d4140faa634cbc47.camel@intel.com>
-Subject: Re: [RFC PATCH v4 06/27] x86/cet: Control protection exception
- handler
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Wed, 03 Oct 2018 09:11:34 -0700
-In-Reply-To: <20181003103959.GB7111@asgard.redhat.com>
-References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
-         <20180921150351.20898-7-yu-cheng.yu@intel.com>
-         <20181003103959.GB7111@asgard.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 3 Oct 2018 19:11:12 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36222 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbeJCXLM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 19:11:12 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b7-v6so1938342pfo.3
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 09:22:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pyMX4oZVAb9kWFyfJzSbUGaup+9yQZk3V9tA+AqtpFc=;
+        b=FYZeGzNU39a+Fk73U5YqDG81TMGWMi8p9NRZCB8slpFIMBoEMsdztFNVIsvCGVxKFG
+         k7U9SK34OV38vL7VgT9uzYUmu+BSX1L3xND5Lq3jsHAlq2+J8aJhkUOeGSBfaUD8qJhz
+         8eqO1FOKoXXdocwIrvi+MN87xbw4hw80TzGw3kESYMB8ZsbzPZuz5LnzHRsqsP483S9l
+         8fJp6F2BakDE9E1I0xw0mIWSxbHAzHE6JMd59m5QAwHnaFb7Sr+MZlI5TTUl88otS+Hy
+         Pcd5GV5gy9ZIRt5M7yr0NVTXImS1nw9whhWiSpqgcHll51CSkOSi3tyBP6kF85i6DTfm
+         MD+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pyMX4oZVAb9kWFyfJzSbUGaup+9yQZk3V9tA+AqtpFc=;
+        b=RaUqLSdYP1VexzqFJHgra/HEW/bD2vALR1cILYn3aW0s+36F/0Bw3TM3hHPMLNxkUK
+         jiao1IEJZ0JQo6HDszfcqL1+zhZMqo7i0to7QtCIkxhWMMmrwGjDSfu9Hr6Jvg3wHwie
+         biWCGrori+79KBQMTHj4ZqwpuKP76a0wo63xayHm0IRTq4i8kbdOwFV0WKVSVZC420BW
+         WwKy7ogd/ivpwHAaVeJ4drR81NEaU7jMADIDFByNSXfP+3Tnp1gWMt2yAN37Iku2A9pM
+         IRIn/cCfoNMv7kFqIlx3Us5pMATRsRYqhXWH0s4Q6TUnV88TcVjLbYU6/3KRg4ao6ZnK
+         eQeA==
+X-Gm-Message-State: ABuFfohK2+VKpNKLxb6KPVX5F1Eb0oseKZwl3Cw7fT5G9YltmjKXZHdO
+        DZCPrZJNJTdnxRyX7frgKg8=
+X-Google-Smtp-Source: ACcGV62Mfh4Y1rd2qadcVwZLHYUu/w4D06IeGNi49aTL+yYUjZtgiiv0focEXfjVMjlE3ckcUAuqXw==
+X-Received: by 2002:a63:d0e:: with SMTP id c14-v6mr2000232pgl.281.1538583726752;
+        Wed, 03 Oct 2018 09:22:06 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id i2-v6sm2190055pgq.35.2018.10.03.09.22.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 09:22:06 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 21:51:58 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>
+Cc:     NeilBrown <neil@brown.name>, devel@driverdev.osuosl.org,
+        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v5 1/3] staging: mt7621-mmc: Remove #if 0 blocks
+Message-ID: <20181003162153.GA19341@nishad>
+References: <cover.1538402548.git.nishadkamdar@gmail.com>
+ <b0ae4cb302d68d2fb0f6584bd8ecc8043f88845c.1538402548.git.nishadkamdar@gmail.com>
+ <20181002221636.GA8586@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181002221636.GA8586@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-03 at 12:39 +0200, Eugene Syromiatnikov wrote:
-> On Fri, Sep 21, 2018 at 08:03:30AM -0700, Yu-cheng Yu wrote:
-> > +dotraplinkage void
-> > +do_control_protection(struct pt_regs *regs, long error_code)
-> > +{
-> > +	struct task_struct *tsk;
-> > +
-> > +	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
-> > +	if (notify_die(DIE_TRAP, "control protection fault", regs,
-> > +		       error_code, X86_TRAP_CP, SIGSEGV) == NOTIFY_STOP)
-> > +		return;
-> > +	cond_local_irq_enable(regs);
-> > +
-> > +	if (!user_mode(regs))
-> > +		die("kernel control protection fault", regs, error_code);
-> > +
-> > +	if (!static_cpu_has(X86_FEATURE_SHSTK) &&
-> > +	    !static_cpu_has(X86_FEATURE_IBT))
-> > +		WARN_ONCE(1, "CET is disabled but got control "
-> > +			  "protection fault\n");
-> > +
-> > +	tsk = current;
-> > +	tsk->thread.error_code = error_code;
-> > +	tsk->thread.trap_nr = X86_TRAP_CP;
-> > +
-> > +	if (show_unhandled_signals && unhandled_signal(tsk, SIGSEGV) &&
-> > +	    printk_ratelimit()) {
-> > +		unsigned int max_err;
-> > +
-> > +		max_err = ARRAY_SIZE(control_protection_err) - 1;
-> > +		if ((error_code < 0) || (error_code > max_err))
-> > +			error_code = 0;
-> > +		pr_info("%s[%d] control protection ip:%lx sp:%lx
-> > error:%lx(%s)",
-> > +			tsk->comm, task_pid_nr(tsk),
-> > +			regs->ip, regs->sp, error_code,
-> > +			control_protection_err[error_code]);
-> > +		print_vma_addr(KERN_CONT " in ", regs->ip);
-> > +		pr_cont("\n");
-> > +	}
-> > +
-> > +	force_sig_info(SIGSEGV, SEND_SIG_PRIV, tsk);
+On Tue, Oct 02, 2018 at 03:16:36PM -0700, Greg Kroah-Hartman wrote:
+> On Mon, Oct 01, 2018 at 08:13:40PM +0530, Nishad Kamdar wrote:
+> > This patch removes #if 0 code blocks and usages of
+> > functions defined in the #if 0 blocks.
+> > 
+> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> > ---
+> >  drivers/staging/mt7621-mmc/dbg.c |  21 +--
+> >  drivers/staging/mt7621-mmc/dbg.h |  14 --
+> >  drivers/staging/mt7621-mmc/sd.c  | 269 -------------------------------
+> >  3 files changed, 1 insertion(+), 303 deletions(-)
 > 
-> That way, no information is provided to userspace (both application and
-> debugger), which is rather unfortunate. It would be nice if a new SEGV_*
-> code was added at least, and CET error (with error code constant provided
-> in UAPI) is passed via si_errno. (Having ip/sp/*ssp would be even
-> better, but I'm not exactly sure about ramifications of providing this
-> kind of information to user space).
+> This patch did not apply :(
 
-Ok, I will add that.
+Oh, do you mean it gave conflicts while applying?
+I'll check and resubmit it in that case.
 
-Yu-cheng
+Thanks for the review.
+
+regards,
+Nishad
