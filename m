@@ -2,99 +2,120 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAA3C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A4D4C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B8F20684
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B8F20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1AAC620684
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 13:36:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AAC620684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbeJCUYi (ORCPT
+        id S1727044AbeJCUYt convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 16:24:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35450 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726694AbeJCUYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 16:24:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 70A85AEB0;
-        Wed,  3 Oct 2018 13:36:10 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 15:36:09 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
-        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
-        catalin.marinas@arm.com, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com
-Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
-Message-ID: <20181003133609.GG4714@dhcp22.suse.cz>
-References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
- <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
- <20181002123909.GS18290@dhcp22.suse.cz>
- <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
- <20181003065833.GD18290@dhcp22.suse.cz>
- <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
- <20181003105926.GA4714@dhcp22.suse.cz>
- <34b25855-fcef-61ed-312d-2011f80bdec4@arm.com>
- <20181003114842.GD4714@dhcp22.suse.cz>
- <d42cc88b-6bab-797c-f263-2dce650ea3ab@arm.com>
+        Wed, 3 Oct 2018 16:24:49 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:20755 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726694AbeJCUYt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 16:24:49 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-70-VCdlQgMINlqyQC5ESQclYg-1; Wed, 03 Oct 2018 14:36:20 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 3 Oct 2018 14:36:20 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 3 Oct 2018 14:36:20 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Ben Dooks' <ben.dooks@codethink.co.uk>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     "oneukum@suse.com" <oneukum@suse.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-kernel@lists.codethink.co.uk" 
+        <linux-kernel@lists.codethink.co.uk>
+Subject: RE: [PATCH] usbnet: smsc95xx: simplify tx_fixup code
+Thread-Topic: [PATCH] usbnet: smsc95xx: simplify tx_fixup code
+Thread-Index: AQHUWx0583bpLHRSvES/p/KDDm+zIA==
+Date:   Wed, 3 Oct 2018 13:36:20 +0000
+Message-ID: <55e4b55bae6148b18a27a23aab7d7501@AcuMS.aculab.com>
+References: <59988ed22559410881addfecf58335eb@AcuMS.aculab.com>
+ <20181002165602.21033-1-ben.dooks@codethink.co.uk>
+In-Reply-To: <20181002165602.21033-1-ben.dooks@codethink.co.uk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d42cc88b-6bab-797c-f263-2dce650ea3ab@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: VCdlQgMINlqyQC5ESQclYg-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 03-10-18 18:36:39, Anshuman Khandual wrote:
-[...]
-> So we have two checks here
+From: Ben Dooks
+> Sent: 02 October 2018 17:56
 > 
-> 1) platform specific arch_hugetlb_migration -> In principle go ahead
+> The smsc95xx_tx_fixup is doing multiple calls to skb_push() to
+> put an 8-byte command header onto the packet. It would be easier
+> to do one skb_push() and then copy the data in once the push is
+> done.
 > 
-> 2) huge_movable() during allocation
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> ---
+>  drivers/net/usb/smsc95xx.c | 25 +++++++++++++------------
+>  1 file changed, 13 insertions(+), 12 deletions(-)
 > 
-> 	- If huge page does not have to be placed on movable zone
-> 
-> 		- Allocate any where successfully and done !
->  
-> 	- If huge page *should* be placed on a movable zone
-> 
-> 		- Try allocating on movable zone
-> 
-> 			- Successfull and done !
-> 
-> 		- If the new page could not be allocated on movable zone
-> 		
-> 			- Abort the migration completely
-> 
-> 					OR
-> 
-> 			- Warn and fall back to non-movable
+> diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+> index cb19aea139d3..813ab93ee2c3 100644
+> --- a/drivers/net/usb/smsc95xx.c
+> +++ b/drivers/net/usb/smsc95xx.c
+> @@ -2006,6 +2006,7 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
+>  	bool csum = skb->ip_summed == CHECKSUM_PARTIAL;
+>  	int overhead = csum ? SMSC95XX_TX_OVERHEAD_CSUM : SMSC95XX_TX_OVERHEAD;
+>  	u32 tx_cmd_a, tx_cmd_b;
+> +	void *ptr;
 
-I guess you are still making it more complicated than necessary. The
-later is really only about __GFP_MOVABLE at this stage. I would just
-make it simple for now. We do not have to implement any dynamic
-heuristic right now. All that I am asking for is to split the migrate
-possible part from movable part.
+It might be useful to define a structure for the header.
+You might need to find the 'store unaligned 32bit word' macro though.
+(Actually that will probably be better than the memcpy() which might
+end up doing memory-memory copies rather than storing the register.)
+Although if/when you add the tx alignment that won't be needed because the
+header will be aligned.
 
-I should have been more clear about that I guess from my very first
-reply. I do like how you moved the current coarse grained
-hugepage_migration_supported to be more arch specific but I merely
-wanted to point out that we need to do some other changes before we can
-go that route and that thing is to distinguish movable from migration
-supported.
+>  	/* We do not advertise SG, so skbs should be already linearized */
+>  	BUG_ON(skb_shinfo(skb)->nr_frags);
+> @@ -2019,6 +2020,9 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
+>  		return NULL;
+>  	}
+> 
+> +	tx_cmd_b = (u32)skb->len;
+> +	tx_cmd_a = tx_cmd_b | TX_CMD_A_FIRST_SEG_ | TX_CMD_A_LAST_SEG_;
+> +
+>  	if (csum) {
+>  		if (skb->len <= 45) {
+>  			/* workaround - hardware tx checksum does not work
+> @@ -2035,21 +2039,18 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
+>  			skb_push(skb, 4);
+>  			cpu_to_le32s(&csum_preamble);
 
-See my point?
--- 
-Michal Hocko
-SUSE Labs
+Not related, but csum_preamble = cpu_to_le32(csum_preamble) is likely to
+generate better code (at least for some architectures).
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
