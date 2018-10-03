@@ -2,156 +2,191 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFDCC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9194C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3F9721486
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:40:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3F9721486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 4FE9F20835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:42:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Otbf8Q+D";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="aiAxUkxe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FE9F20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeJCO1V (ORCPT
+        id S1727092AbeJCO3j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 10:27:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33122 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726723AbeJCO1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:27:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 28ED8AD33;
-        Wed,  3 Oct 2018 07:40:07 +0000 (UTC)
-Subject: Re: [PATCH 13/16] mm: Replace spin_is_locked() with lockdep
-To:     Lance Roy <ldr709@gmail.com>, linux-kernel@vger.kernel.org
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Jan Kara <jack@suse.cz>, Shakeel Butt <shakeelb@google.com>,
-        linux-mm@kvack.org
-References: <20181003053902.6910-1-ldr709@gmail.com>
- <20181003053902.6910-14-ldr709@gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <efb9c50b-d420-18a0-2a90-9a01ef719a70@suse.cz>
-Date:   Wed, 3 Oct 2018 09:37:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20181003053902.6910-14-ldr709@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Wed, 3 Oct 2018 10:29:39 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:61951 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726723AbeJCO3j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 10:29:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1538552563; x=1570088563;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=md9NwOnOWsdnz7QbVkPitFxqLS4VZksiTZWTfkyk6qQ=;
+  b=Otbf8Q+D3Du8oFx5OR6gQk90zG7QNlOg9Pdd7Kn2KYzUiY9fGfSos2dM
+   9NLyKWxY29KKOROiPwXlgXWUtd//bykqy/jwKTemcmkjGLrWCZ4yaQJbZ
+   GeESX5F4qwbJ1+8hRf+vCl5bE8/KFFTYjop+CsFvJkxVjz/pTKffoapLT
+   r14p/KFW2UmtXM2YXHzuLF4amNCDm2rUalbEr/Tf7hG2p6nfBkdbHqtGv
+   DFUyJaHPpzhN+HE/E/e92FFc9NocJQvm9C1miZZZkdhwqQDvC2S/Y4cQ+
+   mwAdjxHz7KdS/7kdHJcn8moGVDULZDL60ECttF5Lia0S56430WQmy3f/B
+   A==;
+X-IronPort-AV: E=Sophos;i="5.54,335,1534780800"; 
+   d="scan'208";a="188760851"
+Received: from mail-co1nam03lp0022.outbound.protection.outlook.com (HELO NAM03-CO1-obe.outbound.protection.outlook.com) ([216.32.181.22])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Oct 2018 15:42:39 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=md9NwOnOWsdnz7QbVkPitFxqLS4VZksiTZWTfkyk6qQ=;
+ b=aiAxUkxex7U0ZTi0fEcEF09tZYE1QlAViYbhJT7fkJTjQIQ9I0MwMkRgjXzEqZdk7Ue+Jng86F1yfMdlxE0yeqtzvlrgJPX/jpOq5KJHvZ3VNEiWbup1uLaLTFvGhoSyfYkCrPkyVlh2l8Ii++d5MSfCRQ/eiqiu3MYVP0v2lcU=
+Received: from BN3PR0401MB1640.namprd04.prod.outlook.com (10.163.41.30) by
+ BN3PR0401MB1283.namprd04.prod.outlook.com (10.160.157.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.25; Wed, 3 Oct 2018 07:42:15 +0000
+Received: from BN3PR0401MB1640.namprd04.prod.outlook.com
+ ([fe80::a81d:7688:be04:a661]) by BN3PR0401MB1640.namprd04.prod.outlook.com
+ ([fe80::a81d:7688:be04:a661%4]) with mapi id 15.20.1185.026; Wed, 3 Oct 2018
+ 07:42:15 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>
+CC:     Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jan Kara <jack@suse.cz>,
+        "aherrmann@suse.com" <aherrmann@suse.com>,
+        "mgorman@suse.com" <mgorman@suse.com>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bfq-iosched@googlegroups.com" <bfq-iosched@googlegroups.com>,
+        "oleksandr@natalenko.name" <oleksandr@natalenko.name>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] block: BFQ default for single queue devices
+Thread-Topic: [PATCH] block: BFQ default for single queue devices
+Thread-Index: AQHUWk2QDMBQjA6xOUmaZJha2EJuQQ==
+Date:   Wed, 3 Oct 2018 07:42:15 +0000
+Message-ID: <BN3PR0401MB164003C967C45F2681F503A7E7E90@BN3PR0401MB1640.namprd04.prod.outlook.com>
+References: <20181002124329.21248-1-linus.walleij@linaro.org>
+ <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk>
+ <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
+ <1538550325.14984.108.camel@gmail.com>
+ <CACRpkdaLZXGKMQGJPH02p2QPkxUDA03Y=cu_wBR_+rFaLWTw7g@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [199.255.47.9]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN3PR0401MB1283;6:mlHv/6TRf8sFZ97gKALHxi/PFyl4hguQSfZqVlGdkXRtqW/ZwpEvbRxlzQ392Ou6h7G+g1DnJ2ATZ6Pi5c2vN+hP7FuScVQvFK3MRMNJhNkEXAcNh2B1yW/JwSGx2SZjeVu9vacZLpmOJ57mEOBT3BHWpxXWxxRa8waR+FQfArAGIR0nG39A3792LMGBMC0ircWL2DvPoyQbM13axqq5wp4Z4KPv1APeDTvhMZBgoYHC/CP0RW5ylbGZnGGtfqrh9l7Wuc915UXwx87wBiimfq/pEljxT2guT/zusB9M8VFhmd7xyQjEAq/J+rdSpeUn1SzRjEBsGwd3NiLoMgD9g1LHAYhM1lOPHCVyIlJ6pqI+Zzhq6vLy3h4cyCQRSQnjGnbFRZ9b/yVkrccoHqrr1XzraPrpZidvlbChDScxGkFQ6scC3ZO5EdGgeceamYtMgVEIl/cOQGJhMsTcUT6XEg==;5:HZz13Vop2BIctT2d4Lcucnm93WJHBWJt+TAKJNGJxfjgAvZ24Ik+CWdqB/zvpQzPG+OvZfVFRt2wXgT9acPY+VDFX2a0LhSzI4fDihS68J0KVrz+l7qLXb0B/STnbU4SxeblLBvjD4TVqtnIzxI2ilj+aGIwHwI53fh+iruG7NM=;7:WfiWsO44W1RM02Mb6NwPmd7B+gf1yZMaGmaU+0RQohpiMf0BKMOjZvbSAQ4fG+BXqhvlJkMr80kykkZ9lsVatTnzTV+k98jNFpC/KbAItVoTo6NUV5CsfESUKES2K8hl14fL7JbTHEZASICjFCSTR5g+2UJ6Ym1KcW4Y7iQlYiUkcgnusUzzCofCKiGdEXt/anWm1qQlfTAgw/9Z9oc8h4ZNqEiB5fuA9jcUUhwGYmnkaYIKr1xEzD61bE/sUS3U
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 5dd56d5f-a00e-40dc-1db4-08d62903bd47
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN3PR0401MB1283;
+x-ms-traffictypediagnostic: BN3PR0401MB1283:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <BN3PR0401MB1283BDEFC4F5528B46506765E7E90@BN3PR0401MB1283.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:BN3PR0401MB1283;BCL:0;PCL:0;RULEID:;SRVR:BN3PR0401MB1283;
+x-forefront-prvs: 0814A2C7A3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(366004)(39860400002)(396003)(199004)(189003)(102836004)(6116002)(25786009)(39060400002)(561944003)(486006)(68736007)(99286004)(446003)(33656002)(105586002)(93886005)(106356001)(476003)(316002)(97736004)(66066001)(74316002)(71190400001)(256004)(5250100002)(14444005)(7416002)(305945005)(86362001)(2900100001)(71200400001)(7736002)(81166006)(53936002)(478600001)(53546011)(76176011)(6436002)(8936002)(8676002)(72206003)(2906002)(14454004)(55016002)(6506007)(229853002)(81156014)(9686003)(26005)(5660300001)(6246003)(186003)(7696005)(4326008)(54906003)(3846002)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:BN3PR0401MB1283;H:BN3PR0401MB1640.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: v4nHkuNDb16e5GKheZbBFyYDmbxzscdDPo25o1GgNRsODdoxWGWRfTVlTIX21PLgUF+b6bpEQrCz0iDYGD/2Uw8rJkX9iGdyWsEmSVy9s8MAeMyO1o/Mlmkj44NxGHa8IFGJkRJ1CIRzxwSvWNzzeVJ2oWRfQt3bIjRDOlcKydd7RDv3QuKV5BX5VqjZYMXF3HD0mGe5ieJLvw9cmOQ6btqMQvy0jCqvBFyNCu5RETUjWbpTDtf/s2W5OUuGU8A2z9eFYBzfjOa8CNrWPgzTff31/b9F716THFXuV2mG7qBFXjebIYe1Orwpy3yxgIT/UqVWBuxqiSJ2wXL6Ya59olHnEMqHWphZCPf+ncZSJi0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5dd56d5f-a00e-40dc-1db4-08d62903bd47
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2018 07:42:15.3026
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR0401MB1283
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/3/18 7:38 AM, Lance Roy wrote:
-> lockdep_assert_held() is better suited to checking locking requirements,
-> since it won't get confused when someone else holds the lock. This is
-> also a step towards possibly removing spin_is_locked().
-
-Agreed
-> Signed-off-by: Lance Roy <ldr709@gmail.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Yang Shi <yang.shi@linux.alibaba.com>
-> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: <linux-mm@kvack.org>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-> ---
->  mm/khugepaged.c | 4 ++--
->  mm/swap.c       | 3 +--
->  2 files changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index a31d740e6cd1..80f12467ccb3 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1225,7 +1225,7 @@ static void collect_mm_slot(struct mm_slot *mm_slot)
->  {
->  	struct mm_struct *mm = mm_slot->mm;
->  
-> -	VM_BUG_ON(NR_CPUS != 1 && !spin_is_locked(&khugepaged_mm_lock));
-> +	lockdep_assert_held(&khugepaged_mm_lock);
->  
->  	if (khugepaged_test_exit(mm)) {
->  		/* free mm_slot */
-> @@ -1665,7 +1665,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages,
->  	int progress = 0;
->  
->  	VM_BUG_ON(!pages);
-> -	VM_BUG_ON(NR_CPUS != 1 && !spin_is_locked(&khugepaged_mm_lock));
-> +	lockdep_assert_held(&khugepaged_mm_lock);
->  
->  	if (khugepaged_scan.mm_slot)
->  		mm_slot = khugepaged_scan.mm_slot;
-> diff --git a/mm/swap.c b/mm/swap.c
-> index 26fc9b5f1b6c..c89eb442c0bf 100644
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -824,8 +824,7 @@ void lru_add_page_tail(struct page *page, struct page *page_tail,
->  	VM_BUG_ON_PAGE(!PageHead(page), page);
->  	VM_BUG_ON_PAGE(PageCompound(page_tail), page);
->  	VM_BUG_ON_PAGE(PageLRU(page_tail), page);
-> -	VM_BUG_ON(NR_CPUS != 1 &&
-> -		  !spin_is_locked(&lruvec_pgdat(lruvec)->lru_lock));
-> +	lockdep_assert_held(&lruvec_pgdat(lruvec)->lru_lock);
->  
->  	if (!list)
->  		SetPageLRU(page_tail);
-> 
-
+On 2018/10/03 16:18, Linus Walleij wrote:=0A=
+> On Wed, Oct 3, 2018 at 9:05 AM Artem Bityutskiy <dedekind1@gmail.com> wro=
+te:=0A=
+>> On Wed, 2018-10-03 at 08:29 +0200, Paolo Valente wrote:=0A=
+>>> So, I do understand your need for conservativeness, but, after so much=
+=0A=
+>>> evidence on single-queue devices, and so many years! :), what's the=0A=
+>>> point in keeping Linux worse for virtually everybody, by default?=0A=
+>>=0A=
+>> Sounds like what we just need a mechanism for the device (ubi block in=
+=0A=
+>> this case) to select the I/O scheduler. I doubt enhancing the default=0A=
+>> scheduler selection logic in 'elevator.c' is the right answer. Just=0A=
+>> give the driver authority to override the defaults.=0A=
+> =0A=
+> This might be true in the wider sense (like for what scheduler to=0A=
+> select for an NVME device with N channels) but $SUBJECT is just=0A=
+> trying to select BFQ (if available) for devices with one and only one=0A=
+> hardware queue.=0A=
+> =0A=
+> That is AFAICT the only reasonable choice for anything with just=0A=
+> one hardware queue as things stand right now.=0A=
+> =0A=
+> I have a slight reservation for the weird outliers like loopdev, which=0A=
+> has "one hardware queue" (.nr_hw_queues =3D=3D 1) though this=0A=
+> makes no sense at all. So I would like to know what people think=0A=
+> about that. Maybe we should have .nr_queues and .nr_hw_queues=0A=
+> where the former is the number of logical queues and the latter=0A=
+> the actual number of hardware queues.=0A=
+=0A=
+There is another class of outliers: host-managed SMR disks (SATA and SCSI,=
+=0A=
+definitely single hw queue). For these, using mq-deadline is mandatory in m=
+any=0A=
+cases in order to guarantee sequential write command delivery to the device=
+=0A=
+driver. Having the default changed to bfq, which as far as I know is not SM=
+R=0A=
+friendly (can sequential writes within a single zone be reordered ?) is ask=
+ing=0A=
+for troubles (unaligned write errors showing up).=0A=
+=0A=
+A while back, we already had this discussion with Jens and Christoph on the=
+ list=0A=
+to allow device drivers to set a sensible default I/O scheduler for devices=
+ with=0A=
+"special needs" (e.g. host-managed SMR). At the time, the conclusion was th=
+at=0A=
+udev (or something alike in userland) is better suited to set a correct sch=
+eduler.=0A=
+=0A=
+Of note also is that host-managed like sequential zone devices are also lik=
+ely=0A=
+to show up soon with the work being done in the NVMe standard on the new "Z=
+oned=0A=
+namespace" feature proposal. These devices will also require a scheduler li=
+ke=0A=
+mq-deadline guaranteeing per-zone in-order delivery of sequential write=0A=
+requests. Looking only at the number of queues of the device is not enough =
+to=0A=
+choose the best (most reasonnable/appropriate) scheduler.=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
