@@ -2,67 +2,203 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56164C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C45D1C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D56CC21473
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:20:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D56CC21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+	by mail.kernel.org (Postfix) with ESMTP id 882CA21470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:20:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 882CA21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeJDEKI (ORCPT
+        id S1726858AbeJDELC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 00:10:08 -0400
-Received: from namei.org ([65.99.196.166]:35524 "EHLO namei.org"
+        Thu, 4 Oct 2018 00:11:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52056 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbeJDEKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 00:10:08 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id w93LJibv023350;
-        Wed, 3 Oct 2018 21:19:44 GMT
-Date:   Thu, 4 Oct 2018 07:19:44 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Kees Cook <keescook@chromium.org>
-cc:     John Johansen <john.johansen@canonical.com>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
-In-Reply-To: <CAGXu5jLBHN=YSs3Uh49bBJ1SRA1Km2UUD4j37GJJXiKhQq+KPA@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1810040719060.16168@namei.org>
-References: <20181002005505.6112-1-keescook@chromium.org> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com> <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
- <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com> <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com> <alpine.LRH.2.21.1810030758460.23596@namei.org>
- <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com> <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <alpine.LRH.2.21.1810040416500.13517@namei.org> <CAGXu5j+oPR58oJ06-n7e96-Rmu+ywTW0hud5LhOZ_3UXG5s12w@mail.gmail.com>
- <alpine.LRH.2.21.1810040427550.13517@namei.org> <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com> <CAGXu5jLBHN=YSs3Uh49bBJ1SRA1Km2UUD4j37GJJXiKhQq+KPA@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1725871AbeJDELB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 00:11:01 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 57A188764B;
+        Wed,  3 Oct 2018 21:20:56 +0000 (UTC)
+Received: from krava (ovpn-204-77.brq.redhat.com [10.40.204.77])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 672D86A53B;
+        Wed,  3 Oct 2018 21:20:53 +0000 (UTC)
+Date:   Wed, 3 Oct 2018 23:20:52 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] perf tools: Store ids for events with their own cpus
+ perf_event__synthesize_event_update_cpus
+Message-ID: <20181003212052.GA32371@krava>
+References: <712b7c31-f681-7737-71e7-c028b8d2bba5@huawei.com>
+ <20180927160210.GF6916@krava>
+ <4ac88076-60fa-4509-7fa0-2f99d73174d2@huawei.com>
+ <20181002111621.GA6357@krava>
+ <20181003113643.GA31725@krava>
+ <594506a2-8cb3-3d09-82ab-5cb6d8c31ed0@huawei.com>
+ <20181003141627.GA6341@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181003141627.GA6341@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 03 Oct 2018 21:20:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 3 Oct 2018, Kees Cook wrote:
+On Wed, Oct 03, 2018 at 04:16:27PM +0200, Jiri Olsa wrote:
+> On Wed, Oct 03, 2018 at 03:08:10PM +0100, John Garry wrote:
+> > On 03/10/2018 12:36, Jiri Olsa wrote:
+> > > On Tue, Oct 02, 2018 at 01:16:21PM +0200, Jiri Olsa wrote:
+> > > > On Tue, Oct 02, 2018 at 11:41:36AM +0100, John Garry wrote:
+> > > > 
+> > > > SNIP
+> > > > 
+> > > > > > 
+> > > > > > 
+> > > > > > ---
+> > > > > > diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> > > > > > index 1ec1d9bc2d63..fb2a0dab3978 100644
+> > > > > > --- a/tools/perf/util/header.c
+> > > > > > +++ b/tools/perf/util/header.c
+> > > > > > @@ -29,6 +29,7 @@
+> > > > > >  #include "symbol.h"
+> > > > > >  #include "debug.h"
+> > > > > >  #include "cpumap.h"
+> > > > > > +#include "thread_map.h"
+> > > > > >  #include "pmu.h"
+> > > > > >  #include "vdso.h"
+> > > > > >  #include "strbuf.h"
+> > > > > > @@ -3579,6 +3580,11 @@ perf_event__synthesize_event_update_cpus(struct perf_tool *tool,
+> > > > > > 	if (!evsel->own_cpus)
+> > > > > > 		return 0;
+> > > > > > 
+> > > > > > +	if (!evsel->id ||
+> > > > > 
+> > > > > for my test, evsel->id is NULL
+> > > > > 
+> > > > > > +	    perf_evsel__alloc_id(evsel, cpu_map__nr(evsel->cpus),
+> > > > > > +				 thread_map__nr(evsel->threads)))
+> > > > > 
+> > > > > and then this function is not called as we return immediately. So did you
+> > > > > really want this:
+> > > > > 
+> > > > > if (!evsel->id && perf_evsel__alloc_id(...))
+> > > > > 	return -ENOMEM;
+> > > > 
+> > > > ugh.. yes ;-) thanks for the fix.. I'll double
+> > > > check the logic and post the patch this week
+> > > 
+> > > actualy, we also need to populate those ids ;-)
+> > > so calling perf_evsel__store_ids instead..
+> > > attaching the full patch
+> > > 
+> > > thanks,
+> > > jirka
+> > > 
+> > 
+> > Hi Jirka,
+> > 
+> > Can you please double-check your new patch, as I'm getting this now:
+> > root@localhost:~# ./perf_debug record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.001 MB perf.data (6 samples) ]
+> > root@localhost:~# ./perf_debug report
+> > 0xe8 [0]: failed to process type: 461
+> > Error:
+> > failed to process sample
+> > # To display the perf.data header info, please use --header/--header-only
+> > option
+> > #
+> > root@localhost:~#
+> 
+> ok, I need to get a machine to test this.. but it looks like
+> any sample-able events with cpumask are in arm :-\ will try
+> to get some..
 
-> I should also note that I don't want to leave CONFIG_DEFAULT_SECURITY
-> in, since it's just a way to disable all the other majors.
+got an arm server and patch below works for me.. could you please test?
 
-Right, default doesn't make sense anymore.
+thanks,
+jirka
 
 
+---
+
+John reported crash when recording on an event under
+pmu with cpumask defined:
+
+  root@localhost:~# ./perf_debug_ record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
+  perf: Segmentation fault
+  Obtained 9 stack frames.
+  ./perf_debug_() [0x4c5ef8]
+  [0xffff82ba267c]
+  ./perf_debug_() [0x4bc5a8]
+  ./perf_debug_() [0x419550]
+  ./perf_debug_() [0x41a928]
+  ./perf_debug_() [0x472f58]
+  ./perf_debug_() [0x473210]
+  ./perf_debug_() [0x4070f4]
+  /lib/aarch64-linux-gnu/libc.so.6(__libc_start_main+0xe0) [0xffff8294c8a0]
+  Segmentation fault (core dumped)
+
+We synthesize an update event that needs to touch the evsel
+id array, which is not defined at that time. Fixing this by
+forcing the id allocation for events with theeir own cpus.
+
+Reported-by: John Garry <john.garry@huawei.com>
+Link: http://lkml.kernel.org/n/tip-8x4n7o34yheigoxm1jibflm6@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/builtin-report.c | 1 +
+ tools/perf/util/evsel.c     | 3 +++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index c0703979c51d..257c9c18cb7e 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -980,6 +980,7 @@ int cmd_report(int argc, const char **argv)
+ 			.id_index	 = perf_event__process_id_index,
+ 			.auxtrace_info	 = perf_event__process_auxtrace_info,
+ 			.auxtrace	 = perf_event__process_auxtrace,
++			.event_update	 = perf_event__process_event_update,
+ 			.feature	 = process_feature_event,
+ 			.ordered_events	 = true,
+ 			.ordering_requires_timestamps = true,
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index ac6cfb8b085e..7a0d5fbaf3c1 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1088,6 +1088,9 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
+ 		attr->exclude_user   = 1;
+ 	}
+ 
++	if (evsel->own_cpus)
++		evsel->attr.read_format |= PERF_FORMAT_ID;
++
+ 	/*
+ 	 * Apply event specific term settings,
+ 	 * it overloads any global configuration.
 -- 
-James Morris
-<jmorris@namei.org>
+2.17.1
 
