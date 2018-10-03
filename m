@@ -2,118 +2,105 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3588FC64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950CAC65BA7
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEF1820684
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:39:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l1b0JEs6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF1820684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 633A620684
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:39:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 633A620684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbeJCM0d (ORCPT
+        id S1726861AbeJCM0e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 08:26:33 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39421 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbeJCM0d (ORCPT
+        Wed, 3 Oct 2018 08:26:34 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37343 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbeJCM0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 3 Oct 2018 08:26:33 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w14-v6so2872861plp.6;
-        Tue, 02 Oct 2018 22:39:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
-         :mime-version:content-transfer-encoding;
-        bh=zSFnQe3osAhSI/yCScn4VpMhcXnR9g7aaMBXVQdp4bM=;
-        b=l1b0JEs6srj1RsDS4bSQIh1ayBpuE69qoqcMVgviT9a4CBdFGILy3EORYCtDV1ZXpA
-         ddYC5odsDxiIOhOOLB+oMkGKHr0+SVihpETc7BiNVNUYjbUBiWpvkaJ3lZdpCSj9Crzz
-         qDXOWViaMcNE/i9s8a+VZXYqFFy5T9dXw7MYEh5ap3c+/sDLRAVQ0nM1EZFRFmn7L5EU
-         xVKfmpyCA3uWR+uBURbM2K7iUjt906h8c25rWY/Muw0auUCyTh/Oo26ECsa53qvRs08D
-         eFuITRp4S6G6o4MYjQ2f76R+ZYsbqZLx0TOFcK+58JAPynQKtDPSNdbk3epO3WDUa40M
-         Ezjg==
+Received: by mail-lf1-f66.google.com with SMTP id a82-v6so3192467lfa.4
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 22:39:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:reply-to:mime-version:content-transfer-encoding;
-        bh=zSFnQe3osAhSI/yCScn4VpMhcXnR9g7aaMBXVQdp4bM=;
-        b=BcTgZdce5hQ6p/Lol2ZuQEq5LGqS36JwjhOFveFurdy+th0SHSjTglZ5lnygcTDDNA
-         QP9HqX/uUQsrWvXkZ2VdRZMyA/yK/YlBOOIzVn6ykMgY3RVtzaJFdR3rkOc4p9IKWjMB
-         TPgu760ETMXOYs+gfWko2fzON9WlRU0Udg1/usHinZPJZNr3/MZvTQwWVA1OSx8KZfST
-         M5LH8sR1GGnvIW0/WW57YOU235sWSZ8zLBYVaE67AV5aLqSEcg2lDnvfksZ6ABe9NqMG
-         UZet8VyinU0TlspyXphFAmXAgNaBL/94BkZJYFS6hP8Gw2oBDrx990K/d7kN8ppcytS2
-         0BZw==
-X-Gm-Message-State: ABuFfoj5OfAA6FYw5SgWu5kXOpbeV6N9Vb/I3ktyeY7F1s7s+QlPlflp
-        bLzQW2JxQwQQfFdkjRuFR7+flQDEYac=
-X-Google-Smtp-Source: ACcGV60DM6w+lxkhXNWo48Xsut1TnV2qSCplosRn4OgBkndHSXGOvfQne4ZBM9FT3MBIZR3WN1yBHQ==
-X-Received: by 2002:a17:902:6689:: with SMTP id e9-v6mr19898972plk.115.1538545183362;
-        Tue, 02 Oct 2018 22:39:43 -0700 (PDT)
-Received: from E570.localdomain (c-24-21-68-121.hsd1.or.comcast.net. [24.21.68.121])
-        by smtp.gmail.com with ESMTPSA id h4-v6sm570978pfe.49.2018.10.02.22.39.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0if6v2eWOR553v1acn4YcQGaB4y4FMj4cXevHW3+78E=;
+        b=VG3voo1qUau4KZ0qsprh4AJEC9CWCPnt6DDfw/m50HmFWQHvJ8Qc211zB9nPRFVEr7
+         LqT3S1ho8b1NqlwHfilFR5LCG3lLoVnUrVPpkNa5Xys7kiA+gIKXv12AWyrZtYxGnWUv
+         2A9bOdNVFNQh9vjKjZJIcq00R1D6WXOJxS4l7zCYYiI2vLAT1XZ+4BVmj1n9oYfeKRdq
+         maSkdwnSc4IIEBLowtOx2uIdhcsgMzKiM46MvNIpgJVSzIQH9Szj1SuUea2Q8yIT33cs
+         xr1QW66GTFj2c6iHYrZXemIGIPlZ4Pw+QH8mT0OBn6N0valq+dPq4+KqpLnsqjm+qMVS
+         xuxA==
+X-Gm-Message-State: ABuFfohKONR80WAITQy5VZtkLo0GbW86NHVWm/GocLMgBsaQJ/cVSbQS
+        99SnFbKmiiUETY+Ep8L5yUQ=
+X-Google-Smtp-Source: ACcGV60KsdoQRLUQOTiXqkAYrMNc6969qZ1FLk8MSQQvO5khIisMk7BlunkPHQSsIY2hpWfVCXofVw==
+X-Received: by 2002:a19:ea57:: with SMTP id i84-v6mr9744422lfh.91.1538545182396;
         Tue, 02 Oct 2018 22:39:42 -0700 (PDT)
-Received: by E570.localdomain (Postfix, from userid 1000)
-        id C82EA1643D0; Tue,  2 Oct 2018 22:39:41 -0700 (PDT)
-From:   Lance Roy <ldr709@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Lance Roy <ldr709@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pci@vger.kernel.org
-Subject: [PATCH 01/16] x86/PCI: Replace spin_is_locked() with lockdep
-Date:   Tue,  2 Oct 2018 22:38:47 -0700
-Message-Id: <20181003053902.6910-2-ldr709@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181003053902.6910-1-ldr709@gmail.com>
-References: <20181003053902.6910-1-ldr709@gmail.com>
-Reply-To: Lance Roy <ldr709@gmail.com>
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id g14-v6sm65540lja.96.2018.10.02.22.39.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Oct 2018 22:39:41 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 08:39:39 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator/mfd: fix pointer-to-int cast
+Message-ID: <20181003053939.GE9389@localhost.localdomain>
+References: <20181002210826.2588925-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181002210826.2588925-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lockdep_assert_held() is better suited to checking locking requirements,
-since it won't get confused when someone else holds the lock. This is
-also a step towards possibly removing spin_is_locked().
+Hello Arnd,
 
-Signed-off-by: Lance Roy <ldr709@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: <x86@kernel.org>
-Cc: <linux-pci@vger.kernel.org>
----
- arch/x86/pci/i386.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Oct 02, 2018 at 11:07:32PM +0200, Arnd Bergmann wrote:
+> gcc points out that a pointer is longer than an int on 64-bit
+> architectures, and that casting between the two may be dangerous:
+> 
+> drivers/mfd/rohm-bd718x7.c: In function 'bd718xx_i2c_probe':
+> drivers/mfd/rohm-bd718x7.c:101:23: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+> 
+> In this driver it is correct, we just need the right kind of cast
+> to avoid the warning.
+> 
+> Fixes: 494edd266b94 ("regulator/mfd: Support ROHM BD71847 power management IC")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/mfd/rohm-bd718x7.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+> index 161c8aac6d86..e66d59190a82 100644
+> --- a/drivers/mfd/rohm-bd718x7.c
+> +++ b/drivers/mfd/rohm-bd718x7.c
+> @@ -98,7 +98,7 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+>  		return -ENOMEM;
+>  
+>  	bd718xx->chip_irq = i2c->irq;
+> -	bd718xx->chip_type = (unsigned int)
+> +	bd718xx->chip_type = (uintptr_t)
+>  				of_device_get_match_data(&i2c->dev);
+>  	bd718xx->dev = &i2c->dev;
+>  	dev_set_drvdata(&i2c->dev, bd718xx);
 
-diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
-index ed4ac215305d..24bb58a007de 100644
---- a/arch/x86/pci/i386.c
-+++ b/arch/x86/pci/i386.c
-@@ -59,7 +59,7 @@ static struct pcibios_fwaddrmap *pcibios_fwaddrmap_lookup(struct pci_dev *dev)
- {
- 	struct pcibios_fwaddrmap *map;
- 
--	WARN_ON_SMP(!spin_is_locked(&pcibios_fwaddrmap_lock));
-+	lockdep_assert_held(&pcibios_fwaddrmap_lock);
- 
- 	list_for_each_entry(map, &pcibios_fwaddrmappings, list)
- 		if (map->dev == dev)
--- 
-2.19.0
+Big thanks for this activity =) I also got heads up mail from linux-next
+so I also did a patch fixing this. I think Mark alrady applied that
+patch to his tree.
 
+(https://lore.kernel.org/lkml/20181002145901.899D41121A41@debutante.sirena.org.uk/)
+
+Br,
+	Matti Vaittinen
