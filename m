@@ -2,144 +2,130 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 630A3C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCB0C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A15720835
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:35:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFF1020835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:36:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="kS6f045c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A15720835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="PD6VGsRu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF1020835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeJCSXp (ORCPT
+        id S1727375AbeJCSYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:23:45 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:43076 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeJCSXp (ORCPT
+        Wed, 3 Oct 2018 14:24:13 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:39340 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeJCSYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:23:45 -0400
-X-Greylist: delayed 170058 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Oct 2018 14:23:43 EDT
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id w93BZVai020388;
-        Wed, 3 Oct 2018 20:35:32 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w93BZVai020388
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538566532;
-        bh=IeGBb+8CJbG3tQgKNl9Xr3t0jLYUM5mtOLalvsHeidA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=kS6f045cNvX9P/U8yrXeuUxp/8fLJuB80mzsLG6AoTX7HeC2ySbO1qCsENvdRAqSh
-         BBBvBQwv3w6hLjEgYloS/ejm7A+3gPQG5+cAcNWpcKVf+kNPkDKLO/ryTMEOe28wC6
-         NfS2OyGmkiAs9KwQib5eYm49bFIaVvxI3OpdO9gUEHhN0S23EYnB2x1/Nb2kRoIFrT
-         blm5QF1A/VUNUO0QBTUefdYMCW6ijTP35/jkXYhkHuDFuX/wDTi02uNh5oZ28tUHfg
-         YDlxCIWeChQfMe5lCPYBQnf6o/jcOGQ9KP7tqgLx0OjQzzo4686h9lK0cQ15SZw807
-         l4A8EGR7bkvAA==
-X-Nifty-SrcIP: [209.85.217.52]
-Received: by mail-vs1-f52.google.com with SMTP id i10so2980484vsm.13;
-        Wed, 03 Oct 2018 04:35:32 -0700 (PDT)
-X-Gm-Message-State: ABuFfogSDGw2p8nS4P3h2GZdLeYYmTbwl7ITiRJPbge7tRuFEU7LbA2P
-        tybstIKqhUhYHOwPaKKZn3Sb9t8PeMqfkU1tPAk=
-X-Google-Smtp-Source: ACcGV62Drm8oP2I8I9ITS29wTBiG1dPYqX2Vn6dJItk7j/n3PpdFPGLvyJKX+ymClG81VIraw1hDasYJidhlv/MKxg0=
-X-Received: by 2002:a67:5f85:: with SMTP id t127-v6mr375192vsb.155.1538566531230;
- Wed, 03 Oct 2018 04:35:31 -0700 (PDT)
+        Wed, 3 Oct 2018 14:24:12 -0400
+Received: by mail-it1-f196.google.com with SMTP id w200-v6so8283726itc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 04:36:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VCtsNBqlFCtOCynnTHy7XnGpqUdbKfVPRfEtIdgE9Xs=;
+        b=PD6VGsRu8Adj7+8swQQDg0neBFGntX37EVUY7AmdKKROGO/ZM4trkaMUiMhpKlIh3c
+         l8B3tXktW2EY9jpSXw66N2vkwcjYaPml3FA1yTMuCn3nz9Gyv+fXxodH8pkc4MA4eBBQ
+         dWXrbzwIhtVR4zMlgE1AZE7QZsz0WpIwtPwM8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VCtsNBqlFCtOCynnTHy7XnGpqUdbKfVPRfEtIdgE9Xs=;
+        b=q9NIAYBUFsWN8lhELFy6U8fX3N3eZU0FFzc/j1bzzyWP5ndObVNnPfDPLe2jZtn3g8
+         S9kZAkrJij7AVjbdc3U3wjXIHD7UdM3AvWJ6qWY6KtFaP/3P9LD6RtyAE4JEaUkQPSj1
+         GrmFNaAQGoelCYWrrJD+cV85oiGXCvgCKruv7I6LVnAFShpU5tEviQojQ5+gNflzmwc/
+         hJCBp0sa5UaeGwceK4Ab6uKhEYHqj7FIvFbjQEif5A++MP2kBbL9GyRvqwcqRv+ph+YX
+         /LuwgmUMI86zNuVXGjcH2GUdALY1dw94adwb4IIqlgVnCi4T+y7y5hPlA3fP1I+BRudh
+         49jg==
+X-Gm-Message-State: ABuFfoh8GyoudB2EWtsJBUBnfMXLaZdVJzkzUo//lBJl+qjm/sg++CiG
+        tkzO1VzKTyR/+ftn2CQxqG1PrtpcjiPNxv0HcyPCrg==
+X-Google-Smtp-Source: ACcGV63/ykds09ZwA3n0z1jzYrBOGP2bR2Tqin1q7h0T0ufVOd0MizqQgmySyKTqYW08B8bJlc7+V4YN9ywvNkM00uU=
+X-Received: by 2002:a24:d857:: with SMTP id b84-v6mr985264itg.77.1538566571601;
+ Wed, 03 Oct 2018 04:36:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <1538397062-19162-1-git-send-email-yamada.masahiro@socionext.com>
- <1538397062-19162-2-git-send-email-yamada.masahiro@socionext.com> <20181002230115.GB812@kunai>
-In-Reply-To: <20181002230115.GB812@kunai>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 3 Oct 2018 20:34:55 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS6TxN8rU-=wr1XXjkTJ2n+FK8YHqWCvOqMvXrMFHXoXg@mail.gmail.com>
-Message-ID: <CAK7LNAS6TxN8rU-=wr1XXjkTJ2n+FK8YHqWCvOqMvXrMFHXoXg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mmc: tmio: move MFD variant reset to a platform hook
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181003110457.9318-1-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20181003110457.9318-1-Eugeniy.Paltsev@synopsys.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Wed, 3 Oct 2018 13:36:00 +0200
+Message-ID: <CAKMK7uFP3bMcNSY2L9ZmvFPz6KB51_gMnZ-b7FPCz3NEOafi=w@mail.gmail.com>
+Subject: Re: [PATCH] drm: fb-helper: Validate requested pixel format against bpp
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        linux-snps-arc@lists.infradead.org, Sean Paul <sean@poorly.run>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+On Wed, Oct 3, 2018 at 1:05 PM Eugeniy Paltsev
+<Eugeniy.Paltsev@synopsys.com> wrote:
+>
+> Validate requested pixel format against bits_per_pixel to reject
+> invalid formats with subcomponents length sum is greater than requested
+> bits_per_pixel.
+>
+> weston 5.0.0 with fbdev backend tries to set up an ARGB x8r8g8b8 pixel
+> format without bits_per_pixel updating. So it can request
+> x8r8g8b8 with 16 bpp which is obviously incorrect and should be
+> rejected.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
+drm fbdev emulation doesn't support changing the pixel format at all.
+I think we should reject all such request, not just the invalid ones.
+Can you pls respin?
 
-On Wed, Oct 3, 2018 at 8:02 AM Wolfram Sang <wsa@the-dreams.de> wrote:
->
-> Hi Yamada-san,
->
-> On Mon, Oct 01, 2018 at 09:31:01PM +0900, Masahiro Yamada wrote:
-> > CTL_RESET_SDIO register is specific to the TMIO MFD (tmio_mmc.c).
-> >
-> > Add a new hook host->reset for performing a platform-specific reset
-> > sequence, and move CTL_RESET_SDIO over there.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> I like it in general.
->
-> > +static void tmio_mmc_reset(struct tmio_mmc_host *host)
-> > +{
-> > +     sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
-> > +     usleep_range(10000, 11000);
-> > +     sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
-> > +     usleep_range(10000, 11000);
-> > +}
-> > +
->
-> Are you sure resetting SDIO works independently of resetting SD? Maybe
-> we should add resetting SD here, too, to keep the pattern...
+Thanks, Daniel
 
-I am not 100% sure
-since I do not have this hardware.
-
-
-> > --- a/drivers/mmc/host/tmio_mmc_core.c
-> > +++ b/drivers/mmc/host/tmio_mmc_core.c
-> > @@ -164,14 +164,13 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
-> >  {
-> >       /* FIXME - should we set stop clock reg here */
-> >       sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
-> > -     if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
-> > -             sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
-> >       usleep_range(10000, 11000);
-> >       sd_ctrl_write16(host, CTL_RESET_SD, 0x0001);
-> > -     if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
-> > -             sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0001);
-> >       usleep_range(10000, 11000);
+> ---
+>  drivers/gpu/drm/drm_fb_helper.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 >
-> ... and have this simplified reset pattern either also in a seperate
-> function, or doing...
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index 16ec93b75dbf..4f39da07f053 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -1610,6 +1610,13 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
+>                 return -EINVAL;
+>         }
 >
-> >
-> > +     if (host->reset)
-> > +             host->reset(host);
->         else
->                 simplified_reset_pattern
+> +       if ((var->green.length + var->blue.length + var->red.length +
+> +           var->transp.length) > var->bits_per_pixel) {
+> +               DRM_DEBUG("fb requested pixel format can't fit in %d bpp\n",
+> +                         var->bits_per_pixel);
+> +               return -EINVAL;
+> +       }
+> +
+>         switch (var->bits_per_pixel) {
+>         case 16:
+>                 depth = (var->green.length == 6) ? 16 : 15;
+> --
+> 2.14.4
 >
-> ?
->
-> What's your opinion?
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-
-OK, I will send v2.
-
-
-
-> Regards,
->
->    Wolfram
->
 
 
 -- 
-Best Regards
-Masahiro Yamada
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
