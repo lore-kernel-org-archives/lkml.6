@@ -2,184 +2,143 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B5EC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7B1C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B6D72089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:19:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gF6GVm6P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B6D72089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 717F42089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 15:20:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 717F42089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbeJCWIl (ORCPT
+        id S1727209AbeJCWJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 18:08:41 -0400
-Received: from mail-wr1-f51.google.com ([209.85.221.51]:37565 "EHLO
-        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbeJCWIl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 18:08:41 -0400
-Received: by mail-wr1-f51.google.com with SMTP id u12-v6so6570660wrr.4;
-        Wed, 03 Oct 2018 08:19:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=azXK8WBLvDrbPv69PUwTGJdDYAr2nqqlpnKbIFqwkIo=;
-        b=gF6GVm6PuL8cc5zlUHDWcffskx+MhxwoLkawvmkPSDyq0kjCpYtdbHqmtxg2WBx30v
-         bDSjER5ljduVYqQAj8gs04pk6LGkyvkEBGyTheWjk87vQ2739TzKTEyl7PQFyUmcSoag
-         YI763kJzr45C6gpyBTnT0BYpTQhbb0VN5nGtgxKjOGssWMyjkqZl/OfhrecwyQ9O+Z3d
-         0PNZQyOCwqAAUniRbbDrFfwbzOZS/G37dhKpb/3DVi7MJfRhacvcphVCq4IUXcJSSPm8
-         1uWxsNNJwdCaW4znwhb2pO23aKgc0K724isrXdKh4FYk79cIHKdXq3i30AKijUIRgwV5
-         qSwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=azXK8WBLvDrbPv69PUwTGJdDYAr2nqqlpnKbIFqwkIo=;
-        b=bYW+OykxPNC+7+BmqQ6pI+/+FHzbaogE/AQp8wBUGdG5BZd/bLK41OykPPok3WcVqe
-         ZKfq2ot5Ug2GozCk+gMotZtyC19SqBOrPvKOSihhTfay1L1RuEvZZZisc7ya+r++WEFP
-         mWAjssCT/zWZKLnvv00GLXvLa6XAcun+sAVBGDl6O0DnGSzIQlHwa+avZR1iANDMJQfD
-         EG8wk5KjnfI14qAEZaExdWYrbAfekvrWCCCP/aLY+h4yUnLRYO5pD4DtCDAFEyh/a8tv
-         syUUjGaWfX2T2/j6Qm+qBhbqMBAF437Q4iNR759eP6aJ2jLn1TjIP1r21Hz4sb0uGwDH
-         8RIg==
-X-Gm-Message-State: ABuFfohKo02bzggm0rDsyLFYCWUhqtzbtZo/mBsXlDh5oemcBzFKQDDW
-        HQn7TvBdavrf/gucEgRBm6HHP23O
-X-Google-Smtp-Source: ACcGV63igcNXq6vU4kl1gwL7Obg/vNMQZlmDCwbehvnBPi5YAmAaxIjs1jGRsuy2dg5iyJtAvEe3wg==
-X-Received: by 2002:adf:fa92:: with SMTP id h18-v6mr1706342wrr.74.1538579988964;
-        Wed, 03 Oct 2018 08:19:48 -0700 (PDT)
-Received: from pc-ceresoli.dev.aim (45.11.168.109.cust.ip.kpnqwest.it. [109.168.11.45])
-        by smtp.gmail.com with ESMTPSA id l140-v6sm3354635wmb.24.2018.10.03.08.19.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 08:19:47 -0700 (PDT)
-From:   Luca Ceresoli <lucaceresoli77@gmail.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Wolfram Sang <wsa@the-dreams.de>, Peter Rosin <peda@axentia.se>
-Subject: [PATCH v3] i2c: mux: remove duplicated i2c_algorithm
-Date:   Wed,  3 Oct 2018 17:19:28 +0200
-Message-Id: <20181003151928.17713-1-lucaceresoli77@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 3 Oct 2018 18:09:32 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52898 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726748AbeJCWJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 18:09:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD15F7A9;
+        Wed,  3 Oct 2018 08:20:41 -0700 (PDT)
+Received: from [10.4.13.99] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8570B3F5A0;
+        Wed,  3 Oct 2018 08:20:40 -0700 (PDT)
+Subject: Re: [PATCH v8 2/9] KVM: arm/arm64: Share common code in
+ user_mem_abort()
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, suzuki.poulose@arm.com,
+        Christoffer Dall <christoffer.dall@arm.com>
+References: <20181001155443.23032-1-punit.agrawal@arm.com>
+ <20181001155443.23032-3-punit.agrawal@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <1eb4df93-4610-ac83-fec3-6a7efeddfc4f@arm.com>
+Date:   Wed, 3 Oct 2018 16:20:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181001155443.23032-3-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Ceresoli <luca@lucaceresoli.net>
+Hi Punit,
 
-i2c-mux instantiates one i2c_algorithm for each downstream adapter.
-However these algorithms are all identical, depending only on the
-parent adapter.
+On 01/10/18 16:54, Punit Agrawal wrote:
+> The code for operations such as marking the pfn as dirty, and
+> dcache/icache maintenance during stage 2 fault handling is duplicated
+> between normal pages and PMD hugepages.
+> 
+> Instead of creating another copy of the operations when we introduce
+> PUD hugepages, let's share them across the different pagesizes.
+> 
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>   virt/kvm/arm/mmu.c | 45 +++++++++++++++++++++++++++++----------------
+>   1 file changed, 29 insertions(+), 16 deletions(-)
+> 
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index c23a1b323aad..5b76ee204000 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -1490,7 +1490,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>   	kvm_pfn_t pfn;
+>   	pgprot_t mem_type = PAGE_S2;
+>   	bool logging_active = memslot_is_logging(memslot);
+> -	unsigned long flags = 0;
+> +	unsigned long vma_pagesize, flags = 0;
+>   
+>   	write_fault = kvm_is_write_fault(vcpu);
+>   	exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
+> @@ -1510,10 +1510,17 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>   		return -EFAULT;
+>   	}
+>   
+> -	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
+> +	vma_pagesize = vma_kernel_pagesize(vma);
+> +	if (vma_pagesize == PMD_SIZE && !logging_active) {
+>   		hugetlb = true;
+>   		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+>   	} else {
+> +		/*
+> +		 * Fallback to PTE if it's not one of the Stage 2
+> +		 * supported hugepage sizes
+> +		 */
+> +		vma_pagesize = PAGE_SIZE;
+> +
+>   		/*
+>   		 * Pages belonging to memslots that don't have the same
+>   		 * alignment for userspace and IPA cannot be mapped using
+> @@ -1579,23 +1586,34 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>   	if (mmu_notifier_retry(kvm, mmu_seq))
+>   		goto out_unlock;
+>   
+> -	if (!hugetlb && !force_pte)
+> +	if (!hugetlb && !force_pte) {
+> +		/*
+> +		 * Only PMD_SIZE transparent hugepages(THP) are
+> +		 * currently supported. This code will need to be
+> +		 * updated to support other THP sizes.
+> +		 */
+>   		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
+> +		if (hugetlb)
+> +			vma_pagesize = PMD_SIZE;
+> +	}
+> +
+> +	if (writable)
+> +		kvm_set_pfn_dirty(pfn);
+>   
+> -	if (hugetlb) {
+> +	if (fault_status != FSC_PERM)
+> +		clean_dcache_guest_page(pfn, vma_pagesize);
+> +
+> +	if (exec_fault)
+> +		invalidate_icache_guest_page(pfn, vma_pagesize);
+> +
+> +	if (hugetlb && vma_pagesize == PMD_SIZE) {
 
-Avoid duplication by hoisting the i2c_algorithm from the adapters to
-the i2c_mux_core object, and reuse it in all the adapters.
+Can you end-up in a situation where hugetlb==false and vma_pagesize == 
+PMD_SIZE? If that's the case, then the above CMOs are not done on the 
+same granularity as they were done before this patch. If that cannot 
+happen, then the above condition can be simplified.
 
-Cc: Peter Rosin <peda@axentia.se>
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Which one is it?
 
----
+Thanks,
 
-Changes v2 -> v3:
- - fix coding style of comment when moving it (Peter Rosin)
- - move the 'algo' member between parent and dev (Peter Rosin)
-
-Changes v1 -> v2:
- - include i2c.h (fixes build failure on i2c-mux-ltc4306)
----
- drivers/i2c/i2c-mux.c   | 38 +++++++++++++++++++-------------------
- include/linux/i2c-mux.h |  2 ++
- 2 files changed, 21 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/i2c/i2c-mux.c b/drivers/i2c/i2c-mux.c
-index f330690b4125..6ac23004fb2a 100644
---- a/drivers/i2c/i2c-mux.c
-+++ b/drivers/i2c/i2c-mux.c
-@@ -30,7 +30,6 @@
- /* multiplexer per channel data */
- struct i2c_mux_priv {
- 	struct i2c_adapter adap;
--	struct i2c_algorithm algo;
- 	struct i2c_mux_core *muxc;
- 	u32 chan_id;
- };
-@@ -263,6 +262,24 @@ struct i2c_mux_core *i2c_mux_alloc(struct i2c_adapter *parent,
- 	muxc->deselect = deselect;
- 	muxc->max_adapters = max_adapters;
- 
-+	/*
-+	 * Need to do algo dynamically because we don't know ahead of
-+	 * time what sort of physical adapter we'll be dealing with.
-+	 */
-+	if (parent->algo->master_xfer) {
-+		if (muxc->mux_locked)
-+			muxc->algo.master_xfer = i2c_mux_master_xfer;
-+		else
-+			muxc->algo.master_xfer = __i2c_mux_master_xfer;
-+	}
-+	if (parent->algo->smbus_xfer) {
-+		if (muxc->mux_locked)
-+			muxc->algo.smbus_xfer = i2c_mux_smbus_xfer;
-+		else
-+			muxc->algo.smbus_xfer = __i2c_mux_smbus_xfer;
-+	}
-+	muxc->algo.functionality = i2c_mux_functionality;
-+
- 	return muxc;
- }
- EXPORT_SYMBOL_GPL(i2c_mux_alloc);
-@@ -301,28 +318,11 @@ int i2c_mux_add_adapter(struct i2c_mux_core *muxc,
- 	priv->muxc = muxc;
- 	priv->chan_id = chan_id;
- 
--	/* Need to do algo dynamically because we don't know ahead
--	 * of time what sort of physical adapter we'll be dealing with.
--	 */
--	if (parent->algo->master_xfer) {
--		if (muxc->mux_locked)
--			priv->algo.master_xfer = i2c_mux_master_xfer;
--		else
--			priv->algo.master_xfer = __i2c_mux_master_xfer;
--	}
--	if (parent->algo->smbus_xfer) {
--		if (muxc->mux_locked)
--			priv->algo.smbus_xfer = i2c_mux_smbus_xfer;
--		else
--			priv->algo.smbus_xfer = __i2c_mux_smbus_xfer;
--	}
--	priv->algo.functionality = i2c_mux_functionality;
--
- 	/* Now fill out new adapter structure */
- 	snprintf(priv->adap.name, sizeof(priv->adap.name),
- 		 "i2c-%d-mux (chan_id %d)", i2c_adapter_id(parent), chan_id);
- 	priv->adap.owner = THIS_MODULE;
--	priv->adap.algo = &priv->algo;
-+	priv->adap.algo = &muxc->algo;
- 	priv->adap.algo_data = priv;
- 	priv->adap.dev.parent = &parent->dev;
- 	priv->adap.retries = parent->retries;
-diff --git a/include/linux/i2c-mux.h b/include/linux/i2c-mux.h
-index bd74d5706f3b..3d89600d5a9e 100644
---- a/include/linux/i2c-mux.h
-+++ b/include/linux/i2c-mux.h
-@@ -28,9 +28,11 @@
- #ifdef __KERNEL__
- 
- #include <linux/bitops.h>
-+#include <linux/i2c.h>
- 
- struct i2c_mux_core {
- 	struct i2c_adapter *parent;
-+	struct i2c_algorithm algo;
- 	struct device *dev;
- 	unsigned int mux_locked:1;
- 	unsigned int arbitrator:1;
+	M.
 -- 
-2.17.1
-
+Jazz is not dead. It just smells funny...
