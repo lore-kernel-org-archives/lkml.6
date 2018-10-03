@@ -2,118 +2,381 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9EDC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB462C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F06FD20645
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:50:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BHEaOtMB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F06FD20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 7414320878
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:53:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7414320878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbeJCKhO (ORCPT
+        id S1726746AbeJCKjf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 06:37:14 -0400
-Received: from ozlabs.org ([203.11.71.1]:57379 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbeJCKhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 06:37:14 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42Q29V42fsz9s7h;
-        Wed,  3 Oct 2018 13:50:38 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538538638;
-        bh=3c85BcuDHHu389EHQ4FeYwtpACjFSLtt9Wdkdfy9ios=;
-        h=Date:From:To:Cc:Subject:From;
-        b=BHEaOtMB8H33HhfJFS7hGOM7pAtV1D4rI8ofAi2qq6hBb3rMZdnt2Jj+6ix1uwUmQ
-         71x8qI0ZE+ATFRfpcDDgRFBDi4zw6xFpdkpr/WK5lZ+AhjmIxRypN0grNw17PJNEJR
-         7wPLuLrD6slJ5xcyIgyh39uWAmYlxNZNZ8sGqLoklbg9JwyH5sxNdbXeAFR1J5Vqhy
-         ntmgV24+eguYgsY2aLotgFn2RWZ4CZ5bVH/5/l04UOKn1VWWdNf4WNPliZA/JczpjL
-         4OvaOAZc11uk2gKL+zRnH2pqCASS0ELffoCvdioNCkGLAiP2FHpO7k0Z9GfVdpohyj
-         0pbo2b2fWQw0g==
-Date:   Wed, 3 Oct 2018 13:50:38 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: occassional build errors
-Message-ID: <20181003135038.24438d97@canb.auug.org.au>
+        Wed, 3 Oct 2018 06:39:35 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:18237 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726514AbeJCKjf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 06:39:35 -0400
+X-UUID: 0d834eacb47440aa95c8ffb76d9fe0ef-20181003
+X-UUID: 0d834eacb47440aa95c8ffb76d9fe0ef-20181003
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1013030258; Wed, 03 Oct 2018 11:52:52 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 3 Oct 2018 11:52:51 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 3 Oct 2018 11:52:51 +0800
+Message-ID: <1538538771.14795.0.camel@mtksdaap41>
+Subject: Re: [PATCH v5 09/11] drm/mediatek: add hdmi driver for MT2701 and
+ MT7623
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cawa Cheng <cawa.cheng@mediatek.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Mao Huang <littlecvr@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
+        chunhui dai <chunhui.dai@mediatek.com>
+Date:   Wed, 3 Oct 2018 11:52:51 +0800
+In-Reply-To: <20181003034151.31452-10-bibby.hsieh@mediatek.com>
+References: <20181003034151.31452-1-bibby.hsieh@mediatek.com>
+         <20181003034151.31452-10-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/654D6paRw+IaZia8xFV6OEY"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/654D6paRw+IaZia8xFV6OEY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi, Bibby:
 
-Hi Masahiro,
+On Wed, 2018-10-03 at 11:41 +0800, Bibby Hsieh wrote:
+> From: chunhui dai <chunhui.dai@mediatek.com>
+> 
+> This patch adds hdmi dirver suppot for both MT2701 and MT7623.
+> And also support other (existing or future) chips that use
+> the same binding and driver.
+> 
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
 
-I don't know if that has anything to changes in the kbuild system, but
-since Tuesday, I have been getting random build errors that go away after
-I remove the object directory and build again.  The latest example is this:
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 
-include/linux/kconfig.h: file not recognized: file format not recognized
-make[2]: *** [scripts/Makefile.build:492: crypto/crypto_user.o] Error 1
-make[1]: *** [Makefile:1057: crypto] Error 2
-make: *** [Makefile:152: sub-make] Error 2
-Command exited with non-zero status 2
+> ---
+>  drivers/gpu/drm/mediatek/Makefile              |   3 +-
+>  drivers/gpu/drm/mediatek/mtk_hdmi.c            |   9 +-
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        |   3 +
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |   2 +
+>  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 212 +++++++++++++++++++++++++
+>  5 files changed, 226 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> 
+> diff --git a/drivers/gpu/drm/mediatek/Makefile b/drivers/gpu/drm/mediatek/Makefile
+> index 61cf0d2ab28a..82ae49c64221 100644
+> --- a/drivers/gpu/drm/mediatek/Makefile
+> +++ b/drivers/gpu/drm/mediatek/Makefile
+> @@ -19,7 +19,8 @@ obj-$(CONFIG_DRM_MEDIATEK) += mediatek-drm.o
+>  mediatek-drm-hdmi-objs := mtk_cec.o \
+>  			  mtk_hdmi.o \
+>  			  mtk_hdmi_ddc.o \
+> +                          mtk_mt2701_hdmi_phy.o \
+>  			  mtk_mt8173_hdmi_phy.o \
+>  			  mtk_hdmi_phy.o
+>  
+> -obj-$(CONFIG_DRM_MEDIATEK_HDMI) += mediatek-drm-hdmi.o
+> \ No newline at end of file
+> +obj-$(CONFIG_DRM_MEDIATEK_HDMI) += mediatek-drm-hdmi.o
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> index d62e685cec73..11e3644da79a 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+> @@ -241,8 +241,13 @@ static void mtk_hdmi_hw_make_reg_writable(struct mtk_hdmi *hdmi, bool enable)
+>  	 * The ARM trusted firmware provides an API for the HDMI driver to set
+>  	 * this control bit to enable HDMI output in supervisor mode.
+>  	 */
+> -	arm_smccc_smc(MTK_SIP_SET_AUTHORIZED_SECURE_REG, 0x14000904, 0x80000000,
+> -		      0, 0, 0, 0, 0, &res);
+> +	if (hdmi_phy->conf && hdmi_phy->conf->tz_disabled)
+> +		regmap_update_bits(hdmi->sys_regmap,
+> +				   hdmi->sys_offset + HDMI_SYS_CFG20,
+> +				   0x80008005, enable ? 0x80000005 : 0x8000);
+> +	else
+> +		arm_smccc_smc(MTK_SIP_SET_AUTHORIZED_SECURE_REG, 0x14000904,
+> +			      0x80000000, 0, 0, 0, 0, 0, &res);
+>  
+>  	regmap_update_bits(hdmi->sys_regmap, hdmi->sys_offset + HDMI_SYS_CFG20,
+>  			   HDMI_PCLK_FREE_RUN, enable ? HDMI_PCLK_FREE_RUN : 0);
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> index 514f3e9a8767..4ef9c57ffd44 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> @@ -214,6 +214,9 @@ static int mtk_hdmi_phy_probe(struct platform_device *pdev)
+>  }
+>  
+>  static const struct of_device_id mtk_hdmi_phy_match[] = {
+> +	{ .compatible = "mediatek,mt2701-hdmi-phy",
+> +	  .data = &mtk_hdmi_phy_2701_conf,
+> +	},
+>  	{ .compatible = "mediatek,mt8173-hdmi-phy",
+>  	  .data = &mtk_hdmi_phy_8173_conf,
+>  	},
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> index 09b8f525e6b8..f39b1fc66612 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> @@ -20,6 +20,7 @@
+>  struct mtk_hdmi_phy;
+>  
+>  struct mtk_hdmi_phy_conf {
+> +	bool tz_disabled;
+>  	const struct clk_ops *hdmi_phy_clk_ops;
+>  	void (*hdmi_phy_enable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
+>  	void (*hdmi_phy_disable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
+> @@ -54,5 +55,6 @@ unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
+>  
+>  extern struct platform_driver mtk_hdmi_phy_driver;
+>  extern struct mtk_hdmi_phy_conf mtk_hdmi_phy_8173_conf;
+> +extern struct mtk_hdmi_phy_conf mtk_hdmi_phy_2701_conf;
+>  
+>  #endif /* _MTK_HDMI_PHY_H */
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> new file mode 100644
+> index 000000000000..fcc42dc6ea7f
+> --- /dev/null
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> @@ -0,0 +1,212 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 MediaTek Inc.
+> + * Author: Chunhui Dai <chunhui.dai@mediatek.com>
+> + */
+> +
+> +#include "mtk_hdmi_phy.h"
+> +
+> +#define HDMI_CON0	0x00
+> +#define RG_HDMITX_DRV_IBIAS		0
+> +#define RG_HDMITX_DRV_IBIAS_MASK	(0x3f << 0)
+> +#define RG_HDMITX_EN_SER		12
+> +#define RG_HDMITX_EN_SER_MASK		(0x0f << 12)
+> +#define RG_HDMITX_EN_SLDO		16
+> +#define RG_HDMITX_EN_SLDO_MASK		(0x0f << 16)
+> +#define RG_HDMITX_EN_PRED		20
+> +#define RG_HDMITX_EN_PRED_MASK		(0x0f << 20)
+> +#define RG_HDMITX_EN_IMP		24
+> +#define RG_HDMITX_EN_IMP_MASK		(0x0f << 24)
+> +#define RG_HDMITX_EN_DRV		28
+> +#define RG_HDMITX_EN_DRV_MASK		(0x0f << 28)
+> +
+> +#define HDMI_CON1	0x04
+> +#define RG_HDMITX_PRED_IBIAS		18
+> +#define RG_HDMITX_PRED_IBIAS_MASK	(0x0f << 18)
+> +#define RG_HDMITX_PRED_IMP		(0x01 << 22)
+> +#define RG_HDMITX_DRV_IMP		26
+> +#define RG_HDMITX_DRV_IMP_MASK		(0x3f << 26)
+> +
+> +#define HDMI_CON2	0x08
+> +#define RG_HDMITX_EN_TX_CKLDO		(0x01 << 0)
+> +#define RG_HDMITX_EN_TX_POSDIV		(0x01 << 1)
+> +#define RG_HDMITX_TX_POSDIV		3
+> +#define RG_HDMITX_TX_POSDIV_MASK	(0x03 << 3)
+> +#define RG_HDMITX_EN_MBIAS		(0x01 << 6)
+> +#define RG_HDMITX_MBIAS_LPF_EN		(0x01 << 7)
+> +
+> +#define HDMI_CON4	0x10
+> +#define RG_HDMITX_RESERVE_MASK		(0xffffffff << 0)
+> +
+> +#define HDMI_CON6	0x18
+> +#define RG_HTPLL_BR			0
+> +#define RG_HTPLL_BR_MASK		(0x03 << 0)
+> +#define RG_HTPLL_BC			2
+> +#define RG_HTPLL_BC_MASK		(0x03 << 2)
+> +#define RG_HTPLL_BP			4
+> +#define RG_HTPLL_BP_MASK		(0x0f << 4)
+> +#define RG_HTPLL_IR			8
+> +#define RG_HTPLL_IR_MASK		(0x0f << 8)
+> +#define RG_HTPLL_IC			12
+> +#define RG_HTPLL_IC_MASK		(0x0f << 12)
+> +#define RG_HTPLL_POSDIV			16
+> +#define RG_HTPLL_POSDIV_MASK		(0x03 << 16)
+> +#define RG_HTPLL_PREDIV			18
+> +#define RG_HTPLL_PREDIV_MASK		(0x03 << 18)
+> +#define RG_HTPLL_FBKSEL			20
+> +#define RG_HTPLL_FBKSEL_MASK		(0x03 << 20)
+> +#define RG_HTPLL_RLH_EN			(0x01 << 22)
+> +#define RG_HTPLL_FBKDIV			24
+> +#define RG_HTPLL_FBKDIV_MASK		(0x7f << 24)
+> +#define RG_HTPLL_EN			(0x01 << 31)
+> +
+> +#define HDMI_CON7	0x1c
+> +#define RG_HTPLL_AUTOK_EN		(0x01 << 23)
+> +#define RG_HTPLL_DIVEN			28
+> +#define RG_HTPLL_DIVEN_MASK		(0x07 << 28)
+> +
+> +static int mtk_hdmi_pll_prepare(struct clk_hw *hw)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_phy(hw);
+> +
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON7, RG_HTPLL_AUTOK_EN);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_RLH_EN);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_POSDIV_MASK);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_MBIAS);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_EN);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_CKLDO);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
+> +	usleep_range(80, 100);
+> +	return 0;
+> +}
+> +
+> +static void mtk_hdmi_pll_unprepare(struct clk_hw *hw)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_phy(hw);
+> +
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_CKLDO);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_EN);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_MBIAS);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_POSDIV_MASK);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_RLH_EN);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON7, RG_HTPLL_AUTOK_EN);
+> +	usleep_range(80, 100);
+> +}
+> +
+> +static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				 unsigned long parent_rate)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_phy(hw);
+> +	u32 pos_div;
+> +
+> +	if (rate <= 64000000)
+> +		pos_div = 3;
+> +	else if (rate <= 12800000)
+> +		pos_div = 1;
+> +	else
+> +		pos_div = 1;
+> +
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_PREDIV_MASK);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_POSDIV_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IC),
+> +			  RG_HTPLL_IC_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IR),
+> +			  RG_HTPLL_IR_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON2, (pos_div << RG_HDMITX_TX_POSDIV),
+> +			  RG_HDMITX_TX_POSDIV_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (1 << RG_HTPLL_FBKSEL),
+> +			  RG_HTPLL_FBKSEL_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (19 << RG_HTPLL_FBKDIV),
+> +			  RG_HTPLL_FBKDIV_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON7, (0x2 << RG_HTPLL_DIVEN),
+> +			  RG_HTPLL_DIVEN_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (0xc << RG_HTPLL_BP),
+> +			  RG_HTPLL_BP_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (0x2 << RG_HTPLL_BC),
+> +			  RG_HTPLL_BC_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_BR),
+> +			  RG_HTPLL_BR_MASK);
+> +
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON1, RG_HDMITX_PRED_IMP);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON1, (0x3 << RG_HDMITX_PRED_IBIAS),
+> +			  RG_HDMITX_PRED_IBIAS_MASK);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_IMP_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON1, (0x28 << RG_HDMITX_DRV_IMP),
+> +			  RG_HDMITX_DRV_IMP_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON4, 0x28, RG_HDMITX_RESERVE_MASK);
+> +	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON0, (0xa << RG_HDMITX_DRV_IBIAS),
+> +			  RG_HDMITX_DRV_IBIAS_MASK);
+> +	return 0;
+> +}
+> +
+> +static const struct clk_ops mtk_hdmi_phy_pll_ops = {
+> +	.prepare = mtk_hdmi_pll_prepare,
+> +	.unprepare = mtk_hdmi_pll_unprepare,
+> +	.set_rate = mtk_hdmi_pll_set_rate,
+> +	.round_rate = mtk_hdmi_pll_round_rate,
+> +	.recalc_rate = mtk_hdmi_pll_recalc_rate,
+> +};
+> +
+> +static void mtk_hdmi_phy_enable_tmds(struct mtk_hdmi_phy *hdmi_phy)
+> +{
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON7, RG_HTPLL_AUTOK_EN);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_RLH_EN);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_POSDIV_MASK);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_MBIAS);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_EN);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_CKLDO);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
+> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
+> +	usleep_range(80, 100);
+> +}
+> +
+> +static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
+> +{
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_CKLDO);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_EN);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_MBIAS);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_POSDIV_MASK);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_RLH_EN);
+> +	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON7, RG_HTPLL_AUTOK_EN);
+> +	usleep_range(80, 100);
+> +}
+> +
+> +struct mtk_hdmi_phy_conf mtk_hdmi_phy_2701_conf = {
+> +	.tz_disabled = true,
+> +	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
+> +	.hdmi_phy_enable_tmds = mtk_hdmi_phy_enable_tmds,
+> +	.hdmi_phy_disable_tmds = mtk_hdmi_phy_disable_tmds,
+> +};
+> +
+> +MODULE_AUTHOR("Chunhui Dai <chunhui.dai@mediatek.com>");
+> +MODULE_DESCRIPTION("MediaTek HDMI PHY Driver");
+> +MODULE_LICENSE("GPL v2");
 
-It is always complaining about a .h file ...
 
-Makefile:152 is the MAKE lien below:
-
-# Invoke a second make in the output directory, passing relevant variables
-sub-make:
-        $(Q)$(MAKE) -C $(KBUILD_OUTPUT) KBUILD_SRC=3D$(CURDIR) \
-        -f $(CURDIR)/Makefile $(filter-out _all sub-make,$(MAKECMDGOALS))
-
-Makefile:1057 is the MAKE line below:
-
-PHONY +=3D $(vmlinux-dirs)
-$(vmlinux-dirs): prepare scripts
-        $(Q)$(MAKE) $(build)=3D$@ need-builtin=3D1
-
-scripts/Makefile.build:492 is the if_changed line below:
-
-$(multi-used-m): FORCE
-        $(call if_changed,link_multi-m)
-        @{ echo $(@:.o=3D.ko); echo $(filter-out FORCE,$^); \
-           $(cmd_undef_syms); } > $(MODVERDIR)/$(@F:.o=3D.mod)
-$(call multi_depend, $(multi-used-m), .o, -objs -y -m)
-
-Not sure what else I can tell you.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/654D6paRw+IaZia8xFV6OEY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu0PI4ACgkQAVBC80lX
-0Gy0LAf8CwCKEd/94KzYgo4ys0Oy5ZYUeu3an+fPimjOGPEqyd8p5d4I/wVqiy3j
-A5i7t5mpEmYq5BhKHJf/PvsEbmI2V1QxrC+8ADSRxsOFB/szhLCD8UXGoROzyQcG
-5L+qm8dIXmDLi7G1fTpJ7KGbPFqOmWPQt7QUIcf7TX+ZdAQF4UM6qJg8ygmr03+a
-Dfm6YGEgYfQDQOmFWHlC9/wOHnPEzmcjjCtj/QKr3sAVaqyPOBNCr0JZlvTE7LjW
-FvVVToQcewZxihhVCOYR76biJHPUoIAebq3N2RmWpb0AY0J2vIysjUfxjXd0Fh+M
-gQB3Z9WVKeIyo3Ugy/6cD0ttFn7BfQ==
-=aTXN
------END PGP SIGNATURE-----
-
---Sig_/654D6paRw+IaZia8xFV6OEY--
