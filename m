@@ -2,144 +2,216 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B89C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29ABDC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 684B72098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:58:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IRAPLirT";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IRAPLirT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684B72098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id DDB132098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 09:58:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDB132098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbeJCQpn (ORCPT
+        id S1726818AbeJCQqJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 12:45:43 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59360 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725746AbeJCQpn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 12:45:43 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 668E96079C; Wed,  3 Oct 2018 09:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538560682;
-        bh=9tBJ1/LvggrCHA/EPLB6ubAGRzeC9XUtM9E9G40VkFA=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=IRAPLirTdKo0HsKJQ7gk5OKWQzmGCl/8fhF7gx6ABYZRurjyO8HrX044Ua6FjxRe6
-         a/GML/jG4jrDw89n412Y3Corl8n2h3n9tPMLlHbNpW6vV1Qx5sE5UX2Ix/eIn2zwAx
-         tIXlvdknln9w3duXIPVkRszruH8HsxJOq/w/aQGg=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B326860275;
-        Wed,  3 Oct 2018 09:57:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538560682;
-        bh=9tBJ1/LvggrCHA/EPLB6ubAGRzeC9XUtM9E9G40VkFA=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=IRAPLirTdKo0HsKJQ7gk5OKWQzmGCl/8fhF7gx6ABYZRurjyO8HrX044Ua6FjxRe6
-         a/GML/jG4jrDw89n412Y3Corl8n2h3n9tPMLlHbNpW6vV1Qx5sE5UX2Ix/eIn2zwAx
-         tIXlvdknln9w3duXIPVkRszruH8HsxJOq/w/aQGg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B326860275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     "Grumbach\, Emmanuel" <emmanuel.grumbach@intel.com>
-Cc:     Kai Heng Feng <kai.heng.feng@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Berg\, Johannes" <johannes.berg@intel.com>,
-        "Coelho\, Luciano" <luciano.coelho@intel.com>,
-        linuxwifi <linuxwifi@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        linux-bluetooth@vger.kernel.org
-Subject: Re: [RESEND] [PATCH 3/3] iwlwifi: Load firmware exclusively for Intel WiFi
-References: <20181003073556.28154-1-kai.heng.feng@canonical.com>
-        <20181003073556.28154-3-kai.heng.feng@canonical.com>
-        <87y3bfiees.fsf@kamboji.qca.qualcomm.com>
-        <265BAF93-4BFF-4850-92F7-80AC39496473@canonical.com>
-        <0BA3FCBA62E2DC44AF3030971E174FB301336D868D@HASMSX111.ger.corp.intel.com>
-Date:   Wed, 03 Oct 2018 12:57:57 +0300
-In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB301336D868D@HASMSX111.ger.corp.intel.com>
-        (Emmanuel Grumbach's message of "Wed, 3 Oct 2018 09:50:58 +0000")
-Message-ID: <871s97ic7u.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Wed, 3 Oct 2018 12:46:09 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48856 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725746AbeJCQqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 12:46:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A214618A;
+        Wed,  3 Oct 2018 02:58:28 -0700 (PDT)
+Received: from [10.162.0.72] (p8cg001049571a15.blr.arm.com [10.162.0.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8FA583F5B7;
+        Wed,  3 Oct 2018 02:58:25 -0700 (PDT)
+Subject: Re: [PATCH 1/4] mm/hugetlb: Enable PUD level huge page migration
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        catalin.marinas@arm.com, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com
+References: <1538482531-26883-1-git-send-email-anshuman.khandual@arm.com>
+ <1538482531-26883-2-git-send-email-anshuman.khandual@arm.com>
+ <20181002123909.GS18290@dhcp22.suse.cz>
+ <fae68a4e-b14b-8342-940c-ea5ef3c978af@arm.com>
+ <20181003065833.GD18290@dhcp22.suse.cz>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <7f0488b5-053f-0954-9b95-8c0890ef5597@arm.com>
+Date:   Wed, 3 Oct 2018 15:28:23 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20181003065833.GD18290@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ linux-bluetooth
 
-"Grumbach, Emmanuel" <emmanuel.grumbach@intel.com> writes:
 
->>=20
->> > On Oct 3, 2018, at 5:10 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
->> >
->> > Kai-Heng Feng <kai.heng.feng@canonical.com> writes:
->> >
->> >> To avoid the firmware loading race between Bluetooth and WiFi on
->> >> Intel 8260, load firmware exclusively when BT_INTEL is enabled.
->> >>
->> >> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> >
->> > Still the commit log tells nothing about the actual problem which
->> > makes review impossible.
->>=20
->> Sorry for that. The first two patches [1] only sends to linux-bluetooth =
-and
->> LMKL.
->>=20
->> I don=E2=80=99t know what really happened at hardware/firmware level, bu=
-t making
->> btusb and iwlwifi load firmware sequentially can workaround the issue.
->>=20
->> Matt Chen may be able to explain this issue with more detail.
->>=20
->> [1] https://lkml.org/lkml/2018/10/3/322
+On 10/03/2018 12:28 PM, Michal Hocko wrote:
+> On Wed 03-10-18 07:46:27, Anshuman Khandual wrote:
 >>
->
-> I just read the code of this patch and I don't quite understand.
-> You have a function that is declared as a non-inline function in two diff=
-erent header files?
-> btintel_firmware_lock is declared here:
->
-> --- /dev/null
-> +++ b/include/linux/intel-wifi-bt.h
-> @@ -0,0 +1,8 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __INTEL_WIFI_BT_H__
-> +#define __INTEL_WIFI_BT_H__
-> +
-> +void btintel_firmware_lock(void);
->
-> And ...
->
-> diff --git a/drivers/bluetooth/btintel.h b/drivers/bluetooth/btintel.h
-> index 41c642cc523f..1373ffc2b575 100644
-> --- a/drivers/bluetooth/btintel.h
-> +++ b/drivers/bluetooth/btintel.h
-> @@ -102,6 +102,8 @@ int btintel_read_boot_params(struct hci_dev *hdev,
->  			     struct intel_boot_params *params);
->  int btintel_download_firmware(struct hci_dev *dev, const struct firmware=
- *fw,
->  			      u32 *boot_param);
-> +void btintel_firmware_lock(void);
->
->
-> This can't be right.
+>>
+>> On 10/02/2018 06:09 PM, Michal Hocko wrote:
+>>> On Tue 02-10-18 17:45:28, Anshuman Khandual wrote:
+>>>> Architectures like arm64 have PUD level HugeTLB pages for certain configs
+>>>> (1GB huge page is PUD based on ARM64_4K_PAGES base page size) that can be
+>>>> enabled for migration. It can be achieved through checking for PUD_SHIFT
+>>>> order based HugeTLB pages during migration.
+>>>
+>>> Well a long term problem with hugepage_migration_supported is that it is
+>>> used in two different context 1) to bail out from the migration early
+>>> because the arch doesn't support migration at all and 2) to use movable
+>>> zone for hugetlb pages allocation. I am especially concerned about the
+>>> later because the mere support for migration is not really good enough.
+>>> Are you really able to find a different giga page during the runtime to
+>>> move an existing giga page out of the movable zone?
+>>
+>> I pre-allocate them before trying to initiate the migration (soft offline
+>> in my experiments). Hence it should come from the pre-allocated HugeTLB
+>> pool instead from the buddy. I might be missing something here but do we
+>> ever allocate HugeTLB on the go when trying to migrate ? IIUC it always
+>> came from the pool (unless its something related to ovecommit/surplus).
+>> Could you please kindly explain regarding how migration target HugeTLB
+>> pages are allocated on the fly from movable zone.
+> 
+> Hotplug comes to mind. You usually do not pre-allocate to cover full
+> node going offline. And people would like to do that. Another example is
+> CMA. You would really like to move pages out of the way.
 
---=20
-Kalle Valo
+You are right.
+
+Hotplug migration:
+
+__offline_pages
+   do_migrate_range
+	migrate_pages(...new_node_page...)
+
+new_node_page
+   new_page_nodemask
+	alloc_huge_page_nodemask
+	   dequeue_huge_page_nodemask (Getting from pool)
+	or
+	   alloc_migrate_huge_page    (Getting from buddy - non-gigantic)
+		alloc_fresh_huge_page
+		    alloc_buddy_huge_page
+			__alloc_pages_nodemask ----> goes into buddy
+
+CMA allocation:
+
+cma_alloc
+   alloc_contig_range
+	__alloc_contig_migrate_range
+		migrate_pages(...alloc_migrate_target...)
+
+alloc_migrate_target
+   new_page_nodemask -> __alloc_pages_nodemask ---> goes into buddy
+
+But this is not applicable for gigantic pages for which it backs off way
+before going into buddy. With MAX_ORDER as 11 its anything beyond 64MB
+for 64K pages, 16MB for 16K pages, 4MB for 4K pages etc. So all those
+bigger huge pages like 512MB/1GB/16GB will not be part of the HugeTLB/CMA
+initiated migrations. I will look into migration details during auto NUMA,
+compaction, memory-failure etc to see if gigantic huge page is allocated
+from the buddy with ___alloc_pages_nodemask or with alloc_contig_range().
+
+> 
+>> But even if there are some chances of run time allocation failure from
+>> movable zone (as in point 2) that should not block the very initiation
+>> of migration itself. IIUC thats not the semantics for either THP or
+>> normal pages. Why should it be different here. If the allocation fails
+>> we should report and abort as always. Its the caller of migration taking
+>> the chances. why should we prevent that.
+> 
+> Yes I agree, hence the distinction between the arch support for
+> migrateability and the criterion on the movable zone placement.
+movable zone placement sounds very tricky here. How can the platform
+(through the hook huge_movable) before hand say whether destination
+page could be allocated from the ZONE_MOVABLE without looking into the
+state of buddy at migration (any sort attempt to do this is going to
+be expensive) or it merely indicates the desire to live with possible
+consequence (unable to hot unplug/CMA going forward) for a migration
+which might end up in an unmovable area.
+
+>  
+>>>
+>>> So I guess we want to split this into two functions
+>>> arch_hugepage_migration_supported and hugepage_movable. The later would
+>>
+>> So the set difference between arch_hugepage_migration_supported and 
+>> hugepage_movable still remains un-migratable ? Then what is the purpose
+>> for arch_hugepage_migration_supported page size set in the first place.
+>> Does it mean we allow the migration at the beginning and the abort later
+>> when the page size does not fall within the subset for hugepage_movable.
+>> Could you please kindly explain this in more detail.
+> 
+> The purpose of arch_hugepage_migration_supported is to tell whether it
+> makes any sense to even try to migration. The allocation placement is
+
+Which kind of matches what we have right now and being continued with this
+proposal in the series.
+
+> completely independent on this choice. The later just says whether it is
+> feasible to place a hugepage to the zone movable. Sure regular 2MB pages
+
+What do you exactly mean by feasible ? Wont it depend on the state of the
+buddy allocator (ZONE_MOVABLE in particular) and it's ability to accommodate
+a given huge page. How can the platform decide on it ? Or as I mentioned
+before it's platform's willingness to live with unmovable huge pages (of
+certain sizes) as a consequence of migration.
+
+> do not guarantee movability as well because of the memory fragmentation.
+> But allocating a 2MB is a completely different storage from 1G or even
+> larger huge pages, isn't it?
+
+Right I understand that. Hotplug/CMA capability goes down more with bigger
+huge pages being unmovable on the system.
+
+> 
+>>> be a reasonably migrateable subset of the former. Without that this
+>>> patch migth introduce subtle regressions when somebody relies on movable
+>>> zone to be really movable.
+>> PUD based HugeTLB pages were never migratable, then how can there be any
+>> regression here ?
+> 
+> That means that they haven't been allocated from the movable zone
+> before. Which is going to change by this patch.
+
+The source PUD huge page might have been allocated from movable zone.
+The denial for migration is explicit and because we dont check for
+PUD_SHIFT in there and nothing to do with the zone type where the
+source page belongs. But are you referring to regression caused by
+something like this.
+
+Before the patch:
+
+- PUD huge page allocated on ZONE_MOVABLE
+- Huge page is movable (Hotplug/CMA works)
+
+After the patch:
+
+- PUD huge page allocated on ZONE_MOVABLE
+- Migration is successful without checking for destination page's zone
+- PUD huge page (new) is not on ZONE_MOVABLE
+- Huge page is unmovable (Hotplug/CMA does not work anymore) -> Regression!
+
+> 
+>> At present we even support PGD based HugeTLB pages for
+>> migration.
+> 
+> And that is already wrong but nobody probably cares because those are
+> rarely used.
+> 
+>> Wondering how PUD based ones are going to be any different.
+> 
+> It is not different, PGD is dubious already.
+>
+Got it.
