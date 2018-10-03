@@ -2,139 +2,122 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B74C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE5EC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B37D32098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:19:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B37D32098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 848F720652
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:20:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cbtbq3si"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848F720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbeJCSHV (ORCPT
+        id S1726829AbeJCSIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:07:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57952 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726617AbeJCSHU (ORCPT
+        Wed, 3 Oct 2018 14:08:10 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38055 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeJCSIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:07:20 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w93BAnJJ100223
-        for <linux-kernel@vger.kernel.org>; Wed, 3 Oct 2018 07:19:22 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mvvnvr9y7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 07:19:22 -0400
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Wed, 3 Oct 2018 05:19:22 -0600
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 3 Oct 2018 05:19:18 -0600
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w93BJHDD66322522
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 3 Oct 2018 04:19:17 -0700
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 463D213604F;
-        Wed,  3 Oct 2018 05:19:17 -0600 (MDT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AC75C136059;
-        Wed,  3 Oct 2018 05:19:16 -0600 (MDT)
-Received: from sofia.ibm.com (unknown [9.124.35.51])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed,  3 Oct 2018 05:19:16 -0600 (MDT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 5C3BB2E4C72; Wed,  3 Oct 2018 16:49:13 +0530 (IST)
-Date:   Wed, 3 Oct 2018 16:49:13 +0530
-From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Anton Blanchard <anton@samba.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 0/3] powerpc: Detection and scheduler optimization for
- POWER9 bigcore
-Reply-To: ego@linux.vnet.ibm.com
-References: <1538399802-23582-1-git-send-email-ego@linux.vnet.ibm.com>
- <994106db-7f79-7d22-0d4e-f458bd85bb64@intel.com>
+        Wed, 3 Oct 2018 14:08:10 -0400
+Received: by mail-qt1-f196.google.com with SMTP id l9-v6so5413606qtf.5;
+        Wed, 03 Oct 2018 04:20:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=64RzwtB7e2uj2EjRCEk6rJ3pykZdZ1J0Bh28PpfHk5I=;
+        b=Cbtbq3si4fj/YnVnlb2dcMhvGaUEnx21y0R4DkCh7+SYGTt0jKWgcLSKc94NWFNa3Q
+         SsBMjmbhpaUH7uuiWyOKtHEzKAflNWf09xpFRgb2DlZci8b635gyTVys83YQ0q1fW9oK
+         SCMPTDBAHjseBobG3t1SDvJiyZKQJMh5DocjvhriLXJ1oR6jscE6IA8fKtLIP3fkaZaq
+         x/bHQjSGX1TkWkiEO/vyZugL1f/OWZOyn7JIYfxkhfTaZVJJBfFOoTz2uw0sP+QA6G3e
+         I1ZHH1F/e1TJBmJE2OXntkO0Q+65xAPR8zaJ11Sp5Ha7GCH2/hCq/4TFFFuCXVRtQNU9
+         5opg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=64RzwtB7e2uj2EjRCEk6rJ3pykZdZ1J0Bh28PpfHk5I=;
+        b=R/8BOGkrKi+6j/D9BLNLj1Bx64ndnohpmsBrMZvaGfysCpSH3FrmoJ032y3OkeTvRf
+         BIsodYW6GVoe3mEaqh4dBdOjkucDdJjatSQ5MJ+i6v2i+FsQuVg8Nu907cgsOv7Y++aF
+         3byaC06x4m3U87xXacV/COBRWGAzlZ31xtJYz/fUdDOBZHKW3EY0Rp/GbzFsZQL5Y43b
+         oYn+mP2DrnUnWurIMJF7AmCYdmAbyJyGEs6FaX0/XjFZSn8kaID/jiry6JXBwmWk24TV
+         Ij2FkuN8U6pB9z8QnphiIbL/vIjjX4s6UWjMYEbCInwcMMPdOAonvl6yK5WQbxKiMlHO
+         vz1A==
+X-Gm-Message-State: ABuFfohSrza/CV3fdBq2vIViOao4YPhqgKB/YZ5dh4JA1LJBAqLYfSo0
+        i2sZp0mEu6OJd5BXNthn/1bart97plxobMxyEd8=
+X-Google-Smtp-Source: ACcGV63T9KpbCw9EWazj9kVA2Ro45vEtuH6dKnhrGkhJAO9DMxeJgA9SbbJ1b5ajBe3FQPQvJWvh1zzs7FrGhmP5QgU=
+X-Received: by 2002:a0c:aa06:: with SMTP id d6-v6mr760754qvb.26.1538565612481;
+ Wed, 03 Oct 2018 04:20:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <994106db-7f79-7d22-0d4e-f458bd85bb64@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-x-cbid: 18100311-0016-0000-0000-0000093A538C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009814; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01097236; UDB=6.00567426; IPR=6.00877278;
- MB=3.00023598; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-03 11:19:20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100311-0017-0000-0000-00004091F6F9
-Message-Id: <20181003111913.GA9055@in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-03_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810030112
+References: <20181002211651.2804717-1-arnd@arndb.de>
+In-Reply-To: <20181002211651.2804717-1-arnd@arndb.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 3 Oct 2018 14:20:01 +0300
+Message-ID: <CAHp75VfJCZM8Ho3DLB1-xkhJJ=i+BACuvUY-6W-GuFa=iyZzcw@mail.gmail.com>
+Subject: Re: [PATCH] firmware: dcdbas: include linux/io.h
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Stuart Hayes <stuart.w.hayes@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dave,
-
-On Mon, Oct 01, 2018 at 07:05:11AM -0700, Dave Hansen wrote:
-> On 10/01/2018 06:16 AM, Gautham R. Shenoy wrote:
-> > 
-> > Patch 3: Creates a pair of sysfs attributes named
-> > 	  /sys/devices/system/cpu/cpuN/topology/smallcore_thread_siblings
-> > 	  and
-> > 	  /sys/devices/system/cpu/cpuN/topology/smallcore_thread_siblings_list
-> > 	  exposing the small-core siblings that share the L1 cache
-> > 	  to the userspace.
-> 
-> I really don't think you've justified the existence of a new user/kernel
-> interface here.  We already have information about threads share L1
-> caches in here:
-> 
-> 	/sys/devices/system/cpu/cpu0/cache/index0/shared_cpu_list
-
-
-Hmmm. My bad, I wasn't aware of this sysfs interface. We can use this
-to share information about L1 cache. And currently on the upstream
-kernel we report incorrect value on POWER9 SMT8 core. I will fix
-this. Thanks for calling this out.
-
-> 
-> The only question would be if anything would break because it assumes
-> that all SMT siblings share all caches.  But, it breaks if your new
-> interface is there or not; it's old software that we care about.
+On Wed, Oct 3, 2018 at 12:17 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> memremap() is declared in linux/io.h, not in asm/io.h, so we should
+> include that header to avoid build errors:
+>
+> drivers/platform/x86/dcdbas.c: In function 'dcdbas_check_wsmt':
+> drivers/platform/x86/dcdbas.c:572:15: error: implicit declaration of function 'memremap'; did you mean 'ioremap'? [-Werror=implicit-function-declaration]
+>   eps_buffer = memremap(eps->smm_comm_buff_addr, remap_size, MEMREMAP_WB);
+>                ^~~~~~~~
+>                ioremap
+> drivers/platform/x86/dcdbas.c:572:61: error: 'MEMREMAP_WB' undeclared (first use in this function)
+>   eps_buffer = memremap(eps->smm_comm_buff_addr, remap_size, MEMREMAP_WB);
+>                                                              ^~~~~~~~~~~
+> drivers/platform/x86/dcdbas.c:572:61: note: each undeclared identifier is reported only once for each function it appears in
+> drivers/platform/x86/dcdbas.c: In function 'dcdbas_exit':
+> drivers/platform/x86/dcdbas.c:748:3: error: implicit declaration of function 'memunmap'; did you mean 'vm_munmap'? [-Werror=implicit-function-declaration]
 >
 
-Up until POWER9 SMT8 cores, this assumption was true that all SMT
-siblings share all caches. POWER9 SMT8 cores are the only exception. 
+Pushed to for-next, sorry for inconveniences and thanks for the quick fix!
 
---
-Thanks and Regards
-gautham.
+> Fixes: 12c956c4f32e ("firmware: dcdbas: Add support for WSMT ACPI table")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/platform/x86/dcdbas.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/platform/x86/dcdbas.c b/drivers/platform/x86/dcdbas.c
+> index ae28e48ff7dc..daa7e3574568 100644
+> --- a/drivers/platform/x86/dcdbas.c
+> +++ b/drivers/platform/x86/dcdbas.c
+> @@ -37,7 +37,7 @@
+>  #include <linux/string.h>
+>  #include <linux/types.h>
+>  #include <linux/mutex.h>
+> -#include <asm/io.h>
+> +#include <linux/io.h>
+>
+>  #include "dcdbas.h"
+>
+> --
+> 2.18.0
+>
 
+
+-- 
+With Best Regards,
+Andy Shevchenko
