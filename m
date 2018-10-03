@@ -2,96 +2,140 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFF4C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CE2C677E6
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08F2721470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:14:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08F2721470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D4A320835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:21:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D4A320835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbeJCTDB (ORCPT
+        id S1726738AbeJCTJU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 15:03:01 -0400
-Received: from gateway20.websitewelcome.com ([192.185.53.25]:35316 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726964AbeJCTDB (ORCPT
+        Wed, 3 Oct 2018 15:09:20 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:44920 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbeJCTJT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 15:03:01 -0400
-X-Greylist: delayed 1419 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Oct 2018 15:03:01 EDT
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 23CA6400EE919
-        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 06:51:18 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 7fg3g8lYU8YaU7fgMgbcMf; Wed, 03 Oct 2018 06:51:17 -0500
-X-Authority-Reason: nr=8
-Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:35978 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g7fg2-001hWK-Vk; Wed, 03 Oct 2018 06:50:51 -0500
-Date:   Wed, 3 Oct 2018 13:50:44 +0200
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaya Kumar <jayalk@intworks.biz>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] video: fbdev: arcfb: mark expected switch fall-through
-Message-ID: <20181003115044.GA10786@embeddedor.com>
+        Wed, 3 Oct 2018 15:09:19 -0400
+Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
+        with ESMTP id S23992066AbeJCMVH6HqjO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 14:21:07 +0200
+Date:   Wed, 3 Oct 2018 13:21:07 +0100 (BST)
+From:   "Maciej W. Rozycki" <macro@linux-mips.org>
+To:     Ralf Baechle <ralf@linux-mips.org>
+cc:     linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] TC: Set DMA masks for devices
+Message-ID: <alpine.LFD.2.21.1810030109210.5483@eddie.linux-mips.org>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 92.93.206.174
-X-Source-L: No
-X-Exim-ID: 1g7fg2-001hWK-Vk
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:35978
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Fix a TURBOchannel support regression with commit 205e1b7f51e4 
+("dma-mapping: warn when there is no coherent_dma_mask") that caused 
+coherent DMA allocations to produce a warning such as:
 
-Addresses-Coverity-ID: 115017 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+defxx: v1.11 2014/07/01  Lawrence V. Stefani and others
+tc1: DEFTA at MMIO addr = 0x1e900000, IRQ = 20, Hardware addr = 08-00-2b-a3-a3-29
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 dfx_dev_register+0x670/0x678
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #2
+Stack : ffffffff8009ffc0 fffffffffffffec0 0000000000000000 ffffffff80647650
+        0000000000000000 0000000000000000 ffffffff806f5f80 ffffffffffffffff
+        0000000000000000 0000000000000000 0000000000000001 ffffffff8065d4e8
+        98000000031b6300 ffffffff80563478 ffffffff805685b0 ffffffffffffffff
+        0000000000000000 ffffffff805d6720 0000000000000204 ffffffff80388df8
+        0000000000000000 0000000000000009 ffffffff8053efd0 ffffffff806657d0
+        0000000000000000 ffffffff803177f8 0000000000000000 ffffffff806d0000
+        9800000003078000 980000000307b9e0 000000001e900000 ffffffff80067940
+        0000000000000000 ffffffff805d6720 0000000000000204 ffffffff80388df8
+        ffffffff805176c0 ffffffff8004dc78 0000000000000000 ffffffff80067940
+        ...
+Call Trace:
+[<ffffffff8004dc78>] show_stack+0xa0/0x130
+[<ffffffff80067940>] __warn+0x128/0x170
+---[ end trace b1d1e094f67f3bb2 ]---
+
+This is because the TURBOchannel bus driver fails to set the coherent 
+DMA mask for devices enumerated.
+
+Set the regular and coherent DMA masks for TURBOchannel devices then, 
+observing that the bus protocol supports a 34-bit (16GiB) DMA address 
+space, by interpreting the value presented in the address cycle across 
+the 32 `ad' lines as a 32-bit word rather than byte address[1].  The 
+architectural size of the TURBOchannel DMA address space exceeds the 
+maximum amount of RAM any actual TURBOchannel system in existence may 
+have, hence both masks are the same.
+
+This removes the warning shown above.
+
+References:
+
+[1] "TURBOchannel Hardware Specification", EK-369AA-OD-007B, Digital 
+    Equipment Corporation, January 1993, Section "DMA", pp. 1-15 -- 1-17
+
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+Fixes: 205e1b7f51e4 ("dma-mapping: warn when there is no coherent_dma_mask")
+Cc: stable@vger.kernel.org # 4.16+
 ---
- drivers/video/fbdev/arcfb.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tc/tc.c    |    8 +++++++-
+ include/linux/tc.h |    1 +
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/arcfb.c b/drivers/video/fbdev/arcfb.c
-index 7e87d0d..a48741a 100644
---- a/drivers/video/fbdev/arcfb.c
-+++ b/drivers/video/fbdev/arcfb.c
-@@ -419,6 +419,8 @@ static int arcfb_ioctl(struct fb_info *info,
- 			schedule();
- 			finish_wait(&arcfb_waitq, &wait);
- 		}
-+		/* fall through */
+linux-tc-dma-mask.patch
+Index: linux-20180930-4maxp64/drivers/tc/tc.c
+===================================================================
+--- linux-20180930-4maxp64.orig/drivers/tc/tc.c
++++ linux-20180930-4maxp64/drivers/tc/tc.c
+@@ -2,7 +2,7 @@
+  *	TURBOchannel bus services.
+  *
+  *	Copyright (c) Harald Koerfgen, 1998
+- *	Copyright (c) 2001, 2003, 2005, 2006  Maciej W. Rozycki
++ *	Copyright (c) 2001, 2003, 2005, 2006, 2018  Maciej W. Rozycki
+  *	Copyright (c) 2005  James Simmons
+  *
+  *	This file is subject to the terms and conditions of the GNU
+@@ -10,6 +10,7 @@
+  *	directory of this archive for more details.
+  */
+ #include <linux/compiler.h>
++#include <linux/dma-mapping.h>
+ #include <linux/errno.h>
+ #include <linux/init.h>
+ #include <linux/ioport.h>
+@@ -92,6 +93,11 @@ static void __init tc_bus_add_devices(st
+ 		tdev->dev.bus = &tc_bus_type;
+ 		tdev->slot = slot;
+ 
++		/* TURBOchannel has 34-bit DMA addressing (16GiB space). */
++		tdev->dma_mask = DMA_BIT_MASK(34);
++		tdev->dev.dma_mask = &tdev->dma_mask;
++		tdev->dev.coherent_dma_mask = DMA_BIT_MASK(34);
 +
- 		case FBIO_GETCONTROL2:
- 		{
- 			unsigned char ctl2;
--- 
-2.7.4
-
+ 		for (i = 0; i < 8; i++) {
+ 			tdev->firmware[i] =
+ 				readb(module + offset + TC_FIRM_VER + 4 * i);
+Index: linux-20180930-4maxp64/include/linux/tc.h
+===================================================================
+--- linux-20180930-4maxp64.orig/include/linux/tc.h
++++ linux-20180930-4maxp64/include/linux/tc.h
+@@ -84,6 +84,7 @@ struct tc_dev {
+ 					   device. */
+ 	struct device	dev;		/* Generic device interface. */
+ 	struct resource	resource;	/* Address space of this device. */
++	u64		dma_mask;	/* DMA addressable range. */
+ 	char		vendor[9];
+ 	char		name[9];
+ 	char		firmware[9];
