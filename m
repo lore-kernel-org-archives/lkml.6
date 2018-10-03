@@ -2,113 +2,88 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD2BC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B411C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11A092089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:00:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2LBMzFB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11A092089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CCD992089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 08:07:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCD992089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727325AbeJCOsN (ORCPT
+        id S1727416AbeJCOya (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 10:48:13 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46530 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbeJCOsM (ORCPT
+        Wed, 3 Oct 2018 10:54:30 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:33274 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbeJCOy3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:48:12 -0400
-Received: by mail-qt1-f195.google.com with SMTP id d8-v6so4899548qtk.13;
-        Wed, 03 Oct 2018 01:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4m0nKHGcdBzOprfw5dJXGsHaVwfwzct9r0tlTmIvcrA=;
-        b=Z2LBMzFBV5w0syVrLvdiAbLoiQpJMUqYbtTAvHeG0pjYXiooUVHKlln1otvWx60U1m
-         C+/B3GlK3vnKwqJTIU3hMNSlkx+UFa5UP3WxEzSePhNt+tLgTGSx0+yYm/TiX47n5dTA
-         R1U5BBl3IfcEkWxAopDelt8YbSTUM1gGrVy5se3mkszVH0Gkons/J9kChFZfzUae/QWy
-         6/VH6IIgQONc8AE9z6vRrkUGFjDDh6T8VJsB00R7hMtLluQOgrqs9z+74DD6NWENk0Tc
-         hrkIRTXqLBqrpJ/raEtSQFxL/PfmvCywsHbtrg5aruJCoBEkvqIHs1Ew4qNbY3dfXfHg
-         D8sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4m0nKHGcdBzOprfw5dJXGsHaVwfwzct9r0tlTmIvcrA=;
-        b=iyAcgh4HEmecdRRSX8lnWeitStR+soWji66R01/yVaMKbOxrfkwvBFeTxBDUlHZI7d
-         vIY+Fshe6hXIjRuR5AbMdeQLJdcM/njFPQOqJKCXBU35esZri0kMdeZDesSXybnqdVWw
-         VMnUdI9vldtGH+d7iGhU6ntnsXnDlFHZEDaFyCVe58hvOGq576mii821Gix02GfLRzIX
-         JbnM3+r78l2fs5v8zFxzKU5TsSzyOSf8tmd5dlDA44ay3ddmENGTyLfx5PKzC2yIPt9X
-         vYxX/HOWhhSUZlO7GbWjZFk+DirkcYJva/JJ7GU9yQt7RVjHm9grNku0IVb44Y4VpjSW
-         isWg==
-X-Gm-Message-State: ABuFfoidkeueBNY57fxeW566dPd1qxJQx0yLOgGztv1cdsFU6Fd40cm6
-        3EcoM0EZScIXbo3jd7gctsdVa45W+oprs1/DV7Q=
-X-Google-Smtp-Source: ACcGV63ZVV4E6ryARi/4F7SXhkP9q+mIoUS/5Gdj9bqcMzK/tk8x9Pf75Jv//OsxpIMHIlKjYCB7SCZcvOwNSalksFg=
-X-Received: by 2002:ac8:29d3:: with SMTP id 19-v6mr228459qtt.174.1538553655187;
- Wed, 03 Oct 2018 01:00:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181002191818.1c2eec51@canb.auug.org.au> <b019c375-1157-778f-99b2-1d09aa4b4e6a@infradead.org>
-In-Reply-To: <b019c375-1157-778f-99b2-1d09aa4b4e6a@infradead.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 3 Oct 2018 11:00:44 +0300
-Message-ID: <CAHp75VdU1u9VueXB+f68c5TA4QsxBNihv_VtWw2zPpWvehV1vQ@mail.gmail.com>
-Subject: Re: linux-next: Tree for Oct 2 (dell: dcdbas)
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next <linux-next@vger.kernel.org>,
+        Wed, 3 Oct 2018 10:54:29 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g7cBW-0000Go-3W; Wed, 03 Oct 2018 10:07:06 +0200
+Date:   Wed, 3 Oct 2018 10:07:05 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+cc:     Peter Zijlstra <peterz@infradead.org>, bigeasy@linutronix.de,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Stuart Hayes <stuart.w.hayes@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        daniel.wagner@siemens.com, Will Deacon <will.deacon@arm.com>,
+        x86@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, boqun.feng@gmail.com,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>
+Subject: Re: [Problem] Cache line starvation
+In-Reply-To: <CAHkRjk4Vvv5rc+habecu2xPiFGZ37onRzy1kCnFcBH2115U8jQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1810031005210.1435@nanos.tec.linutronix.de>
+References: <20180921120226.6xjgr4oiho22ex75@linutronix.de> <20180921122058.GB24124@hirez.programming.kicks-ass.net> <CAHkRjk4Vvv5rc+habecu2xPiFGZ37onRzy1kCnFcBH2115U8jQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 7:52 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 10/2/18 2:18 AM, Stephen Rothwell wrote:
-> > Hi all,
+On Wed, 3 Oct 2018, Catalin Marinas wrote:
+
+> On Fri, 21 Sep 2018 at 13:22, Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Fri, Sep 21, 2018 at 02:02:26PM +0200, Sebastian Andrzej Siewior wrote:
+> > > We reproducibly observe cache line starvation on a Core2Duo E6850 (2
+> > > cores), a i5-6400 SKL (4 cores) and on a NXP LS2044A ARM Cortex-A72 (4
+> > > cores).
+> > >
+> > > The problem can be triggered with a v4.9-RT kernel by starting
 > >
-> > Changes since 20180928:
+> > > Daniel reported that disabling ticket locks on 4.4 makes the problem go
+> > > away, but he hasn't run a long time test yet and as we saw with 4.14 it can
+> > > take quite a while.
 > >
->
-> on i386 or x86_64:
->
->   CC      drivers/platform/x86/dcdbas.o
-> ../drivers/platform/x86/dcdbas.c: In function 'dcdbas_check_wsmt':
-> ../drivers/platform/x86/dcdbas.c:572:2: error: implicit declaration of function 'memremap' [-Werror=implicit-function-declaration]
->   eps_buffer = memremap(eps->smm_comm_buff_addr, remap_size, MEMREMAP_WB);
->   ^
-> ../drivers/platform/x86/dcdbas.c:572:61: error: 'MEMREMAP_WB' undeclared (first use in this function)
->   eps_buffer = memremap(eps->smm_comm_buff_addr, remap_size, MEMREMAP_WB);
->                                                              ^
-> ../drivers/platform/x86/dcdbas.c:572:61: note: each undeclared identifier is reported only once for each function it appears in
-> ../drivers/platform/x86/dcdbas.c: In function 'dcdbas_exit':
-> ../drivers/platform/x86/dcdbas.c:748:3: error: implicit declaration of function 'memunmap' [-Werror=implicit-function-declaration]
->    memunmap(eps_buffer);
->    ^
->
->
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > On 4.4 and 4.9 ARM64 still uses ticket locks. So I'm very interested to
+> > know if the ticket locks on x86 really fix or just make it harder.
+> >
+> > I've been looking at qspinlock in the light of this and there is indeed
+> > room for improvement. The ticket lock certainly is much simpler.
+> 
+> FWIW, in the qspinlock TLA+ model [1], if I replace the
+> atomic_fetch_or() model with a try_cmpxchg loop, it violates the
+> liveness properties with only 2 CPUs as one keeps locking/unlocking,
+> hence changing the lock value, while the other repeatedly fails the
+> cmpxchg. Your latest qspinlock patches seem to address this (couldn't
+> get it to fail but the model is only sequentially consistent). Not
+> sure that's what Sebastian is seeing but without your proposed
+> qspinlock changes, ticket spinlocks may be a better bet for RT.
 
-Sorry for that. Arnd sent a fix and I'm going to apply it soon.
+Except that the ARM64 ticket locks are not preventing the starvation
+issue. Neither do the qrlocks on ARM64 on later kernels.
 
->
-> --
-> ~Randy
+Thanks,
 
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+	tglx
