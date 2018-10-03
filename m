@@ -2,69 +2,57 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72600C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A25BC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4174B20684
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:36:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4174B20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1ED082083F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:37:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED082083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbeJCX0B (ORCPT
+        id S1727132AbeJCX07 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 19:26:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35640 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbeJCX0B (ORCPT
+        Wed, 3 Oct 2018 19:26:59 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:34520 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726829AbeJCX07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 19:26:01 -0400
-Received: from localhost (unknown [104.132.0.111])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71558E9A;
-        Wed,  3 Oct 2018 16:36:52 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 09:36:51 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Roman Kiryanov <rkir@google.com>
-Cc:     linux-kernel@vger.kernel.org, Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v2 01/15] platform: goldfish: pipe: Move the file-scope
- goldfish_interrupt_tasklet variable into the driver state
-Message-ID: <20181003163651.GA5558@kroah.com>
-References: <20181002231024.58408-1-rkir@google.com>
- <20181003110514.GA12267@kroah.com>
- <CAOGAQer9HGNjKRRCM8cudJ4uVZ5s5ViT8YQiRSdhLWNNbQ5WdA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOGAQer9HGNjKRRCM8cudJ4uVZ5s5ViT8YQiRSdhLWNNbQ5WdA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 3 Oct 2018 19:26:59 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c06::30d2])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7D7681466B4E5;
+        Wed,  3 Oct 2018 09:37:50 -0700 (PDT)
+Date:   Wed, 03 Oct 2018 09:37:49 -0700 (PDT)
+Message-Id: <20181003.093749.18891556425491580.davem@davemloft.net>
+To:     vdronov@redhat.com
+Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, syzkaller@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: arp, ipv6: handle special case of tap device
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <2058134821.17788321.1538573112620.JavaMail.zimbra@redhat.com>
+References: <1615981257.17285278.1538393552487.JavaMail.zimbra@redhat.com>
+        <20181002.222540.1948082296309410659.davem@davemloft.net>
+        <2058134821.17788321.1538573112620.JavaMail.zimbra@redhat.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 03 Oct 2018 09:37:50 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 09:26:12AM -0700, Roman Kiryanov wrote:
-> > I only received 3 emails in this series.  Always resend them all.
-> 
-> Hi. It was not obvious to me to resend all patches.
+From: Vladis Dronov <vdronov@redhat.com>
+Date: Wed, 3 Oct 2018 09:25:12 -0400 (EDT)
 
-If I find a problem in the first patch of a series, I just drop the
-whole thing.
+> Otherwise, we can just to remove the TUNSETLINK ioctl.
 
-> Do I mark all other patches "v2" as well?
-
-Yes.
-
-> What do I put there in the "Changelog"?
-
-"no change"
-
-This should be all documented somewhere in our in-kernel
-documentation...
-
-thanks,
-
-greg k-h
+I bet that is the best solution unless we can find a real user.
