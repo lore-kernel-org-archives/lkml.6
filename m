@@ -2,146 +2,103 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E89C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA6E7C64EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D743A2147C
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:51:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D743A2147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
+	by mail.kernel.org (Postfix) with ESMTP id 7C54221470
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 22:51:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M3u3fqdw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C54221470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbeJDFl3 (ORCPT
+        id S1727058AbeJDFlc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 01:41:29 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:38611 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725723AbeJDFl3 (ORCPT
+        Thu, 4 Oct 2018 01:41:32 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38164 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725723AbeJDFlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 01:41:29 -0400
-Received: from localhost.localdomain ([78.238.229.36]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1M8hMn-1g3B8d02Kn-004ijJ; Thu, 04 Oct 2018 00:50:34 +0200
-Received: from localhost.localdomain ([78.238.229.36]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1M8hMn-1g3B8d02Kn-004ijJ; Thu, 04 Oct 2018 00:50:34 +0200
-From:   Laurent Vivier <laurent@vivier.eu>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <dima@arista.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        containers@lists.linux-foundation.org,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, Laurent Vivier <laurent@vivier.eu>
-Subject: [RFC v3 0/1] ns: introduce binfmt_misc namespace
-Date:   Thu,  4 Oct 2018 00:50:21 +0200
-Message-Id: <20181003225022.32033-1-laurent@vivier.eu>
-X-Mailer: git-send-email 2.17.1
-X-Provags-ID: V03:K1:Itdnkg1CbJ89sYCoqiKuXvDDz+lmArH/O9tmqMBNe87MnWNBQ60
- 4YGX16RHE+iANIlPPOIwwSLxGnm38Z/v8vH5Eh/rhT5ZV4PQiR5cpbeYYTt3tQ1SY06u9Rp
- M3ds6YP0Xz73STW7e/8owzAdcvT91QbCo5onkMWesARcXmrf4YSSVXOlg1M2tpEb6ot6YCP
- 2lXr07xhpm915FTaVTwOw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:3z+Cxg6sXT8=:76nfUU6ZoUEhzwHqzm4z6F
- hV3mchLKYKEM7gCZlsXUJNsD+u+Wo14P8J1vGYjhihFOMtRSb32suUnUi1uyGkgeFklDHokX4
- bATxfoXV87S5gUaXstCCt1HhaO8Gu+ogvqmWAC93pLoeW8rh0nj8QUsrQNxad5yLtjdpT193c
- NYSiOk/cMzvdZNM4K7RDRLOlTo1MdjgV9M5x9wanqGff5GHgb93mNkPbxp3+koxIrITD7Bhn/
- F0Ab/3geb1Rj/8qWmXX/4XyHmpCSvQzANAzdRx/sIgHJ7VSTlEm2QOfw35RkjHyLd9NnC/rcj
- UoIJZAm2hFHAwDKRtwQfmwPiZ+m7GEcnq18BqarDP1e4sF0Smvl7XwwWQYs1SFLwfGSAYIUOd
- jPkn3XoHVcNLbtM1VDOtSji44DeRHP11hyjOvR0RKLODrjnP1fqmgWvYC/JW3mh65A28gnRbi
- 0XgfbMRNGD5uhBVhiXDNZBrm9M5T3alZmHUUVeTfz4B5rSJ92bLnrkJsx4eXao27eX73TlYJM
- dTwjQ2UjnPrP41hrxkF+N2bj0j6EzCbdbq9t7eGuEQqiFZRlkAJA9nfPdbyQ/JX82JkIw9fpa
- tMJ+rdjV8WNm0S7S+kOmlJ4Z3onoNhbBzYSy0NWR9u6Okb9OE0FvY5UXIHEG1e86TvlDX0BmA
- GtJ/Mesv3Ll7cfZVLl8XSvT9fC2+Y5uxjAHIP3/WB7cN/AsxAxy75J9sG9RtiXq+vwic=
+        Thu, 4 Oct 2018 01:41:31 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r77-v6so2212049pgr.5
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 15:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=UZglTBizvX/yOVqXcm55tcIE03q1zO1FIn6z28ZwCtg=;
+        b=M3u3fqdw3xeAYGJOrQQy0sx5+iU2Q2EUZ34j7uf88s8J9EgX4V0+aNSamuXGcMBv6p
+         mMDGtnRrO+hoYUV+rzNEXuJ9D7xcvah5aoc4KvWbUDdOLVd9VADe/txvzVl+w3/4I25w
+         II12wFYMrxgmnMZl3Nya4liX2xyaV8SbB4UMT5WNw7o1HcLl1txvVx7DMOCV0O4vmR4f
+         QuMNuke4d1WnA3NwcLrOfzrUaggoS6+D9a+rVgScIwiWh1ZOm7DlzFi8X91kUd8ftbhY
+         ZiEkCR5AbCcwb4wbQb7E+rdM688uTBIJ1B1XG+mTxQG2jjsuJ4VF9f0Cmkb9EDl142/i
+         LNrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=UZglTBizvX/yOVqXcm55tcIE03q1zO1FIn6z28ZwCtg=;
+        b=dpwSsW2th+MIgg5/qEXVXty7avrMbjULITcprQCmCN9g+F0SGPxT4nIC9C9PxzdLDN
+         ykkz9KKvJgWDwpFfvUziSOKljtJKuENGw0zeRSAlQVbbU6h5qS9sk/ReadZkCeKUKzGc
+         64RFS3ixjUCbgOw2YXvKnzl9DAXX/PCcncOgNjA/Ihk7WUOc8QzWM8+AKmNAPQU452aE
+         CSNbmi0+zHHy/8nTORPVQOiA6KbyPY37E49vJGGYNt1s+AA5UIUYiMm1CEcHBVboDgmH
+         Q9Rsv/etsD3fLAc+Xa35j/aMik0m8UYIWEMvpKujNSltjaZ+/mYSwlgxZksfjmX24CHH
+         jDVw==
+X-Gm-Message-State: ABuFfoikAGctptZi9aK3ONXAoB53+am4CIyJsS+4p4kuyaDssqywuXH8
+        Rn1Nj+jrwgyAPWfTiGFsp5GbZQ==
+X-Google-Smtp-Source: ACcGV60jL8pRa9UpU29FNQRPBiBNoKEhppBYwrMpCdFchKk5sKdafilQAEHa+bHa8sPmn7PMUuJKtw==
+X-Received: by 2002:a62:1316:: with SMTP id b22-v6mr3791278pfj.37.1538607066723;
+        Wed, 03 Oct 2018 15:51:06 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id e64-v6sm4602704pfe.55.2018.10.03.15.51.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 03 Oct 2018 15:51:05 -0700 (PDT)
+Date:   Wed, 3 Oct 2018 15:51:05 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: Re: [RFC PATCH] mm, proc: report PR_SET_THP_DISABLE in proc
+In-Reply-To: <20181003073640.GF18290@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1810031547150.202532@chino.kir.corp.google.com>
+References: <20180924195603.GJ18685@dhcp22.suse.cz> <20180924200258.GK18685@dhcp22.suse.cz> <0aa3eb55-82c0-eba3-b12c-2ba22e052a8e@suse.cz> <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com> <20180925202959.GY18685@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1809251440001.94921@chino.kir.corp.google.com> <20180925150406.872aab9f4f945193e5915d69@linux-foundation.org> <20180926060624.GA18685@dhcp22.suse.cz> <20181002112851.GP18290@dhcp22.suse.cz> <alpine.DEB.2.21.1810021329260.87409@chino.kir.corp.google.com>
+ <20181003073640.GF18290@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v3: create a structure to store binfmt_misc data,
-    add a pointer to this structure in the user_namespace structure,
-    in init_user_ns structure this pointer points to an init_binfmt_ns
-    structure. And all new user namespaces point to this init structure.
-    A new binfmt namespace structure is allocated if the binfmt_misc
-    filesystem is mounted in a user namespace that is not the initial
-    one but its binfmt namespace pointer points to the initial one.
-    add override_creds()/revert_creds() around open_exec() in
-    bm_register_write()
+On Wed, 3 Oct 2018, Michal Hocko wrote:
 
-v2: no new namespace, binfmt_misc data are now part of
-    the mount namespace
-    I put this in mount namespace instead of user namespace
-    because the mount namespace is already needed and
-    I don't want to force to have the user namespace for that.
-    As this is a filesystem, it seems logic to have it here.
+> > > So how about this? (not tested yet but it should be pretty
+> > > straightforward)
+> > 
+> > Umm, prctl(PR_GET_THP_DISABLE)?
+> 
+> /me confused. I thought you want to query for the flag on a
+> _different_ process. 
 
-This allows to define a new interpreter for each new container.
+Why would we want to check three locations (system wide setting, prctl 
+setting, madvise setting) to determine if a heap can be backed by thp?
 
-But the main goal is to be able to chroot to a directory
-using a binfmt_misc interpreter without being root.
+If the nh flag being exported to VmFlag is to be extended beyond what my 
+patch did, I suggest (1) it does it for the system wide setting as well 
+and/or (2) calling a helper function to determine if the vma could be 
+backed by thp in the first place regardless of any setting to determine if 
+nh/hg is important.
 
-I have a modified version of unshare at:
-
-  git@github.com:vivier/util-linux.git branch unshare-chroot
-
-with some new options to unshare binfmt_misc namespace and to chroot
-to a directory.
-
-If you have a directory /chroot/powerpc/jessie containing debian for powerpc
-binaries and a qemu-ppc interpreter, you can do for instance:
-
- $ uname -a
- Linux fedora28-wor-2 4.19.0-rc5+ #18 SMP Mon Oct 1 00:32:34 CEST 2018 x86_64 x86_64 x86_64 GNU/Linux
- $ ./unshare --map-root-user --fork --pid \
-   --load-interp ":qemu-ppc:M::\x7fELF\x01\x02\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x14:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff:/qemu-ppc:OC" \
-   --root=/chroot/powerpc/jessie /bin/bash -l
- # uname -a
- Linux fedora28-wor-2 4.19.0-rc5+ #18 SMP Mon Oct 1 00:32:34 CEST 2018 ppc GNU/Linux
- # id
-uid=0(root) gid=0(root) groups=0(root),65534(nogroup)
- # ls -l
-total 5940
-drwxr-xr-x.   2 nobody nogroup    4096 Aug 12 00:58 bin
-drwxr-xr-x.   2 nobody nogroup    4096 Jun 17 20:26 boot
-drwxr-xr-x.   4 nobody nogroup    4096 Aug 12 00:08 dev
-drwxr-xr-x.  42 nobody nogroup    4096 Sep 28 07:25 etc
-drwxr-xr-x.   3 nobody nogroup    4096 Sep 28 07:25 home
-drwxr-xr-x.   9 nobody nogroup    4096 Aug 12 00:58 lib
-drwxr-xr-x.   2 nobody nogroup    4096 Aug 12 00:08 media
-drwxr-xr-x.   2 nobody nogroup    4096 Aug 12 00:08 mnt
-drwxr-xr-x.   3 nobody nogroup    4096 Aug 12 13:09 opt
-dr-xr-xr-x. 143 nobody nogroup       0 Sep 30 23:02 proc
--rwxr-xr-x.   1 nobody nogroup 6009712 Sep 28 07:22 qemu-ppc
-drwx------.   3 nobody nogroup    4096 Aug 12 12:54 root
-drwxr-xr-x.   3 nobody nogroup    4096 Aug 12 00:08 run
-drwxr-xr-x.   2 nobody nogroup    4096 Aug 12 00:58 sbin
-drwxr-xr-x.   2 nobody nogroup    4096 Aug 12 00:08 srv
-drwxr-xr-x.   2 nobody nogroup    4096 Apr  6  2015 sys
-drwxrwxrwt.   2 nobody nogroup    4096 Sep 28 10:31 tmp
-drwxr-xr-x.  10 nobody nogroup    4096 Aug 12 00:08 usr
-drwxr-xr-x.  11 nobody nogroup    4096 Aug 12 00:08 var
-
-If you want to use the qemu binary provided by your distro, you can use
-
-    --load-interp ":qemu-ppc:M::\x7fELF\x01\x02\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x14:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff:/bin/qemu-ppc-static:OCF"
-
-With the 'F' flag, qemu-ppc-static will be then loaded from the main root
-filesystem before switching to the chroot.
-
-Laurent Vivier (1):
-  ns: add binfmt_misc to the user namespace
-
- fs/binfmt_misc.c               | 85 +++++++++++++++++++++++-----------
- include/linux/user_namespace.h | 15 ++++++
- kernel/user.c                  | 14 ++++++
- kernel/user_namespace.c        |  9 ++++
- 4 files changed, 95 insertions(+), 28 deletions(-)
-
--- 
-2.17.1
-
+The last thing I suggest is done is adding a third place to check.
