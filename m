@@ -2,113 +2,157 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C11A3C64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 06:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD26C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 06:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F2532098A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 06:34:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2532098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id BBFD720684
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 06:45:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBFD720684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbeJCNVO (ORCPT
+        id S1726946AbeJCNcb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 09:21:14 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49873 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbeJCNVO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 09:21:14 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w936Xqib2249320
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 2 Oct 2018 23:33:52 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w936XqS22249317;
-        Tue, 2 Oct 2018 23:33:52 -0700
-Date:   Tue, 2 Oct 2018 23:33:52 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Nathan Chancellor <tipbot@zytor.com>
-Message-ID: <tip-88296bd42b4e9d24e138a68b337c235b5cac89a7@git.kernel.org>
-Cc:     natechancellor@gmail.com, bp@alien8.de,
-        torvalds@linux-foundation.org, peterz@infradead.org,
-        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de
-Reply-To: natechancellor@gmail.com, bp@alien8.de,
-          torvalds@linux-foundation.org, peterz@infradead.org,
-          mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de
-In-Reply-To: <20181002224511.14929-1-natechancellor@gmail.com>
-References: <20181002224511.14929-1-natechancellor@gmail.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/cpu/amd: Remove unnecessary parentheses
-Git-Commit-ID: 88296bd42b4e9d24e138a68b337c235b5cac89a7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 3 Oct 2018 09:32:31 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:8128 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726767AbeJCNcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 09:32:31 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42Q63B29l9z9ttBf;
+        Wed,  3 Oct 2018 08:45:26 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id DfpDUv8INvGS; Wed,  3 Oct 2018 08:45:26 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42Q63B1Ptqz9ttBW;
+        Wed,  3 Oct 2018 08:45:26 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 688018B74C;
+        Wed,  3 Oct 2018 08:45:26 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 0SsFmtUpynbv; Wed,  3 Oct 2018 08:45:26 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CEC7C8B8B9;
+        Wed,  3 Oct 2018 08:45:25 +0200 (CEST)
+Subject: Re: [RFC PATCH v3 4/7] powerpc: regain entire stack space
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <cover.1538396658.git.christophe.leroy@c-s.fr>
+ <8108de51846b7b34e4732753b2b65e435b6a2b7a.1538396659.git.christophe.leroy@c-s.fr>
+ <20181003153448.3fb64e19@roar.ozlabs.ibm.com>
+ <6a539614-abb6-d468-ccba-2e3c1fb8b680@c-s.fr>
+ <20181003163024.281254bf@roar.ozlabs.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <38d58749-c058-a6d7-1ca2-23abe9dd34a3@c-s.fr>
+Date:   Wed, 3 Oct 2018 08:45:25 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20181003163024.281254bf@roar.ozlabs.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  88296bd42b4e9d24e138a68b337c235b5cac89a7
-Gitweb:     https://git.kernel.org/tip/88296bd42b4e9d24e138a68b337c235b5cac89a7
-Author:     Nathan Chancellor <natechancellor@gmail.com>
-AuthorDate: Tue, 2 Oct 2018 15:45:11 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 3 Oct 2018 08:27:47 +0200
 
-x86/cpu/amd: Remove unnecessary parentheses
 
-Clang warns when multiple pairs of parentheses are used for a single
-conditional statement.
+Le 03/10/2018 à 08:30, Nicholas Piggin a écrit :
+> On Wed, 3 Oct 2018 07:52:59 +0200
+> Christophe LEROY <christophe.leroy@c-s.fr> wrote:
+> 
+>> Le 03/10/2018 à 07:34, Nicholas Piggin a écrit :
+>>> On Mon,  1 Oct 2018 12:30:25 +0000 (UTC)
+>>> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+>>>    
+>>>> thread_info is not anymore in the stack, so the entire stack
+>>>> can now be used.
+>>>
+>>> Nice.
+>>>    
+>>>>
+>>>> In the meantime, all pointers to the stacks are not anymore
+>>>> pointers to thread_info so this patch changes them to void*
+>>>
+>>> Wasn't this previously effectively already the case with patch
+>>> 3/7? You had thread_info sized space left there, but it was not
+>>> used or initialized right? Does it make sense to move this part
+>>> of it to the previous patch?
+>>
+>> Not really.
+>>
+>> In 3/7 I changed the prototypes of two functions that really used the
+>> pointer as a task pointer only.
 
-arch/x86/kernel/cpu/amd.c:925:14: warning: equality comparison with
-extraneous parentheses [-Wparentheses-equality]
-        if ((c->x86 == 6)) {
-             ~~~~~~~^~~~
-arch/x86/kernel/cpu/amd.c:925:14: note: remove extraneous parentheses
-around the comparison to silence this warning
-        if ((c->x86 == 6)) {
-            ~       ^   ~
-arch/x86/kernel/cpu/amd.c:925:14: note: use '=' to turn this equality
-comparison into an assignment
-        if ((c->x86 == 6)) {
-                    ^~
-                    =
-1 warning generated.
+I meant 2/7 here sorry.
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20181002224511.14929-1-natechancellor@gmail.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/187
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/cpu/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> Here it change things that before 4/7 were really used as both stack
+>> pointers and thread_info pointers.
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 22ab408177b2..eeea634bee0a 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -922,7 +922,7 @@ static void init_amd(struct cpuinfo_x86 *c)
- static unsigned int amd_size_cache(struct cpuinfo_x86 *c, unsigned int size)
- {
- 	/* AMD errata T13 (order #21922) */
--	if ((c->x86 == 6)) {
-+	if (c->x86 == 6) {
- 		/* Duron Rev A0 */
- 		if (c->x86_model == 3 && c->x86_stepping == 0)
- 			size = 64;
+And here I meant 3/7
+
+> 
+> What uses it as a thread_info pointer? It seems more like a stack
+> with some amount of unused space in it but that's all.
+
+Before 3/7, we have
+
+void do_softirq_own_stack(void)
+{
+	struct thread_info *curtp, *irqtp;
+
+	curtp = current_thread_info();
+	irqtp = softirq_ctx[smp_processor_id()];
+	irqtp->task = curtp->task;
+	irqtp->flags = 0;
+	call_do_softirq(irqtp);
+	irqtp->task = NULL;
+
+	/* Set any flag that may have been set on the
+	 * alternate stack
+	 */
+	if (irqtp->flags)
+		set_bits(irqtp->flags, &curtp->flags);
+}
+
+After 3/7, we have
+
+  void do_softirq_own_stack(void)
+  {
+	struct thread_info *irqtp;
+
+  	irqtp = softirq_ctx[smp_processor_id()];
+  	call_do_softirq(irqtp);
+  }
+
+
+So now only we can change irqtp to void* can't we ?
+
+> 
+> That said I don't care to nitpick too much where things go exactly
+> if you like it better here that's fine.
+
+No worry, I may have missed something, your comments are always welcome.
+
+Thanks
+Christophe
+
+> 
+> Thanks,
+> Nick
+> 
