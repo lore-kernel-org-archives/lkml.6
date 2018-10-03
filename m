@@ -2,151 +2,157 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20AAC64EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92076C64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B957E21470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:11:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50A8621476
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 20:12:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XPda/oH/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B957E21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oV2UGR3e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A8621476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbeJDDAv (ORCPT
+        id S1727201AbeJDDCl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 23:00:51 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:40803 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726950AbeJDDAv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 23:00:51 -0400
-Received: by mail-yw1-f67.google.com with SMTP id l79-v6so2829860ywc.7
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 13:10:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=2ltOwQ63QbGaIFq6R/SviRcoBgF6s6Isx0gKdU2+eh4=;
-        b=XPda/oH/q9itpDkmQRKeH9ujvUdiUnzH6UMG3fUN1ETKnM2I5z5t2kM6l4KmpYER+g
-         KpYQxsFTsVEdMQLDSVbBHLTY2cY5felkFLqd+8ZHGAfWyS/MU2mJgi1/Q/I88AtSLEmj
-         uZlwpyrbwRnSCwR9ft+EWCry46D1M2+Z14BUY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=2ltOwQ63QbGaIFq6R/SviRcoBgF6s6Isx0gKdU2+eh4=;
-        b=GuRkcBRXoCz00tIgKvJqMbb1qfPrmrZbDcCgUsbgd5+t1rjBIAFJTUW37FaDj5XiKq
-         kumPBOjIcRh+pzboH7JQ2aqBMwa12Cr44LNatxAquTd16vIFi4rRrrdTXbq6L1m9PGW9
-         e17aZdaoRKfw/Yr+8RmreyrBPTznSKJ/DLZVUlLEBhBf3laxg7kshNVo0VH5IXG0W/0O
-         qf8shZ/7+dpGafSBaBQUBno+TDiroCBt8AoLZpEJ/X3Ku/p7yMuxyee20vaebcIrJmlK
-         0NCPbxY0rH6axBg28HTiAY8Vo05Yt2kaxTA4xnfoN6yvAnyRHDYC0Tx4yaoQYgi632Zg
-         2sDw==
-X-Gm-Message-State: ABuFfohcw3I8MXcf5VJMRYbdwaIMYW1KUvdQRiqcKrOnfUIgtYOW4qh7
-        Vg+j/c31lf/YKaqXvCSUv/X5PSK2Juk=
-X-Google-Smtp-Source: ACcGV62NHCgvIXD0Y4bva3y/smU99h19G/T4MOQfZ2+Zyb63WubfmxedUd1pGeDrb2KRWn32irlamg==
-X-Received: by 2002:a81:6d85:: with SMTP id i127-v6mr1846543ywc.322.1538597457664;
-        Wed, 03 Oct 2018 13:10:57 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id r5-v6sm2225422ywr.80.2018.10.03.13.10.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 13:10:54 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id c4-v6so2940068ybl.6
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 13:10:53 -0700 (PDT)
-X-Received: by 2002:a25:8091:: with SMTP id n17-v6mr1888958ybk.209.1538597452740;
- Wed, 03 Oct 2018 13:10:52 -0700 (PDT)
+        Wed, 3 Oct 2018 23:02:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60964 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726950AbeJDDCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 23:02:41 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EC0321470;
+        Wed,  3 Oct 2018 20:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538597567;
+        bh=ZPs0Oa4tqcEP9M41WwrONHaui5nL3bwAw5u1np159FA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oV2UGR3ejbLPCTEssToBX3t8/sktoYvn5g9X78QQuAHdN0iSWPnb6H0NStoedSb3v
+         Du/B4rLzRlFUI3TqbIhsQqU01GE9Fkb+fY9dPngJhY94ZUwex4YtezE0ABCBzyF7eh
+         M1P5OB100U+wpdlHWCN89bXdI/OqL73IqfWYx2dw=
+Date:   Wed, 3 Oct 2018 15:12:44 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Bin Meng <bmeng.cn@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Thomas Jarosch <thomas.jarosch@intra2net.com>,
+        stable <stable@vger.kernel.org>, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pci: Add a few new IDs for Intel GPU "spurious
+ interrupt" quirk
+Message-ID: <20181003201244.GG120535@bhelgaas-glaptop.roam.corp.google.com>
+References: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com>
+ <20180926165721.GA28024@bhelgaas-glaptop.roam.corp.google.com>
+ <CAEUhbmXc--Ph71DGu2b+ijTzB6xvHXzuESBJKp9zARE2gjqV6w@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Wed, 3 Oct 2018 13:10:51 -0700 (PDT)
-In-Reply-To: <alpine.LRH.2.21.1810040427550.13517@namei.org>
-References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-24-keescook@chromium.org>
- <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
- <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
- <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
- <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
- <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
- <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
- <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <alpine.LRH.2.21.1810040416500.13517@namei.org>
- <CAGXu5j+oPR58oJ06-n7e96-Rmu+ywTW0hud5LhOZ_3UXG5s12w@mail.gmail.com> <alpine.LRH.2.21.1810040427550.13517@namei.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 3 Oct 2018 13:10:51 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com>
-Message-ID: <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com>
-Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
-To:     James Morris <jmorris@namei.org>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEUhbmXc--Ph71DGu2b+ijTzB6xvHXzuESBJKp9zARE2gjqV6w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 11:28 AM, James Morris <jmorris@namei.org> wrote:
-> On Wed, 3 Oct 2018, Kees Cook wrote:
->
->> On Wed, Oct 3, 2018 at 11:17 AM, James Morris <jmorris@namei.org> wrote:
->> > On Tue, 2 Oct 2018, John Johansen wrote:
->> >> To me a list like
->> >>   lsm.enable=X,Y,Z
->> >
->> > What about even simpler:
->> >
->> > lsm=selinux,!apparmor,yama
->>
->> We're going to have lsm.order=, so I'd like to keep it with a dot
->> separator (this makes it more like module parameters, too). You want
->> to mix enable/disable in the same string? That implies you'd want
->> implicit enabling (i.e. it complements the builtin enabling), which is
->> opposite from what John wanted.
->>
->
-> Why can't this be the order as well?
+On Thu, Sep 27, 2018 at 10:10:07AM +0800, Bin Meng wrote:
+> On Thu, Sep 27, 2018 at 12:57 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Wed, Sep 26, 2018 at 08:14:01AM -0700, Bin Meng wrote:
+> > > Add more PCI IDs to the Intel GPU "spurious interrupt" quirk table,
+> > > which are known to break.
+> >
+> > Do you have a reference for this?  Any public bug reports, bugzilla,
+> > Intel spec reference or errata?  "Which are known to break" is pretty
+> > vague.
+> 
+> Sorry I used wrong words and should have been clearer. These devices
+> are validated to be broken. The test I used is very simple, just
+> unplug the VGA cable and plug it again, and "spurious interrupt" will
+> be seen on the interrupt line of the IGD device. I was not aware of
+> any public bugs filed to Intel, nor seen any errata from Intel.
 
-That was covered extensively in the earlier threads. It boils down to
-making sure we do not create a pattern of leaving LSMs disabled by
-default when they are added to the kernel. The v1 series used
-security= like this:
+The original commit, f67fd55fa96f ("PCI: Add quirk for still enabled
+interrupts on Intel Sandy Bridge GPUs"), says some systems "crash"
+(not sure if that means an oops or an actual crash that requires a
+reboot) and on other systems, Linux disables the shared interrupt
+line.  I assume disabling the interrupt line keeps devices using that
+line from working, but does not directly cause a crash.
 
-+       security=       [SECURITY] An ordered comma-separated list of
-+                       security modules to attempt to enable at boot. If
-+                       this boot parameter is not specified, only the
-+                       security modules asking for initialization will be
-+                       enabled (see CONFIG_DEFAULT_SECURITY). Duplicate
-+                       or invalid security modules will be ignored. The
-+                       capability module is always loaded first, without
-+                       regard to this parameter.
+What specific symptom do you see here?  I think it might be useful to
+collect details, e.g., dmesg logs, /proc/interrupts contents, output
+of "sudo lspci -vv", etc., for the systems you're quirking here.  I'm
+hoping we can eventually figure out a solution that doesn't require a
+quirk for every new GPU, and maybe that info will help find it.
 
-This meant booting "security=apparmor" would disable all the other
-LSMs, which wasn't friendly at all. So "security=" was left alone (to
-leave it to only select the "major" LSM: all major LSMs not matching
-"security=" would be disabled). So I proposed "lsm.order=" to specify
-the order things were going to be initialized in, but to avoid kernels
-booting with newly added LSMs forced-off due to not being listed in
-"lsm.order=", it had to have implicit fall-back for unlisted LSMs.
-(i.e. anything missing from lsm.order would then follow their order in
-CONFIG_LSM_ORDER, and anything missing there would fall back to
-link-time ordering.) However, then the objection was raised that this
-didn't provide a way to explicitly disable an LSM. So I proposed
-lsm.enable/disable, and John argued for CONFIG_LSM_ENABLE over
-CONFIG_LSM_DISABLE.
+> > > See commit f67fd55fa96f ("PCI: Add quirk for still enabled interrupts
+> > > on Intel Sandy Bridge GPUs"), and commit 7c82126a94e6 ("PCI: Add new
+> > > ID for Intel GPU "spurious interrupt" quirk") for some history.
+> > >
+> > > Based on current findings, it is highly possible that all Intel
+> > > 1st/2nd/3rd generation Core processors' IGD has such quirk.
+> >
+> > Can you include a reference to these "current findings"?  I assume you
+> > have bug reports that include the device IDs you're adding?  If not,
+> > how did you build this list of new IDs?
+> 
+> By "current findings" I mean given the IDs we have here, plus previous
+> one added by Thomas, it's highly possible this VGA BIOS bug exists in
+> every 1st/2nd/3rd generation Core processors.
+> 
+> > The function comment added by f67fd55fa96f ("PCI: Add quirk for still
+> > enabled interrupts on Intel Sandy Bridge GPUs") suggests that this is
+> > actually a BIOS issue, not a hardware erratum, i.e., I don't see
+> > anything there that suggests a hardware defect.
+> >
+> > But there must be a hole somewhere -- the kernel can't be expected to
+> > disable interrupts in device-specific ways when there's no driver
+> > loaded.  Maybe it's simply a BIOS defect or maybe there's some
+> > interrupt or _PRT-related setup we're missing.
+> 
+> It's a pure VGA BIOS bug, not the BIOS bug or _PRT etc. The VGA BIOS
+> forgot to turn off the interrupt on these devices.
 
--Kees
+If this is a VGA BIOS defect, it's not very likely that it will
+magically be fixed for all new Intel GPUs, so in effect it sounds like
+we need to update this list of quirks in Linux every time a new Intel
+GPU comes out.  That prospect is a little daunting.
 
--- 
-Kees Cook
-Pixel Security
+Do you happen to know if Windows has the same problem?  I.e., if you
+boot an old version of Windows with a new GPU, and unplug the VGA
+cable, does Windows crash?  If Windows can figure out how to handle
+that situation gracefully, Linux should be able to do it, too.
+
+> > > Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
+> > > Cc: <stable@vger.kernel.org> # v3.4+
+> > > ---
+> > >
+> > >  drivers/pci/quirks.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > > index 6bc27b7..c0673a7 100644
+> > > --- a/drivers/pci/quirks.c
+> > > +++ b/drivers/pci/quirks.c
+> > > @@ -3190,7 +3190,11 @@ static void disable_igfx_irq(struct pci_dev *dev)
+> > >
+> > >       pci_iounmap(dev, regs);
+> > >  }
+> > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
+> > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
+> > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
+> > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
+> > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
+> > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
+> > >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
+> > >
+> > > --
+> 
+> Regards,
+> Bin
