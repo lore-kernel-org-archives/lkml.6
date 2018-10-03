@@ -6,176 +6,233 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 509D6C64EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C50C64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B01121477
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B01121477
+	by mail.kernel.org (Postfix) with ESMTP id 7701A21477
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:32:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7701A21477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbeJDEWo (ORCPT
+        id S1727427AbeJDEWq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 00:22:44 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:45001 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725747AbeJDEWm (ORCPT
+        Thu, 4 Oct 2018 00:22:46 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:14656 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727234AbeJDEWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 00:22:42 -0400
+        Thu, 4 Oct 2018 00:22:44 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Wed, 3 Oct 2018 14:32:25 -0700
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Wed, 3 Oct 2018 14:32:27 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id B51F8407D0;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 7B820407D5;
         Wed,  3 Oct 2018 14:32:32 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
 CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Nadav Amit <namit@vmware.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v9 08/10] x86: extable: use macros instead of inline assembly
-Date:   Wed, 3 Oct 2018 14:30:58 -0700
-Message-ID: <20181003213100.189959-9-namit@vmware.com>
+Subject: [PATCH v9 04/10] x86: refcount: prevent gcc distortions
+Date:   Wed, 3 Oct 2018 14:30:54 -0700
+Message-ID: <20181003213100.189959-5-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181003213100.189959-1-namit@vmware.com>
 References: <20181003213100.189959-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use assembly macros for exception-tables and call them from inline
-assembly.  This not only makes the code more readable and allows to
-avoid the duplicate implementation, but also improves compilation
-decision, specifically inline decisions which GCC base on the number of
-new lines in inline assembly.
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
+
+The solution is to set an assembly macro and call it from the inlined
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
+
+This patch allows to inline functions such as __get_seccomp_filter().
+Interestingly, this allows more aggressive inlining while reducing the
+kernel size.
 
    text	   data	    bss	    dec	    hex	filename
-18162555 10226288 2957312 31346155 1de4deb ./vmlinux before
-18162879 10226256 2957312 31346447 1de4f0f ./vmlinux after (+292)
+18140970 10225412 2957312 31323694 1ddf62e ./vmlinux before
+18140140 10225284 2957312 31322736 1ddf270 ./vmlinux after (-958)
 
-This allows to inline functions such as nested_vmx_exit_reflected(),
-set_segment_reg(), __copy_xstate_to_user().
+Static text symbols:
+Before:	40302
+After:	40286	(-16)
+
+Functions such as kref_get(), free_user(), fuse_file_get() now get
+inlined.
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
+Cc: Jan Beulich <JBeulich@suse.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Tested-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/asm.h | 61 +++++++++++++++++---------------------
- arch/x86/kernel/macros.S   |  1 +
- 2 files changed, 28 insertions(+), 34 deletions(-)
+ arch/x86/include/asm/refcount.h | 74 ++++++++++++++++++++-------------
+ arch/x86/kernel/macros.S        |  1 +
+ 2 files changed, 46 insertions(+), 29 deletions(-)
 
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index 990770f9e76b..e47a2256c64e 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -117,28 +117,44 @@
- # define CC_OUT(c) [_cc_ ## c] "=qm"
- #endif
- 
--/* Exception table entry */
- #ifdef __ASSEMBLY__
- # define _ASM_EXTABLE_HANDLE(from, to, handler)			\
--	.pushsection "__ex_table","a" ;				\
--	.balign 4 ;						\
--	.long (from) - . ;					\
--	.long (to) - . ;					\
--	.long (handler) - . ;					\
--	.popsection
-+	ASM_EXTABLE_HANDLE from to handler
+diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
+index 19b90521954c..c92909da0686 100644
+--- a/arch/x86/include/asm/refcount.h
++++ b/arch/x86/include/asm/refcount.h
+@@ -4,6 +4,41 @@
+  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
+  * PaX/grsecurity.
+  */
++
++#ifdef __ASSEMBLY__
++
++#include <asm/asm.h>
++#include <asm/bug.h>
++
++.macro REFCOUNT_EXCEPTION counter:req
++	.pushsection .text..refcount
++111:	lea \counter, %_ASM_CX
++112:	ud2
++	ASM_UNREACHABLE
++	.popsection
++113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
++.endm
++
++/* Trigger refcount exception if refcount result is negative. */
++.macro REFCOUNT_CHECK_LT_ZERO counter:req
++	js 111f
++	REFCOUNT_EXCEPTION counter="\counter"
++.endm
++
++/* Trigger refcount exception if refcount result is zero or negative. */
++.macro REFCOUNT_CHECK_LE_ZERO counter:req
++	jz 111f
++	REFCOUNT_CHECK_LT_ZERO counter="\counter"
++.endm
++
++/* Trigger refcount exception unconditionally. */
++.macro REFCOUNT_ERROR counter:req
++	jmp 111f
++	REFCOUNT_EXCEPTION counter="\counter"
++.endm
 +
 +#else /* __ASSEMBLY__ */
 +
-+# define _ASM_EXTABLE_HANDLE(from, to, handler)			\
-+	"ASM_EXTABLE_HANDLE from=" #from " to=" #to		\
-+	" handler=\"" #handler "\"\n\t"
-+
-+/* For C file, we already have NOKPROBE_SYMBOL macro */
-+
+ #include <linux/refcount.h>
+ #include <asm/bug.h>
+ 
+@@ -15,34 +50,11 @@
+  * central refcount exception. The fixup address for the exception points
+  * back to the regular execution flow in .text.
+  */
+-#define _REFCOUNT_EXCEPTION				\
+-	".pushsection .text..refcount\n"		\
+-	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
+-	"112:\t" ASM_UD2 "\n"				\
+-	ASM_UNREACHABLE					\
+-	".popsection\n"					\
+-	"113:\n"					\
+-	_ASM_EXTABLE_REFCOUNT(112b, 113b)
+-
+-/* Trigger refcount exception if refcount result is negative. */
+-#define REFCOUNT_CHECK_LT_ZERO				\
+-	"js 111f\n\t"					\
+-	_REFCOUNT_EXCEPTION
+-
+-/* Trigger refcount exception if refcount result is zero or negative. */
+-#define REFCOUNT_CHECK_LE_ZERO				\
+-	"jz 111f\n\t"					\
+-	REFCOUNT_CHECK_LT_ZERO
+-
+-/* Trigger refcount exception unconditionally. */
+-#define REFCOUNT_ERROR					\
+-	"jmp 111f\n\t"					\
+-	_REFCOUNT_EXCEPTION
+ 
+ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
+-		REFCOUNT_CHECK_LT_ZERO
++		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: "ir" (i)
+ 		: "cc", "cx");
+@@ -51,7 +63,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ static __always_inline void refcount_inc(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "incl %0\n\t"
+-		REFCOUNT_CHECK_LT_ZERO
++		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
+ }
+@@ -59,7 +71,7 @@ static __always_inline void refcount_inc(refcount_t *r)
+ static __always_inline void refcount_dec(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "decl %0\n\t"
+-		REFCOUNT_CHECK_LE_ZERO
++		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
+ }
+@@ -67,13 +79,15 @@ static __always_inline void refcount_dec(refcount_t *r)
+ static __always_inline __must_check
+ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+ {
+-	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
++	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
++				  "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+ 				  r->refs.counter, "er", i, "%0", e, "cx");
+ }
+ 
+ static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+ {
+-	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
++	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
++				 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+ 				 r->refs.counter, "%0", e, "cx");
+ }
+ 
+@@ -91,7 +105,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+ 
+ 		/* Did we try to increment from/to an undesirable state? */
+ 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
+-			asm volatile(REFCOUNT_ERROR
++			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
+ 				     : : [counter] "m" (r->refs.counter)
+ 				     : "cc", "cx");
+ 			break;
+@@ -107,4 +121,6 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
+ 	return refcount_add_not_zero(1, r);
+ }
+ 
 +#endif /* __ASSEMBLY__ */
- 
--# define _ASM_EXTABLE(from, to)					\
-+#define _ASM_EXTABLE(from, to)					\
- 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
- 
--# define _ASM_EXTABLE_FAULT(from, to)				\
-+#define _ASM_EXTABLE_FAULT(from, to)				\
- 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
- 
--# define _ASM_EXTABLE_EX(from, to)				\
-+#define _ASM_EXTABLE_EX(from, to)				\
- 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_ext)
- 
--# define _ASM_EXTABLE_REFCOUNT(from, to)			\
-+#define _ASM_EXTABLE_REFCOUNT(from, to)				\
- 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_refcount)
- 
-+/* Exception table entry */
-+#ifdef __ASSEMBLY__
 +
-+.macro ASM_EXTABLE_HANDLE from:req to:req handler:req
-+	.pushsection "__ex_table","a"
-+	.balign 4
-+	.long (\from) - .
-+	.long (\to) - .
-+	.long (\handler) - .
-+	.popsection
-+.endm
-+
- # define _ASM_NOKPROBE(entry)					\
- 	.pushsection "_kprobe_blacklist","aw" ;			\
- 	_ASM_ALIGN ;						\
-@@ -169,29 +185,6 @@
- 	_ASM_EXTABLE(101b,103b)
- 	.endm
- 
--#else
--# define _EXPAND_EXTABLE_HANDLE(x) #x
--# define _ASM_EXTABLE_HANDLE(from, to, handler)			\
--	" .pushsection \"__ex_table\",\"a\"\n"			\
--	" .balign 4\n"						\
--	" .long (" #from ") - .\n"				\
--	" .long (" #to ") - .\n"				\
--	" .long (" _EXPAND_EXTABLE_HANDLE(handler) ") - .\n"	\
--	" .popsection\n"
--
--# define _ASM_EXTABLE(from, to)					\
--	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
--
--# define _ASM_EXTABLE_FAULT(from, to)				\
--	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
--
--# define _ASM_EXTABLE_EX(from, to)				\
--	_ASM_EXTABLE_HANDLE(from, to, ex_handler_ext)
--
--# define _ASM_EXTABLE_REFCOUNT(from, to)			\
--	_ASM_EXTABLE_HANDLE(from, to, ex_handler_refcount)
--
--/* For C file, we already have NOKPROBE_SYMBOL macro */
  #endif
- 
- #ifndef __ASSEMBLY__
 diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index 71d8b716b111..7baa40d5bf16 100644
+index cee28c3246dc..f1fe1d570365 100644
 --- a/arch/x86/kernel/macros.S
 +++ b/arch/x86/kernel/macros.S
-@@ -11,3 +11,4 @@
- #include <asm/alternative-asm.h>
- #include <asm/bug.h>
- #include <asm/paravirt.h>
-+#include <asm/asm.h>
+@@ -7,3 +7,4 @@
+  */
+ 
+ #include <linux/compiler.h>
++#include <asm/refcount.h>
 -- 
 2.17.1
 
