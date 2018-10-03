@@ -2,111 +2,118 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB570C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DC7C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E26920684
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:48:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E26920684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D94820684
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 07:49:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="FcSVKPjv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D94820684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727222AbeJCOfo (ORCPT
+        id S1727368AbeJCOhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 10:35:44 -0400
-Received: from foss.arm.com ([217.140.101.70]:47274 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726835AbeJCOfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 10:35:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BA337A9;
-        Wed,  3 Oct 2018 00:48:30 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C73AB3F5A0;
-        Wed,  3 Oct 2018 00:48:24 -0700 (PDT)
-Date:   Wed, 3 Oct 2018 08:48:23 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
-        adharmap@codeaurora.org, skannan@codeaurora.org,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [PATCH v7 03/14] PM: Introduce an Energy Model management
- framework
-Message-ID: <20181003074822.bwlhiowr4upjwunm@queper01-lin>
-References: <20180912091309.7551-1-quentin.perret@arm.com>
- <20180912091309.7551-4-quentin.perret@arm.com>
- <20181002123031.GZ3439@hirez.programming.kicks-ass.net>
- <20181002125115.245r3ocusvyiexno@queper01-lin>
- <20181002134857.GE26858@hirez.programming.kicks-ass.net>
- <20181002140430.fpeiqzblbcaewg6n@queper01-lin>
- <20181002142924.GI26858@hirez.programming.kicks-ass.net>
- <20181002144025.wnanxibhdcnl23sf@queper01-lin>
- <20181002191217.GA4160@andrea>
+        Wed, 3 Oct 2018 10:37:10 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33796 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726872AbeJCOhJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 10:37:09 -0400
+Received: by mail-qt1-f196.google.com with SMTP id x23-v6so4939207qtr.1;
+        Wed, 03 Oct 2018 00:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v0DuBfrTnfQCiyuMwCJZZ3CnYAFbgXosdK8G7lLtCDQ=;
+        b=FcSVKPjvo+41ArJUhTph0/YbGs+njhFP2RsRWfIwvl/eNBaLL7hUaN/5Y/kHh/xCqP
+         Oa/ryGGFx325Tt4f5b4mUiyChyfD7VOUaRGHN+naxPtOZLxeNYhsmGSvIJodHcfkQgbr
+         bGFTTcJr8EN5tXsLHduz0314UQoDAhCsL9KcQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v0DuBfrTnfQCiyuMwCJZZ3CnYAFbgXosdK8G7lLtCDQ=;
+        b=VN3owQQ/nHU32mBBFpBDMKcPXpFTd0E25Q1O3Ga61InELJUMnVTsIONGuD4wmX19ct
+         9avHC+qOAzeYMKSAcEHNirHCBZaAflNH37WmrI+dax/WbUkraqOPT9BreuPUTwBMr994
+         yQtRdhN/1HYDwDZSN+8OyMpuWY8Ia2z9lK6qP1G2qyyfoDtofXHM5oQ47Z96OeRsh3zV
+         yXVlhjW6uQpI2Z570whwPM24rFebJFHdNC7DdZQVaIV+lC3uxuTXzudyeZczwTANhbQC
+         +iaFWqLDdGg1JhSF4EGPRfVmsEunJLiDnuDnkAnWCNQLZ5ktg8rpM/8eQxSC4FucgInW
+         SnTw==
+X-Gm-Message-State: ABuFfogEtD5TZ45gHF5MLf7/PBrrhUmfSfj9iZJbFABj4udR84zfsUdr
+        aLcb3WIUF8fKN3KfTmoVnXU/fgyFG3sdq5zCEac=
+X-Google-Smtp-Source: ACcGV62smntijufm1xMOhQTmPSjD6t65hLUHwJRBSbty48oML6aocL876NiDvTV26XReumK2b8Lg/MneH5b1mKBD6Fc=
+X-Received: by 2002:ac8:4145:: with SMTP id e5-v6mr211383qtm.330.1538552994425;
+ Wed, 03 Oct 2018 00:49:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181002191217.GA4160@andrea>
-User-Agent: NeoMutt/20171215
+References: <20181001202748.8030-1-jae.hyun.yoo@linux.intel.com> <20181001202748.8030-3-jae.hyun.yoo@linux.intel.com>
+In-Reply-To: <20181001202748.8030-3-jae.hyun.yoo@linux.intel.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 3 Oct 2018 09:49:41 +0200
+Message-ID: <CACPK8XeuFm_GYFhe-KimOHV7y7PBdFjhMGG+QAmfNrfOcb488A@mail.gmail.com>
+Subject: Re: [PATCH i2c-next v4 2/3] i2c: aspeed: Add 'timeout' DT property
+ reading code
+To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jarkko.nikula@linux.intel.com,
+        James Feist <james.feist@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrea,
+Hello Jae,
 
-On Tuesday 02 Oct 2018 at 21:12:17 (+0200), Andrea Parri wrote:
-> An example might help clarify this: here is a scenario I can _imagine,
-> based on your description.
-> 
-> CPU0 (em_register_perf_domain())	CPU1 (reader)
-> 
-> [...]					my_pd = READ_ONCE(per_cpu(em_data, 1)); /* em_cpu_get() */
-> pd->table = table			if (my_pd)
-> WRITE_ONCE(per_cpu(em_data, 1), pd);		my_table = my_pd->table; /* process, dereference, ... my_table */
-> 
-> In this scenario, we'd like CPU1 to see CPU0's store to ->table (as well
-> as the stores to table[]) _if CPU1 sees CPU0's store to em_data (that is,
-> if my_pd != NULL).
-> 
-> This guarantee does not hold with the WRITE_ONCE(), because CPU0 could
-> propagate the store to ->table and the store to em_data out-of-order.
+On Mon, 1 Oct 2018 at 22:28, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
+>
+> This commit adds reading code of the 'timeout' DT property to set
+> bus timeout value in adapter configuration. This value still
+> can be configured through an I2C_TIMEOUT ioctl on cdev too.
+>
+> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+> ---
+>  drivers/i2c/busses/i2c-aspeed.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+> index 8dc9161ced38..6d31f54a6653 100644
+> --- a/drivers/i2c/busses/i2c-aspeed.c
+> +++ b/drivers/i2c/busses/i2c-aspeed.c
+> @@ -885,6 +885,7 @@ static int aspeed_i2c_probe_bus(struct platform_device *pdev)
+>         struct clk *parent_clk;
+>         struct resource *res;
+>         int irq, ret;
+> +       u32 timeout_ms;
+>
+>         bus = devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
+>         if (!bus)
+> @@ -918,6 +919,11 @@ static int aspeed_i2c_probe_bus(struct platform_device *pdev)
+>                 bus->bus_frequency = 100000;
+>         }
+>
+> +       ret = of_property_read_u32(pdev->dev.of_node, "timeout",
+> +                                  &timeout_ms);
+> +       if (ret)
+> +               timeout_ms = 0; /* then adap.timeout will be set by i2c-core */
 
-Ah, this is a very good point ... It's fine if a reader sees em_data
-half way through being updated, but it is NOT fine at all if a reader
-gets a pointer onto a half-baked em_perf_domain.
-
-So I agree, there is a problem here.
-
-(I also realize now that I totally misunderstood Peter's messages before
-which were basically pointing out this issue :/ ...)
-
-> The smp_store_release(), together with the address dependency headed by
-> the READ_ONCE(), provides this guarantee (and more...).
-> 
-> (Enclosing the reader into an em_pd_mutex critical section would also
-> provide this guarantee, but I can imagine a few arguments for not using
-> a mutex... ;-) ).
-
-Right, using the mutex in em_cpu_get() could work too, although we
-probably don't want to do that. We might very well end up using it in a
-RCU critical section for example (although that's not the case with this
-series, I'm just looking forward a bit).
-
-So using smp_store_release() is the best choice here. I'll fix that up
-for v8.
-
-Thank you very much,
-Quentin
+Is it possible to implement the parsing of this property in the i2c
+core instead?
