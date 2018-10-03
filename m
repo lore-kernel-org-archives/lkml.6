@@ -2,193 +2,106 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E28BC00449
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD918C64EBC
 	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 472012089F
+	by mail.kernel.org (Postfix) with ESMTP id 7E93C21473
 	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 16:45:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="WxBncMYz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 472012089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E93C21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbeJCXe5 (ORCPT
+        id S1727180AbeJCXfB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 19:34:57 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:39490 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbeJCXe4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 19:34:56 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 551E710C0558;
-        Wed,  3 Oct 2018 09:45:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1538585146; bh=omY/f8Wi6zegYSgr43GTNQyuRQqPQw7Jc9Ap4Tve6xc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=WxBncMYz65rydfgRD7o5N0JkshKuO41BomG7J/NsD8X4vkIgXFE+ne143I/eTZ2mi
-         ffZaI1F5a3F5OIcu0qZc1wk7O/WaTIzxh/NbHNNIJj0wxeoIScGXAd5fdeukGW9+nC
-         I5jFdGgYfNbyZl3MwJnFxKP013XouzbkC14obo0l1Y7zlDJBnUZJhmvvEFNdX3p3Px
-         RNvrun/JwpjA6IrCRz1yfsb8yCXVXbqcs/fITzyNJyfu8807G45TlsjMWZ0+FK5UiX
-         vFq7bOMUSiSROiCS8EdzETGsJF7I8QuVkLHACHNOmKnT2/ghstPZQv1Xcwh2hLYvg0
-         eK15x8rHpsPbA==
-Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.38])
-        by mailhost.synopsys.com (Postfix) with ESMTP id D22B83F69;
-        Wed,  3 Oct 2018 09:45:43 -0700 (PDT)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        stable@vger.kernel.org,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v2] drm: fb-helper: Reject all pixel format changing requests
-Date:   Wed,  3 Oct 2018 19:45:38 +0300
-Message-Id: <20181003164538.5534-1-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.4
+        Wed, 3 Oct 2018 19:35:01 -0400
+Received: from mga11.intel.com ([192.55.52.93]:19275 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726842AbeJCXfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 19:35:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 09:45:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,336,1534834800"; 
+   d="scan'208";a="95767878"
+Received: from 2b52.sc.intel.com ([143.183.136.147])
+  by fmsmga001.fm.intel.com with ESMTP; 03 Oct 2018 09:45:38 -0700
+Message-ID: <36fa923c4ed6b78517b93475aa2544aa8ba7243c.camel@intel.com>
+Subject: Re: [RFC PATCH v4 24/27] mm/mmap: Create a guard area between VMAs
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Eugene Syromiatnikov <esyr@redhat.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
+Date:   Wed, 03 Oct 2018 09:40:58 -0700
+In-Reply-To: <20181003163226.GC9449@asgard.redhat.com>
+References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+         <20180921150351.20898-25-yu-cheng.yu@intel.com>
+         <20181003045611.GB22724@asgard.redhat.com>
+         <CALCETrU-Ny-uC1NqRedQwNKe2MMhsFEqZ08TtHJwbLfCACMmLw@mail.gmail.com>
+         <5ddb0ad33298d1858e530fce9c9ea2788b2fac81.camel@intel.com>
+         <20181003163226.GC9449@asgard.redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drm fbdev emulation doesn't support changing the pixel format at all,
-so reject all pixel format changing requests.
+On Wed, 2018-10-03 at 18:32 +0200, Eugene Syromiatnikov wrote:
+> On Wed, Oct 03, 2018 at 09:00:04AM -0700, Yu-cheng Yu wrote:
+> > On Tue, 2018-10-02 at 22:36 -0700, Andy Lutomirski wrote:
+> > > On Tue, Oct 2, 2018 at 9:55 PM Eugene Syromiatnikov <esyr@redhat.com>
+> > > wrote:
+> > > > 
+> > > > On Fri, Sep 21, 2018 at 08:03:48AM -0700, Yu-cheng Yu wrote:
+> > > > > Create a guard area between VMAs, to detect memory corruption.
+> > > > 
+> > > > Do I understand correctly that with this patch a user space program
+> > > > no longer be able to place two mappings back to back? If it is so,
+> > > > it will likely break a lot of things; for example, it's a common ring
+> > > > buffer implementations technique, to map buffer memory twice back
+> > > > to back in order to avoid special handling of items wrapping its end.
+> > > 
+> > > I haven't checked what the patch actually does, but it shouldn't have
+> > > any affect on MAP_FIXED or the new no-replace MAP_FIXED variant.
+> > > 
+> > > --Andy
+> > 
+> > I did some mmap tests with/without MAP_FIXED, and it works as intended.
+> > In addition to the ring buffer, are there other test cases?
+> 
+> Right, after some more code reading I figured out that it indeed
+> shouldn't affect MAP_FIXED, thank you for confirmation.
+> 
+> I'm not sure, however, whether such a change that provides no ability
+> to configure or affect it will go well with all the supported
+> architectures.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
-Changes v1->v2:
- * Reject all pixel format changing request, not just the invalid ones.
-
- drivers/gpu/drm/drm_fb_helper.c | 91 ++++++++++++-----------------------------
- 1 file changed, 26 insertions(+), 65 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 16ec93b75dbf..48598d7f673f 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -1580,6 +1580,25 @@ int drm_fb_helper_ioctl(struct fb_info *info, unsigned int cmd,
- }
- EXPORT_SYMBOL(drm_fb_helper_ioctl);
- 
-+static bool drm_fb_pixel_format_equal(const struct fb_var_screeninfo *var_1,
-+				      const struct fb_var_screeninfo *var_2)
-+{
-+	return var_1->bits_per_pixel == var_2->bits_per_pixel &&
-+	       var_1->grayscale == var_2->grayscale &&
-+	       var_1->red.offset == var_2->red.offset &&
-+	       var_1->red.length == var_2->red.length &&
-+	       var_1->red.msb_right == var_2->red.msb_right &&
-+	       var_1->green.offset == var_2->green.offset &&
-+	       var_1->green.length == var_2->green.length &&
-+	       var_1->green.msb_right == var_2->green.msb_right &&
-+	       var_1->blue.offset == var_2->blue.offset &&
-+	       var_1->blue.length == var_2->blue.length &&
-+	       var_1->blue.msb_right == var_2->blue.msb_right &&
-+	       var_1->transp.offset == var_2->transp.offset &&
-+	       var_1->transp.length == var_2->transp.length &&
-+	       var_1->transp.msb_right == var_2->transp.msb_right;
-+}
-+
- /**
-  * drm_fb_helper_check_var - implementation for &fb_ops.fb_check_var
-  * @var: screeninfo to check
-@@ -1590,7 +1609,6 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
- {
- 	struct drm_fb_helper *fb_helper = info->par;
- 	struct drm_framebuffer *fb = fb_helper->fb;
--	int depth;
- 
- 	if (var->pixclock != 0 || in_dbg_master())
- 		return -EINVAL;
-@@ -1610,72 +1628,15 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
- 		return -EINVAL;
- 	}
- 
--	switch (var->bits_per_pixel) {
--	case 16:
--		depth = (var->green.length == 6) ? 16 : 15;
--		break;
--	case 32:
--		depth = (var->transp.length > 0) ? 32 : 24;
--		break;
--	default:
--		depth = var->bits_per_pixel;
--		break;
--	}
--
--	switch (depth) {
--	case 8:
--		var->red.offset = 0;
--		var->green.offset = 0;
--		var->blue.offset = 0;
--		var->red.length = 8;
--		var->green.length = 8;
--		var->blue.length = 8;
--		var->transp.length = 0;
--		var->transp.offset = 0;
--		break;
--	case 15:
--		var->red.offset = 10;
--		var->green.offset = 5;
--		var->blue.offset = 0;
--		var->red.length = 5;
--		var->green.length = 5;
--		var->blue.length = 5;
--		var->transp.length = 1;
--		var->transp.offset = 15;
--		break;
--	case 16:
--		var->red.offset = 11;
--		var->green.offset = 5;
--		var->blue.offset = 0;
--		var->red.length = 5;
--		var->green.length = 6;
--		var->blue.length = 5;
--		var->transp.length = 0;
--		var->transp.offset = 0;
--		break;
--	case 24:
--		var->red.offset = 16;
--		var->green.offset = 8;
--		var->blue.offset = 0;
--		var->red.length = 8;
--		var->green.length = 8;
--		var->blue.length = 8;
--		var->transp.length = 0;
--		var->transp.offset = 0;
--		break;
--	case 32:
--		var->red.offset = 16;
--		var->green.offset = 8;
--		var->blue.offset = 0;
--		var->red.length = 8;
--		var->green.length = 8;
--		var->blue.length = 8;
--		var->transp.length = 8;
--		var->transp.offset = 24;
--		break;
--	default:
-+	/*
-+	 * drm fbdev emulation doesn't support changing the pixel format at all,
-+	 * so reject all pixel format changing requests.
-+	 */
-+	if (!drm_fb_pixel_format_equal(var, &info->var)) {
-+		DRM_DEBUG("fbdev emulation doesn't support changing the pixel format\n");
- 		return -EINVAL;
- 	}
-+
- 	return 0;
- }
- EXPORT_SYMBOL(drm_fb_helper_check_var);
--- 
-2.14.4
-
+Can we do CONFIG_MMAP_GUARD_GAP?
