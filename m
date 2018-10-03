@@ -2,343 +2,145 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DA5C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F5DC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9F7213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:44:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F9F7213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 5519C2089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 11:47:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxxQOKOe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5519C2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbeJCScf (ORCPT
+        id S1726969AbeJCSf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 14:32:35 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:65467 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726725AbeJCScf (ORCPT
+        Wed, 3 Oct 2018 14:35:58 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39425 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726710AbeJCSf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 14:32:35 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w93BY5i0022731;
-        Wed, 3 Oct 2018 13:44:06 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mv4kcxy48-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 03 Oct 2018 13:44:06 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0433231;
-        Wed,  3 Oct 2018 11:44:04 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C53E2299D;
-        Wed,  3 Oct 2018 11:44:03 +0000 (GMT)
-Received: from [10.48.0.237] (10.75.127.46) by SFHDAG6NODE1.st.com
- (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 3 Oct
- 2018 13:44:03 +0200
-Subject: Re: [PATCH V4 02/25] mmc: mmci: create generic mmci_dma_setup
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1538482167-13819-1-git-send-email-ludovic.Barre@st.com>
- <1538482167-13819-3-git-send-email-ludovic.Barre@st.com>
- <CAPDyKFpZKdZ5Oh29_EpgDqpwppa63Uci-FeLHF2KZBxVcO4COQ@mail.gmail.com>
-From:   Ludovic BARRE <ludovic.barre@st.com>
-Message-ID: <a4257361-b6ad-3ccc-1ade-303065744bad@st.com>
-Date:   Wed, 3 Oct 2018 13:44:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 3 Oct 2018 14:35:57 -0400
+Received: by mail-wm1-f67.google.com with SMTP id q8-v6so5306611wmq.4;
+        Wed, 03 Oct 2018 04:47:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JuzfczhLlmrJYUGS3HkZzgMkIcgs4yXjieCh43v5oQk=;
+        b=DxxQOKOev6RTLN6BGmdX4wTl1b+76xphkEwjV2Fzf2PAdefnveZ7aOReccRNbVr0Z9
+         A9Hu1+srl8Dfvz7zg6meaCAX4yy7DkjfZDGOTjFscsKgweDCSSzTDJCtO0z1S8+UhY/2
+         Hhb8f7HIwiEO414i9wQlSwqP33MWlctIcXXClk0JrKXsb2Mv7+E6XrmVDPW/Dpx2A9ud
+         cuYd5RRSUSruqAsIZl/K1hPoQY9WYww3mt69j9c31vEI7I2HFw+xHxNHGm7aHkKxmhK4
+         DRJpaBoBXez9LPPyJKUeGBQ7PNg0DV8pOv4LZm9Gsw5caMTfxY3QKA5MKbqMhZeeD73U
+         0L6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=JuzfczhLlmrJYUGS3HkZzgMkIcgs4yXjieCh43v5oQk=;
+        b=JaF9UpwyCArxu6DbFXOQ3yLkOr53nKw4YUA6tsju/wuuOcKdMCj89O9Lu2/Cj/mCCF
+         luPRPvVvzYeSdptXa1bgiDtPKSZixH1y6cX01LyJ4N5M7eufz2FZttPg8DaeHDI81daH
+         8KRT1mCSfsUNvNjn+9frfKUWcFVjFI44u1dxD2GOuZ0aV4m6GALdU8sWfFBgsvzIe/1N
+         i9UZ4NOaWgXvEvrlXPWazqJBtonNaQRViiwoKpI72C4ATTqmlgUGwVwc4kkKQTTTrn5E
+         tTIrTMvbJviQjRTuEgaw9dBhPiVGvCFyM3z9aMEJO4ZRrOXFMuxuiYlS2xQHAOfGPGGz
+         V2Bw==
+X-Gm-Message-State: ABuFfohkNp2CJmQ66aXaN+ozl69W0iAdqaMqEYMfqh6yDWnpuF/qiIHP
+        WzesyeW/1e0WAY+4nIxxpR6rse64
+X-Google-Smtp-Source: ACcGV609N0WNUu1w1YEtJh7mz/+ScFBytOw/naIfcqazmLkSljZ+xCLN6liBwQbfuOs5L0uzAVOVng==
+X-Received: by 2002:a1c:8f0e:: with SMTP id r14-v6mr1198355wmd.79.1538567272153;
+        Wed, 03 Oct 2018 04:47:52 -0700 (PDT)
+Received: from 640k.lan (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
+        by smtp.gmail.com with ESMTPSA id c8-v6sm2112445wrb.6.2018.10.03.04.47.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 04:47:51 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Nikita Leshchenko <nikita.leshchenko@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH] kvm: nVMX: fix entry with pending interrupt if APICv is enabled
+Date:   Wed,  3 Oct 2018 13:47:47 +0200
+Message-Id: <1538567267-2343-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpZKdZ5Oh29_EpgDqpwppa63Uci-FeLHF2KZBxVcO4COQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-03_06:,,
- signatures=0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi Ulf
+Commit b5861e5cf2fcf83031ea3e26b0a69d887adf7d21 introduced a check on
+the interrupt-window and NMI-window CPU execution controls in order to
+inject an external interrupt vmexit before the first guest instruction
+executes.  However, when APIC virtualization is enabled the host does not
+need a vmexit in order to inject an interrupt at the next interrupt window;
+instead, it just places the interrupt vector in RVI and the processor will
+inject it as soon as possible.  Therefore, on machines with APICv it is
+not enough to check the CPU execution controls: the same scenario can also
+happen if RVI>0.
 
-On 10/03/2018 11:22 AM, Ulf Hansson wrote:
-> + Srinivas
+Fixes: b5861e5cf2fcf83031ea3e26b0a69d887adf7d21
+Cc: Nikita Leshchenko <nikita.leshchenko@oracle.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Liran Alon <liran.alon@oracle.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/vmx.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-for next series, I will add Srinivas
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 6ef2d5b139b9..c0c7689f0049 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -10280,6 +10280,11 @@ static void vmx_hwapic_isr_update(struct kvm_vcpu *vcpu, int max_isr)
+ 	}
+ }
+ 
++static u8 vmx_get_rvi(void)
++{
++	return vmcs_read16(GUEST_INTR_STATUS) & 0xff;
++}
++
+ static void vmx_set_rvi(int vector)
+ {
+ 	u16 status;
+@@ -12593,10 +12598,13 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, u32 *exit_qual)
+ 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+ 	bool from_vmentry = !!exit_qual;
+ 	u32 dummy_exit_qual;
+-	u32 vmcs01_cpu_exec_ctrl;
++	bool evaluate_pending_interrupts;
+ 	int r = 0;
+ 
+-	vmcs01_cpu_exec_ctrl = vmcs_read32(CPU_BASED_VM_EXEC_CONTROL);
++	evaluate_pending_interrupts = vmcs_read32(CPU_BASED_VM_EXEC_CONTROL) &
++		(CPU_BASED_VIRTUAL_INTR_PENDING | CPU_BASED_VIRTUAL_NMI_PENDING);
++	if (enable_apicv && kvm_vcpu_apicv_active(vcpu))
++		evaluate_pending_interrupts |= vmx_get_rvi() > 0;
+ 
+ 	enter_guest_mode(vcpu);
+ 
+@@ -12650,10 +12658,8 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, u32 *exit_qual)
+ 	 * instead. Thus, we force L0 to perform pending event
+ 	 * evaluation by requesting a KVM_REQ_EVENT.
+ 	 */
+-	if (vmcs01_cpu_exec_ctrl &
+-		(CPU_BASED_VIRTUAL_INTR_PENDING | CPU_BASED_VIRTUAL_NMI_PENDING)) {
++	if (evaluate_pending_interrupts)
+ 		kvm_make_request(KVM_REQ_EVENT, vcpu);
+-	}
+ 
+ 	/*
+ 	 * Note no nested_vmx_succeed or nested_vmx_fail here. At this point
+-- 
+1.8.3.1
 
-> 
-> [...]
-> 
->>   #ifdef CONFIG_DMA_ENGINE
->> -static void mmci_dma_setup(struct mmci_host *host)
->> +static inline void mmci_dma_release(struct mmci_host *host);
->> +
->> +int mmci_dmae_setup(struct mmci_host *host)
->>   {
->>          const char *rxname, *txname;
->>
->> @@ -464,8 +485,12 @@ static void mmci_dma_setup(struct mmci_host *host)
->>                          host->mmc->max_seg_size = max_seg_size;
->>          }
->>
->> -       if (host->ops && host->ops->dma_setup)
->> -               host->ops->dma_setup(host);
->> +       if (!host->dma_tx_channel || !host->dma_rx_channel) {
->> +               mmci_dma_release(host);
-> 
-> This doesn't look right to me. The existing code allows a tx channel
-> to be used, even if an rx channel could not be setup. It seems
-> reasonable to still allow that.
-
-ok, I could replace by
-if (!host->dma_tx_channel && !host->dma_rx_channel)
-
-> 
->> +               return -EINVAL;
->> +       }
->> +
->> +       return 0;
->>   }
->>
->>   /*
->> @@ -496,7 +521,7 @@ static void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
->>
->>   static void mmci_dma_data_error(struct mmci_host *host)
->>   {
->> -       if (!dma_inprogress(host))
->> +       if (!host->use_dma || !dma_inprogress(host))
-> 
-> Adding the check for use_dma here seems like an unnecessary check,
-> unless there is a reason for it due to following changes on top. In
-> such case, please make it a part of the patch(es) where it's actually
-> needed.
-
-In Fact, these checks are add to ensure the pio fallback, if only this 
-patch it's taken. In the next commit of serie, these checks are moved to 
-common functions mmci_dma_XX function.
-
-> 
->>                  return;
->>
->>          dev_err(mmc_dev(host->mmc), "error during DMA transfer!\n");
->> @@ -514,7 +539,7 @@ static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
->>          u32 status;
->>          int i;
->>
->> -       if (!dma_inprogress(host))
->> +       if (!host->use_dma || !dma_inprogress(host))
-> 
-> Ditto.
-> 
->>                  return;
->>
->>          /* Wait up to 1ms for the DMA to complete */
->> @@ -546,6 +571,7 @@ static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
->>          if (status & MCI_RXDATAAVLBLMASK) {
->>                  dev_err(mmc_dev(host->mmc), "buggy DMA detected. Taking evasive action.\n");
->>                  mmci_dma_release(host);
->> +               host->use_dma = false;
->>          }
->>
->>          host->dma_in_progress = false;
->> @@ -640,6 +666,9 @@ static int mmci_dma_start_data(struct mmci_host *host, unsigned int datactrl)
->>          int ret;
->>          struct mmc_data *data = host->data;
->>
->> +       if (!host->use_dma)
->> +               return -EINVAL;
->> +
->>          ret = mmci_dma_prep_data(host, host->data);
->>          if (ret)
->>                  return ret;
->> @@ -674,6 +703,9 @@ static void mmci_get_next_data(struct mmci_host *host, struct mmc_data *data)
->>   {
->>          struct mmci_host_next *next = &host->next_data;
->>
->> +       if (!host->use_dma)
->> +               return;
->> +
->>          WARN_ON(data->host_cookie && data->host_cookie != next->cookie);
->>          WARN_ON(!data->host_cookie && (next->dma_desc || next->dma_chan));
->>
->> @@ -689,7 +721,7 @@ static void mmci_pre_request(struct mmc_host *mmc, struct mmc_request *mrq)
->>          struct mmc_data *data = mrq->data;
->>          struct mmci_host_next *nd = &host->next_data;
->>
->> -       if (!data)
->> +       if (!host->use_dma || !data)
->>                  return;
->>
->>          BUG_ON(data->host_cookie);
->> @@ -707,7 +739,7 @@ static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
->>          struct mmci_host *host = mmc_priv(mmc);
->>          struct mmc_data *data = mrq->data;
->>
->> -       if (!data || !data->host_cookie)
->> +       if (!host->use_dma || !data || !data->host_cookie)
-> 
-> Ditto.
-> 
->>                  return;
->>
->>          mmci_dma_unmap(host, data);
->> @@ -735,14 +767,14 @@ static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
->>          }
->>   }
->>
->> +static struct mmci_host_ops mmci_variant_ops = {
->> +       .dma_setup = mmci_dmae_setup,
->> +};
->>   #else
->>   /* Blank functions if the DMA engine is not available */
->>   static void mmci_get_next_data(struct mmci_host *host, struct mmc_data *data)
->>   {
->>   }
->> -static inline void mmci_dma_setup(struct mmci_host *host)
->> -{
->> -}
->>
->>   static inline void mmci_dma_release(struct mmci_host *host)
->>   {
->> @@ -765,8 +797,14 @@ static inline int mmci_dma_start_data(struct mmci_host *host, unsigned int datac
->>   #define mmci_pre_request NULL
->>   #define mmci_post_request NULL
->>
->> +static struct mmci_host_ops mmci_variant_ops = {};
-> 
-> This seems a bit unnecessary. See more about why, below.
-> 
->>   #endif
->>
->> +void mmci_variant_init(struct mmci_host *host)
-> 
-> Looks like you should make mmci_variant_init() internal to mmci.c,
-> thus covert it to static.
-> 
-> Moreover, I suggest you define a "static inline void
-> mmci_variant_init()", when CONFIG_DMA_ENGINE is unset. In that way you
-> don't need to assign host->ops at all for this case.
-
-OK, no problem
-
-> 
->> +{
->> +       host->ops = &mmci_variant_ops;
->> +}
->> +
->>   static void mmci_start_data(struct mmci_host *host, struct mmc_data *data)
->>   {
->>          struct variant_data *variant = host->variant;
->> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
->> index 01e6c6b..f7fe80f 100644
->> --- a/drivers/mmc/host/mmci.h
->> +++ b/drivers/mmc/host/mmci.h
->> @@ -273,7 +273,7 @@ struct variant_data {
->>
->>   /* mmci variant callbacks */
->>   struct mmci_host_ops {
->> -       void (*dma_setup)(struct mmci_host *host);
->> +       int (*dma_setup)(struct mmci_host *host);
->>   };
->>
->>   struct mmci_host_next {
->> @@ -323,6 +323,7 @@ struct mmci_host {
->>          unsigned int            size;
->>          int (*get_rx_fifocnt)(struct mmci_host *h, u32 status, int remain);
->>
->> +       u8                      use_dma:1;
->>   #ifdef CONFIG_DMA_ENGINE
->>          /* DMA stuff */
->>          struct dma_chan         *dma_current;
->> @@ -336,3 +337,7 @@ struct mmci_host {
->>   #endif
->>   };
->>
->> +void mmci_variant_init(struct mmci_host *host);
->> +
->> +int mmci_dmae_setup(struct mmci_host *host);
->> +
->> diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
->> index be3fab5..c8d7592 100644
->> --- a/drivers/mmc/host/mmci_qcom_dml.c
->> +++ b/drivers/mmc/host/mmci_qcom_dml.c
->> @@ -119,19 +119,22 @@ static int of_get_dml_pipe_index(struct device_node *np, const char *name)
->>   }
->>
->>   /* Initialize the dml hardware connected to SD Card controller */
->> -static void qcom_dma_setup(struct mmci_host *host)
->> +static int qcom_dma_setup(struct mmci_host *host)
->>   {
->>          u32 config;
->>          void __iomem *base;
->>          int consumer_id, producer_id;
->>          struct device_node *np = host->mmc->parent->of_node;
->>
->> +       if (mmci_dmae_setup(host))
->> +               return -EINVAL;
->> +
->>          consumer_id = of_get_dml_pipe_index(np, "tx");
->>          producer_id = of_get_dml_pipe_index(np, "rx");
->>
->>          if (producer_id < 0 || consumer_id < 0) {
->>                  host->variant->qcom_dml = false;
->> -               return;
->> +               return -EINVAL;
-> 
-> Seems like you need to call a corresponding dma release function here,
-> before returning the error code.
-> 
-> Probably an "mmci_dmae_release()" needs to be implemented as a part of
-> this change - and then also called from here. This is according to
-> Srinivas recommendations, which means falling back to pio. As a matter
-> of fact this also needs to be clearly stated in the changelog, as you
-> are really also improving the behavior for the Qcom variant.
-
-it's in relation with the comment on
-+       if (!host->dma_tx_channel || !host->dma_rx_channel) {
-
-So yes.
-At first sight Qcom need to have a tx and rx channel,
-I will add mmci_dmae_release before returning error code.
-
-> 
-> Unfortunate, I am not able to test this as I don't have the HW (which
-> I thought I had). Perhaps Srinivas can help, once we have something
-> ready for him to test.
-> 
->>          }
->>
->>          base = host->base + DML_OFFSET;
->> @@ -175,6 +178,8 @@ static void qcom_dma_setup(struct mmci_host *host)
->>
->>          /* Make sure dml initialization is finished */
->>          mb();
->> +
->> +       return 0;
->>   }
->>
->>   static struct mmci_host_ops qcom_variant_ops = {
->> --
->> 2.7.4
->>
-> 
-> Kind regards
-> Uffe
-> 
