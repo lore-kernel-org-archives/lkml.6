@@ -2,102 +2,108 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A27C64EBC
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6C5C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 757AF20878
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:53:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 757AF20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 3099720878
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 05:56:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r66F6whZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3099720878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbeJCMjv (ORCPT
+        id S1726819AbeJCMmy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 08:39:51 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:40765 "EHLO pegase1.c-s.fr"
+        Wed, 3 Oct 2018 08:42:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726405AbeJCMjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 08:39:51 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42Q4tg2KVmz9ttBf;
-        Wed,  3 Oct 2018 07:52:59 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id YYJHYWpY89IC; Wed,  3 Oct 2018 07:52:59 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42Q4tg1bHxz9ttBW;
-        Wed,  3 Oct 2018 07:52:59 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8570C8B8B3;
-        Wed,  3 Oct 2018 07:52:59 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id Rg-qn4K7LZxh; Wed,  3 Oct 2018 07:52:59 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4EED28B74C;
-        Wed,  3 Oct 2018 07:52:59 +0200 (CEST)
-Subject: Re: [RFC PATCH v3 4/7] powerpc: regain entire stack space
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        aneesh.kumar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <cover.1538396658.git.christophe.leroy@c-s.fr>
- <8108de51846b7b34e4732753b2b65e435b6a2b7a.1538396659.git.christophe.leroy@c-s.fr>
- <20181003153448.3fb64e19@roar.ozlabs.ibm.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <6a539614-abb6-d468-ccba-2e3c1fb8b680@c-s.fr>
-Date:   Wed, 3 Oct 2018 07:52:59 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726552AbeJCMmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 08:42:54 -0400
+Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C929020835;
+        Wed,  3 Oct 2018 05:56:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538546162;
+        bh=CJ6awt8fMuMaOMIo6OcnF1Mm9DyzE4LLAQwoYkjVnpg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r66F6whZFILkej8NY0bRcPf8ab/ZNqfAJFLZVgEEeoDvmo3zBr4kd1P2rQQD3sMJd
+         H9y2ghRJxKYmJN5BQeOSL9c1C20tQlwOkKTvz43nHg911Z4/1Nm/Bu3Q/B8Soov3c5
+         dMwXRR/jBuGUS1MVt2EN1O5vLSESQe4MIqOrUiWA=
+Date:   Tue, 2 Oct 2018 22:56:00 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-crypto@vger.kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, Samuel Neves <sneves@dei.uc.pt>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
+Subject: Re: [PATCH net-next v6 21/23] crypto: port ChaCha20 to Zinc
+Message-ID: <20181003055559.GA745@sol.localdomain>
+References: <20180925145622.29959-1-Jason@zx2c4.com>
+ <20180925145622.29959-22-Jason@zx2c4.com>
 MIME-Version: 1.0
-In-Reply-To: <20181003153448.3fb64e19@roar.ozlabs.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925145622.29959-22-Jason@zx2c4.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 25, 2018 at 04:56:20PM +0200, Jason A. Donenfeld wrote:
+> diff --git a/crypto/chacha20_zinc.c b/crypto/chacha20_zinc.c
+> new file mode 100644
+> index 000000000000..f7d70b3efc31
+> --- /dev/null
+> +++ b/crypto/chacha20_zinc.c
+> @@ -0,0 +1,90 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + *
+> + * Copyright (C) 2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+> + */
+> +
+> +#include <asm/unaligned.h>
+> +#include <crypto/algapi.h>
+> +#include <crypto/internal/skcipher.h>
+> +#include <zinc/chacha20.h>
+> +#include <linux/module.h>
+> +
+> +static int crypto_chacha20_setkey(struct crypto_skcipher *tfm, const u8 *key,
+> +				  unsigned int keysize)
+> +{
+> +	struct chacha20_ctx *ctx = crypto_skcipher_ctx(tfm);
+> +
+> +	if (keysize != CHACHA20_KEY_SIZE)
+> +		return -EINVAL;
+> +	chacha20_init(ctx, key, 0);
+> +	return 0;
+> +}
+> +
+> +static int crypto_chacha20_crypt(struct skcipher_request *req)
+> +{
+> +	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+> +	struct chacha20_ctx *ctx = crypto_skcipher_ctx(tfm);
+> +	struct skcipher_walk walk;
+> +	simd_context_t simd_context;
+> +	int err, i;
+> +
+> +	err = skcipher_walk_virt(&walk, req, true);
+> +	if (unlikely(err))
+> +		return err;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(ctx->counter); ++i)
+> +		ctx->counter[i] = get_unaligned_le32(walk.iv + i * sizeof(u32));
+> +
 
+Multiple threads may use the same tfm concurrently, so the tfm context must not
+be used to store per-request information such as the IV.
 
-Le 03/10/2018 à 07:34, Nicholas Piggin a écrit :
-> On Mon,  1 Oct 2018 12:30:25 +0000 (UTC)
-> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
-> 
->> thread_info is not anymore in the stack, so the entire stack
->> can now be used.
-> 
-> Nice.
-> 
->>
->> In the meantime, all pointers to the stacks are not anymore
->> pointers to thread_info so this patch changes them to void*
-> 
-> Wasn't this previously effectively already the case with patch
-> 3/7? You had thread_info sized space left there, but it was not
-> used or initialized right? Does it make sense to move this part
-> of it to the previous patch?
-
-Not really.
-
-In 3/7 I changed the prototypes of two functions that really used the 
-pointer as a task pointer only.
-
-Here it change things that before 4/7 were really used as both stack 
-pointers and thread_info pointers.
-
-Christophe
-
-> 
-> Thanks,
-> Nick
-> 
+- Eric
