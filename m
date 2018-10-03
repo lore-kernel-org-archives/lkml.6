@@ -2,168 +2,135 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13665C64EBD
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 00:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07947C64EBD
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 00:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B840A2082A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 00:12:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C178E2082A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 00:13:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PJBLAxrQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B840A2082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D4CQvmW2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C178E2082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbeJCG6J (ORCPT
+        id S1726572AbeJCG66 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 02:58:09 -0400
-Received: from ozlabs.org ([203.11.71.1]:52547 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726251AbeJCG6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 02:58:09 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42PxKQ3Hssz9s55;
-        Wed,  3 Oct 2018 10:12:10 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1538525530;
-        bh=toMn6nnsKlAl9zMvZvO0fHcIeKee8Y9yZUVM4jBIMHQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=PJBLAxrQhOhCshhTQoxjpcTps5iUtmaQKvtC0cFa2Q5Y3CV82HNNPXDsL4XGDS8Mq
-         cTWfyI9m1+zVY6jBr/wDLGRg/rp/rghyNzW7E6iClyd5tmfYMkELsIKq4wPqBPtaew
-         r7rA3lJ6MBeolT0JsTN8r9UJP1HXBysaoauT74EPVMT5YYR40emuFjLiineDorVSm7
-         dqlN7TB9Ait4XrhOwMgMTYV6psi8aZYVeAsw2Pz37mmV2G/tlcaV1MmE/FPGA/eHiU
-         eyvdUBxEXCEhYmwrZ6UWBhUpev9NOaCFmKfZdhgzdEYBWR3pb/yl/+TnrGXUM9xl/k
-         9Iq8MDDz7m7dA==
-Date:   Wed, 3 Oct 2018 10:12:07 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Daniel Rosenberg <drosen@google.com>
-Subject: linux-next: manual merge of the vfs tree with the f2fs tree
-Message-ID: <20181003101207.2553ca7c@canb.auug.org.au>
+        Wed, 3 Oct 2018 02:58:58 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33409 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725754AbeJCG66 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 02:58:58 -0400
+Received: by mail-yw1-f66.google.com with SMTP id m127-v6so1586464ywb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 17:13:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=X5BnuAGhgfj4DUNsWuwoN0sZkV1YAJwtcmx3txcghz0=;
+        b=D4CQvmW2TA1WvT7TeKvuETP4MpHuHFm4D7Fj859S51UPV57DvMYXoVD+/kPXRx9ZTS
+         Wk++7esffUgh551V568wm99Of6FhfuGptyi6suZbHU2VacHbQfrPw/9lZOwIQo8uRqvX
+         Nl7r5ZNpcOGQHiX0hN55oKhsDd4e0hLtJLIAM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=X5BnuAGhgfj4DUNsWuwoN0sZkV1YAJwtcmx3txcghz0=;
+        b=QvsUL8kVvI/2REa4sCPHkWyG95PePIR+R5XwJxXTlXqE77rqvECo+nFdyHcqqRmDHw
+         Jp7glHsxSQX4TA4fffW1KIIhqGa0gmB/HwbBTOwWJq7/6Fp1gcox9XLliIwtxSKW2ksl
+         sRzIMhwTU2/6aYEdezSuUZbbqvehYeJtORGBeu0Dyv2Ep4GxFEIf/nKB2z2NI1PKp1R7
+         ivavR6AGiYoFsYS4iLuodQKElMqXpt3B2yUrmUwZxd6BbhEoVg9hC941s73czIkQ9cBF
+         BDaJ2arFuVTZpgr4jmSD6QETFQxphQ0HrygdgG3wX2t7gU/FBQzJ74asLLLs2Ew6qcNW
+         hl6w==
+X-Gm-Message-State: ABuFfogzhj5UYp8+Vm3/hJhm+Buvwf21Rx6jSX8cNBJRhLS6uKIBLNEl
+        lsG8hnP4i18x6wHeMj46QQaAcEsvClE=
+X-Google-Smtp-Source: ACcGV61wN8Uej/mabcjEqWmzzsHX9SfC8luAEWGznn+WZYs0gxKOv1FsM0mkIVr/PTnN/dVggaE7ng==
+X-Received: by 2002:a81:1b58:: with SMTP id b85-v6mr9728803ywb.63.1538525581226;
+        Tue, 02 Oct 2018 17:13:01 -0700 (PDT)
+Received: from mail-yw1-f41.google.com (mail-yw1-f41.google.com. [209.85.161.41])
+        by smtp.gmail.com with ESMTPSA id f194-v6sm9361459ywb.53.2018.10.02.17.12.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 17:12:59 -0700 (PDT)
+Received: by mail-yw1-f41.google.com with SMTP id m127-v6so1586398ywb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 17:12:59 -0700 (PDT)
+X-Received: by 2002:a0d:d302:: with SMTP id v2-v6mr10168177ywd.124.1538525579097;
+ Tue, 02 Oct 2018 17:12:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ST5DDRH7T+QUIB5ojyL6Ihm"; protocol="application/pgp-signature"
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Tue, 2 Oct 2018 17:12:58 -0700 (PDT)
+In-Reply-To: <3b539d37-136f-b868-3155-f2982eb63890@canonical.com>
+References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-24-keescook@chromium.org>
+ <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
+ <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
+ <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+ <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
+ <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
+ <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
+ <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <CAGXu5jKqSZ5LhQ_HwbA9-_DAg3efNzWfLjpxO_rurBgUZ-nnAA@mail.gmail.com>
+ <3b539d37-136f-b868-3155-f2982eb63890@canonical.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 2 Oct 2018 17:12:58 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJ-2V5ch-Qer_O0mg1J5-9SUmyJXsGYicZEMyg5KkqHaw@mail.gmail.com>
+Message-ID: <CAGXu5jJ-2V5ch-Qer_O0mg1J5-9SUmyJXsGYicZEMyg5KkqHaw@mail.gmail.com>
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     James Morris <jmorris@namei.org>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ST5DDRH7T+QUIB5ojyL6Ihm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 2, 2018 at 5:05 PM, John Johansen
+<john.johansen@canonical.com> wrote:
+> On 10/02/2018 04:54 PM, Kees Cook wrote:
+>> That's not how I have it currently. It's a comma-separated a string,
+>> including the reserved name "all". The default would just be
+>> "CONFIG_LSM_ENABLE=all". Casey and I wanted this to have a way to
+>> capture new LSMs by default at build-time.
+>>
+>
+> I understand where you are coming from, but speaking with my distro
+> hat on, that is not going to work. As a distro Ubuntu very much wants
+> to be able to offer all the LSMs built in to the kernel so the user
+> can select them. But very much wants to be able to specify a default
+> supported subset that is enabled at boot.
+>
+> I expect RH and Suse will feel similarily. Speaking for Ubuntu if this
+> isn't available as part of lsm stacking it will get distro patched in.
 
-Hi Al,
+Right. Ubuntu would do something like:
 
-Today's linux-next merge of the vfs tree got a conflict in:
+CONFIG_LSM_ENABLE=yama,apparmor,integrity
 
-  fs/f2fs/super.c
+And that's why I wanted non-explicit lsm.enable, so that an end user
+could just do:
 
-between commit:
+lsm.enable=loadpin
 
-  f80f781514ef ("f2fs: checkpoint disabling")
+to add loadpin.
 
-from the f2fs tree and commit:
+Perhaps we could have both? "lsm.enable=+loadpin" (add loadpin to
+build default list) vs "lsm.enable=loadpin" (override build default
+list with ONLY loadpin).
 
-  307c6e5241b4 ("vfs: Require specification of size of mount data for inter=
-nal mounts")
+-Kees
 
-from the vfs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/f2fs/super.c
-index 952a67b3184a,89970dd81b0e..000000000000
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@@ -1449,53 -1419,8 +1449,54 @@@ static void default_options(struct f2fs
-  #ifdef CONFIG_QUOTA
-  static int f2fs_enable_quotas(struct super_block *sb);
-  #endif
- +
- +static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- +{
- +	struct cp_control cpc;
- +	int err;
- +
- +	sbi->sb->s_flags |=3D SB_ACTIVE;
- +
- +	mutex_lock(&sbi->gc_mutex);
- +	for (; dirty_segments(sbi) > 2 * NR_CURSEG_TYPE;) {
- +		err =3D f2fs_gc(sbi, true, false, NULL_SEGNO);
- +		if (err =3D=3D -ENODATA)
- +			break;
- +		if (err && err !=3D -EAGAIN) {
- +			mutex_unlock(&sbi->gc_mutex);
- +			return err;
- +		}
- +	}
- +	mutex_unlock(&sbi->gc_mutex);
- +
- +	err =3D sync_filesystem(sbi->sb);
- +	if (err)
- +		return err;
- +
- +	mutex_lock(&sbi->gc_mutex);
- +	cpc.reason =3D CP_PAUSE;
- +	set_sbi_flag(sbi, SBI_CP_DISABLED);
- +	f2fs_write_checkpoint(sbi, &cpc);
- +
- +	sbi->unusable_block_count =3D 0;
- +	mutex_unlock(&sbi->gc_mutex);
- +	return 0;
- +}
- +
- +static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
- +{
- +	mutex_lock(&sbi->gc_mutex);
- +	f2fs_dirty_to_prefree(sbi);
- +
- +	clear_sbi_flag(sbi, SBI_CP_DISABLED);
- +	set_sbi_flag(sbi, SBI_IS_DIRTY);
- +	mutex_unlock(&sbi->gc_mutex);
- +
- +	f2fs_sync_fs(sbi->sb, 1);
- +}
- +
-- static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-+ static int f2fs_remount(struct super_block *sb, int *flags,
-+ 			char *data, size_t data_size)
-  {
-  	struct f2fs_sb_info *sbi =3D F2FS_SB(sb);
-  	struct f2fs_mount_info org_mount_opt;
-
---Sig_/ST5DDRH7T+QUIB5ojyL6Ihm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlu0CVcACgkQAVBC80lX
-0GxmdAgAkYuaezPMu/Nttte9vH5MqBuJLbJQIEq+jHka9gUQoaLbyvvHK6ALklB5
-jOxvoHELYKgrZt6EBzdemYedSYpOPXmIphi0dn+FXm8U/3TmTEGPgqX3X3kEnWR7
-F15cqtBTVH8zTNdWI/w563/+aepJsMbrQTiqGURQK3rH8OMm9ZRIdhHfBGq+BiaM
-UGj6n2Zkj4JFiJJj/H6fXGYXwv/OgRfWg05F5gtOtRW2wPOxnDK83to0FEg9MCCD
-PlN529/5OAjBMAF/PM01fRntvlo1OS9keyVjkJ5sl2Y88n3vbFTvVEPwaqOvmzNz
-qeIRK+HdJZx7UKGgtNiH3xYU2/626Q==
-=G058
------END PGP SIGNATURE-----
-
---Sig_/ST5DDRH7T+QUIB5ojyL6Ihm--
+-- 
+Kees Cook
+Pixel Security
