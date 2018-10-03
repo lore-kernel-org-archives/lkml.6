@@ -2,99 +2,126 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63815C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B5BC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8505213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:40:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56B2C213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 21:41:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="e1XMq5o4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8505213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sal/xKkq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B2C213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbeJDEax (ORCPT
+        id S1727071AbeJDEbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 00:30:53 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35604 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbeJDEaw (ORCPT
+        Thu, 4 Oct 2018 00:31:31 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:43842 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbeJDEbb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 00:30:52 -0400
-Received: by mail-ed1-f66.google.com with SMTP id y19-v6so6734539edd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 14:40:41 -0700 (PDT)
+        Thu, 4 Oct 2018 00:31:31 -0400
+Received: by mail-qt1-f194.google.com with SMTP id q41-v6so7675273qtq.10;
+        Wed, 03 Oct 2018 14:41:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0EoW6/M0CSM4gvZ4wT30NMjrEHjHBg5QS0vKUb7a8kU=;
-        b=e1XMq5o4nVjdrq2Dg2ZwpWwx9n814Hxizvb+CjzbUxuGLVeAf/tPAT0hPYie3v1tYI
-         AlvCw3yuRJVLJHqvWt/dgV5M3ZObH6CwMraoLNvgVPx0tXt7n/i9hByRtERZujO+6yuK
-         XLCM/k4p20wRKJag40+kx07vmDr3nKjGZVCWo=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=DcNfJBcvV+N7frxghQMur12JlWbuuNXGuvgJdjrvXBo=;
+        b=sal/xKkq5rwbI2+2joC43ZN0ip6rMYj26GDTYJDS/wgXm8NtowPu+5gA25dDuh+yHa
+         okkPAElXyGwrB6HFmCRWiVa/AD5FJbf/MRAB4YECiz+AJ4oxBaPcsJIURzE1TKN4Z9ze
+         CyrtKMhc+mGc2k/T4vcawKa205hSGQaS8QcEXY+4NIEVaCkc3omnKnXVJKyzoE+nOV4t
+         b8YqiZoPtiesYFig0gPVsU0YZ0wdGw0+2PtFRjGLYmQppF4/iWRD44E5KigGrMmY3ixv
+         LdQ+wqqi3SWy3L3ozlkjxy4jhdCD5dyqVSbUFwVrMEL8NX8KwmAAkXs84KS50N3GNUl4
+         JsDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0EoW6/M0CSM4gvZ4wT30NMjrEHjHBg5QS0vKUb7a8kU=;
-        b=Xh4jQCXlNigK7Xra+xoJvtgRD+rfgmg/DsJtQW73UFlcKiRQnaVqNttYkjDT8uMqxq
-         wvExZrrkmP3d+YpnX/4RtMfKsqLLRRwWbVSP/ZHOkawx3WtLrUdXzNQUgThDIyS/mL+1
-         SOX8fK5V/S9rNPFP1LjXYJFF3SWfpoAiN6uLq0oOlk/qR2khCIKdUUY1QcgcaIouJ5Z2
-         +U1ANAktESXPYMaQ+gXx7G0rLePJcS3IZBt/kK36oy1tYWfVBZvlkAAAvnwHSVU5Y2xZ
-         7cIcjWj+Zs67CIt2qO/3yWpb0aMNft2q25vieCSDgac0dWBIQE+8uNgREa9X6ez6/Vqv
-         Gmkw==
-X-Gm-Message-State: ABuFfohgRVCmd2uN62D2jGVSt7yrV/lVZ8ruX73n1NXUys8Ax181O1cP
-        OHiFx8InMKy5kH2suoz7Rq/LWw==
-X-Google-Smtp-Source: ACcGV62S59jHE1tfOWIZ8Ts2rgke18f4aHKnzGrdLP7TjP7zp65sSehxbq/pO1YJOMvsUvRhNV8XNA==
-X-Received: by 2002:a50:b765:: with SMTP id g92-v6mr4859841ede.94.1538602841271;
-        Wed, 03 Oct 2018 14:40:41 -0700 (PDT)
-Received: from [192.168.0.189] (dhcp-5-186-116-96.cgn.ip.fibianet.dk. [5.186.116.96])
-        by smtp.gmail.com with ESMTPSA id gk1-v6sm500190ejb.37.2018.10.03.14.40.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 14:40:40 -0700 (PDT)
-Subject: Re: [PATCH 22/22] x86_64: use relative pointers with dynamic debug
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jason Baron <jbaron@akamai.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
- <20180919220444.23190-23-linux@rasmusvillemoes.dk>
- <20181002095055.GC98058@gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <76d66929-0c3d-4251-f315-f034405a71ff@rasmusvillemoes.dk>
-Date:   Wed, 3 Oct 2018 23:40:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=DcNfJBcvV+N7frxghQMur12JlWbuuNXGuvgJdjrvXBo=;
+        b=EVYxcHj179L0unZ4K0GH430Tg78C05OXYtkZoZ6bWmOMQ4sqCQaG9uZ4by+Yy/opZw
+         dwZInM6fwYJHtRaF+l5hBdvEqrYvBlM4nzDDTgJdhjgqIP4KBiVdzEMJ5ciXr2E34h6u
+         H30N+w2anQMpGlQ3Mxnx3GYSUDBIBhM892NGRwijES35U1+AcAqdcaCDIebO7NKWry2t
+         2IVA3q1HyXyL69iREKFQJtp2T3N7ibcX1MkUaAFAs340kJD4HUOcUXggYxd9i2guRQGP
+         cW83pXKspulDSJfZQ9EVk444UAPFajN1vN8WXOW5aAAdnc8Kepgs7xjBlk18mEGnFPf+
+         cr2A==
+X-Gm-Message-State: ABuFfoiXDPEQFXfeW37B82UAXBdCpEQ9lVvXlWRd/3QRHiH7eN1wKJd7
+        0751yins/KtuDh9MnglekZBKdII29NeBEV9KEcE=
+X-Google-Smtp-Source: ACcGV62IfciUlmeUqPMP0Tm5Q68jeE+CimzP24KFGHYdeSc9hZ1gmWuzPzJ8+5Un8Lv7x+pz52uBPoG8TN2mJ6loCAQ=
+X-Received: by 2002:aed:2867:: with SMTP id r94-v6mr2937732qtd.112.1538602880400;
+ Wed, 03 Oct 2018 14:41:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181002095055.GC98058@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CANiq72=rgT9cPWH64Tf_8gAU09EiH5FvGqFUdOjV=spVbM5m8Q@mail.gmail.com>
+ <20181003071059.02b3fd6f@canb.auug.org.au> <CAKwvOdmt4-jFv6d-ZVUH5OOvXSz38jpuNvQy-jtoSS3xEoh78A@mail.gmail.com>
+ <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com>
+ <20181002232454.GB2483@thunk.org> <CANiq72=cRpqnB3BxLsmj-rMdUGJK+pac1SRppoRgsON69ErfQg@mail.gmail.com>
+ <20181003153303.GC2835@thunk.org> <CANiq72=Jq8HZ1=CsSvV4GenG+F6z3vRFmiB7Joct5VKdUFo8pA@mail.gmail.com>
+In-Reply-To: <CANiq72=Jq8HZ1=CsSvV4GenG+F6z3vRFmiB7Joct5VKdUFo8pA@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Wed, 3 Oct 2018 23:41:08 +0200
+Message-ID: <CANiq72nMu6NXg1Ovn49qJ=FP_S4_LQJSwPuS+Q_zofhOEbVZng@mail.gmail.com>
+Subject: Re: [GIT PULL linux-next] Add Compiler Attributes tree
+To:     "Ted Ts'o" <tytso@mit.edu>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Olof Johansson <olof@lxom.net>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        David Miller <davem@davemloft.net>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Paul Burton <paul.burton@mips.com>,
+        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
+        Martin Sebor <msebor@gmail.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-02 11:50, Ingo Molnar wrote:
-> 
-> * Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
-> 
->> Similar to how x86_64 uses bug_entry-relative pointers to reduce
->> sizeof(struct bug_entry), the same thing can now be done for struct
->> _ddebug, saving 16 bytes for each of those (i.e., each pr_debug, dev_dbg
->> etc. in a CONFIG_DYNAMIC_DEBUG kernel).
-> 
-> Reviewed-by: Ingo Molnar <mingo@kernel.org>
+On Wed, Oct 3, 2018 at 11:23 PM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> On Wed, Oct 3, 2018 at 5:33 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> > had done with full consideration, specifically for this reason.  Even
+> > if the definition was different, my definition *had* been fully tested
+> > with over a 27+ VM hours of regression testing, and if it turned out
 
-Thanks! Can I assume this also applies to the latecomer 23/22, which I
-think I'm gonna squash with 22/22? Then I'll resend the series with
-various tags included and ask Andrew to pick it up.
+I forgot to mention that if the definitions were different, it could
+have caused a problem, because your definition wouldn't apply, so your
+27+ hours of testing wouldn't have mattered :-P Without the #ifndef,
+we would have at least got a redefinition warning about it.
 
-Rasmus
-
-
+Cheers,
+Miguel
