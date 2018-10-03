@@ -2,116 +2,255 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2275C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E20E2C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5369F2082A
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:55:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="gZhAdD7s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5369F2082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
+	by mail.kernel.org (Postfix) with ESMTP id 747BD2082A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:55:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 747BD2082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbeJCVnz (ORCPT
+        id S1727206AbeJCVod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 17:43:55 -0400
-Received: from mta-p1.oit.umn.edu ([134.84.196.201]:38444 "EHLO
-        mta-p1.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbeJCVnz (ORCPT
+        Wed, 3 Oct 2018 17:44:33 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.68]:47382 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726748AbeJCVod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 17:43:55 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mta-p1.oit.umn.edu (Postfix) with ESMTP id 5E9DA1D9
-        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 14:55:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=umn.edu; h=
-        content-type:content-type:subject:subject:message-id:date:date
-        :from:from:in-reply-to:references:mime-version:received:received
-        :received; s=20160920; t=1538578510; x=1540392911; bh=IlJLfzKa9j
-        r+ORaiaIegYdmgXRrDqSUsQqHshUKxjwo=; b=gZhAdD7sNqJ+epjjTwXNtmVEzU
-        8w/GKpwlKqO/WkFWbvXggbQBm+7rbds4L/g92P7nYKHurOlB/E5nHe82UG2DMPPY
-        OutEBFrYzxT8xLuS4b9iqEhdPaEJZ1diz8yc3j5nj4GoLrxJ2x0M6DJBIfFlzmcy
-        EtSwWYRopaR6Hof+lqdmn0phymn0zQdhhpYKIwtqay2WQyf208BCjlrKI6s/tCiK
-        2jHpB9itafhbv81t2MDGroZNRe9zgS9wegS68B4MsVsU5i4wyBfJSBGTXwpk3iPu
-        Kl03jUEV23+w/Mm61FvufhR+rxwpkTpG9IpnkvNw7+qCemmG71igg+3YbIrg==
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p1.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p1.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id J0XKcDyR0t-g for <linux-kernel@vger.kernel.org>;
-        Wed,  3 Oct 2018 09:55:10 -0500 (CDT)
-Received: from mail-it1-f172.google.com (mail-it1-f172.google.com [209.85.166.172])
-        (using TLSv1 with cipher AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wang6495)
-        by mta-p1.oit.umn.edu (Postfix) with ESMTPSA id 383121D6
-        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 09:55:10 -0500 (CDT)
-Received: by mail-it1-f172.google.com with SMTP id p64-v6so9310580itp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 07:55:10 -0700 (PDT)
-X-Gm-Message-State: ABuFfogDx8L4gWcgPGcRprOpFAZAcmH7QBJMyW6JzxZ04oQlQtulv8Te
-        MyIkli/AWnSfokrZetKDrM0qRJx7V6xiV2XiAtw=
-X-Google-Smtp-Source: ACcGV61oSwY+/vx8EY5rxCNZN4Y13B4bwcB0hYhscW2hY+J6WUQ/LWViDkve9M9fB7FAY9Gc6HODbH/176+6MQIalTs=
-X-Received: by 2002:a24:9005:: with SMTP id x5-v6mr1600039itd.76.1538578509987;
- Wed, 03 Oct 2018 07:55:09 -0700 (PDT)
+        Wed, 3 Oct 2018 17:44:33 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 0D9291992538
+        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 09:55:46 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 7iYsgvEGGkBj67iYxg2INJ; Wed, 03 Oct 2018 09:55:46 -0500
+X-Authority-Reason: nr=8
+Received: from 174.206.93.92.rev.sfr.net ([92.93.206.174]:38930 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g7iYr-003jDV-2P; Wed, 03 Oct 2018 09:55:37 -0500
+Date:   Wed, 3 Oct 2018 16:55:35 +0200
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Don Brace <don.brace@microsemi.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        Willem Riede <osst@riede.org>,
+        Kai =?iso-8859-1?Q?M=E4kisara?= <Kai.Makisara@kolumbus.fi>
+Cc:     esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, osst-users@lists.sourceforge.net,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] scsi: mark expected switch fall-throughs
+Message-ID: <20181003145535.GA24941@embeddedor.com>
 MIME-Version: 1.0
-References: <1538542259-11868-1-git-send-email-wang6495@umn.edu> <87h8i379af.fsf@ashishki-desk.ger.corp.intel.com>
-In-Reply-To: <87h8i379af.fsf@ashishki-desk.ger.corp.intel.com>
-From:   Wenwen Wang <wang6495@umn.edu>
-Date:   Wed, 3 Oct 2018 09:54:34 -0500
-X-Gmail-Original-Message-ID: <CAAa=b7diJTzf-Y=6VcYhQGztPTj0uT0MX7-N0YKLW45EpxpcAg@mail.gmail.com>
-Message-ID: <CAAa=b7diJTzf-Y=6VcYhQGztPTj0uT0MX7-N0YKLW45EpxpcAg@mail.gmail.com>
-Subject: Re: [PATCH] stm class: fix a missing-check bug
-To:     alexander.shishkin@linux.intel.com
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        open list <linux-kernel@vger.kernel.org>,
-        Wenwen Wang <wang6495@umn.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 92.93.206.174
+X-Source-L: No
+X-Exim-ID: 1g7iYr-003jDV-2P
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 174.206.93.92.rev.sfr.net (embeddedor) [92.93.206.174]:38930
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 2:57 AM Alexander Shishkin
-<alexander.shishkin@linux.intel.com> wrote:
->
-> Wenwen Wang <wang6495@umn.edu> writes:
->
-> > In stm_char_policy_set_ioctl(), the 'size' field of the struct
-> > 'stp_polic_id' is firstly copied from the user space and then checked,
-> > because the length of the 'id' field in this struct, which represents an
-> > identification string, is not fixed. If the 'size' field cannot pass the
-> > check, an error code EINVAL will be returned. However, after the check, the
-> > whole struct is copied again from the user space. Given that the user data
-> > resides in the user space, a malicious user-space process can race to
-> > change the size between the two copies. By doing so, the attacker can
-> > bypass the check on the 'size' field and inject malicious data.
->
-> How? The id->size is not used for anything.
->
-> And even if there was a problem, this:
->
-> > -     if (copy_from_user(id, arg, size)) {
-> > +     if (copy_from_user(&id->master, (char __user *)arg + sizeof(size),
-> > +                             size - sizeof(size))) {
->
-> is completely pointless.
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Given that id->size is not used, it should not be copied from the user
-space. This code is used to remove such redundant copy.
+Addresses-Coverity-ID: 1195463 ("Missing break in switch")
+Addresses-Coverity-ID: 1195464 ("Missing break in switch")
+Addresses-Coverity-ID: 1195465 ("Missing break in switch")
+Addresses-Coverity-ID: 1195466 ("Missing break in switch")
+Addresses-Coverity-ID: 1357338 ("Missing break in switch")
+Addresses-Coverity-ID: 114973 ("Missing break in switch")
+Addresses-Coverity-ID: 114983 ("Missing break in switch")
+Addresses-Coverity-ID: 114984 ("Missing break in switch")
+Addresses-Coverity-ID: 114985 ("Missing break in switch")
+Addresses-Coverity-ID: 114988 ("Missing break in switch")
+Addresses-Coverity-ID: 114994 ("Missing break in switch")
+Addresses-Coverity-ID: 114995 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/scsi/hpsa.c | 5 +++++
+ drivers/scsi/ips.c  | 1 +
+ drivers/scsi/osst.c | 6 ++++++
+ drivers/scsi/ppa.c  | 1 +
+ drivers/scsi/st.c   | 4 ++++
+ 5 files changed, 17 insertions(+)
 
->
-> >               ret = -EFAULT;
-> >               goto err_free;
-> >       }
-> >
-> > +     id->size = size;
->
-> So, if we did use id->size after the copying, we'd indeed have this line
-> in the code. But since we don't, it's also pointless, so it's not there.
->
-> Thanks,
-> --
-> Alex
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index f903983..fb6a356 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -4662,6 +4662,7 @@ static int fixup_ioaccel_cdb(u8 *cdb, int *cdb_len)
+ 	case WRITE_6:
+ 	case WRITE_12:
+ 		is_write = 1;
++		/* fall through */
+ 	case READ_6:
+ 	case READ_12:
+ 		if (*cdb_len == 6) {
+@@ -5092,6 +5093,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
+ 	switch (cmd->cmnd[0]) {
+ 	case WRITE_6:
+ 		is_write = 1;
++		/* fall through */
+ 	case READ_6:
+ 		first_block = (((cmd->cmnd[1] & 0x1F) << 16) |
+ 				(cmd->cmnd[2] << 8) |
+@@ -5102,6 +5104,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
+ 		break;
+ 	case WRITE_10:
+ 		is_write = 1;
++		/* fall through */
+ 	case READ_10:
+ 		first_block =
+ 			(((u64) cmd->cmnd[2]) << 24) |
+@@ -5114,6 +5117,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
+ 		break;
+ 	case WRITE_12:
+ 		is_write = 1;
++		/* fall through */
+ 	case READ_12:
+ 		first_block =
+ 			(((u64) cmd->cmnd[2]) << 24) |
+@@ -5128,6 +5132,7 @@ static int hpsa_scsi_ioaccel_raid_map(struct ctlr_info *h,
+ 		break;
+ 	case WRITE_16:
+ 		is_write = 1;
++		/* fall through */
+ 	case READ_16:
+ 		first_block =
+ 			(((u64) cmd->cmnd[2]) << 56) |
+diff --git a/drivers/scsi/ips.c b/drivers/scsi/ips.c
+index bd6ac6b..8e1c45d 100644
+--- a/drivers/scsi/ips.c
++++ b/drivers/scsi/ips.c
+@@ -3485,6 +3485,7 @@ ips_send_cmd(ips_ha_t * ha, ips_scb_t * scb)
+ 
+ 		case START_STOP:
+ 			scb->scsi_cmd->result = DID_OK << 16;
++			/* fall through */
+ 
+ 		case TEST_UNIT_READY:
+ 		case INQUIRY:
+diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
+index 7a1a1ed..8af608d 100644
+--- a/drivers/scsi/osst.c
++++ b/drivers/scsi/osst.c
+@@ -216,12 +216,14 @@ static void osst_analyze_sense(struct osst_request *SRpnt, struct st_cmdstatus *
+ 		switch (sense[0] & 0x7f) {
+ 		case 0x71:
+ 			s->deferred = 1;
++			/* fall through */
+ 		case 0x70:
+ 			s->fixed_format = 1;
+ 			s->flags = sense[2] & 0xe0;
+ 			break;
+ 		case 0x73:
+ 			s->deferred = 1;
++			/* fall through */
+ 		case 0x72:
+ 			s->fixed_format = 0;
+ 			ucp = scsi_sense_desc_find(sense, SCSI_SENSE_BUFFERSIZE, 4);
+@@ -591,6 +593,7 @@ static void osst_init_aux(struct osst_tape * STp, int frame_type, int frame_seq_
+ 		dat->dat_list[0].flags    = frame_type==OS_FRAME_TYPE_MARKER?
+ 							OS_DAT_FLAGS_MARK:OS_DAT_FLAGS_DATA;
+ 		dat->dat_list[0].reserved = 0;
++		/* fall through */
+ 	  case	OS_FRAME_TYPE_EOD:
+ 		aux->update_frame_cntr    = htonl(0);
+ 		par->partition_num        = OS_DATA_PARTITION;
+@@ -4086,6 +4089,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
+ 	switch (cmd_in) {
+ 	 case MTFSFM:
+ 		chg_eof = 0; /* Changed from the FSF after this */
++		/* fall through */
+ 	 case MTFSF:
+ 		if (STp->raw)
+ 		   return (-EIO);
+@@ -4101,6 +4105,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
+ 
+ 	 case MTBSF:
+ 		chg_eof = 0; /* Changed from the FSF after this */
++		/* fall through */
+ 	 case MTBSFM:
+ 		if (STp->raw)
+ 		   return (-EIO);
+@@ -4312,6 +4317,7 @@ static int osst_int_ioctl(struct osst_tape * STp, struct osst_request ** aSRpnt,
+ 					   name, STp->block_size);
+ 			 return 0;
+ 		 }
++		/* fall through */
+ 	 case MTSETDENSITY:       /* Set tape density */
+ 	 case MTSETDRVBUFFER:     /* Set drive buffering */
+ 	 case SET_DENS_AND_BLK:   /* Set density and block size */
+diff --git a/drivers/scsi/ppa.c b/drivers/scsi/ppa.c
+index ee86a0c..d29999b 100644
+--- a/drivers/scsi/ppa.c
++++ b/drivers/scsi/ppa.c
+@@ -717,6 +717,7 @@ static int ppa_engine(ppa_struct *dev, struct scsi_cmnd *cmd)
+ 			}
+ 			cmd->SCp.phase++;
+ 		}
++		/* fall through */
+ 
+ 	case 2:		/* Phase 2 - We are now talking to the scsi bus */
+ 		if (!ppa_select(dev, scmd_id(cmd))) {
+diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
+index 307df2f..f1351ec 100644
+--- a/drivers/scsi/st.c
++++ b/drivers/scsi/st.c
+@@ -337,12 +337,14 @@ static void st_analyze_sense(struct st_request *SRpnt, struct st_cmdstatus *s)
+ 		switch (sense[0] & 0x7f) {
+ 		case 0x71:
+ 			s->deferred = 1;
++			/* fall through */
+ 		case 0x70:
+ 			s->fixed_format = 1;
+ 			s->flags = sense[2] & 0xe0;
+ 			break;
+ 		case 0x73:
+ 			s->deferred = 1;
++			/* fall through */
+ 		case 0x72:
+ 			s->fixed_format = 0;
+ 			ucp = scsi_sense_desc_find(sense, SCSI_SENSE_BUFFERSIZE, 4);
+@@ -2721,6 +2723,7 @@ static int st_int_ioctl(struct scsi_tape *STp, unsigned int cmd_in, unsigned lon
+ 	switch (cmd_in) {
+ 	case MTFSFM:
+ 		chg_eof = 0;	/* Changed from the FSF after this */
++		/* fall through */
+ 	case MTFSF:
+ 		cmd[0] = SPACE;
+ 		cmd[1] = 0x01;	/* Space FileMarks */
+@@ -2735,6 +2738,7 @@ static int st_int_ioctl(struct scsi_tape *STp, unsigned int cmd_in, unsigned lon
+ 		break;
+ 	case MTBSFM:
+ 		chg_eof = 0;	/* Changed from the FSF after this */
++		/* fall through */
+ 	case MTBSF:
+ 		cmd[0] = SPACE;
+ 		cmd[1] = 0x01;	/* Space FileMarks */
+-- 
+2.7.4
+
