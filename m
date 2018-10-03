@@ -2,155 +2,108 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F89C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0296EC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E57CC213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:56:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E57CC213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 89CED213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 19:58:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89CED213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbeJDCqj (ORCPT
+        id S1727234AbeJDCru (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 22:46:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47364 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726941AbeJDCqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 22:46:39 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C52EB307D857;
-        Wed,  3 Oct 2018 19:56:48 +0000 (UTC)
-Received: from asgard.redhat.com (ovpn-200-25.brq.redhat.com [10.40.200.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F19B300166E;
-        Wed,  3 Oct 2018 19:56:36 +0000 (UTC)
-Date:   Wed, 3 Oct 2018 21:57:06 +0200
-From:   Eugene Syromiatnikov <esyr@redhat.com>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v4 3/9] x86/cet/ibt: Add IBT legacy code bitmap
- allocation function
-Message-ID: <20181003195702.GF32759@asgard.redhat.com>
-References: <20180921150553.21016-1-yu-cheng.yu@intel.com>
- <20180921150553.21016-4-yu-cheng.yu@intel.com>
+        Wed, 3 Oct 2018 22:47:50 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37835 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726941AbeJDCru (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 22:47:50 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w93Jvn732469307
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 3 Oct 2018 12:57:50 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w93Jvn042469304;
+        Wed, 3 Oct 2018 12:57:49 -0700
+Date:   Wed, 3 Oct 2018 12:57:49 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
+Message-ID: <tip-53ed74af05517cf5fe83d87c4bb7ab998adfd631@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
+        tglx@linutronix.de, reinette.chatre@intel.com
+Reply-To: tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, reinette.chatre@intel.com
+In-Reply-To: <bfb9fc31692e0c62d9ca39062e55eceb6a0635b5.1537377064.git.reinette.chatre@intel.com>
+References: <bfb9fc31692e0c62d9ca39062e55eceb6a0635b5.1537377064.git.reinette.chatre@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cache] x86/intel_rdt: Re-enable pseudo-lock measurements
+Git-Commit-ID: 53ed74af05517cf5fe83d87c4bb7ab998adfd631
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180921150553.21016-4-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 03 Oct 2018 19:56:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 08:05:47AM -0700, Yu-cheng Yu wrote:
-> Indirect branch tracking provides an optional legacy code bitmap
-> that indicates locations of non-IBT compatible code.  When set,
-> each bit in the bitmap represents a page in the linear address is
-> legacy code.
-> 
-> We allocate the bitmap only when the application requests it.
-> Most applications do not need the bitmap.
-> 
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> ---
->  arch/x86/kernel/cet.c | 45 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-> index 6adfe795d692..a65d9745af08 100644
-> --- a/arch/x86/kernel/cet.c
-> +++ b/arch/x86/kernel/cet.c
-> @@ -314,3 +314,48 @@ void cet_disable_ibt(void)
->  	wrmsrl(MSR_IA32_U_CET, r);
->  	current->thread.cet.ibt_enabled = 0;
->  }
-> +
-> +int cet_setup_ibt_bitmap(void)
-> +{
-> +	u64 r;
-> +	unsigned long bitmap;
-> +	unsigned long size;
-> +
-> +	if (!cpu_feature_enabled(X86_FEATURE_IBT))
-> +		return -EOPNOTSUPP;
-> +
-> +	if (!current->thread.cet.ibt_bitmap_addr) {
-> +		/*
-> +		 * Calculate size and put in thread header.
-> +		 * may_expand_vm() needs this information.
-> +		 */
-> +		size = TASK_SIZE / PAGE_SIZE / BITS_PER_BYTE;
+Commit-ID:  53ed74af05517cf5fe83d87c4bb7ab998adfd631
+Gitweb:     https://git.kernel.org/tip/53ed74af05517cf5fe83d87c4bb7ab998adfd631
+Author:     Reinette Chatre <reinette.chatre@intel.com>
+AuthorDate: Wed, 19 Sep 2018 10:29:11 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 3 Oct 2018 21:53:35 +0200
 
-TASK_SIZE_MAX is likely needed here, as an application can easily switch
-between long an 32-bit protected mode.  And then the case of a CPU that
-doesn't support 5LPT.
+x86/intel_rdt: Re-enable pseudo-lock measurements
 
-> +		current->thread.cet.ibt_bitmap_size = size;
-> +		bitmap = do_mmap_locked(0, size, PROT_READ | PROT_WRITE,
-> +					MAP_ANONYMOUS | MAP_PRIVATE,
-> +					VM_DONTDUMP);
-> +
-> +		if (bitmap >= TASK_SIZE) {
+Commit 4a7a54a55e72 ("x86/intel_rdt: Disable PMU access") disabled
+measurements of pseudo-locked regions because of incorrect usage
+of the performance monitoring hardware.
 
-Shouldn't bitmap be unmapped here?
+Cache pseudo-locking measurements are now done correctly with the
+in-kernel perf API and its use can be re-enabled at this time.
 
-> +			current->thread.cet.ibt_bitmap_size = 0;
-> +			return -ENOMEM;
-> +		}
-> +
-> +		current->thread.cet.ibt_bitmap_addr = bitmap;
-> +	}
-> +
-> +	/*
-> +	 * Lower bits of MSR_IA32_CET_LEG_IW_EN are for IBT
-> +	 * settings.  Clear lower bits even bitmap is already
-> +	 * page-aligned.
-> +	 */
-> +	bitmap = current->thread.cet.ibt_bitmap_addr;
-> +	bitmap &= PAGE_MASK;
+The adjustment to the in-kernel perf API also separated the L2 and L3
+measurements that can be triggered separately from user space. The
+re-enabling of the measurements is thus not a simple revert of the
+original disable in order to accommodate the additional parameter
+possible.
 
-In a hypothetical situation of bitmap & PAGE_MASK < bitmap that would lead
-to bitmap pointing to unmapped memory. A check that bitmap is sane would
-probably be better.
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com
+Cc: tony.luck@intel.com
+Cc: peterz@infradead.org
+Cc: acme@kernel.org
+Cc: gavin.hindman@intel.com
+Cc: jithu.joseph@intel.com
+Cc: dave.hansen@intel.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/bfb9fc31692e0c62d9ca39062e55eceb6a0635b5.1537377064.git.reinette.chatre@intel.com
 
-> +
-> +	/*
-> +	 * Turn on IBT legacy bitmap.
-> +	 */
-> +	rdmsrl(MSR_IA32_U_CET, r);
-> +	r |= (MSR_IA32_CET_LEG_IW_EN | bitmap);
-> +	wrmsrl(MSR_IA32_U_CET, r);
-> +	return 0;
-> +}
-> -- 
-> 2.17.1
-> 
+---
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index d68836139cf9..30e6c9f5a0ad 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -1236,7 +1236,7 @@ static ssize_t pseudo_lock_measure_trigger(struct file *file,
+ 	buf[buf_size] = '\0';
+ 	ret = kstrtoint(buf, 10, &sel);
+ 	if (ret == 0) {
+-		if (sel != 1)
++		if (sel != 1 && sel != 2 && sel != 3)
+ 			return -EINVAL;
+ 		ret = debugfs_file_get(file->f_path.dentry);
+ 		if (ret)
