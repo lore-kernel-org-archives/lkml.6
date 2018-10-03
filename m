@@ -2,112 +2,105 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D1DC00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6A1C00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A172089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76802213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 17:45:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WNzpwQLS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58A172089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VNkPIQXB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76802213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbeJDAcW (ORCPT
+        id S1727183AbeJDAek (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 20:32:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35037 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726923AbeJDAcW (ORCPT
+        Wed, 3 Oct 2018 20:34:40 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:45701 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbeJDAek (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 20:32:22 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w5-v6so7096751wrt.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 10:42:58 -0700 (PDT)
+        Wed, 3 Oct 2018 20:34:40 -0400
+Received: by mail-vs1-f66.google.com with SMTP id g201so3731794vsd.12
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 10:45:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=g+O+OFij2my0awpdYPqPJMt3Sgs+WM1e3rQ7IgVxQjU=;
-        b=WNzpwQLSgW9LgNpo+xTFTuhI6lh3VnCEouA3jvWpYgByRzjUCSjh3YgfZto7sJIFcl
-         kPWtoWBb42VPAk8+6EuZuC0HkBLxqi26xrkJJSxcPffabsTvkmAPhebSfcHeoty9mcpL
-         Tyf0rVLYKzxsHrKB0L0h5CBNU/Ldy6CCG2IWE=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YOUAzLexp0jWuOvCu4XLmmjhqC5LfxLq3vt68Tl0uZI=;
+        b=VNkPIQXBJ+EdWW4FqCSg4phL5Liq97osJCkca0khk7BrLEEOe4foUougLCuxBUcHhz
+         tTMpubvGgFFGYD7OMl8FGo1/Nmu7rIvrLJo3WPxGkk5txuYSKtsrWCH+dqH9zsqsgFN4
+         ALUriWJiIoOSmF7Ym6FDYYtpd0Ehxx/SmqbUU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=g+O+OFij2my0awpdYPqPJMt3Sgs+WM1e3rQ7IgVxQjU=;
-        b=pmzRhpr9o04EL5MDNYnjBwu3fOV9dxfBQ/bbdA6hrOiwfjHht+oCBFmv0vf5amMKE9
-         uFmfmy7MxmmEv7sxAsalmI2Lbn2wL+uM4S46u2OBc8WLarGSqR8zEsR+AjGlCHlNperA
-         oHBW4XECZAshaqg1Hmh7S/a2eOnV06wbGVV5u3sq3HWN+LsltRwO2E92pVc63TwGJ0Fh
-         66TppXsX9WumanLNcdec/EKHCVTu5DFqiRF81i4kI8H7Coi7laE9/bMOeKDTZnoBNpnB
-         HEFea4n/nymGXQlXtO4bifMTu6KLZWn5u9uA754XpsjKag/7nzja42+UO7ukUrNEsag9
-         NSNA==
-X-Gm-Message-State: ABuFfojVfcyjm0Zq2/mbrQs5Wl0dOStsbH4nu3kW4MG2gwKXSehWs2ut
-        KcChXnBUC5q5ogJy6Fp8qTI7lw==
-X-Google-Smtp-Source: ACcGV61NWv3dXQ09ahbI357+DojMtOt8r9v4XMPlnIZlIwukPGkSEyXZzIXSNkvS1WLL3Im/rI5RlA==
-X-Received: by 2002:adf:e607:: with SMTP id p7-v6mr2138250wrm.254.1538588577473;
-        Wed, 03 Oct 2018 10:42:57 -0700 (PDT)
-Received: from [192.168.0.19] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id 143-v6sm3229157wmv.6.2018.10.03.10.42.56
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YOUAzLexp0jWuOvCu4XLmmjhqC5LfxLq3vt68Tl0uZI=;
+        b=jW1F1TBS+LGC5tz5Hvd9Jjwn8qDCVGy70F7V6SBled35hJLpgJ4s2wAhU8Sgh3bhNk
+         1p3EYUzTjtuMOQ/y8HChdYbVLD2AvyYGYo3hYawOGSnbs398YU58em1bHOo9Yyfcr639
+         dO70wyRuu89q7qGT1HOsWRWHnlpxx+p4sRmWmVfsP5hLEzWgQnHTyOPs8EzKwtnusGqH
+         ZhMoG8uwqLAGV0hzV6oH/yrOBeyZeGcAK2D0M3CygwLM63pisTKnxOFeICWon3a+nj3I
+         aC61gSv8rnb2DjgAGTwju3P8ipBvtVDjzW2nGv7Rz1/hxqsKrBzOKkkQ3Jcsoi0Vri7E
+         LdOA==
+X-Gm-Message-State: ABuFfoh8hP6k1P8iP5W/2Jw6tWREvLz8KOcJfQQy5zLl4vJ63FodxpFr
+        v7cbTRPeKt2yfc+n4gHTVCh3kd9mWEo=
+X-Google-Smtp-Source: ACcGV6345exJBR+8Hy8v2lMRfJwaySx9KwotSi8clPhnS/Oyh7w1v/Mo9fMVBPwwV5klok5dL/CRBg==
+X-Received: by 2002:a67:4dc7:: with SMTP id i68mr1013920vsg.46.1538588715463;
+        Wed, 03 Oct 2018 10:45:15 -0700 (PDT)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id r76sm450672vsa.12.2018.10.03.10.45.14
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 10:42:56 -0700 (PDT)
-Subject: Re: [PATCH v2] nvmem: lpc18xx_eeprom: remove unused variable
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <greg@kroah.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20181003072430.20966-1-brgl@bgdev.pl>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <e51fd8aa-50bc-569b-4523-fc34ab0f5355@linaro.org>
-Date:   Wed, 3 Oct 2018 18:42:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 03 Oct 2018 10:45:14 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id z130-v6so3747428vsc.7
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Oct 2018 10:45:14 -0700 (PDT)
+X-Received: by 2002:a67:83d5:: with SMTP id f204-v6mr999348vsd.6.1538588713891;
+ Wed, 03 Oct 2018 10:45:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181003072430.20966-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1538569430-32374-1-git-send-email-alokc@codeaurora.org>
+In-Reply-To: <1538569430-32374-1-git-send-email-alokc@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 3 Oct 2018 10:45:02 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XnkGA-3LOxJUVoYbSQ5QwVk21_N=pVLhfQySCG30heAw@mail.gmail.com>
+Message-ID: <CAD=FV=XnkGA-3LOxJUVoYbSQ5QwVk21_N=pVLhfQySCG30heAw@mail.gmail.com>
+Subject: Re: [PATCH] soc: qcom: Add irq clear handling during SE init
+To:     alokc@codeaurora.org
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Dilip Kota <dkota@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-
-On 03/10/18 08:24, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Remove a variable that's no longer used from lpc18xx_eeprom_remove().
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
+On Wed, Oct 3, 2018 at 5:24 AM Alok Chauhan <alokc@codeaurora.org> wrote:
+>
+> when the kernel inits a SE, its quite possible we have pending interrupts
+> from bootloaders which did not handle/clear them. So do this in kernel at
+> the SE init, to avoid some of it causing bad behavior, while at it also
+> club all the register writes needed to clear the se irqs into a function
+> to avoid repeating it over.
+>
+> Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
 > ---
-> v1 -> v2:
-> - added the Reported-by tag
-> 
->   drivers/nvmem/lpc18xx_eeprom.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/nvmem/lpc18xx_eeprom.c b/drivers/nvmem/lpc18xx_eeprom.c
-> index b42dbaddb419..66cff1e2147a 100644
-> --- a/drivers/nvmem/lpc18xx_eeprom.c
-> +++ b/drivers/nvmem/lpc18xx_eeprom.c
-> @@ -255,7 +255,6 @@ static int lpc18xx_eeprom_probe(struct platform_device *pdev)
->   static int lpc18xx_eeprom_remove(struct platform_device *pdev)
->   {
->   	struct lpc18xx_eeprom_dev *eeprom = platform_get_drvdata(pdev);
-> -	int ret;
->   
->   	clk_disable_unprepare(eeprom->clk);
->   
-> 
+>  drivers/soc/qcom/qcom-geni-se.c | 25 +++++++++++++------------
+>  1 file changed, 13 insertions(+), 12 deletions(-)
+
+This looks fine to me.  To clarify this doesn't fix any known issues
+and it just fixes the theoretical case where somehow a IRQ was sitting
+around (maybe left by the firmware) so we want to make really certain
+that we start with a clean state at init time.
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
