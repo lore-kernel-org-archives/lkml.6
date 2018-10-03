@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A333C64EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B04BAC00449
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5973F21470
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:22:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5973F21470
+	by mail.kernel.org (Postfix) with ESMTP id 7927D2098A
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 14:23:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7927D2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbeJCVLQ (ORCPT
+        id S1727065AbeJCVLk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 17:11:16 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37587 "EHLO
+        Wed, 3 Oct 2018 17:11:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35021 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726543AbeJCVLP (ORCPT
+        with ESMTP id S1726694AbeJCVLk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 17:11:15 -0400
+        Wed, 3 Oct 2018 17:11:40 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w93ELrur2374031
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w93EMwdw2374120
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 3 Oct 2018 07:21:53 -0700
+        Wed, 3 Oct 2018 07:22:58 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w93ELrnp2374028;
-        Wed, 3 Oct 2018 07:21:53 -0700
-Date:   Wed, 3 Oct 2018 07:21:53 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w93EMwbD2374117;
+        Wed, 3 Oct 2018 07:22:58 -0700
+Date:   Wed, 3 Oct 2018 07:22:58 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Peter Zijlstra (Intel)" <tipbot@zytor.com>
-Message-ID: <tip-3a387c6d96e69f1710a3804eb68e1253263298f2@git.kernel.org>
-Cc:     peterz@infradead.org, bhe@redhat.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, m.mizuma@jp.fujitsu.com,
-        torvalds@linux-foundation.org, hpa@zytor.com, bp@suse.de,
-        mingo@kernel.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, torvalds@linux-foundation.org,
-          bp@suse.de, tglx@linutronix.de, m.mizuma@jp.fujitsu.com,
-          linux-kernel@vger.kernel.org, bhe@redhat.com,
-          peterz@infradead.org
-In-Reply-To: <20181003123402.GA15494@hirez.programming.kicks-ass.net>
-References: <20181003123402.GA15494@hirez.programming.kicks-ass.net>
+From:   tip-bot for Xiaochen Shen <tipbot@zytor.com>
+Message-ID: <tip-32ece95d3052e0778eab98fd9c2ffde92c599ce9@git.kernel.org>
+Cc:     tony.luck@intel.com, linux-kernel@vger.kernel.org,
+        fenghua.yu@intel.com, tglx@linutronix.de, xiaochen.shen@intel.com,
+        mingo@kernel.org, hpa@zytor.com
+Reply-To: hpa@zytor.com, mingo@kernel.org, xiaochen.shen@intel.com,
+          tglx@linutronix.de, fenghua.yu@intel.com,
+          linux-kernel@vger.kernel.org, tony.luck@intel.com
+In-Reply-To: <1536796118-60135-1-git-send-email-fenghua.yu@intel.com>
+References: <1536796118-60135-1-git-send-email-fenghua.yu@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/boot] x86/kaslr, ACPI/NUMA: Fix KASLR build error
-Git-Commit-ID: 3a387c6d96e69f1710a3804eb68e1253263298f2
+Subject: [tip:x86/cache] x86/intel_rdt: Show missing resctrl mount options
+Git-Commit-ID: 32ece95d3052e0778eab98fd9c2ffde92c599ce9
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,147 +58,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3a387c6d96e69f1710a3804eb68e1253263298f2
-Gitweb:     https://git.kernel.org/tip/3a387c6d96e69f1710a3804eb68e1253263298f2
-Author:     Peter Zijlstra (Intel) <peterz@infradead.org>
-AuthorDate: Wed, 3 Oct 2018 14:41:27 +0200
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Wed, 3 Oct 2018 16:15:49 +0200
+Commit-ID:  32ece95d3052e0778eab98fd9c2ffde92c599ce9
+Gitweb:     https://git.kernel.org/tip/32ece95d3052e0778eab98fd9c2ffde92c599ce9
+Author:     Xiaochen Shen <xiaochen.shen@intel.com>
+AuthorDate: Wed, 12 Sep 2018 16:48:38 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 3 Oct 2018 16:19:36 +0200
 
-x86/kaslr, ACPI/NUMA: Fix KASLR build error
+x86/intel_rdt: Show missing resctrl mount options
 
-There is no point in trying to compile KASLR-specific code when there is
-no KASLR.
+In resctrl filesystem, mount options exist to enable L3/L2 CDP and MBA
+Software Controller features if the platform supports them:
 
- [ bp: Move the whole crap into kaslr.c and make
-   rand_mem_physical_padding static. ]
+ mount -t resctrl resctrl [-o cdp[,cdpl2][,mba_MBps]] /sys/fs/resctrl
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: <m.mizuma@jp.fujitsu.com>
-Cc: <bhe@redhat.com>
-Cc: <torvalds@linux-foundation.org>
-Cc: <tglx@linutronix.de>
-Cc: <mingo@kernel.org>
-Cc: <hpa@zytor.com>
-Link: http://lkml.kernel.org/r/20181003123402.GA15494@hirez.programming.kicks-ass.net
+But currently only "cdp" option is displayed in /proc/mounts. "cdpl2" and
+"mba_MBps" options are not shown even when they are active.
+
+Before:
+ # mount -t resctrl resctrl -o cdp,mba_MBps /sys/fs/resctrl
+ # grep resctrl /proc/mounts
+ /sys/fs/resctrl /sys/fs/resctrl resctrl rw,relatime,cdp 0 0
+
+After:
+ # mount -t resctrl resctrl -o cdp,mba_MBps /sys/fs/resctrl
+ # grep resctrl /proc/mounts
+ /sys/fs/resctrl /sys/fs/resctrl resctrl rw,relatime,cdp,mba_MBps 0 0
+
+Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H Peter Anvin" <hpa@zytor.com>
+Cc: "Tony Luck" <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/1536796118-60135-1-git-send-email-fenghua.yu@intel.com
+
 ---
- arch/x86/include/asm/kaslr.h |  2 ++
- arch/x86/include/asm/setup.h |  2 --
- arch/x86/mm/kaslr.c          | 19 ++++++++++++++++++-
- drivers/acpi/numa.c          | 15 +++------------
- 4 files changed, 23 insertions(+), 15 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/x86/include/asm/kaslr.h b/arch/x86/include/asm/kaslr.h
-index db7ba2feb947..95ef3fc01d12 100644
---- a/arch/x86/include/asm/kaslr.h
-+++ b/arch/x86/include/asm/kaslr.h
-@@ -6,8 +6,10 @@ unsigned long kaslr_get_random_long(const char *purpose);
- 
- #ifdef CONFIG_RANDOMIZE_MEMORY
- void kernel_randomize_memory(void);
-+void kaslr_check_padding(void);
- #else
- static inline void kernel_randomize_memory(void) { }
-+static inline void kaslr_check_padding(void) { }
- #endif /* CONFIG_RANDOMIZE_MEMORY */
- 
- #endif
-diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-index 65a5bf8f6aba..ae13bc974416 100644
---- a/arch/x86/include/asm/setup.h
-+++ b/arch/x86/include/asm/setup.h
-@@ -80,8 +80,6 @@ static inline unsigned long kaslr_offset(void)
- 	return (unsigned long)&_text - __START_KERNEL;
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 1b8e86a5d5e1..82a487840eb2 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -2795,6 +2795,13 @@ static int rdtgroup_show_options(struct seq_file *seq, struct kernfs_root *kf)
+ {
+ 	if (rdt_resources_all[RDT_RESOURCE_L3DATA].alloc_enabled)
+ 		seq_puts(seq, ",cdp");
++
++	if (rdt_resources_all[RDT_RESOURCE_L2DATA].alloc_enabled)
++		seq_puts(seq, ",cdpl2");
++
++	if (is_mba_sc(&rdt_resources_all[RDT_RESOURCE_MBA]))
++		seq_puts(seq, ",mba_MBps");
++
+ 	return 0;
  }
  
--extern int rand_mem_physical_padding;
--
- /*
-  * Do NOT EVER look at the BIOS memory size location.
-  * It does not work on many machines.
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 00cf4cae38f5..b3471388288d 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -23,6 +23,7 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/random.h>
-+#include <linux/bootmem.h>
- 
- #include <asm/pgalloc.h>
- #include <asm/pgtable.h>
-@@ -40,7 +41,7 @@
-  */
- static const unsigned long vaddr_end = CPU_ENTRY_AREA_BASE;
- 
--int __initdata rand_mem_physical_padding = CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-+static int __initdata rand_mem_physical_padding = CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
- /*
-  * Memory regions randomized by KASLR (except modules that use a separate logic
-  * earlier during boot). The list is ordered based on virtual addresses. This
-@@ -70,6 +71,22 @@ static inline bool kaslr_memory_enabled(void)
- 	return kaslr_enabled() && !IS_ENABLED(CONFIG_KASAN);
- }
- 
-+/*
-+ * Check the padding size for KASLR is enough.
-+ */
-+void __init kaslr_check_padding(void)
-+{
-+	u64 max_possible_phys, max_actual_phys, threshold;
-+
-+	max_actual_phys = roundup(PFN_PHYS(max_pfn), 1ULL << 40);
-+	max_possible_phys = roundup(PFN_PHYS(max_possible_pfn), 1ULL << 40);
-+	threshold = max_actual_phys + ((u64)rand_mem_physical_padding << 40);
-+
-+	if (max_possible_phys > threshold)
-+		pr_warn("Set 'rand_mem_physical_padding=%llu' to avoid memory hotadd failure.\n",
-+			(max_possible_phys - max_actual_phys) >> 40);
-+}
-+
- static int __init rand_mem_physical_padding_setup(char *str)
- {
- 	int max_padding = (1 << (MAX_PHYSMEM_BITS - TB_SHIFT)) - 1;
-diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-index 3d69834c692f..4408e37600ef 100644
---- a/drivers/acpi/numa.c
-+++ b/drivers/acpi/numa.c
-@@ -32,7 +32,7 @@
- #include <linux/numa.h>
- #include <linux/nodemask.h>
- #include <linux/topology.h>
--#include <asm/setup.h>
-+#include <asm/kaslr.h>
- 
- static nodemask_t nodes_found_map = NODE_MASK_NONE;
- 
-@@ -436,7 +436,6 @@ acpi_table_parse_srat(enum acpi_srat_type id,
- int __init acpi_numa_init(void)
- {
- 	int cnt = 0;
--	u64 max_possible_phys, max_actual_phys, threshold;
- 
- 	if (acpi_disabled)
- 		return -EINVAL;
-@@ -466,17 +465,9 @@ int __init acpi_numa_init(void)
- 		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
- 					    acpi_parse_memory_affinity, 0);
- 
--		/* check the padding size for KASLR is enough. */
--		if (parsed_numa_memblks && kaslr_enabled()) {
--			max_actual_phys = roundup(PFN_PHYS(max_pfn), 1ULL << 40);
--			max_possible_phys = roundup(PFN_PHYS(max_possible_pfn), 1ULL << 40);
--			threshold = max_actual_phys + ((u64)rand_mem_physical_padding << 40);
-+		if (parsed_numa_memblks)
-+			kaslr_check_padding();
- 
--			if (max_possible_phys > threshold) {
--				pr_warn("Set 'rand_mem_physical_padding=%llu' to avoid memory hotadd failure.\n",
--				  (max_possible_phys - max_actual_phys) >> 40);
--			}
--		}
- 	}
- 
- 	/* SLIT: System Locality Information Table */
