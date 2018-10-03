@@ -2,115 +2,130 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D824C00449
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 638E6C64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E960520684
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:14:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21FE020835
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 12:14:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="A4QH6hMG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E960520684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V0sq8MMM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21FE020835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbeJCTCK (ORCPT
+        id S1726893AbeJCTCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 15:02:10 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:58656 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbeJCTCJ (ORCPT
+        Wed, 3 Oct 2018 15:02:50 -0400
+Received: from mail-qt1-f181.google.com ([209.85.160.181]:44010 "EHLO
+        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbeJCTCt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 15:02:09 -0400
-Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id D4911B00A75
-        for <linux-kernel@vger.kernel.org>; Wed,  3 Oct 2018 14:13:59 +0200 (CEST)
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
-         h=content-transfer-encoding:content-language:content-type
-        :content-type:in-reply-to:mime-version:user-agent:date:date
-        :message-id:from:from:references:to:subject:subject; s=dkim; t=
-        1538568839; x=1539432840; bh=c2HRf60Ewcj7zRu4Bhmq+ouHmj2YqpXj/RA
-        m+PWbIOE=; b=A4QH6hMGjxO/fc0T37QJDPpl9qMHQxnZA2sIrkUVuDIgROGSUU9
-        8O+xUJCvjSDJR9FXjemLWpsnihS+Ay/9NcfZfy1qcIk9bNfOTWkiR/v5jfujWszz
-        xeFNgZCiWcJB5Q8mfe/HwkeF+PZxLTj0wCoKt+zfscFHZ71lkNDpSVRU=
-X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
-Received: from mail.micronovasrl.com ([127.0.0.1])
-        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id NWTl1fVZdI1u for <linux-kernel@vger.kernel.org>;
-        Wed,  3 Oct 2018 14:13:59 +0200 (CEST)
-Received: from [192.168.0.105] (146-241-101-147.dyn.eolo.it [146.241.101.147])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id DD917B00568;
-        Wed,  3 Oct 2018 14:13:54 +0200 (CEST)
-Subject: Re: [PATCH 1/2] drm/sun4i: tcon: fix check of tcon->panel null
- pointer
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <20181001093612.GA13672@mwanda>
- <20181002215917.1849-1-giulio.benetti@micronovasrl.com>
- <CAGb2v64z+j=ywU8n210Zw+97n=Ff4rVdUwNR9nbKO-hMD3nJcQ@mail.gmail.com>
-From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <9a545739-eed5-7af1-3b75-108bdd3427a2@micronovasrl.com>
-Date:   Wed, 3 Oct 2018 14:13:53 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 3 Oct 2018 15:02:49 -0400
+Received: by mail-qt1-f181.google.com with SMTP id q41-v6so5557528qtq.10;
+        Wed, 03 Oct 2018 05:14:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JZ6SjRN7wE51mkqoyKikCoCxFwvUX+jyBke290XiCDk=;
+        b=V0sq8MMMen6LrKDcuUxywm1VVsNqbQq63TxDX1M9vgpNPaa1A2t44XhNrKzWO0qfYt
+         moNk2lX+iopA2W4EMABwOPppzd8W1h2+LNZebfcMwmd8KML2FoaZ+pQsp4z1Xh/dQOGA
+         l3HxmX1VcxQ+oQHcqx+BshfTn1znRG/wUYI2uDSWwiZnKAUqzTpqVTXhBelOzWbnJs0U
+         Ch+A1r+H5Tc3YvPH/yoQrfMadE2iy2OkrddzWBs6G/gY3UjUcCLi+H3vKjwOje2ZfnLo
+         Zimh6nLaQkXKD+2aLRWle7sSHP1FFN1IeLKRN4ZvmhoXVRQiibL+cxbDQWzcTrt34nJB
+         RfeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JZ6SjRN7wE51mkqoyKikCoCxFwvUX+jyBke290XiCDk=;
+        b=lUA9P0rbsN9olbM05efd6YdFmoGWUZ7dhQWc6sJxfOqwiwZo+PcGeeZJSyrwul11qW
+         EW94veka+VaPURAEMsHcBwV9w5/0JNPx4AP8Dv7G2JmiTm/4FdVFNz7Xv27hCTfkyoPw
+         bNEUMX4uDpSwzxH/b/hDxzxL4JNsmlam4yRSCJ4ukVXsEAnUKUswdRnn6FBgOCk2TcRj
+         U6sGTj0aAPoovVqAN4Uqd/vBGzjWnf13/ic9jzr1ngD/yBGtujxrJrxI0b5zufj30Efj
+         f+fWNYcglVsdGhDzk1t9YIqiro1VZ/1kHlZEKrQLbAFjgcCfzCrOwuOvnlYHlFFR+Sbo
+         07Rw==
+X-Gm-Message-State: ABuFfoh4m8zGPRIrIBcIHj7inosmlKnbopaw6AozbDicmvJNrv/RD0kG
+        kw2yRnOWl5PSkAHWm+JPkllFhZJzTCnLMrdt/N4=
+X-Google-Smtp-Source: ACcGV60yrOCrSVT/HVLbGitvvMGQeN2ROahIvGMiwQJ8XORXpmyPSsiDRgxw1LZ8DVuIwM4s1jWsZQZ8jpfnaOUWyds=
+X-Received: by 2002:ad4:4245:: with SMTP id l5-v6mr909546qvq.140.1538568879681;
+ Wed, 03 Oct 2018 05:14:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v64z+j=ywU8n210Zw+97n=Ff4rVdUwNR9nbKO-hMD3nJcQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+References: <CANiq72=rgT9cPWH64Tf_8gAU09EiH5FvGqFUdOjV=spVbM5m8Q@mail.gmail.com>
+ <20181003071059.02b3fd6f@canb.auug.org.au> <CAKwvOdmt4-jFv6d-ZVUH5OOvXSz38jpuNvQy-jtoSS3xEoh78A@mail.gmail.com>
+ <CANiq72mmxiO6RWBTQfWYDaa6gmOF01nXmN6BJNCAjAFz3QJqqA@mail.gmail.com> <20181002223652.GA4290@nautica>
+In-Reply-To: <20181002223652.GA4290@nautica>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Wed, 3 Oct 2018 14:14:28 +0200
+Message-ID: <CANiq72=M2xQa6FJ1YZ2kKuNXES-XSn1O9yJ+FbhgMawND_kAqA@mail.gmail.com>
+Subject: Re: [GIT PULL linux-next] Add Compiler Attributes tree
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Olof Johansson <olof@lxom.net>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        David Miller <davem@davemloft.net>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Paul Burton <paul.burton@mips.com>,
+        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
+        Martin Sebor <msebor@gmail.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Jonathan Corbet <corbet@lwn.net>, "Ted Ts'o" <tytso@mit.edu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
+        Stefan Agner <stefan@agner.ch>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Il 03/10/2018 11:43, Chen-Yu Tsai ha scritto:
-> On Wed, Oct 3, 2018 at 5:59 AM Giulio Benetti
-> <giulio.benetti@micronovasrl.com> wrote:
->>
->> At the moment, the check of tcon->panel to be valid is wrong. IS_ERR()
->> has been used, but that macro doesn't check if tcon->panel pointer is
->> null or not, but check if tcon->panel is between -1 and -4095(MAX_ERRNO).
->>
->> Remove IS_ERR() from tcon->panel checking and let "if (tcon->panel)" as
->> condition to check if it's a pointer not null.
-> 
-> There's actually more than one occurance of this error:
-> 
-> drivers/gpu/drm/sun4i/sun4i_lvds.c:     if (!IS_ERR(tcon->panel)) {
-> drivers/gpu/drm/sun4i/sun4i_lvds.c:     if (!IS_ERR(tcon->panel)) {
-> drivers/gpu/drm/sun4i/sun4i_rgb.c:      if (!IS_ERR(tcon->panel)) {
-> drivers/gpu/drm/sun4i/sun4i_rgb.c:      if (!IS_ERR(tcon->panel)) {
-> 
-> These four are responsible for enabling and disabling the panel.
-> 
-> drivers/gpu/drm/sun4i/sun4i_tcon.c:     if (!IS_ERR(tcon->panel)) {
-> 
-> All this looks like it was left over from commit ebc9446135671 ("drm: convert
-> drivers to use drm_of_find_panel_or_bridge"). We have checks against tcon->panel
-> in several places and not all of them were converted.
-> 
+HI Dominique,
 
-Then, I'm going to send a patchset to correct them.
+On Wed, Oct 3, 2018 at 12:37 AM Dominique Martinet
+<asmadeus@codewreck.org> wrote:
+>
+> Miguel Ojeda wrote on Wed, Oct 03, 2018:
+> > As I have read, -next is supposed to be a vision of what the merge
+> > window will look like after merging everything, i.e. ideally -rc1. For
+> > that to work for files out-of-tree (like these ones, which are not
+> > maintained by a single tree), changes should be allowed to be stacked
+> > on each other; otherwise, we cannot handle conflicts :-(
+>
+> The rule is the same as with a regular mainline pull; I don't have the
+> reference at hand but in some recent-ish pull request Linus said he
 
-Best regards
--- 
-Giulio Benetti
-CTO
+That is actually the first problem: there is no
+reference/documentation at hand. :-P
 
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+Cheers,
+Miguel
