@@ -2,83 +2,114 @@ Return-Path: <SRS0=e9m6=MP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2F2C64EBD
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75083C64EBC
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E73520878
-	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:11:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1438820878
+	for <linux-kernel@archiver.kernel.org>; Wed,  3 Oct 2018 03:12:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="vBrAsMr2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E73520878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zt6qTJEp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1438820878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbeJCJ5h (ORCPT
+        id S1726619AbeJCJ7G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 3 Oct 2018 05:57:37 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:56429 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726162AbeJCJ5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Oct 2018 05:57:37 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 5121f873;
-        Wed, 3 Oct 2018 03:11:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=yOvHGQSsuxbS9p8SsM8HIZThH+g=; b=vBrAsM
-        r2cGPNYOoICgxJ9s9fg5ccUs9WruKiFEAHby7tHqJpZqFU9rhQZ+9ZwAZdOkVwaD
-        THgViWxlQO5SM/q/jeNMLpf4wtTOqg5muZbuCSn3PWOOz6AqPGwOrYFJIvs6H1AF
-        FB2SJQ80t7bNVn4cimeJ7X8UyQRHfUqBxG8mk3ZhZxU5WIn3P7jjWk4z+0j0YBko
-        hcO+0m5xhoejFRlP9NtoXStrDjWWLd1/Uw/6S4tC9LroJvvwDryYPg8JVYAZH/VA
-        NwgEQJpgOrNhLwnGPhm9zcM26AKbaJiKq9wjjB+F22BDNS7cAH7vyag5N/BtAzNd
-        k7oaUzuRHExeKJow==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6c7026f7 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Wed, 3 Oct 2018 03:11:02 +0000 (UTC)
-Received: by mail-ot1-f43.google.com with SMTP id 36-v6so4094034oth.11;
-        Tue, 02 Oct 2018 20:11:09 -0700 (PDT)
-X-Gm-Message-State: ABuFfoiXyTNRqa0uCR6tTLv3Ncvh0wpbFJEntqldin1P0Sapplw4RxS6
-        Y3XwyS7nLiMf8SML1+Dq/6QQH6bxIQ9h1+5v74o=
-X-Google-Smtp-Source: ACcGV62xJyJ2FZrOlwsN+QGyBP+u3WejdxdTOjggg6GxpB9e3qiIZOI07MkA2sRA1V1R4a2Ab7qwMR5w2idutuB94Eo=
-X-Received: by 2002:a9d:17d0:: with SMTP id j74-v6mr5198870otj.268.1538536268191;
- Tue, 02 Oct 2018 20:11:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-20-Jason@zx2c4.com>
- <CAKv+Gu9FLDRLxHReKcveZYHNYerR5Y2pZd9gn-hWrU0jb2KgfA@mail.gmail.com>
-In-Reply-To: <CAKv+Gu9FLDRLxHReKcveZYHNYerR5Y2pZd9gn-hWrU0jb2KgfA@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Wed, 3 Oct 2018 05:10:56 +0200
-X-Gmail-Original-Message-ID: <CAHmME9ojGATK+AcFLL2Fij_7XCW-=HBzjtkRqiitCH=p5=8KEA@mail.gmail.com>
-Message-ID: <CAHmME9ojGATK+AcFLL2Fij_7XCW-=HBzjtkRqiitCH=p5=8KEA@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 19/23] zinc: Curve25519 ARM implementation
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 3 Oct 2018 05:59:06 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41594 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726162AbeJCJ7F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Oct 2018 05:59:05 -0400
+Received: by mail-pf1-f195.google.com with SMTP id m77-v6so936312pfi.8
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Oct 2018 20:12:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=nEVDmBbxfh6xO+hh75zn5eGRCfiidmomaGOCEIOQa7M=;
+        b=Zt6qTJEpuMAYmyFCdxXwjBcK9NxMRUvIOlf0L3MHC8ATWd2oAbcumac2zSELI52CUq
+         UKco2vxnJ0ZbHk/ADZYcULmVI/qbwRMyyVrxkhNopj5dx4Cbcv0vwSTAH5JBrE166WCb
+         +FkNagsprBEgFse62L1Bc6PEfAVy5JwOvCOoQOSegvu0JIclFR7Q3uELVfKw/k2whFne
+         ptHQxUvwysZh0diU1ISEu8iaDCXeXrPLB1xmAnnRnX1r2HJrET4Mcm4MmPfTX1ZT9iXB
+         U825neixL8nPlOetoxFY6d5s7KDEaLuzpFQSCyntIpsqGymq7S+2S22EHjiLk9I88zFt
+         9oyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nEVDmBbxfh6xO+hh75zn5eGRCfiidmomaGOCEIOQa7M=;
+        b=aMbMEort+XQC2tsmbDecLuWE0/0l4xYG+D2WaMhpuvfeIFf9Z8aBqVZdOd/9VwS5lq
+         FoJXOlN2n83BBQUGbwRTplMlJhYA8EqGX1ac/f7hP9zC0pc3CLqZd5afjkHSBCEp/jKr
+         qyueu1cNveik7KgIZAguF9U5c502NUGMiyNAQWJ0Y06QOjqObQyVxn3WyCm9dWbulfYD
+         cP2XE3QP+L+DKXNv50oWYZLGXrXY86z9anHOVqylFnUvq1XDg+R0o9x1EHobuP4fbdLL
+         Xt9z780Zr20E5Mgn/oUF6U3gPD9VWiSyJYM6mIp0rUk5cWEbqol4iWOc55kJ11T5UxQw
+         ++Uw==
+X-Gm-Message-State: ABuFfohHNx/dAnW0OiCr7Ez9L6PffYzB/neiocADMh+RIUPTf44oMGjo
+        DLT5/ZeLOFP2nrsmOKNivFk=
+X-Google-Smtp-Source: ACcGV6104aFcCl70X28KtsuX3W+/X9gvYyPw3zHVyXUhzd0xiKTxH8USlIK1f/F+lQvVA8msDWe6fw==
+X-Received: by 2002:a63:4c4e:: with SMTP id m14-v6mr16990363pgl.173.1538536359605;
+        Tue, 02 Oct 2018 20:12:39 -0700 (PDT)
+Received: from app09.andestech.com (59-120-53-16.HINET-IP.hinet.net. [59.120.53.16])
+        by smtp.gmail.com with ESMTPSA id v23-v6sm21777747pfm.80.2018.10.02.20.12.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Oct 2018 20:12:38 -0700 (PDT)
+From:   Zong Li <zongbox@gmail.com>
+To:     palmer@sifive.com, aou@eecs.berkeley.edu
+Cc:     hch@infradead.org, zong@andestech.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Zong Li <zongbox@gmail.com>
+Subject: [PATCH v4 0/5] Fix some bugs on RV32 build fail and issue
+Date:   Wed,  3 Oct 2018 11:09:57 +0800
+Message-Id: <cover.1538535527.git.zongbox@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 6:59 PM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> Could you elaborate on what qhasm is exactly? And, as with the other
-> patches, I would prefer it if we could have your changes as a separate
-> patch (although having the qhasm base would be preferred)
+This patches contain the modificaion as follows:
+1. Fix up the building fail on RV32.
+2. Add umoddi3 and udivmoddi4 functions for RV32.
+3. Fix ioremap problem on RV32.
 
-By the way, as of a few minutes ago, if you look in the development
-tree at the commit called "zinc: Curve25519 ARM implementation", that
-now shows the diffs to the original, as you requested. I'll probably
-obsess over that a little bit more before v7, but if you see anything
-gnarly there beforehand, I'd be happy to hear.
+Thanks all for review these code and modify the copyright description.
 
-Jason
+Changes in v4:
+ - Retain the complete copyright description.
+ - Modify commit message.
+ - Rebase upstream code.
+
+Changes in v3:
+ - Change the copyright notices to GPLv2 from  gcc 4.2.1.
+
+Changes in v2:
+ - Retain the copyright notices from libgcc in umoddi3.c and udivmoddi4.c.
+
+Vincent Chen (1):
+  RISC-V: Avoid corrupting the upper 32-bit of phys_addr_t in ioremap
+
+Zong Li (4):
+  RISC-V: Build tishift only on 64-bit
+  RISC-V: Add preprocessor directive for swiotlb
+  lib: Add umoddi3 and udivmoddi4 of GCC library routines
+  RISC-V: Select GENERIC_LIB_UMODDI3 on RV32
+
+ arch/riscv/Kconfig        |   1 +
+ arch/riscv/kernel/setup.c |   3 +
+ arch/riscv/lib/Makefile   |   3 +-
+ arch/riscv/mm/ioremap.c   |   2 +-
+ lib/Kconfig               |   3 +
+ lib/Makefile              |   1 +
+ lib/udivmoddi4.c          | 326 ++++++++++++++++++++++++++++++++++++++++++++++
+ lib/umoddi3.c             |  48 +++++++
+ 8 files changed, 385 insertions(+), 2 deletions(-)
+ create mode 100644 lib/udivmoddi4.c
+ create mode 100644 lib/umoddi3.c
+
+-- 
+2.7.4
+
