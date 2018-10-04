@@ -6,95 +6,130 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A174C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA2DC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:28:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E178620877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:25:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E178620877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id AF42120877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 11:28:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF42120877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbeJDSSk (ORCPT
+        id S1727427AbeJDSVA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 14:18:40 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34846 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727188AbeJDSSk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 14:18:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 505D37A9;
-        Thu,  4 Oct 2018 04:25:50 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 036B03F5A0;
-        Thu,  4 Oct 2018 04:25:48 -0700 (PDT)
-Subject: Re: [PATCH] dma-direct: Fix return value of dma_direct_supported
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        iommu@lists.linux-foundation.org
-Cc:     benh@kernel.crashing.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, linuxppc-dev@lists.ozlabs.org,
-        linux@roeck-us.net
-References: <20181003234746.3586.42014.stgit@localhost.localdomain>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <5329f992-d3aa-c16c-1218-c26d758889b8@arm.com>
-Date:   Thu, 4 Oct 2018 12:25:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 4 Oct 2018 14:21:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34189 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727183AbeJDSU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 14:20:59 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 226492090A; Thu,  4 Oct 2018 13:28:07 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BF00320890;
+        Thu,  4 Oct 2018 13:27:56 +0200 (CEST)
+Date:   Thu, 4 Oct 2018 13:27:57 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] mtd: spi-nor: Add Octal mode support for
+ mt35xu512aba
+Message-ID: <20181004132757.16107d10@bbrezillon>
+In-Reply-To: <904391ba-5a12-aee9-966a-17346dded080@ti.com>
+References: <20181003165603.2579-1-vigneshr@ti.com>
+        <20181003165603.2579-2-vigneshr@ti.com>
+        <20181004114535.3a5dba05@bbrezillon>
+        <904391ba-5a12-aee9-966a-17346dded080@ti.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181003234746.3586.42014.stgit@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/10/18 00:48, Alexander Duyck wrote:
-> It appears that in commit 9d7a224b463e ("dma-direct: always allow dma mask
-> <= physiscal memory size") the logic of the test was changed from a "<" to
-> a ">=" however I don't see any reason for that change. I am assuming that
-> there was some additional change planned, specifically I suspect the logic
-> was intended to be reversed and possibly used for a return. Since that is
-> the case I have gone ahead and done that.
+On Thu, 4 Oct 2018 16:42:22 +0530
+Vignesh R <vigneshr@ti.com> wrote:
 
-Bah, seems I got hung up on the min_mask code above it and totally 
-overlooked that the condition itself got flipped. It probably also can't 
-help that it's an int return type, but treated as a bool by callers 
-rather than "0 for success" as int tends to imply in isolation.
+> On Thursday 04 October 2018 03:15 PM, Boris Brezillon wrote:
+> > On Wed, 3 Oct 2018 22:26:01 +0530
+> > Vignesh R <vigneshr@ti.com> wrote:
+> >   
+> >> Micron's mt35xu512aba flash is an Octal flash that has x8 IO lines. It
+> >> supports read/write over 8 IO lines simulatenously. Add support for
+> >> Octal read mode for Micron mt35xu512aba.
+> >> Unfortunately, this flash is only complaint to SFDP JESD216B and does not
+> >> seem to support newer JESD216C standard that provides auto detection of
+> >> Octal mode capabilities and opcodes. Therefore, this capability is
+> >> manually added using new SPI_NOR_OCTAL_READ flag.
+> >>
+> >> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> >> ---
+> >>  drivers/mtd/spi-nor/spi-nor.c | 11 ++++++++++-
+> >>  include/linux/mtd/spi-nor.h   |  2 ++
+> >>  2 files changed, 12 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> >> index aff5e6ff0b2c..4926e805a8cb 100644
+> >> --- a/drivers/mtd/spi-nor/spi-nor.c
+> >> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> >> @@ -90,6 +90,7 @@ struct flash_info {
+> >>  #define NO_CHIP_ERASE		BIT(12) /* Chip does not support chip erase */
+> >>  #define SPI_NOR_SKIP_SFDP	BIT(13)	/* Skip parsing of SFDP tables */
+> >>  #define USE_CLSR		BIT(14)	/* use CLSR command */
+> >> +#define SPI_NOR_OCTAL_READ	BIT(15)	/* Flash supports Octal Read */  
+> > 
+> > Hm, we'll need to clarify what OCTAL means. I see at least 3 different
+> > modes using 8 IO lines (1-1-8, 1-8-8 and 8-8-8) and all of them could
+> > be qualified as "octal" modes.
+> > So how about renaming this macro SPI_NOR_1_1_8_READ.
+> >   
+> 
+> My understanding is that, if a flash is Octal IO capable, then it
+> supports all mode of Octal IO (1-1-8, 1-8-8 and 8-8-8). At least in the
+> current code, I see SPI_NOR_QUAD_READ seems to imply 1-1-4, 1-4-4 and
+> 4-4-4 modes.
 
-Anyway, paying a bit more attention this time, I think this looks like 
-the right fix - cheers Alex.
+I already have one NOR which is not following this rule (mx25uw51245g)
+and is only supporting 1-1-1 and 8-8-8, nothing in between.
 
-Robin.
+> Moreover, these capabilities should be auto discoverable once flash
+> start populating SFDP JESD216C tables (IIRC, JESD216B already takes care
+> of QUAD IO modes). So, I don't think we need different flags for 1-1-8,
+> 1-8-8 and 8-8-8. Please let me if that's not the case.
 
-> This addresses issues I had on my system that prevented me from booting
-> with the above mentioned commit applied on an x86_64 system w/ Intel IOMMU.
+Except we already have NORs out there that do not have a valid SFDP
+table but still support a subset of the octal modes (mx25uw51245g is in
+this case, but I'm pretty sure there are others).
+
 > 
-> Fixes: 9d7a224b463e ("dma-direct: always allow dma mask <= physiscal memory size")
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> ---
->   kernel/dma/direct.c |    4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
+> For this patch, I wanted to start small and support only 1-1-8 mode
+> which is the easiest.
+
+Which is fine, just wanted to know what SPI_NOR_OCTAL_READ meant.
+
 > 
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index 5a0806b5351b..65872f6c2e93 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -301,9 +301,7 @@ int dma_direct_supported(struct device *dev, u64 mask)
->   
->   	min_mask = min_t(u64, min_mask, (max_pfn - 1) << PAGE_SHIFT);
->   
-> -	if (mask >= phys_to_dma(dev, min_mask))
-> -		return 0;
-> -	return 1;
-> +	return mask >= phys_to_dma(dev, min_mask);
->   }
->   
->   int dma_direct_mapping_error(struct device *dev, dma_addr_t dma_addr)
 > 
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> > Also, I fear we'll soon run out of bits in ->flags if we keep adding
+> > one flag per mode which is why I proposed a solution to let flash
+> > chips tweak the flash parameters as they wish [1][2]. I'm not saying we
+> > should do it now, but we should definitely plan for something like that.
+> > 
+> > [1]https://github.com/bbrezillon/linux/commit/9c672e4c85a91f1b0803c9c6e4b8f3aae5d79ffb
+> > [2]https://github.com/bbrezillon/linux/commit/3a5515c8821314c06a3d84f9861aefe476bb711e
+> >   
 > 
+> Hmm, it almost seems like Macronix flash warrants its own driver now.
+> 
+
+Actually, we already have quite a bit of code that is vendor (and even
+chip) specific in spi-nor.c, and I indeed think it would be beneficial
+to have one driver per manufacturer so that the core is not polluted by
+those chip/manufacturer specific hacks. The thing is, the spi_nor
+interface (and the way hwcaps selection works) is not ready for that.
