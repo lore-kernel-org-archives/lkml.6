@@ -2,136 +2,91 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B22C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47167C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:26:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E95A2082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:23:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="httUygJs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E95A2082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E487A2082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 13:26:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E487A2082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeJDUQ1 (ORCPT
+        id S1727629AbeJDUTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 16:16:27 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38099 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727415AbeJDUQ1 (ORCPT
+        Thu, 4 Oct 2018 16:19:22 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54837 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727367AbeJDUTW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:16:27 -0400
-Received: by mail-it1-f195.google.com with SMTP id i76-v6so13930999ita.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 06:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=fhrln2Ni8CMM1C65rN9ObT4bBIxJeaQ97/JOaRHhPWo=;
-        b=httUygJskY4ixpUHgMoRf3uxgMxqCgJErsabpz9X97yUITPyRjwHZ6d/d5SryYdUKb
-         KuUsNRxTzRVjDxb1+YXr8kA633ga2GzO/luSsabh3JEHv4cfjLBF01pj6yGd7zCpCm3K
-         fYrHKZSbFhZrt1Lq00cHnArYmbMxPco/D3W1I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=fhrln2Ni8CMM1C65rN9ObT4bBIxJeaQ97/JOaRHhPWo=;
-        b=LRpaOWzvhJpOoENMZ6fT9QhIfpylhjp/zWQTNVLPlZcOv/b7Noh2mgQiYydTFD3jWG
-         V6A169Bj1Rh0fjE+Pckrk4fNcyPXVROtWvpqcMYvOELEiM3l0WbTPAAd9LJ0SHenhsrT
-         K/8OcZDVaNqAuveb7paRhHs87/4///Xmgi3mOoBOXv9qiroEvXpmo/El3Veq7MMgtF6/
-         y90TUVWAis0IbWYXmXwbVv117uMVS9aEBVQF7Etow9SdgKOiosPzM6CFnwITJcl12PUV
-         Glw2olfhDMc1MiDAJVqwDZxfvJiMKAlM5ipXJNLwMNvaPC+hlemE1tiY9v1A1kKqr1pN
-         LNAg==
-X-Gm-Message-State: ABuFfogE9gNjjWy25S2NCvcTG+tDwtu8t4kEQKXbz2lXR2PrFR59OHPS
-        x25msq2k3dJDTfMwupESGCHPsz7n49FewuM2uYd6Gw==
-X-Google-Smtp-Source: ACcGV60WGXXzTHcuAtWUVdnwHsuY/3KFCyv2uj9IZu3S3WRGa2m/7gYbiDAqd022sr7VOJRRunOFWQtYPxhc67+KleQ=
-X-Received: by 2002:a05:660c:243:: with SMTP id t3mr4669638itk.146.1538659389507;
- Thu, 04 Oct 2018 06:23:09 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 4 Oct 2018 06:22:29 -0700 (PDT)
-In-Reply-To: <61559514.Vym8FNvob2@aspire.rjw.lan>
-References: <61559514.Vym8FNvob2@aspire.rjw.lan>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 4 Oct 2018 15:22:29 +0200
-Message-ID: <CAPDyKFoUdQRUYQ0qb5WM=Bi-F_4Fe8VEPNYZGu2ezMPj_wxoPg@mail.gmail.com>
-Subject: Re: [PATCH] PM / core: Clear the direct_complete flag on errors
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Al Cooper <alcooperx@gmail.com>, Pavel Machek <pavel@ucw.cz>
+        Thu, 4 Oct 2018 16:19:22 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1g83df-0004ly-KW; Thu, 04 Oct 2018 15:25:59 +0200
+Message-ID: <1538659558.14153.12.camel@pengutronix.de>
+Subject: Re: [PATCH 4/4] PCI: imx: Add PME_Turn_Off support
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Date:   Thu, 04 Oct 2018 15:25:58 +0200
+In-Reply-To: <e7d5a2beb146f627e7043a81083e6978961b2761.camel@nxp.com>
+References: <cover.1538423063.git.leonard.crestez@nxp.com>
+         <1cf53d188657bba7df06ad417eb2a65160238196.1538423063.git.leonard.crestez@nxp.com>
+         <1538643596.3515.5.camel@pengutronix.de>
+         <e7d5a2beb146f627e7043a81083e6978961b2761.camel@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 October 2018 at 11:08, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> If __device_suspend() returns early on an error or pending wakeup
-> and the power.direct_complete flag has been set for the device
-> already, the subsequent device_resume() will be confused by it
-> and it will call pm_runtime_enable() incorrectly, as runtime PM
-> has not been disabled for the device by __device_suspend().
+On Thu, 2018-10-04 at 13:20 +0000, Leonard Crestez wrote:
+> On Thu, 2018-10-04 at 10:59 +0200, Lucas Stach wrote:
+> > Am Montag, den 01.10.2018, 22:53 +0300 schrieb Leonard Crestez:
+> > > When the root complex suspends it must send a PME_Turn_Off TLP.
+> > > Implement this by asserting the "turnoff" reset.
+> > > 
+> > > +static void imx6_pcie_pm_turnoff(struct imx6_pcie *imx6_pcie)
+> > > +{
+> > > +	reset_control_assert(imx6_pcie->turnoff_reset);
+> > > +	reset_control_deassert(imx6_pcie->turnoff_reset);
+> > 
+> > I'm a bit surprised to see no timing requirements here. I would have
+> > expected that there is a minimum time from asserting the reset, so the
+> > turnoff message gets transmitted to the EP before the clocks are
+> > stopped.
+> 
+> According to the PCI standard after PME_Turn_Off is sent all components
+> must respond with PME_TO_Ack. There doesn't seem to be any bit exposed
+> to check if acks were received but the standard recommends a 1-10ms
+> timeout after which you should proceed anyway.
+> 
+> It seems the NXP vendor tree has an udelay(1000) which I missed, it
+> seems like an acceptable solution. Or maybe it should be msleep(10)?
 
-I think it would be fair to mention that is related to the async
-suspend path, in dpm_suspend().
+Maybe usleep_range(1000, 10000) ?
 
->
-> To avoid that, clear power.direct_complete if __device_suspend()
-> is not going to disable runtime PM for the device before returning.
-
-Overall, by looking at the behavior in dpm_suspend() of async
-suspended devices, it does look a bit fragile to me.
-
-My worries is that we put asynced suspended devices in the
-dpm_suspended_list, no matter if the device was successfully suspended
-or not. This differs from the no-async path.
-
-In the long run, maybe we should change that instead?
-
->
-> Fixes: aae4518b3124 (PM / sleep: Mechanism to avoid resuming runtime-suspended devices unnecessarily)
-> Reported-by: Al Cooper <alcooperx@gmail.com>
-> Cc: 3.16+ <stable@vger.kernel.org> # 3.16+
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Kind regards
-Uffe
-
-> ---
->  drivers/base/power/main.c |    5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> Index: linux-pm/drivers/base/power/main.c
-> ===================================================================
-> --- linux-pm.orig/drivers/base/power/main.c
-> +++ linux-pm/drivers/base/power/main.c
-> @@ -1713,8 +1713,10 @@ static int __device_suspend(struct devic
->
->         dpm_wait_for_subordinate(dev, async);
->
-> -       if (async_error)
-> +       if (async_error) {
-> +               dev->power.direct_complete = false;
->                 goto Complete;
-> +       }
->
->         /*
->          * If a device configured to wake up the system from sleep states
-> @@ -1726,6 +1728,7 @@ static int __device_suspend(struct devic
->                 pm_wakeup_event(dev, 0);
->
->         if (pm_wakeup_pending()) {
-> +               dev->power.direct_complete = false;
->                 async_error = -EBUSY;
->                 goto Complete;
->         }
->
+regards
+Philipp
