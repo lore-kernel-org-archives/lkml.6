@@ -2,157 +2,82 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25865C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 601D9C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E736720877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E736720877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 12A6C20877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 12:21:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12A6C20877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbeJDTNx (ORCPT
+        id S1727627AbeJDTOp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 15:13:53 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2095 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727325AbeJDTNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 15:13:53 -0400
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 517163D3B2D1;
-        Thu,  4 Oct 2018 13:20:48 +0100 (IST)
-Received: from [10.204.65.138] (10.204.65.138) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 4 Oct
- 2018 13:20:46 +0100
-Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-13-tomas.winkler@intel.com>
- <20181002005208.GH23753@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
- <20181003120141.GA7969@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
- <20181004113502.GA12498@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9E6D00@hasmsx109.ger.corp.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <19c26db0-cde9-da70-1b02-7e37ca188b45@huawei.com>
-Date:   Thu, 4 Oct 2018 14:20:42 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 4 Oct 2018 15:14:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:35600 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727336AbeJDTOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 15:14:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C44697A9;
+        Thu,  4 Oct 2018 05:21:43 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ED1653F5A0;
+        Thu,  4 Oct 2018 05:21:42 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id A0AEB1AE3326; Thu,  4 Oct 2018 13:22:07 +0100 (BST)
+Date:   Thu, 4 Oct 2018 13:22:07 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Ganapatrao Kulkarni <gklkml16@gmail.com>
+Cc:     Ganapatrao Kulkarni <Ganapatrao.Kulkarni@cavium.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>, catalin.marinas@arm.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
+Subject: Re: [PATCH] arm_pmu: Delete incorrect cache event mapping for some
+ armv8_pmuv3 events.
+Message-ID: <20181004122207.GE4065@arm.com>
+References: <20181001100707.16840-1-ganapatrao.kulkarni@cavium.com>
+ <20181001142914.GD9716@arm.com>
+ <CAKTKpr6SQUc9EgdYL2N32a=szUmSs82Mbb4y89htbVQhTPp2rQ@mail.gmail.com>
+ <CAKTKpr5+p=X6QcRp+tsxYYgirwWW=cfs7GOKyKegutEfM_W2vg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9E6D00@hasmsx109.ger.corp.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.138]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKTKpr5+p=X6QcRp+tsxYYgirwWW=cfs7GOKyKegutEfM_W2vg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/4/2018 1:45 PM, Winkler, Tomas wrote:
-> 
-> 
->> -----Original Message-----
->> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
->> Sent: Thursday, October 04, 2018 14:35
->> To: Winkler, Tomas <tomas.winkler@intel.com>
->> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
->> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
->> <alexander.usyskin@intel.com>; Struk, Tadeusz <tadeusz.struk@intel.com>;
->> linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
->> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
->> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
->>
->> On Wed, Oct 03, 2018 at 10:24:09PM +0000, Winkler, Tomas wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
->>>> Sent: Wednesday, October 03, 2018 15:02
->>>> To: Winkler, Tomas <tomas.winkler@intel.com>
->>>> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
->>>> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
->>>> <alexander.usyskin@intel.com>; Struk, Tadeusz
->>>> <tadeusz.struk@intel.com>; linux-integrity@vger.kernel.org;
->>>> linux-security-module@vger.kernel.org;
->>>> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
->>>> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to
->>>> tpm2-cmd.c
->>>>
->>>> On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
->>>>>
->>>>>
->>>>>>
->>>>>> On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
->>>>>>> Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
->>>>>>> required by tpm-interface.c. It wraps the original open code
->>>> implementation.
->>>>>>> The original original tpm2_pcr_extend() function is renamed to
->>>>>>> __tpm2_pcr_extend() and made static, it is called only from
->>>>>>> new tpm2_pcr_extend().
->>>>>>>
->>>>>>> Fix warnings in __tpm2_pcr_extend()
->>>>>>> tpm2-cmd.c:251:16: warning: comparison between signed and
->>>>>>> unsigned integer expressions [-Wsign-compare]
->>>>>>> tpm2-cmd.c:252:17: warning: comparison between signed and
->>>>>>> unsigned integer expressions [-Wsign-compare]
->>>>>>>
->>>>>>> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
->>>>>>
->>>>>> We do not want the signature change, especially because as we
->>>>>> are working on getting Roberto's changes in and also because it
->>>>>> has absolutely a zero gain. Who cares if those functions take
->>>>>> different
->>>> parameters? I don't.
->>>>>
->>>>> Yes, we do care this series tries to have a clean cut between 1.x
->>>>> and 2.x
->>>> specs. Please, let's finish one transformation and then move to another.
->>>>> I understand that Roberto will have to rebase anyhow, if this
->>>>> series goes in
->>>> first, if this is hard I can do it myself, it's trivial.
->>>>>
->>>>> Tomas
->>>>
->>>> I'm happy to tune this minor stuff.
->>> What minor stuff?  This patch is just okay, let's change the API in next
->> round.
->>
->> The patch is not okay because it does a completely unnecessary API change.
->   
-> There is no API change, in that sense.
-> The exported API is in tpm-interface.c int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
-> that is used is outside of the tpm reminds the same, only the open coded implementation of tpm2_pcr_extned has moved to
-> tpm2-cmd.c, This code is not called out of tpm module.
-> Please review the code again.
+Hi Ganapat,
 
-Hi Tomas
+On Thu, Oct 04, 2018 at 11:12:09AM +0530, Ganapatrao Kulkarni wrote:
+> can you please pull this patch?
 
-I will update tpm_pcr_extend() by replacing the array of u8 with an
-array of tpm2_digest structures, so that the caller can provide multiple
-digests with one call. The array of tpm2_digest structures will be
-passed to tpm2_pcr_extend(). Please, don't modify the parameters of
-tpm2_pcr_extend().
+I still don't like the idea of just removing events like this, especially
+when other architectures (including some x86 and Power CPUs afaict) playa
+similar games for generic events, and these events do actually appear in
+user code.
 
-Thanks
+I also don't understand why you remove the TLB events. I think that logic
+would imply we should remove all of the events, because we can't distinguish
+prefetches from reads either. If we want to be consistent, then I think
+we should just remove the OP_WRITE events for L1D and BPU -- would you be
+ok with that instead?
 
-Roberto
+Also, looking at the code, I think our PMCEID parsing is broken for 8.1
+parts, where the upper 32 bits of the register are offset by 0x4000 in the
+event numbering space.
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Will
