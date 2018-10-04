@@ -2,85 +2,121 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18138C65BA7
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 271D9C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D42CC20877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:38:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2F452087D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:38:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Gx8sWVnp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42CC20877
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="ZeBFcSu2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2F452087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbeJEDda (ORCPT
+        id S1727970AbeJEDdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 23:33:30 -0400
-Received: from mail.andi.de1.cc ([85.214.239.24]:33928 "EHLO
+        Thu, 4 Oct 2018 23:33:36 -0400
+Received: from mail.andi.de1.cc ([85.214.239.24]:33974 "EHLO
         h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727523AbeJEDda (ORCPT
+        with ESMTP id S1727499AbeJEDdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:33:30 -0400
+        Thu, 4 Oct 2018 23:33:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Message-Id:Date:Subject:Cc:To:From:Sender:
-        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=f5vN4Nr+Jqz2KJe3rLSHRYJR6SIZV4zzrcuUPCuhVa8=; b=Gx8sWVnp0VsBowr3guNIawi4bN
-        UjoIiwKGKVZQ2waB3WB80Du7iXL/JPS0b/TiYS9FXT5l54mKLOAhejPqdpMxTzQLUrUa78jS2lPLR
-        sYgFab5dbRHuucHjIZFUUvTibINCaqunUsBdeqnPPvDNzH0MTT+EjmBzVloHc0sjd3o0=;
+        d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gsrVQYqOvt6bHEaGNBZ3ivI+imRg6+0o4MIOMQo5To4=; b=ZeBFcSu2Hx1koLT2PIh73dYHu
+        jPtkOI5GZ4A3vQqPOip3WbsbqBQuOXL6a7pl6sVMRKQvigEUWEv/gj1sX0JHgt2HZY8KHZaBmYftz
+        I8SKgTmAGsw5/qS9qdNkhfI02qaMqmMFGnPNVvdBLfMciucd4zBaYijGNIzUD4sSQKWhk=;
 Received: from p200300ccfbcbd5001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbcb:d500:1a3d:a2ff:febf:d33a] helo=aktux)
         by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <andreas@kemnade.info>)
-        id 1g8AO7-0007GT-Pf; Thu, 04 Oct 2018 22:38:23 +0200
+        id 1g8AOG-0007Gy-FE; Thu, 04 Oct 2018 22:38:32 +0200
 Received: from andi by aktux with local (Exim 4.89)
         (envelope-from <andreas@kemnade.info>)
-        id 1g8AO7-0005m8-CU; Thu, 04 Oct 2018 22:38:23 +0200
+        id 1g8AOG-0005mE-71; Thu, 04 Oct 2018 22:38:32 +0200
 From:   Andreas Kemnade <andreas@kemnade.info>
 To:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
         linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, bcousson@baylibre.com,
         paul@pwsan.com, tony@atomide.com, letux-kernel@openphoenux.org
 Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH 0/2] mach-omap2: handle autoidle denial
-Date:   Thu,  4 Oct 2018 22:38:15 +0200
-Message-Id: <20181004203817.22101-1-andreas@kemnade.info>
+Subject: [PATCH 2/2] arm: omap_hwmod disable ick autoidling when a hwmod requires that
+Date:   Thu,  4 Oct 2018 22:38:17 +0200
+Message-Id: <20181004203817.22101-3-andreas@kemnade.info>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181004203817.22101-1-andreas@kemnade.info>
+References: <20181004203817.22101-1-andreas@kemnade.info>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the gta04 with a dm3730 omap_hdq does not work properly when the
-device enters lower power states. Idling uart1 and 2 is enough
-to show up that problem, if there are no other things enabled.
-Further research reveals that hdq iclk must not be turned off during
-transfers, also according to the TRM. That fact is also correctly described
-in the flags but the code to handle that is incomplete.
+Deny autoidle for hwmods with the OCPIF_SWSUP_IDLE flag,
+that makes hwmods working properly which cannot handle
+autoidle properly in lower power states.
+Affected is e. g. the omap_hdq.
+Since an ick might have mulitple users, autoidle is disabled
+when an individual user requires that rather than in
+_setup_iclk_autoidle. dss_ick is an example for that.
 
-To handle multiple users of a single ick, autoidle is disabled
-when a user of that ick requires that (has the OCPIF_SWSUP_IDLE))
-
-Changes since the RFC version:
-- mutex lock for autoidle changes
-- deny_idle/allow_idle calls moved to clock enable/disable of the
-  individual modules
-
-Andreas Kemnade (2):
-  clk: ti: add a usecount for autoidle
-  arm: omap_hwmod disable ick autoidling when a hwmod requires that
-
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
  arch/arm/mach-omap2/omap_hwmod.c | 16 ++++++++++++----
- drivers/clk/ti/autoidle.c        | 32 ++++++++++++++++++++++++--------
- include/linux/clk/ti.h           |  1 +
- 3 files changed, 37 insertions(+), 12 deletions(-)
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+index bb641e6c93d0..0078b0e1d242 100644
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -986,8 +986,10 @@ static int _enable_clocks(struct omap_hwmod *oh)
+ 		clk_enable(oh->_clk);
+ 
+ 	list_for_each_entry(os, &oh->slave_ports, node) {
+-		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE))
++		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE)) {
++			omap2_clk_deny_idle(os->_clk);
+ 			clk_enable(os->_clk);
++		}
+ 	}
+ 
+ 	/* The opt clocks are controlled by the device driver. */
+@@ -1039,8 +1041,10 @@ static int _disable_clocks(struct omap_hwmod *oh)
+ 		clk_disable(oh->_clk);
+ 
+ 	list_for_each_entry(os, &oh->slave_ports, node) {
+-		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE))
++		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE)) {
+ 			clk_disable(os->_clk);
++			omap2_clk_allow_idle(os->_clk);
++		}
+ 	}
+ 
+ 	if (oh->flags & HWMOD_OPT_CLKS_NEEDED)
+@@ -2410,9 +2414,13 @@ static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
+ 			continue;
+ 
+ 		if (os->flags & OCPIF_SWSUP_IDLE) {
+-			/* XXX omap_iclk_deny_idle(c); */
++			/*
++			 * we might have multiple users of one iclk with
++			 * different requirements, disable autoidle when
++			 * the module is enabled, e.g. dss iclk
++			 */
+ 		} else {
+-			/* XXX omap_iclk_allow_idle(c); */
++			/* we are enabling autoidle afterwards anyways */
+ 			clk_enable(os->_clk);
+ 		}
+ 	}
 -- 
 2.11.0
 
