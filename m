@@ -2,216 +2,150 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6C6C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 829FBC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEA1A2084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:42:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEA1A2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3609A2084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 15:43:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3609A2084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeJDWft (ORCPT
+        id S1727691AbeJDWhk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 18:35:49 -0400
-Received: from mga05.intel.com ([192.55.52.43]:45890 "EHLO mga05.intel.com"
+        Thu, 4 Oct 2018 18:37:40 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:56693 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727537AbeJDWft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 18:35:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 08:41:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,340,1534834800"; 
-   d="scan'208";a="78717399"
-Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by orsmga008.jf.intel.com with ESMTP; 04 Oct 2018 08:41:58 -0700
-Message-ID: <3350f7b42b32f3f7a1963a9c9c526210c24f7b05.camel@intel.com>
-Subject: Re: [RFC PATCH v4 6/9] x86/cet/ibt: Add arch_prctl functions for IBT
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Thu, 04 Oct 2018 08:37:16 -0700
-In-Reply-To: <20181004132811.GJ32759@asgard.redhat.com>
-References: <20180921150553.21016-1-yu-cheng.yu@intel.com>
-         <20180921150553.21016-7-yu-cheng.yu@intel.com>
-         <20181004132811.GJ32759@asgard.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727519AbeJDWhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 18:37:40 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42Qxxt48d6z9ttRb;
+        Thu,  4 Oct 2018 17:43:46 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id h9d6tzncLAM8; Thu,  4 Oct 2018 17:43:46 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42Qxxt3bSPz9ttRV;
+        Thu,  4 Oct 2018 17:43:46 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 576FE8BB65;
+        Thu,  4 Oct 2018 17:43:49 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 4WqAolK4he87; Thu,  4 Oct 2018 17:43:49 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A865F8BB5F;
+        Thu,  4 Oct 2018 17:43:48 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 5F1F16F2D5; Thu,  4 Oct 2018 15:43:48 +0000 (UTC)
+Message-Id: <cover.1538541946.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v4 0/9] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu,  4 Oct 2018 15:43:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-04 at 15:28 +0200, Eugene Syromiatnikov wrote:
-> On Fri, Sep 21, 2018 at 08:05:50AM -0700, Yu-cheng Yu wrote:
-> > Update ARCH_CET_STATUS and ARCH_CET_DISABLE to include Indirect
-> > Branch Tracking features.
-> > 
-> > Introduce:
-> > 
-> > arch_prctl(ARCH_CET_LEGACY_BITMAP, unsigned long *addr)
-> >     Enable the Indirect Branch Tracking legacy code bitmap.
-> > 
-> >     The parameter 'addr' is a pointer to a user buffer.
-> >     On returning to the caller, the kernel fills the following:
-> > 
-> >     *addr = IBT bitmap base address
-> >     *(addr + 1) = IBT bitmap size
-> 
-> Again, some structure with a size field would be better from
-> UAPI/extensibility standpoint.
-> 
-> One additional point: "size" in the structure from kernel should have
-> structure size expected by kernel, and at least providing there "0" from
-> user space shouldn't lead to failure (in fact, it is possible to provide
-> structure size back to userspace even if buffer is too small, along
-> with error).
+The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
+moves the thread_info into task_struct.
 
-This has been in GLIBC v2.28.  We cannot change it anymore.
+Moving thread_info into task_struct has the following advantages:
+- It protects thread_info from corruption in the case of stack
+overflows.
+- Its address is harder to determine if stack addresses are
+leaked, making a number of attacks more difficult.
 
-> 
-> > 
-> > Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> > ---
-> >  arch/x86/include/uapi/asm/prctl.h |  1 +
-> >  arch/x86/kernel/cet_prctl.c       | 38 ++++++++++++++++++++++++++++++-
-> >  arch/x86/kernel/process.c         |  1 +
-> >  3 files changed, 39 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/include/uapi/asm/prctl.h
-> > b/arch/x86/include/uapi/asm/prctl.h
-> > index 3aec1088e01d..31d2465f9caf 100644
-> > --- a/arch/x86/include/uapi/asm/prctl.h
-> > +++ b/arch/x86/include/uapi/asm/prctl.h
-> > @@ -18,5 +18,6 @@
-> >  #define ARCH_CET_DISABLE	0x3002
-> >  #define ARCH_CET_LOCK		0x3003
-> >  #define ARCH_CET_ALLOC_SHSTK	0x3004
-> > +#define ARCH_CET_LEGACY_BITMAP	0x3005
-> 
-> It would probably be nice to have mention of an architecture in these
-> definitions ("ARCH_X86_CET_"...), but it's likely too late.
+Changes since RFC v3: (based on Nick's review)
+ - Renamed task_size.h to task_size_user64.h to better relate to what it contains.
+ - Handling of the isolation of thread_info cpu field inside CONFIG_SMP #ifdefs moved to a separate patch.
+ - Removed CURRENT_THREAD_INFO macro completely.
+ - Added a guard in asm/smp.h to avoid build failure before _TASK_CPU is defined.
+ - Added a patch at the end to rename 'tp' pointers to 'sp' pointers
+ - Renamed 'tp' into 'sp' pointers in preparation patch when relevant
+ - Fixed a few commit logs
+ - Fixed checkpatch report.
 
-We can still change macro names.  I will work on that.
+Changes since RFC v2:
+ - Removed the modification of names in asm-offsets
+ - Created a rule in arch/powerpc/Makefile to append the offset of current->cpu in CFLAGS
+ - Modified asm/smp.h to use the offset set in CFLAGS
+ - Squashed the renaming of THREAD_INFO to TASK_STACK in the preparation patch
+ - Moved the modification of current_pt_regs in the patch activating CONFIG_THREAD_INFO_IN_TASK
 
-> 
-> >  
-> >  #endif /* _ASM_X86_PRCTL_H */
-> > diff --git a/arch/x86/kernel/cet_prctl.c b/arch/x86/kernel/cet_prctl.c
-> > index c4b7c19f5040..df47b5ebc3f4 100644
-> > --- a/arch/x86/kernel/cet_prctl.c
-> > +++ b/arch/x86/kernel/cet_prctl.c
-> > @@ -20,6 +20,8 @@ static int handle_get_status(unsigned long arg2)
-> >  
-> >  	if (current->thread.cet.shstk_enabled)
-> >  		features |= GNU_PROPERTY_X86_FEATURE_1_SHSTK;
-> > +	if (current->thread.cet.ibt_enabled)
-> > +		features |= GNU_PROPERTY_X86_FEATURE_1_IBT;
-> >  
-> >  	shstk_base = current->thread.cet.shstk_base;
-> >  	shstk_size = current->thread.cet.shstk_size;
-> > @@ -49,9 +51,35 @@ static int handle_alloc_shstk(unsigned long arg2)
-> >  	return 0;
-> >  }
-> >  
-> > +static int handle_bitmap(unsigned long arg2)
-> > +{
-> > +	unsigned long addr, size;
-> > +
-> > +	if (current->thread.cet.ibt_enabled) {
-> > +		int err;
-> > +
-> > +		err  = cet_setup_ibt_bitmap();
-> > +		if (err)
-> > +			return err;
-> > +
-> > +		addr = current->thread.cet.ibt_bitmap_addr;
-> > +		size = current->thread.cet.ibt_bitmap_size;
-> > +	} else {
-> > +		addr = 0;
-> > +		size = 0;
-> > +	}
-> > +
-> > +	if (put_user(addr, (unsigned long __user *)arg2) ||
-> > +	    put_user(size, (unsigned long __user *)arg2 + 1))
-> > +		return -EFAULT;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  int prctl_cet(int option, unsigned long arg2)
-> >  {
-> > -	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-> > +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
-> > +	    !cpu_feature_enabled(X86_FEATURE_IBT))
-> 
-> This check is repeated many times, it is probably worth defining
-> something like cpu_x86_cet_enabled() or something like that.
-> Besides, early introduction of the macro would allow avoiding all these
-> changes over the code in IBT patches, only macro definition has
-> to be changed that way.
+Changes since RFC v1:
+ - Removed the first patch which was modifying header inclusion order in timer
+ - Modified some names in asm-offsets to avoid conflicts when including asm-offsets in C files
+ - Modified asm/smp.h to avoid having to include linux/sched.h (using asm-offsets instead)
+ - Moved some changes from the activation patch to the preparation patch.
 
-Yes, that makes things easier.
+Christophe Leroy (9):
+  book3s/64: avoid circular header inclusion in mmu-hash.h
+  powerpc: Only use task_struct 'cpu' field on SMP
+  powerpc: Prepare for moving thread_info into task_struct
+  powerpc: Activate CONFIG_THREAD_INFO_IN_TASK
+  powerpc: regain entire stack space
+  powerpc: 'current_set' is now a table of task_struct pointers
+  powerpc/32: Remove CURRENT_THREAD_INFO and rename TI_CPU
+  powerpc/64: Remove CURRENT_THREAD_INFO
+  powerpc: clean stack pointers naming
 
-> 
-> > @@ -73,6 +103,12 @@ int prctl_cet(int option, unsigned long arg2)
-> >  	case ARCH_CET_ALLOC_SHSTK:
-> >  		return handle_alloc_shstk(arg2);
-> >  
-> > +	/*
-> > +	 * Allocate legacy bitmap and return address & size to user.
-> > +	 */
-> > +	case ARCH_CET_LEGACY_BITMAP:
-> > +		return handle_bitmap(arg2);
-> > +
-> >  	default:
-> >  		return -EINVAL;
-> >  	}
-> > diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> > index ac0ea9c7e89f..aea15a9b6a3e 100644
-> > --- a/arch/x86/kernel/process.c
-> > +++ b/arch/x86/kernel/process.c
-> > @@ -797,6 +797,7 @@ long do_arch_prctl_common(struct task_struct *task, int
-> > option,
-> >  	case ARCH_CET_DISABLE:
-> >  	case ARCH_CET_LOCK:
-> >  	case ARCH_CET_ALLOC_SHSTK:
-> > +	case ARCH_CET_LEGACY_BITMAP:
-> >  		return prctl_cet(option, cpuid_enabled);
-> >  	}
-> 
-> I wonder, whether this duplication is really needed for CET-related
-> arch_prctl commands, why not just call them from do_arch_prctl_common?
+ arch/powerpc/Kconfig                           |  1 +
+ arch/powerpc/Makefile                          |  8 ++-
+ arch/powerpc/include/asm/asm-prototypes.h      |  4 +-
+ arch/powerpc/include/asm/book3s/64/mmu-hash.h  |  2 +-
+ arch/powerpc/include/asm/exception-64s.h       |  4 +-
+ arch/powerpc/include/asm/irq.h                 | 14 ++---
+ arch/powerpc/include/asm/livepatch.h           |  2 +-
+ arch/powerpc/include/asm/processor.h           | 39 +------------
+ arch/powerpc/include/asm/ptrace.h              |  2 +-
+ arch/powerpc/include/asm/reg.h                 |  2 +-
+ arch/powerpc/include/asm/smp.h                 | 17 +++++-
+ arch/powerpc/include/asm/task_size_user64.h    | 42 ++++++++++++++
+ arch/powerpc/include/asm/thread_info.h         | 19 -------
+ arch/powerpc/kernel/asm-offsets.c              | 10 ++--
+ arch/powerpc/kernel/entry_32.S                 | 66 ++++++++--------------
+ arch/powerpc/kernel/entry_64.S                 | 12 ++--
+ arch/powerpc/kernel/epapr_hcalls.S             |  5 +-
+ arch/powerpc/kernel/exceptions-64e.S           | 13 +----
+ arch/powerpc/kernel/exceptions-64s.S           |  2 +-
+ arch/powerpc/kernel/head_32.S                  | 14 ++---
+ arch/powerpc/kernel/head_40x.S                 |  4 +-
+ arch/powerpc/kernel/head_44x.S                 |  8 +--
+ arch/powerpc/kernel/head_64.S                  |  1 +
+ arch/powerpc/kernel/head_8xx.S                 |  2 +-
+ arch/powerpc/kernel/head_booke.h               | 12 +---
+ arch/powerpc/kernel/head_fsl_booke.S           | 16 +++---
+ arch/powerpc/kernel/idle_6xx.S                 |  8 +--
+ arch/powerpc/kernel/idle_book3e.S              |  2 +-
+ arch/powerpc/kernel/idle_e500.S                |  8 +--
+ arch/powerpc/kernel/idle_power4.S              |  2 +-
+ arch/powerpc/kernel/irq.c                      | 77 +++++---------------------
+ arch/powerpc/kernel/kgdb.c                     | 28 ----------
+ arch/powerpc/kernel/machine_kexec_64.c         |  6 +-
+ arch/powerpc/kernel/misc_32.S                  | 17 +++---
+ arch/powerpc/kernel/process.c                  | 15 ++---
+ arch/powerpc/kernel/setup-common.c             |  2 +-
+ arch/powerpc/kernel/setup_32.c                 | 15 ++---
+ arch/powerpc/kernel/setup_64.c                 | 41 ++++----------
+ arch/powerpc/kernel/smp.c                      | 16 +++---
+ arch/powerpc/kernel/trace/ftrace_64_mprofile.S |  6 +-
+ arch/powerpc/kvm/book3s_hv_hmi.c               |  1 +
+ arch/powerpc/mm/hash_low_32.S                  | 14 ++---
+ arch/powerpc/sysdev/6xx-suspend.S              |  5 +-
+ arch/powerpc/xmon/xmon.c                       |  2 +-
+ 44 files changed, 224 insertions(+), 362 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/task_size_user64.h
 
-I will fix it.
+-- 
+2.13.3
 
-Yu-cheng
