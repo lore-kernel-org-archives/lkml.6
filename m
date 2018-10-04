@@ -6,51 +6,52 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 869C0C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F51CC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31C3520652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:03:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C3520652
+	by mail.kernel.org (Postfix) with ESMTP id 5000920652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 10:03:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5000920652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728044AbeJDQzt (ORCPT
+        id S1728068AbeJDQ4B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:55:49 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50245 "EHLO
+        Thu, 4 Oct 2018 12:56:01 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50751 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727311AbeJDQzt (ORCPT
+        with ESMTP id S1727311AbeJDQ4A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:55:49 -0400
+        Thu, 4 Oct 2018 12:56:00 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w94A2X4K2701490
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w94A1T5g2701311
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 4 Oct 2018 03:02:33 -0700
+        Thu, 4 Oct 2018 03:01:29 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w94A2XwE2701483;
-        Thu, 4 Oct 2018 03:02:33 -0700
-Date:   Thu, 4 Oct 2018 03:02:33 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w94A1Tj82701308;
+        Thu, 4 Oct 2018 03:01:29 -0700
+Date:   Thu, 4 Oct 2018 03:01:29 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Nadav Amit <tipbot@zytor.com>
-Message-ID: <tip-9e1725b410594911cc5981b6c7b4cea4ec054ca8@git.kernel.org>
-Cc:     namit@vmware.com, tglx@linutronix.de, brgerst@gmail.com,
-        hpa@zytor.com, torvalds@linux-foundation.org, jpoimboe@redhat.com,
-        dvlasenk@redhat.com, JBeulich@suse.com, bp@alien8.de,
-        peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, luto@amacapital.net,
-        keescook@chromium.org
-Reply-To: jpoimboe@redhat.com, dvlasenk@redhat.com,
-          torvalds@linux-foundation.org, JBeulich@suse.com,
-          brgerst@gmail.com, hpa@zytor.com, namit@vmware.com,
-          tglx@linutronix.de, mingo@kernel.org, luto@amacapital.net,
-          keescook@chromium.org, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, bp@alien8.de
-In-Reply-To: <20181003213100.189959-5-namit@vmware.com>
-References: <20181003213100.189959-5-namit@vmware.com>
+Message-ID: <tip-77b0bf55bc675233d22cd5df97605d516d64525e@git.kernel.org>
+Cc:     luto@amacapital.net, linux-kernel@vger.kernel.org,
+        sam@ravnborg.org, mingo@kernel.org, yamada.masahiro@socionext.com,
+        tglx@linutronix.de, namit@vmware.com, michal.lkml@markovi.net,
+        brgerst@gmail.com, hpa@zytor.com, keescook@chromium.org,
+        peterz@infradead.org, dvlasenk@redhat.com,
+        torvalds@linux-foundation.org, bp@alien8.de
+Reply-To: peterz@infradead.org, bp@alien8.de, dvlasenk@redhat.com,
+          torvalds@linux-foundation.org, keescook@chromium.org,
+          hpa@zytor.com, namit@vmware.com, brgerst@gmail.com,
+          michal.lkml@markovi.net, mingo@kernel.org, sam@ravnborg.org,
+          luto@amacapital.net, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, yamada.masahiro@socionext.com
+In-Reply-To: <20181003213100.189959-3-namit@vmware.com>
+References: <20181003213100.189959-3-namit@vmware.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/build] x86/refcount: Work around GCC inlining bug
-Git-Commit-ID: 9e1725b410594911cc5981b6c7b4cea4ec054ca8
+Subject: [tip:x86/build] kbuild/Makefile: Prepare for using macros in inline
+ assembly code to work around asm() related GCC inlining bugs
+Git-Commit-ID: 77b0bf55bc675233d22cd5df97605d516d64525e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,207 +65,186 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9e1725b410594911cc5981b6c7b4cea4ec054ca8
-Gitweb:     https://git.kernel.org/tip/9e1725b410594911cc5981b6c7b4cea4ec054ca8
+Commit-ID:  77b0bf55bc675233d22cd5df97605d516d64525e
+Gitweb:     https://git.kernel.org/tip/77b0bf55bc675233d22cd5df97605d516d64525e
 Author:     Nadav Amit <namit@vmware.com>
-AuthorDate: Wed, 3 Oct 2018 14:30:54 -0700
+AuthorDate: Wed, 3 Oct 2018 14:30:52 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 4 Oct 2018 11:24:59 +0200
+CommitDate: Thu, 4 Oct 2018 10:57:09 +0200
 
-x86/refcount: Work around GCC inlining bug
+kbuild/Makefile: Prepare for using macros in inline assembly code to work around asm() related GCC inlining bugs
 
-As described in:
+Using macros in inline assembly allows us to work around bugs
+in GCC's inlining decisions.
 
-  77b0bf55bc67: ("kbuild/Makefile: Prepare for using macros in inline assembly code to work around asm() related GCC inlining bugs")
+Compile macros.S and use it to assemble all C files.
+Currently only x86 will use it.
 
-GCC's inlining heuristics are broken with common asm() patterns used in
-kernel code, resulting in the effective disabling of inlining.
+Background:
 
-The workaround is to set an assembly macro and call it from the inline
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction. (Which it isn't, but that's the best we can get.)
+The inlining pass of GCC doesn't include an assembler, so it's not aware
+of basic properties of the generated code, such as its size in bytes,
+or that there are such things as discontiuous blocks of code and data
+due to the newfangled linker feature called 'sections' ...
 
-This patch allows GCC to inline simple functions such as __get_seccomp_filter().
+Instead GCC uses a lazy and fragile heuristic: it does a linear count of
+certain syntactic and whitespace elements in inlined assembly block source
+code, such as a count of new-lines and semicolons (!), as a poor substitute
+for "code size and complexity".
 
-To no-one's surprise the result is that GCC performs more aggressive (read: correct)
-inlining decisions in these senarios, which reduces the kernel size and presumably
-also speeds it up:
+Unsurprisingly this heuristic falls over and breaks its neck whith certain
+common types of kernel code that use inline assembly, such as the frequent
+practice of putting useful information into alternative sections.
 
-      text     data     bss      dec     hex  filename
-  18140970 10225412 2957312 31323694 1ddf62e  ./vmlinux before
-  18140140 10225284 2957312 31322736 1ddf270  ./vmlinux after (-958)
+As a result of this fresh, 20+ years old GCC bug, GCC's inlining decisions
+are effectively disabled for inlined functions that make use of such asm()
+blocks, because GCC thinks those sections of code are "large" - when in
+reality they are often result in just a very low number of machine
+instructions.
 
-16 fewer static text symbols:
+This absolute lack of inlining provess when GCC comes across such asm()
+blocks both increases generated kernel code size and causes performance
+overhead, which is particularly noticeable on paravirt kernels, which make
+frequent use of these inlining facilities in attempt to stay out of the
+way when running on baremetal hardware.
 
-   Before: 40302
-    After: 40286 (-16)
+Instead of fixing the compiler we use a workaround: we set an assembly macro
+and call it from the inlined assembly block. As a result GCC considers the
+inline assembly block as a single instruction. (Which it often isn't but I digress.)
 
-these got inlined instead.
+This uglifies and bloats the source code - for example just the refcount
+related changes have this impact:
 
-Functions such as kref_get(), free_user(), fuse_file_get() now get inlined. Hurray!
+ Makefile                 |    9 +++++++--
+ arch/x86/Makefile        |    7 +++++++
+ arch/x86/kernel/macros.S |    7 +++++++
+ scripts/Kbuild.include   |    4 +++-
+ scripts/mod/Makefile     |    2 ++
+ 5 files changed, 26 insertions(+), 3 deletions(-)
 
-[ mingo: Rewrote the changelog. ]
+Yay readability and maintainability, it's not like assembly code is hard to read
+and maintain ...
+
+We also hope that GCC will eventually get fixed, but we are not holding
+our breath for that. Yet we are optimistic, it might still happen, any decade now.
+
+[ mingo: Wrote new changelog describing the background. ]
 
 Tested-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Brian Gerst <brgerst@gmail.com>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jan Beulich <JBeulich@suse.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michal Marek <michal.lkml@markovi.net>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sam Ravnborg <sam@ravnborg.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20181003213100.189959-5-namit@vmware.com
+Cc: linux-kbuild@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181003213100.189959-3-namit@vmware.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/refcount.h | 74 +++++++++++++++++++++++++----------------
- arch/x86/kernel/macros.S        |  1 +
- 2 files changed, 46 insertions(+), 29 deletions(-)
+ Makefile                 | 9 +++++++--
+ arch/x86/Makefile        | 7 +++++++
+ arch/x86/kernel/macros.S | 7 +++++++
+ scripts/Kbuild.include   | 4 +++-
+ scripts/mod/Makefile     | 2 ++
+ 5 files changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-index 19b90521954c..c92909da0686 100644
---- a/arch/x86/include/asm/refcount.h
-+++ b/arch/x86/include/asm/refcount.h
-@@ -4,6 +4,41 @@
-  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
-  * PaX/grsecurity.
-  */
-+
-+#ifdef __ASSEMBLY__
-+
-+#include <asm/asm.h>
-+#include <asm/bug.h>
-+
-+.macro REFCOUNT_EXCEPTION counter:req
-+	.pushsection .text..refcount
-+111:	lea \counter, %_ASM_CX
-+112:	ud2
-+	ASM_UNREACHABLE
-+	.popsection
-+113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
-+.endm
-+
-+/* Trigger refcount exception if refcount result is negative. */
-+.macro REFCOUNT_CHECK_LT_ZERO counter:req
-+	js 111f
-+	REFCOUNT_EXCEPTION counter="\counter"
-+.endm
-+
-+/* Trigger refcount exception if refcount result is zero or negative. */
-+.macro REFCOUNT_CHECK_LE_ZERO counter:req
-+	jz 111f
-+	REFCOUNT_CHECK_LT_ZERO counter="\counter"
-+.endm
-+
-+/* Trigger refcount exception unconditionally. */
-+.macro REFCOUNT_ERROR counter:req
-+	jmp 111f
-+	REFCOUNT_EXCEPTION counter="\counter"
-+.endm
-+
-+#else /* __ASSEMBLY__ */
-+
- #include <linux/refcount.h>
- #include <asm/bug.h>
+diff --git a/Makefile b/Makefile
+index 6c3da3e10f07..6c40d547513c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1071,7 +1071,7 @@ scripts: scripts_basic asm-generic gcc-plugins $(autoksyms_h)
+ # version.h and scripts_basic is processed / created.
  
-@@ -15,34 +50,11 @@
-  * central refcount exception. The fixup address for the exception points
-  * back to the regular execution flow in .text.
-  */
--#define _REFCOUNT_EXCEPTION				\
--	".pushsection .text..refcount\n"		\
--	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
--	"112:\t" ASM_UD2 "\n"				\
--	ASM_UNREACHABLE					\
--	".popsection\n"					\
--	"113:\n"					\
--	_ASM_EXTABLE_REFCOUNT(112b, 113b)
--
--/* Trigger refcount exception if refcount result is negative. */
--#define REFCOUNT_CHECK_LT_ZERO				\
--	"js 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
--
--/* Trigger refcount exception if refcount result is zero or negative. */
--#define REFCOUNT_CHECK_LE_ZERO				\
--	"jz 111f\n\t"					\
--	REFCOUNT_CHECK_LT_ZERO
--
--/* Trigger refcount exception unconditionally. */
--#define REFCOUNT_ERROR					\
--	"jmp 111f\n\t"					\
--	_REFCOUNT_EXCEPTION
+ # Listed in dependency order
+-PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
++PHONY += prepare archprepare macroprepare prepare0 prepare1 prepare2 prepare3
  
- static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: "ir" (i)
- 		: "cc", "cx");
-@@ -51,7 +63,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- static __always_inline void refcount_inc(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "incl %0\n\t"
--		REFCOUNT_CHECK_LT_ZERO
-+		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -59,7 +71,7 @@ static __always_inline void refcount_inc(refcount_t *r)
- static __always_inline void refcount_dec(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "decl %0\n\t"
--		REFCOUNT_CHECK_LE_ZERO
-+		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
- 		: [counter] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
-@@ -67,13 +79,15 @@ static __always_inline void refcount_dec(refcount_t *r)
- static __always_inline __must_check
- bool refcount_sub_and_test(unsigned int i, refcount_t *r)
- {
--	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
-+				  "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
- 				  r->refs.counter, "er", i, "%0", e, "cx");
- }
+ # prepare3 is used to check if we are building in a separate output directory,
+ # and if so do:
+@@ -1094,7 +1094,9 @@ prepare2: prepare3 outputmakefile asm-generic
+ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h
+ 	$(cmd_crmodverdir)
  
- static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
- {
--	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
-+	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
-+				 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
- 				 r->refs.counter, "%0", e, "cx");
- }
- 
-@@ -91,7 +105,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
- 
- 		/* Did we try to increment from/to an undesirable state? */
- 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
--			asm volatile(REFCOUNT_ERROR
-+			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
- 				     : : [counter] "m" (r->refs.counter)
- 				     : "cc", "cx");
- 			break;
-@@ -107,4 +121,6 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
- 	return refcount_add_not_zero(1, r);
- }
- 
-+#endif /* __ASSEMBLY__ */
+-archprepare: archheaders archscripts prepare1 scripts_basic
++macroprepare: prepare1 archmacros
 +
- #endif
++archprepare: archheaders archscripts macroprepare scripts_basic
+ 
+ prepare0: archprepare gcc-plugins
+ 	$(Q)$(MAKE) $(build)=.
+@@ -1162,6 +1164,9 @@ archheaders:
+ PHONY += archscripts
+ archscripts:
+ 
++PHONY += archmacros
++archmacros:
++
+ PHONY += __headers
+ __headers: $(version_h) scripts_basic uapi-asm-generic archheaders archscripts
+ 	$(Q)$(MAKE) $(build)=scripts build_unifdef
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 0e496ed476d4..5b562e464009 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -236,6 +236,13 @@ archscripts: scripts_basic
+ archheaders:
+ 	$(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
+ 
++archmacros:
++	$(Q)$(MAKE) $(build)=arch/x86/kernel arch/x86/kernel/macros.s
++
++ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s -Wa,-
++export ASM_MACRO_FLAGS
++KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
++
+ ###
+ # Kernel objects
+ 
 diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index cee28c3246dc..f1fe1d570365 100644
---- a/arch/x86/kernel/macros.S
+new file mode 100644
+index 000000000000..cfc1c7d1a6eb
+--- /dev/null
 +++ b/arch/x86/kernel/macros.S
-@@ -7,3 +7,4 @@
-  */
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * This file includes headers whose assembly part includes macros which are
++ * commonly used. The macros are precompiled into assmebly file which is later
++ * assembled together with each compiled file.
++ */
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index ce53639a864a..8aeb60eb6ee3 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -115,7 +115,9 @@ __cc-option = $(call try-run,\
  
- #include <linux/compiler.h>
-+#include <asm/refcount.h>
+ # Do not attempt to build with gcc plugins during cc-option tests.
+ # (And this uses delayed resolution so the flags will be up to date.)
+-CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
++# In addition, do not include the asm macros which are built later.
++CC_OPTION_FILTERED = $(GCC_PLUGINS_CFLAGS) $(ASM_MACRO_FLAGS)
++CC_OPTION_CFLAGS = $(filter-out $(CC_OPTION_FILTERED),$(KBUILD_CFLAGS))
+ 
+ # cc-option
+ # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
+diff --git a/scripts/mod/Makefile b/scripts/mod/Makefile
+index 42c5d50f2bcc..a5b4af47987a 100644
+--- a/scripts/mod/Makefile
++++ b/scripts/mod/Makefile
+@@ -4,6 +4,8 @@ OBJECT_FILES_NON_STANDARD := y
+ hostprogs-y	:= modpost mk_elfconfig
+ always		:= $(hostprogs-y) empty.o
+ 
++CFLAGS_REMOVE_empty.o := $(ASM_MACRO_FLAGS)
++
+ modpost-objs	:= modpost.o file2alias.o sumversion.o
+ 
+ devicetable-offsets-file := devicetable-offsets.h
