@@ -2,227 +2,106 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3072DC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9230AC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C05EB21473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:20:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C05EB21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 51CEE2098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:21:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HcG6Dm6k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51CEE2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbeJDPMy (ORCPT
+        id S1727422AbeJDPN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:12:54 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:2389 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbeJDPMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:12:54 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42Qm6k0clfz9ttCM;
-        Thu,  4 Oct 2018 10:20:46 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 2Wnz-K94dzA7; Thu,  4 Oct 2018 10:20:46 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42Qm6k05Dpz9ttBv;
-        Thu,  4 Oct 2018 10:20:46 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6C3458B90B;
-        Thu,  4 Oct 2018 10:20:48 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 99vJ-2qz5Eka; Thu,  4 Oct 2018 10:20:48 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8393E8B907;
-        Thu,  4 Oct 2018 10:20:47 +0200 (CEST)
-Subject: Re: [RFC PATCH v3 1/7] book3s/64: avoid circular header inclusion in
- mmu-hash.h
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        aneesh.kumar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <cover.1538396658.git.christophe.leroy@c-s.fr>
- <c95148024873842459472bbcc0dd0e65607fd43b.1538396658.git.christophe.leroy@c-s.fr>
- <20181003142400.490fd38a@roar.ozlabs.ibm.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <bed3d788-6633-6eef-30ea-bdfa374e0216@c-s.fr>
-Date:   Thu, 4 Oct 2018 10:20:47 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 4 Oct 2018 11:13:29 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52328 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbeJDPN2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 11:13:28 -0400
+Received: by mail-it1-f196.google.com with SMTP id 134-v6so11990834itz.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:21:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eLsLOIuZo5+XWpGw9AXQYbV43EzIMgt6VHkD75PjN6Y=;
+        b=HcG6Dm6kb1tq1fonIuaEsGLnWBZbSjTUYcPB8lBNT6n+OK/aoTWHrlKHRT5j83ZQ+v
+         aAkbADV36yafpfHVrPVUfxM4fxXvpyv+ysoryTeHdPD4bZskYq2JRg/9DjlOKz94Z3IG
+         MMHvc5GSIAgZwQFKofgYDtynjLHV2vQVo4HrI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eLsLOIuZo5+XWpGw9AXQYbV43EzIMgt6VHkD75PjN6Y=;
+        b=gGpQAC4PaZ3TF4AXsJRZDccJXZHVKt/NnEkUkuFT51UUwlqdshATEKflbZyjsZeOwE
+         pWwDQaIhk5HqKBx1oaCyCdT/suUD3owl72Ji3L3KKCWSAa6+EyXiTUb6cDrzim8atIE+
+         hMlF21qAFDVJ9BQnHXZbuFmhcbA2iNvxxNF2O0jsyxcEudASPqGX23ZTDM0LDz/E83z4
+         8wLKX/1SG2LlVa0ZoEZYjy/Jx97NyrkJSRiowqB+VkzyzHTCesyUQMtHzezvlBcY2SV8
+         4zZHKMrdTKmsHQfM/QngP7E5BEI67OcQ49EUpP/NYWTK4EtxsNBmezXMgPRkq7NVXW+D
+         Z5RA==
+X-Gm-Message-State: ABuFfoiGSz2z8bTA0TgeqKdby0JVOyOEF23RUBk0uU+2stGzPRJLzlxQ
+        cC01tw6vJ6iR1vXutHHNmEYwtz+7Jet2O4B9GhFLUg==
+X-Google-Smtp-Source: ACcGV632MamWI+sZTX7ssrpK4esQLYD3bTGXA8sSF6OyVIcYx34BgZq8fqyrTTxTyR7pP3jcS4ROAr8BBhx96lLY9mU=
+X-Received: by 2002:a24:83c1:: with SMTP id d184-v6mr4445694ite.16.1538641283776;
+ Thu, 04 Oct 2018 01:21:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181003142400.490fd38a@roar.ozlabs.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <20181002124329.21248-1-linus.walleij@linaro.org>
+ <05fdbe23-ec01-895f-e67e-abff85c1ece2@kernel.dk> <B5321A64-8A1A-42FF-A337-F4524BDA179B@linaro.org>
+ <1538550325.14984.108.camel@gmail.com> <CACRpkdaLZXGKMQGJPH02p2QPkxUDA03Y=cu_wBR_+rFaLWTw7g@mail.gmail.com>
+ <BN3PR0401MB164003C967C45F2681F503A7E7E90@BN3PR0401MB1640.namprd04.prod.outlook.com>
+ <CACRpkdbHiq9bstRzyg-fJfXKnXr8wD1YzAooLAwQKM0OzP=HVA@mail.gmail.com>
+ <1E24731C-13E1-41CC-A96A-ABDAA6175849@linaro.org> <CAHhmqcRbz+UsgDsHzJzKDWqZ_JMNp1UYq3M2rAf1vqfmO+wRyg@mail.gmail.com>
+In-Reply-To: <CAHhmqcRbz+UsgDsHzJzKDWqZ_JMNp1UYq3M2rAf1vqfmO+wRyg@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 4 Oct 2018 10:21:11 +0200
+Message-ID: <CACRpkdbHD4fNq0jz_JBuake7piJwRJmiK_JtsMXkiWVWxnis8A@mail.gmail.com>
+Subject: Re: [PATCH] block: BFQ default for single queue devices
+To:     bgurney@redhat.com
+Cc:     Paolo Valente <paolo.valente@linaro.org>, Damien.LeMoal@wdc.com,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jan Kara <jack@suse.cz>, aherrmann@suse.com, mgorman@suse.com,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Oct 3, 2018 at 7:34 PM Bryan Gurney <bgurney@redhat.com> wrote:
 
+> Right now, users of host-managed SMR drives should be using "deadline"
+> or "mq-deadline", to avoid out-of-order writes in sequential-only
+> zones.
+>
+> I'm running into a situation right now on a test system (Fedora 28,
+> 4.18.7 kernel) where I copied test data onto an F2FS filesystem, but I
+> accidentally forgot to add my "udev rule" file:
 
-Le 03/10/2018 à 06:24, Nicholas Piggin a écrit :
-> On Mon,  1 Oct 2018 12:30:19 +0000 (UTC)
-> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
-> 
->> When activating CONFIG_THREAD_INFO_IN_TASK, linux/sched.h
->> includes asm/current.h. This generates a circular dependency.
->> To avoid that, asm/processor.h shall not be included in mmu-hash.h
->>
->> In order to do that, this patch moves into a new header called
->> asm/task_size.h the information from asm/processor.h requires by
->> mmu-hash.h
-> 
-> Doesn't look like you use this header in 32-bit code. Put task_size.h
-> in asm/64/ maybe?
+This should be fixed after
+d5038a13eca7 scsi: core: switch to scsi-mq by default
+right?
 
-There is no asm/64/ dir at the time being, only book3s/64/ and nohash/64/
+Since mq use mq-deadline by default.
 
-I'm thinking about leaving it in asm/ but renaming it task_size_user64.h
+I'm making sure to preserve mq-deadline on zoned devices
+in my v2 of this patch.
 
-Christophe
-
-> 
-> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-> 
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   arch/powerpc/include/asm/book3s/64/mmu-hash.h |  2 +-
->>   arch/powerpc/include/asm/processor.h          | 34 +---------------------
->>   arch/powerpc/include/asm/task_size.h          | 42 +++++++++++++++++++++++++++
->>   arch/powerpc/kvm/book3s_hv_hmi.c              |  1 +
->>   4 files changed, 45 insertions(+), 34 deletions(-)
->>   create mode 100644 arch/powerpc/include/asm/task_size.h
->>
->> diff --git a/arch/powerpc/include/asm/book3s/64/mmu-hash.h b/arch/powerpc/include/asm/book3s/64/mmu-hash.h
->> index bbeaf6adf93c..7788e35f19f0 100644
->> --- a/arch/powerpc/include/asm/book3s/64/mmu-hash.h
->> +++ b/arch/powerpc/include/asm/book3s/64/mmu-hash.h
->> @@ -23,7 +23,7 @@
->>    */
->>   #include <asm/book3s/64/pgtable.h>
->>   #include <asm/bug.h>
->> -#include <asm/processor.h>
->> +#include <asm/task_size.h>
->>   #include <asm/cpu_has_feature.h>
->>   
->>   /*
->> diff --git a/arch/powerpc/include/asm/processor.h b/arch/powerpc/include/asm/processor.h
->> index 350c584ca179..353879db3e98 100644
->> --- a/arch/powerpc/include/asm/processor.h
->> +++ b/arch/powerpc/include/asm/processor.h
->> @@ -101,40 +101,8 @@ void release_thread(struct task_struct *);
->>   #endif
->>   
->>   #ifdef CONFIG_PPC64
->> -/*
->> - * 64-bit user address space can have multiple limits
->> - * For now supported values are:
->> - */
->> -#define TASK_SIZE_64TB  (0x0000400000000000UL)
->> -#define TASK_SIZE_128TB (0x0000800000000000UL)
->> -#define TASK_SIZE_512TB (0x0002000000000000UL)
->> -#define TASK_SIZE_1PB   (0x0004000000000000UL)
->> -#define TASK_SIZE_2PB   (0x0008000000000000UL)
->> -/*
->> - * With 52 bits in the address we can support
->> - * upto 4PB of range.
->> - */
->> -#define TASK_SIZE_4PB   (0x0010000000000000UL)
->>   
->> -/*
->> - * For now 512TB is only supported with book3s and 64K linux page size.
->> - */
->> -#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_PPC_64K_PAGES)
->> -/*
->> - * Max value currently used:
->> - */
->> -#define TASK_SIZE_USER64		TASK_SIZE_4PB
->> -#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_128TB
->> -#define TASK_CONTEXT_SIZE		TASK_SIZE_512TB
->> -#else
->> -#define TASK_SIZE_USER64		TASK_SIZE_64TB
->> -#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_64TB
->> -/*
->> - * We don't need to allocate extended context ids for 4K page size, because
->> - * we limit the max effective address on this config to 64TB.
->> - */
->> -#define TASK_CONTEXT_SIZE		TASK_SIZE_64TB
->> -#endif
->> +#include <asm/task_size.h>
->>   
->>   /*
->>    * 32-bit user address space is 4GB - 1 page
->> diff --git a/arch/powerpc/include/asm/task_size.h b/arch/powerpc/include/asm/task_size.h
->> new file mode 100644
->> index 000000000000..ca45638617b0
->> --- /dev/null
->> +++ b/arch/powerpc/include/asm/task_size.h
->> @@ -0,0 +1,42 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef _ASM_POWERPC_TASK_SIZE_H
->> +#define _ASM_POWERPC_TASK_SIZE_H
->> +
->> +#ifdef CONFIG_PPC64
->> +/*
->> + * 64-bit user address space can have multiple limits
->> + * For now supported values are:
->> + */
->> +#define TASK_SIZE_64TB  (0x0000400000000000UL)
->> +#define TASK_SIZE_128TB (0x0000800000000000UL)
->> +#define TASK_SIZE_512TB (0x0002000000000000UL)
->> +#define TASK_SIZE_1PB   (0x0004000000000000UL)
->> +#define TASK_SIZE_2PB   (0x0008000000000000UL)
->> +/*
->> + * With 52 bits in the address we can support
->> + * upto 4PB of range.
->> + */
->> +#define TASK_SIZE_4PB   (0x0010000000000000UL)
->> +
->> +/*
->> + * For now 512TB is only supported with book3s and 64K linux page size.
->> + */
->> +#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_PPC_64K_PAGES)
->> +/*
->> + * Max value currently used:
->> + */
->> +#define TASK_SIZE_USER64		TASK_SIZE_4PB
->> +#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_128TB
->> +#define TASK_CONTEXT_SIZE		TASK_SIZE_512TB
->> +#else
->> +#define TASK_SIZE_USER64		TASK_SIZE_64TB
->> +#define DEFAULT_MAP_WINDOW_USER64	TASK_SIZE_64TB
->> +/*
->> + * We don't need to allocate extended context ids for 4K page size, because
->> + * we limit the max effective address on this config to 64TB.
->> + */
->> +#define TASK_CONTEXT_SIZE		TASK_SIZE_64TB
->> +#endif
->> +
->> +#endif /* CONFIG_PPC64 */
->> +#endif /* _ASM_POWERPC_TASK_SIZE_H */
->> diff --git a/arch/powerpc/kvm/book3s_hv_hmi.c b/arch/powerpc/kvm/book3s_hv_hmi.c
->> index e3f738eb1cac..64b5011475c7 100644
->> --- a/arch/powerpc/kvm/book3s_hv_hmi.c
->> +++ b/arch/powerpc/kvm/book3s_hv_hmi.c
->> @@ -24,6 +24,7 @@
->>   #include <linux/compiler.h>
->>   #include <asm/paca.h>
->>   #include <asm/hmi.h>
->> +#include <asm/processor.h>
->>   
->>   void wait_for_subcore_guest_exit(void)
->>   {
->> -- 
->> 2.13.3
->>
+Yours,
+Linus Walleij
