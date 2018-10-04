@@ -6,52 +6,48 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF7AC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D45C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A0A821473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:14:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A0A821473
+	by mail.kernel.org (Postfix) with ESMTP id 1BD9B21473
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 06:15:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BD9B21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbeJDNG1 (ORCPT
+        id S1727486AbeJDNGV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 09:06:27 -0400
-Received: from ozlabs.org ([203.11.71.1]:38419 "EHLO ozlabs.org"
+        Thu, 4 Oct 2018 09:06:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:37361 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727537AbeJDNG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 09:06:26 -0400
+        id S1726858AbeJDNGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 09:06:21 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 42QjKL05sjz9s7h; Thu,  4 Oct 2018 16:14:44 +1000 (AEST)
+        id 42QjKF2wcZzB4MQ; Thu,  4 Oct 2018 16:14:40 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: d90fe2acd9b2900790da01354dbca48dba37c20d
-In-Reply-To: <b3ca67442a924acb9f4a3409264914ca9feaf7d5.1538148840.git.christophe.leroy@c-s.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Jonathan Corbet <corbet@lwn.net>
+X-powerpc-patch-commit: cd5ff94577e004e0a4457e70d0ef3a030f4010b8
+In-Reply-To: <1537963772-15309-1-git-send-email-zhongjiang@huawei.com>
+To:     zhong jiang <zhongjiang@huawei.com>, <paulus@samba.org>,
+        <akpm@linux-foundation.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [v3] powerpc: wire up memtest
-Message-Id: <42QjKL05sjz9s7h@ozlabs.org>
-Date:   Thu,  4 Oct 2018 16:14:44 +1000 (AEST)
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        fbarrat@linux.vnet.ibm.com, npiggin@gmail.com,
+        fthain@telegraphics.com.au
+Subject: Re: powerpc: xive: Move a dereference below a NULL test
+Message-Id: <42QjKF2wcZzB4MQ@ozlabs.org>
+Date:   Thu,  4 Oct 2018 16:14:40 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-09-28 at 15:39:20 UTC, Christophe Leroy wrote:
-> Add call to early_memtest() so that kernel compiled with
-> CONFIG_MEMTEST really perform memtest at startup when requested
-> via 'memtest' boot parameter.
+On Wed, 2018-09-26 at 12:09:32 UTC, zhong jiang wrote:
+> It is safe to move dereference below a NULL test.
 > 
-> Tested-by: Daniel Axtens <dja@axtens.net>
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/d90fe2acd9b2900790da01354dbca4
+https://git.kernel.org/powerpc/c/cd5ff94577e004e0a4457e70d0ef3a
 
 cheers
