@@ -2,143 +2,74 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 397CEC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C2AC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6E0021473
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:41:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6E0021473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4344A213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:42:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4344A213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbeJDQeA (ORCPT
+        id S1727857AbeJDQeo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:34:00 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54622 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727046AbeJDQd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:33:59 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 894534268DD10;
-        Thu,  4 Oct 2018 17:41:31 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Thu, 4 Oct 2018
- 17:41:22 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <mpe@ellerman.id.au>, <nfont@linux.vnet.ibm.com>
-CC:     <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2 -next] powerpc/pseries/memory-hotplug: Fix return value type of find_aa_index
-Date:   Thu, 4 Oct 2018 17:41:13 +0800
-Message-ID: <20181004094113.5492-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Thu, 4 Oct 2018 12:34:44 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55945 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727046AbeJDQeo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 12:34:44 -0400
+Received: from 79.184.253.194.ipv4.supernova.orange.pl (79.184.253.194) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id 37c95c7b2ecb34ec; Thu, 4 Oct 2018 11:42:16 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Colin Cross <ccross@android.com>,
+        Ramesh Thomas <ramesh.thomas@intel.com>,
+        Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] cpuidle/drivers/menu: Remove get_loadavg in the performance multiplier
+Date:   Thu, 04 Oct 2018 11:39:14 +0200
+Message-ID: <2531993.xoN9vA4MB0@aspire.rjw.lan>
+In-Reply-To: <20181004093644.GL19272@hirez.programming.kicks-ass.net>
+References: <1538638927-26846-1-git-send-email-daniel.lezcano@linaro.org> <CAJZ5v0i+TMAeaMp8D8qGph1VZKg0L23RsqdPMEQ0xHhpTCHgQA@mail.gmail.com> <20181004093644.GL19272@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'aa_index' is defined as an unsigned value, but find_aa_index
-may return -1 when dlpar_clone_property fails. So we use an rc
-value to track the validation of finding the aa_index instead
-of the 'aa_index' value itself
+On Thursday, October 4, 2018 11:36:44 AM CEST Peter Zijlstra wrote:
+> On Thu, Oct 04, 2018 at 10:47:04AM +0200, Rafael J. Wysocki wrote:
+> 
+> > > The comment is irrelevant as the remaining function is used for
+> > > statistics in addition to the perf multiplier. It does exactly what the
+> > > function name is.
+> > 
+> > Which is my point.  It shouldn't be dropped entirely, but updated IMO.
+> 
+> But the function name isn't the problem.. the problem that any use of
+> the number is fundamentally broken.
+> 
 
-Fixes: c05a5a40969e ("powerpc/pseries: Dynamic add entires to associativity lookup array")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v2: use 'rc' track the validation of aa_index
----
- arch/powerpc/platforms/pseries/hotplug-memory.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+We're in violent agreement here. :-)
 
-diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
-index 9a15d39..796e68b 100644
---- a/arch/powerpc/platforms/pseries/hotplug-memory.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
-@@ -101,13 +101,12 @@ static struct property *dlpar_clone_property(struct property *prop,
- 	return new_prop;
- }
- 
--static u32 find_aa_index(struct device_node *dr_node,
--			 struct property *ala_prop, const u32 *lmb_assoc)
-+static int find_aa_index(struct device_node *dr_node, struct property *ala_prop,
-+			 const u32 *lmb_assoc, u32 *aa_index)
- {
- 	u32 *assoc_arrays;
--	u32 aa_index;
- 	int aa_arrays, aa_array_entries, aa_array_sz;
--	int i, index;
-+	int i, index, rc = -1;
- 
- 	/*
- 	 * The ibm,associativity-lookup-arrays property is defined to be
-@@ -121,18 +120,18 @@ static u32 find_aa_index(struct device_node *dr_node,
- 	aa_array_entries = be32_to_cpu(assoc_arrays[1]);
- 	aa_array_sz = aa_array_entries * sizeof(u32);
- 
--	aa_index = -1;
- 	for (i = 0; i < aa_arrays; i++) {
- 		index = (i * aa_array_entries) + 2;
- 
- 		if (memcmp(&assoc_arrays[index], &lmb_assoc[1], aa_array_sz))
- 			continue;
- 
--		aa_index = i;
-+		*aa_index = i;
-+		rc = 0;
- 		break;
- 	}
- 
--	if (aa_index == -1) {
-+	if (rc == -1) {
- 		struct property *new_prop;
- 		u32 new_prop_size;
- 
-@@ -157,10 +156,11 @@ static u32 find_aa_index(struct device_node *dr_node,
- 		 * number of entries - 1 since we added its associativity
- 		 * to the end of the lookup array.
- 		 */
--		aa_index = be32_to_cpu(assoc_arrays[0]) - 1;
-+		*aa_index = be32_to_cpu(assoc_arrays[0]) - 1;
-+		rc = 0;
- 	}
- 
--	return aa_index;
-+	return rc;
- }
- 
- static int update_lmb_associativity_index(struct drmem_lmb *lmb)
-@@ -169,6 +169,7 @@ static int update_lmb_associativity_index(struct drmem_lmb *lmb)
- 	struct property *ala_prop;
- 	const u32 *lmb_assoc;
- 	u32 aa_index;
-+	int rc;
- 
- 	parent = of_find_node_by_path("/");
- 	if (!parent)
-@@ -200,11 +201,11 @@ static int update_lmb_associativity_index(struct drmem_lmb *lmb)
- 		return -ENODEV;
- 	}
- 
--	aa_index = find_aa_index(dr_node, ala_prop, lmb_assoc);
-+	rc = find_aa_index(dr_node, ala_prop, lmb_assoc, &aa_index);
- 
- 	dlpar_free_cc_nodes(lmb_node);
- 
--	if (aa_index < 0) {
-+	if (rc < 0) {
- 		pr_err("Could not find LMB associativity\n");
- 		return -1;
- 	}
--- 
-2.7.0
+I just wanted to say that the comment was still relevant at least with
+respect to this function, but the patch was removing the comment
+entirely.
 
 
