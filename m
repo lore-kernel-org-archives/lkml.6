@@ -2,238 +2,165 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA90AC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A62BBC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CCF1213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:16:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CCF1213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 4D6F9213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 07:19:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PdW0izqz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D6F9213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbeJDOHy (ORCPT
+        id S1727395AbeJDOLF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:07:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34954 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727058AbeJDOHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:07:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 51375ACC5;
-        Thu,  4 Oct 2018 07:16:01 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 456061E3614; Thu,  4 Oct 2018 09:16:00 +0200 (CEST)
-Date:   Thu, 4 Oct 2018 09:16:00 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andi Kleen <andi@firstfloor.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH v9 5/5] lib/dlock-list: Scale dlock_lists_empty()
-Message-ID: <20181004071600.GC29482@quack2.suse.cz>
-References: <1536780532-4092-1-git-send-email-longman@redhat.com>
- <1536780532-4092-6-git-send-email-longman@redhat.com>
+        Thu, 4 Oct 2018 10:11:05 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44400 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbeJDOLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 10:11:05 -0400
+Received: by mail-io1-f68.google.com with SMTP id x26-v6so7083306iog.11
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 00:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p73WRf1ZvmFlYb+MQdIzApOD+ANqXv8H980Hl3JFA/0=;
+        b=PdW0izqzcK830AX320OBjdRWgohdD77kYYg3vH1ylCvVCT89rFIBb3WgAPaCiSksp8
+         RALpQhr5XiS/zf9dJbK43Z+LLFPKHXW5DLkstgcM8+n/D3pVUmXTdLjTVPkZZljmAd/a
+         2IwTfpF6nJGjiAGmqC66UxRSMhKKKTnYrsEhg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p73WRf1ZvmFlYb+MQdIzApOD+ANqXv8H980Hl3JFA/0=;
+        b=QwR/GchBwQVh7IXGGV2CrC5/F3Sw1iG1+PVN0azxEv2zDC9WZAoyC/vWLZQ330PmNZ
+         66cjHlbYI7phBiJWbA3cpSXfOJliC+knna/3mi8clQHW2SP0YGIoPg8wRXzmcT4XEuuX
+         iBOZZlfuhCKhqV+PxNnBHeCuS/pLBWGNZrF0vuu3U3dLBbDQrPLypVS7dAFLKS349pzB
+         XoBrtOt3xHGB06tp/ykIu1jWBEYUUaH3ccD88GQwHMncOPTLCBJNYrxLM+ICmvkGeqYd
+         EuZSa+7vgOLgsleSg6As+gMeS/yNYP/lUHq8wd5i8bFGADVGkKR/0vwVSwIbd6dACcHo
+         7KcQ==
+X-Gm-Message-State: ABuFfoii8Apgl244bIJcdMchOenP8fNzr1DSjTQZQJP0c9+Fo9Y+/8sm
+        3z8u6TXWC9hcVpl92Jlxz1IbeAOt8GdJfNpTqNL0oA==
+X-Google-Smtp-Source: ACcGV61W4xY8zxSyvTHfyRIR78RFj5xvRYq2tc6i39LRO2SViiNDFNdF9Cxshi307HD1nD62899Jdx09mcpYgpXK/Jo=
+X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr3252856ioa.277.1538637554381;
+ Thu, 04 Oct 2018 00:19:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536780532-4092-6-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181001204346.4655-1-linus.walleij@linaro.org>
+ <28e88d54f6503cf1be577eb1872cdf2c50d7dfa3.camel@nxp.com> <20181003121002.GA7132@sirena.org.uk>
+ <c2ace38e09344d325271498fe8133c888470b5f6.camel@nxp.com>
+In-Reply-To: <c2ace38e09344d325271498fe8133c888470b5f6.camel@nxp.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 4 Oct 2018 09:19:02 +0200
+Message-ID: <CACRpkdYtddXBYQE4RbDj_7rKb38jE9HvKetokjiCi2Tt8-ZhzA@mail.gmail.com>
+Subject: Re: [PATCH] regulator: fixed: Default enable high on DT regulators
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Duan <fugang.duan@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        John Stultz <john.stultz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 12-09-18 15:28:52, Waiman Long wrote:
-> From: Davidlohr Bueso <dave@stgolabs.net>
-> 
-> Instead of the current O(N) implementation, at the cost
-> of adding an atomic counter, we can convert the call to
-> an atomic_read(). The counter only serves for accounting
-> empty to non-empty transitions, and vice versa; therefore
-> only modified twice for each of the lists during the
-> lifetime of the dlock (while used).
-> 
-> In addition, to be able to unaccount a list_del(), we
-> add a dlist pointer to each head, thus minimizing the
-> overall memory footprint.
-> 
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-> Acked-by: Waiman Long <longman@redhat.com>
+On Wed, Oct 3, 2018 at 8:08 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
+> On Wed, 2018-10-03 at 13:10 +0100, Mark Brown wrote:
+> > On Tue, Oct 02, 2018 at 01:42:38PM +0000, Leonard Crestez wrote:
+> >
+> > > This turns the phy off and on again instead of leaving it up from uboot
+> > > and it doesn't work for some reason. However looking at
+> > > reg_fixed_voltage_probe introducing an edge seems to be intentional for
+> > > regulators which are not marked with "enabled-at-boot". Right?
+> >
+> > No, that's definitely not desired.  We don't want to change the state of
+> > the regulator at all if we can avoid it unless the user explicitly asked
+> > for it.
+>
+> That also makes sense, for a top level perspective. But
+> reg_fixed_voltage_probe contains the following snippet:
+>
+>         if (config->enabled_at_boot) {
+>                 if (config->enable_high)
+>                         cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
+>                 else
+>                         cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
+>         } else {
+>                 if (config->enable_high)
+>                         cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
+>                 else
+>                         cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
+>         }
 
-So I was wondering: Is this really worth it? AFAICS we have a single call
-site for dlock_lists_empty() and that happens during umount where we don't
-really care about this optimization. So it seems like unnecessary
-complication to me at this point? If someone comes up with a usecase that
-needs fast dlock_lists_empty(), then sure, we can do this...
+GPIOD_* flags nowadays but yes.
 
-								Honza
+> Unless config->enabled_at_boot the GPIO is initialized with the
+> opposite polarity of enabled. This means that fixed regulators which
+> are not marked with "enabled-at-boot" but happen to be "on" anyway are
+> always power cycled.
+>
+> This is from before recent changes by Linus, code dates from 2012
+> commit 25a53dfbfbfd ("regulator: fixed: Use core GPIO enable support").
+> Even before that the logic was similar:
+>
+>         drvdata->is_enabled = config->enabled_at_boot;
+>         ret = drvdata->is_enabled ?
+>                 config->enable_high : !config->enable_high;
+>         gpio_flag = ret ? GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW;
+>
+> Looking further back it seems that this behavior has always been
+> present in fixed-regulator code.
 
-> ---
->  include/linux/dlock-list.h |  8 ++++++
->  lib/dlock-list.c           | 67 +++++++++++++++++++++++++++++++++++++++-------
->  2 files changed, 65 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/dlock-list.h b/include/linux/dlock-list.h
-> index 327cb9e..ac1a2e3 100644
-> --- a/include/linux/dlock-list.h
-> +++ b/include/linux/dlock-list.h
-> @@ -32,10 +32,18 @@
->  struct dlock_list_head {
->  	struct list_head list;
->  	spinlock_t lock;
-> +	struct dlock_list_heads *dlist;
->  } ____cacheline_aligned_in_smp;
->  
-> +/*
-> + * This is the main dlist data structure, with the array of heads
-> + * and a counter that atomically tracks if any of the lists are
-> + * being used. That is, empty to non-empty (and vice versa)
-> + * head->list transitions.
-> + */
->  struct dlock_list_heads {
->  	struct dlock_list_head *heads;
-> +	atomic_t used_lists;
->  };
->  
->  /*
-> diff --git a/lib/dlock-list.c b/lib/dlock-list.c
-> index e286094..04da20d 100644
-> --- a/lib/dlock-list.c
-> +++ b/lib/dlock-list.c
-> @@ -122,8 +122,11 @@ int __alloc_dlock_list_heads(struct dlock_list_heads *dlist,
->  
->  		INIT_LIST_HEAD(&head->list);
->  		head->lock = __SPIN_LOCK_UNLOCKED(&head->lock);
-> +		head->dlist = dlist;
->  		lockdep_set_class(&head->lock, key);
->  	}
-> +
-> +	atomic_set(&dlist->used_lists, 0);
->  	return 0;
->  }
->  EXPORT_SYMBOL(__alloc_dlock_list_heads);
-> @@ -139,29 +142,36 @@ void free_dlock_list_heads(struct dlock_list_heads *dlist)
->  {
->  	kfree(dlist->heads);
->  	dlist->heads = NULL;
-> +	atomic_set(&dlist->used_lists, 0);
->  }
->  EXPORT_SYMBOL(free_dlock_list_heads);
->  
->  /**
->   * dlock_lists_empty - Check if all the dlock lists are empty
->   * @dlist: Pointer to the dlock_list_heads structure
-> - * Return: true if list is empty, false otherwise.
->   *
-> - * This can be a pretty expensive function call. If this function is required
-> - * in a performance critical path, we may have to maintain a global count
-> - * of the list entries in the global dlock_list_heads structure instead.
-> + * Return: true if all dlock lists are empty, false otherwise.
->   */
->  bool dlock_lists_empty(struct dlock_list_heads *dlist)
->  {
-> -	int idx;
-> -
->  	/* Shouldn't be called before nr_dlock_lists is initialized */
->  	WARN_ON_ONCE(!nr_dlock_lists);
->  
-> -	for (idx = 0; idx < nr_dlock_lists; idx++)
-> -		if (!list_empty(&dlist->heads[idx].list))
-> -			return false;
-> -	return true;
-> +	/*
-> +	 * Serialize dlist->used_lists such that a 0->1 transition is not
-> +	 * missed by another thread checking if any of the dlock lists are
-> +	 * used.
-> +	 *
-> +	 * CPU0				    CPU1
-> +	 * dlock_list_add()                 dlock_lists_empty()
-> +	 *   [S] atomic_inc(used_lists);
-> +	 *       smp_mb__after_atomic();
-> +	 *					  smp_mb__before_atomic();
-> +	 *				      [L] atomic_read(used_lists)
-> +	 *       list_add()
-> +	 */
-> +	smp_mb__before_atomic();
-> +	return !atomic_read(&dlist->used_lists);
->  }
->  EXPORT_SYMBOL(dlock_lists_empty);
->  
-> @@ -177,11 +187,39 @@ void dlock_lists_add(struct dlock_list_node *node,
->  		     struct dlock_list_heads *dlist)
->  {
->  	struct dlock_list_head *head = &dlist->heads[this_cpu_read(cpu2idx)];
-> +	bool list_empty_before_lock = false;
-> +
-> +	/*
-> +	 * Optimistically bump the used_lists counter _before_ taking
-> +	 * the head->lock such that we don't miss a thread adding itself
-> +	 * to a list while spinning for the lock.
-> +	 *
-> +	 * Then, after taking the lock, recheck if the empty to non-empty
-> +	 * transition changed and (un)account for ourselves, accordingly.
-> +	 * Note that all these scenarios are corner cases, and not the
-> +	 * common scenario, where the lists are actually populated most
-> +	 * of the time.
-> +	 */
-> +	if (unlikely(list_empty_careful(&head->list))) {
-> +		list_empty_before_lock = true;
-> +		atomic_inc(&dlist->used_lists);
-> +		smp_mb__after_atomic();
-> +	}
->  
->  	/*
->  	 * There is no need to disable preemption
->  	 */
->  	spin_lock(&head->lock);
-> +
-> +	if (unlikely(!list_empty_before_lock && list_empty(&head->list))) {
-> +		atomic_inc(&dlist->used_lists);
-> +		smp_mb__after_atomic();
-> +	}
-> +	if (unlikely(list_empty_before_lock && !list_empty(&head->list))) {
-> +		atomic_dec(&dlist->used_lists);
-> +		smp_mb__after_atomic();
-> +	}
-> +
->  	WRITE_ONCE(node->head, head);
->  	list_add(&node->list, &head->list);
->  	spin_unlock(&head->lock);
-> @@ -212,6 +250,15 @@ void dlock_lists_del(struct dlock_list_node *node)
->  		spin_lock(&head->lock);
->  		if (likely(head == READ_ONCE(node->head))) {
->  			list_del_init(&node->list);
-> +
-> +			if (unlikely(list_empty(&head->list))) {
-> +				struct dlock_list_heads *dlist;
-> +				dlist = node->head->dlist;
-> +
-> +				atomic_dec(&dlist->used_lists);
-> +				smp_mb__after_atomic();
-> +			}
-> +
->  			WRITE_ONCE(node->head, NULL);
->  			retry = false;
->  		} else {
-> -- 
-> 1.8.3.1
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yep, I can't take the credit for that, I just tried to preserve the
+logic that was already there.
+
+> In theory it might be possible to request the GPIO while asking to keep
+> the value from the bootloader?
+>
+> Maybe I'm confused but I don't see an
+> easy way to do this through the GPIO api; functions for requesting in
+> output mode all seem to also ask for the initial value.
+>
+> GPIOD_ASIS looks close but it doesn't even adjust the direction.
+
+If the bootloader set up the line value, isn't it reasonable to assume
+it also set up the direction (to output)? How else would it even work?
+
+That said, you could just call gpiod_direction_output() after
+getting the handle if you want to make sure it is set as output.
+
+We are floating patches that will re-enable the GPIO code to call
+.get_direction() on all descriptors at boot. After that you can use
+gpiod_get_direction() to determine if it needs to be switched,
+but that would be a bit overengineered IMO.
+
+I guess you can make a patch using GPIOD_ASIS, but I am worried
+that several systems will depend on the active driving of this since
+as you describe, it has been like this for ages.
+
+Yet again I'm not the conservative kind, as you notice, so by all means
+try it! :)
+
+> > > It's possible that you exposed an imx board-specific bug: maybe power
+> > > cycling the phy after uboot needs some missing fixup?
+> >
+> > It'd probably also be good to sort this out though.
+>
+> Yes, handled separately: https://lore.kernel.org/patchwork/patch/994871/
+
+That one was especially interesting!
+
+Yours,
+Linus Walleij
