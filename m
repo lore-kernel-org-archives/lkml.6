@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 040C8C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D5BC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C79FA20877
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:43:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C79FA20877
+	by mail.kernel.org (Postfix) with ESMTP id 3C04A20877
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:44:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C04A20877
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbeJEDix (ORCPT
+        id S1727986AbeJEDik (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 23:38:53 -0400
+        Thu, 4 Oct 2018 23:38:40 -0400
 Received: from mga14.intel.com ([192.55.52.115]:21644 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728038AbeJEDil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:38:41 -0400
+        id S1727650AbeJEDik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 23:38:40 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
   by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 13:43:42 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,341,1534834800"; 
-   d="scan'208";a="92295014"
+   d="scan'208";a="92295017"
 Received: from maru.jf.intel.com ([10.54.51.77])
-  by fmsmga002.fm.intel.com with ESMTP; 04 Oct 2018 13:43:29 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 04 Oct 2018 13:43:30 -0700
 From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 To:     Brendan Higgins <brendanhiggins@google.com>,
         Wolfram Sang <wsa@the-dreams.de>,
@@ -46,9 +46,9 @@ Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
         James Feist <james.feist@linux.intel.com>,
         Vernon Mauery <vernon.mauery@linux.intel.com>,
         Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH i2c-next v6 3/5] dt-bindings: i2c: aspeed: Add 'timeout-ms' property as an optional property
-Date:   Thu,  4 Oct 2018 13:43:20 -0700
-Message-Id: <20181004204322.20665-4-jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH i2c-next v6 4/5] i2c: aspeed: Remove hard-coded bus timeout value setting
+Date:   Thu,  4 Oct 2018 13:43:21 -0700
+Message-Id: <20181004204322.20665-5-jae.hyun.yoo@linux.intel.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181004204322.20665-1-jae.hyun.yoo@linux.intel.com>
 References: <20181004204322.20665-1-jae.hyun.yoo@linux.intel.com>
@@ -59,31 +59,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds 'timeout-ms' property as an optional property
-which can be used for setting the bus timeout value of an adapter.
-With this patch, the bus timeout value can be set through this
-property at the probing time of this module. Still the bus timeout
-value can be set by an I2C_TIMEOUT ioctl on cdev at runtime too.
+This commit removes hard-coded bus timeout value setting so that
+it can be set by i2c-core-base.
 
 Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Reviewed-by: Joel Stanley <joel@jms.id.au>
 ---
- Documentation/devicetree/bindings/i2c/i2c-aspeed.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/i2c/busses/i2c-aspeed.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt b/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
-index 8fbd8633a387..af9be200383c 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
-@@ -17,6 +17,9 @@ Optional Properties:
- 		  specified
- - multi-master	: states that there is another master active on this bus.
- 
-+- timeout-ms	: bus timeout in milliseconds defaults to 1 second when not
-+		  specified.
-+
- Example:
- 
- i2c {
+diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+index 8dc9161ced38..833b6b6a4c7e 100644
+--- a/drivers/i2c/busses/i2c-aspeed.c
++++ b/drivers/i2c/busses/i2c-aspeed.c
+@@ -930,7 +930,6 @@ static int aspeed_i2c_probe_bus(struct platform_device *pdev)
+ 	init_completion(&bus->cmd_complete);
+ 	bus->adap.owner = THIS_MODULE;
+ 	bus->adap.retries = 0;
+-	bus->adap.timeout = 5 * HZ;
+ 	bus->adap.algo = &aspeed_i2c_algo;
+ 	bus->adap.dev.parent = &pdev->dev;
+ 	bus->adap.dev.of_node = pdev->dev.of_node;
 -- 
 2.19.0
 
