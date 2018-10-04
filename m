@@ -2,128 +2,86 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00030C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E18C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72202082A
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lo1JyTuL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B72202082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E0CC2084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E0CC2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeJDVDm (ORCPT
+        id S1727715AbeJDVDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:03:42 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36261 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727369AbeJDVDm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:03:42 -0400
-Received: by mail-lf1-f65.google.com with SMTP id d4-v6so6907940lfa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 07:10:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=26OpygXkVkQ+yy/bOBSZug/4KNAD5akX+cDA2JpwiYI=;
-        b=Lo1JyTuLy0JkdfX/5X2hYieCvqUgyGKcs5fa8U3FhZLoOJ8bBMWtmXrR5Tfley5Xtk
-         TAHilvZ15Tnr1O7LsI3oLi/yDq2p23lugoLLYvF19yonOivzRETbZzrMMys71/+vUXVj
-         pbDNuvaSO0LCjfzMHiaGrMsY5UISaGBvZpmIgJNlu3tP7NAKArDZHzSacvnEVQXicYjV
-         0b+MBQLIyb6OruaT86QogT6fcDLDBrfRWY6+XN8vTr652kVK5xcMvRH3hRJXuIFQc3To
-         dXtFKRw+Ql7lbCXSTApqa7Xaj9u6KyVk8sHQwHySCj2pY48gVyPP0CPuPWnTZUu4QZ4X
-         La9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=26OpygXkVkQ+yy/bOBSZug/4KNAD5akX+cDA2JpwiYI=;
-        b=ui+BLhVob7I73kn6dkbVzn/rRYMgSMj3X7lyHCk/wFlc45NYSt9z1BwXptQuUEiiP/
-         fvcwx/yDdk0OF7qd0Wmk4qkO3aBP2iK3MPsO5hQbZOEbzkgICYvPHeLntj0hGMpvHYXZ
-         P8C8JM21hbiiv4PwsSFcSIMOeueOxLiHqXDLy2jsJE5+GE99UYrj2pXRpRZrVG858RXj
-         XNR/upXA40koDnE9wyNDUjEzW6MrfZvDFLYLQKWQ77JNMREHL1uiYxjNIEG952XPg+DJ
-         6FLEo+Miggup3Z89w25Dsq04oUoEY5pS32ntfYStShzqWF8ErOwO43MK0+uKd0+/IvTW
-         oqwA==
-X-Gm-Message-State: ABuFfohXvjNLsdNvQ6PpbR5FLkA2KSCaffEywmhMgjWZ2XalU8wefRY8
-        nt5zYpvCNwV2QdMKp8/4Ujk=
-X-Google-Smtp-Source: ACcGV61YqXGROw40LUBsmjoOjlMetrtIspVX63dpa98BorqXXuy+Iohw2yfYcBdMIoFRYYsMFZMsyQ==
-X-Received: by 2002:a19:d3c4:: with SMTP id k187-v6mr4160505lfg.101.1538662210873;
-        Thu, 04 Oct 2018 07:10:10 -0700 (PDT)
-Received: from z50.localnet (78-10-164-223.static.ip.netia.com.pl. [78.10.164.223])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm1105856lji.87.2018.10.04.07.10.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 07:10:10 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] mtd: rawnand: ams-delta: use ->exec_op()
-Date:   Thu, 04 Oct 2018 16:11:42 +0200
-Message-ID: <38470936.GRFaOSl3cF@z50>
-In-Reply-To: <20181004155933.0a32c4ac@bbrezillon>
-References: <20180719081508.5dafebde@bbrezillon> <7546835.d2Xs8Qh0bZ@z50> <20181004155933.0a32c4ac@bbrezillon>
+        Thu, 4 Oct 2018 17:03:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49990 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727355AbeJDVDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 17:03:51 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6F5A512F8E4;
+        Thu,  4 Oct 2018 14:10:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 622B41084288;
+        Thu,  4 Oct 2018 14:10:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <153861496327.30373.10501882399296347125.stgit@noble>
+References: <153861496327.30373.10501882399296347125.stgit@noble> <153861471803.30373.6184444014227748848.stgit@noble>
+To:     NeilBrown <neilb@suse.com>
+Cc:     dhowells@redhat.com, "J. Bruce Fields" <bfields@fieldses.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, linux-nfs@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-afs@lists.infradead.org, coda@cs.cmu.edu,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 1/3] VFS: introduce MAY_ACT_AS_OWNER
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <28762.1538662213.1@warthog.procyon.org.uk>
+Date:   Thu, 04 Oct 2018 15:10:13 +0100
+Message-ID: <28763.1538662213@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 04 Oct 2018 14:10:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, October 4, 2018 3:59:33 PM CEST Boris Brezillon wrote:
-> On Thu, 04 Oct 2018 15:52:57 +0200
-> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> 
-> > Hi Boris,
-> > 
-> > On Wednesday, October 3, 2018 4:06:34 PM CEST Boris Brezillon wrote:
-> > > On Wed, 03 Oct 2018 15:55:25 +0200
-> > > Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> > >     
-> > > > > > 
-> > > > > > Implementation of NAND_OP_WAITRDY_INSTR has been based on legacy
-> > > > > > nand_wait_ready(),    
-> > > > > 
-> > > > > I don't remember what the ams-delta ->dev_ready()/->waitfunc() hooks
-> > > > > are doing, but is shouldn't be too hard to replace them by an
-> > > > > ams_delta_wait_ready() func.    
-> > > > 
-> > > > Default nand_wait() is used as ->waitfunc(), and ->dev_ready() returns 
-R/B 
-> > > > GPIO pin status.  
-> > > 
-> > > Okay. Then it might make sense to provide a generic helper to poll a
-> > > gpio.
-> > > 
-> > > void nand_gpio_waitrdy(struct nand_chip *chip, struct gpio_desc *gpiod)
-> > > {
-> > > 	...
-> > > }  
-> > 
-> > How about a still more generic helper which accepts dev_ready() callback 
-as an 
-> > argument?
-> 
-> Nope, I still prefer the GPIO based one. We'll see if others need a
-> a more generic helper, but I doubt it.
+NeilBrown <neilb@suse.com> wrote:
 
-OK.
+> diff --git a/fs/afs/security.c b/fs/afs/security.c
+> index 81dfedb7879f..ac2e39de8bff 100644
+> --- a/fs/afs/security.c
+> +++ b/fs/afs/security.c
+> @@ -349,6 +349,16 @@ int afs_permission(struct inode *inode, int mask)
+>  	if (mask & MAY_NOT_BLOCK)
+>  		return -ECHILD;
+>  
+> +	/* Short-circuit for owner */
+> +	if (mask & MAY_ACT_AS_OWNER) {
+> +		if (inode_owner_or_capable(inode))
 
-Legacy nand_wait_ready() uses a hardcoded timeout value of 400 ms.   Should we 
-follow the same approach in nand_gpio_waitrdy(), or should we rather let 
-drivers pass the timeout value, like in case of nand_soft_waitrdy()?
+You don't know that inode->i_uid in meaningful.  You may have noticed that
+afs_permission() ignores i_uid and i_gid entirely.  It queries the server (if
+this information is not otherwise cached) to ask what permits the user is
+granted - where the user identity is defined by the key returned from
+afs_request_key()[*].
 
-Thanks,
-Janusz
+So, NAK for the afs piece.
 
+David
 
+[*] If there's no appropriate key, anonymous permits will be used.
