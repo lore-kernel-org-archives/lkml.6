@@ -2,75 +2,87 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2473FC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E8FC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7AAC20854
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:52:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7AAC20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 0A3FF2087D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:52:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPNg85G/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A3FF2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbeJEDrE (ORCPT
+        id S1728060AbeJEDrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 23:47:04 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55874 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727536AbeJEDrE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:47:04 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c06::4572])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3607313ADD682;
-        Thu,  4 Oct 2018 13:52:03 -0700 (PDT)
-Date:   Thu, 04 Oct 2018 13:52:02 -0700 (PDT)
-Message-Id: <20181004.135202.1340830794025516563.davem@davemloft.net>
-To:     yuzhao@google.com
-Cc:     steve.glendinning@shawell.net, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net/usb: cancel pending work when unbinding smsc75xx
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180928230430.125003-1-yuzhao@google.com>
-References: <20180928230430.125003-1-yuzhao@google.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 04 Oct 2018 13:52:03 -0700 (PDT)
+        Thu, 4 Oct 2018 23:47:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55984 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727536AbeJEDrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 23:47:22 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81A6720854;
+        Thu,  4 Oct 2018 20:52:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538686340;
+        bh=b42EPkrt/ZjF3xT+fO10BGM1CbNcYPzjOe5+xKzByjU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jPNg85G/AmaZ8w7BBSupXoUWet9vkNaOLE5jhe4sMSa9r+tGmUOXXOLJU2S0AJ572
+         D5IrUsmrmCbrcoZkG4/pZiMyMdslhzXtDt/CN886TfrcdN5YEHbHoYe1Ik7t/xFiCX
+         vLPKGrEMUvD3GGxitW0WsgHS5C/Q8B07sEWwuBpI=
+Date:   Thu, 4 Oct 2018 15:52:19 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI / ACPI: Mark expected switch fall-through
+Message-ID: <20181004205219.GJ120535@bhelgaas-glaptop.roam.corp.google.com>
+References: <20181004154041.GA28767@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181004154041.GA28767@embeddedor.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
-Date: Fri, 28 Sep 2018 17:04:30 -0600
-
-> Cancel pending work before freeing smsc75xx private data structure
-> during binding. This fixes the following crash in the driver:
+On Thu, Oct 04, 2018 at 05:40:41PM +0200, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
 > 
-> BUG: unable to handle kernel NULL pointer dereference at 0000000000000050
-> IP: mutex_lock+0x2b/0x3f
-> <snipped>
-> Workqueue: events smsc75xx_deferred_multicast_write [smsc75xx]
-> task: ffff8caa83e85700 task.stack: ffff948b80518000
-> RIP: 0010:mutex_lock+0x2b/0x3f
-> <snipped>
-> Call Trace:
->  smsc75xx_deferred_multicast_write+0x40/0x1af [smsc75xx]
->  process_one_work+0x18d/0x2fc
->  worker_thread+0x1a2/0x269
->  ? pr_cont_work+0x58/0x58
->  kthread+0xfa/0x10a
->  ? pr_cont_work+0x58/0x58
->  ? rcu_read_unlock_sched_notrace+0x48/0x48
->  ret_from_fork+0x22/0x40
-> 
-> Signed-off-by: Yu Zhao <yuzhao@google.com>
+> Addresses-Coverity-ID: 1472052 ("Missing break in switch")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Applied and queued up for -stable.
+Applied to pci/misc for v4.20, thanks!
+
+> ---
+>  drivers/pci/pci-acpi.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+> index 79c8e95..2a4aa64 100644
+> --- a/drivers/pci/pci-acpi.c
+> +++ b/drivers/pci/pci-acpi.c
+> @@ -588,6 +588,7 @@ static int acpi_pci_set_power_state(struct pci_dev *dev, pci_power_t state)
+>  			error = -EBUSY;
+>  			break;
+>  		}
+> +		/* Fall through */
+>  	case PCI_D0:
+>  	case PCI_D1:
+>  	case PCI_D2:
+> -- 
+> 2.7.4
+> 
