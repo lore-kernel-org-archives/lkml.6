@@ -2,131 +2,120 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FC0C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEEDC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D702F20684
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:47:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D702F20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cs.cmu.edu
+	by mail.kernel.org (Postfix) with ESMTP id 548F020684
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:50:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=herochao.de header.i=@herochao.de header.b="LhHGPF41"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 548F020684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=herochao.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbeJDVlJ convert rfc822-to-8bit (ORCPT
+        id S1727640AbeJDVoN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:41:09 -0400
-Received: from hurricane.elijah.cs.cmu.edu ([128.2.209.191]:50028 "EHLO
-        hurricane.elijah.cs.cmu.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727380AbeJDVlJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:41:09 -0400
-Received: from [208.54.90.203] (helo=[IPv6:2607:fb90:3dc:4e7a:1312:49d1:5894:c86e])
-        by hurricane.elijah.cs.cmu.edu with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.91)
-        (envelope-from <jaharkes@cs.cmu.edu>)
-        id 1g84pN-0004mu-SL; Thu, 04 Oct 2018 10:42:10 -0400
-Date:   Thu, 04 Oct 2018 10:42:07 -0400
-In-Reply-To: <28763.1538662213@warthog.procyon.org.uk>
-References: <153861496327.30373.10501882399296347125.stgit@noble> <153861471803.30373.6184444014227748848.stgit@noble> <28763.1538662213@warthog.procyon.org.uk>
+        Thu, 4 Oct 2018 17:44:13 -0400
+Received: from mail.huaman.de ([88.99.34.23]:39304 "EHLO mail.huaman.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727380AbeJDVoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 17:44:13 -0400
+X-Greylist: delayed 475 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Oct 2018 17:44:11 EDT
+Received: from localhost.localdomain (ip5f5acd5e.dynamic.kabel-deutschland.de [95.90.205.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: nicolas@herochao.de)
+        by mail.huaman.de (Postfix) with ESMTPSA id E1F331A1570;
+        Thu,  4 Oct 2018 16:42:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=herochao.de; s=dkim;
+        t=1538664159; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=mZdWCnvNL5gApRumXk9wNEFbyyBurInk+2sLVXpNzn4=;
+        b=LhHGPF41n91DlQ5IqSd4NVTgeGnYmQST4AXXXCgmlgXsIVO3caRUxCwrASH9v5OWOeaElm
+        xhjhvYwhkW4ktIUDjVDCyV+YmJk/JFTmKm6QYvsz4ci6Oa+6ulxYZuzBt1LPUNBkuoGxwt
+        09hKXL7k9HTRcQR7W4U52SkQbQrgGjY=
+From:   Nicolas Huaman <nicolas@herochao.de>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Nicolas Huaman <nicolas@herochao.de>
+Subject: [PATCH] ALSA: usb-audio: update quirk for B&W PX to remove microphone
+Date:   Thu,  4 Oct 2018 16:42:05 +0200
+Message-Id: <20181004144205.18153-1-nicolas@herochao.de>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Autocrypt: addr=jaharkes@cs.cmu.edu; keydata=
- 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
-Subject: Re: [PATCH 1/3] VFS: introduce MAY_ACT_AS_OWNER
-To:     David Howells <dhowells@redhat.com>, NeilBrown <neilb@suse.com>
-CC:     dhowells@redhat.com, "J. Bruce Fields" <bfields@fieldses.org>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        linux-nfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-afs@lists.infradead.org, coda@cs.cmu.edu,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-From:   Jan Harkes <jaharkes@cs.cmu.edu>
-Message-ID: <3D5BB0E9-E43C-43D1-86E9-96E409A17D54@cs.cmu.edu>
+Content-Transfer-Encoding: 8bit
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=herochao.de;
+        s=dkim; t=1538664159; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=mZdWCnvNL5gApRumXk9wNEFbyyBurInk+2sLVXpNzn4=;
+        b=gOqRS8xeXkDhw4O7gTaPLhzuiH9ZPIpuA03MCSWvhzwDz3ZBUBAl5fP+fNtZArnBNkYMXT
+        WWKxT99QGgq0T26f/TzjyxcR9SkYoePf7IC0noMkXcAM/9a1UTB++loiQSUfI4AVRGwM+/
+        QST6YHdf2GKOoOVZp8RYxyNcB8u1m9A=
+ARC-Seal: i=1; s=dkim; d=herochao.de; t=1538664159; a=rsa-sha256; cv=none;
+        b=MzdB0/89T2LRJ4cFRodVC7fFRWhUTAUTwm+hHLD4wpzVWfjkproIt8EZFpVX9asbh3RtFci2zCBOcy7Po6Oup1YPIeuR5rsaAt8SCJ6AmKhD8ZyTfz/soMVUlfWTnmRi00+kDJO3iRQ1xZ+jhqlkHAA7IzYhabFAJ6pYO+5Cq0Y=
+ARC-Authentication-Results: i=1;
+        mail.huaman.de;
+        auth=pass smtp.auth=nicolas@herochao.de smtp.mailfrom=nicolas@herochao.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Same for Coda.
+A quirk in snd-usb-audio was added to automate setting sample rate to
+4800k and remove the previously exposed nonfunctional microphone for 
+the Bowers & Wilkins PX:
+commit 240a8af929c7c57dcde28682725b29cf8474e8e5
+https://lore.kernel.org/patchwork/patch/919689/
 
-uid/gid/mode don't mean anything, access is based on the directory ACL and the authentication token that is held by the userspace cache manager and ultimately decided by the servers.
+However the headphones where updated shortly after that to remove the
+unintentional microphone functionality. I guess because of this the
+headphones now crash when connecting them via USB while the quirk is
+active. Dmesg:
 
-Unless someone broke this recently and made permission checks uid based I would expect no change. If this is broken by a recent commit I expect something similar to what NFS is trying to do by allowing the actual check to be passed down.
+snd-usb-audio: probe of 2-3:1.0 failed with error -22
+usb 2-3: 2:1: cannot get min/max values for control 2 (id 2)
 
-Jan
+This patch removes the microfone and allows the headphones to connect 
+and work out of the box. It is based on the current mainline kernel 
+ and successfully applied an tested on my machine (4.18.10.arch1-1).
 
-On October 4, 2018 10:10:13 AM EDT, David Howells <dhowells@redhat.com> wrote:
->NeilBrown <neilb@suse.com> wrote:
->
->> diff --git a/fs/afs/security.c b/fs/afs/security.c
->> index 81dfedb7879f..ac2e39de8bff 100644
->> --- a/fs/afs/security.c
->> +++ b/fs/afs/security.c
->> @@ -349,6 +349,16 @@ int afs_permission(struct inode *inode, int
->mask)
->>  	if (mask & MAY_NOT_BLOCK)
->>  		return -ECHILD;
->>  
->> +	/* Short-circuit for owner */
->> +	if (mask & MAY_ACT_AS_OWNER) {
->> +		if (inode_owner_or_capable(inode))
->
->You don't know that inode->i_uid in meaningful.  You may have noticed
->that
->afs_permission() ignores i_uid and i_gid entirely.  It queries the
->server (if
->this information is not otherwise cached) to ask what permits the user
->is
->granted - where the user identity is defined by the key returned from
->afs_request_key()[*].
->
->So, NAK for the afs piece.
->
->David
->
->[*] If there's no appropriate key, anonymous permits will be used.
+Signed-off-by: Nicolas Huaman <nicolas@herochao.de>
+---
+ sound/usb/quirks-table.h | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
+index 08aa78007020..849953e5775c 100644
+--- a/sound/usb/quirks-table.h
++++ b/sound/usb/quirks-table.h
+@@ -3346,19 +3346,14 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge", "HVR-950Q"),
+ 				.ifnum = 0,
+ 				.type = QUIRK_AUDIO_STANDARD_MIXER,
+ 			},
+-			/* Capture */
+-			{
+-				.ifnum = 1,
+-				.type = QUIRK_IGNORE_INTERFACE,
+-			},
+ 			/* Playback */
+ 			{
+-				.ifnum = 2,
++				.ifnum = 1,
+ 				.type = QUIRK_AUDIO_FIXED_ENDPOINT,
+ 				.data = &(const struct audioformat) {
+ 					.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 					.channels = 2,
+-					.iface = 2,
++					.iface = 1,
+ 					.altsetting = 1,
+ 					.altset_idx = 1,
+ 					.attributes = UAC_EP_CS_ATTR_FILL_MAX |
+-- 
+2.19.0
+
