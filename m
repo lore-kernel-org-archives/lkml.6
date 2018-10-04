@@ -2,138 +2,147 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDDCBC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F10BC64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 636462084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:16:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35F432087D
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 20:17:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBXbkTgU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 636462084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="kyDi6Dt7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35F432087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727961AbeJEDLm (ORCPT
+        id S1727976AbeJEDMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 23:11:42 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38795 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeJEDLm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 23:11:42 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f29-v6so1061211pff.5;
-        Thu, 04 Oct 2018 13:16:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cYWGTrpZ7lK9/2jkEbRj+C2jjHpWqvNW96h+T1WbRLo=;
-        b=SBXbkTgU0O0DCt8PqldnEAtGiNWb6adgks6bQBOpePKreHV6sOComHzSfgjwKjrWw/
-         Vm6gywM34A96Ra77hWyE5vez2saqHmZDAW4ws0jIG4oW6RxnhkcnGlTI98UQFJ49TMG6
-         6huVX9Vl2RqEvTBUPOfQQif7CjJ+SlQMixieK8Axm+HdUfu2TRV79I1awvyspXG9Zk1U
-         B5m1RbGKywUpD1auF4NKkfYwoPCXQ0ylBmixjCbeCBvpnvTiNAc+e6Uu19VFcCh5agta
-         V/PajDW81XKxyBM5dgN8m0sSWiZ39tgCIv2+txoADfEDDn2UNfKgW1AhJHHk1nVAQVR9
-         MIFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=cYWGTrpZ7lK9/2jkEbRj+C2jjHpWqvNW96h+T1WbRLo=;
-        b=gCTA2HFqHTFUSxJPMqM3a3UXuP+0YJj2YKZL+y92f1+GfknFYvfyM356tJh7ocPGsC
-         XT2taNBA4tg4UeRaRIqLCyr7Ed1ce3jmFOYXkVeoCk13I73iRWFIMfAvFS6oKSn3Ol5e
-         xQOoyF0JYlknuHRxHwSwquxbu4EQl8v8adnTPz/AV/tl8cvmQ+gjH0q86MEzfmUDBKD2
-         0WvzxB5bBR02eTgaD+7tz0hRgQV4RwyyzDTZRVVPCPBVBMOlcWB/M8RPPahN9JlT1EIW
-         pVn2IwgoV3YVwOOiUVXMwAcUtxQ6YsBkQTvvLVmIs1+oM9lz/U5P/uSnZoagSjwQsrkh
-         0awg==
-X-Gm-Message-State: ABuFfojLg/6wlTtDm1B7/boTKOB/H85jQmwNbYaa1JT9FT5Hc9st7ZHE
-        0QA+K2rBQxB/Dwv3dXI9qNA=
-X-Google-Smtp-Source: ACcGV61DGAOaOI0JfPgEhyIsm/9PCGKawZ2tt+sc28vjDMptqGpi7jA2pLO1PmveR6cYx/F4hRprMg==
-X-Received: by 2002:a62:db46:: with SMTP id f67-v6mr8262508pfg.1.1538684210316;
-        Thu, 04 Oct 2018 13:16:50 -0700 (PDT)
-Received: from [10.67.50.87] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id 74-v6sm8407444pfx.182.2018.10.04.13.16.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 13:16:49 -0700 (PDT)
-Subject: Re: [PATCH net-next v4 11/11] net: mscc: ocelot: make use of SerDes
- PHYs for handling their configuration
-To:     Quentin Schulz <quentin.schulz@bootlin.com>,
-        alexandre.belloni@bootlin.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, davem@davemloft.net, kishon@ti.com,
-        andrew@lunn.ch
-Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com
-References: <20181004122208.32272-1-quentin.schulz@bootlin.com>
- <20181004122208.32272-12-quentin.schulz@bootlin.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <5031bcfa-d32f-3ac7-b8b6-0deaecdc06a1@gmail.com>
-Date:   Thu, 4 Oct 2018 13:16:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181004122208.32272-12-quentin.schulz@bootlin.com>
-Content-Type: text/plain; charset=utf-8
+        Thu, 4 Oct 2018 23:12:12 -0400
+Received: from mail-dm3nam03on0079.outbound.protection.outlook.com ([104.47.41.79]:42249
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727354AbeJEDMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 23:12:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Zt2nDL1LznBBcosFNE3tARjlsvhOWrovlnepNqmwpzA=;
+ b=kyDi6Dt7qF3wPTnoBB+rymOBaCdKwozBXF2K6O5YgmE4mcVuUr40Oo43pZPM5lt+g1pMVidtAMaQePMPzpcfelc1fPo/ugZdOM9tKG38swdOuv1MAddmJ3U/5xSoQotNq8XhNLqTxigdtdtIQY2X88pSYXe5xRsxHXtPDwSVnr8=
+Received: from BYAPR05MB4887.namprd05.prod.outlook.com (52.135.235.153) by
+ BYAPR05MB4038.namprd05.prod.outlook.com (52.135.199.26) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.18; Thu, 4 Oct 2018 20:17:14 +0000
+Received: from BYAPR05MB4887.namprd05.prod.outlook.com
+ ([fe80::a143:c9c9:a2e:314f]) by BYAPR05MB4887.namprd05.prod.outlook.com
+ ([fe80::a143:c9c9:a2e:314f%3]) with mapi id 15.20.1207.022; Thu, 4 Oct 2018
+ 20:17:14 +0000
+From:   Sinclair Yeh <syeh@vmware.com>
+To:     Colin King <colin.king@canonical.com>
+CC:     linux-graphics-maintainer <linux-graphics-maintainer@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        David Airlie <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][drm-next] drm/vmwgfx: remove redundant return ret
+ statement
+Thread-Topic: [PATCH][drm-next] drm/vmwgfx: remove redundant return ret
+ statement
+Thread-Index: AQHUXAqsmNjYI0R1Ck2VCZeWx2z3DqUPhUOA
+Date:   Thu, 4 Oct 2018 20:17:14 +0000
+Message-ID: <20181004201309.GA9246@vmware.com>
+References: <20181004174953.28107-1-colin.king@canonical.com>
+In-Reply-To: <20181004174953.28107-1-colin.king@canonical.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.5.24 (2015-08-30)
+x-originating-ip: [66.170.99.1]
+x-clientproxiedby: DM5PR06CA0060.namprd06.prod.outlook.com
+ (2603:10b6:3:37::22) To BYAPR05MB4887.namprd05.prod.outlook.com
+ (2603:10b6:a03:42::25)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=syeh@vmware.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4038;20:1SXU0luMnd9LnbXd7vq0cUIA6wXPNrj0o8kdTyL9NNtV0hQ67o99PmuioICuibAuVMrFUpq2SBzI+LXV+Lxh4nRX8ztwIBqVe6tBOr3JkDMs7BYmARly8vDTYCX6YykSEU03IjDEXgvvTdLHVQsvem06hytTEBv27/NkZXIGfzs=
+x-ms-office365-filtering-correlation-id: a719a764-1ae1-4fd1-3bdd-08d62a365f8c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4038;
+x-ms-traffictypediagnostic: BYAPR05MB4038:
+x-ld-processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
+bcl:    0
+x-microsoft-antispam-prvs: <BYAPR05MB4038F88D15D380C9BEADEF49A8EA0@BYAPR05MB4038.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(61668805478150)(198206253151910);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(10201501046)(3002001)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051);SRVR:BYAPR05MB4038;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4038;
+x-forefront-prvs: 0815F8251E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(396003)(136003)(39860400002)(189003)(199004)(6116002)(4326008)(256004)(6246003)(478600001)(2906002)(54906003)(58126008)(186003)(102836004)(5660300001)(26005)(36756003)(25786009)(68736007)(8936002)(1076002)(106356001)(66066001)(5250100002)(97736004)(71190400001)(71200400001)(3846002)(2900100001)(76176011)(316002)(53936002)(6436002)(6916009)(81156014)(86362001)(105586002)(6486002)(99286004)(81166006)(52116002)(229853002)(8676002)(6506007)(386003)(486006)(33656002)(476003)(11346002)(446003)(14454004)(7736002)(305945005)(2616005)(6512007)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4038;H:BYAPR05MB4887.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: krrV4gxfqW5qXy6acru8zFwotsXPYvxJmBIbXwVXzfeji14idopw3zDUwfPC1168feISDghDBjasYdchmkBKoVkqTebzOh9qLDdT0rdgl2UzQZ9prlBuh4pcZnvLibMsFrsk5W7g7Jr43YiafNh5XbcsBZDPJkP+MGx/eUw4/KFg5adB9bk/ra53ygAqvtXtmOCCZcTYI2gongxs5EKrfGgLFMULUuYKQsz/PXFRubMNsMKw5JORBxPnGaiTy7VZBDsH0HRMdOVHGrj6s9n+r+Q94DUXNXREY8A8sfKWj97PvGPTnT38bAAYS1n12dIAwB7nG8LqR0R7wZG1TLfHUDslBXMm/cIrDh+6Yj0UySM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <653C633B6695334897FD977C1EC39631@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a719a764-1ae1-4fd1-3bdd-08d62a365f8c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Oct 2018 20:17:14.3505
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4038
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/2018 05:22 AM, Quentin Schulz wrote:
-> Previously, the SerDes muxing was hardcoded to a given mode in the MAC
-> controller driver. Now, the SerDes muxing is configured within the
-> Device Tree and is enforced in the MAC controller driver so we can have
-> a lot of different SerDes configurations.
-> 
-> Make use of the SerDes PHYs in the MAC controller to set up the SerDes
-> according to the SerDes<->switch port mapping and the communication mode
-> with the Ethernet PHY.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+Good catch.
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Reviewed-by: Sinclair Yeh <syeh@vmware.com>
+
+On Thu, Oct 04, 2018 at 06:49:53PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The return statement is redundant as there is a return statement
+> immediately before it so we have dead code that can be removed.
+> Also remove the unused declaration of ret.
+>=20
+> Detected by CoverityScan, CID#1473793 ("Structurally dead code")
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vm=
+wgfx/vmwgfx_execbuf.c
+> index 5a6b70ba137a..260650bb5560 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+> @@ -1738,7 +1738,6 @@ static int vmw_cmd_check_define_gmrfb(struct vmw_pr=
+ivate *dev_priv,
+>  				      void *buf)
+>  {
+>  	struct vmw_buffer_object *vmw_bo;
+> -	int ret;
+> =20
+>  	struct {
+>  		uint32_t header;
+> @@ -1748,7 +1747,6 @@ static int vmw_cmd_check_define_gmrfb(struct vmw_pr=
+ivate *dev_priv,
+>  	return vmw_translate_guest_ptr(dev_priv, sw_context,
+>  				       &cmd->body.ptr,
+>  				       &vmw_bo);
+> -	return ret;
+>  }
+> =20
+> =20
+> --=20
+> 2.17.1
+>=20
