@@ -2,132 +2,116 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C204CC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FD8C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AF6A213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:52:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1D21213A2
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:54:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="awVWBm0e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF6A213A2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dT5sgIyv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D21213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbeJDPoj (ORCPT
+        id S1727545AbeJDPqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:44:39 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42500 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727144AbeJDPoj (ORCPT
+        Thu, 4 Oct 2018 11:46:53 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56210 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727190AbeJDPqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:44:39 -0400
-Received: by mail-pg1-f193.google.com with SMTP id i4-v6so2832133pgq.9;
-        Thu, 04 Oct 2018 01:52:25 -0700 (PDT)
+        Thu, 4 Oct 2018 11:46:53 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 206-v6so8241648wmb.5;
+        Thu, 04 Oct 2018 01:54:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=zTXLXK8P+FBlVdxIdbSO7KNUqx7jveW1kZHc8/lXAIA=;
-        b=awVWBm0e9iOKQvI2J2Iry0B+pme1R+lur6gbFMjxqqTW59ipWxmzHmlLefcyVulGRc
-         3GyUy0O4TLLzh5ONs+LvqSUTX34FphLNLYrYUoSEeY8HKw9jDcKB2ril2jdQRa6/jieo
-         MA6uNlhRar3SWfQQb6FEZBMNbxBZQ0bXNTWcFHdvghk3Yub2ZDzJilCwyUQo15KpesJB
-         QxAWcZwdWnmRlqU/a1sPsS3FrdVS5JzOiHqg0pSWvgIi7jaG8XrLu87eL435N7lOCbHb
-         lmbpum7D/JOhEvNecemGs9OOVSBdDJ6lxcsAIKhQlGgXb92rAMf8CUScUskLcPgpA4NL
-         5KDQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oal2Sxh3eKSVbX8dI6XStpPyPYZTzwiOSIntq3DfXv0=;
+        b=dT5sgIyvnwhdXHQNv4Rc5C8G6LVXjSGFrF/ZnRKwlC0SX0iRP6iS5Tbo1bE3gj/A5V
+         EdB/wxWmQdEcfh+jCNIB7tvyiGOJcXOgSw39pJTqoNbY7+TS2ZbZaCf+OZFQC3CHUTiU
+         27fHFh8IUC20VLaYm1B/hLhdQVH9gaew1XRtlRJJXAif4Mp4xvDPMJHj5azHuVv0WmbA
+         qNkUEGQzDVoah0zPYnIgYeK/oDQfYBlySF3Cp5YEMVFZkkXP4v0sxVHYGZqkwJPgYfqs
+         WN/D1/YhvgieTMDfMMQS2lmGB4zctbe0/B8BzgbZvARI3nwW+F/kvcH2WzOLqcOsC1hZ
+         coWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=zTXLXK8P+FBlVdxIdbSO7KNUqx7jveW1kZHc8/lXAIA=;
-        b=VU0+Kq/n80CVpunu1X7XKjcEDcKw1/ZQ6IYzwyZ7utgb6U60XozCDCQGB3arAOWvAD
-         WdBHE4OgZ8DGgARz+Am0dFD7titv+ouzO2rg6EJyBrOHUvo1pmKedshfaWDpvenCKiw5
-         N81u1xbU/8qOg2XYePBqqQOKSkBRihncaaRXdvLOt2Be7DM+5zmwNClK48enAy9A/iGU
-         Yp5c+GvjovFLwcVIwH2gbgDCAqE4jVJvNmtgaOKVhFh1ZTb2BId1XztUyGf+d2L+4WW7
-         qf2c0jJoCGWXOV6QjIPkJ7viGZNWwjhPjlXZumles8lpkcPXcOsrwZbWIK9gIugie10l
-         azJw==
-X-Gm-Message-State: ABuFfoglLHA32dZXCazYmk3zArNO+lN6HLfAuFspmsgEGuG+6gtZMdD+
-        8UHO83X6qxTv02DVWy1o4o3iqAm4
-X-Google-Smtp-Source: ACcGV60EG92/K2ePN5H9oEgsXGtIUFL/8ODx3FoOxNp+0lBVIKxSiCN23h1/lv4RqyrBn/eWmFbOyg==
-X-Received: by 2002:a62:f20f:: with SMTP id m15-v6mr5625959pfh.244.1538643145145;
-        Thu, 04 Oct 2018 01:52:25 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.3? ([2402:f000:1:1501:200:5efe:a66f:4703])
-        by smtp.gmail.com with ESMTPSA id g88-v6sm7875036pfd.181.2018.10.04.01.52.22
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oal2Sxh3eKSVbX8dI6XStpPyPYZTzwiOSIntq3DfXv0=;
+        b=PwnYfIp2OG/RnKdQnyFlqyKHNL7JYYm9Kwqfo6SK9mZFqG2lHCzX4J+ckoa37ZtL/5
+         EIov+ItL148sSeG/smsmsCNi0umpoN6+KrGgNaT8rUjFndJvcWP4b/9NS7XOshkI5YY1
+         9+gRh9FQIs8ioxTf+ZnjrChPxbmslPieKXwTc42lsnT2CXwdzS/qnwp1S6rv65f49xC6
+         2iAE0sSiSIiQ2e2gxPxFGs8B0f6WHDodUSLWOhggt95XH+yf7b4tK7U2NLeQ6K+CKlTx
+         pbjEbBvY/1CXvidRcrm/D+QX/zdO8Huypq/a9qB8wvK4ykKdJvJeeD+7YG15UvtrkuFo
+         rAlg==
+X-Gm-Message-State: ABuFfohN1W3eVEIOMJAXKbeCVYL4i9KTIcgd0iZe/44H0fereF7NJ7mu
+        P5YCTLBMgbf0Jt7boqlFGWE=
+X-Google-Smtp-Source: ACcGV63CRi4UXM8mkEXCOVPqg17EE1pywkCH4HbqumAq958mbNu+iW5GiJHFu0dx9cXUtII0l3Jxig==
+X-Received: by 2002:a1c:a683:: with SMTP id p125-v6mr4134869wme.24.1538643277075;
+        Thu, 04 Oct 2018 01:54:37 -0700 (PDT)
+Received: from cperon-Latitude-7490.devialet.com (static-css-csd-151233.business.bouyguestelecom.com. [176.162.151.233])
+        by smtp.gmail.com with ESMTPSA id b139-v6sm8715013wmd.36.2018.10.04.01.54.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 01:52:24 -0700 (PDT)
-Subject: Re: [PATCH] net: wireless: iwlegacy: Fix possible data races in
- il4965_send_rxon_assoc()
-To:     Stanislaw Gruszka <sgruszka@redhat.com>
-Cc:     kvalo@codeaurora.org, davem@davemloft.net,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181003140745.7650-1-baijiaju1990@gmail.com>
- <20181004075914.GB20523@redhat.com>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <988494cb-c121-697e-b502-ea4e7c601f47@gmail.com>
-Date:   Thu, 4 Oct 2018 16:52:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 04 Oct 2018 01:54:36 -0700 (PDT)
+From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To:     Dinh Nguyen <dinguyen@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Subject: [PATCH 1/3] ARM: socfpga: Clean unused functions
+Date:   Thu,  4 Oct 2018 10:54:13 +0200
+Message-Id: <20181004085415.12925-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20181004075914.GB20523@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for your reply :)
+These functions are unused externally, removed them and declare
+the one used locally as static.
 
+Signed-off-by: Clément Péron <peron.clem@gmail.com>
+---
+ arch/arm/mach-socfpga/core.h    | 2 --
+ arch/arm/mach-socfpga/socfpga.c | 2 +-
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-On 2018/10/4 15:59, Stanislaw Gruszka wrote:
-> On Wed, Oct 03, 2018 at 10:07:45PM +0800, Jia-Ju Bai wrote:
->> These possible races are detected by a runtime testing.
->> To fix these races, the mutex lock is used in il4965_send_rxon_assoc()
->> to protect the data.
-> Really ? I'm surprised by that, see below.
+diff --git a/arch/arm/mach-socfpga/core.h b/arch/arm/mach-socfpga/core.h
+index 65e1817d8afe..92cae0a9213f 100644
+--- a/arch/arm/mach-socfpga/core.h
++++ b/arch/arm/mach-socfpga/core.h
+@@ -34,8 +34,6 @@
+ 
+ #define RSTMGR_MPUMODRST_CPU1		0x2     /* CPU1 Reset */
+ 
+-extern void socfpga_init_clocks(void);
+-extern void socfpga_sysmgr_init(void);
+ void socfpga_init_l2_ecc(void);
+ void socfpga_init_ocram_ecc(void);
+ void socfpga_init_arria10_l2_ecc(void);
+diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
+index dde14f7bf2c3..5fb6f79059a8 100644
+--- a/arch/arm/mach-socfpga/socfpga.c
++++ b/arch/arm/mach-socfpga/socfpga.c
+@@ -32,7 +32,7 @@ void __iomem *rst_manager_base_addr;
+ void __iomem *sdr_ctl_base_addr;
+ unsigned long socfpga_cpu1start_addr;
+ 
+-void __init socfpga_sysmgr_init(void)
++static void __init socfpga_sysmgr_init(void)
+ {
+ 	struct device_node *np;
+ 
+-- 
+2.17.1
 
-My runtime testing shows that il4965_send_rxon_assoc() and 
-il4965_configure_filter() are concurrently executed.
-But after seeing your reply, I need to carefully check whether my 
-runtime testing is right, because I think you are right.
-In fact, I only monitored the iwl4965 driver, but did not monitor the 
-iwlegacy driver, so I will do the testing again with monitoring the 
-lwlegacy driver.
-
->
->> @@ -1297,6 +1297,7 @@ il4965_send_rxon_assoc(struct il_priv *il)
->>   	const struct il_rxon_cmd *rxon1 = &il->staging;
->>   	const struct il_rxon_cmd *rxon2 = &il->active;
->>   
->> +	mutex_lock(&il->mutex);
->>   	if (rxon1->flags == rxon2->flags &&
-> For 4965 driver il4965_send_rxon_assoc() is only called by
-> il_mac_bss_info_changed() and il4965_commit_rxon().
->
-> il_mac_bss_info_changed() acquire il->mutex and
-> callers of  il4965_commit_rxon() acquire il->mutex
-> (but I did not check all of them).
->
-> So I wonder how this patch did not cause the deadlock ?
-
-Oh, sorry, anyway, my patch will cause double locks...
-
->    
-> Anyway what can be done is adding:
->
-> lockdep_assert_held(&il->mutex);
->
-> il4965_commit_rxon() to check if we hold the mutex.
-
-I agree.
-
-
-Best wishes,
-Jia-Ju Bai
