@@ -2,116 +2,543 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C125C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 395BDC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:29:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1385B20652
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:26:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="JwwLVwmv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1385B20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id C56332082A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:29:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C56332082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbeJDVUI (ORCPT
+        id S1727535AbeJDVXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:20:08 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38833 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbeJDVUI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:20:08 -0400
-Received: by mail-io1-f67.google.com with SMTP id e2-v6so6357978ioh.5
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 07:26:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=e3oUToljdNg4jFKh8IeKwQuDeOdbxIh2CueesadUMDs=;
-        b=JwwLVwmvBf0ZEUEuA04qfPqOoFblUAKpUctfuh//YCiVGIwhzMphoBMK7Jd/YtiZM6
-         pPoEGISaUr5Ov9heXAZmt4oNpl2xVb4iv5aX5Iv9aEqhsFE6tFKniESei/67o5vRn8yf
-         ukv2G1wA46mv7aQd7PJhAVhsjSwGnc8R7lN5yjCUtVaZRxWvVBiMoPpkBwU4T0ummtii
-         XFHdxnzsWQ966xJz8hYszDbnrQDdLXiETsSnHLTxtdNyBf26UqPUUEilWhOIoECbYMCG
-         Nwv+KpYC3VdWHjlEl1H5f7gydZ/FmUqu9q/cspelYPltUdaIvWPwnN6GWb+GYkn5JlFV
-         NOFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=e3oUToljdNg4jFKh8IeKwQuDeOdbxIh2CueesadUMDs=;
-        b=LAGMivVuna41eXbtx2y3LD5ZIPko7OlSslQxjuKfS2LGVA5aP7SCm1kO0TsBO9/Zt6
-         a/jnTrcROiMHuXNTLAGRx1dBM3VrotwVPR2t2hpphzNsPU04QgkPoNjaEIhLLEJ4scXo
-         xcbSaMtwWhVKGJQ3k4mgMeo8H5X0tLrCSep3r0qJ76Csj2yr/cfDGs6NvZUfym0NGexm
-         faVYXyiw/L7E+gUocFmVXbMrY8b4or1oCkFXcxBoY74pFUmXNwj0xqdmCE3FkSaJsu2B
-         iS3SaI2CToT71zm4wUm2VTt15yL3BnO3lP9nhZoAkVt1aRu8jcdQKmYFopDs6dMs51+t
-         vnCA==
-X-Gm-Message-State: ABuFfogbNWy1SeyitgEN3JOOsewpgyO0WYI65pWpjed88nXEPmSh8lKr
-        XLA0JrQUoLkptxv9yGKH56FK3g==
-X-Google-Smtp-Source: ACcGV60zgYrhUhNKJtoHiVfwaMvVngvlVkHeFyUkTuBfPtFtrUf3IwYI6DQNgyK/EyPeLhUStcjCng==
-X-Received: by 2002:a6b:370b:: with SMTP id e11-v6mr4723566ioa.67.1538663195137;
-        Thu, 04 Oct 2018 07:26:35 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id w193-v6sm2083276ita.11.2018.10.04.07.26.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Oct 2018 07:26:33 -0700 (PDT)
-Subject: Re: [PATCH] ata: ep93xx: Use proper enums for directions
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-References: <20181004023754.15477-1-natechancellor@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <139aaf99-1189-a3cb-b801-fdf16a6ec9ac@kernel.dk>
-Date:   Thu, 4 Oct 2018 08:26:32 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 4 Oct 2018 17:23:04 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:18944 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727322AbeJDVXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 17:23:04 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42QwJ74LTcz9ttKk;
+        Thu,  4 Oct 2018 16:29:27 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id ORtGWJSX--q0; Thu,  4 Oct 2018 16:29:27 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42QwJ73g5Hz9ttKg;
+        Thu,  4 Oct 2018 16:29:27 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6853E8BB62;
+        Thu,  4 Oct 2018 16:29:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Pbd-oTJ-Y7kY; Thu,  4 Oct 2018 16:29:30 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B23778BB5F;
+        Thu,  4 Oct 2018 16:29:29 +0200 (CEST)
+Subject: Re: [RFC PATCH v3 2/7] powerpc: Prepare for moving thread_info into
+ task_struct
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <cover.1538396658.git.christophe.leroy@c-s.fr>
+ <8dd2cade6299099a244b5eb223d7b84b460d7cd9.1538396658.git.christophe.leroy@c-s.fr>
+ <20181003150253.5124e989@roar.ozlabs.ibm.com>
+ <8c53e2fd-c97e-7968-130f-8b5728e20cab@c-s.fr>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <dbca7acd-7d79-8237-b396-fd9cb7dd9361@c-s.fr>
+Date:   Thu, 4 Oct 2018 16:29:29 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181004023754.15477-1-natechancellor@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <8c53e2fd-c97e-7968-130f-8b5728e20cab@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/3/18 8:37 PM, Nathan Chancellor wrote:
-> Clang warns when one enumerated type is implicitly converted to another.
-> 
-> drivers/ata/pata_ep93xx.c:662:36: warning: implicit conversion from
-> enumeration type 'enum dma_data_direction' to different enumeration type
-> 'enum dma_transfer_direction' [-Wenum-conversion]
->         drv_data->dma_rx_data.direction = DMA_FROM_DEVICE;
->                                         ~ ^~~~~~~~~~~~~~~
-> drivers/ata/pata_ep93xx.c:670:36: warning: implicit conversion from
-> enumeration type 'enum dma_data_direction' to different enumeration type
-> 'enum dma_transfer_direction' [-Wenum-conversion]
->         drv_data->dma_tx_data.direction = DMA_TO_DEVICE;
->                                         ~ ^~~~~~~~~~~~~
-> drivers/ata/pata_ep93xx.c:681:19: warning: implicit conversion from
-> enumeration type 'enum dma_data_direction' to different enumeration type
-> 'enum dma_transfer_direction' [-Wenum-conversion]
->         conf.direction = DMA_FROM_DEVICE;
->                        ~ ^~~~~~~~~~~~~~~
-> drivers/ata/pata_ep93xx.c:692:19: warning: implicit conversion from
-> enumeration type 'enum dma_data_direction' to different enumeration type
-> 'enum dma_transfer_direction' [-Wenum-conversion]
->         conf.direction = DMA_TO_DEVICE;
->                        ~ ^~~~~~~~~~~~~
-> 
-> Use the equivalent valued enums from the expected type so that Clang no
-> longer warns about a conversion.
-> 
-> DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
-> DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
 
-Applied, thanks.
 
--- 
-Jens Axboe
+Le 03/10/2018 à 07:49, Christophe LEROY a écrit :
+> 
+> 
+> Le 03/10/2018 à 07:02, Nicholas Piggin a écrit :
+>> On Mon,  1 Oct 2018 12:30:21 +0000 (UTC)
+>> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+>>
+>>> This patch cleans the powerpc kernel before activating
+>>> CONFIG_THREAD_INFO_IN_TASK:
+>>> - The purpose of the pointer given to call_do_softirq() and
+>>> call_do_irq() is to point the new stack ==> change it to void*
+>>> - Don't use CURRENT_THREAD_INFO() to locate the stack.
+>>> - Fixed a few comments.
+>>> - TI_CPU is only used when CONFIG_SMP is set.
+>>> - Replace current_thread_info()->task by current
+>>> - Remove unnecessary casts to thread_info, as they'll become invalid
+>>> once thread_info is not in stack anymore.
+>>> - Ensure task_struct 'cpu' fields is not used directly out of SMP code
+>>> - Rename THREAD_INFO to TASK_STASK: As it is in fact the offset of the
+>>> pointer to the stack in task_struct, this pointer will not be impacted
+>>> by the move of THREAD_INFO.
+>>> - Makes TASK_STACK available to PPC64 which will need it to the get
+>>> stack pointer from current once the thread_info have been moved.
+>>>
+>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>> ---
+>>>   arch/powerpc/include/asm/irq.h       |  4 ++--
+>>>   arch/powerpc/include/asm/livepatch.h |  2 +-
+>>>   arch/powerpc/include/asm/processor.h |  4 ++--
+>>>   arch/powerpc/include/asm/reg.h       |  2 +-
+>>>   arch/powerpc/kernel/asm-offsets.c    |  2 +-
+>>>   arch/powerpc/kernel/entry_32.S       |  2 +-
+>>>   arch/powerpc/kernel/entry_64.S       |  2 +-
+>>>   arch/powerpc/kernel/head_32.S        |  4 ++--
+>>>   arch/powerpc/kernel/head_40x.S       |  4 ++--
+>>>   arch/powerpc/kernel/head_44x.S       |  2 +-
+>>>   arch/powerpc/kernel/head_8xx.S       |  2 +-
+>>>   arch/powerpc/kernel/head_booke.h     |  4 ++--
+>>>   arch/powerpc/kernel/head_fsl_booke.S |  6 ++++--
+>>>   arch/powerpc/kernel/irq.c            |  2 +-
+>>>   arch/powerpc/kernel/misc_32.S        |  8 ++++++--
+>>>   arch/powerpc/kernel/process.c        |  6 +++---
+>>>   arch/powerpc/kernel/setup_32.c       | 15 +++++----------
+>>>   arch/powerpc/kernel/smp.c            |  4 +++-
+>>>   arch/powerpc/xmon/xmon.c             |  2 +-
+>>>   19 files changed, 40 insertions(+), 37 deletions(-)
+>>>
+>>> diff --git a/arch/powerpc/include/asm/irq.h 
+>>> b/arch/powerpc/include/asm/irq.h
+>>> index ee39ce56b2a2..8108d1fe33ca 100644
+>>> --- a/arch/powerpc/include/asm/irq.h
+>>> +++ b/arch/powerpc/include/asm/irq.h
+>>> @@ -63,8 +63,8 @@ extern struct thread_info *hardirq_ctx[NR_CPUS];
+>>>   extern struct thread_info *softirq_ctx[NR_CPUS];
+>>>   extern void irq_ctx_init(void);
+>>> -extern void call_do_softirq(struct thread_info *tp);
+>>> -extern void call_do_irq(struct pt_regs *regs, struct thread_info *tp);
+>>> +extern void call_do_softirq(void *tp);
+>>> +extern void call_do_irq(struct pt_regs *regs, void *tp);
+>>
+>> void *sp for these ?
+> 
+> Yes, why not but it means changing the code. I wanted to minimise the 
+> changes and avoid cosmetic. Or maybe should add a cosmetic patch at the 
+> end ?
 
+In fact, I'll do it because the only additional impact is on a comment 
+in misc_32.S
+
+Christophe
+
+> 
+>>
+>> This all seems okay to me except the 32-bit code which I don't know.
+>> Would it be any trouble for you to put the TI_CPU bits into their own
+>> patch?
+> 
+> No problem, I can put the TI_CPU bits in a separate patch.
+> 
+>>
+>> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+>>
+> 
+> Thanks
+> Christophe
+> 
+>>
+>>>   extern void do_IRQ(struct pt_regs *regs);
+>>>   extern void __init init_IRQ(void);
+>>>   extern void __do_irq(struct pt_regs *regs);
+>>> diff --git a/arch/powerpc/include/asm/livepatch.h 
+>>> b/arch/powerpc/include/asm/livepatch.h
+>>> index 47a03b9b528b..818451bf629c 100644
+>>> --- a/arch/powerpc/include/asm/livepatch.h
+>>> +++ b/arch/powerpc/include/asm/livepatch.h
+>>> @@ -49,7 +49,7 @@ static inline void klp_init_thread_info(struct 
+>>> thread_info *ti)
+>>>       ti->livepatch_sp = (unsigned long *)(ti + 1) + 1;
+>>>   }
+>>>   #else
+>>> -static void klp_init_thread_info(struct thread_info *ti) { }
+>>> +static inline void klp_init_thread_info(struct thread_info *ti) { }
+>>>   #endif /* CONFIG_LIVEPATCH */
+>>>   #endif /* _ASM_POWERPC_LIVEPATCH_H */
+>>> diff --git a/arch/powerpc/include/asm/processor.h 
+>>> b/arch/powerpc/include/asm/processor.h
+>>> index 353879db3e98..31873614392f 100644
+>>> --- a/arch/powerpc/include/asm/processor.h
+>>> +++ b/arch/powerpc/include/asm/processor.h
+>>> @@ -40,7 +40,7 @@
+>>>   #ifndef __ASSEMBLY__
+>>>   #include <linux/types.h>
+>>> -#include <asm/thread_info.h>
+>>> +#include <linux/thread_info.h>
+>>>   #include <asm/ptrace.h>
+>>>   #include <asm/hw_breakpoint.h>
+>>> @@ -333,7 +333,7 @@ struct thread_struct {
+>>>   #define INIT_SP        (sizeof(init_stack) + (unsigned long) 
+>>> &init_stack)
+>>>   #define INIT_SP_LIMIT \
+>>> -    (_ALIGN_UP(sizeof(init_thread_info), 16) + (unsigned long) 
+>>> &init_stack)
+>>> +    (_ALIGN_UP(sizeof(struct thread_info), 16) + (unsigned long) 
+>>> &init_stack)
+>>>   #ifdef CONFIG_SPE
+>>>   #define SPEFSCR_INIT \
+>>> diff --git a/arch/powerpc/include/asm/reg.h 
+>>> b/arch/powerpc/include/asm/reg.h
+>>> index e5b314ed054e..f3a9cf19a986 100644
+>>> --- a/arch/powerpc/include/asm/reg.h
+>>> +++ b/arch/powerpc/include/asm/reg.h
+>>> @@ -1053,7 +1053,7 @@
+>>>    *    - SPRG9 debug exception scratch
+>>>    *
+>>>    * All 32-bit:
+>>> - *    - SPRG3 current thread_info pointer
+>>> + *    - SPRG3 current thread_struct physical addr pointer
+>>>    *        (virtual on BookE, physical on others)
+>>>    *
+>>>    * 32-bit classic:
+>>> diff --git a/arch/powerpc/kernel/asm-offsets.c 
+>>> b/arch/powerpc/kernel/asm-offsets.c
+>>> index ba9d0fc98730..d1f161e48945 100644
+>>> --- a/arch/powerpc/kernel/asm-offsets.c
+>>> +++ b/arch/powerpc/kernel/asm-offsets.c
+>>> @@ -85,10 +85,10 @@ int main(void)
+>>>       DEFINE(NMI_MASK, NMI_MASK);
+>>>       OFFSET(TASKTHREADPPR, task_struct, thread.ppr);
+>>>   #else
+>>> -    OFFSET(THREAD_INFO, task_struct, stack);
+>>>       DEFINE(THREAD_INFO_GAP, _ALIGN_UP(sizeof(struct thread_info), 
+>>> 16));
+>>>       OFFSET(KSP_LIMIT, thread_struct, ksp_limit);
+>>>   #endif /* CONFIG_PPC64 */
+>>> +    OFFSET(TASK_STACK, task_struct, stack);
+>>>   #ifdef CONFIG_LIVEPATCH
+>>>       OFFSET(TI_livepatch_sp, thread_info, livepatch_sp);
+>>> diff --git a/arch/powerpc/kernel/entry_32.S 
+>>> b/arch/powerpc/kernel/entry_32.S
+>>> index e58c3f467db5..12c0721f65ea 100644
+>>> --- a/arch/powerpc/kernel/entry_32.S
+>>> +++ b/arch/powerpc/kernel/entry_32.S
+>>> @@ -1166,7 +1166,7 @@ ret_from_debug_exc:
+>>>       mfspr    r9,SPRN_SPRG_THREAD
+>>>       lwz    r10,SAVED_KSP_LIMIT(r1)
+>>>       stw    r10,KSP_LIMIT(r9)
+>>> -    lwz    r9,THREAD_INFO-THREAD(r9)
+>>> +    lwz    r9,TASK_STACK-THREAD(r9)
+>>>       CURRENT_THREAD_INFO(r10, r1)
+>>>       lwz    r10,TI_PREEMPT(r10)
+>>>       stw    r10,TI_PREEMPT(r9)
+>>> diff --git a/arch/powerpc/kernel/entry_64.S 
+>>> b/arch/powerpc/kernel/entry_64.S
+>>> index 77a888bfcb53..697406572592 100644
+>>> --- a/arch/powerpc/kernel/entry_64.S
+>>> +++ b/arch/powerpc/kernel/entry_64.S
+>>> @@ -680,7 +680,7 @@ END_FTR_SECTION_IFCLR(CPU_FTR_ARCH_207S)
+>>>   2:
+>>>   #endif /* CONFIG_PPC_BOOK3S_64 */
+>>> -    CURRENT_THREAD_INFO(r7, r8)  /* base of new stack */
+>>> +    clrrdi    r7, r8, THREAD_SHIFT    /* base of new stack */
+>>>       /* Note: this uses SWITCH_FRAME_SIZE rather than INT_FRAME_SIZE
+>>>          because we don't need to leave the 288-byte ABI gap at the
+>>>          top of the kernel stack. */
+>>> diff --git a/arch/powerpc/kernel/head_32.S 
+>>> b/arch/powerpc/kernel/head_32.S
+>>> index 61ca27929355..dce6f2ff07e5 100644
+>>> --- a/arch/powerpc/kernel/head_32.S
+>>> +++ b/arch/powerpc/kernel/head_32.S
+>>> @@ -261,7 +261,7 @@ __secondary_hold_acknowledge:
+>>>       tophys(r11,r1);            /* use tophys(r1) if kernel */ \
+>>>       beq    1f;        \
+>>>       mfspr    r11,SPRN_SPRG_THREAD;    \
+>>> -    lwz    r11,THREAD_INFO-THREAD(r11);    \
+>>> +    lwz    r11,TASK_STACK-THREAD(r11);    \
+>>>       addi    r11,r11,THREAD_SIZE;    \
+>>>       tophys(r11,r11);    \
+>>>   1:    subi    r11,r11,INT_FRAME_SIZE    /* alloc exc. frame */
+>>> @@ -841,7 +841,7 @@ __secondary_start:
+>>>       bl    init_idle_6xx
+>>>   #endif /* CONFIG_6xx */
+>>> -    /* get current_thread_info and current */
+>>> +    /* get current's stack and current */
+>>>       lis    r1,secondary_ti@ha
+>>>       tophys(r1,r1)
+>>>       lwz    r1,secondary_ti@l(r1)
+>>> diff --git a/arch/powerpc/kernel/head_40x.S 
+>>> b/arch/powerpc/kernel/head_40x.S
+>>> index b19d78410511..3088c9f29f5e 100644
+>>> --- a/arch/powerpc/kernel/head_40x.S
+>>> +++ b/arch/powerpc/kernel/head_40x.S
+>>> @@ -115,7 +115,7 @@ _ENTRY(saved_ksp_limit)
+>>>       andi.    r11,r11,MSR_PR;                             \
+>>>       beq    1f;                                 \
+>>>       mfspr    r1,SPRN_SPRG_THREAD;    /* if from user, start at top 
+>>> of   */\
+>>> -    lwz    r1,THREAD_INFO-THREAD(r1); /* this thread's kernel 
+>>> stack   */\
+>>> +    lwz    r1,TASK_STACK-THREAD(r1); /* this thread's kernel stack   
+>>> */\
+>>>       addi    r1,r1,THREAD_SIZE;                         \
+>>>   1:    subi    r1,r1,INT_FRAME_SIZE;    /* Allocate an exception 
+>>> frame     */\
+>>>       tophys(r11,r1);                                 \
+>>> @@ -158,7 +158,7 @@ _ENTRY(saved_ksp_limit)
+>>>       beq    1f;                                 \
+>>>       /* COMING FROM USER MODE */                         \
+>>>       mfspr    r11,SPRN_SPRG_THREAD;    /* if from user, start at top 
+>>> of   */\
+>>> -    lwz    r11,THREAD_INFO-THREAD(r11); /* this thread's kernel 
+>>> stack */\
+>>> +    lwz    r11,TASK_STACK-THREAD(r11); /* this thread's kernel stack 
+>>> */\
+>>>   1:    addi    r11,r11,THREAD_SIZE-INT_FRAME_SIZE; /* Alloc an excpt 
+>>> frm  */\
+>>>       tophys(r11,r11);                             \
+>>>       stw    r10,_CCR(r11);          /* save various registers       */\
+>>> diff --git a/arch/powerpc/kernel/head_44x.S 
+>>> b/arch/powerpc/kernel/head_44x.S
+>>> index 37e4a7cf0065..15d39b2499de 100644
+>>> --- a/arch/powerpc/kernel/head_44x.S
+>>> +++ b/arch/powerpc/kernel/head_44x.S
+>>> @@ -1020,7 +1020,7 @@ _GLOBAL(start_secondary_47x)
+>>>       /* Now we can get our task struct and real stack pointer */
+>>> -    /* Get current_thread_info and current */
+>>> +    /* Get current's stack and current */
+>>>       lis    r1,secondary_ti@ha
+>>>       lwz    r1,secondary_ti@l(r1)
+>>>       lwz    r2,TI_TASK(r1)
+>>> diff --git a/arch/powerpc/kernel/head_8xx.S 
+>>> b/arch/powerpc/kernel/head_8xx.S
+>>> index 6582f824d620..e56e36aa2b3d 100644
+>>> --- a/arch/powerpc/kernel/head_8xx.S
+>>> +++ b/arch/powerpc/kernel/head_8xx.S
+>>> @@ -124,7 +124,7 @@ turn_on_mmu:
+>>>       tophys(r11,r1);            /* use tophys(r1) if kernel */ \
+>>>       beq    1f;        \
+>>>       mfspr    r11,SPRN_SPRG_THREAD;    \
+>>> -    lwz    r11,THREAD_INFO-THREAD(r11);    \
+>>> +    lwz    r11,TASK_STACK-THREAD(r11);    \
+>>>       addi    r11,r11,THREAD_SIZE;    \
+>>>       tophys(r11,r11);    \
+>>>   1:    subi    r11,r11,INT_FRAME_SIZE    /* alloc exc. frame */
+>>> diff --git a/arch/powerpc/kernel/head_booke.h 
+>>> b/arch/powerpc/kernel/head_booke.h
+>>> index d0862a100d29..20fe0c93a0bd 100644
+>>> --- a/arch/powerpc/kernel/head_booke.h
+>>> +++ b/arch/powerpc/kernel/head_booke.h
+>>> @@ -44,7 +44,7 @@
+>>>       mr    r11, r1;                             \
+>>>       beq    1f;                                 \
+>>>       /* if from user, start at top of this thread's kernel stack 
+>>> */       \
+>>> -    lwz    r11, THREAD_INFO-THREAD(r10);                     \
+>>> +    lwz    r11, TASK_STACK-THREAD(r10);                     \
+>>>       ALLOC_STACK_FRAME(r11, THREAD_SIZE);                     \
+>>>   1 :    subi    r11, r11, INT_FRAME_SIZE; /* Allocate exception 
+>>> frame */     \
+>>>       stw    r13, _CCR(r11);        /* save various registers 
+>>> */         \
+>>> @@ -130,7 +130,7 @@
+>>>       DO_KVM    BOOKE_INTERRUPT_##intno 
+>>> exc_level_srr1;                     \
+>>>       andi.    r11,r11,MSR_PR;                             \
+>>>       mfspr    r11,SPRN_SPRG_THREAD;    /* if from user, start at top 
+>>> of   */\
+>>> -    lwz    r11,THREAD_INFO-THREAD(r11); /* this thread's kernel 
+>>> stack */\
+>>> +    lwz    r11,TASK_STACK-THREAD(r11); /* this thread's kernel stack 
+>>> */\
+>>>       addi    r11,r11,EXC_LVL_FRAME_OVERHEAD;    /* allocate stack 
+>>> frame    */\
+>>>       beq    1f;                                 \
+>>>       /* COMING FROM USER MODE */                         \
+>>> diff --git a/arch/powerpc/kernel/head_fsl_booke.S 
+>>> b/arch/powerpc/kernel/head_fsl_booke.S
+>>> index e2750b856c8f..239ad8a4754e 100644
+>>> --- a/arch/powerpc/kernel/head_fsl_booke.S
+>>> +++ b/arch/powerpc/kernel/head_fsl_booke.S
+>>> @@ -243,8 +243,10 @@ set_ivor:
+>>>       li    r0,0
+>>>       stwu    r0,THREAD_SIZE-STACK_FRAME_OVERHEAD(r1)
+>>> +#ifdef CONFIG_SMP
+>>>       CURRENT_THREAD_INFO(r22, r1)
+>>>       stw    r24, TI_CPU(r22)
+>>> +#endif
+>>>       bl    early_init
+>>> @@ -702,7 +704,7 @@ finish_tlb_load:
+>>>       /* Get the next_tlbcam_idx percpu var */
+>>>   #ifdef CONFIG_SMP
+>>> -    lwz    r12, THREAD_INFO-THREAD(r12)
+>>> +    lwz    r12, TASK_STACK-THREAD(r12)
+>>>       lwz    r15, TI_CPU(r12)
+>>>       lis     r14, __per_cpu_offset@h
+>>>       ori     r14, r14, __per_cpu_offset@l
+>>> @@ -1074,7 +1076,7 @@ __secondary_start:
+>>>       mr    r4,r24        /* Why? */
+>>>       bl    call_setup_cpu
+>>> -    /* get current_thread_info and current */
+>>> +    /* get current's stack and current */
+>>>       lis    r1,secondary_ti@ha
+>>>       lwz    r1,secondary_ti@l(r1)
+>>>       lwz    r2,TI_TASK(r1)
+>>> diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
+>>> index 916ddc4aac44..aa53db3ba6e7 100644
+>>> --- a/arch/powerpc/kernel/irq.c
+>>> +++ b/arch/powerpc/kernel/irq.c
+>>> @@ -663,7 +663,7 @@ void do_IRQ(struct pt_regs *regs)
+>>>       struct thread_info *curtp, *irqtp, *sirqtp;
+>>>       /* Switch to the irq stack to handle this */
+>>> -    curtp = current_thread_info();
+>>> +    curtp = (void*)(current_stack_pointer() & ~(THREAD_SIZE - 1));
+>>>       irqtp = hardirq_ctx[raw_smp_processor_id()];
+>>>       sirqtp = softirq_ctx[raw_smp_processor_id()];
+>>> diff --git a/arch/powerpc/kernel/misc_32.S 
+>>> b/arch/powerpc/kernel/misc_32.S
+>>> index 695b24a2d954..24a7f18ea10c 100644
+>>> --- a/arch/powerpc/kernel/misc_32.S
+>>> +++ b/arch/powerpc/kernel/misc_32.S
+>>> @@ -60,7 +60,7 @@ _GLOBAL(call_do_softirq)
+>>>       blr
+>>>   /*
+>>> - * void call_do_irq(struct pt_regs *regs, struct thread_info *irqtp);
+>>> + * void call_do_irq(struct pt_regs *regs, void *irqtp);
+>>>    */
+>>>   _GLOBAL(call_do_irq)
+>>>       mflr    r0
+>>> @@ -183,10 +183,14 @@ _GLOBAL(low_choose_750fx_pll)
+>>>       or    r4,r4,r5
+>>>       mtspr    SPRN_HID1,r4
+>>> +#ifdef CONFIG_SMP
+>>>       /* Store new HID1 image */
+>>>       CURRENT_THREAD_INFO(r6, r1)
+>>>       lwz    r6,TI_CPU(r6)
+>>>       slwi    r6,r6,2
+>>> +#else
+>>> +    li    r6, 0
+>>> +#endif
+>>>       addis    r6,r6,nap_save_hid1@ha
+>>>       stw    r4,nap_save_hid1@l(r6)
+>>> @@ -599,7 +603,7 @@ EXPORT_SYMBOL(__bswapdi2)
+>>>   #ifdef CONFIG_SMP
+>>>   _GLOBAL(start_secondary_resume)
+>>>       /* Reset stack */
+>>> -    CURRENT_THREAD_INFO(r1, r1)
+>>> +    rlwinm    r1, r1, 0, 0, 31 - THREAD_SHIFT
+>>>       addi    r1,r1,THREAD_SIZE-STACK_FRAME_OVERHEAD
+>>>       li    r3,0
+>>>       stw    r3,0(r1)        /* Zero the stack frame pointer    */
+>>> diff --git a/arch/powerpc/kernel/process.c 
+>>> b/arch/powerpc/kernel/process.c
+>>> index 03c2e1f134bc..111abb4df2ec 100644
+>>> --- a/arch/powerpc/kernel/process.c
+>>> +++ b/arch/powerpc/kernel/process.c
+>>> @@ -1240,8 +1240,8 @@ struct task_struct *__switch_to(struct 
+>>> task_struct *prev,
+>>>           batch->active = 1;
+>>>       }
+>>> -    if (current_thread_info()->task->thread.regs) {
+>>> -        restore_math(current_thread_info()->task->thread.regs);
+>>> +    if (current->thread.regs) {
+>>> +        restore_math(current->thread.regs);
+>>>           /*
+>>>            * The copy-paste buffer can only store into foreign real
+>>> @@ -1251,7 +1251,7 @@ struct task_struct *__switch_to(struct 
+>>> task_struct *prev,
+>>>            * mappings, we must issue a cp_abort to clear any state and
+>>>            * prevent snooping, corruption or a covert channel.
+>>>            */
+>>> -        if (current_thread_info()->task->thread.used_vas)
+>>> +        if (current->thread.used_vas)
+>>>               asm volatile(PPC_CP_ABORT);
+>>>       }
+>>>   #endif /* CONFIG_PPC_BOOK3S_64 */
+>>> diff --git a/arch/powerpc/kernel/setup_32.c 
+>>> b/arch/powerpc/kernel/setup_32.c
+>>> index 8c507be12c3c..81ebf7d6f526 100644
+>>> --- a/arch/powerpc/kernel/setup_32.c
+>>> +++ b/arch/powerpc/kernel/setup_32.c
+>>> @@ -205,10 +205,8 @@ void __init irqstack_early_init(void)
+>>>       /* interrupt stacks must be in lowmem, we get that for free on 
+>>> ppc32
+>>>        * as the memblock is limited to lowmem by default */
+>>>       for_each_possible_cpu(i) {
+>>> -        softirq_ctx[i] = (struct thread_info *)
+>>> -            __va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
+>>> -        hardirq_ctx[i] = (struct thread_info *)
+>>> -            __va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
+>>> +        softirq_ctx[i] = __va(memblock_alloc(THREAD_SIZE, 
+>>> THREAD_SIZE));
+>>> +        hardirq_ctx[i] = __va(memblock_alloc(THREAD_SIZE, 
+>>> THREAD_SIZE));
+>>>       }
+>>>   }
+>>> @@ -226,13 +224,10 @@ void __init exc_lvl_early_init(void)
+>>>           hw_cpu = 0;
+>>>   #endif
+>>> -        critirq_ctx[hw_cpu] = (struct thread_info *)
+>>> -            __va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
+>>> +        critirq_ctx[hw_cpu] = __va(memblock_alloc(THREAD_SIZE, 
+>>> THREAD_SIZE));
+>>>   #ifdef CONFIG_BOOKE
+>>> -        dbgirq_ctx[hw_cpu] = (struct thread_info *)
+>>> -            __va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
+>>> -        mcheckirq_ctx[hw_cpu] = (struct thread_info *)
+>>> -            __va(memblock_alloc(THREAD_SIZE, THREAD_SIZE));
+>>> +        dbgirq_ctx[hw_cpu] = __va(memblock_alloc(THREAD_SIZE, 
+>>> THREAD_SIZE));
+>>> +        mcheckirq_ctx[hw_cpu] = __va(memblock_alloc(THREAD_SIZE, 
+>>> THREAD_SIZE));
+>>>   #endif
+>>>       }
+>>>   }
+>>> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+>>> index 61c1fadbc644..19dd0ea55714 100644
+>>> --- a/arch/powerpc/kernel/smp.c
+>>> +++ b/arch/powerpc/kernel/smp.c
+>>> @@ -20,6 +20,7 @@
+>>>   #include <linux/kernel.h>
+>>>   #include <linux/export.h>
+>>>   #include <linux/sched/mm.h>
+>>> +#include <linux/sched/task_stack.h>
+>>>   #include <linux/sched/topology.h>
+>>>   #include <linux/smp.h>
+>>>   #include <linux/interrupt.h>
+>>> @@ -812,7 +813,8 @@ static void cpu_idle_thread_init(unsigned int 
+>>> cpu, struct task_struct *idle)
+>>>   #ifdef CONFIG_PPC64
+>>>       paca_ptrs[cpu]->__current = idle;
+>>> -    paca_ptrs[cpu]->kstack = (unsigned long)ti + THREAD_SIZE - 
+>>> STACK_FRAME_OVERHEAD;
+>>> +    paca_ptrs[cpu]->kstack = (unsigned long)task_stack_page(idle) +
+>>> +                  THREAD_SIZE - STACK_FRAME_OVERHEAD;
+>>>   #endif
+>>>       ti->cpu = cpu;
+>>>       secondary_ti = current_set[cpu] = ti;
+>>> diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
+>>> index 694c1d92e796..0d8d6fee892a 100644
+>>> --- a/arch/powerpc/xmon/xmon.c
+>>> +++ b/arch/powerpc/xmon/xmon.c
+>>> @@ -2988,7 +2988,7 @@ static void show_task(struct task_struct *tsk)
+>>>       printf("%px %016lx %6d %6d %c %2d %s\n", tsk,
+>>>           tsk->thread.ksp,
+>>>           tsk->pid, tsk->parent->pid,
+>>> -        state, task_thread_info(tsk)->cpu,
+>>> +        state, task_cpu(tsk),
+>>>           tsk->comm);
+>>>   }
+>>> -- 
+>>> 2.13.3
+>>>
