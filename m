@@ -2,101 +2,132 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8699C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9E9C64EBC
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B292083F
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:34:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B292083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 9AAF82083F
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 18:37:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GkNBteae"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AAF82083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbeJEB3C (ORCPT
+        id S1728177AbeJEBbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 21:29:02 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39606 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbeJEB3C (ORCPT
+        Thu, 4 Oct 2018 21:31:36 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:38866 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728003AbeJEBbg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 21:29:02 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c25-v6so3480377pfe.6;
-        Thu, 04 Oct 2018 11:34:32 -0700 (PDT)
+        Thu, 4 Oct 2018 21:31:36 -0400
+Received: by mail-it1-f195.google.com with SMTP id i76-v6so15480206ita.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 11:37:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Qripqr2lFTOyL4eG2+rH2ogPhSlNydPej+tyL4yiDas=;
+        b=GkNBteaeVZdPC4KyPiGu/XKewT0XWSjcqaJ6eeetb9169p16ZEbl+uMEmkQHw+YXkd
+         slLztKWLQHqvxPjqtHPJ+GKpURFQRkAjiBE+z0CSIOO90DH/lV1ullMH/j3jKw+deTgl
+         5gN3hTSNCrNCWLjQq6wFm1/LQmFMO+lQIdfgk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZrquAgqPqeD2rvB9XaKGI2DD/jWvMz/jpQNkDgR5v48=;
-        b=igirjmF/ipb0kszKOV/8o04jS9AdHyvUBGbf4/HsZaFEq3c9TX+n9jFqm+LccI42iL
-         IxHOl+7guIYdaps3bg03Oyo1SyPa2ONCwHbiGEQjbpNPFnqo0eEIKJ0IvsU+EUyR44ic
-         NzSh8zemUW5If9j6DxLTzdpAPWtMvaMHCWVCv1HRzOz+y1v9PtrJYwWVjIGoBOMsJAOh
-         OjuPu4QIlvRNmJM94Fu859tT4OBA7KIyBd7Fw3snCyIAKhh7iVtvnxgRwy6LFt/vwKgW
-         1PpMvfFoyf/tz+pKcyPhQd6BUGPjmuRo3sP8XfimGRQj5iImV881Z8nHdeCRqW1EP1eZ
-         +Dvw==
-X-Gm-Message-State: ABuFfojjsfBBDz1lb5H/x75qdMbFfH8M4UZRzGXJZA0sjk4FNnEohaVL
-        2mhC5GPn9uM3G5BhdIPXEV4=
-X-Google-Smtp-Source: ACcGV62VQ39+HvSL5aUnoOV2zT/2dPrS8C0TSPb5gNIIfUTMQs05QyZOLoQ13VZgIM+08bPctKWBQw==
-X-Received: by 2002:a65:664e:: with SMTP id z14-v6mr6624426pgv.347.1538678071691;
-        Thu, 04 Oct 2018 11:34:31 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id u9-v6sm12662348pfi.104.2018.10.04.11.34.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 04 Oct 2018 11:34:31 -0700 (PDT)
-Message-ID: <1538678069.230807.6.camel@acm.org>
-Subject: Re: -Wswitch Clang warnings in drivers/scsi
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 04 Oct 2018 11:34:29 -0700
-In-Reply-To: <20181004183047.GA1885@flashbox>
-References: <20181004183047.GA1885@flashbox>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Qripqr2lFTOyL4eG2+rH2ogPhSlNydPej+tyL4yiDas=;
+        b=NeA/1OhbX+NM6f8IYXXU5XAmuic9QtmxZlXYsAk59YpbRnwtR32lN4pGA41BAPn5xV
+         DXmAyj+jmc70YtV6ogM4oxUFg8t5plzYdS8HiQCYwXjxRcgNuSq4tX9a80nQHMKKSiFk
+         mmagjo2zhyNR7hEpXKIAQp2NJdvxc2tRK2X+pmN3HlnPMnmesIKge/6myNT9vBR2JgK9
+         Xrrfq+FXwTt4iBbGb1nxj4H/HWKRCblfbvap4WCBMzoOiFjKUCcisFpaY3nV8sKB/HiS
+         uiX/gyGSV+nx6mA24S6oKRMZZuhAPVm8q3+CvGcoMiluC31qTnMllO5QI8qbQ6HJ5dgE
+         h9HQ==
+X-Gm-Message-State: ABuFfohur6rK2w34j5oVOuOEZIP5tXS8krkGq8ycP0faL/kl9Syx5Ue9
+        H07LMLdm/r4MJv4dtAvF/l/Ny0IgKx7YvJWDUk3jcw==
+X-Google-Smtp-Source: ACcGV60YnHWOyTVtQhJGXHp+a5mHhaHtTNDMCZ7CYM3z163QmMp+zCHpV1zI1Qw+LGbDHg1CpIHD5G9y8qPP4ZVIsY4=
+X-Received: by 2002:a05:660c:243:: with SMTP id t3mr5721582itk.146.1538678225481;
+ Thu, 04 Oct 2018 11:37:05 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 4 Oct 2018 11:36:24 -0700 (PDT)
+In-Reply-To: <20181004172109.GA16878@red-moon>
+References: <20181003143824.13059-1-ulf.hansson@linaro.org>
+ <CAJZ5v0h7jvoa4oUeM4FgFizF_jbAonoAgP3m417n_TGqfqNsqg@mail.gmail.com>
+ <CAPDyKFq0GLs2AMA+6b-Khf+4kGxzVCTvtehp-YmwV2h=_SP4=g@mail.gmail.com>
+ <10136406.EY9A7BdqYq@aspire.rjw.lan> <CAJZ5v0iv9OYoaLYHsmdp2xbDuENPgue_mBgFujdmesnBOegRKQ@mail.gmail.com>
+ <20181004155755.GD5233@e107981-ln.cambridge.arm.com> <CAJZ5v0j+W2CHiqkniXNJgZ3DU9pOpd_83Wj9Egwf+pVkRCjZLg@mail.gmail.com>
+ <20181004172109.GA16878@red-moon>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 4 Oct 2018 20:36:24 +0200
+Message-ID: <CAPDyKFrWzDU9BsfAnx7uoaXq=gmGg2r46Mn-cJHSWUk-TmyomA@mail.gmail.com>
+Subject: Re: [PATCH v9 00/11] PM / Domains: Support hierarchical CPU
+ arrangement (PSCI/ARM) (a subset)
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-04 at 11:30 -0700, Nathan Chancellor wrote:
-+AD4 Hi SCSI folks,
-+AD4 
-+AD4 In an effort to get the kernel building warning free with Clang, we've
-+AD4 come across an interesting occurrence in a few scsi drivers:
-+AD4 
-+AD4 drivers/scsi/hpsa.c:6533:7: warning: overflow converting case value to switch condition type (2148024833 to 18446744071562609153) +AFs--Wswitch+AF0
-+AD4         case CCISS+AF8-GETPCIINFO:
-+AD4              +AF4
-+AD4 ./include/uapi/linux/cciss+AF8-ioctl.h:65:26: note: expanded from macro 'CCISS+AF8-GETPCIINFO'
-+AD4 +ACM-define CCISS+AF8-GETPCIINFO +AF8-IOR(CCISS+AF8-IOC+AF8-MAGIC, 1, cciss+AF8-pci+AF8-info+AF8-struct)
-+AD4                          +AF4
-+AD4 ./include/uapi/asm-generic/ioctl.h:86:28: note: expanded from macro '+AF8-IOR'
-+AD4 +ACM-define +AF8-IOR(type,nr,size)      +AF8-IOC(+AF8-IOC+AF8-READ,(type),(nr),(+AF8-IOC+AF8-TYPECHECK(size)))
-+AD4                                 +AF4
-+AD4 ./include/uapi/asm-generic/ioctl.h:70:2: note: expanded from macro '+AF8-IOC'
-+AD4         (((dir)  +ADwAPA +AF8-IOC+AF8-DIRSHIFT) +AHw +AFw
-+AD4         +AF4
-+AD4 
-+AD4 I see this warning in drivers/scsi/hpsa.c and drivers/scsi/smartpqi/smartpqi+AF8-init.c
-+AD4 on an arm64 allyesconfig build and it has also been reported in a couple of files in
-+AD4 drivers/scsi/cxlflash.
-+AD4 
-+AD4 As the warning states, there is an overflow because the switch statement's value is of
-+AD4 type int but the switch value is greater than INT+AF8-MAX. I did a brief sweep of the tree
-+AD4 and it seems that all uses of +AF8-IOC in switch statement values either are small enough
-+AD4 to fit into size int or the value is of size unsigned int.
-+AD4 
-+AD4 I am unsure of the implications of using a smaller +AF8-IOC value or converting all ioctls
-+AD4 to expect a cmd of type unsigned int (especially since that has userspace implications)
-+AD4 but I didn't see any negative ioctl commands. Some clarity and insight would be
-+AD4 appreciated.
+On 4 October 2018 at 19:21, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
+> On Thu, Oct 04, 2018 at 07:07:27PM +0200, Rafael J. Wysocki wrote:
+>
+> [...]
+>
+>> > > I don't see any dependency there, so I'll queue up the 1-3 in
+>> > > pm-domains and the 4-6 in pm-cpuidle.
+>> >
+>> > I do not see why we should merge patches 4-6 for v4.20; they add legacy
+>> > (DT bindings and related parsing code) with no user in the kernel; we
+>> > may still want to tweak them, in particular PSCI DT bindings.
+>>
+>> My impression was that 4-6 have been agreed on due to the ACKs they
+>> carry.  I'll drop them if that's not the case.
+>
+> I have not expressed myself correctly: they have been agreed (even
+> though as I said they may require some tweaking) but I see no urgency
+> of merging them in v4.20 since they have no user. They contain DT
+> bindings, that create ABI/legacy, I think it is better to have code
+> that uses them in the kernel before merging them and creating a
+> dependency that is not needed.
 
-Have you verified how gcc compiles these switch statements? Maybe gcc supports
-switch / case statements on integral types that are larger than an int?
+There is already code using the new bindings, for the idle states.
+Please have look at patch 5, 6 and 11.
 
-Bart.
+Moreover, you have had plenty on time to look at the series, as those
+patches haven't changed since a very long time.
+
+May I suggest you do the review instead, so we can move things
+forward, please. The changes in the v9 series should be trivial to
+review.
+
+>
+>> > Likewise, it makes no sense to merge patches 7-8 without the rest of
+>> > the PSCI patches.
+
+Well, those patches are part of this series, because Mark wanted me to
+move the files. Is really such a big deal? I think it makes sense, no
+matter what happens afterwards.
+
+[...]
+
+Kind regards
+Uffe
