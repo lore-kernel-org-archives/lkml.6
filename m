@@ -2,144 +2,155 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5173C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 02:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8BAC00449
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 02:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91F5A20856
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 02:29:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F5A20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 48A302098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 02:38:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1TefeZk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48A302098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbeJDJUR (ORCPT
+        id S1726949AbeJDJ3P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 05:20:17 -0400
-Received: from mga17.intel.com ([192.55.52.151]:62286 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbeJDJUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 05:20:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 19:29:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,338,1534834800"; 
-   d="scan'208";a="96302448"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga001.jf.intel.com with ESMTP; 03 Oct 2018 19:27:22 -0700
-Subject: [PATCH v2 3/3] mm: Maintain randomization of page free lists
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     Michal Hocko <mhocko@suse.com>, Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org
-Date:   Wed, 03 Oct 2018 19:15:34 -0700
-Message-ID: <153861933441.2863953.2686611248399177664.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <153861931865.2863953.11185006931458762795.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        Thu, 4 Oct 2018 05:29:15 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34216 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbeJDJ3P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 05:29:15 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z4-v6so8172337wrb.1;
+        Wed, 03 Oct 2018 19:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JGDDzdaPEjNNa54cMH5hLj2C5VcbK/COpXqvwNROqlw=;
+        b=d1TefeZk7TlU9UlzUIIR2ABnRhj23olMfgCSblzLysQqPxyHAxY5NlpAJr51Y1lELo
+         PffGx3gLEltcMSTafnmvZ04pHQeqIiCMgIimlMNi8b2Z9Z/lEzCZZ0HvN/NPW1pHO6My
+         g3TOviU1ssBed0TL0ACfRIAOjOiDd0IkGoh0l6KVQAfjii6mxLWg2Fki+Gyvetj4fvD3
+         LBphXt3NfAaE+VkxlbcwUrbUiAzK6LR95l5xvtj5K5TEOhGzJQFXuEE/+q4KXpFE0bRQ
+         t+P3uyNAmSAS7+pVIfMVtA2DWyusw244O+OCTTlaODXUWrE07BO0YTBsEONh/XMJ5rIN
+         SM5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JGDDzdaPEjNNa54cMH5hLj2C5VcbK/COpXqvwNROqlw=;
+        b=HPMqRFJxbZ/KD6uSwsIokBEZryCGZWqAYVuPx+bkhsxsHFIQRiH7m+gi9jP6nN3x6v
+         SeOjKbrpTn/GTD4c8qtvhEaAJflvACrg5+3uEDKxkjZ2BKDWDxoideqi+h6kzkkbXUMb
+         rR+sUqVLcvXcHovyGVQRSVlR5L/jpmBDZ2JugiHsVKldc79o6GLhtx/5A/ScGCjFCXD3
+         8ByUyWVysI+rKGcvjErdzktY9f0mY8zKnOueIp0/GL9O5aeGOurH0QGQGmz2t7gq6nOw
+         NIZnlGRnATQvsVs17zVNiE3ejEG+EPosDnGpW2jP7zC23/Go8JaxQRWLfa7A1ow4OJ7C
+         ZBiA==
+X-Gm-Message-State: ABuFfoiAvYAJiple4ByTQ13CyJ/XuWKWh3fQEzicNXaZPXVxiMWOvATl
+        JJwVv+OQSB1uELZd2L/HL/c=
+X-Google-Smtp-Source: ACcGV62fBppLVhzJO8pCxfL5tccLOJ95xl3n5guGNOwm4UXO4A07EKz5Dcmq0MtU0EkXM/Aao7Jq4g==
+X-Received: by 2002:adf:c513:: with SMTP id q19-v6mr1020314wrf.46.1538620689000;
+        Wed, 03 Oct 2018 19:38:09 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id d2-v6sm2052666wrn.20.2018.10.03.19.38.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 19:38:08 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] ata: ep93xx: Use proper enums for directions
+Date:   Wed,  3 Oct 2018 19:37:54 -0700
+Message-Id: <20181004023754.15477-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When freeing a page with an order >= shuffle_page_order randomly select
-the front or back of the list for insertion.
+Clang warns when one enumerated type is implicitly converted to another.
 
-While the mm tries to defragment physical pages into huge pages this can
-tend to make the page allocator more predictable over time. Inject the
-front-back randomness to preserve the initial randomness established by
-shuffle_free_memory() when the kernel was booted.
+drivers/ata/pata_ep93xx.c:662:36: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        drv_data->dma_rx_data.direction = DMA_FROM_DEVICE;
+                                        ~ ^~~~~~~~~~~~~~~
+drivers/ata/pata_ep93xx.c:670:36: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        drv_data->dma_tx_data.direction = DMA_TO_DEVICE;
+                                        ~ ^~~~~~~~~~~~~
+drivers/ata/pata_ep93xx.c:681:19: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        conf.direction = DMA_FROM_DEVICE;
+                       ~ ^~~~~~~~~~~~~~~
+drivers/ata/pata_ep93xx.c:692:19: warning: implicit conversion from
+enumeration type 'enum dma_data_direction' to different enumeration type
+'enum dma_transfer_direction' [-Wenum-conversion]
+        conf.direction = DMA_TO_DEVICE;
+                       ~ ^~~~~~~~~~~~~
 
-The overhead of this manipulation is constrained by only being applied
-for MAX_ORDER sized pages by default.
+Use the equivalent valued enums from the expected type so that Clang no
+longer warns about a conversion.
 
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
+DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- include/linux/mmzone.h |    2 ++
- mm/page_alloc.c        |   27 +++++++++++++++++++++++++--
- 2 files changed, 27 insertions(+), 2 deletions(-)
+ drivers/ata/pata_ep93xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index adf9b3a7440d..4a095432843d 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -98,6 +98,8 @@ extern int page_group_by_mobility_disabled;
- struct free_area {
- 	struct list_head	free_list[MIGRATE_TYPES];
- 	unsigned long		nr_free;
-+	u64			rand;
-+	u8			rand_bits;
- };
- 
- /* Used for pages not on another list */
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index b4a1598fcab5..e659119351ad 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -43,6 +43,7 @@
- #include <linux/mempolicy.h>
- #include <linux/memremap.h>
- #include <linux/stop_machine.h>
-+#include <linux/random.h>
- #include <linux/sort.h>
- #include <linux/pfn.h>
- #include <linux/backing-dev.h>
-@@ -746,6 +747,22 @@ static inline int page_is_buddy(struct page *page, struct page *buddy,
- 	return 0;
- }
- 
-+static void add_to_free_area_random(struct page *page, struct free_area *area,
-+		int migratetype)
-+{
-+	if (area->rand_bits == 0) {
-+		area->rand_bits = 64;
-+		area->rand = get_random_u64();
-+	}
-+
-+	if (area->rand & 1)
-+		add_to_free_area(page, area, migratetype);
-+	else
-+		add_to_free_area_tail(page, area, migratetype);
-+	area->rand_bits--;
-+	area->rand >>= 1;
-+}
-+
- /*
-  * Freeing function for a buddy system allocator.
-  *
-@@ -851,7 +868,8 @@ static inline void __free_one_page(struct page *page,
- 	 * so it's less likely to be used soon and more likely to be merged
- 	 * as a higher order page
+diff --git a/drivers/ata/pata_ep93xx.c b/drivers/ata/pata_ep93xx.c
+index 0a550190955a..cc6d06c1b2c7 100644
+--- a/drivers/ata/pata_ep93xx.c
++++ b/drivers/ata/pata_ep93xx.c
+@@ -659,7 +659,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
+ 	 * start of new transfer.
  	 */
--	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)) {
-+	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)
-+			&& order < shuffle_page_order) {
- 		struct page *higher_page, *higher_buddy;
- 		combined_pfn = buddy_pfn & pfn;
- 		higher_page = page + (combined_pfn - pfn);
-@@ -865,7 +883,12 @@ static inline void __free_one_page(struct page *page,
- 		}
- 	}
+ 	drv_data->dma_rx_data.port = EP93XX_DMA_IDE;
+-	drv_data->dma_rx_data.direction = DMA_FROM_DEVICE;
++	drv_data->dma_rx_data.direction = DMA_DEV_TO_MEM;
+ 	drv_data->dma_rx_data.name = "ep93xx-pata-rx";
+ 	drv_data->dma_rx_channel = dma_request_channel(mask,
+ 		ep93xx_pata_dma_filter, &drv_data->dma_rx_data);
+@@ -667,7 +667,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
+ 		return;
  
--	add_to_free_area(page, &zone->free_area[order], migratetype);
-+	if (order < shuffle_page_order)
-+		add_to_free_area(page, &zone->free_area[order], migratetype);
-+	else
-+		add_to_free_area_random(page, &zone->free_area[order],
-+				migratetype);
-+
- }
+ 	drv_data->dma_tx_data.port = EP93XX_DMA_IDE;
+-	drv_data->dma_tx_data.direction = DMA_TO_DEVICE;
++	drv_data->dma_tx_data.direction = DMA_MEM_TO_DEV;
+ 	drv_data->dma_tx_data.name = "ep93xx-pata-tx";
+ 	drv_data->dma_tx_channel = dma_request_channel(mask,
+ 		ep93xx_pata_dma_filter, &drv_data->dma_tx_data);
+@@ -678,7 +678,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
  
- /*
+ 	/* Configure receive channel direction and source address */
+ 	memset(&conf, 0, sizeof(conf));
+-	conf.direction = DMA_FROM_DEVICE;
++	conf.direction = DMA_DEV_TO_MEM;
+ 	conf.src_addr = drv_data->udma_in_phys;
+ 	conf.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	if (dmaengine_slave_config(drv_data->dma_rx_channel, &conf)) {
+@@ -689,7 +689,7 @@ static void ep93xx_pata_dma_init(struct ep93xx_pata_data *drv_data)
+ 
+ 	/* Configure transmit channel direction and destination address */
+ 	memset(&conf, 0, sizeof(conf));
+-	conf.direction = DMA_TO_DEVICE;
++	conf.direction = DMA_MEM_TO_DEV;
+ 	conf.dst_addr = drv_data->udma_out_phys;
+ 	conf.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	if (dmaengine_slave_config(drv_data->dma_tx_channel, &conf)) {
+-- 
+2.19.0
 
