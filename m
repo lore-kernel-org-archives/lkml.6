@@ -2,187 +2,131 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6D6C64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B061C64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABD4C21470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:20:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABD4C21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D2A3521470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 09:22:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UW7qXuDk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2A3521470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbeJDQNQ (ORCPT
+        id S1727500AbeJDQOU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 12:13:16 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49485 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727030AbeJDQNQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 12:13:16 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9A48092CE3EFC;
-        Thu,  4 Oct 2018 17:20:52 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.399.0; Thu, 4 Oct 2018
- 17:20:46 +0800
-Subject: Re: [PATCH] perf tools: Store ids for events with their own cpus
- perf_event__synthesize_event_update_cpus
-To:     Jiri Olsa <jolsa@redhat.com>
-References: <712b7c31-f681-7737-71e7-c028b8d2bba5@huawei.com>
- <20180927160210.GF6916@krava>
- <4ac88076-60fa-4509-7fa0-2f99d73174d2@huawei.com>
- <20181002111621.GA6357@krava> <20181003113643.GA31725@krava>
- <594506a2-8cb3-3d09-82ab-5cb6d8c31ed0@huawei.com>
- <20181003141627.GA6341@krava> <20181003212052.GA32371@krava>
-CC:     Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Thu, 4 Oct 2018 12:14:20 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:60324 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbeJDQOT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 12:14:19 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w949LSWj001417;
+        Thu, 4 Oct 2018 04:21:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1538644888;
+        bh=zrBtGmHGGxLT2IYJEHy3fxmRYmzbOzFgGS/4YiayPuk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=UW7qXuDkhPmBQev4hDLHvcJHKuGs8S09KfRd5HIr0BRR2aJmX8VHTKIWYZ1ktqAEG
+         oo9iW3lMZCcqewpRqi/QkV9DZZouPHkbTTfVqwXSbB0Yt4jc37C48h0ZH/GSQkdSuE
+         vimWDC3i3OH54F2N+l/EzrmtRXKTMj8fNL9aYRlI=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w949LSc2001404;
+        Thu, 4 Oct 2018 04:21:28 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 4 Oct
+ 2018 04:21:28 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 4 Oct 2018 04:21:28 -0500
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w949LNHv016709;
+        Thu, 4 Oct 2018 04:21:25 -0500
+Subject: Re: [PATCH 0/4] spi: add support for octal mode data transfer
+To:     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+        <linux-mtd@lists.infradead.org>, <boris.brezillon@bootlin.com>,
+        <marek.vasut@gmail.com>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC:     <robh@kernel.org>, <mark.rutland@arm.com>, <shawnguo@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Will Deacon" <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <d071bb27-5533-da2f-9f8f-808183e04794@huawei.com>
-Date:   Thu, 4 Oct 2018 10:20:39 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        <computersforpeace@gmail.com>, <frieder.schrempf@exceet.de>,
+        <linux-kernel@vger.kernel.org>
+References: <1538642920-3843-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <43cff872-0dc5-d3ce-ca35-082faa0e0e7c@ti.com>
+Date:   Thu, 4 Oct 2018 14:52:18 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181003212052.GA32371@krava>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <1538642920-3843-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> Hi Jirka,
->>>
->>> Can you please double-check your new patch, as I'm getting this now:
->>> root@localhost:~# ./perf_debug record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
->>> [ perf record: Woken up 1 times to write data ]
->>> [ perf record: Captured and wrote 0.001 MB perf.data (6 samples) ]
->>> root@localhost:~# ./perf_debug report
->>> 0xe8 [0]: failed to process type: 461
->>> Error:
->>> failed to process sample
->>> # To display the perf.data header info, please use --header/--header-only
->>> option
->>> #
->>> root@localhost:~#
->>
->> ok, I need to get a machine to test this.. but it looks like
->> any sample-able events with cpumask are in arm :-\ will try
->> to get some..
->
-> got an arm server and patch below works for me.. could you please test?
->
+Hi Yogesh,
 
-Cool, so this works ok:
-root@localhost:~# ./perf_debug record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.002 MB perf.data (6 samples) ]
-root@localhost:~# ./perf_debug report
-# To display the perf.data header info, please use 
---header/--header-only option
-#
-#
-# Total Lost Samples: 0
-#
-# Samples: 6  of event 'armv8_pmuv3_0/br_mis_pred/'
-# Event count (approx.): 3369
-#
-# Overhead  Command  Shared Object      Symbol
-# ........  .......  .................  ...................
-#
-     94.81%  sleep    [kernel.kallsyms]  [k] memcmp
-      4.87%  sleep    [kernel.kallsyms]  [k] tlb_flush_mmu
-      0.33%  perf_de  [kernel.kallsyms]  [k] perf_event_exec
+On Thursday 04 October 2018 02:18 PM, Yogesh Gaur wrote:
+> Add support for octal mode IO data transfer.
+> Micron flash, mt35xu512aba, supports octal mode data transfer and
+> NXP FlexSPI controller supports 8 data lines for data transfer (Rx/Tx).
+> 
+> Patch series 
+> * Add support for octal mode flags and parsing of same in spi driver.
+> * Add octal data communication commands required for mt35xu512aba [1] flash.
+> * Add support for Read and Write proto for (1-1-8/1-8-8) mode.
+> * Add mode bit required for octal mode in nxp-fspi driver [2].
+> * Define binding property 'spi-rx/tx-bus-width' for LX2160ARDB target [2].
+> 
+> Tested on LX2160ARDB target with nxp-fspi driver, below are
+> Read performance number of 1-1-1 and 1-1-8 read protocol.
+> 
+>  root@lxxx:~# cat /proc/mtd
+>  dev:    size   erasesize  name
+>  mtd0: 04000000 00001000 "spi0.0"
+>  mtd1: 04000000 00001000 "spi0.1"
+>  root@lxxx:~# time mtd_debug read /dev/mtd0 0x0 0x1000000 0read
+>  Copied 16777216 bytes from address 0x00000000 in flash to 0read
+>  
+>  real    0m2.792s
+>  user    0m0.000s
+>  sys     0m2.790s
+>  root@lxxx:~# time mtd_debug read /dev/mtd1 0x0 0x1000000 0read
+>  Copied 16777216 bytes from address 0x00000000 in flash to 0read
+>  
+>  real    0m0.441s
+>  user    0m0.000s
+>  sys     0m0.440s
+>  root@ls1012ardb:~#
+> 
+>  Flash device MTD0 configured in 1-1-1 protocol.
+>  Flash device MTD1 configured in 1-1-8 protocol.
+> 
+> [1] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=66317
+> [2] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=66887
+> 
+> Yogesh Gaur (4):
+>   spi: add support for octal I/O data transfer
+>   mtd: spi-nor: add support for octal mode data transfer
+>   spi: nxp-fspi: add mode flag bit for octal support
+>   arm64: dts: lx2160a: update fspi node
 
+This is a bit confusing and difficult to follow. I suggest to order
+patches such that spi-nor layer changes are at the first, then m25p80
+related things, followed by spi-mem (if needed spi) changes and finally
+spi-mem controller driver changes.
 
-#
-# (Cannot load tips.txt file, please install perf!)
-#
-root@localhost:~#
-
-
-> thanks,
-> jirka
->
->
-> ---
->
-> John reported crash when recording on an event under
-> pmu with cpumask defined:
->
->   root@localhost:~# ./perf_debug_ record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
->   perf: Segmentation fault
->   Obtained 9 stack frames.
->   ./perf_debug_() [0x4c5ef8]
->   [0xffff82ba267c]
->   ./perf_debug_() [0x4bc5a8]
->   ./perf_debug_() [0x419550]
->   ./perf_debug_() [0x41a928]
->   ./perf_debug_() [0x472f58]
->   ./perf_debug_() [0x473210]
->   ./perf_debug_() [0x4070f4]
->   /lib/aarch64-linux-gnu/libc.so.6(__libc_start_main+0xe0) [0xffff8294c8a0]
->   Segmentation fault (core dumped)
->
-> We synthesize an update event that needs to touch the evsel
-> id array, which is not defined at that time. Fixing this by
-> forcing the id allocation for events with theeir own cpus.
->
-> Reported-by: John Garry <john.garry@huawei.com>
-> Link: http://lkml.kernel.org/n/tip-8x4n7o34yheigoxm1jibflm6@git.kernel.org
-
-Tested-by: John Garry <john.garry@huawei.com>
-
-In terms of adding to stable, LT v4.14 is not affected, but 4.18.x is.
-
-Thanks,
-John
-
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/perf/builtin-report.c | 1 +
->  tools/perf/util/evsel.c     | 3 +++
->  2 files changed, 4 insertions(+)
->
-> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-> index c0703979c51d..257c9c18cb7e 100644
-> --- a/tools/perf/builtin-report.c
-> +++ b/tools/perf/builtin-report.c
-> @@ -980,6 +980,7 @@ int cmd_report(int argc, const char **argv)
->  			.id_index	 = perf_event__process_id_index,
->  			.auxtrace_info	 = perf_event__process_auxtrace_info,
->  			.auxtrace	 = perf_event__process_auxtrace,
-> +			.event_update	 = perf_event__process_event_update,
->  			.feature	 = process_feature_event,
->  			.ordered_events	 = true,
->  			.ordering_requires_timestamps = true,
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index ac6cfb8b085e..7a0d5fbaf3c1 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -1088,6 +1088,9 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
->  		attr->exclude_user   = 1;
->  	}
->
-> +	if (evsel->own_cpus)
-> +		evsel->attr.read_format |= PERF_FORMAT_ID;
-> +
->  	/*
->  	 * Apply event specific term settings,
->  	 * it overloads any global configuration.
->
-
-
+-- 
+Regards
+Vignesh
