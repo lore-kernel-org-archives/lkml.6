@@ -2,84 +2,71 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3DBC64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D935BC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:15:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 761B720684
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:15:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761B720684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siemens.com
+	by mail.kernel.org (Postfix) with ESMTP id A99F720652
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:15:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A99F720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbeJDVJC (ORCPT
+        id S1727596AbeJDVJH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 17:09:02 -0400
-Received: from lizzard.sbs.de ([194.138.37.39]:36408 "EHLO lizzard.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727283AbeJDVJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 17:09:02 -0400
-X-Greylist: delayed 1758 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Oct 2018 17:09:00 EDT
-Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
-        by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id w94DjsBK028094
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 4 Oct 2018 15:45:54 +0200
-Received: from localhost ([139.25.0.78])
-        by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id w94Djr2v019965;
-        Thu, 4 Oct 2018 15:45:53 +0200
-From:   Daniel Wagner <daniel.wagner@siemens.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Julia Cartwright <julia@ni.com>
-Subject: [PATCH RT 0/2] Linux v4.4.148-rt166-rc1
-Date:   Thu,  4 Oct 2018 15:46:20 +0200
-Message-Id: <20181004134622.23181-1-daniel.wagner@siemens.com>
+        Thu, 4 Oct 2018 17:09:07 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44960 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbeJDVJH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 17:09:07 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g84Pg-0004Jf-1z; Thu, 04 Oct 2018 14:15:36 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: cx23885: make const array addr_list static
+Date:   Thu,  4 Oct 2018 15:15:35 +0100
+Message-Id: <20181004141535.20809-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear RT Folks,
+From: Colin Ian King <colin.king@canonical.com>
 
-This is the RT stable review cycle of patch v4.4.148-rt166-rc1.
+The const array addr_list can be made static, saves populating it on
+the stack and will make it read-only.
 
-Please scream at me if I messed something up. Please test the patches
-too.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/pci/cx23885/cx23885-i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The -rc release will be uploaded to kernel.org and will be deleted
-when the final release is out. This is just a review release (or
-release candidate).
-
-The pre-releases will not be pushed to the git repository, only the
-final release is.
-
-If all goes well, this patch will be converted to the next main
-release on 2018-10-11.
-
-Enjoy,
-
--- Daniel
-
-
-Daniel Wagner (2):
-  x86/kconfig: Use ticket spinlocks for -rt
-  Linux 4.4.148-rt166-rc1
-
- arch/x86/Kconfig | 2 +-
- localversion-rt  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/media/pci/cx23885/cx23885-i2c.c b/drivers/media/pci/cx23885/cx23885-i2c.c
+index dd67135d2bb6..d0df3dfff694 100644
+--- a/drivers/media/pci/cx23885/cx23885-i2c.c
++++ b/drivers/media/pci/cx23885/cx23885-i2c.c
+@@ -340,7 +340,7 @@ int cx23885_i2c_register(struct cx23885_i2c *bus)
+ 	/* Instantiate the IR receiver device, if present */
+ 	if (0 == bus->i2c_rc) {
+ 		struct i2c_board_info info;
+-		const unsigned short addr_list[] = {
++		static const unsigned short addr_list[] = {
+ 			0x6b, I2C_CLIENT_END
+ 		};
+ 
 -- 
 2.17.1
 
