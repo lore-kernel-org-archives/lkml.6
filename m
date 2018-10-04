@@ -2,135 +2,113 @@ Return-Path: <SRS0=SFDS=MQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E762CC64EBC
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8185EC64EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:36:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B14D721470
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B14D721470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 437FD21470
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 08:36:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="i1NtUt4k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437FD21470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbeJDP2V (ORCPT
+        id S1727631AbeJDP2q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 4 Oct 2018 11:28:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46746 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726808AbeJDP2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 11:28:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DEB8FAD82;
-        Thu,  4 Oct 2018 08:36:10 +0000 (UTC)
-Date:   Thu, 4 Oct 2018 10:36:09 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Daniel Wang <wonderfly@google.com>, rostedt@goodmis.org,
-        stable@vger.kernel.org, Alexander.Levin@microsoft.com,
-        akpm@linux-foundation.org, byungchul.park@lge.com,
-        dave.hansen@intel.com, hannes@cmpxchg.org, jack@suse.cz,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
-        penguin-kernel@i-love.sakura.ne.jp, peterz@infradead.org,
-        tj@kernel.org, torvalds@linux-foundation.org, vbabka@suse.cz,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Peter Feiner <pfeiner@google.com>
-Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
- owner and waiter logic to load balance console writes"
-Message-ID: <20181004083609.kcziz2ynwi2w7lcm@pathway.suse.cz>
-References: <20181001152324.72a20bea@gandalf.local.home>
- <CAJmjG29Jwn_1E5zexcm8eXTG=cTWyEr1gjSfSAS2fueB_V0tfg@mail.gmail.com>
- <20181002084225.6z2b74qem3mywukx@pathway.suse.cz>
- <CAJmjG2-RrG5XKeW1-+rN3C=F6bZ-L3=YKhCiQ_muENDTzm_Ofg@mail.gmail.com>
- <20181002212327.7aab0b79@vmware.local.home>
- <20181003091400.rgdjpjeaoinnrysx@pathway.suse.cz>
- <CAJmjG2_4JFA=qL-d2Pb9umUEcPt9h13w-g40JQMbdKsZTRSZww@mail.gmail.com>
- <20181003133704.43a58cf5@gandalf.local.home>
- <CAJmjG291w2ZPRiAevSzxGNcuR6vTuqyk6z4SG3xRsbaQh5U3zQ@mail.gmail.com>
- <20181004074442.GA12879@jagdpanzerIV>
+        Thu, 4 Oct 2018 11:28:46 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45101 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbeJDP2p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 4 Oct 2018 11:28:45 -0400
+Received: by mail-lf1-f67.google.com with SMTP id m80-v6so6134009lfi.12
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Oct 2018 01:36:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/LBR37Lgz421/EYf6/ISCqZcMWY/Q9fZrP8XaeRV5lU=;
+        b=i1NtUt4kQE3EC6yNqcIv/4dpnCxZ6RTnYc0J8gP5HAatJTEBZhqPCNHWLKI8fBZzQN
+         TliRK8OHjLz/Zy3iPFgbr7Kh+phpYrAgZsP8HJuyvxFFzBWb1QnSuICGxbOOXFy8C5Oe
+         iLaDB32GF8vQbNf3twUQfYc+pKNvPAXxGA3KMlXGkrpUcjxYn6n0KpZ48xrUHWVKwskj
+         2ST7PFSchPih1AH/8J8NEwn2UHBbZht4FvwCGSZQdj6RBJRvhOugrJH2f72qS9Ho32+p
+         l9e/L/aplBHsxr/p0Jc+huWAFBR9rQkqrooDO/H6ThK64opkAvvRx+fCAPpSWTMTxU1m
+         Hf+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/LBR37Lgz421/EYf6/ISCqZcMWY/Q9fZrP8XaeRV5lU=;
+        b=VcW5TcnRJaD8W4scx0p0+OL8sPb9N9EcrTdWfrYUNZJnaIOQutbgCjq6ivV/aDn8Lx
+         eNyni7fPZQ9uueil/weJ7ovJU+IVRraPU3hIPMfJmDJ+DFtFR/F3brym+lhNmqs1e+Nl
+         Z4Q9edyyR27OhDMb8UiXXxcEOEnQNA0lAAFL7lWsoauRp9nJjXQ/kbz7eLisor2NpuOQ
+         3co79nA6qfUzokztpL1DyI9FZkBUBeAShWByr7BL76TYFxjkMgqHTB4CQ2tiBIeuE/PF
+         YHpES/aCY2Bs8STQswPpSmtGjXddBEHGRvx/3T6jTthvYZUHUWRJAkbquyZDS6T/oDSr
+         FHNg==
+X-Gm-Message-State: ABuFfogWv7H3+SuyiViOgsTg0CRFtloh0/O0HJW0/rjibs56LavdS9Pm
+        niEcZKbEVcMdbrpcKyjcWEckUNbHNmY=
+X-Google-Smtp-Source: ACcGV609knavE19cCsJM8PgqCfDzCAIK36RuWBbVqa735lXN9/pkjg4fFT86dzZSk2VUJaOksG/keQ==
+X-Received: by 2002:a19:dd0e:: with SMTP id u14-v6mr3315866lfg.109.1538642194556;
+        Thu, 04 Oct 2018 01:36:34 -0700 (PDT)
+Received: from [192.168.0.126] ([31.173.83.191])
+        by smtp.gmail.com with ESMTPSA id j73-v6sm876345lfg.16.2018.10.04.01.36.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Oct 2018 01:36:33 -0700 (PDT)
+Subject: Re: [PATCH] mips: delete duplication of BUILTIN_DTB selection
+To:     Maksym Kokhan <maksym.kokhan@globallogic.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>
+Cc:     Andrii Bordunov <andrew.bordunov@gmail.com>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+References: <1538587415-24126-1-git-send-email-maksym.kokhan@globallogic.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <de95ca86-014d-77f6-6e2b-24f191147487@cogentembedded.com>
+Date:   Thu, 4 Oct 2018 11:36:33 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181004074442.GA12879@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <1538587415-24126-1-git-send-email-maksym.kokhan@globallogic.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-10-04 16:44:42, Sergey Senozhatsky wrote:
-> On (10/03/18 11:37), Daniel Wang wrote:
-> > When `softlockup_panic` is set (which is what my original repro had and
-> > what we use in production), without the backport patch, the expected panic
-> > would hit a seemingly deadlock. So even when the machine is configured
-> > to reboot immediately after the panic (kernel.panic=-1), it just hangs there
-> > with an incomplete backtrace. With your patch, the deadlock doesn't happen
-> > and the machine reboots successfully.
-> > 
-> > This was and still is the issue this thread is trying to fix. The last
-> > log snippet
-> > was from an "experiment" that I did in order to understand what's really
-> > happening. So far the speculation has been that the panic path was trying
-> > to get a lock held by a backtrace dumping thread, but there is not enough
-> > evidence which thread is holding the lock and how it uses it. So I set
-> > `softlockup_panic` to 0, to get panic out of the equation. Then I saw that one
-> > CPU was indeed holding the console lock, trying to write something out. If
-> > the panic was to hit while it's doing that, we might get a deadlock.
-> 
-> Hmm, console_sem state is ignored when we flush logbuf, so it's OK to
-> have it locked when we declare panic():
-> 
-> void console_flush_on_panic(void)
-> {
-> 	/*
-> 	 * If someone else is holding the console lock, trylock will fail
-> 	 * and may_schedule may be set.  Ignore and proceed to unlock so
-> 	 * that messages are flushed out.  As this can be called from any
-> 	 * context and we don't want to get preempted while flushing,
-> 	 * ensure may_schedule is cleared.
-> 	 */
-> 	console_trylock();
-> 	console_may_schedule = 0;
-> 	console_unlock();
-> }
-> 
-> Things are not so simple with uart_port lock. Generally speaking we
-> should deadlock when we NMI panic() kills the system while one of the
-> CPUs holds uart_port lock.
+Hello!
 
-This looks like a reasonable explanation of what is happening here.
-It also explains why the console owner logic helped.
+On 10/3/2018 8:23 PM, Maksym Kokhan wrote:
 
+> CONFIG_BUILTIN_DTB selection is duplicated in menu
+> "Machine selection" under MIPS_MALTA.
+> 
+> Fixes: e81a8c7dabac ("MIPS: Malta: Setup RAM regions via DT")
+> Signed-off-by: Maksym Kokhan <maksym.kokhan@globallogic.com>
+> Signed-off-by: Andrii Bordunov <andrew.bordunov@gmail.com>
+> ---
+>   arch/mips/Kconfig | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 3551199..71d6549 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -539,7 +539,6 @@ config MIPS_MALTA
+>   	select USE_OF
+>   	select LIBFDT
+>   	select ZONE_DMA32 if 64BIT
+> -	select BUILTIN_DTB
+>   	select LIBFDT
 
-> 8250 has sort of a workaround for this scenario:
-> 
-> serial8250_console_write()
-> {
-> 	if (port->sysrq)
-> 		locked = 0;
-> 	else if (oops_in_progress)
-> 		locked = spin_trylock_irqsave(&port->lock, flags);
-> 	else
-> 		spin_lock_irqsave(&port->lock, flags);
-> 
-> 	...
-> 	uart_console_write(port, s, count, serial8250_console_putchar);
-> 	...
-> 
-> 	if (locked)
-> 		spin_unlock_irqrestore(&port->lock, flags);
-> }
-> 
-> Now... the problem. A theory, in fact.
-> panic() sets oops_in_progress back to zero - bust_spinlocks(0) -  too soon.
+    LIBFDT seems duplicated too.
 
-I see your point. I am just a bit scared of this way. Ignoring locks
-is a dangerous and painful approach in general.
+[...]
 
-Best Regards,
-Petr
+MBR, Sergei
