@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 087E4C64EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 507F1C64EBD
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBA4B214FA
-	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:06:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA4B214FA
+	by mail.kernel.org (Postfix) with ESMTP id 1C3FB20684
+	for <linux-kernel@archiver.kernel.org>; Thu,  4 Oct 2018 14:06:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C3FB20684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbeJDU7f (ORCPT
+        id S1727781AbeJDU7f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 4 Oct 2018 16:59:35 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36274 "EHLO
+Received: from Galois.linutronix.de ([146.0.238.70]:36296 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727356AbeJDU7d (ORCPT
+        with ESMTP id S1727380AbeJDU7f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:59:33 -0400
+        Thu, 4 Oct 2018 16:59:35 -0400
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1g84GP-0002ic-KC; Thu, 04 Oct 2018 16:06:01 +0200
+        id 1g84GR-0002ic-8G; Thu, 04 Oct 2018 16:06:03 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 03/11] x86/fpu: make __raw_xsave_addr() use feature number instead of mask
-Date:   Thu,  4 Oct 2018 16:05:39 +0200
-Message-Id: <20181004140547.13014-4-bigeasy@linutronix.de>
+Subject: [PATCH 05/11] x86/fpu: set PKRU state for kernel threads
+Date:   Thu,  4 Oct 2018 16:05:41 +0200
+Message-Id: <20181004140547.13014-6-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181004140547.13014-1-bigeasy@linutronix.de>
 References: <20181004140547.13014-1-bigeasy@linutronix.de>
@@ -49,86 +49,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most users of __raw_xsave_addr() use a feature number, shift it to a
-mask and then __raw_xsave_addr() shifts it back to the feature number.
+The PKRU value is not set for kernel threads because they do not have
+the ->initialized value set. As a result the kernel thread has a random
+PKRU value set which it inherits from the previous task.
+It has been suggested by Paolo Bonzini to set it for kernel threads, too
+because it might be a fix.
+I *think* this is not required because the kernel threads don't copy
+data to/from userland and don't have access to any userspace mm in
+general.
+However there is this use_mm(). If we gain a mm by use_mm() we don't
+have a matching PKRU value because those are per thread. It has been
+suggested to use 0 as the PKRU value but this would bypass PKRU.
 
-Make __raw_xsave_addr() use the feature number as argument.
+Set the initial (default) PKRU value for kernel threads.
 
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/kernel/fpu/xstate.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/x86/include/asm/fpu/internal.h | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 87a57b7642d36..38d0b5ea40425 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -811,10 +811,8 @@ void fpu__resume_cpu(void)
-  *
-  * Note: does not work for compacted buffers.
-  */
--void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
-+void *__raw_xsave_addr(struct xregs_state *xsave, int feature_nr)
- {
--	int feature_nr = fls64(xstate_feature_mask) - 1;
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 956d967ca824a..4ecaf4d22954e 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -14,6 +14,7 @@
+ #include <linux/compat.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
++#include <linux/pkeys.h>
+ 
+ #include <asm/user.h>
+ #include <asm/fpu/api.h>
+@@ -573,20 +574,23 @@ static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
+ 	bool load_fpu;
+ 
+ 	load_fpu = static_cpu_has(X86_FEATURE_FPU) && new_fpu->initialized;
+-	if (!load_fpu)
+-		return;
 -
- 	if (!xfeature_enabled(feature_nr)) {
- 		WARN_ON_FPU(1);
- 		return NULL;
-@@ -842,6 +840,7 @@ void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
-  */
- void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
- {
-+	int feature_nr;
- 	/*
- 	 * Do we even *have* xsave state?
- 	 */
-@@ -869,7 +868,8 @@ void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
- 	if (!(xsave->header.xfeatures & xstate_feature))
- 		return NULL;
+-	__fpregs_load_activate(new_fpu, cpu);
+-
+ #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+ 	if (static_cpu_has(X86_FEATURE_OSPKE)) {
+ 		struct pkru_state *pk;
  
--	return __raw_xsave_addr(xsave, xstate_feature);
-+	feature_nr = fls64(xstate_feature) - 1;
-+	return __raw_xsave_addr(xsave, feature_nr);
+-		pk = __raw_xsave_addr(&new_fpu->state.xsave, XFEATURE_PKRU);
+-		if (pk->pkru != __read_pkru())
+-			__write_pkru(pk->pkru);
++		if (!load_fpu) {
++			pkru_set_init_value();
++		} else {
++			pk = __raw_xsave_addr(&new_fpu->state.xsave,
++					      XFEATURE_PKRU);
++			if (pk->pkru != __read_pkru())
++				__write_pkru(pk->pkru);
++		}
+ 	}
+ #endif
++	if (!load_fpu)
++		return;
++	__fpregs_load_activate(new_fpu, cpu);
  }
- EXPORT_SYMBOL_GPL(get_xsave_addr);
  
-@@ -1018,7 +1018,7 @@ int copy_xstate_to_kernel(void *kbuf, struct xregs_state *xsave, unsigned int of
- 		 * Copy only in-use xstates:
- 		 */
- 		if ((header.xfeatures >> i) & 1) {
--			void *src = __raw_xsave_addr(xsave, 1 << i);
-+			void *src = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
-@@ -1104,7 +1104,7 @@ int copy_xstate_to_user(void __user *ubuf, struct xregs_state *xsave, unsigned i
- 		 * Copy only in-use xstates:
- 		 */
- 		if ((header.xfeatures >> i) & 1) {
--			void *src = __raw_xsave_addr(xsave, 1 << i);
-+			void *src = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
-@@ -1161,7 +1161,7 @@ int copy_kernel_to_xstate(struct xregs_state *xsave, const void *kbuf)
- 		u64 mask = ((u64)1 << i);
- 
- 		if (hdr.xfeatures & mask) {
--			void *dst = __raw_xsave_addr(xsave, 1 << i);
-+			void *dst = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
-@@ -1215,7 +1215,7 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
- 		u64 mask = ((u64)1 << i);
- 
- 		if (hdr.xfeatures & mask) {
--			void *dst = __raw_xsave_addr(xsave, 1 << i);
-+			void *dst = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
+ /*
 -- 
 2.19.0
 
